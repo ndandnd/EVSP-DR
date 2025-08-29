@@ -1,6 +1,6 @@
 # Joint Truck & Battery Routing under Solar & V2G EVSP
 
-**Authors:** Nathan Cho, nc437@cornell.edu; Andrea Lodi; Anna Scaglione
+**Authors:** Nathan Cho, nc437@cornell.edu; Andrea Lodi; Anna Scaglione; Nada Ae
 
 
 This repository contains the Python implementation and data needed to reproduce all results in:
