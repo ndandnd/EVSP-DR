@@ -1,11 +1,9 @@
-
 #%%
 import pandas as pd
 import numpy as np
 from gurobipy import *
 from gurobipy import Model, Column, LinExpr, GRB
 import time
-import matplotlib.pyplot as plt
 import os
 
 from config  import n_fast_cols, n_exact_cols, time_blocks, tolerance, bar_t, charge_mult, factor, charge_cost_premium
@@ -13,6 +11,20 @@ from config  import n_fast_cols, n_exact_cols, time_blocks, tolerance, bar_t, ch
 from utils   import make_locs, generate_trip_data, extract_route_from_solution, extract_batt_route_from_solution, extract_duals, calculate_truck_route_cost, calculate_battery_route_cost
 
 from master  import init_master, solve_master, build_master
+
+# ================== NEW: imports & run metadata for CSV outputs ==================
+import datetime
+from pathlib import Path
+# Unique run ID so multiple runs don’t overwrite each other
+RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + f"_{os.getpid()}"
+OUTDIR = Path("results")
+OUTDIR.mkdir(parents=True, exist_ok=True)
+
+# Buffers for CSVs
+iter_rows = []      # per-iteration timings
+timeline_rows = []  # final timeline events (selected routes)
+# ================================================================================
+
 
 #%%
 
@@ -67,8 +79,6 @@ def create_pricing_variables(model, T, S, bar_t, G):
 
     #  SoC g[i]
     vars_dict["g"] = {}
-    # for i in (T + S + ["O"]):
-    #     vars_dict["g"][i] = model.addVar(lb=0, ub=G, vtype=GRB.CONTINUOUS, name=f"g_{i}")
     vars_dict["g"] = model.addVars(
         T + S + ["O"],
         lb=0, ub=G,
@@ -880,6 +890,10 @@ for solar_mult in solar_multipliers:
                     rmp.reset()
                     iteration += 1
                     print(f"\n--- Iteration {iteration} ---")
+                    # ================== NEW: iteration timing trackers ==================
+                    iter_start = time.time()
+                    used_exact_this_iter = False
+                    # ====================================================================
 
                     if iteration > max_iter:
                         print("Reached iteration limit, stopping.")
@@ -924,6 +938,7 @@ for solar_mult in solar_multipliers:
                     # if no fast columns, try exact
                     if not new_trucks and new_pricing_obj < -tolerance:
                         print("No fast truck cols → running exact pricing")
+                        used_exact_this_iter = True  # NEW
                         pricing_model, vars_pr = solve_pricing_exact(
                             alpha, beta, gamma,
                             mode=selected_mode,
@@ -1025,6 +1040,7 @@ for solar_mult in solar_multipliers:
                         
                         if not new_batts and new_batt_obj < -tolerance:
                             print("No fast batt cols → running exact batt pricing")
+                            used_exact_this_iter = True  # NEW
                             batt_model, vars_batt = solve_battery_pricing_exact(
                                 beta, gamma, selected_mode,
                                 num_exact_cols=n_exact_cols
@@ -1061,6 +1077,21 @@ for solar_mult in solar_multipliers:
                                                 vtype=GRB.CONTINUOUS,
                                                 column=col_b, name=f"b[{idx_b}]")
                             R_batt.append(route)
+
+                    # ================== NEW: record per-iteration row ==================
+                    iter_rows.append({
+                        "run_id": RUN_ID,
+                        "iteration": iteration,
+                        "master_time_s": master_times[-1] if master_times else None,
+                        "pricing_time_s": pricing_times[-1] if pricing_times else None,
+                        "iteration_time_s": time.time() - iter_start,
+                        "pricing_mode": "exact" if used_exact_this_iter else "fast",
+                        "mode_name": mode_name,
+                        "solar_mult": solar_mult,
+                        "epsilon": epsilon_const,
+                        "points": points
+                    })
+                    # ====================================================================
 
                 # Final LP
 
@@ -1170,23 +1201,24 @@ for solar_mult in solar_multipliers:
                 # 
                 time_end   = time.time()
                 time_taken = time_end - time_begin
-                print(f"Total time: {time_taken:.1f} s")
+                print(f"Total time: {time_taken:.1f} s")
 
                 new_truck_num = len(R_truck) - init_truck
                 new_batt_num  = len(R_batt)  - init_batt
 
-                print(f"New truck‑routes generated:   {new_truck_num}")
-                print(f"New battery‑routes generated: {new_batt_num}")
+                print(f"New truck-routes generated:   {new_truck_num}")
+                print(f"New battery-routes generated: {new_batt_num}")
 
                 # 
 
 
                 # 
-                print(f"Average Master Problem Time per Iteration: {np.average(master_times):.2f} seconds")
-
-                print(f"Average Pricing Problem Time per Iteration: {np.average(pricing_times):.2f} seconds")
-
-                print(f"Average Iteration Time: {np.average(iteration_times):.2f} seconds")
+                if master_times:
+                    print(f"Average Master Problem Time per Iteration: {np.average(master_times):.2f} seconds")
+                if pricing_times:
+                    print(f"Average Pricing Problem Time per Iteration: {np.average(pricing_times):.2f} seconds")
+                if iteration_times:
+                    print(f"Average Iteration Time: {np.average(iteration_times):.2f} seconds")
 
                 selected_routes = []
                 for r in range(len(R_truck)):
@@ -1207,7 +1239,6 @@ for solar_mult in solar_multipliers:
                         selected_routes.append(R_truck[r])
                         route_labels.append(f"Truck[{r}]")
 
-
                 # Battery routes (b[r] can be >1)
                 for r, var in b.items():
                     count = int(round(var.X))
@@ -1215,65 +1246,32 @@ for solar_mult in solar_multipliers:
                         selected_routes.append(R_batt[r])
                         route_labels.append(f"Batt[{r}] - {k+1}")
 
-
-
-                #   Gantt 
-                times = sorted(time_blocks)
-                n = len(selected_routes)
-                height = 0.8
-
-                fig, ax = plt.subplots(figsize=(10, n*0.4))
+                # ================== NEW: build timeline_rows for CSV ==================
+                event_maps = {
+                    "chi_plus": "paid_charge",
+                    "chi_plus_free": "free_charge",
+                    "chi_minus_free": "v2v_discharge",
+                    "chi_minus": "v2g_discharge",
+                }
                 for idx, route in enumerate(selected_routes):
-                    cs = route['charging_stops']
-                    for _, t in cs.get('chi_plus', []):
-                        ax.barh(idx, 1, left=t, height=height, color='red',    alpha=0.7)
-                    for _, t in cs.get('chi_plus_free', []):
-                        ax.barh(idx, 1, left=t, height=height, color='green', alpha=0.7)
-                    for _, t in cs.get('chi_minus_free', []):
-                        ax.barh(idx, 1, left=t, height=height, color='cyan',   alpha=0.7)
-                    for _, t in cs.get('chi_minus', []):
-                        ax.barh(idx, 1, left=t, height=height, color='blue',   alpha=0.7)
-
-                ax.set_yticks(range(len(route_labels)))
-                ax.set_yticklabels(route_labels)
-                ax.set_xticks(times)
-                ax.set_xlabel("Time Block")
-                ax.set_title(f"Charging/Discharging Timeline by Route ({mode_name})")
-                legend_handles = [
-                    plt.Rectangle((0,0),1,1,color=c,alpha=0.7,label=l)
-                    for c,l in [('red','Paid charge'),
-                                ('green','Free charge'),
-                                ('cyan','V2V discharge'),
-                                ('blue','V2G discharge')]
-                ]
-                ax.legend(handles=legend_handles, bbox_to_anchor=(1.02,1), loc='upper left')
-                plt.grid(axis='x', linestyle='--', alpha=0.5)
-                plt.tight_layout()
-                plt.show()
-
-                import matplotlib.pyplot as plt
-
-                iters = list(range(len(master_times)))
-
-                exact_idx = [i for i,m in enumerate(pricing_mode_used) if m=='exact']
-
-                plt.figure(figsize=(10,6))
-                plt.scatter(iters, master_times, marker='o', label='Master Time', color='C0')
-
-                plt.scatter(iters, pricing_times, marker='o', label='Pricing (fast)', color='C1')
-
-                plt.scatter(exact_idx, [pricing_times[i] for i in exact_idx],
-                            marker='o', label='Pricing (exact)', color='C2')
-
-                plt.xlabel("Iteration")
-                plt.ylabel("Time (s)")
-                plt.title(f"{bar_t} Timeblocks and {len(trip_data)} Trips")
-                plt.legend()
-                plt.grid(True)
-                plt.show()
-
-
-
+                    label = route_labels[idx]
+                    rtype = route.get("type", "truck")
+                    cs = route.get("charging_stops", {})
+                    for key, etype in event_maps.items():
+                        for (station, t) in cs.get(key, []):
+                            timeline_rows.append({
+                                "run_id": RUN_ID,
+                                "mode_name": mode_name,
+                                "solar_mult": solar_mult,
+                                "epsilon": epsilon_const,
+                                "points": points,
+                                "route_label": label,
+                                "route_type": rtype,
+                                "event_type": etype,
+                                "station": station,
+                                "time_block": t
+                            })
+                # ======================================================================
 
                 print("Final LP, MIP obj:", final_LP_obj, final_MIP_obj)
 
@@ -1304,38 +1302,19 @@ for solar_mult in solar_multipliers:
 
 df = pd.DataFrame(results)
 
-points_levels = sorted(df['points'].unique())
+# ================== NEW: write summary CSV ==================
+summary_path = OUTDIR / f"summary_{RUN_ID}.csv"
+df.to_csv(summary_path, index=False)
+print(f"[WRITE] {summary_path}")
+# ===========================================================
 
-metrics = ['trucks', 'fuel_used']
-ylabels = {'trucks': 'Number of Vehicles', 
-           'fuel_used': 'Net Energy (kWh)'}
+# ================== NEW: write iterations & timeline CSVs ==================
+iters_path = OUTDIR / f"iterations_{RUN_ID}.csv"
+pd.DataFrame(iter_rows).to_csv(iters_path, index=False)
+print(f"[WRITE] {iters_path}")
 
-for metric in metrics:
-    fig, axes = plt.subplots(
-        nrows=1, 
-        ncols=len(points_levels), 
-        figsize=(5*len(points_levels), 4), 
-        sharey=True
-    )
-    if len(points_levels)==1:
-        axes = [axes]
-    for ax, pts in zip(axes, points_levels):
-        sub = df[df['points']==pts]
-        for eps in sorted(sub['epsilon'].unique()):
-            grp = sub[sub['epsilon']==eps]
-            ax.plot(
-                grp['solar_mult'], 
-                grp[metric], 
-                marker='o', 
-                linestyle='-',
-                label=f'ε={eps}'
-            )
-        ax.set_title(f'{pts} Locations')
-        ax.set_xlabel('Solar Multiplier')
-        ax.set_ylabel(ylabels[metric])
-        ax.grid(True, linestyle='--', alpha=0.5)
-        ax.legend(title='ε')
-    fig.suptitle(ylabels[metric], fontsize=14)
-    plt.tight_layout(rect=[0,0,1,0.95])
-    plt.show()
+timeline_path = OUTDIR / f"timeline_{RUN_ID}.csv"
+pd.DataFrame(timeline_rows).to_csv(timeline_path, index=False)
+print(f"[WRITE] {timeline_path}")
+# ===========================================================
 # %%
