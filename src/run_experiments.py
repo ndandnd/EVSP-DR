@@ -8,7 +8,7 @@ import os
 
 from config  import n_fast_cols, n_exact_cols, time_blocks, tolerance, bar_t, charge_mult, factor, charge_cost_premium
 
-from utils   import make_locs, generate_trip_data, extract_route_from_solution, extract_batt_route_from_solution, extract_duals, calculate_truck_route_cost, calculate_battery_route_cost
+from utils   import load_price_curve, make_locs, generate_trip_data, extract_route_from_solution, extract_batt_route_from_solution, extract_duals, calculate_truck_route_cost, calculate_battery_route_cost
 
 from master  import init_master, solve_master, build_master
 
@@ -17,7 +17,7 @@ import datetime
 from pathlib import Path
 # Unique run ID so multiple runs don’t overwrite each other
 RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + f"_{os.getpid()}"
-OUTDIR = Path("results")
+OUTDIR = Path(__file__).resolve().parent / "results"
 OUTDIR.mkdir(parents=True, exist_ok=True)
 
 # Buffers for CSVs
@@ -705,11 +705,7 @@ for solar_mult in solar_multipliers:
                     # epsilon_const =  # energy consumed per trip
 
 
-                ## case 3
-                fuel_cost = 5
-                bus_cost = fuel_cost * G + 10        # fixed cost per bus
-                batt_discount = 9    # subtract cost from bus_cost
-                batt_cost = bus_cost - batt_discount
+
                 
 
                 sl = trip_data["Start loc"].to_dict()  # sl[i] = 'A'/'B'
@@ -786,16 +782,21 @@ for solar_mult in solar_multipliers:
                 for (i,j), dist in d.items():
                     tau[(i,j)] = dist / speed
 
-                cost_data_rows = []
-                for t in time_blocks:
-                    # repeat “1” once per station in S
-                    cost_data_rows.append([fuel_cost]*len(S))
 
-                charging_cost_data = pd.DataFrame(
-                    data=cost_data_rows,
-                    index=time_blocks,
-                    columns=S
-                )
+                
+                # path to your new CSV with (time_block,cost)
+                price_csv = os.path.join(os.path.dirname(__file__), '..', 'data', 'hourly_prices.csv')
+                # Build charging_cost_data from CSV (per-hour, all stations share the same hour price)
+                charging_cost_data, avg_cost = load_price_curve(price_csv, time_blocks, S)
+                # You still have terms that need a scalar; use the average as an anchor.
+                # # (All marginal charging/discharging costs are already using charging_cost_data[t,h].)
+                fuel_cost = avg_cost
+                # Fixed costs: keep the structure you had, but now tied to avg price
+                bus_cost = fuel_cost * G + 10       # same formula as before, just with avg price
+                batt_discount = 9
+                batt_cost = bus_cost - batt_discount 
+
+
 
 
                 # 

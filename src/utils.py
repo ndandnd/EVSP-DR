@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import string
 import matplotlib.pyplot as plt
@@ -278,3 +279,34 @@ def generate_trip_data(locs, start_time, end_time):
     df = pd.DataFrame(records)
     df.index.name = 'Trip'
     return df
+
+def load_price_curve(csv_path, time_blocks, stations):
+    """
+    Read a CSV with columns: time_block,cost
+    Returns:
+      charging_cost_data: DataFrame indexed by time_blocks, columns = stations
+                          every (h,t) gets that hour's 'cost'
+      avg_cost: float average over provided time_blocks
+    """
+    df = pd.read_csv(csv_path)
+    if not {'time_block','cost'}.issubset(df.columns):
+        raise ValueError("CSV must have columns: time_block,cost")
+
+    # normalize types
+    df['time_block'] = df['time_block'].astype(int)
+    df['cost'] = df['cost'].astype(float)
+
+    # build a map for quick lookup, validate coverage
+    missing = [t for t in time_blocks if t not in set(df['time_block'])]
+    if missing:
+        raise ValueError(f"CSV missing prices for time blocks: {missing}")
+
+    price_map = dict(zip(df['time_block'], df['cost']))
+
+    # build per-(h,t) table (same price for every station column at time t)
+    data = [[price_map[t] for _ in stations] for t in time_blocks]
+    charging_cost_data = pd.DataFrame(data, index=time_blocks, columns=stations)
+
+    # average cost (handy if you still need a scalar somewhere)
+    avg_cost = float(np.mean([price_map[t] for t in time_blocks]))
+    return charging_cost_data, avg_cost
