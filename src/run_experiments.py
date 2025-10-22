@@ -1,1321 +1,1019 @@
-#%%
-import pandas as pd
-import numpy as np
-from gurobipy import *
-from gurobipy import Model, Column, LinExpr, GRB
-import time
+# EVSP only (no solar, no V2G/V2V) on your real data.
+# Speedups:
+#  - Smaller pool + RC cutoff + K-best columns per CG iteration
+#  - Pricing timelimit + gap; master LP timelimit; stagnation early-stop
+#  - Nodefile spill to avoid OOM kills; auto TMP detection
+#  - Final MIP with warm-start and relaxed gap
+
 import os
-
-from config  import n_fast_cols, n_exact_cols, time_blocks, tolerance, bar_t, charge_mult, factor, charge_cost_premium
-
-from utils   import load_price_curve, make_locs, generate_trip_data, extract_route_from_solution, extract_batt_route_from_solution, extract_duals, calculate_truck_route_cost, calculate_battery_route_cost
-
-from master  import init_master, solve_master, build_master
-
-# ================== NEW: imports & run metadata for CSV outputs ==================
+import time
+import math
 import datetime
 from pathlib import Path
-# Unique run ID so multiple runs don’t overwrite each other
-RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + f"_{os.getpid()}"
-OUTDIR = Path(__file__).resolve().parent / "results"
+
+import pandas as pd
+import numpy as np
+from gurobipy import Model, Column, GRB, quicksum
+
+from config import (
+    n_fast_cols, n_exact_cols, tolerance,
+    bar_t, time_blocks,
+    DEPOT_NAME, SOC_CAPACITY_KWH, ENERGY_PER_BLOCK_KWH,
+    CHARGING_POWER_KW, CHARGE_EFFICIENCY,
+    charge_mult, charge_cost_premium,
+    BUS_COST_SCALAR, ALLOW_ONLY_LISTED_DEADHEADS, MODE_EVS_ONLY,
+    CHARGING_STATIONS,
+
+    # NEW
+    RC_EPSILON, K_BEST,
+    MAX_CG_ITERS, STAGNATION_ITERS, MASTER_IMPROVE_THRESHOLD,
+    THREADS, NODEFILE_START, NODEFILE_DIR,
+    MASTER_TIMELIMIT, PRICING_TIMELIMIT, PRICING_GAP
+)
+from utils import (
+    load_price_curve, extract_duals, extract_route_from_solution,
+    calculate_truck_route_cost
+)
+from master import init_master, solve_master, build_master
+
+# ------------------------------ Output dirs ------------------------------
+RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+ROOT = Path(__file__).resolve().parent
+OUTDIR = ROOT / "results"
 OUTDIR.mkdir(parents=True, exist_ok=True)
+CKPT = OUTDIR / f"ckpt_{RUN_ID}"
+CKPT.mkdir(parents=True, exist_ok=True)
 
-# Buffers for CSVs
-iter_rows = []      # per-iteration timings
-timeline_rows = []  # final timeline events (selected routes)
-# ================================================================================
+# ------------------------------ Helpers ------------------------------
 
+def _nearest_hour_block(hhmm: str) -> int:
+    hh, mm = hhmm.split(":")
+    hh = int(hh); mm = int(mm)
+    blk = hh + (1 if mm >= 30 else 0)
+    blk = max(1, min(24, blk if blk > 0 else 1))
+    return blk
 
-#%%
+def _ceil_hour_block(hhmm: str) -> int:
+    hh, mm = hhmm.split(":")
+    hh = int(hh); mm = int(mm)
+    blk = hh if mm == 0 else hh + 1
+    blk = max(1, min(24, blk))
+    return blk
 
+def ceil_hours_from_minutes(m: float) -> int:
+    return int(math.ceil(float(m) / 60.0))
 
-def create_pricing_variables(model, T, S, bar_t, G):
+def energy_to_events(kwh: float) -> int:
+    return int(math.ceil(float(kwh) / float(ENERGY_PER_BLOCK_KWH)))
 
-    vars_dict = {}
+def _detect_tmp():
+    if NODEFILE_DIR:
+        return NODEFILE_DIR
+    for k in ("SLURM_TMPDIR", "TMPDIR", "TMP"):
+        v = os.environ.get(k)
+        if v:
+            return v
+    return "/tmp"
 
-    #  pull‐out / pull‐in
-    vars_dict["wA_trip"]   = model.addVars(T, vtype=GRB.BINARY, name="wA_trip")
-    vars_dict["wOmega_trip"] = model.addVars(T, vtype=GRB.BINARY, name="wOmega_trip")
+# ------------------------------ Data ingest ------------------------------
 
-    vars_dict["wA_station"]   = model.addVars(S, vtype=GRB.BINARY, name="wA")
-    vars_dict["wOmega_station"] = model.addVars(S, vtype=GRB.BINARY, name="wOmega")
+DATA_DIR = ROOT.parent / "data"
 
-    vars_dict["x"] = model.addVars(
-        T, T,
-        vtype=GRB.BINARY,
-        name="x",
-        ub={(i,i):0 for i in T}
+routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
+deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
+prices_csv    = DATA_DIR / "hourly_prices.csv"
+
+if not routes_csv.exists():
+    raise FileNotFoundError(f"Missing {routes_csv}")
+if not deadheads_csv.exists():
+    raise FileNotFoundError(f"Missing {deadheads_csv}")
+if not prices_csv.exists():
+    raise FileNotFoundError(f"Missing {prices_csv} (needed for charging prices)")
+
+df_trips = pd.read_csv(routes_csv)
+
+trip_col_map = {"SL": None, "ST": None, "ET": None, "EL": None, "Energy used": None}
+for want in list(trip_col_map.keys()):
+    if want in df_trips.columns:
+        trip_col_map[want] = want
+        continue
+    if want == "Energy used" and "Energy_used" in df_trips.columns:
+        trip_col_map[want] = "Energy_used"
+        continue
+    for c in df_trips.columns:
+        if c.strip().lower() == want.lower():
+            trip_col_map[want] = c
+            break
+
+missing = [k for k, v in trip_col_map.items() if v is None]
+if missing:
+    raise ValueError(f"{routes_csv.name} must have columns {{'SL','ST','ET','EL','Energy used'}}, "
+                     f"could not find: {missing}. Found: {set(df_trips.columns)}")
+
+df_trips = df_trips.rename(columns={trip_col_map[k]: k for k in trip_col_map})
+
+df_dh = pd.read_csv(deadheads_csv)
+
+dh_col_map = {"From": None, "To": None, "Duration": None, "Energy used": None}
+for want in list(dh_col_map.keys()):
+    if want in df_dh.columns:
+        dh_col_map[want] = want
+        continue
+    if want == "Energy used" and "Energy_use" in df_dh.columns:
+        dh_col_map[want] = "Energy_use"
+        continue
+    for c in df_dh.columns:
+        if c.strip().lower() == want.lower():
+            dh_col_map[want] = c
+            break
+missing_dh = [k for k, v in dh_col_map.items() if v is None]
+if missing_dh:
+    raise ValueError(f"{deadheads_csv.name} must include columns {{'From','To','Duration','Energy used'}}, "
+                     f"could not find: {missing_dh}. Found: {set(df_dh.columns)}")
+df_dh = df_dh.rename(columns={dh_col_map[k]: k for k in dh_col_map})
+
+# ----------------------------------------------------------------------
+# SINGLE canonical CHARGERS definition (use config + depot)
+# ----------------------------------------------------------------------
+CHARGERS = sorted(set(CHARGING_STATIONS + [DEPOT_NAME]))
+
+# ----------------------------------------------------------------------
+# OPTIONAL: auto-augment deadheads with one-hop compositions
+# ----------------------------------------------------------------------
+def augment_deadheads(df, chargers):
+    df = df.copy()
+    df["From"] = df["From"].astype(str).str.strip()
+    df["To"]   = df["To"].astype(str).str.strip()
+    df["Duration"] = pd.to_numeric(df["Duration"], errors="coerce")
+    df["Energy used"] = pd.to_numeric(df["Energy used"], errors="coerce")
+
+    # join (X→mid) + (mid→charger) → (X→charger)
+    mid_to_chg = df[df["To"].isin(chargers)][["From","To","Duration","Energy used"]]
+    mid_to_chg = mid_to_chg.rename(columns={"From":"mid","To":"charger"})
+    x_to_mid   = df.rename(columns={"From":"X","To":"mid"})
+
+    fwd = x_to_mid.merge(mid_to_chg, on="mid", how="inner")
+    fwd["From"] = fwd["X"]
+    fwd["To"]   = fwd["charger"]
+    fwd["Duration"]    = fwd["Duration_x"] + fwd["Duration_y"]
+    fwd["Energy used"] = fwd["Energy used_x"] + fwd["Energy used_y"]
+    fwd = fwd[["From","To","Duration","Energy used"]]
+
+    # backward: (charger→mid) + (mid→X) → (charger→X)
+    chg_to_mid = df[df["From"].isin(chargers)][["From","To","Duration","Energy used"]]
+    chg_to_mid = chg_to_mid.rename(columns={"From":"charger","To":"mid"})
+    mid_to_x   = df.rename(columns={"From":"mid","To":"X"})
+
+    bwd = chg_to_mid.merge(mid_to_x, on="mid", how="inner")
+    bwd["From"] = bwd["charger"]
+    bwd["To"]   = bwd["X"]
+    bwd["Duration"]    = bwd["Duration_x"] + bwd["Duration_y"]
+    bwd["Energy used"] = bwd["Energy used_x"] + bwd["Energy used_y"]
+    bwd = bwd[["From","To","Duration","Energy used"]]
+
+    composed = pd.concat([fwd, bwd], ignore_index=True)
+    composed = composed[composed["From"] != composed["To"]]
+
+    # remove duplicates and already-existing arcs
+    key = set(zip(df["From"], df["To"]))
+    composed = composed[~composed.apply(lambda r: (r["From"], r["To"]) in key, axis=1)]
+
+    # --- duration cap for indirect arcs (minutes) ---
+    MAX_INDIRECT_MIN = 40
+    composed = composed[composed["Duration"] <= MAX_INDIRECT_MIN]
+
+    # combine and keep only the shortest version of each (From, To)
+    df = pd.concat([df, composed], ignore_index=True)
+    df = df.sort_values(["From","To","Duration","Energy used"])
+    df = df.drop_duplicates(subset=["From","To"], keep="first")
+
+    print(f"[augment] added {len(composed)} indirect arcs (after duration filter ≤ {MAX_INDIRECT_MIN} min)")
+    return df
+
+df_dh = augment_deadheads(df_dh, CHARGERS)
+
+# ---- Add direct depot arcs via 1-hop composition: PARX→mid→Y and X→mid→PARX ----
+def augment_depot_bridging(df, depot):
+    df = df.copy()
+    for col in ["From", "To"]:
+        df[col] = df[col].astype(str).str.strip()
+    df["Duration"]    = pd.to_numeric(df["Duration"], errors="coerce")
+    df["Energy used"] = pd.to_numeric(df["Energy used"], errors="coerce")
+    df = df.dropna(subset=["Duration","Energy used"])
+
+    # (depot → mid) + (mid → Y) → (depot → Y)
+    dep_to_mid = df[df["From"] == depot][["From","To","Duration","Energy used"]].rename(
+        columns={"To":"mid","Duration":"d0","Energy used":"e0"}
     )
-    vars_dict["y"] = model.addVars(T, S, vtype=GRB.BINARY, name="y")
-    vars_dict["z"] = model.addVars(S, T, vtype=GRB.BINARY, name="z")
+    mid_to_Y   = df.rename(columns={"From":"mid","To":"Y","Duration":"d1","Energy used":"e1"})[["mid","Y","d1","e1"]]
+    fwd = dep_to_mid.merge(mid_to_Y, on="mid", how="inner")
+    fwd = fwd.assign(
+        From=depot,
+        To=fwd["Y"],
+        Duration=fwd["d0"] + fwd["d1"],
+        **{"Energy used": fwd["e0"] + fwd["e1"]}
+    )[["From","To","Duration","Energy used"]]
 
-    # timing cst/cet
-    vars_dict["cst"] = model.addVars(
-        S,
-        lb=0, ub=bar_t,
-        vtype=GRB.INTEGER,
-        name="cst"
+    # (X → mid) + (mid → depot) → (X → depot)
+    X_to_mid = df.rename(columns={"To":"mid","Duration":"d0","Energy used":"e0"})[["From","mid","d0","e0"]]
+    mid_to_dep = df[df["To"] == depot][["From","To","Duration","Energy used"]].rename(
+        columns={"From":"mid","Duration":"d1","Energy used":"e1"}
     )
-    vars_dict["cet"] = model.addVars(
-        S,
-        lb=0, ub=bar_t,
-        vtype=GRB.INTEGER,
-        name="cet"
-    )
+    bwd = X_to_mid.merge(mid_to_dep, on="mid", how="inner")
+    bwd = bwd.assign(
+        From=bwd["From"],
+        To=depot,
+        Duration=bwd["d0"] + bwd["d1"],
+        **{"Energy used": bwd["e0"] + bwd["e1"]}
+    )[["From","To","Duration","Energy used"]]
 
-    # charge-mode binaries over (h,t)
-    vars_dict["charge"]        = model.addVars(S, time_blocks, vtype=GRB.BINARY, name="charge")
-    vars_dict["chi_plus"]      = model.addVars(S, time_blocks, vtype=GRB.BINARY, name="chi_plus")
-    vars_dict["chi_plus_free"] = model.addVars(S, time_blocks, vtype=GRB.BINARY, name="chi_plus_free")
-    vars_dict["chi_minus"]     = model.addVars(S, time_blocks, vtype=GRB.BINARY, name="chi_minus")
-    vars_dict["chi_minus_free"]= model.addVars(S, time_blocks, vtype=GRB.BINARY, name="chi_minus_free")
-    vars_dict["chi_zero"]      = model.addVars(S, time_blocks, vtype=GRB.BINARY, name="chi_zero")
+    composed = pd.concat([fwd, bwd], ignore_index=True)
+    composed = composed[
+        (composed["From"] != composed["To"]) &
+        (composed["Duration"] >= 0) &
+        (composed["Energy used"] >= 0)
+    ]
 
-    #  number of charges
-    vars_dict["bar_l"] = model.addVar(vtype=GRB.INTEGER, name="bar_l")
+    # drop ones that already exist
+    existing = set(zip(df["From"], df["To"]))
+    composed = composed[~composed.apply(lambda r: (r["From"], r["To"]) in existing, axis=1)]
 
-    # net charge v[h]
-    vars_dict["v"] = { h: model.addVar(lb=-G, ub=G, vtype=GRB.INTEGER, name=f"v_{h}") for h in S }
+    # --- duration cap for these indirect arcs (minutes) ---
+    MAX_INDIRECT_MIN = 40
+    composed = composed[composed["Duration"] <= MAX_INDIRECT_MIN]
 
-    #  SoC g[i]
-    vars_dict["g"] = {}
-    vars_dict["g"] = model.addVars(
-        T + S + ["O"],
-        lb=0, ub=G,
-        vtype=GRB.CONTINUOUS,
-        name="g"
-    )
-    # # final g
-    vars_dict["g_return"] = model.addVar(lb=0, ub=G, vtype=GRB.CONTINUOUS, name="g_return")
+    # combine and keep only the shortest version of each (From, To)
+    out = pd.concat([df, composed], ignore_index=True)
+    out = out.sort_values(["From","To","Duration","Energy used"])
+    out = out.drop_duplicates(subset=["From","To"], keep="first")
 
-    return vars_dict
+    print(f"[augment/depot] added {len(composed)} depot-bridging arcs (≤ {MAX_INDIRECT_MIN} min)")
+    return out
 
+df_dh = augment_depot_bridging(df_dh, DEPOT_NAME)
+
+# ---- Ensure depot↔trip endpoint arcs exist (allow ANY mid, not just chargers) ----
+def ensure_depot_endpoint_arcs(df, depot, sl_map, el_map, max_dur_min=None):
+    """
+    Ensure depot↔trip endpoint arcs exist by composing via ANY mid node.
+    If max_dur_min is not None, discard composed arcs whose total Duration exceeds this cap (minutes).
+    """
+    df = df.copy()
+    df["From"] = df["From"].astype(str).str.strip()
+    df["To"]   = df["To"].astype(str).str.strip()
+    df["Duration"]    = pd.to_numeric(df["Duration"], errors="coerce")
+    df["Energy used"] = pd.to_numeric(df["Energy used"], errors="coerce")
+    df = df.dropna(subset=["Duration","Energy used"])
+
+    sl_set = set(sl_map.values())
+    el_set = set(el_map.values())
+    existing = set(zip(df["From"], df["To"]))
+
+    # Helper tables (ANY mid)
+    dep_to_mid = df[df["From"] == depot][["From","To","Duration","Energy used"]].rename(
+        columns={"To":"mid","Duration":"d0","Energy used":"e0"}
+    )[["mid","d0","e0"]]
+    mid_to_any = df.rename(columns={"From":"mid","To":"Y","Duration":"d1","Energy used":"e1"})[
+        ["mid","Y","d1","e1"]
+    ]
+    any_to_mid = df.rename(columns={"From":"X","To":"mid","Duration":"d0","Energy used":"e0"})[
+        ["X","mid","d0","e0"]
+    ]
+    mid_to_dep = df[df["To"] == depot][["From","To","Duration","Energy used"]].rename(
+        columns={"From":"mid","Duration":"d1","Energy used":"e1"}
+    )[["mid","d1","e1"]]
+
+    new_rows = []
+
+    # ---- Missing pull-out: depot -> SL(i)
+    missing_pullout_targets = {s for s in sl_set if (depot, s) not in existing}
+    if missing_pullout_targets and not dep_to_mid.empty and not mid_to_any.empty:
+        fwd = dep_to_mid.merge(mid_to_any, on="mid", how="inner")
+        fwd = fwd[fwd["Y"].isin(missing_pullout_targets)]
+        # Compose totals
+        fwd["Duration_tot"] = fwd["d0"] + fwd["d1"]
+        fwd["Energy_tot"]   = fwd["e0"] + fwd["e1"]
+        # Apply duration cap if requested
+        if max_dur_min is not None:
+            fwd = fwd[fwd["Duration_tot"] <= float(max_dur_min)]
+        for _, r in fwd.iterrows():
+            From, To = depot, r["Y"]
+            if (From, To) not in existing:
+                new_rows.append({
+                    "From": From,
+                    "To": To,
+                    "Duration": float(r["Duration_tot"]),
+                    "Energy used": float(r["Energy_tot"]),
+                })
+
+    # ---- Missing pull-in: EL(i) -> depot
+    missing_pulluin_sources = {e for e in el_set if (e, depot) not in existing}
+    if missing_pulluin_sources and not any_to_mid.empty and not mid_to_dep.empty:
+        bwd = any_to_mid.merge(mid_to_dep, on="mid", how="inner")
+        bwd = bwd[bwd["X"].isin(missing_pulluin_sources)]
+        bwd["Duration_tot"] = bwd["d0"] + bwd["d1"]
+        bwd["Energy_tot"]   = bwd["e0"] + bwd["e1"]
+        if max_dur_min is not None:
+            bwd = bwd[bwd["Duration_tot"] <= float(max_dur_min)]
+        for _, r in bwd.iterrows():
+            From, To = r["X"], depot
+            if (From, To) not in existing:
+                new_rows.append({
+                    "From": From,
+                    "To": To,
+                    "Duration": float(r["Duration_tot"]),
+                    "Energy used": float(r["Energy_tot"]),
+                })
+
+    if new_rows:
+        # Keep the best (shortest) per (From, To)
+        add_df = (
+            pd.DataFrame(new_rows)
+              .sort_values(["From","To","Duration","Energy used"])
+              .drop_duplicates(subset=["From","To"], keep="first")
+        )
+        print(f"[augment/endpoints-targeted] adding {len(add_df)} depot↔endpoint arcs"
+              + (f" (≤ {max_dur_min} min)" if max_dur_min is not None else ""))
+        df = pd.concat([df, add_df], ignore_index=True)
+    else:
+        note = f" with duration cap ≤ {max_dur_min} min" if max_dur_min is not None else ""
+        print(f"[augment/endpoints-targeted] no missing endpoint arcs found to add{note}")
+
+    return df
+
+
+# ------------------------------ Build trip set ------------------------------
+
+df_trips = df_trips.reset_index(drop=True).copy()
+df_trips["Trip"] = df_trips.index
+
+df_trips["st_blk"] = df_trips["ST"].astype(str).map(_nearest_hour_block)
+df_trips["et_blk"] = df_trips["ET"].astype(str).map(_ceil_hour_block)
+
+df_trips["eps_events"] = df_trips["Energy used"].map(energy_to_events)
+
+T = list(df_trips["Trip"].tolist())
+
+sl = df_trips.set_index("Trip")["SL"].to_dict()
+el = df_trips.set_index("Trip")["EL"].to_dict()
+st = df_trips.set_index("Trip")["st_blk"].to_dict()
+et = df_trips.set_index("Trip")["et_blk"].to_dict()
+epsilon = df_trips.set_index("Trip")["eps_events"].to_dict()
+
+# ensure endpoints after we know sl/el
+df_dh = ensure_depot_endpoint_arcs(df_dh, DEPOT_NAME, sl, el, max_dur_min=50)
+
+# ------------------------------ Allowed deadhead graph ------------------------------
+
+def _energy_to_events(kwh: float) -> int:
+    return energy_to_events(kwh)
+
+allowed_arcs = {}
+for _, row in df_dh.iterrows():
+    f = str(row["From"]).strip()
+    t = str(row["To"]).strip()
+    dur_min = float(row["Duration"])
+    eng_kwh = float(row["Energy used"])
+    tau_blk = ceil_hours_from_minutes(dur_min)
+    d_evt   = _energy_to_events(eng_kwh)
+    allowed_arcs[(f, t)] = (tau_blk, d_evt)
+
+def arc_from_to(from_node: str, to_node: str):
+    return allowed_arcs.get((from_node, to_node), None)
+
+# ------------------------------ Globals for pricing ------------------------------
+
+S = CHARGERS[:]  # stations set (includes depot name too)
+G = energy_to_events(SOC_CAPACITY_KWH)
+DEPOT = DEPOT_NAME
+
+tau = {}
+d   = {}
+
+# Depot <-> trip
+for i in T:
+    pair = arc_from_to(DEPOT, sl[i])
+    if pair is not None:
+        tau[(DEPOT, i)] = pair[0]; d[(DEPOT, i)] = pair[1]
+    pair = arc_from_to(el[i], DEPOT)
+    if pair is not None:
+        tau[(i, DEPOT)] = pair[0]; d[(i, DEPOT)] = pair[1]
+
+# Trip -> Trip
+for i in T:
+    for j in T:
+        if i == j: continue
+        pair = arc_from_to(el[i], sl[j])
+        if pair is not None:
+            tau[(i, j)] = pair[0]; d[(i, j)] = pair[1]
+
+# Trip <-> Station
+for i in T:
+    for h in S:
+        pair1 = arc_from_to(el[i], h)
+        if pair1 is not None:
+            tau[(i, h)] = pair1[0]; d[(i, h)] = pair1[1]
+        pair2 = arc_from_to(h, sl[i])
+        if pair2 is not None:
+            tau[(h, i)] = pair2[0]; d[(h, i)] = pair2[1]
+
+# ---- Zero-hop arcs when the trip endpoint is itself a charger ----
+# If SL(i) is a charger h, allow h -> i with 0 time and 0 energy.
+# If EL(i) is a charger h, allow i -> h with 0 time and 0 energy.
+added_zero = 0
+for i in T:
+    # pre-trip charge at SL if it’s a station
+    if sl[i] in S and (sl[i], i) not in tau:
+        tau[(sl[i], i)] = 0
+        d[(sl[i], i)]   = 0
+        added_zero += 1
+    # post-trip charge at EL if it’s a station
+    if el[i] in S and (i, el[i]) not in tau:
+        tau[(i, el[i])] = 0
+        d[(i, el[i])]   = 0
+        added_zero += 1
+
+print(f"[augment/zero-hop] added {added_zero} station↔trip zero-hop arcs")
+
+
+# Station <-> Depot
+for h in S:
+    pair1 = arc_from_to(DEPOT, h)
+    if pair1 is not None:
+        tau[(DEPOT, h)] = pair1[0]; d[(DEPOT, h)] = pair1[1]
+    pair2 = arc_from_to(h, DEPOT)
+    if pair2 is not None:
+        tau[(h, DEPOT)] = pair2[0]; d[(h, DEPOT)] = pair2[1]
+
+def has_depot_pull(i):
+    return ((DEPOT, i) in tau) and ((i, DEPOT) in tau)
+
+unseedable = [i for i in T if not has_depot_pull(i)]
+if unseedable:
+    print("[WARN] Trips lacking depot pull-out or pull-in in DHD (cannot seed O->i->O):", unseedable)
+
+# ------------------------------ Price curve ------------------------------
+
+STATION_BASES = sorted(set(S))
+charging_cost_data, avg_cost_per_kwh = load_price_curve(
+    str(prices_csv), time_blocks, STATION_BASES
+)
+charging_cost_data = charging_cost_data * float(ENERGY_PER_BLOCK_KWH)
+avg_cost_per_event = float(avg_cost_per_kwh) * float(ENERGY_PER_BLOCK_KWH)
+
+bus_cost  = BUS_COST_SCALAR * avg_cost_per_event
+
+print(f"[INFO] Capacity G(events): {G} (each={ENERGY_PER_BLOCK_KWH} kWh)")
+print(f"[INFO] Avg price/kWh={avg_cost_per_kwh:.3f} → per-event={avg_cost_per_event:.3f}")
+print(f"[INFO] bus_cost={bus_cost:.2f}")
+print(f"[INFO] Trips={len(T)}  Stations={len(S)}")
+
+# ------------------------------ Seed routes ------------------------------
+
+R_truck = []
+
+for i in T:
+    if has_depot_pull(i):
+        g_ret = max(0, G - (d[(DEPOT, i)] + d[(i, DEPOT)] + epsilon[i]))
+        R_truck.append({
+            "route": [DEPOT, i, DEPOT],
+            "charging_stops": {
+                "stations": [], "cst": [], "cet": [],
+                "chi_plus_free": [], "chi_minus": [], "chi_minus_free": [],
+                "chi_plus": [], "chi_zero": []
+            },
+            "charging_activities": 0,
+            "type": "truck",
+            "remaining_soc": g_ret
+        })
+
+# Dummy columns (BIG-M) for trips we couldn't seed
+BIG_M = 1e7
+dummy_count = 0
+for i in T:
+    if not has_depot_pull(i):
+        R_truck.append({
+            "route": [i],
+            "charging_stops": {
+                "stations": [], "cst": [], "cet": [],
+                "chi_plus_free": [], "chi_minus": [], "chi_minus_free": [],
+                "chi_plus": [], "chi_zero": []
+            },
+            "charging_activities": 0,
+            "type": "truck",
+            "dummy": True,
+            "dummy_cost": BIG_M
+        })
+        dummy_count += 1
+
+print(f"[INFO] Seeded {len([r for r in R_truck if not r.get('dummy')])} real routes + {dummy_count} dummy routes (for uncovered trips).")
+
+# ------------------------------ Build & solve master once ------------------------------
+
+rmp, a, trip_cov = init_master(
+    R_truck=R_truck,
+    T=T,
+    charging_cost_data=charging_cost_data,
+    bus_cost=bus_cost,
+    binary=False
+)
+# LP params for the RMP (per-iteration)
+rmp.Params.Threads = THREADS
+rmp.Params.NodefileStart = NODEFILE_START
+rmp.Params.NodefileDir = _detect_tmp()
+rmp.Params.Method = 1
+rmp.Params.TimeLimit = MASTER_TIMELIMIT
+rmp.optimize()
+
+# ------------------------------ Pricing model (no layering, dwell-linked charge) ------------------------------
 
 def build_pricing(alpha, beta, gamma, mode):
-    HT = [(h,t) for h in S for t in time_blocks]           
-
     pricing_model = Model("EV_Routing")
-    pricing_model.setParam(GRB.Param.MIPFocus, 2)  
-   
+    pricing_model.Params.OutputFlag = 1
+    pricing_model.Params.Threads = THREADS
+    pricing_model.Params.NodefileStart = NODEFILE_START
+    pricing_model.Params.NodefileDir = _detect_tmp()
+    pricing_model.Params.Method = 1  # simplex in root
+    pricing_model.Params.TimeLimit = PRICING_TIMELIMIT
+    pricing_model.Params.MIPGap = PRICING_GAP
+    pricing_model.Params.MIPFocus = 1
+    pricing_model.Params.Heuristics = 0.25
+    pricing_model.Params.Cuts = 0
 
-    vars_dict = create_pricing_variables(pricing_model,
-                                        T,
-                                        S,
-                                        bar_t=bar_t,
-                                        G=G)
+    # --------- helper: strong pre-pruning for feasibility + short deadheads ---------
+    MAX_TAU = 2  # at most 2 hour-blocks between nodes in pricing graph
 
-
-    wA_trip       = vars_dict["wA_trip"]
-    wOmega_trip   = vars_dict["wOmega_trip"]
-    wA_station    = vars_dict["wA_station"]
-    wOmega_station= vars_dict["wOmega_station"]
-    x             = vars_dict["x"]
-    y             = vars_dict["y"]
-    z             = vars_dict["z"]
-    cst           = vars_dict["cst"]
-    cet           = vars_dict["cet"]
-    chi_plus      = vars_dict["chi_plus"]
-    chi_plus_free = vars_dict["chi_plus_free"]
-    chi_minus     = vars_dict["chi_minus"]
-    chi_minus_free= vars_dict["chi_minus_free"]
-    chi_zero      = vars_dict["chi_zero"]
-    charge        = vars_dict["charge"]
-    bar_l         = vars_dict["bar_l"]
-    v             = vars_dict["v"]
-    g             = vars_dict["g"]
-    g_return     = vars_dict["g_return"]
-
-    cs = pricing_model.addVars(S, time_blocks, vtype=GRB.BINARY, name="cs")  # cs[h,t]
-    gcharge = pricing_model.addVars(S, time_blocks, vtype=GRB.CONTINUOUS, lb=0, ub=G, name="gcharge")
-
-
-    # pull-out:
-    pullout = quicksum(wA_station[h] for h in S_l[1]) \
-                + quicksum(wA_trip[i] for i in T)
-    # pull-in:
-    pullin = quicksum(wOmega_station[h] for h in S) \
-                + quicksum(wOmega_trip[i] for i in T)
-    
-    pricing_model.addConstr(pullout == pullin, name="start_end_balance")
-    # equal 1
-    pricing_model.addConstr(pullout == 1, name="start_end_once_value")
-    # (equivalently, pullin == 1)
-
-    # pull-out==0 for all h in layers 2…L
-    pricing_model.addConstrs(
-        (wA_station[h] == 0
-        for l in range(2, L+1) for h in S_l[l]),
-        name="pullout_charge"
-    )
-
-    # at most one charge per layer
-    pricing_model.addConstrs(
-        ( quicksum(wA_station[h] for h in S_l[l])
-        + quicksum(y[(i,h)] for i in T for h in S_l[l]) <= 1
-        for l in range(1, L+1) ),
-        name="one_charge_per_layer"
-    )
-
-    # sequential layer
-    pricing_model.addConstrs(
-        ( quicksum(wOmega_station[h] for h in S_l[l+1])
-        + quicksum(z[(h,i)] for h in S_l[l+1] for i in T)
-        <=
-        quicksum(wOmega_station[h] for h in S_l[l])
-        + quicksum(z[(h,i)] for h in S_l[l]   for i in T)
-        for l in range(1, L) ),
-        name="sequential_layer"
-    )
-
-    pricing_model.addConstrs(
-                ( wA_station[h]
-                    + quicksum(y[(i,h)] for i in T)
-                    ==
-                    wOmega_station[h]
-                    + quicksum(z[(h,i)] for i in T)
-                    for h in S ),
-                name="flow_charge_balance"
-                )
-
-
-    ### Num Charges
-    lhs_in  = quicksum(wA_station[h] + quicksum(y[(i,h)] for i in T) for h in S)
-    lhs_out = quicksum(wOmega_station[h] + quicksum(z[(h,i)] for i in T) for h in S)
-
-    pricing_model.addConstr(bar_l == lhs_in,  name="num_charge_in")
-    pricing_model.addConstr(bar_l == lhs_out, name="num_charge_out")
-
-
-
-    pricing_model.addConstrs((cst[h] >= 0    for h in S), name="cst_lb")
-    pricing_model.addConstrs((cst[h] <= bar_t for h in S), name="cst_ub")
-    pricing_model.addConstrs((cet[h] >= 0    for h in S), name="cet_lb")
-    pricing_model.addConstrs((cet[h] <= bar_t for h in S), name="cet_ub")
-    pricing_model.addConstrs(
-    ( cst[h]
-        >= wA_station[h]*tau[("O",h)]
-        + quicksum(y[(i,h)]*(et[i]+tau[(i,h)]) for i in T)
-        for h in S ),
-    name="cst_def"
-    )
-
-    pricing_model.addConstrs(
-    ( cet[h]
-        <= wOmega_station[h]*(bar_t - tau[(h,"O")])
-        + quicksum(z[(h,i)]*(st[i] - tau[(h,i)]) for i in T)
-        for h in S ),
-    name="cet_def"
-    )
-
-    pricing_model.addConstrs((cst[h] <= cet[h] for h in S),
-                            name="charge_start_end")
-
-    for h,t in HT:
-        pricing_model.addGenConstrIndicator(
-            charge[h,t],                    # the binary var
-            1,                               # value it takes
-            cst[h] - t,                          # left‐hand var
-            GRB.LESS_EQUAL,                  # sense
-            0,                               # right‐hand constant
-            name=f"ind_charge_cst_{h}_{t}"
-        )
-        pricing_model.addGenConstrIndicator(
-            charge[h,t],                    # the binary var
-            1,                               # value it takes
-            cet[h] - t,                          # left‐hand var
-            GRB.GREATER_EQUAL,              # sense
-            0,                               # right‐hand constant
-            name=f"ind_charge_cet_{h}_{t}"
+    def tt_ok(i, j):
+        return (
+            (i, j) in tau
+            and (et[i] + tau[(i, j)] <= st[j])
+            and (tau[(i, j)] <= MAX_TAU)
         )
 
-        #  Enforce cs[h, t] = 1 iff t == cst[h] 
-        pricing_model.addGenConstrIndicator(
-            cs[h, t],  # the binary variable
-            1,         # value it takes
-            cst[h] - t,  # left-hand side
-            GRB.EQUAL,  # sense
-            0,         # right-hand constant
-            name=f"ind_cs_{h}_{t}"
-        )
-        pricing_model.addGenConstrIndicator(
-            cs[h, t],  # the binary variable
-            1,         # value it takes
-            gcharge[h, t] - g[h],  # left-hand side
-            GRB.EQUAL,  # sense
-            0,         # right-hand constant
-            name=f"ind_gcharge_{h}_{t}"
-        )
-        pricing_model.addSOS(
-            GRB.SOS_TYPE1,
-            [ chi_plus[(h,t)],
-            chi_plus_free[(h,t)],
-            chi_zero[(h,t)],
-            chi_minus[(h,t)],
-            chi_minus_free[(h,t)] ]
+    def ih_ok(i, h):
+        return (
+            (i, h) in tau
+            and (et[i] + tau[(i, h)] <= bar_t)
+            and (tau[(i, h)] <= MAX_TAU)
         )
 
-    if mode == 0:
-        pricing_model.addConstrs(
-            ( y[(i,h)] + z[(h,i)] + wA_station[h] + wOmega_station[h] == 0
-            for h in S for i in T ),
-            name="no_visit_charge"
-            )
-        pricing_model.addConstrs(
-            ( chi_zero[(h,t)] == charge[(h,t)]
-            for h in S for t in time_blocks ),
-            name="mode0_chi_zero"
-            )
-        pricing_model.addConstrs(
-            ( chi_plus[(h,t)] + chi_plus_free[(h,t)]
-            + chi_minus[(h,t)] + chi_minus_free[(h,t)] == 0
-            for h in S for t in time_blocks ),
-            name="mode0_no_other"
-            )
-    elif mode == 1:
-        # EVSP only: only paid charging or idle
-        pricing_model.addConstrs(
-            ( chi_plus[(h,t)] + chi_zero[(h,t)] == charge[(h,t)]
-            for h in S for t in time_blocks),
-            name="mode1_charge_modes"
-            )
-        pricing_model.addConstrs(
-            ( chi_plus_free[(h,t)]
-            + chi_minus[(h,t)] + chi_minus_free[(h,t)] == 0
-            for h in S for t in time_blocks ),
-            name="mode1_no_other"
-            )
-    elif mode == 2:
-        # EVSP+solar: paid + free charge + idle
-        pricing_model.addConstrs(
-            ( chi_plus[(h,t)] + chi_zero[(h,t)] + chi_plus_free[(h,t)] == charge[(h,t)]
-            for h in S for t in time_blocks),
-            name="mode2_charge_modes"
-            )
-        pricing_model.addConstrs(
-            ( chi_minus[(h,t)] + chi_minus_free[(h,t)]       == 0
-            for h in S for t in time_blocks ),
-            name="mode2_no_discharge"
-            )
-    elif mode == 3:
-        # EVSP+solar+V2G: paid + free charge + idle + discharge
-        pricing_model.addConstrs(
-            ( chi_plus[(h,t)] + chi_zero[(h,t)] + chi_plus_free[(h,t)]
-            + chi_minus[(h,t)] + chi_minus_free[(h,t)] == charge[(h,t)]
-            for h in S for t in time_blocks),
-            name="mode3_charge_modes"
-            )
-
-
-    ## Flow trip
-    pricing_model.addConstrs(
-        ( wA_trip[i]
-            + quicksum(x[(j,i)] for j in T if j!=i)
-            + quicksum(z[(h,i)] for h in S_l[l])
-            ==
-            wOmega_trip[i]
-            + quicksum(x[(i,j)] for j in T if j!=i)
-            + (quicksum(y[(i,h)] for h in S_l[l+1]) if l < L else 0)
-            for l in range(1, L+1) for i in T ),
-        name="flow_trip"
+    def hi_ok(h, i):
+        return (
+            (h, i) in tau
+            and (tau[(h, i)] <= st[i])
+            and (tau[(h, i)] <= MAX_TAU)
         )
 
+    # --------- sparse key sets (heavily pruned) ---------
+    x_keys = [(i, j) for (i, j) in tau.keys()
+              if isinstance(i, int) and isinstance(j, int) and tt_ok(i, j)]
+    y_keys = [(i, h) for (i, h) in tau.keys()
+              if isinstance(i, int) and isinstance(h, str) and (h in S) and ih_ok(i, h)]
+    z_keys = [(h, i) for (h, i) in tau.keys()
+              if isinstance(h, str) and (h in S) and isinstance(i, int) and hi_ok(h, i)]
 
-    ### AMOUNT CHARGED
-
-    pricing_model.addConstrs(
-    ( v[h]
-        == charge_mult * quicksum(
-            chi_plus_free[(h,t)] + chi_plus[(h,t)]
-        - chi_minus[(h,t)] - chi_minus_free[(h,t)]
-        for t in time_blocks)
-        for h in S ),
-    name="amt_charged"
-    )
-
-
-
-    # g["O"] = G
-    pricing_model.addConstr(g["O"] == G, name="initial_soc")
-
-    pricing_model.addConstrs(
-    ( g[h] + v[h] <= G   for h in S ), name="soc_sum_ub"
-    )
-    pricing_model.addConstrs(
-    ( g[h] + v[h] >= 0   for h in S ), name="soc_sum_lb"
-    )
-    # # 5) Enough i->O
-
-
-    ## main h in S ##
-    # Enough h -> O
+    # Stations that actually appear in the pruned graph, plus any with depot links
+    S_use = set(h for (_, h) in y_keys) | set(h for (h, _) in z_keys)
     for h in S:
-        pricing_model.addGenConstrIndicator(
-            wOmega_station[h],
-            1,
-            g[h] + v[h] - d[(h,"O")],
-            GRB.GREATER_EQUAL,
-            0,
-            name=f"ind_suff_stat2O_{h}"
-        )
-        # final SOC
-        pricing_model.addGenConstrIndicator(
-            wOmega_station[h],           # the binary var
-            1,                         # value it takes
-            g_return - (g[h] + v[h] - d[(h,"O")]),  # left‐hand var
-            GRB.EQUAL,         # sense
-            0,                         # right‐hand constant
-            name=f"ind_final_soc_stat_{h}"
-        )
+        if (DEPOT, h) in d or (h, DEPOT) in d:
+            S_use.add(h)
+    S_use = sorted(S_use)
 
-    # SOC update origin to h
-        pricing_model.addGenConstrIndicator(
-            wA_station[h],             # the binary var
-            1,                         # value it takes
-            g[h] - (g["O"] - d[("O", h)]),  # left‐hand var
-            GRB.EQUAL,                 # sense
-            0,                         # right‐hand constant
-            name=f"ind_soc_depot2station_{h}"
-        )
+    forbid_start = {h for h in S_use if (DEPOT, h) not in d}
+    forbid_end   = {h for h in S_use if (h, DEPOT) not in d}
 
+    print(f"[PRICING] |S_use|={len(S_use)}  |x|={len(x_keys)}  |y|={len(y_keys)}  |z|={len(z_keys)}")
+
+    # --------- variables ----------
+    wA_trip        = pricing_model.addVars(T, vtype=GRB.BINARY, name="wA_trip")
+    wOmega_trip    = pricing_model.addVars(T, vtype=GRB.BINARY, name="wOmega_trip")
+    wA_station     = pricing_model.addVars(S_use, vtype=GRB.BINARY, name="wA")
+    wOmega_station = pricing_model.addVars(S_use, vtype=GRB.BINARY, name="wOmega")
+
+    x = pricing_model.addVars(x_keys, vtype=GRB.BINARY, name="x")
+    y = pricing_model.addVars([(i, h) for (i, h) in y_keys if h in S_use], vtype=GRB.BINARY, name="y")
+    z = pricing_model.addVars([(h, i) for (h, i) in z_keys if h in S_use], vtype=GRB.BINARY, name="z")
+
+    cst = pricing_model.addVars(S_use, lb=0, ub=bar_t, vtype=GRB.INTEGER, name="cst")
+    cet = pricing_model.addVars(S_use, lb=0, ub=bar_t, vtype=GRB.INTEGER, name="cet")
+    chi_plus       = pricing_model.addVars(S_use, time_blocks, vtype=GRB.BINARY, name="chi_plus")
+    chi_plus_free  = pricing_model.addVars(S_use, time_blocks, vtype=GRB.BINARY, name="chi_plus_free")
+    chi_minus      = pricing_model.addVars(S_use, time_blocks, vtype=GRB.BINARY, name="chi_minus")
+    chi_minus_free = pricing_model.addVars(S_use, time_blocks, vtype=GRB.BINARY, name="chi_minus_free")
+    chi_zero       = pricing_model.addVars(S_use, time_blocks, vtype=GRB.BINARY, name="chi_zero")
+    charge         = pricing_model.addVars(S_use, time_blocks, vtype=GRB.BINARY, name="charge")
+
+    t_in  = {}
+    t_out = {}
+    for i in T:
+        t_in[i]  = pricing_model.addVar(lb=1, ub=bar_t, vtype=GRB.INTEGER, name=f"tin_trip_{i}")
+        t_out[i] = pricing_model.addVar(lb=1, ub=bar_t, vtype=GRB.INTEGER, name=f"tout_trip_{i}")
+    for h in S_use:
+        t_in[h]  = pricing_model.addVar(lb=0, ub=bar_t, vtype=GRB.INTEGER, name=f"tin_stat_{h}")
+        t_out[h] = pricing_model.addVar(lb=0, ub=bar_t, vtype=GRB.INTEGER, name=f"tout_stat_{h}")
+    t_in[DEPOT]  = pricing_model.addVar(lb=0, ub=bar_t, vtype=GRB.INTEGER, name="tin_depot")
+    t_out[DEPOT] = pricing_model.addVar(lb=0, ub=bar_t, vtype=GRB.INTEGER, name="tout_depot")
+
+    v_amt = {h: pricing_model.addVar(lb=-G, ub=G, vtype=GRB.INTEGER, name=f"v_{h}") for h in S_use}
+    if DEPOT in S_use:
+        g = pricing_model.addVars(T + S_use, lb=0, ub=G, vtype=GRB.CONTINUOUS, name="g")
+    else:
+        g = pricing_model.addVars(T + S_use + [DEPOT], lb=0, ub=G, vtype=GRB.CONTINUOUS, name="g")
+    g_return = pricing_model.addVar(lb=0, ub=G, vtype=GRB.CONTINUOUS, name="g_return")
+
+    vars_dict = dict(
+        wA_trip=wA_trip, wOmega_trip=wOmega_trip,
+        wA_station=wA_station, wOmega_station=wOmega_station,
+        x=x, y=y, z=z, cst=cst, cet=cet,
+        chi_plus=chi_plus, chi_plus_free=chi_plus_free,
+        chi_minus=chi_minus, chi_minus_free=chi_minus_free, chi_zero=chi_zero,
+        g=g, g_return=g_return
+    )
+
+    pullout = quicksum(wA_station[h] for h in S_use) + quicksum(wA_trip[i] for i in T)
+    pullin  = quicksum(wOmega_station[h] for h in S_use) + quicksum(wOmega_trip[i] for i in T)
+    pricing_model.addConstr(pullout == pullin, name="start_end_balance")
+    pricing_model.addConstr(pullout == 1, name="start_end_once_value")
+
+    for h in forbid_start:
+        pricing_model.addConstr(wA_station[h] == 0, name=f"no_start_{h}")
+    for h in forbid_end:
+        pricing_model.addConstr(wOmega_station[h] == 0, name=f"no_end_{h}")
+
+    for h in S_use:
+        in_h  = wA_station[h]  + quicksum(y[(i,h)] for (i,hk) in y.keys() if hk == h)
+        out_h = wOmega_station[h] + quicksum(z[(h,i)] for (hk,i) in z.keys() if hk == h)
+        pricing_model.addConstr(in_h == out_h, name=f"flow_charge_balance_{h}")
+
+    for i in T:
+        in_x  = quicksum(x[(j,i)] for (j,i2) in x.keys() if i2 == i)
+        out_x = quicksum(x[(i,j)] for (i2,j) in x.keys() if i2 == i)
+        in_z  = quicksum(z[(h,i)] for (h,i2) in z.keys() if i2 == i)
+        out_y = quicksum(y[(i,h)] for (i2,h) in y.keys() if i2 == i)
         pricing_model.addConstr(
-            quicksum(cs[h, t] for t in time_blocks) == wA_station[h] \
-                    + quicksum(y[(i,h)] for i in T),
-            name=f"only_one_cs_{h}"
+            wA_trip[i] + in_x + in_z ==
+            wOmega_trip[i] + out_x + out_y,
+            name=f"flow_trip_{i}"
         )
 
-        for t in time_blocks[:-1]:
-            pricing_model.addConstr(
-                gcharge[h, t + 1] == gcharge[h, t] +
-                    chi_plus[h, t] + chi_plus_free[h, t] - chi_minus[h, t] - chi_minus_free[h,t],
-                name=f"soc_update_gcharge_{h}_{t}"
-            )
-        pricing_model.addSOS(
-            GRB.SOS_TYPE1,
-            [ cs[h,t] for t in time_blocks ]
-        )
-
-    ## main i in T ##
     for i in T:
-        ## soc update origin to i##
-        pricing_model.addGenConstrIndicator(
-            wA_trip[i],             # the binary var
-            1,                       # value it takes
-            g[i] - (g["O"] - d[("O", i)]),  # left‐hand var
-            GRB.EQUAL,               # sense
-            0,                       # right‐hand constant
-            name=f"ind_soc_depot2trip_{i}"
-        )
+        pricing_model.addConstr(t_in[i]  == st[i], name=f"tin_trip_fix_{i}")
+        pricing_model.addConstr(t_out[i] == et[i], name=f"tout_trip_fix_{i}")
 
-        # 5) Enough i->O
-        pricing_model.addGenConstrIndicator(
-            wOmega_trip[i],           # the binary var
-            1,                         # value it takes
-            g[i] - (d[(i,"O")] + epsilon[i]),  # left‐hand var
-            GRB.GREATER_EQUAL,         # sense
-            0,                         # right‐hand constant
-            name=f"ind_suff_trip2O_{i}"
-        )
-        # final SOC
-        pricing_model.addGenConstrIndicator(
-            wOmega_trip[i],           # the binary var
-            1,                         # value it takes
-            g_return - (g[i] - d[(i,"O")]),  # left‐hand var
-            GRB.EQUAL,         # sense
-            0,                         # right‐hand constant
-            name=f"ind_final_soc_trip_{i}"
-        )
-        # SoC update i->j
-        for j in T:
-            if i != j:
-                ## SoC update trip to trip ##
-                pricing_model.addGenConstrIndicator(
-                    x[(i,j)],             # binary arc‐selection var
-                    1,                     # value it takes
-                    g[j] - (g[i] - epsilon[i] - d[(i,j)]),  # left‐hand var
-                    GRB.EQUAL,             # sense
-                    0,                     # right‐hand constant
-                    name=f"ind_soc_trip2trip_{i}_{j}"
-                )
+    for h in S_use:
+        pricing_model.addConstr(cst[h] >= t_in[h],  name=f"cst_ge_tin_{h}")
+        pricing_model.addConstr(cet[h] <= t_out[h], name=f"cet_le_tout_{h}")
+        pricing_model.addConstr(cst[h] <= cet[h],   name=f"cst_le_cet_{h}")
+        for t in time_blocks:
+            pricing_model.addGenConstrIndicator(charge[h,t], 1, cst[h] - t, GRB.LESS_EQUAL, 0, name=f"ind_charge_cst_{h}_{t}")
+            pricing_model.addGenConstrIndicator(charge[h,t], 1, cet[h] - t, GRB.GREATER_EQUAL, 0, name=f"ind_charge_cet_{h}_{t}")
+            pricing_model.addConstr(chi_plus[h,t] + chi_zero[h,t] == charge[h,t], name=f"mode1_charge_modes_{h}_{t}")
+            pricing_model.addConstr(chi_plus_free[h,t] == 0, name=f"mode1_no_free_{h}_{t}")
+            pricing_model.addConstr(chi_minus[h,t]     == 0, name=f"mode1_no_dis_{h}_{t}")
+            pricing_model.addConstr(chi_minus_free[h,t]== 0, name=f"mode1_no_disfree_{h}_{t}")
 
-                ## time sequencing ##
-                pricing_model.addGenConstrIndicator(
-                    x[(i,j)],             # binary arc‐selection var
-                    1,
-                    et[i] + tau[(i,j)] - (st[j]),                  
-                    GRB.LESS_EQUAL,
-                    0,
-                    name=f"ind_time_{i}_{j}"
-                )
-        
-        for h in S:
-            # SoC update i->h
-            pricing_model.addGenConstrIndicator(
-                y[(i,h)],             # binary arc‐selection var
-                1,                     # value it takes
-                g[h] - (g[i] - epsilon[i] - d[(i,h)]),  # left‐hand var
-                GRB.EQUAL,             # sense
-                0,                     # right‐hand constant
-                name=f"ind_soc_trip2station_{i}_{h}"
-            )
-            # SoC update h->i
-            pricing_model.addGenConstrIndicator(
-                z[(h,i)],
-                1,                     # value it takes
-                g[i] - (g[h] + v[h] - d[(h,i)]),  # left‐hand var
-                GRB.EQUAL,             # sense
-                0,                     # right‐hand constant
-                name=f"ind_soc_station2trip_{h}_{i}"
-            )
-
-    obj_expr = 0
-
-    obj_expr += bus_cost
-    for h,t in HT:
-        if t in charging_cost_data.index and h in charging_cost_data.columns:
-            charging_cost = charging_cost_data.loc[t, h]  # c_{h,t}
-            # Add charging cost contribution
-            obj_expr += charging_cost * chi_plus.get((h, t), 0) * charge_cost_premium
-            obj_expr -= charging_cost * chi_minus.get((h, t), 0)
-
-    # The rest of the objective follows:
-    # Subtract alpha[i] times (wA_i + sum_j x[j,i] + sum_h z[h,i])
     for i in T:
-        alpha_val = alpha.get(i, 0)  # Default to 0 if alpha[i] is not present
-        trip_expr = (
-            wA_trip[i]
-            + quicksum(x[(j, i)] for j in T if j != i)
-            + quicksum(z[(h, i)] for h in S)
-        )
-        obj_expr -= alpha_val * trip_expr
+        if (DEPOT, i) in tau:
+            pricing_model.addGenConstrIndicator(
+                wA_trip[i], 1, t_in[i] - (t_out[DEPOT] + tau[(DEPOT, i)]), GRB.GREATER_EQUAL, 0,
+                name=f"ind_time_O2trip_{i}"
+            )
+        if (i, DEPOT) in tau:
+            pricing_model.addGenConstrIndicator(
+                wOmega_trip[i], 1, t_out[DEPOT] - (t_out[i] + tau[(i, DEPOT)]), GRB.GREATER_EQUAL, 0,
+                name=f"ind_time_trip2O_{i}"
+            )
+    for h in S_use:
+        if (DEPOT, h) in tau:
+            pricing_model.addGenConstrIndicator(
+                wA_station[h], 1, t_in[h] - (t_out[DEPOT] + tau[(DEPOT, h)]), GRB.GREATER_EQUAL, 0,
+                name=f"ind_time_O2stat_{h}"
+            )
+        if (h, DEPOT) in tau:
+            pricing_model.addGenConstrIndicator(
+                wOmega_station[h], 1, t_out[DEPOT] - (t_out[h] + tau[(h, DEPOT)]), GRB.GREATER_EQUAL, 0,
+                name=f"ind_time_stat2O_{h}"
+            )
 
-    # Subtract beta[t] * chi_plus_free[h,t] across all stations h
-    for t, beta_val in beta.items():
-        free_charge_expr = quicksum(
-            chi_plus_free[(h, t)] - chi_minus_free[(h,t)] for h in S if (h, t) in chi_plus_free
+    for (ii,jj) in x.keys():
+        pricing_model.addGenConstrIndicator(
+            x[(ii,jj)], 1, t_in[jj] - (t_out[ii] + tau[(ii, jj)]), GRB.GREATER_EQUAL, 0,
+            name=f"ind_time_tt_{ii}_{jj}"
         )
-        obj_expr -= beta_val * free_charge_expr
-
-    # Subtract gamma[t] * (chi_minus[h,t] - chi_plus[h,t]) across all stations h
-    for t, gamma_val in gamma.items():
-        discharge_net_expr = quicksum(
-            - chi_minus.get((h, t), 0)  for h in S
+    for (ii,h) in y.keys():
+        pricing_model.addGenConstrIndicator(
+            y[(ii,h)], 1, t_in[h] - (t_out[ii] + tau[(ii, h)]), GRB.GREATER_EQUAL, 0,
+            name=f"ind_time_ts_{ii}_{h}"
         )
-        obj_expr -= gamma_val * discharge_net_expr
+    for (h,ii) in z.keys():
+        pricing_model.addGenConstrIndicator(
+            z[(h,ii)], 1, t_in[ii] - (t_out[h] + tau[(h, ii)]), GRB.GREATER_EQUAL, 0,
+            name=f"ind_time_st_{h}_{ii}"
+        )
 
-    pricing_model.setObjective(obj_expr, GRB.MINIMIZE)
+    for h in S_use:
+        pricing_model.addConstr(
+            v_amt[h] == charge_mult * quicksum(chi_plus[(h,t)] for t in time_blocks),
+            name=f"amt_charged_{h}"
+        )
+
+    pricing_model.addConstr(g[DEPOT] == G, name="initial_soc")
+
+    for h in S_use:
+        pricing_model.addConstr(g[h] + v_amt[h] <= G, name=f"soc_sum_ub_{h}")
+        pricing_model.addConstr(g[h] + v_amt[h] >= 0, name=f"soc_sum_lb_{h}")
+        if (DEPOT, h) in d:
+            pricing_model.addGenConstrIndicator(
+                wA_station[h], 1, g[h] - (g[DEPOT] - d[(DEPOT, h)]), GRB.EQUAL, 0,
+                name=f"ind_soc_depot2station_{h}"
+            )
+        if (h, DEPOT) in d:
+            pricing_model.addGenConstrIndicator(
+                wOmega_station[h], 1, g[h] + v_amt[h] - d[(h, DEPOT)], GRB.GREATER_EQUAL, 0,
+                name=f"ind_suff_stat2O_{h}"
+            )
+    for i in T:
+        if (DEPOT, i) in d:
+            pricing_model.addGenConstrIndicator(
+                wA_trip[i], 1, g[i] - (g[DEPOT] - d[(DEPOT, i)]), GRB.EQUAL, 0,
+                name=f"ind_soc_depot2trip_{i}"
+            )
+        if (i, DEPOT) in d:
+            pricing_model.addGenConstrIndicator(
+                wOmega_trip[i], 1, g[i] - (d[(i, DEPOT)] + epsilon[i]), GRB.GREATER_EQUAL, 0,
+                name=f"ind_suff_trip2O_{i}"
+            )
+
+        for (ii,jj) in [key for key in x.keys() if key[0] == i]:
+            pricing_model.addGenConstrIndicator(
+                x[(ii,jj)], 1, g[jj] - (g[i] - epsilon[i] - d[(ii,jj)]), GRB.EQUAL, 0,
+                name=f"ind_soc_trip2trip_{ii}_{jj}"
+            )
+        for (ii,h) in [key for key in y.keys() if key[0] == i]:
+            pricing_model.addGenConstrIndicator(
+                y[(ii,h)], 1, g[h] - (g[i] - epsilon[i] - d[(ii,h)]), GRB.EQUAL, 0,
+                name=f"ind_soc_trip2station_{ii}_{h}"
+            )
+        for (h,ii) in [key for key in z.keys() if key[1] == i]:
+            pricing_model.addGenConstrIndicator(
+                z[(h,ii)], 1, g[i] - (g[h] + v_amt[h] - d[(h,ii)]), GRB.EQUAL, 0,
+                name=f"ind_soc_station2trip_{h}_{ii}"
+            )
+
+    obj = bus_cost
+    for h in S_use:
+        if h in charging_cost_data.columns:
+            for t in time_blocks:
+                if t in charging_cost_data.index:
+                    price_evt = float(charging_cost_data.at[t, h])
+                    obj += price_evt * chi_plus[h, t] * charge_cost_premium
+
+    for i in T:
+        a_i = alpha.get(i, 0.0)
+        cov_expr = wA_trip[i] \
+                   + quicksum(x[(j, i)] for (j, i2) in x.keys() if i2 == i) \
+                   + quicksum(z[(h, i)] for (h, i2) in z.keys() if i2 == i)
+        obj -= a_i * cov_expr
+
+    pricing_model.setObjective(obj, GRB.MINIMIZE)
     return pricing_model, vars_dict
 
-def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols = 10):
+def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10):
+    cap = min(int(num_fast_cols), 400)
     m, vars_dict = build_pricing(alpha, beta, gamma, mode)
-    m.Params.PoolSearchMode = 1 # random search direction for solutions
-    m.Params.PoolSolutions  = num_fast_cols
-    m.Params.SolutionLimit  = num_fast_cols
-
-    m.optimize()
-    return m, vars_dict
-
-def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols = 10):
-    m, vars_dict = build_pricing(alpha, beta, gamma, mode)
-    m.Params.PoolSearchMode = 2 # systematic search for the n best solutions
-    m.Params.PoolSolutions  = num_exact_cols
-    return m, vars_dict
-
-#### new pricing model, with batt routes
-def build_battery_pricing(beta, gamma, mode):
-    """
-    mode=1: EVSP only (no free‐charge, no discharge)
-    mode=2: EVSP+solar (free‐charge OK, but no discharge)
-    mode=3: EVSP+solar+V2G (everything OK)
-    """
-    from gurobipy import Model, GRB
-
-    m = Model("Battery_Pricing")
-    m.setParam(GRB.Param.MIPFocus, 2)
-
-    # unpack parameters for clarity
-
-
-
-    # variables
-    vars_batt = {}
-    vars_batt["g_batt"]        = m.addVars(time_blocks, lb=0, ub=G, vtype=GRB.CONTINUOUS, name="g")
-    vars_batt["chi_plus"]      = m.addVars(time_blocks, vtype=GRB.BINARY, name="chi_plus")
-    vars_batt["chi_plus_free"] = m.addVars(time_blocks, vtype=GRB.BINARY, name="chi_plus_free")
-    vars_batt["chi_minus"]     = m.addVars(time_blocks, vtype=GRB.BINARY, name="chi_minus")
-    vars_batt["chi_minus_free"]= m.addVars(time_blocks, vtype=GRB.BINARY, name="chi_minus_free")
-    vars_batt["chi_zero"]      = m.addVars(time_blocks, vtype=GRB.BINARY, name="chi_zero")
-
-    # bjective
-    expr = batt_cost
-    for t in time_blocks:
-        price   = charging_cost_data.at[t, "h1"]
-        expr   += price * (vars_batt["chi_plus"][t] * charge_cost_premium
-                        - vars_batt["chi_minus"][t])
-        expr   -= beta.get(t, 0) * (vars_batt["chi_plus_free"][t]
-                                - vars_batt["chi_minus_free"][t])
-        expr   -= gamma.get(t, 0) * (- vars_batt["chi_minus"][t])
-
-    m.setObjective(expr, GRB.MINIMIZE)
-
-    # constraints
-    # 1 initial SoC
-    m.addConstr(vars_batt["g_batt"][1] == G, name="initial_soc")
-
-    # 3 SoC update
-    for t in time_blocks[:-1]:
-        m.addConstr(
-            vars_batt["g_batt"][t+1]
-            == vars_batt["g_batt"][t]
-            + vars_batt["chi_plus"][t]
-            + vars_batt["chi_plus_free"][t]
-            - vars_batt["chi_minus"][t]
-            - vars_batt["chi_minus_free"][t],
-            name=f"soc_update_{t}"
-        )
-
-    # only one can happen.
-    for t in time_blocks:
-        cp  = vars_batt["chi_plus"][t]
-        cpf = vars_batt["chi_plus_free"][t]
-        cm  = vars_batt["chi_minus"][t]
-        cmf = vars_batt["chi_minus_free"][t]
-        cz  = vars_batt["chi_zero"][t]
-
-        if mode == 1:
-            # only paid charging or idle
-            m.addConstr( cp + cz == 1, name=f"mode1_onehot_{t}" )
-            # force everything else off
-            m.addConstr(cpf == 0, name=f"mode1_no_free_{t}")
-            m.addConstr(cm  == 0, name=f"mode1_no_discharge_{t}")
-            m.addConstr(cmf == 0, name=f"mode1_no_dischargefree_{t}")
-
-        elif mode == 2:
-            # paid + free charge + idle + free discharge
-            m.addConstr(cp + cpf + cz + cmf == 1, name=f"mode2_onehot_{t}")
-            # but no “true” discharge
-            m.addConstr(cm == 0, name=f"mode2_no_discharge_{t}")
-
-        else:  # mode == 3
-            # allow everything
-            m.addConstr(cp + cpf + cm + cmf + cz == 1, name=f"mode3_onehot_{t}")
-
-    return m, vars_batt
-def solve_battery_pricing_fast(beta, gamma, mode, num_fast_cols=10):
-    m, vars_batt = build_battery_pricing(beta, gamma, mode)
-    # stop as soon as we find up to num_fast_cols feasible columns
     m.Params.PoolSearchMode = 1
-    m.Params.PoolSolutions  = num_fast_cols
-    m.Params.SolutionLimit   = num_fast_cols
+    m.Params.PoolSolutions  = cap
+    m.Params.SolutionLimit  = cap
     m.optimize()
-    return m, vars_batt
+    return m, vars_dict
 
-def solve_battery_pricing_exact(beta, gamma, mode, num_exact_cols=10):
-    m, vars_batt = build_battery_pricing(beta, gamma, mode)
+def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10):
+    m, vars_dict = build_pricing(alpha, beta, gamma, mode)
     m.Params.PoolSearchMode = 2
-    m.Params.PoolSolutions  = num_exact_cols
-    return m, vars_batt
+    m.Params.PoolSolutions  = int(num_exact_cols)
+    m.optimize()
+    return m, vars_dict
 
+# ------------------------------ DIAGNOSTICS: list missing depot arcs ------------------------------
+diag_dir = OUTDIR / f"diag_{RUN_ID}"
+diag_dir.mkdir(parents=True, exist_ok=True)
+missing_pullout = [i for i in T if (DEPOT, sl[i]) not in allowed_arcs]
+missing_pulluin = [i for i in T if (el[i], DEPOT) not in allowed_arcs]
+print(f"[DIAG] Trips missing PARX -> SL: {len(missing_pullout)}")
+print(f"[DIAG] Trips missing EL -> PARX: {len(missing_pulluin)}")
+pd.DataFrame({"Trip": missing_pullout, "SL": [sl[i] for i in missing_pullout]}).to_csv(diag_dir / "missing_pullout.csv", index=False)
+pd.DataFrame({"Trip": missing_pulluin, "EL": [el[i] for i in missing_pulluin]}).to_csv(diag_dir / "missing_pulluin.csv", index=False)
+print(f"[WRITE] Diagnostics saved under {diag_dir}")
 
+# ------------------------------ CG loop ------------------------------
 
-### modes ###
-VSP = 0           # no charge
-EVSP        = 1   # no free‐charge, no discharge
-EVSP_SOLAR   = 2   # free‐charge OK, but no v2g discharge
-EVSP_V2G = 3   # full model
+iteration = 0
+new_pricing_obj = -1.0
+max_iter = MAX_CG_ITERS
 
-
-csv_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'delta.csv')
-
-df = pd.read_csv(csv_path, header=1)
-
-
-
-
+if len(R_truck) == 0:
+    print("[WARN] No initial seed routes; master may be infeasible if some trips lack any coverable pattern.")
 
 master_times = []
 pricing_times = []
-iteration_times = []
+iter_rows = []
 
+def _route_key(route):
+    return tuple(route["route"])
 
+best_master = float("inf")
+stagnant = 0
 
+while new_pricing_obj < -tolerance and iteration < max_iter:
+    iteration += 1
+    print(f"\n--- Iteration {iteration} ---")
+    t0 = time.time()
+    rmp.Params.TimeLimit = MASTER_TIMELIMIT
+    rmp.optimize()
+    master_times.append(time.time() - t0)
+    print(" Master obj:", rmp.ObjVal)
 
+    # stagnation check
+    rel_impr = (best_master - rmp.ObjVal) / max(1.0, abs(best_master)) if math.isfinite(best_master) else 1.0
+    if rmp.SolCount > 0 and rmp.ObjVal < best_master - 1e-9 and rel_impr >= MASTER_IMPROVE_THRESHOLD:
+        best_master = rmp.ObjVal
+        stagnant = 0
+    else:
+        stagnant += 1
+        print(f" [CG] no meaningful improve (stagnant={stagnant})")
 
-# Keep only rows with time ending in ':00' (on the hour)
-df_hourly = df[df["Time"].str.endswith(":00")].copy()
+    if stagnant >= STAGNATION_ITERS:
+        print(f"[STOP] Stagnation for {STAGNATION_ITERS} iters (rel_impr<{MASTER_IMPROVE_THRESHOLD:.4%}).")
+        break
 
-# Keep only 01:00 to 24:00
-df_hourly = df_hourly[df_hourly["Time"].between("01:00", "24:00")]
+    alpha, beta_dual, gamma_dual = extract_duals(rmp)
 
-df_hourly.reset_index(drop=True, inplace=True)
-delta_dict = {}
-delta_dict = {i+1: df_hourly.loc[i, "Delta_int"] for i in range(len(df_hourly))}
+    t0 = time.time()
+    pricing_model, vars_pr = solve_pricing_fast(
+        alpha, beta_dual, gamma_dual,
+        mode=1,
+        num_fast_cols=n_fast_cols
+    )
+    pricing_times.append(time.time() - t0)
 
+    new_trucks = []
+    new_pricing_obj = float('inf')
+    seen_keys_existing = {_route_key(r) for r in R_truck}
 
-
-results = []
-modes = [3]
-epsilons      = [2.5]
-points_list   = [2]    # number of locations
-solar_multipliers = [7]  # 7 was the default, scaled for the data.
-for solar_mult in solar_multipliers:
-    df_hourly['Delta_mod']   = (df_hourly['Power (MW)'] / 5 - df_hourly['PV(MW)']) * solar_mult
-    df_hourly['Delta_int']   = df_hourly['Delta_mod'].round().astype(int)
-    
-    delta_dict = {i+1: int(df_hourly.loc[i,'Delta_int'])
-                  for i in range(len(df_hourly))}
-    for mode in modes:
-        selected_mode = mode
-        mode_names = {
-            0: "VSP",
-            1: "EVSP",
-            2: "EVSP_SOLAR",
-            3: "EVSP_V2G"
-        }
-        mode_name = mode_names[selected_mode]
-        for base_eps in epsilons:
-
-            epsilon_const = base_eps * (10 if selected_mode==0 else 1)
-            
-
-            for points in points_list:
-                
-                print(f"Running solar_mult={solar_mult}, mode={mode_name}, ε={base_eps}, points={points}")
-
-                locs = make_locs(points)
-                morning = generate_trip_data(locs, 4, 9)   # 5–10 inclusive
-                evening = generate_trip_data(locs, 18, 23)  # 19–22 inclusive
-                trip_data = pd.concat([morning, evening], ignore_index=True)
-                trip_data.index.name = 'Trip'
-                
-                #trip_data = generate_trip_data_solar_skip(locs, 8, 18, delta_dict)  # trips from 1 to 24
-                epsilon = {i: epsilon_const for i in trip_data.index}
-
-                time_begin = time.time()
-
-
-                # PARAMETERS
-
-
-                L = 4              # up to L charging activities
-                if selected_mode == 0:
-                    G = 125             # battery capacity
-                    
-                else:
-                    G = 7             # battery capacity
-                    # epsilon_const =  # energy consumed per trip
-
-
-
-                
-
-                sl = trip_data["Start loc"].to_dict()  # sl[i] = 'A'/'B'
-                el = trip_data["End loc"].to_dict()    # el[i] = 'B'/'A'
-                st = trip_data["Start time"].to_dict() # st[i] = 4 or 12
-                et = trip_data["End time"].to_dict()   # et[i] = 8 or 16
-
-                T = list(range(len(trip_data)))  # [0..19]
-
-
-
-
-                base_stations = ["h"] # , "k"]
-
-                S_l = { l:[f"{s}{l}" for s in base_stations]
-                        for l in range(1, L+1) }
-
-                S = [h for layer in S_l.values() for h in layer]
-
-                Nodes = ["O"] + T + S
-
-
-                
-                # LOCATION COORDINATES
-                
-                coordinates = {
-                    "O": (0, 0),     # Depot
-                    "A": (.25, .25),
-                    "B": (-.25, .25),
-                    "C": (.25, -.25),
-                    "D": (-.25, -.25),
-                    "h1": (0, 0), # We will have one charging station, at same location as depot. 
-                    "h2": (0, 0),
-                    "h3": (0, 0),
-                    "h4": (0, 0),
-                    "h5": (0, 0),
-                    "h6": (0, 0),
-                    # "k1": (0, -1),
-                    # "k2": (0, -1),
-                }
-
-                # Simple Manhattan distance function
-                def manhattan_distance(c1, c2):
-                    return abs(c1[0]-c2[0]) + abs(c1[1]-c2[1])
-
-                # Build distance dictionary d[(i,j)]
-                d = {}
-                all_keys = list(coordinates.keys())
-                for i in all_keys:
-                    for j in all_keys:
-                        d[(i,j)] = manhattan_distance(coordinates[i], coordinates[j])
-                # trip "i" as a location from sl[i]->el[i].
-                # “O”-> "i" means the distance from O->sl[i]
-                for i in T:
-                    d[("O", i)] = manhattan_distance(coordinates["O"], coordinates[sl[i]])
-                    d[(i, "O")] = manhattan_distance(coordinates[el[i]], coordinates["O"])
-                    # station vs. trip
-                    for h in S: #,"k1","k2"]:
-                        d[(i, h)] = manhattan_distance(coordinates[el[i]], coordinates[h])
-                        d[(h, i)] = manhattan_distance(coordinates[h], coordinates[sl[i]])
-                    # trip vs. trip
-                    for j in T:
-                        if i != j:
-                            # If the end loc of i matches the start loc of j, distance=0, else normal
-                            if el[i] == sl[j]:
-                                d[(i, j)] = 0
-                            else:
-                                d[(i, j)] = manhattan_distance(coordinates[el[i]], coordinates[sl[j]])
-
-
-
-                speed = 1    # e.g. truck goes 10 "distance‐units" per time‐block
-                tau = {}      # travel‐time
-                for (i,j), dist in d.items():
-                    tau[(i,j)] = dist / speed
-
-
-                
-                # path to your new CSV with (time_block,cost)
-                price_csv = os.path.join(os.path.dirname(__file__), '..', 'data', 'hourly_prices.csv')
-                # Build charging_cost_data from CSV (per-hour, all stations share the same hour price)
-                charging_cost_data, avg_cost = load_price_curve(price_csv, time_blocks, S)
-                # You still have terms that need a scalar; use the average as an anchor.
-                # # (All marginal charging/discharging costs are already using charging_cost_data[t,h].)
-                fuel_cost = avg_cost
-                # Fixed costs: keep the structure you had, but now tied to avg price
-                bus_cost = fuel_cost * G + 10       # same formula as before, just with avg price
-                batt_discount = 9
-                batt_cost = bus_cost - batt_discount 
-
-
-
-
-                # 
-                # R' simple = 4 routes: O->0->O, O->1->O, O->2->O, O->3->O
-                # Initialize separate route lists
-                R_truck = []
-                R_batt = []
-
-                # R_prime_simple
-                # Create truck routes covering trips (existing)
-                for i in T:
-                    # total “distance” cost in SoC units for O→i→O
-                    g_return = d[("O", i)] + d[(i, "O")]
-                    route_dict = {
-                        "route": ["O", i, "O"],
-                        "charging_stops": {
-                            "stations": [],
-                            "cst": [],
-                            "cet": [],
-                            "chi_plus_free": [],
-                            "chi_minus": [],
-                            "chi_minus_free": [],
-                            "chi_plus": [],
-                            "chi_zero": [],
-                        },
-                        "charging_activities": 0,
-                        "type": "truck",
-                        "remaining_soc": G - g_return
-                    }
-                    R_truck.append(route_dict)
-
-                if selected_mode > 0:
-                    # Create battery-only routes (no trips) for charging needs (defined by delta_dict)
-                    for t in time_blocks:
-                        if delta_dict[t] < 0:
-                            # Free charging required at time t
-                            for _ in range(-delta_dict[t]):  
-                                route_dict = {
-                                    "route": ["O", "h1", "O"],
-                                    "charging_stops": {
-                                        "stations": ["h1"],
-                                        "cst": [t],
-                                        "cet": [t],
-                                        "chi_plus_free": [("h1", t)],
-                                        "chi_minus": [],
-                                        "chi_minus_free": [],
-                                        "chi_plus": [],
-                                        "chi_zero": []
-                                    },
-                                    "charging_activities": 1,
-                                    "type": "batt"
-                                }
-                                R_batt.append(route_dict)
-
-                # Verify initial route counts
-                print("Initial Truck Routes (R_truck):", len(R_truck))
-                print("Initial Battery-only Routes (R_batt):", len(R_batt))
-                # record how many of each we started with
-                init_truck = len(R_truck)
-                init_batt  = len(R_batt)
-
-
-                # COLGEN LOOP
-                iteration = 0
-                new_pricing_obj = -1.0   # force first pass
-                new_batt_obj    = 0
-                max_iter = 333
-
-                ## initial run
-                rmp, a, b, trip_cov, freechg, discharge = init_master(
-                    R_truck,
-                    R_batt,
-                    mode,
-                    T,
-                    time_blocks,
-                    delta_dict,
-                    bus_cost,              
-                    batt_cost,             
-                    charging_cost_data,    
-                    binary=False
+    # Scan pool, collect K_BEST with rc < -RC_EPSILON
+    candidates = []
+    for sol in range(pricing_model.SolCount):
+        pricing_model.Params.SolutionNumber = sol
+        rc = pricing_model.PoolObjVal
+        new_pricing_obj = min(new_pricing_obj, rc)
+        if rc < -RC_EPSILON:
+            try:
+                truck = extract_route_from_solution(
+                    vars_pr, T, list(vars_pr["wA_station"].keys()), bar_t,
+                    depot=DEPOT,
+                    value_getter=lambda v: v.Xn
                 )
+                truck["_rc"] = rc
+                candidates.append(truck)
+            except Exception as e:
+                print(f"[SKIP] bad pricing solution in pool: {e}")
 
-                rmp.optimize()
+    # sort by rc and keep K_BEST unique routes
+    candidates.sort(key=lambda r: r["_rc"])
+    seen_new = set()
+    for t_route in candidates:
+        k = _route_key(t_route)
+        if (k not in seen_keys_existing) and (k not in seen_new):
+            new_trucks.append(t_route)
+            seen_new.add(k)
+        if len(new_trucks) >= K_BEST:
+            break
 
-
-                pricing_mode_used = [] # fast or exact
-
-                truck_added = []
-                batt_added  = []
-
-                while (new_pricing_obj < -tolerance) or (new_batt_obj < -tolerance):
-                    rmp.reset()
-                    iteration += 1
-                    print(f"\n--- Iteration {iteration} ---")
-                    # ================== NEW: iteration timing trackers ==================
-                    iter_start = time.time()
-                    used_exact_this_iter = False
-                    # ====================================================================
-
-                    if iteration > max_iter:
-                        print("Reached iteration limit, stopping.")
-                        break
-
-                    # 1) solve master
-                    master_start = time.time()
-                    rmp.optimize()
-                    print(" Master obj:", rmp.ObjVal)
-                    master_times.append(time.time() - master_start)
-
-                    # 2) extract duals
-                    alpha, beta, gamma = extract_duals(rmp)
-
-                    #
-                    # 3) TRUCK‐PRICING (fast then exact)
-                    #
-                    pricing_start = time.time()
-                    pricing_model, vars_pr = solve_pricing_fast(
-                        alpha, beta, gamma,
-                        mode=selected_mode,
-                        num_fast_cols=n_fast_cols
+    # exact if needed (still negative but no candidates under epsilon)
+    if not new_trucks and new_pricing_obj < -RC_EPSILON and n_exact_cols > 0:
+        print(" No fast cols → exact pricing")
+        pricing_model, vars_pr = solve_pricing_exact(
+            alpha, beta_dual, gamma_dual,
+            mode=1,
+            num_exact_cols=n_exact_cols
+        )
+        candidates = []
+        for sol in range(pricing_model.SolCount):
+            pricing_model.Params.SolutionNumber = sol
+            rc = pricing_model.PoolObjVal
+            new_pricing_obj = min(new_pricing_obj, rc)
+            if rc < -RC_EPSILON:
+                try:
+                    truck = extract_route_from_solution(
+                        vars_pr, T, list(vars_pr["wA_station"].keys()), bar_t,
+                        depot=DEPOT,
+                        value_getter=lambda v: v.Xn
                     )
-                    pricing_times.append(time.time() - pricing_start)
+                    truck["_rc"] = rc
+                    candidates.append(truck)
+                except Exception as e:
+                    print(f"[SKIP] bad pricing solution in pool: {e}")
+        candidates.sort(key=lambda r: r["_rc"])
+        seen_new = set()
+        for t_route in candidates:
+            k = _route_key(t_route)
+            if (k not in seen_keys_existing) and (k not in seen_new):
+                new_trucks.append(t_route)
+                seen_new.add(k)
+            if len(new_trucks) >= K_BEST:
+                break
 
-                    # collect improving truck routes
-                    new_trucks = []
-                    new_pricing_obj = float('inf')
-                    for sol in range(pricing_model.SolCount):
-                        pricing_model.Params.SolutionNumber = sol
-                        rc = pricing_model.PoolObjVal
-                        new_pricing_obj = min(new_pricing_obj, rc)
-                        if rc < -tolerance:
-                            truck = extract_route_from_solution(
-                                vars_pr, T, S, bar_t,
-                                value_getter=lambda v: v.Xn
-                            )
-                            if truck not in R_truck and truck not in new_trucks:
-                                new_trucks.append(truck)
-                    truck_added.append(len(new_trucks))
+    # Add columns (append to R_truck so final rebuilds see them)
+    for route in new_trucks:
+        print(f"[ADD] column rc={route.get('_rc', float('nan')):.1f}  route={route['route']}")
+        R_truck.append(route)  # keep master copy in sync
+        cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
+        col = Column()
+        for node in route["route"]:
+            if isinstance(node, int):
+                col.addTerms(1.0, trip_cov[node])
+        idx = len(R_truck) - 1  # index corresponds to appended route
+        a[idx] = rmp.addVar(
+            obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]"
+        )
+    rmp.update()
 
-                    # if no fast columns, try exact
-                    if not new_trucks and new_pricing_obj < -tolerance:
-                        print("No fast truck cols → running exact pricing")
-                        used_exact_this_iter = True  # NEW
-                        pricing_model, vars_pr = solve_pricing_exact(
-                            alpha, beta, gamma,
-                            mode=selected_mode,
-                            num_exact_cols=n_exact_cols
-                        )
-                        pricing_model.optimize()
+    # checkpoint each iter
+    try:
+        rmp.write(str(CKPT / f"iter_{iteration:03d}.lp"))
+    except Exception:
+        pass
 
-                        for sol in range(pricing_model.SolCount):
-                            pricing_model.Params.SolutionNumber = sol
-                            rc = pricing_model.PoolObjVal
-                            new_pricing_obj = min(new_pricing_obj, rc)
-                            if rc < -tolerance:
-                                truck = extract_route_from_solution(
-                                    vars_pr, T, S, bar_t,
-                                    value_getter=lambda v: v.Xn
-                                )
-                                if truck not in R_truck and truck not in new_trucks:
-                                    new_trucks.append(truck)
+    iter_rows.append({
+        "run_id": RUN_ID,
+        "iteration": iteration,
+        "master_time_s": master_times[-1] if master_times else None,
+        "pricing_time_s": pricing_times[-1] if pricing_times else None,
+        "pricing_mode": "fast" if new_trucks else ("exact" if new_pricing_obj < -RC_EPSILON else "none"),
+        "best_rc": float(new_pricing_obj)
+    })
+    print(f"[ITER] {iteration}: master {master_times[-1]:.2f}s, pricing {pricing_times[-1]:.2f}s, "
+          f"new_cols={len(new_trucks)}, best_rc={new_pricing_obj:.1f}")
 
-                    # add truck columns
-                    for route in new_trucks:
-                       
-                        cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
-                        col = Column()
-                        for i in route["route"]:
-                            if i in T:
-                                col.addTerms(1.0, trip_cov[i])
-                        if selected_mode >= 2:
-                            for t in time_blocks:
-                                pf = sum(1 for (_,tt) in route["charging_stops"].get("chi_plus_free", [])  if tt==t)
-                                mf = sum(1 for (_,tt) in route["charging_stops"].get("chi_minus_free", []) if tt==t)
-                                delta = pf - mf
-                                if delta:
-                                    col.addTerms(delta, freechg[t])
-                        if selected_mode == 3:
-                            for t in time_blocks:
-                                m = sum(1 for (_,tt) in route["charging_stops"].get("chi_minus", []) if tt==t)
-                                if m:
-                                    col.addTerms(-m, discharge[t])
-                        idx = len(a)
-                        a[idx] = rmp.addVar(obj=cost, lb=0, ub=1,
-                                            vtype=GRB.CONTINUOUS,
-                                            column=col, name=f"a[{idx}]")
-                        R_truck.append(route)
+    if new_pricing_obj >= -RC_EPSILON:
+        print(f"[STOP] Reduced-cost optimal (best_rc={new_pricing_obj:.1f} ≥ -RC_EPSILON={-RC_EPSILON}).")
+        break
 
-                        if route["charging_stops"].get("chi_minus_free"):
-                            variant = {
-                                **route,
-                                "charging_stops": {
-                                    **route["charging_stops"],
-                                    "chi_minus_free": []
-                                }
-                            }
-                            cost_var = calculate_truck_route_cost(variant, bus_cost, charging_cost_data)
-                            col_var = Column()
-                            for i in variant["route"]:
-                                if i in T:
-                                    col_var.addTerms(1.0, trip_cov[i])
-                            if selected_mode >= 2:
-                                for t in time_blocks:
-                                    pf = sum(1 for (_,tt) in variant["charging_stops"].get("chi_plus_free", []) if tt==t)
-                                    if pf:
-                                        col_var.addTerms(pf, freechg[t])
-                            if selected_mode == 3:
-                                for t in time_blocks:
-                                    m = sum(1 for (_,tt) in variant["charging_stops"].get("chi_minus", []) if tt==t)
-                                    if m:
-                                        col_var.addTerms(-m, discharge[t])
-                            idx2 = len(a)
-                            a[idx2] = rmp.addVar(obj=cost_var, lb=0, ub=1,
-                                                vtype=GRB.CONTINUOUS,
-                                                column=col_var, name=f"a[{idx2}]")
-                            R_truck.append(variant)
+# ------------------------------ Final solve (LP then MIP warm-start) ------------------------------
 
+rmp_lp, a_lp = solve_master(
+    R_truck=R_truck,
+    T=T,
+    charging_cost_data=charging_cost_data,
+    bus_cost=bus_cost,
+    binary=False
+)
+final_LP_obj = rmp_lp.ObjVal
 
-                    if selected_mode > 0:
-                            
-                        #
-                        # 4) BATTERY‐PRICING
-                        #
-                        batt_model, vars_batt = solve_battery_pricing_fast(
-                            beta, gamma, selected_mode,
-                            num_fast_cols=n_fast_cols
-                        )
+rmp_final, a_final, trip_cov_final = build_master(
+    R_truck=R_truck,
+    T=T,
+    charging_cost_data=charging_cost_data,
+    bus_cost=bus_cost,
+    binary=True
+)
+for idx, var in a_final.items():
+    if idx in a_lp:
+        var.start = a_lp[idx].X
 
-                        new_batt_obj = float('inf')
-                        new_batts = []
-                        for sol in range(batt_model.SolCount):
-                            batt_model.Params.SolutionNumber = sol
-                            rc_b = batt_model.PoolObjVal
-                            new_batt_obj = min(new_batt_obj, rc_b)
-                            if rc_b < -tolerance:
-                                batt_route = extract_batt_route_from_solution(batt_model, bar_t, h="h1")
-                                if batt_route not in R_batt:
-                                    new_batts.append(batt_route)
+# safer final MIP params
+rmp_final.Params.Threads = THREADS
+rmp_final.Params.NodefileStart = NODEFILE_START
+rmp_final.Params.NodefileDir = _detect_tmp()
+rmp_final.Params.MIPFocus = 1
+rmp_final.Params.Heuristics = 0.5
+rmp_final.Params.Cuts = 1
+rmp_final.Params.MIPGap = 0.03
+rmp_final.Params.TimeLimit = 600  # brief polish
+rmp_final.Params.LPWarmStart = 2
 
-                        batt_added.append(len(new_batts))
+rmp_final.optimize()
+final_MIP_obj = rmp_final.ObjVal
 
-                        
-                        if not new_batts and new_batt_obj < -tolerance:
-                            print("No fast batt cols → running exact batt pricing")
-                            used_exact_this_iter = True  # NEW
-                            batt_model, vars_batt = solve_battery_pricing_exact(
-                                beta, gamma, selected_mode,
-                                num_exact_cols=n_exact_cols
-                            )
-                            batt_model.optimize()
-                            for sol in range(batt_model.SolCount):
-                                batt_model.Params.SolutionNumber = sol
-                                rc_b = batt_model.PoolObjVal
-                                new_batt_obj = min(new_batt_obj, rc_b)
-                                if rc_b < -tolerance:
-                                    batt_route = extract_batt_route_from_solution(batt_model, bar_t, h="h1")
-                                    if batt_route not in R_batt:
-                                        new_batts.append(batt_route)
+print("\n=== Selected truck routes ===")
+used_routes = []
+for r in range(len(R_truck)):
+    if r in a_final and a_final[r].X > 0.5:
+        used_routes.append(r)
+        print(f"Route {r}: a[{r}]={a_final[r].X:.0f}  -> {R_truck[r]}")
 
-                        # add battery columns
-                        for route in new_batts:
-                            
-                            cost_b = calculate_battery_route_cost(route, batt_cost, charging_cost_data)
-                            col_b = Column()
-                            if selected_mode >= 2:
-                                for t in time_blocks:
-                                    pf = sum(1 for (_,tt) in route["charging_stops"]["chi_plus_free"]  if tt==t)
-                                    mf = sum(1 for (_,tt) in route["charging_stops"]["chi_minus_free"] if tt==t)
-                                    delta = pf - mf
-                                    if delta:
-                                        col_b.addTerms(delta, freechg[t])
-                            if selected_mode == 3:
-                                for t in time_blocks:
-                                    m = sum(1 for (_,tt) in route["charging_stops"]["chi_minus"] if tt==t)
-                                    if m:
-                                        col_b.addTerms(-m, discharge[t])
-                            idx_b = len(b)
-                            b[idx_b] = rmp.addVar(obj=cost_b, lb=0, ub=1,
-                                                vtype=GRB.CONTINUOUS,
-                                                column=col_b, name=f"b[{idx_b}]")
-                            R_batt.append(route)
+print("\n Master LP obj:", final_LP_obj)
+print(" Master MIP obj:", final_MIP_obj)
+print(f" Buses used: {len(used_routes)}")
 
-                    # ================== NEW: record per-iteration row ==================
-                    iter_rows.append({
-                        "run_id": RUN_ID,
-                        "iteration": iteration,
-                        "master_time_s": master_times[-1] if master_times else None,
-                        "pricing_time_s": pricing_times[-1] if pricing_times else None,
-                        "iteration_time_s": time.time() - iter_start,
-                        "pricing_mode": "exact" if used_exact_this_iter else "fast",
-                        "mode_name": mode_name,
-                        "solar_mult": solar_mult,
-                        "epsilon": epsilon_const,
-                        "points": points
-                    })
-                    # ====================================================================
+pd.DataFrame(iter_rows).to_csv(OUTDIR / f"iterations_{RUN_ID}.csv", index=False)
+print(f"[WRITE] {OUTDIR / ('iterations_' + RUN_ID + '.csv')}")
+try:
+    rmp_final.write(str(OUTDIR / f"solution_{RUN_ID}.sol"))
+except Exception:
+    pass
 
-                # Final LP
-
-
-                rmp_lp, a_lp, b_lp = solve_master(R_truck,
-                                R_batt,
-                                mode,
-                                T,
-                                time_blocks,
-                                delta_dict,
-                                bus_cost,              
-                                batt_cost,             
-                                charging_cost_data,    
-                                binary=False
-                            )
-                final_LP_obj = rmp_lp.ObjVal
-
-                # Final check MIP
-
-
-                rmp, a, b = build_master(R_truck,
-                                R_batt,
-                                mode,
-                                T,
-                                time_blocks,
-                                delta_dict,
-                                bus_cost,              
-                                batt_cost,             
-                                charging_cost_data,    
-                                binary=False
-                            )
-                for idx, var in a.items():
-                    var.start = a_lp[idx].X
-                for idx, var in b.items():
-                    var.start = b_lp[idx].X
-                rmp.Params.LPWarmStart = 2
-
-                if selected_mode == 3:
-                    rmp.Params.MIPGap      = 0.01
-                else:
-                    rmp.Params.MIPGap      = 0.01
-
-                rmp.setParam("MIPFocus", 3)      # aggressive heuristics
-                rmp.setParam("Heuristics", 0.5)  # increase heuristic effort
-                rmp.setParam("Cuts", 2)          # more cutting‐plane generation
-                rmp.setParam("Presolve", 0)      # aggressive presolve
-                rmp.optimize()
-                final_MIP_obj = rmp.ObjVal
-
-
-
-                for r in range(len(R_truck)):
-                    if a[r].X == 1:
-                        print(f"Route {r} selected: a[{r}] = {a[r].X}")
-                        print(R_truck[r])
-                        print("-" * 40)
-
-                if selected_mode > 0: # only if not vsp
-                    for r in range(len(R_batt)):
-                        if b[r].X == 1:
-                            print(f"Route {r} selected: b[{r}] = {b[r].X}")
-                            print(R_batt[r])
-                            print("-" * 40)
-
-
-                if selected_mode == 0: # only for VSP we calculate the fuel used
-                        
-                    total_fuel_used = 0.0
-
-                    for r, var in a.items():
-                        if var.X == 1:
-                            route = R_truck[r]
-                           
-                            rem_soc   = route.get("remaining_soc")
-                            if rem_soc is None:
-                                raise KeyError(f"Route {r} has no remaining_soc")
-                            fuel_used = G - rem_soc
-                            total_fuel_used += fuel_used
-                            print(f"Route {r}: fuel used = {fuel_used:.1f} kWh (returned SOC {rem_soc:.1f})")
-
-                    print(f"\nTotal fuel used by all buses: {total_fuel_used:.1f} kWh")
-
-                else: # for EVSP, we calculate charging
-
-                    # 1) per‐route net energy (paid charge minus discharge)
-                    net_truck = 0.0
-                    for r, var in a.items():
-                        if var.X == 1:
-                            cs = R_truck[r]["charging_stops"]
-                            plus  = len(cs.get("chi_plus", []))
-                            minus = len(cs.get("chi_minus", []))
-                            net_truck += plus - minus
-
-                    net_batt = 0.0
-                    for r, var in b.items():
-                        if var.X == 1:
-                            cs = R_batt[r]["charging_stops"]
-                            plus  = len(cs.get("chi_plus", []))
-                            minus = len(cs.get("chi_minus", []))
-                            net_batt += plus - minus
-
-
-                    print(f"net paid‐charge on truck routes:  {net_truck:.0f} kWh")
-                    print(f"net paid‐charge on batt routes:   {net_batt:.0f} kWh")
-                    print(f"total net paid‐charge (fleet):    {net_truck+net_batt:.0f} kWh")
-
-                # 
-                time_end   = time.time()
-                time_taken = time_end - time_begin
-                print(f"Total time: {time_taken:.1f} s")
-
-                new_truck_num = len(R_truck) - init_truck
-                new_batt_num  = len(R_batt)  - init_batt
-
-                print(f"New truck-routes generated:   {new_truck_num}")
-                print(f"New battery-routes generated: {new_batt_num}")
-
-                # 
-
-
-                # 
-                if master_times:
-                    print(f"Average Master Problem Time per Iteration: {np.average(master_times):.2f} seconds")
-                if pricing_times:
-                    print(f"Average Pricing Problem Time per Iteration: {np.average(pricing_times):.2f} seconds")
-                if iteration_times:
-                    print(f"Average Iteration Time: {np.average(iteration_times):.2f} seconds")
-
-                selected_routes = []
-                for r in range(len(R_truck)):
-                    if a[r].X > tolerance:
-                        selected_routes.append(R_truck[r])
-                for r in range(len(R_batt)):
-                    if b[r].X > tolerance:
-                        selected_routes.append(R_batt[r])
-
-
-                print(" Master obj:", rmp.ObjVal)
-
-                selected_routes = []
-                route_labels   = []
-
-                for r, var in a.items():
-                    if var.X > tolerance:
-                        selected_routes.append(R_truck[r])
-                        route_labels.append(f"Truck[{r}]")
-
-                # Battery routes (b[r] can be >1)
-                for r, var in b.items():
-                    count = int(round(var.X))
-                    for k in range(count):
-                        selected_routes.append(R_batt[r])
-                        route_labels.append(f"Batt[{r}] - {k+1}")
-
-                # ================== NEW: build timeline_rows for CSV ==================
-                event_maps = {
-                    "chi_plus": "paid_charge",
-                    "chi_plus_free": "free_charge",
-                    "chi_minus_free": "v2v_discharge",
-                    "chi_minus": "v2g_discharge",
-                }
-                for idx, route in enumerate(selected_routes):
-                    label = route_labels[idx]
-                    rtype = route.get("type", "truck")
-                    cs = route.get("charging_stops", {})
-                    for key, etype in event_maps.items():
-                        for (station, t) in cs.get(key, []):
-                            timeline_rows.append({
-                                "run_id": RUN_ID,
-                                "mode_name": mode_name,
-                                "solar_mult": solar_mult,
-                                "epsilon": epsilon_const,
-                                "points": points,
-                                "route_label": label,
-                                "route_type": rtype,
-                                "event_type": etype,
-                                "station": station,
-                                "time_block": t
-                            })
-                # ======================================================================
-
-                print("Final LP, MIP obj:", final_LP_obj, final_MIP_obj)
-
-                tolerance = 1e-6
-                used_trucks = [r for r, var in a.items() if var.X > 0.5]   
-                num_used = len(used_trucks)
-                print(f"Number of truck routes used: {num_used}")
-                print("  routes:", used_trucks)
-
-                if selected_mode == 0:
-                    fuel = total_fuel_used
-                else:
-                    fuel = (net_truck + net_batt) * 100 / 33 # convert kWh to fuel equivalent
-
-                results.append({
-                    'solar_mult' : solar_mult,
-                    'mode'       : mode_name,
-                    'epsilon'    : epsilon_const,
-                    'points'     : points,
-                    'locs'       : locs,
-                    'lp_obj'     : final_LP_obj,
-                    'mip_obj'    : final_MIP_obj,
-                    'fuel_used'  : fuel,
-                    'run_time_s' : time_taken,
-                    'trucks'     : num_used
-                })
-
-
-df = pd.DataFrame(results)
-
-# ================== NEW: write summary CSV ==================
-summary_path = OUTDIR / f"summary_{RUN_ID}.csv"
-df.to_csv(summary_path, index=False)
-print(f"[WRITE] {summary_path}")
-# ===========================================================
-
-# ================== NEW: write iterations & timeline CSVs ==================
-iters_path = OUTDIR / f"iterations_{RUN_ID}.csv"
-pd.DataFrame(iter_rows).to_csv(iters_path, index=False)
-print(f"[WRITE] {iters_path}")
-
-timeline_path = OUTDIR / f"timeline_{RUN_ID}.csv"
-pd.DataFrame(timeline_rows).to_csv(timeline_path, index=False)
-print(f"[WRITE] {timeline_path}")
-# ===========================================================
-# %%
+dummy_used = [r for r in used_routes if R_truck[r].get("dummy", False)]
+real_used  = [r for r in used_routes if not R_truck[r].get("dummy", False)]
+print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
+print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
