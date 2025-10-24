@@ -1,13 +1,14 @@
 # ---------- Column pool controls ----------
-n_fast_cols  = 200         
-n_exact_cols = 10        
+n_fast_cols  = 2000         
+n_exact_cols = 200        
 
 # ---------- Horizon ----------
-bar_t = 24
+granularity = 1
+bar_t = 24 * granularity
 time_blocks = list(range(1, bar_t + 1))
 
 # ---------- Numerics ----------
-tolerance = 1e-4
+tolerance =  1e-6  
 
 # ---------- Energy / charging scale ----------
 BLOCK_KWH = 30.0
@@ -19,7 +20,7 @@ charge_mult = 1
 charge_cost_premium = 1 + 1e-2
 
 # ---------- Costs ----------
-BUS_COST_KX = 20.0
+BUS_COST_KX = 10000.0
 
 # ---------- Misc ----------
 factor = 1
@@ -39,13 +40,13 @@ MODE_EVS_ONLY        = True
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)
-RC_EPSILON = 5.0           # was 300.0 (kept out many mildly negative routes)
-K_BEST = 50               # was 30 (add more useful columns per iter)
+RC_EPSILON =  1e-6         
+K_BEST = 500               
 
 # CG loop limits / guards
-MAX_CG_ITERS = 80
-STAGNATION_ITERS = 5      # was 3 (don’t stop so early)
-MASTER_IMPROVE_THRESHOLD = 5e-4  # was 5e-4 (count small progress as improvement)
+MAX_CG_ITERS = 300
+STAGNATION_ITERS = 20     
+MASTER_IMPROVE_THRESHOLD = 1e-8  # was 5e-4 (count small progress as improvement)
 
 # ---------- NEW: Solver resource knobs ----------
 THREADS = 8
@@ -54,9 +55,9 @@ NODEFILE_DIR = None
 
 # ---------- NEW: Timelimits/gaps ----------
 # Master RMP (LP) per-iteration solve
-MASTER_TIMELIMIT = 60     # was 60 (still modest, gives RMP time to settle)
-MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
+MASTER_TIMELIMIT = 300   # was 60 (still modest, gives RMP time to settle)
+MASTER_MIPGAP   = 1.0    # final MIP target gap (keep)
 
 # Pricing MIPs
-PRICING_TIMELIMIT = 60    # was 60; pricing is your bottleneck
-PRICING_GAP       = 0.05   # keep
+PRICING_TIMELIMIT = 180    # was 60; pricing is your bottleneck
+PRICING_GAP       = 1.0   # keep
