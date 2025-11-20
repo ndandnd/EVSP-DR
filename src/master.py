@@ -2,7 +2,8 @@ from gurobipy import Model, Column, LinExpr, GRB
 from utils import calculate_truck_route_cost
 from config import (
     THREADS, NODEFILE_START, NODEFILE_DIR,
-    MASTER_TIMELIMIT, MASTER_MIPGAP
+    MASTER_TIMELIMIT, MASTER_MIPGAP,
+    BIG_M_PENALTY
 )
 
 def _apply_master_params(rmp: Model, *, mip_mode=False):
@@ -37,6 +38,23 @@ def build_master(
     trip_cov = {}
     for i in T:
         trip_cov[i] = rmp.addConstr(LinExpr() >= 1, name=f"trip_coverage_{i}")
+
+
+    ### Dummy variables to ensure feasibility for empty initial R'
+    q_vars = {}
+    for i in T:
+        col = Column()
+        col.addTerms(1.0, trip_cov[i]) # Add q_i to the coverage constraint for trip i
+        
+        q_vars[i] = rmp.addVar(
+            obj=BIG_M_PENALTY,  # High penalty
+            lb=0, 
+            ub=GRB.INFINITY,    # In the end bounded by 1 because constraint is \geq 1.
+            vtype=GRB.CONTINUOUS, 
+            column=col,
+            name=f"q_{i}"
+        )
+
 
     # 2) Decision variables (one per truck route)
     vtype = GRB.INTEGER if binary else GRB.CONTINUOUS

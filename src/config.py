@@ -19,7 +19,7 @@ charge_mult = 1
 charge_cost_premium = 1 + 1e-2
 
 # ---------- Costs ----------
-BUS_COST_KX = 20.0
+BUS_COST_KX = 1e3
 
 # ---------- Misc ----------
 factor = 1
@@ -36,6 +36,7 @@ CHARGE_EFFICIENCY    = 1.0
 BUS_COST_SCALAR      = BUS_COST_KX
 ALLOW_ONLY_LISTED_DEADHEADS = True
 MODE_EVS_ONLY        = True
+BIG_M_PENALTY       = 1e9
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)

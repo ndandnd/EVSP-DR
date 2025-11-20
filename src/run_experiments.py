@@ -472,41 +472,43 @@ print(f"[INFO] Trips={len(T)}  Stations={len(S)}")
 
 R_truck = []
 
-for i in T:
-    if has_depot_pull(i):
-        g_ret = max(0, G - (d[(DEPOT, i)] + d[(i, DEPOT)] + epsilon[i]))
-        R_truck.append({
-            "route": [DEPOT, i, DEPOT],
-            "charging_stops": {
-                "stations": [], "cst": [], "cet": [],
-                "chi_plus_free": [], "chi_minus": [], "chi_minus_free": [],
-                "chi_plus": [], "chi_zero": []
-            },
-            "charging_activities": 0,
-            "type": "truck",
-            "remaining_soc": g_ret
-        })
 
-# Dummy columns (BIG-M) for trips we couldn't seed
-BIG_M = 1e7
-dummy_count = 0
-for i in T:
-    if not has_depot_pull(i):
-        R_truck.append({
-            "route": [i],
-            "charging_stops": {
-                "stations": [], "cst": [], "cet": [],
-                "chi_plus_free": [], "chi_minus": [], "chi_minus_free": [],
-                "chi_plus": [], "chi_zero": []
-            },
-            "charging_activities": 0,
-            "type": "truck",
-            "dummy": True,
-            "dummy_cost": BIG_M
-        })
-        dummy_count += 1
+### instead of depot-trip-depot seeding, just make dummy routes for all trips
+# for i in T:
+#     if has_depot_pull(i):
+#         g_ret = max(0, G - (d[(DEPOT, i)] + d[(i, DEPOT)] + epsilon[i]))
+#         R_truck.append({
+#             "route": [DEPOT, i, DEPOT],
+#             "charging_stops": {
+#                 "stations": [], "cst": [], "cet": [],
+#                 "chi_plus_free": [], "chi_minus": [], "chi_minus_free": [],
+#                 "chi_plus": [], "chi_zero": []
+#             },
+#             "charging_activities": 0,
+#             "type": "truck",
+#             "remaining_soc": g_ret
+#         })
 
-print(f"[INFO] Seeded {len([r for r in R_truck if not r.get('dummy')])} real routes + {dummy_count} dummy routes (for uncovered trips).")
+# # Dummy columns (BIG-M) for trips we couldn't seed
+# BIG_M = 1e7
+# dummy_count = 0
+# for i in T:
+#     if not has_depot_pull(i):
+#         R_truck.append({
+#             "route": [i],
+#             "charging_stops": {
+#                 "stations": [], "cst": [], "cet": [],
+#                 "chi_plus_free": [], "chi_minus": [], "chi_minus_free": [],
+#                 "chi_plus": [], "chi_zero": []
+#             },
+#             "charging_activities": 0,
+#             "type": "truck",
+#             "dummy": True,
+#             "dummy_cost": BIG_M
+#         })
+#         dummy_count += 1
+
+# print(f"[INFO] Seeded {len([r for r in R_truck if not r.get('dummy')])} real routes + {dummy_count} dummy routes (for uncovered trips).")
 
 # ------------------------------ Build & solve master once ------------------------------
 
