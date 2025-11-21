@@ -1,3 +1,4 @@
+#%%
 # EVSP only (no solar, no V2G/V2V) on your real data.
 # Speedups:
 #  - Smaller pool + RC cutoff + K-best columns per CG iteration
@@ -91,6 +92,30 @@ if not prices_csv.exists():
     raise FileNotFoundError(f"Missing {prices_csv} (needed for charging prices)")
 
 df_trips = pd.read_csv(routes_csv)
+
+
+
+# #### filter out trips ####
+
+# BAD_TRIPS_INDICES = [13, 14, 19, 23, 34, 43, 96, 99, 101, 103, 120, 155, 164, 181, 187, 207, 210, 212, 251, 272, 292, 304, 326, 346, 361, 365, 368, 369, 406, 407, 423, 425, 437, 438, 460, 526, 527, 530, 531, 546, 576, 589, 601, 671, 721, 724, 725, 762, 763, 800, 801, 812, 821, 866, 869, 886, 902, 903, 934, 942, 974]
+
+
+# print(f"[FILTER] Original trip count: {len(df_trips)}")
+# print(f"[FILTER] Removing {len(BAD_TRIPS_INDICES)} trips known to be uncovered...")
+
+# # Filter out rows by index
+# df_trips = df_trips.drop(BAD_TRIPS_INDICES, errors='ignore')
+
+# # IMPORTANT: Reset index so the resulting T list is contiguous (0, 1, 2...)
+# # This ensures the rest of your code (which assumes Trip ID maps to range(N)) remains valid.
+# df_trips = df_trips.reset_index(drop=True)
+
+# print(f"[FILTER] New trip count: {len(df_trips)}")
+
+
+# #### filter out trips ####
+
+
 
 trip_col_map = {"SL": None, "ST": None, "ET": None, "EL": None, "Energy used": None}
 for want in list(trip_col_map.keys()):
@@ -960,7 +985,29 @@ while new_pricing_obj < -tolerance and iteration < max_iter:
     if new_pricing_obj >= -RC_EPSILON:
         print(f"[STOP] Reduced-cost optimal (best_rc={new_pricing_obj:.1f} ≥ -RC_EPSILON={-RC_EPSILON}).")
         break
+#%%
+# ---------------- DIAGNOSTIC START ----------------
+# Check which trips are still using dummy variables in the LP solution
 
+print("\n--- Solving RMP one last time for diagnostics ---")
+rmp.optimize()  # <--- ADD THIS LINE. It restores .X values.
+
+print("\n--- Uncovered Trips Diagnostic ---")
+uncovered_trips = []
+for i in T:
+    q_var = rmp.getVarByName(f"q_{i}")
+    if q_var and q_var.X > 0.01:  # If slack is non-zero
+        uncovered_trips.append(i)
+
+if uncovered_trips:
+    print(f"[WARN] The following {len(uncovered_trips)} trips are covered by DUMMY variables (q_i=1):")
+    print(uncovered_trips)
+    print("These trips likely have no valid incoming/outgoing arcs in the pricing graph.")
+else:
+    print("[SUCCESS] All trips are covered by real vehicle routes.")
+# ---------------- DIAGNOSTIC END ------------------
+
+#%%
 # ------------------------------ Final solve (LP then MIP warm-start) ------------------------------
 
 rmp_lp, a_lp = solve_master(
@@ -979,6 +1026,24 @@ rmp_final, a_final, trip_cov_final = build_master(
     bus_cost=bus_cost,
     binary=True
 )
+
+
+# ---------------- ENFORCE DUMMY =0  ----------------
+print("[FINAL] Locking out dummy variables (forcing q_i = 0)...")
+locked_count = 0
+for i in T:
+    # Retrieve the slack variable by name
+    q_var = rmp_final.getVarByName(f"q_{i}")
+    if q_var is not None:
+        # Force it to 0. The solver MUST cover trip i with a real vehicle OR return Infeasible.
+        q_var.UB = 0.0 
+        locked_count += 1
+
+print(f"[FINAL] Locked {locked_count} dummy variables.")
+# ---------------- ENFORCE DUMMY =0  ----------------
+
+
+
 for idx, var in a_final.items():
     if idx in a_lp:
         var.start = a_lp[idx].X
@@ -1019,3 +1084,5 @@ dummy_used = [r for r in used_routes if R_truck[r].get("dummy", False)]
 real_used  = [r for r in used_routes if not R_truck[r].get("dummy", False)]
 print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
 print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
+
+# %%
