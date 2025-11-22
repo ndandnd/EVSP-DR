@@ -3,7 +3,7 @@ n_fast_cols  = 200
 n_exact_cols = 10        
 
 # ---------- Horizon ----------
-bar_t = 26
+bar_t = 24
 time_blocks = list(range(1, bar_t + 1))
 
 # ---------- Numerics ----------
@@ -27,6 +27,18 @@ factor = 1
 # ---------- Real-data names / aliases ----------
 DEPOT_NAME = "PARX"
 CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
+
+STATION_COPIES = {
+    "2190L": 3,
+    "4808":  3,
+    "PARX":  3,  
+    "3127L": 3,
+    "7880C": 3,
+    "JON_A": 3
+}
+
+
+
 
 # Aliases for run script
 SOC_CAPACITY_KWH     = G_KWH

@@ -214,7 +214,31 @@ def load_price_curve(csv_path, time_blocks, stations):
         raise ValueError(f"CSV missing prices for time blocks: {missing}")
 
     price_map = dict(zip(df['time_block'], df['cost']))
-    data = [[price_map[t] for _ in stations] for t in time_blocks]
+
+
+
+    #data = [[price_map[t] for _ in stations] for t in time_blocks]
+    
+    
+
+    data = []
+    for t in time_blocks:
+        row = []
+        for s in stations:
+            # 1. Parse base name to handle copies (e.g., "2190L_1" -> "2190L")
+            if "_" in s and s.split("_")[-1].isdigit():
+                base_name = s.rsplit("_", 1)[0]
+            else:
+                base_name = s
+
+            # 2. Get base price (using base_name logic if you had station-specific columns)
+            # Since we use a single price_map currently:
+            cost = price_map[t]
+            
+            row.append(cost)
+        data.append(row)
+    
+    
     charging_cost_data = pd.DataFrame(data, index=time_blocks, columns=stations)
     avg_cost = float(np.mean([price_map[t] for t in time_blocks]))
     return charging_cost_data, avg_cost

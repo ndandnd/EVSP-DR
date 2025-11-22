@@ -24,6 +24,7 @@ from config import (
     charge_mult, charge_cost_premium,
     BUS_COST_SCALAR, ALLOW_ONLY_LISTED_DEADHEADS, MODE_EVS_ONLY,
     CHARGING_STATIONS,
+    STATION_COPIES,
 
     # NEW
     RC_EPSILON, K_BEST,
@@ -156,6 +157,100 @@ if missing_dh:
     raise ValueError(f"{deadheads_csv.name} must include columns {{'From','To','Duration','Energy used'}}, "
                      f"could not find: {missing_dh}. Found: {set(df_dh.columns)}")
 df_dh = df_dh.rename(columns={dh_col_map[k]: k for k in dh_col_map})
+
+# ==============================================================================
+# NEW: Graph Node Explosion (Station Copies) with Bridge Arcs
+# ==============================================================================
+def explode_graph_nodes(df, station_copies):
+    """
+    Explodes rows in df_dh to account for station copies.
+    Crucially, this version INCLUDES the Base Name in the variants, ensuring
+    that Base->Copy and Copy->Base arcs are generated directly.
+    This bypasses the 40-minute limit in augment_deadheads.
+    """
+    new_rows = []
+    
+    # Helper: Get ALL variants (Base + Copies)
+    def get_variants_inclusive(node_name):
+        node_str = str(node_name).strip()
+        # Always start with the Base name so we keep Base->Base connections
+        variants = [node_str] 
+        
+        if node_str in station_copies:
+            count = station_copies[node_str]
+            if count > 1:
+                variants.extend([f"{node_str}_{k}" for k in range(count)])
+            else:
+                variants.append(f"{node_str}_0")
+        return variants
+
+    print("[INFO] Generating exploded graph arcs...")
+    for _, row in df.iterrows():
+        # Get all versions of Source and Target (Base + Copies)
+        sources = get_variants_inclusive(row["From"])
+        targets = get_variants_inclusive(row["To"])
+        
+        for s in sources:
+            for t in targets:
+                # Avoid self-loops (e.g. 2190L -> 2190L) unless they are distinct copies
+                # or the original row was a loop.
+                if s == t: 
+                    continue
+                
+                # Prevent cross-copy movement for the SAME station if not desired
+                # (e.g. prevent 2190L_0 -> 2190L_1 which implies teleporting between plugs)
+                # We check if they share the same base but are different variants
+                s_base = s.split('_')[0]
+                t_base = t.split('_')[0]
+                if s_base == t_base and s != t and s_base in station_copies:
+                    continue
+
+                new_r = row.copy()
+                new_r["From"] = s
+                new_r["To"]   = t
+                new_rows.append(new_r)
+
+    # 2. Bridge Arcs (Copy <-> Base Name) with 0 Cost
+    # These are technically redundant if the loop above generates Base->Copy arcs,
+    # but we keep them to allow 0-cost "docking" logic if needed by the solver.
+    bridge_rows = []
+    for base_name, count in station_copies.items():
+        variants = [f"{base_name}_{k}" if count > 1 else f"{base_name}_0" for k in range(count)]
+        
+        for v in variants:
+            # Bridge: Variant -> Base (Cost 0)
+            bridge_rows.append({
+                "From": v, "To": base_name, "Duration": 0.0, "Energy used": 0.0
+            })
+            # Bridge: Base -> Variant (Cost 0)
+            bridge_rows.append({
+                "From": base_name, "To": v, "Duration": 0.0, "Energy used": 0.0
+            })
+
+    # Combine
+    df_exploded = pd.DataFrame(new_rows)
+    df_bridge = pd.DataFrame(bridge_rows)
+    
+    return pd.concat([df_exploded, df_bridge], ignore_index=True)
+print("[INFO] Exploding graph nodes for station copies...")
+df_dh = explode_graph_nodes(df_dh, STATION_COPIES)
+
+# REBUILD GLOBAL CHARGERS LIST and DEPOT NAME
+CHARGERS = []
+for s_name in CHARGING_STATIONS:
+    count = STATION_COPIES.get(s_name, 1)
+    if count > 1:
+        for k in range(count):
+            CHARGERS.append(f"{s_name}_{k}")
+    else:
+        CHARGERS.append(f"{s_name}_0") # Consistent suffixing
+
+# Update DEPOT_NAME to match the exploded graph (usually _0)
+DEPOT_NAME = f"{DEPOT_NAME}_0" 
+
+print(f"[INFO] New Depot Name: {DEPOT_NAME}")
+print(f"[INFO] Expanded Chargers: {CHARGERS}")
+
 
 # ----------------------------------------------------------------------
 # SINGLE canonical CHARGERS definition (use config + depot)
@@ -802,6 +897,40 @@ def build_pricing(alpha, beta, gamma, mode):
                    + quicksum(z[(h, i)] for (h, i2) in z.keys() if i2 == i)
         obj -= a_i * cov_expr
 
+
+    # ---------------------------------------------------------
+    # NEW: Symmetry Breaking (cst_0 <= cst_1 <= ...)
+    # ---------------------------------------------------------
+    # 1. Group stations by their base name
+    station_groups = {}
+    for h in S_use:
+        # Check for suffix pattern like "Name_0", "Name_1"
+        if "_" in str(h) and str(h).split("_")[-1].isdigit():
+            base = str(h).rsplit("_", 1)[0]
+            if base not in station_groups:
+                station_groups[base] = []
+            station_groups[base].append(h)
+    
+    # 2. Add constraints for each group
+    symmetry_count = 0
+    for base, nodes in station_groups.items():
+        # Sort by suffix index to ensure correct order (_0, then _1, then _2)
+        nodes.sort(key=lambda x: int(x.split("_")[-1]))
+        
+        for k in range(len(nodes) - 1):
+            h_curr = nodes[k]
+            h_next = nodes[k+1]
+            
+            # Constraint: cst[h_curr] <= cst[h_next]
+            pricing_model.addConstr(
+                cst[h_curr] <= cst[h_next],
+                name=f"sym_break_{h_curr}_{h_next}"
+            )
+            symmetry_count += 1
+            
+    print(f"[PRICING] Added {symmetry_count} symmetry breaking constraints.")
+    # ---------------------------------------------------------
+
     pricing_model.setObjective(obj, GRB.MINIMIZE)
     return pricing_model, vars_dict
 
@@ -1029,17 +1158,17 @@ rmp_final, a_final, trip_cov_final = build_master(
 
 
 # ---------------- ENFORCE DUMMY =0  ----------------
-print("[FINAL] Locking out dummy variables (forcing q_i = 0)...")
-locked_count = 0
-for i in T:
-    # Retrieve the slack variable by name
-    q_var = rmp_final.getVarByName(f"q_{i}")
-    if q_var is not None:
-        # Force it to 0. The solver MUST cover trip i with a real vehicle OR return Infeasible.
-        q_var.UB = 0.0 
-        locked_count += 1
+# print("[FINAL] Locking out dummy variables (forcing q_i = 0)...")
+# locked_count = 0
+# for i in T:
+#     # Retrieve the slack variable by name
+#     q_var = rmp_final.getVarByName(f"q_{i}")
+#     if q_var is not None:
+#         # Force it to 0. The solver MUST cover trip i with a real vehicle OR return Infeasible.
+#         q_var.UB = 0.0 
+#         locked_count += 1
 
-print(f"[FINAL] Locked {locked_count} dummy variables.")
+# print(f"[FINAL] Locked {locked_count} dummy variables.")
 # ---------------- ENFORCE DUMMY =0  ----------------
 
 
@@ -1061,7 +1190,7 @@ rmp_final.Params.LPWarmStart = 2
 
 rmp_final.optimize()
 final_MIP_obj = rmp_final.ObjVal
-
+ 
 print("\n=== Selected truck routes ===")
 used_routes = []
 for r in range(len(R_truck)):
@@ -1086,3 +1215,5 @@ print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
 print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 
 # %%
+
+#thisfile has unsaved changes on symm breaking a1 \leq a2
