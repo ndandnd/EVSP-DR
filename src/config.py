@@ -3,7 +3,8 @@ n_fast_cols  = 200
 n_exact_cols = 10        
 
 # ---------- Horizon ----------
-bar_t = 26
+TIMEBLOCKS_PER_HOUR = 1 
+bar_t = 26*TIMEBLOCKS_PER_HOUR
 time_blocks = list(range(1, bar_t + 1))
 
 # ---------- Numerics ----------
@@ -12,6 +13,7 @@ tolerance = 1e-4
 # ---------- Energy / charging scale ----------
 BLOCK_KWH = 30.0
 G_KWH     = 240.0
+ENERGY_PER_BLOCK_KWH = BLOCK_KWH / TIMEBLOCKS_PER_HOUR
 G         = int(round(G_KWH / BLOCK_KWH))
 assert G > 0
 
@@ -28,13 +30,6 @@ factor = 1
 DEPOT_NAME = "PARX"
 CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
 
-# Aliases for run script
-SOC_CAPACITY_KWH     = G_KWH
-ENERGY_PER_BLOCK_KWH = BLOCK_KWH
-CHARGING_POWER_KW    = BLOCK_KWH
-CHARGE_EFFICIENCY    = 1.0
-BUS_COST_SCALAR      = BUS_COST_KX
-ALLOW_ONLY_LISTED_DEADHEADS = True
 MODE_EVS_ONLY        = True
 BIG_M_PENALTY       = 1e9
 

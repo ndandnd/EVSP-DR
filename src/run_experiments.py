@@ -18,14 +18,11 @@ from gurobipy import Model, Column, GRB, quicksum
 
 from config import (
     n_fast_cols, n_exact_cols, tolerance,
-    bar_t, time_blocks,
-    DEPOT_NAME, SOC_CAPACITY_KWH, ENERGY_PER_BLOCK_KWH,
-    CHARGING_POWER_KW, CHARGE_EFFICIENCY,
+    bar_t, time_blocks, TIMEBLOCKS_PER_HOUR,
+    DEPOT_NAME, G_KWH, ENERGY_PER_BLOCK_KWH, BLOCK_KWH, 
     charge_mult, charge_cost_premium,
-    BUS_COST_SCALAR, ALLOW_ONLY_LISTED_DEADHEADS, MODE_EVS_ONLY,
+    BUS_COST_KX, 
     CHARGING_STATIONS,
-
-    # NEW
     RC_EPSILON, K_BEST,
     MAX_CG_ITERS, STAGNATION_ITERS, MASTER_IMPROVE_THRESHOLD,
     THREADS, NODEFILE_START, NODEFILE_DIR,
@@ -47,25 +44,29 @@ CKPT.mkdir(parents=True, exist_ok=True)
 
 # ------------------------------ Helpers ------------------------------
 
-def _nearest_hour_block(hhmm: str) -> int:
-    hh, mm = hhmm.split(":")
-    hh = int(hh); mm = int(mm)
-    blk = hh + (1 if mm >= 30 else 0)
-    blk = max(1, min(24, blk if blk > 0 else 1))
-    return blk
-
-def _ceil_hour_block(hhmm: str) -> int:
-    hh, mm = hhmm.split(":")
-    hh = int(hh); mm = int(mm)
-    blk = hh if mm == 0 else hh + 1
-    blk = max(1, min(24, blk))
-    return blk
-
-def ceil_hours_from_minutes(m: float) -> int:
-    return int(math.ceil(float(m) / 60.0))
+TB_MIN   = int(round(60 / TIMEBLOCKS_PER_HOUR))  # minutes per block (60, 30, 15…)
+TB_HOURS = 1.0 / TIMEBLOCKS_PER_HOUR             # hours per block (1.0, 0.5, 0.25…)
 
 def energy_to_events(kwh: float) -> int:
-    return int(math.ceil(float(kwh) / float(ENERGY_PER_BLOCK_KWH)))
+    # “event” = BLOCK_KWH kWh regardless of granularity
+    return int(math.ceil(float(kwh) / float(BLOCK_KWH)))
+
+def _total_minutes(hhmm: str) -> int:
+    hh, mm = hhmm.split(":")
+    return int(hh) * 60 + int(mm)
+
+def _floor_block(hhmm: str) -> int:
+    m = _total_minutes(hhmm)
+    blk0 = m // TB_MIN            # 0-based
+    return max(1, min(int(bar_t), blk0 + 1))
+
+def _ceil_block(hhmm: str) -> int:
+    m = _total_minutes(hhmm)
+    blk0 = (m + TB_MIN - 1) // TB_MIN   # 0-based
+    return max(1, min(int(bar_t), blk0 + 1))
+
+def ceil_blocks_from_minutes(m: float) -> int:
+    return int(math.ceil(float(m) / float(TB_MIN)))
 
 def _detect_tmp():
     if NODEFILE_DIR:
@@ -372,8 +373,8 @@ def ensure_depot_endpoint_arcs(df, depot, sl_map, el_map, max_dur_min=None):
 df_trips = df_trips.reset_index(drop=True).copy()
 df_trips["Trip"] = df_trips.index
 
-df_trips["st_blk"] = df_trips["ST"].astype(str).map(_nearest_hour_block)
-df_trips["et_blk"] = df_trips["ET"].astype(str).map(_ceil_hour_block)
+df_trips["st_blk"] = df_trips["ST"].astype(str).map(_floor_block)
+df_trips["et_blk"] = df_trips["ET"].astype(str).map(_ceil_block)
 
 df_trips["eps_events"] = df_trips["Energy used"].map(energy_to_events)
 
@@ -399,7 +400,7 @@ for _, row in df_dh.iterrows():
     t = str(row["To"]).strip()
     dur_min = float(row["Duration"])
     eng_kwh = float(row["Energy used"])
-    tau_blk = ceil_hours_from_minutes(dur_min)
+    tau_blk = ceil_blocks_from_minutes(dur_min)
     d_evt   = _energy_to_events(eng_kwh)
     allowed_arcs[(f, t)] = (tau_blk, d_evt)
 
@@ -409,7 +410,7 @@ def arc_from_to(from_node: str, to_node: str):
 # ------------------------------ Globals for pricing ------------------------------
 
 S = CHARGERS[:]  # stations set (includes depot name too)
-G = energy_to_events(SOC_CAPACITY_KWH)
+G = energy_to_events(G_KWH)  
 DEPOT = DEPOT_NAME
 
 tau = {}
@@ -486,7 +487,7 @@ charging_cost_data, avg_cost_per_kwh = load_price_curve(
 charging_cost_data = charging_cost_data * float(ENERGY_PER_BLOCK_KWH)
 avg_cost_per_event = float(avg_cost_per_kwh) * float(ENERGY_PER_BLOCK_KWH)
 
-bus_cost  = BUS_COST_SCALAR * avg_cost_per_event
+bus_cost  = BUS_COST_KX* avg_cost_per_event
 
 print(f"[INFO] Capacity G(events): {G} (each={ENERGY_PER_BLOCK_KWH} kWh)")
 print(f"[INFO] Avg price/kWh={avg_cost_per_kwh:.3f} → per-event={avg_cost_per_event:.3f}")
@@ -641,7 +642,7 @@ def build_pricing(alpha, beta, gamma, mode):
     t_in[DEPOT]  = pricing_model.addVar(lb=0, ub=bar_t, vtype=GRB.INTEGER, name="tin_depot")
     t_out[DEPOT] = pricing_model.addVar(lb=0, ub=bar_t, vtype=GRB.INTEGER, name="tout_depot")
 
-    v_amt = {h: pricing_model.addVar(lb=-G, ub=G, vtype=GRB.INTEGER, name=f"v_{h}") for h in S_use}
+    v_amt = {h: pricing_model.addVar(lb=-G, ub=G, vtype=GRB.CONTINUOUS, name=f"v_{h}") for h in S_use}
     if DEPOT in S_use:
         g = pricing_model.addVars(T + S_use, lb=0, ub=G, vtype=GRB.CONTINUOUS, name="g")
     else:
@@ -740,8 +741,9 @@ def build_pricing(alpha, beta, gamma, mode):
 
     for h in S_use:
         pricing_model.addConstr(
-            v_amt[h] == charge_mult * quicksum(chi_plus[(h,t)] for t in time_blocks),
-            name=f"amt_charged_{h}"
+            v_amt[h] == charge_mult * (1.0 / TIMEBLOCKS_PER_HOUR) *
+                quicksum(chi_plus[(h, t)] for t in time_blocks),
+             name=f"amt_charged_{h}"
         )
 
     pricing_model.addConstr(g[DEPOT] == G, name="initial_soc")
