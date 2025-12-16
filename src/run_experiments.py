@@ -80,10 +80,22 @@ def _detect_tmp():
             return v
     return "/tmp"
 
+import re
+
+PC_REF_FALLBACK = "13215"
+
+def canon_node_pc_only(x):
+    s = str(x).strip()
+    if re.fullmatch(r"PC_\d+", s):
+        return PC_REF_FALLBACK
+    return s
+
+
 # ------------------------------ Data ingest ------------------------------
 
 DATA_DIR = ROOT.parent / "data"
-
+ref_csv = DATA_DIR / "Reference.csv"
+df_ref = pd.read_csv(ref_csv)
 routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
 deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
@@ -94,6 +106,25 @@ if not deadheads_csv.exists():
     raise FileNotFoundError(f"Missing {deadheads_csv}")
 if not prices_csv.exists():
     raise FileNotFoundError(f"Missing {prices_csv} (needed for charging prices)")
+
+
+# change these if your columns are named differently
+NAME_COL = "StopName"
+REF_COL  = "Reference"
+
+name_to_ref = dict(
+    zip(df_ref[NAME_COL].astype(str).str.strip(),
+        df_ref[REF_COL].astype(str).str.strip())
+)
+
+def ref_of(node: str) -> str:
+    """Return reference-id for node name, but only for depot-lookup usage."""
+    s = str(node).strip()
+
+    # handle copies like JON_A_0 -> base JON_A
+    base = s.rsplit("_", 1)[0] if re.search(r"_\d+$", s) else s
+
+    return name_to_ref.get(base, s)  # if unknown, keep original
 
 df_trips = pd.read_csv(routes_csv)
 
@@ -469,7 +500,8 @@ def ensure_depot_endpoint_arcs(df, depot, sl_map, el_map, max_dur_min=None):
 
 df_trips = df_trips.reset_index(drop=True).copy()
 df_trips["Trip"] = df_trips.index
-
+df_trips["SL"] = df_trips["SL"].map(canon_node_pc_only).map(ref_of)
+df_trips["EL"] = df_trips["EL"].map(canon_node_pc_only).map(ref_of)
 df_trips["st_blk"] = df_trips["ST"].astype(str).map(_floor_block)
 df_trips["et_blk"] = df_trips["ET"].astype(str).map(_ceil_block)
 
@@ -491,18 +523,56 @@ df_dh = ensure_depot_endpoint_arcs(df_dh, DEPOT_NAME, sl, el, max_dur_min=50)
 def _energy_to_events(kwh: float) -> int:
     return energy_to_events(kwh)
 
+# ------------------------------
+# Depot canonicalization helpers
+# ------------------------------
+DEPOT_BASE = str(DEPOT_NAME).rsplit("_", 1)[0] if re.search(r"_\d+$", str(DEPOT_NAME)) else str(DEPOT_NAME)
+
+def _is_depot(x: str) -> bool:
+    xs = str(x).strip()
+    xb = xs.rsplit("_", 1)[0] if re.search(r"_\d+$", xs) else xs
+    return xb == DEPOT_BASE
+
+def canon_depot(node: str) -> str:
+    s = str(node).strip()
+    base = s.rsplit("_", 1)[0] if re.search(r"_\d+$", s) else s
+    # If it's any depot variant (PARX, PARX_0, PARX_7...), normalize to DEPOT_NAME
+    return DEPOT_NAME if base == DEPOT_BASE else s
+
+# ------------------------------
+# Build allowed_arcs (WITH depot canonicalization!)
+# ------------------------------
 allowed_arcs = {}
 for _, row in df_dh.iterrows():
-    f = str(row["From"]).strip()
-    t = str(row["To"]).strip()
+    f = canon_depot(row["From"])   # <-- IMPORTANT: canonicalize here
+    t = canon_depot(row["To"])     # <-- IMPORTANT: canonicalize here
     dur_min = float(row["Duration"])
     eng_kwh = float(row["Energy used"])
     tau_blk = ceil_blocks_from_minutes(dur_min)
     d_evt   = _energy_to_events(eng_kwh)
     allowed_arcs[(f, t)] = (tau_blk, d_evt)
 
+# ------------------------------
+# Arc lookup (depot-only aliasing to reference IDs)
+# ------------------------------
 def arc_from_to(from_node: str, to_node: str):
-    return allowed_arcs.get((from_node, to_node), None)
+    from_node = canon_depot(from_node)
+    to_node   = canon_depot(to_node)
+
+    # 1) direct
+    hit = allowed_arcs.get((from_node, to_node), None)
+    if hit is not None:
+        return hit
+
+    # 2) If DEPOT involved, try mapping the other endpoint to reference-id
+    if _is_depot(from_node):
+        return allowed_arcs.get((from_node, ref_of(to_node)), None)
+
+    if _is_depot(to_node):
+        return allowed_arcs.get((ref_of(from_node), to_node), None)
+
+    # otherwise: no aliasing (keeps non-depot arcs strict)
+    return None
 
 # ------------------------------ Globals for pricing ------------------------------
 
