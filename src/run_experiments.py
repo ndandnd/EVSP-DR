@@ -253,13 +253,13 @@ DEPOT_NAME = f"{DEPOT_NAME}_0"
 
 print(f"[INFO] New Depot Name: {DEPOT_NAME}")
 print(f"[INFO] Expanded Chargers: {CHARGERS}")
-
+#%%
 
 # ----------------------------------------------------------------------
 # SINGLE canonical CHARGERS definition (use config + depot)
 # ----------------------------------------------------------------------
-CHARGERS = sorted(set(CHARGING_STATIONS + [DEPOT_NAME]))
-
+# CHARGERS = sorted(set(CHARGING_STATIONS + [DEPOT_NAME]))
+#%%
 # ----------------------------------------------------------------------
 # OPTIONAL: auto-augment deadheads with one-hop compositions
 # ----------------------------------------------------------------------
@@ -475,6 +475,29 @@ df_trips["et_blk"] = df_trips["ET"].astype(str).map(_ceil_block)
 
 df_trips["eps_events"] = df_trips["Energy used"].map(energy_to_events)
 
+
+
+# ==============================================================================
+# NEW: Diagnostic - Check Time Block Discretization
+# ==============================================================================
+print(f"\n[DIAGNOSTIC] Time Discretization Check (TBPH={TIMEBLOCKS_PER_HOUR})")
+print(f"Horizon: {bar_t} blocks")
+# Print a sample of trips to verify rounding
+print(df_trips[["Trip", "ST", "st_blk", "ET", "et_blk"]].head(20).to_string())
+
+# Check for late trips that might be clamped
+late_trips = df_trips[df_trips['et_blk'] >= bar_t]
+if not late_trips.empty:
+    print(f"\n[WARN] {len(late_trips)} trips end at or beyond the time horizon limit ({bar_t}):")
+    print(late_trips[["Trip", "ST", "st_blk", "ET", "et_blk"]].head(5).to_string())
+#==============================================================================
+
+
+
+#%%
+
+
+
 T = list(df_trips["Trip"].tolist())
 
 sl = df_trips.set_index("Trip")["SL"].to_dict()
@@ -666,7 +689,7 @@ def build_pricing(alpha, beta, gamma, mode):
     pricing_model.Params.Cuts = 0
 
     # --------- helper: strong pre-pruning for feasibility + short deadheads ---------
-    MAX_TAU = 2  # at most 2 hour-blocks between nodes in pricing graph
+    MAX_TAU = 2 * TIMEBLOCKS_PER_HOUR # at most 2 hour-blocks between nodes in pricing graph
 
     def tt_ok(i, j):
         return (

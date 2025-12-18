@@ -3,8 +3,8 @@ n_fast_cols  = 200
 n_exact_cols = 10        
 
 # ---------- Horizon ----------
-TIMEBLOCKS_PER_HOUR = 1 
-bar_t = 26*TIMEBLOCKS_PER_HOUR
+TIMEBLOCKS_PER_HOUR = 4
+bar_t = 26 * TIMEBLOCKS_PER_HOUR
 time_blocks = list(range(1, bar_t + 1))
 
 # ---------- Numerics ----------

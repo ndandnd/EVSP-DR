@@ -5,7 +5,7 @@ import string
 import matplotlib.pyplot as plt
 
 # use the shared constant from config; do NOT redefine locally
-from config import time_blocks, charge_cost_premium
+from config import time_blocks, charge_cost_premium, TIMEBLOCKS_PER_HOUR
 
 
 def make_locs(n: int):
@@ -209,11 +209,20 @@ def load_price_curve(csv_path, time_blocks, stations):
     df['time_block'] = df['time_block'].astype(int)
     df['cost'] = df['cost'].astype(float)
 
-    missing = [t for t in time_blocks if t not in set(df['time_block'])]
-    if missing:
-        raise ValueError(f"CSV missing prices for time blocks: {missing}")
+    # missing = [t for t in time_blocks if t not in set(df['time_block'])]
+    # if missing:
+    #     raise ValueError(f"CSV missing prices for time blocks: {missing}")
 
-    price_map = dict(zip(df['time_block'], df['cost']))
+    #price_map = dict(zip(df['time_block'], df['cost']))
+    raw_price_map = dict(zip(df['time_block'], df['cost']))
+
+
+
+    price_map = {}
+    for t in time_blocks:
+        # Map t (e.g. 1..156) → hour in [1..24]
+        hour_idx = ((t - 1) // TIMEBLOCKS_PER_HOUR) % 24 + 1
+        price_map[t] = raw_price_map[hour_idx]
 
 
 
