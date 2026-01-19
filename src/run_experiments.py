@@ -84,9 +84,13 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
-deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
-prices_csv    = DATA_DIR / "hourly_prices.csv"
+# routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
+# deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
+# prices_csv    = DATA_DIR / "hourly_prices.csv"
+routes_csv    = DATA_DIR / "Toy_Routes.csv"
+deadheads_csv = DATA_DIR / "Toy_DHD.csv"
+prices_csv    = DATA_DIR / "Toy_Prices.csv"
+
 
 if not routes_csv.exists():
     raise FileNotFoundError(f"Missing {routes_csv}")
@@ -97,27 +101,6 @@ if not prices_csv.exists():
 
 df_trips = pd.read_csv(routes_csv)
 
-
-
-# #### filter out trips ####
-
-# BAD_TRIPS_INDICES = [13, 14, 19, 23, 34, 43, 96, 99, 101, 103, 120, 155, 164, 181, 187, 207, 210, 212, 251, 272, 292, 304, 326, 346, 361, 365, 368, 369, 406, 407, 423, 425, 437, 438, 460, 526, 527, 530, 531, 546, 576, 589, 601, 671, 721, 724, 725, 762, 763, 800, 801, 812, 821, 866, 869, 886, 902, 903, 934, 942, 974]
-
-
-# print(f"[FILTER] Original trip count: {len(df_trips)}")
-# print(f"[FILTER] Removing {len(BAD_TRIPS_INDICES)} trips known to be uncovered...")
-
-# # Filter out rows by index
-# df_trips = df_trips.drop(BAD_TRIPS_INDICES, errors='ignore')
-
-# # IMPORTANT: Reset index so the resulting T list is contiguous (0, 1, 2...)
-# # This ensures the rest of your code (which assumes Trip ID maps to range(N)) remains valid.
-# df_trips = df_trips.reset_index(drop=True)
-
-# print(f"[FILTER] New trip count: {len(df_trips)}")
-
-
-# #### filter out trips ####
 
 
 
@@ -161,51 +144,48 @@ if missing_dh:
                      f"could not find: {missing_dh}. Found: {set(df_dh.columns)}")
 df_dh = df_dh.rename(columns={dh_col_map[k]: k for k in dh_col_map})
 
+
 # ==============================================================================
-# NEW: Graph Node Explosion (Station Copies) with Bridge Arcs
+# Graph Node Explosion (Station Copies) -- COPIES ONLY, underscore-safe
 # ==============================================================================
+def strip_copy_suffix(name: str) -> str:
+    s = str(name).strip()
+    if "_" in s:
+        left, right = s.rsplit("_", 1)
+        if right.isdigit():
+            return left
+    return s
+
+def variants_copies_only(node_name, station_copies):
+    base = strip_copy_suffix(node_name)
+    if base in station_copies:
+        c = station_copies[base]
+        return [f"{base}_{k}" for k in range(c)]
+    else:
+        return [str(node_name).strip()]
+
 def explode_graph_nodes(df, station_copies):
     """
-    Explodes rows in df_dh to account for station copies.
-    Crucially, this version INCLUDES the Base Name in the variants, ensuring
-    that Base->Copy and Copy->Base arcs are generated directly.
-    This bypasses the 40-minute limit in augment_deadheads.
+    Replaces any station base node (e.g. DEPOT, CHARGER1) by its copies
+    (e.g. DEPOT_0, DEPOT_1, ...) everywhere in the deadhead arcs.
+    Does NOT keep base nodes in the graph.
     """
     new_rows = []
-    
-    # Helper: Get ALL variants (Base + Copies)
-    def get_variants_inclusive(node_name):
-        node_str = str(node_name).strip()
-        # Always start with the Base name so we keep Base->Base connections
-        variants = [node_str] 
-        
-        if node_str in station_copies:
-            count = station_copies[node_str]
-            if count > 1:
-                variants.extend([f"{node_str}_{k}" for k in range(count)])
-            else:
-                variants.append(f"{node_str}_0")
-        return variants
+    print("[INFO] Generating exploded graph arcs (copies only)...")
 
-    print("[INFO] Generating exploded graph arcs...")
     for _, row in df.iterrows():
-        # Get all versions of Source and Target (Base + Copies)
-        sources = get_variants_inclusive(row["From"])
-        targets = get_variants_inclusive(row["To"])
-        
+        sources = variants_copies_only(row["From"], station_copies)
+        targets = variants_copies_only(row["To"], station_copies)
+
         for s in sources:
             for t in targets:
-                # Avoid self-loops (e.g. 2190L -> 2190L) unless they are distinct copies
-                # or the original row was a loop.
-                if s == t: 
+                if s == t:
                     continue
-                
-                # Prevent cross-copy movement for the SAME station if not desired
-                # (e.g. prevent 2190L_0 -> 2190L_1 which implies teleporting between plugs)
-                # We check if they share the same base but are different variants
-                s_base = s.split('_')[0]
-                t_base = t.split('_')[0]
-                if s_base == t_base and s != t and s_base in station_copies:
+
+                # Prevent copy-to-copy "teleporting" within the same physical station
+                s_base = strip_copy_suffix(s)
+                t_base = strip_copy_suffix(t)
+                if (s_base == t_base) and (s_base in station_copies) and (s != t):
                     continue
 
                 new_r = row.copy()
@@ -213,52 +193,40 @@ def explode_graph_nodes(df, station_copies):
                 new_r["To"]   = t
                 new_rows.append(new_r)
 
-    # 2. Bridge Arcs (Copy <-> Base Name) with 0 Cost
-    # These are technically redundant if the loop above generates Base->Copy arcs,
-    # but we keep them to allow 0-cost "docking" logic if needed by the solver.
-    bridge_rows = []
-    for base_name, count in station_copies.items():
-        variants = [f"{base_name}_{k}" if count > 1 else f"{base_name}_0" for k in range(count)]
-        
-        for v in variants:
-            # Bridge: Variant -> Base (Cost 0)
-            bridge_rows.append({
-                "From": v, "To": base_name, "Duration": 0.0, "Energy used": 0.0
-            })
-            # Bridge: Base -> Variant (Cost 0)
-            bridge_rows.append({
-                "From": base_name, "To": v, "Duration": 0.0, "Energy used": 0.0
-            })
+    return pd.DataFrame(new_rows)
 
-    # Combine
-    df_exploded = pd.DataFrame(new_rows)
-    df_bridge = pd.DataFrame(bridge_rows)
-    
-    return pd.concat([df_exploded, df_bridge], ignore_index=True)
-print("[INFO] Exploding graph nodes for station copies...")
+
 df_dh = explode_graph_nodes(df_dh, STATION_COPIES)
 
-# REBUILD GLOBAL CHARGERS LIST and DEPOT NAME
-CHARGERS = []
-for s_name in CHARGING_STATIONS:
-    count = STATION_COPIES.get(s_name, 1)
-    if count > 1:
-        for k in range(count):
-            CHARGERS.append(f"{s_name}_{k}")
-    else:
-        CHARGERS.append(f"{s_name}_0") # Consistent suffixing
 
-# Update DEPOT_NAME to match the exploded graph (usually _0)
-DEPOT_NAME = f"{DEPOT_NAME}_0" 
+
+def expand_station_copies(base_names, station_copies):
+    out = []
+    for b in base_names:
+        c = station_copies.get(b, 1)
+        for k in range(c):
+            out.append(f"{b}_{k}")
+    return out
+
+# copies only
+CHARGERS = expand_station_copies(CHARGING_STATIONS, STATION_COPIES)
+
+# choose a canonical depot copy
+DEPOT_BASE = DEPOT_NAME  # imported from config, e.g. "DEPOT"
+
+
+DEPOT_NAME = f"{DEPOT_BASE}_0"
 
 print(f"[INFO] New Depot Name: {DEPOT_NAME}")
-print(f"[INFO] Expanded Chargers: {CHARGERS}")
+print(f"[INFO] Expanded Chargers (copies only): {CHARGERS}")
 
+assert all(h.endswith("_0") or h.endswith("_1") or h.rsplit("_",1)[1].isdigit() for h in CHARGERS)
+assert "CHARGER1" not in CHARGERS  # base should NOT appear
 
-# ----------------------------------------------------------------------
-# SINGLE canonical CHARGERS definition (use config + depot)
-# ----------------------------------------------------------------------
-CHARGERS = sorted(set(CHARGING_STATIONS + [DEPOT_NAME]))
+# # ----------------------------------------------------------------------
+# # SINGLE canonical CHARGERS definition (use config + depot)
+# # ----------------------------------------------------------------------
+# CHARGERS = sorted(set(CHARGING_STATIONS + [DEPOT_NAME]))
 
 # ----------------------------------------------------------------------
 # OPTIONAL: auto-augment deadheads with one-hop compositions
@@ -502,7 +470,14 @@ for _, row in df_dh.iterrows():
     allowed_arcs[(f, t)] = (tau_blk, d_evt)
 
 def arc_from_to(from_node: str, to_node: str):
-    return allowed_arcs.get((from_node, to_node), None)
+    if str(from_node).strip() == str(to_node).strip():
+
+        return (0, 0)
+
+    return allowed_arcs.get((str(from_node).strip(), str(to_node).strip()), None)
+
+
+
 
 # ------------------------------ Globals for pricing ------------------------------
 
@@ -577,7 +552,9 @@ if unseedable:
 
 # ------------------------------ Price curve ------------------------------
 
-STATION_BASES = sorted(set(S))
+# price curve should be indexed by PHYSICAL station names (base), not copies
+STATION_BASES = sorted(set(strip_copy_suffix(s) for s in S))
+
 charging_cost_data, avg_cost_per_kwh = load_price_curve(
     str(prices_csv), time_blocks, STATION_BASES
 )
@@ -797,10 +774,15 @@ def build_pricing(alpha, beta, gamma, mode):
             pricing_model.addConstr(chi_minus[h,t]     == 0, name=f"mode1_no_dis_{h}_{t}")
             pricing_model.addConstr(chi_minus_free[h,t]== 0, name=f"mode1_no_disfree_{h}_{t}")
 
+
+
+    # depot in out
+    pricing_model.addConstr(t_in[DEPOT] <= t_out[DEPOT], name="depot_time_order")
+
     for i in T:
         if (DEPOT, i) in tau:
             pricing_model.addGenConstrIndicator(
-                wA_trip[i], 1, t_in[i] - (t_out[DEPOT] + tau[(DEPOT, i)]), GRB.GREATER_EQUAL, 0,
+                wA_trip[i], 1, t_in[i] - (t_in[DEPOT] + tau[(DEPOT, i)]), GRB.GREATER_EQUAL, 0,
                 name=f"ind_time_O2trip_{i}"
             )
         if (i, DEPOT) in tau:
@@ -811,7 +793,7 @@ def build_pricing(alpha, beta, gamma, mode):
     for h in S_use:
         if (DEPOT, h) in tau:
             pricing_model.addGenConstrIndicator(
-                wA_station[h], 1, t_in[h] - (t_out[DEPOT] + tau[(DEPOT, h)]), GRB.GREATER_EQUAL, 0,
+                wA_station[h], 1, t_in[h] - (t_in[DEPOT] + tau[(DEPOT, h)]), GRB.GREATER_EQUAL, 0,
                 name=f"ind_time_O2stat_{h}"
             )
         if (h, DEPOT) in tau:
@@ -985,6 +967,7 @@ best_master = float("inf")
 stagnant = 0
 
 while new_pricing_obj < -tolerance and iteration < max_iter:
+# for _ in range(1):
     iteration += 1
     print(f"\n--- Iteration {iteration} ---")
     t0 = time.time()

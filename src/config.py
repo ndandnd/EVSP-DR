@@ -27,29 +27,28 @@ BUS_COST_KX = 1e3
 factor = 1
 
 # ---------- Real-data names / aliases ----------
-DEPOT_NAME = "PARX"
-CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
+# IMPORTANT: Update constants to match Toy Model
+DEPOT_NAME = "DEPOT"
+CHARGING_STATIONS = ["DEPOT", "CHARGER1"]
 
+# Only duplicate the charger if you want to test queueing/symmetry
 STATION_COPIES = {
-    "2190L": 3,
-    "4808":  3,
-    "PARX":  3,  
-    "3127L": 3,
-    "7880C": 3,
-    "JON_A": 3
+    "DEPOT": 2,
+    "CHARGER1": 2
 }
 
+# DEPOT_NAME = "PARX"
+# CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
 
+# STATION_COPIES = {
+#     "2190L": 3,
+#     "4808":  3,
+#     "PARX":  3,  
+#     "3127L": 3,
+#     "7880C": 3,
+#     "JON_A": 3
+# }
 
-
-STATION_COPIES = {
-    "2190L": 3,
-    "4808":  3,
-    "PARX":  3,  
-    "3127L": 3,
-    "7880C": 3,
-    "JON_A": 3
-}
 
 
 

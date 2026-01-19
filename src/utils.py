@@ -35,15 +35,27 @@ def plot_net_with_delta(net, delta, time_blocks, solar_mult, mode_name, base_eps
 
 
 # ---------- pricing costs (uses time-varying price table) ----------
-
+def base_station_name(name: str) -> str:
+    s = str(name).strip()
+    if "_" in s:
+        left, right = s.rsplit("_", 1)
+        if right.isdigit():   # only strip copy suffix
+            return left
+    return s
 def calculate_truck_route_cost(route, truck_cost, charging_cost_data: pd.DataFrame) -> float:
     total = float(truck_cost)
     cs = route.get("charging_stops", {})
+
     for (h, t) in cs.get("chi_plus", []):
-        total += float(charging_cost_data.at[int(t), str(h)]) * charge_cost_premium
+        h_base = base_station_name(h)
+        total += float(charging_cost_data.at[int(t), h_base]) * charge_cost_premium
+
     for (h, t) in cs.get("chi_minus", []):
-        total -= float(charging_cost_data.at[int(t), str(h)])
+        h_base = base_station_name(h)
+        total -= float(charging_cost_data.at[int(t), h_base])
+
     return total
+
 
 def calculate_battery_route_cost(route, batt_cost, charging_cost_data: pd.DataFrame) -> float:
     total = float(batt_cost)
