@@ -84,12 +84,12 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-# routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
-# deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
-# prices_csv    = DATA_DIR / "hourly_prices.csv"
-routes_csv    = DATA_DIR / "Toy_Routes.csv"
-deadheads_csv = DATA_DIR / "Toy_DHD.csv"
-prices_csv    = DATA_DIR / "Toy_Prices.csv"
+routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
+deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
+prices_csv    = DATA_DIR / "hourly_prices.csv"
+# routes_csv    = DATA_DIR / "Toy_Routes.csv"
+# deadheads_csv = DATA_DIR / "Toy_DHD.csv"
+# prices_csv    = DATA_DIR / "Toy_Prices.csv"
 
 
 if not routes_csv.exists():
