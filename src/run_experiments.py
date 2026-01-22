@@ -15,6 +15,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from gurobipy import Model, Column, GRB, quicksum
+# from collections import Counter, defaultdict
 
 from config import (
     n_fast_cols, n_exact_cols, tolerance,
@@ -31,6 +32,7 @@ from config import (
     THREADS, NODEFILE_START, NODEFILE_DIR,
     MASTER_TIMELIMIT, PRICING_TIMELIMIT, PRICING_GAP
 )
+
 from utils import (
     load_price_curve, extract_duals, extract_route_from_solution,
     calculate_truck_route_cost
@@ -87,6 +89,9 @@ DATA_DIR = ROOT.parent / "data"
 routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
 deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
+# details_csv    = DATA_DIR / "Par_VehicleDetails.csv"
+# vd_csv = DATA_DIR / "Par_VehicleDetails.csv"  # or VehicleDetails.csv
+
 # routes_csv    = DATA_DIR / "Toy_Routes.csv"
 # deadheads_csv = DATA_DIR / "Toy_DHD.csv"
 # prices_csv    = DATA_DIR / "Toy_Prices.csv"
@@ -102,6 +107,68 @@ if not prices_csv.exists():
 df_trips = pd.read_csv(routes_csv)
 
 
+
+# # ------------------------------
+# # Build loc -> reference map from VehicleDetails
+# # ------------------------------
+# def _norm_loc(x):
+#     if pd.isna(x):
+#         return None
+#     return str(x).strip()
+
+# def _norm_ref(x):
+#     if pd.isna(x):
+#         return None
+#     s = str(x).strip()
+#     # "13410.0" -> "13410"
+#     if s.endswith(".0"):
+#         s = s[:-2]
+#     return s
+
+# def build_loc_to_ref(vehicle_details_df: pd.DataFrame):
+#     pairs = []
+
+#     if {"From1", "Refer."}.issubset(vehicle_details_df.columns):
+#         tmp = vehicle_details_df[["From1", "Refer."]]
+#         for loc, ref in zip(tmp["From1"], tmp["Refer."]):
+#             loc, ref = _norm_loc(loc), _norm_ref(ref)
+#             if loc and ref:
+#                 pairs.append((loc, ref))
+
+#     if {"To1", "Refer.1"}.issubset(vehicle_details_df.columns):
+#         tmp = vehicle_details_df[["To1", "Refer.1"]]
+#         for loc, ref in zip(tmp["To1"], tmp["Refer.1"]):
+#             loc, ref = _norm_loc(loc), _norm_ref(ref)
+#             if loc and ref:
+#                 pairs.append((loc, ref))
+
+#     counts = defaultdict(Counter)
+#     for loc, ref in pairs:
+#         counts[loc][ref] += 1
+
+#     loc_to_ref = {}
+#     ambiguous = {}
+#     for loc, ctr in counts.items():
+#         best_ref, best_ct = ctr.most_common(1)[0]
+#         loc_to_ref[loc] = best_ref
+#         if len(ctr) > 1:
+#             ambiguous[loc] = ctr
+
+#     print(f"[map] loc_to_ref size = {len(loc_to_ref)}")
+#     if ambiguous:
+#         print(f"[map] ambiguous locations = {len(ambiguous)} (showing up to 20)")
+#         for loc, ctr in list(ambiguous.items())[:20]:
+#             print(" ", loc, dict(ctr))
+
+#     return loc_to_ref
+
+# # ------------------------------
+# # Load VehicleDetails.csv (preprocess once)
+# # ------------------------------
+
+# loc_to_ref = {}
+# df_vd = pd.read_csv(vd_csv, low_memory=False)
+# loc_to_ref = build_loc_to_ref(df_vd)
 
 
 trip_col_map = {"SL": None, "ST": None, "ET": None, "EL": None, "Energy used": None}
@@ -231,6 +298,8 @@ assert "CHARGER1" not in CHARGERS  # base should NOT appear
 # ----------------------------------------------------------------------
 # OPTIONAL: auto-augment deadheads with one-hop compositions
 # ----------------------------------------------------------------------
+
+
 def augment_deadheads(df, chargers):
     df = df.copy()
     df["From"] = df["From"].astype(str).str.strip()
@@ -469,6 +538,8 @@ for _, row in df_dh.iterrows():
     d_evt   = _energy_to_events(eng_kwh)
     allowed_arcs[(f, t)] = (tau_blk, d_evt)
 
+
+# arc_from_to before we allowed ref to reference.
 def arc_from_to(from_node: str, to_node: str):
     if str(from_node).strip() == str(to_node).strip():
 
@@ -476,6 +547,59 @@ def arc_from_to(from_node: str, to_node: str):
 
     return allowed_arcs.get((str(from_node).strip(), str(to_node).strip()), None)
 
+# # ------------------------------
+# # Arc lookup with stats
+# # ------------------------------
+# fallback_hits = 0
+# direct_hits = 0
+# mixed_hits = 0
+# misses = 0
+
+
+# def arc_from_to(from_node, to_node):
+#     global fallback_hits, direct_hits, mixed_hits, misses
+
+#     f = str(from_node).strip()
+#     t = str(to_node).strip()
+#     if f == t:
+#         return (0, 0)
+
+#     # 1) direct (location->location)
+#     pair = allowed_arcs.get((f, t), None)
+#     if pair is not None:
+#         direct_hits += 1
+#         return pair
+
+#     if not loc_to_ref:
+#         misses += 1
+#         return None
+
+#     # 2) fallback using refs (use base names for station copies)
+#     base_f = strip_copy_suffix(f)
+#     base_t = strip_copy_suffix(t)
+
+#     f_ref = loc_to_ref.get(base_f, base_f)
+#     t_ref = loc_to_ref.get(base_t, base_t)
+
+#     # try ref->ref
+#     pair = allowed_arcs.get((f_ref, t_ref), None)
+#     if pair is not None:
+#         fallback_hits += 1
+#         return pair
+
+#     # try mixed (helps when only one side is missing in DHD)
+#     pair = allowed_arcs.get((f_ref, t), None)
+#     if pair is not None:
+#         mixed_hits += 1
+#         return pair
+
+#     pair = allowed_arcs.get((f, t_ref), None)
+#     if pair is not None:
+#         mixed_hits += 1
+#         return pair
+
+#     misses += 1
+#     return None
 
 
 
@@ -947,6 +1071,7 @@ pd.DataFrame({"Trip": missing_pullout, "SL": [sl[i] for i in missing_pullout]}).
 pd.DataFrame({"Trip": missing_pulluin, "EL": [el[i] for i in missing_pulluin]}).to_csv(diag_dir / "missing_pulluin.csv", index=False)
 print(f"[WRITE] Diagnostics saved under {diag_dir}")
 
+
 # ------------------------------ CG loop ------------------------------
 
 iteration = 0
@@ -1200,6 +1325,11 @@ dummy_used = [r for r in used_routes if R_truck[r].get("dummy", False)]
 real_used  = [r for r in used_routes if not R_truck[r].get("dummy", False)]
 print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
 print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
+
+
+# arc stats
+# print(f"[arc stats] direct={direct_hits} fallback(ref->ref)={fallback_hits} mixed={mixed_hits} misses={misses}")
+
 
 # %%
 

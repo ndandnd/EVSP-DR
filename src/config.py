@@ -3,8 +3,8 @@ n_fast_cols  = 200
 n_exact_cols = 10        
 
 # ---------- Horizon ----------
-TIMEBLOCKS_PER_HOUR = 1 
-bar_t = 26*TIMEBLOCKS_PER_HOUR
+TIMEBLOCKS_PER_HOUR = 60
+bar_t = 26 * TIMEBLOCKS_PER_HOUR
 time_blocks = list(range(1, bar_t + 1))
 
 # ---------- Numerics ----------
@@ -28,26 +28,26 @@ factor = 1
 
 # ---------- Real-data names / aliases ----------
 # IMPORTANT: Update constants to match Toy Model
-DEPOT_NAME = "DEPOT"
-CHARGING_STATIONS = ["DEPOT", "CHARGER1"]
+# DEPOT_NAME = "DEPOT"
+# CHARGING_STATIONS = ["DEPOT", "CHARGER1"]
 
 # Only duplicate the charger if you want to test queueing/symmetry
-STATION_COPIES = {
-    "DEPOT": 2,
-    "CHARGER1": 2
-}
-
-# DEPOT_NAME = "PARX"
-# CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
-
 # STATION_COPIES = {
-#     "2190L": 3,
-#     "4808":  3,
-#     "PARX":  3,  
-#     "3127L": 3,
-#     "7880C": 3,
-#     "JON_A": 3
+#     "DEPOT": 2,
+#     "CHARGER1": 2
 # }
+
+DEPOT_NAME = "PARX"
+CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
+
+STATION_COPIES = {
+    "2190L": 3,
+    "4808":  3,
+    "PARX":  3,  
+    "3127L": 3,
+    "7880C": 3,
+    "JON_A": 3
+}
 
 
 
