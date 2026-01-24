@@ -54,7 +54,7 @@ STATION_COPIES = {
 
 
 MODE_EVS_ONLY        = True
-BIG_M_PENALTY       = 1e9
+BIG_M_PENALTY       = 1e5
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)
