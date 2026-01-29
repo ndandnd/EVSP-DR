@@ -38,6 +38,10 @@ from utils import (
     calculate_truck_route_cost
 )
 from master import init_master, solve_master, build_master
+#%%
+
+begin = time.time()
+
 
 # ------------------------------ Output dirs ------------------------------
 RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1334,3 +1338,6 @@ print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 # %%
 
 #thisfile has unsaved changes on symm breaking a1 \leq a2
+end = time.time()
+print(f"\n=== TOTAL TIME: {end - begin:.2f} seconds ===")
+# %%

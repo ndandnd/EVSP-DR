@@ -12,12 +12,12 @@ tolerance = 1e-4
 
 # ---------- Energy / charging scale ----------
 BLOCK_KWH = 30.0
-G_KWH     = 240.0
+G_KWH     = 270.0
 ENERGY_PER_BLOCK_KWH = BLOCK_KWH / TIMEBLOCKS_PER_HOUR
 G         = int(round(G_KWH / BLOCK_KWH))
 assert G > 0
 
-charge_mult = 1
+charge_mult = 40
 charge_cost_premium = 1 + 1e-2
 
 # ---------- Costs ----------
