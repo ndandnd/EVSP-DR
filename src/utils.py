@@ -35,15 +35,27 @@ def plot_net_with_delta(net, delta, time_blocks, solar_mult, mode_name, base_eps
 
 
 # ---------- pricing costs (uses time-varying price table) ----------
-
+def base_station_name(name: str) -> str:
+    s = str(name).strip()
+    if "_" in s:
+        left, right = s.rsplit("_", 1)
+        if right.isdigit():   # only strip copy suffix
+            return left
+    return s
 def calculate_truck_route_cost(route, truck_cost, charging_cost_data: pd.DataFrame) -> float:
     total = float(truck_cost)
     cs = route.get("charging_stops", {})
+
     for (h, t) in cs.get("chi_plus", []):
-        total += float(charging_cost_data.at[int(t), str(h)]) * charge_cost_premium
+        h_base = base_station_name(h)
+        total += float(charging_cost_data.at[int(t), h_base]) * charge_cost_premium
+
     for (h, t) in cs.get("chi_minus", []):
-        total -= float(charging_cost_data.at[int(t), str(h)])
+        h_base = base_station_name(h)
+        total -= float(charging_cost_data.at[int(t), h_base])
+
     return total
+
 
 def calculate_battery_route_cost(route, batt_cost, charging_cost_data: pd.DataFrame) -> float:
     total = float(batt_cost)
@@ -201,7 +213,50 @@ def extract_route_from_solution(vars_dict, T, S, bar_t, depot="PARX", value_gett
 
 # ---------- price curve loader ----------
 
-def load_price_curve(csv_path, time_blocks, stations):
+# def load_price_curve(csv_path, time_blocks, stations):
+#     df = pd.read_csv(csv_path)
+#     if not {'time_block', 'cost'}.issubset(df.columns):
+#         raise ValueError("CSV must have columns: time_block,cost")
+
+#     df['time_block'] = df['time_block'].astype(int)
+#     df['cost'] = df['cost'].astype(float)
+
+#     missing = [t for t in time_blocks if t not in set(df['time_block'])]
+#     if missing:
+#         raise ValueError(f"CSV missing prices for time blocks: {missing}")
+
+#     price_map = dict(zip(df['time_block'], df['cost']))
+
+
+
+#     #data = [[price_map[t] for _ in stations] for t in time_blocks]
+    
+    
+
+#     data = []
+#     for t in time_blocks:
+#         row = []
+#         for s in stations:
+#             # 1. Parse base name to handle copies (e.g., "2190L_1" -> "2190L")
+#             if "_" in s and s.split("_")[-1].isdigit():
+#                 base_name = s.rsplit("_", 1)[0]
+#             else:
+#                 base_name = s
+
+#             # 2. Get base price (using base_name logic if you had station-specific columns)
+#             # Since we use a single price_map currently:
+#             cost = price_map[t]
+            
+#             row.append(cost)
+#         data.append(row)
+    
+    
+#     charging_cost_data = pd.DataFrame(data, index=time_blocks, columns=stations)
+#     avg_cost = float(np.mean([price_map[t] for t in time_blocks]))
+#     return charging_cost_data, avg_cost
+
+
+def load_price_curve(csv_path, time_blocks, stations, timeblocks_per_hour=1, clamp_to_csv=True):
     df = pd.read_csv(csv_path)
     if not {'time_block', 'cost'}.issubset(df.columns):
         raise ValueError("CSV must have columns: time_block,cost")
@@ -209,45 +264,37 @@ def load_price_curve(csv_path, time_blocks, stations):
     df['time_block'] = df['time_block'].astype(int)
     df['cost'] = df['cost'].astype(float)
 
-    # missing = [t for t in time_blocks if t not in set(df['time_block'])]
-    # if missing:
-    #     raise ValueError(f"CSV missing prices for time blocks: {missing}")
+    # Build hourly map from CSV
+    price_map_hour = dict(zip(df['time_block'], df['cost']))
+    max_hour_in_csv = max(price_map_hour.keys())
 
-    #price_map = dict(zip(df['time_block'], df['cost']))
-    raw_price_map = dict(zip(df['time_block'], df['cost']))
+    k = int(timeblocks_per_hour)
+    if k <= 0:
+        raise ValueError(f"timeblocks_per_hour must be positive, got {k}")
 
+    # Map fine block -> hour index (ceil(t/k))
+    def block_to_hour(t: int) -> int:
+        h = (int(t) + k - 1) // k
+        if clamp_to_csv:
+            return min(h, max_hour_in_csv)
+        return h
 
+    # Validate *hours* needed exist (not fine blocks)
+    needed_hours = {block_to_hour(t) for t in time_blocks}
+    missing_hours = sorted(h for h in needed_hours if h not in price_map_hour)
+    if missing_hours:
+        raise ValueError(f"CSV missing prices for HOURS needed: {missing_hours}")
 
-    price_map = {}
-    for t in time_blocks:
-        # Map t (e.g. 1..156) → hour in [1..24]
-        hour_idx = ((t - 1) // TIMEBLOCKS_PER_HOUR) % 24 + 1
-        price_map[t] = raw_price_map[hour_idx]
+    # Expand to per-(fine block) price
+    price_map_block = {t: price_map_hour[block_to_hour(t)] for t in time_blocks}
 
-
-
-    #data = [[price_map[t] for _ in stations] for t in time_blocks]
-    
-    
-
+    # Build station x time table (still same price for all stations in your current setup)
     data = []
     for t in time_blocks:
-        row = []
-        for s in stations:
-            # 1. Parse base name to handle copies (e.g., "2190L_1" -> "2190L")
-            if "_" in s and s.split("_")[-1].isdigit():
-                base_name = s.rsplit("_", 1)[0]
-            else:
-                base_name = s
-
-            # 2. Get base price (using base_name logic if you had station-specific columns)
-            # Since we use a single price_map currently:
-            cost = price_map[t]
-            
-            row.append(cost)
+        cost = price_map_block[t]
+        row = [cost for _ in stations]
         data.append(row)
-    
-    
+
     charging_cost_data = pd.DataFrame(data, index=time_blocks, columns=stations)
-    avg_cost = float(np.mean([price_map[t] for t in time_blocks]))
+    avg_cost = float(np.mean([price_map_block[t] for t in time_blocks]))
     return charging_cost_data, avg_cost

@@ -15,6 +15,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from gurobipy import Model, Column, GRB, quicksum
+# from collections import Counter, defaultdict
 
 from config import (
     n_fast_cols, n_exact_cols, tolerance,
@@ -31,11 +32,16 @@ from config import (
     THREADS, NODEFILE_START, NODEFILE_DIR,
     MASTER_TIMELIMIT, PRICING_TIMELIMIT, PRICING_GAP
 )
+
 from utils import (
     load_price_curve, extract_duals, extract_route_from_solution,
     calculate_truck_route_cost
 )
 from master import init_master, solve_master, build_master
+#%%
+
+begin = time.time()
+
 
 # ------------------------------ Output dirs ------------------------------
 RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -84,9 +90,20 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-routes_csv    = DATA_DIR / "Par_Routes_For_Code.csv"
+routes_csv    = DATA_DIR / "Par_Routes_Overhauled.csv"
+# routes_csv = DATA_DIR / "Par_Routes_for_code.csv"
 deadheads_csv = DATA_DIR / "Par_DHD_for_code.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
+
+# details_csv    = DATA_DIR / "Par_VehicleDetails.csv"
+# vd_csv = DATA_DIR / "Par_VehicleDetails.csv"  # or VehicleDetails.csv
+
+vd_csv = DATA_DIR / "Par_VehicleDetails_Updated.csv"
+
+# routes_csv    = DATA_DIR / "Toy_Routes.csv"
+# deadheads_csv = DATA_DIR / "Toy_DHD.csv"
+# prices_csv    = DATA_DIR / "Toy_Prices.csv"
+
 
 if not routes_csv.exists():
     raise FileNotFoundError(f"Missing {routes_csv}")
@@ -99,26 +116,67 @@ df_trips = pd.read_csv(routes_csv)
 
 
 
-# #### filter out trips ####
+# # ------------------------------
+# # Build loc -> reference map from VehicleDetails
+# # ------------------------------
+# def _norm_loc(x):
+#     if pd.isna(x):
+#         return None
+#     return str(x).strip()
 
-# BAD_TRIPS_INDICES = [13, 14, 19, 23, 34, 43, 96, 99, 101, 103, 120, 155, 164, 181, 187, 207, 210, 212, 251, 272, 292, 304, 326, 346, 361, 365, 368, 369, 406, 407, 423, 425, 437, 438, 460, 526, 527, 530, 531, 546, 576, 589, 601, 671, 721, 724, 725, 762, 763, 800, 801, 812, 821, 866, 869, 886, 902, 903, 934, 942, 974]
+# def _norm_ref(x):
+#     if pd.isna(x):
+#         return None
+#     s = str(x).strip()
+#     # "13410.0" -> "13410"
+#     if s.endswith(".0"):
+#         s = s[:-2]
+#     return s
 
+# def build_loc_to_ref(vehicle_details_df: pd.DataFrame):
+#     pairs = []
 
-# print(f"[FILTER] Original trip count: {len(df_trips)}")
-# print(f"[FILTER] Removing {len(BAD_TRIPS_INDICES)} trips known to be uncovered...")
+#     if {"From1", "Refer."}.issubset(vehicle_details_df.columns):
+#         tmp = vehicle_details_df[["From1", "Refer."]]
+#         for loc, ref in zip(tmp["From1"], tmp["Refer."]):
+#             loc, ref = _norm_loc(loc), _norm_ref(ref)
+#             if loc and ref:
+#                 pairs.append((loc, ref))
 
-# # Filter out rows by index
-# df_trips = df_trips.drop(BAD_TRIPS_INDICES, errors='ignore')
+#     if {"To1", "Refer.1"}.issubset(vehicle_details_df.columns):
+#         tmp = vehicle_details_df[["To1", "Refer.1"]]
+#         for loc, ref in zip(tmp["To1"], tmp["Refer.1"]):
+#             loc, ref = _norm_loc(loc), _norm_ref(ref)
+#             if loc and ref:
+#                 pairs.append((loc, ref))
 
-# # IMPORTANT: Reset index so the resulting T list is contiguous (0, 1, 2...)
-# # This ensures the rest of your code (which assumes Trip ID maps to range(N)) remains valid.
-# df_trips = df_trips.reset_index(drop=True)
+#     counts = defaultdict(Counter)
+#     for loc, ref in pairs:
+#         counts[loc][ref] += 1
 
-# print(f"[FILTER] New trip count: {len(df_trips)}")
+#     loc_to_ref = {}
+#     ambiguous = {}
+#     for loc, ctr in counts.items():
+#         best_ref, best_ct = ctr.most_common(1)[0]
+#         loc_to_ref[loc] = best_ref
+#         if len(ctr) > 1:
+#             ambiguous[loc] = ctr
 
+#     print(f"[map] loc_to_ref size = {len(loc_to_ref)}")
+#     if ambiguous:
+#         print(f"[map] ambiguous locations = {len(ambiguous)} (showing up to 20)")
+#         for loc, ctr in list(ambiguous.items())[:20]:
+#             print(" ", loc, dict(ctr))
 
-# #### filter out trips ####
+#     return loc_to_ref
 
+# # ------------------------------
+# # Load VehicleDetails.csv (preprocess once)
+# # ------------------------------
+
+# loc_to_ref = {}
+# df_vd = pd.read_csv(vd_csv, low_memory=False)
+# loc_to_ref = build_loc_to_ref(df_vd)
 
 
 trip_col_map = {"SL": None, "ST": None, "ET": None, "EL": None, "Energy used": None}
@@ -161,51 +219,48 @@ if missing_dh:
                      f"could not find: {missing_dh}. Found: {set(df_dh.columns)}")
 df_dh = df_dh.rename(columns={dh_col_map[k]: k for k in dh_col_map})
 
+
 # ==============================================================================
-# NEW: Graph Node Explosion (Station Copies) with Bridge Arcs
+# Graph Node Explosion (Station Copies) -- COPIES ONLY, underscore-safe
 # ==============================================================================
+def strip_copy_suffix(name: str) -> str:
+    s = str(name).strip()
+    if "_" in s:
+        left, right = s.rsplit("_", 1)
+        if right.isdigit():
+            return left
+    return s
+
+def variants_copies_only(node_name, station_copies):
+    base = strip_copy_suffix(node_name)
+    if base in station_copies:
+        c = station_copies[base]
+        return [f"{base}_{k}" for k in range(c)]
+    else:
+        return [str(node_name).strip()]
+
 def explode_graph_nodes(df, station_copies):
     """
-    Explodes rows in df_dh to account for station copies.
-    Crucially, this version INCLUDES the Base Name in the variants, ensuring
-    that Base->Copy and Copy->Base arcs are generated directly.
-    This bypasses the 40-minute limit in augment_deadheads.
+    Replaces any station base node (e.g. DEPOT, CHARGER1) by its copies
+    (e.g. DEPOT_0, DEPOT_1, ...) everywhere in the deadhead arcs.
+    Does NOT keep base nodes in the graph.
     """
     new_rows = []
-    
-    # Helper: Get ALL variants (Base + Copies)
-    def get_variants_inclusive(node_name):
-        node_str = str(node_name).strip()
-        # Always start with the Base name so we keep Base->Base connections
-        variants = [node_str] 
-        
-        if node_str in station_copies:
-            count = station_copies[node_str]
-            if count > 1:
-                variants.extend([f"{node_str}_{k}" for k in range(count)])
-            else:
-                variants.append(f"{node_str}_0")
-        return variants
+    print("[INFO] Generating exploded graph arcs (copies only)...")
 
-    print("[INFO] Generating exploded graph arcs...")
     for _, row in df.iterrows():
-        # Get all versions of Source and Target (Base + Copies)
-        sources = get_variants_inclusive(row["From"])
-        targets = get_variants_inclusive(row["To"])
-        
+        sources = variants_copies_only(row["From"], station_copies)
+        targets = variants_copies_only(row["To"], station_copies)
+
         for s in sources:
             for t in targets:
-                # Avoid self-loops (e.g. 2190L -> 2190L) unless they are distinct copies
-                # or the original row was a loop.
-                if s == t: 
+                if s == t:
                     continue
-                
-                # Prevent cross-copy movement for the SAME station if not desired
-                # (e.g. prevent 2190L_0 -> 2190L_1 which implies teleporting between plugs)
-                # We check if they share the same base but are different variants
-                s_base = s.split('_')[0]
-                t_base = t.split('_')[0]
-                if s_base == t_base and s != t and s_base in station_copies:
+
+                # Prevent copy-to-copy "teleporting" within the same physical station
+                s_base = strip_copy_suffix(s)
+                t_base = strip_copy_suffix(t)
+                if (s_base == t_base) and (s_base in station_copies) and (s != t):
                     continue
 
                 new_r = row.copy()
@@ -213,56 +268,46 @@ def explode_graph_nodes(df, station_copies):
                 new_r["To"]   = t
                 new_rows.append(new_r)
 
-    # 2. Bridge Arcs (Copy <-> Base Name) with 0 Cost
-    # These are technically redundant if the loop above generates Base->Copy arcs,
-    # but we keep them to allow 0-cost "docking" logic if needed by the solver.
-    bridge_rows = []
-    for base_name, count in station_copies.items():
-        variants = [f"{base_name}_{k}" if count > 1 else f"{base_name}_0" for k in range(count)]
-        
-        for v in variants:
-            # Bridge: Variant -> Base (Cost 0)
-            bridge_rows.append({
-                "From": v, "To": base_name, "Duration": 0.0, "Energy used": 0.0
-            })
-            # Bridge: Base -> Variant (Cost 0)
-            bridge_rows.append({
-                "From": base_name, "To": v, "Duration": 0.0, "Energy used": 0.0
-            })
+    return pd.DataFrame(new_rows)
 
-    # Combine
-    df_exploded = pd.DataFrame(new_rows)
-    df_bridge = pd.DataFrame(bridge_rows)
-    
-    return pd.concat([df_exploded, df_bridge], ignore_index=True)
-print("[INFO] Exploding graph nodes for station copies...")
+
 df_dh = explode_graph_nodes(df_dh, STATION_COPIES)
 
-# REBUILD GLOBAL CHARGERS LIST and DEPOT NAME
-CHARGERS = []
-for s_name in CHARGING_STATIONS:
-    count = STATION_COPIES.get(s_name, 1)
-    if count > 1:
-        for k in range(count):
-            CHARGERS.append(f"{s_name}_{k}")
-    else:
-        CHARGERS.append(f"{s_name}_0") # Consistent suffixing
 
-# Update DEPOT_NAME to match the exploded graph (usually _0)
-DEPOT_NAME = f"{DEPOT_NAME}_0" 
+
+def expand_station_copies(base_names, station_copies):
+    out = []
+    for b in base_names:
+        c = station_copies.get(b, 1)
+        for k in range(c):
+            out.append(f"{b}_{k}")
+    return out
+
+# copies only
+CHARGERS = expand_station_copies(CHARGING_STATIONS, STATION_COPIES)
+DEPOT_BASE = DEPOT_NAME
+
+DEPOT_NAME = f"{DEPOT_BASE}_0"
+
+DEPOT = DEPOT_NAME
+
 
 print(f"[INFO] New Depot Name: {DEPOT_NAME}")
-print(f"[INFO] Expanded Chargers: {CHARGERS}")
-#%%
+print(f"[INFO] Expanded Chargers (copies only): {CHARGERS}")
 
-# ----------------------------------------------------------------------
-# SINGLE canonical CHARGERS definition (use config + depot)
-# ----------------------------------------------------------------------
+assert all(h.endswith("_0") or h.endswith("_1") or h.rsplit("_",1)[1].isdigit() for h in CHARGERS)
+assert "CHARGER1" not in CHARGERS  # base should NOT appear
+
+# # ----------------------------------------------------------------------
+# # SINGLE canonical CHARGERS definition (use config + depot)
+# # ----------------------------------------------------------------------
 # CHARGERS = sorted(set(CHARGING_STATIONS + [DEPOT_NAME]))
-#%%
+
 # ----------------------------------------------------------------------
 # OPTIONAL: auto-augment deadheads with one-hop compositions
 # ----------------------------------------------------------------------
+
+
 def augment_deadheads(df, chargers):
     df = df.copy()
     df["From"] = df["From"].astype(str).str.strip()
@@ -372,6 +417,16 @@ def augment_depot_bridging(df, depot):
 
     print(f"[augment/depot] added {len(composed)} depot-bridging arcs (≤ {MAX_INDIRECT_MIN} min)")
     return out
+
+# DEPOT_CHARGERS = [f"PARX_{k}" for k in range(STATION_COPIES["PARX"])]
+
+# rows = []
+# for h in DEPOT_CHARGERS:
+#     rows += [
+#         {"From": DEPOT_NAME, "To": h, "Duration": 0, "Energy used": 0},
+#         {"From": h, "To": DEPOT_NAME, "Duration": 0, "Energy used": 0},
+#     ]
+# df_dh = pd.concat([df_dh, pd.DataFrame(rows)], ignore_index=True)
 
 df_dh = augment_depot_bridging(df_dh, DEPOT_NAME)
 
@@ -524,14 +579,77 @@ for _, row in df_dh.iterrows():
     d_evt   = _energy_to_events(eng_kwh)
     allowed_arcs[(f, t)] = (tau_blk, d_evt)
 
-def arc_from_to(from_node: str, to_node: str):
-    return allowed_arcs.get((from_node, to_node), None)
 
+# arc_from_to before we allowed ref to reference.
+def arc_from_to(from_node: str, to_node: str):
+    if str(from_node).strip() == str(to_node).strip():
+
+        return (0, 0)
+
+    return allowed_arcs.get((str(from_node).strip(), str(to_node).strip()), None)
+
+# # ------------------------------
+# # Arc lookup with stats
+# # ------------------------------
+# fallback_hits = 0
+# direct_hits = 0
+# mixed_hits = 0
+# misses = 0
+
+
+# def arc_from_to(from_node, to_node):
+#     global fallback_hits, direct_hits, mixed_hits, misses
+
+#     f = str(from_node).strip()
+#     t = str(to_node).strip()
+#     if f == t:
+#         return (0, 0)
+
+#     # 1) direct (location->location)
+#     pair = allowed_arcs.get((f, t), None)
+#     if pair is not None:
+#         direct_hits += 1
+#         return pair
+
+#     if not loc_to_ref:
+#         misses += 1
+#         return None
+
+#     # 2) fallback using refs (use base names for station copies)
+#     base_f = strip_copy_suffix(f)
+#     base_t = strip_copy_suffix(t)
+
+#     f_ref = loc_to_ref.get(base_f, base_f)
+#     t_ref = loc_to_ref.get(base_t, base_t)
+
+#     # try ref->ref
+#     pair = allowed_arcs.get((f_ref, t_ref), None)
+#     if pair is not None:
+#         fallback_hits += 1
+#         return pair
+
+#     # try mixed (helps when only one side is missing in DHD)
+#     pair = allowed_arcs.get((f_ref, t), None)
+#     if pair is not None:
+#         mixed_hits += 1
+#         return pair
+
+#     pair = allowed_arcs.get((f, t_ref), None)
+#     if pair is not None:
+#         mixed_hits += 1
+#         return pair
+
+#     misses += 1
+#     return None
+
+
+#%%
 # ------------------------------ Globals for pricing ------------------------------
 
-S = CHARGERS[:]  # stations set (includes depot name too)
+S = CHARGERS[:]  # stations set 
+# S = [h for h in S if h != DEPOT] # make sure not to include depot
 G = energy_to_events(G_KWH)  
-DEPOT = DEPOT_NAME
+
 
 tau = {}
 d   = {}
@@ -600,7 +718,9 @@ if unseedable:
 
 # ------------------------------ Price curve ------------------------------
 
-STATION_BASES = sorted(set(S))
+# price curve should be indexed by PHYSICAL station names (base), not copies
+STATION_BASES = sorted(set(strip_copy_suffix(s) for s in S))
+
 charging_cost_data, avg_cost_per_kwh = load_price_curve(
     str(prices_csv), time_blocks, STATION_BASES
 )
@@ -689,7 +809,7 @@ def build_pricing(alpha, beta, gamma, mode):
     pricing_model.Params.Cuts = 0
 
     # --------- helper: strong pre-pruning for feasibility + short deadheads ---------
-    MAX_TAU = 2 * TIMEBLOCKS_PER_HOUR # at most 2 hour-blocks between nodes in pricing graph
+    MAX_TAU = TIMEBLOCKS_PER_HOUR // 2 # at most 30MIN deadheads between nodes in pricing graph
 
     def tt_ok(i, j):
         return (
@@ -820,10 +940,15 @@ def build_pricing(alpha, beta, gamma, mode):
             pricing_model.addConstr(chi_minus[h,t]     == 0, name=f"mode1_no_dis_{h}_{t}")
             pricing_model.addConstr(chi_minus_free[h,t]== 0, name=f"mode1_no_disfree_{h}_{t}")
 
+
+
+    # depot in out
+    pricing_model.addConstr(t_in[DEPOT] <= t_out[DEPOT], name="depot_time_order")
+
     for i in T:
         if (DEPOT, i) in tau:
             pricing_model.addGenConstrIndicator(
-                wA_trip[i], 1, t_in[i] - (t_out[DEPOT] + tau[(DEPOT, i)]), GRB.GREATER_EQUAL, 0,
+                wA_trip[i], 1, t_in[i] - (t_in[DEPOT] + tau[(DEPOT, i)]), GRB.GREATER_EQUAL, 0,
                 name=f"ind_time_O2trip_{i}"
             )
         if (i, DEPOT) in tau:
@@ -834,7 +959,7 @@ def build_pricing(alpha, beta, gamma, mode):
     for h in S_use:
         if (DEPOT, h) in tau:
             pricing_model.addGenConstrIndicator(
-                wA_station[h], 1, t_in[h] - (t_out[DEPOT] + tau[(DEPOT, h)]), GRB.GREATER_EQUAL, 0,
+                wA_station[h], 1, t_in[h] - (t_in[DEPOT] + tau[(DEPOT, h)]), GRB.GREATER_EQUAL, 0,
                 name=f"ind_time_O2stat_{h}"
             )
         if (h, DEPOT) in tau:
@@ -859,6 +984,8 @@ def build_pricing(alpha, beta, gamma, mode):
             name=f"ind_time_st_{h}_{ii}"
         )
 
+
+    ## charging updates
     for h in S_use:
         pricing_model.addConstr(
             v_amt[h] == charge_mult * (1.0 / TIMEBLOCKS_PER_HOUR) *
@@ -908,6 +1035,26 @@ def build_pricing(alpha, beta, gamma, mode):
                 z[(h,ii)], 1, g[i] - (g[h] + v_amt[h] - d[(h,ii)]), GRB.EQUAL, 0,
                 name=f"ind_soc_station2trip_{h}_{ii}"
             )
+
+    # # Define g_return based on which node is the last node (end marker)
+    # for i in T:
+    #     if (i, DEPOT) in d:
+    #         pricing_model.addGenConstrIndicator(
+    #             wOmega_trip[i], 1,
+    #             g_return - (g[i] - epsilon[i] - d[(i, DEPOT)]),
+    #             GRB.EQUAL, 0,
+    #             name=f"ind_greturn_endtrip_{i}"
+    #         )
+
+    # for h in S_use:
+    #     if (h, DEPOT) in d:
+    #         pricing_model.addGenConstrIndicator(
+    #             wOmega_station[h], 1,
+    #             g_return - (g[h] + v_amt[h] - d[(h, DEPOT)]),
+    #             GRB.EQUAL, 0,
+    #             name=f"ind_greturn_endstat_{h}"
+    #         )
+
 
     obj = bus_cost
     for h in S_use:
@@ -988,6 +1135,7 @@ pd.DataFrame({"Trip": missing_pullout, "SL": [sl[i] for i in missing_pullout]}).
 pd.DataFrame({"Trip": missing_pulluin, "EL": [el[i] for i in missing_pulluin]}).to_csv(diag_dir / "missing_pulluin.csv", index=False)
 print(f"[WRITE] Diagnostics saved under {diag_dir}")
 
+#%%
 # ------------------------------ CG loop ------------------------------
 
 iteration = 0
@@ -1008,6 +1156,7 @@ best_master = float("inf")
 stagnant = 0
 
 while new_pricing_obj < -tolerance and iteration < max_iter:
+# for _ in range(1):
     iteration += 1
     print(f"\n--- Iteration {iteration} ---")
     t0 = time.time()
@@ -1241,6 +1390,355 @@ real_used  = [r for r in used_routes if not R_truck[r].get("dummy", False)]
 print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
 print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 
+
+# arc stats
+# print(f"[arc stats] direct={direct_hits} fallback(ref->ref)={fallback_hits} mixed={mixed_hits} misses={misses}")
+
+
 # %%
 
 #thisfile has unsaved changes on symm breaking a1 \leq a2
+end = time.time()
+print(f"\n=== TOTAL TIME: {end - begin:.2f} seconds ===")
+
+
+
+
+
+
+
+
+
+# %%
+# ==============================================================================
+# DIAGNOSTIC: Check GIRO Solution Reduced Cost (With Fuzzy Matching)
+# ==============================================================================
+
+# def check_giro_route_fuzzy(alpha_duals, charging_cost_data, bus_cost_val, df_trips):
+#     print("\n" + "="*60)
+#     print(" CHECKING GIRO SOLUTION REDUCED COST (Fuzzy Match)")
+#     print("="*60)
+
+#     # 1. LOAD MAPPING DATA (RouteID -> Trip Attributes -> Internal Index)
+#     # ---------------------------------------------------------
+    
+#     # A. Parse VehicleDetails to get RouteID -> List of (Start, From)
+    
+#     #vd_csv = DATA_DIR / "VehicleDetails.csv" # Ensure filename is correct
+#     vd_csv = DATA_DIR / "Par_VehicleDetails_Updated.csv"
+#     if not vd_csv.exists():
+#         # Fallback to Par_VehicleDetails if just renamed
+#         vd_csv = DATA_DIR / "Par_VehicleDetails.xlsx - Data.csv"
+        
+#     if not vd_csv.exists():
+#         print(f"[ERROR] VehicleDetails file not found. Cannot map Route IDs.")
+#         return
+
+#     print("Building Route ID map from VehicleDetails...")
+#     df_vd = pd.read_csv(vd_csv, low_memory=False)
+    
+#     # Helper to normalize time "4:45" -> "04:45"
+#     def norm_time(t):
+#         try:
+#             h, m = map(int, str(t).split(':'))
+#             return f"{h}:{m:02d}"
+#         except: return str(t)
+    
+#     # Map: RouteID (e.g. 5518) -> List of specific trip details [(4:45, JON_A), (6:00, ...)]
+#     # Because one RouteID might be used for multiple trips in a day
+#     giro_trip_details = {} 
+    
+#     # Filter for Regular trips
+#     for _, row in df_vd[df_vd['Identifier'] == 'Regular'].iterrows():
+#         try:
+#             r_id = int(float(row['Route']))
+#             st = norm_time(row['Start'])
+#             sl = str(row['From']).strip()
+            
+#             if r_id not in giro_trip_details:
+#                 giro_trip_details[r_id] = []
+#             giro_trip_details[r_id].append({'st': st, 'sl': sl})
+#         except: pass
+
+#     # B. Map Internal Index -> (ST, SL) for fast lookup
+#     # We allow some tolerance on time matching if needed, but exact string match first
+#     internal_trips_map = {}
+#     for idx, row in df_trips.iterrows():
+#         st = norm_time(row['ST'])
+#         sl = str(row['SL']).strip()
+#         # Key by (ST, SL) -> Index
+#         internal_trips_map[(st, sl)] = idx
+
+#     # 2. DEFINE THE ROUTE (GIRO IDs + Stations)
+#     # ---------------------------------------------------------
+#     # Route 13301
+#     giro_route_raw = [
+#         'PARX', 5518, 5513, 5513, 5514, '7880C_0', 5514, 5518, 5501, 'PARX', 
+#         'PARX_1', 5515, 5515, 5515, 5515, 5518, 5519, 5517, 5517, 5518, 
+#         'JON_A_0', 5518, 5513, '3127L_0', 5513, 5510, 5513, 5510, '3127L_1', 
+#         5510, 5519, 'JON_A_1', 5519, 5515, 5515, 5519, 5519, 5510, '3127L_2', 
+#         5510, 5515, 5515, 5515, 5515, 5515, 'PARX'
+#     ]
+
+#     # 3. MATCHING LOGIC
+#     # ---------------------------------------------------------
+#     internal_route = []
+#     covered_indices = []
+    
+#     print("Matching Route items to Internal Trips...")
+    
+#     # We need to track "current time" to disambiguate if 5518 appears twice?
+#     # Actually, the sequence in the list likely matches the sequence in VehicleDetails
+#     # But VehicleDetails isn't sorted by bus? 
+#     # Let's try simple exact matching. If 5518 has multiple entries, we need to pick the "next" one.
+    
+#     # Queue of available trips for each RouteID
+#     # We sort them by time to pick them in order
+#     import collections
+#     trip_queues = {}
+#     for r_id, trips in giro_trip_details.items():
+#         # Sort by start time
+#         sorted_trips = sorted(trips, key=lambda x: int(x['st'].split(':')[0])*60 + int(x['st'].split(':')[1]))
+#         trip_queues[r_id] = collections.deque(sorted_trips)
+
+#     for item in giro_route_raw:
+#         if isinstance(item, str):
+#             # Station
+#             if item == "PARX": internal_route.append(f"{DEPOT_NAME}_0")
+#             else: internal_route.append(item)
+#         else:
+#             # Trip ID (int)
+#             r_id = item
+#             if r_id in trip_queues and trip_queues[r_id]:
+#                 # Pop the next occurrence of this route
+#                 details = trip_queues[r_id].popleft()
+#                 key = (details['st'], details['sl'])
+                
+#                 if key in internal_trips_map:
+#                     idx = internal_trips_map[key]
+#                     internal_route.append(idx)
+#                     covered_indices.append(idx)
+#                     # print(f"  Mapped {r_id} -> Trip {idx} ({details['st']} {details['sl']})")
+#                 else:
+#                     print(f"  [FAIL] Route {r_id} ({details['st']} {details['sl']}) not found in df_trips!")
+#             else:
+#                 print(f"  [FAIL] Route {r_id} has no more scheduled trips in VehicleDetails or unknown ID.")
+
+#     # 4. CALCULATE REDUCED COST
+#     # ---------------------------------------------------------
+#     test_route = {
+#         "route": internal_route,
+#         "charging_stops": {
+#             'chi_plus': [
+#                 ('7880C_0', 142), ('7880C_0', 143), ('7880C_0', 144), 
+#                 ('PARX_1', 238), ('PARX_1', 239), ('PARX_1', 240),
+#                 ('JON_A_0', 614), ('3127L_0', 668), ('3127L_1', 802),
+#                 ('JON_A_1', 865), ('3127L_2', 1006)
+#             ],
+#             'chi_minus': []
+#         },
+#         "type": "truck"
+#     }
+
+#     try:
+#         real_cost = calculate_truck_route_cost(test_route, bus_cost_val, charging_cost_data)
+        
+#         dual_sum = 0.0
+#         for i in covered_indices:
+#             if i in alpha_duals:
+#                 dual_sum += alpha_duals[i]
+#             else:
+#                  # If i is not in alpha, it might be a trip that was filtered out or dummy?
+#                  pass
+        
+#         rc = real_cost - dual_sum
+        
+#         print(f"\n--- RESULTS ---")
+#         print(f"Route Length: {len(internal_route)} nodes")
+#         print(f"Trips Covered: {len(covered_indices)}")
+#         print(f"Real Cost: {real_cost:,.2f}")
+#         print(f"Dual Sum:  {dual_sum:,.2f}")
+#         print(f"Reduced Cost: {rc:,.2f}")
+        
+#         if rc < -1e-3:
+#             print("✅ VALID: Negative Reduced Cost. The solver SHOULD find this.")
+#         else:
+#             print("❌ INVALID: Positive Reduced Cost.")
+            
+#     except Exception as e:
+#         print(f"[ERROR] Calculation failed: {e}")
+# check_giro_route_fuzzy(alpha, charging_cost_data, bus_cost, df_trips)
+# # %%
+# from collections import Counter
+
+# def pricing_obj_for_route(
+#     route_dict,
+#     alpha,
+#     charging_cost_data,
+#     bus_cost,
+#     charge_cost_premium=1.0,
+#     # if your route uses GIRO IDs (e.g., 5518) but alpha uses 0..986,
+#     # pass a mapping {giro_trip_id -> internal_trip_index}
+#     trip_id_to_alpha_key=None,
+#     # if you have actual chi_plus values, pass {(h,t): value}; else we assume 1.0 for each (h,t) listed
+#     chi_plus_value=None,
+#     # if True: count coverage multiplicity (if the same trip appears multiple times)
+#     count_multiplicity=False,
+# ):
+#     obj = float(bus_cost)
+
+#     # ---- 1) charging term ----
+#     missing_prices = []
+#     for (h, t) in route_dict["charging_stops"].get("chi_plus", []):
+#         if (h in charging_cost_data.columns) and (t in charging_cost_data.index):
+#             price_evt = float(charging_cost_data.at[t, h])
+#             qty = 1.0 if chi_plus_value is None else float(chi_plus_value.get((h, t), 0.0))
+#             obj += price_evt * qty * float(charge_cost_premium)
+#         else:
+#             missing_prices.append((h, t))
+
+#     # ---- 2) alpha coverage term ----
+#     # interpret "covered trips" as the integer nodes in the route.
+#     # IMPORTANT: if these ints are GIRO IDs, you MUST map them to the alpha index space (0..986).
+#     route_ints = [n for n in route_dict["route"] if isinstance(n, int)]
+
+#     if count_multiplicity:
+#         counts = Counter(route_ints)
+#         covered = counts.items()
+#     else:
+#         covered = [(n, 1) for n in set(route_ints)]
+
+#     unmapped = []
+#     for trip_id, mult in covered:
+#         key = trip_id
+#         if trip_id_to_alpha_key is not None:
+#             if trip_id in trip_id_to_alpha_key:
+#                 key = trip_id_to_alpha_key[trip_id]
+#             else:
+#                 unmapped.append(trip_id)
+#                 continue  # can't subtract alpha if we don't know the key
+#         obj -= float(alpha.get(key, 0.0)) * float(mult)
+
+#     return obj, {
+#         "missing_prices": missing_prices,
+#         "unmapped_trip_ids": unmapped,
+#         "num_chi_plus_terms": len(route_dict["charging_stops"].get("chi_plus", [])),
+#         "num_route_int_nodes": len(route_ints),
+#         "num_covered_trips_used": len(covered),
+#     }
+
+# obj_val, debug = pricing_obj_for_route(
+#     route_dict={'route': ['PARX', 5518, 5513, 5513, 5514, '7880C_0', 5514, 5518, 5501, 'PARX', 'PARX_1', 5515, 5515, 5515, 5515, 5518, 5519, 5517, 5517, 5518, 'JON_A_0', 5518, 5513, '3127L_0', 5513, 5510, 5513, 5510, '3127L_1', 5510, 5519, 'JON_A_1', 5519, 5515, 5515, 5519, 5519, 5510, '3127L_2', 5510, 5515, 5515, 5515, 5515, 5515, 'PARX'], 'charging_stops': {'stations': ['7880C_0', 'PARX_1', 'JON_A_0', '3127L_0', '3127L_1', 'JON_A_1', '3127L_2'], 'cst': [142.0, 238.0, 614.0, 668.0, 802.0, 865.0, 1006.0], 'cet': [153.0, 359.0, 624.0, 677.0, 813.0, 873.0, 1031.0], 'chi_plus_free': [], 'chi_minus_free': [], 'chi_minus': [], 'chi_plus': [('7880C_0', 142), ('7880C_0', 143), ('7880C_0', 144), ('7880C_0', 145), ('7880C_0', 146), ('7880C_0', 147), ('7880C_0', 148), ('7880C_0', 149), ('7880C_0', 150), ('7880C_0', 151), ('7880C_0', 152), ('7880C_0', 153), ('PARX_1', 238), ('PARX_1', 239), ('PARX_1', 240), ('PARX_1', 241), ('PARX_1', 242), ('PARX_1', 243), ('PARX_1', 244), ('PARX_1', 245), ('PARX_1', 246), ('PARX_1', 247), ('PARX_1', 248), ('PARX_1', 249), ('PARX_1', 250), ('PARX_1', 251), ('PARX_1', 252), ('PARX_1', 253), ('PARX_1', 254), ('PARX_1', 255), ('PARX_1', 256), ('PARX_1', 257), ('PARX_1', 258), ('PARX_1', 259), ('PARX_1', 260), ('PARX_1', 261), ('PARX_1', 262), ('PARX_1', 263), ('PARX_1', 264), ('PARX_1', 265), ('PARX_1', 266), ('PARX_1', 267), ('PARX_1', 268), ('PARX_1', 269), ('PARX_1', 270), ('PARX_1', 271), ('PARX_1', 272), ('PARX_1', 273), ('PARX_1', 274), ('PARX_1', 275), ('PARX_1', 276), ('PARX_1', 277), ('PARX_1', 278), ('PARX_1', 279), ('PARX_1', 280), ('PARX_1', 281), ('PARX_1', 282), ('PARX_1', 283), ('PARX_1', 284), ('PARX_1', 285), ('PARX_1', 286), ('PARX_1', 287), ('PARX_1', 288), ('PARX_1', 289), ('PARX_1', 290), ('PARX_1', 291), ('PARX_1', 292), ('PARX_1', 293), ('PARX_1', 294), ('PARX_1', 295), ('PARX_1', 296), ('PARX_1', 297), ('PARX_1', 298), ('PARX_1', 299), ('PARX_1', 300), ('PARX_1', 301), ('PARX_1', 302), ('PARX_1', 303), ('PARX_1', 304), ('PARX_1', 305), ('PARX_1', 306), ('PARX_1', 307), ('PARX_1', 308), ('PARX_1', 309), ('PARX_1', 310), ('PARX_1', 311), ('PARX_1', 312), ('PARX_1', 313), ('PARX_1', 314), ('PARX_1', 315), ('PARX_1', 316), ('PARX_1', 317), ('PARX_1', 318), ('PARX_1', 319), ('PARX_1', 320), ('PARX_1', 321), ('PARX_1', 322), ('PARX_1', 323), ('PARX_1', 324), ('PARX_1', 325), ('PARX_1', 326), ('PARX_1', 327), ('PARX_1', 328), ('PARX_1', 329), ('PARX_1', 330), ('PARX_1', 331), ('PARX_1', 332), ('PARX_1', 333), ('PARX_1', 334), ('PARX_1', 335), ('PARX_1', 336), ('PARX_1', 337), ('PARX_1', 338), ('PARX_1', 339), ('PARX_1', 340), ('PARX_1', 341), ('PARX_1', 342), ('PARX_1', 343), ('PARX_1', 344), ('PARX_1', 345), ('PARX_1', 346), ('PARX_1', 347), ('PARX_1', 348), ('PARX_1', 349), ('PARX_1', 350), ('PARX_1', 351), ('PARX_1', 352), ('PARX_1', 353), ('PARX_1', 354), ('PARX_1', 355), ('PARX_1', 356), ('PARX_1', 357), ('PARX_1', 358), ('PARX_1', 359), ('JON_A_0', 614), ('JON_A_0', 615), ('JON_A_0', 616), ('JON_A_0', 617), ('JON_A_0', 618), ('JON_A_0', 619), ('JON_A_0', 620), ('JON_A_0', 621), ('JON_A_0', 622), ('JON_A_0', 623), ('JON_A_0', 624), ('3127L_0', 668), ('3127L_0', 669), ('3127L_0', 670), ('3127L_0', 671), ('3127L_0', 672), ('3127L_0', 673), ('3127L_0', 674), ('3127L_0', 675), ('3127L_0', 676), ('3127L_0', 677), ('3127L_1', 802), ('3127L_1', 803), ('3127L_1', 804), ('3127L_1', 805), ('3127L_1', 806), ('3127L_1', 807), ('3127L_1', 808), ('3127L_1', 809), ('3127L_1', 810), ('3127L_1', 811), ('3127L_1', 812), ('3127L_1', 813), ('JON_A_1', 865), ('JON_A_1', 866), ('JON_A_1', 867), ('JON_A_1', 868), ('JON_A_1', 869), ('JON_A_1', 870), ('JON_A_1', 871), ('JON_A_1', 872), ('JON_A_1', 873), ('3127L_2', 1006), ('3127L_2', 1007), ('3127L_2', 1008), ('3127L_2', 1009), ('3127L_2', 1010), ('3127L_2', 1011), ('3127L_2', 1012), ('3127L_2', 1013), ('3127L_2', 1014), ('3127L_2', 1015), ('3127L_2', 1016), ('3127L_2', 1017), ('3127L_2', 1018), ('3127L_2', 1019), ('3127L_2', 1020), ('3127L_2', 1021), ('3127L_2', 1022), ('3127L_2', 1023), ('3127L_2', 1024), ('3127L_2', 1025), ('3127L_2', 1026), ('3127L_2', 1027), ('3127L_2', 1028), ('3127L_2', 1029), ('3127L_2', 1030), ('3127L_2', 1031)], 'chi_zero': []}, 'charging_activities': 7, 'type': 'truck', 'remaining_soc': 15.8902826, '_rc': -1000000000.0},              # your GIRO route dict
+#     alpha=alpha,                       # your alpha dict
+#     charging_cost_data=charging_cost_data,
+#     bus_cost=bus_cost,
+#     charge_cost_premium=charge_cost_premium,
+#     #trip_id_to_alpha_key=trip_id_to_alpha_key,  # <-- if needed
+#     chi_plus_value=None,               # set to dict if you have actual amounts
+#     count_multiplicity=False,          # usually False for "covers trip once"
+# )
+
+# print("pricing obj:", obj_val)
+# print("debug:", debug)
+# # %%
+# from collections import Counter
+
+# def default_station_normalizer(h: str) -> str:
+#     # strips a trailing "_<digits>" (e.g., "7880C_0" -> "7880C")
+#     if isinstance(h, str) and "_" in h:
+#         base, suf = h.rsplit("_", 1)
+#         if suf.isdigit():
+#             return base
+#     return h
+
+# def pricing_obj_for_route_breakdown(
+#     route_dict,
+#     alpha,
+#     charging_cost_data,
+#     bus_cost,
+#     charge_cost_premium=1.0,
+#     trip_id_to_alpha_key=None,     # dict GIRO_trip_id -> internal i in T (0..986)
+#     time_map=None,                 # function t_route -> t_df (e.g., minute -> 15-min block)
+#     station_map=None,              # function station_name -> df column name
+#     chi_plus_qty=None,             # dict (h,t)->amount; if None assumes 1.0 each (h,t)
+#     count_multiplicity=False,      # usually False: each trip covered once
+# ):
+#     # ---- trips covered by this route (integers in route sequence) ----
+#     seq = route_dict.get("route", [])
+#     trip_ids = [n for n in seq if isinstance(n, int)]
+#     if not count_multiplicity:
+#         trip_ids = sorted(set(trip_ids))
+
+#     # map to alpha keys
+#     alpha_keys = []
+#     unmapped_trips = []
+#     for tid in trip_ids:
+#         k = trip_id_to_alpha_key[tid] if trip_id_to_alpha_key is not None else tid
+#         if k is None:
+#             unmapped_trips.append(tid)
+#         else:
+#             alpha_keys.append(k)
+
+#     alpha_credit = sum(float(alpha.get(k, 0.0)) for k in alpha_keys)
+
+#     # ---- charging cost ----
+#     chi_plus = route_dict.get("charging_stops", {}).get("chi_plus", [])
+#     if station_map is None:
+#         station_map = default_station_normalizer
+#     if time_map is None:
+#         time_map = lambda t: t
+
+#     charge_cost = 0.0
+#     missing = []
+#     missing_station = Counter()
+#     missing_time = Counter()
+
+#     for (h, t) in chi_plus:
+#         col = station_map(h)
+#         tt = time_map(t)
+#         qty = 1.0 if chi_plus_qty is None else float(chi_plus_qty.get((h, t), 0.0))
+
+#         has_col = col in charging_cost_data.columns
+#         has_t = tt in charging_cost_data.index
+
+#         if has_col and has_t:
+#             price = float(charging_cost_data.at[tt, col])
+#             charge_cost += price * qty * float(charge_cost_premium)
+#         else:
+#             missing.append((h, t, col, tt))
+#             if not has_col:
+#                 missing_station[col] += 1
+#             if not has_t:
+#                 missing_time[tt] += 1
+
+#     obj = float(bus_cost) + float(charge_cost) - float(alpha_credit)
+
+#     debug = {
+#         "bus_cost": float(bus_cost),
+#         "charge_cost": float(charge_cost),
+#         "alpha_credit": float(alpha_credit),
+#         "obj": float(obj),
+#         "num_trips_used": len(trip_ids),
+#         "num_chi_plus_terms": len(chi_plus),
+#         "unmapped_trips": unmapped_trips[:20],
+#         "missing_count": len(missing),
+#         "missing_station_top": missing_station.most_common(10),
+#         "missing_time_top": missing_time.most_common(10),
+#         "missing_examples": missing[:10],
+#     }
+#     return obj, debug
+
+# obj_val, debug = pricing_obj_for_route(
+#     route_dict={'route': ['PARX', 5518, 5513, 5513, 5514, '7880C_0', 5514, 5518, 5501, 'PARX', 'PARX_1', 5515, 5515, 5515, 5515, 5518, 5519, 5517, 5517, 5518, 'JON_A_0', 5518, 5513, '3127L_0', 5513, 5510, 5513, 5510, '3127L_1', 5510, 5519, 'JON_A_1', 5519, 5515, 5515, 5519, 5519, 5510, '3127L_2', 5510, 5515, 5515, 5515, 5515, 5515, 'PARX'], 'charging_stops': {'stations': ['7880C_0', 'PARX_1', 'JON_A_0', '3127L_0', '3127L_1', 'JON_A_1', '3127L_2'], 'cst': [142.0, 238.0, 614.0, 668.0, 802.0, 865.0, 1006.0], 'cet': [153.0, 359.0, 624.0, 677.0, 813.0, 873.0, 1031.0], 'chi_plus_free': [], 'chi_minus_free': [], 'chi_minus': [], 'chi_plus': [('7880C_0', 142), ('7880C_0', 143), ('7880C_0', 144), ('7880C_0', 145), ('7880C_0', 146), ('7880C_0', 147), ('7880C_0', 148), ('7880C_0', 149), ('7880C_0', 150), ('7880C_0', 151), ('7880C_0', 152), ('7880C_0', 153), ('PARX_1', 238), ('PARX_1', 239), ('PARX_1', 240), ('PARX_1', 241), ('PARX_1', 242), ('PARX_1', 243), ('PARX_1', 244), ('PARX_1', 245), ('PARX_1', 246), ('PARX_1', 247), ('PARX_1', 248), ('PARX_1', 249), ('PARX_1', 250), ('PARX_1', 251), ('PARX_1', 252), ('PARX_1', 253), ('PARX_1', 254), ('PARX_1', 255), ('PARX_1', 256), ('PARX_1', 257), ('PARX_1', 258), ('PARX_1', 259), ('PARX_1', 260), ('PARX_1', 261), ('PARX_1', 262), ('PARX_1', 263), ('PARX_1', 264), ('PARX_1', 265), ('PARX_1', 266), ('PARX_1', 267), ('PARX_1', 268), ('PARX_1', 269), ('PARX_1', 270), ('PARX_1', 271), ('PARX_1', 272), ('PARX_1', 273), ('PARX_1', 274), ('PARX_1', 275), ('PARX_1', 276), ('PARX_1', 277), ('PARX_1', 278), ('PARX_1', 279), ('PARX_1', 280), ('PARX_1', 281), ('PARX_1', 282), ('PARX_1', 283), ('PARX_1', 284), ('PARX_1', 285), ('PARX_1', 286), ('PARX_1', 287), ('PARX_1', 288), ('PARX_1', 289), ('PARX_1', 290), ('PARX_1', 291), ('PARX_1', 292), ('PARX_1', 293), ('PARX_1', 294), ('PARX_1', 295), ('PARX_1', 296), ('PARX_1', 297), ('PARX_1', 298), ('PARX_1', 299), ('PARX_1', 300), ('PARX_1', 301), ('PARX_1', 302), ('PARX_1', 303), ('PARX_1', 304), ('PARX_1', 305), ('PARX_1', 306), ('PARX_1', 307), ('PARX_1', 308), ('PARX_1', 309), ('PARX_1', 310), ('PARX_1', 311), ('PARX_1', 312), ('PARX_1', 313), ('PARX_1', 314), ('PARX_1', 315), ('PARX_1', 316), ('PARX_1', 317), ('PARX_1', 318), ('PARX_1', 319), ('PARX_1', 320), ('PARX_1', 321), ('PARX_1', 322), ('PARX_1', 323), ('PARX_1', 324), ('PARX_1', 325), ('PARX_1', 326), ('PARX_1', 327), ('PARX_1', 328), ('PARX_1', 329), ('PARX_1', 330), ('PARX_1', 331), ('PARX_1', 332), ('PARX_1', 333), ('PARX_1', 334), ('PARX_1', 335), ('PARX_1', 336), ('PARX_1', 337), ('PARX_1', 338), ('PARX_1', 339), ('PARX_1', 340), ('PARX_1', 341), ('PARX_1', 342), ('PARX_1', 343), ('PARX_1', 344), ('PARX_1', 345), ('PARX_1', 346), ('PARX_1', 347), ('PARX_1', 348), ('PARX_1', 349), ('PARX_1', 350), ('PARX_1', 351), ('PARX_1', 352), ('PARX_1', 353), ('PARX_1', 354), ('PARX_1', 355), ('PARX_1', 356), ('PARX_1', 357), ('PARX_1', 358), ('PARX_1', 359), ('JON_A_0', 614), ('JON_A_0', 615), ('JON_A_0', 616), ('JON_A_0', 617), ('JON_A_0', 618), ('JON_A_0', 619), ('JON_A_0', 620), ('JON_A_0', 621), ('JON_A_0', 622), ('JON_A_0', 623), ('JON_A_0', 624), ('3127L_0', 668), ('3127L_0', 669), ('3127L_0', 670), ('3127L_0', 671), ('3127L_0', 672), ('3127L_0', 673), ('3127L_0', 674), ('3127L_0', 675), ('3127L_0', 676), ('3127L_0', 677), ('3127L_1', 802), ('3127L_1', 803), ('3127L_1', 804), ('3127L_1', 805), ('3127L_1', 806), ('3127L_1', 807), ('3127L_1', 808), ('3127L_1', 809), ('3127L_1', 810), ('3127L_1', 811), ('3127L_1', 812), ('3127L_1', 813), ('JON_A_1', 865), ('JON_A_1', 866), ('JON_A_1', 867), ('JON_A_1', 868), ('JON_A_1', 869), ('JON_A_1', 870), ('JON_A_1', 871), ('JON_A_1', 872), ('JON_A_1', 873), ('3127L_2', 1006), ('3127L_2', 1007), ('3127L_2', 1008), ('3127L_2', 1009), ('3127L_2', 1010), ('3127L_2', 1011), ('3127L_2', 1012), ('3127L_2', 1013), ('3127L_2', 1014), ('3127L_2', 1015), ('3127L_2', 1016), ('3127L_2', 1017), ('3127L_2', 1018), ('3127L_2', 1019), ('3127L_2', 1020), ('3127L_2', 1021), ('3127L_2', 1022), ('3127L_2', 1023), ('3127L_2', 1024), ('3127L_2', 1025), ('3127L_2', 1026), ('3127L_2', 1027), ('3127L_2', 1028), ('3127L_2', 1029), ('3127L_2', 1030), ('3127L_2', 1031)], 'chi_zero': []}, 'charging_activities': 7, 'type': 'truck', 'remaining_soc': 15.8902826, '_rc': -1000000000.0},              # your GIRO route dict
+#     alpha=alpha,                       # your alpha dict
+#     charging_cost_data=charging_cost_data,
+#     bus_cost=bus_cost,
+#     charge_cost_premium=charge_cost_premium,
+#     #trip_id_to_alpha_key=trip_id_to_alpha_key,  # <-- if needed
+#     chi_plus_value=None,               # set to dict if you have actual amounts
+#     count_multiplicity=False,          # usually False for "covers trip once"
+# )
+
+# print("pricing obj:", obj_val)
+# print("debug:", debug)
+# %%
