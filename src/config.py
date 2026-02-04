@@ -11,13 +11,13 @@ time_blocks = list(range(1, bar_t + 1))
 tolerance = 1e-4
 
 # ---------- Energy / charging scale ----------
-BLOCK_KWH = 30.0
-G_KWH     = 270.0
+BLOCK_KWH = 1
+G_KWH     = 360.0
 ENERGY_PER_BLOCK_KWH = BLOCK_KWH / TIMEBLOCKS_PER_HOUR
 G         = int(round(G_KWH / BLOCK_KWH))
 assert G > 0
 
-charge_mult = 40
+charge_mult = 360 # 400, 350, 340, 330, 310, 300, 280, 270, 150, 120
 charge_cost_premium = 1 + 1e-2
 
 # ---------- Costs ----------
@@ -74,8 +74,8 @@ NODEFILE_DIR = None
 # ---------- NEW: Timelimits/gaps ----------
 # Master RMP (LP) per-iteration solve
 MASTER_TIMELIMIT = 60     # was 60 (still modest, gives RMP time to settle)
-MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
+MASTER_MIPGAP   = 0.01     # final MIP target gap (keep)
 
 # Pricing MIPs
 PRICING_TIMELIMIT = 60    # was 60; pricing is your bottleneck
-PRICING_GAP       = 0.05   # keep
+PRICING_GAP       = 0.03   # keep
