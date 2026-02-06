@@ -54,7 +54,7 @@ STATION_COPIES = {
 
 
 MODE_EVS_ONLY        = True
-BIG_M_PENALTY       = 1e5
+BIG_M_PENALTY       = 1e3
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)
@@ -77,5 +77,5 @@ MASTER_TIMELIMIT = 60     # was 60 (still modest, gives RMP time to settle)
 MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
 
 # Pricing MIPs
-PRICING_TIMELIMIT = 60    # was 60; pricing is your bottleneck
+PRICING_TIMELIMIT = 10    # was 60; pricing is your bottleneck
 PRICING_GAP       = 0.05   # keep
