@@ -11,13 +11,12 @@ time_blocks = list(range(1, bar_t + 1))
 tolerance = 1e-4
 
 # ---------- Energy / charging scale ----------
-BLOCK_KWH = 30.0
-G_KWH     = 240.0
-ENERGY_PER_BLOCK_KWH = BLOCK_KWH / TIMEBLOCKS_PER_HOUR
-G         = int(round(G_KWH / BLOCK_KWH))
-assert G > 0
+G         = 300
+CHARGE_RATE_KW = 300
 
-charge_mult = 1
+CHARGE_PER_BLOCK = CHARGE_RATE_KW / TIMEBLOCKS_PER_HOUR
+
+
 charge_cost_premium = 1 + 1e-2
 
 # ---------- Costs ----------
@@ -77,5 +76,5 @@ MASTER_TIMELIMIT = 60     # was 60 (still modest, gives RMP time to settle)
 MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
 
 # Pricing MIPs
-PRICING_TIMELIMIT = 10    # was 60; pricing is your bottleneck
+PRICING_TIMELIMIT = 10    # was 60; 10 is good to find new routes quickly
 PRICING_GAP       = 0.05   # keep

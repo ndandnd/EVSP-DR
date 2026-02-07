@@ -5,7 +5,7 @@ import string
 import matplotlib.pyplot as plt
 
 # use the shared constant from config; do NOT redefine locally
-from config import time_blocks, charge_cost_premium, TIMEBLOCKS_PER_HOUR
+from config import time_blocks, charge_cost_premium, TIMEBLOCKS_PER_HOUR, CHARGE_PER_BLOCK
 
 
 def make_locs(n: int):
@@ -46,24 +46,29 @@ def calculate_truck_route_cost(route, truck_cost, charging_cost_data: pd.DataFra
     total = float(truck_cost)
     cs = route.get("charging_stops", {})
 
+    kwh_per_block = CHARGE_PER_BLOCK
+
     for (h, t) in cs.get("chi_plus", []):
         h_base = base_station_name(h)
-        total += float(charging_cost_data.at[int(t), h_base]) * charge_cost_premium
+        total += kwh_per_block * float(charging_cost_data.at[int(t), h_base]) * charge_cost_premium
 
     for (h, t) in cs.get("chi_minus", []):
         h_base = base_station_name(h)
-        total -= float(charging_cost_data.at[int(t), h_base])
+        total -= kwh_per_block * float(charging_cost_data.at[int(t), h_base])
 
     return total
 
 
 def calculate_battery_route_cost(route, batt_cost, charging_cost_data: pd.DataFrame) -> float:
     total = float(batt_cost)
+
+    kwh_per_block = CHARGE_PER_BLOCK
+    
     cs = route.get("charging_stops", {})
     for (h, t) in cs.get("chi_plus", []):
-        total += float(charging_cost_data.at[int(t), str(h)]) * charge_cost_premium
+        total += kwh_per_block *float(charging_cost_data.at[int(t), str(h)]) * charge_cost_premium
     for (h, t) in cs.get("chi_minus", []):
-        total -= float(charging_cost_data.at[int(t), str(h)])
+        total -= kwh_per_block * float(charging_cost_data.at[int(t), str(h)])
     return total
 
 

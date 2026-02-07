@@ -20,8 +20,8 @@ from gurobipy import Model, Column, GRB, quicksum
 from config import (
     n_fast_cols, n_exact_cols, tolerance,
     bar_t, time_blocks, TIMEBLOCKS_PER_HOUR,
-    DEPOT_NAME, G_KWH, ENERGY_PER_BLOCK_KWH, BLOCK_KWH, 
-    charge_mult, charge_cost_premium,
+    DEPOT_NAME, G, CHARGE_PER_BLOCK, CHARGE_RATE_KW,
+    charge_cost_premium,
     BUS_COST_KX, 
     CHARGING_STATIONS,
     STATION_COPIES,
@@ -52,9 +52,9 @@ CKPT.mkdir(parents=True, exist_ok=True)
 TB_MIN   = int(round(60 / TIMEBLOCKS_PER_HOUR))  # minutes per block (60, 30, 15…)
 TB_HOURS = 1.0 / TIMEBLOCKS_PER_HOUR             # hours per block (1.0, 0.5, 0.25…)
 
-def energy_to_events(kwh: float) -> int:
-    # “event” = BLOCK_KWH kWh regardless of granularity
-    return int(math.ceil(float(kwh) / float(BLOCK_KWH)))
+# def energy_to_events(kwh: float) -> int:
+#     # “event” = BLOCK_KWH kWh regardless of granularity
+#     return int(math.ceil(float(kwh) / float(BLOCK_KWH)))
 
 def _total_minutes(hhmm: str) -> int:
     hh, mm = hhmm.split(":")
@@ -171,7 +171,14 @@ df_trips = pd.read_csv(routes_csv)
 # loc_to_ref = build_loc_to_ref(df_vd)
 
 
-trip_col_map = {"SL": None, "ST": None, "ET": None, "EL": None, "Energy used": None}
+# trip_col_map = {"SL": None, "ST": None, "ET": None, "EL": None, "Energy used": None}
+trip_col_map = {
+    "SL": "Start_Loc",
+    "ST": "Start_Time",
+    "ET": "End_Time",
+    "EL": "End_Loc",
+    "Energy used": "Energy"
+}
 for want in list(trip_col_map.keys()):
     if want in df_trips.columns:
         trip_col_map[want] = want
@@ -510,7 +517,7 @@ df_trips["Trip"] = df_trips.index
 df_trips["st_blk"] = df_trips["ST"].astype(str).map(_floor_block)
 df_trips["et_blk"] = df_trips["ET"].astype(str).map(_ceil_block)
 
-df_trips["eps_events"] = df_trips["Energy used"].map(energy_to_events)
+df_trips["eps_events"] = df_trips["Energy used"].astype(float)
 
 T = list(df_trips["Trip"].tolist())
 
@@ -525,8 +532,8 @@ df_dh = ensure_depot_endpoint_arcs(df_dh, DEPOT_NAME, sl, el, max_dur_min=50)
 
 # ------------------------------ Allowed deadhead graph ------------------------------
 
-def _energy_to_events(kwh: float) -> int:
-    return energy_to_events(kwh)
+# def _energy_to_events(kwh: float) -> int:
+#     return energy_to_events(kwh)
 
 allowed_arcs = {}
 for _, row in df_dh.iterrows():
@@ -535,7 +542,7 @@ for _, row in df_dh.iterrows():
     dur_min = float(row["Duration"])
     eng_kwh = float(row["Energy used"])
     tau_blk = ceil_blocks_from_minutes(dur_min)
-    d_evt   = _energy_to_events(eng_kwh)
+    d_evt   = float(eng_kwh)
     allowed_arcs[(f, t)] = (tau_blk, d_evt)
 
 
@@ -606,7 +613,7 @@ def arc_from_to(from_node: str, to_node: str):
 # ------------------------------ Globals for pricing ------------------------------
 
 S = CHARGERS[:]  # stations set (includes depot name too)
-G = energy_to_events(G_KWH)  
+# G = energy_to_events(G_KWH)  
 DEPOT = DEPOT_NAME
 
 tau = {}
@@ -682,13 +689,11 @@ STATION_BASES = sorted(set(strip_copy_suffix(s) for s in S))
 charging_cost_data, avg_cost_per_kwh = load_price_curve(
     str(prices_csv), time_blocks, STATION_BASES
 )
-charging_cost_data = charging_cost_data * float(ENERGY_PER_BLOCK_KWH)
-avg_cost_per_event = float(avg_cost_per_kwh) * float(ENERGY_PER_BLOCK_KWH)
 
-bus_cost  = BUS_COST_KX* avg_cost_per_event
+bus_cost  = BUS_COST_KX # * avg_cost_per_kwh #??
 
-print(f"[INFO] Capacity G(events): {G} (each={ENERGY_PER_BLOCK_KWH} kWh)")
-print(f"[INFO] Avg price/kWh={avg_cost_per_kwh:.3f} → per-event={avg_cost_per_event:.3f}")
+print(f"[INFO] Capacity G: {G} kWh")
+print(f"[INFO] Avg price/kWh={avg_cost_per_kwh:.3f}")
 print(f"[INFO] bus_cost={bus_cost:.2f}")
 print(f"[INFO] Trips={len(T)}  Stations={len(S)}")
 
@@ -944,7 +949,7 @@ def build_pricing(alpha, beta, gamma, mode):
 
     for h in S_use:
         pricing_model.addConstr(
-            v_amt[h] == charge_mult * (1.0 / TIMEBLOCKS_PER_HOUR) *
+            v_amt[h] == CHARGE_PER_BLOCK *
                 quicksum(chi_plus[(h, t)] for t in time_blocks),
              name=f"amt_charged_{h}"
         )
@@ -997,8 +1002,9 @@ def build_pricing(alpha, beta, gamma, mode):
         if h in charging_cost_data.columns:
             for t in time_blocks:
                 if t in charging_cost_data.index:
-                    price_evt = float(charging_cost_data.at[t, h])
-                    obj += price_evt * chi_plus[h, t] * charge_cost_premium
+                    price_kwh = float(charging_cost_data.at[t, h])
+
+                    obj += price_kwh * CHARGE_PER_BLOCK * chi_plus[h, t] * charge_cost_premium
 
     for i in T:
         a_i = alpha.get(i, 0.0)
