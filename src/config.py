@@ -20,7 +20,7 @@ CHARGE_PER_BLOCK = CHARGE_RATE_KW / TIMEBLOCKS_PER_HOUR
 charge_cost_premium = 1 + 1e-2
 
 # ---------- Costs ----------
-BUS_COST_KX = 1e3
+BUS_COST_KX = 1e4
 
 # ---------- Misc ----------
 factor = 1
@@ -53,15 +53,15 @@ STATION_COPIES = {
 
 
 MODE_EVS_ONLY        = True
-BIG_M_PENALTY       = 1e3
+BIG_M_PENALTY       = 2e4
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)
-RC_EPSILON = 5.0           # was 300.0 (kept out many mildly negative routes)
+RC_EPSILON = 1.0           # was 300.0 (kept out many mildly negative routes)
 K_BEST = 50               # was 30 (add more useful columns per iter)
 
 # CG loop limits / guards
-MAX_CG_ITERS = 300
+MAX_CG_ITERS = 500      # was 300
 STAGNATION_ITERS = 5      # was 3 (don’t stop so early)
 MASTER_IMPROVE_THRESHOLD = 5e-4  # was 5e-4 (count small progress as improvement)
 

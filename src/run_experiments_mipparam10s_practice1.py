@@ -39,6 +39,11 @@ from utils import (
 )
 from master import init_master, solve_master, build_master
 
+
+stopwatch_start = time.time()
+
+
+
 # ------------------------------ Output dirs ------------------------------
 RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 ROOT = Path(__file__).resolve().parent
@@ -86,7 +91,7 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-routes_csv    = DATA_DIR / "Practice_4bus.csv"
+routes_csv    = DATA_DIR / "Practice_1bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
@@ -236,11 +241,11 @@ def _normalize_ref(x):
         return s
 
 
-def _is_copy_node(name: str) -> bool:
-    s = str(name).strip()
-    if "_" not in s:
-        return False
-    return s.rsplit("_", 1)[1].isdigit()
+# def _is_copy_node(name: str) -> bool:
+#     s = str(name).strip()
+#     if "_" not in s:
+#         return False
+#     return s.rsplit("_", 1)[1].isdigit()
 
 
 def _ordered_ref_pair(a: str, b: str):
@@ -371,10 +376,10 @@ def arc_from_to(from_node: str, to_node: str):
     if a == b:
         return (0, 0.0)
 
-    # Avoid copy-to-copy teleporting for the same physical station.
-    if _is_copy_node(a) and _is_copy_node(b):
-        if strip_copy_suffix(a) == strip_copy_suffix(b):
-            return None
+    # # Avoid copy-to-copy teleporting for the same physical station.
+    # if _is_copy_node(a) and _is_copy_node(b):
+    #     if strip_copy_suffix(a) == strip_copy_suffix(b):
+    #         return None
 
     ref_a = resolve_ref(a)
     ref_b = resolve_ref(b)
@@ -559,31 +564,31 @@ def build_pricing(alpha, beta, gamma, mode):
     pricing_model.Params.TimeLimit = PRICING_TIMELIMIT
     pricing_model.Params.MIPGap = PRICING_GAP
     pricing_model.Params.MIPFocus = 1
-    pricing_model.Params.Heuristics = 0.25
+    pricing_model.Params.Heuristics = 0.8
     pricing_model.Params.Cuts = 0
 
     # --------- helper: strong pre-pruning for feasibility + short deadheads ---------
-    MAX_TAU = 2  # at most 2 hour-blocks between nodes in pricing graph
+    # MAX_TAU = 2  # at most 2 hour-blocks between nodes in pricing graph
 
     def tt_ok(i, j):
         return (
             (i, j) in tau
             and (et[i] + tau[(i, j)] <= st[j])
-            and (tau[(i, j)] <= MAX_TAU)
+            #and (tau[(i, j)] <= MAX_TAU)
         )
 
     def ih_ok(i, h):
         return (
             (i, h) in tau
             and (et[i] + tau[(i, h)] <= bar_t)
-            and (tau[(i, h)] <= MAX_TAU)
+            #and (tau[(i, h)] <= MAX_TAU)
         )
 
     def hi_ok(h, i):
         return (
             (h, i) in tau
             and (tau[(h, i)] <= st[i])
-            and (tau[(h, i)] <= MAX_TAU)
+            #and (tau[(h, i)] <= MAX_TAU)
         )
 
     # --------- sparse key sets (heavily pruned) ---------
@@ -865,12 +870,12 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     m.Params.TimeLimit = int(time_limit)
 
     # 2. Root-LP speed (Critical for large models)
-    m.Params.Method = 2           # Barrier method
+    m.Params.Method = -1           # Barrier method 2
     m.Params.Crossover = 0        # Disable crossover (saves ~30% time, we don't need a basis)
 
     # 3. Incumbent-hunting (CG wants good columns, not tight bounds)
     m.Params.MIPFocus   = 1       # Focus on Feasibility
-    m.Params.Heuristics = 0.6     # 60% time on heuristics
+    m.Params.Heuristics = 0.7     # 60% time on heuristics
     m.Params.Cuts       = 0       # Disable cuts (saves time)
 
     # 4. NoRel Heuristic (Great for finding initial solutions quickly)
@@ -893,6 +898,11 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
 
     m.optimize()
     return m, vars_dict
+
+
+
+
+
 
 def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10, time_limit=60):
     """
@@ -982,8 +992,24 @@ def _route_key(route):
     return tuple(route["route"])
 
 best_master = float("inf")
-stagnant = 0
+
+PRICING_TLIM_INIT = 15
+PRICING_TLIM_MAX  = 300
+
+STAGNATION_LIMIT = 3
+MIN_IMPROVEMENT = 1.5  # master obj improvement must be at least
+
+stagnant_counter = 0
+last_master_obj = None   #start as None
 current_pricing_timelimit = PRICING_TLIM_INIT
+
+
+# For deduplication of routes
+
+# seen_patterns = set()
+# for r in R_truck:
+#     pattern = frozenset([x for x in r["route"] if isinstance(x, int)])
+#     seen_patterns.add(pattern)
 
 while iteration < max_iter:
     iteration += 1
@@ -998,6 +1024,27 @@ while iteration < max_iter:
 
     # Check stagnation (optional, keep your existing logic here)
     # ...
+
+    current_obj = rmp.ObjVal
+    # compute improvement safely
+    if last_master_obj is None:
+        improvement = float("inf")
+    else:
+        improvement = last_master_obj - current_obj
+
+    print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
+
+    # B. STAGNATION CHECK
+    if improvement < MIN_IMPROVEMENT:
+        stagnant_counter += 1
+        print(f"   [WARN] Stagnant {stagnant_counter}/{STAGNATION_LIMIT}")
+        if stagnant_counter >= STAGNATION_LIMIT:
+            print("[STOP] Master stabilized. Converged.")
+            break
+    else:
+        stagnant_counter = 0
+        
+    last_master_obj = current_obj
 
     # Extract Duals
     alpha, beta_dual, gamma_dual = extract_duals(rmp)
@@ -1014,6 +1061,9 @@ while iteration < max_iter:
     BEST_OBJ_STOP = None         # Set to e.g. -5000.0 if you want early stops
     
     while True:
+        # time limit cap
+        current_pricing_timelimit = min(current_pricing_timelimit, PRICING_TLIM_MAX)
+
         print(f"   > FAST pricing (TimeLimit={current_pricing_timelimit}s)")
 
         t0_price = time.time()
@@ -1025,6 +1075,7 @@ while iteration < max_iter:
             best_obj_stop=BEST_OBJ_STOP
             
         )
+
         pricing_times.append(time.time() - t0_price)
 
         # check status
@@ -1236,17 +1287,20 @@ print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 # print(f"[arc stats] direct={direct_hits} fallback(ref->ref)={fallback_hits} mixed={mixed_hits} misses={misses}")
 
 
+
+stopwatch_end = time.time()
+elapsed = stopwatch_end - stopwatch_start
+print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
+
 # %%
 
-#thisfile has unsaved changes on symm breaking a1 \leq a2
-
-# --- PHASE 2: TARGETING UNCOVERED TRIPS ---
+# # --- PHASE 2: TARGETING UNCOVERED TRIPS ---
 
 # print("\n\n>>> STARTING PHASE 2: CLEANING UP UNCOVERED TRIPS <<<\n")
 
 # # Configuration for Phase 2
-# PHASE2_MAX_ITERS = 50      # Safety cap so it doesn't run forever
-# TARGET_MAX_ALPHA = 500.0   # Your goal
+# PHASE2_MAX_ITERS = 200      # Safety cap so it doesn't run forever
+# TARGET_MAX_ALPHA = 900.0   # 
 # current_pricing_timelimit = 15 # Start slightly higher for stubborn trips
 
 # # We continue using the EXISTING R_truck and rmp from memory
@@ -1390,4 +1444,11 @@ print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 #         a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
     
 #     rmp.update()
-# %%
+
+
+# stopwatch_end2 = time.time()
+# elapsed = stopwatch_end2 - stopwatch_end
+# print(f"\n=== 2nd CG Loop Completed in {elapsed:.1f} seconds ===")
+# # %%
+
+
