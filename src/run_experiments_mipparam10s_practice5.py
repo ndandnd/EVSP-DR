@@ -91,7 +91,7 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-routes_csv    = DATA_DIR / "Practice_1bus.csv"
+routes_csv    = DATA_DIR / "Practice_5bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
@@ -564,7 +564,7 @@ def build_pricing(alpha, beta, gamma, mode):
     pricing_model.Params.TimeLimit = PRICING_TIMELIMIT
     pricing_model.Params.MIPGap = PRICING_GAP
     pricing_model.Params.MIPFocus = 1
-    pricing_model.Params.Heuristics = 0.8
+    pricing_model.Params.Heuristics = 0.5
     pricing_model.Params.Cuts = 0
 
     # --------- helper: strong pre-pruning for feasibility + short deadheads ---------
@@ -854,7 +854,7 @@ PRICING_TLIM_INIT = 10
 PRICING_TLIM_MAX  = 300
 PRICING_TLIM_GROW = 2.0   # multiply TL when we retry
 PRICING_TLIM_DECAY = 0.8  # shrink TL after success (optional)
-PRICING_POOL_CAP_MAX = 30 # keep pool small for CG; 10–30 is usually plenty
+PRICING_POOL_CAP_MAX = 50 # keep pool small for CG; 10–30 is usually plenty
 
 # --- HELPER FUNCTIONS ---
 def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10, *,
@@ -870,12 +870,13 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     m.Params.TimeLimit = int(time_limit)
 
     # 2. Root-LP speed (Critical for large models)
-    m.Params.Method = -1           # Barrier method 2
+    m.Params.Method = 3           # Barrier method 2
     m.Params.Crossover = 0        # Disable crossover (saves ~30% time, we don't need a basis)
 
     # 3. Incumbent-hunting (CG wants good columns, not tight bounds)
     m.Params.MIPFocus   = 1       # Focus on Feasibility
-    m.Params.Heuristics = 0.7     # 60% time on heuristics
+    m.Params.Heuristics = 0.5     # % time on heuristics
+    m.Params.NoRelHeurTime = 5
     m.Params.Cuts       = 0       # Disable cuts (saves time)
 
     # 4. NoRel Heuristic (Great for finding initial solutions quickly)
@@ -884,14 +885,14 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     else:
         m.Params.NoRelHeurTime = 0
 
-    # 5. Early stop (Optional)
-    if best_obj_stop is not None:
-        m.Params.BestObjStop = float(best_obj_stop)
+    # # 5. Early stop (Optional)
+    # if best_obj_stop is not None:
+    #     m.Params.BestObjStop = float(best_obj_stop)
 
     # 6. Pool settings
     m.Params.PoolSearchMode = 1
     m.Params.PoolSolutions  = cap
-    m.Params.SolutionLimit  = 2000 
+    m.Params.SolutionLimit  = 10
     
     # [FIX] REMOVED Invalid Parameter PoolObjBound
     # Filtering happens in the extraction phase instead.
@@ -904,7 +905,7 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
 
 
 
-def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10, time_limit=60):
+def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10, time_limit=120):
     """
     Solves pricing exactly to prove optimality or find hard-to-reach columns.
     """
@@ -915,11 +916,18 @@ def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10, time_limit=
     # Use Barrier for the root node speedup
     m.Params.Method = 2
     m.Params.Crossover = 0 
+    m.Params.MIPGap = 0.05
+    m.Params.Presolve = 2
 
-    m.Params.PoolSearchMode = 2
+    m.Params.PoolSearchMode = 1e-1
     m.Params.PoolSolutions  = int(num_exact_cols)
     
     # [FIX] REMOVED Invalid Parameter PoolObjBound
+
+
+    m.Params.MIPFocus = 2
+    m.Params.Heuristics = 0.4
+
 
     m.optimize()
     return m, vars_dict
@@ -1004,12 +1012,20 @@ last_master_obj = None   #start as None
 current_pricing_timelimit = PRICING_TLIM_INIT
 
 
+
+
 # For deduplication of routes
 
 # seen_patterns = set()
 # for r in R_truck:
 #     pattern = frozenset([x for x in r["route"] if isinstance(x, int)])
 #     seen_patterns.add(pattern)
+
+cg_stats = []
+# Create a unique filename based on the run ID so you don't overwrite previous experiments
+stats_csv_path = OUTDIR / f"pricing_stats_{RUN_ID}.csv"
+print(f"Saving real-time stats to: {stats_csv_path}")
+
 
 while iteration < max_iter:
     iteration += 1
@@ -1037,12 +1053,22 @@ while iteration < max_iter:
     # B. STAGNATION CHECK
     if improvement < MIN_IMPROVEMENT:
         stagnant_counter += 1
+
         print(f"   [WARN] Stagnant {stagnant_counter}/{STAGNATION_LIMIT}")
-        if stagnant_counter >= STAGNATION_LIMIT:
+        
+        
+        if stagnant_counter == STAGNATION_LIMIT:
+            print("   [ACTION] Triggering DEEP DIVE Pricing (Focus=3, Time=300s)...")
+            current_pricing_timelimit = 300 # 5 minutes
+            force_exact_next = True
+        
+        elif stagnant_counter > STAGNATION_LIMIT:
             print("[STOP] Master stabilized. Converged.")
             break
     else:
         stagnant_counter = 0
+        current_pricing_timelimit = 30 # reset timelimit
+        force_exact_next = False
         
     last_master_obj = current_obj
 
@@ -1059,6 +1085,8 @@ while iteration < max_iter:
 
     # Configuration for this iteration
     BEST_OBJ_STOP = None         # Set to e.g. -5000.0 if you want early stops
+    
+    t0_pricing_total = time.time()
     
     while True:
         # time limit cap
@@ -1161,6 +1189,28 @@ while iteration < max_iter:
               f"Increasing TimeLimit: {current_pricing_timelimit}s -> {new_tlim}s")
         current_pricing_timelimit = new_tlim
         # Loop continues...
+
+
+    # --- [INSERT 2: Collect Metrics (After Retry Loop Ends)] ---
+    pricing_dur_total = time.time() - t0_pricing_total
+    
+    current_stat = {
+        "Iteration": iteration,
+        "Master_Obj": current_obj,
+        "Master_Improvement": improvement if last_master_obj is not None else 0,
+        "Pricing_Time_s": pricing_dur_total,  # Total time for ALL pricing attempts this iter
+        "Cols_Added": len(new_trucks),
+        "Best_RC": best_rc_iter,
+        "Timed_Out": timed_out_any,
+        "Pricing_TimeLimit_Used": current_pricing_timelimit,
+        "Stagnant_Counter": stagnant_counter,
+        "Total_Runtime_s": time.time() - stopwatch_start
+    }
+    cg_stats.append(current_stat)
+    
+    # Force Save (Overwrites file every iteration)
+    pd.DataFrame(cg_stats).to_csv(stats_csv_path, index=False)
+    # -----------------------------------------------------------
 
     # 3) ADD COLUMNS TO MASTER
     for route in new_trucks:
@@ -1455,374 +1505,437 @@ print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
 #%%
 ### CHECKER
 
-def parse_vehicle_details(details_csv, df_trips):
-    """
-    Parses VehicleDetails to build a sequence of (Type, ID, StartTime, EndTime, ChargeDuration).
-    """
-    df_vd = pd.read_csv(details_csv)
-    
-    # 1. Match VehicleDetails rows to Model Trip IDs (0..35)
-    # We match based on Start Time (ST) and Start Loc (SL)
-    df_trips['st_min'] = df_trips['ST'].apply(_total_minutes)
-    trip_lookup = {}
-    for idx, row in df_trips.iterrows():
-        key = (row['st_min'], row['SL'])
-        trip_lookup[key] = idx
 
-    route_sequence = []
-    
-    # Start at Depot
-    route_sequence.append({
-        "type": "Depot_Start", 
-        "id": DEPOT, 
-        "loc_ref": "PARX" # Known ref for depot
-    })
 
-    # Filter for relevant rows
-    valid_tasks = ["Regular", "Recharge", "Pull-in"]
-    df_vd = df_vd[df_vd["VehicleTask"].isin(valid_tasks)].copy()
-    
-    # Sort just in case
-    df_vd['Start_Min'] = df_vd['Start'].apply(lambda x: _total_minutes(str(x)))
-    df_vd = df_vd.sort_values('Start_Min')
+# DATA_DIR = ROOT.parent / "data"
 
-    for _, row in df_vd.iterrows():
-        task = row['VehicleTask']
-        start_time = row['Start']
-        end_time = row['End']
-        st_min = _total_minutes(str(start_time))
+# routes_csv    = DATA_DIR / "Practice_1bus.csv"
+# ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
+# ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
+# prices_csv    = DATA_DIR / "hourly_prices.csv"
+
+# DEPOT_NAME = "PARX"
+
+# # --- 2. LOAD DATA ---
+# print(">>> LOADING DATA...")
+# try:
+#     df_details = pd.read_csv(DATA_DIR / "Par_VehicleDetails_1bus.csv")
+#     df_trips = pd.read_csv(DATA_DIR / "Practice_1bus.csv").sort_values('Ordered_Trip_ID').reset_index(drop=True)
+#     df_ref = pd.read_csv(DATA_DIR / "Ref_dict.csv")
+#     df_dhd = pd.read_csv(DATA_DIR / "par_ref_dhd.csv")
+# except Exception as e:
+#     print(f"Error loading files: {e}")
+#     exit()
+
+# # Helper: Parse Time
+# def parse_time(t_str):
+#     if pd.isna(t_str): return None
+#     try:
+#         parts = t_str.split(':')
+#         return int(parts[0]) * 60 + int(parts[1])
+#     except: return None
+
+# # Helper: Location Mapping (Case insensitive)
+# loc_to_ref = {}
+# for _, row in df_ref.iterrows():
+#     l_col = 'Location' if 'Location' in df_ref.columns else 'location'
+#     r_col = 'Ref' if 'Ref' in df_ref.columns else 'ref'
+#     loc = str(row[l_col]).strip()
+#     ref = str(int(float(row[r_col]))) if pd.notna(row[r_col]) else None
+#     if ref: loc_to_ref[loc] = ref
+
+# # Helper: Deadhead Map
+# dhd_map = {}
+# for _, row in df_dhd.iterrows():
+#     try:
+#         r1 = str(int(float(row.iloc[0])))
+#         r2 = str(int(float(row.iloc[1])))
+#         dur = float(row.iloc[2])
+#         nrg = float(row.iloc[3])
+#         dhd_map[(r1, r2)] = (dur, nrg)
+#         dhd_map[(r2, r1)] = (dur, nrg)
+#     except: continue
+
+# def get_arc(loc_a, loc_b):
+#     """Returns (dur, nrg) between two locations via Ref/DHD lookup."""
+#     a, b = str(loc_a).strip(), str(loc_b).strip()
+#     if a == b: return 0.0, 0.0
+    
+#     ref_a, ref_b = loc_to_ref.get(a), loc_to_ref.get(b)
+#     if not ref_a or not ref_b: return None, None # Missing Ref
+#     if ref_a == ref_b: return 0.0, 0.0 # Virtual move
+    
+#     return dhd_map.get((ref_a, ref_b), (None, None))
+
+# # --- 3. FILTER & PROCESS SEQUENCE ---
+# print("\n>>> VALIDATING PRICING VARIABLES (x, y, z)...")
+
+# # Filter to relevant rows only
+# mask = df_details['Identifier'].isin(['Pull-out', 'Regular', 'Recharge'])
+# df_events = df_details[mask].copy().reset_index(drop=True)
+
+# # State Tracking
+# prev_type = None      # 'DEPOT', 'TRIP', 'STATION'
+# prev_id = None        # Trip Index (int) or Station Name (str)
+# prev_loc = DEPOT_NAME # Physical location string
+# prev_end_time = 0     # Minutes
+# curr_soc = 300.0
+
+# trip_idx_counter = 0
+
+# print(f"{'VARIABLE':<15} {'FROM':<8} {'TO':<8} {'ARC_T':<5} {'ARC_E':<5} {'SOC':<6} {'STATUS':<10} {'NOTES'}")
+# print("-" * 105)
+
+# for i, row in df_events.iterrows():
+#     evt_type = row['Identifier']
+    
+#     # 1. IDENTIFY CURRENT NODE
+#     if evt_type == 'Pull-out':
+#         curr_type = 'DEPOT' # We are leaving the depot, so 'prev' was effectively depot state
+#         curr_loc = DEPOT_NAME
+#         curr_id = DEPOT_NAME
+#         # Timestamps
+#         start_t = parse_time(row['Start1'])
+#         end_t = parse_time(row['End1'])
         
-        if task == "Regular":
-            # Find which trip this is
-            sl = row['From1'] # Using From1 as per your CSV mapping
-            match_key = (st_min, sl)
+#     elif evt_type == 'Regular':
+#         curr_type = 'TRIP'
+#         # Get Trip Details from Golden Truth (df_trips)
+#         if trip_idx_counter >= len(df_trips): break
+#         trip_row = df_trips.iloc[trip_idx_counter]
+        
+#         curr_id = trip_idx_counter
+#         curr_loc = trip_row['From1'] # Start of Trip
+#         trip_end_loc = trip_row['To1']
+        
+#         # Trip Constraints are FIXED by the schedule
+#         start_t = parse_time(trip_row['Start1'])
+#         end_t = parse_time(trip_row['End1'])
+#         trip_kwh = float(trip_row['Usage kWh'])
+        
+#         trip_idx_counter += 1
+        
+#     elif evt_type == 'Recharge':
+#         curr_type = 'STATION'
+#         curr_loc = row['From1'] # Station Name
+#         curr_id = curr_loc
+#         # Recharge constraints are FLEXIBLE, but fixed in this specific schedule
+#         start_t = parse_time(row['Start1'])
+#         end_t = parse_time(row['End1'])
+#         charge_kwh = float(row['Recharge kWh']) if pd.notna(row['Recharge kWh']) else 0.0
+
+#     # 2. EVALUATE ARC FROM PREV -> CURRENT
+#     if prev_type is not None:
+#         # Determine Variable Name & Logic
+#         var_name = "???"
+        
+#         # A. DEPOT -> TRIP (wA)
+#         if prev_type == 'DEPOT' and curr_type == 'TRIP':
+#             var_name = f"wA_trip[{curr_id}]"
+#             src_loc = DEPOT_NAME
+        
+#         # B. TRIP -> TRIP (x)
+#         elif prev_type == 'TRIP' and curr_type == 'TRIP':
+#             var_name = f"x[{prev_id},{curr_id}]"
+#             src_loc = prev_loc # End of previous trip
             
-            if match_key in trip_lookup:
-                trip_id = trip_lookup[match_key]
-                route_sequence.append({
-                    "type": "Trip",
-                    "id": trip_id,
-                    "st": st_min,
-                    "et": _total_minutes(str(end_time))
-                })
-            else:
-                print(f"[WARN] Could not match VehicleDetails trip starting at {start_time} from {sl}")
+#         # C. TRIP -> STATION (y)
+#         elif prev_type == 'TRIP' and curr_type == 'STATION':
+#             var_name = f"y[{prev_id},{curr_id}]"
+#             src_loc = prev_loc # End of previous trip
+            
+#         # D. STATION -> TRIP (z)
+#         elif prev_type == 'STATION' and curr_type == 'TRIP':
+#             var_name = f"z[{prev_id},{curr_id}]"
+#             src_loc = prev_loc # Station location
+            
+#         # E. STATION -> STATION (Move)
+#         elif prev_type == 'STATION' and curr_type == 'STATION':
+#              var_name = f"move[{prev_id},{curr_id}]"
+#              src_loc = prev_loc
         
-        elif task == "Recharge":
-            # It's a charging station
-            loc = row['From1'] # e.g., 7880C
-            # Map to model station name (handling copies if necessary)
-            # We default to _0 for validation unless you have complex copy logic
-            stat_id = f"{loc}_0"
-            
-            # Calculate duration in blocks
-            dur_str = str(row['Duration1']) if pd.notna(row['Duration1']) else "0"
-            # Some duration formats might be odd, relying on Start/End times is safer
-            charge_min = _total_minutes(str(end_time)) - st_min
-            
-            route_sequence.append({
-                "type": "Station",
-                "id": stat_id,
-                "arr_time": st_min,
-                "dep_time": _total_minutes(str(end_time)),
-                "charge_min": charge_min
-            })
+#         else:
+#              var_name = f"UNK[{prev_type}->{curr_type}]"
+#              src_loc = prev_loc
 
-    # End at Depot
-    route_sequence.append({
-        "type": "Depot_End",
-        "id": DEPOT,
-        "loc_ref": "PARX"
-    })
+#         # 3. CHECK FEASIBILITY
+#         # --------------------
+#         arc_dur, arc_nrg = get_arc(src_loc, curr_loc)
+        
+#         status = "OK"
+#         notes = []
+        
+#         # Connectivity Check
+#         if arc_dur is None:
+#             status = "FAIL"
+#             notes.append(f"No Arc: {src_loc}->{curr_loc}")
+#             arc_dur = 0; arc_nrg = 0 # Prevent crash
+        
+#         # Time Check: Arrival <= Start
+#         arrival_t = prev_end_time + arc_dur
+#         slack = start_t - arrival_t
+#         if slack < -1e-3:
+#             status = "FAIL"
+#             notes.append(f"Late: Arr {arrival_t} > Start {start_t} (Slack {slack}m)")
+            
+#         # SOC Check (Travel Consumption)
+#         curr_soc -= (arc_nrg or 0)
+        
+#         # PRINT VAR ROW
+#         if var_name != "???":
+#             print(f"{var_name:<15} {str(src_loc)[:8]:<8} {str(curr_loc)[:8]:<8} {arc_dur:<5} {arc_nrg:<5} {curr_soc:<6.1f} {status:<10} {'; '.join(notes)}")
+
+#     # 4. EXECUTE EVENT (Update State)
+#     # -------------------------------
+#     if curr_type == 'TRIP':
+#         curr_soc -= trip_kwh
+#         prev_loc = trip_end_loc # We end at trip destination
+#     elif curr_type == 'STATION':
+#         curr_soc += charge_kwh
+#         if curr_soc > G: curr_soc = G
+#         prev_loc = curr_loc # We stay at station
+#     elif curr_type == 'DEPOT':
+#         prev_loc = DEPOT_NAME
+
+#     if curr_soc < -1e-3:
+#         # We flag negative SOC *after* the activity logic
+#         print(f"{' ':<15} {' ':<8} {' ':<8} {' ':<5} {' ':<5} {curr_soc:<6.1f} FAIL       Negative SOC!")
+
+#     prev_type = curr_type
+#     prev_id = curr_id
+#     prev_end_time = end_t
+
+
+# # 5. FINAL RETURN TO DEPOT CHECK (wOmega)
+# if prev_type == 'TRIP':
+#     var_name = f"wOmega[{prev_id}]"
+#     arc_dur, arc_nrg = get_arc(prev_loc, DEPOT_NAME)
     
-    return route_sequence
-
-def check_feasibility(sequence):
-    """
-    Simulates the route using the MODEL'S dictionaries (tau, d).
-    Returns True if feasible, False + Reason if not.
-    """
-    print("\n" + "="*50)
-    print("VALIDATING 1-BUS ROUTE AGAINST PRICING CONSTRAINTS")
-    print("="*50)
+#     status = "OK"
+#     notes = []
+#     if arc_dur is None:
+#         status = "FAIL"
+#         notes.append("No Arc to Depot")
+#         arc_dur=0; arc_nrg=0
     
-    current_node = DEPOT
-    current_time_blk = 0 # t_out of depot (start of day)
-    current_soc = G # Start full
+#     curr_soc -= (arc_nrg or 0)
+#     print(f"{var_name:<15} {str(prev_loc)[:8]:<8} {str(DEPOT_NAME)[:8]:<8} {arc_dur:<5} {arc_nrg:<5} {curr_soc:<6.1f} {status:<10} {'; '.join(notes)}")
+
+# print("-" * 105)
+# # %%
+# ### try 5
+# # --- 3. HELPERS ---
+# def parse_time(t_str):
+#     if pd.isna(t_str): return None
+#     try:
+#         parts = t_str.split(':')
+#         return int(parts[0]) * 60 + int(parts[1])
+#     except: return None
+
+# # Location to Ref Map
+# loc_to_ref = {}
+# for _, row in df_ref.iterrows():
+#     l = str(row.get('Location', row.get('location'))).strip()
+#     r = row.get('Ref', row.get('ref'))
+#     if pd.notna(r): loc_to_ref[l] = str(int(float(r)))
+
+# # Deadhead Map
+# dhd_map = {}
+# for _, row in df_dhd.iterrows():
+#     try:
+#         r1 = str(int(float(row.iloc[0])))
+#         r2 = str(int(float(row.iloc[1])))
+#         dur = float(row.iloc[2])
+#         nrg = float(row.iloc[3])
+#         dhd_map[(r1, r2)] = (dur, nrg)
+#         dhd_map[(r2, r1)] = (dur, nrg)
+#     except: continue
+
+# def get_arc(a, b):
+#     a_clean, b_clean = str(a).strip(), str(b).strip()
+#     if a_clean == b_clean: return 0.0, 0.0
     
-    # We need to infer the depot start time. 
-    # Usually t_out[Depot] <= st[FirstTrip] - tau[Depot, FirstTrip]
-    # Let's peek at first trip
-    first_trip = next(x for x in sequence if x["type"] == "Trip")
-    pair = (DEPOT, first_trip['id'])
+#     ra, rb = loc_to_ref.get(a_clean), loc_to_ref.get(b_clean)
+#     if not ra or not rb: return None, None
+#     if ra == rb: return 0.0, 0.0
     
-    if pair not in tau:
-        print(f"[FATAL] No arc defined in model from {DEPOT} to Trip {first_trip['id']}")
-        return False
-        
-    travel_blocks = tau[pair]
-    # Set depot departure exactly when needed to arrive on time (or earlier)
-    # t_out_depot = st[trip] - travel
-    current_time_blk = st[first_trip['id']] - travel_blocks
-    print(f"[INIT] Leaving Depot at Block {current_time_blk} (Time ~{current_time_blk * 15} min)")
+#     return dhd_map.get((ra, rb), (None, None))
 
-    valid = True
+# # --- 4. PROCESSING LOOP ---
+# print(f"\n{'VARIABLE':<20} {'FROM':<10} {'TO':<10} {'ARC_T':<6} {'ARC_E':<6} {'SOC':<7} {'STATUS':<10} {'NOTES'}")
+# print("-" * 110)
 
-    for i in range(len(sequence) - 1):
-        prev_step = sequence[i]
-        next_step = sequence[i+1]
-        
-        prev_node = prev_step['id']
-        next_node = next_step['id']
-        
-        print(f"\n--- Step {i}: {prev_node} -> {next_node} ---")
-        
-        # 1. CHECK ARC EXISTENCE
-        if (prev_node, next_node) not in tau:
-            print(f"[FAIL] Arc Missing: {prev_node} -> {next_node} is not in 'tau' dictionary.")
-            print(f"       This means the Ref_Dhd/Ref_Dict logic filtered it out.")
-            valid = False
-            continue # Try to continue to find other errors
-            
-        # 2. GET MODEL COSTS
-        travel_time = tau[(prev_node, next_node)]
-        energy_cost = d[(prev_node, next_node)]
-        
-        print(f"   Model Stats: Travel={travel_time} blks, Energy={energy_cost:.2f} kWh")
+# # Filter: Keep Regular, Recharge. Keep Pull-out ONLY if it's the very first event.
+# df_clean = df_details[df_details['Identifier'].isin(['Regular', 'Recharge', 'Pull-out'])].copy()
+# # We only want the first Pull-out to initialize the Depot state. 
+# # If a Pull-out appears mid-day, we ignore it to maintain the y/z chain.
+# first_idx = df_clean.index[0]
+# df_seq = []
+# trip_ctr = 0
 
-        # 3. UPDATE STATE (Travel)
-        arrival_time = current_time_blk + travel_time
-        current_soc -= energy_cost
-        
-        print(f"   Arrival Time: Block {arrival_time}")
-        print(f"   SOC after travel: {current_soc:.2f} / {G}")
-        
-        # 4. CHECK SOC (Travel)
-        if current_soc < -0.001: # Epsilon tolerance
-            print(f"[FAIL] Negative SOC ({current_soc:.2f}) arriving at {next_node}")
-            valid = False
+# # Trip Lookup Map: (Start1, From1) -> TripID
+# trip_map = {}
+# for idx, row in df_trips.iterrows():
+#     key = (str(row['Start1']).strip(), str(row['From1']).strip())
+#     trip_map[key] = row['count_trip_id']
 
-        # 5. HANDLE NODE TYPES (Trip vs Station)
-        
-        if next_step['type'] == "Trip":
-            trip_idx = next_step['id']
-            trip_start = st[trip_idx]
-            trip_energy = epsilon[trip_idx]
-            
-            # Timing Check
-            if arrival_time > trip_start:
-                print(f"[FAIL] LATE ARRIVAL at Trip {trip_idx}.")
-                print(f"       Required Start: {trip_start}, Arrived: {arrival_time}")
-                print(f"       Delay: {arrival_time - trip_start} blocks")
-                valid = False
-            
-            # Wait for start (if early)
-            current_time_blk = et[trip_idx] # Jump to end of trip
-            current_soc -= trip_energy
-            
-            print(f"   Trip {trip_idx} Done. End Time: {current_time_blk}. SOC: {current_soc:.2f}")
-            if current_soc < -0.001:
-                print(f"[FAIL] Negative SOC after Trip {trip_idx}")
-                valid = False
-                
-        elif next_step['type'] == "Station":
-            # Charging logic
-            # In pricing model, we arrive at t_in, charge, leave at t_out.
-            # Real data has specific duration.
-            
-            real_charge_min = next_step['charge_min']
-            # Convert real minutes to blocks (ceiling to be safe/conservative for model)
-            charge_blocks = math.ceil(real_charge_min / 15.0) # Assuming 15min blocks, adjust if variable
-            
-            # Calculate max possible charge in this time
-            # Model: v_amt = CHARGE_PER_BLOCK * blocks
-            added_kwh = CHARGE_PER_BLOCK * charge_blocks
-            
-            # Cap at G
-            old_soc = current_soc
-            current_soc = min(G, current_soc + added_kwh)
-            
-            # Update time
-            current_time_blk = arrival_time + charge_blocks
-            
-            print(f"   Charged for {real_charge_min} min ({charge_blocks} blks).")
-            print(f"   Gained: {current_soc - old_soc:.2f} kWh. New SOC: {current_soc:.2f}")
+# # Initial State
+# prev_type = 'DEPOT'
+# prev_id = 'PARX'
+# prev_loc = 'PARX'
+# prev_end_t = 0 # Will be inferred or 0
+# curr_soc = 300.0
 
-        elif next_step['type'] == "Depot_End":
-            print(f"   Arrived at Depot. Final SOC: {current_soc:.2f}")
+# # Pre-scan to set initial time if Pull-out exists
+# if df_clean.iloc[0]['Identifier'] == 'Pull-out':
+#     # We use this just to "start" the day, but the variable wA is generated by the first Regular trip
+#     # We won't iterate over it.
+#     pass
+# else:
+#     # No Pull-out? Assume starting at Depot at t=0
+#     pass
 
-    return valid
-#%%
-# 1. Parse the Real Schedule
-originalroute1 = DATA_DIR / "Par_VehicleDetails_1bus.csv"
-seq = parse_vehicle_details(originalroute1, df_trips)
-
-# 2. Run the Validator
-is_feasible = check_feasibility(seq)
-
-print("\n" + "="*50)
-if is_feasible:
-    print("RESULT: The 1-bus route IS FEASIBLE in the model.")
-    print("If the solver isn't finding it, the issue is likely heuristic tuning or Pricing limits.")
-else:
-    print("RESULT: The 1-bus route is INFEASIBLE in the model.")
-    print("Review the [FAIL] messages above to adjust Ref_DHD, Tau, or battery capacity.")
-print("="*50)
-# %%
-
-
-#### try again
-
-
-
-
-# --- 1. Load Data ---
-print(">>> Loading CSVs...")
-
-df_trips = pd.read_csv(routes_csv)
-df_ref = pd.read_csv(ref_dict_csv)
-df_dhd = pd.read_csv(ref_dhd_csv)
-
-# Standardize column names for Ref_dict
-ref_cols = {c.lower(): c for c in df_ref.columns}
-df_ref = df_ref.rename(columns={ref_cols['location']: 'Location', ref_cols['ref']: 'Ref'})
-
-# Standardize column names for Deadheads
-dhd_cols = list(df_dhd.columns)
-df_dhd = df_dhd.rename(columns={
-    dhd_cols[0]: 'Start_Ref', 
-    dhd_cols[1]: 'End_Ref', 
-    dhd_cols[2]: 'Duration', 
-    dhd_cols[3]: 'Energy'
-})
-
-# --- 2. Build Lookup Maps ---
-
-# Location -> Ref Map
-loc_to_ref = {}
-for _, row in df_ref.iterrows():
-    loc = str(row['Location']).strip()
-    ref = str(int(float(row['Ref']))) if not pd.isna(row['Ref']) else None
-    if ref:
-        loc_to_ref[loc] = ref
-
-# Deadhead Map: (Ref_A, Ref_B) -> (Duration, Energy)
-dhd_map = {}
-for _, row in df_dhd.iterrows():
-    try:
-        r1 = str(int(float(row['Start_Ref'])))
-        r2 = str(int(float(row['End_Ref'])))
-        dur = float(row['Duration'])
-        nrg = float(row['Energy'])
-        
-        # Store symmetric pairs
-        dhd_map[(r1, r2)] = (dur, nrg)
-        dhd_map[(r2, r1)] = (dur, nrg)
-    except:
-        continue
-
-def get_connection(loc_a, loc_b):
-    """Returns (minutes, kwh) or None if no path."""
-    # 1. Normalize Names (Handle PC_5 vs PC_10)
-    # The 'Ref_dict' handles the mapping, so we just strip whitespace.
-    la = str(loc_a).strip()
-    lb = str(loc_b).strip()
+# for _, row in df_clean.iterrows():
+#     etype = row['Identifier']
+#     start_loc = str(row['From1']).strip()
+#     end_loc = str(row['To1']).strip()
+#     start_t = parse_time(row['Start1'])
+#     end_t = parse_time(row['End1'])
     
-    # 2. Get Refs
-    ref_a = loc_to_ref.get(la)
-    ref_b = loc_to_ref.get(lb)
+#     # 1. SKIP LOGIC
+#     if etype == 'Pull-out':
+#         # If this is the start of the day, we just ensure we are at DEPOT.
+#         # We do NOT generate a variable for Pull-out itself.
+#         # wA_trip will be generated when we hit the first Regular trip.
+#         continue
+
+#     # 2. DETERMINE CURRENT NODE
+#     curr_type = None
+#     curr_id = None
+#     curr_loc_start = None # Where the arc lands (Start of Trip / Station Loc)
     
-    if not ref_a: return None, f"Missing Ref for {la}"
-    if not ref_b: return None, f"Missing Ref for {lb}"
+#     act_nrg = 0.0
+#     act_charge = 0.0
     
-    # 3. Same Ref = 0 cost
-    if ref_a == ref_b:
-        return (0.0, 0.0), "Same Ref"
+#     if etype == 'Regular':
+#         curr_type = 'TRIP'
+#         # Identify Trip
+#         key = (row['Start1'], start_loc)
+#         curr_id = trip_map.get(key)
+#         if curr_id is None:
+#             # Fallback: strict sequence from practice file
+#             if trip_ctr < len(df_trips):
+#                 curr_id = df_trips.iloc[trip_ctr]['count_trip_id']
+#             else:
+#                 curr_id = "UNK"
         
-    # 4. Lookup Deadhead
-    if (ref_a, ref_b) in dhd_map:
-        return dhd_map[(ref_a, ref_b)], f"Ref {ref_a}->{ref_b}"
+#         # Increment global counter if we matched a trip
+#         trip_ctr += 1
         
-    return None, f"No DHD path {ref_a}->{ref_b}"
+#         # For a trip, the "Node" is the Start of the Trip
+#         curr_loc_start = start_loc 
+#         trip_end_loc = end_loc # We will end here after activity
+        
+#         act_nrg = float(row['Usage kWh']) if pd.notna(row['Usage kWh']) else 0.0
+        
+#     elif etype == 'Recharge':
+#         curr_type = 'STATION'
+#         curr_id = start_loc # Station Name
+#         curr_loc_start = start_loc
+        
+#         dur = end_t - start_t
+#         act_charge = dur * 5.0
 
-def parse_time(hhmm):
-    """Converts HH:MM string to minutes from midnight."""
-    h, m = map(int, hhmm.split(':'))
-    return h * 60 + m
-
-# --- 3. Validate the "Perfect Route" (0 -> 1 -> ... -> 35) ---
-print("\n>>> VALIDATING SEQUENTIAL ROUTE (Trips 0 to 35)...")
-
-# Sort trips just to be safe (though CSV is likely ordered)
-df_trips = df_trips.sort_values('Ordered_Trip_ID').reset_index(drop=True)
-
-# Simulation State
-current_soc = 300.0  # Assumed full start
-# Assumed Depot Start: We just assume we arrive exactly at Trip 0 start for the sake of the test
-prev_trip_idx = -1 
-prev_end_loc = "PARX" # Start at Depot
-prev_end_time = 0 
-
-print(f"{'TRIP':<6} {'FROM':<10} {'TO':<10} {'STATUS':<10} {'DETAILS'}")
-print("-" * 80)
-
-for idx, row in df_trips.iterrows():
-    trip_id = idx
-    sl = row['From1'] # Start Loc
-    el = row['To1']   # End Loc
-    st_str = row['Start1']
-    et_str = row['End1']
-    trip_kwh = float(row['Usage kWh'])
+#     # 3. GENERATE VARIABLE (Prev -> Curr)
+#     var_name = "???"
     
-    st_min = parse_time(st_str)
-    et_min = parse_time(et_str)
+#     # wA: Depot -> Trip
+#     if prev_type == 'DEPOT' and curr_type == 'TRIP':
+#         var_name = f"wA_trip[{curr_id}]"
+        
+#     # x: Trip -> Trip
+#     elif prev_type == 'TRIP' and curr_type == 'TRIP':
+#         var_name = f"x[{prev_id},{curr_id}]"
+        
+#     # y: Trip -> Station (Charge)
+#     elif prev_type == 'TRIP' and curr_type == 'STATION':
+#         var_name = f"y[{prev_id},{curr_id}]"
+        
+#     # z: Station -> Trip
+#     elif prev_type == 'STATION' and curr_type == 'TRIP':
+#         var_name = f"z[{prev_id},{curr_id}]"
+        
+#     # Move: Station -> Station (Rare, but possible)
+#     elif prev_type == 'STATION' and curr_type == 'STATION':
+#         if prev_id == curr_id:
+#             # Consecutive charges at same place? Merge or ignore.
+#             var_name = "IGNORE"
+#         else:
+#             var_name = f"move[{prev_id},{curr_id}]"
+            
+#     # Depot -> Station (e.g. start day with charge?)
+#     elif prev_type == 'DEPOT' and curr_type == 'STATION':
+#         var_name = f"z_stat[{curr_id}]"
 
-    # CHECK 1: Connection from Previous Location
-    if idx == 0:
-        # Depot -> First Trip
-        conn, note = get_connection("PARX", sl) # Assuming PARX is depot
-        arrival_time = st_min # Assume we leave depot early enough
-    else:
-        # Trip (i-1) -> Trip i
-        conn, note = get_connection(prev_end_loc, sl)
-        if conn:
-            travel_time, travel_kwh = conn
-            arrival_time = prev_end_time + travel_time
-            current_soc -= travel_kwh
-        else:
-            arrival_time = 99999
-            travel_time = 0
+#     # 4. CHECK ARC
+#     if var_name != "IGNORE":
+#         src = prev_loc
+#         dst = curr_loc_start
+        
+#         # Get Arc
+#         arc_dur, arc_nrg = get_arc(src, dst)
+#         status = "OK"
+#         notes = []
+        
+#         if arc_dur is None:
+#             status = "FAIL"
+#             notes.append(f"No Arc {src}->{dst}")
+#             arc_dur=0; arc_nrg=0
+        
+#         # Timing
+#         # We must arrive by start_t
+#         # Arrival = prev_end_t + arc_dur
+#         # Special Case: First event (wA_trip)
+#         if prev_type == 'DEPOT' and prev_end_t == 0:
+#             # We assume we leave Depot exactly when needed
+#             # So slack is irrelevant (or always 0)
+#             arrival = start_t 
+#             # But let's verify if arc_dur is crazy long? No constraint usually.
+#             # Just set soc consumption
+#             pass
+#         else:
+#             arrival = prev_end_t + arc_dur
+#             slack = start_t - arrival
+#             if slack < -1e-3:
+#                 status = "FAIL"
+#                 notes.append(f"Late: Arr {arrival} > Start {start_t} ({slack:.1f}m)")
+        
+#         curr_soc -= (arc_nrg or 0)
+        
+#         print(f"{var_name:<20} {str(src)[:10]:<10} {str(dst)[:10]:<10} {arc_dur:<6} {arc_nrg:<6} {curr_soc:<7.1f} {status:<10} {'; '.join(notes)}")
 
-    # CHECK 2: Time Constraint
-    time_slack = st_min - arrival_time
+#     # 5. UPDATE STATE
+#     if curr_type == 'TRIP':
+#         curr_soc -= act_nrg
+#         prev_type = 'TRIP'
+#         prev_id = curr_id
+#         prev_loc = trip_end_loc # ! End of Trip
+#         prev_end_t = end_t
     
-    # CHECK 3: Energy Constraint
-    trip_feasible = True
-    status = "OK"
-    fail_reason = ""
+#     elif curr_type == 'STATION':
+#         curr_soc += act_charge
+#         if curr_soc > 300.0: curr_soc = 300.0
+#         prev_type = 'STATION'
+#         prev_id = curr_id
+#         prev_loc = curr_loc_start # Stay at station
+#         prev_end_t = end_t
 
-    if conn is None:
-        status = "FAIL"
-        fail_reason = f"NO ARC: {prev_end_loc} -> {sl} ({note})"
-    elif time_slack < 0:
-        status = "FAIL"
-        fail_reason = f"LATE: Arrive {arrival_time} > Start {st_min} (Slack {time_slack}m)"
-    elif current_soc < trip_kwh:
-        status = "FAIL"
-        fail_reason = f"OOM: SoC {current_soc:.1f} < Trip {trip_kwh:.1f}"
+# # 6. END OF DAY
+# if prev_type == 'TRIP':
+#     var_name = f"wOmega[{prev_id}]"
+#     arc_dur, arc_nrg = get_arc(prev_loc, DEPOT_NAME)
+#     curr_soc -= (arc_nrg or 0)
+#     print(f"{var_name:<20} {str(prev_loc)[:10]:<10} {str(DEPOT_NAME)[:10]:<10} {arc_dur:<6} {arc_nrg:<6} {curr_soc:<7.1f} OK")
 
-    # Print Row
-    print(f"{trip_id:<6} {sl[:10]:<10} {el[:10]:<10} {status:<10} {fail_reason if status=='FAIL' else f'Arr: {arrival_time} (Slack {time_slack}m)'}")
-
-    # Update State for next loop
-    current_soc -= trip_kwh
-    prev_end_loc = el
-    prev_end_time = et_min
-    
-    if status == "FAIL":
-        print("\n!!! VALIDATION STOPPED DUE TO FAILURE !!!")
-        break
-
-print("-" * 80)
-print(f"Final SoC after simulation: {current_soc:.2f} kWh")
-# %%
+# print("-" * 110)
+# # %%
