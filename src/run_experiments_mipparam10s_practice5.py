@@ -914,12 +914,12 @@ def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10, time_limit=
     m.Params.TimeLimit = int(time_limit)
     
     # Use Barrier for the root node speedup
-    m.Params.Method = 2
+    m.Params.Method = 3
     m.Params.Crossover = 0 
-    m.Params.MIPGap = 0.05
+    m.Params.MIPGap = 1e-1
     m.Params.Presolve = 2
 
-    m.Params.PoolSearchMode = 1e-1
+    m.Params.PoolSearchMode = 2
     m.Params.PoolSolutions  = int(num_exact_cols)
     
     # [FIX] REMOVED Invalid Parameter PoolObjBound
