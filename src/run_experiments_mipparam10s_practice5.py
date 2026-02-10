@@ -875,9 +875,9 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
 
     # 3. Incumbent-hunting (CG wants good columns, not tight bounds)
     m.Params.MIPFocus   = 1       # Focus on Feasibility
-    m.Params.Heuristics = 0.5     # % time on heuristics
+    m.Params.Heuristics = 0.8     # % time on heuristics
     m.Params.NoRelHeurTime = 5
-    m.Params.Cuts       = 0       # Disable cuts (saves time)
+    #m.Params.Cuts       = 0       # Disable cuts (saves time)
 
     # 4. NoRel Heuristic (Great for finding initial solutions quickly)
     if time_limit >= 20:
@@ -892,7 +892,7 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     # 6. Pool settings
     m.Params.PoolSearchMode = 1
     m.Params.PoolSolutions  = cap
-    m.Params.SolutionLimit  = 10
+    #m.Params.SolutionLimit  = 10 # no limit
     
     # [FIX] REMOVED Invalid Parameter PoolObjBound
     # Filtering happens in the extraction phase instead.
@@ -914,7 +914,7 @@ def solve_pricing_exact(alpha, beta, gamma, mode, num_exact_cols=10, time_limit=
     m.Params.TimeLimit = int(time_limit)
     
     # Use Barrier for the root node speedup
-    m.Params.Method = 3
+    m.Params.Method = 2
     m.Params.Crossover = 0 
     m.Params.MIPGap = 1e-1
     m.Params.Presolve = 2
