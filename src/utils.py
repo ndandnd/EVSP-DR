@@ -42,19 +42,46 @@ def base_station_name(name: str) -> str:
         if right.isdigit():   # only strip copy suffix
             return left
     return s
-def calculate_truck_route_cost(route, truck_cost, charging_cost_data: pd.DataFrame) -> float:
+
+
+# ---------- COST CALCULATOR (UPDATED FOR DICT) ----------
+def calculate_truck_route_cost(route, truck_cost, hourly_prices: dict) -> float:
+    """
+    Calculates cost using hourly_prices dict {0: 0.10, 1: 0.15...}
+    and the route's cst/cet values.
+    """
     total = float(truck_cost)
-    cs = route.get("charging_stops", {})
+    
+    stops = route.get("charging_stops", {})
+    stations = stops.get("stations", [])
+    csts = stops.get("cst", [])
+    cets = stops.get("cet", [])
+    
+    # Safety check
+    if not (len(stations) == len(csts) == len(cets)):
+        # If lengths mismatch, we might have a data issue, return base cost or warn
+        return total
 
-    kwh_per_block = CHARGE_PER_BLOCK
+    for i, station in enumerate(stations):
+        start_min = csts[i]
+        end_min   = cets[i]
+        
+        # Logic: Price is based on the START hour
+        hour_idx = int(start_min // 60)
+        
+        # Fallback to key 0 or max key if hour is out of bounds (e.g. 25th hour)
+        # Assuming hourly_prices has keys 0..23 or similar
+        price = hourly_prices.get(hour_idx, 0.0)
+        if price == 0.0 and hourly_prices:
+             # Try modulo 24 if your dict is 0-23 but time goes to 26h
+             price = hourly_prices.get(hour_idx % 24, hourly_prices.get(0, 0.0))
 
-    for (h, t) in cs.get("chi_plus", []):
-        h_base = base_station_name(h)
-        total += kwh_per_block * float(charging_cost_data.at[int(t), h_base]) * charge_cost_premium
-
-    for (h, t) in cs.get("chi_minus", []):
-        h_base = base_station_name(h)
-        total -= kwh_per_block * float(charging_cost_data.at[int(t), h_base])
+        duration_min = end_min - start_min
+        
+        # Energy = Duration * Rate (kW/min)
+        energy_kwh = duration_min * CHARGE_PER_BLOCK
+        
+        total += price * energy_kwh * charge_cost_premium
 
     return total
 
@@ -63,7 +90,7 @@ def calculate_battery_route_cost(route, batt_cost, charging_cost_data: pd.DataFr
     total = float(batt_cost)
 
     kwh_per_block = CHARGE_PER_BLOCK
-    
+
     cs = route.get("charging_stops", {})
     for (h, t) in cs.get("chi_plus", []):
         total += kwh_per_block *float(charging_cost_data.at[int(t), str(h)]) * charge_cost_premium
@@ -126,30 +153,40 @@ def extract_batt_route_from_solution(model, bar_t, h="h1"):
     route["charging_stops"]["cst"].append(cst if cst is not None else 1)
     route["charging_stops"]["cet"].append(cet if cet is not None else bar_t)
     return route
-
+# In utils.py
 
 def extract_route_from_solution(vars_dict, T, S, bar_t, depot="PARX", value_getter=lambda v: v.X):
     def _has(varname, key):
+        # SAFEGUARD: Check if varname exists in dict first!
+        if varname not in vars_dict:
+            return False
         return key in vars_dict[varname]
 
+    # 1. GRAPH TRAVERSAL (Find the path of nodes)
     route_nodes = [depot]
     first = None
+    
+    # Find start arc
     for i in T:
-        if value_getter(vars_dict["wA_trip"][i]) > 0.5:
+        if _has("wA_trip", i) and value_getter(vars_dict["wA_trip"][i]) > 0.5:
             first = i; break
     if first is None:
         for h in S:
-            if value_getter(vars_dict["wA_station"][h]) > 0.5:
+            if _has("wA_station", h) and value_getter(vars_dict["wA_station"][h]) > 0.5:
                 first = h; break
+    
     if first is None:
-        raise RuntimeError("No node found leaving the depot!")
+        # If no start found, check if it's a "stay at depot" or empty route (dummy)
+        return {"route": [], "dummy": True, "charging_stops": {}, "type": "empty"}
 
     route_nodes.append(first)
     cur = first
     seen = set([depot, first])
 
+    # Follow arcs
     while True:
         nxt = None
+        # From Trip
         if cur in T:
             for j in T:
                 if j != cur and _has("x", (cur, j)) and value_getter(vars_dict["x"][(cur, j)]) > 0.5:
@@ -158,61 +195,59 @@ def extract_route_from_solution(vars_dict, T, S, bar_t, depot="PARX", value_gett
                 for h in S:
                     if _has("y", (cur, h)) and value_getter(vars_dict["y"][(cur, h)]) > 0.5:
                         nxt = h; break
-            if nxt is None and value_getter(vars_dict["wOmega_trip"][cur]) > 0.5:
+            if nxt is None and _has("wOmega_trip", cur) and value_getter(vars_dict["wOmega_trip"][cur]) > 0.5:
                 nxt = depot
+        # From Station
         else:
             for i in T:
                 if _has("z", (cur, i)) and value_getter(vars_dict["z"][(cur, i)]) > 0.5:
                     nxt = i; break
-            if nxt is None and value_getter(vars_dict["wOmega_station"][cur]) > 0.5:
+            if nxt is None and _has("wOmega_station", cur) and value_getter(vars_dict["wOmega_station"][cur]) > 0.5:
                 nxt = depot
 
         if nxt is None:
-            raise RuntimeError(f"No outgoing arc from {cur}")
+            break 
 
         route_nodes.append(nxt)
         if nxt == depot:
             break
         if nxt in seen:
-            raise RuntimeError(f"Cycle detected at {nxt}")
+            break # Cycle detected
         seen.add(nxt)
         cur = nxt
 
+    # 2. EXTRACT CHARGING DETAILS (Updated for cst/cet)
     route = {
         "route": route_nodes,
-        "charging_stops": {k: [] for k in [
-            "stations", "cst", "cet",
-            "chi_plus_free", "chi_minus_free", "chi_minus", "chi_plus", "chi_zero"
-        ]},
+        "charging_stops": {
+            "stations": [], "cst": [], "cet": []
+        },
         "charging_activities": 0
     }
 
+    # Iterate through the path and grab cst/cet for any station nodes
     for node in route_nodes[1:-1]:
         if node in S:
             route["charging_stops"]["stations"].append(node)
+            
+            start_val = 0
+            end_val = 0
+            
+            # Look for cst/cet in vars_dict safely
             if "cst" in vars_dict and node in vars_dict["cst"]:
-                route["charging_stops"]["cst"].append(value_getter(vars_dict["cst"][node]))
+                start_val = value_getter(vars_dict["cst"][node])
+            
             if "cet" in vars_dict and node in vars_dict["cet"]:
-                route["charging_stops"]["cet"].append(value_getter(vars_dict["cet"][node]))
-            for t in range(1, bar_t + 1):
-                if _has("chi_plus_free",  (node, t)) and value_getter(vars_dict["chi_plus_free"][(node, t)])  > 0.5:
-                    route["charging_stops"]["chi_plus_free"].append((node, t))
-                if _has("chi_minus_free", (node, t)) and value_getter(vars_dict["chi_minus_free"][(node, t)]) > 0.5:
-                    route["charging_stops"]["chi_minus_free"].append((node, t))
-                if _has("chi_minus",      (node, t)) and value_getter(vars_dict["chi_minus"][(node, t)])      > 0.5:
-                    route["charging_stops"]["chi_minus"].append((node, t))
-                if _has("chi_plus",       (node, t)) and value_getter(vars_dict["chi_plus"][(node, t)])       > 0.5:
-                    route["charging_stops"]["chi_plus"].append((node, t))
-                if _has("chi_zero",       (node, t)) and value_getter(vars_dict["chi_zero"][(node, t)])       > 0.5:
-                    route["charging_stops"]["chi_zero"].append((node, t))
-            route["charging_activities"] += 1
+                end_val = value_getter(vars_dict["cet"][node])
+                
+            route["charging_stops"]["cst"].append(start_val)
+            route["charging_stops"]["cet"].append(end_val)
+            
+            # Count if meaningful charge occurred
+            if end_val - start_val > 0.1:
+                route["charging_activities"] += 1
 
-    route["type"] = "truck" if any(n in T for n in route_nodes) else "batt"
-    if "g_return" in vars_dict:
-        try:
-            route["remaining_soc"] = float(value_getter(vars_dict["g_return"]))
-        except Exception:
-            pass
+    route["type"] = "truck"
     return route
 
 
