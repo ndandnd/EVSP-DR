@@ -155,100 +155,200 @@ def extract_batt_route_from_solution(model, bar_t, h="h1"):
     return route
 # In utils.py
 
+
 def extract_route_from_solution(vars_dict, T, S, bar_t, depot="PARX", value_getter=lambda v: v.X):
     def _has(varname, key):
-        # SAFEGUARD: Check if varname exists in dict first!
-        if varname not in vars_dict:
-            return False
+        if varname not in vars_dict: return False
         return key in vars_dict[varname]
 
-    # 1. GRAPH TRAVERSAL (Find the path of nodes)
+    def _get_val(varname, key, default=0.0):
+        if _has(varname, key):
+            return value_getter(vars_dict[varname][key])
+        return default
+
+    # 1. GRAPH TRAVERSAL (Find path)
     route_nodes = [depot]
     first = None
     
-    # Find start arc
+    # Find start
     for i in T:
-        if _has("wA_trip", i) and value_getter(vars_dict["wA_trip"][i]) > 0.5:
-            first = i; break
+        if _get_val("wA_trip", i) > 0.5: first = i; break
     if first is None:
         for h in S:
-            if _has("wA_station", h) and value_getter(vars_dict["wA_station"][h]) > 0.5:
-                first = h; break
-    
+            if _get_val("wA_station", h) > 0.5: first = h; break
+            
     if first is None:
-        # If no start found, check if it's a "stay at depot" or empty route (dummy)
-        return {"route": [], "dummy": True, "charging_stops": {}, "type": "empty"}
+        return {"route": [], "dummy": True, "type": "empty", "desc": "Empty Route"}
 
     route_nodes.append(first)
     cur = first
     seen = set([depot, first])
 
-    # Follow arcs
     while True:
         nxt = None
         # From Trip
         if cur in T:
             for j in T:
-                if j != cur and _has("x", (cur, j)) and value_getter(vars_dict["x"][(cur, j)]) > 0.5:
-                    nxt = j; break
+                if j != cur and _get_val("x", (cur, j)) > 0.5: nxt = j; break
             if nxt is None:
                 for h in S:
-                    if _has("y", (cur, h)) and value_getter(vars_dict["y"][(cur, h)]) > 0.5:
-                        nxt = h; break
-            if nxt is None and _has("wOmega_trip", cur) and value_getter(vars_dict["wOmega_trip"][cur]) > 0.5:
-                nxt = depot
+                    if _get_val("y", (cur, h)) > 0.5: nxt = h; break
+            if nxt is None and _get_val("wOmega_trip", cur) > 0.5: nxt = depot
         # From Station
         else:
             for i in T:
-                if _has("z", (cur, i)) and value_getter(vars_dict["z"][(cur, i)]) > 0.5:
-                    nxt = i; break
-            if nxt is None and _has("wOmega_station", cur) and value_getter(vars_dict["wOmega_station"][cur]) > 0.5:
-                nxt = depot
+                if _get_val("z", (cur, i)) > 0.5: nxt = i; break
+            if nxt is None and _get_val("wOmega_station", cur) > 0.5: nxt = depot
 
-        if nxt is None:
-            break 
-
+        if nxt is None: break 
         route_nodes.append(nxt)
-        if nxt == depot:
-            break
-        if nxt in seen:
-            break # Cycle detected
+        if nxt == depot: break
+        if nxt in seen: break
         seen.add(nxt)
         cur = nxt
 
-    # 2. EXTRACT CHARGING DETAILS (Updated for cst/cet)
-    route = {
+    # 2. EXTRACT DETAILS (Charging & SoC)
+    route_data = {
         "route": route_nodes,
-        "charging_stops": {
-            "stations": [], "cst": [], "cet": []
-        },
+        "charging_stops": {"stations": [], "cst": [], "cet": [], "kwh": []},
         "charging_activities": 0
     }
 
-    # Iterate through the path and grab cst/cet for any station nodes
-    for node in route_nodes[1:-1]:
-        if node in S:
-            route["charging_stops"]["stations"].append(node)
-            
-            start_val = 0
-            end_val = 0
-            
-            # Look for cst/cet in vars_dict safely
-            if "cst" in vars_dict and node in vars_dict["cst"]:
-                start_val = value_getter(vars_dict["cst"][node])
-            
-            if "cet" in vars_dict and node in vars_dict["cet"]:
-                end_val = value_getter(vars_dict["cet"][node])
-                
-            route["charging_stops"]["cst"].append(start_val)
-            route["charging_stops"]["cet"].append(end_val)
-            
-            # Count if meaningful charge occurred
-            if end_val - start_val > 0.1:
-                route["charging_activities"] += 1
+    # Build a "Rich Description" string for debugging
+    # Format: PARX -> T1(SoC:280) -> S1(Charge:50 @ 600-630) -> ...
+    desc_parts = []
 
-    route["type"] = "truck"
-    return route
+    for node in route_nodes:
+        part_str = str(node)
+        
+        # Try to get SoC at arrival (g variables)
+        # Assuming g[i] exists in pricing model
+        soc = _get_val("g", node, default=-1)
+        if soc >= 0:
+            part_str += f"(SoC:{soc:.0f})"
+
+        # If it's a station, get charging info
+        if node in S:
+            cst = _get_val("cst", node)
+            cet = _get_val("cet", node)
+            amt = _get_val("v_amt", node) # <--- THIS IS WHAT YOU MISSED
+            
+            if amt > 0.1:
+                route_data["charging_stops"]["stations"].append(node)
+                route_data["charging_stops"]["cst"].append(cst)
+                route_data["charging_stops"]["cet"].append(cet)
+                route_data["charging_stops"]["kwh"].append(amt)
+                route_data["charging_activities"] += 1
+                
+                # Add to description
+                # Convert minutes to HH:MM for readability
+                h_start, m_start = divmod(int(cst), 60)
+                h_end, m_end = divmod(int(cet), 60)
+                time_str = f"{h_start:02d}:{m_start:02d}-{h_end:02d}:{m_end:02d}"
+                
+                part_str += f" [Charge {amt:.1f}kWh @ {time_str}]"
+        
+        desc_parts.append(part_str)
+
+    route_data["desc"] = " -> ".join(desc_parts)
+    route_data["type"] = "truck"
+    
+    return route_data
+
+# def extract_route_from_solution(vars_dict, T, S, bar_t, depot="PARX", value_getter=lambda v: v.X):
+#     def _has(varname, key):
+#         # SAFEGUARD: Check if varname exists in dict first!
+#         if varname not in vars_dict:
+#             return False
+#         return key in vars_dict[varname]
+
+#     # 1. GRAPH TRAVERSAL (Find the path of nodes)
+#     route_nodes = [depot]
+#     first = None
+    
+#     # Find start arc
+#     for i in T:
+#         if _has("wA_trip", i) and value_getter(vars_dict["wA_trip"][i]) > 0.5:
+#             first = i; break
+#     if first is None:
+#         for h in S:
+#             if _has("wA_station", h) and value_getter(vars_dict["wA_station"][h]) > 0.5:
+#                 first = h; break
+    
+#     if first is None:
+#         # If no start found, check if it's a "stay at depot" or empty route (dummy)
+#         return {"route": [], "dummy": True, "charging_stops": {}, "type": "empty"}
+
+#     route_nodes.append(first)
+#     cur = first
+#     seen = set([depot, first])
+
+#     # Follow arcs
+#     while True:
+#         nxt = None
+#         # From Trip
+#         if cur in T:
+#             for j in T:
+#                 if j != cur and _has("x", (cur, j)) and value_getter(vars_dict["x"][(cur, j)]) > 0.5:
+#                     nxt = j; break
+#             if nxt is None:
+#                 for h in S:
+#                     if _has("y", (cur, h)) and value_getter(vars_dict["y"][(cur, h)]) > 0.5:
+#                         nxt = h; break
+#             if nxt is None and _has("wOmega_trip", cur) and value_getter(vars_dict["wOmega_trip"][cur]) > 0.5:
+#                 nxt = depot
+#         # From Station
+#         else:
+#             for i in T:
+#                 if _has("z", (cur, i)) and value_getter(vars_dict["z"][(cur, i)]) > 0.5:
+#                     nxt = i; break
+#             if nxt is None and _has("wOmega_station", cur) and value_getter(vars_dict["wOmega_station"][cur]) > 0.5:
+#                 nxt = depot
+
+#         if nxt is None:
+#             break 
+
+#         route_nodes.append(nxt)
+#         if nxt == depot:
+#             break
+#         if nxt in seen:
+#             break # Cycle detected
+#         seen.add(nxt)
+#         cur = nxt
+
+#     # 2. EXTRACT CHARGING DETAILS (Updated for cst/cet)
+#     route = {
+#         "route": route_nodes,
+#         "charging_stops": {
+#             "stations": [], "cst": [], "cet": []
+#         },
+#         "charging_activities": 0
+#     }
+
+#     # Iterate through the path and grab cst/cet for any station nodes
+#     for node in route_nodes[1:-1]:
+#         if node in S:
+#             route["charging_stops"]["stations"].append(node)
+            
+#             start_val = 0
+#             end_val = 0
+            
+#             # Look for cst/cet in vars_dict safely
+#             if "cst" in vars_dict and node in vars_dict["cst"]:
+#                 start_val = value_getter(vars_dict["cst"][node])
+            
+#             if "cet" in vars_dict and node in vars_dict["cet"]:
+#                 end_val = value_getter(vars_dict["cet"][node])
+                
+#             route["charging_stops"]["cst"].append(start_val)
+#             route["charging_stops"]["cet"].append(end_val)
+            
+#             # Count if meaningful charge occurred
+#             if end_val - start_val > 0.1:
+#                 route["charging_activities"] += 1
+
+#     route["type"] = "truck"
+#     return route
 
 
 # ---------- price curve loader ----------

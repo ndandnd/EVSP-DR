@@ -1,5 +1,5 @@
 # ---------- Column pool controls ----------
-n_fast_cols  = 200         
+n_fast_cols  = 20         
 n_exact_cols = 10        
 
 # ---------- Horizon ----------
@@ -63,12 +63,12 @@ K_BEST = 50               # was 30 (add more useful columns per iter)
 # CG loop limits / guards
 MAX_CG_ITERS = 500      # was 300
 STAGNATION_ITERS = 5      # was 3 (don’t stop so early)
-MASTER_IMPROVE_THRESHOLD = 5e-4  # was 5e-4 (count small progress as improvement)
+MASTER_IMPROVE_THRESHOLD = 0.1  # was 5e-4 (count small progress as improvement)
 
 # ---------- NEW: Solver resource knobs ----------
-THREADS = 8
-NODEFILE_START = 0.2
-NODEFILE_DIR = None
+THREADS = 4
+NODEFILE_START = 0.5
+NODEFILE_DIR = "."
 
 # ---------- NEW: Timelimits/gaps ----------
 # Master RMP (LP) per-iteration solve
@@ -77,4 +77,4 @@ MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
 
 # Pricing MIPs
 PRICING_TIMELIMIT = 10    # was 60; 10 is good to find new routes quickly
-PRICING_GAP       = 0.05   # keep
+PRICING_GAP       = 0.1   # keep

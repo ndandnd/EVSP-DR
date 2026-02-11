@@ -92,7 +92,7 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-routes_csv    = DATA_DIR / "Practice_1bus.csv"
+routes_csv    = DATA_DIR / "Practice_5bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
@@ -674,7 +674,8 @@ def build_pricing(alpha, beta, gamma, mode):
         x=x, y=y, z=z, cst=cst, cet=cet,
         # chi_plus=chi_plus, chi_plus_free=chi_plus_free,
         # chi_minus=chi_minus, chi_minus_free=chi_minus_free, chi_zero=chi_zero,
-        g=g, g_return=g_return
+        g=g, g_return=g_return,
+        v_amt=v_amt
     )
 
     pullout = quicksum(wA_station[h] for h in S_use) + quicksum(wA_trip[i] for i in T)
@@ -923,7 +924,7 @@ PRICING_TLIM_INIT = 10
 PRICING_TLIM_MAX  = 300
 PRICING_TLIM_GROW = 2.0   # multiply TL when we retry
 PRICING_TLIM_DECAY = 0.8  # shrink TL after success (optional)
-PRICING_POOL_CAP_MAX = 50 # keep pool small for CG; 10–30 is usually plenty
+PRICING_POOL_CAP_MAX = 30 # keep pool small for CG; 10–30 is usually plenty
 
 # --- HELPER FUNCTIONS ---
 def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10, *,
@@ -1286,7 +1287,7 @@ while iteration < max_iter:
     # 3) ADD COLUMNS TO MASTER
     for route in new_trucks:
         # print(f"[ADD] column rc={route.get('_rc', float('nan')):.1f}  route={route['route']}")
-        # print(f"[ADD] rc={route.get('_rc', 0):.1f} | Path: {route['desc']}")
+        print(f"[ADD] rc={route.get('_rc', 0):.1f} | Path: {route['desc']}")
         R_truck.append(route)
         cost = calculate_truck_route_cost(route, bus_cost, hourly_prices)
 
@@ -1386,7 +1387,9 @@ used_routes = []
 for r in range(len(R_truck)):
     if r in a_final and a_final[r].X > 0.5:
         used_routes.append(r)
-        print(f"Route {r}: a[{r}]={a_final[r].X:.0f}  -> {R_truck[r]}")
+        description = R_truck[r].get('desc', str(R_truck[r]['route']))
+        print(f"Route {r}: a[{r}]={a_final[r].X:.0f} | {description}")
+        #print(f"Route {r}: a[{r}]={a_final[r].X:.0f}  -> {R_truck[r]}")
 
 print("\n Master LP obj:", final_LP_obj)
 print(" Master MIP obj:", final_MIP_obj)
