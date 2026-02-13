@@ -574,14 +574,16 @@ def build_pricing(alpha, beta, gamma, mode):
     pricing_model.Params.Cuts = 0
 
     # --------- helper: strong pre-pruning for feasibility + short deadheads ---------
-    # MAX_TAU = 2  # at most 2 hour-blocks between nodes in pricing graph
+    #MAX_TAU = 41  # at most 2 hour-blocks between nodes in pricing graph
+    max_trip2trip = 45
 
     def tt_ok(i, j):
         return (
-            (i, j) in tau
-            and (et[i] + tau[(i, j)] <= st[j])
-            #and (tau[(i, j)] <= MAX_TAU)
+            (i,j) in tau and
+            et[i] + tau[(i, j)] <= st[j] and
+            (st[j] - et[i]) <= max_trip2trip
         )
+    
 
     def ih_ok(i, h):
         return (
@@ -960,7 +962,7 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     #     m.Params.BestObjStop = float(best_obj_stop)
 
     # 6. Pool settings
-    m.Params.PoolSearchMode = 1
+    m.Params.PoolSearchMode = 2
     m.Params.PoolSolutions  = cap
     #m.Params.SolutionLimit  = 10 # no limit
     
@@ -1076,8 +1078,8 @@ best_master = float("inf")
 PRICING_TLIM_INIT = 15
 PRICING_TLIM_MAX  = 300
 
-STAGNATION_LIMIT = 3
-MIN_IMPROVEMENT = 1.5  # master obj improvement must be at least
+STAGNATION_LIMIT = 10
+MIN_IMPROVEMENT = 100  # master obj improvement must be at least
 
 stagnant_counter = 0
 last_master_obj = None   #start as None
@@ -1097,6 +1099,11 @@ cg_stats = []
 # Create a unique filename based on the run ID so you don't overwrite previous experiments
 stats_csv_path = OUTDIR / f"pricing_stats_{RUN_ID}.csv"
 print(f"Saving real-time stats to: {stats_csv_path}")
+
+
+stagnant_improvement_counter = 0
+MIN_MEANINGFUL_IMPROVEMENT = 20.0  # e.g., $40, or about 60minutes of charging
+STAGNANT_IMPROVEMENT_LIMIT = 10      # Stop after 8 iters of low gains
 
 
 while iteration < max_iter:
@@ -1122,25 +1129,37 @@ while iteration < max_iter:
 
     print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
 
-    # B. STAGNATION CHECK
-    if improvement < MIN_IMPROVEMENT:
-        stagnant_counter += 1
+    # # B. STAGNATION CHECK
+    # if improvement < MIN_MEANINGFUL_IMPROVEMENT:
+    #     stagnant_improvement_counter += 1
+    #     print(f"   [INFO] Low improvement (< {MIN_MEANINGFUL_IMPROVEMENT}). "
+    #           f"Count: {stagnant_improvement_counter}/{STAGNANT_IMPROVEMENT_LIMIT}")
+        
+    #     if stagnant_improvement_counter >= STAGNANT_IMPROVEMENT_LIMIT:
+    #         print(f"[STOP] Gains are too small ({improvement:.2f}). Stopping early to save time.")
+    #         break
+    # else:
+    #     stagnant_counter = 0
+    #     current_pricing_timelimit = 30 # reset timelimit
+    #     force_exact_next = False
 
-        print(f"   [WARN] Stagnant {stagnant_counter}/{STAGNATION_LIMIT}")
+    # --- NEW STAGNATION LOGIC (5-in-a-row) ---
+    if improvement < MIN_MEANINGFUL_IMPROVEMENT:
+        stagnant_improvement_counter += 1
+        print(f"   [INFO] Low improvement (< {MIN_MEANINGFUL_IMPROVEMENT}). "
+              f"Stagnation count: {stagnant_improvement_counter}/{STAGNANT_IMPROVEMENT_LIMIT}")
         
-        
-        if stagnant_counter == STAGNATION_LIMIT:
-            print("   [ACTION] Triggering DEEP DIVE Pricing (Focus=3, Time=300s)...")
-            current_pricing_timelimit = 300 # 5 minutes
-            force_exact_next = True
-        
-        elif stagnant_counter > STAGNATION_LIMIT:
-            print("[STOP] Master stabilized. Converged.")
+        if stagnant_improvement_counter >= STAGNANT_IMPROVEMENT_LIMIT:
+            print(f"[STOP] Stagnated for {STAGNANT_IMPROVEMENT_LIMIT} iterations with gains < {MIN_MEANINGFUL_IMPROVEMENT}. Stopping.")
             break
     else:
-        stagnant_counter = 0
-        current_pricing_timelimit = 30 # reset timelimit
-        force_exact_next = False
+        if stagnant_improvement_counter > 0:
+            print(f"   [RESET] Significant improvement found ({improvement:.2f}). Resetting stagnation counter.")
+        stagnant_improvement_counter = 0
+        current_pricing_timelimit = PRICING_TIMELIMIT
+    
+    last_master_obj = current_obj
+    # ------------------------------------------
         
     last_master_obj = current_obj
 
@@ -1418,599 +1437,3 @@ elapsed = stopwatch_end - stopwatch_start
 print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
 
 # %%
-
-# # --- PHASE 2: TARGETING UNCOVERED TRIPS ---
-
-# print("\n\n>>> STARTING PHASE 2: CLEANING UP UNCOVERED TRIPS <<<\n")
-
-# # Configuration for Phase 2
-# PHASE2_MAX_ITERS = 200      # Safety cap so it doesn't run forever
-# TARGET_MAX_ALPHA = 900.0   # 
-# current_pricing_timelimit = 15 # Start slightly higher for stubborn trips
-
-# # We continue using the EXISTING R_truck and rmp from memory
-# # No need to rebuild the RMP from scratch unless you closed the object
-
-# iteration_p2 = 0
-# while iteration_p2 < PHASE2_MAX_ITERS:
-#     iteration_p2 += 1
-#     print(f"\n--- Phase 2 Iteration {iteration_p2} ---")
-
-#     # 1. SOLVE MASTER (Reuse existing model)
-#     t0 = time.time()
-#     rmp.Params.TimeLimit = MASTER_TIMELIMIT
-#     rmp.optimize()
-#     print(f" Master obj: {rmp.ObjVal:.2f}")
-
-#     # 2. CHECK STATUS (Duals & Dummies)
-#     alpha, beta_dual, gamma_dual = extract_duals(rmp)
-    
-#     # Calculate max alpha specifically for TRIP constraints
-#     # (Assuming alpha is a dict/list corresponding to trip indices)
-#     if isinstance(alpha, dict):
-#         max_alpha = max(alpha.values()) if alpha else 0
-#     else:
-#         max_alpha = max(alpha) if len(alpha) > 0 else 0
-
-#     # Count active dummies
-#     # (Assuming you have a list/dict of dummy variables 'q' or can infer from slack)
-#     # A simple way to check coverage is checking if 'alpha' is close to your Big-M penalty
-#     # But checking the RMP variables is safer if you have the handles:
-#     # active_dummies = sum(1 for v in dummy_vars if v.X > 0.5) 
-    
-#     print(f"   [STATUS] Max Alpha: {max_alpha:.1f} (Target: {TARGET_MAX_ALPHA})")
-    
-#     # STOP CONDITION
-#     if max_alpha <= TARGET_MAX_ALPHA:
-#         print(f"[STOP] Success! Max alpha {max_alpha:.1f} is below threshold {TARGET_MAX_ALPHA}.")
-#         break
-
-#     # 3. SOLVE PRICING (Standard Adaptive Logic)
-#     new_trucks = []
-#     best_rc_iter = float("inf")
-#     timed_out_any = False
-#     seen_keys_existing = {_route_key(r) for r in R_truck}
-    
-#     # Configuration for "stubborn" trips
-#     # We allow exact pricing to run earlier if fast pricing fails
-#     BEST_OBJ_STOP = -100.0 # Stop fast pricing if we find ANY saving
-    
-
-#     while True:
-#         print(f"   > Pricing (TimeLimit={current_pricing_timelimit}s)")
-        
-#         # ... [Reuse your existing solve_pricing_fast call] ...
-#         pricing_model, vars_pr = solve_pricing_fast(
-#             alpha, beta_dual, gamma_dual,
-#             mode=1,
-#             num_fast_cols=n_fast_cols,
-#             time_limit=current_pricing_timelimit,
-#             best_obj_stop=BEST_OBJ_STOP
-#         )
-        
-#         timed_out_fast = (pricing_model.Status == GRB.TIME_LIMIT)
-#         timed_out_any |= timed_out_fast
-        
-#         candidates, best_rc_fast, neg_in_pool, extract_fail = _collect_candidates_from_pool(
-#             pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
-#         )
-#         best_rc_iter = min(best_rc_iter, best_rc_fast)
-
-#         # Standard extraction logic...
-#         candidates.sort(key=lambda r: r["_rc"])
-#         seen_new = set()
-#         for t_route in candidates:
-#             k = _route_key(t_route)
-#             if (k not in seen_keys_existing) and (k not in seen_new):
-#                 new_trucks.append(t_route)
-#                 seen_new.add(k)
-#             if len(new_trucks) >= K_BEST: break
-
-#         # Success?
-#         if new_trucks:
-#             print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
-#             current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.8)) # Decay
-#             break
-            
-#         # Fallback to Exact? (Run this aggressively in Phase 2)
-#         ran_exact = False
-#         if not new_trucks and (neg_in_pool > 0 or n_exact_cols > 0):
-#             print(f"   > Trying EXACT pricing (TimeLimit={current_pricing_timelimit}s)...")
-#             pricing_model2, vars_pr2 = solve_pricing_exact(
-#                 alpha, beta_dual, gamma_dual,
-#                 mode=1,
-#                 num_exact_cols=n_exact_cols,
-#                 time_limit=current_pricing_timelimit
-#             )
-#             # ... [Extract candidates logic same as before] ...
-#             # (If you need the full exact block pasted here let me know, 
-#             # otherwise assume it's the same logic as your main loop)
-#             # ...
-            
-#             # [Shortened for brevity - insert extraction logic here]
-#             candidates2, _, _, _ = _collect_candidates_from_pool(
-#                 pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
-#             )
-#             for t_route in candidates2:
-#                  k = _route_key(t_route)
-#                  if (k not in seen_keys_existing) and (k not in seen_new):
-#                      new_trucks.append(t_route)
-#                      seen_new.add(k)
-            
-#             if new_trucks:
-#                 print(f"   [SUCCESS] Found {len(new_trucks)} cols via Exact.")
-#                 break
-
-#         # Check for IMPOSSIBILITY
-#         if not new_trucks and not timed_out_any and best_rc_iter >= -RC_EPSILON:
-#             print(f"[STOP] Pricing is Optimal (rc >= 0). No more columns exist.")
-#             print(f"[WARNING] We still have Max Alpha={max_alpha:.1f}. This means the remaining trips are INFEASIBLE to cover.")
-#             iteration_p2 = PHASE2_MAX_ITERS # Force exit
-#             break
-
-#         # Retry Logic
-#         if current_pricing_timelimit >= 300: # Max 5 mins
-#             print("[GIVE UP] Max timer hit.")
-#             break
-            
-#         current_pricing_timelimit = int(current_pricing_timelimit * 2.0)
-#         print(f"   [RETRY] bumping time to {current_pricing_timelimit}s")
-
-#     # 4. ADD COLUMNS (Same as before)
-#     for route in new_trucks:
-#         # ... [Add to R_truck and RMP logic] ...
-#         R_truck.append(route)
-#         cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
-#         col = Column()
-#         for node in route["route"]:
-#             if isinstance(node, int):
-#                 col.addTerms(1.0, trip_cov[node])
-#         idx = len(R_truck) - 1
-#         a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
-    
-#     rmp.update()
-
-
-# stopwatch_end2 = time.time()
-# elapsed = stopwatch_end2 - stopwatch_end
-# print(f"\n=== 2nd CG Loop Completed in {elapsed:.1f} seconds ===")
-# # %%
-
-
-#%%
-### CHECKER
-
-
-
-# DATA_DIR = ROOT.parent / "data"
-
-# routes_csv    = DATA_DIR / "Practice_1bus.csv"
-# ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
-# ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
-# prices_csv    = DATA_DIR / "hourly_prices.csv"
-
-# DEPOT_NAME = "PARX"
-
-# # --- 2. LOAD DATA ---
-# print(">>> LOADING DATA...")
-# try:
-#     df_details = pd.read_csv(DATA_DIR / "Par_VehicleDetails_1bus.csv")
-#     df_trips = pd.read_csv(DATA_DIR / "Practice_1bus.csv").sort_values('Ordered_Trip_ID').reset_index(drop=True)
-#     df_ref = pd.read_csv(DATA_DIR / "Ref_dict.csv")
-#     df_dhd = pd.read_csv(DATA_DIR / "par_ref_dhd.csv")
-# except Exception as e:
-#     print(f"Error loading files: {e}")
-#     exit()
-
-# # Helper: Parse Time
-# def parse_time(t_str):
-#     if pd.isna(t_str): return None
-#     try:
-#         parts = t_str.split(':')
-#         return int(parts[0]) * 60 + int(parts[1])
-#     except: return None
-
-# # Helper: Location Mapping (Case insensitive)
-# loc_to_ref = {}
-# for _, row in df_ref.iterrows():
-#     l_col = 'Location' if 'Location' in df_ref.columns else 'location'
-#     r_col = 'Ref' if 'Ref' in df_ref.columns else 'ref'
-#     loc = str(row[l_col]).strip()
-#     ref = str(int(float(row[r_col]))) if pd.notna(row[r_col]) else None
-#     if ref: loc_to_ref[loc] = ref
-
-# # Helper: Deadhead Map
-# dhd_map = {}
-# for _, row in df_dhd.iterrows():
-#     try:
-#         r1 = str(int(float(row.iloc[0])))
-#         r2 = str(int(float(row.iloc[1])))
-#         dur = float(row.iloc[2])
-#         nrg = float(row.iloc[3])
-#         dhd_map[(r1, r2)] = (dur, nrg)
-#         dhd_map[(r2, r1)] = (dur, nrg)
-#     except: continue
-
-# def get_arc(loc_a, loc_b):
-#     """Returns (dur, nrg) between two locations via Ref/DHD lookup."""
-#     a, b = str(loc_a).strip(), str(loc_b).strip()
-#     if a == b: return 0.0, 0.0
-    
-#     ref_a, ref_b = loc_to_ref.get(a), loc_to_ref.get(b)
-#     if not ref_a or not ref_b: return None, None # Missing Ref
-#     if ref_a == ref_b: return 0.0, 0.0 # Virtual move
-    
-#     return dhd_map.get((ref_a, ref_b), (None, None))
-
-# # --- 3. FILTER & PROCESS SEQUENCE ---
-# print("\n>>> VALIDATING PRICING VARIABLES (x, y, z)...")
-
-# # Filter to relevant rows only
-# mask = df_details['Identifier'].isin(['Pull-out', 'Regular', 'Recharge'])
-# df_events = df_details[mask].copy().reset_index(drop=True)
-
-# # State Tracking
-# prev_type = None      # 'DEPOT', 'TRIP', 'STATION'
-# prev_id = None        # Trip Index (int) or Station Name (str)
-# prev_loc = DEPOT_NAME # Physical location string
-# prev_end_time = 0     # Minutes
-# curr_soc = 300.0
-
-# trip_idx_counter = 0
-
-# print(f"{'VARIABLE':<15} {'FROM':<8} {'TO':<8} {'ARC_T':<5} {'ARC_E':<5} {'SOC':<6} {'STATUS':<10} {'NOTES'}")
-# print("-" * 105)
-
-# for i, row in df_events.iterrows():
-#     evt_type = row['Identifier']
-    
-#     # 1. IDENTIFY CURRENT NODE
-#     if evt_type == 'Pull-out':
-#         curr_type = 'DEPOT' # We are leaving the depot, so 'prev' was effectively depot state
-#         curr_loc = DEPOT_NAME
-#         curr_id = DEPOT_NAME
-#         # Timestamps
-#         start_t = parse_time(row['Start1'])
-#         end_t = parse_time(row['End1'])
-        
-#     elif evt_type == 'Regular':
-#         curr_type = 'TRIP'
-#         # Get Trip Details from Golden Truth (df_trips)
-#         if trip_idx_counter >= len(df_trips): break
-#         trip_row = df_trips.iloc[trip_idx_counter]
-        
-#         curr_id = trip_idx_counter
-#         curr_loc = trip_row['From1'] # Start of Trip
-#         trip_end_loc = trip_row['To1']
-        
-#         # Trip Constraints are FIXED by the schedule
-#         start_t = parse_time(trip_row['Start1'])
-#         end_t = parse_time(trip_row['End1'])
-#         trip_kwh = float(trip_row['Usage kWh'])
-        
-#         trip_idx_counter += 1
-        
-#     elif evt_type == 'Recharge':
-#         curr_type = 'STATION'
-#         curr_loc = row['From1'] # Station Name
-#         curr_id = curr_loc
-#         # Recharge constraints are FLEXIBLE, but fixed in this specific schedule
-#         start_t = parse_time(row['Start1'])
-#         end_t = parse_time(row['End1'])
-#         charge_kwh = float(row['Recharge kWh']) if pd.notna(row['Recharge kWh']) else 0.0
-
-#     # 2. EVALUATE ARC FROM PREV -> CURRENT
-#     if prev_type is not None:
-#         # Determine Variable Name & Logic
-#         var_name = "???"
-        
-#         # A. DEPOT -> TRIP (wA)
-#         if prev_type == 'DEPOT' and curr_type == 'TRIP':
-#             var_name = f"wA_trip[{curr_id}]"
-#             src_loc = DEPOT_NAME
-        
-#         # B. TRIP -> TRIP (x)
-#         elif prev_type == 'TRIP' and curr_type == 'TRIP':
-#             var_name = f"x[{prev_id},{curr_id}]"
-#             src_loc = prev_loc # End of previous trip
-            
-#         # C. TRIP -> STATION (y)
-#         elif prev_type == 'TRIP' and curr_type == 'STATION':
-#             var_name = f"y[{prev_id},{curr_id}]"
-#             src_loc = prev_loc # End of previous trip
-            
-#         # D. STATION -> TRIP (z)
-#         elif prev_type == 'STATION' and curr_type == 'TRIP':
-#             var_name = f"z[{prev_id},{curr_id}]"
-#             src_loc = prev_loc # Station location
-            
-#         # E. STATION -> STATION (Move)
-#         elif prev_type == 'STATION' and curr_type == 'STATION':
-#              var_name = f"move[{prev_id},{curr_id}]"
-#              src_loc = prev_loc
-        
-#         else:
-#              var_name = f"UNK[{prev_type}->{curr_type}]"
-#              src_loc = prev_loc
-
-#         # 3. CHECK FEASIBILITY
-#         # --------------------
-#         arc_dur, arc_nrg = get_arc(src_loc, curr_loc)
-        
-#         status = "OK"
-#         notes = []
-        
-#         # Connectivity Check
-#         if arc_dur is None:
-#             status = "FAIL"
-#             notes.append(f"No Arc: {src_loc}->{curr_loc}")
-#             arc_dur = 0; arc_nrg = 0 # Prevent crash
-        
-#         # Time Check: Arrival <= Start
-#         arrival_t = prev_end_time + arc_dur
-#         slack = start_t - arrival_t
-#         if slack < -1e-3:
-#             status = "FAIL"
-#             notes.append(f"Late: Arr {arrival_t} > Start {start_t} (Slack {slack}m)")
-            
-#         # SOC Check (Travel Consumption)
-#         curr_soc -= (arc_nrg or 0)
-        
-#         # PRINT VAR ROW
-#         if var_name != "???":
-#             print(f"{var_name:<15} {str(src_loc)[:8]:<8} {str(curr_loc)[:8]:<8} {arc_dur:<5} {arc_nrg:<5} {curr_soc:<6.1f} {status:<10} {'; '.join(notes)}")
-
-#     # 4. EXECUTE EVENT (Update State)
-#     # -------------------------------
-#     if curr_type == 'TRIP':
-#         curr_soc -= trip_kwh
-#         prev_loc = trip_end_loc # We end at trip destination
-#     elif curr_type == 'STATION':
-#         curr_soc += charge_kwh
-#         if curr_soc > G: curr_soc = G
-#         prev_loc = curr_loc # We stay at station
-#     elif curr_type == 'DEPOT':
-#         prev_loc = DEPOT_NAME
-
-#     if curr_soc < -1e-3:
-#         # We flag negative SOC *after* the activity logic
-#         print(f"{' ':<15} {' ':<8} {' ':<8} {' ':<5} {' ':<5} {curr_soc:<6.1f} FAIL       Negative SOC!")
-
-#     prev_type = curr_type
-#     prev_id = curr_id
-#     prev_end_time = end_t
-
-
-# # 5. FINAL RETURN TO DEPOT CHECK (wOmega)
-# if prev_type == 'TRIP':
-#     var_name = f"wOmega[{prev_id}]"
-#     arc_dur, arc_nrg = get_arc(prev_loc, DEPOT_NAME)
-    
-#     status = "OK"
-#     notes = []
-#     if arc_dur is None:
-#         status = "FAIL"
-#         notes.append("No Arc to Depot")
-#         arc_dur=0; arc_nrg=0
-    
-#     curr_soc -= (arc_nrg or 0)
-#     print(f"{var_name:<15} {str(prev_loc)[:8]:<8} {str(DEPOT_NAME)[:8]:<8} {arc_dur:<5} {arc_nrg:<5} {curr_soc:<6.1f} {status:<10} {'; '.join(notes)}")
-
-# print("-" * 105)
-# # %%
-# ### try 5
-# # --- 3. HELPERS ---
-# def parse_time(t_str):
-#     if pd.isna(t_str): return None
-#     try:
-#         parts = t_str.split(':')
-#         return int(parts[0]) * 60 + int(parts[1])
-#     except: return None
-
-# # Location to Ref Map
-# loc_to_ref = {}
-# for _, row in df_ref.iterrows():
-#     l = str(row.get('Location', row.get('location'))).strip()
-#     r = row.get('Ref', row.get('ref'))
-#     if pd.notna(r): loc_to_ref[l] = str(int(float(r)))
-
-# # Deadhead Map
-# dhd_map = {}
-# for _, row in df_dhd.iterrows():
-#     try:
-#         r1 = str(int(float(row.iloc[0])))
-#         r2 = str(int(float(row.iloc[1])))
-#         dur = float(row.iloc[2])
-#         nrg = float(row.iloc[3])
-#         dhd_map[(r1, r2)] = (dur, nrg)
-#         dhd_map[(r2, r1)] = (dur, nrg)
-#     except: continue
-
-# def get_arc(a, b):
-#     a_clean, b_clean = str(a).strip(), str(b).strip()
-#     if a_clean == b_clean: return 0.0, 0.0
-    
-#     ra, rb = loc_to_ref.get(a_clean), loc_to_ref.get(b_clean)
-#     if not ra or not rb: return None, None
-#     if ra == rb: return 0.0, 0.0
-    
-#     return dhd_map.get((ra, rb), (None, None))
-
-# # --- 4. PROCESSING LOOP ---
-# print(f"\n{'VARIABLE':<20} {'FROM':<10} {'TO':<10} {'ARC_T':<6} {'ARC_E':<6} {'SOC':<7} {'STATUS':<10} {'NOTES'}")
-# print("-" * 110)
-
-# # Filter: Keep Regular, Recharge. Keep Pull-out ONLY if it's the very first event.
-# df_clean = df_details[df_details['Identifier'].isin(['Regular', 'Recharge', 'Pull-out'])].copy()
-# # We only want the first Pull-out to initialize the Depot state. 
-# # If a Pull-out appears mid-day, we ignore it to maintain the y/z chain.
-# first_idx = df_clean.index[0]
-# df_seq = []
-# trip_ctr = 0
-
-# # Trip Lookup Map: (Start1, From1) -> TripID
-# trip_map = {}
-# for idx, row in df_trips.iterrows():
-#     key = (str(row['Start1']).strip(), str(row['From1']).strip())
-#     trip_map[key] = row['count_trip_id']
-
-# # Initial State
-# prev_type = 'DEPOT'
-# prev_id = 'PARX'
-# prev_loc = 'PARX'
-# prev_end_t = 0 # Will be inferred or 0
-# curr_soc = 300.0
-
-# # Pre-scan to set initial time if Pull-out exists
-# if df_clean.iloc[0]['Identifier'] == 'Pull-out':
-#     # We use this just to "start" the day, but the variable wA is generated by the first Regular trip
-#     # We won't iterate over it.
-#     pass
-# else:
-#     # No Pull-out? Assume starting at Depot at t=0
-#     pass
-
-# for _, row in df_clean.iterrows():
-#     etype = row['Identifier']
-#     start_loc = str(row['From1']).strip()
-#     end_loc = str(row['To1']).strip()
-#     start_t = parse_time(row['Start1'])
-#     end_t = parse_time(row['End1'])
-    
-#     # 1. SKIP LOGIC
-#     if etype == 'Pull-out':
-#         # If this is the start of the day, we just ensure we are at DEPOT.
-#         # We do NOT generate a variable for Pull-out itself.
-#         # wA_trip will be generated when we hit the first Regular trip.
-#         continue
-
-#     # 2. DETERMINE CURRENT NODE
-#     curr_type = None
-#     curr_id = None
-#     curr_loc_start = None # Where the arc lands (Start of Trip / Station Loc)
-    
-#     act_nrg = 0.0
-#     act_charge = 0.0
-    
-#     if etype == 'Regular':
-#         curr_type = 'TRIP'
-#         # Identify Trip
-#         key = (row['Start1'], start_loc)
-#         curr_id = trip_map.get(key)
-#         if curr_id is None:
-#             # Fallback: strict sequence from practice file
-#             if trip_ctr < len(df_trips):
-#                 curr_id = df_trips.iloc[trip_ctr]['count_trip_id']
-#             else:
-#                 curr_id = "UNK"
-        
-#         # Increment global counter if we matched a trip
-#         trip_ctr += 1
-        
-#         # For a trip, the "Node" is the Start of the Trip
-#         curr_loc_start = start_loc 
-#         trip_end_loc = end_loc # We will end here after activity
-        
-#         act_nrg = float(row['Usage kWh']) if pd.notna(row['Usage kWh']) else 0.0
-        
-#     elif etype == 'Recharge':
-#         curr_type = 'STATION'
-#         curr_id = start_loc # Station Name
-#         curr_loc_start = start_loc
-        
-#         dur = end_t - start_t
-#         act_charge = dur * 5.0
-
-#     # 3. GENERATE VARIABLE (Prev -> Curr)
-#     var_name = "???"
-    
-#     # wA: Depot -> Trip
-#     if prev_type == 'DEPOT' and curr_type == 'TRIP':
-#         var_name = f"wA_trip[{curr_id}]"
-        
-#     # x: Trip -> Trip
-#     elif prev_type == 'TRIP' and curr_type == 'TRIP':
-#         var_name = f"x[{prev_id},{curr_id}]"
-        
-#     # y: Trip -> Station (Charge)
-#     elif prev_type == 'TRIP' and curr_type == 'STATION':
-#         var_name = f"y[{prev_id},{curr_id}]"
-        
-#     # z: Station -> Trip
-#     elif prev_type == 'STATION' and curr_type == 'TRIP':
-#         var_name = f"z[{prev_id},{curr_id}]"
-        
-#     # Move: Station -> Station (Rare, but possible)
-#     elif prev_type == 'STATION' and curr_type == 'STATION':
-#         if prev_id == curr_id:
-#             # Consecutive charges at same place? Merge or ignore.
-#             var_name = "IGNORE"
-#         else:
-#             var_name = f"move[{prev_id},{curr_id}]"
-            
-#     # Depot -> Station (e.g. start day with charge?)
-#     elif prev_type == 'DEPOT' and curr_type == 'STATION':
-#         var_name = f"z_stat[{curr_id}]"
-
-#     # 4. CHECK ARC
-#     if var_name != "IGNORE":
-#         src = prev_loc
-#         dst = curr_loc_start
-        
-#         # Get Arc
-#         arc_dur, arc_nrg = get_arc(src, dst)
-#         status = "OK"
-#         notes = []
-        
-#         if arc_dur is None:
-#             status = "FAIL"
-#             notes.append(f"No Arc {src}->{dst}")
-#             arc_dur=0; arc_nrg=0
-        
-#         # Timing
-#         # We must arrive by start_t
-#         # Arrival = prev_end_t + arc_dur
-#         # Special Case: First event (wA_trip)
-#         if prev_type == 'DEPOT' and prev_end_t == 0:
-#             # We assume we leave Depot exactly when needed
-#             # So slack is irrelevant (or always 0)
-#             arrival = start_t 
-#             # But let's verify if arc_dur is crazy long? No constraint usually.
-#             # Just set soc consumption
-#             pass
-#         else:
-#             arrival = prev_end_t + arc_dur
-#             slack = start_t - arrival
-#             if slack < -1e-3:
-#                 status = "FAIL"
-#                 notes.append(f"Late: Arr {arrival} > Start {start_t} ({slack:.1f}m)")
-        
-#         curr_soc -= (arc_nrg or 0)
-        
-#         print(f"{var_name:<20} {str(src)[:10]:<10} {str(dst)[:10]:<10} {arc_dur:<6} {arc_nrg:<6} {curr_soc:<7.1f} {status:<10} {'; '.join(notes)}")
-
-#     # 5. UPDATE STATE
-#     if curr_type == 'TRIP':
-#         curr_soc -= act_nrg
-#         prev_type = 'TRIP'
-#         prev_id = curr_id
-#         prev_loc = trip_end_loc # ! End of Trip
-#         prev_end_t = end_t
-    
-#     elif curr_type == 'STATION':
-#         curr_soc += act_charge
-#         if curr_soc > 300.0: curr_soc = 300.0
-#         prev_type = 'STATION'
-#         prev_id = curr_id
-#         prev_loc = curr_loc_start # Stay at station
-#         prev_end_t = end_t
-
-# # 6. END OF DAY
-# if prev_type == 'TRIP':
-#     var_name = f"wOmega[{prev_id}]"
-#     arc_dur, arc_nrg = get_arc(prev_loc, DEPOT_NAME)
-#     curr_soc -= (arc_nrg or 0)
-#     print(f"{var_name:<20} {str(prev_loc)[:10]:<10} {str(DEPOT_NAME)[:10]:<10} {arc_dur:<6} {arc_nrg:<6} {curr_soc:<7.1f} OK")
-
-# print("-" * 110)
-# # %%

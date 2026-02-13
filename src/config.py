@@ -17,7 +17,7 @@ CHARGE_RATE_KW = 300
 CHARGE_PER_BLOCK = CHARGE_RATE_KW / TIMEBLOCKS_PER_HOUR
 
 
-charge_cost_premium = 1 + 1e-2
+charge_cost_premium = 0 #1 + 1e-2
 
 # ---------- Costs ----------
 BUS_COST_KX = 1e4
@@ -77,4 +77,4 @@ MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
 
 # Pricing MIPs
 PRICING_TIMELIMIT = 10    # was 60; 10 is good to find new routes quickly
-PRICING_GAP       = 0.1   # keep
+PRICING_GAP       = 1e-3   # keep

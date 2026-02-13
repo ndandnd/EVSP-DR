@@ -92,7 +92,7 @@ def _detect_tmp():
 
 DATA_DIR = ROOT.parent / "data"
 
-routes_csv    = DATA_DIR / "Practice_1bus.csv"
+routes_csv    = DATA_DIR / "Practice_2bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
@@ -1099,6 +1099,11 @@ stats_csv_path = OUTDIR / f"pricing_stats_{RUN_ID}.csv"
 print(f"Saving real-time stats to: {stats_csv_path}")
 
 
+stagnant_improvement_counter = 0
+MIN_MEANINGFUL_IMPROVEMENT = 40.0  # e.g., $40, or about 60minutes of charging
+STAGNANT_IMPROVEMENT_LIMIT = 8      # Stop after 8 iters of low gains
+
+
 while iteration < max_iter:
     iteration += 1
     print(f"\n--- Iteration {iteration} ---")
@@ -1122,25 +1127,37 @@ while iteration < max_iter:
 
     print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
 
-    # B. STAGNATION CHECK
-    if improvement < MIN_IMPROVEMENT:
-        stagnant_counter += 1
+    # # B. STAGNATION CHECK
+    # if improvement < MIN_MEANINGFUL_IMPROVEMENT:
+    #     stagnant_improvement_counter += 1
+    #     print(f"   [INFO] Low improvement (< {MIN_MEANINGFUL_IMPROVEMENT}). "
+    #           f"Count: {stagnant_improvement_counter}/{STAGNANT_IMPROVEMENT_LIMIT}")
+        
+    #     if stagnant_improvement_counter >= STAGNANT_IMPROVEMENT_LIMIT:
+    #         print(f"[STOP] Gains are too small ({improvement:.2f}). Stopping early to save time.")
+    #         break
+    # else:
+    #     stagnant_counter = 0
+    #     current_pricing_timelimit = 30 # reset timelimit
+    #     force_exact_next = False
 
-        print(f"   [WARN] Stagnant {stagnant_counter}/{STAGNATION_LIMIT}")
+    # --- NEW STAGNATION LOGIC (5-in-a-row) ---
+    if improvement < MIN_MEANINGFUL_IMPROVEMENT:
+        stagnant_improvement_counter += 1
+        print(f"   [INFO] Low improvement (< {MIN_MEANINGFUL_IMPROVEMENT}). "
+              f"Stagnation count: {stagnant_improvement_counter}/{STAGNANT_IMPROVEMENT_LIMIT}")
         
-        
-        if stagnant_counter == STAGNATION_LIMIT:
-            print("   [ACTION] Triggering DEEP DIVE Pricing (Focus=3, Time=300s)...")
-            current_pricing_timelimit = 300 # 5 minutes
-            force_exact_next = True
-        
-        elif stagnant_counter > STAGNATION_LIMIT:
-            print("[STOP] Master stabilized. Converged.")
+        if stagnant_improvement_counter >= STAGNANT_IMPROVEMENT_LIMIT:
+            print(f"[STOP] Stagnated for {STAGNANT_IMPROVEMENT_LIMIT} iterations with gains < {MIN_MEANINGFUL_IMPROVEMENT}. Stopping.")
             break
     else:
-        stagnant_counter = 0
-        current_pricing_timelimit = 30 # reset timelimit
-        force_exact_next = False
+        if stagnant_improvement_counter > 0:
+            print(f"   [RESET] Significant improvement found ({improvement:.2f}). Resetting stagnation counter.")
+        stagnant_improvement_counter = 0
+        current_pricing_timelimit = PRICING_TIMELIMIT
+    
+    last_master_obj = current_obj
+    # ------------------------------------------
         
     last_master_obj = current_obj
 
