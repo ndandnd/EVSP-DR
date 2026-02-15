@@ -40,12 +40,12 @@ DEPOT_NAME = "PARX"
 CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
 
 STATION_COPIES = {
-    "2190L": 3,
-    "4808":  3,
-    "PARX":  3,  
-    "3127L": 3,
-    "7880C": 3,
-    "JON_A": 3
+    "2190L": 0,
+    "4808":  0,
+    "PARX":  0,  
+    "3127L": 10,
+    "7880C": 5,
+    "JON_A": 10
 }
 
 

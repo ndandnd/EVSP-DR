@@ -39,6 +39,11 @@ from utils import (
 )
 from master import init_master, solve_master, build_master
 
+
+stopwatch_start = time.time()
+
+
+
 # ------------------------------ Output dirs ------------------------------
 RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 ROOT = Path(__file__).resolve().parent
@@ -1236,158 +1241,170 @@ print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 # print(f"[arc stats] direct={direct_hits} fallback(ref->ref)={fallback_hits} mixed={mixed_hits} misses={misses}")
 
 
+
+stopwatch_end = time.time()
+elapsed = stopwatch_end - stopwatch_start
+print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
+
 # %%
 
 #thisfile has unsaved changes on symm breaking a1 \leq a2
 
 # --- PHASE 2: TARGETING UNCOVERED TRIPS ---
 
-# print("\n\n>>> STARTING PHASE 2: CLEANING UP UNCOVERED TRIPS <<<\n")
+print("\n\n>>> STARTING PHASE 2: CLEANING UP UNCOVERED TRIPS <<<\n")
 
-# # Configuration for Phase 2
-# PHASE2_MAX_ITERS = 50      # Safety cap so it doesn't run forever
-# TARGET_MAX_ALPHA = 500.0   # Your goal
-# current_pricing_timelimit = 15 # Start slightly higher for stubborn trips
+# Configuration for Phase 2
+PHASE2_MAX_ITERS = 200      # Safety cap so it doesn't run forever
+TARGET_MAX_ALPHA = 1000.0   # 
+current_pricing_timelimit = 15 # Start slightly higher for stubborn trips
 
-# # We continue using the EXISTING R_truck and rmp from memory
-# # No need to rebuild the RMP from scratch unless you closed the object
+# We continue using the EXISTING R_truck and rmp from memory
+# No need to rebuild the RMP from scratch unless you closed the object
 
-# iteration_p2 = 0
-# while iteration_p2 < PHASE2_MAX_ITERS:
-#     iteration_p2 += 1
-#     print(f"\n--- Phase 2 Iteration {iteration_p2} ---")
+iteration_p2 = 0
+while iteration_p2 < PHASE2_MAX_ITERS:
+    iteration_p2 += 1
+    print(f"\n--- Phase 2 Iteration {iteration_p2} ---")
 
-#     # 1. SOLVE MASTER (Reuse existing model)
-#     t0 = time.time()
-#     rmp.Params.TimeLimit = MASTER_TIMELIMIT
-#     rmp.optimize()
-#     print(f" Master obj: {rmp.ObjVal:.2f}")
+    # 1. SOLVE MASTER (Reuse existing model)
+    t0 = time.time()
+    rmp.Params.TimeLimit = MASTER_TIMELIMIT
+    rmp.optimize()
+    print(f" Master obj: {rmp.ObjVal:.2f}")
 
-#     # 2. CHECK STATUS (Duals & Dummies)
-#     alpha, beta_dual, gamma_dual = extract_duals(rmp)
+    # 2. CHECK STATUS (Duals & Dummies)
+    alpha, beta_dual, gamma_dual = extract_duals(rmp)
     
-#     # Calculate max alpha specifically for TRIP constraints
-#     # (Assuming alpha is a dict/list corresponding to trip indices)
-#     if isinstance(alpha, dict):
-#         max_alpha = max(alpha.values()) if alpha else 0
-#     else:
-#         max_alpha = max(alpha) if len(alpha) > 0 else 0
+    # Calculate max alpha specifically for TRIP constraints
+    # (Assuming alpha is a dict/list corresponding to trip indices)
+    if isinstance(alpha, dict):
+        max_alpha = max(alpha.values()) if alpha else 0
+    else:
+        max_alpha = max(alpha) if len(alpha) > 0 else 0
 
-#     # Count active dummies
-#     # (Assuming you have a list/dict of dummy variables 'q' or can infer from slack)
-#     # A simple way to check coverage is checking if 'alpha' is close to your Big-M penalty
-#     # But checking the RMP variables is safer if you have the handles:
-#     # active_dummies = sum(1 for v in dummy_vars if v.X > 0.5) 
+    # Count active dummies
+    # (Assuming you have a list/dict of dummy variables 'q' or can infer from slack)
+    # A simple way to check coverage is checking if 'alpha' is close to your Big-M penalty
+    # But checking the RMP variables is safer if you have the handles:
+    # active_dummies = sum(1 for v in dummy_vars if v.X > 0.5) 
     
-#     print(f"   [STATUS] Max Alpha: {max_alpha:.1f} (Target: {TARGET_MAX_ALPHA})")
+    print(f"   [STATUS] Max Alpha: {max_alpha:.1f} (Target: {TARGET_MAX_ALPHA})")
     
-#     # STOP CONDITION
-#     if max_alpha <= TARGET_MAX_ALPHA:
-#         print(f"[STOP] Success! Max alpha {max_alpha:.1f} is below threshold {TARGET_MAX_ALPHA}.")
-#         break
+    # STOP CONDITION
+    if max_alpha <= TARGET_MAX_ALPHA:
+        print(f"[STOP] Success! Max alpha {max_alpha:.1f} is below threshold {TARGET_MAX_ALPHA}.")
+        break
 
-#     # 3. SOLVE PRICING (Standard Adaptive Logic)
-#     new_trucks = []
-#     best_rc_iter = float("inf")
-#     timed_out_any = False
-#     seen_keys_existing = {_route_key(r) for r in R_truck}
+    # 3. SOLVE PRICING (Standard Adaptive Logic)
+    new_trucks = []
+    best_rc_iter = float("inf")
+    timed_out_any = False
+    seen_keys_existing = {_route_key(r) for r in R_truck}
     
-#     # Configuration for "stubborn" trips
-#     # We allow exact pricing to run earlier if fast pricing fails
-#     BEST_OBJ_STOP = -100.0 # Stop fast pricing if we find ANY saving
+    # Configuration for "stubborn" trips
+    # We allow exact pricing to run earlier if fast pricing fails
+    BEST_OBJ_STOP = -100.0 # Stop fast pricing if we find ANY saving
     
 
-#     while True:
-#         print(f"   > Pricing (TimeLimit={current_pricing_timelimit}s)")
+    while True:
+        print(f"   > Pricing (TimeLimit={current_pricing_timelimit}s)")
         
-#         # ... [Reuse your existing solve_pricing_fast call] ...
-#         pricing_model, vars_pr = solve_pricing_fast(
-#             alpha, beta_dual, gamma_dual,
-#             mode=1,
-#             num_fast_cols=n_fast_cols,
-#             time_limit=current_pricing_timelimit,
-#             best_obj_stop=BEST_OBJ_STOP
-#         )
+        # ... [Reuse your existing solve_pricing_fast call] ...
+        pricing_model, vars_pr = solve_pricing_fast(
+            alpha, beta_dual, gamma_dual,
+            mode=1,
+            num_fast_cols=n_fast_cols,
+            time_limit=current_pricing_timelimit,
+            best_obj_stop=BEST_OBJ_STOP
+        )
         
-#         timed_out_fast = (pricing_model.Status == GRB.TIME_LIMIT)
-#         timed_out_any |= timed_out_fast
+        timed_out_fast = (pricing_model.Status == GRB.TIME_LIMIT)
+        timed_out_any |= timed_out_fast
         
-#         candidates, best_rc_fast, neg_in_pool, extract_fail = _collect_candidates_from_pool(
-#             pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
-#         )
-#         best_rc_iter = min(best_rc_iter, best_rc_fast)
+        candidates, best_rc_fast, neg_in_pool, extract_fail = _collect_candidates_from_pool(
+            pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
+        )
+        best_rc_iter = min(best_rc_iter, best_rc_fast)
 
-#         # Standard extraction logic...
-#         candidates.sort(key=lambda r: r["_rc"])
-#         seen_new = set()
-#         for t_route in candidates:
-#             k = _route_key(t_route)
-#             if (k not in seen_keys_existing) and (k not in seen_new):
-#                 new_trucks.append(t_route)
-#                 seen_new.add(k)
-#             if len(new_trucks) >= K_BEST: break
+        # Standard extraction logic...
+        candidates.sort(key=lambda r: r["_rc"])
+        seen_new = set()
+        for t_route in candidates:
+            k = _route_key(t_route)
+            if (k not in seen_keys_existing) and (k not in seen_new):
+                new_trucks.append(t_route)
+                seen_new.add(k)
+            if len(new_trucks) >= K_BEST: break
 
-#         # Success?
-#         if new_trucks:
-#             print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
-#             current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.8)) # Decay
-#             break
+        # Success?
+        if new_trucks:
+            print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
+            current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.8)) # Decay
+            break
             
-#         # Fallback to Exact? (Run this aggressively in Phase 2)
-#         ran_exact = False
-#         if not new_trucks and (neg_in_pool > 0 or n_exact_cols > 0):
-#             print(f"   > Trying EXACT pricing (TimeLimit={current_pricing_timelimit}s)...")
-#             pricing_model2, vars_pr2 = solve_pricing_exact(
-#                 alpha, beta_dual, gamma_dual,
-#                 mode=1,
-#                 num_exact_cols=n_exact_cols,
-#                 time_limit=current_pricing_timelimit
-#             )
-#             # ... [Extract candidates logic same as before] ...
-#             # (If you need the full exact block pasted here let me know, 
-#             # otherwise assume it's the same logic as your main loop)
-#             # ...
+        # Fallback to Exact? (Run this aggressively in Phase 2)
+        ran_exact = False
+        if not new_trucks and (neg_in_pool > 0 or n_exact_cols > 0):
+            print(f"   > Trying EXACT pricing (TimeLimit={current_pricing_timelimit}s)...")
+            pricing_model2, vars_pr2 = solve_pricing_exact(
+                alpha, beta_dual, gamma_dual,
+                mode=1,
+                num_exact_cols=n_exact_cols,
+                time_limit=current_pricing_timelimit
+            )
+            # ... [Extract candidates logic same as before] ...
+            # (If you need the full exact block pasted here let me know, 
+            # otherwise assume it's the same logic as your main loop)
+            # ...
             
-#             # [Shortened for brevity - insert extraction logic here]
-#             candidates2, _, _, _ = _collect_candidates_from_pool(
-#                 pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
-#             )
-#             for t_route in candidates2:
-#                  k = _route_key(t_route)
-#                  if (k not in seen_keys_existing) and (k not in seen_new):
-#                      new_trucks.append(t_route)
-#                      seen_new.add(k)
+            # [Shortened for brevity - insert extraction logic here]
+            candidates2, _, _, _ = _collect_candidates_from_pool(
+                pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
+            )
+            for t_route in candidates2:
+                 k = _route_key(t_route)
+                 if (k not in seen_keys_existing) and (k not in seen_new):
+                     new_trucks.append(t_route)
+                     seen_new.add(k)
             
-#             if new_trucks:
-#                 print(f"   [SUCCESS] Found {len(new_trucks)} cols via Exact.")
-#                 break
+            if new_trucks:
+                print(f"   [SUCCESS] Found {len(new_trucks)} cols via Exact.")
+                break
 
-#         # Check for IMPOSSIBILITY
-#         if not new_trucks and not timed_out_any and best_rc_iter >= -RC_EPSILON:
-#             print(f"[STOP] Pricing is Optimal (rc >= 0). No more columns exist.")
-#             print(f"[WARNING] We still have Max Alpha={max_alpha:.1f}. This means the remaining trips are INFEASIBLE to cover.")
-#             iteration_p2 = PHASE2_MAX_ITERS # Force exit
-#             break
+        # Check for IMPOSSIBILITY
+        if not new_trucks and not timed_out_any and best_rc_iter >= -RC_EPSILON:
+            print(f"[STOP] Pricing is Optimal (rc >= 0). No more columns exist.")
+            print(f"[WARNING] We still have Max Alpha={max_alpha:.1f}. This means the remaining trips are INFEASIBLE to cover.")
+            iteration_p2 = PHASE2_MAX_ITERS # Force exit
+            break
 
-#         # Retry Logic
-#         if current_pricing_timelimit >= 300: # Max 5 mins
-#             print("[GIVE UP] Max timer hit.")
-#             break
+        # Retry Logic
+        if current_pricing_timelimit >= 300: # Max 5 mins
+            print("[GIVE UP] Max timer hit.")
+            break
             
-#         current_pricing_timelimit = int(current_pricing_timelimit * 2.0)
-#         print(f"   [RETRY] bumping time to {current_pricing_timelimit}s")
+        current_pricing_timelimit = int(current_pricing_timelimit * 2.0)
+        print(f"   [RETRY] bumping time to {current_pricing_timelimit}s")
 
-#     # 4. ADD COLUMNS (Same as before)
-#     for route in new_trucks:
-#         # ... [Add to R_truck and RMP logic] ...
-#         R_truck.append(route)
-#         cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
-#         col = Column()
-#         for node in route["route"]:
-#             if isinstance(node, int):
-#                 col.addTerms(1.0, trip_cov[node])
-#         idx = len(R_truck) - 1
-#         a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
+    # 4. ADD COLUMNS (Same as before)
+    for route in new_trucks:
+        # ... [Add to R_truck and RMP logic] ...
+        R_truck.append(route)
+        cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
+        col = Column()
+        for node in route["route"]:
+            if isinstance(node, int):
+                col.addTerms(1.0, trip_cov[node])
+        idx = len(R_truck) - 1
+        a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
     
-#     rmp.update()
+    rmp.update()
+
+
+stopwatch_end2 = time.time()
+elapsed = stopwatch_end2 - stopwatch_end
+print(f"\n=== 2nd CG Loop Completed in {elapsed:.1f} seconds ===")
 # %%
+
+

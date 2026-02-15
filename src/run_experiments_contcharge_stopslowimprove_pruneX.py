@@ -1078,8 +1078,8 @@ best_master = float("inf")
 PRICING_TLIM_INIT = 15
 PRICING_TLIM_MAX  = 300
 
-STAGNATION_LIMIT = 3
-MIN_IMPROVEMENT = 1.5  # master obj improvement must be at least
+STAGNATION_LIMIT = 10
+MIN_IMPROVEMENT = 100  # master obj improvement must be at least
 
 stagnant_counter = 0
 last_master_obj = None   #start as None
