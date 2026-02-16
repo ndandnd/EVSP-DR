@@ -18,6 +18,7 @@ CHARGE_PER_BLOCK = CHARGE_RATE_KW / TIMEBLOCKS_PER_HOUR
 
 
 charge_cost_premium = 0 #1 + 1e-2
+TRAVEL_COST_FACTOR = 1   # Cost per kWh of deadhead travel
 
 # ---------- Costs ----------
 BUS_COST_KX = 1e4
@@ -61,7 +62,7 @@ RC_EPSILON = 1.0           # was 300.0 (kept out many mildly negative routes)
 K_BEST = 50               # was 30 (add more useful columns per iter)
 
 # CG loop limits / guards
-MAX_CG_ITERS = 300      # was 300
+MAX_CG_ITERS = 200      # was 300
 STAGNATION_ITERS = 15      # was 3 (don’t stop so early)
 MASTER_IMPROVE_THRESHOLD = 0.1  # was 5e-4 (count small progress as improvement)
 

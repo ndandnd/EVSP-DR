@@ -5,7 +5,7 @@ import string
 import matplotlib.pyplot as plt
 
 # use the shared constant from config; do NOT redefine locally
-from config import time_blocks, charge_cost_premium, TIMEBLOCKS_PER_HOUR, CHARGE_PER_BLOCK
+from config import time_blocks, charge_cost_premium, TIMEBLOCKS_PER_HOUR, CHARGE_PER_BLOCK, TRAVEL_COST_FACTOR
 
 
 def make_locs(n: int):
@@ -51,6 +51,11 @@ def calculate_truck_route_cost(route, truck_cost, hourly_prices: dict) -> float:
     and the route's cst/cet values.
     """
     total = float(truck_cost)
+    # --- NEW: Add Travel Cost from Route Description ---
+    # We use .get(0) so it doesn't crash on old pickles or dummy routes
+    deadhead_amount = route.get("deadhead_kwh", 0.0)
+    total += deadhead_amount * TRAVEL_COST_FACTOR
+    # ---------------------------------------------------
     
     stops = route.get("charging_stops", {})
     stations = stops.get("stations", [])
