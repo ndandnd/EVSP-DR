@@ -43,10 +43,10 @@ CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
 STATION_COPIES = {
     "2190L": 0,
     "4808":  0,
-    "PARX":  2,  
-    "3127L": 7,
-    "7880C": 4,
-    "JON_A": 7
+    "PARX":  1,  
+    "3127L": 2,
+    "7880C": 1,
+    "JON_A": 1
 }
 
 
