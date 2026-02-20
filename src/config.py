@@ -21,7 +21,7 @@ charge_cost_premium = 0 #1 + 1e-2
 TRAVEL_COST_FACTOR = 1   # Cost per kWh of deadhead travel
 
 # ---------- Costs ----------
-BUS_COST_KX = 1e4
+BUS_COST_KX = 1e5
 
 # ---------- Misc ----------
 factor = 1
@@ -44,8 +44,8 @@ STATION_COPIES = {
     "2190L": 0,
     "4808":  0,
     "PARX":  1,  
-    "3127L": 2,
-    "7880C": 1,
+    "3127L": 3,
+    "7880C": 2,
     "JON_A": 1
 }
 
@@ -54,7 +54,7 @@ STATION_COPIES = {
 
 
 MODE_EVS_ONLY        = True
-BIG_M_PENALTY       = 5e4
+BIG_M_PENALTY       = BUS_COST_KX * 5
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)
