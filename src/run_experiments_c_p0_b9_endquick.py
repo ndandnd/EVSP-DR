@@ -173,6 +173,18 @@ routes_csv    = DATA_DIR / "Practice_Selected_4bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
+
+# Create a dynamic name based on the input file (e.g., "Practice_Selected_4buses")
+DATA_NAME = routes_csv.stem 
+RUN_NAME = f"{DATA_NAME}_{RUN_ID}"
+
+# Create a dedicated directory for EVERYTHING from this run
+RUN_DIR = OUTDIR / RUN_NAME
+RUN_DIR.mkdir(parents=True, exist_ok=True)
+
+print(f"[INFO] All outputs and logs will be saved to: {RUN_DIR}")
+
+
 # details_csv    = DATA_DIR / "Par_VehicleDetails.csv"
 # vd_csv = DATA_DIR / "Par_VehicleDetails.csv"  # or VehicleDetails.csv
 
@@ -1072,6 +1084,10 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     cap = min(int(num_fast_cols), PRICING_POOL_CAP_MAX)
     m, vars_dict = build_pricing(alpha, beta, gamma, mode)
 
+
+    m.Params.LogFile = str(RUN_DIR / "pricing_fast.log")
+
+
     # 1. Hard runtime cap for this call
     m.Params.TimeLimit = int(time_limit)
 
@@ -1252,7 +1268,7 @@ current_pricing_timelimit = PRICING_TLIM_INIT
 
 cg_stats = []
 # Create a unique filename based on the run ID so you don't overwrite previous experiments
-stats_csv_path = OUTDIR / f"pricing_stats_{RUN_ID}.csv"
+stats_csv_path = RUN_DIR / f"pricing_stats.csv"
 print(f"Saving real-time stats to: {stats_csv_path}")
 
 #%%
@@ -1297,26 +1313,23 @@ while iteration < max_iter:
 
     print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
 
-    # B. STAGNATION CHECK
-    if improvement < MIN_IMPROVEMENT:
-        stagnant_counter += 1
-
-        print(f"   [WARN] Stagnant {stagnant_counter}/{STAGNATION_LIMIT}")
-        
-        
-        if stagnant_counter == STAGNATION_LIMIT:
-            print("   [ACTION] Triggering DEEP DIVE Pricing (Focus=3, Time=300s)...")
-            current_pricing_timelimit = 300 # 5 minutes
-            force_exact_next = True
-        
-        elif stagnant_counter > STAGNATION_LIMIT:
-            print("[STOP] Master stabilized. Converged.")
-            break
+    
+    # compute improvement safely
+    if last_master_obj is None:
+        improvement = float("inf")
     else:
-        stagnant_counter = 0
-        current_pricing_timelimit = 30 # reset timelimit
-        force_exact_next = False
+        improvement = last_master_obj - current_obj
+
+    print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
+
+    stagnant_counter = 0 # Keep this here just so your cg_stats dictionary doesn't throw a NameError
         
+    last_master_obj = current_obj
+
+    # Extract Duals
+    alpha, beta_dual, gamma_dual = extract_duals(rmp)
+
+
     last_master_obj = current_obj
 
     # Extract Duals
@@ -1521,6 +1534,8 @@ rmp_final, a_final, trip_cov_final = build_master(
     bus_cost=bus_cost,
     binary=True
 )
+rmp_final.Params.LogFile = str(RUN_DIR / "final_mip.log")
+
 
 
 # ---------------- ENFORCE DUMMY =0  ----------------
@@ -1568,10 +1583,8 @@ print("\n Master LP obj:", final_LP_obj)
 print(" Master MIP obj:", final_MIP_obj)
 print(f" Buses used: {len(used_routes)}")
 
-pd.DataFrame(iter_rows).to_csv(OUTDIR / f"iterations_{RUN_ID}.csv", index=False)
-print(f"[WRITE] {OUTDIR / ('iterations_' + RUN_ID + '.csv')}")
 try:
-    rmp_final.write(str(OUTDIR / f"solution_{RUN_ID}.sol"))
+    rmp_final.write(str(RUN_DIR / f"solution_{RUN_ID}.sol"))
 except Exception:
     pass
 

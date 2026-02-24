@@ -157,7 +157,7 @@ def generate_specific_buses_instance(target_bus_ids, output_filename=None):
 
 # Create a file with exactly these 3 buses
 # generate_specific_buses_instance([13405, 13411], "Practice_Selected_2buses.csv")
-generate_specific_buses_instance([13320, 13311, 13307 , 13314], "Practice_Selected_4bus.csv")
+# generate_specific_buses_instance([13320, 13311, 13307 , 13314], "Practice_Selected_4bus.csv")
 
 MAX_DAILY_RECHARGES = 4  # Buffer above observed max of 13
 MIN_TRIPS_PER_ROUTE = 14  # Based on observed distribution (allowing some flexibility below the historical min of 17)
@@ -169,10 +169,22 @@ MIN_TRIPS_PER_ROUTE = 14  # Based on observed distribution (allowing some flexib
 
 
 
-routes_csv    = DATA_DIR / "Practice_Selected_4bus.csv"
+routes_csv    = DATA_DIR / "Practice_Selected_5bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
+
+# Create a dynamic name based on the input file (e.g., "Practice_Selected_4buses")
+DATA_NAME = routes_csv.stem 
+RUN_NAME = f"{DATA_NAME}_{RUN_ID}"
+
+# Create a dedicated directory for EVERYTHING from this run
+RUN_DIR = OUTDIR / RUN_NAME
+RUN_DIR.mkdir(parents=True, exist_ok=True)
+
+print(f"[INFO] All outputs and logs will be saved to: {RUN_DIR}")
+
+
 # details_csv    = DATA_DIR / "Par_VehicleDetails.csv"
 # vd_csv = DATA_DIR / "Par_VehicleDetails.csv"  # or VehicleDetails.csv
 
@@ -1072,6 +1084,10 @@ def solve_pricing_fast(alpha, beta, gamma, mode, num_fast_cols=10, time_limit=10
     cap = min(int(num_fast_cols), PRICING_POOL_CAP_MAX)
     m, vars_dict = build_pricing(alpha, beta, gamma, mode)
 
+
+    m.Params.LogFile = str(RUN_DIR / "pricing_fast.log")
+
+
     # 1. Hard runtime cap for this call
     m.Params.TimeLimit = int(time_limit)
 
@@ -1252,7 +1268,7 @@ current_pricing_timelimit = PRICING_TLIM_INIT
 
 cg_stats = []
 # Create a unique filename based on the run ID so you don't overwrite previous experiments
-stats_csv_path = OUTDIR / f"pricing_stats_{RUN_ID}.csv"
+stats_csv_path = RUN_DIR / f"pricing_stats.csv"
 print(f"Saving real-time stats to: {stats_csv_path}")
 
 #%%
@@ -1266,9 +1282,40 @@ while iteration < max_iter:
     rmp.optimize()
     master_times.append(time.time() - t0)
     print(f" Master obj: {rmp.ObjVal:.2f}")
+    
+    
+    # ---------------------------------------------------------
+    # NEW: SOLVE INTEGER MASTER (MIP) FOR TRACKING
+    # ---------------------------------------------------------
+    print("   > Evaluating current columns as MIP...")
+    t0_mip = time.time()
+    
+    # Build a fresh, temporary integer master using the current R_truck
+    rmp_mip, _, _ = build_master(
+        R_truck=R_truck,
+        T=T,
+        charging_cost_data=hourly_prices,
+        bus_cost=bus_cost,
+        binary=True
+    )
+    
+    # Fast MIP Settings to prevent stalling the CG loop
+    rmp_mip.Params.OutputFlag = 0       # Silence Gurobi spam in the console
+    rmp_mip.Params.TimeLimit = 60       # Give it exactly 30 seconds max
+    rmp_mip.Params.MIPFocus = 1         # Focus ONLY on finding a feasible integer solution quickly
+    rmp_mip.Params.Heuristics = 0.8     # Use heavy heuristics
+    
+    rmp_mip.optimize()
+    
+    # Safely extract the objective if a solution was found
+    if rmp_mip.SolCount > 0:
+        current_mip_obj = rmp_mip.ObjVal
+        print(f"   [MIP] Integer obj: {current_mip_obj:.2f} (Solve time: {time.time() - t0_mip:.1f}s)")
+    else:
+        current_mip_obj = float('inf')  # No integer solution found in the time limit
+        print(f"   [MIP] No integer solution found within time limit.")
+    # ---------------------------------------------------------
 
-    # Check stagnation (optional, keep your existing logic here)
-    # ...
 
     current_obj = rmp.ObjVal
 
@@ -1297,26 +1344,23 @@ while iteration < max_iter:
 
     print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
 
-    # B. STAGNATION CHECK
-    if improvement < MIN_IMPROVEMENT:
-        stagnant_counter += 1
-
-        print(f"   [WARN] Stagnant {stagnant_counter}/{STAGNATION_LIMIT}")
-        
-        
-        if stagnant_counter == STAGNATION_LIMIT:
-            print("   [ACTION] Triggering DEEP DIVE Pricing (Focus=3, Time=300s)...")
-            current_pricing_timelimit = 300 # 5 minutes
-            force_exact_next = True
-        
-        elif stagnant_counter > STAGNATION_LIMIT:
-            print("[STOP] Master stabilized. Converged.")
-            break
+    
+    # compute improvement safely
+    if last_master_obj is None:
+        improvement = float("inf")
     else:
-        stagnant_counter = 0
-        current_pricing_timelimit = 30 # reset timelimit
-        force_exact_next = False
+        improvement = last_master_obj - current_obj
+
+    print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
+
+    stagnant_counter = 0 # Keep this here just so your cg_stats dictionary doesn't throw a NameError
         
+    last_master_obj = current_obj
+
+    # Extract Duals
+    alpha, beta_dual, gamma_dual = extract_duals(rmp)
+
+
     last_master_obj = current_obj
 
     # Extract Duals
@@ -1444,6 +1488,7 @@ while iteration < max_iter:
     current_stat = {
         "Iteration": iteration,
         "Master_Obj": current_obj,
+        "MIP_Obj": current_mip_obj,
         "Master_Improvement": improvement if last_master_obj is not None else 0,
         "Pricing_Time_s": pricing_dur_total,  # Total time for ALL pricing attempts this iter
         "Cols_Added": len(new_trucks),
@@ -1521,6 +1566,8 @@ rmp_final, a_final, trip_cov_final = build_master(
     bus_cost=bus_cost,
     binary=True
 )
+rmp_final.Params.LogFile = str(RUN_DIR / "final_mip.log")
+
 
 
 # ---------------- ENFORCE DUMMY =0  ----------------
@@ -1568,10 +1615,8 @@ print("\n Master LP obj:", final_LP_obj)
 print(" Master MIP obj:", final_MIP_obj)
 print(f" Buses used: {len(used_routes)}")
 
-pd.DataFrame(iter_rows).to_csv(OUTDIR / f"iterations_{RUN_ID}.csv", index=False)
-print(f"[WRITE] {OUTDIR / ('iterations_' + RUN_ID + '.csv')}")
 try:
-    rmp_final.write(str(OUTDIR / f"solution_{RUN_ID}.sol"))
+    rmp_final.write(str(RUN_DIR / f"solution_{RUN_ID}.sol"))
 except Exception:
     pass
 
