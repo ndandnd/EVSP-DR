@@ -169,7 +169,7 @@ MIN_TRIPS_PER_ROUTE = 14  # Based on observed distribution (allowing some flexib
 
 
 
-routes_csv    = DATA_DIR / "Practice_Selected_5bus.csv"
+routes_csv    = DATA_DIR / "Practice_Selected_8bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"
@@ -1347,36 +1347,28 @@ while iteration < max_iter:
     BEST_OBJ_STOP = None         # Set to e.g. -5000.0 if you want early stops
     
     t0_pricing_total = time.time()
-    
+    # --- PRICING RETRY LOOP ---
     while True:
-        # time limit cap
-        current_pricing_timelimit = min(current_pricing_timelimit, PRICING_TLIM_MAX)
+        # Cap max time
+        current_pricing_timelimit = min(current_pricing_timelimit, 120) 
 
         print(f"   > FAST pricing (TimeLimit={current_pricing_timelimit}s)")
-
-        t0_price = time.time()
+        
+        # Call your existing fast pricing function
         pricing_model, vars_pr = solve_pricing_fast(
             alpha, beta_dual, gamma_dual,
             mode=1,
             num_fast_cols=n_fast_cols,
-            time_limit=current_pricing_timelimit,
-            best_obj_stop=BEST_OBJ_STOP
-            
+            time_limit=current_pricing_timelimit
         )
 
-        pricing_times.append(time.time() - t0_price)
-
-        # check status
-        timed_out_fast = (pricing_model.Status == GRB.TIME_LIMIT)
-        timed_out_any |= timed_out_fast
-
-        # Collect candidates
-        candidates, best_rc_fast, neg_in_pool, extract_fail = _collect_candidates_from_pool(
+        # Collect (We keep RC_EPSILON small here so we don't accidentally ignore good heuristics)
+        candidates, best_rc_fast, neg_in_pool, _ = _collect_candidates_from_pool(
             pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
         )
         best_rc_iter = min(best_rc_iter, best_rc_fast)
 
-        # Sort and filter unique candidates
+        # Filter duplicates
         candidates.sort(key=lambda r: r["_rc"])
         seen_new = set()
         for t_route in candidates:
@@ -1386,40 +1378,39 @@ while iteration < max_iter:
                 seen_new.add(k)
             if len(new_trucks) >= K_BEST:
                 break
-
-        # A) SUCCESS: We found columns
+        
+        # 1. SUCCESS?
         if new_trucks:
             print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
-            # Decay time limit slightly to keep next iter fast
-            current_pricing_timelimit = max(PRICING_TLIM_INIT, int(current_pricing_timelimit * PRICING_TLIM_DECAY))
+            # Decay time slightly to stay aggressive for next iteration
+            current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.9))
             break
+            
+        # 2. ESCALATING EXACT PRICING SCHEDULE
+        print(f"   > FAST pricing found no columns. Switching to EXACT pricing schedule...")
+        
+        exact_time_schedule = [30, 60, 120, 240, 480]
+        exact_success = False
+        
+        # We will require a reduced cost to be at least -1.0 to be considered "meaningful"
+        SIGNIFICANT_RC_THRESHOLD = 1.0 
 
-        # B) FALLBACK: Fast pricing found nothing, but maybe Exact will?
-        # Only run if fast saw "potential" (neg_in_pool > 0) but failed to extract, 
-        # OR if we want to be exhaustive.
-        ran_exact = False
-        if (best_rc_fast < -RC_EPSILON) and (n_exact_cols > 0) and not new_trucks:
-            ran_exact = True
-            print(f"   > EXACT pricing (TimeLimit={current_pricing_timelimit}s) "
-                  f"[neg_in_pool={neg_in_pool}, extract_fail={extract_fail}]")
-
+        for exact_tlim in exact_time_schedule:
+            print(f"      [EXACT] Trying TimeLimit={exact_tlim}s...")
             pricing_model2, vars_pr2 = solve_pricing_exact(
                 alpha, beta_dual, gamma_dual,
                 mode=1,
                 num_exact_cols=n_exact_cols,
-                time_limit=current_pricing_timelimit
+                time_limit=exact_tlim
             )
-            timed_out_exact = (pricing_model2.Status == GRB.TIME_LIMIT)
-            timed_out_any |= timed_out_exact
-
-            candidates2, best_rc_exact, neg_in_pool2, extract_fail2 = _collect_candidates_from_pool(
-                pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
+            
+            # Pass our SIGNIFICANT_RC_THRESHOLD so we ignore noise like -0.67
+            candidates2, best_rc_exact, _, _ = _collect_candidates_from_pool(
+                pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=SIGNIFICANT_RC_THRESHOLD
             )
             best_rc_iter = min(best_rc_iter, best_rc_exact)
 
-            # Process exact candidates
             candidates2.sort(key=lambda r: r["_rc"])
-            seen_new = set()
             for t_route in candidates2:
                 k = _route_key(t_route)
                 if (k not in seen_keys_existing) and (k not in seen_new):
@@ -1429,26 +1420,20 @@ while iteration < max_iter:
                     break
             
             if new_trucks:
-                print(f"   [SUCCESS] Found {len(new_trucks)} cols after EXACT (best_rc={best_rc_iter:.1f})")
-                current_pricing_timelimit = max(PRICING_TLIM_INIT, int(current_pricing_timelimit * PRICING_TLIM_DECAY))
+                print(f"   [SUCCESS] Found {len(new_trucks)} cols after EXACT at {exact_tlim}s (best_rc={best_rc_iter:.2f})")
+                exact_success = True
                 break
-
-        # C) OPTIMAL STOP: No timeout occurred, and best RC is non-negative
-        if (not timed_out_any) and (best_rc_iter >= -RC_EPSILON):
-            print(f"   [RC-OPT] Pricing solved (no timeout) and best_rc={best_rc_iter:.1f} >= -RC_EPSILON")
+            else:
+                print(f"      [EXACT FAIL] No meaningful columns found (< -{SIGNIFICANT_RC_THRESHOLD}) at {exact_tlim}s. Best was {best_rc_exact:.2f}.")
+        
+        if exact_success:
+            # We break out of the while True loop and go back to the Master LP
             break
-
-        # D) TIMEOUT / GIVE UP: We hit max time limit
-        if current_pricing_timelimit >= PRICING_TLIM_MAX:
-            print(f"   [GIVE UP] Hit max pricing TL={PRICING_TLIM_MAX}s; continuing without new cols.")
+        else:
+            # 3. OPTIMAL STOP
+            print(f"   [RC-OPT / STOP] EXACT pricing exhausted schedule up to {exact_time_schedule[-1]}s. Mathematical convergence reached.")
             break
-
-        # E) RETRY: We timed out with no columns. Double time and loop again.
-        new_tlim = min(PRICING_TLIM_MAX, int(current_pricing_timelimit * PRICING_TLIM_GROW))
-        print(f"   [RETRY] No cols found (best_rc={best_rc_iter:.1f}, timeout={timed_out_any}). "
-              f"Increasing TimeLimit: {current_pricing_timelimit}s -> {new_tlim}s")
-        current_pricing_timelimit = new_tlim
-        # Loop continues...
+    # --------------------------
 
 
     # --- [INSERT 2: Collect Metrics (After Retry Loop Ends)] ---
@@ -1604,116 +1589,302 @@ elapsed = stopwatch_end - stopwatch_start
 print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
 
 #%%
-import pandas as pd
-# Clean Station Mapper
-def clean_station_name(raw_name):
-    raw_str = str(raw_name).upper()
-    if 'PARX' in raw_str: return 'PARX'
-    if 'JON' in raw_str: return 'JON_A'
-    if '3127' in raw_str: return '3127L'
-    if '7880' in raw_str: return '7880C'
-    if '4808' in raw_str: return '4808'
-    if '2190' in raw_str: return '2190L'
-    return str(raw_name)
 
-# 2. Recreate the mapping from Original Master Row -> Pricing Index 'i'
-target_bus_ids = [13320, 13311, 13307, 13314, "13316uwt"]
-# target_bus_ids = [13320, 13311, 13307 , 13314, "13316uwt", "13324muw", 13309, 13323, 13321, 13310]
-target_ids_str = [str(x) for x in target_bus_ids]
+import pickle
+import datetime
 
-df_master = pd.read_csv(DATA_DIR / MASTER_FILE)
-df_master['VehicleTask_Str'] = df_master['VehicleTask'].astype(str)
 
-mask = (df_master['Identifier'] == 'Regular') & (df_master['VehicleTask_Str'].isin(target_ids_str))
-df_cg_trips = df_master[mask].copy()
 
-# Sort exactly how the instance generator did it
-df_cg_trips['Sort_Time'] = df_cg_trips['Start1'].apply(parse_time_to_minutes)
-df_cg_trips_sorted = df_cg_trips.sort_values('Sort_Time')
+# Save list of routes to a pickle file
+backup_filename = f"R_truck_backup_{datetime.datetime.now().strftime('%H%M%S')}.pkl"
+with open(backup_filename, "wb") as f:
+    pickle.dump(R_truck, f)
 
-# Dictionary: Original Master Row Index => Pricing Trip Index `i`
-orig_row_to_i = {orig_idx: i for i, orig_idx in enumerate(df_cg_trips_sorted.index)}
+print(f"SAFEGUARD: Saved {len(R_truck)} routes to {backup_filename}")
 
-# 3. Process each historical bus path
-for bus_id in target_ids_str:
-    print(f"\nEvaluating Historical Bus Route: {bus_id}")
+
+
+
+def solve_pricing_deep_dive(alpha, beta, gamma, mode, time_limit=300):
+    """
+    Configuration to find the mathematically optimal column, 
+    no matter how hard the tree search is.
+    """
+    m, vars_dict = build_pricing(alpha, beta, gamma, mode)
+
+    # 1. TIME: Give it a long leash. 
+    # For 50 trips, 300s is plenty. For 1000 trips, this would hang forever.
+    m.Params.TimeLimit = time_limit 
+
+    # 2. FOCUS: Optimality
+    # 1=Feasibility (Fast), 2=Optimality (Deep), 3=Bound (Proof)
+    m.Params.MIPFocus = 2  
+
+    # 3. METHOD: Auto
+    # Let Gurobi decide between Primal/Dual/Barrier. 
+    # Barrier is fast for roots, but Dual Simplex is better for deep tree searches.
+    m.Params.Method = -1 
     
-    bus_df = df_master[df_master['VehicleTask_Str'] == bus_id].copy()
-    bus_df['Sort_Time'] = bus_df['Start1'].apply(parse_time_to_minutes)
-    bus_df = bus_df.sort_values('Sort_Time')
-    
-    route_nodes = [DEPOT_NAME]
-    charging_cost = 0.0
-    
-    for orig_idx, row in bus_df.iterrows():
-        identifier = str(row.get('Identifier', ''))
-        
-        # A) Add Regular Trips
-        if identifier == 'Regular':
-            i = orig_row_to_i.get(orig_idx)
-            if i is not None:
-                route_nodes.append(i)
-            
-        # B) Add Charging Stations
-        elif 'Charge' in identifier or 'Recharge' in identifier:
-            loc = row.get('From1', None)
-            if loc:
-                station_node = f"{clean_station_name(loc)}_0"
-                route_nodes.append(station_node)
-                
-                # Safely get energy from either Recharge or Usage column
-                energy_val = row.get('Recharge kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = row.get('Usage kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = 0
-                    
-                energy = abs(float(energy_val))
-                hour_of_day = int(row['Sort_Time'] // 60)
-                
-                # Default to 100.0 if you don't have hourly_prices globally available in this scope
-                price = hourly_prices.get(hour_of_day, 100.0) if 'hourly_prices' in globals() else 100.0
-                charging_cost += price * energy * charge_cost_premium
+    # 4. GAP: Tight
+    # We don't want a "good enough" route. We want THE route.
+    m.Params.MIPGap = 0.01  # 0.1% gap (standard default is 0.0001)
 
-    route_nodes.append(DEPOT_NAME)
+    # 5. HEURISTICS: Balanced
+    # Don't spend 100% on heuristics. We need the Branch-and-Bound tree to prove 
+    # that no better column exists.
+    m.Params.Heuristics = 0.2 
 
-    # 4. Evaluate the mathematical objective
-    travel_cost = 0.0
-    missing_arcs = []
+    # 6. POOL: Optimization
+    # Mode 0 = Just find the optimal solution. 
+    # We don't need 20 mediocre columns; we need the 1 perfect one.
+    m.Params.PoolSearchMode = 0 
     
-    for k in range(len(route_nodes) - 1):
-        u = route_nodes[k]
-        v = route_nodes[k+1]
-        
-        # If the start is 'PARX' and we need 'PARX_0' to match dictionary, handle it
-        if u == 'PARX': u = 'PARX_0'
-        if v == 'PARX': v = 'PARX_0'
-        
-        if (u, v) in d:
-            travel_cost += d[(u, v)]
+    # 7. CROSSOVER: Auto (Default)
+    # We need accurate bases now.
+    m.Params.Crossover = -1
+
+    m.optimize()
+    return m, vars_dict
+
+print("\n--- INITIATING DEEP DIVE FOR 1-BUS SOLUTION ---")
+
+# 1. Update Duals one last time
+rmp.optimize()
+alpha, beta_d, gamma_d = extract_duals(rmp)
+print(f"Current Master LP Obj: {rmp.ObjVal:.2f}")
+
+# 2. Run Deep Dive Pricing
+# We set a high time limit because we expect this to solve the puzzle.
+pricing_model, vars_pr = solve_pricing_deep_dive(alpha, beta_d, gamma_d, mode=1, time_limit=600)
+
+#%%
+# 3. Process Result
+if pricing_model.SolCount > 0:
+    # [FIX] Corrected arguments: Remove pricing_model, Add S (stations)
+    # Ensure S is defined in your scope (it usually is from config/globals)
+    route = extract_route_from_solution(vars_pr, T, S, bar_t, DEPOT)
+    
+    print(f"\n[DEEP DIVE SUCCESS] Found column with RC: {pricing_model.ObjVal:.2f}")
+    
+    # Add to Master
+    R_truck.append(route)
+    
+    # Calculate cost and add variable
+    cost = calculate_truck_route_cost(route, bus_cost, hourly_prices)
+    col = Column()
+    for node in route["route"]:
+        if isinstance(node, int):
+            col.addTerms(1.0, trip_cov[node])
+    
+    idx = len(R_truck) - 1
+    a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
+    
+    # 4. Solve Master ONE LAST TIME as MIP
+    rmp.update()
+    
+    print("\n--- SOLVING MASTER AS MIP (Integrality Check) ---")
+    # Switch all variables to binary to test for integer solution
+    for var in rmp.getVars():
+        var.VType = GRB.BINARY 
+    
+    rmp.optimize()
+    
+    if rmp.SolCount > 0:
+        print(f"Final Integer Objective: {rmp.ObjVal:.2f}")
+        if rmp.ObjVal < 20000:
+             print("VICTORY: 1 BUS SOLUTION FOUND!")
         else:
-            missing_arcs.append((u, v))
-            
-    total_travel_cost = travel_cost * TRAVEL_COST_FACTOR
-    sum_of_duals = sum(alpha.get(node, 0.0) for node in route_nodes if isinstance(node, int))
-    
-    total_cost = bus_cost + total_travel_cost + charging_cost
-    reduced_cost = total_cost - sum_of_duals
-    
-    print(f"Path Sequence:  {route_nodes}")
-    print(f"Base Bus Cost:  {bus_cost:.2f}")
-    print(f"Travel Cost:    {total_travel_cost:.2f}")
-    print(f"Charging Cost:  {charging_cost:.2f}")
-    print(f"Sum of Duals:   {sum_of_duals:.2f}")
-    print(f"REDUCED COST:   {reduced_cost:.2f}")
-    
-    if missing_arcs:
-        print(f"--> [WARNING] Route contains deadheads missing from the DHD dictionary: {missing_arcs}")
-    
-    if reduced_cost <= -0.01:
-        print("--> [VERDICT] NEGATIVE! The CG pricing problem missed this historical route.")
+             print(f"Result: Best Integer Solution is {rmp.ObjVal:.2f} (likely >1 bus).")
     else:
-        print("--> [VERDICT] POSITIVE. This route is mathematically sub-optimal in the current LP state.")
+        print("Master MIP Infeasible (The current columns cannot form a valid integer set).")
 
-print("\n========================================================")
+else:
+    print("[DEEP DIVE FAILED] No negative reduced cost columns found. The current LP relaxation is likely the true bound.")
+#%%
+
+
+# --- 1. ADJUST PARAMETERS FOR THE "EXTENSION" RUN ---
+# We want to push past the stagnation. 
+# Allow 30 more iterations of "low gain" before quitting, and look for smaller gains.
+
+MAX_CG_ITERS = iteration + 50     # Add 200 more iterations to the current count
+STAGNATION_IMPROVEMENT_LIMIT = 10  # Be much more patient (was 8 or 10)
+MIN_MEANINGFUL_IMPROVEMENT = 1  # Lower threshold (was 40 or 100) based on K-Means
+PRICING_TIMELIMIT = 180             # Reset pricing to be fast/aggressive
+
+# Reset the internal counter so it doesn't stop on the very next step
+stagnant_improvement_counter = 0   
+
+# --- 2. RE-SYNC MASTER PROBLEM ---
+# We rebuild the RMP to ensure it perfectly matches the 'R_truck' list in memory.
+print(f"Re-building Master Problem with {len(R_truck)} existing columns...")
+rmp, a, trip_cov = init_master(
+    R_truck=R_truck,
+    T=T,
+    charging_cost_data=hourly_prices,
+    bus_cost=bus_cost,
+    binary=False
+)
+
+# --- 3. RESUME LOOP ---
+print(f"Resuming Optimization from Iteration {iteration} to {MAX_CG_ITERS}...")
+#%%
+
+MAX_RUNTIME_SECONDS = 3600 * 4 # Let it run for 1 hour maximum
+loop_start_time = time.time()
+
+while iteration < MAX_CG_ITERS:
+    iteration += 1
+    print(f"\n--- Iteration {iteration} (RESUMED) ---")
+
+
+
+    # A. SOLVE MASTER
+    t0 = time.time()
+    if t0 - loop_start_time > MAX_RUNTIME_SECONDS:
+        print(f"[STOP] Max runtime of {MAX_RUNTIME_SECONDS}s reached. Stopping safely.")
+        break
+    
+    rmp.Params.TimeLimit = MASTER_TIMELIMIT
+    rmp.optimize()
+    
+    current_obj = rmp.ObjVal
+    
+    # Calculate improvement
+    # Note: last_master_obj might be from the old run, which is fine
+    if last_master_obj is None:
+        improvement = float("inf")
+    else:
+        improvement = last_master_obj - current_obj
+
+    print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
+
+    # B. STAGNATION CHECK (Updated Settings)
+    if improvement < MIN_MEANINGFUL_IMPROVEMENT:
+        stagnant_improvement_counter += 1
+        print(f"   [INFO] Low improvement (< {MIN_MEANINGFUL_IMPROVEMENT}). "
+              f"Stagnation count: {stagnant_improvement_counter}/{STAGNATION_IMPROVEMENT_LIMIT}")
+        
+        # Safety Valve: Don't stop if we are finding huge RC columns (-1000 or less)
+        # We check best_rc_iter from previous loop (initialized to -inf for safety first time)
+        if stagnant_improvement_counter >= STAGNATION_IMPROVEMENT_LIMIT:
+             print(f"[STOP] Stagnated for {STAGNATION_IMPROVEMENT_LIMIT} iterations. Stopping.")
+             break
+    else:
+        if stagnant_improvement_counter > 0:
+            print(f"   [RESET] Improvement {improvement:.2f}. Resetting counter.")
+        stagnant_improvement_counter = 0
+        current_pricing_timelimit = PRICING_TIMELIMIT # Keep it fast
+    
+    last_master_obj = current_obj
+
+    # C. EXTRACT DUALS
+    alpha, beta_dual, gamma_dual = extract_duals(rmp)
+
+    # D. SOLVE PRICING
+    new_trucks = []
+    best_rc_iter = float("inf")
+    timed_out_any = False
+    
+    # Track existing routes to avoid duplicates
+    seen_keys_existing = {_route_key(r) for r in R_truck}
+    
+    t0_pricing_total = time.time()
+
+    # --- PRICING RETRY LOOP ---
+    while True:
+        # Cap max time
+        current_pricing_timelimit = min(current_pricing_timelimit, 120) 
+
+        print(f"   > FAST pricing (TimeLimit={current_pricing_timelimit}s)")
+        
+        # Call your existing fast pricing function
+        pricing_model, vars_pr = solve_pricing_fast(
+            alpha, beta_dual, gamma_dual,
+            mode=1,
+            num_fast_cols=n_fast_cols,
+            time_limit=current_pricing_timelimit
+        )
+        
+        timed_out_fast = (pricing_model.Status == GRB.TIME_LIMIT)
+        timed_out_any |= timed_out_fast
+
+        # Collect
+        candidates, best_rc_fast, neg_in_pool, _ = _collect_candidates_from_pool(
+            pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
+        )
+        best_rc_iter = min(best_rc_iter, best_rc_fast)
+
+        # Filter duplicates
+        candidates.sort(key=lambda r: r["_rc"])
+        seen_new = set()
+        for t_route in candidates:
+            k = _route_key(t_route)
+            if (k not in seen_keys_existing) and (k not in seen_new):
+                new_trucks.append(t_route)
+                seen_new.add(k)
+            if len(new_trucks) >= K_BEST:
+                break
+        
+        # Success?
+        if new_trucks:
+            print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
+            # Decay time slightly to stay aggressive
+            current_pricing_timelimit = max(20, int(current_pricing_timelimit * 0.9))
+            break
+            
+        # Fallback to EXACT if FAST failed but showed promise?
+        # Note: You can re-enable exact pricing here if you wish, 
+        # but for now, let's stick to the retry logic to keep it simple.
+        
+        # Stop if optimal
+        if (not timed_out_any) and (best_rc_iter >= -RC_EPSILON):
+            print(f"   [RC-OPT] Pricing optimal. Stopping.")
+            break
+            
+        # Retry with more time
+        if current_pricing_timelimit >= 180:
+             print("   [GIVE UP] Max time reached.")
+             break
+             
+        new_tlim = int(current_pricing_timelimit * 2.0)
+        print(f"   [RETRY] No cols. Increasing time: {current_pricing_timelimit} -> {new_tlim}")
+        current_pricing_timelimit = new_tlim
+    # --------------------------
+
+    # E. RECORD STATS (Append to existing list)
+    pricing_dur_total = time.time() - t0_pricing_total
+    current_stat = {
+        "Iteration": iteration,
+        "Master_Obj": current_obj,
+        "Master_Improvement": improvement,
+        "Pricing_Time_s": pricing_dur_total,
+        "Cols_Added": len(new_trucks),
+        "Best_RC": best_rc_iter,
+        "Stagnant_Counter": stagnant_improvement_counter,
+        "Total_Runtime_s": time.time() - stopwatch_start
+    }
+    cg_stats.append(current_stat)
+    
+    # Update CSV in place
+    pd.DataFrame(cg_stats).to_csv(stats_csv_path, index=False)
+
+    # F. ADD COLUMNS
+    if not new_trucks and best_rc_iter >= -RC_EPSILON:
+        print("Done.")
+        break
+        
+    for route in new_trucks:
+        print(f"[ADD] rc={route.get('_rc', 0):.1f} | Path: {route['desc']}")
+        R_truck.append(route)
+        cost = calculate_truck_route_cost(route, bus_cost, hourly_prices)
+
+        col = Column()
+        for node in route["route"]:
+            if isinstance(node, int):
+                col.addTerms(1.0, trip_cov[node])
+
+        idx = len(R_truck) - 1
+        a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
+    rmp.update()
 # %%
