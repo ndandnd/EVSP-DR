@@ -204,12 +204,6 @@ if not prices_csv.exists():
     raise FileNotFoundError(f"Missing {prices_csv} (needed for charging prices)")
 
 df_trips = pd.read_csv(routes_csv)
-df_trips = df_trips.rename(columns={trip_col_map[k]: k for k in trip_col_map})
-# --- Sort trips chronologically ---
-# We reuse existing parse_time_to_minutes function
-df_trips['Sort_Time'] = df_trips['ST'].apply(parse_time_to_minutes)
-df_trips = df_trips.sort_values('Sort_Time').reset_index(drop=True)
-df_trips = df_trips.drop(columns=['Sort_Time'])
 
 # # ------------------------------
 # # Build loc -> reference map from VehicleDetails
@@ -309,6 +303,14 @@ if missing:
                      f"could not find: {missing}. Found: {set(df_trips.columns)}")
 
 df_trips = df_trips.rename(columns={trip_col_map[k]: k for k in trip_col_map})
+
+# --- Sort trips chronologically ---
+# We reuse existing parse_time_to_minutes function
+df_trips['Sort_Time'] = df_trips['ST'].apply(parse_time_to_minutes)
+df_trips = df_trips.sort_values('Sort_Time').reset_index(drop=True)
+df_trips = df_trips.drop(columns=['Sort_Time'])
+
+
 
 df_ref_dict = pd.read_csv(ref_dict_csv)
 df_ref_dhd = pd.read_csv(ref_dhd_csv)
@@ -1393,7 +1395,7 @@ while iteration < max_iter:
         # 2. ESCALATING EXACT PRICING SCHEDULE
         print(f"   > FAST pricing found no columns. Switching to EXACT pricing schedule...")
         
-        exact_time_schedule = [30, 60, 120, 240, 480, 1200], #2400, 3600]
+        exact_time_schedule = [30, 60, 120, 240, 480, 1200]#,2400, 3600]
         exact_success = False
         
         # We will require a reduced cost to be at least -1.0 to be considered "meaningful"

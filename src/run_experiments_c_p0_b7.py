@@ -169,7 +169,7 @@ MIN_TRIPS_PER_ROUTE = 14  # Based on observed distribution (allowing some flexib
 
 
 
-routes_csv    = DATA_DIR / "Practice_Selected_8bus.csv"
+routes_csv    = DATA_DIR / "Practice_Selected_7bus.csv"
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 prices_csv    = DATA_DIR / "hourly_prices.csv"

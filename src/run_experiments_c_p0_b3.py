@@ -1347,28 +1347,36 @@ while iteration < max_iter:
     BEST_OBJ_STOP = None         # Set to e.g. -5000.0 if you want early stops
     
     t0_pricing_total = time.time()
-    # --- PRICING RETRY LOOP ---
+    
     while True:
-        # Cap max time
-        current_pricing_timelimit = min(current_pricing_timelimit, 120) 
+        # time limit cap
+        current_pricing_timelimit = min(current_pricing_timelimit, PRICING_TLIM_MAX)
 
         print(f"   > FAST pricing (TimeLimit={current_pricing_timelimit}s)")
-        
-        # Call your existing fast pricing function
+
+        t0_price = time.time()
         pricing_model, vars_pr = solve_pricing_fast(
             alpha, beta_dual, gamma_dual,
             mode=1,
             num_fast_cols=n_fast_cols,
-            time_limit=current_pricing_timelimit
+            time_limit=current_pricing_timelimit,
+            best_obj_stop=BEST_OBJ_STOP
+            
         )
 
-        # Collect (We keep RC_EPSILON small here so we don't accidentally ignore good heuristics)
-        candidates, best_rc_fast, neg_in_pool, _ = _collect_candidates_from_pool(
+        pricing_times.append(time.time() - t0_price)
+
+        # check status
+        timed_out_fast = (pricing_model.Status == GRB.TIME_LIMIT)
+        timed_out_any |= timed_out_fast
+
+        # Collect candidates
+        candidates, best_rc_fast, neg_in_pool, extract_fail = _collect_candidates_from_pool(
             pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
         )
         best_rc_iter = min(best_rc_iter, best_rc_fast)
 
-        # Filter duplicates
+        # Sort and filter unique candidates
         candidates.sort(key=lambda r: r["_rc"])
         seen_new = set()
         for t_route in candidates:
@@ -1378,39 +1386,40 @@ while iteration < max_iter:
                 seen_new.add(k)
             if len(new_trucks) >= K_BEST:
                 break
-        
-        # 1. SUCCESS?
+
+        # A) SUCCESS: We found columns
         if new_trucks:
             print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
-            # Decay time slightly to stay aggressive for next iteration
-            current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.9))
+            # Decay time limit slightly to keep next iter fast
+            current_pricing_timelimit = max(PRICING_TLIM_INIT, int(current_pricing_timelimit * PRICING_TLIM_DECAY))
             break
-            
-        # 2. ESCALATING EXACT PRICING SCHEDULE
-        print(f"   > FAST pricing found no columns. Switching to EXACT pricing schedule...")
-        
-        exact_time_schedule = [30, 60, 120, 240, 480]
-        exact_success = False
-        
-        # We will require a reduced cost to be at least -1.0 to be considered "meaningful"
-        SIGNIFICANT_RC_THRESHOLD = 1.0 
 
-        for exact_tlim in exact_time_schedule:
-            print(f"      [EXACT] Trying TimeLimit={exact_tlim}s...")
+        # B) FALLBACK: Fast pricing found nothing, but maybe Exact will?
+        # Only run if fast saw "potential" (neg_in_pool > 0) but failed to extract, 
+        # OR if we want to be exhaustive.
+        ran_exact = False
+        if (best_rc_fast < -RC_EPSILON) and (n_exact_cols > 0) and not new_trucks:
+            ran_exact = True
+            print(f"   > EXACT pricing (TimeLimit={current_pricing_timelimit}s) "
+                  f"[neg_in_pool={neg_in_pool}, extract_fail={extract_fail}]")
+
             pricing_model2, vars_pr2 = solve_pricing_exact(
                 alpha, beta_dual, gamma_dual,
                 mode=1,
                 num_exact_cols=n_exact_cols,
-                time_limit=exact_tlim
+                time_limit=current_pricing_timelimit
             )
-            
-            # Pass our SIGNIFICANT_RC_THRESHOLD so we ignore noise like -0.67
-            candidates2, best_rc_exact, _, _ = _collect_candidates_from_pool(
-                pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=SIGNIFICANT_RC_THRESHOLD
+            timed_out_exact = (pricing_model2.Status == GRB.TIME_LIMIT)
+            timed_out_any |= timed_out_exact
+
+            candidates2, best_rc_exact, neg_in_pool2, extract_fail2 = _collect_candidates_from_pool(
+                pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
             )
             best_rc_iter = min(best_rc_iter, best_rc_exact)
 
+            # Process exact candidates
             candidates2.sort(key=lambda r: r["_rc"])
+            seen_new = set()
             for t_route in candidates2:
                 k = _route_key(t_route)
                 if (k not in seen_keys_existing) and (k not in seen_new):
@@ -1420,20 +1429,27 @@ while iteration < max_iter:
                     break
             
             if new_trucks:
-                print(f"   [SUCCESS] Found {len(new_trucks)} cols after EXACT at {exact_tlim}s (best_rc={best_rc_iter:.2f})")
-                exact_success = True
+                print(f"   [SUCCESS] Found {len(new_trucks)} cols after EXACT (best_rc={best_rc_iter:.1f})")
+                current_pricing_timelimit = max(PRICING_TLIM_INIT, int(current_pricing_timelimit * PRICING_TLIM_DECAY))
                 break
-            else:
-                print(f"      [EXACT FAIL] No meaningful columns found (< -{SIGNIFICANT_RC_THRESHOLD}) at {exact_tlim}s. Best was {best_rc_exact:.2f}.")
-        
-        if exact_success:
-            # We break out of the while True loop and go back to the Master LP
+
+        # C) OPTIMAL STOP: No timeout occurred, and best RC is non-negative
+        if (not timed_out_any) and (best_rc_iter >= -RC_EPSILON):
+            print(f"   [RC-OPT] Pricing solved (no timeout) and best_rc={best_rc_iter:.1f} >= -RC_EPSILON")
             break
-        else:
-            # 3. OPTIMAL STOP
-            print(f"   [RC-OPT / STOP] EXACT pricing exhausted schedule up to {exact_time_schedule[-1]}s. Mathematical convergence reached.")
+
+        # D) TIMEOUT / GIVE UP: We hit max time limit
+        if current_pricing_timelimit >= PRICING_TLIM_MAX:
+            print(f"   [GIVE UP] Hit max pricing TL={PRICING_TLIM_MAX}s; continuing without new cols.")
             break
-    # --------------------------
+
+        # E) RETRY: We timed out with no columns. Double time and loop again.
+        new_tlim = min(PRICING_TLIM_MAX, int(current_pricing_timelimit * PRICING_TLIM_GROW))
+        print(f"   [RETRY] No cols found (best_rc={best_rc_iter:.1f}, timeout={timed_out_any}). "
+              f"Increasing TimeLimit: {current_pricing_timelimit}s -> {new_tlim}s")
+        current_pricing_timelimit = new_tlim
+        # Loop continues...
+
 
     # --- [INSERT 2: Collect Metrics (After Retry Loop Ends)] ---
     pricing_dur_total = time.time() - t0_pricing_total

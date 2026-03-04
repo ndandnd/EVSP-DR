@@ -1890,3 +1890,115 @@ elapsed = stopwatch_end - stopwatch_start
 print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
 
 # %%
+# Clean Station Mapper
+def clean_station_name(raw_name):
+    raw_str = str(raw_name).upper()
+    if 'PARX' in raw_str: return 'PARX'
+    if 'JON' in raw_str: return 'JON_A'
+    if '3127' in raw_str: return '3127L'
+    if '7880' in raw_str: return '7880C'
+    if '4808' in raw_str: return '4808'
+    if '2190' in raw_str: return '2190L'
+    return str(raw_name)
+
+# 2. Recreate the mapping from Original Master Row -> Pricing Index 'i'
+target_bus_ids = [13320, 13311, 13307 , 13314, "13316uwt", "13324muw", 13309, 13323, 13321,
+                                  13310]
+target_ids_str = [str(x) for x in target_bus_ids]
+
+df_master = pd.read_csv(DATA_DIR / MASTER_FILE)
+df_master['VehicleTask_Str'] = df_master['VehicleTask'].astype(str)
+
+mask = (df_master['Identifier'] == 'Regular') & (df_master['VehicleTask_Str'].isin(target_ids_str))
+df_cg_trips = df_master[mask].copy()
+
+# Sort exactly how the instance generator did it
+df_cg_trips['Sort_Time'] = df_cg_trips['Start1'].apply(parse_time_to_minutes)
+df_cg_trips_sorted = df_cg_trips.sort_values('Sort_Time')
+
+# Dictionary: Original Master Row Index => Pricing Trip Index `i`
+orig_row_to_i = {orig_idx: i for i, orig_idx in enumerate(df_cg_trips_sorted.index)}
+
+# 3. Process each historical bus path
+for bus_id in target_ids_str:
+    print(f"\nEvaluating Historical Bus Route: {bus_id}")
+    
+    bus_df = df_master[df_master['VehicleTask_Str'] == bus_id].copy()
+    bus_df['Sort_Time'] = bus_df['Start1'].apply(parse_time_to_minutes)
+    bus_df = bus_df.sort_values('Sort_Time')
+    
+    route_nodes = [DEPOT_NAME]
+    charging_cost = 0.0
+    
+    for orig_idx, row in bus_df.iterrows():
+        identifier = str(row.get('Identifier', ''))
+        
+        # A) Add Regular Trips
+        if identifier == 'Regular':
+            i = orig_row_to_i.get(orig_idx)
+            if i is not None:
+                route_nodes.append(i)
+            
+        # B) Add Charging Stations
+        elif 'Charge' in identifier or 'Recharge' in identifier:
+            loc = row.get('From1', None)
+            if loc:
+                station_node = f"{clean_station_name(loc)}_0"
+                route_nodes.append(station_node)
+                
+                # Safely get energy from either Recharge or Usage column
+                energy_val = row.get('Recharge kWh', 0)
+                if pd.isna(energy_val) or energy_val == '':
+                    energy_val = row.get('Usage kWh', 0)
+                if pd.isna(energy_val) or energy_val == '':
+                    energy_val = 0
+                    
+                energy = abs(float(energy_val))
+                hour_of_day = int(row['Sort_Time'] // 60)
+                
+                # Default to 100.0 if you don't have hourly_prices globally available in this scope
+                price = hourly_prices.get(hour_of_day, 100.0) if 'hourly_prices' in globals() else 100.0
+                charging_cost += price * energy * charge_cost_premium
+
+    route_nodes.append(DEPOT_NAME)
+
+    # 4. Evaluate the mathematical objective
+    travel_cost = 0.0
+    missing_arcs = []
+    
+    for k in range(len(route_nodes) - 1):
+        u = route_nodes[k]
+        v = route_nodes[k+1]
+        
+        # If the start is 'PARX' and we need 'PARX_0' to match dictionary, handle it
+        if u == 'PARX': u = 'PARX_0'
+        if v == 'PARX': v = 'PARX_0'
+        
+        if (u, v) in d:
+            travel_cost += d[(u, v)]
+        else:
+            missing_arcs.append((u, v))
+            
+    total_travel_cost = travel_cost * TRAVEL_COST_FACTOR
+    sum_of_duals = sum(alpha.get(node, 0.0) for node in route_nodes if isinstance(node, int))
+    
+    total_cost = bus_cost + total_travel_cost + charging_cost
+    reduced_cost = total_cost - sum_of_duals
+    
+    print(f"Path Sequence:  {route_nodes}")
+    print(f"Base Bus Cost:  {bus_cost:.2f}")
+    print(f"Travel Cost:    {total_travel_cost:.2f}")
+    print(f"Charging Cost:  {charging_cost:.2f}")
+    print(f"Sum of Duals:   {sum_of_duals:.2f}")
+    print(f"REDUCED COST:   {reduced_cost:.2f}")
+    
+    if missing_arcs:
+        print(f"--> [WARNING] Route contains deadheads missing from the DHD dictionary: {missing_arcs}")
+    
+    if reduced_cost <= -0.01:
+        print("--> [VERDICT] NEGATIVE! The CG pricing problem missed this historical route.")
+    else:
+        print("--> [VERDICT] POSITIVE. This route is mathematically sub-optimal in the current LP state.")
+
+print("\n========================================================")
+# %%
