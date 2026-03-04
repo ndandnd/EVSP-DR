@@ -41,12 +41,12 @@ DEPOT_NAME = "PARX"
 CHARGING_STATIONS = ["2190L", "4808", "3127L", "7880C", "JON_A", "PARX"]
 
 STATION_COPIES = {
-    "2190L": 0,
-    "4808":  0,
+    "2190L": 8,
+    "4808":  8,
     "PARX":  1,  
-    "3127L": 3,
-    "7880C": 2,
-    "JON_A": 1
+    "3127L": 6,
+    "7880C": 8,
+    "JON_A": 6
 }
 
 
@@ -58,11 +58,11 @@ BIG_M_PENALTY       = BUS_COST_KX * 5
 
 # ---------- NEW: Column Generation controls ----------
 # accept *any* improving column (don’t discard mild improvements)
-RC_EPSILON = 1           # was 300.0 (kept out many mildly negative routes)
+RC_EPSILON = .1           # was 300.0 (kept out many mildly negative routes)
 K_BEST = 50               # was 30 (add more useful columns per iter)
 
 # CG loop limits / guards
-MAX_CG_ITERS = 300      # was 300
+MAX_CG_ITERS = 200      # was 300
 STAGNATION_ITERS = 15      # was 3 (don’t stop so early)
 MASTER_IMPROVE_THRESHOLD = 0.1  # was 5e-4 (count small progress as improvement)
 
