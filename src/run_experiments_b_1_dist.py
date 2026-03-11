@@ -1354,14 +1354,16 @@ while True:
     new_trucks = []
     best_rc_iter = float("inf")
     timed_out_any = False
+    converged = False  # <--- NEW FLAG to stop the outer loop
 
     # For deduplication
     seen_keys_existing = {_route_key(r) for r in R_truck}
 
     # Configuration for this iteration
-    BEST_OBJ_STOP = None         # Set to e.g. -5000.0 if you want early stops
+    BEST_OBJ_STOP = None
     
     t0_pricing_total = time.time()
+    
     # --- PRICING RETRY LOOP ---
     while True:
         # Cap max time
@@ -1377,7 +1379,6 @@ while True:
             time_limit=current_pricing_timelimit
         )
 
-        # Collect (We keep RC_EPSILON small here so we don't accidentally ignore good heuristics)
         candidates, best_rc_fast, neg_in_pool, _ = _collect_candidates_from_pool(
             pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
         )
@@ -1399,15 +1400,13 @@ while True:
             print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
             # Decay time slightly to stay aggressive for next iteration
             current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.9))
-            break
+            break # Breaks inner retry loop, goes to ADD COLUMNS
             
         # 2. ESCALATING EXACT PRICING SCHEDULE
         print(f"   > FAST pricing found no columns. Switching to EXACT pricing schedule...")
         
-        exact_time_schedule = [30, 60, 120, 240, 480, 900]#,2400, 3600]
+        exact_time_schedule = [30, 60, 120, 240, 480, 900] # 3600
         exact_success = False
-        
-        # We will require a reduced cost to be at least -1.0 to be considered "meaningful"
         SIGNIFICANT_RC_THRESHOLD = 1.0 
 
         for exact_tlim in exact_time_schedule:
@@ -1419,7 +1418,6 @@ while True:
                 time_limit=exact_tlim
             )
             
-            # Pass our SIGNIFICANT_RC_THRESHOLD so we ignore noise like -0.67
             candidates2, best_rc_exact, _, _ = _collect_candidates_from_pool(
                 pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=SIGNIFICANT_RC_THRESHOLD
             )
@@ -1437,28 +1435,28 @@ while True:
             if new_trucks:
                 print(f"   [SUCCESS] Found {len(new_trucks)} cols after EXACT at {exact_tlim}s (best_rc={best_rc_iter:.2f})")
                 exact_success = True
-                break
+                break # Breaks out of exact_time_schedule
             else:
                 print(f"      [EXACT FAIL] No meaningful columns found (< -{SIGNIFICANT_RC_THRESHOLD}) at {exact_tlim}s. Best was {best_rc_exact:.2f}.")
         
         if exact_success:
-            # We break out of the while True loop and go back to the Master LP
-            break
+            break # Breaks inner retry loop, goes to ADD COLUMNS
         else:
             # 3. OPTIMAL STOP
             print(f"   [RC-OPT / STOP] EXACT pricing exhausted schedule up to {exact_time_schedule[-1]}s. Mathematical convergence reached.")
-            break
+            converged = True # <--- SET FLAG TO BREAK OUTER LOOP
+            break # Breaks inner retry loop
     # --------------------------
 
 
-    # --- [INSERT 2: Collect Metrics (After Retry Loop Ends)] ---
+    # --- [INSERT 2: Collect Metrics] ---
     pricing_dur_total = time.time() - t0_pricing_total
     
     current_stat = {
         "Iteration": iteration,
         "Master_Obj": current_obj,
         "Master_Improvement": improvement if last_master_obj is not None else 0,
-        "Pricing_Time_s": pricing_dur_total,  # Total time for ALL pricing attempts this iter
+        "Pricing_Time_s": pricing_dur_total,
         "Cols_Added": len(new_trucks),
         "Best_RC": best_rc_iter,
         "Timed_Out": timed_out_any,
@@ -1468,14 +1466,11 @@ while True:
     }
     cg_stats.append(current_stat)
     
-    # Force Save (Overwrites file every iteration)
     pd.DataFrame(cg_stats).to_csv(stats_csv_path, index=False)
     # -----------------------------------------------------------
 
     # 3) ADD COLUMNS TO MASTER
     for route in new_trucks:
-        # print(f"[ADD] column rc={route.get('_rc', float('nan')):.1f}  route={route['route']}")
-        # print(f"[ADD] rc={route.get('_rc', 0):.1f} | Path: {route['desc']}")
         R_truck.append(route)
         cost = calc_cost_distance_only(route, bus_cost)
 
@@ -1489,10 +1484,10 @@ while True:
     rmp.update()
 
     # 4) CHECK TERMINATION
-    # Only stop if we truly found nothing AND we didn't time out
-    if (not new_trucks) and (not timed_out_any) and (best_rc_iter >= -RC_EPSILON):
-        print(f"[STOP] Reduced-cost optimal (best_rc={best_rc_iter:.1f}).")
-        break
+    if converged:
+        print(f"[STOP] Column generation mathematically converged.")
+        break # <--- THIS BREAKS THE OUTER WHILE TRUE LOOP
+
 #%%
 # ---------------- DIAGNOSTIC START ----------------
 # Check which trips are still using dummy variables in the LP solution
