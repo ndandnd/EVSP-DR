@@ -1396,10 +1396,11 @@ while True:
     t0_pricing_total = time.time()
     
     # --- ESCALATING EXACT PRICING FOR DP ---
-    label_schedule = [10000, 30000, 60000, 100000] # The DP version of "trying harder"
-    
+    #label_schedule = [10000, 30000, 60000, 100000] # The DP version of "trying harder"
+    label_schedule = [50000, 100000, 200000]
+
     ## charging levels
-    granularity = 20
+    granularity = 50
     fine_soc_levels = [round(i * G / granularity, 2) for i in range(1, granularity + 1)]
     
     for current_max_labels in label_schedule:
@@ -1417,7 +1418,7 @@ while True:
             charge_cost_premium=0.0,          # ZERO FOR DISTANCE-ONLY
             travel_cost_factor=TRAVEL_COST_FACTOR,
             RC_EPSILON=RC_EPSILON,
-            K_BEST=100,                       # Extract up to 100 cols per pass
+            K_BEST=200,                       # Extract up to 100 cols per pass
             MAX_LABELS_PER_NODE=current_max_labels, 
             soc_charge_levels=fine_soc_levels,# <-- USING YOUR FINER GRID
             MIN_TRIPS_PER_ROUTE=3, 
@@ -1426,8 +1427,15 @@ while True:
         
         #raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual)
         #
+        # raw_new_trucks = dp_price(alpha, beta_dual, gamma_dual)
+
+        t0_dp_pass = time.time()
+        #raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual)
         raw_new_trucks = dp_price(alpha, beta_dual, gamma_dual)
         
+        dp_pass_time = time.time() - t0_dp_pass
+        # raw_new_trucks, best_rc_iter, _, _ = dp_price(alpha, beta_dual, gamma_dual)
+
         if raw_new_trucks:
             # V2 returns a sorted list, so the best RC is just the first item
             best_rc_iter = raw_new_trucks[0]["_rc"]
@@ -1441,8 +1449,11 @@ while True:
             if (k not in seen_keys_existing) and (k not in seen_new):
                 new_trucks.append(t_route)
                 seen_new.add(k)
-            if len(new_trucks) >= 100:  # Match K_BEST
-                break
+
+
+###NOT SURE IF NEEDED
+            # if len(new_trucks) >= 200:  # Match K_BEST
+            #     break
                 
         if new_trucks:
             print(f"   [SUCCESS] DP found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
