@@ -1,4 +1,3 @@
-#%%
 # EVSP only (no solar, no V2G/V2V) on your real data.
 # Speedups:
 #  - Smaller pool + RC cutoff + K-best columns per CG iteration
@@ -40,7 +39,7 @@ from config import (
     MASTER_TIMELIMIT, PRICING_TIMELIMIT, PRICING_GAP
 )
 
-from pricing_dp_v2 import make_dp_pricer
+from pricing_dp import make_dp_pricer
 
 from utils_v2 import (
     load_price_curve, extract_duals, extract_route_from_solution,
@@ -1396,52 +1395,32 @@ while True:
     t0_pricing_total = time.time()
     
     # --- ESCALATING EXACT PRICING FOR DP ---
-    #label_schedule = [10000, 30000, 60000, 100000] # The DP version of "trying harder"
-    label_schedule = [50000, 100000, 200000]
-
-    ## charging levels
-    granularity = 50
-    fine_soc_levels = [round(i * G / granularity, 2) for i in range(1, granularity + 1)]
+    label_schedule = [2000, 5000, 10000, 20000] # The DP version of "trying harder"
     
     for current_max_labels in label_schedule:
         current_max_labels_used = current_max_labels
-        print(f"   > DP pricing (MAX_LABELS={current_max_labels}, SOC_GRANULARITY={granularity})...")
+        print(f"   > DP pricing (MAX_LABELS={current_max_labels})...")
         
-        # Re-initialize the pricer with the new label limit & SOC grid
+        # Re-initialize the pricer with the new label limit
         dp_price = make_dp_pricer(
             T=T, S_use=S_use, DEPOT=DEPOT,
             tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
             G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-            bus_cost=bus_cost,                # FIXED from truck_cost
+            bus_cost=bus_cost,
             charge_rate_kw=CHARGE_RATE_KW,
             hourly_prices=hourly_prices,
             charge_cost_premium=0.0,          # ZERO FOR DISTANCE-ONLY
             travel_cost_factor=TRAVEL_COST_FACTOR,
             RC_EPSILON=RC_EPSILON,
-            K_BEST=200,                       # Extract up to 100 cols per pass
-            MAX_LABELS_PER_NODE=current_max_labels, 
-            soc_charge_levels=fine_soc_levels,# <-- USING YOUR FINER GRID
+            K_BEST=K_BEST,
+            MAX_LABELS_PER_NODE=current_max_labels, # <--- ESCALATING VARIABLE
+            soc_charge_levels=[0.2*G, 0.4*G, 0.6*G, 0.8*G, G],
             MIN_TRIPS_PER_ROUTE=3, 
             MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
         )
         
-        #raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual)
-        #
-        # raw_new_trucks = dp_price(alpha, beta_dual, gamma_dual)
-
-        t0_dp_pass = time.time()
-        #raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual)
-        raw_new_trucks = dp_price(alpha, beta_dual, gamma_dual)
+        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=60)
         
-        dp_pass_time = time.time() - t0_dp_pass
-        # raw_new_trucks, best_rc_iter, _, _ = dp_price(alpha, beta_dual, gamma_dual)
-
-        if raw_new_trucks:
-            # V2 returns a sorted list, so the best RC is just the first item
-            best_rc_iter = raw_new_trucks[0]["_rc"]
-        else:
-            best_rc_iter = float("inf")
-
         # Filter duplicates
         seen_new = set()
         for t_route in raw_new_trucks:
@@ -1449,11 +1428,8 @@ while True:
             if (k not in seen_keys_existing) and (k not in seen_new):
                 new_trucks.append(t_route)
                 seen_new.add(k)
-
-
-###NOT SURE IF NEEDED
-            # if len(new_trucks) >= 200:  # Match K_BEST
-            #     break
+            if len(new_trucks) >= K_BEST:
+                break
                 
         if new_trucks:
             print(f"   [SUCCESS] DP found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
@@ -1472,7 +1448,7 @@ while True:
         "Cols_Added": len(new_trucks),
         "Best_RC": best_rc_iter,
         "Timed_Out": timed_out_any,
-        "Pricing_TimeLimit_Used": current_max_labels_used, 
+        "Pricing_TimeLimit_Used": current_max_labels_used, # Hijacked to track labels used
         "Stagnant_Counter": stagnant_counter,
         "Total_Runtime_s": time.time() - stopwatch_start
     }
@@ -1485,7 +1461,7 @@ while True:
         R_truck.append(route)
         
         # Use the distance-only cost function
-        cost = calc_cost_distance_only(route, bus_cost) # FIXED from truck_cost
+        cost = calc_cost_distance_only(route, bus_cost)
 
         col = Column()
         for node in route["route"]:
