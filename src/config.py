@@ -17,8 +17,8 @@ CHARGE_RATE_KW = 300
 CHARGE_PER_BLOCK = CHARGE_RATE_KW / TIMEBLOCKS_PER_HOUR
 
 
-charge_cost_premium = 0 #1 + 1e-2
-TRAVEL_COST_FACTOR = 1   # Cost per kWh of deadhead travel
+charge_cost_premium = 1 #1 + 1e-2
+TRAVEL_COST_FACTOR = 0   # Cost per kWh of deadhead travel
 
 # ---------- Costs ----------
 BUS_COST_KX = 1e5

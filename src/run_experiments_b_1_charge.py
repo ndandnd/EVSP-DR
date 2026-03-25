@@ -1,3 +1,4 @@
+#%%
 # EVSP only (no solar, no V2G/V2V) on your real data.
 # Speedups:
 #  - Smaller pool + RC cutoff + K-best columns per CG iteration
@@ -10,15 +11,13 @@ import time
 import math
 import datetime
 from pathlib import Path
-import json
 import sys
-
+import json
 
 import pandas as pd
 import numpy as np
 from gurobipy import Model, Column, GRB, quicksum, LinExpr
 # from collections import Counter, defaultdict
-
 
 from config import (
     n_fast_cols, n_exact_cols, tolerance,
@@ -38,8 +37,6 @@ from config import (
     THREADS, NODEFILE_START, NODEFILE_DIR,
     MASTER_TIMELIMIT, PRICING_TIMELIMIT, PRICING_GAP
 )
-
-from pricing_dp import make_dp_pricer
 
 from utils_v2 import (
     load_price_curve, extract_duals, extract_route_from_solution,
@@ -164,7 +161,7 @@ def generate_specific_buses_instance(target_bus_ids, output_filename=None):
 # generate_specific_buses_instance([13405, 13411], "Practice_Selected_2buses.csv")
 # generate_specific_buses_instance([13320, 13311, 13307 , 13314], "Practice_Selected_4bus.csv")
 
-MAX_DAILY_RECHARGES = 4  # Buffer above observed max of 13
+MAX_DAILY_RECHARGES = 15 # Buffer above observed max of 15
 MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibility below the historical min of 17)
 
 # generate_specific_buses_instance([13405, 13411, 13413], "Practice_Selected_3buses.csv")
@@ -174,7 +171,6 @@ MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibi
 
 
 
-#routes_csv    = DATA_DIR / "Practice_Selected_8bus.csv"
 # routes_csv    = DATA_DIR / "Practice_Selected_1bus.csv"
 
 if len(sys.argv) > 1:
@@ -217,8 +213,6 @@ if not prices_csv.exists():
     raise FileNotFoundError(f"Missing {prices_csv} (needed for charging prices)")
 
 df_trips = pd.read_csv(routes_csv)
-
-
 
 # # ------------------------------
 # # Build loc -> reference map from VehicleDetails
@@ -318,6 +312,14 @@ if missing:
                      f"could not find: {missing}. Found: {set(df_trips.columns)}")
 
 df_trips = df_trips.rename(columns={trip_col_map[k]: k for k in trip_col_map})
+
+# --- Sort trips chronologically ---
+# We reuse existing parse_time_to_minutes function
+df_trips['Sort_Time'] = df_trips['ST'].apply(parse_time_to_minutes)
+df_trips = df_trips.sort_values('Sort_Time').reset_index(drop=True)
+df_trips = df_trips.drop(columns=['Sort_Time'])
+
+
 
 df_ref_dict = pd.read_csv(ref_dict_csv)
 df_ref_dhd = pd.read_csv(ref_dhd_csv)
@@ -660,20 +662,6 @@ rmp.Params.Method = 1
 rmp.Params.TimeLimit = MASTER_TIMELIMIT
 rmp.optimize()
 #%%
-S_use_set = set()
-for i in T:
-    for h in S:
-        if (i, h) in tau and (et[i] + tau[(i, h)] <= bar_t):
-            S_use_set.add(h)
-        if (h, i) in tau and (tau[(h, i)] <= st[i]):
-            S_use_set.add(h)
-for h in S:
-    if (DEPOT, h) in d or (h, DEPOT) in d:
-        S_use_set.add(h)
-S_use = sorted(list(S_use_set))
-print(f"[INFO] Global S_use size for DP: {len(S_use)}")
-
-
 # ------------------------------ Pricing model (no layering, dwell-linked charge) ------------------------------
 
 def build_pricing(alpha, beta, gamma, mode):
@@ -1001,42 +989,43 @@ def build_pricing(alpha, beta, gamma, mode):
 
     # --- NEW: Add Travel (Deadhead) Cost ---
     # Sum d[u,v] * var[u,v] for all active arcs
-    travel_expr = LinExpr()
+    # travel_expr = LinExpr()
     
-    # 1. Trip -> Trip (x)
-    for (i, j) in x.keys():
-        if (i, j) in d: travel_expr += d[(i, j)] * x[(i, j)]
+    # # 1. Trip -> Trip (x)
+    # for (i, j) in x.keys():
+    #     if (i, j) in d: travel_expr += d[(i, j)] * x[(i, j)]
             
-    # 2. Trip -> Station (y)
-    for (i, h) in y.keys():
-        if (i, h) in d: travel_expr += d[(i, h)] * y[(i, h)]
+    # # 2. Trip -> Station (y)
+    # for (i, h) in y.keys():
+    #     if (i, h) in d: travel_expr += d[(i, h)] * y[(i, h)]
             
-    # 3. Station -> Trip (z)
-    for (h, i) in z.keys():
-        if (h, i) in d: travel_expr += d[(h, i)] * z[(h, i)]
+    # # 3. Station -> Trip (z)
+    # for (h, i) in z.keys():
+    #     if (h, i) in d: travel_expr += d[(h, i)] * z[(h, i)]
             
-    # 4. Depot Connections (wA, wOmega)
-    for i in T:
-        if (DEPOT, i) in d: travel_expr += d[(DEPOT, i)] * wA_trip[i]
-        if (i, DEPOT) in d: travel_expr += d[(i, DEPOT)] * wOmega_trip[i]
+    # # 4. Depot Connections (wA, wOmega)
+    # for i in T:
+    #     if (DEPOT, i) in d: travel_expr += d[(DEPOT, i)] * wA_trip[i]
+    #     if (i, DEPOT) in d: travel_expr += d[(i, DEPOT)] * wOmega_trip[i]
         
-    for h in S_use:
-        if (DEPOT, h) in d: travel_expr += d[(DEPOT, h)] * wA_station[h]
-        if (h, DEPOT) in d: travel_expr += d[(h, DEPOT)] * wOmega_station[h]
+    # for h in S_use:
+    #     if (DEPOT, h) in d: travel_expr += d[(DEPOT, h)] * wA_station[h]
+    #     if (h, DEPOT) in d: travel_expr += d[(h, DEPOT)] * wOmega_station[h]
 
-    # Add to main objective
-    obj += travel_expr * TRAVEL_COST_FACTOR
+    # # Add to main objective
+    # obj += travel_expr * TRAVEL_COST_FACTOR
 
 
     for h in S_use:
         for k in hours:
             # Look up price for hour k
             price = hourly_prices.get(k, 100.0) 
+            obj += price * q_hour[h, k] * charge_cost_premium
             
             # Add cost: Price * Amount_in_that_bucket * Premium
             # Note: CHARGE_PER_BLOCK is NOT needed here if v_amt is already energy units (kWh).
             # Double check if your prices are $/kWh. If so:
-            obj += price * q_hour[h, k] * charge_cost_premium
+            # obj += price * q_hour[h, k] * charge_cost_premium
 
 
         # if h in charging_cost_data.columns:
@@ -1259,7 +1248,7 @@ print(f"[WRITE] Diagnostics saved under {diag_dir}")
 
 iteration = 0
 new_pricing_obj = -1.0
-# max_iter = MAX_CG_ITERS
+max_iter = MAX_CG_ITERS
 
 if len(R_truck) == 0:
     print("[WARN] No initial seed routes; master may be infeasible if some trips lack any coverable pattern.")
@@ -1298,29 +1287,9 @@ cg_stats = []
 stats_csv_path = RUN_DIR / f"pricing_stats.csv"
 print(f"Saving real-time stats to: {stats_csv_path}")
 
-granularity = 10
-dp_price = make_dp_pricer(
-    T=T, S_use=S_use, DEPOT=DEPOT,
-    tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
-    G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-    bus_cost=bus_cost, charge_rate_kw=CHARGE_RATE_KW,
-    hourly_prices=hourly_prices,
-    charge_cost_premium=0,
-    travel_cost_factor=TRAVEL_COST_FACTOR,
-    RC_EPSILON=RC_EPSILON, K_BEST=K_BEST,
-    MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
-    MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-
-
-    ## try
-    MAX_LABELS_PER_NODE=2000,
-    soc_charge_levels=[G * i * (1/granularity) for i in range(1,1 + granularity)]
-
-)
 #%%
-# max_iter += 100
-#%%
-while True:
+while iteration < max_iter:
+# while True:
     iteration += 1
     print(f"\n--- Iteration {iteration} ---")
 
@@ -1342,7 +1311,7 @@ while True:
 
     ####### stopping criteria for practice ######
         # --- TARGET CONFIGURATION ---
-    TARGET_NUM_BUSES = 1  # Set to 1 for your '2minus1' file, or 2 for '2bus' file
+    TARGET_NUM_BUSES = 2  # Set to 1 for your '2minus1' file, or 2 for '2bus' file
     TARGET_OBJ = (TARGET_NUM_BUSES * BUS_COST_KX)
 
     print(f"temp Goal: Run until Master Objective <= {TARGET_OBJ:.2f}")
@@ -1383,85 +1352,130 @@ while True:
     # Extract Duals
     alpha, beta_dual, gamma_dual = extract_duals(rmp)
 
-    # 2) SOLVE PRICING (Dynamic Programming)
+    # 2) SOLVE PRICING (Adaptive Retry Loop)
     new_trucks = []
     best_rc_iter = float("inf")
-    timed_out_any = False # DP doesn't timeout the same way Gurobi does
-    current_max_labels_used = 0
-    
-    # For deduplication against what's already in the Master Problem
+    timed_out_any = False
+    converged = False  # <--- NEW FLAG to stop the outer loop
+
+    # For deduplication
     seen_keys_existing = {_route_key(r) for r in R_truck}
+
+    # Configuration for this iteration
+    BEST_OBJ_STOP = None
     
     t0_pricing_total = time.time()
     
-    # --- ESCALATING EXACT PRICING FOR DP ---
-    label_schedule = [1e4, 2e4, 5e4, 1e5] # The DP version of "trying harder"
-    
-    for current_max_labels in label_schedule:
-        current_max_labels_used = current_max_labels
-        print(f"   > DP pricing (MAX_LABELS={current_max_labels})...")
+    # --- PRICING RETRY LOOP ---
+    while True:
+        # Cap max time
+        current_pricing_timelimit = min(current_pricing_timelimit, 120) 
+
+        print(f"   > FAST pricing (TimeLimit={current_pricing_timelimit}s)")
         
-        # Re-initialize the pricer with the new label limit
-        dp_price = make_dp_pricer(
-            T=T, S_use=S_use, DEPOT=DEPOT,
-            tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
-            G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-            bus_cost=bus_cost,
-            charge_rate_kw=CHARGE_RATE_KW,
-            hourly_prices=hourly_prices,
-            charge_cost_premium=0.0,          # ZERO FOR DISTANCE-ONLY
-            travel_cost_factor=TRAVEL_COST_FACTOR,
-            RC_EPSILON=RC_EPSILON,
-            K_BEST=K_BEST,
-            MAX_LABELS_PER_NODE=int(current_max_labels), # <--- ESCALATING VARIABLE
-            soc_charge_levels=[G * i * (1/granularity) for i in range(1,1 + granularity)],
-            MIN_TRIPS_PER_ROUTE=3, 
-            MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
+        # Call your existing fast pricing function
+        pricing_model, vars_pr = solve_pricing_fast(
+            alpha, beta_dual, gamma_dual,
+            mode=1,
+            num_fast_cols=n_fast_cols,
+            time_limit=current_pricing_timelimit
         )
-        
-        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=60)
-        
+
+        candidates, best_rc_fast, neg_in_pool, _ = _collect_candidates_from_pool(
+            pricing_model, vars_pr, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=RC_EPSILON
+        )
+        best_rc_iter = min(best_rc_iter, best_rc_fast)
+
         # Filter duplicates
+        candidates.sort(key=lambda r: r["_rc"])
         seen_new = set()
-        for t_route in raw_new_trucks:
+        for t_route in candidates:
             k = _route_key(t_route)
             if (k not in seen_keys_existing) and (k not in seen_new):
                 new_trucks.append(t_route)
                 seen_new.add(k)
             if len(new_trucks) >= K_BEST:
                 break
-                
+        
+        # 1. SUCCESS?
         if new_trucks:
-            print(f"   [SUCCESS] DP found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
-            break # Break out of the escalation schedule and go back to Master LP
-        else:
-            print(f"   [FAILED] No cols found with {current_max_labels} labels. Trying harder...")
+            print(f"   [SUCCESS] Found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
+            # Decay time slightly to stay aggressive for next iteration
+            current_pricing_timelimit = max(15, int(current_pricing_timelimit * 0.9))
+            break # Breaks inner retry loop, goes to ADD COLUMNS
+            
+        # 2. ESCALATING EXACT PRICING SCHEDULE
+        print(f"   > FAST pricing found no columns. Switching to EXACT pricing schedule...")
+        
+        exact_time_schedule = [33, 66, 122, 244, 480, 900, 1800] #3600
+        exact_success = False
+        SIGNIFICANT_RC_THRESHOLD = 1.0 
 
+        for exact_tlim in exact_time_schedule:
+            print(f"      [EXACT] Trying TimeLimit={exact_tlim}s...")
+            pricing_model2, vars_pr2 = solve_pricing_exact(
+                alpha, beta_dual, gamma_dual,
+                mode=1,
+                num_exact_cols=n_exact_cols,
+                time_limit=exact_tlim
+            )
+            
+            candidates2, best_rc_exact, _, _ = _collect_candidates_from_pool(
+                pricing_model2, vars_pr2, T=T, bar_t=bar_t, DEPOT=DEPOT, RC_EPSILON=SIGNIFICANT_RC_THRESHOLD
+            )
+            best_rc_iter = min(best_rc_iter, best_rc_exact)
+
+            candidates2.sort(key=lambda r: r["_rc"])
+            for t_route in candidates2:
+                k = _route_key(t_route)
+                if (k not in seen_keys_existing) and (k not in seen_new):
+                    new_trucks.append(t_route)
+                    seen_new.add(k)
+                if len(new_trucks) >= K_BEST:
+                    break
+            
+            if new_trucks:
+                print(f"   [SUCCESS] Found {len(new_trucks)} cols after EXACT at {exact_tlim}s (best_rc={best_rc_iter:.2f})")
+                exact_success = True
+                break # Breaks out of exact_time_schedule
+            else:
+                print(f"      [EXACT FAIL] No meaningful columns found (< -{SIGNIFICANT_RC_THRESHOLD}) at {exact_tlim}s. Best was {best_rc_exact:.2f}.")
+        
+        if exact_success:
+            break # Breaks inner retry loop, goes to ADD COLUMNS
+        else:
+            # 3. OPTIMAL STOP
+            print(f"   [RC-OPT / STOP] EXACT pricing exhausted schedule up to {exact_time_schedule[-1]}s. Mathematical convergence reached.")
+            converged = True # <--- SET FLAG TO BREAK OUTER LOOP
+            break # Breaks inner retry loop
+    # --------------------------
+
+
+    # --- [INSERT 2: Collect Metrics] ---
     pricing_dur_total = time.time() - t0_pricing_total
     
-    # --- Collect Metrics ---
     current_stat = {
         "Iteration": iteration,
         "Master_Obj": current_obj,
         "Master_Improvement": improvement if last_master_obj is not None else 0,
-        "Pricing_Time_s": pricing_dur_total,  
+        "Pricing_Time_s": pricing_dur_total,
         "Cols_Added": len(new_trucks),
         "Best_RC": best_rc_iter,
         "Timed_Out": timed_out_any,
-        "Pricing_TimeLimit_Used": current_max_labels_used, # Hijacked to track labels used
+        "Pricing_TimeLimit_Used": current_pricing_timelimit,
         "Stagnant_Counter": stagnant_counter,
         "Total_Runtime_s": time.time() - stopwatch_start
     }
-    
     cg_stats.append(current_stat)
+    
     pd.DataFrame(cg_stats).to_csv(stats_csv_path, index=False)
+    # -----------------------------------------------------------
 
     # 3) ADD COLUMNS TO MASTER
     for route in new_trucks:
         R_truck.append(route)
-        
-        # Use the distance-only cost function
-        cost = calc_cost_distance_only(route, bus_cost)
+        cost = calculate_truck_route_cost(route, bus_cost, hourly_prices)
+        # cost = calc_cost_distance_only(route, bus_cost)
 
         col = Column()
         for node in route["route"]:
@@ -1473,13 +1487,10 @@ while True:
     rmp.update()
 
     # 4) CHECK TERMINATION
-    if not new_trucks:
-        if best_rc_iter >= -RC_EPSILON:
-             print("   [RC-OPT / STOP] Mathematical convergence reached.")
-             break # Break the 'while True' loop!
-        else:
-             print("   [WARNING] DP failed to extract columns even at max label limits.")
-             break
+    if converged:
+        print(f"[STOP] Column generation mathematically converged.")
+        break # <--- THIS BREAKS THE OUTER WHILE TRUE LOOP
+
 #%%
 # ---------------- DIAGNOSTIC START ----------------
 # Check which trips are still using dummy variables in the LP solution
@@ -1589,9 +1600,8 @@ print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
 stopwatch_end = time.time()
 elapsed = stopwatch_end - stopwatch_start
 print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
-
 #%%
-
+# EARLY RETURN FOR META SCRIPT
 
 result = {
         "LP_Obj": final_LP_obj,
@@ -1602,125 +1612,15 @@ result = {
     }
 
 # Save to a temporary JSON file that the meta script will read
-
-with open("R_truck_DP.json", "w") as f_out:
+with open("R_truck_MIP.json", "w") as f_out:
     json.dump(R_truck, f_out)
     
 with open("temp_meta_result.json", "w") as f:
     json.dump(result, f)
+    
 print(f"\n[META] Saved early return stats. Exiting script gracefully.")
 sys.exit(0)  # This safely STOPS the script here!
 
-# %%
-# Clean Station Mapper
-def clean_station_name(raw_name):
-    raw_str = str(raw_name).upper()
-    if 'PARX' in raw_str: return 'PARX'
-    if 'JON' in raw_str: return 'JON_A'
-    if '3127' in raw_str: return '3127L'
-    if '7880' in raw_str: return '7880C'
-    if '4808' in raw_str: return '4808'
-    if '2190' in raw_str: return '2190L'
-    return str(raw_name)
+#%%
 
-# 2. Recreate the mapping from Original Master Row -> Pricing Index 'i'
-target_bus_ids = [13320, 13311, 13307 , 13314, "13316uwt", "13324muw", 13309, 13323, 13321,
-                                  13310]
-target_ids_str = [str(x) for x in target_bus_ids]
-
-df_master = pd.read_csv(DATA_DIR / MASTER_FILE)
-df_master['VehicleTask_Str'] = df_master['VehicleTask'].astype(str)
-
-mask = (df_master['Identifier'] == 'Regular') & (df_master['VehicleTask_Str'].isin(target_ids_str))
-df_cg_trips = df_master[mask].copy()
-
-# Sort exactly how the instance generator did it
-df_cg_trips['Sort_Time'] = df_cg_trips['Start1'].apply(parse_time_to_minutes)
-df_cg_trips_sorted = df_cg_trips.sort_values('Sort_Time')
-
-# Dictionary: Original Master Row Index => Pricing Trip Index `i`
-orig_row_to_i = {orig_idx: i for i, orig_idx in enumerate(df_cg_trips_sorted.index)}
-
-# 3. Process each historical bus path
-for bus_id in target_ids_str:
-    print(f"\nEvaluating Historical Bus Route: {bus_id}")
-    
-    bus_df = df_master[df_master['VehicleTask_Str'] == bus_id].copy()
-    bus_df['Sort_Time'] = bus_df['Start1'].apply(parse_time_to_minutes)
-    bus_df = bus_df.sort_values('Sort_Time')
-    
-    route_nodes = [DEPOT_NAME]
-    charging_cost = 0.0
-    
-    for orig_idx, row in bus_df.iterrows():
-        identifier = str(row.get('Identifier', ''))
-        
-        # A) Add Regular Trips
-        if identifier == 'Regular':
-            i = orig_row_to_i.get(orig_idx)
-            if i is not None:
-                route_nodes.append(i)
-            
-        # B) Add Charging Stations
-        elif 'Charge' in identifier or 'Recharge' in identifier:
-            loc = row.get('From1', None)
-            if loc:
-                station_node = f"{clean_station_name(loc)}_0"
-                route_nodes.append(station_node)
-                
-                # Safely get energy from either Recharge or Usage column
-                energy_val = row.get('Recharge kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = row.get('Usage kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = 0
-                    
-                energy = abs(float(energy_val))
-                hour_of_day = int(row['Sort_Time'] // 60)
-                
-                # Default to 100.0 if you don't have hourly_prices globally available in this scope
-                price = hourly_prices.get(hour_of_day, 100.0) if 'hourly_prices' in globals() else 100.0
-                charging_cost += price * energy * charge_cost_premium
-
-    route_nodes.append(DEPOT_NAME)
-
-    # 4. Evaluate the mathematical objective
-    travel_cost = 0.0
-    missing_arcs = []
-    
-    for k in range(len(route_nodes) - 1):
-        u = route_nodes[k]
-        v = route_nodes[k+1]
-        
-        # If the start is 'PARX' and we need 'PARX_0' to match dictionary, handle it
-        if u == 'PARX': u = 'PARX_0'
-        if v == 'PARX': v = 'PARX_0'
-        
-        if (u, v) in d:
-            travel_cost += d[(u, v)]
-        else:
-            missing_arcs.append((u, v))
-            
-    total_travel_cost = travel_cost * TRAVEL_COST_FACTOR
-    sum_of_duals = sum(alpha.get(node, 0.0) for node in route_nodes if isinstance(node, int))
-    
-    total_cost = bus_cost + total_travel_cost + charging_cost
-    reduced_cost = total_cost - sum_of_duals
-    
-    print(f"Path Sequence:  {route_nodes}")
-    print(f"Base Bus Cost:  {bus_cost:.2f}")
-    print(f"Travel Cost:    {total_travel_cost:.2f}")
-    print(f"Charging Cost:  {charging_cost:.2f}")
-    print(f"Sum of Duals:   {sum_of_duals:.2f}")
-    print(f"REDUCED COST:   {reduced_cost:.2f}")
-    
-    if missing_arcs:
-        print(f"--> [WARNING] Route contains deadheads missing from the DHD dictionary: {missing_arcs}")
-    
-    if reduced_cost <= -0.01:
-        print("--> [VERDICT] NEGATIVE! The CG pricing problem missed this historical route.")
-    else:
-        print("--> [VERDICT] POSITIVE. This route is mathematically sub-optimal in the current LP state.")
-
-print("\n========================================================")
-# %%
+## runrun RUN AGAIN

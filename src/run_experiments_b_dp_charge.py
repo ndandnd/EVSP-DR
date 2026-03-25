@@ -1305,7 +1305,7 @@ dp_price = make_dp_pricer(
     G=G, TB_MIN=TB_MIN, bar_t=bar_t,
     bus_cost=bus_cost, charge_rate_kw=CHARGE_RATE_KW,
     hourly_prices=hourly_prices,
-    charge_cost_premium=0,
+    charge_cost_premium= charge_cost_premium,
     travel_cost_factor=TRAVEL_COST_FACTOR,
     RC_EPSILON=RC_EPSILON, K_BEST=K_BEST,
     MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
@@ -1409,8 +1409,8 @@ while True:
             bus_cost=bus_cost,
             charge_rate_kw=CHARGE_RATE_KW,
             hourly_prices=hourly_prices,
-            charge_cost_premium=0.0,          # ZERO FOR DISTANCE-ONLY
-            travel_cost_factor=TRAVEL_COST_FACTOR,
+            charge_cost_premium= charge_cost_premium,          # Electric cost
+            travel_cost_factor=0, # distance penalty
             RC_EPSILON=RC_EPSILON,
             K_BEST=K_BEST,
             MAX_LABELS_PER_NODE=int(current_max_labels), # <--- ESCALATING VARIABLE
@@ -1461,8 +1461,9 @@ while True:
         R_truck.append(route)
         
         # Use the distance-only cost function
-        cost = calc_cost_distance_only(route, bus_cost)
-
+        cost = calculate_truck_route_cost(route, bus_cost, hourly_prices)
+        # cost = calc_cost_distance_only(route, bus_cost)
+        
         col = Column()
         for node in route["route"]:
             if isinstance(node, int):
