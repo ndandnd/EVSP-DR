@@ -164,7 +164,7 @@ def generate_specific_buses_instance(target_bus_ids, output_filename=None):
 # generate_specific_buses_instance([13405, 13411], "Practice_Selected_2buses.csv")
 # generate_specific_buses_instance([13320, 13311, 13307 , 13314], "Practice_Selected_4bus.csv")
 
-MAX_DAILY_RECHARGES = 4  # Buffer above observed max of 13
+MAX_DAILY_RECHARGES = 15  # Buffer above observed max of 13
 MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibility below the historical min of 17)
 
 # generate_specific_buses_instance([13405, 13411, 13413], "Practice_Selected_3buses.csv")
@@ -180,7 +180,7 @@ MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibi
 if len(sys.argv) > 1:
     csv_name = sys.argv[1]
 else:
-    csv_name = "Practice_Selected_1bus.csv"
+    csv_name = "Practice_15bus.csv"
 routes_csv = DATA_DIR / csv_name
 
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
@@ -954,7 +954,7 @@ def build_pricing(alpha, beta, gamma, mode):
 
 
 
-    pricing_model.addConstr(g[DEPOT] == G, name="initial_soc")
+    pricing_model.addConstr(g[DEPOT] == 0, name="initial_soc")
 
     for h in S_use:
         pricing_model.addConstr(g[h] + v_amt[h] <= G, name=f"soc_sum_ub_{h}")
@@ -1277,7 +1277,7 @@ PRICING_TLIM_INIT = 15
 PRICING_TLIM_MAX  = 300
 
 STAGNATION_LIMIT = 10
-MIN_IMPROVEMENT = 1.5  # master obj improvement must be at least
+MIN_IMPROVEMENT = 20  # master obj improvement must be at least
 
 stagnant_counter = 0
 last_master_obj = None   #start as None
@@ -1353,15 +1353,37 @@ while True:
         break
 
 
-    # compute improvement safely
-    if last_master_obj is None:
-        improvement = float("inf")
-    else:
-        improvement = last_master_obj - current_obj
+    # # compute improvement safely
+    # if last_master_obj is None:
+    #     improvement = float("inf")
+    # else:
+    #     improvement = last_master_obj - current_obj
 
-    print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
+    # print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
 
     
+    # # compute improvement safely
+    # if last_master_obj is None:
+    #     improvement = float("inf")
+    # else:
+    #     improvement = last_master_obj - current_obj
+
+    # print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
+
+    # stagnant_counter = 0 # Keep this here just so your cg_stats dictionary doesn't throw a NameError
+        
+    # last_master_obj = current_obj
+
+    # # Extract Duals
+    # alpha, beta_dual, gamma_dual = extract_duals(rmp)
+
+
+    # last_master_obj = current_obj
+
+    # # Extract Duals
+    # alpha, beta_dual, gamma_dual = extract_duals(rmp)
+
+
     # compute improvement safely
     if last_master_obj is None:
         improvement = float("inf")
@@ -1370,18 +1392,22 @@ while True:
 
     print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
 
-    stagnant_counter = 0 # Keep this here just so your cg_stats dictionary doesn't throw a NameError
-        
+    # --- Stagnation detection ---
+    if improvement < MIN_IMPROVEMENT:
+        stagnant_counter += 1
+    else:
+        stagnant_counter = 0
+
+    if stagnant_counter >= STAGNATION_LIMIT:
+        print(f"[STOP] Stagnation: {stagnant_counter} consecutive iters with < ${MIN_IMPROVEMENT:.1f} improvement")
+        print(f"       Master obj settled at {current_obj:.2f}")
+        break
+
     last_master_obj = current_obj
 
     # Extract Duals
     alpha, beta_dual, gamma_dual = extract_duals(rmp)
 
-
-    last_master_obj = current_obj
-
-    # Extract Duals
-    alpha, beta_dual, gamma_dual = extract_duals(rmp)
 
     # 2) SOLVE PRICING (Dynamic Programming)
     new_trucks = []

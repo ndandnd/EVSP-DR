@@ -104,6 +104,8 @@ import math
 
 import heapq
 
+import time
+
 from dataclasses import dataclass, field
 
 from typing import Any
@@ -862,9 +864,11 @@ def solve_pricing_dp(
 
     soc_charge_levels: list[float] | None = None,
 
-    MIN_TRIPS_PER_ROUTE: int = 0,
+    MIN_TRIPS_PER_ROUTE: int = 16,
 
-    MAX_DAILY_RECHARGES: int = 4,
+    MAX_DAILY_RECHARGES: int = 8,
+
+    time_limit: float | None = None,
 
 ) -> list[dict]:
 
@@ -1024,7 +1028,7 @@ def solve_pricing_dp(
 
         time=0.0,          # earliest possible departure (minute 0)
 
-        soc=G,             # full battery
+        soc=0,             # full battery
 
         node=DEPOT,
 
@@ -1094,11 +1098,15 @@ def solve_pricing_dp(
 
 
     # ── Main loop ──
+    dp_start_time = time.time()
 
     while pq:
 
         _, _, _, label = heapq.heappop(pq)
 
+        if time_limit and (time.time() - dp_start_time > time_limit):
+            print(f"[DP-PRICER] Time limit ({time_limit}s) reached! Halting DP early.")
+            break
 
 
         cur = label.node
@@ -1865,7 +1873,7 @@ def make_dp_pricer(
             MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
 
             MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-
+            time_limit=time_limit
         )
 
 

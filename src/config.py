@@ -62,8 +62,8 @@ RC_EPSILON = .1           # was 300.0 (kept out many mildly negative routes)
 K_BEST = 50               # was 30 (add more useful columns per iter)
 
 # CG loop limits / guards
-MAX_CG_ITERS = 200      # was 300
-STAGNATION_ITERS = 15      # was 3 (don’t stop so early)
+MAX_CG_ITERS = 400      # was 300
+STAGNATION_ITERS = 10      # was 3 (don’t stop so early)
 MASTER_IMPROVE_THRESHOLD = 0.1  # was 5e-4 (count small progress as improvement)
 
 # ---------- NEW: Solver resource knobs ----------
