@@ -4,7 +4,6 @@
 #  - Pricing timelimit + gap; master LP timelimit; stagnation early-stop
 #  - Nodefile spill to avoid OOM kills; auto TMP detection
 #  - Final MIP with warm-start and relaxed gap
-#%%
 
 import os
 import time
@@ -181,12 +180,12 @@ MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibi
 if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
     csv_name = sys.argv[1]
 else:
-    csv_name = "Practice_43bus.csv"
+    csv_name = "Practice_20bus.csv"
 routes_csv = DATA_DIR / csv_name
 
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
-prices_csv    = DATA_DIR / "hourly_prices_odd.csv"
+prices_csv    = DATA_DIR / "hourly_prices.csv"
 
 # Create a dynamic name based on the input file (e.g., "Practice_Selected_4buses")
 DATA_NAME = routes_csv.stem 
@@ -1446,7 +1445,7 @@ while True:
             MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
         )
         
-        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=299)
+        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=60)
         
         # Filter duplicates
         seen_new = set()
@@ -1580,8 +1579,8 @@ rmp_final.Params.NodefileDir = _detect_tmp()
 rmp_final.Params.MIPFocus = 1
 rmp_final.Params.Heuristics = 0.5
 rmp_final.Params.Cuts = 1
-rmp_final.Params.MIPGap = 0.05
-rmp_final.Params.TimeLimit = 3600 * 2  # brief polish
+rmp_final.Params.MIPGap = 0.03
+rmp_final.Params.TimeLimit = 600  # brief polish
 rmp_final.Params.LPWarmStart = 2
 
 rmp_final.optimize()

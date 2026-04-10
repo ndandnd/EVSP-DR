@@ -854,6 +854,7 @@ def solve_pricing_dp(
 
     RC_EPSILON: float = 1.0,
 
+    EARLY_EXIT_FLOOR_S: float = 5.0,   # don't early-exit before this many seconds
 
 
     # ── Algorithm tuning ──
@@ -1091,7 +1092,7 @@ def solve_pricing_dp(
     _uid = 0
 
     #heapq.heappush(pq, (source_label.rc, _uid, source_label))
-    heapq.heappush(pq, (source_label.time, source_label.rc, _uid, source_label))
+    heapq.heappush(pq, (source_label.rc, source_label.time, _uid, source_label))
     
     _uid += 1
 
@@ -1099,15 +1100,28 @@ def solve_pricing_dp(
 
     # ── Main loop ──
     dp_start_time = time.time()
+    hit_timelimit = False
+    early_exit_kbest = False
+    labels_expanded = 0
+    n_neg_completed = 0   # running count of completed labels with rc < -RC_EPSILON
 
     while pq:
-
+        
         _, _, _, label = heapq.heappop(pq)
 
-        if time_limit and (time.time() - dp_start_time > time_limit):
+        elapsed = time.time() - dp_start_time
+        if time_limit and elapsed > time_limit:
             print(f"[DP-PRICER] Time limit ({time_limit}s) reached! Halting DP early.")
+            hit_timelimit = True
             break
 
+        if (n_neg_completed >= K_BEST) and (elapsed >= EARLY_EXIT_FLOOR_S):
+            print(f"[DP-PRICER] Early exit: {n_neg_completed} neg-RC routes found in {elapsed:.1f}s "
+                  f"(K_BEST={K_BEST}, floor={EARLY_EXIT_FLOOR_S}s)")
+            early_exit_kbest = True
+            break
+
+        labels_expanded += 1
 
         cur = label.node
 
@@ -1291,8 +1305,8 @@ def solve_pricing_dp(
                         node_labels[trip_idx].sort(key=lambda lb: lb.rc)
                         node_labels[trip_idx] = node_labels[trip_idx][:MAX_LABELS_PER_NODE]
 
-                    # NEW: Push sorted by TIME first!
-                    heapq.heappush(pq, (new_label.time, new_label.rc, _uid, new_label))
+                    # NEW: Push sorted by rc first!
+                    heapq.heappush(pq, (new_label.rc, new_label.time, _uid, new_label))
                     _uid += 1
 
 
@@ -1556,7 +1570,8 @@ def solve_pricing_dp(
 
                 completed.append(completed_label)
 
-
+                if completed_label.rc < -RC_EPSILON:
+                                    n_neg_completed += 1
 
     # ──────────────────────────────────────────────────────────────
 
@@ -1706,7 +1721,7 @@ def solve_pricing_dp(
 
 
 
-    return results
+    return results, hit_timelimit, early_exit_kbest, labels_expanded, (time.time() - dp_start_time)
 
 
 
@@ -1823,8 +1838,8 @@ def make_dp_pricer(
         but without the Gurobi model – just the routes).
 
         """
-
-        routes = solve_pricing_dp(
+        routes, hit_timelimit, early_exit_kbest, labels_expanded, dp_wall_s = solve_pricing_dp(
+#        routes, hit_timelimit, labels_expanded, dp_wall_s = solve_pricing_dp(
 
             alpha=alpha,
 
@@ -1880,10 +1895,21 @@ def make_dp_pricer(
 
         n_neg = len(routes)
         best_overall_rc = routes[0]["_rc"] if routes else float("inf")
-        print(f"[DP-PRICER] Found {n_neg} negative-RC routes (best_rc={best_overall_rc:.2f})")
-        
-        return routes, best_overall_rc
+        print(f"[DP-PRICER] Found {n_neg} negative-RC routes "
+              f"(best_rc={best_overall_rc:.2f}, timed_out={hit_timelimit}, "
+              f"early_exit={early_exit_kbest}, labels_expanded={labels_expanded}, wall={dp_wall_s:.1f}s)")
 
+        return {
+            "routes": routes,
+            "best_rc": best_overall_rc,
+            "hit_timelimit": hit_timelimit,
+            
+            "early_exit_kbest": early_exit_kbest,    
+
+            "n_neg_rc_found": n_neg,
+            "labels_expanded": labels_expanded,
+            "wall_time_s": dp_wall_s,
+        }
 
 
     return _solve

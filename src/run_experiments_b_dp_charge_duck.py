@@ -1446,7 +1446,7 @@ while True:
             MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
         )
         
-        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=99)
+        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=299)
         
         # Filter duplicates
         seen_new = set()
@@ -1553,22 +1553,6 @@ rmp_final.Params.LogFile = str(RUN_DIR / "final_mip.log")
 
 
 
-# ---------------- ENFORCE DUMMY =0  ----------------
-# print("[FINAL] Locking out dummy variables (forcing q_i = 0)...")
-# locked_count = 0
-# for i in T:
-#     # Retrieve the slack variable by name
-#     q_var = rmp_final.getVarByName(f"q_{i}")
-#     if q_var is not None:
-#         # Force it to 0. The solver MUST cover trip i with a real vehicle OR return Infeasible.
-#         q_var.UB = 0.0 
-#         locked_count += 1
-
-# print(f"[FINAL] Locked {locked_count} dummy variables.")
-# ---------------- ENFORCE DUMMY =0  ----------------
-
-
-
 for idx, var in a_final.items():
     if idx in a_lp:
         var.start = a_lp[idx].X
@@ -1577,12 +1561,15 @@ for idx, var in a_final.items():
 rmp_final.Params.Threads = THREADS
 rmp_final.Params.NodefileStart = NODEFILE_START
 rmp_final.Params.NodefileDir = _detect_tmp()
-rmp_final.Params.MIPFocus = 1
+rmp_final.Params.MIPFocus = 3
+rmp_final.Params.Symmetry = 2
+# rmp_final.Params.NoRelHeurTime = 60
 rmp_final.Params.Heuristics = 0.5
-rmp_final.Params.Cuts = 1
-rmp_final.Params.MIPGap = 0.03
-rmp_final.Params.TimeLimit = 3600  # brief polish
+rmp_final.Params.Cuts = 2
+rmp_final.Params.MIPGap = 0.05
+rmp_final.Params.TimeLimit = 60 * 3  # brief polish
 rmp_final.Params.LPWarmStart = 2
+# rmp_final.Params.Presolve = 2
 
 rmp_final.optimize()
 final_MIP_obj = rmp_final.ObjVal
@@ -1641,6 +1628,7 @@ sys.exit(0)  # This safely STOPS the script here!
 
 # %%
 # Clean Station Mapper
+
 def clean_station_name(raw_name):
     raw_str = str(raw_name).upper()
     if 'PARX' in raw_str: return 'PARX'

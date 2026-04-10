@@ -18,6 +18,8 @@ import sys
 import pandas as pd
 import numpy as np
 from gurobipy import Model, Column, GRB, quicksum, LinExpr
+import gurobipy as gp
+
 # from collections import Counter, defaultdict
 
 
@@ -181,12 +183,12 @@ MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibi
 if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
     csv_name = sys.argv[1]
 else:
-    csv_name = "Practice_43bus.csv"
+    csv_name = "Practice_30bus.csv"
 routes_csv = DATA_DIR / csv_name
 
 ref_dhd_csv   = DATA_DIR / "par_ref_dhd.csv"
 ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
-prices_csv    = DATA_DIR / "hourly_prices_odd.csv"
+prices_csv    = DATA_DIR / "hourly_prices_duck.csv"
 
 # Create a dynamic name based on the input file (e.g., "Practice_Selected_4buses")
 DATA_NAME = routes_csv.stem 
@@ -1274,17 +1276,16 @@ def _route_key(route):
 
 best_master = float("inf")
 
-PRICING_TLIM_INIT = 15
-PRICING_TLIM_MAX  = 300
+# --- CG tuning knobs (single source of truth) ---
+DP_PRICING_TIMELIMIT = 188    # seconds per DP pricing call; tune this
+MAX_ITERS = 999
 
-STAGNATION_LIMIT = 10
-MIN_IMPROVEMENT = 20  # master obj improvement must be at least
+STAGNATION_LIMIT     = 50
+MIN_IMPROVEMENT      = 2     # master obj must improve by at least this
 
 stagnant_counter = 0
-last_master_obj = None   #start as None
-current_pricing_timelimit = PRICING_TLIM_INIT
-
-
+last_master_obj  = None
+termination_reason = "unknown"   # set when we break out of CG loop
 
 
 # For deduplication of routes
@@ -1295,9 +1296,11 @@ current_pricing_timelimit = PRICING_TLIM_INIT
 #     seen_patterns.add(pattern)
 
 cg_stats = []
-# Create a unique filename based on the run ID so you don't overwrite previous experiments
-stats_csv_path = RUN_DIR / f"pricing_stats.csv"
-print(f"Saving real-time stats to: {stats_csv_path}")
+escalation_stats = []
+stats_csv_path       = RUN_DIR / "pricing_stats.csv"
+escalation_csv_path  = RUN_DIR / "pricing_escalation_stats.csv"
+print(f"Saving per-iteration stats to: {stats_csv_path}")
+print(f"Saving per-escalation stats to: {escalation_csv_path}")
 
 granularity = 10
 dp_price = make_dp_pricer(
@@ -1321,7 +1324,11 @@ dp_price = make_dp_pricer(
 #%%
 # max_iter += 100
 #%%
+
+
 while True:
+
+# while iteration < MAX_ITERS:
     iteration += 1
     print(f"\n--- Iteration {iteration} ---")
 
@@ -1329,173 +1336,151 @@ while True:
     t0 = time.time()
     rmp.Params.TimeLimit = MASTER_TIMELIMIT
     rmp.optimize()
-    master_times.append(time.time() - t0)
-    print(f" Master obj: {rmp.ObjVal:.2f}")
-
-    # Check stagnation (optional, keep your existing logic here)
-    # ...
-
+    master_time_s = time.time() - t0
+    master_times.append(master_time_s)
     current_obj = rmp.ObjVal
+    print(f" Master obj: {current_obj:.2f}  (solved in {master_time_s:.2f}s)")
 
-
-
-
-
-    ####### stopping criteria for practice ######
-        # --- TARGET CONFIGURATION ---
-    TARGET_NUM_BUSES = 1  # Set to 1 for your '2minus1' file, or 2 for '2bus' file
+    # --- TARGET STOP ---
+    TARGET_NUM_BUSES = 1
     TARGET_OBJ = (TARGET_NUM_BUSES * BUS_COST_KX)
-
-    print(f"temp Goal: Run until Master Objective <= {TARGET_OBJ:.2f}")
-
-    # 2. CHECK TARGET CRITERIA
-    # If we are effectively using the target number of buses (plus reasonable energy), STOP.
+    print(f" temp Goal: Run until Master Objective <= {TARGET_OBJ:.2f}")
     if current_obj <= TARGET_OBJ:
+        termination_reason = "target_obj_hit"
         break
 
-
-    # # compute improvement safely
-    # if last_master_obj is None:
-    #     improvement = float("inf")
-    # else:
-    #     improvement = last_master_obj - current_obj
-
-    # print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
-
-    
-    # # compute improvement safely
-    # if last_master_obj is None:
-    #     improvement = float("inf")
-    # else:
-    #     improvement = last_master_obj - current_obj
-
-    # print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
-
-    # stagnant_counter = 0 # Keep this here just so your cg_stats dictionary doesn't throw a NameError
-        
-    # last_master_obj = current_obj
-
-    # # Extract Duals
-    # alpha, beta_dual, gamma_dual = extract_duals(rmp)
-
-
-    # last_master_obj = current_obj
-
-    # # Extract Duals
-    # alpha, beta_dual, gamma_dual = extract_duals(rmp)
-
-
-    # compute improvement safely
+    # --- Improvement / stagnation ---
     if last_master_obj is None:
         improvement = float("inf")
     else:
         improvement = last_master_obj - current_obj
+    print(f" Improvement vs prev: {improvement:.4f}")
 
-    print(f" Master obj: {current_obj:.2f} (Impv: {improvement:.4f})")
-
-    # --- Stagnation detection ---
     if improvement < MIN_IMPROVEMENT:
         stagnant_counter += 1
     else:
         stagnant_counter = 0
 
     if stagnant_counter >= STAGNATION_LIMIT:
-        print(f"[STOP] Stagnation: {stagnant_counter} consecutive iters with < ${MIN_IMPROVEMENT:.1f} improvement")
+        print(f"[STOP] Stagnation: {stagnant_counter} iters with < ${MIN_IMPROVEMENT:.1f} improvement")
         print(f"       Master obj settled at {current_obj:.2f}")
+        termination_reason = "stagnation"
         break
 
     last_master_obj = current_obj
-
-    # Extract Duals
     alpha, beta_dual, gamma_dual = extract_duals(rmp)
 
-
-    # 2) SOLVE PRICING (Dynamic Programming)
+    # 2) SOLVE PRICING (escalating label limits)
     new_trucks = []
     best_rc_iter = float("inf")
-    timed_out_any = False # DP doesn't timeout the same way Gurobi does
-    current_max_labels_used = 0
-    
-    # For deduplication against what's already in the Master Problem
+    hit_timelimit_any = False
+    n_neg_rc_found_raw = 0
+    max_labels_reached = 0
+    succeeded_at_step = None
+
     seen_keys_existing = {_route_key(r) for r in R_truck}
-    
+
     t0_pricing_total = time.time()
-    
-    # --- ESCALATING EXACT PRICING FOR DP ---
-    label_schedule = [1e4, 2e4, 5e4, 1e5] # The DP version of "trying harder"
-    
-    for current_max_labels in label_schedule:
-        current_max_labels_used = current_max_labels
-        print(f"   > DP pricing (MAX_LABELS={current_max_labels})...")
+
+    # Escalate time limits instead of label limits
+    time_schedule = [100, 200, 300] 
+
+    for esc_step, current_time_limit in enumerate(time_schedule, start=1):
+        max_labels_reached = 2000 # Matches your global initialization
+        print(f"   > DP pricing step {esc_step} (time_limit={current_time_limit}s)...")
+
+        t0_esc = time.time()
         
-        # Re-initialize the pricer with the new label limit
-        dp_price = make_dp_pricer(
-            T=T, S_use=S_use, DEPOT=DEPOT,
-            tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
-            G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-            bus_cost=bus_cost,
-            charge_rate_kw=CHARGE_RATE_KW,
-            hourly_prices=hourly_prices,
-            charge_cost_premium= charge_cost_premium,          # Electric cost
-            travel_cost_factor=0, # distance penalty
-            RC_EPSILON=RC_EPSILON,
-            K_BEST=K_BEST,
-            MAX_LABELS_PER_NODE=int(current_max_labels), # <--- ESCALATING VARIABLE
-            soc_charge_levels=[G * i * (1/granularity) for i in range(1,1 + granularity)],
-            MIN_TRIPS_PER_ROUTE=3, 
-            MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-        )
+        # Use the dp_price factory defined OUTSIDE the while loop
+        result = dp_price(alpha, beta_dual, gamma_dual, time_limit=current_time_limit)
         
-        raw_new_trucks, best_rc_iter = dp_price(alpha, beta_dual, gamma_dual, time_limit=299)
-        
-        # Filter duplicates
+        esc_wall_s = time.time() - t0_esc
+
+        # Backward-compat: accept either dict (new) or tuple (old) return
+        if isinstance(result, dict):
+            raw_new_trucks   = result["routes"]
+            best_rc_iter     = result["best_rc"]
+            hit_timelimit    = result.get("hit_timelimit", False)
+            n_neg_rc_raw_esc = result.get("n_neg_rc_found", len(raw_new_trucks))
+            labels_expanded  = result.get("labels_expanded", -1)
+        else:
+            raw_new_trucks, best_rc_iter = result
+            hit_timelimit    = False
+            n_neg_rc_raw_esc = len(raw_new_trucks)
+            labels_expanded  = -1
+
+        if hit_timelimit:
+            hit_timelimit_any = True
+        n_neg_rc_found_raw += n_neg_rc_raw_esc
+
+        # Dedup against existing R_truck
         seen_new = set()
+        step_new_trucks = []
         for t_route in raw_new_trucks:
             k = _route_key(t_route)
             if (k not in seen_keys_existing) and (k not in seen_new):
-                new_trucks.append(t_route)
+                step_new_trucks.append(t_route)
                 seen_new.add(k)
-            if len(new_trucks) >= K_BEST:
+            if len(new_trucks) + len(step_new_trucks) >= K_BEST:
                 break
-                
-        if new_trucks:
-            print(f"   [SUCCESS] DP found {len(new_trucks)} cols (best_rc={best_rc_iter:.1f})")
-            break # Break out of the escalation schedule and go back to Master LP
-        else:
-            print(f"   [FAILED] No cols found with {current_max_labels} labels. Trying harder...")
+        new_trucks.extend(step_new_trucks)
 
-    pricing_dur_total = time.time() - t0_pricing_total
-    
-    # --- Collect Metrics ---
+        escalation_stats.append({
+            "iteration": iteration,
+            "escalation_step": esc_step,
+            "max_labels": max_labels_reached, # updated to log static cap
+            "time_limit_s": current_time_limit, # updated to log escalating time
+            "wall_time_s": esc_wall_s,
+            "hit_timelimit": hit_timelimit,
+            "labels_expanded": labels_expanded,
+            "n_neg_rc_found_raw": n_neg_rc_raw_esc,
+            "n_new_after_dedup": len(step_new_trucks),
+            "best_rc": best_rc_iter,
+            "succeeded": len(step_new_trucks) > 0,
+            "early_exit_kbest": result.get("early_exit_kbest", False) if isinstance(result, dict) else False
+        })
+        pd.DataFrame(escalation_stats).to_csv(escalation_csv_path, index=False)
+
+        if step_new_trucks:
+            succeeded_at_step = esc_step
+            print(f"   [SUCCESS] step {esc_step} found {len(step_new_trucks)} new cols "
+                  f"(best_rc={best_rc_iter:.1f}, wall={esc_wall_s:.1f}s, timed_out={hit_timelimit})")
+            break
+        else:
+            print(f"   [FAILED] step {esc_step}: 0 new cols after dedup "
+                  f"(raw={n_neg_rc_raw_esc}, wall={esc_wall_s:.1f}s, timed_out={hit_timelimit})")
+          
+    pricing_time_s = time.time() - t0_pricing_total
+
+    # --- Per-iteration stats row ---
     current_stat = {
-        "Iteration": iteration,
-        "Master_Obj": current_obj,
-        "Master_Improvement": improvement if last_master_obj is not None else 0,
-        "Pricing_Time_s": pricing_dur_total,  
-        "Cols_Added": len(new_trucks),
-        "Best_RC": best_rc_iter,
-        "Timed_Out": timed_out_any,
-        "Pricing_TimeLimit_Used": current_max_labels_used, # Hijacked to track labels used
-        "Stagnant_Counter": stagnant_counter,
-        "Total_Runtime_s": time.time() - stopwatch_start
+        "iteration":             iteration,
+        "master_obj_before":     current_obj,
+        "improvement_vs_prev":   improvement if last_master_obj is not None else 0,
+        "master_time_s":         master_time_s,
+        "pricing_time_s":        pricing_time_s,
+        "pricing_time_limit_s":  DP_PRICING_TIMELIMIT,
+        "pricing_hit_timelimit": hit_timelimit_any,
+        "max_labels_reached":    int(max_labels_reached),
+        "succeeded_at_step":     succeeded_at_step,
+        "n_neg_rc_found_raw":    n_neg_rc_found_raw,
+        "cols_added":            len(new_trucks),
+        "best_rc":               best_rc_iter,
+        "stagnant_counter":      stagnant_counter,
+        "n_cols_total":          len(R_truck) + len(new_trucks),
+        "cumulative_time_s":     time.time() - stopwatch_start,
     }
-    
     cg_stats.append(current_stat)
     pd.DataFrame(cg_stats).to_csv(stats_csv_path, index=False)
 
     # 3) ADD COLUMNS TO MASTER
     for route in new_trucks:
         R_truck.append(route)
-        
-        # Use the distance-only cost function
         cost = calculate_truck_route_cost(route, bus_cost, hourly_prices)
-        # cost = calc_cost_distance_only(route, bus_cost)
-        
         col = Column()
         for node in route["route"]:
             if isinstance(node, int):
                 col.addTerms(1.0, trip_cov[node])
-
         idx = len(R_truck) - 1
         a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
     rmp.update()
@@ -1503,12 +1488,25 @@ while True:
     # 4) CHECK TERMINATION
     if not new_trucks:
         if best_rc_iter >= -RC_EPSILON:
-             print("   [RC-OPT / STOP] Mathematical convergence reached.")
-             break # Break the 'while True' loop!
+            print("   [RC-OPT / STOP] Mathematical convergence reached.")
+            termination_reason = "rc_optimal"
+            break
         else:
-             print("   [WARNING] DP failed to extract columns even at max label limits.")
-             break
+            print("   [WARNING] DP failed to extract columns even at max label limits.")
+            termination_reason = "dp_failed_extraction"
+            break
+
 #%%
+
+print(f"\n{'='*60}")
+print(f"CG terminated. Reason: {termination_reason}")
+print(f"  Iterations run:      {iteration}")
+print(f"  Final master LP obj: {last_master_obj if last_master_obj is not None else 'N/A'}")
+print(f"  Total columns:       {len(R_truck)}")
+print(f"  Per-iter stats:      {stats_csv_path}")
+print(f"  Escalation stats:    {escalation_csv_path}")
+print(f"{'='*60}\n")
+
 # ---------------- DIAGNOSTIC START ----------------
 # Check which trips are still using dummy variables in the LP solution
 
@@ -1573,16 +1571,26 @@ for idx, var in a_final.items():
     if idx in a_lp:
         var.start = a_lp[idx].X
 
-# safer final MIP params
-rmp_final.Params.Threads = THREADS
-rmp_final.Params.NodefileStart = NODEFILE_START
-rmp_final.Params.NodefileDir = _detect_tmp()
-rmp_final.Params.MIPFocus = 1
-rmp_final.Params.Heuristics = 0.5
-rmp_final.Params.Cuts = 1
-rmp_final.Params.MIPGap = 0.05
-rmp_final.Params.TimeLimit = 3600 * 2  # brief polish
-rmp_final.Params.LPWarmStart = 2
+
+
+# ==========================================
+# Config W: Winning reference + binary fix + modest heuristic boost
+# Matches the 2h reference that found the best incumbent on this pool,
+# fixes the binary bug, and gives RINS/ImproveStart extra traction.
+# ==========================================
+for v in rmp_final.getVars():
+    if v.VarName.startswith("a["):
+        v.VType = gp.GRB.BINARY
+rmp_final.update()
+
+rmp_final.setParam('TimeLimit', 60*60*1)
+rmp_final.setParam('Threads', 4)              # match reference; run ONLY this one
+rmp_final.setParam('MIPFocus', 1)             # incumbent-focused, not bound
+rmp_final.setParam('Heuristics', 0.5)         # match reference
+rmp_final.setParam('Cuts', 1)                 # default-level, not aggressive
+rmp_final.setParam('RINS', 15)                # neighborhood search every 15 nodes
+rmp_final.setParam('ImproveStartTime', 1200)  # give it 20 min to explore, then go all-in on incumbent
+rmp_final.setParam('ImproveStartGap', 0.30)
 
 rmp_final.optimize()
 final_MIP_obj = rmp_final.ObjVal
@@ -1626,6 +1634,8 @@ result = {
         "MIP_Obj": final_MIP_obj, 
         "Total_Time_s": elapsed,
         "CG_Iterations": iteration,
+        "CG_Termination_Reason": termination_reason,
+        "DP_Pricing_TimeLimit_s": DP_PRICING_TIMELIMIT,
         "Columns_Generated": len(R_truck)
     }
 
@@ -1639,116 +1649,10 @@ with open("temp_meta_result.json", "w") as f:
 print(f"\n[META] Saved early return stats. Exiting script gracefully.")
 sys.exit(0)  # This safely STOPS the script here!
 
-# %%
-# Clean Station Mapper
-def clean_station_name(raw_name):
-    raw_str = str(raw_name).upper()
-    if 'PARX' in raw_str: return 'PARX'
-    if 'JON' in raw_str: return 'JON_A'
-    if '3127' in raw_str: return '3127L'
-    if '7880' in raw_str: return '7880C'
-    if '4808' in raw_str: return '4808'
-    if '2190' in raw_str: return '2190L'
-    return str(raw_name)
+#%%
 
-# 2. Recreate the mapping from Original Master Row -> Pricing Index 'i'
-target_bus_ids = [13320, 13311, 13307 , 13314, "13316uwt", "13324muw", 13309, 13323, 13321,
-                                  13310]
-target_ids_str = [str(x) for x in target_bus_ids]
-
-df_master = pd.read_csv(DATA_DIR / MASTER_FILE)
-df_master['VehicleTask_Str'] = df_master['VehicleTask'].astype(str)
-
-mask = (df_master['Identifier'] == 'Regular') & (df_master['VehicleTask_Str'].isin(target_ids_str))
-df_cg_trips = df_master[mask].copy()
-
-# Sort exactly how the instance generator did it
-df_cg_trips['Sort_Time'] = df_cg_trips['Start1'].apply(parse_time_to_minutes)
-df_cg_trips_sorted = df_cg_trips.sort_values('Sort_Time')
-
-# Dictionary: Original Master Row Index => Pricing Trip Index `i`
-orig_row_to_i = {orig_idx: i for i, orig_idx in enumerate(df_cg_trips_sorted.index)}
-
-# 3. Process each historical bus path
-for bus_id in target_ids_str:
-    print(f"\nEvaluating Historical Bus Route: {bus_id}")
-    
-    bus_df = df_master[df_master['VehicleTask_Str'] == bus_id].copy()
-    bus_df['Sort_Time'] = bus_df['Start1'].apply(parse_time_to_minutes)
-    bus_df = bus_df.sort_values('Sort_Time')
-    
-    route_nodes = [DEPOT_NAME]
-    charging_cost = 0.0
-    
-    for orig_idx, row in bus_df.iterrows():
-        identifier = str(row.get('Identifier', ''))
-        
-        # A) Add Regular Trips
-        if identifier == 'Regular':
-            i = orig_row_to_i.get(orig_idx)
-            if i is not None:
-                route_nodes.append(i)
-            
-        # B) Add Charging Stations
-        elif 'Charge' in identifier or 'Recharge' in identifier:
-            loc = row.get('From1', None)
-            if loc:
-                station_node = f"{clean_station_name(loc)}_0"
-                route_nodes.append(station_node)
-                
-                # Safely get energy from either Recharge or Usage column
-                energy_val = row.get('Recharge kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = row.get('Usage kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = 0
-                    
-                energy = abs(float(energy_val))
-                hour_of_day = int(row['Sort_Time'] // 60)
-                
-                # Default to 100.0 if you don't have hourly_prices globally available in this scope
-                price = hourly_prices.get(hour_of_day, 100.0) if 'hourly_prices' in globals() else 100.0
-                charging_cost += price * energy * charge_cost_premium
-
-    route_nodes.append(DEPOT_NAME)
-
-    # 4. Evaluate the mathematical objective
-    travel_cost = 0.0
-    missing_arcs = []
-    
-    for k in range(len(route_nodes) - 1):
-        u = route_nodes[k]
-        v = route_nodes[k+1]
-        
-        # If the start is 'PARX' and we need 'PARX_0' to match dictionary, handle it
-        if u == 'PARX': u = 'PARX_0'
-        if v == 'PARX': v = 'PARX_0'
-        
-        if (u, v) in d:
-            travel_cost += d[(u, v)]
-        else:
-            missing_arcs.append((u, v))
-            
-    total_travel_cost = travel_cost * TRAVEL_COST_FACTOR
-    sum_of_duals = sum(alpha.get(node, 0.0) for node in route_nodes if isinstance(node, int))
-    
-    total_cost = bus_cost + total_travel_cost + charging_cost
-    reduced_cost = total_cost - sum_of_duals
-    
-    print(f"Path Sequence:  {route_nodes}")
-    print(f"Base Bus Cost:  {bus_cost:.2f}")
-    print(f"Travel Cost:    {total_travel_cost:.2f}")
-    print(f"Charging Cost:  {charging_cost:.2f}")
-    print(f"Sum of Duals:   {sum_of_duals:.2f}")
-    print(f"REDUCED COST:   {reduced_cost:.2f}")
-    
-    if missing_arcs:
-        print(f"--> [WARNING] Route contains deadheads missing from the DHD dictionary: {missing_arcs}")
-    
-    if reduced_cost <= -0.01:
-        print("--> [VERDICT] NEGATIVE! The CG pricing problem missed this historical route.")
-    else:
-        print("--> [VERDICT] POSITIVE. This route is mathematically sub-optimal in the current LP state.")
-
-print("\n========================================================")
-# %%
+import pandas as pd
+df = pd.read_csv(stats_csv_path)
+df[["iteration","master_obj_before","improvement_vs_prev",
+    "master_time_s","pricing_time_s","pricing_hit_timelimit",
+    "best_rc","cols_added","max_labels_reached"]]
