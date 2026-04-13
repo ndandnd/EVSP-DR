@@ -1092,7 +1092,8 @@ def solve_pricing_dp(
     _uid = 0
 
     #heapq.heappush(pq, (source_label.rc, _uid, source_label))
-    heapq.heappush(pq, (source_label.rc, source_label.time, _uid, source_label))
+    #heapq.heappush(pq, (source_label.rc, source_label.time, _uid, source_label))
+    heapq.heappush(pq, (source_label.time, source_label.rc, _uid, source_label))
     
     _uid += 1
 
@@ -1115,11 +1116,15 @@ def solve_pricing_dp(
             hit_timelimit = True
             break
 
-        if (n_neg_completed >= K_BEST) and (elapsed >= EARLY_EXIT_FLOOR_S):
-            print(f"[DP-PRICER] Early exit: {n_neg_completed} neg-RC routes found in {elapsed:.1f}s "
-                  f"(K_BEST={K_BEST}, floor={EARLY_EXIT_FLOOR_S}s)")
-            early_exit_kbest = True
-            break
+
+        ## this might be the problem.
+        # if (n_neg_completed >= K_BEST) and (elapsed >= EARLY_EXIT_FLOOR_S):
+        #     print(f"[DP-PRICER] Early exit: {n_neg_completed} neg-RC routes found in {elapsed:.1f}s "
+        #           f"(K_BEST={K_BEST}, floor={EARLY_EXIT_FLOOR_S}s)")
+        #     early_exit_kbest = True
+        #     break
+
+
 
         labels_expanded += 1
 
@@ -1306,7 +1311,11 @@ def solve_pricing_dp(
                         node_labels[trip_idx] = node_labels[trip_idx][:MAX_LABELS_PER_NODE]
 
                     # NEW: Push sorted by rc first!
-                    heapq.heappush(pq, (new_label.rc, new_label.time, _uid, new_label))
+                    #heapq.heappush(pq, (new_label.rc, new_label.time, _uid, new_label))
+
+                    # revert back to time
+                    heapq.heappush(pq, (new_label.time, new_label.rc, _uid, new_label))
+                    
                     _uid += 1
 
 
