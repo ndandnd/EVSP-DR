@@ -42,7 +42,10 @@ data/pricing_*.csv
 data/*stillrunning*.csv
 data/Practice_Custom_*.csv
 data/Practice_10bus_*.csv
+data/Practice_*.csv
 data/*.png
+data/giro_soln_allDHDs/
+data/visual.py
 src/random_instances_*/
 
 # Superseded exploratory drivers retained only in local history/worktrees
@@ -67,3 +70,9 @@ src/final_*.csv
 data/Par_DHD_Updated_*.csv
 data/Practice_Selected_*.csv
 data/Practice_slice_*.csv
+src/Practice_*_20*/
+src/slice.py
+src/sparsitycheck.py
+src/spatiotemporal_prices.csv
+src/stcharge_cluster.py
+src/temp_pricing_debug.py
