@@ -1,0 +1,55 @@
+# Python caches and local tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Solver and Slurm runtime files
+logs/
+src/logs/
+grbnodes*/
+src/grbnodes*/
+GRBnodefile*
+*.lp
+*.mps
+*.sol
+*.log
+
+# Generated column-generation and MIP outputs
+results/
+src/results/
+output/
+ckpt_*.json
+routes_*snapshot_*.json
+routes_colgen_final_*.json
+final_mip_*.json
+final_mip_*.sol
+final_mip_*.log
+Best_*_columns.json
+R_truck_DP.json
+temp_meta_result.json
+
+# Generated visualizations and local scratch files
+*.pdf
+*.png
+*.numbers
+
+# Derived datasets and downloaded experiment material
+data/bus_outputs/
+data/Inst_*.csv
+data/pricing_*.csv
+data/*stillrunning*.csv
+data/Practice_Custom_*.csv
+src/random_instances_*/
+
+# Superseded exploratory drivers retained only in local history/worktrees
+src/run_experiments*.py
+src/MIP_*.py
+src/gen_xls.py
+src/plot.py
+src/pricing_dp.py
+src/pricing_dp_v2.py
+src/Meta_Comparison_Stats.csv
+src/Par_VehicleDetails_Updated.csv
+src/Practice_2minus1.csv

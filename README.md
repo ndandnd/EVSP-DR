@@ -8,5 +8,19 @@ This repository contains the Python implementation and data needed to reproduce 
 
 
 
-We solve a two‐stage column‐generation model for joint truck & battery routing under solar and vehicle‐to‐grid planning, and generate all tables and figures in the manuscript.
+We solve a two-stage column-generation model for joint truck and battery routing under solar and vehicle-to-grid planning.
 
+## Current Workflow
+
+The maintained experiment path is intentionally small:
+
+- `src/run_ex_unicorn.py`: column-generation driver.
+- `src/pricing_dp_og.py`: dynamic-programming pricing problem.
+- `src/greedy_init.py`: feasible greedy route-cover initialization.
+- `src/run_final_mip.py`: final set-covering MIP over a saved column pool.
+- `src/reconstruct_milestone_snapshots.py`: reconstruct 3h/10h/24h route pools from checkpoints and pricing statistics.
+- `src/plot_charging_gantt_from_solutions.py` and `src/plot_greedy_vs_nocheat_master.py`: result visualization.
+
+Canonical static inputs live in `data/`. Experiment instances, checkpoints, solver logs, route pools, MIP solutions, and plots are generated artifacts and are deliberately ignored by Git. Keep research results in a dated results directory or external storage rather than committing them to the source repository.
+
+For the current research-state details, including Unicorn submission workflows, see `HANDOFF_ISSUE18.md`.
