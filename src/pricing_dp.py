@@ -1029,7 +1029,7 @@ def solve_pricing_dp(
 
         time=0.0,          # earliest possible departure (minute 0)
 
-        soc=0,             # full battery
+        soc=float(G),      # full battery at the depot, no initial charging cost
 
         node=DEPOT,
 

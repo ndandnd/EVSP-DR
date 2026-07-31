@@ -1,0 +1,114 @@
+#!/bin/bash
+#SBATCH -J CG12HFS
+#SBATCH -o /home/nc437/demandresponse/src/logs/CG12HFS_%A_%a.out
+#SBATCH -e /home/nc437/demandresponse/src/logs/CG12HFS_%A_%a.err
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=16G
+#SBATCH --partition=default_partition
+#SBATCH -t 13:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --requeue
+#SBATCH --array=1-48
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+conda activate /home/nc437/evsp_env
+
+cd /home/nc437/demandresponse/src
+mkdir -p logs
+
+FLEETS=(10 15)
+RNDS=(001 002 003 004)
+MODES=(NO_CHEAT CHEAT)
+PEAKS=(08 12 18)
+
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+PEAK_IDX=$((TASK0 % 3))
+TMP=$((TASK0 / 3))
+MODE_IDX=$((TMP % 2))
+TMP=$((TMP / 2))
+RND_IDX=$((TMP % 4))
+FLEET_IDX=$((TMP / 4))
+
+FLEET=${FLEETS[$FLEET_IDX]}
+RND=${RNDS[$RND_IDX]}
+MODE=${MODES[$MODE_IDX]}
+PEAK=${PEAKS[$PEAK_IDX]}
+
+CSV_BASENAME="Inst_${FLEET}B_RND${RND}.csv"
+PRICE_CSV="spatiotemporal_single_peak_${PEAK}.csv"
+# Keep these runs separate from the earlier price-scenario batch.  The
+# fullsoc suffix prevents Slurm resumes from picking up old peakXX checkpoints.
+PRICE_TAG="peak${PEAK}_fullsoc"
+STAG_WIN=999997
+IMP_BND=-2.0
+
+if [ "$MODE" = "CHEAT" ]; then
+    BASE_SUFFIX="_CHEAT"
+    CHEAT_FLAG="--cheat"
+    MODE_SHORT="CH"
+else
+    BASE_SUFFIX="_NO_CHEAT"
+    CHEAT_FLAG=""
+    MODE_SHORT="NC"
+fi
+
+FULL_SUFFIX="${BASE_SUFFIX}_stag${STAG_WIN}_imp${IMP_BND}_${PRICE_TAG}"
+INSTANCE_NAME="Inst_${FLEET}B_RND${RND}${FULL_SUFFIX}"
+JOB_LABEL="FS${PEAK}_${FLEET}B_R${RND}_${MODE_SHORT}"
+
+echo "[BASH] Job label       : ${JOB_LABEL}"
+echo "[BASH] Array task      : ${SLURM_ARRAY_TASK_ID}"
+echo "[BASH] CSV             : ${CSV_BASENAME}"
+echo "[BASH] Mode            : ${MODE}"
+echo "[BASH] Price CSV       : ${PRICE_CSV}"
+echo "[BASH] Price tag       : ${PRICE_TAG}"
+echo "[BASH] Instance name   : ${INSTANCE_NAME}"
+echo "[BASH] Host            : $(hostname)"
+echo "[BASH] Start time      : $(date)"
+
+if [ ! -f "/home/nc437/demandresponse/data/${CSV_BASENAME}" ]; then
+    echo "[ERROR] Missing CSV: /home/nc437/demandresponse/data/${CSV_BASENAME}"
+    exit 2
+fi
+
+if [ ! -f "/home/nc437/demandresponse/data/${PRICE_CSV}" ]; then
+    echo "[ERROR] Missing price CSV: /home/nc437/demandresponse/data/${PRICE_CSV}"
+    exit 2
+fi
+
+LATEST_CKPT=$(find /home/nc437/demandresponse/src/results \
+    -name "ckpt_latest_${INSTANCE_NAME}*.json" \
+    -print 2>/dev/null | xargs -r ls -t 2>/dev/null | head -n 1)
+
+if [ -n "$LATEST_CKPT" ]; then
+    export RESUME_CKPT="$LATEST_CKPT"
+    echo "[BASH] Resuming from checkpoint: ${RESUME_CKPT}"
+else
+    unset RESUME_CKPT
+    echo "[BASH] No checkpoint found. Fresh start."
+fi
+
+python run_ex_unicorn.py \
+    --csv "$CSV_BASENAME" \
+    --G 300 \
+    --kbest 150 \
+    --stagnation_window "$STAG_WIN" \
+    --improvement_bound "$IMP_BND" \
+    --milestones_hours 12 \
+    --prices_csv "$PRICE_CSV" \
+    --price_tag "$PRICE_TAG" \
+    --final_mip_timelimit 3600 \
+    --skip_final_mip \
+    $CHEAT_FLAG
+
+EXIT_CODE=$?
+echo "[BASH] End time        : $(date)"
+echo "[BASH] Exit code       : ${EXIT_CODE}"
+exit "$EXIT_CODE"

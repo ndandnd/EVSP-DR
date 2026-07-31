@@ -1,0 +1,74 @@
+#!/bin/bash
+#SBATCH -J MIP40FS
+#SBATCH -o /home/nc437/demandresponse/src/logs/MIP40FS_%A_%a.out
+#SBATCH -e /home/nc437/demandresponse/src/logs/MIP40FS_%A_%a.err
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=32G
+#SBATCH --partition=scaglione
+#SBATCH -t 01:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --array=1-48
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+conda activate /home/nc437/evsp_env
+
+cd /home/nc437/demandresponse/src
+mkdir -p logs
+
+FLEETS=(10 15)
+RNDS=(001 002 003 004)
+MODES=(NO_CHEAT CHEAT)
+PEAKS=(08 12 18)
+
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+PEAK_IDX=$((TASK0 % 3))
+TMP=$((TASK0 / 3))
+MODE_IDX=$((TMP % 2))
+TMP=$((TMP / 2))
+RND_IDX=$((TMP % 4))
+FLEET_IDX=$((TMP / 4))
+
+FLEET=${FLEETS[$FLEET_IDX]}
+RND=${RNDS[$RND_IDX]}
+MODE=${MODES[$MODE_IDX]}
+PEAK=${PEAKS[$PEAK_IDX]}
+
+STAG_WIN=999997
+IMP_BND=-2.0
+PRICE_TAG="peak${PEAK}_fullsoc"
+INSTANCE_NAME="Inst_${FLEET}B_RND${RND}_${MODE}_stag${STAG_WIN}_imp${IMP_BND}_${PRICE_TAG}"
+
+echo "[BASH] MIP task      : ${SLURM_ARRAY_TASK_ID}"
+echo "[BASH] Instance      : ${INSTANCE_NAME}"
+echo "[BASH] Host          : $(hostname)"
+echo "[BASH] Start time    : $(date)"
+
+SNAPSHOT=$(find /home/nc437/demandresponse/src/results \
+    -path "*${INSTANCE_NAME}_g300_*/routes_12h_snapshot_${INSTANCE_NAME}.json" \
+    -print 2>/dev/null | xargs -r ls -t 2>/dev/null | head -n 1)
+
+if [ -z "$SNAPSHOT" ]; then
+    echo "[WARN] Missing 12h snapshot for ${INSTANCE_NAME}; skipping this MIP task."
+    exit 0
+fi
+
+echo "[BASH] Snapshot      : ${SNAPSHOT}"
+echo "[BASH] MIP timelimit : 2400 seconds (40 minutes)"
+
+python run_final_mip.py \
+    --ckpt "$SNAPSHOT" \
+    --timelimit 2400 \
+    --mipgap 0.0001 \
+    --threads 8
+
+EXIT_CODE=$?
+echo "[BASH] End time      : $(date)"
+echo "[BASH] Exit code     : ${EXIT_CODE}"
+exit "$EXIT_CODE"
