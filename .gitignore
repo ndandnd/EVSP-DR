@@ -41,6 +41,8 @@ data/Inst_*.csv
 data/pricing_*.csv
 data/*stillrunning*.csv
 data/Practice_Custom_*.csv
+data/Practice_10bus_*.csv
+data/*.png
 src/random_instances_*/
 
 # Superseded exploratory drivers retained only in local history/worktrees
@@ -50,6 +52,8 @@ src/gen_xls.py
 src/plot.py
 src/pricing_dp.py
 src/pricing_dp_v2.py
+src/run_10B_group*.py
 src/Meta_Comparison_Stats.csv
 src/Par_VehicleDetails_Updated.csv
 src/Practice_2minus1.csv
+src/INTEGRATION_PATCH.txt

@@ -1,9 +1,10 @@
 from gurobipy import Model, Column, LinExpr, GRB
-from utils import calculate_truck_route_cost
+from utils_v2 import calculate_truck_route_cost
 from config import (
     THREADS, NODEFILE_START, NODEFILE_DIR,
     MASTER_TIMELIMIT, MASTER_MIPGAP,
-    BIG_M_PENALTY
+    BIG_M_PENALTY,
+    CHARGE_START_COST,
 )
 
 def _apply_master_params(rmp: Model, *, mip_mode=False):
@@ -29,8 +30,10 @@ def build_master(
     T,
     charging_cost_data,
     bus_cost,
-    binary=False
+    binary=False,
+    station_hourly_prices=None,   # NEW
 ):
+
     rmp = Model("RMP_EVSP")
     _apply_master_params(rmp, mip_mode=binary)
 
@@ -45,12 +48,12 @@ def build_master(
     for i in T:
         col = Column()
         col.addTerms(1.0, trip_cov[i]) # Add q_i to the coverage constraint for trip i
-        
+
         q_vars[i] = rmp.addVar(
             obj=BIG_M_PENALTY,  # High penalty
-            lb=0, 
+            lb=0,
             ub=GRB.INFINITY,    # In the end bounded by 1 because constraint is \geq 1.
-            vtype=GRB.CONTINUOUS, 
+            vtype=GRB.CONTINUOUS,
             column=col,
             name=f"q_{i}"
         )
@@ -65,7 +68,12 @@ def build_master(
         if route.get("dummy", False):
             cost = float(route.get("dummy_cost", 1e7))
         else:
-            cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
+            cost = calculate_truck_route_cost(
+                route, bus_cost, charging_cost_data,
+                station_hourly_prices=station_hourly_prices,
+                charge_start_cost=CHARGE_START_COST,
+            )
+            #cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
 
         col = Column()
         for i in route.get("route", []):
@@ -85,17 +93,23 @@ def build_master(
     return rmp, a, trip_cov
 
 
-def init_master(R_truck, T, charging_cost_data, bus_cost, binary=False):
-    return build_master(R_truck, T, charging_cost_data, bus_cost, binary=binary)
+# def init_master(R_truck, T, charging_cost_data, bus_cost, binary=False):
+#     return build_master(R_truck, T, charging_cost_data, bus_cost, binary=binary)
+
+def init_master(R_truck, T, charging_cost_data, bus_cost, binary=False, station_hourly_prices=None):
+    return build_master(R_truck, T, charging_cost_data, bus_cost, binary=binary,
+                        station_hourly_prices=station_hourly_prices)
 
 
-def solve_master(R_truck, T, charging_cost_data, bus_cost, binary=False):
+def solve_master(R_truck, T, charging_cost_data, bus_cost, binary=False,  station_hourly_prices=None):
     rmp, a, trip_cov = build_master(
         R_truck=R_truck,
         T=T,
         charging_cost_data=charging_cost_data,
         bus_cost=bus_cost,
-        binary=binary
+        binary=binary,
+
+        station_hourly_prices=station_hourly_prices,
     )
     rmp.optimize()
     return rmp, a

@@ -6,7 +6,7 @@ import pandas as pd
 
 import string
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 
@@ -30,39 +30,39 @@ def make_locs(n: int):
 
 
 
-def plot_net_with_delta(net, delta, time_blocks, solar_mult, mode_name, base_eps, points):
+# def plot_net_with_delta(net, delta, time_blocks, solar_mult, mode_name, base_eps, points):
 
-    times = sorted(time_blocks)
+#     times = sorted(time_blocks)
 
-    net_vals = [net.get(t, 0) * 100 for t in times]
+#     net_vals = [net.get(t, 0) * 100 for t in times]
 
-    delta_vals = [-delta.get(t, 0) * 100 for t in times]
+#     delta_vals = [-delta.get(t, 0) * 100 for t in times]
 
 
 
-    plt.figure()
+#     plt.figure()
 
-    plt.bar(times, net_vals, align='center', label='Net (Dis)charge')
+#     plt.bar(times, net_vals, align='center', label='Net (Dis)charge')
 
-    plt.plot(times, delta_vals, marker='o', label='Net Generation')
+#     plt.plot(times, delta_vals, marker='o', label='Net Generation')
 
-    plt.axhline(0, linewidth=0.8)
+#     plt.axhline(0, linewidth=0.8)
 
-    plt.xlabel('Hour')
+#     plt.xlabel('Hour')
 
-    plt.ylabel('Power (kW)')
+#     plt.ylabel('Power (kW)')
 
-    plt.title('Net Generation Over Time')
+#     plt.title('Net Generation Over Time')
 
-    plt.legend()
+#     plt.legend()
 
-    plt.grid(True, linestyle='--', linewidth=0.5)
+#     plt.grid(True, linestyle='--', linewidth=0.5)
 
-    filename = f"net_generation_s{solar_mult}_m{mode_name}_e{base_eps}_p{points}.png"
+#     filename = f"net_generation_s{solar_mult}_m{mode_name}_e{base_eps}_p{points}.png"
 
-    plt.savefig(filename, bbox_inches='tight')
+#     plt.savefig(filename, bbox_inches='tight')
 
-    plt.close()
+#     plt.close()
 
 
 
@@ -105,8 +105,14 @@ def calc_cost_distance_only(route, truck_cost):
 
 
 
-def calculate_truck_route_cost(route, truck_cost, hourly_prices: dict) -> float:
-
+#def calculate_truck_route_cost(route, truck_cost, hourly_prices: dict) -> float:
+def calculate_truck_route_cost(
+    route,
+    truck_cost,
+    hourly_prices: dict,
+    station_hourly_prices: dict = None,   # NEW
+    charge_start_cost: float = 0.0,       # NEW
+) -> float:
     """
 
     Calculates cost using hourly_prices dict {0: 0.10, 1: 0.15...}
@@ -167,13 +173,20 @@ def calculate_truck_route_cost(route, truck_cost, hourly_prices: dict) -> float:
 
         # Assuming hourly_prices has keys 0..23 or similar
 
-        price = hourly_prices.get(hour_idx, 0.0)
 
-        if price == 0.0 and hourly_prices:
+        # Use station-specific prices if available, fall back to base hourly_prices
+        prices_to_use = (station_hourly_prices or {}).get(station, hourly_prices)
+        price = prices_to_use.get(hour_idx, 0.0)
+        if price == 0.0 and prices_to_use:
+            price = prices_to_use.get(hour_idx % 24, prices_to_use.get(0, 0.0))
 
-             # Try modulo 24 if your dict is 0-23 but time goes to 26h
+        # price = hourly_prices.get(hour_idx, 0.0)
 
-             price = hourly_prices.get(hour_idx % 24, hourly_prices.get(0, 0.0))
+        # if price == 0.0 and hourly_prices:
+
+        #      # Try modulo 24 if your dict is 0-23 but time goes to 26h
+
+        #      price = hourly_prices.get(hour_idx % 24, hourly_prices.get(0, 0.0))
 
 
 
@@ -188,7 +201,7 @@ def calculate_truck_route_cost(route, truck_cost, hourly_prices: dict) -> float:
 
 
         total += price * energy_kwh * charge_cost_premium
-
+        total += charge_start_cost  # Add flat cost per charging activity
 
 
     return total
@@ -208,6 +221,8 @@ def calculate_truck_route_cost_accurate(
     charge_rate_kw: float,
 
     travel_cost_factor: float | None = None,
+    station_hourly_prices=None,    # NEW — optional
+    charge_start_cost=0.0,         # NEW
 
 ) -> float:
 

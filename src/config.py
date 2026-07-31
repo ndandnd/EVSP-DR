@@ -49,7 +49,19 @@ STATION_COPIES = {
     "JON_A": 6
 }
 
+# ---------- Charging symmetry controls ----------
+CHARGE_START_COST = 5.0  # flat cost per charge activity
 
+# ---------- Spatial price multipliers ----------
+# Multiplier applied to base hourly_prices per station
+STATION_PRICE_MULTIPLIER = {
+    "PARX":   0.80,   # depot cheapest
+    "JON_A":  0.90,
+    "2190L":  0.95,
+    "4808":   1.00,
+    "3127L":  1.05,
+    "7880C":  1.10,
+}
 
 
 
@@ -67,13 +79,13 @@ STAGNATION_ITERS = 10      # was 3 (don’t stop so early)
 MASTER_IMPROVE_THRESHOLD = 0.1  # was 5e-4 (count small progress as improvement)
 
 # ---------- NEW: Solver resource knobs ----------
-THREADS = 4
+THREADS = 2
 NODEFILE_START = 0.5
 NODEFILE_DIR = "."
 
 # ---------- NEW: Timelimits/gaps ----------
 # Master RMP (LP) per-iteration solve
-MASTER_TIMELIMIT = 60     # was 60 (still modest, gives RMP time to settle)
+MASTER_TIMELIMIT = 120     # was 60 (still modest, gives RMP time to settle)
 MASTER_MIPGAP   = 0.02     # final MIP target gap (keep)
 
 # Pricing MIPs
