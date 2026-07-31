@@ -53,7 +53,17 @@ src/plot.py
 src/pricing_dp.py
 src/pricing_dp_v2.py
 src/run_10B_group*.py
+src/analysis.py
+src/comparison_*.py
+src/generate_raondom_instances.py
+src/generatepractice.py
 src/Meta_Comparison_Stats.csv
 src/Par_VehicleDetails_Updated.csv
 src/Practice_2minus1.csv
 src/INTEGRATION_PATCH.txt
+src/final_*.csv
+
+# Historical derived instance variants
+data/Par_DHD_Updated_*.csv
+data/Practice_Selected_*.csv
+data/Practice_slice_*.csv
