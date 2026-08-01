@@ -8,6 +8,7 @@ usage() {
 Usage:
   src/submit_goal1_matrix.sh smoke [RUN_TAG]
   src/submit_goal1_matrix.sh 3h [RUN_TAG]
+  src/submit_goal1_matrix.sh 5h [RUN_TAG]
   src/submit_goal1_matrix.sh 6h [RUN_TAG]
   src/submit_goal1_matrix.sh unlimited SLURM_WALLTIME [RUN_TAG]
 
@@ -44,6 +45,14 @@ case "$PROFILE" in
         ACTIVE_HOURS=3
         MILESTONES=3
         WALLTIME=05:00:00
+        RUN_TAG=${1:-}
+        INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
+        MODES_RAW=${EVSP_MODES:-NO_CHEAT,GREEDY}
+        ;;
+    5h)
+        ACTIVE_HOURS=5
+        MILESTONES=3,5
+        WALLTIME=07:00:00
         RUN_TAG=${1:-}
         INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
         MODES_RAW=${EVSP_MODES:-NO_CHEAT,GREEDY}
