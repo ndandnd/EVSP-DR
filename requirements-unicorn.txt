@@ -1,0 +1,5 @@
+# The Unicorn conda environment may already provide these packages.
+# Gurobi still requires the cluster license configured in UNICORN_RUNBOOK.md.
+gurobipy
+numpy
+pandas

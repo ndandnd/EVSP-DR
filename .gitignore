@@ -1,4 +1,6 @@
 # Python caches and local tooling
+.DS_Store
+**/.DS_Store
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -6,8 +8,10 @@ __pycache__/
 .ruff_cache/
 
 # Solver and Slurm runtime files
-logs/
-src/logs/
+logs/*
+!logs/.gitkeep
+src/logs/*
+!src/logs/.gitkeep
 grbnodes*/
 src/grbnodes*/
 GRBnodefile*
@@ -44,6 +48,13 @@ data/Practice_Custom_*.csv
 data/Practice_10bus_*.csv
 data/Practice_*.csv
 data/*.png
+# Private GIRO/Transdev source material. The public repository may contain
+# derived benchmark CSVs, but never publish the C1/Internal originals or email
+# correspondence from this local provenance folder.
+data/original_giro_data/
+# Email-derived two-column tariff retained locally for provenance. Use the
+# tracked flat/scenario inputs for public reproducible runs.
+data/hourly_prices_transdev_sek.csv
 data/giro_soln_allDHDs/
 data/visual.py
 src/random_instances_*/

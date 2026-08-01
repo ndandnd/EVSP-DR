@@ -23,4 +23,7 @@ The maintained experiment path is intentionally small:
 
 Canonical static inputs live in `data/`. Experiment instances, checkpoints, solver logs, route pools, MIP solutions, and plots are generated artifacts and are deliberately ignored by Git. Keep research results in a dated results directory or external storage rather than committing them to the source repository.
 
-For the current research-state details, including Unicorn submission workflows, see `HANDOFF_ISSUE18.md`.
+For the current reproducible Unicorn checkpoint, exact 3h/6h/unlimited launch
+commands, result audits, and next-step decision rules, see
+[`UNICORN_RUNBOOK.md`](UNICORN_RUNBOOK.md). `HANDOFF_ISSUE18.md` is retained as
+historical context.

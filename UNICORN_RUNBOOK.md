@@ -1,0 +1,341 @@
+# EVSP-DR Unicorn checkpoint and runbook
+
+This is the entry point for a fresh GPT/Codex session on the Unicorn computer.
+It describes the maintained, reproducible path for measuring the current DP
+before making the charge-timing model more ambitious.
+
+## Start here
+
+Use the `issue20` branch. Do not merge `main` into it: `main` diverged before
+the maintained DP work and contains obsolete generated files and conflicting
+model/data changes.
+
+```bash
+git clone https://github.com/ndandnd/EVSP-DR.git
+cd EVSP-DR
+git switch issue20
+git pull --ff-only origin issue20
+git status --short --branch
+```
+
+The checkout must be clean before submitting a benchmark. Generated results,
+checkpoints, Gurobi files, and logs are ignored by Git and stay under
+`src/results/` and `src/logs/`.
+
+Do not copy or commit `data/original_giro_data/`. Those local provenance files
+are C1/Internal and are intentionally excluded from this public repository.
+
+## What this checkpoint is testing
+
+The current checkpoint includes these DP/master fixes:
+
+- unrestricted LP column upper bounds, removing a dual-degeneracy stall mode;
+- identical hour-split charging costs in the DP, RMP, resume path, and final MIP;
+- station-specific prices resolved from physical names rather than copy names;
+- one pricing node per physical station, while keeping the PARX charger distinct
+  from the source/sink depot node;
+- one-time DAG construction and reusable per-call label limits;
+- O(1) stale-label rejection;
+- dominance that preserves both remaining recharge capacity and the minimum
+  completed-trip requirement, without pruning later station labels that retain
+  a different 220-minute successor window;
+- charging-aware column identity, so a cheaper charging realization of the same
+  trip path is not discarded;
+- checkpoints that store the complete trip set, input hashes, mode, arguments,
+  and Git revision;
+- final-MIP audits for missing-column trips, artificial `q_i`, and overcoverage;
+- one-trip columns allowed by default, so the pricer does not discard otherwise
+  feasible routes merely as a speed heuristic.
+
+This is still the **Goal-1 restricted model**. Charging begins immediately on
+station arrival, and pricing uses the 57/61/220-minute trip/station restrictions.
+That is acceptable for a flat-price rediscovery benchmark, but it cannot support
+the later headline temporal demand-response claim.
+
+Benchmark interpretation:
+
+- `Practice_10bus.csv` and `Practice_15bus.csv` are the clean regression cases.
+- `Practice_20bus.csv` and `Practice_43bus.csv` mix weekday variants. They may be
+  used only as synthetic scaling tests, not as one-day GIRO parity evidence.
+- `Practice_43bus.csv` maps to 42 literal historical `VehicleTask` values; its
+  filename is not evidence of a verified 43-bus day.
+- The intended full-day comparison target remains 43 buses, but the current
+  tracked 987-trip file is not a verified single-day parity instance.
+  Reconstructing that input remains a separate task.
+
+## Unicorn environment
+
+The submitted jobs default to the environment previously used on Unicorn:
+
+```bash
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+conda activate /home/nc437/evsp_env
+```
+
+Override `EVSP_CONDA_SH`, `EVSP_CONDA_ENV`, or `GRB_LICENSE_FILE` if the cluster
+environment has moved. Python 3.10+, `gurobipy`, `pandas`, and `numpy` are
+required; see `requirements-unicorn.txt`.
+
+From the repository root, run the preflight once on the login node:
+
+```bash
+python -u src/unicorn_preflight.py \
+  --csv Practice_10bus.csv \
+  --prices_csv hourly_prices_flat.csv \
+  --mode NO_CHEAT
+```
+
+`hourly_prices_flat.csv` is a two-column temporal curve. The maintained loader
+now replicates it across all six physical stations, giving the neutral Goal-1
+price input that the older scripts lacked.
+
+## Recommended first experiment
+
+First submit one short environment/plumbing smoke:
+
+```bash
+bash src/submit_goal1_matrix.sh smoke
+```
+
+Inspect its log and confirm that it writes a run-local checkpoint and summary.
+Then submit the main matrix:
+
+```bash
+bash src/submit_goal1_matrix.sh 6h
+```
+
+That submits four jobs:
+
+- 10-bus NO_CHEAT;
+- 10-bus GREEDY;
+- 15-bus NO_CHEAT;
+- 15-bus GREEDY.
+
+NO_CHEAT measures the DP from an empty real-route pool. GREEDY supplies a route
+cover constructed under the current time, energy, and 57/61/220-minute rules,
+so it isolates warm-start effects without importing GIRO's answer.
+
+`CHEAT` remains available only as a translation diagnostic:
+
+```bash
+EVSP_MODES=CHEAT bash src/submit_goal1_matrix.sh smoke
+```
+
+Those historical columns are reconstructed from GIRO output but are **not**
+validated against the current DP's time/SOC/restricted-graph rules. A CHEAT
+fleet count or zero-artificial result proves coverage mapping only; do not call
+it a model-feasible benchmark or use it as parity evidence.
+
+Each job runs for at most six active compute hours and, if it reaches both
+thresholds, saves 3h and 6h column-pool snapshots. The Slurm request is eight
+wall-clock hours because the active budget counts master plus pricing time and a
+partially completed iteration needs padding. Pricing tiers are clipped at milestone boundaries, so
+these are the first completed-iteration checkpoints at approximately 3h and 6h.
+
+To run all three initialization modes for diagnosis:
+
+```bash
+EVSP_MODES=NO_CHEAT,CHEAT,GREEDY \
+  bash src/submit_goal1_matrix.sh 6h
+```
+
+To run only a three-hour wave:
+
+```bash
+bash src/submit_goal1_matrix.sh 3h
+```
+
+The launcher prints a unique run tag. Save it. Reusing the same tag with the
+same critical pricing configuration automatically resumes the matching
+`ckpt_latest_*.json`; completed column pools are never deleted. Active limit and
+milestone targets may be extended, but changing the pricing tiers, label cap,
+minimum trips, or commit requires a fresh tag (or an explicitly unsafe resume).
+
+## Unlimited Python-side run
+
+An “unlimited” run disables the Python active-time stop, but Slurm still needs a
+walltime. Check the current partition policy rather than guessing:
+
+```bash
+/usr/local/slurm/current/bin/scontrol show partition
+```
+
+Then supply an allowed walltime explicitly, for example:
+
+```bash
+bash src/submit_goal1_matrix.sh unlimited 2-00:00:00
+```
+
+The job will continue until restricted pricing terminates, the iteration guard
+is reached, or Slurm ends the allocation. If Slurm ends it, resubmit with the
+same printed run tag to resume from the last completed iteration. Milestones at
+3h, 6h, 12h, and 24h are saved by default.
+
+## Useful overrides
+
+The launchers accept environment overrides without editing tracked files:
+
+```bash
+# One synthetic scaling job only; do not call this GIRO parity.
+EVSP_INSTANCES=Practice_43bus.csv \
+EVSP_MODES=NO_CHEAT \
+  bash src/submit_goal1_matrix.sh 3h provisional987
+
+# Change the pricing escalation schedule.
+EVSP_MAX_LABELS=200000 \
+EVSP_PRICING_TIERS=100000:500,200000:3000 \
+  bash src/submit_goal1_matrix.sh 6h
+
+# A price scenario must regenerate columns under that price file.
+EVSP_PRICE_CSV=spatiotemporal_single_peak_08.csv \
+EVSP_PRICE_TAG=peak08 \
+  bash src/submit_goal1_matrix.sh 6h
+
+# Select a verified partition or memory request.
+EVSP_PARTITION=PARTITION_NAME EVSP_MEMORY=64G \
+  bash src/submit_goal1_matrix.sh 6h
+```
+
+Important controls:
+
+- `EVSP_AUTO_RESUME=0`: force a fresh result directory;
+- `EVSP_RESUME_CKPT=/path/to/file.json`: select a checkpoint explicitly;
+- `EVSP_KBEST`: columns accepted per iteration, default 150;
+- `EVSP_MAX_LABELS`: default label cap, default 100000 in cluster jobs;
+- `EVSP_MIN_TRIPS_PER_ROUTE`: default 1; larger values deliberately restrict the
+  pricing graph and must be reported;
+- `EVSP_MASTER_TIME_LIMIT`: exact master-LP limit per iteration, default 120
+  seconds. A non-optimal master stops rather than pricing invalid duals; resume
+  the same tag with a larger value if this occurs;
+- `EVSP_PRICING_TIERS`: `labels:seconds` escalation list;
+- `EVSP_PRICING_WALL_PER_ITER`: total pricing wall cap per iteration;
+- `EVSP_STAGNATION_WINDOW` and `EVSP_IMPROVEMENT_BOUND`: the benchmark launcher
+  effectively disables early stagnation by default;
+- `EVSP_PRICE_TAG`: output label; by default it is derived from the price CSV;
+- `EVSP_ALLOW_UNSAFE_RESUME=1`: explicitly allow mixing a checkpoint with a
+  different commit or critical pricing configuration. Do not use this for a
+  reported benchmark.
+
+Auto-resume refuses a checkpoint made by another Git commit or critical pricing
+configuration. The job lock also rejects two simultaneous writers for the same
+instance/mode/run-tag instead of risking checkpoint corruption.
+
+Old list-only pools can be preserved, but they lack instance, price, and code
+provenance. To migrate one, set the exact original instance/mode/price, provide
+`EVSP_RESUME_CKPT`, and set `EVSP_ALLOW_UNSAFE_RESUME=1`. Treat the resulting run
+as a legacy diagnostic until its provenance and route feasibility are audited.
+
+## Monitor and inspect resource use
+
+```bash
+squeue --me
+sacct -S today --name='G1_*' \
+  --format=JobID,JobName,State,Elapsed,Timelimit,MaxRSS,ExitCode
+```
+
+Do not infer that a run “solved” merely because the process exited successfully.
+Read `termination_reason`, the pricing timeouts, and the artificial-trip counts.
+
+## Run final MIPs from the saved pools
+
+Column generation deliberately skips the final MIP. Submit it separately for
+each desired 3h and 6h snapshot:
+
+```bash
+find src/results -type f -name 'routes_3h_snapshot_*.json' -print
+
+sbatch --time=01:30:00 --mem=32G --cpus-per-task=8 \
+  src/submit_final_mip.sub \
+  /absolute/path/to/routes_3h_snapshot_NAME.json 3600
+```
+
+Add a verified `--partition=NAME` if Unicorn requires one. Repeat with
+`routes_6h_snapshot_*.json`. The final-MIP script writes its `.sol`,
+log, and `final_mip_summary_*.json` beside the source snapshot. It verifies the
+generating Git commit and price hash by default.
+
+Passing a different price file only to the final MIP is rejected: reselecting
+old-price columns can miss newly attractive routes and is not a valid savings
+experiment. `EVSP_ALLOW_RESTRICTED_POOL_REPRICE=1` exists only for an explicitly
+labeled diagnostic; reported price scenarios must rerun column generation.
+
+If restricted pricing converges before a milestone, use
+`routes_colgen_final_*.json`. If Slurm interrupts a run after at least one
+completed iteration, use its `ckpt_latest_*.json`. Both contain the full trip
+set and provenance required by the standalone MIP. An interruption before the
+first completed iteration may leave no usable checkpoint and must be restarted.
+
+A fleet result is usable only when all of these are reported:
+
+```text
+artificial_trips_used == 0
+missing_column_trips == 0
+dummy_routes_used == 0
+buses_used is not null
+unsafe_checkpoint_override == false
+restricted_pool_reprice == false
+```
+
+For a model-feasible claim, `mode` must be `NO_CHEAT` or `GREEDY`; CHEAT is
+excluded by the historical-route validation caveat above.
+
+Also report `overcovered_trips`, LP objective, MIP objective/bound/gap, columns in
+the pool, Git commit, mode, active time, and termination reason.
+
+The per-iteration pricing CSV now contains `Artificial_Trips`,
+`Artificial_Total`, and `LP_Route_Weight`. Use the first row with
+`Artificial_Trips == 0` as the time-to-first-real-cover metric. Compare
+NO_CHEAT and GREEDY only at the same instance, commit, flat price file, hardware
+request, pricing schedule, and active-time budget. Report CHEAT separately as an
+unvalidated historical-translation diagnostic.
+
+## Preserve and collect long-running columns
+
+A normally completed result directory contains `ckpt_latest_*.json`, a final
+route pool, and any milestones it actually reached. An interrupted run may have
+only the last completed checkpoint. These JSON files contain the generated
+columns. They are ignored by Git intentionally; back up complete directories.
+
+From another computer:
+
+```bash
+RUN_TAG='paste_the_printed_run_tag_here'
+LOCAL_ROOT="$HOME/Downloads/evsp_goal1_${RUN_TAG}"
+REMOTE_REPO='/home/nc437/EVSP-DR'  # replace with the actual clone path
+mkdir -p "$LOCAL_ROOT"
+
+rsync -av --partial --prune-empty-dirs \
+  --include='*/' \
+  --include="*${RUN_TAG}*/***" \
+  --exclude='*' \
+  "nc437@unicorn-login-01.coecis.cornell.edu:${REMOTE_REPO}/src/results/" \
+  "$LOCAL_ROOT/results/"
+
+rsync -av --partial \
+  "nc437@unicorn-login-01.coecis.cornell.edu:${REMOTE_REPO}/src/logs/G1_*" \
+  "$LOCAL_ROOT/logs/"
+```
+
+Never use `git clean` as a result-collection step. Git does not contain these
+long-running columns.
+
+## Decision after the first batch
+
+1. If GREEDY does not produce a zero-artificial feasible pool, repair the
+   current-model initialization/data translation before interpreting DP speed.
+2. If GREEDY succeeds but NO_CHEAT does not, use the pricing CSV to distinguish
+   slow improvement from timeout/no-new-column failure.
+3. Treat CHEAT only as a coverage-mapping check unless a separate validator is
+   added for every imported route's current time/SOC/restricted-graph feasibility.
+4. If 10/15-bus parity is healthy, reconstruct the valid single-day full input
+   and verify its historical blocks before attempting full parity.
+5. Only after Goal 1 is trustworthy should delayed-start charging and relaxed
+   waiting restrictions enter Goal 2.
+6. Before any temporal savings claim, charging time must be a first-class
+   decision and charger/solar-capacity assumptions must be stated explicitly.
+
+`HANDOFF_ISSUE18.md` is historical context. Its old random-instance arrays and
+local paths are not the clean-clone run path; use this file and the new generic
+launchers instead.

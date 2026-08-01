@@ -1,5 +1,9 @@
 # EVSP Demand-Response Handoff
 
+> Historical handoff: paths and random-instance launchers below describe the
+> earlier issue18 campaign. For a clean clone and the maintained Goal-1 Unicorn
+> workflow, use [`UNICORN_RUNBOOK.md`](UNICORN_RUNBOOK.md).
+
 This repository contains a column-generation EVSP workflow run locally on macOS
 and remotely on the Cornell Unicorn Slurm cluster. This handoff captures the
 current state after adding greedy initialization and comparing GREEDY,

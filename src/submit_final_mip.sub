@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Solve a final route-selection MIP from one saved CG checkpoint/snapshot.
+#SBATCH --job-name=G1MIP
+#SBATCH --output=src/logs/G1_%x_%j.out
+#SBATCH --error=src/logs/G1_%x_%j.err
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --time=01:30:00
+
+set -euo pipefail
+
+if (( $# < 1 || $# > 3 )); then
+    echo "Usage: sbatch src/submit_final_mip.sub SNAPSHOT [MIP_SECONDS] [PRICES_CSV]" >&2
+    exit 2
+fi
+
+SNAPSHOT=$1
+MIP_SECONDS=${2:-3600}
+PRICES_CSV=${3:-}
+REPO_ROOT=${EVSP_REPO_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}
+
+CONDA_SH=${EVSP_CONDA_SH:-/share/apps/software/anaconda3/etc/profile.d/conda.sh}
+CONDA_ENV=${EVSP_CONDA_ENV:-/home/nc437/evsp_env}
+if [[ ! -f "$CONDA_SH" ]]; then
+    echo "Missing conda setup: $CONDA_SH (override EVSP_CONDA_SH)" >&2
+    exit 2
+fi
+source "$CONDA_SH"
+conda activate "$CONDA_ENV"
+
+if [[ -z "${GRB_LICENSE_FILE:-}" && -f /share/apps/software/gurobi/gurobi.lic ]]; then
+    export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+fi
+unset LM_LICENSE_FILE || true
+export PYTHONUNBUFFERED=1
+
+cd "$REPO_ROOT"
+mkdir -p src/logs
+if [[ ! -f "$SNAPSHOT" ]]; then
+    echo "Snapshot not found: $SNAPSHOT" >&2
+    exit 2
+fi
+if [[ -n "$(git status --porcelain)" ]]; then
+    echo "Checkout is dirty; refusing an unreproducible MIP run." >&2
+    exit 2
+fi
+
+command=(
+    python -u src/run_final_mip.py
+    --ckpt "$SNAPSHOT"
+    --timelimit "$MIP_SECONDS"
+    --mipgap "${EVSP_MIP_GAP:-0.0001}"
+    --threads "${SLURM_CPUS_PER_TASK:-8}"
+)
+if [[ -n "$PRICES_CSV" ]]; then
+    command+=(--prices_csv "$PRICES_CSV")
+fi
+if [[ "${EVSP_ALLOW_UNSAFE_MIP:-0}" == "1" ]]; then
+    command+=(--allow_unsafe_checkpoint)
+fi
+if [[ "${EVSP_ALLOW_RESTRICTED_POOL_REPRICE:-0}" == "1" ]]; then
+    command+=(--allow_restricted_pool_reprice)
+fi
+
+echo "[MIP] start      : $(date --iso-8601=seconds 2>/dev/null || date)"
+echo "[MIP] commit     : $(git rev-parse HEAD)"
+echo "[MIP] snapshot   : $SNAPSHOT"
+echo "[MIP] seconds    : $MIP_SECONDS"
+"${command[@]}"
+echo "[MIP] end        : $(date --iso-8601=seconds 2>/dev/null || date)"
