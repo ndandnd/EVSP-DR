@@ -87,6 +87,126 @@ def base_station_name(name: str) -> str:
     return s
 
 
+def load_station_hourly_prices(csv_path, stations):
+
+    """Load either temporal-only or station-specific hourly prices.
+
+    Accepted schemas are ``time_block,cost`` (replicated across every physical
+    station) and ``time_block,station,cost``. The latter must contain every
+    requested physical station; missing stations are an error rather than a
+    silent fallback to the depot curve.
+    """
+
+    df = pd.read_csv(csv_path)
+    required = {"time_block", "cost"}
+    if not required.issubset(df.columns):
+        raise ValueError(
+            f"{csv_path} must contain time_block,cost; found {list(df.columns)}"
+        )
+
+    work = df.copy()
+    work["time_block"] = pd.to_numeric(work["time_block"], errors="raise")
+    work["cost"] = pd.to_numeric(work["cost"], errors="raise")
+    if work[["time_block", "cost"]].isna().any().any():
+        raise ValueError(f"{csv_path} contains missing time blocks or costs")
+    if not np.allclose(work["time_block"], np.round(work["time_block"])):
+        raise ValueError(f"{csv_path} contains non-integer hourly time_block values")
+    work["time_block"] = work["time_block"].astype(int)
+    if work.empty:
+        raise ValueError(f"{csv_path} contains no price rows")
+
+    def _validate_contiguous_hours(hours):
+        hour_set = set(hours)
+        expected = set(range(0, max(hour_set) + 1))
+        if hour_set != expected:
+            missing_hours = sorted(expected - hour_set)
+            raise ValueError(
+                f"{csv_path} must contain contiguous hourly time_block values "
+                f"starting at 0; missing={missing_hours}"
+            )
+
+    station_bases = list(dict.fromkeys(base_station_name(s) for s in stations))
+    if not station_bases:
+        raise ValueError("At least one station is required to load price curves")
+
+    if "station" not in work.columns:
+        if work["time_block"].duplicated().any():
+            raise ValueError(f"{csv_path} contains duplicate time_block rows")
+        curve = work.set_index("time_block")["cost"].astype(float).to_dict()
+        _validate_contiguous_hours(curve)
+        return {station: dict(curve) for station in station_bases}
+
+    work["station"] = work["station"].map(base_station_name)
+    if work[["station", "time_block"]].duplicated().any():
+        raise ValueError(f"{csv_path} contains duplicate station/time_block rows")
+
+    result = {
+        station: group.set_index("time_block")["cost"].astype(float).to_dict()
+        for station, group in work.groupby("station", sort=False)
+    }
+    missing = sorted(set(station_bases) - set(result))
+    if missing:
+        raise ValueError(f"{csv_path} has no price curve for stations: {missing}")
+
+    expected_hours = set(result[station_bases[0]])
+    _validate_contiguous_hours(expected_hours)
+    inconsistent = [
+        station for station in station_bases
+        if set(result[station]) != expected_hours
+    ]
+    if inconsistent:
+        raise ValueError(
+            f"{csv_path} has inconsistent time blocks for stations: {inconsistent}"
+        )
+    return {station: result[station] for station in station_bases}
+
+
+def select_unique_station_copies(stations, depot):
+
+    """Choose one pricing node per physical station without reusing DEPOT.
+
+    The source/sink depot node and a charging node must have distinct graph
+    identities. For the depot's physical station, prefer another configured
+    copy (for example PARX_1 rather than the source node PARX_0).
+    """
+
+    grouped = {}
+    for station in stations:
+        grouped.setdefault(base_station_name(station), []).append(station)
+
+    selected = []
+    depot_base = base_station_name(depot)
+    for base, copies in grouped.items():
+        candidates = [station for station in copies if station != depot]
+        if base == depot_base and not candidates:
+            raise ValueError(
+                f"Depot charging station {base!r} needs a node distinct from {depot!r}"
+            )
+        selected.append(candidates[0] if base == depot_base else copies[0])
+
+    if depot in selected:
+        raise AssertionError("Pricing station selection reused the source depot node")
+    return selected
+
+
+def route_column_key(route, ndigits=6):
+
+    """Identify a column by both its node path and charging realization."""
+
+    charging = route.get("charging_stops", {}) or {}
+
+    def _rounded(values):
+        return tuple(round(float(value), ndigits) for value in (values or []))
+
+    return (
+        tuple(route.get("route", [])),
+        tuple(str(value) for value in charging.get("stations", []) or []),
+        _rounded(charging.get("cst", [])),
+        _rounded(charging.get("cet", [])),
+        _rounded(charging.get("kwh", [])),
+    )
+
+
 
 
 # ---------- COST CALCULATOR (UPDATED FOR DICT) ----------
@@ -174,8 +294,9 @@ def calculate_truck_route_cost(
         # Assuming hourly_prices has keys 0..23 or similar
 
 
-        # Use station-specific prices if available, fall back to base hourly_prices
-        prices_to_use = (station_hourly_prices or {}).get(station, hourly_prices)
+        # Use station-specific prices if available, fall back to base hourly_prices.
+        # Station nodes are copy names ("2190L_0"); price tables use base names.
+        prices_to_use = (station_hourly_prices or {}).get(base_station_name(station), hourly_prices)
         price = prices_to_use.get(hour_idx, 0.0)
         if price == 0.0 and prices_to_use:
             price = prices_to_use.get(hour_idx % 24, prices_to_use.get(0, 0.0))
@@ -308,31 +429,53 @@ def calculate_truck_route_cost_accurate(
 
     # Safety check
 
-    if not (len(stations) == len(csts) == len(cets) == len(kwhs)):
+    if not (len(stations) == len(csts) == len(cets)):
 
-        return total
+        raise ValueError(
+
+            "charging_stops stations/cst/cet must have matching lengths"
+
+        )
+
+    # Older route dicts may omit per-stop kWh; fall back to duration * rate.
+
+    if not kwhs and stations:
+
+        kwhs = [max(0.0, (cets[i] - csts[i])) * charge_rate_kw / 60.0
+
+                for i in range(len(stations))]
+
+    elif len(kwhs) != len(stations):
+
+        raise ValueError(
+
+            "charging_stops.kwh must be empty or have one entry per station"
+
+        )
 
 
 
     for i, station in enumerate(stations):
 
-        start_min = csts[i]
+        # Station-specific curve when available (keyed by base station name)
 
-        energy_kwh = kwhs[i]
+        prices_to_use = (station_hourly_prices or {}).get(
 
+            base_station_name(station), hourly_prices
 
+        )
 
         # Compute charging cost for this segment (split across hours)
 
         cost = _compute_charging_cost_accurate(
 
-            start_min=start_min,
+            start_min=csts[i],
 
-            energy_kwh=energy_kwh,
+            energy_kwh=kwhs[i],
 
             charge_rate_kw=charge_rate_kw,
 
-            hourly_prices=hourly_prices,
+            hourly_prices=prices_to_use,
 
             charge_cost_premium=charge_cost_premium,
 
@@ -340,7 +483,7 @@ def calculate_truck_route_cost_accurate(
 
 
 
-        total += cost
+        total += cost + charge_start_cost
 
 
 
@@ -875,4 +1018,3 @@ def load_price_curve(csv_path, time_blocks, stations, timeblocks_per_hour=1, cla
     avg_cost = float(np.mean([price_map_block[t] for t in time_blocks]))
 
     return charging_cost_data, avg_cost
-

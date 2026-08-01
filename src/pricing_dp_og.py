@@ -120,7 +120,7 @@ from typing import Any
 
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False)
 
 class Label:
 
@@ -169,6 +169,10 @@ class Label:
     charging_stops: tuple = field(default_factory=tuple)
 
     deadhead_kwh: float = 0.0
+
+    # False once dominated/evicted from its node pool; stale heap entries
+    # check this flag in O(1) instead of scanning the pool.
+    alive: bool = True
 
 
 
@@ -769,18 +773,50 @@ def _generate_charge_options(
 # ──────────────────────────────────────────────────────────────────────
 
 
-def _is_dominated(label: Label, label_pool: list[Label]) -> bool:
+def _dominates(
+    other: Label,
+    label: Label,
+    tol: float = 1e-4,
+    *,
+    station_pool: bool = False,
+) -> bool:
+    # At a station, an earlier departure is not always more useful: the
+    # restricted graph also imposes a maximum station-to-trip wait.  Without
+    # an explicit waiting action, two different station completion times can
+    # therefore have different feasible successor sets and are incomparable.
+    time_dominates = (
+        abs(other.time - label.time) <= tol
+        if station_pool
+        else other.time <= label.time + tol
+    )
+    return (
+        other.rc <= label.rc + tol
+        and time_dominates
+        and other.soc >= label.soc - tol
+        and len(other.charging_stops) <= len(label.charging_stops)
+        and len(other.trips_visited) >= len(label.trips_visited)
+    )
+
+
+def _is_dominated(
+    label: Label,
+    label_pool: list[Label],
+    *,
+    station_pool: bool = False,
+) -> bool:
     """
     Check whether `label` is dominated.
     Because our network moves forward in time, cycles are impossible.
     We do NOT need to check trips_visited for elementarity!
+
+    Recharge count and the minimum completed-trip requirement are resources.
+    A label with more charging stops has fewer remaining extensions, while a
+    label with fewer visited trips may be unable to satisfy
+    MIN_TRIPS_PER_ROUTE at the depot. Both must participate in dominance.
     """
 
     for other in label_pool:
-        # Added tiny 1e-4 tolerance to prevent floating point misses
-        if (other.rc   <= label.rc + 1e-4 and
-            other.time <= label.time + 1e-4
-            and  other.soc  >= label.soc - 1e-4):
+        if _dominates(other, label, station_pool=station_pool):
             return True
     return False
 
@@ -788,7 +824,11 @@ def _is_dominated(label: Label, label_pool: list[Label]) -> bool:
 
 
 
-def _prune_dominated(label_pool: list[Label]) -> list[Label]:
+def _prune_dominated(
+    label_pool: list[Label],
+    *,
+    station_pool: bool = False,
+) -> list[Label]:
 
     """
 
@@ -808,23 +848,14 @@ def _prune_dominated(label_pool: list[Label]) -> list[Label]:
 
     for lab in label_pool:
 
-        if not _is_dominated(lab, kept):
+        if not _is_dominated(lab, kept, station_pool=station_pool):
 
             # Also remove any labels in `kept` that the new label dominates
 
-            kept = [k for k in kept
-
-                    if not (lab.rc   <= k.rc   and
-
-                            lab.time <= k.time and
-
-                            lab.soc  >= k.soc  and
-
-                            lab.trips_visited <= k.trips_visited and
-
-                            (lab.rc < k.rc or lab.time < k.time or
-
-                             lab.soc > k.soc or lab.trips_visited < k.trips_visited))]
+            kept = [
+                k for k in kept
+                if not _dominates(lab, k, station_pool=station_pool)
+            ]
 
             kept.append(lab)
 
@@ -920,7 +951,7 @@ def solve_pricing_dp(
 
     soc_charge_levels: list[float] | None = None,
 
-    MIN_TRIPS_PER_ROUTE: int = 16,
+    MIN_TRIPS_PER_ROUTE: int = 1,
 
     MAX_DAILY_RECHARGES: int = 8,
 
@@ -1055,6 +1086,25 @@ def solve_pricing_dp(
     if soc_charge_levels is None:
 
         soc_charge_levels = [0.25 * G, 0.50 * G, 0.75 * G, G]
+
+
+
+    # Resolve the price curve per station ONCE. Station nodes are copy names
+    # ("2190L_0") while the price table is keyed by base names ("2190L");
+    # without stripping the copy suffix every lookup silently falls back to
+    # the depot's hourly_prices curve.
+    def _base_station(name) -> str:
+        s = str(name)
+        if "_" in s:
+            left, right = s.rsplit("_", 1)
+            if right.isdigit():
+                return left
+        return s
+
+    station_prices = {
+        h: (station_hourly_prices or {}).get(_base_station(h), hourly_prices)
+        for h in (S_use or [])
+    }
 
 
 
@@ -1207,19 +1257,10 @@ def solve_pricing_dp(
 
 
 
-        # Skip if this label has been dominated since it was enqueued
-
-        if cur != DEPOT or label is source_label:
-
-            # Check it's still in the pool (quick identity check)
-
-            if cur in node_labels and label not in node_labels.get(cur, []):
-
-                # It was pruned; skip
-
-                if cur != DEPOT:
-
-                    continue
+        # Skip if this label was dominated/evicted after being enqueued.
+        # O(1) flag check instead of a linear (deep-equality) pool scan.
+        if not label.alive:
+            continue
 
 
 
@@ -1379,24 +1420,28 @@ def solve_pricing_dp(
                 #    _uid += 1
                 pool = node_labels[trip_idx]
                 if not _is_dominated(new_label, pool):
-                    # Prune labels that are strictly worse than our new label
-                    node_labels[trip_idx] = [
-                        lb for lb in pool
-                        if not (new_label.rc <= lb.rc and new_label.time <= lb.time and new_label.soc >= lb.soc)
-                    ]
-                    node_labels[trip_idx].append(new_label)
+                    # Prune labels that are strictly worse than our new label,
+                    # marking them dead so their stale heap entries skip in O(1)
+                    kept = []
+                    for lb in pool:
+                        if _dominates(new_label, lb):
+                            lb.alive = False
+                        else:
+                            kept.append(lb)
+                    kept.append(new_label)
 
-                    if len(node_labels[trip_idx]) > MAX_LABELS_PER_NODE:
-                        node_labels[trip_idx].sort(key=lambda lb: lb.rc)
-                        node_labels[trip_idx] = node_labels[trip_idx][:MAX_LABELS_PER_NODE]
+                    # Cap with hysteresis (instead of sorting the whole pool on
+                    # every insertion once at the cap)
+                    if len(kept) > MAX_LABELS_PER_NODE + max(50, MAX_LABELS_PER_NODE // 10):
+                        kept.sort(key=lambda lb: lb.rc)
+                        for lb in kept[MAX_LABELS_PER_NODE:]:
+                            lb.alive = False
+                        kept = kept[:MAX_LABELS_PER_NODE]
+                    node_labels[trip_idx] = kept
 
-                    # NEW: Push sorted by rc first!
-                    #heapq.heappush(pq, (new_label.rc, new_label.time, _uid, new_label))
-
-                    # revert back to time
-                    heapq.heappush(pq, (new_label.time, new_label.rc, _uid, new_label))
-
-                    _uid += 1
+                    if new_label.alive:
+                        heapq.heappush(pq, (new_label.time, new_label.rc, _uid, new_label))
+                        _uid += 1
 
 
 
@@ -1458,7 +1503,7 @@ def solve_pricing_dp(
                     departure_deadline_min=departure_deadline,
                     G=G,
                     charge_rate_kw=charge_rate_kw,
-                    hourly_prices=(station_hourly_prices or {}).get(station, hourly_prices),  # NEW
+                    hourly_prices=station_prices.get(station, hourly_prices),
                     charge_cost_premium=charge_cost_premium,
                     soc_levels=soc_charge_levels,
                     charge_start_cost=charge_start_cost,   # NEW
@@ -1582,21 +1627,27 @@ def solve_pricing_dp(
                     #     _uid += 1
 
                     pool = node_labels[station]
-                    if not _is_dominated(new_label, pool):
-                        # Prune labels that are strictly worse than our new label
-                        node_labels[station] = [
-                            lb for lb in pool
-                            if not (new_label.rc <= lb.rc and new_label.time <= lb.time and new_label.soc >= lb.soc)
-                        ]
-                        node_labels[station].append(new_label)
+                    if not _is_dominated(new_label, pool, station_pool=True):
+                        # Prune labels that are strictly worse than our new label,
+                        # marking them dead so their stale heap entries skip in O(1)
+                        kept = []
+                        for lb in pool:
+                            if _dominates(new_label, lb, station_pool=True):
+                                lb.alive = False
+                            else:
+                                kept.append(lb)
+                        kept.append(new_label)
 
-                        if len(node_labels[station]) > MAX_LABELS_PER_NODE:
-                            node_labels[station].sort(key=lambda lb: lb.rc)
-                            node_labels[station] = node_labels[station][:MAX_LABELS_PER_NODE]
+                        if len(kept) > MAX_LABELS_PER_NODE + max(50, MAX_LABELS_PER_NODE // 10):
+                            kept.sort(key=lambda lb: lb.rc)
+                            for lb in kept[MAX_LABELS_PER_NODE:]:
+                                lb.alive = False
+                            kept = kept[:MAX_LABELS_PER_NODE]
+                        node_labels[station] = kept
 
-                        # NEW: Push sorted by TIME first!
-                        heapq.heappush(pq, (new_label.time, new_label.rc, _uid, new_label))
-                        _uid += 1
+                        if new_label.alive:
+                            heapq.heappush(pq, (new_label.time, new_label.rc, _uid, new_label))
+                            _uid += 1
 
 
 
@@ -1853,7 +1904,7 @@ def make_dp_pricer(
 
     soc_charge_levels=None,
 
-    MIN_TRIPS_PER_ROUTE=0,
+    MIN_TRIPS_PER_ROUTE=1,
 
     MAX_DAILY_RECHARGES=4,
 
@@ -1931,7 +1982,7 @@ def make_dp_pricer(
 
     def _solve(alpha, beta=None, gamma=None, mode=1,
 
-               num_fast_cols=None, time_limit=None, **kwargs):
+               num_fast_cols=None, time_limit=None, max_labels=None, **kwargs):
 
         """
 
@@ -1939,9 +1990,13 @@ def make_dp_pricer(
 
 
 
-        Parameters `mode`, `num_fast_cols`, `time_limit` are accepted
+        `mode` and `num_fast_cols` are accepted for API compatibility but
 
-        for API compatibility but ignored (DP doesn't need them).
+        ignored. `time_limit` (seconds) and `max_labels` (labels per node)
+
+        override the factory defaults per call, so one pricer (and one DAG)
+
+        can serve every escalation tier of every CG iteration.
 
         Returns a list of route dicts (same as solve_pricing_fast output,
 
@@ -1994,7 +2049,7 @@ def make_dp_pricer(
 
             K_BEST=K_BEST,
 
-            MAX_LABELS_PER_NODE=MAX_LABELS_PER_NODE,
+            MAX_LABELS_PER_NODE=int(max_labels) if max_labels else MAX_LABELS_PER_NODE,
 
             soc_charge_levels=soc_charge_levels,
 
@@ -2105,4 +2160,3 @@ def make_dp_pricer(
 #          a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, ...)
 
 #      ...
-

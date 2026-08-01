@@ -81,7 +81,9 @@ MASTER_IMPROVE_THRESHOLD = 0.1  # was 5e-4 (count small progress as improvement)
 # ---------- NEW: Solver resource knobs ----------
 THREADS = 2
 NODEFILE_START = 0.5
-NODEFILE_DIR = "."
+# Empty means: prefer SLURM_TMPDIR/TMPDIR and fall back to /tmp. Writing
+# Gurobi nodefiles into the shared repository filesystem is slow on Unicorn.
+NODEFILE_DIR = None
 
 # ---------- NEW: Timelimits/gaps ----------
 # Master RMP (LP) per-iteration solve

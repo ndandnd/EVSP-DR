@@ -1,10 +1,12 @@
+import os
+
 from gurobipy import Model, Column, LinExpr, GRB
-from utils_v2 import calculate_truck_route_cost
+from utils_v2 import calculate_truck_route_cost_accurate
 from config import (
     THREADS, NODEFILE_START, NODEFILE_DIR,
     MASTER_TIMELIMIT, MASTER_MIPGAP,
     BIG_M_PENALTY,
-    CHARGE_START_COST,
+    CHARGE_START_COST, CHARGE_RATE_KW,
 )
 
 def _apply_master_params(rmp: Model, *, mip_mode=False):
@@ -12,8 +14,12 @@ def _apply_master_params(rmp: Model, *, mip_mode=False):
     rmp.Params.OutputFlag = 1
     rmp.Params.Threads = THREADS
     rmp.Params.NodefileStart = NODEFILE_START
-    if NODEFILE_DIR:
-        rmp.Params.NodefileDir = NODEFILE_DIR
+    rmp.Params.NodefileDir = (
+        NODEFILE_DIR
+        or os.environ.get("SLURM_TMPDIR")
+        or os.environ.get("TMPDIR")
+        or "/tmp"
+    )
     # LP (CG) vs MIP (final)
     if not mip_mode:
         rmp.Params.Method = 1         # dual simplex for LPs
@@ -68,21 +74,27 @@ def build_master(
         if route.get("dummy", False):
             cost = float(route.get("dummy_cost", 1e7))
         else:
-            cost = calculate_truck_route_cost(
+            # Hour-split charging cost — must match the DP pricer's rc math
+            cost = calculate_truck_route_cost_accurate(
                 route, bus_cost, charging_cost_data,
+                charge_rate_kw=CHARGE_RATE_KW,
                 station_hourly_prices=station_hourly_prices,
                 charge_start_cost=CHARGE_START_COST,
             )
-            #cost = calculate_truck_route_cost(route, bus_cost, charging_cost_data)
 
         col = Column()
         for i in route.get("route", []):
             if i in T:
                 col.addTerms(1.0, trip_cov[i])
 
+        # LP columns must be unbounded above: with ub=1, a column at its bound
+        # can price negative (rc = -mu of the bound) under dual degeneracy, so
+        # the pricer keeps regenerating existing routes and CG stalls on
+        # "no new columns". Over-selection never helps set covering, so the
+        # bound is redundant in the LP; keep it only for the integer model.
         a[idx] = rmp.addVar(
             obj=cost,
-            lb=0, ub=1,
+            lb=0, ub=1 if binary else GRB.INFINITY,
             vtype=vtype,
             column=col,
             name=f"a[{idx}]"

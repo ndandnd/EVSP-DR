@@ -15,23 +15,22 @@ import json
 import sys
 import argparse
 import collections
+import hashlib
+import subprocess
 
 import pandas as pd
-import numpy as np
 import gurobipy as gp
-from gurobipy import Model, Column, GRB, quicksum, LinExpr
+from gurobipy import Column, GRB
 # from collections import Counter, defaultdict
 
 from config import (
-    n_fast_cols, n_exact_cols, tolerance,
     bar_t, TIMEBLOCKS_PER_HOUR,
-    DEPOT_NAME, CHARGE_PER_BLOCK, CHARGE_RATE_KW,
+    DEPOT_NAME, CHARGE_RATE_KW,
     charge_cost_premium, BUS_COST_KX,
-    CHARGING_STATIONS, STATION_COPIES, TRAVEL_COST_FACTOR,
+    CHARGING_STATIONS, STATION_COPIES,
     RC_EPSILON,
-    MAX_CG_ITERS, STAGNATION_ITERS, MASTER_IMPROVE_THRESHOLD,
     THREADS, NODEFILE_START, NODEFILE_DIR,
-    MASTER_TIMELIMIT, PRICING_TIMELIMIT, PRICING_GAP,
+    MASTER_TIMELIMIT,
     CHARGE_START_COST
 )
 
@@ -39,8 +38,10 @@ from config import (
 from pricing_dp_og import make_dp_pricer
 
 from utils_v2 import (
-    load_price_curve, extract_duals, extract_route_from_solution,
-    calculate_truck_route_cost, calc_cost_distance_only
+    extract_duals,
+    calculate_truck_route_cost_accurate,
+    load_station_hourly_prices, route_column_key,
+    select_unique_station_copies,
 )
 
 
@@ -49,13 +50,8 @@ from master import init_master, solve_master, build_master
 import re
 
 stopwatch_start = time.time()
-# ------------------------------ Output dirs ------------------------------
-RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+RUN_ID = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
 ROOT = Path(__file__).resolve().parent
-OUTDIR = ROOT / "results"
-OUTDIR.mkdir(parents=True, exist_ok=True)
-CKPT = OUTDIR / f"ckpt_{RUN_ID}"
-CKPT.mkdir(parents=True, exist_ok=True)
 
 
 # ==========================================
@@ -84,8 +80,61 @@ parser.add_argument(
 parser.add_argument(
     "--milestones_hours",
     type=str,
-    default="3,10,24",
-    help="Comma-separated active-compute-hour milestones, e.g. '12' or '3,10,24'.",
+    default="3,6",
+    help="Comma-separated active-compute-hour snapshots, e.g. '3,6'. Empty disables milestones.",
+)
+parser.add_argument(
+    "--active_time_limit_hours",
+    type=float,
+    default=6.0,
+    help="Column-generation active-compute limit in hours; 0 disables the Python-side limit.",
+)
+parser.add_argument(
+    "--pricing_tiers",
+    type=str,
+    default=None,
+    help="Comma-separated MAX_LABELS:SECONDS tiers. Default uses --max_labels at 500s and 3000s.",
+)
+parser.add_argument(
+    "--pricing_wall_per_iter",
+    type=int,
+    default=6000,
+    help="Maximum total pricing wall time per CG iteration in seconds.",
+)
+parser.add_argument(
+    "--master_time_limit",
+    type=float,
+    default=MASTER_TIMELIMIT,
+    help="Per-iteration master-LP time limit in seconds.",
+)
+parser.add_argument(
+    "--target_master_obj",
+    type=float,
+    default=None,
+    help="Optional experimental LP objective stop. Disabled by default; final fleet count comes from the MIP.",
+)
+parser.add_argument(
+    "--run_tag",
+    type=str,
+    default=None,
+    help="Experiment identifier included in the result directory and checkpoint names.",
+)
+parser.add_argument(
+    "--min_trips_per_route",
+    type=int,
+    default=1,
+    help="Minimum trips in a DP column. Default 1 avoids excluding feasible routes.",
+)
+parser.add_argument(
+    "--allow_unsafe_resume",
+    action="store_true",
+    help="Allow a checkpoint from another commit/config (unsafe; provenance is retained).",
+)
+parser.add_argument(
+    "--results_root",
+    type=str,
+    default=None,
+    help="Optional results directory. Relative paths are resolved from the repository root.",
 )
 parser.add_argument(
     "--final_mip_timelimit",
@@ -114,57 +163,68 @@ args = parser.parse_args()
 
 if args.cheat and args.greedy:
     raise SystemExit("ERROR: --cheat and --greedy are mutually exclusive.")
+if args.kbest <= 0:
+    raise ValueError("--kbest must be positive")
+if args.max_labels <= 0:
+    raise ValueError("--max_labels must be positive")
+if args.stagnation_window <= 0:
+    raise ValueError("--stagnation_window must be positive")
+if args.pricing_wall_per_iter <= 30:
+    raise ValueError("--pricing_wall_per_iter must be greater than 30 seconds")
+if args.master_time_limit <= 0:
+    raise ValueError("--master_time_limit must be positive")
+if args.min_trips_per_route <= 0:
+    raise ValueError("--min_trips_per_route must be positive")
+if args.final_mip_timelimit <= 0:
+    raise ValueError("--final_mip_timelimit must be positive")
 
 csv_name = args.csv
 G_PARAM = args.G
 K_BEST = args.kbest
 MAX_LABELS_PER_NODE = args.max_labels
-# After argparse block, add:
-STAGNATION_ITERS = 9999   # never stagnate on cluster
-MAX_CG_ITERS = 99999      # run until time limit
-PRICING_WALL_PER_ITER = 6000
+MAX_CG_ITERS = 99999
+PRICING_WALL_PER_ITER = int(args.pricing_wall_per_iter)
+MASTER_TIME_LIMIT = float(args.master_time_limit)
 
-# Deep-pricing escalation schedule: (MAX_LABELS_PER_NODE, TIME_LIMIT_SECONDS)
-# Keep this as the old search policy: no early K_BEST stop inside the DP.
-ESCALATION_SCHEDULE = [
-    (1e5,  500),
-    (1e5, 3000),
-    #(2e5,  900),
-    #(5e5, 1500),
-]
+
+def _parse_pricing_tiers(spec):
+    if not spec:
+        return [(int(MAX_LABELS_PER_NODE), 500), (int(MAX_LABELS_PER_NODE), 3000)]
+    tiers = []
+    for raw in spec.split(","):
+        labels, seconds = raw.strip().split(":", 1)
+        labels, seconds = int(labels), int(seconds)
+        if labels <= 0 or seconds <= 0:
+            raise ValueError("Pricing tier labels and seconds must be positive")
+        tiers.append((labels, seconds))
+    if not tiers:
+        raise ValueError("--pricing_tiers did not contain any tiers")
+    return tiers
+
+
+ESCALATION_SCHEDULE = _parse_pricing_tiers(args.pricing_tiers)
 
 TARGET_MILESTONES_HOURS = sorted(
     float(x.strip()) for x in args.milestones_hours.split(",") if x.strip()
 )
-if not TARGET_MILESTONES_HOURS:
-    raise ValueError("--milestones_hours must contain at least one positive hour value")
-FINAL_MILESTONE_HOURS = max(TARGET_MILESTONES_HOURS)
-
-
-
-# # ==========================================
-# # 1. COMMAND LINE ARGUMENTS
-# # ==========================================
-# parser = argparse.ArgumentParser(description="EVSP Column Generation")
-# parser.add_argument("--csv", type=str, required=True, help="Input CSV (e.g., Practice_10bus.csv)")
-# parser.add_argument("--G", type=int, required=True, help="Battery capacity (300 for EVSP, 9999 for VSP/infcharge)")
-# parser.add_argument("--kbest", type=int, default=150, help="Number of columns to add per iteration")
-# parser.add_argument("--max_labels", type=int, default=200000, help="DP max labels per node")
-
-# args = parser.parse_args()
-
-csv_name = args.csv
-G_PARAM = args.G
-K_BEST = args.kbest
-MAX_LABELS_PER_NODE = args.max_labels
+if any(value <= 0 for value in TARGET_MILESTONES_HOURS):
+    raise ValueError("--milestones_hours entries must be positive")
+if args.active_time_limit_hours < 0:
+    raise ValueError("--active_time_limit_hours must be nonnegative")
+ACTIVE_TIME_LIMIT_HOURS = float(args.active_time_limit_hours)
 
 # ==========================================
 # 2. FILE PATHS
 # ==========================================
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
-OUTDIR = ROOT_DIR / "src" / "results"
-OUTDIR.mkdir(exist_ok=True)
+if args.results_root:
+    OUTDIR = Path(args.results_root)
+    if not OUTDIR.is_absolute():
+        OUTDIR = ROOT_DIR / OUTDIR
+else:
+    OUTDIR = ROOT_DIR / "src" / "results"
+OUTDIR.mkdir(parents=True, exist_ok=True)
 
 def _resolve_data_path(path_like: str) -> Path:
     path = Path(path_like)
@@ -176,6 +236,25 @@ def _safe_tag(raw: str) -> str:
     cleaned = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(raw)).strip("_")
     return cleaned or "untagged"
 
+
+def _hours_tag(value: float) -> str:
+    return f"{value:g}".replace(".", "p") + "h"
+
+
+def _git_state():
+    def _run(*git_args):
+        result = subprocess.run(
+            ["git", *git_args], cwd=ROOT_DIR, text=True,
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=False,
+        )
+        return result.stdout.strip() if result.returncode == 0 else None
+
+    return {
+        "commit": _run("rev-parse", "HEAD"),
+        "branch": _run("branch", "--show-current"),
+        "dirty": bool(_run("status", "--porcelain")),
+    }
+
 # Dynamically point to the correct CSVs in the data folder
 routes_csv = DATA_DIR / csv_name
 ref_dhd_csv = DATA_DIR / "par_ref_dhd.csv"
@@ -183,17 +262,22 @@ ref_dict_csv = DATA_DIR / "Ref_dict.csv"
 master_csv = DATA_DIR / "Par_VehicleDetails_Updated.csv"
 prices_csv = _resolve_data_path(args.prices_csv)
 price_tag = _safe_tag(args.price_tag or prices_csv.stem)
+run_tag = _safe_tag(args.run_tag) if args.run_tag else None
+git_state = _git_state()
+runtime_versions = {
+    "python": sys.version.split()[0],
+    "pandas": pd.__version__,
+    "gurobi": ".".join(str(part) for part in gp.gurobi.version()),
+}
 
 print(f"[INIT] Using trip data: {routes_csv.name}")
 print(f"[INIT] Battery Capacity parameter: {G_PARAM}")
+print(f"[INIT] Git state: {git_state}")
+print(f"[INIT] Runtime versions: {runtime_versions}")
 
 # ==========================================
 # 3. DYNAMIC TARGET & VSP MODE OVERRIDE
 # ==========================================
-bus_match = re.search(r'(\d+)[Bb](?:us)?', csv_name)
-TARGET_NUM_BUSES = int(bus_match.group(1)) if bus_match else 10
-TARGET_OBJ = (TARGET_NUM_BUSES - 5) * BUS_COST_KX
-
 if G_PARAM >= 9000:
     SAFE_G = 300
 else:
@@ -302,7 +386,7 @@ def generate_specific_buses_instance(target_bus_ids, output_filename=None):
 # ==========================================
 
 MAX_DAILY_RECHARGES = 15  # Buffer above observed max of 13
-MIN_TRIPS_PER_ROUTE = 8  # Based on observed distribution (allowing some flexibility below the historical min of 17)
+MIN_TRIPS_PER_ROUTE = args.min_trips_per_route
 
 
 #%%
@@ -323,13 +407,18 @@ ref_dict_csv  = DATA_DIR / "Ref_dict.csv"
 # Create a dedicated directory for EVERYTHING from this run
 DATA_NAME = routes_csv.stem  # e.g., "Inst_10B_G01_13301_13310"
 if args.cheat:
+    run_mode = "CHEAT"
     mode_suffix = "_CHEAT"
 elif args.greedy:
+    run_mode = "GREEDY"
     mode_suffix = "_GREEDY"
 else:
+    run_mode = "NO_CHEAT"
     mode_suffix = "_NO_CHEAT"
 mode_suffix += f"_stag{args.stagnation_window}_imp{args.improvement_bound}"
 bus_label = f"{DATA_NAME}{mode_suffix}_{price_tag}"
+if run_tag:
+    bus_label += f"_{run_tag}"
 
 RUN_DIR = OUTDIR / f"{bus_label}_g{G_PARAM}_{RUN_ID}"
 RUN_DIR.mkdir(parents=True, exist_ok=True)
@@ -338,6 +427,9 @@ print(f"[INFO] All outputs and logs will be saved to: {RUN_DIR}")
 print(f"[INFO] Price CSV: {prices_csv}")
 print(f"[INFO] Price tag: {price_tag}")
 print(f"[INFO] Milestones: {TARGET_MILESTONES_HOURS}")
+print(f"[INFO] Active-time limit: {ACTIVE_TIME_LIMIT_HOURS:g}h"
+      if ACTIVE_TIME_LIMIT_HOURS else "[INFO] Active-time limit: disabled")
+print(f"[INFO] Pricing tiers: {ESCALATION_SCHEDULE}")
 
 if not routes_csv.exists():
     raise FileNotFoundError(f"Missing {routes_csv}")
@@ -347,6 +439,9 @@ if not ref_dict_csv.exists():
     raise FileNotFoundError(f"Missing {ref_dict_csv}")
 if not prices_csv.exists():
     raise FileNotFoundError(f"Missing {prices_csv} (needed for charging prices)")
+
+instance_sha256 = hashlib.sha256(routes_csv.read_bytes()).hexdigest()
+price_sha256 = hashlib.sha256(prices_csv.read_bytes()).hexdigest()
 
 df_trips = pd.read_csv(routes_csv)
 
@@ -669,12 +764,8 @@ if unseedable:
 STATION_BASES = sorted(set(strip_copy_suffix(s) for s in S))
 
 
-st_df = pd.read_csv(prices_csv)
-station_hourly_prices = {
-    station: grp.set_index('time_block')['cost'].to_dict()
-    for station, grp in st_df.groupby('station')
-}
-hourly_prices = station_hourly_prices['PARX']
+station_hourly_prices = load_station_hourly_prices(prices_csv, STATION_BASES)
+hourly_prices = station_hourly_prices[DEPOT_BASE]
 MAX_HOUR = int(max(hourly_prices.keys()))
 bus_cost = BUS_COST_KX
 print(f"[INFO] Loaded spatiotemporal prices for: {list(station_hourly_prices.keys())}")
@@ -695,7 +786,13 @@ def match_station_name(raw_name):
     return raw_str
 
 
-def get_initial_routes_from_csv(vehicle_details_path, target_bus_ids):
+def get_initial_routes_from_csv(
+    vehicle_details_path,
+    target_bus_ids,
+    *,
+    depot,
+    station_node_by_base,
+):
     df = pd.read_csv(vehicle_details_path)
     df["VehicleTask_Str"] = df["VehicleTask"].astype(str)
     target_ids_str = [str(x) for x in target_bus_ids]
@@ -711,10 +808,9 @@ def get_initial_routes_from_csv(vehicle_details_path, target_bus_ids):
     for bus_id in target_ids_str:
         bus_df = df[df["VehicleTask_Str"] == bus_id].copy()
 
-        route_nodes = ["PARX_0"]
+        route_nodes = [depot]
         stations, csts, cets, kwhs = [], [], [], []
         deadhead_kwh = 0.0
-        depot_recharge_count = 0
 
         for _, row in bus_df.iterrows():
             identifier = row["Identifier"]
@@ -731,12 +827,11 @@ def get_initial_routes_from_csv(vehicle_details_path, target_bus_ids):
 
             elif identifier == "Recharge":
                 matched_loc = match_station_name(row["From1"])
-
-                if matched_loc == "PARX":
-                    depot_recharge_count += 1
-                    station_node = f"PARX_{depot_recharge_count}"
-                else:
-                    station_node = matched_loc + "_0"
+                station_node = station_node_by_base.get(matched_loc)
+                if station_node is None:
+                    raise ValueError(
+                        f"Historical recharge station {matched_loc!r} is not in the pricing graph"
+                    )
 
                 if route_nodes[-1] != station_node:
                     route_nodes.append(station_node)
@@ -745,8 +840,8 @@ def get_initial_routes_from_csv(vehicle_details_path, target_bus_ids):
                     cets.append(parse_time_to_minutes(row["End1"]))
                     kwhs.append(float(row["Recharge kWh"]) if pd.notna(row["Recharge kWh"]) else 0.0)
 
-        if len(route_nodes) > 1 and route_nodes[-1] != "PARX_0":
-            route_nodes.append("PARX_0")
+        if len(route_nodes) > 1 and route_nodes[-1] != depot:
+            route_nodes.append(depot)
 
         trip_count = sum(1 for n in route_nodes if isinstance(n, int))
         if trip_count == 0:
@@ -778,7 +873,13 @@ for h in S:
     if (DEPOT, h) in d or (h, DEPOT) in d:
         S_use_set.add(h)
 S_use = sorted(list(S_use_set))
-print(f"[INFO] Global S_use size for DP/greedy: {len(S_use)}")
+print(f"[INFO] Expanded reachable station copies: {len(S_use)}")
+
+# Copies are interchangeable because this model has no charger-capacity
+# constraints. Keep one per physical station, but never reuse the source/sink
+# depot node as the PARX charging node.
+S_price = select_unique_station_copies(S_use, DEPOT)
+print(f"[INFO] Pricing/greedy station set: {len(S_use)} copies -> {len(S_price)} physical nodes")
 
 #%%
 # ------------------------------ Seed routes ------------------------------
@@ -788,6 +889,11 @@ start_iteration = 0
 prev_cum_master = 0.0
 prev_cum_pricing = 0.0
 resumed_stats_csv = None
+resume_count = 0
+seed_route_count = 0
+dp_columns_generated = 0
+resume_history = []
+seed_route_validation = "not_applicable"
 
 RESUME_CKPT = os.environ.get("RESUME_CKPT", "")
 data = {}
@@ -802,12 +908,125 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
         data = json.load(f)
 
     if isinstance(data, dict):
+        required_metadata = (
+            "csv_name",
+            "instance_sha256",
+            "price_sha256",
+            "mode",
+            "battery_kwh",
+            "trip_ids",
+            "git",
+            "run_arguments",
+        )
+        missing_metadata = [
+            key for key in required_metadata
+            if data.get(key) is None
+        ]
+        if missing_metadata and not args.allow_unsafe_resume:
+            raise ValueError(
+                "RESUME_CKPT lacks required provenance fields "
+                f"{missing_metadata}. Use a current checkpoint or explicitly pass "
+                "--allow_unsafe_resume for a legacy pool."
+            )
+
+        resume_expectations = {
+            "csv_name": csv_name,
+            "instance_sha256": instance_sha256,
+            "price_sha256": price_sha256,
+            "mode": run_mode,
+            "battery_kwh": G_PARAM,
+        }
+        mismatches = {
+            key: (data.get(key), expected)
+            for key, expected in resume_expectations.items()
+            if data.get(key) is not None and data.get(key) != expected
+        }
+        if mismatches:
+            raise ValueError(f"RESUME_CKPT does not match this run: {mismatches}")
+
+        checkpoint_git = data.get("git") or {}
+        checkpoint_commit = checkpoint_git.get("commit")
+        current_commit = git_state.get("commit")
+        if not checkpoint_commit and not args.allow_unsafe_resume:
+            raise ValueError(
+                "RESUME_CKPT does not record git.commit. Use a current checkpoint "
+                "or explicitly pass --allow_unsafe_resume for a legacy pool."
+            )
+        if (
+            checkpoint_commit
+            and current_commit
+            and checkpoint_commit != current_commit
+            and not args.allow_unsafe_resume
+        ):
+            raise ValueError(
+                "RESUME_CKPT was generated by Git commit "
+                f"{checkpoint_commit}, but this checkout is {current_commit}. "
+                "Use the original commit, start a fresh run tag, or explicitly pass "
+                "--allow_unsafe_resume."
+            )
+
+        saved_args = data.get("run_arguments") or {}
+        resume_critical_args = (
+            "kbest",
+            "max_labels",
+            "pricing_tiers",
+            "pricing_wall_per_iter",
+            "min_trips_per_route",
+            "stagnation_window",
+            "improvement_bound",
+            "cheat",
+            "greedy",
+        )
+        config_mismatches = {
+            key: (saved_args.get(key), vars(args).get(key))
+            for key in resume_critical_args
+            if key in saved_args and saved_args.get(key) != vars(args).get(key)
+        }
+        missing_config = [
+            key for key in resume_critical_args
+            if key not in saved_args
+        ]
+        if missing_config and not args.allow_unsafe_resume:
+            raise ValueError(
+                "RESUME_CKPT lacks critical run arguments "
+                f"{missing_config}. Use a current checkpoint or explicitly pass "
+                "--allow_unsafe_resume for a legacy pool."
+            )
+        if config_mismatches and not args.allow_unsafe_resume:
+            raise ValueError(
+                "RESUME_CKPT uses different algorithm arguments: "
+                f"{config_mismatches}. Use the original settings, a fresh run tag, "
+                "or explicitly pass --allow_unsafe_resume."
+            )
+
         R_truck = data["routes"]
         start_iteration = data.get("iteration", 0)
-        prev_cum_master = data.get("cum_master_time", 0.0)
-        prev_cum_pricing = data.get("cum_pricing_time", 0.0)
+        prev_cum_master = data.get(
+            "cum_master_time", data.get("cumulative_master_time_s", 0.0)
+        )
+        prev_cum_pricing = data.get(
+            "cum_pricing_time", data.get("cumulative_pricing_time_s", 0.0)
+        )
         resumed_stats_csv = data.get("stats_csv_path")
-        resume_count = data.get("resume_count", 0) # NEW
+        resume_count = data.get("resume_count", 0)
+        seed_route_count = data.get("seed_route_count")
+        dp_columns_generated = data.get("dp_columns_generated")
+        if seed_route_count is None or dp_columns_generated is None:
+            # Old checkpoints did not distinguish seeds from DP columns.
+            seed_route_count = len(R_truck)
+            dp_columns_generated = 0
+            print("[RESUME WARN] Old checkpoint lacks seed/DP column counts; "
+                  "treating the existing pool as seed provenance.")
+        resume_history = list(data.get("resume_history", []))
+        seed_route_validation = data.get("seed_route_validation", "unknown")
+        resume_history.append({
+            "source_checkpoint": str(RESUME_CKPT),
+            "source_git": checkpoint_git,
+            "resumed_with_git": git_state,
+            "cross_commit": bool(
+                checkpoint_commit and current_commit and checkpoint_commit != current_commit
+            ),
+        })
 
         last_master_obj = data.get("last_master_obj", None)
         recent_improvements = collections.deque(
@@ -821,9 +1040,17 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             print(f"[RESUME] Already saved milestones: {milestones_passed}")
 
         if "run_dir" in data:
-            RUN_DIR = Path(data["run_dir"])
+            recorded_run_dir = Path(data["run_dir"])
+            RUN_DIR = recorded_run_dir if recorded_run_dir.exists() else Path(RESUME_CKPT).parent
     else:
+        if not args.allow_unsafe_resume:
+            raise ValueError(
+                "Legacy list-only RESUME_CKPT has no instance/price/code provenance. "
+                "Explicitly pass --allow_unsafe_resume to use it."
+            )
         R_truck = data # Compatibility for old list-only format
+        seed_route_count = len(R_truck)
+        seed_route_validation = "unknown_legacy_checkpoint"
 
     print(f"[RESUME] Loaded {len(R_truck)} routes. Resuming from Iteration {start_iteration + 1}")
     is_resuming = True
@@ -836,17 +1063,40 @@ if not is_resuming:
 
     if args.cheat:
         _raw = pd.read_csv(routes_csv)
-        if "VehicleTask" not in _raw.columns:
-            raise ValueError(f"--cheat requires a 'VehicleTask' column in {csv_name}")
         if not ordered_to_local:
             raise ValueError(f"--cheat requires an 'Ordered_Trip_ID' column in {csv_name}")
 
-        cheat_target_buses = _raw["VehicleTask"].dropna().astype(str).unique().tolist()
+        if "VehicleTask" in _raw.columns:
+            inferred_tasks = _raw["VehicleTask"]
+        else:
+            # The tracked Practice_10bus/15bus inputs intentionally contain a
+            # compact model schema. Recover their historical block labels from
+            # the tracked, ordered derived table without rewriting the input.
+            master_tasks = pd.read_csv(master_csv)
+            master_tasks = master_tasks[master_tasks["Identifier"] == "Regular"].copy()
+            master_tasks["Ordered_Trip_ID"] = pd.to_numeric(
+                master_tasks["Ordered_Trip_ID"], errors="raise"
+            ).astype(int)
+            if master_tasks["Ordered_Trip_ID"].duplicated().any():
+                raise ValueError("Par_VehicleDetails_Updated.csv has duplicate Ordered_Trip_ID values")
+            task_by_ordered = master_tasks.set_index("Ordered_Trip_ID")["VehicleTask"]
+            input_ordered = pd.to_numeric(_raw["Ordered_Trip_ID"], errors="raise").astype(int)
+            inferred_tasks = input_ordered.map(task_by_ordered)
+            if inferred_tasks.isna().any():
+                missing_ids = input_ordered[inferred_tasks.isna()].tolist()
+                raise ValueError(
+                    f"Cannot infer VehicleTask for Ordered_Trip_ID values: {missing_ids[:20]}"
+                )
+            print(f"[CHEAT] Inferred VehicleTask from {master_csv.name}; input CSV was compact.")
+
+        cheat_target_buses = inferred_tasks.dropna().astype(str).unique().tolist()
         print(f"[CHEAT] Inferred {len(cheat_target_buses)} buses from {csv_name}: {cheat_target_buses}")
 
         csv_routes, _ = get_initial_routes_from_csv(
             vehicle_details_path=DATA_DIR / "Par_VehicleDetails_Updated.csv",
             target_bus_ids=cheat_target_buses,
+            depot=DEPOT,
+            station_node_by_base={strip_copy_suffix(s): s for s in S_price},
         )
 
         for route in csv_routes:
@@ -875,13 +1125,14 @@ if not is_resuming:
                   f"({sum(1 for n in new_route_nodes if isinstance(n, int))} trips)")
 
         print(f"[CHEAT] Seeded R_truck with {len(R_truck)} warm-start routes.")
+        seed_route_validation = "historical_coverage_import_not_time_soc_validated"
     elif args.greedy:
         from greedy_init import build_greedy_routes
 
         print("[GREEDY] Constructing warm-start routes from trip/depot/station arcs...")
         greedy_routes = build_greedy_routes(
             T=T,
-            S_use=S_use,
+            S_use=S_price,
             DEPOT=DEPOT,
             tau=tau,
             tau_min=tau_min,
@@ -916,13 +1167,15 @@ if not is_resuming:
             f"[GREEDY] Seeded R_truck with {len(greedy_routes)} routes "
             f"covering {len(covered)}/{len(T)} unique trips."
         )
+        seed_route_validation = "constructed_under_current_time_soc_rules"
     else:
         print("[NO_CHEAT] R_truck initialized empty.")
+
+    seed_route_count = len(R_truck)
 
 # Statistics trackers for CURRENT run
 master_times = []
 pricing_times = []
-cg_stats = []
 
 # ------------------------------ Build & solve master once ------------------------------
 #%%
@@ -941,12 +1194,13 @@ rmp.Params.Threads = THREADS
 rmp.Params.NodefileStart = NODEFILE_START
 rmp.Params.NodefileDir = _detect_tmp()
 rmp.Params.Method = 1
-rmp.Params.TimeLimit = MASTER_TIMELIMIT
-rmp.optimize()
+rmp.Params.TimeLimit = MASTER_TIME_LIMIT
+# The first CG iteration performs and times the first solve.  Optimizing here
+# would solve the same unchanged RMP twice and evade the active-time budget.
 
 
 # ------------------------------ DIAGNOSTICS: list missing depot arcs ------------------------------
-diag_dir = OUTDIR / f"diag_{RUN_ID}"
+diag_dir = RUN_DIR / "diagnostics"
 diag_dir.mkdir(parents=True, exist_ok=True)
 missing_pullout = [i for i in T if arc_from_to(DEPOT, sl[i]) is None]
 missing_pulluin = [i for i in T if arc_from_to(el[i], DEPOT) is None]
@@ -968,12 +1222,14 @@ print(f"[WRITE] Diagnostics saved under {diag_dir}")
 # ------------------------------ CG loop ------------------------------
 
 iteration = start_iteration
-new_pricing_obj = -1.0
-# max_iter = MAX_CG_ITERS
 
-skip_cg_loop = FINAL_MILESTONE_HOURS in milestones_passed
+completed_active_hours = (prev_cum_master + prev_cum_pricing) / 3600.0
+skip_cg_loop = bool(
+    ACTIVE_TIME_LIMIT_HOURS
+    and completed_active_hours >= ACTIVE_TIME_LIMIT_HOURS
+)
 if skip_cg_loop:
-    print(f"[RESUME] Final milestone {FINAL_MILESTONE_HOURS:g}h already saved; "
+    print(f"[RESUME] Active-time limit {ACTIVE_TIME_LIMIT_HOURS:g}h already reached; "
           "skipping column generation and proceeding to final MIP.")
 
 if len(R_truck) == 0:
@@ -981,15 +1237,7 @@ if len(R_truck) == 0:
 
 
 def _route_key(route):
-    return tuple(route["route"])
-
-best_master = float("inf")
-
-PRICING_TLIM_INIT = 15
-current_pricing_timelimit = PRICING_TLIM_INIT
-
-
-# bus_match = re.search(r'(\d+)bus', csv_name.lower())
+    return route_column_key(route)
 
 # Determine CSV path
 if is_resuming and resumed_stats_csv and Path(resumed_stats_csv).exists():
@@ -1005,45 +1253,107 @@ else:
     stats_csv_path = RUN_DIR / f"pricing_{bus_label}_{K_BEST}cols.csv"
 
 
-granularity = 10
-# dp_price = make_dp_pricer(
-#     T=T, S_use=S_use, DEPOT=DEPOT,
-#     tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
-#     G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-#     bus_cost=bus_cost, charge_rate_kw=CHARGE_RATE_KW,
-#     hourly_prices=hourly_prices,
-#     charge_cost_premium= charge_cost_premium,
-#     travel_cost_factor=TRAVEL_COST_FACTOR,
-#     RC_EPSILON=RC_EPSILON, K_BEST=K_BEST,
-#     MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
-#     MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-#     ## try
-#     MAX_LABELS_PER_NODE=2000,
-#     soc_charge_levels=[G * i * (1/granularity) for i in range(1,1 + granularity)]
+def _write_iteration_checkpoint(iteration_number, reason):
+    iteration_state = {
+        "iteration": iteration_number,
+        "cum_master_time": sum(master_times) + prev_cum_master,
+        "cum_pricing_time": sum(pricing_times) + prev_cum_pricing,
+        "stats_csv_path": str(stats_csv_path),
+        "recent_improvements": list(recent_improvements),
+        "last_master_obj": last_master_obj,
+        "resume_count": (resume_count + 1) if is_resuming else 0,
+        "run_dir": str(RUN_DIR),
+        "routes": R_truck,
+        "seed_route_count": seed_route_count,
+        "dp_columns_generated": dp_columns_generated,
+        "seed_route_validation": seed_route_validation,
+        "csv_name": csv_name,
+        "trip_ids": T,
+        "instance_sha256": instance_sha256,
+        "price_sha256": price_sha256,
+        "mode": run_mode,
+        "battery_kwh": G_PARAM,
+        "git": git_state,
+        "runtime_versions": runtime_versions,
+        "resume_history": resume_history,
+        "run_arguments": vars(args),
+        "price_tag": price_tag,
+        "prices_csv": str(prices_csv),
+        "termination_reason": reason,
+        "milestones_passed": milestones_passed,
+    }
+    ckpt_path = RUN_DIR / f"ckpt_latest_{bus_label}_g{G_PARAM}_{K_BEST}cols.json"
+    tmp_path = ckpt_path.with_suffix(".tmp")
+    with open(tmp_path, "w") as handle:
+        json.dump(iteration_state, handle)
+    os.replace(tmp_path, ckpt_path)
+    return ckpt_path
 
-# )
+
+granularity = 10
+
+# Build the DP pricer ONCE: the DAG topology is fixed across CG iterations,
+# only the duals change. time_limit / max_labels are passed per call.
+dp_price = make_dp_pricer(
+    T=T, S_use=S_price, DEPOT=DEPOT,
+    tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
+    tau_min=tau_min, st_min=st_min, et_min=et_min,
+    G=G, TB_MIN=TB_MIN, bar_t=bar_t,
+    bus_cost=bus_cost,
+    charge_rate_kw=CHARGE_RATE_KW,
+    hourly_prices=hourly_prices,
+    charge_cost_premium=charge_cost_premium,
+    travel_cost_factor=0,
+    RC_EPSILON=RC_EPSILON,
+    K_BEST=K_BEST,
+    MAX_LABELS_PER_NODE=int(ESCALATION_SCHEDULE[0][0]),
+    soc_charge_levels=[G * i * (1 / granularity) for i in range(1, 1 + granularity)],
+    MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
+    MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
+    max_trip2trip=57,
+    max_trip2charge=61,
+    max_charge2trip=220,
+    station_hourly_prices=station_hourly_prices,
+    charge_start_cost=CHARGE_START_COST,
+)
 #%%
 # max_iter += 100
 #%%
-while not skip_cg_loop:
+while not skip_cg_loop and iteration < MAX_CG_ITERS:
     iteration += 1
+    termination_reason = "running"
     print(f"\n--- Iteration {iteration} ---")
 
     # 1) SOLVE MASTER
     t0 = time.time()
-    rmp.Params.TimeLimit = MASTER_TIMELIMIT
+    rmp.Params.TimeLimit = MASTER_TIME_LIMIT
     rmp.optimize()
 
     master_iter_time = time.time() - t0
     master_times.append(master_iter_time)
+
+    if rmp.Status != GRB.OPTIMAL:
+        # Column generation requires valid optimal LP duals. Pricing an
+        # incumbent/basis from a time-limited master can create a false
+        # reduced-cost-optimal stop, so fail loudly and preserve the previous
+        # completed checkpoint instead.
+        raise RuntimeError(
+            f"Master LP status {rmp.Status} is not OPTIMAL "
+            f"(TimeLimit={MASTER_TIME_LIMIT:g}s). Rerun from the last checkpoint "
+            "with a larger --master_time_limit."
+        )
+
     print(f" Master obj: {rmp.ObjVal:.2f}")
 
     current_obj = rmp.ObjVal
 
-    print(f"temp Goal: Run until Master Objective <= {TARGET_OBJ:.2f}")
+    if args.target_master_obj is not None:
+        print(f" Experimental objective stop: {args.target_master_obj:.2f}")
 
-    if current_obj <= TARGET_OBJ:
+    if args.target_master_obj is not None and current_obj <= args.target_master_obj:
         termination_reason = "target_obj_reached"
+        last_master_obj = current_obj
+        _write_iteration_checkpoint(iteration, termination_reason)
         break
 
     # compute improvement safely
@@ -1067,6 +1377,8 @@ while not skip_cg_loop:
                   f"improvement = {window_sum:.4f} <= {args.improvement_bound}")
             print(f"       Master obj settled at {current_obj:.2f}")
             termination_reason = "stagnation_rolling_window"
+            last_master_obj = current_obj
+            _write_iteration_checkpoint(iteration, termination_reason)
             break
 
     last_master_obj = current_obj
@@ -1083,6 +1395,9 @@ while not skip_cg_loop:
     current_max_labels_used = 0
     highest_tier_reached = 0
     tier_stats = []
+    active_budget_exhausted = False
+    milestone_boundary_reached = False
+    milestone_boundary_hour = None
 
     # For deduplication against what's already in the Master Problem
     seen_keys_existing = {_route_key(r) for r in R_truck}
@@ -1095,39 +1410,63 @@ while not skip_cg_loop:
             print(f"   [WALL] Pricing wall budget exhausted ({elapsed_pricing:.0f}s). Stopping escalation.")
             break
 
-        # Don't ask the DP for more time than we have left in the wall budget
-        effective_time_limit = min(current_time_limit, int(remaining_wall))
+        active_used = (
+            prev_cum_master + prev_cum_pricing
+            + sum(master_times) + sum(pricing_times)
+            + elapsed_pricing
+        )
+
+        # Finish the current iteration at each requested milestone instead of
+        # letting a long pricing tier overshoot it by hundreds of seconds.
+        crossed_unsaved = [
+            milestone for milestone in TARGET_MILESTONES_HOURS
+            if milestone not in milestones_passed
+            and active_used >= milestone * 3600.0
+        ]
+        if crossed_unsaved:
+            milestone_boundary_reached = True
+            milestone_boundary_hour = min(crossed_unsaved)
+            print(f"   [MILESTONE] Active time crossed {milestone_boundary_hour:g}h; "
+                  "checkpointing before another pricing tier.")
+            break
+
+        pending_milestones = [
+            milestone for milestone in TARGET_MILESTONES_HOURS
+            if milestone not in milestones_passed
+            and milestone * 3600.0 > active_used
+        ]
+        next_milestone = min(pending_milestones) if pending_milestones else None
+        remaining_milestone = (
+            next_milestone * 3600.0 - active_used
+            if next_milestone is not None
+            else float("inf")
+        )
+
+        remaining_active = float("inf")
+        if ACTIVE_TIME_LIMIT_HOURS:
+            remaining_active = ACTIVE_TIME_LIMIT_HOURS * 3600.0 - active_used
+            if remaining_active <= 1:
+                print("   [ACTIVE LIMIT] No active-compute budget remains for another pricing tier.")
+                active_budget_exhausted = True
+                break
+
+        # Do not request more DP time than remains in either budget.
+        time_limits = [current_time_limit, int(remaining_wall)]
+        if ACTIVE_TIME_LIMIT_HOURS:
+            time_limits.append(max(1, int(remaining_active)))
+        if next_milestone is not None:
+            time_limits.append(max(1, int(remaining_milestone)))
+        effective_time_limit = min(time_limits)
         current_max_labels_used = current_max_labels
         highest_tier_reached = tier_idx
         print(f"   > DP pricing tier {tier_idx}: "
               f"MAX_LABELS={current_max_labels}, TIME_LIMIT={effective_time_limit}s...")
 
-        dp_price = make_dp_pricer(
-            T=T, S_use=S_use, DEPOT=DEPOT,
-            tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
-            tau_min=tau_min, st_min=st_min, et_min=et_min,
-            G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-            bus_cost=bus_cost,
-            charge_rate_kw=CHARGE_RATE_KW,
-            hourly_prices=hourly_prices,
-            charge_cost_premium=charge_cost_premium,
-            travel_cost_factor=0,
-            RC_EPSILON=RC_EPSILON,
-            K_BEST=K_BEST,
-            MAX_LABELS_PER_NODE=int(current_max_labels),
-            soc_charge_levels=[G * i * (1/granularity) for i in range(1, 1 + granularity)],
-            MIN_TRIPS_PER_ROUTE=3,
-            MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-            max_trip2trip=57,
-            max_trip2charge=61,
-            max_charge2trip=220,
-            station_hourly_prices=station_hourly_prices,   # NEW
-            charge_start_cost=CHARGE_START_COST,           # NEW
-        )
-
         tier_t0 = time.time()
         raw_new_trucks, best_rc_iter, tier_timed_out = dp_price(
-            alpha, beta_dual, gamma_dual, time_limit=effective_time_limit
+            alpha, beta_dual, gamma_dual,
+            time_limit=effective_time_limit,
+            max_labels=int(current_max_labels),
         )
         tier_time = time.time() - tier_t0
         timed_out_any = timed_out_any or tier_timed_out
@@ -1155,11 +1494,23 @@ while not skip_cg_loop:
             "found_zero": accepted_this_tier == 0,
         })
 
+        active_after_tier = active_used + tier_time
+        if (
+            next_milestone is not None
+            and active_after_tier >= next_milestone * 3600.0 - 1.0
+        ):
+            milestone_boundary_reached = True
+            milestone_boundary_hour = next_milestone
+
         if new_trucks:
             print(f"   [SUCCESS tier {tier_idx}] DP accepted {accepted_this_tier} new cols "
                   f"from {len(raw_new_trucks)} returned routes "
                   f"(best_rc={best_rc_iter:.1f}, timed_out={tier_timed_out}) "
                   f"after {time.time()-t0_pricing_total:.0f}s of pricing")
+            break
+        elif milestone_boundary_reached:
+            print(f"   [MILESTONE] Pricing reached the {milestone_boundary_hour:g}h boundary; "
+                  "saving the pool before escalation.")
             break
         else:
             print(f"   [FAILED tier {tier_idx}] 0 accepted cols "
@@ -1175,15 +1526,25 @@ while not skip_cg_loop:
 
     tier_map = {ts["tier"]: ts for ts in tier_stats}
 
+    artificial_values = [
+        float(q_var.X)
+        for i in T
+        if (q_var := rmp.getVarByName(f"q_{i}")) is not None and q_var.X > 1e-6
+    ]
+    lp_route_weight = sum(float(var.X) for var in a.values() if var.X > 1e-9)
+
     # --- Collect Metrics ---
     current_stat = {
         "Iteration": iteration,
         "Master_Obj": current_obj,
         "Master_Improvement": improvement,
         "Master_Time_s": master_iter_time,
+        "LP_Route_Weight": lp_route_weight,
+        "Artificial_Trips": len(artificial_values),
+        "Artificial_Total": sum(artificial_values),
         "Pricing_Time_s": pricing_dur_total,
-        "Cumulative_Master_Time_s": sum(master_times),
-        "Cumulative_Pricing_Time_s": sum(pricing_times),
+        "Cumulative_Master_Time_s": prev_cum_master + sum(master_times),
+        "Cumulative_Pricing_Time_s": prev_cum_pricing + sum(pricing_times),
         "Cols_Added": len(new_trucks),
         "Best_RC": best_rc_iter,
         "Timed_Out": timed_out_any,
@@ -1211,7 +1572,6 @@ while not skip_cg_loop:
         "Total_Runtime_s": time.time() - stopwatch_start,
     }
 
-    cg_stats.append(current_stat)
     pd.DataFrame([current_stat]).to_csv(
         stats_csv_path,
         mode='a',
@@ -1223,13 +1583,14 @@ while not skip_cg_loop:
     for route in new_trucks:
         R_truck.append(route)
 
-        # Use the distance-only cost function
-        cost = calculate_truck_route_cost(
+        # Hour-split charging cost — must match the DP pricer's rc computation
+        # (same function build_master uses, so resumes recompute identical costs)
+        cost = calculate_truck_route_cost_accurate(
             route, bus_cost, hourly_prices,
+            charge_rate_kw=CHARGE_RATE_KW,
             station_hourly_prices=station_hourly_prices,
             charge_start_cost=CHARGE_START_COST,
-      )
-        # cost = calc_cost_distance_only(route, bus_cost)
+        )
 
         col = Column()
         for node in route["route"]:
@@ -1237,22 +1598,36 @@ while not skip_cg_loop:
                 col.addTerms(1.0, trip_cov[node])
 
         idx = len(R_truck) - 1
-        a[idx] = rmp.addVar(obj=cost, lb=0, ub=1, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
+        # No ub in the LP: a bounded column at ub can price negative via its
+        # bound dual, making the DP "rediscover" it forever (see master.py)
+        a[idx] = rmp.addVar(obj=cost, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
     rmp.update()
+    dp_columns_generated += len(new_trucks)
 
 
     stop_after_iteration = False
     if not new_trucks:
-        if (best_rc_iter >= -RC_EPSILON) and not deepest_tier_timed_out:
-             print("   [RC-OPT / STOP] Deepest pricing tier exhausted with no negative RC columns.")
-             termination_reason = "rc_optimal"
+        if milestone_boundary_reached:
+             print("   [CONTINUE] Milestone checkpoint boundary reached; pricing will resume next iteration.")
+             termination_reason = "running"
+        elif active_budget_exhausted:
+             print("   [STOP] Active-compute budget exhausted.")
+             termination_reason = "active_time_limit_reached"
+        elif (best_rc_iter >= -RC_EPSILON) and not deepest_tier_timed_out:
+             # NOTE: optimal only within the RESTRICTED pricing graph (57/61/220
+             # min gap limits, min-trips filter, discrete SOC grid, label cap) —
+             # not an LP-optimality certificate for the full EVSP.
+             print("   [RC-OPT / STOP] Deepest pricing tier exhausted with no negative RC "
+                   "columns (restricted pricing graph).")
+             termination_reason = "rc_optimal_restricted"
         elif deepest_tier_timed_out:
              print("   [STOP] Deepest pricing tier hit its time limit with no accepted new columns.")
              termination_reason = "pricing_timed_out_no_new_columns"
         else:
              print("   [STOP] Pricing returned negative routes, but none were new to the master.")
              termination_reason = "no_new_columns"
-        stop_after_iteration = True
+        if not milestone_boundary_reached:
+            stop_after_iteration = True
 
     # --- MILESTONE SNAPSHOTS ---
     # Active compute time is cumulative master + pricing time across resumes.
@@ -1262,11 +1637,18 @@ while not skip_cg_loop:
     total_active_time_s = total_master_time_s + total_pricing_time_s
     total_active_hours = total_active_time_s / 3600.0
 
+    if ACTIVE_TIME_LIMIT_HOURS and total_active_hours >= ACTIVE_TIME_LIMIT_HOURS:
+        print(f"\n[STOP] Reached {ACTIVE_TIME_LIMIT_HOURS:g} hour active-compute limit. "
+              "Halting column generation.")
+        termination_reason = "active_time_limit_reached"
+        stop_after_iteration = True
+
     for milestone in TARGET_MILESTONES_HOURS:
         if total_active_hours >= milestone and milestone not in milestones_passed:
             print(f"\n[MILESTONE] Crossed {milestone:g} hours of active compute time.")
-            snapshot_path = RUN_DIR / f"routes_{int(milestone)}h_snapshot_{bus_label}.json"
+            snapshot_path = RUN_DIR / f"routes_{_hours_tag(milestone)}_snapshot_{bus_label}.json"
             tmp_snapshot_path = snapshot_path.with_suffix(".tmp")
+            milestones_passed.append(milestone)
 
             with open(tmp_snapshot_path, "w") as f:
                 json.dump({
@@ -1280,53 +1662,42 @@ while not skip_cg_loop:
                     "best_rc": best_rc_iter,
                     "cols_added_this_iteration": len(new_trucks),
                     "num_routes": len(R_truck),
+                    "run_dir": str(RUN_DIR),
+                    "seed_route_count": seed_route_count,
+                    "dp_columns_generated": dp_columns_generated,
+                    "seed_route_validation": seed_route_validation,
                     "csv_name": csv_name,
                     "bus_label": bus_label,
                     "price_tag": price_tag,
                     "prices_csv": str(prices_csv),
+                    "price_sha256": price_sha256,
+                    "instance_sha256": instance_sha256,
+                    "trip_ids": T,
+                    "mode": run_mode,
+                    "battery_kwh": G_PARAM,
+                    "git": git_state,
+                    "runtime_versions": runtime_versions,
+                    "resume_history": resume_history,
+                    "run_arguments": vars(args),
+                    "termination_reason": termination_reason,
+                    "milestones_passed": milestones_passed,
                     "stats_csv_path": str(stats_csv_path),
                     "routes": R_truck,
                 }, f)
             os.replace(tmp_snapshot_path, snapshot_path)
 
             print(f"            Saved {len(R_truck)} routes to {snapshot_path.name}")
-            milestones_passed.append(milestone)
-
-    if FINAL_MILESTONE_HOURS in milestones_passed:
-        print(f"\n[STOP] Reached {FINAL_MILESTONE_HOURS:g} hour active compute limit. "
-              "Halting Column Generation.")
-        termination_reason = f"{int(FINAL_MILESTONE_HOURS)}h_limit_reached"
-        stop_after_iteration = True
-
 
     # --- SAVE STATE (Every Iteration) ---
-    iteration_state = {
-    "iteration": iteration,
-    "cum_master_time": sum(master_times) + prev_cum_master,
-    "cum_pricing_time": sum(pricing_times) + prev_cum_pricing,
-    "stats_csv_path": str(stats_csv_path),
-    "recent_improvements": list(recent_improvements),
-    "last_master_obj": last_master_obj,
-    "resume_count": (data.get("resume_count", 0) + 1) if is_resuming else 0,
-    "run_dir": str(RUN_DIR),
-    "routes": R_truck,
-    "price_tag": price_tag,
-    "prices_csv": str(prices_csv),
-    "termination_reason": termination_reason,
-    "milestones_passed": milestones_passed,
-    }
-
-
-    ckpt_path = RUN_DIR / f"ckpt_latest_{bus_label}_g{G_PARAM}_{K_BEST}cols.json"
-    tmp_path = ckpt_path.with_suffix('.tmp')
-    with open(tmp_path, 'w') as f:
-        json.dump(iteration_state, f)
-    os.replace(tmp_path, ckpt_path)
+    _write_iteration_checkpoint(iteration, termination_reason)
 
 
     # 4) CHECK TERMINATION
     if stop_after_iteration:
         break
+
+if iteration >= MAX_CG_ITERS and termination_reason == "running":
+    termination_reason = "max_iterations_reached"
 
 #%%
 print("\n=== COLUMN GENERATION TIME SUMMARY ===")
@@ -1371,10 +1742,23 @@ if args.skip_final_mip:
             "cumulative_master_time_s": sum(master_times) + prev_cum_master,
             "cumulative_pricing_time_s": sum(pricing_times) + prev_cum_pricing,
             "num_routes": len(R_truck),
+            "run_dir": str(RUN_DIR),
+            "seed_route_count": seed_route_count,
+            "dp_columns_generated": dp_columns_generated,
+            "seed_route_validation": seed_route_validation,
             "csv_name": csv_name,
             "bus_label": bus_label,
             "price_tag": price_tag,
             "prices_csv": str(prices_csv),
+            "price_sha256": price_sha256,
+            "instance_sha256": instance_sha256,
+            "trip_ids": T,
+            "mode": run_mode,
+            "battery_kwh": G_PARAM,
+            "git": git_state,
+            "runtime_versions": runtime_versions,
+            "resume_history": resume_history,
+            "run_arguments": vars(args),
             "termination_reason": termination_reason,
             "milestones_passed": milestones_passed,
             "routes": R_truck,
@@ -1387,20 +1771,34 @@ if args.skip_final_mip:
         "Skipped_Final_MIP": True,
         "Total_Time_s": elapsed,
         "CG_Iterations": iteration,
-        "Columns_Generated": len(R_truck),
+        "Columns_In_Pool": len(R_truck),
+        "Seed_Routes": seed_route_count,
+        "DP_Columns_Generated": dp_columns_generated,
+        "Seed_Route_Validation": seed_route_validation,
+        "Instance_CSV": csv_name,
+        "Instance_SHA256": instance_sha256,
+        "Mode": run_mode,
+        "Git": git_state,
+        "Runtime_Versions": runtime_versions,
+        "Run_Arguments": vars(args),
+        "Artificial_Trips_LP": len(uncovered_trips),
         "Price_Tag": price_tag,
         "Prices_CSV": str(prices_csv),
         "Milestones_Hours": TARGET_MILESTONES_HOURS,
+        "Active_Time_s": (
+            prev_cum_master + sum(master_times)
+            + prev_cum_pricing + sum(pricing_times)
+        ),
+        "Termination_Reason": termination_reason,
         "Final_Routes_JSON": str(final_routes_path),
     }
 
-    with open("R_truck_DP.json", "w") as f_out:
-        json.dump(R_truck, f_out)
-
-    with open("temp_meta_result.json", "w") as f:
-        json.dump(result, f)
+    summary_path = RUN_DIR / f"colgen_summary_{bus_label}.json"
+    with open(summary_path, "w") as f:
+        json.dump(result, f, indent=2)
 
     print(f"\n[CG-ONLY] Saved final column pool: {final_routes_path}")
+    print(f"[CG-ONLY] Saved summary: {summary_path}")
     print("[CG-ONLY] --skip_final_mip active. Exiting before final MIP.")
     sys.exit(0)
 
@@ -1415,6 +1813,8 @@ rmp_lp, a_lp = solve_master(
     binary=False,
     station_hourly_prices=station_hourly_prices,
 )
+if rmp_lp.SolCount == 0:
+    raise RuntimeError(f"Final LP produced no solution (status={rmp_lp.Status})")
 final_LP_obj = rmp_lp.ObjVal
 #%%
 rmp_final, a_final, trip_cov_final = build_master(
@@ -1447,7 +1847,8 @@ rmp_final.Params.LogFile = str(RUN_DIR / "final_mip.log")
 
 for idx, var in a_final.items():
     if idx in a_lp:
-        var.start = a_lp[idx].X
+        # LP vars are unbounded above; clamp so the binary warm start is valid
+        var.start = min(a_lp[idx].X, 1.0)
 
 
 # ==========================================
@@ -1470,18 +1871,22 @@ rmp_final.setParam('TimeLimit', args.final_mip_timelimit)
 # rmp_final.setParam('ImproveStartGap', 0.30)
 
 rmp_final.optimize()
-final_MIP_obj = rmp_final.ObjVal
+has_final_solution = rmp_final.SolCount > 0
+final_MIP_obj = float(rmp_final.ObjVal) if has_final_solution else None
 
 print("\n=== Selected truck routes ===")
 used_routes = []
-for r in range(len(R_truck)):
-    if r in a_final and a_final[r].X > 0.5:
-        used_routes.append(r)
-        print(f"Route {r}: a[{r}]={a_final[r].X:.0f}  -> {R_truck[r]}")
+if has_final_solution:
+    for r in range(len(R_truck)):
+        if r in a_final and a_final[r].X > 0.5:
+            used_routes.append(r)
+            print(f"Route {r}: a[{r}]={a_final[r].X:.0f}  -> {R_truck[r]}")
+else:
+    print("No final-MIP incumbent was found.")
 
 print("\n Master LP obj:", final_LP_obj)
-print(" Master MIP obj:", final_MIP_obj)
-print(f" Buses used: {len(used_routes)}")
+print(" Master MIP obj:", final_MIP_obj if has_final_solution else "no incumbent")
+print(f" Buses used: {len(used_routes)}" if has_final_solution else " Buses used: unavailable")
 
 try:
     rmp_final.write(str(RUN_DIR / f"solution_{RUN_ID}.sol"))
@@ -1490,8 +1895,23 @@ except Exception:
 
 dummy_used = [r for r in used_routes if R_truck[r].get("dummy", False)]
 real_used  = [r for r in used_routes if not R_truck[r].get("dummy", False)]
-print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
-print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
+if has_final_solution:
+    print(f" Dummy routes used: {len(dummy_used)} / {len(used_routes)}")
+    print(f" Real routes used : {len(real_used)} / {len(used_routes)}")
+
+# The q_i artificial variables are NOT in R_truck: audit them directly, else a
+# "0 dummy routes" report can hide trips covered only by BIG-M slacks.
+q_used = [i for i in T
+          if has_final_solution
+          and (qv := rmp_final.getVarByName(f"q_{i}")) is not None and qv.X > 0.5]
+print(f" Artificial q_i used in final MIP: {len(q_used)}"
+      + (f" -> trips {q_used}" if q_used else ""))
+
+# Set covering allows over-coverage; count trips driven 'empty' at least once
+_cov = collections.Counter(
+    n for r in used_routes for n in R_truck[r].get("route", []) if isinstance(n, int))
+_over = {i: c for i, c in _cov.items() if c > 1}
+print(f" Trips covered more than once: {len(_over)}")
 
 
 # arc stats
@@ -1512,136 +1932,35 @@ result = {
         "MIP_Obj": final_MIP_obj,
         "Total_Time_s": elapsed,
         "CG_Iterations": iteration,
-        "Columns_Generated": len(R_truck),
+        "Columns_In_Pool": len(R_truck),
+        "Seed_Routes": seed_route_count,
+        "DP_Columns_Generated": dp_columns_generated,
+        "Seed_Route_Validation": seed_route_validation,
+        "Instance_CSV": csv_name,
+        "Instance_SHA256": instance_sha256,
+        "Mode": run_mode,
+        "Git": git_state,
+        "Runtime_Versions": runtime_versions,
+        "Run_Arguments": vars(args),
+        "Artificial_Trips_MIP": len(q_used) if has_final_solution else None,
+        "Overcovered_Trips_MIP": len(_over) if has_final_solution else None,
         "Price_Tag": price_tag,
         "Prices_CSV": str(prices_csv),
         "Milestones_Hours": TARGET_MILESTONES_HOURS,
         "Final_MIP_Timelimit_s": args.final_mip_timelimit,
         "Skipped_Final_MIP": False,
+        "Active_Time_s": (
+            prev_cum_master + sum(master_times)
+            + prev_cum_pricing + sum(pricing_times)
+        ),
+        "Termination_Reason": termination_reason,
+        "MIP_Status": int(rmp_final.Status),
+        "MIP_Has_Solution": has_final_solution,
+        "Buses_Used": len(used_routes) if has_final_solution else None,
     }
 
-# Save to a temporary JSON file that the meta script will read
-
-with open("R_truck_DP.json", "w") as f_out:
-    json.dump(R_truck, f_out)
-
-with open("temp_meta_result.json", "w") as f:
-    json.dump(result, f)
-print(f"\n[META] Saved early return stats. Exiting script gracefully.")
-sys.exit(0)  # This safely STOPS the script here!
-
-# %%
-# Clean Station Mapper
-def clean_station_name(raw_name):
-    raw_str = str(raw_name).upper()
-    if 'PARX' in raw_str: return 'PARX'
-    if 'JON' in raw_str: return 'JON_A'
-    if '3127' in raw_str: return '3127L'
-    if '7880' in raw_str: return '7880C'
-    if '4808' in raw_str: return '4808'
-    if '2190' in raw_str: return '2190L'
-    return str(raw_name)
-
-# 2. Recreate the mapping from Original Master Row -> Pricing Index 'i'
-target_bus_ids = [13320, 13311, 13307 , 13314, "13316uwt", "13324muw", 13309, 13323, 13321,
-                                  13310]
-target_ids_str = [str(x) for x in target_bus_ids]
-
-df_master = pd.read_csv(DATA_DIR / MASTER_FILE)
-df_master['VehicleTask_Str'] = df_master['VehicleTask'].astype(str)
-
-mask = (df_master['Identifier'] == 'Regular') & (df_master['VehicleTask_Str'].isin(target_ids_str))
-df_cg_trips = df_master[mask].copy()
-
-# Sort exactly how the instance generator did it
-df_cg_trips['Sort_Time'] = df_cg_trips['Start1'].apply(parse_time_to_minutes)
-df_cg_trips_sorted = df_cg_trips.sort_values('Sort_Time')
-
-# Dictionary: Original Master Row Index => Pricing Trip Index `i`
-orig_row_to_i = {orig_idx: i for i, orig_idx in enumerate(df_cg_trips_sorted.index)}
-
-# 3. Process each historical bus path
-for bus_id in target_ids_str:
-    print(f"\nEvaluating Historical Bus Route: {bus_id}")
-
-    bus_df = df_master[df_master['VehicleTask_Str'] == bus_id].copy()
-    bus_df['Sort_Time'] = bus_df['Start1'].apply(parse_time_to_minutes)
-    bus_df = bus_df.sort_values('Sort_Time')
-
-    route_nodes = [DEPOT_NAME]
-    charging_cost = 0.0
-
-    for orig_idx, row in bus_df.iterrows():
-        identifier = str(row.get('Identifier', ''))
-
-        # A) Add Regular Trips
-        if identifier == 'Regular':
-            i = orig_row_to_i.get(orig_idx)
-            if i is not None:
-                route_nodes.append(i)
-
-        # B) Add Charging Stations
-        elif 'Charge' in identifier or 'Recharge' in identifier:
-            loc = row.get('From1', None)
-            if loc:
-                station_node = f"{clean_station_name(loc)}_0"
-                route_nodes.append(station_node)
-
-                # Safely get energy from either Recharge or Usage column
-                energy_val = row.get('Recharge kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = row.get('Usage kWh', 0)
-                if pd.isna(energy_val) or energy_val == '':
-                    energy_val = 0
-
-                energy = abs(float(energy_val))
-                hour_of_day = int(row['Sort_Time'] // 60)
-
-                # Default to 100.0 if you don't have hourly_prices globally available in this scope
-                price = hourly_prices.get(hour_of_day, 100.0) if 'hourly_prices' in globals() else 100.0
-                charging_cost += price * energy * charge_cost_premium
-
-    route_nodes.append(DEPOT_NAME)
-
-    # 4. Evaluate the mathematical objective
-    travel_cost = 0.0
-    missing_arcs = []
-
-    for k in range(len(route_nodes) - 1):
-        u = route_nodes[k]
-        v = route_nodes[k+1]
-
-        # If the start is 'PARX' and we need 'PARX_0' to match dictionary, handle it
-        if u == 'PARX': u = 'PARX_0'
-        if v == 'PARX': v = 'PARX_0'
-
-        if (u, v) in d:
-            travel_cost += d[(u, v)]
-        else:
-            missing_arcs.append((u, v))
-
-    total_travel_cost = travel_cost * TRAVEL_COST_FACTOR
-    sum_of_duals = sum(alpha.get(node, 0.0) for node in route_nodes if isinstance(node, int))
-
-    total_cost = bus_cost + total_travel_cost + charging_cost
-    reduced_cost = total_cost - sum_of_duals
-
-    print(f"Path Sequence:  {route_nodes}")
-    print(f"Base Bus Cost:  {bus_cost:.2f}")
-    print(f"Travel Cost:    {total_travel_cost:.2f}")
-    print(f"Charging Cost:  {charging_cost:.2f}")
-    print(f"Sum of Duals:   {sum_of_duals:.2f}")
-    print(f"REDUCED COST:   {reduced_cost:.2f}")
-
-    if missing_arcs:
-        print(f"--> [WARNING] Route contains deadheads missing from the DHD dictionary: {missing_arcs}")
-
-    if reduced_cost <= -0.01:
-        print("--> [VERDICT] NEGATIVE! The CG pricing problem missed this historical route.")
-    else:
-        print("--> [VERDICT] POSITIVE. This route is mathematically sub-optimal in the current LP state.")
-
-print("\n========================================================")
-# %%
-print("done")
-# %%
+# Save run-local metadata; array tasks must never overwrite shared files.
+summary_path = RUN_DIR / f"colgen_and_mip_summary_{bus_label}.json"
+with open(summary_path, "w") as f:
+    json.dump(result, f, indent=2)
+print(f"\n[META] Saved summary to {summary_path}. Exiting script gracefully.")
