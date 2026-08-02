@@ -108,6 +108,8 @@ import bisect
 
 import time
 
+from collections import deque
+
 from dataclasses import dataclass, field
 
 from typing import Any, Mapping
@@ -154,6 +156,10 @@ class Label:
 
     deadhead_kwh : float  – total deadhead energy consumed on this path
 
+    first_trip : object | None – first trip on the path, used only by the
+
+                                 optional start-fair queue scheduler
+
     """
 
     rc:    float
@@ -175,6 +181,10 @@ class Label:
     # False once dominated/evicted from its node pool; stale heap entries
     # check this flag in O(1) instead of scanning the pool.
     alive: bool = True
+
+    # Keep this experimental scheduler field after the historical fields so
+    # positional construction of ``alive`` remains backward compatible.
+    first_trip: Any | None = None
 
 
 
@@ -207,7 +217,12 @@ class PricingRunStats:
     dominance_mode: str = "resource"
 
 
-_VALID_QUEUE_ORDERS = frozenset({"time", "reduced_cost", "reduced_cost_bound"})
+_VALID_QUEUE_ORDERS = frozenset({
+    "time",
+    "reduced_cost",
+    "reduced_cost_bound",
+    "start_fair_bound",
+})
 _VALID_OUTPUT_SELECTIONS = frozenset({"reduced_cost", "diversified"})
 _VALID_DOMINANCE_MODES = frozenset({"resource", "incidence_diverse"})
 
@@ -376,7 +391,7 @@ def _make_label_priority_key(queue_order: str, remaining_dual_bound=None):
     else:
         if remaining_dual_bound is None:
             raise ValueError(
-                "queue_order='reduced_cost_bound' requires a remaining-dual bound"
+                f"queue_order={order!r} requires a remaining-dual bound"
             )
 
         def _priority(label: Label):
@@ -388,7 +403,11 @@ def _make_label_priority_key(queue_order: str, remaining_dual_bound=None):
 
 
 def _make_label_queue_entry(queue_order: str, remaining_dual_bound=None):
-    """Bind one validated heap-entry function for an entire pricing call."""
+    """Bind one validated intra-queue entry function for a pricing call.
+
+    For ``start_fair_bound`` this is the bound priority *within* one first-trip
+    group. Inter-group ordering is supplied by :class:`_StartFairBoundQueue`.
+    """
 
     priority = _make_label_priority_key(queue_order, remaining_dual_bound)
 
@@ -397,6 +416,57 @@ def _make_label_queue_entry(queue_order: str, remaining_dual_bound=None):
         return (first, second, unique_id, label)
 
     return _entry
+
+
+class _StartFairBoundQueue:
+    """Strict round-robin scheduler over first-trip-specific bound heaps.
+
+    Each group is a regular heap ordered by ``reduced_cost_bound``. A group may
+    contribute at most one popped entry before every other currently active
+    group gets a turn. Labels before their first trip use the ``None`` group.
+
+    Stale dominated entries deliberately remain drainable, matching the flat
+    heap's behavior. Consequently ``while queue`` reaches false exactly when
+    every group heap is empty, which preserves exhaustive-search accounting.
+    """
+
+    def __init__(self) -> None:
+        self._group_heaps: dict[Any | None, list[tuple[float, float, int, Label]]] = {}
+        self._active_groups: deque[Any | None] = deque()
+        self._active_group_set: set[Any | None] = set()
+        self._size = 0
+
+    def push(self, entry: tuple[float, float, int, Label]) -> None:
+        group = entry[-1].first_trip
+        heap = self._group_heaps.setdefault(group, [])
+        heapq.heappush(heap, entry)
+        self._size += 1
+        if group not in self._active_group_set:
+            self._active_groups.append(group)
+            self._active_group_set.add(group)
+
+    def pop(self) -> tuple[float, float, int, Label]:
+        if not self._size:
+            raise IndexError("pop from an empty start-fair queue")
+
+        group = self._active_groups.popleft()
+        self._active_group_set.remove(group)
+        heap = self._group_heaps[group]
+        entry = heapq.heappop(heap)
+        self._size -= 1
+
+        if heap:
+            self._active_groups.append(group)
+            self._active_group_set.add(group)
+        else:
+            del self._group_heaps[group]
+        return entry
+
+    def __bool__(self) -> bool:
+        return self._size > 0
+
+    def __len__(self) -> int:
+        return self._size
 
 
 def _cap_label_pool(
@@ -1479,6 +1549,12 @@ def solve_pricing_dp(
 
                   weighted-interval bound on future positive trip duals.
 
+                  ``"start_fair_bound"`` uses that same bound within each
+
+                  first-trip group and rotates across active groups after
+
+                  every pop.
+
     output_selection : ``"reduced_cost"`` preserves historical K-best output;
                        ``"diversified"`` mixes best-RC, longest, and rare-trip
                        eligible negative routes before filling by RC.
@@ -1620,7 +1696,7 @@ def solve_pricing_dp(
         trip_end_min = {i: tb2min(et[i]) for i in T}
 
     remaining_dual_bound = None
-    if queue_order == "reduced_cost_bound":
+    if queue_order in {"reduced_cost_bound", "start_fair_bound"}:
         remaining_dual_bound = _build_remaining_dual_bound(
             alpha,
             T,
@@ -1679,6 +1755,8 @@ def solve_pricing_dp(
 
         deadhead_kwh=0.0,
 
+        first_trip=None,
+
     )
 
 
@@ -1729,11 +1807,28 @@ def solve_pricing_dp(
 
     # the configured ordering.
 
-    pq: list[tuple[float, float, int, Label]] = []
+    use_start_fair_queue = queue_order == "start_fair_bound"
+    pq: list[tuple[float, float, int, Label]] | _StartFairBoundQueue
+    pq = _StartFairBoundQueue() if use_start_fair_queue else []
+
+    def push_queue(entry: tuple[float, float, int, Label]) -> None:
+        if use_start_fair_queue:
+            assert isinstance(pq, _StartFairBoundQueue)
+            pq.push(entry)
+        else:
+            assert isinstance(pq, list)
+            heapq.heappush(pq, entry)
+
+    def pop_queue() -> tuple[float, float, int, Label]:
+        if use_start_fair_queue:
+            assert isinstance(pq, _StartFairBoundQueue)
+            return pq.pop()
+        assert isinstance(pq, list)
+        return heapq.heappop(pq)
 
     _uid = 0
 
-    heapq.heappush(pq, queue_entry(source_label, _uid))
+    push_queue(queue_entry(source_label, _uid))
 
     _uid += 1
 
@@ -1750,7 +1845,7 @@ def solve_pricing_dp(
 
     while pq:
 
-        _, _, _, label = heapq.heappop(pq)
+        _, _, _, label = pop_queue()
 
         elapsed = time.time() - dp_start_time
         if time_limit and elapsed > time_limit:
@@ -1886,6 +1981,12 @@ def solve_pricing_dp(
 
                     deadhead_kwh=label.deadhead_kwh + dh_kwh,
 
+                    first_trip=(
+                        label.first_trip
+                        if label.first_trip is not None
+                        else trip_idx
+                    ),
+
                 )
 
 
@@ -1968,10 +2069,7 @@ def solve_pricing_dp(
                     node_labels[trip_idx] = kept
 
                     if new_label.alive:
-                        heapq.heappush(
-                            pq,
-                            queue_entry(new_label, _uid),
-                        )
+                        push_queue(queue_entry(new_label, _uid))
                         _uid += 1
 
 
@@ -2125,6 +2223,8 @@ def solve_pricing_dp(
 
                         deadhead_kwh=label.deadhead_kwh + dh_kwh,
 
+                        first_trip=label.first_trip,
+
                     )
 
 
@@ -2206,10 +2306,7 @@ def solve_pricing_dp(
                         node_labels[station] = kept
 
                         if new_label.alive:
-                            heapq.heappush(
-                                pq,
-                                queue_entry(new_label, _uid),
-                            )
+                            push_queue(queue_entry(new_label, _uid))
                             _uid += 1
 
 
@@ -2277,6 +2374,8 @@ def solve_pricing_dp(
                     charging_stops=label.charging_stops,
 
                     deadhead_kwh=label.deadhead_kwh + dh_kwh,
+
+                    first_trip=label.first_trip,
 
                 )
 

@@ -99,8 +99,8 @@ case "$MASTER_BACKEND" in
 esac
 QUEUE_ORDER=${EVSP_QUEUE_ORDER:-reduced_cost_bound}
 case "$QUEUE_ORDER" in
-    time|reduced_cost|reduced_cost_bound) ;;
-    *) echo "EVSP_QUEUE_ORDER must be time, reduced_cost, or reduced_cost_bound; got $QUEUE_ORDER" >&2; exit 2 ;;
+    time|reduced_cost|reduced_cost_bound|start_fair_bound) ;;
+    *) echo "EVSP_QUEUE_ORDER must be time, reduced_cost, reduced_cost_bound, or start_fair_bound; got $QUEUE_ORDER" >&2; exit 2 ;;
 esac
 PRICING_OUTPUT_SELECTION=${EVSP_PRICING_OUTPUT_SELECTION:-reduced_cost}
 case "$PRICING_OUTPUT_SELECTION" in

@@ -35,6 +35,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         job_text = (REPO_ROOT / "src" / "submit_goal1_colgen.sub").read_text()
         matrix_text = (REPO_ROOT / "src" / "submit_goal1_matrix.sh").read_text()
         self.assertIn("EVSP_QUEUE_ORDER:-reduced_cost_bound", job_text)
+        self.assertIn("reduced_cost_bound|start_fair_bound", job_text)
         self.assertIn('--queue_order "$QUEUE_ORDER"', job_text)
         self.assertIn("EVSP_PRICING_OUTPUT_SELECTION:-reduced_cost", job_text)
         self.assertIn(

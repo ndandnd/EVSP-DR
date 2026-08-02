@@ -14,6 +14,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from pricing_dp_og import (  # noqa: E402
     Label,
     PricingRunStats,
+    _StartFairBoundQueue,
     _build_remaining_dual_bound,
     _cap_label_pool,
     _is_dominated,
@@ -33,7 +34,16 @@ from utils_v2 import (  # noqa: E402
 
 
 class DominanceTests(unittest.TestCase):
-    def make_label(self, *, trips, charges=0, rc=0.0, time=100.0, soc=100.0):
+    def make_label(
+        self,
+        *,
+        trips,
+        charges=0,
+        rc=0.0,
+        time=100.0,
+        soc=100.0,
+        first_trip=None,
+    ):
         return Label(
             rc=rc,
             time=time,
@@ -42,6 +52,7 @@ class DominanceTests(unittest.TestCase):
             path=tuple(trips),
             trips_visited=frozenset(trips),
             charging_stops=tuple((f"S{i}", 0, 1, 1) for i in range(charges)),
+            first_trip=first_trip,
         )
 
     def make_tiny_pricer(self, queue_order, *, dominance_mode="resource"):
@@ -214,6 +225,49 @@ class DominanceTests(unittest.TestCase):
 
         self.assertIs(heapq.heappop(queue)[-1], early_promising)
 
+    def test_start_fair_bound_rotates_before_one_start_group_exhausts(self):
+        bound = lambda _time_min: 0.0
+        entry = _make_label_queue_entry("start_fair_bound", bound)
+        first_a = self.make_label(trips=[1], first_trip=1, rc=-100.0)
+        second_a = self.make_label(trips=[1, 3], first_trip=1, rc=-90.0)
+        later_group = self.make_label(trips=[2], first_trip=2, rc=100.0)
+        queue = _StartFairBoundQueue()
+        for uid, label in enumerate((first_a, second_a, later_group)):
+            queue.push(entry(label, uid))
+
+        self.assertIs(queue.pop()[-1], first_a)
+        # Fairness overrides the much better remaining entry in group 1.
+        self.assertIs(queue.pop()[-1], later_group)
+        self.assertIs(queue.pop()[-1], second_a)
+        self.assertFalse(queue)
+
+    def test_start_fair_bound_full_drain_remains_exhaustive(self):
+        pricer = self.make_tiny_pricer("start_fair_bound")
+
+        routes, _, timed_out = pricer({0: 200.0})
+
+        self.assertEqual(len(routes), 1)
+        self.assertFalse(timed_out)
+        self.assertEqual(pricer.queue_order, "start_fair_bound")
+        self.assertEqual(pricer.last_stats.queue_order, "start_fair_bound")
+        self.assertTrue(pricer.last_stats.exhaustive)
+
+    def test_start_fair_bound_assigns_the_first_visited_trip(self):
+        observed = []
+        original_push = _StartFairBoundQueue.push
+
+        def recording_push(queue, entry):
+            label = entry[-1]
+            observed.append((label.trips_visited, label.first_trip))
+            return original_push(queue, entry)
+
+        pricer = self.make_tiny_pricer("start_fair_bound")
+        with mock.patch.object(_StartFairBoundQueue, "push", new=recording_push):
+            pricer({0: 200.0})
+
+        self.assertIn((frozenset(), None), observed)
+        self.assertIn((frozenset({0}), 0), observed)
+
     def test_remaining_dual_bound_uses_nonoverlapping_future_trips(self):
         bound = _build_remaining_dual_bound(
             alpha={0: 5.0, 1: 100.0, 2: 6.0, 3: 4.0, 4: -500.0},
@@ -229,8 +283,10 @@ class DominanceTests(unittest.TestCase):
         self.assertAlmostEqual(bound(21.0), 0.0)
 
     def test_bound_queue_requires_a_bound_function(self):
-        with self.assertRaisesRegex(ValueError, "remaining-dual bound"):
-            _make_label_queue_entry("reduced_cost_bound")
+        for queue_order in ("reduced_cost_bound", "start_fair_bound"):
+            with self.subTest(queue_order=queue_order):
+                with self.assertRaisesRegex(ValueError, "remaining-dual bound"):
+                    _make_label_queue_entry(queue_order)
 
     def test_label_cap_retention_uses_configured_bound_priority(self):
         labels = [

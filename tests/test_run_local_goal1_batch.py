@@ -29,6 +29,16 @@ class LocalGoal1LauncherTests(unittest.TestCase):
         self.assertEqual(args.initializer, "matching")
         self.assertEqual(args.dominance_mode, "resource")
 
+    def test_local_launcher_accepts_start_fair_bound_queue(self):
+        args = parse_args([
+            "5m",
+            "--manifest",
+            "manifest.json",
+            "--queue-order",
+            "start_fair_bound",
+        ])
+        self.assertEqual(args.queue_order, "start_fair_bound")
+
     def test_command_uses_selected_initializer_exclusively(self):
         common = dict(
             case=self.make_case(),
@@ -83,6 +93,23 @@ class LocalGoal1LauncherTests(unittest.TestCase):
 
         flag_index = command.index("--dominance_mode")
         self.assertEqual(command[flag_index + 1], "incidence_diverse")
+
+    def test_command_threads_start_fair_bound_queue(self):
+        command = build_command(
+            case=self.make_case(),
+            python=Path(sys.executable),
+            profile_name="5m",
+            results_root=REPO_ROOT / "src" / "results" / "test",
+            batch_tag="test",
+            initializer="matching",
+            queue_order="start_fair_bound",
+            pricing_output_selection="reduced_cost",
+            dominance_mode="incidence_diverse",
+            max_charge2trip=1560,
+        )
+
+        flag_index = command.index("--queue_order")
+        self.assertEqual(command[flag_index + 1], "start_fair_bound")
 
 
 if __name__ == "__main__":

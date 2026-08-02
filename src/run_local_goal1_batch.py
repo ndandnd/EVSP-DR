@@ -382,7 +382,11 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         default="matching",
         help="Model-derived matching cover by default; use greedy as a control.",
     )
-    parser.add_argument("--queue-order", default="reduced_cost_bound")
+    parser.add_argument(
+        "--queue-order",
+        choices=("time", "reduced_cost", "reduced_cost_bound", "start_fair_bound"),
+        default="reduced_cost_bound",
+    )
     parser.add_argument(
         "--pricing-output-selection",
         choices=("reduced_cost", "diversified"),

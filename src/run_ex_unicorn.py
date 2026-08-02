@@ -158,11 +158,12 @@ parser.add_argument(
 )
 parser.add_argument(
     "--queue_order",
-    choices=("time", "reduced_cost", "reduced_cost_bound"),
+    choices=("time", "reduced_cost", "reduced_cost_bound", "start_fair_bound"),
     default="reduced_cost_bound",
     help=(
-        "DP label priority: historical chronological, reduced-cost first, or "
-        "reduced cost minus an optimistic future-dual bound."
+        "DP label priority: historical chronological, reduced-cost first, "
+        "reduced cost minus an optimistic future-dual bound, or round-robin "
+        "first-trip fairness with that bound inside each group."
     ),
 )
 parser.add_argument(
