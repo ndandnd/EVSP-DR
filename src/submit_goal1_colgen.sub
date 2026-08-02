@@ -107,6 +107,11 @@ case "$PRICING_OUTPUT_SELECTION" in
     reduced_cost|diversified) ;;
     *) echo "EVSP_PRICING_OUTPUT_SELECTION must be reduced_cost or diversified; got $PRICING_OUTPUT_SELECTION" >&2; exit 2 ;;
 esac
+DOMINANCE_MODE=${EVSP_DOMINANCE_MODE:-resource}
+case "$DOMINANCE_MODE" in
+    resource|incidence_diverse) ;;
+    *) echo "EVSP_DOMINANCE_MODE must be resource or incidence_diverse; got $DOMINANCE_MODE" >&2; exit 2 ;;
+esac
 MAX_CHARGE2TRIP=${EVSP_MAX_CHARGE2TRIP:-1560}
 MAX_SUCCESSOR_TARGETS=${EVSP_MAX_SUCCESSOR_TARGETS:-64}
 
@@ -173,6 +178,7 @@ command=(
     --master_backend "$MASTER_BACKEND"
     --queue_order "$QUEUE_ORDER"
     --pricing_output_selection "$PRICING_OUTPUT_SELECTION"
+    --dominance_mode "$DOMINANCE_MODE"
     --max_charge2trip "$MAX_CHARGE2TRIP"
     --max_successor_charge_targets "$MAX_SUCCESSOR_TARGETS"
     --master_time_limit "$MASTER_TIME_LIMIT"

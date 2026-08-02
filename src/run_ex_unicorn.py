@@ -176,6 +176,16 @@ parser.add_argument(
     ),
 )
 parser.add_argument(
+    "--dominance_mode",
+    choices=("resource", "incidence_diverse"),
+    default="resource",
+    help=(
+        "DP dominance policy. Default preserves resource dominance; the "
+        "experimental incidence-diverse mode retains equal-cost labels with "
+        "different trip histories."
+    ),
+)
+parser.add_argument(
     "--max_charge2trip",
     type=float,
     default=None,
@@ -396,6 +406,7 @@ print(f"[INIT] Runtime versions: {runtime_versions}")
 print(f"[INIT] Restricted-master backend: {MASTER_BACKEND} ({MASTER_METHOD})")
 print(f"[INIT] DP queue order: {args.queue_order}")
 print(f"[INIT] DP output selection: {args.pricing_output_selection}")
+print(f"[INIT] DP dominance mode: {args.dominance_mode}")
 
 # ==========================================
 # 3. DYNAMIC TARGET & VSP MODE OVERRIDE
@@ -1091,6 +1102,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "master_backend": MASTER_BACKEND,
             "queue_order": args.queue_order,
             "pricing_output_selection": args.pricing_output_selection,
+            "dominance_mode": args.dominance_mode,
             "max_charge2trip": MAX_CHARGE2TRIP,
             "successor_charge_targets": args.successor_charge_targets,
             "max_successor_charge_targets": args.max_successor_charge_targets,
@@ -1128,11 +1140,11 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             )
 
         saved_args = dict(data.get("run_arguments") or {})
-        # Checkpoints created before this optional mode existed used the
-        # unchanged reduced-cost policy. Normalize that missing field so a
-        # default-mode resume does not require --allow_unsafe_resume, while a
-        # diversified resume still registers a real algorithm mismatch.
+        # Normalize optional-policy fields absent from older checkpoints to
+        # their historical defaults. A nondefault resume still registers a
+        # real algorithm mismatch.
         saved_args.setdefault("pricing_output_selection", "reduced_cost")
+        saved_args.setdefault("dominance_mode", "resource")
         resume_critical_args = (
             "kbest",
             "max_labels",
@@ -1150,6 +1162,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "master_backend",
             "queue_order",
             "pricing_output_selection",
+            "dominance_mode",
             "max_charge2trip",
             "successor_charge_targets",
             "max_successor_charge_targets",
@@ -1650,6 +1663,7 @@ STATS_COLUMNS = (
     "Pricing_Exhaustive_Deepest_Tier",
     "Pricing_Queue_Order",
     "Pricing_Output_Selection",
+    "Pricing_Dominance_Mode",
     "Pricing_Eligible_Negative_Incidences",
     "Pricing_Returned_Trip_Count_Min",
     "Pricing_Returned_Trip_Count_Mean",
@@ -1712,6 +1726,7 @@ def _write_iteration_checkpoint(iteration_number, reason):
         "master_method": MASTER_METHOD,
         "queue_order": args.queue_order,
         "pricing_output_selection": args.pricing_output_selection,
+        "dominance_mode": args.dominance_mode,
         "max_charge2trip": MAX_CHARGE2TRIP,
         "successor_charge_targets": args.successor_charge_targets,
         "max_successor_charge_targets": args.max_successor_charge_targets,
@@ -1764,6 +1779,7 @@ if not skip_cg_loop:
         charge_start_cost=CHARGE_START_COST,
         queue_order=args.queue_order,
         output_selection=args.pricing_output_selection,
+        dominance_mode=args.dominance_mode,
         adj=pricing_adj,
     )
 #%%
@@ -1997,6 +2013,10 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
             "queue_order": (
                 pricing_run_stats.queue_order if pricing_run_stats else args.queue_order
             ),
+            "dominance_mode": (
+                pricing_run_stats.dominance_mode
+                if pricing_run_stats else args.dominance_mode
+            ),
             "labels_expanded": (
                 pricing_run_stats.labels_expanded if pricing_run_stats else None
             ),
@@ -2131,6 +2151,7 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         "Pricing_Exhaustive_Deepest_Tier": deepest_tier_exhaustive,
         "Pricing_Queue_Order": args.queue_order,
         "Pricing_Output_Selection": args.pricing_output_selection,
+        "Pricing_Dominance_Mode": args.dominance_mode,
         "Pricing_Eligible_Negative_Incidences": (
             deepest_tier_eligible_negative_incidences
         ),
@@ -2355,6 +2376,7 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
                     "master_method": MASTER_METHOD,
                     "queue_order": args.queue_order,
                     "pricing_output_selection": args.pricing_output_selection,
+                    "dominance_mode": args.dominance_mode,
                     "git": git_state,
                     "runtime_versions": runtime_versions,
                     "resume_history": resume_history,
@@ -2465,6 +2487,7 @@ if args.skip_final_mip:
             "master_method": MASTER_METHOD,
             "queue_order": args.queue_order,
             "pricing_output_selection": args.pricing_output_selection,
+            "dominance_mode": args.dominance_mode,
             "git": git_state,
             "runtime_versions": runtime_versions,
             "resume_history": resume_history,
@@ -2501,6 +2524,7 @@ if args.skip_final_mip:
         "Master_Method": MASTER_METHOD,
         "Pricing_Queue_Order": args.queue_order,
         "Pricing_Output_Selection": args.pricing_output_selection,
+        "Pricing_Dominance_Mode": args.dominance_mode,
         "Git": git_state,
         "Runtime_Versions": runtime_versions,
         "Run_Arguments": vars(args),
@@ -2683,6 +2707,7 @@ result = {
         "Master_Method": MASTER_METHOD,
         "Pricing_Queue_Order": args.queue_order,
         "Pricing_Output_Selection": args.pricing_output_selection,
+        "Pricing_Dominance_Mode": args.dominance_mode,
         "Git": git_state,
         "Runtime_Versions": runtime_versions,
         "Run_Arguments": vars(args),

@@ -204,10 +204,12 @@ class PricingRunStats:
     returned_trip_count_min: int | None = None
     returned_trip_count_mean: float | None = None
     returned_trip_count_max: int | None = None
+    dominance_mode: str = "resource"
 
 
 _VALID_QUEUE_ORDERS = frozenset({"time", "reduced_cost", "reduced_cost_bound"})
 _VALID_OUTPUT_SELECTIONS = frozenset({"reduced_cost", "diversified"})
+_VALID_DOMINANCE_MODES = frozenset({"resource", "incidence_diverse"})
 
 
 def _validate_queue_order(queue_order: str) -> str:
@@ -226,6 +228,15 @@ def _validate_output_selection(output_selection: str) -> str:
             f"{sorted(_VALID_OUTPUT_SELECTIONS)}, found {output_selection!r}"
         )
     return output_selection
+
+
+def _validate_dominance_mode(dominance_mode: str) -> str:
+    if dominance_mode not in _VALID_DOMINANCE_MODES:
+        raise ValueError(
+            "dominance_mode must be one of "
+            f"{sorted(_VALID_DOMINANCE_MODES)}, found {dominance_mode!r}"
+        )
+    return dominance_mode
 
 
 def _trip_incidence_sort_key(label: Label) -> tuple:
@@ -1142,6 +1153,7 @@ def _dominates(
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
     require_equal_soc: bool = False,
+    dominance_mode: str = "resource",
 ) -> bool:
     # At a station, an earlier departure is not always more useful: the
     # restricted graph also imposes a maximum station-to-trip wait.  Without
@@ -1162,8 +1174,20 @@ def _dominates(
         if require_equal_soc
         else other.soc >= label.soc - tol
     )
+    # The experimental mode keeps equal-cost labels with different incidence
+    # histories.  Such labels may expose different useful columns downstream,
+    # so cross-incidence dominance requires a strict reduced-cost improvement.
+    cross_incidence = (
+        dominance_mode == "incidence_diverse"
+        and other.trips_visited != label.trips_visited
+    )
+    rc_dominates = (
+        other.rc < label.rc - tol
+        if cross_incidence
+        else other.rc <= label.rc + tol
+    )
     return (
-        other.rc <= label.rc + tol
+        rc_dominates
         and time_dominates
         and soc_dominates
         and len(other.charging_stops) <= len(label.charging_stops)
@@ -1178,6 +1202,7 @@ def _is_dominated(
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
     require_equal_soc: bool = False,
+    dominance_mode: str = "resource",
 ) -> bool:
     """
     Check whether `label` is dominated.
@@ -1197,6 +1222,7 @@ def _is_dominated(
             station_pool=station_pool,
             station_waiting_unrestricted=station_waiting_unrestricted,
             require_equal_soc=require_equal_soc,
+            dominance_mode=dominance_mode,
         ):
             return True
     return False
@@ -1211,6 +1237,7 @@ def _prune_dominated(
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
     require_equal_soc: bool = False,
+    dominance_mode: str = "resource",
 ) -> list[Label]:
 
     """
@@ -1237,6 +1264,7 @@ def _prune_dominated(
             station_pool=station_pool,
             station_waiting_unrestricted=station_waiting_unrestricted,
             require_equal_soc=require_equal_soc,
+            dominance_mode=dominance_mode,
         ):
 
             # Also remove any labels in `kept` that the new label dominates
@@ -1249,6 +1277,7 @@ def _prune_dominated(
                     station_pool=station_pool,
                     station_waiting_unrestricted=station_waiting_unrestricted,
                     require_equal_soc=require_equal_soc,
+                    dominance_mode=dominance_mode,
                 )
             ]
 
@@ -1372,6 +1401,8 @@ def solve_pricing_dp(
 
     output_selection: str = "reduced_cost",
 
+    dominance_mode: str = "resource",
+
 ) -> (
     tuple[list[dict], bool]
     | tuple[list[dict], bool, PricingRunStats]
@@ -1452,6 +1483,10 @@ def solve_pricing_dp(
                        ``"diversified"`` mixes best-RC, longest, and rare-trip
                        eligible negative routes before filling by RC.
 
+    dominance_mode : ``"resource"`` preserves historical resource dominance;
+                     ``"incidence_diverse"`` preserves equal-cost labels with
+                     different trip-incidence histories.
+
     existing_trip_set_costs : optional best master cost for each trip-incidence
 
                               pattern already present in the restricted master.
@@ -1499,6 +1534,7 @@ def solve_pricing_dp(
     if K_BEST < 0:
         raise ValueError("K_BEST must be nonnegative")
     selected_output_mode = _validate_output_selection(output_selection)
+    selected_dominance_mode = _validate_dominance_mode(dominance_mode)
     if existing_cost_epsilon < 0:
         raise ValueError("existing_cost_epsilon must be nonnegative")
     incumbent_cost_by_trip_set = {
@@ -1904,6 +1940,7 @@ def solve_pricing_dp(
                     new_label,
                     pool,
                     require_equal_soc=require_equal_soc_for_dominance,
+                    dominance_mode=selected_dominance_mode,
                 ):
                     # Prune labels that are strictly worse than our new label,
                     # marking them dead so their stale heap entries skip in O(1)
@@ -1913,6 +1950,7 @@ def solve_pricing_dp(
                             new_label,
                             lb,
                             require_equal_soc=require_equal_soc_for_dominance,
+                            dominance_mode=selected_dominance_mode,
                         ):
                             lb.alive = False
                         else:
@@ -2140,6 +2178,7 @@ def solve_pricing_dp(
                         station_pool=True,
                         station_waiting_unrestricted=station_waiting_unrestricted,
                         require_equal_soc=require_equal_soc_for_dominance,
+                        dominance_mode=selected_dominance_mode,
                     ):
                         # Prune labels that are strictly worse than our new label,
                         # marking them dead so their stale heap entries skip in O(1)
@@ -2151,6 +2190,7 @@ def solve_pricing_dp(
                                 station_pool=True,
                                 station_waiting_unrestricted=station_waiting_unrestricted,
                                 require_equal_soc=require_equal_soc_for_dominance,
+                                dominance_mode=selected_dominance_mode,
                             ):
                                 lb.alive = False
                             else:
@@ -2409,6 +2449,7 @@ def solve_pricing_dp(
     pricing_stats = PricingRunStats(
         queue_order=queue_order,
         output_selection=selected_output_mode,
+        dominance_mode=selected_dominance_mode,
         labels_expanded=labels_expanded,
         completed_routes=n_completed,
         negative_completed=n_neg_completed,
@@ -2495,6 +2536,8 @@ def make_dp_pricer(
 
     output_selection="reduced_cost",
 
+    dominance_mode="resource",
+
 
 ):
 
@@ -2530,6 +2573,7 @@ def make_dp_pricer(
 
     default_queue_order = _validate_queue_order(queue_order)
     default_output_selection = _validate_output_selection(output_selection)
+    default_dominance_mode = _validate_dominance_mode(dominance_mode)
 
     if max_successor_charge_targets <= 0:
         raise ValueError("max_successor_charge_targets must be positive")
@@ -2664,6 +2708,7 @@ def make_dp_pricer(
 
             queue_order=default_queue_order,
             output_selection=default_output_selection,
+            dominance_mode=default_dominance_mode,
             existing_trip_set_costs=existing_trip_set_costs,
             return_stats=True,
 
@@ -2687,6 +2732,7 @@ def make_dp_pricer(
     _solve.last_stats = None
     _solve.queue_order = default_queue_order
     _solve.output_selection = default_output_selection
+    _solve.dominance_mode = default_dominance_mode
     _solve.successor_charge_targets = bool(successor_charge_targets)
     _solve.max_successor_charge_targets = int(max_successor_charge_targets)
     _solve.adjacency = adj

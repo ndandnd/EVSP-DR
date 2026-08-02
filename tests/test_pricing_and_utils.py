@@ -44,7 +44,7 @@ class DominanceTests(unittest.TestCase):
             charging_stops=tuple((f"S{i}", 0, 1, 1) for i in range(charges)),
         )
 
-    def make_tiny_pricer(self, queue_order):
+    def make_tiny_pricer(self, queue_order, *, dominance_mode="resource"):
         return make_dp_pricer(
             T=[0],
             S_use=[],
@@ -70,6 +70,7 @@ class DominanceTests(unittest.TestCase):
             et_min={0: 1.0},
             tau_min={("D", 0): 0.0, (0, "D"): 0.0},
             queue_order=queue_order,
+            dominance_mode=dominance_mode,
         )
 
     def test_short_route_cannot_kill_minimum_trip_ready_route(self):
@@ -81,6 +82,51 @@ class DominanceTests(unittest.TestCase):
         ready = self.make_label(trips=[1, 2, 9])
         short = self.make_label(trips=[9])
         self.assertTrue(_is_dominated(short, [ready]))
+
+    def test_incidence_diverse_preserves_equal_cost_cross_incidence_labels(self):
+        longer = self.make_label(trips=[1, 2, 9])
+        shorter = self.make_label(trips=[9])
+
+        self.assertTrue(_is_dominated(shorter, [longer], dominance_mode="resource"))
+        self.assertFalse(
+            _is_dominated(
+                shorter,
+                [longer],
+                dominance_mode="incidence_diverse",
+            )
+        )
+
+    def test_incidence_diverse_allows_strict_cross_incidence_rc_dominance(self):
+        cheaper_longer = self.make_label(trips=[1, 2, 9], rc=-2e-9)
+        tolerance_tie = self.make_label(trips=[1, 2, 9], rc=-1e-9)
+        shorter = self.make_label(trips=[9], rc=0.0)
+
+        self.assertTrue(
+            _is_dominated(
+                shorter,
+                [cheaper_longer],
+                dominance_mode="incidence_diverse",
+            )
+        )
+        self.assertFalse(
+            _is_dominated(
+                shorter,
+                [tolerance_tie],
+                dominance_mode="incidence_diverse",
+            )
+        )
+
+    def test_incidence_diverse_keeps_same_incidence_resource_dominance(self):
+        same_set = self.make_label(trips=[9, 1], rc=0.0)
+        reordered = self.make_label(trips=[1, 9], rc=0.0)
+
+        self.assertTrue(
+            _is_dominated(
+                reordered,
+                [same_set],
+                dominance_mode="incidence_diverse",
+            )
+        )
 
     def test_more_recharges_cannot_dominate_fewer_recharges(self):
         more_charges = self.make_label(trips=[1, 2, 9], charges=2, rc=-10)
@@ -122,6 +168,11 @@ class DominanceTests(unittest.TestCase):
                 "output_selection"
             ].default
             self.assertEqual(default, "reduced_cost")
+
+    def test_public_pricer_defaults_preserve_resource_dominance(self):
+        for function in (solve_pricing_dp, make_dp_pricer):
+            default = inspect.signature(function).parameters["dominance_mode"].default
+            self.assertEqual(default, "resource")
 
     def test_public_pricer_defaults_preserve_fixed_soc_grid(self):
         for function in (solve_pricing_dp, make_dp_pricer):
@@ -216,6 +267,17 @@ class DominanceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "queue_order"):
             self.make_tiny_pricer("not-an-order")
 
+    def test_invalid_dominance_mode_is_rejected_by_public_pricer(self):
+        with self.assertRaisesRegex(ValueError, "dominance_mode"):
+            solve_pricing_dp(
+                alpha={},
+                T=[],
+                S_use=[],
+                dominance_mode="unknown",
+            )
+        with self.assertRaisesRegex(ValueError, "dominance_mode"):
+            self.make_tiny_pricer("time", dominance_mode="unknown")
+
     def test_factory_threads_queue_order_and_exposes_last_stats(self):
         pricer = self.make_tiny_pricer("reduced_cost")
 
@@ -227,6 +289,18 @@ class DominanceTests(unittest.TestCase):
         self.assertFalse(timed_out)
         self.assertIsInstance(pricer.last_stats, PricingRunStats)
         self.assertEqual(pricer.last_stats.queue_order, "reduced_cost")
+
+    def test_factory_threads_incidence_diverse_dominance(self):
+        pricer = self.make_tiny_pricer(
+            "time",
+            dominance_mode="incidence_diverse",
+        )
+
+        routes, _, _ = pricer({0: 200.0})
+
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(pricer.dominance_mode, "incidence_diverse")
+        self.assertEqual(pricer.last_stats.dominance_mode, "incidence_diverse")
 
     def test_diversified_output_selection_has_deterministic_quotas(self):
         best_rc = self.make_label(trips=[1], rc=-100.0)
