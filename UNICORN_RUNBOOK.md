@@ -153,6 +153,11 @@ Do not jump directly to the helper's `3h` profile. First verify that the
 acceptable. Saved pools are the experiment output; preserve the entire result
 directories before pruning anything.
 
+The exact Mac five-minute pools and audit JSON are also available in GitHub
+release `results-goal1-local-5m-20260802`; download and checksum instructions
+are in `GOAL1_LOCAL_RESULTS_20260802.md`. They are optional for submitting the
+new matrix but useful as the comparison baseline.
+
 The matched local comparison of heap orders on identical GREEDY masters is now
 complete. Random 15-r04 has peak
 concurrency 14, but a verified 15-trip reachability antichain gives the stronger

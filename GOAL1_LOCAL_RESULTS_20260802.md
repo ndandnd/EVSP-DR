@@ -15,6 +15,29 @@ one BLAS thread, five 60-second pricing calls, 150 returned columns per call,
 and no final MIP. Every call timed out and was non-exhaustive. None had a
 label-cap eviction.
 
+## Exact result bundle
+
+The eight local pools and both JSON audits are published in GitHub release
+[`results-goal1-local-5m-20260802`](https://github.com/ndandnd/EVSP-DR/releases/tag/results-goal1-local-5m-20260802).
+After generating the deterministic random inputs, reproduce the local layout
+with:
+
+```bash
+python -u src/generate_random_goal1_instances.py
+mkdir -p src/results/local_goal1
+gh release download results-goal1-local-5m-20260802 \
+  --repo ndandnd/EVSP-DR \
+  --pattern 'evsp_goal1_local_5m_portfolio_20260802.tar.gz*' \
+  --dir /tmp/evsp_goal1_local_release
+(cd /tmp/evsp_goal1_local_release && \
+  shasum -a 256 -c evsp_goal1_local_5m_portfolio_20260802.tar.gz.sha256)
+tar -xzf /tmp/evsp_goal1_local_release/evsp_goal1_local_5m_portfolio_20260802.tar.gz \
+  -C src/results/local_goal1
+```
+
+The archive SHA-256 is
+`617b2e8a1821faba60d108e51e648bdbad5328a4e6daca613c0f6b8af4643115`.
+
 ## Matched five-minute results
 
 | Pricing configuration | Final LP objective | LP route weight | DP trip coverage | Mean / max trips | Labels expanded |
