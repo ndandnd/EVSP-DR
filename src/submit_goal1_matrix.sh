@@ -7,6 +7,8 @@ usage() {
     cat <<'EOF'
 Usage:
   src/submit_goal1_matrix.sh smoke [RUN_TAG]
+  src/submit_goal1_matrix.sh 5m [RUN_TAG]
+  src/submit_goal1_matrix.sh 30m [RUN_TAG]
   src/submit_goal1_matrix.sh 3h [RUN_TAG]
   src/submit_goal1_matrix.sh 5h [RUN_TAG]
   src/submit_goal1_matrix.sh 6h [RUN_TAG]
@@ -16,7 +18,7 @@ Default smoke:
   instances: Practice_10bus.csv
   modes:     MATCHING
 
-Defaults for 3h/5h/6h/unlimited:
+Defaults for 5m/30m/3h/5h/6h/unlimited:
   instances: Practice_10bus.csv,Practice_15bus.csv
   modes:     MATCHING,GREEDY
 
@@ -46,6 +48,28 @@ case "$PROFILE" in
         export EVSP_MAX_LABELS=${EVSP_MAX_LABELS:-5000}
         export EVSP_PRICING_TIERS=${EVSP_PRICING_TIERS:-5000:30}
         export EVSP_PRICING_WALL_PER_ITER=${EVSP_PRICING_WALL_PER_ITER:-60}
+        ;;
+    5m)
+        ACTIVE_HOURS=0.0833333333333
+        MILESTONES=0.0833333333333
+        WALLTIME=00:30:00
+        RUN_TAG=${1:-}
+        INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
+        MODES_RAW=${EVSP_MODES:-MATCHING,GREEDY}
+        export EVSP_MAX_LABELS=${EVSP_MAX_LABELS:-25000}
+        export EVSP_PRICING_TIERS=${EVSP_PRICING_TIERS:-10000:60,25000:120}
+        export EVSP_PRICING_WALL_PER_ITER=${EVSP_PRICING_WALL_PER_ITER:-240}
+        ;;
+    30m)
+        ACTIVE_HOURS=0.5
+        MILESTONES=0.0833333333333,0.5
+        WALLTIME=01:30:00
+        RUN_TAG=${1:-}
+        INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
+        MODES_RAW=${EVSP_MODES:-MATCHING,GREEDY}
+        export EVSP_MAX_LABELS=${EVSP_MAX_LABELS:-50000}
+        export EVSP_PRICING_TIERS=${EVSP_PRICING_TIERS:-25000:180,50000:600}
+        export EVSP_PRICING_WALL_PER_ITER=${EVSP_PRICING_WALL_PER_ITER:-900}
         ;;
     3h)
         ACTIVE_HOURS=3

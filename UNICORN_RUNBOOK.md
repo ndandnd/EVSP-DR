@@ -46,6 +46,12 @@ The current checkpoint includes these DP/master fixes:
   false no-new-column stop when lower-ranked unseen patterns remain;
 - negative depot completions are condensed online to the cheapest realization
   per trip set instead of all being retained until search ends;
+- optional diversified K-column output and incidence-diverse dominance retain
+  more complementary histories;
+- an optional `start_fair_bound` scheduler rotates across first-trip groups
+  while using the future-dual bound within each group;
+- zero-charge station pass-through and SOC-safe restricted-wait dominance fix
+  two demonstrated label-completeness errors;
 - checkpoints that store the complete trip set, input hashes, mode, arguments,
   and Git revision;
 - final-MIP audits for missing-column trips, artificial `q_i`, and overcoverage;
@@ -117,12 +123,50 @@ itself, first generate the deterministic synthetic suite:
 python -u src/generate_random_goal1_instances.py
 ```
 
-Then compare heap orders on identical GREEDY masters. Random 15-r04 has peak
+For the next reportable collection, submit the three complementary policies on
+all five synthetic 10-bus and all five synthetic 15-bus samples. The helper
+creates 30 independent GREEDY jobs (10 instances times 3 policies), each with a
+distinct reproducible run tag:
+
+```bash
+bash src/submit_goal1_portfolio_matrix.sh 5m goal1_portfolio_5m_round1
+```
+
+This is the recommended use of Unicorn now. It is a breadth gate totaling 2.5
+aggregate Python active-hours; requested allocation time and CPU-hours are
+higher because every job includes setup/master overhead and requests four
+CPUs. It is not a claim that the production solver already runs an integrated
+portfolio. After every job finishes, merge the three pool JSONs for
+each instance separately with `src/audit_goal1_column_pools.py`; the audit
+rejects pools from different instances. Run
+`src/audit_matching_cover_pricing.py` on at least one GREEDY pool per size.
+
+If the merged five-minute pools repeatedly improve their GREEDY seed route
+weights, collect the corresponding 30-minute matrix:
+
+```bash
+bash src/submit_goal1_portfolio_matrix.sh 30m goal1_portfolio_30m_round1
+```
+
+Do not jump directly to the helper's `3h` profile. First verify that the
+30-minute unions continue to move and that memory/label-cap statistics remain
+acceptable. Saved pools are the experiment output; preserve the entire result
+directories before pruning anything.
+
+The matched local comparison of heap orders on identical GREEDY masters is now
+complete. Random 15-r04 has peak
 concurrency 14, but a verified 15-trip reachability antichain gives the stronger
 fractional lower bound 15. MATCHING supplies 15 feasible routes and GREEDY
 supplies 17, so the valid pricing target is 17 to 15; below 15 would indicate a
-correctness problem. The hard first-ten case is the regression control. Nested
-instance names below are safe relative paths under `data/`:
+correctness problem.
+
+No individual five-minute policy lowered route weight from 17. A union of all
+eight local pools did reach 16.857142857, and the smallest improving union used
+three complementary policies. Therefore do not submit a multi-hour
+single-queue job. First use Unicorn only to reproduce a short smoke or to
+generate distinct short pools for the union audit. The hard first-ten case is
+the regression control. Nested instance names below are safe relative paths
+under `data/`:
 
 ```bash
 R04='random_goal1_instances/seed_20260802/Practice_SyntheticRandom_15bus_s20260802_r04.csv'
@@ -141,10 +185,31 @@ EVSP_INSTANCES="Practice_10bus.csv,${R04}" \
 EVSP_MODES=GREEDY \
 EVSP_QUEUE_ORDER=reduced_cost_bound \
   bash src/submit_goal1_matrix.sh smoke heap_bound
+
+EVSP_INSTANCES="$R04" \
+EVSP_MODES=GREEDY \
+EVSP_QUEUE_ORDER=start_fair_bound \
+EVSP_PRICING_OUTPUT_SELECTION=diversified \
+EVSP_DOMINANCE_MODE=resource \
+  bash src/submit_goal1_matrix.sh smoke fair_resource
+
+EVSP_INSTANCES="$R04" \
+EVSP_MODES=GREEDY \
+EVSP_QUEUE_ORDER=start_fair_bound \
+EVSP_PRICING_OUTPUT_SELECTION=diversified \
+EVSP_DOMINANCE_MODE=incidence_diverse \
+  bash src/submit_goal1_matrix.sh smoke fair_incidence
 ```
 
-Compare reoptimized master outcomes, not only best reduced cost. Extend only a
-heap/case that changes route weight or objective. For example:
+Compare reoptimized master outcomes, not only best reduced cost. Preserve each
+whole result directory, then run `src/audit_goal1_column_pools.py` over the
+saved final-pool JSON files. Run `src/audit_matching_cover_pricing.py` on one
+GREEDY pool to verify that a current-model 15-route cover enters in
+complementary negative waves without using historical duties. Exact local
+results and interpretation are in `GOAL1_LOCAL_RESULTS_20260802.md`.
+
+The following single-queue extension is shown only as a command template. It
+is **not currently authorized by the five-minute gate**:
 
 ```bash
 EVSP_INSTANCES="$R04" \
@@ -153,7 +218,13 @@ EVSP_QUEUE_ORDER=reduced_cost_bound \
   bash src/submit_goal1_matrix.sh 3h r04_bound_3h
 ```
 
-The older broad matrix remains available as a regression/performance study:
+The separate-job five-minute union gate above may authorize the matching
+separate-job 30-minute collection. It does not remove the need to implement an
+integrated bounded portfolio before calling the production CG pricer repaired
+or before spending three hours on one queue.
+
+The older broad matrix remains available as a regression/performance study,
+but the current evidence does not justify launching it for pricing progress:
 
 ```bash
 bash src/submit_goal1_matrix.sh 6h
@@ -280,8 +351,11 @@ Important controls:
   the same tag with a larger value if this occurs;
 - `EVSP_MASTER_BACKEND`: defaults to `scipy` for these column-generation jobs;
   `gurobi` remains an explicit diagnostic override;
-- `EVSP_QUEUE_ORDER`: `time`, `reduced_cost`, or `reduced_cost_bound`; the last
-  is the default, but controlled comparisons must set it explicitly;
+- `EVSP_QUEUE_ORDER`: `time`, `reduced_cost`, `reduced_cost_bound`, or
+  `start_fair_bound`; bound is the default, and the fair mode is experimental;
+- `EVSP_PRICING_OUTPUT_SELECTION`: `reduced_cost` (default) or `diversified`;
+- `EVSP_DOMINANCE_MODE`: `resource` (default) or the experimental
+  `incidence_diverse`;
 - `EVSP_MAX_CHARGE2TRIP`: station-to-trip wait cap in minutes, default 1560;
 - `EVSP_MAX_SUCCESSOR_TARGETS`: cap on successor-boundary SOC targets, default
   64;

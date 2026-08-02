@@ -145,3 +145,52 @@ heap effect is therefore drastic but dual-dependent: bound priority was not
 uniformly deeper than raw reduced-cost priority on this master. A useful next
 pricing experiment is a diversified batch that returns columns from both
 priorities, not another single-priority multi-hour run.
+
+## Current random-15 complementarity audit
+
+The deterministic random 15-r04 GREEDY master gives a larger controlled test:
+GREEDY needs 17 routes, while a reachability-antichain certificate and a
+model-derived MATCHING cover establish the exact target of 15. Eight matched
+five-minute pricing policies each returned 750 columns. None individually
+reduced LP route weight, even though their DP trip coverage ranged from 61/337
+to 319/337 and all produced many negative completions. No label-cap eviction
+occurred, so the stall is not explained by the configured per-node cap.
+
+Re-solving the union of all eight pools changes the result: 5,669 unique
+trip-incidence columns cover 336/337 trips and give LP route weight
+16.857142857 with no artificial variables. No individual pool or pair moves
+route weight; a three-policy union is the smallest improving combination. This
+is direct evidence that useful columns are complementary across search
+policies and should be retained as a portfolio.
+
+The reduced-cost calculation itself was checked on 150 DP columns. Stored and
+independently recomputed values agreed to `1.164e-10`. The 17 disjoint GREEDY
+seeds induce a sparse HiGHS dual with 17 positive trip values and 320 zeros.
+After one negative batch is added, another optimal dual can support the same
+master objective. Thus a zero LP step does not prove the returned columns were
+mispriced.
+
+Exact prefix tracing exposes the search failures. One feasible 50-trip known
+duty reached prefix `{3, 7}` and was removed by a different equal-cost history
+`{1, 7}` with higher SOC; the retained history conflicted with another duty.
+A feasible 36-trip duty was not dominated at its early traced prefix, but after
+60 seconds more than 31,000 labels remained ahead of its depth-three label.
+The optional `incidence_diverse` dominance mode addresses the first case, and
+the optional `start_fair_bound` queue addresses first-trip starvation. Under a
+fixed wall time each also has a cost: preserving histories reduces depth, while
+strict round-robin fairness spends work on many shallow groups. Neither alone
+reaches 15.
+
+Finally, a diagnostic generated a 15-route partition using only the current
+trip graph, time/SOC/charging rules, deadhead data, and prices. It never read
+historical `VehicleTask` assignments. From the 17 GREEDY seeds, the cover's
+currently negative unseen routes entered in waves of 9 and 6; only then did the
+master move to 15. From the fair/resource 767-column pool, waves of 7, 5, and 3
+were needed. This validates the master, costs, dual sign, and the
+complementary-wave explanation while leaving DP discovery as the unresolved
+problem.
+
+Use `src/audit_goal1_column_pools.py` to reproduce pool unions and
+`src/audit_matching_cover_pricing.py` for the model-only cover wave. Complete
+five-minute data and the stop decision are in
+`GOAL1_LOCAL_RESULTS_20260802.md`.

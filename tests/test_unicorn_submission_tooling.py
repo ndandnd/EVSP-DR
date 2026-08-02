@@ -54,6 +54,32 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn("EVSP_MODES:-MATCHING,GREEDY}", matrix_text)
         self.assertIn("NO_CHEAT|CHEAT|GREEDY|MATCHING", matrix_text)
 
+    def test_matrix_has_short_data_collection_profiles(self):
+        matrix_text = (REPO_ROOT / "src" / "submit_goal1_matrix.sh").read_text()
+        self.assertIn("    5m)", matrix_text)
+        self.assertIn("ACTIVE_HOURS=0.0833333333333", matrix_text)
+        self.assertIn("    30m)", matrix_text)
+        self.assertIn("ACTIVE_HOURS=0.5", matrix_text)
+
+    def test_portfolio_launcher_submits_three_complementary_policies(self):
+        portfolio_text = (
+            REPO_ROOT / "src" / "submit_goal1_portfolio_matrix.sh"
+        ).read_text()
+        self.assertIn(
+            "submit_component bound_resource reduced_cost_bound resource",
+            portfolio_text,
+        )
+        self.assertIn(
+            "submit_component fair_resource start_fair_bound resource",
+            portfolio_text,
+        )
+        self.assertIn(
+            "submit_component fair_incidence start_fair_bound incidence_diverse",
+            portfolio_text,
+        )
+        self.assertIn("EVSP_PRICING_OUTPUT_SELECTION=diversified", portfolio_text)
+        self.assertIn("EVSP_MODES=GREEDY", portfolio_text)
+
 
 if __name__ == "__main__":
     unittest.main()

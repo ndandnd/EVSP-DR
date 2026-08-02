@@ -69,14 +69,16 @@ Before execution, the maintained runner must expose:
 --master_backend scipy
 --matching
 --queue_order reduced_cost_bound
+--queue_order start_fair_bound
+--pricing_output_selection diversified
+--dominance_mode incidence_diverse
 --max_charge2trip 1560
 ```
 
 The launcher checks those options and fails loudly rather than silently falling
 back to the historical time-first heap or 220-minute station-to-trip window.
-If the repaired bound-priority mode receives a different final name, update the
-two runner-facing constants near the top of
-`src/run_local_goal1_batch.py` and/or pass `--queue-order FINAL_NAME`.
+The supported queue names are validated by both the local launcher and the
+production runner.
 
 Commit the exact tested code before a reportable 30-minute or 3-hour batch. The
 runner records the commit and a deterministic worktree fingerprint.
@@ -135,7 +137,7 @@ This is a plumbing and early-search gate, not a convergence verdict. Confirm:
 Live output is prefixed by case and copied to non-overwritten launcher logs.
 Pressing Ctrl-C terminates active child processes but does not delete outputs.
 
-## Controlled heap comparison
+## Controlled heap comparison (completed on random 15-r04)
 
 Heap order can drastically change which labels are expanded, so compare it on
 the same GREEDY master rather than comparing unrelated initializers or duals.
@@ -162,19 +164,81 @@ expansions/evictions, and timeouts. A heap is useful only if its columns improve
 the reoptimized master; a more negative route at one degenerate dual is not by
 itself a win.
 
-## Gate 2: thirty minutes
-
-Only after Gate 1 is healthy:
+The completed matched runs all accepted 750 DP columns and individually stayed
+at route weight 17. The optional fair variants were run as:
 
 ```bash
-"$PYTHON" src/run_local_goal1_batch.py 30m \
+"$PYTHON" src/run_local_goal1_batch.py 5m \
   --manifest "$MANIFEST" \
-  --sizes 15 \
-  --replicates 4 \
-  --execute
+  --sizes 15 --replicates 4 --initializer greedy \
+  --queue-order start_fair_bound \
+  --pricing-output-selection diversified \
+  --dominance-mode resource \
+  --max-workers 1 --execute
+
+"$PYTHON" src/run_local_goal1_batch.py 5m \
+  --manifest "$MANIFEST" \
+  --sizes 15 --replicates 4 --initializer greedy \
+  --queue-order start_fair_bound \
+  --pricing-output-selection diversified \
+  --dominance-mode incidence_diverse \
+  --max-workers 1 --execute
 ```
 
-At this gate, inspect each pricing CSV over time rather than only its last row.
+Fair/resource covered 319/337 trips and fair/incidence-diverse covered 280/337,
+but neither lowered route weight. Re-solving the union of all eight queue-policy
+pools did lower route weight to 16.857142857. No single pool or pair did. This
+means the useful signal is complementary column retention, not a winning heap.
+See `GOAL1_LOCAL_RESULTS_20260802.md`.
+
+Audit saved pools before launching anything longer:
+
+```bash
+"$PYTHON" src/audit_goal1_column_pools.py \
+  src/results/local_goal1/BATCH_A/*/routes_colgen_final_*.json \
+  src/results/local_goal1/BATCH_B/*/routes_colgen_final_*.json \
+  src/results/local_goal1/BATCH_C/*/routes_colgen_final_*.json
+```
+
+Also run the model-only matching-cover diagnostic on one saved GREEDY pool:
+
+```bash
+"$PYTHON" src/audit_matching_cover_pricing.py \
+  --pool src/results/local_goal1/BATCH_A/*/routes_colgen_final_*.json
+```
+
+These commands print JSON. Use their optional `--output` arguments for a saved
+audit.
+
+On Unicorn, submit the exact three-policy data-collection matrix with:
+
+```bash
+python -u src/generate_random_goal1_instances.py
+bash src/submit_goal1_portfolio_matrix.sh 5m goal1_portfolio_5m_round1
+```
+
+By default this submits all five random 10-bus and all five random 15-bus
+instances under each of the three policies. Override `EVSP_INSTANCES` for a
+smaller subset. Merge only pools for the same instance. The helper also exposes
+`30m`, but use it only after the five-minute unions repeatedly beat their
+GREEDY seeds.
+
+## Gate 2: separate-job portfolio collection, then thirty minutes
+
+The completed individual-queue gate did not justify a longer run. If the
+three-policy five-minute unions repeatedly beat their GREEDY seeds across the
+random suite, collect the same three separate policies for 30 minutes on
+Unicorn:
+
+```bash
+bash src/submit_goal1_portfolio_matrix.sh 30m goal1_portfolio_30m_round1
+```
+
+This remains an offline union experiment, not an integrated portfolio inside
+the production column-generation loop. Do not substitute a 30-minute local or
+cluster run of one queue.
+
+At any later gate, inspect each pricing CSV over time rather than only its last row.
 The per-iteration CSV records the master *before* that row's newly priced
 columns are added. Its key fields are `Artificial_Trips_Before_Add`,
 `Artificial_Total_Before_Add`, `LP_Route_Weight_Before_Add`,
@@ -189,16 +253,16 @@ time limit nor a label-cap eviction occurred.
 
 ## Gate 3: three hours
 
-Run the three-hour stage only for configurations that survived Gate 2 and show
-useful DP progress:
+Run the three-hour stage only if the 30-minute unions improve repeatedly across
+instances, rather than only on one lucky sample:
 
 ```bash
-"$PYTHON" src/run_local_goal1_batch.py 3h \
-  --manifest "$MANIFEST" \
-  --sizes 15 \
-  --replicates 4 \
-  --execute
+bash src/submit_goal1_portfolio_matrix.sh 3h goal1_portfolio_3h_round1
 ```
+
+Prefer implementing the integrated time-budgeted portfolio before this stage.
+If the separate-job 3h collection is used first, describe it explicitly as
+three independent searches whose saved pools are merged offline.
 
 If those are healthy, expand `--replicates` to `all` for the five 10-bus and
 five 15-bus replicates. Keep at most two workers. If the 30-minute runs add no

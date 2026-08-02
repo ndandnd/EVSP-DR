@@ -17,13 +17,21 @@ The maintained experiment path is intentionally small:
 - `src/run_ex_unicorn.py`: column-generation driver.
 - `src/pricing_dp_og.py`: dynamic-programming pricing problem.
 - `src/greedy_init.py`: feasible greedy route-cover initialization.
+- `src/audit_goal1_column_pools.py`: validate and re-solve unions of saved
+  column pools with SciPy/HiGHS.
+- `src/audit_matching_cover_pricing.py`: test a finite model-derived matching
+  cover in negative-reduced-cost waves.
+- `src/submit_goal1_portfolio_matrix.sh`: submit the three complementary
+  short-run pricing policies on Unicorn.
 - `src/run_final_mip.py`: final set-covering MIP over a saved column pool.
 - `src/reconstruct_milestone_snapshots.py`: reconstruct 3h/10h/24h route pools from checkpoints and pricing statistics.
 - `src/plot_charging_gantt_from_solutions.py` and `src/plot_greedy_vs_nocheat_master.py`: result visualization.
 
 Canonical static inputs live in `data/`. Experiment instances, checkpoints, solver logs, route pools, MIP solutions, and plots are generated artifacts and are deliberately ignored by Git. Keep research results in a dated results directory or external storage rather than committing them to the source repository.
 
-For the current reproducible Unicorn checkpoint, exact 3h/6h/unlimited launch
-commands, result audits, and next-step decision rules, see
+For the current evidence and stop decision, read
+[`GOAL1_LOCAL_RESULTS_20260802.md`](GOAL1_LOCAL_RESULTS_20260802.md) and
+[`GOAL1_STATUS.md`](GOAL1_STATUS.md). For exact 5m/30m/3h launch commands,
+result audits, and next-step decision rules, see
 [`UNICORN_RUNBOOK.md`](UNICORN_RUNBOOK.md). `HANDOFF_ISSUE18.md` is retained as
 historical context.
