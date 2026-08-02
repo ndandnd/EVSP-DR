@@ -28,14 +28,21 @@ if [[ ! "$RUN_TAG" =~ ^[A-Za-z0-9_.-]+$ ]]; then
     echo "RUN_TAG may contain only letters, digits, dot, underscore, and hyphen" >&2
     exit 2
 fi
-if [[ "$INSTANCE" == */* ]]; then
-    echo "INSTANCE must be a filename under data/, not a path: $INSTANCE" >&2
+if [[ "$INSTANCE" == /* || "$INSTANCE" != *.csv ]]; then
+    echo "INSTANCE must be a relative CSV path under data/: $INSTANCE" >&2
     exit 2
 fi
+IFS='/' read -r -a instance_parts <<< "$INSTANCE"
+for instance_part in "${instance_parts[@]}"; do
+    if [[ -z "$instance_part" || "$instance_part" == "." || "$instance_part" == ".." ]]; then
+        echo "INSTANCE contains an unsafe path component: $INSTANCE" >&2
+        exit 2
+    fi
+done
 
 case "$MODE" in
-    NO_CHEAT|CHEAT|GREEDY) ;;
-    *) echo "MODE must be NO_CHEAT, CHEAT, or GREEDY; got $MODE" >&2; exit 2 ;;
+    NO_CHEAT|CHEAT|GREEDY|MATCHING) ;;
+    *) echo "MODE must be NO_CHEAT, CHEAT, GREEDY, or MATCHING; got $MODE" >&2; exit 2 ;;
 esac
 
 REPO_ROOT=${EVSP_REPO_ROOT:-${SLURM_SUBMIT_DIR:-$PWD}}
@@ -75,11 +82,6 @@ echo "[JOB] prices         : $PRICES_CSV"
 echo "[JOB] run tag        : $RUN_TAG"
 python --version
 
-python -u src/unicorn_preflight.py \
-    --csv "$INSTANCE" \
-    --prices_csv "$PRICES_CSV" \
-    --mode "$MODE"
-
 MAX_LABELS=${EVSP_MAX_LABELS:-100000}
 PRICING_TIERS=${EVSP_PRICING_TIERS:-${MAX_LABELS}:500,${MAX_LABELS}:3000}
 PRICING_WALL=${EVSP_PRICING_WALL_PER_ITER:-6000}
@@ -90,12 +92,38 @@ MIN_TRIPS=${EVSP_MIN_TRIPS_PER_ROUTE:-1}
 MASTER_TIME_LIMIT=${EVSP_MASTER_TIME_LIMIT:-120}
 PRICE_TAG=${EVSP_PRICE_TAG:-${PRICES_CSV##*/}}
 PRICE_TAG=${PRICE_TAG%.csv}
+MASTER_BACKEND=${EVSP_MASTER_BACKEND:-scipy}
+case "$MASTER_BACKEND" in
+    scipy|gurobi) ;;
+    *) echo "EVSP_MASTER_BACKEND must be scipy or gurobi; got $MASTER_BACKEND" >&2; exit 2 ;;
+esac
+QUEUE_ORDER=${EVSP_QUEUE_ORDER:-reduced_cost_bound}
+case "$QUEUE_ORDER" in
+    time|reduced_cost|reduced_cost_bound) ;;
+    *) echo "EVSP_QUEUE_ORDER must be time, reduced_cost, or reduced_cost_bound; got $QUEUE_ORDER" >&2; exit 2 ;;
+esac
+MAX_CHARGE2TRIP=${EVSP_MAX_CHARGE2TRIP:-1560}
+MAX_SUCCESSOR_TARGETS=${EVSP_MAX_SUCCESSOR_TARGETS:-64}
 
-INSTANCE_STEM=${INSTANCE%.csv}
+preflight_command=(
+    python -u src/unicorn_preflight.py
+    --csv "$INSTANCE"
+    --prices_csv "$PRICES_CSV"
+    --mode "$MODE"
+)
+if [[ "$MASTER_BACKEND" == "scipy" ]]; then
+    preflight_command+=(--skip_gurobi)
+fi
+"${preflight_command[@]}"
+
+INSTANCE_STEM=${INSTANCE##*/}
+INSTANCE_STEM=${INSTANCE_STEM%.csv}
+INSTANCE_KEY=${INSTANCE%.csv}
+INSTANCE_KEY=${INSTANCE_KEY//\//_}
 
 # Refuse two jobs that would append to the same checkpoint/stats files.  The
 # lock is released automatically if the allocation exits or is cancelled.
-LOCK_PATH="src/results/.lock_${INSTANCE_STEM}_${MODE}_${RUN_TAG}.lock"
+LOCK_PATH="src/results/.lock_${INSTANCE_KEY}_${MODE}_${RUN_TAG}.lock"
 if ! command -v flock >/dev/null 2>&1; then
     echo "flock is required to protect checkpoint resumes from concurrent writers" >&2
     exit 127
@@ -137,6 +165,10 @@ command=(
     --kbest "$KBEST"
     --max_labels "$MAX_LABELS"
     --min_trips_per_route "$MIN_TRIPS"
+    --master_backend "$MASTER_BACKEND"
+    --queue_order "$QUEUE_ORDER"
+    --max_charge2trip "$MAX_CHARGE2TRIP"
+    --max_successor_charge_targets "$MAX_SUCCESSOR_TARGETS"
     --master_time_limit "$MASTER_TIME_LIMIT"
     --pricing_tiers "$PRICING_TIERS"
     --pricing_wall_per_iter "$PRICING_WALL"
@@ -152,6 +184,7 @@ command=(
 case "$MODE" in
     CHEAT)  command+=(--cheat) ;;
     GREEDY) command+=(--greedy) ;;
+    MATCHING) command+=(--matching) ;;
 esac
 if [[ "${EVSP_ALLOW_UNSAFE_RESUME:-0}" == "1" ]]; then
     command+=(--allow_unsafe_resume)

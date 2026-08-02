@@ -12,12 +12,18 @@ Usage:
   src/submit_goal1_matrix.sh 6h [RUN_TAG]
   src/submit_goal1_matrix.sh unlimited SLURM_WALLTIME [RUN_TAG]
 
-Defaults for 3h/6h/unlimited:
+Default smoke:
+  instances: Practice_10bus.csv
+  modes:     MATCHING
+
+Defaults for 3h/5h/6h/unlimited:
   instances: Practice_10bus.csv,Practice_15bus.csv
-  modes:     NO_CHEAT,GREEDY
+  modes:     MATCHING,GREEDY
 
 Override with EVSP_INSTANCES, EVSP_MODES, EVSP_PRICE_CSV, EVSP_PARTITION,
-EVSP_MEMORY, or the pricing variables documented in UNICORN_RUNBOOK.md.
+EVSP_MEMORY, EVSP_QUEUE_ORDER, or the pricing variables documented in
+UNICORN_RUNBOOK.md. EVSP_INSTANCES accepts safe relative CSV paths under data/.
+NO_CHEAT and CHEAT remain available through EVSP_MODES for diagnostic runs.
 EOF
 }
 
@@ -36,7 +42,7 @@ case "$PROFILE" in
         WALLTIME=00:30:00
         RUN_TAG=${1:-}
         INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv}
-        MODES_RAW=${EVSP_MODES:-NO_CHEAT}
+        MODES_RAW=${EVSP_MODES:-MATCHING}
         export EVSP_MAX_LABELS=${EVSP_MAX_LABELS:-5000}
         export EVSP_PRICING_TIERS=${EVSP_PRICING_TIERS:-5000:30}
         export EVSP_PRICING_WALL_PER_ITER=${EVSP_PRICING_WALL_PER_ITER:-60}
@@ -47,7 +53,7 @@ case "$PROFILE" in
         WALLTIME=05:00:00
         RUN_TAG=${1:-}
         INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
-        MODES_RAW=${EVSP_MODES:-NO_CHEAT,GREEDY}
+        MODES_RAW=${EVSP_MODES:-MATCHING,GREEDY}
         ;;
     5h)
         ACTIVE_HOURS=5
@@ -55,7 +61,7 @@ case "$PROFILE" in
         WALLTIME=07:00:00
         RUN_TAG=${1:-}
         INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
-        MODES_RAW=${EVSP_MODES:-NO_CHEAT,GREEDY}
+        MODES_RAW=${EVSP_MODES:-MATCHING,GREEDY}
         ;;
     6h)
         ACTIVE_HOURS=6
@@ -63,7 +69,7 @@ case "$PROFILE" in
         WALLTIME=08:00:00
         RUN_TAG=${1:-}
         INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
-        MODES_RAW=${EVSP_MODES:-NO_CHEAT,GREEDY}
+        MODES_RAW=${EVSP_MODES:-MATCHING,GREEDY}
         ;;
     unlimited)
         if (( $# < 1 )); then
@@ -75,7 +81,7 @@ case "$PROFILE" in
         WALLTIME=$1
         RUN_TAG=${2:-}
         INSTANCES_RAW=${EVSP_INSTANCES:-Practice_10bus.csv,Practice_15bus.csv}
-        MODES_RAW=${EVSP_MODES:-NO_CHEAT,GREEDY}
+        MODES_RAW=${EVSP_MODES:-MATCHING,GREEDY}
         ;;
     *)
         usage
@@ -116,6 +122,16 @@ MEMORY=${EVSP_MEMORY:-32G}
 IFS=',' read -r -a INSTANCES <<< "$INSTANCES_RAW"
 IFS=',' read -r -a MODES <<< "$MODES_RAW"
 
+for mode in "${MODES[@]}"; do
+    case "$mode" in
+        NO_CHEAT|CHEAT|GREEDY|MATCHING) ;;
+        *)
+            echo "EVSP_MODES contains unsupported mode '$mode'; expected NO_CHEAT, CHEAT, GREEDY, or MATCHING" >&2
+            exit 2
+            ;;
+    esac
+done
+
 sbatch_args=(--time="$WALLTIME" --mem="$MEMORY" --cpus-per-task=4)
 if [[ -n "${EVSP_PARTITION:-}" ]]; then
     sbatch_args+=(--partition="$EVSP_PARTITION")
@@ -129,7 +145,9 @@ echo "  prices    : $PRICE_CSV"
 
 for instance in "${INSTANCES[@]}"; do
     for mode in "${MODES[@]}"; do
-        job_name="G1_${PROFILE}_${instance%.csv}_${mode}"
+        instance_tag=${instance%.csv}
+        instance_tag=${instance_tag//\//_}
+        job_name="G1_${PROFILE}_${instance_tag}_${mode}"
         job_id=$(sbatch --parsable "${sbatch_args[@]}" --job-name="$job_name" \
             src/submit_goal1_colgen.sub \
             "$instance" "$mode" "$ACTIVE_HOURS" "$RUN_TAG" "$MILESTONES" "$PRICE_CSV")

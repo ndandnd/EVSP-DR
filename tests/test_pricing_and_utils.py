@@ -1,15 +1,28 @@
 import csv
+import heapq
 import inspect
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from pricing_dp_og import Label, _is_dominated, make_dp_pricer, solve_pricing_dp  # noqa: E402
+from pricing_dp_og import (  # noqa: E402
+    Label,
+    PricingRunStats,
+    _build_remaining_dual_bound,
+    _cap_label_pool,
+    _is_dominated,
+    _make_label_priority_key,
+    _make_label_queue_entry,
+    _successor_boundary_soc_levels,
+    make_dp_pricer,
+    solve_pricing_dp,
+)
 from utils_v2 import (  # noqa: E402
     calculate_truck_route_cost_accurate,
     load_station_hourly_prices,
@@ -28,6 +41,34 @@ class DominanceTests(unittest.TestCase):
             path=tuple(trips),
             trips_visited=frozenset(trips),
             charging_stops=tuple((f"S{i}", 0, 1, 1) for i in range(charges)),
+        )
+
+    def make_tiny_pricer(self, queue_order):
+        return make_dp_pricer(
+            T=[0],
+            S_use=[],
+            DEPOT="D",
+            tau={("D", 0): 0, (0, "D"): 0},
+            d={("D", 0): 0.0, (0, "D"): 0.0},
+            st={0: 1},
+            et={0: 2},
+            sl={0: "A"},
+            el={0: "B"},
+            epsilon={0: 0.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={},
+            charge_cost_premium=1.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            st_min={0: 0.0},
+            et_min={0: 1.0},
+            tau_min={("D", 0): 0.0, (0, "D"): 0.0},
+            queue_order=queue_order,
         )
 
     def test_short_route_cannot_kill_minimum_trip_ready_route(self):
@@ -55,11 +96,437 @@ class DominanceTests(unittest.TestCase):
         # (170-minute gap). They must remain incomparable at a station.
         self.assertTrue(_is_dominated(late, [early]))
         self.assertFalse(_is_dominated(late, [early], station_pool=True))
+        self.assertTrue(
+            _is_dominated(
+                late,
+                [early],
+                station_pool=True,
+                station_waiting_unrestricted=True,
+            )
+        )
 
     def test_public_pricer_defaults_allow_one_trip_routes(self):
         for function in (solve_pricing_dp, make_dp_pricer):
             default = inspect.signature(function).parameters["MIN_TRIPS_PER_ROUTE"].default
             self.assertEqual(default, 1)
+
+    def test_public_pricer_defaults_preserve_time_queue_order(self):
+        for function in (solve_pricing_dp, make_dp_pricer):
+            default = inspect.signature(function).parameters["queue_order"].default
+            self.assertEqual(default, "time")
+
+    def test_public_pricer_defaults_preserve_fixed_soc_grid(self):
+        for function in (solve_pricing_dp, make_dp_pricer):
+            default = inspect.signature(function).parameters[
+                "successor_charge_targets"
+            ].default
+            self.assertFalse(default)
+
+    def test_queue_order_changes_which_label_pops_first(self):
+        early_expensive = self.make_label(trips=[1], rc=10.0, time=100.0)
+        late_negative = self.make_label(trips=[2], rc=-10.0, time=200.0)
+
+        time_entry = _make_label_queue_entry("time")
+        time_heap = [time_entry(early_expensive, 0), time_entry(late_negative, 1)]
+        heapq.heapify(time_heap)
+        self.assertIs(heapq.heappop(time_heap)[-1], early_expensive)
+
+        reduced_cost_entry = _make_label_queue_entry("reduced_cost")
+        reduced_cost_heap = [
+            reduced_cost_entry(early_expensive, 0),
+            reduced_cost_entry(late_negative, 1),
+        ]
+        heapq.heapify(reduced_cost_heap)
+        self.assertIs(heapq.heappop(reduced_cost_heap)[-1], late_negative)
+
+    def test_future_dual_bound_changes_which_label_pops_first(self):
+        bound = _build_remaining_dual_bound(
+            alpha={0: 100.0},
+            T=[0],
+            trip_start_min={0: 150.0},
+            trip_end_min={0: 160.0},
+        )
+        early_promising = self.make_label(trips=[1], rc=-1.0, time=100.0)
+        late_negative = self.make_label(trips=[2], rc=-10.0, time=200.0)
+        entry = _make_label_queue_entry("reduced_cost_bound", bound)
+        queue = [entry(early_promising, 0), entry(late_negative, 1)]
+
+        heapq.heapify(queue)
+
+        self.assertIs(heapq.heappop(queue)[-1], early_promising)
+
+    def test_remaining_dual_bound_uses_nonoverlapping_future_trips(self):
+        bound = _build_remaining_dual_bound(
+            alpha={0: 5.0, 1: 100.0, 2: 6.0, 3: 4.0, 4: -500.0},
+            T=[0, 1, 2, 3, 4],
+            trip_start_min={0: 0.0, 1: 5.0, 2: 10.0, 3: 7.0, 4: 20.0},
+            trip_end_min={0: 10.0, 1: 15.0, 2: 20.0, 3: 7.0, 4: 30.0},
+        )
+
+        # The positive-duration WIS chooses trip 1 (100) over trips 0+2
+        # (11). The zero-duration trip is conservatively added separately.
+        self.assertAlmostEqual(bound(0.0), 104.0)
+        self.assertAlmostEqual(bound(10.0), 6.0)
+        self.assertAlmostEqual(bound(21.0), 0.0)
+
+    def test_bound_queue_requires_a_bound_function(self):
+        with self.assertRaisesRegex(ValueError, "remaining-dual bound"):
+            _make_label_queue_entry("reduced_cost_bound")
+
+    def test_label_cap_retention_uses_configured_bound_priority(self):
+        labels = [
+            self.make_label(trips=[1], rc=-10.0, time=200.0),
+            self.make_label(trips=[2], rc=-1.0, time=100.0),
+        ]
+        bound = lambda time_min: 100.0 if time_min < 150.0 else 0.0
+        priority = _make_label_priority_key("reduced_cost_bound", bound)
+
+        # Hysteresis triggers only above max_labels + 50.
+        padded = labels + [
+            self.make_label(trips=[index + 3], rc=1000.0 + index, time=300.0)
+            for index in range(50)
+        ]
+        kept, evicted = _cap_label_pool(
+            padded,
+            max_labels=1,
+            priority_key=priority,
+        )
+
+        self.assertEqual(kept, [labels[1]])
+        self.assertEqual(evicted, 51)
+        self.assertTrue(labels[1].alive)
+        self.assertFalse(labels[0].alive)
+
+    def test_invalid_queue_order_is_rejected_by_public_solver(self):
+        with self.assertRaisesRegex(ValueError, "queue_order"):
+            solve_pricing_dp(
+                alpha={},
+                T=[],
+                S_use=[],
+                queue_order="not-an-order",
+            )
+        with self.assertRaisesRegex(ValueError, "queue_order"):
+            self.make_tiny_pricer("not-an-order")
+
+    def test_factory_threads_queue_order_and_exposes_last_stats(self):
+        pricer = self.make_tiny_pricer("reduced_cost")
+
+        routes, best_rc, timed_out = pricer({0: 200.0})
+
+        self.assertEqual(pricer.queue_order, "reduced_cost")
+        self.assertEqual(len(routes), 1)
+        self.assertAlmostEqual(best_rc, -100.0)
+        self.assertFalse(timed_out)
+        self.assertIsInstance(pricer.last_stats, PricingRunStats)
+        self.assertEqual(pricer.last_stats.queue_order, "reduced_cost")
+
+    def test_factory_reuses_a_prebuilt_adjacency(self):
+        adjacency = {
+            "D": [(0, 0.0, 0.0, "depot_trip")],
+            0: [("D", 0.0, 0.0, "trip_depot")],
+        }
+        kwargs = dict(
+            T=[0],
+            S_use=[],
+            DEPOT="D",
+            tau={},
+            d={},
+            st={0: 1},
+            et={0: 2},
+            sl={0: "A"},
+            el={0: "B"},
+            epsilon={0: 0.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={},
+            charge_cost_premium=1.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            st_min={0: 0.0},
+            et_min={0: 1.0},
+            tau_min={},
+            adj=adjacency,
+        )
+
+        with mock.patch("pricing_dp_og.build_dag", side_effect=AssertionError):
+            pricer = make_dp_pricer(**kwargs)
+
+        self.assertIs(pricer.adjacency, adjacency)
+
+    def test_existing_pattern_is_filtered_before_kbest_cutoff(self):
+        routes, timed_out, stats = solve_pricing_dp(
+            alpha={0: 300.0, 1: 200.0},
+            T=[0, 1],
+            S_use=[],
+            DEPOT="D",
+            adj={
+                "D": [
+                    (0, 0.0, 0.0, "depot_trip"),
+                    (1, 0.0, 0.0, "depot_trip"),
+                ],
+                0: [("D", 0.0, 0.0, "trip_depot")],
+                1: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={0: 1, 1: 1},
+            et={0: 2, 1: 2},
+            sl={0: "A", 1: "B"},
+            el={0: "A", 1: "B"},
+            epsilon={0: 0.0, 1: 0.0},
+            st_min={0: 0.0, 1: 0.0},
+            et_min={0: 1.0, 1: 1.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=100.0,
+            hourly_prices={},
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=1,
+            existing_trip_set_costs={frozenset({0}): 100.0},
+            return_stats=True,
+        )
+
+        self.assertFalse(timed_out)
+        self.assertTrue(stats.exhaustive)
+        self.assertEqual(stats.completed_routes, 2)
+        self.assertEqual(stats.negative_completed, 2)
+        self.assertAlmostEqual(stats.best_reduced_cost, -200.0)
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["route"], ["D", 1, "D"])
+
+    def test_cheaper_realization_of_existing_pattern_is_still_returned(self):
+        routes, _ = solve_pricing_dp(
+            alpha={0: 300.0},
+            T=[0],
+            S_use=[],
+            DEPOT="D",
+            adj={
+                "D": [(0, 0.0, 0.0, "depot_trip")],
+                0: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={0: 1},
+            et={0: 2},
+            sl={0: "A"},
+            el={0: "A"},
+            epsilon={0: 0.0},
+            st_min={0: 0.0},
+            et_min={0: 1.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=100.0,
+            hourly_prices={},
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=1,
+            existing_trip_set_costs={frozenset({0}): 150.0},
+        )
+
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["route"], ["D", 0, "D"])
+
+    def test_successor_boundary_soc_target_repairs_partial_charge_gap(self):
+        levels = _successor_boundary_soc_levels(
+            base_levels=[30.0 * index for index in range(1, 11)],
+            successor_latest_departures=[413.0],
+            arrival_soc=216.1329999,
+            arrival_time_min=409.0,
+            G=300.0,
+            charge_rate_kw=300.0,
+            max_successor_targets=64,
+        )
+
+        self.assertIn(236.1329999, levels)
+
+    def test_actual_dp_needs_successor_boundary_target_for_known_shape(self):
+        kwargs = dict(
+            alpha={0: 500.0, 1: 500.0},
+            T=[0, 1],
+            S_use=["S"],
+            DEPOT="D",
+            adj={
+                "D": [(0, 0.0, 0.0, "depot_trip")],
+                0: [("S", 408.0, 0.0, "trip_station")],
+                "S": [(1, 0.0, 0.0, "station_trip")],
+                1: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={0: 1, 1: 414},
+            et={0: 2, 1: 415},
+            sl={0: "A", 1: "B"},
+            el={0: "A", 1: "B"},
+            epsilon={0: 83.8670001, 1: 236.0},
+            st_min={0: 0.0, 1: 413.0},
+            et_min={0: 1.0, 1: 414.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=500,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={},
+            charge_cost_premium=0.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            MAX_LABELS_PER_NODE=100,
+            soc_charge_levels=[30.0 * index for index in range(1, 11)],
+            MIN_TRIPS_PER_ROUTE=2,
+            max_charge2trip=220,
+        )
+
+        grid_only, _ = solve_pricing_dp(
+            **kwargs,
+            successor_charge_targets=False,
+        )
+        boundary, _ = solve_pricing_dp(
+            **kwargs,
+            successor_charge_targets=True,
+        )
+
+        self.assertEqual(grid_only, [])
+        self.assertEqual(len(boundary), 1)
+        self.assertEqual(
+            [node for node in boundary[0]["route"] if isinstance(node, int)],
+            [0, 1],
+        )
+
+    def test_relaxed_station_wait_makes_split_shift_representable(self):
+        kwargs = dict(
+            alpha={0: 500.0, 1: 500.0},
+            T=[0, 1],
+            S_use=["S"],
+            DEPOT="D",
+            adj={
+                "D": [(0, 0.0, 0.0, "depot_trip")],
+                0: [("S", 0.0, 0.0, "trip_station")],
+                "S": [(1, 0.0, 0.0, "station_trip")],
+                1: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={0: 1, 1: 401},
+            et={0: 11, 1: 411},
+            sl={0: "A", 1: "B"},
+            el={0: "A", 1: "B"},
+            epsilon={0: 100.0, 1: 10.0},
+            st_min={0: 0.0, 1: 400.0},
+            et_min={0: 10.0, 1: 410.0},
+            G=100.0,
+            TB_MIN=1,
+            bar_t=500,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={},
+            charge_cost_premium=0.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            MAX_LABELS_PER_NODE=100,
+            soc_charge_levels=[100.0],
+            MIN_TRIPS_PER_ROUTE=2,
+        )
+
+        restricted, _ = solve_pricing_dp(**kwargs, max_charge2trip=220)
+        horizon_wait, _ = solve_pricing_dp(**kwargs, max_charge2trip=500)
+
+        self.assertEqual(restricted, [])
+        self.assertEqual(len(horizon_wait), 1)
+
+    def test_pricing_stats_report_actual_search_counts(self):
+        routes, timed_out, stats = solve_pricing_dp(
+            alpha={0: 200.0},
+            T=[0],
+            S_use=[],
+            DEPOT="D",
+            adj={
+                "D": [(0, 0.0, 0.0, "depot_trip")],
+                0: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={0: 1},
+            et={0: 2},
+            sl={0: "A"},
+            el={0: "B"},
+            epsilon={0: 0.0},
+            st_min={0: 0.0},
+            et_min={0: 1.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=100.0,
+            hourly_prices={},
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            queue_order="reduced_cost",
+            return_stats=True,
+        )
+
+        self.assertFalse(timed_out)
+        self.assertEqual(len(routes), 1)
+        self.assertIsInstance(stats, PricingRunStats)
+        self.assertEqual(stats.queue_order, "reduced_cost")
+        self.assertEqual(stats.labels_expanded, 2)
+        self.assertEqual(stats.completed_routes, 1)
+        self.assertEqual(stats.negative_completed, 1)
+        self.assertEqual(stats.label_cap_evictions, 0)
+        self.assertTrue(stats.exhaustive)
+        self.assertFalse(stats.timed_out)
+        self.assertGreaterEqual(stats.elapsed_s, 0.0)
+
+    def test_actual_dp_marks_label_cap_truncation_nonexhaustive(self):
+        predecessors = list(range(60))
+        common = 60
+        trips = predecessors + [common]
+        adjacency = {
+            "D": [(trip, 0.0, 0.0, "depot_trip") for trip in predecessors],
+            common: [("D", 0.0, 0.0, "trip_depot")],
+        }
+        for trip in predecessors:
+            adjacency[trip] = [(common, 0.0, 0.0, "trip_trip")]
+
+        _, timed_out, stats = solve_pricing_dp(
+            alpha={**{trip: float(trip) for trip in predecessors}, common: 0.0},
+            T=trips,
+            S_use=[],
+            DEPOT="D",
+            adj=adjacency,
+            tau={},
+            d={},
+            st={trip: 1 for trip in trips},
+            et={trip: 2 for trip in trips},
+            sl={trip: "A" for trip in trips},
+            el={trip: "B" for trip in trips},
+            epsilon={**{trip: float(trip) for trip in predecessors}, common: 0.0},
+            st_min={**{trip: 0.0 for trip in predecessors}, common: 2.0},
+            et_min={**{trip: 1.0 for trip in predecessors}, common: 3.0},
+            G=100.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=1000.0,
+            hourly_prices={},
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            MAX_LABELS_PER_NODE=1,
+            MIN_TRIPS_PER_ROUTE=2,
+            queue_order="time",
+            return_stats=True,
+        )
+
+        self.assertFalse(timed_out)
+        self.assertGreater(stats.label_cap_evictions, 0)
+        self.assertFalse(stats.exhaustive)
 
 
 class UtilityTests(unittest.TestCase):

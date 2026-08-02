@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 import numpy as np
+import scipy
 
 from config import CHARGING_STATIONS, DEPOT_NAME, STATION_COPIES
 from utils_v2 import load_station_hourly_prices, select_unique_station_copies
@@ -46,14 +47,22 @@ def check_gurobi() -> str:
     return ".".join(str(part) for part in gp.gurobi.version())
 
 
-def main() -> int:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--csv", required=True, help="Instance filename under data/")
     parser.add_argument("--prices_csv", default="hourly_prices_flat.csv")
-    parser.add_argument("--mode", choices=["NO_CHEAT", "CHEAT", "GREEDY"], default="NO_CHEAT")
+    parser.add_argument(
+        "--mode",
+        choices=["NO_CHEAT", "CHEAT", "GREEDY", "MATCHING"],
+        default="MATCHING",
+    )
     parser.add_argument("--allow_dirty", action="store_true")
     parser.add_argument("--skip_gurobi", action="store_true", help="For local data-only checks")
-    args = parser.parse_args()
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
 
     if sys.version_info < (3, 10):
         raise RuntimeError(f"Python 3.10+ required; found {sys.version.split()[0]}")
@@ -126,6 +135,7 @@ def main() -> int:
     print(f"  python       : {sys.version.split()[0]}")
     print(f"  pandas       : {pd.__version__}")
     print(f"  numpy        : {np.__version__}")
+    print(f"  scipy        : {scipy.__version__}")
     print(f"  gurobi       : {gurobi_version}")
     print(f"  license env  : {os.environ.get('GRB_LICENSE_FILE', '(not set)')}")
     print(f"  instance     : {instance.name} ({len(trips)} trips, sha256={sha256(instance)[:12]})")

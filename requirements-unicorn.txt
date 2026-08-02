@@ -1,5 +1,5 @@
-# The Unicorn conda environment may already provide these packages.
-# Gurobi still requires the cluster license configured in UNICORN_RUNBOOK.md.
-gurobipy
+# Core Goal-1 column generation uses the free SciPy/HiGHS master.
 numpy
 pandas
+scipy
+# Install gurobipy separately only for the optional Gurobi backend or final MIP.

@@ -6,15 +6,16 @@ before making the charge-timing model more ambitious.
 
 ## Start here
 
-Use the `issue20` branch. Do not merge `main` into it: `main` diverged before
-the maintained DP work and contains obsolete generated files and conflicting
-model/data changes.
+Use the `issue20-local-pricing-audit` branch for this checkpoint. It is based on
+the maintained `issue20` line. Do not merge `main` into it: `main` diverged
+before the maintained DP work and contains obsolete generated files and
+conflicting model/data changes.
 
 ```bash
 git clone https://github.com/ndandnd/EVSP-DR.git
 cd EVSP-DR
-git switch issue20
-git pull --ff-only origin issue20
+git switch issue20-local-pricing-audit
+git pull --ff-only origin issue20-local-pricing-audit
 git status --short --branch
 ```
 
@@ -39,8 +40,12 @@ The current checkpoint includes these DP/master fixes:
 - dominance that preserves both remaining recharge capacity and the minimum
   completed-trip requirement, without pruning later station labels that retain
   a different 220-minute successor window;
-- charging-aware column identity, so a cheaper charging realization of the same
-  trip path is not discarded;
+- current-master incidence/cost dominance: for an already represented trip set,
+  only a strictly cheaper charging/path realization is admitted;
+- existing incidence patterns are filtered before the K-best cutoff, avoiding a
+  false no-new-column stop when lower-ranked unseen patterns remain;
+- negative depot completions are condensed online to the cheapest realization
+  per trip set instead of all being retained until search ends;
 - checkpoints that store the complete trip set, input hashes, mode, arguments,
   and Git revision;
 - final-MIP audits for missing-column trips, artificial `q_i`, and overcoverage;
@@ -48,9 +53,11 @@ The current checkpoint includes these DP/master fixes:
   feasible routes merely as a speed heuristic.
 
 This is still the **Goal-1 restricted model**. Charging begins immediately on
-station arrival, and pricing uses the 57/61/220-minute trip/station restrictions.
-That is acceptable for a flat-price rediscovery benchmark, but it cannot support
-the later headline temporal demand-response claim.
+station arrival, and pricing retains the 57-minute trip-to-trip and 61-minute
+trip-to-station restrictions. Station-to-trip waiting defaults to the full
+1560-minute horizon for rediscovery. That is acceptable for a flat-price
+benchmark, but immediate charging still cannot support the later headline
+temporal demand-response claim.
 
 Benchmark interpretation:
 
@@ -68,15 +75,16 @@ Benchmark interpretation:
 The submitted jobs default to the environment previously used on Unicorn:
 
 ```bash
-export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
-unset LM_LICENSE_FILE
 source /share/apps/software/anaconda3/etc/profile.d/conda.sh
 conda activate /home/nc437/evsp_env
 ```
 
-Override `EVSP_CONDA_SH`, `EVSP_CONDA_ENV`, or `GRB_LICENSE_FILE` if the cluster
-environment has moved. Python 3.10+, `gurobipy`, `pandas`, and `numpy` are
-required; see `requirements-unicorn.txt`.
+Override `EVSP_CONDA_SH` or `EVSP_CONDA_ENV` if the cluster environment has
+moved. Goal-1 column generation defaults to the free SciPy/HiGHS master and does
+not require a Gurobi license. Python 3.10+, `scipy`, `pandas`, and `numpy` are
+required; `gurobipy` and `GRB_LICENSE_FILE` are needed only when explicitly
+using the Gurobi backend or solving the later final integer master. See
+`requirements-unicorn.txt`.
 
 From the repository root, run the preflight once on the login node:
 
@@ -84,7 +92,8 @@ From the repository root, run the preflight once on the login node:
 python -u src/unicorn_preflight.py \
   --csv Practice_10bus.csv \
   --prices_csv hourly_prices_flat.csv \
-  --mode NO_CHEAT
+  --mode MATCHING \
+  --skip_gurobi
 ```
 
 `hourly_prices_flat.csv` is a two-column temporal curve. The maintained loader
@@ -100,22 +109,82 @@ bash src/submit_goal1_matrix.sh smoke
 ```
 
 Inspect its log and confirm that it writes a run-local checkpoint and summary.
-Then submit the main matrix:
+The hard 10/15 MATCHING seeds already equal their peak-concurrency lower bounds,
+so a multi-hour MATCHING run cannot improve their fleet counts. To test the DP
+itself, first generate the deterministic synthetic suite:
+
+```bash
+python -u src/generate_random_goal1_instances.py
+```
+
+Then compare heap orders on identical GREEDY masters. Random 15-r04 has peak
+concurrency 14, but a verified 15-trip reachability antichain gives the stronger
+fractional lower bound 15. MATCHING supplies 15 feasible routes and GREEDY
+supplies 17, so the valid pricing target is 17 to 15; below 15 would indicate a
+correctness problem. The hard first-ten case is the regression control. Nested
+instance names below are safe relative paths under `data/`:
+
+```bash
+R04='random_goal1_instances/seed_20260802/Practice_SyntheticRandom_15bus_s20260802_r04.csv'
+
+EVSP_INSTANCES="Practice_10bus.csv,${R04}" \
+EVSP_MODES=GREEDY \
+EVSP_QUEUE_ORDER=time \
+  bash src/submit_goal1_matrix.sh smoke heap_time
+
+EVSP_INSTANCES="Practice_10bus.csv,${R04}" \
+EVSP_MODES=GREEDY \
+EVSP_QUEUE_ORDER=reduced_cost \
+  bash src/submit_goal1_matrix.sh smoke heap_rc
+
+EVSP_INSTANCES="Practice_10bus.csv,${R04}" \
+EVSP_MODES=GREEDY \
+EVSP_QUEUE_ORDER=reduced_cost_bound \
+  bash src/submit_goal1_matrix.sh smoke heap_bound
+```
+
+Compare reoptimized master outcomes, not only best reduced cost. Extend only a
+heap/case that changes route weight or objective. For example:
+
+```bash
+EVSP_INSTANCES="$R04" \
+EVSP_MODES=GREEDY \
+EVSP_QUEUE_ORDER=reduced_cost_bound \
+  bash src/submit_goal1_matrix.sh 3h r04_bound_3h
+```
+
+The older broad matrix remains available as a regression/performance study:
 
 ```bash
 bash src/submit_goal1_matrix.sh 6h
 ```
 
-That submits four jobs:
+Its default four jobs are:
 
-- 10-bus NO_CHEAT;
+- 10-bus MATCHING;
 - 10-bus GREEDY;
-- 15-bus NO_CHEAT;
+- 15-bus MATCHING;
 - 15-bus GREEDY.
 
-NO_CHEAT measures the DP from an empty real-route pool. GREEDY supplies a route
-cover constructed under the current time, energy, and 57/61/220-minute rules,
-so it isolates warm-start effects without importing GIRO's answer.
+MATCHING supplies a model-derived route cover constructed without GIRO's
+`VehicleTask` assignments. It is the primary Goal-1 initializer because its
+resource-feasible routes give the restricted master a real cover immediately.
+It first retries deterministic alternate maximum matchings. If none realizes as
+an exact minimum path cover, it cuts relaxed paths into the fewest contiguous
+resource-feasible routes and records both counts plus
+`resource_repair_mode: contiguous_split` in `Seed_Matching_Provenance`; do not
+describe that repaired seed as an exact minimum cover. GREEDY is the control
+initializer: it also avoids GIRO's assignment, but its sequential construction
+can start with more buses than the matching cover.
+
+NO_CHEAT remains available as a pricing-only ablation. It starts with artificial
+trip variables and no real routes, so it is expected to be much harder and is
+not the recommended way to judge whether the current model can match the target
+fleet count:
+
+```bash
+EVSP_MODES=NO_CHEAT bash src/submit_goal1_matrix.sh smoke
+```
 
 `CHEAT` remains available only as a translation diagnostic:
 
@@ -128,16 +197,16 @@ validated against the current DP's time/SOC/restricted-graph rules. A CHEAT
 fleet count or zero-artificial result proves coverage mapping only; do not call
 it a model-feasible benchmark or use it as parity evidence.
 
-Each job runs for at most six active compute hours and, if it reaches both
+Each broad-matrix job runs for at most six active compute hours and, if it reaches both
 thresholds, saves 3h and 6h column-pool snapshots. The Slurm request is eight
 wall-clock hours because the active budget counts master plus pricing time and a
 partially completed iteration needs padding. Pricing tiers are clipped at milestone boundaries, so
 these are the first completed-iteration checkpoints at approximately 3h and 6h.
 
-To run all three initialization modes for diagnosis:
+To run all four initialization modes for diagnosis:
 
 ```bash
-EVSP_MODES=NO_CHEAT,CHEAT,GREEDY \
+EVSP_MODES=MATCHING,GREEDY,NO_CHEAT,CHEAT \
   bash src/submit_goal1_matrix.sh 6h
 ```
 
@@ -180,7 +249,7 @@ The launchers accept environment overrides without editing tracked files:
 ```bash
 # One synthetic scaling job only; do not call this GIRO parity.
 EVSP_INSTANCES=Practice_43bus.csv \
-EVSP_MODES=NO_CHEAT \
+EVSP_MODES=MATCHING \
   bash src/submit_goal1_matrix.sh 3h provisional987
 
 # Change the pricing escalation schedule.
@@ -209,6 +278,13 @@ Important controls:
 - `EVSP_MASTER_TIME_LIMIT`: exact master-LP limit per iteration, default 120
   seconds. A non-optimal master stops rather than pricing invalid duals; resume
   the same tag with a larger value if this occurs;
+- `EVSP_MASTER_BACKEND`: defaults to `scipy` for these column-generation jobs;
+  `gurobi` remains an explicit diagnostic override;
+- `EVSP_QUEUE_ORDER`: `time`, `reduced_cost`, or `reduced_cost_bound`; the last
+  is the default, but controlled comparisons must set it explicitly;
+- `EVSP_MAX_CHARGE2TRIP`: station-to-trip wait cap in minutes, default 1560;
+- `EVSP_MAX_SUCCESSOR_TARGETS`: cap on successor-boundary SOC targets, default
+  64;
 - `EVSP_PRICING_TIERS`: `labels:seconds` escalation list;
 - `EVSP_PRICING_WALL_PER_ITER`: total pricing wall cap per iteration;
 - `EVSP_STAGNATION_WINDOW` and `EVSP_IMPROVEMENT_BOUND`: the benchmark launcher
@@ -278,17 +354,21 @@ unsafe_checkpoint_override == false
 restricted_pool_reprice == false
 ```
 
-For a model-feasible claim, `mode` must be `NO_CHEAT` or `GREEDY`; CHEAT is
-excluded by the historical-route validation caveat above.
+For a model-feasible claim, `mode` must be `MATCHING`, `NO_CHEAT`, or `GREEDY`;
+CHEAT is excluded by the historical-route validation caveat above.
 
 Also report `overcovered_trips`, LP objective, MIP objective/bound/gap, columns in
 the pool, Git commit, mode, active time, and termination reason.
 
-The per-iteration pricing CSV now contains `Artificial_Trips`,
-`Artificial_Total`, and `LP_Route_Weight`. Use the first row with
-`Artificial_Trips == 0` as the time-to-first-real-cover metric. Compare
-NO_CHEAT and GREEDY only at the same instance, commit, flat price file, hardware
-request, pricing schedule, and active-time budget. Report CHEAT separately as an
+The per-iteration pricing CSV records the master state before newly priced
+columns are added in `Artificial_Trips_Before_Add`,
+`Artificial_Total_Before_Add`, and `LP_Route_Weight_Before_Add`. Use the first
+row with `Artificial_Trips_Before_Add == 0` as the time-to-first-real-cover
+metric. The final summary records the re-solved pool in
+`Final_LP_Artificial_Trips`, `Final_LP_Artificial_Total`, and
+`Final_LP_Route_Weight`. Compare MATCHING and GREEDY only at the same instance,
+commit, flat price file, hardware request, pricing schedule, and active-time
+budget. Report NO_CHEAT as a pricing-only ablation and CHEAT separately as an
 unvalidated historical-translation diagnostic.
 
 ## Preserve and collect long-running columns
@@ -323,10 +403,11 @@ long-running columns.
 
 ## Decision after the first batch
 
-1. If GREEDY does not produce a zero-artificial feasible pool, repair the
+1. If MATCHING does not produce a zero-artificial feasible pool, repair the
    current-model initialization/data translation before interpreting DP speed.
-2. If GREEDY succeeds but NO_CHEAT does not, use the pricing CSV to distinguish
-   slow improvement from timeout/no-new-column failure.
+2. Compare MATCHING with GREEDY to separate pricing performance from the quality
+   of the real-route warm start. Use NO_CHEAT only to diagnose pricing from an
+   artificial-only pool.
 3. Treat CHEAT only as a coverage-mapping check unless a separate validator is
    added for every imported route's current time/SOC/restricted-graph feasibility.
 4. If 10/15-bus parity is healthy, reconstruct the valid single-day full input

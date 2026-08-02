@@ -19,8 +19,6 @@ import hashlib
 import subprocess
 
 import pandas as pd
-import gurobipy as gp
-from gurobipy import Column, GRB
 # from collections import Counter, defaultdict
 
 from config import (
@@ -31,21 +29,23 @@ from config import (
     RC_EPSILON,
     THREADS, NODEFILE_START, NODEFILE_DIR,
     MASTER_TIMELIMIT,
-    CHARGE_START_COST
+    CHARGE_START_COST,
+    BIG_M_PENALTY,
 )
 
 
-from pricing_dp_og import make_dp_pricer
+from matching_init import build_matching_initial_routes, peak_trip_concurrency
+from pricing_dp_og import build_dag, make_dp_pricer
+from run_provenance import worktree_content_fingerprint
 
 from utils_v2 import (
+    _compute_charging_cost_accurate,
     extract_duals,
     calculate_truck_route_cost_accurate,
-    load_station_hourly_prices, route_column_key,
+    load_station_hourly_prices,
     select_unique_station_copies,
 )
 
-
-from master import init_master, solve_master, build_master
 
 import re
 
@@ -128,7 +128,10 @@ parser.add_argument(
 parser.add_argument(
     "--allow_unsafe_resume",
     action="store_true",
-    help="Allow a checkpoint from another commit/config (unsafe; provenance is retained).",
+    help=(
+        "Allow a checkpoint from another commit/algorithm config (unsafe; provenance "
+        "is retained). Mathematical instance identity mismatches are never allowed."
+    ),
 )
 parser.add_argument(
     "--results_root",
@@ -148,6 +151,45 @@ parser.add_argument(
     help="Stop after column generation/checkpoint snapshots; do not build or solve the final MIP.",
 )
 parser.add_argument(
+    "--master_backend",
+    choices=("gurobi", "scipy"),
+    default="gurobi",
+    help="Restricted-master LP backend. SciPy/HiGHS requires --skip_final_mip.",
+)
+parser.add_argument(
+    "--queue_order",
+    choices=("time", "reduced_cost", "reduced_cost_bound"),
+    default="reduced_cost_bound",
+    help=(
+        "DP label priority: historical chronological, reduced-cost first, or "
+        "reduced cost minus an optimistic future-dual bound."
+    ),
+)
+parser.add_argument(
+    "--max_charge2trip",
+    type=float,
+    default=None,
+    help=(
+        "Maximum station-to-trip wait in minutes. Default is the full model "
+        "horizon (1560 minutes with the current configuration)."
+    ),
+)
+parser.add_argument(
+    "--successor_charge_targets",
+    action=argparse.BooleanOptionalAction,
+    default=True,
+    help=(
+        "Add station charge targets at successor-specific latest-departure "
+        "boundaries; enabled by default in the experiment runner."
+    ),
+)
+parser.add_argument(
+    "--max_successor_charge_targets",
+    type=int,
+    default=64,
+    help="Maximum successor-boundary SOC targets added per station label.",
+)
+parser.add_argument(
     "--cheat", action="store_true",
     help="If set, warm-start R_truck with the buses' actual driven routes "
          "from Par_VehicleDetails_Updated.csv (bus IDs inferred from the input CSV's "
@@ -159,10 +201,40 @@ parser.add_argument(
     help="Warm-start R_truck with a depot/charging-aware greedy route cover "
          "instead of historical VehicleTask routes."
 )
+parser.add_argument(
+    "--matching",
+    action="store_true",
+    help=(
+        "Warm-start from a model-derived relaxed minimum path cover. This uses "
+        "no historical VehicleTask assignment, resource-validates every route, "
+        "and explicitly reports any contiguous path splitting needed."
+    ),
+)
+parser.add_argument(
+    "--matching_direct_only",
+    action="store_true",
+    help=(
+        "Diagnostic only: restrict matching compatibility to direct trip-trip "
+        "arcs instead of also using legal trip-station-trip bridges."
+    ),
+)
+parser.add_argument(
+    "--matching_attempts",
+    type=int,
+    default=32,
+    help="Deterministic maximum-matching orderings tried if realization fails.",
+)
+parser.add_argument(
+    "--matching_order_seed",
+    type=int,
+    default=0,
+    help="Reproducible seed used only to order matching ties after fixed retries.",
+)
 args = parser.parse_args()
 
-if args.cheat and args.greedy:
-    raise SystemExit("ERROR: --cheat and --greedy are mutually exclusive.")
+selected_initializers = sum(bool(value) for value in (args.cheat, args.greedy, args.matching))
+if selected_initializers > 1:
+    raise SystemExit("ERROR: --cheat, --greedy, and --matching are mutually exclusive.")
 if args.kbest <= 0:
     raise ValueError("--kbest must be positive")
 if args.max_labels <= 0:
@@ -177,6 +249,34 @@ if args.min_trips_per_route <= 0:
     raise ValueError("--min_trips_per_route must be positive")
 if args.final_mip_timelimit <= 0:
     raise ValueError("--final_mip_timelimit must be positive")
+if args.max_charge2trip is not None and args.max_charge2trip <= 0:
+    raise ValueError("--max_charge2trip must be positive")
+if args.max_successor_charge_targets <= 0:
+    raise ValueError("--max_successor_charge_targets must be positive")
+if args.matching_attempts <= 0:
+    raise ValueError("--matching_attempts must be positive")
+if args.matching_direct_only and not args.matching:
+    raise ValueError("--matching_direct_only requires --matching")
+if args.master_backend == "scipy" and not args.skip_final_mip:
+    raise SystemExit(
+        "ERROR: --master_backend scipy currently requires --skip_final_mip; "
+        "the final integer master remains a Gurobi solve."
+    )
+
+MASTER_BACKEND = args.master_backend
+if MASTER_BACKEND == "gurobi":
+    import gurobipy as gp
+    from gurobipy import Column, GRB
+
+    from master import init_master, solve_master, build_master
+
+    MASTER_METHOD = "dual_simplex_method_1"
+else:
+    import scipy
+
+    from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
+
+    MASTER_METHOD = "highs-ds"
 
 csv_name = args.csv
 G_PARAM = args.G
@@ -249,11 +349,13 @@ def _git_state():
         )
         return result.stdout.strip() if result.returncode == 0 else None
 
-    return {
+    state = {
         "commit": _run("rev-parse", "HEAD"),
         "branch": _run("branch", "--show-current"),
         "dirty": bool(_run("status", "--porcelain")),
     }
+    state["worktree_fingerprint"] = worktree_content_fingerprint(ROOT_DIR)
+    return state
 
 # Dynamically point to the correct CSVs in the data folder
 routes_csv = DATA_DIR / csv_name
@@ -267,13 +369,22 @@ git_state = _git_state()
 runtime_versions = {
     "python": sys.version.split()[0],
     "pandas": pd.__version__,
-    "gurobi": ".".join(str(part) for part in gp.gurobi.version()),
 }
+if MASTER_BACKEND == "gurobi":
+    runtime_versions["gurobi"] = ".".join(
+        str(part) for part in gp.gurobi.version()
+    )
+else:
+    runtime_versions["scipy"] = scipy.__version__
+runtime_versions["master_backend"] = MASTER_BACKEND
+runtime_versions["master_method"] = MASTER_METHOD
 
 print(f"[INIT] Using trip data: {routes_csv.name}")
 print(f"[INIT] Battery Capacity parameter: {G_PARAM}")
 print(f"[INIT] Git state: {git_state}")
 print(f"[INIT] Runtime versions: {runtime_versions}")
+print(f"[INIT] Restricted-master backend: {MASTER_BACKEND} ({MASTER_METHOD})")
+print(f"[INIT] DP queue order: {args.queue_order}")
 
 # ==========================================
 # 3. DYNAMIC TARGET & VSP MODE OVERRIDE
@@ -289,6 +400,14 @@ G = SAFE_G  # ADD THIS LINE — override config G with the correct value
 
 TB_MIN   = int(round(60 / TIMEBLOCKS_PER_HOUR))  # minutes per block (60, 30, 15…)
 TB_HOURS = 1.0 / TIMEBLOCKS_PER_HOUR             # hours per block (1.0, 0.5, 0.25…)
+if args.max_charge2trip is None:
+    args.max_charge2trip = float(bar_t * TB_MIN)
+MAX_CHARGE2TRIP = float(args.max_charge2trip)
+print(f"[INIT] Station-to-trip wait cap: {MAX_CHARGE2TRIP:g} minutes")
+print(
+    "[INIT] Successor-boundary charge targets: "
+    f"{args.successor_charge_targets} (cap={args.max_successor_charge_targets})"
+)
 
 # def energy_to_events(kwh: float) -> int:
 #     # “event” = BLOCK_KWH kWh regardless of granularity
@@ -412,6 +531,9 @@ if args.cheat:
 elif args.greedy:
     run_mode = "GREEDY"
     mode_suffix = "_GREEDY"
+elif args.matching:
+    run_mode = "MATCHING"
+    mode_suffix = "_MATCHING"
 else:
     run_mode = "NO_CHEAT"
     mode_suffix = "_NO_CHEAT"
@@ -694,6 +816,11 @@ epsilon = df_trips.set_index("Trip")["eps_kwh"].to_dict()
 
 st_min = {i: int(df_trips.set_index("Trip")["st_min"].to_dict()[i]) for i in T}
 et_min = {i: int(df_trips.set_index("Trip")["et_min"].to_dict()[i]) for i in T}
+PEAK_TRIP_CONCURRENCY = peak_trip_concurrency(T, st_min, et_min)
+print(
+    "[INFO] Peak concurrent trips (fleet/LP route-weight lower bound): "
+    f"{PEAK_TRIP_CONCURRENCY}"
+)
 # Arc costs/times are now resolved by ref lookup via arc_from_to().
 
 # ------------------------------ Globals for pricing ------------------------------
@@ -885,6 +1012,7 @@ print(f"[INFO] Pricing/greedy station set: {len(S_use)} copies -> {len(S_price)}
 # ------------------------------ Seed routes ------------------------------
 
 R_truck = []
+pricing_adj = None
 start_iteration = 0
 prev_cum_master = 0.0
 prev_cum_pricing = 0.0
@@ -892,6 +1020,7 @@ resumed_stats_csv = None
 resume_count = 0
 seed_route_count = 0
 dp_columns_generated = 0
+seed_matching_provenance = None
 resume_history = []
 seed_route_validation = "not_applicable"
 
@@ -908,6 +1037,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
         data = json.load(f)
 
     if isinstance(data, dict):
+        unsafe_resume_issues = {}
         required_metadata = (
             "csv_name",
             "instance_sha256",
@@ -922,47 +1052,67 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             key for key in required_metadata
             if data.get(key) is None
         ]
-        if missing_metadata and not args.allow_unsafe_resume:
-            raise ValueError(
-                "RESUME_CKPT lacks required provenance fields "
-                f"{missing_metadata}. Use a current checkpoint or explicitly pass "
-                "--allow_unsafe_resume for a legacy pool."
-            )
+        if missing_metadata:
+            unsafe_resume_issues["missing_metadata"] = missing_metadata
 
-        resume_expectations = {
+        # These fields define the mathematical instance. Even an explicitly
+        # unsafe resume must not mix their route pools.
+        immutable_expectations = {
             "csv_name": csv_name,
             "instance_sha256": instance_sha256,
             "price_sha256": price_sha256,
-            "mode": run_mode,
             "battery_kwh": G_PARAM,
+            "trip_ids": T,
         }
-        mismatches = {
+        immutable_mismatches = {
             key: (data.get(key), expected)
-            for key, expected in resume_expectations.items()
+            for key, expected in immutable_expectations.items()
             if data.get(key) is not None and data.get(key) != expected
         }
-        if mismatches:
-            raise ValueError(f"RESUME_CKPT does not match this run: {mismatches}")
+        if immutable_mismatches:
+            raise ValueError(
+                "RESUME_CKPT mathematical instance does not match this run: "
+                f"{immutable_mismatches}. Unsafe resume cannot override instance identity."
+            )
+
+        algorithm_expectations = {
+            "mode": run_mode,
+            "master_backend": MASTER_BACKEND,
+            "queue_order": args.queue_order,
+            "max_charge2trip": MAX_CHARGE2TRIP,
+            "successor_charge_targets": args.successor_charge_targets,
+            "max_successor_charge_targets": args.max_successor_charge_targets,
+        }
+        algorithm_metadata_mismatches = {
+            key: (data.get(key), expected)
+            for key, expected in algorithm_expectations.items()
+            if data.get(key) is not None and data.get(key) != expected
+        }
+        if algorithm_metadata_mismatches:
+            unsafe_resume_issues["algorithm_metadata"] = algorithm_metadata_mismatches
 
         checkpoint_git = data.get("git") or {}
+        if not isinstance(checkpoint_git, dict):
+            unsafe_resume_issues["git_metadata"] = "checkpoint git field is not an object"
+            checkpoint_git = {}
         checkpoint_commit = checkpoint_git.get("commit")
         current_commit = git_state.get("commit")
-        if not checkpoint_commit and not args.allow_unsafe_resume:
-            raise ValueError(
-                "RESUME_CKPT does not record git.commit. Use a current checkpoint "
-                "or explicitly pass --allow_unsafe_resume for a legacy pool."
-            )
-        if (
-            checkpoint_commit
-            and current_commit
-            and checkpoint_commit != current_commit
-            and not args.allow_unsafe_resume
-        ):
-            raise ValueError(
-                "RESUME_CKPT was generated by Git commit "
-                f"{checkpoint_commit}, but this checkout is {current_commit}. "
-                "Use the original commit, start a fresh run tag, or explicitly pass "
-                "--allow_unsafe_resume."
+        if not checkpoint_commit:
+            unsafe_resume_issues["git_commit"] = "checkpoint does not record git.commit"
+        elif current_commit and checkpoint_commit != current_commit:
+            unsafe_resume_issues["git_commit"] = (checkpoint_commit, current_commit)
+
+        checkpoint_fingerprint = checkpoint_git.get("worktree_fingerprint")
+        current_fingerprint = git_state.get("worktree_fingerprint")
+        if checkpoint_fingerprint is not None:
+            if checkpoint_fingerprint != current_fingerprint:
+                unsafe_resume_issues["worktree_fingerprint"] = (
+                    checkpoint_fingerprint,
+                    current_fingerprint,
+                )
+        elif checkpoint_git.get("dirty") or git_state.get("dirty"):
+            unsafe_resume_issues["worktree_fingerprint"] = (
+                "missing from checkpoint while at least one worktree is dirty"
             )
 
         saved_args = data.get("run_arguments") or {}
@@ -976,6 +1126,15 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "improvement_bound",
             "cheat",
             "greedy",
+            "matching",
+            "matching_direct_only",
+            "matching_attempts",
+            "matching_order_seed",
+            "master_backend",
+            "queue_order",
+            "max_charge2trip",
+            "successor_charge_targets",
+            "max_successor_charge_targets",
         )
         config_mismatches = {
             key: (saved_args.get(key), vars(args).get(key))
@@ -986,17 +1145,21 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             key for key in resume_critical_args
             if key not in saved_args
         ]
-        if missing_config and not args.allow_unsafe_resume:
+        if missing_config:
+            unsafe_resume_issues["missing_algorithm_arguments"] = missing_config
+        if config_mismatches:
+            unsafe_resume_issues["algorithm_arguments"] = config_mismatches
+
+        if unsafe_resume_issues and not args.allow_unsafe_resume:
             raise ValueError(
-                "RESUME_CKPT lacks critical run arguments "
-                f"{missing_config}. Use a current checkpoint or explicitly pass "
-                "--allow_unsafe_resume for a legacy pool."
+                "RESUME_CKPT provenance/algorithm state does not match this run: "
+                f"{unsafe_resume_issues}. Use the original code/settings, start a "
+                "fresh run tag, or explicitly pass --allow_unsafe_resume."
             )
-        if config_mismatches and not args.allow_unsafe_resume:
-            raise ValueError(
-                "RESUME_CKPT uses different algorithm arguments: "
-                f"{config_mismatches}. Use the original settings, a fresh run tag, "
-                "or explicitly pass --allow_unsafe_resume."
+        if unsafe_resume_issues:
+            print(
+                "[RESUME UNSAFE WARN] Proceeding despite provenance/algorithm "
+                f"differences: {unsafe_resume_issues}"
             )
 
         R_truck = data["routes"]
@@ -1011,6 +1174,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
         resume_count = data.get("resume_count", 0)
         seed_route_count = data.get("seed_route_count")
         dp_columns_generated = data.get("dp_columns_generated")
+        seed_matching_provenance = data.get("seed_matching_provenance")
         if seed_route_count is None or dp_columns_generated is None:
             # Old checkpoints did not distinguish seeds from DP columns.
             seed_route_count = len(R_truck)
@@ -1026,6 +1190,8 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "cross_commit": bool(
                 checkpoint_commit and current_commit and checkpoint_commit != current_commit
             ),
+            "unsafe_resume": bool(unsafe_resume_issues),
+            "unsafe_resume_issues": unsafe_resume_issues,
         })
 
         last_master_obj = data.get("last_master_obj", None)
@@ -1150,7 +1316,7 @@ if not is_resuming:
             CHARGE_RATE_KW=CHARGE_RATE_KW,
             max_trip2trip=57,
             max_trip2charge=61,
-            max_charge2trip=220,
+            max_charge2trip=MAX_CHARGE2TRIP,
             min_soc_fraction=0.0,
             recharge_to_fraction=1.0,
             max_daily_recharges=MAX_DAILY_RECHARGES,
@@ -1168,6 +1334,130 @@ if not is_resuming:
             f"covering {len(covered)}/{len(T)} unique trips."
         )
         seed_route_validation = "constructed_under_current_time_soc_rules"
+    elif args.matching:
+        matching_started = time.time()
+        matching_horizon_min = float(bar_t * TB_MIN)
+        matching_soc_levels = [
+            G * index / 10.0 for index in range(1, 11)
+        ]
+        print(
+            "[MATCHING] Building the active pricing graph and a model-derived "
+            "relaxed minimum path cover..."
+        )
+        pricing_adj = build_dag(
+            T=T,
+            S_use=S_price,
+            DEPOT=DEPOT,
+            tau=tau,
+            d=d,
+            st=st,
+            et=et,
+            sl=sl,
+            el=el,
+            epsilon=epsilon,
+            TB_MIN=TB_MIN,
+            bar_t=bar_t,
+            tau_min=tau_min,
+            st_min=st_min,
+            et_min=et_min,
+            max_trip2trip=57,
+            max_trip2charge=61,
+            max_charge2trip=MAX_CHARGE2TRIP,
+        )
+
+        def _matching_charge_cost(station, start_minute, energy_kwh):
+            station_prices = station_hourly_prices.get(
+                strip_copy_suffix(station),
+                hourly_prices,
+            )
+            return _compute_charging_cost_accurate(
+                start_min=float(start_minute),
+                energy_kwh=float(energy_kwh),
+                charge_rate_kw=CHARGE_RATE_KW,
+                hourly_prices=station_prices,
+                charge_cost_premium=charge_cost_premium,
+            )
+
+        matching_routes = build_matching_initial_routes(
+            trips=T,
+            adjacency=pricing_adj,
+            depot=DEPOT,
+            stations=S_price,
+            trip_start_min=st_min,
+            trip_end_min=et_min,
+            trip_energy_kwh=epsilon,
+            battery_capacity_kwh=G,
+            charge_rate_kw=CHARGE_RATE_KW,
+            soc_charge_levels=matching_soc_levels,
+            horizon_min=matching_horizon_min,
+            max_daily_recharges=MAX_DAILY_RECHARGES,
+            max_station_to_trip_wait_min=MAX_CHARGE2TRIP,
+            successor_boundary_soc_target=args.successor_charge_targets,
+            max_successor_charge_targets=args.max_successor_charge_targets,
+            station_waiting_unrestricted=(
+                MAX_CHARGE2TRIP >= matching_horizon_min - 1e-6
+            ),
+            charge_start_cost=CHARGE_START_COST,
+            charging_cost=_matching_charge_cost,
+            deadhead_cost_per_kwh=0.0,
+            direct_only=args.matching_direct_only,
+            max_matching_attempts=args.matching_attempts,
+            matching_order_seed=args.matching_order_seed,
+        )
+        matching_elapsed_s = time.time() - matching_started
+        for matching_route in matching_routes:
+            matching_route.setdefault("_matching_init", {})[
+                "initialization_time_s"
+            ] = matching_elapsed_s
+        R_truck.extend(matching_routes)
+        seed_matching_provenance = (
+            dict(matching_routes[0]["_matching_init"])
+            if matching_routes
+            else None
+        )
+        covered = [
+            node
+            for route in matching_routes
+            for node in route.get("route", [])
+            if isinstance(node, int)
+        ]
+        if len(covered) != len(T) or set(covered) != set(T):
+            raise RuntimeError(
+                "[MATCHING] Initializer did not cover every trip exactly once"
+            )
+        print(
+            f"[MATCHING] Seeded {len(matching_routes)} resource-feasible routes "
+            f"covering {len(covered)}/{len(T)} trips exactly once in "
+            f"{matching_elapsed_s:.2f}s (including pricing-graph construction)."
+        )
+        print(f"[MATCHING] Provenance: {seed_matching_provenance}")
+        matching_is_exact = bool(
+            seed_matching_provenance
+            and seed_matching_provenance.get("is_exact_minimum_path_cover")
+        )
+        if not matching_is_exact:
+            print(
+                "[MATCHING] The relaxed minimum path cover required resource "
+                "repair: "
+                f"{seed_matching_provenance['relaxed_minimum_path_count']} "
+                "relaxed paths became "
+                f"{seed_matching_provenance['resource_feasible_path_count']} "
+                "contiguously split routes."
+            )
+        if len(matching_routes) == PEAK_TRIP_CONCURRENCY:
+            print(
+                "[MATCHING] Fleet count equals the peak-concurrency lower bound; "
+                "no feasible LP or integer cover can use less route weight."
+            )
+        if matching_is_exact:
+            seed_route_validation = (
+                "minimum_path_cover_resource_validated_no_historical_assignment"
+            )
+        else:
+            seed_route_validation = (
+                "relaxed_minimum_path_cover_contiguously_split_"
+                "resource_validated_no_historical_assignment"
+            )
     else:
         print("[NO_CHEAT] R_truck initialized empty.")
 
@@ -1177,24 +1467,85 @@ if not is_resuming:
 master_times = []
 pricing_times = []
 
+
+def _route_cost_for_master(route):
+    """Match master.py's objective coefficient for one route."""
+    if route.get("dummy", False):
+        return float(route.get("dummy_cost", 1e7))
+    return calculate_truck_route_cost_accurate(
+        route,
+        bus_cost,
+        hourly_prices,
+        charge_rate_kw=CHARGE_RATE_KW,
+        station_hourly_prices=station_hourly_prices,
+        charge_start_cost=CHARGE_START_COST,
+    )
+
+
+trip_id_set = set(T)
+_COLUMN_COST_EPSILON = 1e-6
+
+
+def _route_trip_set(route):
+    """Master-column identity for the current trip-cover-only formulation."""
+    return frozenset(
+        node for node in route.get("route", []) if node in trip_id_set
+    )
+
+
+best_master_cost_by_trip_set = {}
+for _existing_route in R_truck:
+    _existing_trip_set = _route_trip_set(_existing_route)
+    if not _existing_trip_set:
+        raise RuntimeError("A real route in the initial pool contains no active trips")
+    _existing_cost = _route_cost_for_master(_existing_route)
+    best_master_cost_by_trip_set[_existing_trip_set] = min(
+        _existing_cost,
+        best_master_cost_by_trip_set.get(_existing_trip_set, float("inf")),
+    )
+
+
+def _solve_scipy_master():
+    """Rebuild and solve the exact current restricted set-covering LP."""
+    route_trip_ids = [
+        [node for node in route.get("route", []) if node in trip_id_set]
+        for route in R_truck
+    ]
+    route_costs = [_route_cost_for_master(route) for route in R_truck]
+    incidence = build_route_incidence(T, route_trip_ids)
+    return solve_restricted_master_lp(
+        trip_ids=T,
+        route_incidence=incidence,
+        route_costs=route_costs,
+        artificial_penalty=BIG_M_PENALTY,
+        method=MASTER_METHOD,
+        time_limit_s=MASTER_TIME_LIMIT,
+    )
+
+
 # ------------------------------ Build & solve master once ------------------------------
 #%%
-rmp, a, trip_cov = init_master(
-    R_truck=R_truck,
-    T=T,
-    charging_cost_data=hourly_prices,
-    bus_cost=bus_cost,
-    binary=False,
-    station_hourly_prices=station_hourly_prices,
-)
+scipy_master_result = None
+if MASTER_BACKEND == "gurobi":
+    rmp, a, trip_cov = init_master(
+        R_truck=R_truck,
+        T=T,
+        charging_cost_data=hourly_prices,
+        bus_cost=bus_cost,
+        binary=False,
+        station_hourly_prices=station_hourly_prices,
+    )
 
-
-# LP params for the RMP (per-iteration)
-rmp.Params.Threads = THREADS
-rmp.Params.NodefileStart = NODEFILE_START
-rmp.Params.NodefileDir = _detect_tmp()
-rmp.Params.Method = 1
-rmp.Params.TimeLimit = MASTER_TIME_LIMIT
+    # LP params for the RMP (per-iteration)
+    rmp.Params.Threads = THREADS
+    rmp.Params.NodefileStart = NODEFILE_START
+    rmp.Params.NodefileDir = _detect_tmp()
+    rmp.Params.Method = 1
+    rmp.Params.TimeLimit = MASTER_TIME_LIMIT
+else:
+    rmp = None
+    a = None
+    trip_cov = None
 # The first CG iteration performs and times the first solve.  Optimizing here
 # would solve the same unchanged RMP twice and evade the active-time budget.
 
@@ -1229,21 +1580,76 @@ skip_cg_loop = bool(
     and completed_active_hours >= ACTIVE_TIME_LIMIT_HOURS
 )
 if skip_cg_loop:
-    print(f"[RESUME] Active-time limit {ACTIVE_TIME_LIMIT_HOURS:g}h already reached; "
-          "skipping column generation and proceeding to final MIP.")
+    next_phase = "final diagnostics" if args.skip_final_mip else "the final MIP"
+    print(
+        f"[RESUME] Active-time limit {ACTIVE_TIME_LIMIT_HOURS:g}h already reached; "
+        f"skipping column generation and proceeding to {next_phase}."
+    )
 
 if len(R_truck) == 0:
     print("[WARN] No initial seed routes; master may be infeasible if some trips lack any coverable pattern.")
 
 
-def _route_key(route):
-    return route_column_key(route)
+# Determine CSV path. A copied cluster run may retain an absolute source-host
+# path, so fall back to the same basename beside the copied checkpoint.
+_TIER_STAT_SUFFIXES = (
+    "Time_s",
+    "Hit_Timelimit",
+    "Returned",
+    "Accepted",
+    "Found_Zero",
+    "Labels_Expanded",
+    "Completed_Routes",
+    "Negative_Completed",
+    "Label_Cap_Evictions",
+    "Exhaustive",
+)
+STATS_COLUMNS = (
+    "Iteration",
+    "Master_Obj_Before_Add",
+    "Master_Improvement_Before_Add",
+    "Master_Time_s",
+    "LP_Route_Weight_Before_Add",
+    "Peak_Trip_Concurrency",
+    "Artificial_Trips_Before_Add",
+    "Artificial_Total_Before_Add",
+    "Pricing_Time_s",
+    "Cumulative_Master_Time_s",
+    "Cumulative_Pricing_Time_s",
+    "Cols_Added",
+    "Best_RC",
+    "Timed_Out",
+    "Deepest_Tier_Hit_Timelimit",
+    "Pricing_Labels_Used",
+    "Pricing_Label_Cap_Configured",
+    "Pricing_Completed_Routes",
+    "Pricing_Negative_Completed",
+    "Pricing_Label_Cap_Evictions",
+    "Pricing_Exhaustive_Deepest_Tier",
+    "Pricing_Queue_Order",
+    "Highest_Tier_Reached",
+    *(
+        f"Tier{tier}_{suffix}"
+        for tier in range(1, 4)
+        for suffix in _TIER_STAT_SUFFIXES
+    ),
+    "Recent_Window_Sum",
+    "Total_Runtime_s",
+)
 
-# Determine CSV path
-if is_resuming and resumed_stats_csv and Path(resumed_stats_csv).exists():
-    resumed_stats_path = Path(resumed_stats_csv)
+resumed_stats_path = Path(resumed_stats_csv) if resumed_stats_csv else None
+if (
+    is_resuming
+    and resumed_stats_path is not None
+    and not resumed_stats_path.exists()
+):
+    relocated_stats_path = RUN_DIR / resumed_stats_path.name
+    if relocated_stats_path.exists():
+        resumed_stats_path = relocated_stats_path
+
+if is_resuming and resumed_stats_path is not None and resumed_stats_path.exists():
     header = resumed_stats_path.read_text().splitlines()[0] if resumed_stats_path.stat().st_size else ""
-    if "Pricing_Labels_Used" in header and "Highest_Tier_Reached" in header:
+    if tuple(header.split(",")) == STATS_COLUMNS:
         stats_csv_path = resumed_stats_path
         print(f"[RESUME] Appending stats to original CSV: {stats_csv_path}")
     else:
@@ -1267,12 +1673,20 @@ def _write_iteration_checkpoint(iteration_number, reason):
         "seed_route_count": seed_route_count,
         "dp_columns_generated": dp_columns_generated,
         "seed_route_validation": seed_route_validation,
+        "seed_matching_provenance": seed_matching_provenance,
+        "peak_trip_concurrency": PEAK_TRIP_CONCURRENCY,
         "csv_name": csv_name,
         "trip_ids": T,
         "instance_sha256": instance_sha256,
         "price_sha256": price_sha256,
         "mode": run_mode,
         "battery_kwh": G_PARAM,
+        "master_backend": MASTER_BACKEND,
+        "master_method": MASTER_METHOD,
+        "queue_order": args.queue_order,
+        "max_charge2trip": MAX_CHARGE2TRIP,
+        "successor_charge_targets": args.successor_charge_targets,
+        "max_successor_charge_targets": args.max_successor_charge_targets,
         "git": git_state,
         "runtime_versions": runtime_versions,
         "resume_history": resume_history,
@@ -1293,29 +1707,36 @@ def _write_iteration_checkpoint(iteration_number, reason):
 granularity = 10
 
 # Build the DP pricer ONCE: the DAG topology is fixed across CG iterations,
-# only the duals change. time_limit / max_labels are passed per call.
-dp_price = make_dp_pricer(
-    T=T, S_use=S_price, DEPOT=DEPOT,
-    tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
-    tau_min=tau_min, st_min=st_min, et_min=et_min,
-    G=G, TB_MIN=TB_MIN, bar_t=bar_t,
-    bus_cost=bus_cost,
-    charge_rate_kw=CHARGE_RATE_KW,
-    hourly_prices=hourly_prices,
-    charge_cost_premium=charge_cost_premium,
-    travel_cost_factor=0,
-    RC_EPSILON=RC_EPSILON,
-    K_BEST=K_BEST,
-    MAX_LABELS_PER_NODE=int(ESCALATION_SCHEDULE[0][0]),
-    soc_charge_levels=[G * i * (1 / granularity) for i in range(1, 1 + granularity)],
-    MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
-    MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-    max_trip2trip=57,
-    max_trip2charge=61,
-    max_charge2trip=220,
-    station_hourly_prices=station_hourly_prices,
-    charge_start_cost=CHARGE_START_COST,
-)
+# only the duals change. Do not pay that construction cost when a resumed run
+# has already exhausted its active-time budget.
+dp_price = None
+if not skip_cg_loop:
+    dp_price = make_dp_pricer(
+        T=T, S_use=S_price, DEPOT=DEPOT,
+        tau=tau, d=d, st=st, et=et, sl=sl, el=el, epsilon=epsilon,
+        tau_min=tau_min, st_min=st_min, et_min=et_min,
+        G=G, TB_MIN=TB_MIN, bar_t=bar_t,
+        bus_cost=bus_cost,
+        charge_rate_kw=CHARGE_RATE_KW,
+        hourly_prices=hourly_prices,
+        charge_cost_premium=charge_cost_premium,
+        travel_cost_factor=0,
+        RC_EPSILON=RC_EPSILON,
+        K_BEST=K_BEST,
+        MAX_LABELS_PER_NODE=int(ESCALATION_SCHEDULE[0][0]),
+        soc_charge_levels=[G * i * (1 / granularity) for i in range(1, 1 + granularity)],
+        MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
+        MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
+        max_trip2trip=57,
+        max_trip2charge=61,
+        max_charge2trip=MAX_CHARGE2TRIP,
+        successor_charge_targets=args.successor_charge_targets,
+        max_successor_charge_targets=args.max_successor_charge_targets,
+        station_hourly_prices=station_hourly_prices,
+        charge_start_cost=CHARGE_START_COST,
+        queue_order=args.queue_order,
+        adj=pricing_adj,
+    )
 #%%
 # max_iter += 100
 #%%
@@ -1326,13 +1747,16 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
 
     # 1) SOLVE MASTER
     t0 = time.time()
-    rmp.Params.TimeLimit = MASTER_TIME_LIMIT
-    rmp.optimize()
+    if MASTER_BACKEND == "gurobi":
+        rmp.Params.TimeLimit = MASTER_TIME_LIMIT
+        rmp.optimize()
+    else:
+        scipy_master_result = _solve_scipy_master()
 
     master_iter_time = time.time() - t0
     master_times.append(master_iter_time)
 
-    if rmp.Status != GRB.OPTIMAL:
+    if MASTER_BACKEND == "gurobi" and rmp.Status != GRB.OPTIMAL:
         # Column generation requires valid optimal LP duals. Pricing an
         # incumbent/basis from a time-limited master can create a false
         # reduced-cost-optimal stop, so fail loudly and preserve the previous
@@ -1343,9 +1767,12 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
             "with a larger --master_time_limit."
         )
 
-    print(f" Master obj: {rmp.ObjVal:.2f}")
-
-    current_obj = rmp.ObjVal
+    current_obj = (
+        rmp.ObjVal
+        if MASTER_BACKEND == "gurobi"
+        else scipy_master_result.objective
+    )
+    print(f" Master obj: {current_obj:.2f}")
 
     if args.target_master_obj is not None:
         print(f" Experimental objective stop: {args.target_master_obj:.2f}")
@@ -1383,8 +1810,13 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
 
     last_master_obj = current_obj
 
-    # Extract Duals
-    alpha, beta_dual, gamma_dual = extract_duals(rmp)
+    # Extract trip-coverage duals. This EVSP master currently has no beta/gamma
+    # constraint families, so both backends pass empty dictionaries for them.
+    if MASTER_BACKEND == "gurobi":
+        alpha, beta_dual, gamma_dual = extract_duals(rmp)
+    else:
+        alpha = scipy_master_result.trip_duals
+        beta_dual, gamma_dual = {}, {}
 
 
     # 2) SOLVE PRICING (Dynamic Programming)
@@ -1392,6 +1824,8 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
     best_rc_iter = float("inf")
     timed_out_any = False
     deepest_tier_timed_out = False
+    deepest_tier_exhaustive = False
+    deepest_tier_label_cap_evictions = 0
     current_max_labels_used = 0
     highest_tier_reached = 0
     tier_stats = []
@@ -1399,8 +1833,6 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
     milestone_boundary_reached = False
     milestone_boundary_hour = None
 
-    # For deduplication against what's already in the Master Problem
-    seen_keys_existing = {_route_key(r) for r in R_truck}
     t0_pricing_total = time.time()
 
     for tier_idx, (current_max_labels, current_time_limit) in enumerate(ESCALATION_SCHEDULE, start=1):
@@ -1467,18 +1899,35 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
             alpha, beta_dual, gamma_dual,
             time_limit=effective_time_limit,
             max_labels=int(current_max_labels),
+            existing_trip_set_costs=best_master_cost_by_trip_set,
         )
         tier_time = time.time() - tier_t0
         timed_out_any = timed_out_any or tier_timed_out
         deepest_tier_timed_out = tier_timed_out
+        pricing_run_stats = getattr(dp_price, "last_stats", None)
+        deepest_tier_exhaustive = bool(
+            pricing_run_stats is not None and pricing_run_stats.exhaustive
+        )
+        deepest_tier_label_cap_evictions = (
+            int(pricing_run_stats.label_cap_evictions)
+            if pricing_run_stats is not None
+            else 0
+        )
 
-        seen_new = set()
+        seen_new_costs = {}
         accepted_this_tier = 0
         for t_route in raw_new_trucks:
-            k = _route_key(t_route)
-            if (k not in seen_keys_existing) and (k not in seen_new):
+            trip_set_key = _route_trip_set(t_route)
+            if not trip_set_key:
+                raise RuntimeError("DP returned a route containing no active trips")
+            candidate_cost = _route_cost_for_master(t_route)
+            incumbent_cost = min(
+                best_master_cost_by_trip_set.get(trip_set_key, float("inf")),
+                seen_new_costs.get(trip_set_key, float("inf")),
+            )
+            if candidate_cost < incumbent_cost - _COLUMN_COST_EPSILON:
                 new_trucks.append(t_route)
-                seen_new.add(k)
+                seen_new_costs[trip_set_key] = candidate_cost
                 accepted_this_tier += 1
             if len(new_trucks) >= K_BEST:
                 break
@@ -1492,6 +1941,27 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
             "returned": len(raw_new_trucks),
             "accepted": accepted_this_tier,
             "found_zero": accepted_this_tier == 0,
+            "queue_order": (
+                pricing_run_stats.queue_order if pricing_run_stats else args.queue_order
+            ),
+            "labels_expanded": (
+                pricing_run_stats.labels_expanded if pricing_run_stats else None
+            ),
+            "completed_routes": (
+                pricing_run_stats.completed_routes if pricing_run_stats else None
+            ),
+            "negative_completed": (
+                pricing_run_stats.negative_completed if pricing_run_stats else None
+            ),
+            "label_cap_evictions": (
+                pricing_run_stats.label_cap_evictions if pricing_run_stats else None
+            ),
+            "exhaustive": (
+                pricing_run_stats.exhaustive if pricing_run_stats else False
+            ),
+            "dp_elapsed_s": (
+                pricing_run_stats.elapsed_s if pricing_run_stats else None
+            ),
         })
 
         active_after_tier = active_used + tier_time
@@ -1505,7 +1975,9 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         if new_trucks:
             print(f"   [SUCCESS tier {tier_idx}] DP accepted {accepted_this_tier} new cols "
                   f"from {len(raw_new_trucks)} returned routes "
-                  f"(best_rc={best_rc_iter:.1f}, timed_out={tier_timed_out}) "
+                  f"(best_rc={best_rc_iter:.1f}, timed_out={tier_timed_out}, "
+                  f"cap_evictions={deepest_tier_label_cap_evictions}, "
+                  f"exhaustive={deepest_tier_exhaustive}) "
                   f"after {time.time()-t0_pricing_total:.0f}s of pricing")
             break
         elif milestone_boundary_reached:
@@ -1515,6 +1987,8 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         else:
             print(f"   [FAILED tier {tier_idx}] 0 accepted cols "
                   f"from {len(raw_new_trucks)} returned routes, timed_out={tier_timed_out}. "
+                  f"cap_evictions={deepest_tier_label_cap_evictions}, "
+                  f"exhaustive={deepest_tier_exhaustive}. "
                   f"Escalating...")
 
     pricing_dur_total = time.time() - t0_pricing_total
@@ -1525,23 +1999,52 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
 
 
     tier_map = {ts["tier"]: ts for ts in tier_stats}
+    actual_labels_expanded = sum(
+        int(ts["labels_expanded"])
+        for ts in tier_stats
+        if ts.get("labels_expanded") is not None
+    )
+    actual_completed_routes = sum(
+        int(ts["completed_routes"])
+        for ts in tier_stats
+        if ts.get("completed_routes") is not None
+    )
+    actual_negative_completed = sum(
+        int(ts["negative_completed"])
+        for ts in tier_stats
+        if ts.get("negative_completed") is not None
+    )
+    actual_label_cap_evictions = sum(
+        int(ts["label_cap_evictions"])
+        for ts in tier_stats
+        if ts.get("label_cap_evictions") is not None
+    )
 
-    artificial_values = [
-        float(q_var.X)
-        for i in T
-        if (q_var := rmp.getVarByName(f"q_{i}")) is not None and q_var.X > 1e-6
-    ]
-    lp_route_weight = sum(float(var.X) for var in a.values() if var.X > 1e-9)
+    if MASTER_BACKEND == "gurobi":
+        artificial_values = [
+            float(q_var.X)
+            for i in T
+            if (q_var := rmp.getVarByName(f"q_{i}")) is not None and q_var.X > 1e-6
+        ]
+        lp_route_weight = sum(float(var.X) for var in a.values() if var.X > 1e-9)
+    else:
+        artificial_values = [
+            value
+            for value in scipy_master_result.artificial_values.values()
+            if value > 1e-6
+        ]
+        lp_route_weight = scipy_master_result.route_weight
 
     # --- Collect Metrics ---
     current_stat = {
         "Iteration": iteration,
-        "Master_Obj": current_obj,
-        "Master_Improvement": improvement,
+        "Master_Obj_Before_Add": current_obj,
+        "Master_Improvement_Before_Add": improvement,
         "Master_Time_s": master_iter_time,
-        "LP_Route_Weight": lp_route_weight,
-        "Artificial_Trips": len(artificial_values),
-        "Artificial_Total": sum(artificial_values),
+        "LP_Route_Weight_Before_Add": lp_route_weight,
+        "Peak_Trip_Concurrency": PEAK_TRIP_CONCURRENCY,
+        "Artificial_Trips_Before_Add": len(artificial_values),
+        "Artificial_Total_Before_Add": sum(artificial_values),
         "Pricing_Time_s": pricing_dur_total,
         "Cumulative_Master_Time_s": prev_cum_master + sum(master_times),
         "Cumulative_Pricing_Time_s": prev_cum_pricing + sum(pricing_times),
@@ -1549,30 +2052,53 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         "Best_RC": best_rc_iter,
         "Timed_Out": timed_out_any,
         "Deepest_Tier_Hit_Timelimit": deepest_tier_timed_out,
-        "Pricing_Labels_Used": current_max_labels_used,
+        # Retain the historical column name, but make it truthful: this is the
+        # measured number of live labels expanded across attempted tiers.
+        "Pricing_Labels_Used": actual_labels_expanded,
+        "Pricing_Label_Cap_Configured": current_max_labels_used,
+        "Pricing_Completed_Routes": actual_completed_routes,
+        "Pricing_Negative_Completed": actual_negative_completed,
+        "Pricing_Label_Cap_Evictions": actual_label_cap_evictions,
+        "Pricing_Exhaustive_Deepest_Tier": deepest_tier_exhaustive,
+        "Pricing_Queue_Order": args.queue_order,
         "Highest_Tier_Reached": highest_tier_reached,
         "Tier1_Time_s": tier_map.get(1, {}).get("time_s"),
         "Tier1_Hit_Timelimit": tier_map.get(1, {}).get("hit_timelimit"),
         "Tier1_Returned": tier_map.get(1, {}).get("returned"),
         "Tier1_Accepted": tier_map.get(1, {}).get("accepted"),
         "Tier1_Found_Zero": tier_map.get(1, {}).get("found_zero"),
+        "Tier1_Labels_Expanded": tier_map.get(1, {}).get("labels_expanded"),
+        "Tier1_Completed_Routes": tier_map.get(1, {}).get("completed_routes"),
+        "Tier1_Negative_Completed": tier_map.get(1, {}).get("negative_completed"),
+        "Tier1_Label_Cap_Evictions": tier_map.get(1, {}).get("label_cap_evictions"),
+        "Tier1_Exhaustive": tier_map.get(1, {}).get("exhaustive"),
         "Tier2_Time_s": tier_map.get(2, {}).get("time_s"),
         "Tier2_Hit_Timelimit": tier_map.get(2, {}).get("hit_timelimit"),
         "Tier2_Returned": tier_map.get(2, {}).get("returned"),
         "Tier2_Accepted": tier_map.get(2, {}).get("accepted"),
         "Tier2_Found_Zero": tier_map.get(2, {}).get("found_zero"),
+        "Tier2_Labels_Expanded": tier_map.get(2, {}).get("labels_expanded"),
+        "Tier2_Completed_Routes": tier_map.get(2, {}).get("completed_routes"),
+        "Tier2_Negative_Completed": tier_map.get(2, {}).get("negative_completed"),
+        "Tier2_Label_Cap_Evictions": tier_map.get(2, {}).get("label_cap_evictions"),
+        "Tier2_Exhaustive": tier_map.get(2, {}).get("exhaustive"),
         "Tier3_Time_s": tier_map.get(3, {}).get("time_s"),
         "Tier3_Hit_Timelimit": tier_map.get(3, {}).get("hit_timelimit"),
         "Tier3_Returned": tier_map.get(3, {}).get("returned"),
         "Tier3_Accepted": tier_map.get(3, {}).get("accepted"),
         "Tier3_Found_Zero": tier_map.get(3, {}).get("found_zero"),
+        "Tier3_Labels_Expanded": tier_map.get(3, {}).get("labels_expanded"),
+        "Tier3_Completed_Routes": tier_map.get(3, {}).get("completed_routes"),
+        "Tier3_Negative_Completed": tier_map.get(3, {}).get("negative_completed"),
+        "Tier3_Label_Cap_Evictions": tier_map.get(3, {}).get("label_cap_evictions"),
+        "Tier3_Exhaustive": tier_map.get(3, {}).get("exhaustive"),
         "Recent_Window_Sum": (sum(recent_improvements)
                               if len(recent_improvements) >= args.stagnation_window
                               else None),
         "Total_Runtime_s": time.time() - stopwatch_start,
     }
 
-    pd.DataFrame([current_stat]).to_csv(
+    pd.DataFrame([current_stat], columns=STATS_COLUMNS).to_csv(
         stats_csv_path,
         mode='a',
         header=not stats_csv_path.exists(),
@@ -1583,25 +2109,36 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
     for route in new_trucks:
         R_truck.append(route)
 
-        # Hour-split charging cost — must match the DP pricer's rc computation
-        # (same function build_master uses, so resumes recompute identical costs)
-        cost = calculate_truck_route_cost_accurate(
-            route, bus_cost, hourly_prices,
-            charge_rate_kw=CHARGE_RATE_KW,
-            station_hourly_prices=station_hourly_prices,
-            charge_start_cost=CHARGE_START_COST,
+        trip_set_key = _route_trip_set(route)
+        route_master_cost = _route_cost_for_master(route)
+        best_master_cost_by_trip_set[trip_set_key] = min(
+            route_master_cost,
+            best_master_cost_by_trip_set.get(trip_set_key, float("inf")),
         )
 
-        col = Column()
-        for node in route["route"]:
-            if isinstance(node, int):
-                col.addTerms(1.0, trip_cov[node])
+        if MASTER_BACKEND == "gurobi":
+            # Hour-split charging cost — must match the DP pricer's rc
+            # computation and the full rebuild used by the SciPy backend.
+            cost = _route_cost_for_master(route)
 
-        idx = len(R_truck) - 1
-        # No ub in the LP: a bounded column at ub can price negative via its
-        # bound dual, making the DP "rediscover" it forever (see master.py)
-        a[idx] = rmp.addVar(obj=cost, lb=0, ub=GRB.INFINITY, vtype=GRB.CONTINUOUS, column=col, name=f"a[{idx}]")
-    rmp.update()
+            col = Column()
+            for node in route["route"]:
+                if isinstance(node, int):
+                    col.addTerms(1.0, trip_cov[node])
+
+            idx = len(R_truck) - 1
+            # No ub in the LP: a bounded column at ub can price negative via
+            # its bound dual, making the DP rediscover it forever.
+            a[idx] = rmp.addVar(
+                obj=cost,
+                lb=0,
+                ub=GRB.INFINITY,
+                vtype=GRB.CONTINUOUS,
+                column=col,
+                name=f"a[{idx}]",
+            )
+    if MASTER_BACKEND == "gurobi":
+        rmp.update()
     dp_columns_generated += len(new_trucks)
 
 
@@ -1613,19 +2150,39 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         elif active_budget_exhausted:
              print("   [STOP] Active-compute budget exhausted.")
              termination_reason = "active_time_limit_reached"
-        elif (best_rc_iter >= -RC_EPSILON) and not deepest_tier_timed_out:
-             # NOTE: optimal only within the RESTRICTED pricing graph (57/61/220
-             # min gap limits, min-trips filter, discrete SOC grid, label cap) —
-             # not an LP-optimality certificate for the full EVSP.
+        elif (
+            best_rc_iter >= -RC_EPSILON
+            and not deepest_tier_timed_out
+            and deepest_tier_exhaustive
+        ):
+             # NOTE: optimal only within the configured pricing graph (gap
+             # limits, min-trips filter, and SOC target policy), and only
+             # because this pass had neither a timeout nor a cap eviction. It
+             # is not an LP-optimality certificate for the full EVSP.
              print("   [RC-OPT / STOP] Deepest pricing tier exhausted with no negative RC "
                    "columns (restricted pricing graph).")
              termination_reason = "rc_optimal_restricted"
-        elif deepest_tier_timed_out:
-             print("   [STOP] Deepest pricing tier hit its time limit with no accepted new columns.")
-             termination_reason = "pricing_timed_out_no_new_columns"
+        elif not deepest_tier_exhaustive:
+             truncation_causes = []
+             if deepest_tier_timed_out:
+                 truncation_causes.append("time limit")
+             if deepest_tier_label_cap_evictions:
+                 truncation_causes.append(
+                     f"{deepest_tier_label_cap_evictions} label-cap evictions"
+                 )
+             if not truncation_causes:
+                 truncation_causes.append("unverified pricing completion")
+             print(
+                 "   [STOP] Pricing was truncated with no accepted new columns "
+                 f"({', '.join(truncation_causes)})."
+             )
+             termination_reason = "pricing_truncated_no_new_columns"
         else:
-             print("   [STOP] Pricing returned negative routes, but none were new to the master.")
-             termination_reason = "no_new_columns"
+             print(
+                 "   [STOP] Pricing returned negative routes, but every trip-incidence "
+                 "pattern was already present at an equal or lower master cost."
+             )
+             termination_reason = "no_new_nondominated_columns"
         if not milestone_boundary_reached:
             stop_after_iteration = True
 
@@ -1658,14 +2215,21 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
                     "active_time_s": total_active_time_s,
                     "cumulative_master_time_s": total_master_time_s,
                     "cumulative_pricing_time_s": total_pricing_time_s,
-                    "master_obj": current_obj,
+                    "master_obj_before_add": current_obj,
+                    "lp_route_weight_before_add": lp_route_weight,
+                    "artificial_trips_before_add": len(artificial_values),
+                    "artificial_total_before_add": sum(artificial_values),
                     "best_rc": best_rc_iter,
                     "cols_added_this_iteration": len(new_trucks),
+                    "pricing_exhaustive_deepest_tier": deepest_tier_exhaustive,
+                    "pricing_label_cap_evictions": actual_label_cap_evictions,
                     "num_routes": len(R_truck),
                     "run_dir": str(RUN_DIR),
                     "seed_route_count": seed_route_count,
                     "dp_columns_generated": dp_columns_generated,
                     "seed_route_validation": seed_route_validation,
+                    "seed_matching_provenance": seed_matching_provenance,
+                    "peak_trip_concurrency": PEAK_TRIP_CONCURRENCY,
                     "csv_name": csv_name,
                     "bus_label": bus_label,
                     "price_tag": price_tag,
@@ -1675,6 +2239,9 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
                     "trip_ids": T,
                     "mode": run_mode,
                     "battery_kwh": G_PARAM,
+                    "master_backend": MASTER_BACKEND,
+                    "master_method": MASTER_METHOD,
+                    "queue_order": args.queue_order,
                     "git": git_state,
                     "runtime_versions": runtime_versions,
                     "resume_history": resume_history,
@@ -1712,19 +2279,43 @@ print("========================================\n")
 # Check which trips are still using dummy variables in the LP solution
 
 print("\n--- Solving RMP one last time for diagnostics ---")
-rmp.optimize()  # <--- ADD THIS LINE. It restores .X values.
+if MASTER_BACKEND == "gurobi":
+    rmp.optimize()  # Restore .X values after the last column additions.
+    if rmp.Status != GRB.OPTIMAL:
+        raise RuntimeError(
+            "Final diagnostic LP is not optimal; refusing to report LP metrics "
+            f"(status={rmp.Status}, TimeLimit={MASTER_TIME_LIMIT:g}s)."
+        )
+    final_lp_obj = float(rmp.ObjVal)
+    final_lp_route_weight = sum(float(var.X) for var in a.values())
+    final_lp_artificial_values = {
+        trip: float(q_var.X)
+        for trip in T
+        if (q_var := rmp.getVarByName(f"q_{trip}")) is not None
+    }
+else:
+    scipy_master_result = _solve_scipy_master()
+    final_lp_obj = scipy_master_result.objective
+    final_lp_route_weight = scipy_master_result.route_weight
+    final_lp_artificial_values = dict(scipy_master_result.artificial_values)
+
+final_lp_artificial_total = sum(final_lp_artificial_values.values())
 
 print("\n--- Uncovered Trips Diagnostic ---")
-uncovered_trips = []
-for i in T:
-    q_var = rmp.getVarByName(f"q_{i}")
-    if q_var and q_var.X > 0.01:  # If slack is non-zero
-        uncovered_trips.append(i)
+uncovered_trips = [
+    trip
+    for trip, value in final_lp_artificial_values.items()
+    if value > 0.01
+]
 
 if uncovered_trips:
     print(f"[WARN] The following {len(uncovered_trips)} trips are covered by DUMMY variables (q_i=1):")
     print(uncovered_trips)
-    print("These trips likely have no valid incoming/outgoing arcs in the pricing graph.")
+    print(
+        "These trips are not covered by the current real-column pool. This can "
+        "mean pricing is incomplete/timed out; it does not by itself prove graph "
+        "infeasibility."
+    )
 else:
     print("[SUCCESS] All trips are covered by real vehicle routes.")
 # ---------------- DIAGNOSTIC END ------------------
@@ -1746,6 +2337,8 @@ if args.skip_final_mip:
             "seed_route_count": seed_route_count,
             "dp_columns_generated": dp_columns_generated,
             "seed_route_validation": seed_route_validation,
+            "seed_matching_provenance": seed_matching_provenance,
+            "peak_trip_concurrency": PEAK_TRIP_CONCURRENCY,
             "csv_name": csv_name,
             "bus_label": bus_label,
             "price_tag": price_tag,
@@ -1755,18 +2348,28 @@ if args.skip_final_mip:
             "trip_ids": T,
             "mode": run_mode,
             "battery_kwh": G_PARAM,
+            "master_backend": MASTER_BACKEND,
+            "master_method": MASTER_METHOD,
+            "queue_order": args.queue_order,
             "git": git_state,
             "runtime_versions": runtime_versions,
             "resume_history": resume_history,
             "run_arguments": vars(args),
             "termination_reason": termination_reason,
             "milestones_passed": milestones_passed,
+            "final_lp_obj": final_lp_obj,
+            "final_lp_route_weight": final_lp_route_weight,
+            "final_lp_artificial_total": final_lp_artificial_total,
+            "final_lp_artificial_trips": len(uncovered_trips),
             "routes": R_truck,
         }, f_out)
     os.replace(tmp_final_routes_path, final_routes_path)
 
     result = {
-        "LP_Obj": rmp.ObjVal,
+        "LP_Obj": final_lp_obj,
+        "Final_LP_Route_Weight": final_lp_route_weight,
+        "Final_LP_Artificial_Total": final_lp_artificial_total,
+        "Final_LP_Artificial_Trips": len(uncovered_trips),
         "MIP_Obj": None,
         "Skipped_Final_MIP": True,
         "Total_Time_s": elapsed,
@@ -1775,13 +2378,17 @@ if args.skip_final_mip:
         "Seed_Routes": seed_route_count,
         "DP_Columns_Generated": dp_columns_generated,
         "Seed_Route_Validation": seed_route_validation,
+        "Seed_Matching_Provenance": seed_matching_provenance,
+        "Peak_Trip_Concurrency": PEAK_TRIP_CONCURRENCY,
         "Instance_CSV": csv_name,
         "Instance_SHA256": instance_sha256,
         "Mode": run_mode,
+        "Master_Backend": MASTER_BACKEND,
+        "Master_Method": MASTER_METHOD,
+        "Pricing_Queue_Order": args.queue_order,
         "Git": git_state,
         "Runtime_Versions": runtime_versions,
         "Run_Arguments": vars(args),
-        "Artificial_Trips_LP": len(uncovered_trips),
         "Price_Tag": price_tag,
         "Prices_CSV": str(prices_csv),
         "Milestones_Hours": TARGET_MILESTONES_HOURS,
@@ -1813,9 +2420,22 @@ rmp_lp, a_lp = solve_master(
     binary=False,
     station_hourly_prices=station_hourly_prices,
 )
-if rmp_lp.SolCount == 0:
-    raise RuntimeError(f"Final LP produced no solution (status={rmp_lp.Status})")
-final_LP_obj = rmp_lp.ObjVal
+if rmp_lp.Status != GRB.OPTIMAL:
+    raise RuntimeError(
+        "Final rebuilt LP is not optimal; refusing to report LP metrics "
+        f"(status={rmp_lp.Status})."
+    )
+final_LP_obj = float(rmp_lp.ObjVal)
+final_LP_route_weight = sum(float(var.X) for var in a_lp.values())
+final_LP_artificial_values = {
+    trip: float(q_var.X)
+    for trip in T
+    if (q_var := rmp_lp.getVarByName(f"q_{trip}")) is not None
+}
+final_LP_artificial_total = sum(final_LP_artificial_values.values())
+final_LP_artificial_trips = sum(
+    value > 0.01 for value in final_LP_artificial_values.values()
+)
 #%%
 rmp_final, a_final, trip_cov_final = build_master(
     R_truck=R_truck,
@@ -1929,6 +2549,9 @@ print(f"\n=== CG Loop Completed in {elapsed:.1f} seconds ===")
 
 result = {
         "LP_Obj": final_LP_obj,
+        "Final_LP_Route_Weight": final_LP_route_weight,
+        "Final_LP_Artificial_Total": final_LP_artificial_total,
+        "Final_LP_Artificial_Trips": final_LP_artificial_trips,
         "MIP_Obj": final_MIP_obj,
         "Total_Time_s": elapsed,
         "CG_Iterations": iteration,
@@ -1936,9 +2559,14 @@ result = {
         "Seed_Routes": seed_route_count,
         "DP_Columns_Generated": dp_columns_generated,
         "Seed_Route_Validation": seed_route_validation,
+        "Seed_Matching_Provenance": seed_matching_provenance,
+        "Peak_Trip_Concurrency": PEAK_TRIP_CONCURRENCY,
         "Instance_CSV": csv_name,
         "Instance_SHA256": instance_sha256,
         "Mode": run_mode,
+        "Master_Backend": MASTER_BACKEND,
+        "Master_Method": MASTER_METHOD,
+        "Pricing_Queue_Order": args.queue_order,
         "Git": git_state,
         "Runtime_Versions": runtime_versions,
         "Run_Arguments": vars(args),
