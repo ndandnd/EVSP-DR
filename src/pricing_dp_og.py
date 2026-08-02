@@ -1141,6 +1141,7 @@ def _dominates(
     *,
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
+    require_equal_soc: bool = False,
 ) -> bool:
     # At a station, an earlier departure is not always more useful: the
     # restricted graph also imposes a maximum station-to-trip wait.  Without
@@ -1151,10 +1152,20 @@ def _dominates(
         if station_pool and not station_waiting_unrestricted
         else other.time <= label.time + tol
     )
+    # With a restricted station-to-trip wait, charging duration is currently
+    # the only way to move a station departure later.  A lower-SOC label can
+    # therefore charge longer into a feasible departure window that a
+    # higher-SOC label cannot enter.  In that model, SOC is not a monotone
+    # resource and only numerically equal SOC values are dominance-comparable.
+    soc_dominates = (
+        abs(other.soc - label.soc) <= tol
+        if require_equal_soc
+        else other.soc >= label.soc - tol
+    )
     return (
         other.rc <= label.rc + tol
         and time_dominates
-        and other.soc >= label.soc - tol
+        and soc_dominates
         and len(other.charging_stops) <= len(label.charging_stops)
         and len(other.trips_visited) >= len(label.trips_visited)
     )
@@ -1166,6 +1177,7 @@ def _is_dominated(
     *,
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
+    require_equal_soc: bool = False,
 ) -> bool:
     """
     Check whether `label` is dominated.
@@ -1184,6 +1196,7 @@ def _is_dominated(
             label,
             station_pool=station_pool,
             station_waiting_unrestricted=station_waiting_unrestricted,
+            require_equal_soc=require_equal_soc,
         ):
             return True
     return False
@@ -1197,6 +1210,7 @@ def _prune_dominated(
     *,
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
+    require_equal_soc: bool = False,
 ) -> list[Label]:
 
     """
@@ -1222,6 +1236,7 @@ def _prune_dominated(
             kept,
             station_pool=station_pool,
             station_waiting_unrestricted=station_waiting_unrestricted,
+            require_equal_soc=require_equal_soc,
         ):
 
             # Also remove any labels in `kept` that the new label dominates
@@ -1233,6 +1248,7 @@ def _prune_dominated(
                     k,
                     station_pool=station_pool,
                     station_waiting_unrestricted=station_waiting_unrestricted,
+                    require_equal_soc=require_equal_soc,
                 )
             ]
 
@@ -1582,6 +1598,7 @@ def solve_pricing_dp(
     # station label has every temporal successor available to a later one.
     # Ordinary earlier-time dominance is then safe and substantially tighter.
     station_waiting_unrestricted = max_charge2trip >= horizon_min - 1e-6
+    require_equal_soc_for_dominance = bool(S_use) and not station_waiting_unrestricted
 
     station_successor_deadlines = {}
     if successor_charge_targets:
@@ -1883,12 +1900,20 @@ def solve_pricing_dp(
 
                 #    _uid += 1
                 pool = node_labels[trip_idx]
-                if not _is_dominated(new_label, pool):
+                if not _is_dominated(
+                    new_label,
+                    pool,
+                    require_equal_soc=require_equal_soc_for_dominance,
+                ):
                     # Prune labels that are strictly worse than our new label,
                     # marking them dead so their stale heap entries skip in O(1)
                     kept = []
                     for lb in pool:
-                        if _dominates(new_label, lb):
+                        if _dominates(
+                            new_label,
+                            lb,
+                            require_equal_soc=require_equal_soc_for_dominance,
+                        ):
                             lb.alive = False
                         else:
                             kept.append(lb)
@@ -2114,6 +2139,7 @@ def solve_pricing_dp(
                         pool,
                         station_pool=True,
                         station_waiting_unrestricted=station_waiting_unrestricted,
+                        require_equal_soc=require_equal_soc_for_dominance,
                     ):
                         # Prune labels that are strictly worse than our new label,
                         # marking them dead so their stale heap entries skip in O(1)
@@ -2124,6 +2150,7 @@ def solve_pricing_dp(
                                 lb,
                                 station_pool=True,
                                 station_waiting_unrestricted=station_waiting_unrestricted,
+                                require_equal_soc=require_equal_soc_for_dominance,
                             ):
                                 lb.alive = False
                             else:

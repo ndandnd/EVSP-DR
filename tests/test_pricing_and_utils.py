@@ -624,6 +624,63 @@ class DominanceTests(unittest.TestCase):
         self.assertEqual(routes[0]["route"], ["D", 1, 2, 3, "D"])
         self.assertAlmostEqual(routes[0]["_rc"], -40.0)
 
+    def test_restricted_wait_requires_equal_soc_for_dominance(self):
+        # At trip 2 the cheaper path through trip 0 has 90 kWh, while the path
+        # through trip 1 has 0 kWh.  With a five-minute station-to-trip wait,
+        # charging 90->100 ends too early and cannot reach trip 3; charging
+        # 0->100 takes long enough to enter the window.  Higher SOC is thus not
+        # a monotone resource until explicit station waiting is modeled.
+        routes, timed_out, stats = solve_pricing_dp(
+            alpha={0: 30.0, 1: 20.0, 2: 20.0, 3: 200.0},
+            T=[0, 1, 2, 3],
+            S_use=["S"],
+            DEPOT="D",
+            adj={
+                "D": [
+                    (0, 0.0, 0.0, "depot_trip"),
+                    (1, 0.0, 0.0, "depot_trip"),
+                ],
+                0: [(2, 0.0, 0.0, "trip_trip")],
+                1: [(2, 0.0, 0.0, "trip_trip")],
+                2: [("S", 0.0, 0.0, "trip_station")],
+                "S": [(3, 0.0, 0.0, "station_trip")],
+                3: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={trip: 1 for trip in range(4)},
+            et={trip: 2 for trip in range(4)},
+            sl={},
+            el={},
+            epsilon={0: 10.0, 1: 100.0, 2: 0.0, 3: 100.0},
+            st_min={0: 0.0, 1: 0.0, 2: 9.0, 3: 30.0},
+            et_min={0: 1.0, 1: 1.0, 2: 10.0, 3: 31.0},
+            G=100.0,
+            TB_MIN=1,
+            bar_t=40,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={0: 0.0},
+            charge_cost_premium=0.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=10,
+            MAX_LABELS_PER_NODE=100,
+            soc_charge_levels=[100.0],
+            successor_charge_targets=True,
+            MIN_TRIPS_PER_ROUTE=3,
+            MAX_DAILY_RECHARGES=1,
+            max_charge2trip=5,
+            return_stats=True,
+        )
+
+        self.assertFalse(timed_out)
+        self.assertTrue(stats.exhaustive)
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["route"], ["D", 1, 2, "S", 3, "D"])
+        self.assertEqual(routes[0]["charging_activities"], 1)
+        self.assertEqual(routes[0]["charging_stops"]["kwh"], [100.0])
+
     def test_relaxed_station_wait_makes_split_shift_representable(self):
         kwargs = dict(
             alpha={0: 500.0, 1: 500.0},
