@@ -1000,7 +1000,8 @@ def _generate_charge_options(
 
 
 
-    For each target SOC level that is above `arrival_soc`, compute:
+    The first option is an immediate zero-energy pass-through. For each target
+    SOC level that is above `arrival_soc`, also compute:
 
       – energy to charge  (target − arrival_soc)
 
@@ -1046,7 +1047,8 @@ def _generate_charge_options(
 
     options : list of (departure_soc, departure_time_min, charge_cost, energy_kwh)
 
-              Sorted by energy ascending (cheapest / fastest first).
+              The pass-through is first; positive-charge options are sorted by
+              target level/energy ascending.
 
     """
 
@@ -1058,21 +1060,18 @@ def _generate_charge_options(
 
 
 
-    options = []
+    # A station is also a physical waypoint. Passing through it without
+    # charging must remain available, especially when the battery is already
+    # full or the recharge limit has been reached. Omitting this action makes
+    # the extension set non-monotone in SOC: a lower-SOC label can charge and
+    # continue while an otherwise better higher-SOC label has no station
+    # action, invalidating the usual ``higher SOC dominates`` rule.
+    options = [(arrival_soc, arrival_time_min, 0.0, 0.0)]
 
 
 
-    # Option 0: No charging at all (just pass through with some dwell)
-
-    # We still allow a "zero‑charge" option that adds a small dwell time
-
-    # (the minimum dwell is handled by the caller via travel times).
-
-    # Actually, no‑charge means the station is simply not visited,
-
-    # so we omit it here – the caller decides whether to extend
-
-    # through a station or directly to the next trip.
+    # Option 0 above is an immediate zero-energy pass-through. Waiting remains
+    # implicit in the downstream fixed trip start, subject to max_charge2trip.
 
 
 
@@ -1138,7 +1137,7 @@ def _generate_charge_options(
 def _dominates(
     other: Label,
     label: Label,
-    tol: float = 1e-4,
+    tol: float = 1e-9,
     *,
     station_pool: bool = False,
     station_waiting_unrestricted: bool = False,
@@ -1926,14 +1925,6 @@ def solve_pricing_dp(
 
 
 
-                # Limit number of charging stops
-
-                if len(label.charging_stops) >= MAX_DAILY_RECHARGES:
-
-                    continue
-
-
-
                 # ── Time feasibility ──
 
                 arrival_time = label.time + travel_min
@@ -2026,6 +2017,13 @@ def solve_pricing_dp(
 
                 for (dep_soc, dep_time, charge_cost, energy_kwh) in charge_options:
 
+                    is_positive_charge = energy_kwh > 1e-9
+                    if (
+                        is_positive_charge
+                        and len(label.charging_stops) >= MAX_DAILY_RECHARGES
+                    ):
+                        continue
+
 
 
                     # ── Reduced cost ──
@@ -2038,11 +2036,11 @@ def solve_pricing_dp(
 
                     # Record charging stop details
 
-                    new_charging_stops = label.charging_stops + (
-
-                        (station, arrival_time, dep_time, energy_kwh),
-
-                    )
+                    new_charging_stops = label.charging_stops
+                    if is_positive_charge:
+                        new_charging_stops = new_charging_stops + (
+                            (station, arrival_time, dep_time, energy_kwh),
+                        )
 
 
 

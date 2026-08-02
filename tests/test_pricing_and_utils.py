@@ -520,6 +520,110 @@ class DominanceTests(unittest.TestCase):
             [0, 1],
         )
 
+    def test_higher_soc_station_pass_through_preserves_dominance(self):
+        # Labels 0->2 and 1->2 meet at trip 2. The former has lower reduced
+        # cost and one extra kWh, so it correctly dominates the latter. At a
+        # full battery it can continue through S only if a zero-energy station
+        # pass-through is available, including at the recharge-count limit.
+        routes, timed_out, stats = solve_pricing_dp(
+            alpha={0: 20.0, 1: 10.0, 2: 20.0, 3: 200.0},
+            T=[0, 1, 2, 3],
+            S_use=["S"],
+            DEPOT="D",
+            adj={
+                "D": [
+                    (0, 0.0, 0.0, "depot_trip"),
+                    (1, 0.0, 0.0, "depot_trip"),
+                ],
+                0: [(2, 0.0, 0.0, "trip_trip")],
+                1: [(2, 0.0, 0.0, "trip_trip")],
+                2: [("S", 0.0, 0.0, "trip_station")],
+                "S": [(3, 0.0, 0.0, "station_trip")],
+                3: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={trip: 1 for trip in range(4)},
+            et={trip: 2 for trip in range(4)},
+            sl={},
+            el={},
+            epsilon={0: 0.0, 1: 1.0, 2: 0.0, 3: 100.0},
+            st_min={0: 0.0, 1: 0.0, 2: 10.0, 3: 20.0},
+            et_min={0: 1.0, 1: 1.0, 2: 11.0, 3: 21.0},
+            G=100.0,
+            TB_MIN=1,
+            bar_t=30,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={0: 0.0},
+            charge_cost_premium=0.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=10,
+            MAX_LABELS_PER_NODE=100,
+            soc_charge_levels=[100.0],
+            successor_charge_targets=True,
+            MIN_TRIPS_PER_ROUTE=3,
+            MAX_DAILY_RECHARGES=0,
+            max_charge2trip=30,
+            return_stats=True,
+        )
+
+        self.assertFalse(timed_out)
+        self.assertTrue(stats.exhaustive)
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["route"], ["D", 0, 2, "S", 3, "D"])
+        self.assertEqual(routes[0]["charging_activities"], 0)
+        self.assertEqual(routes[0]["charging_stops"]["kwh"], [])
+
+    def test_dominance_tolerance_cannot_prune_boundary_feasible_soc(self):
+        # At trip 2, path 0->2 is 0.00005 kWh short of path 1->2. The old
+        # 1e-4 dominance tolerance treated the lower-SOC path as superior even
+        # though it cannot cover the last 10 kWh trip under the solver's 1e-6
+        # feasibility tolerance. The exactly feasible path must survive.
+        routes, timed_out, stats = solve_pricing_dp(
+            alpha={0: 21.0, 1: 20.0, 2: 20.0, 3: 100.0},
+            T=[0, 1, 2, 3],
+            S_use=[],
+            DEPOT="D",
+            adj={
+                "D": [
+                    (0, 0.0, 0.0, "depot_trip"),
+                    (1, 0.0, 0.0, "depot_trip"),
+                ],
+                0: [(2, 0.0, 0.0, "trip_trip")],
+                1: [(2, 0.0, 0.0, "trip_trip")],
+                2: [(3, 0.0, 0.0, "trip_trip")],
+                3: [("D", 0.0, 0.0, "trip_depot")],
+            },
+            tau={},
+            d={},
+            st={trip: 1 for trip in range(4)},
+            et={trip: 2 for trip in range(4)},
+            sl={},
+            el={},
+            epsilon={0: 0.00005, 1: 0.0, 2: 0.0, 3: 10.0},
+            st_min={0: 0.0, 1: 0.0, 2: 10.0, 3: 20.0},
+            et_min={0: 1.0, 1: 1.0, 2: 11.0, 3: 21.0},
+            G=10.0,
+            TB_MIN=1,
+            bar_t=30,
+            bus_cost=100.0,
+            hourly_prices={},
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=10,
+            MAX_LABELS_PER_NODE=100,
+            MIN_TRIPS_PER_ROUTE=3,
+            return_stats=True,
+        )
+
+        self.assertFalse(timed_out)
+        self.assertTrue(stats.exhaustive)
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(routes[0]["route"], ["D", 1, 2, 3, "D"])
+        self.assertAlmostEqual(routes[0]["_rc"], -40.0)
+
     def test_relaxed_station_wait_makes_split_shift_representable(self):
         kwargs = dict(
             alpha={0: 500.0, 1: 500.0},
