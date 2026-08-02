@@ -199,9 +199,15 @@ class PricingRunStats:
     exhaustive: bool
     timed_out: bool
     elapsed_s: float
+    output_selection: str = "reduced_cost"
+    eligible_negative_incidences: int = 0
+    returned_trip_count_min: int | None = None
+    returned_trip_count_mean: float | None = None
+    returned_trip_count_max: int | None = None
 
 
 _VALID_QUEUE_ORDERS = frozenset({"time", "reduced_cost", "reduced_cost_bound"})
+_VALID_OUTPUT_SELECTIONS = frozenset({"reduced_cost", "diversified"})
 
 
 def _validate_queue_order(queue_order: str) -> str:
@@ -211,6 +217,139 @@ def _validate_queue_order(queue_order: str) -> str:
             f"{sorted(_VALID_QUEUE_ORDERS)}, found {queue_order!r}"
         )
     return queue_order
+
+
+def _validate_output_selection(output_selection: str) -> str:
+    if output_selection not in _VALID_OUTPUT_SELECTIONS:
+        raise ValueError(
+            "output_selection must be one of "
+            f"{sorted(_VALID_OUTPUT_SELECTIONS)}, found {output_selection!r}"
+        )
+    return output_selection
+
+
+def _trip_incidence_sort_key(label: Label) -> tuple:
+    """Return a stable key for the scalar trip identifiers used by the model."""
+
+    return tuple(
+        sorted((type(trip).__name__, repr(trip)) for trip in label.trips_visited)
+    )
+
+
+def _select_negative_labels(
+    eligible_labels: list[Label],
+    *,
+    k_best: int,
+    output_selection: str,
+) -> list[Label]:
+    """Select at most ``k_best`` eligible labels deterministically.
+
+    ``reduced_cost`` preserves the historical best-RC behavior. The optional
+    ``diversified`` policy splits the slots, in order, across best-reduced-cost,
+    longest-route, and rare-trip rankings, then fills unclaimed slots by RC.
+    Rare-trip ranking uses mean inverse incidence frequency over the eligible
+    pool so that signal remains distinct from the longest-route ranking.
+
+    Incumbent filtering deliberately happens before this helper is called, so
+    no quota can be consumed by a pattern already represented at equal or lower
+    cost in the master.
+    """
+
+    mode = _validate_output_selection(output_selection)
+    if k_best < 0:
+        raise ValueError("k_best must be nonnegative")
+    if k_best == 0 or not eligible_labels:
+        return []
+
+    # Preserve the historical stable ``sort(key=rc)`` behavior exactly for the
+    # default, including DP discovery order at equal reduced cost.
+    historical_rc_ranked = sorted(
+        eligible_labels,
+        key=lambda label: float(label.rc),
+    )
+    target = min(k_best, len(historical_rc_ranked))
+    if mode == "reduced_cost":
+        return historical_rc_ranked[:target]
+
+    # Diversified output is explicitly deterministic at ties rather than
+    # inheriting search/discovery order.
+    rc_ranked = sorted(
+        eligible_labels,
+        key=lambda label: (
+            float(label.rc),
+            -len(label.trips_visited),
+            _trip_incidence_sort_key(label),
+        ),
+    )
+    trip_frequency: dict[Any, int] = {}
+    for label in eligible_labels:
+        for trip in label.trips_visited:
+            trip_frequency[trip] = trip_frequency.get(trip, 0) + 1
+
+    def rarity_score(label: Label) -> float:
+        if not label.trips_visited:
+            return 0.0
+        ordered_trips = sorted(
+            label.trips_visited,
+            key=lambda trip: (type(trip).__name__, repr(trip)),
+        )
+        return math.fsum(
+            1.0 / trip_frequency[trip] for trip in ordered_trips
+        ) / len(ordered_trips)
+
+    longest_ranked = sorted(
+        eligible_labels,
+        key=lambda label: (
+            -len(label.trips_visited),
+            float(label.rc),
+            _trip_incidence_sort_key(label),
+        ),
+    )
+    rare_ranked = sorted(
+        eligible_labels,
+        key=lambda label: (
+            -rarity_score(label),
+            float(label.rc),
+            -len(label.trips_visited),
+            _trip_incidence_sort_key(label),
+        ),
+    )
+
+    base_quota, remainder = divmod(target, 3)
+    quotas = (
+        base_quota + (1 if remainder >= 1 else 0),
+        base_quota + (1 if remainder >= 2 else 0),
+        base_quota,
+    )
+    selected: list[Label] = []
+    selected_incidences: set[frozenset] = set()
+
+    for ranking, quota in zip(
+        (rc_ranked, longest_ranked, rare_ranked),
+        quotas,
+    ):
+        if quota <= 0:
+            continue
+        taken = 0
+        for label in ranking:
+            incidence = label.trips_visited
+            if incidence in selected_incidences:
+                continue
+            selected.append(label)
+            selected_incidences.add(incidence)
+            taken += 1
+            if taken >= quota:
+                break
+
+    for label in rc_ranked:
+        if len(selected) >= target:
+            break
+        if label.trips_visited in selected_incidences:
+            continue
+        selected.append(label)
+        selected_incidences.add(label.trips_visited)
+
+    return selected
 
 
 def _make_label_priority_key(queue_order: str, remaining_dual_bound=None):
@@ -1216,6 +1355,8 @@ def solve_pricing_dp(
 
     return_stats: bool = False,
 
+    output_selection: str = "reduced_cost",
+
 ) -> (
     tuple[list[dict], bool]
     | tuple[list[dict], bool, PricingRunStats]
@@ -1229,9 +1370,8 @@ def solve_pricing_dp(
 
     This is a drop‑in replacement for ``solve_pricing_fast``.
 
-    It returns a list of route dictionaries (with ``_rc`` field)
-
-    sorted by reduced cost, compatible with ``R_truck`` append logic.
+    It returns a list of route dictionaries (with ``_rc`` field), ordered by
+    the selected output policy and compatible with ``R_truck`` append logic.
 
 
 
@@ -1293,6 +1433,10 @@ def solve_pricing_dp(
 
                   weighted-interval bound on future positive trip duals.
 
+    output_selection : ``"reduced_cost"`` preserves historical K-best output;
+                       ``"diversified"`` mixes best-RC, longest, and rare-trip
+                       eligible negative routes before filling by RC.
+
     existing_trip_set_costs : optional best master cost for each trip-incidence
 
                               pattern already present in the restricted master.
@@ -1337,6 +1481,9 @@ def solve_pricing_dp(
         raise ValueError("max_successor_charge_targets must be positive")
     if MAX_LABELS_PER_NODE <= 0:
         raise ValueError("MAX_LABELS_PER_NODE must be positive")
+    if K_BEST < 0:
+        raise ValueError("K_BEST must be nonnegative")
+    selected_output_mode = _validate_output_selection(output_selection)
     if existing_cost_epsilon < 0:
         raise ValueError("existing_cost_epsilon must be nonnegative")
     incumbent_cost_by_trip_set = {
@@ -2093,15 +2240,15 @@ def solve_pricing_dp(
 
 
 
-    # Sort by reduced cost (most negative first)
-
-    neg_routes.sort(key=lambda lb: lb.rc)
-
-
-
-    unique_routes: list[Label] = []
+    # Filter incumbent incidence patterns before applying any K-output policy.
+    # Otherwise an already represented route can consume a scarce selection
+    # slot and hide a lower-ranked improving pattern.
+    eligible_routes: list[Label] = []
 
     for lab in neg_routes:
+
+        if lab.rc >= -RC_EPSILON:
+            continue
 
         key = lab.trips_visited
 
@@ -2117,11 +2264,13 @@ def solve_pricing_dp(
         ):
             continue
 
-        unique_routes.append(lab)
+        eligible_routes.append(lab)
 
-        if len(unique_routes) >= K_BEST:
-
-            break
+    unique_routes = _select_negative_labels(
+        eligible_routes,
+        k_best=K_BEST,
+        output_selection=selected_output_mode,
+    )
 
 
 
@@ -2231,12 +2380,30 @@ def solve_pricing_dp(
 
 
 
+    returned_trip_counts = [len(label.trips_visited) for label in unique_routes]
     pricing_stats = PricingRunStats(
         queue_order=queue_order,
+        output_selection=selected_output_mode,
         labels_expanded=labels_expanded,
         completed_routes=n_completed,
         negative_completed=n_neg_completed,
-        best_reduced_cost=(neg_routes[0].rc if neg_routes else float("inf")),
+        eligible_negative_incidences=len(eligible_routes),
+        returned_trip_count_min=(
+            min(returned_trip_counts) if returned_trip_counts else None
+        ),
+        returned_trip_count_mean=(
+            sum(returned_trip_counts) / len(returned_trip_counts)
+            if returned_trip_counts
+            else None
+        ),
+        returned_trip_count_max=(
+            max(returned_trip_counts) if returned_trip_counts else None
+        ),
+        best_reduced_cost=(
+            min(label.rc for label in neg_routes)
+            if neg_routes
+            else float("inf")
+        ),
         label_cap_evictions=label_cap_evictions,
         exhaustive=(
             not hit_timelimit
@@ -2301,6 +2468,8 @@ def make_dp_pricer(
 
     adj=None,
 
+    output_selection="reduced_cost",
+
 
 ):
 
@@ -2335,6 +2504,7 @@ def make_dp_pricer(
     """
 
     default_queue_order = _validate_queue_order(queue_order)
+    default_output_selection = _validate_output_selection(output_selection)
 
     if max_successor_charge_targets <= 0:
         raise ValueError("max_successor_charge_targets must be positive")
@@ -2468,6 +2638,7 @@ def make_dp_pricer(
             charge_start_cost=charge_start_cost,           # NEW
 
             queue_order=default_queue_order,
+            output_selection=default_output_selection,
             existing_trip_set_costs=existing_trip_set_costs,
             return_stats=True,
 
@@ -2490,6 +2661,7 @@ def make_dp_pricer(
 
     _solve.last_stats = None
     _solve.queue_order = default_queue_order
+    _solve.output_selection = default_output_selection
     _solve.successor_charge_targets = bool(successor_charge_targets)
     _solve.max_successor_charge_targets = int(max_successor_charge_targets)
     _solve.adjacency = adj

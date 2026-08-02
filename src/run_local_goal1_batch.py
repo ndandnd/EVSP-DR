@@ -24,6 +24,7 @@ RUNNER = REPO_ROOT / "src" / "run_ex_unicorn.py"
 # Keep these two runner-facing spellings together.  If the pending pricing
 # integration renames either option, this is the only launcher section to edit.
 RUNNER_QUEUE_FLAG = "--queue_order"
+RUNNER_OUTPUT_SELECTION_FLAG = "--pricing_output_selection"
 RUNNER_GAP_FLAG = "--max_charge2trip"
 
 THREAD_ENVIRONMENT = {
@@ -176,6 +177,7 @@ def build_command(
     batch_tag: str,
     initializer: str,
     queue_order: str,
+    pricing_output_selection: str,
     max_charge2trip: int,
 ) -> list[str]:
     profile = PROFILES[profile_name]
@@ -197,6 +199,8 @@ def build_command(
         "flat",
         RUNNER_QUEUE_FLAG,
         queue_order,
+        RUNNER_OUTPUT_SELECTION_FLAG,
+        pricing_output_selection,
         RUNNER_GAP_FLAG,
         str(max_charge2trip),
         "--active_time_limit_hours",
@@ -227,7 +231,11 @@ def build_command(
     ]
 
 
-def _runner_preflight(python: Path, queue_order: str) -> None:
+def _runner_preflight(
+    python: Path,
+    queue_order: str,
+    pricing_output_selection: str,
+) -> None:
     result = subprocess.run(
         [str(python), str(RUNNER), "--help"],
         cwd=REPO_ROOT,
@@ -243,6 +251,7 @@ def _runner_preflight(python: Path, queue_order: str) -> None:
         "--master_backend",
         "--matching",
         RUNNER_QUEUE_FLAG,
+        RUNNER_OUTPUT_SELECTION_FLAG,
         RUNNER_GAP_FLAG,
     )
     missing = [flag for flag in required if flag not in help_text]
@@ -255,6 +264,11 @@ def _runner_preflight(python: Path, queue_order: str) -> None:
         raise RuntimeError(
             f"Runner help does not advertise queue order {queue_order!r}; "
             "finish the pricing repair or select the implemented successor with --queue-order."
+        )
+    if pricing_output_selection not in help_text:
+        raise RuntimeError(
+            "Runner help does not advertise pricing output selection "
+            f"{pricing_output_selection!r}."
         )
 
 
@@ -359,6 +373,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Model-derived matching cover by default; use greedy as a control.",
     )
     parser.add_argument("--queue-order", default="reduced_cost_bound")
+    parser.add_argument(
+        "--pricing-output-selection",
+        choices=("reduced_cost", "diversified"),
+        default="reduced_cost",
+        help="How the DP chooses at most K negative columns from its eligible pool.",
+    )
     parser.add_argument("--max-charge2trip", type=int, default=1560)
     parser.add_argument("--batch-tag", default=None)
     parser.add_argument("--results-root", type=Path, default=None)
@@ -404,6 +424,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             batch_tag=batch_tag,
             initializer=args.initializer,
             queue_order=args.queue_order,
+            pricing_output_selection=args.pricing_output_selection,
             max_charge2trip=args.max_charge2trip,
         )
         commands.append((case, command, log_root / f"{case.name}.log"))
@@ -411,6 +432,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     print("Synthetic/random cases are not verified single-day GIRO instances.")
     print(
         f"Profile={args.profile}; initializer={args.initializer}; "
+        f"output_selection={args.pricing_output_selection}; "
         f"cases={len(cases)}; max_workers={args.max_workers}"
     )
     print(f"Thread limits: {THREAD_ENVIRONMENT}")
@@ -432,7 +454,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if args.max_charge2trip <= 0:
         raise SystemExit("ERROR: --max-charge2trip must be positive")
     try:
-        _runner_preflight(args.python, args.queue_order)
+        _runner_preflight(
+            args.python,
+            args.queue_order,
+            args.pricing_output_selection,
+        )
     except (OSError, RuntimeError, subprocess.TimeoutExpired) as exc:
         raise SystemExit(f"ERROR: {exc}") from exc
 

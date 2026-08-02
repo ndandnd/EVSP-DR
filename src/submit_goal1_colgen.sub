@@ -102,6 +102,11 @@ case "$QUEUE_ORDER" in
     time|reduced_cost|reduced_cost_bound) ;;
     *) echo "EVSP_QUEUE_ORDER must be time, reduced_cost, or reduced_cost_bound; got $QUEUE_ORDER" >&2; exit 2 ;;
 esac
+PRICING_OUTPUT_SELECTION=${EVSP_PRICING_OUTPUT_SELECTION:-reduced_cost}
+case "$PRICING_OUTPUT_SELECTION" in
+    reduced_cost|diversified) ;;
+    *) echo "EVSP_PRICING_OUTPUT_SELECTION must be reduced_cost or diversified; got $PRICING_OUTPUT_SELECTION" >&2; exit 2 ;;
+esac
 MAX_CHARGE2TRIP=${EVSP_MAX_CHARGE2TRIP:-1560}
 MAX_SUCCESSOR_TARGETS=${EVSP_MAX_SUCCESSOR_TARGETS:-64}
 
@@ -167,6 +172,7 @@ command=(
     --min_trips_per_route "$MIN_TRIPS"
     --master_backend "$MASTER_BACKEND"
     --queue_order "$QUEUE_ORDER"
+    --pricing_output_selection "$PRICING_OUTPUT_SELECTION"
     --max_charge2trip "$MAX_CHARGE2TRIP"
     --max_successor_charge_targets "$MAX_SUCCESSOR_TARGETS"
     --master_time_limit "$MASTER_TIME_LIMIT"

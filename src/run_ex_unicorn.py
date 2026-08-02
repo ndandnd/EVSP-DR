@@ -166,6 +166,16 @@ parser.add_argument(
     ),
 )
 parser.add_argument(
+    "--pricing_output_selection",
+    choices=("reduced_cost", "diversified"),
+    default="reduced_cost",
+    help=(
+        "Negative-route output policy after incumbent filtering. Default keeps "
+        "the best reduced costs; diversified also reserves slots for long and "
+        "rare-trip-coverage routes."
+    ),
+)
+parser.add_argument(
     "--max_charge2trip",
     type=float,
     default=None,
@@ -385,6 +395,7 @@ print(f"[INIT] Git state: {git_state}")
 print(f"[INIT] Runtime versions: {runtime_versions}")
 print(f"[INIT] Restricted-master backend: {MASTER_BACKEND} ({MASTER_METHOD})")
 print(f"[INIT] DP queue order: {args.queue_order}")
+print(f"[INIT] DP output selection: {args.pricing_output_selection}")
 
 # ==========================================
 # 3. DYNAMIC TARGET & VSP MODE OVERRIDE
@@ -1079,6 +1090,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "mode": run_mode,
             "master_backend": MASTER_BACKEND,
             "queue_order": args.queue_order,
+            "pricing_output_selection": args.pricing_output_selection,
             "max_charge2trip": MAX_CHARGE2TRIP,
             "successor_charge_targets": args.successor_charge_targets,
             "max_successor_charge_targets": args.max_successor_charge_targets,
@@ -1115,7 +1127,12 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
                 "missing from checkpoint while at least one worktree is dirty"
             )
 
-        saved_args = data.get("run_arguments") or {}
+        saved_args = dict(data.get("run_arguments") or {})
+        # Checkpoints created before this optional mode existed used the
+        # unchanged reduced-cost policy. Normalize that missing field so a
+        # default-mode resume does not require --allow_unsafe_resume, while a
+        # diversified resume still registers a real algorithm mismatch.
+        saved_args.setdefault("pricing_output_selection", "reduced_cost")
         resume_critical_args = (
             "kbest",
             "max_labels",
@@ -1132,6 +1149,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "matching_order_seed",
             "master_backend",
             "queue_order",
+            "pricing_output_selection",
             "max_charge2trip",
             "successor_charge_targets",
             "max_successor_charge_targets",
@@ -1601,6 +1619,10 @@ _TIER_STAT_SUFFIXES = (
     "Labels_Expanded",
     "Completed_Routes",
     "Negative_Completed",
+    "Eligible_Negative_Incidences",
+    "Returned_Trip_Count_Min",
+    "Returned_Trip_Count_Mean",
+    "Returned_Trip_Count_Max",
     "Label_Cap_Evictions",
     "Exhaustive",
 )
@@ -1627,6 +1649,11 @@ STATS_COLUMNS = (
     "Pricing_Label_Cap_Evictions",
     "Pricing_Exhaustive_Deepest_Tier",
     "Pricing_Queue_Order",
+    "Pricing_Output_Selection",
+    "Pricing_Eligible_Negative_Incidences",
+    "Pricing_Returned_Trip_Count_Min",
+    "Pricing_Returned_Trip_Count_Mean",
+    "Pricing_Returned_Trip_Count_Max",
     "Highest_Tier_Reached",
     *(
         f"Tier{tier}_{suffix}"
@@ -1684,6 +1711,7 @@ def _write_iteration_checkpoint(iteration_number, reason):
         "master_backend": MASTER_BACKEND,
         "master_method": MASTER_METHOD,
         "queue_order": args.queue_order,
+        "pricing_output_selection": args.pricing_output_selection,
         "max_charge2trip": MAX_CHARGE2TRIP,
         "successor_charge_targets": args.successor_charge_targets,
         "max_successor_charge_targets": args.max_successor_charge_targets,
@@ -1735,6 +1763,7 @@ if not skip_cg_loop:
         station_hourly_prices=station_hourly_prices,
         charge_start_cost=CHARGE_START_COST,
         queue_order=args.queue_order,
+        output_selection=args.pricing_output_selection,
         adj=pricing_adj,
     )
 #%%
@@ -1826,6 +1855,10 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
     deepest_tier_timed_out = False
     deepest_tier_exhaustive = False
     deepest_tier_label_cap_evictions = 0
+    deepest_tier_eligible_negative_incidences = 0
+    deepest_tier_returned_trip_count_min = None
+    deepest_tier_returned_trip_count_mean = None
+    deepest_tier_returned_trip_count_max = None
     current_max_labels_used = 0
     highest_tier_reached = 0
     tier_stats = []
@@ -1913,6 +1946,26 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
             if pricing_run_stats is not None
             else 0
         )
+        deepest_tier_eligible_negative_incidences = (
+            int(pricing_run_stats.eligible_negative_incidences)
+            if pricing_run_stats is not None
+            else 0
+        )
+        deepest_tier_returned_trip_count_min = (
+            pricing_run_stats.returned_trip_count_min
+            if pricing_run_stats is not None
+            else None
+        )
+        deepest_tier_returned_trip_count_mean = (
+            pricing_run_stats.returned_trip_count_mean
+            if pricing_run_stats is not None
+            else None
+        )
+        deepest_tier_returned_trip_count_max = (
+            pricing_run_stats.returned_trip_count_max
+            if pricing_run_stats is not None
+            else None
+        )
 
         seen_new_costs = {}
         accepted_this_tier = 0
@@ -1952,6 +2005,22 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
             ),
             "negative_completed": (
                 pricing_run_stats.negative_completed if pricing_run_stats else None
+            ),
+            "eligible_negative_incidences": (
+                pricing_run_stats.eligible_negative_incidences
+                if pricing_run_stats else None
+            ),
+            "returned_trip_count_min": (
+                pricing_run_stats.returned_trip_count_min
+                if pricing_run_stats else None
+            ),
+            "returned_trip_count_mean": (
+                pricing_run_stats.returned_trip_count_mean
+                if pricing_run_stats else None
+            ),
+            "returned_trip_count_max": (
+                pricing_run_stats.returned_trip_count_max
+                if pricing_run_stats else None
             ),
             "label_cap_evictions": (
                 pricing_run_stats.label_cap_evictions if pricing_run_stats else None
@@ -2061,6 +2130,13 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         "Pricing_Label_Cap_Evictions": actual_label_cap_evictions,
         "Pricing_Exhaustive_Deepest_Tier": deepest_tier_exhaustive,
         "Pricing_Queue_Order": args.queue_order,
+        "Pricing_Output_Selection": args.pricing_output_selection,
+        "Pricing_Eligible_Negative_Incidences": (
+            deepest_tier_eligible_negative_incidences
+        ),
+        "Pricing_Returned_Trip_Count_Min": deepest_tier_returned_trip_count_min,
+        "Pricing_Returned_Trip_Count_Mean": deepest_tier_returned_trip_count_mean,
+        "Pricing_Returned_Trip_Count_Max": deepest_tier_returned_trip_count_max,
         "Highest_Tier_Reached": highest_tier_reached,
         "Tier1_Time_s": tier_map.get(1, {}).get("time_s"),
         "Tier1_Hit_Timelimit": tier_map.get(1, {}).get("hit_timelimit"),
@@ -2070,6 +2146,18 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         "Tier1_Labels_Expanded": tier_map.get(1, {}).get("labels_expanded"),
         "Tier1_Completed_Routes": tier_map.get(1, {}).get("completed_routes"),
         "Tier1_Negative_Completed": tier_map.get(1, {}).get("negative_completed"),
+        "Tier1_Eligible_Negative_Incidences": tier_map.get(1, {}).get(
+            "eligible_negative_incidences"
+        ),
+        "Tier1_Returned_Trip_Count_Min": tier_map.get(1, {}).get(
+            "returned_trip_count_min"
+        ),
+        "Tier1_Returned_Trip_Count_Mean": tier_map.get(1, {}).get(
+            "returned_trip_count_mean"
+        ),
+        "Tier1_Returned_Trip_Count_Max": tier_map.get(1, {}).get(
+            "returned_trip_count_max"
+        ),
         "Tier1_Label_Cap_Evictions": tier_map.get(1, {}).get("label_cap_evictions"),
         "Tier1_Exhaustive": tier_map.get(1, {}).get("exhaustive"),
         "Tier2_Time_s": tier_map.get(2, {}).get("time_s"),
@@ -2080,6 +2168,18 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         "Tier2_Labels_Expanded": tier_map.get(2, {}).get("labels_expanded"),
         "Tier2_Completed_Routes": tier_map.get(2, {}).get("completed_routes"),
         "Tier2_Negative_Completed": tier_map.get(2, {}).get("negative_completed"),
+        "Tier2_Eligible_Negative_Incidences": tier_map.get(2, {}).get(
+            "eligible_negative_incidences"
+        ),
+        "Tier2_Returned_Trip_Count_Min": tier_map.get(2, {}).get(
+            "returned_trip_count_min"
+        ),
+        "Tier2_Returned_Trip_Count_Mean": tier_map.get(2, {}).get(
+            "returned_trip_count_mean"
+        ),
+        "Tier2_Returned_Trip_Count_Max": tier_map.get(2, {}).get(
+            "returned_trip_count_max"
+        ),
         "Tier2_Label_Cap_Evictions": tier_map.get(2, {}).get("label_cap_evictions"),
         "Tier2_Exhaustive": tier_map.get(2, {}).get("exhaustive"),
         "Tier3_Time_s": tier_map.get(3, {}).get("time_s"),
@@ -2090,6 +2190,18 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
         "Tier3_Labels_Expanded": tier_map.get(3, {}).get("labels_expanded"),
         "Tier3_Completed_Routes": tier_map.get(3, {}).get("completed_routes"),
         "Tier3_Negative_Completed": tier_map.get(3, {}).get("negative_completed"),
+        "Tier3_Eligible_Negative_Incidences": tier_map.get(3, {}).get(
+            "eligible_negative_incidences"
+        ),
+        "Tier3_Returned_Trip_Count_Min": tier_map.get(3, {}).get(
+            "returned_trip_count_min"
+        ),
+        "Tier3_Returned_Trip_Count_Mean": tier_map.get(3, {}).get(
+            "returned_trip_count_mean"
+        ),
+        "Tier3_Returned_Trip_Count_Max": tier_map.get(3, {}).get(
+            "returned_trip_count_max"
+        ),
         "Tier3_Label_Cap_Evictions": tier_map.get(3, {}).get("label_cap_evictions"),
         "Tier3_Exhaustive": tier_map.get(3, {}).get("exhaustive"),
         "Recent_Window_Sum": (sum(recent_improvements)
@@ -2242,6 +2354,7 @@ while not skip_cg_loop and iteration < MAX_CG_ITERS:
                     "master_backend": MASTER_BACKEND,
                     "master_method": MASTER_METHOD,
                     "queue_order": args.queue_order,
+                    "pricing_output_selection": args.pricing_output_selection,
                     "git": git_state,
                     "runtime_versions": runtime_versions,
                     "resume_history": resume_history,
@@ -2351,6 +2464,7 @@ if args.skip_final_mip:
             "master_backend": MASTER_BACKEND,
             "master_method": MASTER_METHOD,
             "queue_order": args.queue_order,
+            "pricing_output_selection": args.pricing_output_selection,
             "git": git_state,
             "runtime_versions": runtime_versions,
             "resume_history": resume_history,
@@ -2386,6 +2500,7 @@ if args.skip_final_mip:
         "Master_Backend": MASTER_BACKEND,
         "Master_Method": MASTER_METHOD,
         "Pricing_Queue_Order": args.queue_order,
+        "Pricing_Output_Selection": args.pricing_output_selection,
         "Git": git_state,
         "Runtime_Versions": runtime_versions,
         "Run_Arguments": vars(args),
@@ -2567,6 +2682,7 @@ result = {
         "Master_Backend": MASTER_BACKEND,
         "Master_Method": MASTER_METHOD,
         "Pricing_Queue_Order": args.queue_order,
+        "Pricing_Output_Selection": args.pricing_output_selection,
         "Git": git_state,
         "Runtime_Versions": runtime_versions,
         "Run_Arguments": vars(args),

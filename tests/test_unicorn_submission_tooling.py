@@ -36,6 +36,11 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         matrix_text = (REPO_ROOT / "src" / "submit_goal1_matrix.sh").read_text()
         self.assertIn("EVSP_QUEUE_ORDER:-reduced_cost_bound", job_text)
         self.assertIn('--queue_order "$QUEUE_ORDER"', job_text)
+        self.assertIn("EVSP_PRICING_OUTPUT_SELECTION:-reduced_cost", job_text)
+        self.assertIn(
+            '--pricing_output_selection "$PRICING_OUTPUT_SELECTION"',
+            job_text,
+        )
         self.assertIn('--max_charge2trip "$MAX_CHARGE2TRIP"', job_text)
         self.assertNotIn("INSTANCE must be a filename under data/", job_text)
         self.assertIn('instance_tag=${instance_tag//\\//_}', matrix_text)

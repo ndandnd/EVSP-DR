@@ -36,6 +36,7 @@ class LocalGoal1LauncherTests(unittest.TestCase):
             results_root=REPO_ROOT / "src" / "results" / "test",
             batch_tag="test",
             queue_order="reduced_cost_bound",
+            pricing_output_selection="reduced_cost",
             max_charge2trip=1560,
         )
 
@@ -46,6 +47,22 @@ class LocalGoal1LauncherTests(unittest.TestCase):
         self.assertNotIn("--greedy", matching)
         self.assertIn("--greedy", greedy)
         self.assertNotIn("--matching", greedy)
+
+    def test_command_threads_diversified_output_selection(self):
+        command = build_command(
+            case=self.make_case(),
+            python=Path(sys.executable),
+            profile_name="5m",
+            results_root=REPO_ROOT / "src" / "results" / "test",
+            batch_tag="test",
+            initializer="greedy",
+            queue_order="reduced_cost_bound",
+            pricing_output_selection="diversified",
+            max_charge2trip=1560,
+        )
+
+        flag_index = command.index("--pricing_output_selection")
+        self.assertEqual(command[flag_index + 1], "diversified")
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ from pricing_dp_og import (  # noqa: E402
     _is_dominated,
     _make_label_priority_key,
     _make_label_queue_entry,
+    _select_negative_labels,
     _successor_boundary_soc_levels,
     make_dp_pricer,
     solve_pricing_dp,
@@ -114,6 +115,13 @@ class DominanceTests(unittest.TestCase):
         for function in (solve_pricing_dp, make_dp_pricer):
             default = inspect.signature(function).parameters["queue_order"].default
             self.assertEqual(default, "time")
+
+    def test_public_pricer_defaults_preserve_reduced_cost_output(self):
+        for function in (solve_pricing_dp, make_dp_pricer):
+            default = inspect.signature(function).parameters[
+                "output_selection"
+            ].default
+            self.assertEqual(default, "reduced_cost")
 
     def test_public_pricer_defaults_preserve_fixed_soc_grid(self):
         for function in (solve_pricing_dp, make_dp_pricer):
@@ -220,6 +228,108 @@ class DominanceTests(unittest.TestCase):
         self.assertIsInstance(pricer.last_stats, PricingRunStats)
         self.assertEqual(pricer.last_stats.queue_order, "reduced_cost")
 
+    def test_diversified_output_selection_has_deterministic_quotas(self):
+        best_rc = self.make_label(trips=[1], rc=-100.0)
+        longest = self.make_label(trips=[1, 2, 3, 4], rc=-90.0)
+        rare = self.make_label(trips=[9], rc=-80.0)
+        common_a = self.make_label(trips=[1, 2], rc=-70.0)
+        common_b = self.make_label(trips=[3, 4], rc=-60.0)
+        labels = [best_rc, longest, rare, common_a, common_b]
+
+        selected = _select_negative_labels(
+            list(reversed(labels)),
+            k_best=3,
+            output_selection="diversified",
+        )
+
+        # One slot each goes to best RC, longest route, and rarest incidence.
+        self.assertEqual(selected, [best_rc, longest, rare])
+        self.assertEqual(
+            selected,
+            _select_negative_labels(
+                labels,
+                k_best=3,
+                output_selection="diversified",
+            ),
+        )
+
+    def test_output_selection_k_edges(self):
+        labels = [
+            self.make_label(trips=[1], rc=-3.0),
+            self.make_label(trips=[2], rc=-2.0),
+        ]
+
+        self.assertEqual(
+            _select_negative_labels(
+                labels,
+                k_best=0,
+                output_selection="diversified",
+            ),
+            [],
+        )
+        self.assertEqual(
+            _select_negative_labels(
+                labels,
+                k_best=10,
+                output_selection="diversified",
+            ),
+            labels,
+        )
+        self.assertEqual(
+            _select_negative_labels(
+                list(reversed(labels)),
+                k_best=1,
+                output_selection="diversified",
+            ),
+            [labels[0]],
+        )
+        with self.assertRaisesRegex(ValueError, "nonnegative"):
+            _select_negative_labels(
+                labels,
+                k_best=-1,
+                output_selection="diversified",
+            )
+        with self.assertRaisesRegex(ValueError, "output_selection"):
+            _select_negative_labels(
+                labels,
+                k_best=1,
+                output_selection="unknown",
+            )
+
+    def test_factory_threads_optional_output_selection(self):
+        pricer = make_dp_pricer(
+            T=[0],
+            S_use=[],
+            DEPOT="D",
+            tau={("D", 0): 0, (0, "D"): 0},
+            d={("D", 0): 0.0, (0, "D"): 0.0},
+            st={0: 1},
+            et={0: 2},
+            sl={0: "A"},
+            el={0: "B"},
+            epsilon={0: 0.0},
+            G=300.0,
+            TB_MIN=1,
+            bar_t=10,
+            bus_cost=100.0,
+            charge_rate_kw=300.0,
+            hourly_prices={},
+            charge_cost_premium=1.0,
+            travel_cost_factor=0.0,
+            RC_EPSILON=0.1,
+            K_BEST=5,
+            st_min={0: 0.0},
+            et_min={0: 1.0},
+            tau_min={("D", 0): 0.0, (0, "D"): 0.0},
+            output_selection="diversified",
+        )
+
+        routes, _, _ = pricer({0: 200.0})
+
+        self.assertEqual(len(routes), 1)
+        self.assertEqual(pricer.output_selection, "diversified")
+        self.assertEqual(pricer.last_stats.output_selection, "diversified")
+
     def test_factory_reuses_a_prebuilt_adjacency(self):
         adjacency = {
             "D": [(0, 0.0, 0.0, "depot_trip")],
@@ -258,6 +368,10 @@ class DominanceTests(unittest.TestCase):
         self.assertIs(pricer.adjacency, adjacency)
 
     def test_existing_pattern_is_filtered_before_kbest_cutoff(self):
+        incumbent_costs = {
+            frozenset({0}): 100.0,
+            frozenset({1}): 110.0,
+        }
         routes, timed_out, stats = solve_pricing_dp(
             alpha={0: 300.0, 1: 200.0},
             T=[0, 1],
@@ -288,7 +402,8 @@ class DominanceTests(unittest.TestCase):
             travel_cost_factor=0.0,
             RC_EPSILON=0.1,
             K_BEST=1,
-            existing_trip_set_costs={frozenset({0}): 100.0},
+            output_selection="diversified",
+            existing_trip_set_costs=incumbent_costs,
             return_stats=True,
         )
 
@@ -296,9 +411,15 @@ class DominanceTests(unittest.TestCase):
         self.assertTrue(stats.exhaustive)
         self.assertEqual(stats.completed_routes, 2)
         self.assertEqual(stats.negative_completed, 2)
+        self.assertEqual(stats.output_selection, "diversified")
+        self.assertEqual(stats.eligible_negative_incidences, 1)
         self.assertAlmostEqual(stats.best_reduced_cost, -200.0)
         self.assertEqual(len(routes), 1)
         self.assertEqual(routes[0]["route"], ["D", 1, "D"])
+        self.assertLess(routes[0]["_rc"], -0.1)
+        returned_incidence = frozenset({1})
+        returned_master_cost = routes[0]["_rc"] + 200.0
+        self.assertLess(returned_master_cost, incumbent_costs[returned_incidence])
 
     def test_cheaper_realization_of_existing_pattern_is_still_returned(self):
         routes, _ = solve_pricing_dp(
@@ -479,6 +600,11 @@ class DominanceTests(unittest.TestCase):
         self.assertEqual(stats.labels_expanded, 2)
         self.assertEqual(stats.completed_routes, 1)
         self.assertEqual(stats.negative_completed, 1)
+        self.assertEqual(stats.output_selection, "reduced_cost")
+        self.assertEqual(stats.eligible_negative_incidences, 1)
+        self.assertEqual(stats.returned_trip_count_min, 1)
+        self.assertEqual(stats.returned_trip_count_mean, 1.0)
+        self.assertEqual(stats.returned_trip_count_max, 1)
         self.assertEqual(stats.label_cap_evictions, 0)
         self.assertTrue(stats.exhaustive)
         self.assertFalse(stats.timed_out)
