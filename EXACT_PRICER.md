@@ -21,7 +21,7 @@ process, no Gurobi.
 |---|---|---|
 | 15 kWh / 10 min | **certified** rc-optimal: weight 2.3065, obj 230,875.92 (1,357 iters, 1 col/iter) | 89 s |
 | 15 kWh / 10 min | same certified optimum via 30-col batches (584 iters) — independent consistency check | 106 s |
-| 5 kWh / 5 min | **route weight 2.0000, obj 200,199.63, zero artificials** — cheaper than GIRO's own duties (200,207.79), 0.02% above the runner-model optimum 200,151 | minutes |
+| 5 kWh / 5 min | **CERTIFIED rc-optimal: weight 2.000000, obj 200,192.59, zero artificials** (1,160 iters, 24,091 columns, min_rc = -3.5e-10) — beats GIRO's own duties (200,207.79) by 15.20; 0.021% above the runner-model value 200,151 (different charging discretizations) | 871 s |
 
 The 15 kWh certified optimum exceeds 2.0 purely through conservative SOC
 flooring at every hop (phantom energy loss over 36-50-trip duties) — the
