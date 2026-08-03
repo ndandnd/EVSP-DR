@@ -1,0 +1,79 @@
+#!/bin/bash
+# Exact expanded-network CG over the 20 duty-pair instances, two grids:
+#   tasks  1-20: 15 kWh / 10 min (fast certification grid)
+#   tasks 21-40:  5 kWh /  5 min (near-continuous grid)
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_exact_pairs.sub
+#SBATCH -J EXACTPAIR
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=16G
+#SBATCH --partition=default_partition
+#SBATCH -t 06:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-40
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+python -c "import pandas, scipy" 2>/dev/null || fatal "env lacks pandas/scipy"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+PAIRS_FILE="$ROOT/data/duty_pairs/pairs.txt"
+if [ ! -s "$PAIRS_FILE" ]; then
+  if [ "$SLURM_ARRAY_TASK_ID" -eq 1 ]; then
+    python make_duty_pair_instances.py --pairs 20
+  else
+    for _ in $(seq 1 60); do [ -s "$PAIRS_FILE" ] && break; sleep 5; done
+  fi
+fi
+[ -s "$PAIRS_FILE" ] || fatal "missing $PAIRS_FILE"
+
+N_PAIRS=$(wc -l < "$PAIRS_FILE")
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+PAIR_IDX=$((TASK0 % N_PAIRS))
+GRID_IDX=$((TASK0 / N_PAIRS))
+
+CSV=$(sed -n "$((PAIR_IDX + 1))p" "$PAIRS_FILE")
+SOCS=(15 5)
+BLOCKS=(10 5)
+ITERS=(4000 8000)
+SOC=${SOCS[$GRID_IDX]}
+BLOCK=${BLOCKS[$GRID_IDX]}
+MAXIT=${ITERS[$GRID_IDX]}
+
+OUTDIR="$ROOT/src/results/exact_pairs"
+mkdir -p "$OUTDIR"
+BASE="${CSV%.csv}_soc${SOC}_b${BLOCK}"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $CSV soc_step=$SOC block=$BLOCK max_iters=$MAXIT"
+python -u exact_pricer_expanded.py \
+  --csv "duty_pairs/${CSV}" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step "$SOC" \
+  --block-min "$BLOCK" \
+  --max-iters "$MAXIT" \
+  --out "$OUTDIR/${BASE}.json"
