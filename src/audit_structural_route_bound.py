@@ -48,6 +48,7 @@ from matching_init import _trip_successors, peak_trip_concurrency
 SCHEMA_VERSION = 1
 DEFAULT_BATTERY_KWH = 300.0
 DEFAULT_CHARGE_RATE_KW = 300.0
+DEFAULT_MAX_TRIP2TRIP_MIN = 57.0
 DEFAULT_MAX_CHARGE2TRIP_MIN = HORIZON_MIN
 DEFAULT_SUCCESSOR_CHARGE_TARGETS = True
 LP_BOUND_EXPLANATION = (
@@ -307,6 +308,7 @@ def audit_instance(
     *,
     battery_kwh: float = DEFAULT_BATTERY_KWH,
     charge_rate_kw: float = DEFAULT_CHARGE_RATE_KW,
+    max_trip2trip_min: float = DEFAULT_MAX_TRIP2TRIP_MIN,
     max_charge2trip_min: float = DEFAULT_MAX_CHARGE2TRIP_MIN,
     successor_charge_targets: bool = DEFAULT_SUCCESSOR_CHARGE_TARGETS,
 ) -> dict[str, object]:
@@ -315,6 +317,7 @@ def audit_instance(
     problem = build_problem(
         data_dir,
         csv_name,
+        max_trip2trip_min=max_trip2trip_min,
         max_station_to_trip_wait_min=max_charge2trip_min,
     )
     successors = build_current_trip_successors(
@@ -378,7 +381,7 @@ def audit_instance(
             "battery_kwh": float(battery_kwh),
             "charge_rate_kw": float(charge_rate_kw),
             "horizon_min": float(HORIZON_MIN),
-            "max_trip2trip_min": 57,
+            "max_trip2trip_min": float(max_trip2trip_min),
             "max_trip2charge_min": 61,
             "max_charge2trip_min": float(max_charge2trip_min),
             "max_daily_recharges": int(MAX_DAILY_RECHARGES),
@@ -422,6 +425,7 @@ def build_report(
     *,
     battery_kwh: float = DEFAULT_BATTERY_KWH,
     charge_rate_kw: float = DEFAULT_CHARGE_RATE_KW,
+    max_trip2trip_min: float = DEFAULT_MAX_TRIP2TRIP_MIN,
     max_charge2trip_min: float = DEFAULT_MAX_CHARGE2TRIP_MIN,
     successor_charge_targets: bool = DEFAULT_SUCCESSOR_CHARGE_TARGETS,
 ) -> dict[str, object]:
@@ -435,6 +439,7 @@ def build_report(
                 name,
                 battery_kwh=battery_kwh,
                 charge_rate_kw=charge_rate_kw,
+                max_trip2trip_min=max_trip2trip_min,
                 max_charge2trip_min=max_charge2trip_min,
                 successor_charge_targets=successor_charge_targets,
             )
@@ -491,6 +496,12 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--json-out", type=Path, default=None)
     parser.add_argument(
+        "--max-trip2trip",
+        type=float,
+        default=DEFAULT_MAX_TRIP2TRIP_MIN,
+        help="Direct trip-end to next-trip-start cap in minutes (default: 57)",
+    )
+    parser.add_argument(
         "--max-charge2trip",
         type=float,
         default=DEFAULT_MAX_CHARGE2TRIP_MIN,
@@ -506,8 +517,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
-    if args.max_charge2trip <= 0:
-        raise SystemExit("ERROR: --max-charge2trip must be positive")
+    if args.max_trip2trip <= 0 or args.max_charge2trip <= 0:
+        raise SystemExit(
+            "ERROR: --max-trip2trip and --max-charge2trip must be positive"
+        )
     data_dir = args.data_dir.resolve()
     try:
         instance_names = [
@@ -516,6 +529,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = build_report(
             data_dir,
             instance_names,
+            max_trip2trip_min=args.max_trip2trip,
             max_charge2trip_min=args.max_charge2trip,
             successor_charge_targets=args.successor_charge_targets,
         )

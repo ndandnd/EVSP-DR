@@ -1,11 +1,14 @@
 import sys
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
+import run_local_goal1_batch as launcher  # noqa: E402
 from run_local_goal1_batch import (  # noqa: E402
     BenchmarkCase,
     build_command,
@@ -59,6 +62,54 @@ class LocalGoal1LauncherTests(unittest.TestCase):
         self.assertNotIn("--greedy", matching)
         self.assertIn("--greedy", greedy)
         self.assertNotIn("--matching", greedy)
+        gap_index = matching.index("--max_trip2trip")
+        self.assertEqual(matching[gap_index + 1], "57")
+
+    def test_command_threads_relaxed_trip_gap(self):
+        command = build_command(
+            case=self.make_case(),
+            python=Path(sys.executable),
+            profile_name="5m",
+            results_root=REPO_ROOT / "src" / "results" / "test",
+            batch_tag="test",
+            initializer="greedy",
+            queue_order="reduced_cost_bound",
+            pricing_output_selection="diversified",
+            dominance_mode="resource",
+            max_charge2trip=1560,
+            max_trip2trip=180,
+        )
+
+        flag_index = command.index("--max_trip2trip")
+        self.assertEqual(command[flag_index + 1], "180")
+
+    def test_preflight_requires_trip_gap_interface(self):
+        advertised_without_trip_gap = " ".join(
+            (
+                "--master_backend",
+                "--matching",
+                launcher.RUNNER_QUEUE_FLAG,
+                launcher.RUNNER_OUTPUT_SELECTION_FLAG,
+                launcher.RUNNER_DOMINANCE_FLAG,
+                launcher.RUNNER_GAP_FLAG,
+                "reduced_cost_bound",
+                "diversified",
+                "resource",
+            )
+        )
+        completed = SimpleNamespace(
+            returncode=0,
+            stdout=advertised_without_trip_gap,
+        )
+
+        with patch.object(launcher.subprocess, "run", return_value=completed):
+            with self.assertRaisesRegex(RuntimeError, "--max_trip2trip"):
+                launcher._runner_preflight(
+                    Path(sys.executable),
+                    "reduced_cost_bound",
+                    "diversified",
+                    "resource",
+                )
 
     def test_command_threads_diversified_output_selection(self):
         command = build_command(

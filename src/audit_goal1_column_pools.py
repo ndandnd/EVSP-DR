@@ -49,6 +49,7 @@ DEFAULT_DATA_DIR = REPO_ROOT / "data"
 # *not* compared: combining pools from different search policies is the point
 # of this audit.
 MODEL_CRITICAL_LOCATIONS: dict[str, tuple[tuple[str, ...], ...]] = {
+    "max_trip2trip": (("max_trip2trip",), ("run_arguments", "max_trip2trip")),
     "max_charge2trip": (("max_charge2trip",), ("run_arguments", "max_charge2trip")),
     "successor_charge_targets": (
         ("successor_charge_targets",),
@@ -73,6 +74,13 @@ MODEL_CRITICAL_LOCATIONS: dict[str, tuple[tuple[str, ...], ...]] = {
         ("artificial_penalty",),
         ("run_arguments", "artificial_penalty"),
     ),
+}
+
+# Pools created before the trip-gap option was exposed all used the runner's
+# hard-coded 57-minute value.  Treat an omitted historical field as that known
+# legacy value so a relaxed-gap pool can never be silently merged with it.
+LEGACY_MODEL_CRITICAL_DEFAULTS = {
+    "max_trip2trip": 57.0,
 }
 
 CURRENT_COST_CONFIG = {
@@ -213,6 +221,7 @@ def _validate_identity(pools: Sequence[dict[str, Any]]) -> dict[str, Any]:
     for field, locations in MODEL_CRITICAL_LOCATIONS.items():
         values: list[tuple[str, Any]] = []
         missing: list[str] = []
+        assumed_legacy_default: list[str] = []
         for pool in pools:
             pool_id = pool["_audit_pool_id"]
             value = _one_consistent_value(
@@ -222,7 +231,12 @@ def _validate_identity(pools: Sequence[dict[str, Any]]) -> dict[str, Any]:
                 locations=locations,
             )
             if value is None:
-                missing.append(pool_id)
+                if field in LEGACY_MODEL_CRITICAL_DEFAULTS:
+                    value = LEGACY_MODEL_CRITICAL_DEFAULTS[field]
+                    values.append((pool_id, value))
+                    assumed_legacy_default.append(pool_id)
+                else:
+                    missing.append(pool_id)
             else:
                 values.append((pool_id, value))
         if values:
@@ -238,7 +252,12 @@ def _validate_identity(pools: Sequence[dict[str, Any]]) -> dict[str, Any]:
                 )
             critical_report[field] = {
                 "value": first,
-                "present_in_pool_ids": [pool_id for pool_id, _ in values],
+                "present_in_pool_ids": [
+                    pool_id
+                    for pool_id, _ in values
+                    if pool_id not in assumed_legacy_default
+                ],
+                "assumed_legacy_default_in_pool_ids": assumed_legacy_default,
                 "missing_from_pool_ids": missing,
             }
 

@@ -199,6 +199,7 @@ class EndToEndAuditTests(unittest.TestCase):
                 "battery_kwh": 300,
                 "run_arguments": {
                     "G": 300,
+                    "max_trip2trip": 180.0,
                     "max_charge2trip": 1560.0,
                     "successor_charge_targets": True,
                     "max_successor_charge_targets": 64,
@@ -227,7 +228,11 @@ class EndToEndAuditTests(unittest.TestCase):
             }
 
             with (
-                patch.object(matching_audit, "build_problem", return_value=problem),
+                patch.object(
+                    matching_audit,
+                    "build_problem",
+                    return_value=problem,
+                ) as build_problem,
                 patch.object(
                     matching_audit,
                     "load_station_hourly_prices",
@@ -258,6 +263,10 @@ class EndToEndAuditTests(unittest.TestCase):
         )
         self.assertEqual(
             build_matching.call_args.kwargs["deadhead_cost_per_kwh"], 0.0
+        )
+        self.assertEqual(report["configuration"]["max_trip2trip_min"], 180.0)
+        self.assertEqual(
+            build_problem.call_args.kwargs["max_trip2trip_min"], 180.0
         )
         self.assertEqual(
             report["negative_only_waves"]["from_saved_seeds"]["waves"][0][

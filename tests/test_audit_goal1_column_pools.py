@@ -67,6 +67,7 @@ class Goal1ColumnPoolUnionAuditTests(unittest.TestCase):
             "git": {"commit": commit, "dirty": False},
             "run_arguments": {
                 "G": 300,
+                "max_trip2trip": 57.0,
                 "max_charge2trip": 1560.0,
                 "successor_charge_targets": True,
                 "max_successor_charge_targets": 64,
@@ -146,10 +147,33 @@ class Goal1ColumnPoolUnionAuditTests(unittest.TestCase):
             audit_column_pools([first_path, second_path], data_dir=self.root)
 
         second["trip_ids"] = [0, 1, 2]
+        second["run_arguments"]["max_trip2trip"] = 180.0
+        second_path.write_text(json.dumps(second), encoding="utf-8")
+        with self.assertRaisesRegex(ColumnPoolAuditError, "max_trip2trip"):
+            audit_column_pools([first_path, second_path], data_dir=self.root)
+
+        second["run_arguments"]["max_trip2trip"] = 57.0
         second["run_arguments"]["max_successor_charge_targets"] = 32
         second_path.write_text(json.dumps(second), encoding="utf-8")
         with self.assertRaisesRegex(ColumnPoolAuditError, "max_successor_charge_targets"):
             audit_column_pools([first_path, second_path], data_dir=self.root)
+
+    def test_legacy_pool_without_trip_gap_is_treated_as_57_minutes(self):
+        first_path, second_path = self.make_complementary_pools()
+        first = json.loads(first_path.read_text(encoding="utf-8"))
+        del first["run_arguments"]["max_trip2trip"]
+        first_path.write_text(json.dumps(first), encoding="utf-8")
+
+        report = audit_column_pools(
+            [first_path, second_path],
+            data_dir=self.root,
+        )
+
+        config = report["validated_identity"][
+            "model_critical_config_where_recorded"
+        ]["max_trip2trip"]
+        self.assertEqual(config["value"], 57.0)
+        self.assertEqual(config["assumed_legacy_default_in_pool_ids"], ["pool_001"])
 
     def test_cli_prints_json_and_writes_same_optional_output(self):
         first_path, second_path = self.make_complementary_pools()

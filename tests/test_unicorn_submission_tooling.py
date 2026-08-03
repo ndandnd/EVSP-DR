@@ -44,6 +44,8 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         )
         self.assertIn("EVSP_DOMINANCE_MODE:-resource", job_text)
         self.assertIn('--dominance_mode "$DOMINANCE_MODE"', job_text)
+        self.assertIn("EVSP_MAX_TRIP2TRIP:-57", job_text)
+        self.assertIn('--max_trip2trip "$MAX_TRIP2TRIP"', job_text)
         self.assertIn('--max_charge2trip "$MAX_CHARGE2TRIP"', job_text)
         self.assertNotIn("INSTANCE must be a filename under data/", job_text)
         self.assertIn('instance_tag=${instance_tag//\\//_}', matrix_text)

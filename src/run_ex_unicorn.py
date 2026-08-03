@@ -187,6 +187,15 @@ parser.add_argument(
     ),
 )
 parser.add_argument(
+    "--max_trip2trip",
+    type=float,
+    default=57.0,
+    help=(
+        "Maximum trip-end to next-trip-start separation in minutes for direct "
+        "trip-to-trip arcs. The historical restricted-model default is 57."
+    ),
+)
+parser.add_argument(
     "--max_charge2trip",
     type=float,
     default=None,
@@ -270,6 +279,8 @@ if args.min_trips_per_route <= 0:
     raise ValueError("--min_trips_per_route must be positive")
 if args.final_mip_timelimit <= 0:
     raise ValueError("--final_mip_timelimit must be positive")
+if args.max_trip2trip <= 0:
+    raise ValueError("--max_trip2trip must be positive")
 if args.max_charge2trip is not None and args.max_charge2trip <= 0:
     raise ValueError("--max_charge2trip must be positive")
 if args.max_successor_charge_targets <= 0:
@@ -425,7 +436,9 @@ TB_MIN   = int(round(60 / TIMEBLOCKS_PER_HOUR))  # minutes per block (60, 30, 15
 TB_HOURS = 1.0 / TIMEBLOCKS_PER_HOUR             # hours per block (1.0, 0.5, 0.25…)
 if args.max_charge2trip is None:
     args.max_charge2trip = float(bar_t * TB_MIN)
+MAX_TRIP2TRIP = float(args.max_trip2trip)
 MAX_CHARGE2TRIP = float(args.max_charge2trip)
+print(f"[INIT] Direct trip-to-trip separation cap: {MAX_TRIP2TRIP:g} minutes")
 print(f"[INIT] Station-to-trip wait cap: {MAX_CHARGE2TRIP:g} minutes")
 print(
     "[INIT] Successor-boundary charge targets: "
@@ -1104,6 +1117,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "queue_order": args.queue_order,
             "pricing_output_selection": args.pricing_output_selection,
             "dominance_mode": args.dominance_mode,
+            "max_trip2trip": MAX_TRIP2TRIP,
             "max_charge2trip": MAX_CHARGE2TRIP,
             "successor_charge_targets": args.successor_charge_targets,
             "max_successor_charge_targets": args.max_successor_charge_targets,
@@ -1146,6 +1160,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
         # real algorithm mismatch.
         saved_args.setdefault("pricing_output_selection", "reduced_cost")
         saved_args.setdefault("dominance_mode", "resource")
+        saved_args.setdefault("max_trip2trip", 57.0)
         resume_critical_args = (
             "kbest",
             "max_labels",
@@ -1164,6 +1179,7 @@ if RESUME_CKPT and Path(RESUME_CKPT).exists() and not args.no_resume:
             "queue_order",
             "pricing_output_selection",
             "dominance_mode",
+            "max_trip2trip",
             "max_charge2trip",
             "successor_charge_targets",
             "max_successor_charge_targets",
@@ -1346,7 +1362,7 @@ if not is_resuming:
             bar_t=bar_t,
             TB_MIN=TB_MIN,
             CHARGE_RATE_KW=CHARGE_RATE_KW,
-            max_trip2trip=57,
+            max_trip2trip=MAX_TRIP2TRIP,
             max_trip2charge=61,
             max_charge2trip=MAX_CHARGE2TRIP,
             min_soc_fraction=0.0,
@@ -1392,7 +1408,7 @@ if not is_resuming:
             tau_min=tau_min,
             st_min=st_min,
             et_min=et_min,
-            max_trip2trip=57,
+            max_trip2trip=MAX_TRIP2TRIP,
             max_trip2charge=61,
             max_charge2trip=MAX_CHARGE2TRIP,
         )
@@ -1728,6 +1744,7 @@ def _write_iteration_checkpoint(iteration_number, reason):
         "queue_order": args.queue_order,
         "pricing_output_selection": args.pricing_output_selection,
         "dominance_mode": args.dominance_mode,
+        "max_trip2trip": MAX_TRIP2TRIP,
         "max_charge2trip": MAX_CHARGE2TRIP,
         "successor_charge_targets": args.successor_charge_targets,
         "max_successor_charge_targets": args.max_successor_charge_targets,
@@ -1771,7 +1788,7 @@ if not skip_cg_loop:
         soc_charge_levels=[G * i * (1 / granularity) for i in range(1, 1 + granularity)],
         MIN_TRIPS_PER_ROUTE=MIN_TRIPS_PER_ROUTE,
         MAX_DAILY_RECHARGES=MAX_DAILY_RECHARGES,
-        max_trip2trip=57,
+        max_trip2trip=MAX_TRIP2TRIP,
         max_trip2charge=61,
         max_charge2trip=MAX_CHARGE2TRIP,
         successor_charge_targets=args.successor_charge_targets,
@@ -2489,6 +2506,7 @@ if args.skip_final_mip:
             "queue_order": args.queue_order,
             "pricing_output_selection": args.pricing_output_selection,
             "dominance_mode": args.dominance_mode,
+            "max_trip2trip": MAX_TRIP2TRIP,
             "git": git_state,
             "runtime_versions": runtime_versions,
             "resume_history": resume_history,

@@ -59,11 +59,13 @@ The current checkpoint includes these DP/master fixes:
   feasible routes merely as a speed heuristic.
 
 This is still the **Goal-1 restricted model**. Charging begins immediately on
-station arrival, and pricing retains the 57-minute trip-to-trip and 61-minute
-trip-to-station restrictions. Station-to-trip waiting defaults to the full
-1560-minute horizon for rediscovery. That is acceptable for a flat-price
-benchmark, but immediate charging still cannot support the later headline
-temporal demand-response claim.
+station arrival. Direct trip-to-trip separation defaults to the historical
+57-minute cap but is exposed as `EVSP_MAX_TRIP2TRIP` for controlled sensitivity
+tests; the 61-minute trip-to-station travel-time restriction remains fixed.
+Station-to-trip waiting defaults to the full 1560-minute horizon for
+rediscovery. That is acceptable for a flat-price benchmark, but immediate
+charging still cannot support the later headline temporal demand-response
+claim.
 
 Benchmark interpretation:
 
@@ -361,6 +363,10 @@ Important controls:
 - `EVSP_PRICING_OUTPUT_SELECTION`: `reduced_cost` (default) or `diversified`;
 - `EVSP_DOMINANCE_MODE`: `resource` (default) or the experimental
   `incidence_diverse`;
+- `EVSP_MAX_TRIP2TRIP`: direct trip-end to next-trip-start separation cap in
+  minutes, default 57. This includes deadhead time and is not pure idle time.
+  The current objective has no idle/crew cost, so use a finite experimental cap
+  rather than making direct waiting unrestricted;
 - `EVSP_MAX_CHARGE2TRIP`: station-to-trip wait cap in minutes, default 1560;
 - `EVSP_MAX_SUCCESSOR_TARGETS`: cap on successor-boundary SOC targets, default
   64;

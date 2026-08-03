@@ -27,6 +27,7 @@ RUNNER_QUEUE_FLAG = "--queue_order"
 RUNNER_OUTPUT_SELECTION_FLAG = "--pricing_output_selection"
 RUNNER_DOMINANCE_FLAG = "--dominance_mode"
 RUNNER_GAP_FLAG = "--max_charge2trip"
+RUNNER_TRIP_GAP_FLAG = "--max_trip2trip"
 
 THREAD_ENVIRONMENT = {
     "OMP_NUM_THREADS": "1",
@@ -181,6 +182,7 @@ def build_command(
     pricing_output_selection: str,
     dominance_mode: str,
     max_charge2trip: int,
+    max_trip2trip: int = 57,
 ) -> list[str]:
     profile = PROFILES[profile_name]
     return [
@@ -205,6 +207,8 @@ def build_command(
         pricing_output_selection,
         RUNNER_DOMINANCE_FLAG,
         dominance_mode,
+        RUNNER_TRIP_GAP_FLAG,
+        str(max_trip2trip),
         RUNNER_GAP_FLAG,
         str(max_charge2trip),
         "--active_time_limit_hours",
@@ -258,6 +262,7 @@ def _runner_preflight(
         RUNNER_QUEUE_FLAG,
         RUNNER_OUTPUT_SELECTION_FLAG,
         RUNNER_DOMINANCE_FLAG,
+        RUNNER_TRIP_GAP_FLAG,
         RUNNER_GAP_FLAG,
     )
     missing = [flag for flag in required if flag not in help_text]
@@ -400,6 +405,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Experimental label-dominance policy; resource preserves current behavior.",
     )
     parser.add_argument("--max-charge2trip", type=int, default=1560)
+    parser.add_argument("--max-trip2trip", type=int, default=57)
     parser.add_argument("--batch-tag", default=None)
     parser.add_argument("--results-root", type=Path, default=None)
     parser.add_argument("--allow-dirty", action="store_true")
@@ -447,6 +453,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             pricing_output_selection=args.pricing_output_selection,
             dominance_mode=args.dominance_mode,
             max_charge2trip=args.max_charge2trip,
+            max_trip2trip=args.max_trip2trip,
         )
         commands.append((case, command, log_root / f"{case.name}.log"))
 
@@ -455,6 +462,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         f"Profile={args.profile}; initializer={args.initializer}; "
         f"output_selection={args.pricing_output_selection}; "
         f"dominance={args.dominance_mode}; "
+        f"max_trip2trip={args.max_trip2trip}; "
         f"cases={len(cases)}; max_workers={args.max_workers}"
     )
     print(f"Thread limits: {THREAD_ENVIRONMENT}")
@@ -473,8 +481,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             "ERROR: checkout is dirty; commit the pricing repair first or pass --allow-dirty "
             "for an explicitly provisional diagnostic."
         )
-    if args.max_charge2trip <= 0:
-        raise SystemExit("ERROR: --max-charge2trip must be positive")
+    if args.max_trip2trip <= 0 or args.max_charge2trip <= 0:
+        raise SystemExit(
+            "ERROR: --max-trip2trip and --max-charge2trip must be positive"
+        )
     try:
         _runner_preflight(
             args.python,

@@ -166,6 +166,7 @@ def build_problem(
     data_dir: Path,
     csv_name: str,
     *,
+    max_trip2trip_min: float = 57.0,
     max_station_to_trip_wait_min: float = MAX_STATION_TO_TRIP_WAIT_MIN,
 ) -> ProblemData:
     """Reconstruct the exact issue20 restricted graph for one trip instance."""
@@ -264,7 +265,7 @@ def build_problem(
         tau_min=tau_min,
         st_min=start_min,
         et_min=end_min,
-        max_trip2trip=57,
+        max_trip2trip=max_trip2trip_min,
         max_trip2charge=61,
         max_charge2trip=int(max_station_to_trip_wait_min),
     )
@@ -715,6 +716,18 @@ def _route_cost(
 def audit_pool(pool_path: Path, data_dir: Path = DEFAULT_DATA_DIR) -> dict[str, Any]:
     with pool_path.open() as handle:
         pool = json.load(handle)
+    run_arguments = pool.get("run_arguments") or {}
+    # Older saved pools predate the exposed option and are known to have used
+    # the runner's hard-coded 57-minute value.
+    max_trip2trip_min = float(run_arguments.get("max_trip2trip", 57.0))
+    if (
+        pool.get("max_trip2trip") is not None
+        and float(pool["max_trip2trip"]) != max_trip2trip_min
+    ):
+        raise ValueError(
+            "Saved top-level max_trip2trip disagrees with "
+            "run_arguments.max_trip2trip"
+        )
     csv_name = pool["csv_name"]
     instance_path = data_dir / csv_name
     if not instance_path.exists():
@@ -772,6 +785,7 @@ def audit_pool(pool_path: Path, data_dir: Path = DEFAULT_DATA_DIR) -> dict[str, 
     current_runner_problem = build_problem(
         data_dir,
         csv_name,
+        max_trip2trip_min=max_trip2trip_min,
         max_station_to_trip_wait_min=HORIZON_MIN,
     )
     duties = reconstruct_historical_duties(data_dir, csv_name)
@@ -852,6 +866,7 @@ def audit_pool(pool_path: Path, data_dir: Path = DEFAULT_DATA_DIR) -> dict[str, 
         "price_sha256": actual_price_hash,
         "saved_pool_mode": pool.get("mode"),
         "saved_pool_git": pool.get("git"),
+        "current_runner_max_trip2trip_min": max_trip2trip_min,
         "dual_warning": (
             "The release does not save Gurobi duals. This audit reconstructs one "
             "optimal SciPy/HiGHS dual vector. Individual reduced costs can change "

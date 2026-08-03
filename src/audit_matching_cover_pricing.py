@@ -73,6 +73,7 @@ class MatchingAuditConfig:
     requested_battery_kwh: float
     effective_battery_kwh: float
     horizon_min: float
+    max_trip2trip_min: float
     max_charge2trip_min: float
     successor_charge_targets: bool
     max_successor_charge_targets: int
@@ -246,6 +247,11 @@ def matching_audit_config(pool: Mapping[str, Any]) -> MatchingAuditConfig:
 
     # This mirrors run_ex_unicorn.py's current VSP sentinel handling.
     effective = 300.0 if requested >= 9000.0 else requested
+    run_arguments = pool.get("run_arguments")
+    if not isinstance(run_arguments, Mapping):
+        raise MatchingCoverAuditInputError("Saved final pool lacks run_arguments")
+    # Before this option was exposed, the production runner always used 57.
+    max_trip2trip = float(run_arguments.get("max_trip2trip", 57.0))
     max_wait = float(_required_run_argument(pool, "max_charge2trip"))
     successor_targets = _required_run_argument(
         pool, "successor_charge_targets"
@@ -264,6 +270,7 @@ def matching_audit_config(pool: Mapping[str, Any]) -> MatchingAuditConfig:
     order_seed = int(_required_run_argument(pool, "matching_order_seed"))
 
     top_level_checks = {
+        "max_trip2trip": max_trip2trip,
         "max_charge2trip": max_wait,
         "successor_charge_targets": successor_targets,
         "max_successor_charge_targets": max_targets,
@@ -278,8 +285,10 @@ def matching_audit_config(pool: Mapping[str, Any]) -> MatchingAuditConfig:
             "Saved top-level configuration disagrees with run_arguments: "
             + json.dumps(disagreements, sort_keys=True)
         )
-    if max_wait < 0:
-        raise MatchingCoverAuditInputError("max_charge2trip cannot be negative")
+    if max_trip2trip <= 0 or max_wait <= 0:
+        raise MatchingCoverAuditInputError(
+            "max_trip2trip and max_charge2trip must be positive"
+        )
     if max_targets <= 0 or attempts <= 0:
         raise MatchingCoverAuditInputError(
             "matching target cap and attempt count must be positive"
@@ -288,6 +297,7 @@ def matching_audit_config(pool: Mapping[str, Any]) -> MatchingAuditConfig:
         requested_battery_kwh=requested,
         effective_battery_kwh=effective,
         horizon_min=float(HORIZON_MIN),
+        max_trip2trip_min=max_trip2trip,
         max_charge2trip_min=max_wait,
         successor_charge_targets=successor_targets,
         max_successor_charge_targets=max_targets,
@@ -627,6 +637,7 @@ def audit_matching_cover_pool(
     problem = build_problem(
         data_root,
         instance_name,
+        max_trip2trip_min=config.max_trip2trip_min,
         max_station_to_trip_wait_min=config.max_charge2trip_min,
     )
     if tuple(problem.trips) != trip_ids:
@@ -755,6 +766,7 @@ def audit_matching_cover_pool(
             "matching_initializer_deadhead_cost_per_kwh": 0.0,
             "master_travel_cost_factor": float(TRAVEL_COST_FACTOR),
             "horizon_min": config.horizon_min,
+            "max_trip2trip_min": config.max_trip2trip_min,
             "max_charge2trip_min": config.max_charge2trip_min,
             "successor_charge_targets": config.successor_charge_targets,
             "max_successor_charge_targets": config.max_successor_charge_targets,
