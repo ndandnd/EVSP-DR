@@ -1,8 +1,10 @@
-"""Build deterministic two-duty instances from tracked single-duty CSVs.
+"""Build deterministic two-duty instances for the peel-and-price sweep.
 
-Samples duty pairs (never pairing weekday variants of the same base task),
-concatenates their trips chronologically, re-indexes ``count_trip_id``, and
-writes instances plus a manifest under ``data/duty_pairs/``.
+Self-sufficient: duties are extracted directly from the tracked
+``data/Par_VehicleDetails_Updated.csv`` (Regular rows per VehicleTask), so no
+untracked single-duty CSVs are required — the cluster checkout works as-is.
+Weekday variants of the same base task (e.g. 13316m / 13316uwt) are never
+paired together. Instances plus a manifest land under ``data/duty_pairs/``.
 
     python make_duty_pair_instances.py --pairs 20 --seed 20260803
 """
@@ -20,19 +22,52 @@ import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / "data"
+MASTER_CSV = DATA_DIR / "Par_VehicleDetails_Updated.csv"
 OUT_DIR = DATA_DIR / "duty_pairs"
-SINGLE_PREFIX = "Practice_Custom_SingleDuty_"
+
+# Schema expected by run_ex_unicorn.py (same as the single-duty instances).
+INSTANCE_COLUMNS = [
+    "Identifier", "From1", "Start1", "End1", "To1",
+    "Distance1", "Usage kWh", "count_trip_id", "Ordered_Trip_ID",
+]
 
 
 def _minutes(hhmm: str) -> int:
     hh, mm = str(hhmm).split(":")
-    return int(hh) * 60 + int(mm)
+    return int(hh) * 60 + int(mm)  # Hastus times may exceed 24:00
 
 
 def _base_task(duty: str) -> str:
-    # 13316m / 13316uwt / 13324muw / 13324t are weekday variants of one base.
-    match = re.match(r"(\d+)", duty)
-    return match.group(1) if match else duty
+    match = re.match(r"(\d+)", str(duty))
+    return match.group(1) if match else str(duty)
+
+
+def load_duty_frames() -> dict[str, pd.DataFrame]:
+    master = pd.read_csv(MASTER_CSV)
+    regular = master[
+        (master["Identifier"] == "Regular") & master["Ordered_Trip_ID"].notna()
+    ].copy()
+    regular["VehicleTask"] = regular["VehicleTask"].astype(str)
+    regular["Ordered_Trip_ID"] = regular["Ordered_Trip_ID"].astype(int)
+
+    frames: dict[str, pd.DataFrame] = {}
+    for duty, group in regular.groupby("VehicleTask"):
+        df = group[[c for c in INSTANCE_COLUMNS if c != "count_trip_id"]].copy()
+        df = (df.assign(_sort=df["Start1"].map(_minutes))
+                .sort_values(["_sort", "Ordered_Trip_ID"])
+                .drop(columns="_sort").reset_index(drop=True))
+        df["count_trip_id"] = range(len(df))
+        frames[duty] = df[INSTANCE_COLUMNS]
+    return frames
+
+
+def merge_duties(frames: dict[str, pd.DataFrame], duties: list[str]) -> pd.DataFrame:
+    merged = pd.concat([frames[d] for d in duties], ignore_index=True)
+    merged = (merged.assign(_sort=merged["Start1"].map(_minutes))
+                    .sort_values(["_sort", "Ordered_Trip_ID"])
+                    .drop(columns="_sort").reset_index(drop=True))
+    merged["count_trip_id"] = range(len(merged))
+    return merged
 
 
 def main(argv=None) -> int:
@@ -41,12 +76,11 @@ def main(argv=None) -> int:
     parser.add_argument("--seed", type=int, default=20260803)
     args = parser.parse_args(argv)
 
-    duties = sorted(
-        p.stem[len(SINGLE_PREFIX):]
-        for p in DATA_DIR.glob(f"{SINGLE_PREFIX}*.csv")
-    )
+    frames = load_duty_frames()
+    duties = sorted(frames)
     if len(duties) < 2:
-        raise SystemExit("No tracked single-duty CSVs found under data/.")
+        raise SystemExit(f"Fewer than two duties found in {MASTER_CSV}")
+    print(f"{len(duties)} duties extracted from {MASTER_CSV.name}")
 
     candidates = [
         (a, b)
@@ -60,12 +94,7 @@ def main(argv=None) -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest, names = [], []
     for a, b in sorted(chosen):
-        frames = [pd.read_csv(DATA_DIR / f"{SINGLE_PREFIX}{d}.csv") for d in (a, b)]
-        merged = pd.concat(frames, ignore_index=True)
-        merged = (merged.assign(_sort=merged["Start1"].map(_minutes))
-                        .sort_values(["_sort", "Ordered_Trip_ID"])
-                        .drop(columns="_sort").reset_index(drop=True))
-        merged["count_trip_id"] = range(len(merged))
+        merged = merge_duties(frames, [a, b])
         name = f"Practice_Custom_DutyPair_{a}_{b}.csv"
         path = OUT_DIR / name
         merged.to_csv(path, index=False)
@@ -77,7 +106,8 @@ def main(argv=None) -> int:
         print(f"wrote {name}: {len(merged)} trips")
 
     with open(OUT_DIR / "manifest.json", "w") as fh:
-        json.dump({"seed": args.seed, "pairs": manifest}, fh, indent=1)
+        json.dump({"seed": args.seed, "source": MASTER_CSV.name,
+                   "pairs": manifest}, fh, indent=1)
     (OUT_DIR / "pairs.txt").write_text("\n".join(names) + "\n")
     print(f"{len(names)} pair instances under {OUT_DIR}")
     return 0
