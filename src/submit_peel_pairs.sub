@@ -1,0 +1,57 @@
+#!/bin/bash
+# Peel-and-price duty-pair sweep: 20 pairs x {lookahead, lp} x {0.04h, 0.15h stages}.
+# Before submitting:
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR   # or wherever the checkout lives
+#   cd $EVSP_DR_ROOT/src && python make_duty_pair_instances.py --pairs 20
+#   sbatch submit_peel_pairs.sub
+#SBATCH -J PEELPAIR
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=8G
+#SBATCH --partition=default_partition
+#SBATCH -t 04:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-80
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+conda activate /home/nc437/evsp_env
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+cd "$ROOT/src"
+mkdir -p logs
+
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+PAIRS_FILE="$ROOT/data/duty_pairs/pairs.txt"
+N_PAIRS=$(wc -l < "$PAIRS_FILE")
+
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+PAIR_IDX=$((TASK0 % N_PAIRS))
+TMP=$((TASK0 / N_PAIRS))
+PICK_IDX=$((TMP % 2))
+BUDGET_IDX=$((TMP / 2))
+
+CSV=$(sed -n "$((PAIR_IDX + 1))p" "$PAIRS_FILE")
+PICKS=(lookahead lp)
+BUDGETS=(0.04 0.15)
+SECS=(60 120)
+
+PICK=${PICKS[$PICK_IDX]}
+BUDGET=${BUDGETS[$BUDGET_IDX]}
+SEC=${SECS[$BUDGET_IDX]}
+TAG="peelpair_${SLURM_ARRAY_TASK_ID}_${PICK}_b${BUDGET/./p}"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $CSV pick=$PICK stage=${BUDGET}h pricing=${SEC}s"
+python -u run_peel_and_price.py \
+  --csv "duty_pairs/${CSV}" \
+  --initializer nocheat \
+  --pick "$PICK" \
+  --stage-active-hours "$BUDGET" \
+  --pricing-seconds "$SEC" \
+  --run-tag "$TAG"
