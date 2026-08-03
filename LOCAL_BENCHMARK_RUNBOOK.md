@@ -21,11 +21,11 @@ trips, so it is deliberately less representative than a uniform random sample.
 
 ## One-time generation
 
-Use the Python environment that has pandas and SciPy. On this Mac the known
-working interpreter has been:
+Create or validate the repository's pinned Python 3.12 environment once:
 
 ```bash
-PYTHON=/Users/nathan.cho/.pyenv/versions/3.10.6/bin/python
+bash src/bootstrap_python312.sh
+PYTHON=../.evspdr-envs/py312/bin/python
 "$PYTHON" src/generate_random_goal1_instances.py
 ```
 

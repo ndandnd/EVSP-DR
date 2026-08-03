@@ -1,5 +1,9 @@
+# Python 3.12 core runtime. Keep these pins aligned with environment-py312.yml.
 # Core Goal-1 column generation uses the free SciPy/HiGHS master.
-numpy
-pandas
-scipy
-# Install gurobipy separately only for the optional Gurobi backend or final MIP.
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
+matplotlib==3.10.9
+
+# Gurobi is optional for column generation. For the Gurobi LP backend or final
+# integer master, install requirements-gurobi.txt instead.

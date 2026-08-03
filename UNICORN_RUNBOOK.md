@@ -89,7 +89,7 @@ conda activate /home/nc437/evsp_env
 
 Override `EVSP_CONDA_SH` or `EVSP_CONDA_ENV` if the cluster environment has
 moved. Goal-1 column generation defaults to the free SciPy/HiGHS master and does
-not require a Gurobi license. Python 3.10+, `scipy`, `pandas`, and `numpy` are
+not require a Gurobi license. Python 3.12.x, `scipy`, `pandas`, and `numpy` are
 required; `gurobipy` and `GRB_LICENSE_FILE` are needed only when explicitly
 using the Gurobi backend or solving the later final integer master. See
 `requirements-unicorn.txt`.

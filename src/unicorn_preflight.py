@@ -19,6 +19,25 @@ from utils_v2 import load_station_hourly_prices, select_unique_station_copies
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
+SUPPORTED_PYTHON_MAJOR_MINOR = (3, 12)
+
+
+def validate_python_runtime(
+    version_info: tuple[int, ...] | None = None,
+    version_text: str | None = None,
+) -> tuple[int, int]:
+    """Require the repository's tested CPython 3.12 runtime line."""
+
+    info = sys.version_info if version_info is None else version_info
+    major_minor = (int(info[0]), int(info[1]))
+    if major_minor != SUPPORTED_PYTHON_MAJOR_MINOR:
+        found = sys.version.split()[0] if version_text is None else version_text
+        raise RuntimeError(
+            "Python 3.12.x required; "
+            f"found {found}. Build the pinned environment with "
+            "'bash src/bootstrap_python312.sh'."
+        )
+    return major_minor
 
 
 def git_output(*args: str) -> str:
@@ -64,8 +83,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
 
-    if sys.version_info < (3, 10):
-        raise RuntimeError(f"Python 3.10+ required; found {sys.version.split()[0]}")
+    validate_python_runtime()
 
     instance = Path(args.csv)
     if not instance.is_absolute():

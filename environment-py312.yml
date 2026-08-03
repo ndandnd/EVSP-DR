@@ -1,0 +1,8 @@
+name: evspdr-py312
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.13
+  - pip
+  - pip:
+      - -r requirements-gurobi.txt
