@@ -1,0 +1,91 @@
+#!/bin/bash
+# Exact expanded-network CG over k-duty unions (k = 3, 5, 8, 13; 6 replicates).
+# Grid A (tasks 1-24):  15 kWh / 10 min — certifies every size.
+# Grid B (tasks 25-48):  5 kWh /  5 min — skipped for k=13 until the numpy
+#                        pricing-pass port (pure-Python pass too slow there).
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src
+#   python make_duty_pair_instances.py --union-sizes 3,5,8,13 --per-size 6
+#   sbatch submit_exact_unions.sub
+#SBATCH -J EXACTUNION
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=32G
+#SBATCH --partition=default_partition
+#SBATCH -t 23:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-48
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+python -c "import pandas, scipy" 2>/dev/null || fatal "env lacks pandas/scipy"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+UNIONS_FILE="$ROOT/data/duty_unions/unions.txt"
+if [ ! -s "$UNIONS_FILE" ]; then
+  if [ "$SLURM_ARRAY_TASK_ID" -eq 1 ]; then
+    python make_duty_pair_instances.py --union-sizes 3,5,8,13 --per-size 6
+  else
+    for _ in $(seq 1 60); do [ -s "$UNIONS_FILE" ] && break; sleep 5; done
+  fi
+fi
+[ -s "$UNIONS_FILE" ] || fatal "missing $UNIONS_FILE"
+
+N_UNIONS=$(wc -l < "$UNIONS_FILE")
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+IDX=$((TASK0 % N_UNIONS))
+GRID_IDX=$((TASK0 / N_UNIONS))
+
+CSV=$(sed -n "$((IDX + 1))p" "$UNIONS_FILE")
+K=$(echo "$CSV" | sed -E 's/.*_k0*([0-9]+)_r.*/\1/')
+
+SOCS=(15 5)
+BLOCKS=(10 5)
+SOC=${SOCS[$GRID_IDX]}
+BLOCK=${BLOCKS[$GRID_IDX]}
+
+if [ "$GRID_IDX" -eq 1 ] && [ "$K" -gt 8 ]; then
+  echo "[skip] fine grid for k=$K deferred until the numpy pricing-pass port"
+  exit 0
+fi
+
+# Iteration caps scale with size; certification may still cap out at k=8-13 —
+# that is data (report shows certified=False + the reached weight/objective).
+MAXIT=$((2000 + 1500 * K))
+
+OUTDIR="$ROOT/src/results/exact_unions"
+mkdir -p "$OUTDIR"
+BASE="${CSV%.csv}_soc${SOC}_b${BLOCK}"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $CSV k=$K soc=$SOC block=$BLOCK max_iters=$MAXIT"
+python -u exact_pricer_expanded.py \
+  --csv "duty_unions/${CSV}" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step "$SOC" \
+  --block-min "$BLOCK" \
+  --max-iters "$MAXIT" \
+  --out "$OUTDIR/${BASE}.json"

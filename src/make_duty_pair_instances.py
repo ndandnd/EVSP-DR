@@ -70,10 +70,62 @@ def merge_duties(frames: dict[str, pd.DataFrame], duties: list[str]) -> pd.DataF
     return merged
 
 
+def _peak_concurrency(df: pd.DataFrame) -> int:
+    events = sorted(
+        [(m, 1) for m in df["Start1"].map(_minutes)]
+        + [(m, -1) for m in df["End1"].map(_minutes)],
+        key=lambda x: (x[0], x[1]),
+    )
+    peak = cur = 0
+    for _, delta in events:
+        cur += delta
+        peak = max(peak, cur)
+    return peak
+
+
+def generate_unions(frames, duties, sizes, per_size, seed):
+    """Seeded k-duty unions (no weekday-variant siblings within a union)."""
+    rng = random.Random(seed)
+    out_dir = DATA_DIR / "duty_unions"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    manifest, names = [], []
+    for k in sizes:
+        made = 0
+        attempts = 0
+        while made < per_size and attempts < 500:
+            attempts += 1
+            sample = rng.sample(duties, k)
+            if len({_base_task(d) for d in sample}) < k:
+                continue
+            made += 1
+            sample = sorted(sample)
+            merged = merge_duties(frames, sample)
+            name = f"Practice_Custom_DutyUnion_k{k:02d}_r{made}.csv"
+            path = out_dir / name
+            merged.to_csv(path, index=False)
+            manifest.append({
+                "csv": name, "k": k, "duties": sample, "trips": len(merged),
+                "peak_concurrency_lb": _peak_concurrency(merged),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            })
+            names.append(name)
+            print(f"wrote {name}: k={k} {len(merged)} trips "
+                  f"(peak-concurrency LB {manifest[-1]['peak_concurrency_lb']})")
+    with open(out_dir / "manifest.json", "w") as fh:
+        json.dump({"seed": seed, "source": MASTER_CSV.name,
+                   "unions": manifest}, fh, indent=1)
+    (out_dir / "unions.txt").write_text("\n".join(names) + "\n")
+    print(f"{len(names)} union instances under {out_dir}")
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--pairs", type=int, default=20)
     parser.add_argument("--seed", type=int, default=20260803)
+    parser.add_argument("--union-sizes", default=None,
+                        help="Comma-separated union sizes, e.g. 3,5,8,13. "
+                             "When set, k-duty unions are generated instead of pairs.")
+    parser.add_argument("--per-size", type=int, default=6)
     args = parser.parse_args(argv)
 
     frames = load_duty_frames()
@@ -81,6 +133,11 @@ def main(argv=None) -> int:
     if len(duties) < 2:
         raise SystemExit(f"Fewer than two duties found in {MASTER_CSV}")
     print(f"{len(duties)} duties extracted from {MASTER_CSV.name}")
+
+    if args.union_sizes:
+        sizes = [int(s) for s in args.union_sizes.split(",") if s.strip()]
+        generate_unions(frames, duties, sizes, args.per_size, args.seed)
+        return 0
 
     candidates = [
         (a, b)
