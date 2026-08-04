@@ -92,11 +92,16 @@ def generate_unions(frames, duties, sizes, per_size, seed, dir_name="duty_unions
     for k in sizes:
         made = 0
         attempts = 0
+        seen: set[frozenset] = set()
         while made < per_size and attempts < 500:
             attempts += 1
             sample = rng.sample(duties, k)
             if len({_base_task(d) for d in sample}) < k:
                 continue
+            key = frozenset(sample)
+            if key in seen:  # e.g. k=40 has only 4 distinct valid sets
+                continue
+            seen.add(key)
             made += 1
             sample = sorted(sample)
             merged = merge_duties(frames, sample)
