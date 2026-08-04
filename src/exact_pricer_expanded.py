@@ -52,16 +52,18 @@ G_KWH = 300.0
 class ExpandedNetwork:
     """Static expanded DAG; arc costs are dual-free, trip duals applied on the fly."""
 
-    def __init__(self, problem, station_prices, *, soc_step: float, block_min: int):
+    def __init__(self, problem, station_prices, *, soc_step: float, block_min: int,
+                 g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW):
         self.problem = problem
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
+        self.g = float(g_kwh)
         self.n_blocks = int(HORIZON_MIN) // self.block_min
-        self.block_kwh = CHARGE_RATE_KW * self.block_min / 60.0
+        self.block_kwh = float(charge_kw) * self.block_min / 60.0
         self.prices = station_prices  # base station -> {hour: $/kWh}
 
         self.grid = [round(k * self.soc_step, 6)
-                     for k in range(int(G_KWH / self.soc_step) + 1)]
+                     for k in range(int(self.g / self.soc_step) + 1)]
         self._floor = lambda soc: min(
             max(int(math.floor((soc + 1e-9) / self.soc_step)), 0),
             len(self.grid) - 1,
@@ -126,7 +128,7 @@ class ExpandedNetwork:
         return curve.get(hour, curve[max(curve)])
 
     def _charge_result(self, level: int) -> float:
-        return self.grid[self._floor(min(G_KWH, self.grid[level] + self.block_kwh))]
+        return self.grid[self._floor(min(self.g, self.grid[level] + self.block_kwh))]
 
     def _build_arcs(self):
         p = self.problem
@@ -138,7 +140,7 @@ class ExpandedNetwork:
         # source -> trip
         for trip, (travel, dh) in self.depot_trip.items():
             if travel <= p.start_min[trip] + 1e-9:
-                level = floor(G_KWH - dh)
+                level = floor(self.g - dh)
                 node = self.trip_node.get((trip, level))
                 if node is not None:
                     add(0, node, BUS_COST_KX, trip)
@@ -275,7 +277,8 @@ def run_cg(args) -> dict:
                             max_station_to_trip_wait_min=HORIZON_MIN)
     prices = load_station_hourly_prices(DATA_DIR / args.prices_csv, CHARGING_STATIONS)
     net = ExpandedNetwork(problem, prices,
-                          soc_step=args.soc_step, block_min=args.block_min)
+                          soc_step=args.soc_step, block_min=args.block_min,
+                          g_kwh=args.g_kwh, charge_kw=args.charge_kw)
     build_s = time.time() - t0
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
@@ -285,6 +288,25 @@ def run_cg(args) -> dict:
     pool: dict[frozenset, dict] = {}
     history = []
     certified = False
+    stop_reason = "max_iters"
+    stall_count = 0
+    method_order = ("highs-ds", "highs-ipm", "highs")
+
+    def _write_partial(status):
+        if not args.out:
+            return
+        partial = {
+            "csv": args.csv, "prices_csv": args.prices_csv,
+            "soc_step": args.soc_step, "block_min": args.block_min,
+            "iterations": len(history), "certified_rc_optimal": certified,
+            "final": history[-1] if history else None,
+            "columns": len(pool), "wall_s": time.time() - t0,
+            "stop_reason": status, "history_tail": history[-5:],
+        }
+        tmp = Path(str(args.out) + ".tmp")
+        with open(tmp, "w") as fh:
+            json.dump(partial, fh, indent=1)
+        tmp.replace(args.out)
     class _ArtificialOnlyLP:
         objective = len(trips) * BIG_M_PENALTY
         route_weight = 0.0
@@ -292,6 +314,13 @@ def run_cg(args) -> dict:
         trip_duals = {t: float(BIG_M_PENALTY) for t in trips}
 
     for iteration in range(1, args.max_iters + 1):
+        if args.wall_limit_s and time.time() - t0 > args.wall_limit_s:
+            print(f"[EXACT] wall limit {args.wall_limit_s}s reached — stopping "
+                  "gracefully (partial result saved)", flush=True)
+            stop_reason = "wall_limit"
+            break
+        if args.out and iteration % args.checkpoint_every == 0:
+            _write_partial("running")
         routes = list(pool.values())
         if routes:
             incidence = build_route_incidence(
@@ -299,7 +328,7 @@ def run_cg(args) -> dict:
                 route_trip_ids=[r["trips"] for r in routes],
             )
             lp = None
-            for method in ("highs-ds", "highs-ipm", "highs"):
+            for method in method_order:
                 try:
                     lp = solve_restricted_master_lp(
                         trip_ids=trips,
@@ -330,6 +359,7 @@ def run_cg(args) -> dict:
                   f"min_rc={min_rc:,.3f}", flush=True)
         if best is None or min_rc >= -args.rc_eps:
             certified = best is not None
+            stop_reason = "certified" if certified else "no_path"
             break
         added = 0
         for route in batch:
@@ -343,22 +373,35 @@ def run_cg(args) -> dict:
                 print(f"[EXACT] note: column uses {route['charges_started']} charge "
                       f"starts (> cap {MAX_DAILY_RECHARGES}).", flush=True)
         if added == 0:
-            # every returned incidence already in the pool at equal cost:
-            # degenerate optimum reached within tolerance — stop, uncertified.
-            print("[EXACT] no new or cheaper incidence in batch — degenerate "
-                  "stall; stopping.", flush=True)
+            # Every returned incidence already in the pool at equal cost: the
+            # duals are frozen at a degenerate vertex. Interior-point duals
+            # (analytic center of the optimal face) usually break the cycle;
+            # only give up if the stall repeats under both dual sources.
+            stall_count += 1
+            if stall_count == 1:
+                print("[EXACT] degenerate stall — switching to interior-point "
+                      "duals and continuing", flush=True)
+                method_order = ("highs-ipm", "highs-ds", "highs")
+                continue
+            print("[EXACT] stall persists under alternate duals — stopping "
+                  "uncertified.", flush=True)
+            stop_reason = "degenerate_stall"
             break
+        stall_count = 0
 
     result = {
         "csv": args.csv,
         "prices_csv": args.prices_csv,
         "soc_step": args.soc_step,
         "block_min": args.block_min,
+        "g_kwh": args.g_kwh,
+        "charge_kw": args.charge_kw,
         "iterations": len(history),
         "certified_rc_optimal": certified,
         "final": history[-1] if history else None,
         "columns": len(pool),
         "wall_s": time.time() - t0,
+        "stop_reason": stop_reason,
         "history_tail": history[-5:],
     }
     print(f"[EXACT] DONE: {json.dumps(result['final'], default=float)} "
@@ -376,6 +419,17 @@ def main(argv=None) -> int:
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument("--columns_per_iter", type=int, default=30)
     parser.add_argument("--rc-eps", type=float, default=1e-4)
+    parser.add_argument("--wall-limit-s", type=int, default=None,
+                        help="Stop gracefully after this many seconds "
+                             "(set below the Slurm limit so results get written).")
+    parser.add_argument("--checkpoint-every", type=int, default=25,
+                        help="Write the partial --out JSON every N iterations.")
+    parser.add_argument("--g-kwh", type=float, default=300.0,
+                        help="Battery capacity. GIRO telemetry implies ~239 kWh "
+                             "usable; 300 is the historical model convention.")
+    parser.add_argument("--charge-kw", type=float, default=CHARGE_RATE_KW,
+                        help="Charger power. GIRO telemetry implies ~220 kW; "
+                             "300 is the historical model convention.")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
     result = run_cg(args)

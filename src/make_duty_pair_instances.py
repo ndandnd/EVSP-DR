@@ -83,10 +83,10 @@ def _peak_concurrency(df: pd.DataFrame) -> int:
     return peak
 
 
-def generate_unions(frames, duties, sizes, per_size, seed):
+def generate_unions(frames, duties, sizes, per_size, seed, dir_name="duty_unions"):
     """Seeded k-duty unions (no weekday-variant siblings within a union)."""
     rng = random.Random(seed)
-    out_dir = DATA_DIR / "duty_unions"
+    out_dir = DATA_DIR / dir_name
     out_dir.mkdir(parents=True, exist_ok=True)
     manifest, names = [], []
     for k in sizes:
@@ -126,6 +126,9 @@ def main(argv=None) -> int:
                         help="Comma-separated union sizes, e.g. 3,5,8,13. "
                              "When set, k-duty unions are generated instead of pairs.")
     parser.add_argument("--per-size", type=int, default=6)
+    parser.add_argument("--union-dir-name", default="duty_unions",
+                        help="Output directory under data/ (use a distinct name "
+                             "to avoid overwriting another campaign's manifest).")
     args = parser.parse_args(argv)
 
     frames = load_duty_frames()
@@ -136,7 +139,8 @@ def main(argv=None) -> int:
 
     if args.union_sizes:
         sizes = [int(s) for s in args.union_sizes.split(",") if s.strip()]
-        generate_unions(frames, duties, sizes, args.per_size, args.seed)
+        generate_unions(frames, duties, sizes, args.per_size, args.seed,
+                        dir_name=args.union_dir_name)
         return 0
 
     candidates = [

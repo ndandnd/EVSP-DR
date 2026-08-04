@@ -1,0 +1,86 @@
+#!/bin/bash
+# Overnight exact CG at scale: k = 20, 30, 40 duty unions, coarse grid only
+# (15 kWh / 10 min). Graceful wall-limit stop + periodic JSON checkpoints, so
+# a job that cannot certify within the window still reports weight/objective
+# trajectory and stop_reason.
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src
+#   python make_duty_pair_instances.py --union-sizes 20,30,40 --per-size 2 \
+#       --union-dir-name duty_unions_big
+#   sbatch submit_exact_big.sub
+#SBATCH -J EXACTBIG
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=40G
+#SBATCH --partition=default_partition
+#SBATCH -t 23:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-6
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+python -c "import pandas, scipy" 2>/dev/null || fatal "env lacks pandas/scipy"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+UNIONS_FILE="$ROOT/data/duty_unions_big/unions.txt"
+if [ ! -s "$UNIONS_FILE" ]; then
+  if [ "$SLURM_ARRAY_TASK_ID" -eq 1 ]; then
+    python make_duty_pair_instances.py --union-sizes 20,30,40 --per-size 2 \
+      --union-dir-name duty_unions_big
+  else
+    for _ in $(seq 1 60); do [ -s "$UNIONS_FILE" ] && break; sleep 5; done
+  fi
+fi
+[ -s "$UNIONS_FILE" ] || fatal "missing $UNIONS_FILE"
+
+CSV=$(sed -n "${SLURM_ARRAY_TASK_ID}p" "$UNIONS_FILE")
+[ -n "$CSV" ] || fatal "no line $SLURM_ARRAY_TASK_ID in $UNIONS_FILE"
+K=$(echo "$CSV" | sed -E 's/.*_k0*([0-9]+)_r.*/\1/')
+
+OUTDIR="$ROOT/src/results/exact_big"
+mkdir -p "$OUTDIR"
+BASE="${CSV%.csv}_soc15_b10"
+
+# Overrides from the sbatch line:
+#   EXACT_WALL_S=165600 sbatch -t 47:00:00 submit_exact_big.sub   # run longer
+#   EXACT_G=240 EXACT_KW=220 sbatch submit_exact_big.sub          # real battery
+WALL="${EXACT_WALL_S:-79200}"
+GKWH="${EXACT_G:-300}"
+CKW="${EXACT_KW:-300}"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $CSV k=$K coarse grid, wall-limit ${WALL}s, G=${GKWH} kWh @ ${CKW} kW"
+python -u exact_pricer_expanded.py \
+  --csv "duty_unions_big/${CSV}" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step 15 \
+  --block-min 10 \
+  --g-kwh "$GKWH" \
+  --charge-kw "$CKW" \
+  --max-iters 200000 \
+  --wall-limit-s "$WALL" \
+  --checkpoint-every 25 \
+  --out "$OUTDIR/${BASE}_g${GKWH}.json"
