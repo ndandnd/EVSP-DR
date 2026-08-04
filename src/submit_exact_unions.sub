@@ -11,6 +11,7 @@
 #SBATCH -J EXACTUNION
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH --mem=32G
@@ -18,7 +19,8 @@
 #SBATCH -t 23:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --array=1-48
-#SBATCH --mail-type=FAIL
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL
 #SBATCH --mail-user=nc437@cornell.edu
 
 set -uo pipefail
@@ -88,4 +90,5 @@ python -u exact_pricer_expanded.py \
   --soc-step "$SOC" \
   --block-min "$BLOCK" \
   --max-iters "$MAXIT" \
+  --resume \
   --out "$OUTDIR/${BASE}.json"

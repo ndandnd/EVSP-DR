@@ -31,6 +31,19 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn('--master_backend "$MASTER_BACKEND"', job_text)
         self.assertIn("preflight_command+=(--skip_gurobi)", job_text)
 
+    def test_exact_jobs_requeue_and_resume_persisted_pools(self):
+        for script_name in (
+            "submit_exact_pairs.sub",
+            "submit_exact_unions.sub",
+            "submit_exact_big.sub",
+        ):
+            with self.subTest(script_name=script_name):
+                job_text = (REPO_ROOT / "src" / script_name).read_text()
+                self.assertIn("#SBATCH --requeue", job_text)
+                self.assertIn("#SBATCH --open-mode=append", job_text)
+                self.assertIn("#SBATCH --mail-type=REQUEUE,FAIL", job_text)
+                self.assertIn("--resume", job_text)
+
     def test_cluster_job_exposes_controlled_heap_and_nested_instances(self):
         job_text = (REPO_ROOT / "src" / "submit_goal1_colgen.sub").read_text()
         matrix_text = (REPO_ROOT / "src" / "submit_goal1_matrix.sh").read_text()
