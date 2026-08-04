@@ -93,7 +93,7 @@ def generate_unions(frames, duties, sizes, per_size, seed, dir_name="duty_unions
         made = 0
         attempts = 0
         seen: set[frozenset] = set()
-        while made < per_size and attempts < 500:
+        while made < per_size and attempts < 20000:
             attempts += 1
             sample = rng.sample(duties, k)
             if len({_base_task(d) for d in sample}) < k:
