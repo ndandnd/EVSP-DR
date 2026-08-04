@@ -53,11 +53,13 @@ class ExpandedNetwork:
     """Static expanded DAG; arc costs are dual-free, trip duals applied on the fly."""
 
     def __init__(self, problem, station_prices, *, soc_step: float, block_min: int,
-                 g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW):
+                 g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW,
+                 reserve_kwh: float = 0.0):
         self.problem = problem
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
+        self.reserve = float(reserve_kwh)
         self.n_blocks = int(HORIZON_MIN) // self.block_min
         self.block_kwh = float(charge_kw) * self.block_min / 60.0
         self.prices = station_prices  # base station -> {hour: $/kWh}
@@ -106,7 +108,7 @@ class ExpandedNetwork:
         order = []  # (time_key, tiebreak, node_id)
         for trip in p.trips:
             for level in range(len(self.grid)):
-                if self.grid[level] + 1e-9 >= p.trip_energy[trip]:
+                if self.grid[level] + 1e-9 >= p.trip_energy[trip] + self.reserve:
                     node_id = len(self.node_meta)
                     self.node_meta.append(("trip", trip, level))
                     self.trip_node[(trip, level)] = node_id
@@ -151,7 +153,7 @@ class ExpandedNetwork:
             # trip -> sink
             if trip in self.trip_depot:
                 travel, dh = self.trip_depot[trip]
-                if depart + travel <= HORIZON_MIN + 1e-9 and soc_exit - dh >= -1e-9:
+                if depart + travel <= HORIZON_MIN + 1e-9 and soc_exit - dh >= self.reserve - 1e-9:
                     add(u, 1, 0.0)
             # trip -> trip
             for succ, travel, dh in self.trip_trip.get(trip, ()):  # gap-filtered upstream
@@ -169,7 +171,7 @@ class ExpandedNetwork:
             for station, travel, dh in self.trip_station.get(trip, ()):
                 arrival = depart + travel
                 soc_arr = soc_exit - dh
-                if soc_arr < -1e-9:
+                if soc_arr < self.reserve - 1e-9:
                     continue
                 lvl = floor(soc_arr)
                 if grid[lvl] > soc_arr + 1e-9:
@@ -204,7 +206,7 @@ class ExpandedNetwork:
             # leave to sink
             if station in self.station_depot:
                 travel, dh = self.station_depot[station]
-                if block_end + travel <= HORIZON_MIN + 1e-9 and soc_after - dh >= -1e-9:
+                if block_end + travel <= HORIZON_MIN + 1e-9 and soc_after - dh >= self.reserve - 1e-9:
                     add(u, 1, cost)
 
         self.n_arcs = sum(len(a) for a in self.out)
@@ -228,16 +230,69 @@ class ExpandedNetwork:
             return None
 
         def _walk(from_node):
-            trips, node, charges = [], from_node, 0
+            """Reconstruct the full path: ordered trips + charging events."""
+            nodes, node = [], from_node
             while node != 0:
-                u, trip = parent[node]
-                if trip >= 0:
-                    trips.append(trip)
-                if self.node_meta[node][0] == "charge" and self.node_meta[u][0] == "trip":
-                    charges += 1
-                node = u
-            trips.reverse()
-            return trips, charges
+                nodes.append(node)
+                node = parent[node][0]
+            nodes.reverse()  # source-side first (sink excluded when from_node=1? no: included)
+
+            trips, stops = [], []
+            run = None  # open charging run: [station, first_block, last_block, entry_level]
+            for nid in nodes:
+                kind, key, level = self.node_meta[nid]
+                if kind == "trip":
+                    if run is not None:
+                        stops.append(run)
+                        run = None
+                    trips.append(key)
+                elif kind == "charge":
+                    station, block = key
+                    if run is not None and run[0] == station and block == run[2] + 1:
+                        run[2] = block
+                    else:
+                        if run is not None:
+                            stops.append(run)
+                        run = [station, block, block, level]
+            if run is not None:
+                stops.append(run)
+
+            charging = {"stations": [], "cst": [], "cet": [], "kwh": []}
+            route_nodes = [DEPOT]
+            # interleave trips and stops in path order for the route node list
+            seq = []
+            for nid in nodes:
+                kind, key, level = self.node_meta[nid]
+                if kind == "trip":
+                    seq.append(("t", key))
+                elif kind == "charge":
+                    if not seq or seq[-1] != ("s", key[0]):
+                        seq.append(("s", key[0]))
+            # collapse consecutive same-station markers (one per charging run)
+            collapsed = []
+            for item in seq:
+                if not collapsed or item != collapsed[-1]:
+                    collapsed.append(item)
+            for tag, val in collapsed:
+                route_nodes.append(val if tag == "t" else val)
+            route_nodes.append(DEPOT)
+
+            for station, b0, b1, lvl0 in stops:
+                soc = self.grid[lvl0]
+                for _ in range(b0, b1 + 1):
+                    soc = self.grid[self._floor(min(self.g, soc + self.block_kwh))]
+                charging["stations"].append(station)
+                charging["cst"].append(b0 * self.block_min)
+                charging["cet"].append((b1 + 1) * self.block_min)
+                charging["kwh"].append(round(soc - self.grid[lvl0], 6))
+
+            return trips, charging, route_nodes
+
+        best_trips, best_charging, best_nodes = _walk(1)
+        return {"rc": value[1], "trips": best_trips,
+                "charging_stops": best_charging, "route_nodes": best_nodes,
+                "charges_started": len(best_charging["stations"]),
+                "_value": value, "_walk": _walk}
 
         best_trips, best_charges = _walk(1)
         return {"rc": value[1], "trips": best_trips, "charges_started": best_charges,
@@ -262,13 +317,43 @@ class ExpandedNetwork:
         for rc, u in candidates[: max(4 * k, 200)]:
             if len(routes) >= k or rc >= -1e-9:
                 break
-            trips, charges = _walk(u)
+            trips, charging, route_nodes = _walk(u)
             key = frozenset(trips)
             if key in seen:
                 continue
             seen.add(key)
-            routes.append({"rc": rc, "trips": trips, "charges_started": charges})
+            routes.append({"rc": rc, "trips": trips,
+                           "charging_stops": charging, "route_nodes": route_nodes,
+                           "charges_started": len(charging["stations"])})
         return routes
+
+
+def _provenance(args) -> dict:
+    import platform
+    import scipy
+    import subprocess
+
+    def _git(*a):
+        r = subprocess.run(["git", *a], cwd=Path(__file__).resolve().parent,
+                           text=True, capture_output=True, check=False)
+        return r.stdout.strip() if r.returncode == 0 else None
+
+    def _sha(path):
+        import hashlib
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+    return {
+        "git_commit": _git("rev-parse", "HEAD"),
+        "git_branch": _git("branch", "--show-current"),
+        "git_dirty": bool(_git("status", "--porcelain")),
+        "python": platform.python_version(),
+        "scipy": scipy.__version__,
+        "instance_sha256": _sha(DATA_DIR / args.csv),
+        "prices_sha256": _sha(DATA_DIR / args.prices_csv),
+        "rc_eps": args.rc_eps,
+        "args": {k: (str(v) if isinstance(v, Path) else v)
+                 for k, v in vars(args).items()},
+    }
 
 
 def run_cg(args) -> dict:
@@ -278,7 +363,10 @@ def run_cg(args) -> dict:
     prices = load_station_hourly_prices(DATA_DIR / args.prices_csv, CHARGING_STATIONS)
     net = ExpandedNetwork(problem, prices,
                           soc_step=args.soc_step, block_min=args.block_min,
-                          g_kwh=args.g_kwh, charge_kw=args.charge_kw)
+                          g_kwh=args.g_kwh, charge_kw=args.charge_kw,
+                          reserve_kwh=args.min_soc_frac * args.g_kwh)
+    provenance = _provenance(args)
+    journal_path = Path(str(args.out) + ".columns.jsonl") if args.out else None
     build_s = time.time() - t0
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
@@ -291,6 +379,17 @@ def run_cg(args) -> dict:
     stop_reason = "max_iters"
     stall_count = 0
     method_order = ("highs-ds", "highs-ipm", "highs")
+
+    if args.resume and journal_path and journal_path.exists():
+        with open(journal_path) as fh:
+            for line in fh:
+                rec = json.loads(line)
+                key = frozenset(rec["trips"])
+                if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
+                    pool[key] = rec
+        print(f"[EXACT] resumed {len(pool)} columns from {journal_path.name}",
+              flush=True)
+    journal = open(journal_path, "a") if journal_path else None
 
     def _write_partial(status):
         if not args.out:
@@ -366,9 +465,20 @@ def run_cg(args) -> dict:
             cost = route["rc"] + sum(lp.trip_duals.get(t, 0.0) for t in route["trips"])
             key = frozenset(route["trips"])
             if key not in pool or cost < pool[key]["cost"] - 1e-9:
-                pool[key] = {"trips": sorted(key), "cost": cost,
-                             "charges_started": route["charges_started"]}
+                record = {
+                    "trips": route["trips"],           # ordered
+                    "cost": cost,
+                    "route_nodes": route["route_nodes"],
+                    "charging_stops": route["charging_stops"],
+                    "charges_started": route["charges_started"],
+                    "found_iter": iteration,
+                }
+                pool[key] = record
+                if journal:
+                    journal.write(json.dumps(record) + "\n")
                 added += 1
+        if journal and added:
+            journal.flush()
             if route["charges_started"] > MAX_DAILY_RECHARGES:
                 print(f"[EXACT] note: column uses {route['charges_started']} charge "
                       f"starts (> cap {MAX_DAILY_RECHARGES}).", flush=True)
@@ -389,6 +499,36 @@ def run_cg(args) -> dict:
             break
         stall_count = 0
 
+    if journal:
+        journal.close()
+
+    # Final LP over the persisted pool: store route values + duals so the
+    # fractional solution is reconstructable without re-solving.
+    final_lp_detail = None
+    routes = list(pool.values())
+    if routes:
+        try:
+            lp_final = solve_restricted_master_lp(
+                trip_ids=trips,
+                route_incidence=build_route_incidence(
+                    trip_ids=trips,
+                    route_trip_ids=[r["trips"] for r in routes]),
+                route_costs=[r["cost"] for r in routes],
+                artificial_penalty=BIG_M_PENALTY,
+            )
+            final_lp_detail = {
+                "objective": lp_final.objective,
+                "route_weight": lp_final.route_weight,
+                "artificial_total": lp_final.artificial_total,
+                "positive_routes": [
+                    {"trips": routes[i]["trips"], "value": v,
+                     "cost": routes[i]["cost"]}
+                    for i, v in enumerate(lp_final.route_values) if v > 1e-9],
+                "trip_duals": {str(k): v for k, v in lp_final.trip_duals.items()},
+            }
+        except Exception as exc:
+            print(f"[EXACT] final LP re-solve failed: {exc}", flush=True)
+
     result = {
         "csv": args.csv,
         "prices_csv": args.prices_csv,
@@ -396,13 +536,18 @@ def run_cg(args) -> dict:
         "block_min": args.block_min,
         "g_kwh": args.g_kwh,
         "charge_kw": args.charge_kw,
+        "min_soc_frac": args.min_soc_frac,
+        "trip_ids": trips,
         "iterations": len(history),
         "certified_rc_optimal": certified,
         "final": history[-1] if history else None,
         "columns": len(pool),
+        "columns_journal": str(journal_path) if journal_path else None,
         "wall_s": time.time() - t0,
         "stop_reason": stop_reason,
         "history_tail": history[-5:],
+        "final_lp": final_lp_detail,
+        "provenance": provenance,
     }
     print(f"[EXACT] DONE: {json.dumps(result['final'], default=float)} "
           f"certified={certified} columns={len(pool)} "
@@ -430,6 +575,12 @@ def main(argv=None) -> int:
     parser.add_argument("--charge-kw", type=float, default=CHARGE_RATE_KW,
                         help="Charger power. GIRO telemetry implies ~220 kW; "
                              "300 is the historical model convention.")
+    parser.add_argument("--min-soc-frac", type=float, default=0.0,
+                        help="SOC reserve as a fraction of capacity (FDL notes "
+                             "require 0.2 for duties over 20h).")
+    parser.add_argument("--resume", action="store_true",
+                        help="Reload the column journal next to --out and "
+                             "continue from that pool.")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
     result = run_cg(args)

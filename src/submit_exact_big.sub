@@ -68,11 +68,18 @@ BASE="${CSV%.csv}_soc15_b10"
 # Overrides from the sbatch line:
 #   EXACT_WALL_S=165600 sbatch -t 47:00:00 submit_exact_big.sub   # run longer
 #   EXACT_G=240 EXACT_KW=220 sbatch submit_exact_big.sub          # real battery
+#   EXACT_RESERVE=0.2 sbatch submit_exact_big.sub                 # FDL min SOC
+#   EXACT_RC_EPS=5 sbatch submit_exact_big.sub                    # tolerance-
+#       terminated production run (NOT an exact certificate)
 WALL="${EXACT_WALL_S:-79200}"
 GKWH="${EXACT_G:-300}"
 CKW="${EXACT_KW:-300}"
+RESERVE="${EXACT_RESERVE:-0.0}"
+RCEPS="${EXACT_RC_EPS:-0.0001}"
 
-echo "[SLURM $SLURM_ARRAY_TASK_ID] $CSV k=$K coarse grid, wall-limit ${WALL}s, G=${GKWH} kWh @ ${CKW} kW"
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $CSV k=$K coarse grid, wall-limit ${WALL}s, G=${GKWH} kWh @ ${CKW} kW, reserve=${RESERVE}, rc-eps=${RCEPS}"
+# --resume reloads the column journal, so a requeued or relaunched task
+# continues from its persisted pool instead of starting over.
 python -u exact_pricer_expanded.py \
   --csv "duty_unions_big/${CSV}" \
   --prices_csv hourly_prices_flat.csv \
@@ -80,7 +87,10 @@ python -u exact_pricer_expanded.py \
   --block-min 10 \
   --g-kwh "$GKWH" \
   --charge-kw "$CKW" \
+  --min-soc-frac "$RESERVE" \
+  --rc-eps "$RCEPS" \
   --max-iters 200000 \
   --wall-limit-s "$WALL" \
   --checkpoint-every 25 \
-  --out "$OUTDIR/${BASE}_g${GKWH}.json"
+  --resume \
+  --out "$OUTDIR/${BASE}_g${GKWH}_res${RESERVE}.json"
