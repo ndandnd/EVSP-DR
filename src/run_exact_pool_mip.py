@@ -30,9 +30,8 @@ from collections import Counter
 from pathlib import Path
 
 
-def load_pool(result_path: Path):
-    with open(result_path) as fh:
-        status = json.load(fh)
+def resolve_pool_journal(result_path: Path, status: dict) -> Path:
+    """Resolve the journal exactly as :func:`load_pool` will read it."""
 
     # A live status file normally records the journal path directly.  Frozen
     # snapshots, however, are often copied to a timestamped directory (or a
@@ -65,6 +64,14 @@ def load_pool(result_path: Path):
             f"{result_path} has no readable column journal. Tried:\n  {tried}\n"
             "The run may predate pool persistence, or its journal was not "
             "copied with the status file.")
+    return journal_path
+
+
+def load_pool(result_path: Path):
+    with open(result_path) as fh:
+        status = json.load(fh)
+
+    journal_path = resolve_pool_journal(result_path, status)
     pool = {}
     with open(journal_path) as fh:
         for line in fh:

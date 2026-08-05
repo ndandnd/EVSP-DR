@@ -1,14 +1,17 @@
+import argparse
 import json
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
+import cluster_campaign  # noqa: E402
 from unicorn_preflight import parse_args  # noqa: E402
 
 
@@ -65,7 +68,10 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
 
     def test_validated_cluster_launcher_rejects_placeholder_and_missing_paths(self):
         launcher = REPO_ROOT / "src" / "cluster_campaign.py"
-        for result in ("/absolute/path/to/pool.json", "missing-pool.json"):
+        for result in (
+            "/absolute/path/to/pool.snapshot.json",
+            "missing-pool.snapshot.json",
+        ):
             with self.subTest(result=result):
                 completed = subprocess.run(
                     [sys.executable, str(launcher), "mip", "--result", result,
@@ -76,12 +82,26 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 self.assertNotEqual(completed.returncode, 0)
                 self.assertIn("error: argument --result:", completed.stderr)
 
+    def test_validated_cluster_launcher_rejects_live_status_json(self):
+        launcher = REPO_ROOT / "src" / "cluster_campaign.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            result = Path(tmp) / "live.json"
+            result.write_text("{}\n")
+            completed = subprocess.run(
+                [sys.executable, str(launcher), "mip", "--result", str(result),
+                 "--minutes", "5"],
+                text=True,
+                capture_output=True,
+            )
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertIn("immutable *.snapshot.json", completed.stderr)
+
     def test_validated_cluster_launcher_is_dry_run_and_scaglione_only(self):
         launcher = REPO_ROOT / "src" / "cluster_campaign.py"
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)
-            result = folder / "sample.json"
-            journal = Path(str(result) + ".columns.jsonl")
+            result = folder / "sample.snapshot.json"
+            journal = folder / "sample.columns.jsonl"
             result.write_text(json.dumps({
                 "csv": "sample.csv",
                 "soc_step": 5,
@@ -99,6 +119,96 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertIn("--partition=scaglione", completed.stdout)
             self.assertIn("--no-requeue", completed.stdout)
             self.assertIn("[dry-run]", completed.stdout)
+
+    def test_submitted_campaign_stages_and_hashes_immutable_pool(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            source = Path(tmp) / "source"
+            source.mkdir()
+            result = source / "sample.partition_ready.snapshot.json"
+            journal = source / "sample.partition_ready.columns.jsonl"
+            result.write_text(json.dumps({
+                "csv": "sample.csv",
+                "soc_step": 5,
+                "trip_ids": [1],
+                "columns_journal": str(journal),
+            }))
+            journal.write_text(json.dumps({"trips": [1], "cost": 100000}) + "\n")
+            args = argparse.Namespace(
+                result=result,
+                minutes=5,
+                cover=False,
+                campaign="safe_campaign",
+                submit=True,
+            )
+            completed = subprocess.CompletedProcess(
+                args=["sbatch"], returncode=0, stdout="12345\n", stderr=""
+            )
+            with (
+                mock.patch.object(cluster_campaign, "REPO_ROOT", repo),
+                mock.patch.object(
+                    cluster_campaign,
+                    "MIP_WORKER",
+                    repo / "src" / "submit_exact_pool_mip.sub",
+                ),
+                mock.patch.object(
+                    cluster_campaign,
+                    "MIP_RUNNER",
+                    repo / "src" / "run_exact_pool_mip.py",
+                ),
+                mock.patch.object(cluster_campaign, "_run_checked"),
+                mock.patch.object(cluster_campaign.subprocess, "run", return_value=completed),
+            ):
+                self.assertEqual(cluster_campaign.submit_mip(args), 0)
+
+            campaign = repo / "src" / "results" / "cluster_campaigns" / "safe_campaign"
+            manifest = json.loads((campaign / "submission.json").read_text())
+            staged_result = Path(manifest["input_result"])
+            staged_journal = Path(manifest["input_journal"])
+            self.assertTrue(staged_result.is_file())
+            self.assertTrue(staged_journal.is_file())
+            self.assertEqual(manifest["job_id"], "12345")
+            self.assertTrue(manifest["submitted"])
+            self.assertEqual(
+                manifest["source_journal_sha256"],
+                manifest["input_journal_sha256"],
+            )
+            self.assertEqual(
+                json.loads(staged_result.read_text())["columns_journal"],
+                str(staged_journal),
+            )
+
+    def test_cluster_campaign_refuses_existing_or_dot_campaign(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = Path(tmp) / "sample.snapshot.json"
+            journal = Path(tmp) / "sample.columns.jsonl"
+            result.write_text(json.dumps({
+                "csv": "sample.csv",
+                "soc_step": 5,
+                "trip_ids": [1],
+                "columns_journal": str(journal),
+            }))
+            journal.write_text(json.dumps({"trips": [1], "cost": 100000}) + "\n")
+            args = argparse.Namespace(
+                result=result,
+                minutes=5,
+                cover=False,
+                campaign=".",
+                submit=False,
+            )
+            with self.assertRaises(SystemExit):
+                cluster_campaign.submit_mip(args)
+
+            repo = Path(tmp) / "repo"
+            existing = (
+                repo / "src" / "results" / "cluster_campaigns" / "already"
+            )
+            existing.mkdir(parents=True)
+            args.campaign = "already"
+            with mock.patch.object(cluster_campaign, "REPO_ROOT", repo):
+                with self.assertRaises(SystemExit):
+                    cluster_campaign.submit_mip(args)
 
     def test_cluster_job_exposes_controlled_heap_and_nested_instances(self):
         job_text = (REPO_ROOT / "src" / "submit_goal1_colgen.sub").read_text()

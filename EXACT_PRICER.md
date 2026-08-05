@@ -90,8 +90,12 @@ The launcher pads the allocation by ten minutes, gives Gurobi the requested
 minutes, uses eight threads, enforces exact partitioning, and passes
 `--partition=scaglione --no-requeue`. A Gurobi requeue would restart from zero;
 it cannot preserve the branch-and-bound tree. Add `--cover` only for an
-explicitly labeled covering sensitivity run. Every submission records a JSON
-manifest under `src/results/cluster_campaigns/`.
+explicitly labeled covering sensitivity run. Only immutable `*.snapshot.json`
+inputs are accepted. On submission, the launcher copies the snapshot and its
+column journal into a uniquely reserved campaign directory, validates the copy,
+and records source and staged SHA-256 hashes in `submission.json`. The queued
+MIP therefore solves the frozen campaign copy rather than a journal that can
+continue growing.
 
 ## Honest scope
 

@@ -419,7 +419,8 @@ generating Git commit and price hash by default.
 
 For expanded-network exact-pricer pools, do not use raw `sbatch` or undefined
 shell variables. The validated launcher checks the real pool before submission,
-uses `scaglione --no-requeue`, and defaults to a dry run:
+uses `scaglione --no-requeue`, accepts only immutable snapshots, and defaults
+to a dry run:
 
 ```bash
 python src/cluster_campaign.py mip \
@@ -430,6 +431,11 @@ python src/cluster_campaign.py mip \
   --result src/results/exact_big/INSTANCE.partition_ready.snapshot.json \
   --minutes 60 --submit
 ```
+
+At submission the snapshot and adjacent column journal are copied into a new
+campaign directory under `src/results/cluster_campaigns/`. Source and staged
+SHA-256 hashes are recorded before `sbatch`; a changing source or reused
+campaign name is rejected rather than overwritten.
 
 Passing a different price file only to the final MIP is rejected: reselecting
 old-price columns can miss newly attractive routes and is not a valid savings
