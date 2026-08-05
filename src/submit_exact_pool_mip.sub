@@ -97,9 +97,8 @@ source "$CONDA_SH"
 conda activate "$CONDA_ENV" \
     || fatal "could not activate $CONDA_ENV (override EVSP_CONDA_ENV)"
 
-if [[ -z "${GRB_LICENSE_FILE:-}" && -f /share/apps/software/gurobi/gurobi.lic ]]; then
-    export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
-fi
+# Always override the stale login-shell license path on Unicorn.
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
 unset LM_LICENSE_FILE || true
 export PYTHONUNBUFFERED=1
 
