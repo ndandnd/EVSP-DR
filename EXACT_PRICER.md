@@ -70,21 +70,28 @@ This writes adjacent `*.partition_ready.snapshot.json` and
 unchanged. Validation of the prepared copy must report that strict partition
 feasibility is guaranteed by one singleton per trip.
 
-From the repository root:
+From the repository root, use the validated launcher. It is a dry run unless
+`--submit` is present, rejects placeholder or missing paths before allocating
+a node, writes logs below ignored `src/logs/`, and keeps non-resumable Gurobi
+MIPs on the Scaglione partition:
 
 ```bash
-sbatch src/submit_exact_pool_mip.sub \
-  /absolute/path/to/INSTANCE.partition_ready.snapshot.json \
-  7200
+python src/cluster_campaign.py mip \
+  --result src/results/exact_big/INSTANCE.partition_ready.snapshot.json \
+  --minutes 120
+
+# Submit only after the printed preflight and Slurm command look correct.
+python src/cluster_campaign.py mip \
+  --result src/results/exact_big/INSTANCE.partition_ready.snapshot.json \
+  --minutes 120 --submit
 ```
 
-The defaults request a 2.5-hour allocation, give Gurobi two hours, use eight
-threads, enforce exact partitioning, and enable Slurm requeue. A requeued job
-restarts the MIP from the same immutable pool; it does not preserve Gurobi's
-branch-and-bound tree. Set `EXACT_MIP_COVER=1` only for an explicitly labeled
-covering sensitivity run—the strict benchmark should leave it unset.
-`EXACTMIP_<job>.out/.err` are written in the Slurm submission directory; the
-job-specific `*_mip.json` is written beside the prepared snapshot.
+The launcher pads the allocation by ten minutes, gives Gurobi the requested
+minutes, uses eight threads, enforces exact partitioning, and passes
+`--partition=scaglione --no-requeue`. A Gurobi requeue would restart from zero;
+it cannot preserve the branch-and-bound tree. Add `--cover` only for an
+explicitly labeled covering sensitivity run. Every submission records a JSON
+manifest under `src/results/cluster_campaigns/`.
 
 ## Honest scope
 

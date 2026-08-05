@@ -12,6 +12,12 @@ logs/*
 !logs/.gitkeep
 src/logs/*
 !src/logs/.gitkeep
+# Older launchers wrote Slurm output directly into the directory containing
+# the sbatch command.  Keep those files out of Git while they are archived.
+/*.out
+/*.err
+/src/*.out
+/src/*.err
 grbnodes*/
 src/grbnodes*/
 GRBnodefile*
@@ -49,6 +55,10 @@ data/Practice_Custom_*.csv
 data/Practice_10bus_*.csv
 data/Practice_*.csv
 data/random_goal1_instances/
+/data/duty_pairs/
+/data/duty_unions/
+/data/duty_unions_big/
+/data/peel_tmp/
 data/*.png
 # Private GIRO/Transdev source material. The public repository may contain
 # derived benchmark CSVs, but never publish the C1/Internal originals or email

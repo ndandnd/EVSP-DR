@@ -417,6 +417,20 @@ Add a verified `--partition=NAME` if Unicorn requires one. Repeat with
 log, and `final_mip_summary_*.json` beside the source snapshot. It verifies the
 generating Git commit and price hash by default.
 
+For expanded-network exact-pricer pools, do not use raw `sbatch` or undefined
+shell variables. The validated launcher checks the real pool before submission,
+uses `scaglione --no-requeue`, and defaults to a dry run:
+
+```bash
+python src/cluster_campaign.py mip \
+  --result src/results/exact_big/INSTANCE.partition_ready.snapshot.json \
+  --minutes 60
+
+python src/cluster_campaign.py mip \
+  --result src/results/exact_big/INSTANCE.partition_ready.snapshot.json \
+  --minutes 60 --submit
+```
+
 Passing a different price file only to the final MIP is rejected: reselecting
 old-price columns can miss newly attractive routes and is not a valid savings
 experiment. `EVSP_ALLOW_RESTRICTED_POOL_REPRICE=1` exists only for an explicitly
