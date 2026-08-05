@@ -1,0 +1,129 @@
+#!/bin/bash
+# Solve the strict integer master over one persisted exact-pricer column pool.
+# Submit this file directly; do not put these commands in ``sbatch --wrap``.
+#
+# From either the repository root or src/:
+#   sbatch src/submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]
+#   sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]
+#
+# RESULT may be a live exact-pricer status JSON or an immutable *.snapshot.json.
+# If OUT_JSON is omitted, a job-specific *_mip.json is written beside RESULT.
+#SBATCH --job-name=EXACTMIP
+#SBATCH --output=%x_%j.out
+#SBATCH --error=%x_%j.err
+#SBATCH --open-mode=append
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --partition=default_partition
+#SBATCH --time=02:30:00
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+fatal() {
+    echo "[FATAL] $*" >&2
+    exit 2
+}
+
+if (( $# < 1 || $# > 3 )); then
+    fatal "Usage: sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]"
+fi
+
+SUBMIT_DIR=${SLURM_SUBMIT_DIR:-$PWD}
+RESULT_ARG=$1
+MIP_SECONDS=${2:-7200}
+OUT_ARG=${3:-}
+
+[[ "$MIP_SECONDS" =~ ^[1-9][0-9]*$ ]] \
+    || fatal "MIP_SECONDS must be a positive integer; got '$MIP_SECONDS'"
+
+# Slurm records the submit directory before this worker changes directories.
+# Resolve relative input/output arguments against it so submission works from
+# either the repository root or its src/ directory.
+if [[ "$RESULT_ARG" == /* ]]; then
+    RESULT=$RESULT_ARG
+else
+    RESULT="$SUBMIT_DIR/$RESULT_ARG"
+fi
+
+if [[ -n "$OUT_ARG" ]]; then
+    if [[ "$OUT_ARG" == /* ]]; then
+        OUT=$OUT_ARG
+    else
+        OUT="$SUBMIT_DIR/$OUT_ARG"
+    fi
+else
+    result_dir=$(dirname "$RESULT")
+    result_name=$(basename "$RESULT")
+    result_stem=${result_name%.json}
+    result_stem=${result_stem%.snapshot}
+    run_id=${SLURM_JOB_ID:-manual}
+    OUT="$result_dir/${result_stem}_job${run_id}_mip.json"
+fi
+
+ROOT=${EVSP_DR_ROOT:-${EVSP_REPO_ROOT:-}}
+if [[ -z "$ROOT" ]]; then
+    if [[ -f "$SUBMIT_DIR/src/run_exact_pool_mip.py" ]]; then
+        ROOT=$SUBMIT_DIR
+    elif [[ -f "$SUBMIT_DIR/run_exact_pool_mip.py" ]]; then
+        ROOT=$(cd "$SUBMIT_DIR/.." && pwd)
+    else
+        fatal "cannot locate the EVSP-DR checkout; export EVSP_DR_ROOT"
+    fi
+fi
+[[ -f "$ROOT/src/run_exact_pool_mip.py" ]] \
+    || fatal "EVSP_DR_ROOT=$ROOT has no src/run_exact_pool_mip.py"
+[[ -f "$RESULT" ]] || fatal "result JSON not found: $RESULT"
+
+CONDA_SH=${EVSP_CONDA_SH:-/share/apps/software/anaconda3/etc/profile.d/conda.sh}
+CONDA_ENV=${EVSP_CONDA_ENV:-/home/nc437/evsp_env}
+[[ -f "$CONDA_SH" ]] \
+    || fatal "missing conda setup: $CONDA_SH (override EVSP_CONDA_SH)"
+source "$CONDA_SH"
+conda activate "$CONDA_ENV" \
+    || fatal "could not activate $CONDA_ENV (override EVSP_CONDA_ENV)"
+
+if [[ -z "${GRB_LICENSE_FILE:-}" && -f /share/apps/software/gurobi/gurobi.lic ]]; then
+    export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+fi
+unset LM_LICENSE_FILE || true
+export PYTHONUNBUFFERED=1
+
+mkdir -p "$(dirname "$OUT")"
+cd "$ROOT/src"
+
+echo "[MIP job] start       : $(date --iso-8601=seconds 2>/dev/null || date)"
+echo "[MIP job] host        : $(hostname)"
+echo "[MIP job] slurm job   : ${SLURM_JOB_ID:-none}"
+echo "[MIP job] restart     : ${SLURM_RESTART_COUNT:-0}"
+echo "[MIP job] commit      : $(git rev-parse HEAD)"
+echo "[MIP job] result      : $RESULT"
+echo "[MIP job] output      : $OUT"
+echo "[MIP job] seconds     : $MIP_SECONDS"
+echo "[MIP job] threads     : ${SLURM_CPUS_PER_TASK:-8}"
+python --version
+
+# This no-license code path catches a missing/truncated/relocated journal and
+# uncovered trips before attempting to construct a Gurobi model.
+python -u run_exact_pool_mip.py \
+    --result "$RESULT" \
+    --validate-only
+
+command=(
+    python -u run_exact_pool_mip.py
+    --result "$RESULT"
+    --timelimit "$MIP_SECONDS"
+    --mipgap "${EXACT_MIP_GAP:-0.0001}"
+    --threads "${SLURM_CPUS_PER_TASK:-8}"
+    --out "$OUT"
+)
+if [[ "${EXACT_MIP_COVER:-0}" == "1" ]]; then
+    command+=(--cover)
+fi
+
+"${command[@]}"
+echo "[MIP job] end         : $(date --iso-8601=seconds 2>/dev/null || date)"

@@ -44,6 +44,27 @@ Grid guidance: SOC step must not exceed the per-block charge gain
 (300 kW x block/60), or charging rounds to zero; 5 kWh / 5 min reaches
 runner-comparable optima on pair instances, 15 kWh / 10 min certifies fastest.
 
+## Strict pool MIP on Unicorn
+
+Use the tracked Bash worker, not an `sbatch --wrap` command. Slurm executes
+wrapped command strings through `/bin/sh`, which cannot run this project's
+Bash/conda setup reliably. The worker validates the frozen column journal
+before importing Gurobi and writes a job-specific result beside the snapshot.
+
+From the repository root:
+
+```bash
+sbatch src/submit_exact_pool_mip.sub \
+  /absolute/path/to/INSTANCE.snapshot.json \
+  7200
+```
+
+The defaults request a 2.5-hour allocation, give Gurobi two hours, use eight
+threads, enforce exact partitioning, and enable Slurm requeue. A requeued job
+restarts the MIP from the same immutable pool; it does not preserve Gurobi's
+branch-and-bound tree. Set `EXACT_MIP_COVER=1` only for an explicitly labeled
+covering sensitivity run—the strict benchmark should leave it unset.
+
 ## Honest scope
 
 - The certificate covers the expanded (conservatively rounded) route space:

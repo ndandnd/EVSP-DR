@@ -1,3 +1,4 @@
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -43,6 +44,18 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 self.assertIn("#SBATCH --open-mode=append", job_text)
                 self.assertIn("#SBATCH --mail-type=REQUEUE,FAIL", job_text)
                 self.assertIn("--resume", job_text)
+
+    def test_exact_pool_mip_uses_a_real_bash_worker(self):
+        script = REPO_ROOT / "src" / "submit_exact_pool_mip.sub"
+        job_text = script.read_text()
+        self.assertTrue(job_text.startswith("#!/bin/bash\n"))
+        self.assertIn("set -euo pipefail", job_text)
+        self.assertIn("#SBATCH --requeue", job_text)
+        self.assertIn("#SBATCH --open-mode=append", job_text)
+        self.assertIn("#SBATCH --mail-type=REQUEUE,FAIL", job_text)
+        self.assertIn("run_exact_pool_mip.py", job_text)
+        self.assertNotIn("sbatch --wrap=", job_text)
+        subprocess.run(["/bin/bash", "-n", str(script)], check=True)
 
     def test_cluster_job_exposes_controlled_heap_and_nested_instances(self):
         job_text = (REPO_ROOT / "src" / "submit_goal1_colgen.sub").read_text()

@@ -31,15 +31,38 @@ from pathlib import Path
 def load_pool(result_path: Path):
     with open(result_path) as fh:
         status = json.load(fh)
-    journal_path = status.get("columns_journal")
-    if not journal_path or not Path(journal_path).exists():
-        candidate = Path(str(result_path) + ".columns.jsonl")
-        if candidate.exists():
-            journal_path = str(candidate)
-        else:
-            raise SystemExit(
-                f"{result_path} has no column journal — the run predates pool "
-                "persistence and cannot feed a MIP. Rerun the pricer.")
+
+    # A live status file normally records the journal path directly.  Frozen
+    # snapshots, however, are often copied to a timestamped directory (or a
+    # release archive) together with the journal.  In that case the recorded
+    # absolute Unicorn path may no longer exist, so also look beside the
+    # snapshot using the recorded basename.  The final candidate preserves the
+    # exact-pricer's historical ``RESULT.json.columns.jsonl`` convention.
+    recorded_journal = status.get("columns_journal")
+    candidates = []
+    is_snapshot = result_path.name.endswith(".snapshot.json")
+    recorded_path = Path(recorded_journal) if recorded_journal else None
+    if is_snapshot and recorded_path is not None:
+        # Prefer the frozen sibling over a recorded live/cluster path that may
+        # still exist but no longer represent this snapshot.
+        candidates.append(result_path.parent / recorded_path.name)
+    if is_snapshot:
+        snapshot_stem = result_path.name[: -len(".snapshot.json")]
+        candidates.append(result_path.with_name(f"{snapshot_stem}.columns.jsonl"))
+    if recorded_journal:
+        candidates.append(recorded_path)
+        if not is_snapshot:
+            candidates.append(result_path.parent / recorded_path.name)
+    candidates.append(Path(str(result_path) + ".columns.jsonl"))
+
+    unique_candidates = list(dict.fromkeys(candidates))
+    journal_path = next((path for path in unique_candidates if path.exists()), None)
+    if journal_path is None:
+        tried = "\n  ".join(str(path) for path in unique_candidates)
+        raise SystemExit(
+            f"{result_path} has no readable column journal. Tried:\n  {tried}\n"
+            "The run may predate pool persistence, or its journal was not "
+            "copied with the status file.")
     pool = {}
     with open(journal_path) as fh:
         for line in fh:
@@ -66,6 +89,9 @@ def main(argv=None) -> int:
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
 
+    if args.out is not None and args.out.resolve() == args.result.resolve():
+        parser.error("--out must not overwrite --result")
+
     status, routes, trips = load_pool(args.result)
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
@@ -82,6 +108,9 @@ def main(argv=None) -> int:
     if args.validate_only:
         print("[MIP] validate-only: pool is coverage-complete. OK.")
         return 0
+
+    out = args.out or Path(str(args.result).replace(".json", "_mip.json"))
+    out.parent.mkdir(parents=True, exist_ok=True)
 
     import gurobipy as gp
     from gurobipy import GRB
@@ -126,7 +155,6 @@ def main(argv=None) -> int:
         "pricer_provenance": status.get("provenance"),
         "selected_routes": [routes[i] for i in chosen],
     }
-    out = args.out or Path(str(args.result).replace(".json", "_mip.json"))
     with open(out, "w") as fh:
         json.dump(summary, fh, indent=1)
     print(f"[MIP] status={m.Status} buses={len(chosen)} "
