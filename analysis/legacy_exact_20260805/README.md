@@ -14,6 +14,7 @@ pools, checkpoints, Slurm logs, or solution journals.
 | `charging_events.csv` | Long-form charging event data used by the two Gantt plots. |
 | `legacy_vs_exact_convergence.png` | Log-scale restricted-master convergence comparison. |
 | `timing_and_endpoint_summary.csv` | Endpoint and timing summary for three legacy traces and all 20 exact-pricer runs. |
+| `source_pricing/` | The three April 29 legacy pricing CSVs used for the convergence plot and timing totals. |
 | `historical_numbers/` | Two original Apple Numbers pricing-trace workbooks retained as historical reference. |
 
 ## Findings and caveats
