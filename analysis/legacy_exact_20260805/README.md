@@ -41,6 +41,10 @@ pools, checkpoints, Slurm logs, or solution journals.
   `historical_numbers/pricing_stats30_best.numbers` were saved on 17 April
   2026. They are useful visual summaries of earlier pricing traces, but are
   not the April 29 CSV traces used in the plotted comparison.
+- The additional CSVs in `historical_numbers/` are older runs imported from
+  the local Downloads folder. `pricing_Inst_10B_RND002 3.csv` is retained
+  verbatim for provenance even though it is byte-identical to
+  `pricing_Inst_10B_RND002.csv`.
 
 ## Provenance and reproduction
 
