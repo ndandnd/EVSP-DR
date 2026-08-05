@@ -1,0 +1,78 @@
+#!/bin/bash
+# Exact diving on the big unions: k=30 (r1-r6) and k=40 (r1-r4).
+# Targets the observed price-and-branch integrality gap (LP 29-30/39.x vs
+# pool-MIP ~45/55) with truncated exact CG + theta-fixing + node removal
+# (de Vos et al.). Each dive writes its summary after EVERY round, so a
+# killed job still reports its partial partition.
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_exact_dive.sub
+#SBATCH -J EXACTDIVE
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=40G
+#SBATCH --partition=default_partition
+#SBATCH -t 23:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-10
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+INSTANCES=(
+  "duty_unions_big/Practice_Custom_DutyUnion_k30_r1.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k30_r2.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k30_r3.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k30_r4.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k30_r5.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k30_r6.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k40_r3.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k40_r4.csv"
+)
+CSV=${INSTANCES[$((SLURM_ARRAY_TASK_ID - 1))]}
+NAME=$(basename "$CSV" .csv)
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing — regenerate duty_unions_big first"
+
+ROUND_WALL="${DIVE_ROUND_WALL:-5400}"
+THETA="${DIVE_THETA:-0.7}"
+RCEPS="${DIVE_RC_EPS:-5}"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] dive $NAME round_wall=${ROUND_WALL}s theta=$THETA rc_eps=$RCEPS"
+python -u run_exact_dive.py \
+  --csv "$CSV" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step 15 \
+  --block-min 10 \
+  --rc-eps "$RCEPS" \
+  --theta "$THETA" \
+  --round-wall-s "$ROUND_WALL" \
+  --global-wall-s 75600 \
+  --run-tag "dive_${NAME}_${SLURM_ARRAY_TASK_ID}" \
+  --out "results/exact_dive/${NAME}_dive_summary.json"

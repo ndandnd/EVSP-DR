@@ -1,0 +1,89 @@
+#!/bin/bash
+# Phase-2 pilot: exact CG under time-varying charging prices.
+# Instances: duty unions k08_r3, k13_r2, k15_r6 (certified-friendly sizes).
+# Prices: flat control + single-peak 08/12/18 Gaussian curves.
+# 3 instances x 4 curves = 12 tasks, coarse grid, tolerance-terminated
+# (rc-eps 5). Deliverable per task: pool + final LP + charging events, from
+# which charging-time histograms show (or refute) peak avoidance — the
+# behavior the old stag-batch Gantt plots suggested, now with delayed-start
+# charging native to the network.
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_exact_peaks.sub
+#SBATCH -J EXACTPEAK
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=24G
+#SBATCH --partition=default_partition
+#SBATCH -t 12:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-12
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+INSTANCES=(
+  "duty_unions/Practice_Custom_DutyUnion_k08_r3.csv"
+  "duty_unions/Practice_Custom_DutyUnion_k13_r2.csv"
+  "duty_unions/Practice_Custom_DutyUnion_k15_r6.csv"
+)
+PRICES=(
+  hourly_prices_flat.csv
+  hourly_prices_single_peak_08.csv
+  hourly_prices_single_peak_12.csv
+  hourly_prices_single_peak_18.csv
+)
+TAGS=(flat peak08 peak12 peak18)
+
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+INST_IDX=$((TASK0 % 3))
+PRICE_IDX=$((TASK0 / 3))
+
+CSV=${INSTANCES[$INST_IDX]}
+PRICE=${PRICES[$PRICE_IDX]}
+TAG=${TAGS[$PRICE_IDX]}
+NAME=$(basename "$CSV" .csv)
+
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing — regenerate the k=3..13 union set first"
+
+OUTDIR="$ROOT/src/results/exact_peaks"
+mkdir -p "$OUTDIR"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $NAME under $TAG"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv "$PRICE" \
+  --soc-step 15 \
+  --block-min 10 \
+  --rc-eps 5 \
+  --max-iters 200000 \
+  --wall-limit-s 39600 \
+  --checkpoint-every 25 \
+  --resume \
+  --out "$OUTDIR/${NAME}_${TAG}.json"

@@ -165,6 +165,13 @@ def main(argv=None) -> int:
         help="Refuse a pool that lacks one singleton column per trip.",
     )
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument(
+        "--two-stage",
+        action="store_true",
+        help="Lexicographic solve: stage 1 minimizes the bus count alone; "
+             "stage 2 fixes that count as a budget and minimizes total cost. "
+             "Splits --timelimit roughly 40/60 between the stages.",
+    )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
 
@@ -234,6 +241,33 @@ def main(argv=None) -> int:
             m.addConstr(expr >= 1, name=f"cov_{t}")
         else:
             m.addConstr(expr == 1, name=f"part_{t}")
+    two_stage_detail = None
+    if args.two_stage:
+        # Stage 1: pure fleet minimization. Charging never reaches 1% of a bus,
+        # but an explicit count objective lets Gurobi prove the fleet bound
+        # without dragging cost fractions through the branch-and-bound tree.
+        m.Params.TimeLimit = max(60, int(args.timelimit * 0.4))
+        m.setObjective(gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE)
+        m.optimize()
+        if m.SolCount == 0:
+            raise SystemExit("[MIP] two-stage: stage 1 found no feasible fleet "
+                             "solution within its time slice")
+        stage1_buses = int(round(m.ObjVal))
+        stage1_bound = finite_solver_value(m.ObjBound)
+        stage1_solution = [i for i in range(len(routes)) if a[i].X > 0.5]
+        print(f"[MIP] stage 1: fleet={stage1_buses} "
+              f"(bound {stage1_bound}, gap {finite_solver_value(m.MIPGap)})")
+        # Stage 2: cost minimization under the proven/incumbent fleet budget.
+        m.addConstr(gp.quicksum(a[i] for i in range(len(routes)))
+                    <= stage1_buses, name="fleet_budget")
+        for index in range(len(routes)):
+            a[index].Start = 1.0 if index in set(stage1_solution) else 0.0
+        m.Params.TimeLimit = max(60, int(args.timelimit * 0.6))
+        two_stage_detail = {
+            "stage1_buses": stage1_buses,
+            "stage1_bound": stage1_bound,
+            "stage1_runtime_s": time.time() - t0,
+        }
     m.setObjective(gp.quicksum(routes[i]["cost"] * a[i]
                                for i in range(len(routes))), GRB.MINIMIZE)
     m.optimize()
@@ -276,6 +310,7 @@ def main(argv=None) -> int:
         "mip_start_used": bool(mip_start),
         "mip_start_buses": len(mip_start) if mip_start else None,
         "pool_preparation": status.get("pool_preparation"),
+        "two_stage": two_stage_detail,
         "pricer_provenance": status.get("provenance"),
         "selected_routes": [routes[i] for i in chosen],
     }
