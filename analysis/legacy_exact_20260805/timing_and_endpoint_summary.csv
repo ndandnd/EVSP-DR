@@ -1,0 +1,24 @@
+family,case,iterations,final_objective,route_weight,min_rc,columns,master_hours,pricing_hours,wall_hours,variant
+legacy_dp,20-bus,187,2133213.092204519,,-140913.18739992025,37400,0.05994292716185252,11.895695299837325,11.986640298763911,
+legacy_dp,30-bus,33,2507615.255406647,,-794531.5262469478,6600,0.00017825961112976073,1.9375298560990228,1.9398070657253266,
+legacy_dp,43-bus,19,4501650.795086806,,-1800498.8062003718,3800,4.3103297551472973e-05,1.5515816197130414,1.5529962298605178,
+exact_pricer,Practice_Custom_DutyUnion_k30_r1,1710,3001743.05,30.0,-68.464,51540,,,22.074166666666667,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k40_r4,1420,4233934.15,42.3006,-58857.907,42780,,,22.148888888888887,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k40_r3,1440,4212837.79,42.0902,-61344.125,43320,,,22.061944444444446,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k30_r6,2010,2902499.55,29.0,-365.92,60360,,,22.050555555555555,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k40_r1,1610,3903010.11,39.0,-245.187,48364,,,22.07777777777778,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k30_r4,1810,2901973.14,29.0,-157.771,54323,,,22.04722222222222,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k30_r5,2080,2904831.66,29.0262,-14694.173,62371,,,22.044722222222223,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k40_r4,1430,3955173.33,39.5198,-45908.237,43110,,,22.08277777777778,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k30_r2,1970,2985355.66,29.826,-17823.691,59205,,,22.043333333333333,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k40_r2,1420,3929522.57,39.2637,-44523.532,42837,,,22.04138888888889,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k30_r1,1780,3155481.69,31.5272,-27979.665,53507,,,22.053333333333335,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k40_r3,1510,3916706.57,39.1353,-42444.723,45408,,,22.065555555555555,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k30_r3,1580,3001369.76,30.0,-8.448,47392,,,22.03388888888889,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k30_r2,1720,2901782.24,29.0,-88.975,51599,,,22.05472222222222,"G=300, reserve=0.0"
+exact_pricer,Practice_Custom_DutyUnion_k40_r2,1480,4205126.65,42.0127,-58075.6,44379,,,22.566944444444445,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k30_r3,1690,3020797.75,30.1816,-25137.458,50664,,,9.85,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k30_r5,2170,3106933.33,31.0423,-20829.521,65115,,,22.023055555555555,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k40_r1,1560,4198990.35,41.9515,-54344.262,47030,,,22.076944444444443,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k30_r6,1900,3118577.75,31.1556,-23153.263,57067,,,22.02722222222222,"G=240, reserve=0.2"
+exact_pricer,Practice_Custom_DutyUnion_k30_r4,1910,3021773.53,30.19,-23730.159,57527,,,22.032777777777778,"G=240, reserve=0.2"
