@@ -14,6 +14,7 @@ pools, checkpoints, Slurm logs, or solution journals.
 | `charging_events.csv` | Long-form charging event data used by the two Gantt plots. |
 | `legacy_vs_exact_convergence.png` | Log-scale restricted-master convergence comparison. |
 | `timing_and_endpoint_summary.csv` | Endpoint and timing summary for three legacy traces and all 20 exact-pricer runs. |
+| `historical_numbers/` | Two original Apple Numbers pricing-trace workbooks retained as historical reference. |
 
 ## Findings and caveats
 
@@ -35,6 +36,10 @@ pools, checkpoints, Slurm logs, or solution journals.
 - The exact strict-partition MIPs were infeasible. The 46/48/58-bus results in
   the result release are cover-relaxation incumbents with trip overcoverage;
   they are useful diagnostics, not final schedules.
+- `historical_numbers/pricing_stats20best.numbers` and
+  `historical_numbers/pricing_stats30_best.numbers` were saved on 17 April
+  2026. They are useful visual summaries of earlier pricing traces, but are
+  not the April 29 CSV traces used in the plotted comparison.
 
 ## Provenance and reproduction
 
