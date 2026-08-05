@@ -49,6 +49,82 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 G_KWH = 300.0
 
 
+def direct_singleton_seed_records(
+    problem,
+    *,
+    g_kwh: float,
+    soc_step: float,
+    reserve_kwh: float,
+) -> tuple[list[dict], list[int]]:
+    """Build depot-trip-depot columns feasible in the expanded SOC grid.
+
+    These deterministic one-trip routes form an integer partition whenever
+    every trip can leave from and return directly to the depot.  They are a
+    safe restricted-master initializer: expensive, but real model columns
+    rather than BIG-M artificials.  Trips without a direct singleton are
+    returned separately so callers never mistake a partial seed for a
+    partition certificate.
+    """
+
+    g = float(g_kwh)
+    step = float(soc_step)
+    reserve = float(reserve_kwh)
+    if g <= 0 or step <= 0 or reserve < 0:
+        raise ValueError("g_kwh and soc_step must be positive; reserve_kwh >= 0")
+    grid = [round(level * step, 6) for level in range(int(g / step) + 1)]
+
+    def floor_soc(soc: float) -> float:
+        level = min(
+            max(int(math.floor((soc + 1e-9) / step)), 0),
+            len(grid) - 1,
+        )
+        return grid[level]
+
+    depot_trip: dict[int, tuple[float, float]] = {}
+    trip_depot: dict[int, tuple[float, float]] = {}
+    for node, arcs in problem.adjacency.items():
+        for succ, travel_min, deadhead_kwh, arc_type in arcs:
+            if arc_type == "depot_trip":
+                depot_trip[succ] = (travel_min, deadhead_kwh)
+            elif arc_type == "trip_depot":
+                trip_depot[node] = (travel_min, deadhead_kwh)
+
+    records: list[dict] = []
+    missing: list[int] = []
+    for trip in problem.trips:
+        if trip not in depot_trip or trip not in trip_depot:
+            missing.append(trip)
+            continue
+        outbound_min, outbound_kwh = depot_trip[trip]
+        start_soc = floor_soc(g - outbound_kwh)
+        if outbound_min > problem.start_min[trip] + 1e-9:
+            missing.append(trip)
+            continue
+        if start_soc + 1e-9 < problem.trip_energy[trip] + reserve:
+            missing.append(trip)
+            continue
+        return_min, return_kwh = trip_depot[trip]
+        exit_soc = start_soc - problem.trip_energy[trip]
+        if problem.end_min[trip] + return_min > HORIZON_MIN + 1e-9:
+            missing.append(trip)
+            continue
+        if exit_soc - return_kwh < reserve - 1e-9:
+            missing.append(trip)
+            continue
+        records.append({
+            "trips": [trip],
+            "cost": float(BUS_COST_KX),
+            "route_nodes": [DEPOT, trip, DEPOT],
+            "charging_stops": {
+                "stations": [], "cst": [], "cet": [], "kwh": [],
+            },
+            "charges_started": 0,
+            "found_iter": 0,
+            "origin": "exact_direct_singleton_seed",
+        })
+    return records, missing
+
+
 class ExpandedNetwork:
     """Static expanded DAG; arc costs are dual-free, trip duals applied on the fly."""
 
@@ -391,12 +467,45 @@ def run_cg(args) -> dict:
               flush=True)
     journal = open(journal_path, "a") if journal_path else None
 
+    singleton_seeds, missing_singletons = direct_singleton_seed_records(
+        problem,
+        g_kwh=args.g_kwh,
+        soc_step=args.soc_step,
+        reserve_kwh=args.min_soc_frac * args.g_kwh,
+    )
+    seeds_added = 0
+    for record in singleton_seeds:
+        key = frozenset(record["trips"])
+        if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
+            pool[key] = record
+            if journal:
+                journal.write(json.dumps(record) + "\n")
+            seeds_added += 1
+    if journal and seeds_added:
+        journal.flush()
+    print(
+        f"[EXACT] direct-singleton seed: {len(singleton_seeds)}/{len(trips)} "
+        f"trips feasible ({seeds_added} added to pool)",
+        flush=True,
+    )
+    if missing_singletons:
+        print(
+            "[EXACT] WARNING: direct-singleton seed is not a full partition; "
+            f"missing {len(missing_singletons)} trips "
+            f"({missing_singletons[:15]}).",
+            flush=True,
+        )
+
     def _write_partial(status):
         if not args.out:
             return
         partial = {
             "csv": args.csv, "prices_csv": args.prices_csv,
             "soc_step": args.soc_step, "block_min": args.block_min,
+            "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
+            "min_soc_frac": args.min_soc_frac,
+            "master_sense": args.master_sense,
+            "trip_ids": trips,
             "iterations": len(history), "certified_rc_optimal": certified,
             "final": history[-1] if history else None,
             "columns": len(pool), "wall_s": time.time() - t0,
@@ -435,6 +544,7 @@ def run_cg(args) -> dict:
                         route_costs=[r["cost"] for r in routes],
                         artificial_penalty=BIG_M_PENALTY,
                         method=method,
+                        coverage_sense=args.master_sense,
                     )
                     break
                 except Exception as exc:  # HiGHS can stall on degenerate pools
@@ -515,6 +625,7 @@ def run_cg(args) -> dict:
                     route_trip_ids=[r["trips"] for r in routes]),
                 route_costs=[r["cost"] for r in routes],
                 artificial_penalty=BIG_M_PENALTY,
+                coverage_sense=args.master_sense,
             )
             final_lp_detail = {
                 "objective": lp_final.objective,
@@ -537,6 +648,7 @@ def run_cg(args) -> dict:
         "g_kwh": args.g_kwh,
         "charge_kw": args.charge_kw,
         "min_soc_frac": args.min_soc_frac,
+        "master_sense": args.master_sense,
         "trip_ids": trips,
         "iterations": len(history),
         "certified_rc_optimal": certified,
@@ -564,6 +676,13 @@ def main(argv=None) -> int:
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument("--columns_per_iter", type=int, default=30)
     parser.add_argument("--rc-eps", type=float, default=1e-4)
+    parser.add_argument(
+        "--master-sense",
+        choices=("partition", "cover"),
+        default="partition",
+        help="Trip-row sense in the exact-CG restricted master. Partition is "
+             "the operational default; cover reproduces legacy campaigns.",
+    )
     parser.add_argument("--wall-limit-s", type=int, default=None,
                         help="Stop gracefully after this many seconds "
                              "(set below the Slurm limit so results get written).")

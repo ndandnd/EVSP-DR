@@ -54,6 +54,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn("#SBATCH --open-mode=append", job_text)
         self.assertIn("#SBATCH --mail-type=REQUEUE,FAIL", job_text)
         self.assertIn("run_exact_pool_mip.py", job_text)
+        self.assertIn("--require-singleton-partition", job_text)
         self.assertNotIn("sbatch --wrap=", job_text)
         subprocess.run(["/bin/bash", "-n", str(script)], check=True)
 

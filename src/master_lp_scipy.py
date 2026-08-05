@@ -160,16 +160,20 @@ def solve_restricted_master_lp(
     route_costs: Sequence[float],
     artificial_penalty: float,
     method: str = "highs-ds",
+    coverage_sense: str = "cover",
     time_limit_s: float | None = None,
     feasibility_tolerance: float = 1e-7,
 ) -> RestrictedMasterLPResult:
-    """Solve the set-covering restricted-master LP.
+    """Solve a covering or partitioning restricted-master LP.
 
     The model is
 
     ``min route_costs @ a + artificial_penalty * sum(q)``
 
-    subject to ``route_incidence @ a + q >= 1`` and ``a, q >= 0``.
+    In ``coverage_sense="cover"`` mode the trip rows are
+    ``route_incidence @ a + q >= 1``.  In ``"partition"`` mode they are equal
+    to one.  In both cases ``a, q >= 0`` and the nonnegative artificial
+    variable ``q`` supplies missing coverage.
 
     SciPy represents inequalities as ``A_ub x <= b_ub``.  Coverage rows are
     therefore negated, and the economically conventional nonnegative dual for
@@ -227,6 +231,12 @@ def solve_restricted_master_lp(
         raise RestrictedMasterInputError(
             f"method must be one of {sorted(allowed_methods)}, found {method!r}"
         )
+    allowed_senses = {"cover", "partition"}
+    if coverage_sense not in allowed_senses:
+        raise RestrictedMasterInputError(
+            "coverage_sense must be one of "
+            f"{sorted(allowed_senses)}, found {coverage_sense!r}"
+        )
 
     incidence = _validated_incidence(
         route_incidence,
@@ -245,14 +255,23 @@ def solve_restricted_master_lp(
         options["time_limit"] = time_limit
 
     started = perf_counter()
-    result = linprog(
-        objective,
-        A_ub=-full_incidence,
-        b_ub=-np.ones(len(trips), dtype=float),
-        bounds=(0.0, None),
-        method=method,
-        options=options,
-    )
+    linprog_args = {
+        "c": objective,
+        "bounds": (0.0, None),
+        "method": method,
+        "options": options,
+    }
+    if coverage_sense == "cover":
+        linprog_args.update(
+            A_ub=-full_incidence,
+            b_ub=-np.ones(len(trips), dtype=float),
+        )
+    else:
+        linprog_args.update(
+            A_eq=full_incidence,
+            b_eq=np.ones(len(trips), dtype=float),
+        )
+    result = linprog(**linprog_args)
     runtime_s = perf_counter() - started
 
     status_names = {
@@ -268,24 +287,40 @@ def solve_restricted_master_lp(
             "SciPy/HiGHS restricted-master LP failed: "
             f"status={status} ({result.status}), message={result.message}"
         )
-    if result.ineqlin is None or result.ineqlin.marginals is None:
+    if coverage_sense == "cover":
+        marginal_result = result.ineqlin
+        marginal_label = "inequality"
+        dual_sign = -1.0
+    else:
+        marginal_result = result.eqlin
+        marginal_label = "equality"
+        dual_sign = 1.0
+    if marginal_result is None or marginal_result.marginals is None:
         raise RestrictedMasterSolveError(
-            "SciPy/HiGHS returned no inequality marginals for trip duals"
+            f"SciPy/HiGHS returned no {marginal_label} marginals for trip duals"
         )
 
     route_values_array = np.asarray(result.x[: len(costs)], dtype=float)
     artificial_array = np.asarray(result.x[len(costs) :], dtype=float)
-    dual_array = -np.asarray(result.ineqlin.marginals, dtype=float)
+    dual_array = dual_sign * np.asarray(marginal_result.marginals, dtype=float)
     for values in (route_values_array, artificial_array, dual_array):
         values[np.abs(values) < tolerance] = 0.0
 
     coverage = incidence @ route_values_array + artificial_array
-    minimum_coverage = float(np.min(coverage))
-    if minimum_coverage < 1.0 - tolerance:
-        raise RestrictedMasterSolveError(
-            "SciPy/HiGHS returned a coverage-infeasible solution: "
-            f"minimum coverage={minimum_coverage}"
-        )
+    if coverage_sense == "cover":
+        minimum_coverage = float(np.min(coverage))
+        if minimum_coverage < 1.0 - tolerance:
+            raise RestrictedMasterSolveError(
+                "SciPy/HiGHS returned a coverage-infeasible solution: "
+                f"minimum coverage={minimum_coverage}"
+            )
+    else:
+        maximum_violation = float(np.max(np.abs(coverage - 1.0)))
+        if maximum_violation > tolerance:
+            raise RestrictedMasterSolveError(
+                "SciPy/HiGHS returned a partition-infeasible solution: "
+                f"maximum row violation={maximum_violation}"
+            )
 
     return RestrictedMasterLPResult(
         objective=float(result.fun),

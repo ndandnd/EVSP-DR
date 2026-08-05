@@ -16,13 +16,14 @@ from master_lp_scipy import (  # noqa: E402
 
 
 class RestrictedMasterLPTests(unittest.TestCase):
-    def solve(self, trips, routes, costs, penalty=500.0):
+    def solve(self, trips, routes, costs, penalty=500.0, coverage_sense="cover"):
         incidence = build_route_incidence(trips, routes)
         return solve_restricted_master_lp(
             trip_ids=trips,
             route_incidence=incidence,
             route_costs=costs,
             artificial_penalty=penalty,
+            coverage_sense=coverage_sense,
         )
 
     def test_artificial_only_has_positive_coverage_dual(self):
@@ -71,6 +72,30 @@ class RestrictedMasterLPTests(unittest.TestCase):
         self.assertAlmostEqual(result.trip_duals[0], 2.0)
         self.assertAlmostEqual(result.trip_duals[1], 50.0)
 
+    def test_partition_mode_does_not_accept_cheap_overcoverage(self):
+        trips = [0, 1, 2]
+        routes = [[0, 1], [1, 2]]
+        costs = [1.0, 1.0]
+
+        covering = self.solve(trips, routes, costs, penalty=100.0)
+        partitioning = self.solve(
+            trips,
+            routes,
+            costs,
+            penalty=100.0,
+            coverage_sense="partition",
+        )
+
+        self.assertAlmostEqual(covering.objective, 2.0)
+        self.assertAlmostEqual(partitioning.objective, 101.0)
+        self.assertAlmostEqual(partitioning.artificial_total, 1.0)
+
+        incidence = build_route_incidence(trips, routes)
+        alpha = np.array([partitioning.trip_duals[trip] for trip in trips])
+        reduced_costs = np.array(costs) - incidence.T @ alpha
+        self.assertGreaterEqual(float(reduced_costs.min()), -1e-8)
+        self.assertGreaterEqual(float((100.0 - alpha).min()), -1e-8)
+
     def test_duals_satisfy_route_and_artificial_reduced_costs(self):
         trips = [0, 1, 2]
         routes = [[0, 1], [1, 2], [0, 2], [0]]
@@ -105,6 +130,9 @@ class RestrictedMasterLPTests(unittest.TestCase):
                 route_costs=[1.0],
                 artificial_penalty=100.0,
             )
+
+        with self.assertRaisesRegex(RestrictedMasterInputError, "coverage_sense"):
+            self.solve([0], [[0]], [1.0], coverage_sense="invalid")
 
 
 if __name__ == "__main__":

@@ -13,9 +13,14 @@ restricted labeling DP cannot express it.
 It reuses `audit_giro_known_columns.build_problem()` (the standalone issue20
 restricted-graph loader: 57-minute trip gaps, ref-substituted deadheads,
 full-horizon station waiting) and the SciPy/HiGHS restricted master. One
-process, no Gurobi.
+process, no Gurobi. Current runs seed a real depot-trip-depot singleton for
+every directly feasible trip and use a set-partitioning LP by default. Use
+`--master-sense cover` only to reproduce the legacy covering campaigns.
 
 ## Two-duty results (86 trips, duties 13301+13302, M5 Pro, flat prices)
+
+These historical numbers used the legacy set-covering master. They remain
+valid covering-LP results but are not strict integer-partition certificates.
 
 | grid | result | wall |
 |---|---|---|
@@ -36,7 +41,8 @@ cd src
 python exact_pricer_expanded.py \
   --csv Practice_Custom_TwoDuty_13301_13302.csv \
   --prices_csv hourly_prices_flat.csv \
-  --soc-step 5 --block-min 5 --max-iters 4000
+  --soc-step 5 --block-min 5 --max-iters 4000 \
+  --master-sense partition
 ```
 
 Instances under `data/duty_pairs/` work directly (`--csv duty_pairs/<name>`).
@@ -48,14 +54,27 @@ runner-comparable optima on pair instances, 15 kWh / 10 min certifies fastest.
 
 Use the tracked Bash worker, not an `sbatch --wrap` command. Slurm executes
 wrapped command strings through `/bin/sh`, which cannot run this project's
-Bash/conda setup reliably. The worker validates the frozen column journal
-before importing Gurobi and writes a job-specific result beside the snapshot.
+Bash/conda setup reliably. The worker checks the frozen column journal before
+importing Gurobi and writes a job-specific result beside the snapshot.
+
+Legacy exact-CG snapshots contain priced routes but no guaranteed integer
+partition. Prepare a non-destructive copy with same-grid singleton seeds first:
+
+```bash
+python -u src/prepare_exact_pool_mip.py \
+  --result /absolute/path/to/INSTANCE.snapshot.json
+```
+
+This writes adjacent `*.partition_ready.snapshot.json` and
+`*.partition_ready.columns.jsonl` files while leaving the frozen originals
+unchanged. Validation of the prepared copy must report that strict partition
+feasibility is guaranteed by one singleton per trip.
 
 From the repository root:
 
 ```bash
 sbatch src/submit_exact_pool_mip.sub \
-  /absolute/path/to/INSTANCE.snapshot.json \
+  /absolute/path/to/INSTANCE.partition_ready.snapshot.json \
   7200
 ```
 
@@ -64,6 +83,8 @@ threads, enforce exact partitioning, and enable Slurm requeue. A requeued job
 restarts the MIP from the same immutable pool; it does not preserve Gurobi's
 branch-and-bound tree. Set `EXACT_MIP_COVER=1` only for an explicitly labeled
 covering sensitivity run—the strict benchmark should leave it unset.
+`EXACTMIP_<job>.out/.err` are written in the Slurm submission directory; the
+job-specific `*_mip.json` is written beside the prepared snapshot.
 
 ## Honest scope
 

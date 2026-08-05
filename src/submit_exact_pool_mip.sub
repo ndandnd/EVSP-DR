@@ -6,7 +6,9 @@
 #   sbatch src/submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]
 #   sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]
 #
-# RESULT may be a live exact-pricer status JSON or an immutable *.snapshot.json.
+# RESULT may be a current exact-pricer status JSON or an immutable
+# *.snapshot.json. Legacy pools must first pass through prepare_exact_pool_mip.py
+# so the worker can verify a singleton partition before spending Gurobi time.
 # If OUT_JSON is omitted, a job-specific *_mip.json is written beside RESULT.
 #SBATCH --job-name=EXACTMIP
 #SBATCH --output=%x_%j.out
@@ -109,13 +111,19 @@ python --version
 
 # This no-license code path catches a missing/truncated/relocated journal and
 # uncovered trips before attempting to construct a Gurobi model.
+partition_guard=()
+if [[ "${EXACT_MIP_COVER:-0}" != "1" ]]; then
+    partition_guard+=(--require-singleton-partition)
+fi
 python -u run_exact_pool_mip.py \
     --result "$RESULT" \
+    "${partition_guard[@]}" \
     --validate-only
 
 command=(
     python -u run_exact_pool_mip.py
     --result "$RESULT"
+    "${partition_guard[@]}"
     --timelimit "$MIP_SECONDS"
     --mipgap "${EXACT_MIP_GAP:-0.0001}"
     --threads "${SLURM_CPUS_PER_TASK:-8}"
