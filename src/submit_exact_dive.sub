@@ -4,10 +4,11 @@
 # pool-MIP ~45/55) with truncated exact CG + theta-fixing + node removal
 # (de Vos et al.). Each dive writes its summary after EVERY round, so a
 # killed job still reports its partial partition.
+# Query:  sacct -X --name=dive-flat -S today   (override name: sbatch -J dive-flat-t05 ...)
 #
 #   export EVSP_DR_ROOT=$HOME/EVSP-DR
 #   cd $EVSP_DR_ROOT/src && sbatch submit_exact_dive.sub
-#SBATCH -J EXACTDIVE
+#SBATCH -J dive-flat
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 #SBATCH --open-mode=append

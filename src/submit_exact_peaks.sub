@@ -1,6 +1,7 @@
 #!/bin/bash
 # Phase-2 pilot: exact CG under time-varying charging prices.
-# Instances: duty unions k08_r3, k13_r2, k15_r6 (certified-friendly sizes).
+# Instances: k08_r3, k13_r2 (duty_unions) and k15_r6 (duty_unions_big).
+# Query:  sacct -X --name=peak-pilot -S today
 # Prices: flat control + single-peak 08/12/18 Gaussian curves.
 # 3 instances x 4 curves = 12 tasks, coarse grid, tolerance-terminated
 # (rc-eps 5). Deliverable per task: pool + final LP + charging events, from
@@ -10,7 +11,7 @@
 #
 #   export EVSP_DR_ROOT=$HOME/EVSP-DR
 #   cd $EVSP_DR_ROOT/src && sbatch submit_exact_peaks.sub
-#SBATCH -J EXACTPEAK
+#SBATCH -J peak-pilot
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 #SBATCH --open-mode=append
@@ -51,7 +52,7 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_TH
 INSTANCES=(
   "duty_unions/Practice_Custom_DutyUnion_k08_r3.csv"
   "duty_unions/Practice_Custom_DutyUnion_k13_r2.csv"
-  "duty_unions/Practice_Custom_DutyUnion_k15_r6.csv"
+  "duty_unions_big/Practice_Custom_DutyUnion_k15_r6.csv"
 )
 PRICES=(
   hourly_prices_flat.csv
