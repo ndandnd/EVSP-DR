@@ -5,6 +5,7 @@
 # on) the repool-small array:
 #   sbatch --dependency=afterany:<repool_jobid> submit_mip_sweep.sub
 # Query:  sacct -X --name=mip-sweep -S today
+# Runs on Scaglione: Gurobi MIPs cannot checkpoint, so no preemption.
 #SBATCH -J mip-sweep
 #SBATCH -o %x_%A.out
 #SBATCH -e %x_%A.err
@@ -12,7 +13,7 @@
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH --mem=32G
-#SBATCH --partition=default_partition
+#SBATCH --partition=scaglione
 #SBATCH -t 20:00:00
 #SBATCH --cpus-per-task=4
 #SBATCH --mail-type=FAIL

@@ -593,6 +593,7 @@ def run_cg(args) -> dict:
             if lp is None:
                 print("[EXACT] all master methods failed — stopping uncertified",
                       flush=True)
+                stop_reason = "master_failed"
                 break
         else:
             lp = _ArtificialOnlyLP()
