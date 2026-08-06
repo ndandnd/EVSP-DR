@@ -18,6 +18,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -72,6 +73,56 @@ def _write_manifest(path: Path, record: dict) -> None:
     temporary.replace(path)
 
 
+def _mip_job_name(status: dict, mode: str, minutes: int) -> str:
+    """Build a compact name that exposes the MIP's scientific configuration."""
+
+    source = str(status.get("csv", ""))
+    match = re.search(r"k0*(\d+)_r0*(\d+)", source, flags=re.IGNORECASE)
+    if match:
+        case = f"{int(match.group(1)):02d}r{int(match.group(2))}"
+    else:
+        bus_match = re.search(r"(\d+)bus", source, flags=re.IGNORECASE)
+        if bus_match:
+            case = f"b{int(bus_match.group(1))}"
+        else:
+            case = "x" + hashlib.sha256(source.encode()).hexdigest()[:3]
+    if len(case) > 5:
+        case = "x" + hashlib.sha256(source.encode()).hexdigest()[:3]
+
+    try:
+        battery = str(int(round(float(status["g_kwh"]) / 10)))
+        reserve = str(int(round(float(status["min_soc_frac"]) * 10)))
+    except (KeyError, TypeError, ValueError):
+        battery, reserve = "x", "x"
+
+    mode_tag = "C" if mode == "cover" else "P"
+    duration = f"T{minutes}"
+    name = f"M{mode_tag}{case}G{battery}R{reserve}{duration}"
+    if len(name) > 15:
+        digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        value = minutes
+        encoded = ""
+        while value:
+            value, remainder = divmod(value, 36)
+            encoded = digits[remainder] + encoded
+        if minutes % 60 == 0:
+            hours = minutes // 60
+            encoded = ""
+            while hours:
+                hours, remainder = divmod(hours, 36)
+                encoded = digits[remainder] + encoded
+            duration = "H" + (encoded or "0")
+        else:
+            duration = "Z" + (encoded or "0")
+        name = f"M{mode_tag}{case}G{battery}R{reserve}{duration}"
+    if len(name) > 15:
+        duration = "Q" + hashlib.sha256(str(minutes).encode()).hexdigest()[:2]
+        name = f"M{mode_tag}{case}G{battery}R{reserve}{duration}"
+    if not re.fullmatch(r"[A-Z][A-Za-z0-9]{0,14}", name):
+        raise SystemExit(f"could not build a <=15-character MIP job name: {name}")
+    return name
+
+
 def submit_mip(args: argparse.Namespace) -> int:
     result: Path = args.result
     mode = "cover" if args.cover else "partition"
@@ -119,13 +170,14 @@ def submit_mip(args: argparse.Namespace) -> int:
     _run_checked(validation)
 
     wall = _wall_time(args.minutes)
+    job_name = _mip_job_name(status, mode, args.minutes)
     sbatch = [
         "sbatch",
         "--parsable",
         "--partition=scaglione",
         "--no-requeue",
         f"--time={wall}",
-        f"--job-name=EXACTMIP-{mode}",
+        f"--job-name={job_name}",
         f"--output={log_dir}/%x_%j.out",
         f"--error={log_dir}/%x_%j.err",
         "--export=ALL,EVSP_DR_ROOT=" + str(REPO_ROOT) +
@@ -140,6 +192,7 @@ def submit_mip(args: argparse.Namespace) -> int:
     source_journal_sha256 = _sha256(source_journal)
     record = {
         "campaign": campaign,
+        "job_name": job_name,
         "created_at": dt.datetime.now().astimezone().isoformat(),
         "mode": mode,
         "minutes": args.minutes,

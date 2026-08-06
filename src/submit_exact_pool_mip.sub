@@ -3,14 +3,11 @@
 # Prefer ``python src/cluster_campaign.py mip ... --submit``.  It validates
 # the pool before submission and gives Slurm absolute log/output paths.
 #
-# From the repository root, if the validated launcher cannot be used:
-#   sbatch src/submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]
-#
 # RESULT may be a current exact-pricer status JSON or an immutable
 # *.snapshot.json. Legacy pools must first pass through prepare_exact_pool_mip.py
 # so the worker can verify a singleton partition before spending Gurobi time.
 # If OUT_JSON is omitted, a job-specific *_mip.json is written beside RESULT.
-#SBATCH --job-name=EXACTMIP
+#SBATCH --job-name=MIP-UNNAMED
 #SBATCH --output=src/logs/%x_%j.out
 #SBATCH --error=src/logs/%x_%j.err
 #SBATCH --open-mode=append
@@ -87,6 +84,11 @@ if [[ -n "${SLURM_JOB_ID:-}" &&
       "${EVSP_ALLOW_PREEMPTIBLE_MIP:-0}" != "1" ]]; then
     fatal "MIP requires partition=$required_partition; got "\
 "${SLURM_JOB_PARTITION:-unknown}. Use the validated cluster_campaign.py launcher."
+fi
+if [[ -n "${SLURM_JOB_ID:-}" &&
+      ! "${SLURM_JOB_NAME:-}" =~ ^M[CP][A-Za-z0-9]{1,13}$ ]]; then
+    fatal "non-semantic MIP job name '${SLURM_JOB_NAME:-missing}'; "\
+"submit through cluster_campaign.py"
 fi
 
 CONDA_SH=${EVSP_CONDA_SH:-/share/apps/software/anaconda3/etc/profile.d/conda.sh}

@@ -4,11 +4,11 @@
 # pool-MIP ~45/55) with truncated exact CG + theta-fixing + node removal
 # (de Vos et al.). Each dive writes its summary after EVERY round, so a
 # killed job still reports its partial partition.
-# Query:  sacct -X --name=dive-flat -S today   (override name: sbatch -J dive-flat-t05 ...)
 #
-#   export EVSP_DR_ROOT=$HOME/EVSP-DR
-#   cd $EVSP_DR_ROOT/src && sbatch submit_exact_dive.sub
-#SBATCH -J dive-flat
+# From the repository root, validate first and submit through the named launcher:
+#   python src/slurm_campaign.py submit dive
+#   python src/slurm_campaign.py submit dive --submit
+#SBATCH -J XD-UNNAMED
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 #SBATCH --open-mode=append
@@ -45,35 +45,46 @@ echo "[diag] conda env: $activated  $(python -V 2>&1)"
 set -e
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 
-INSTANCES=(
-  "duty_unions_big/Practice_Custom_DutyUnion_k30_r1.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k30_r2.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k30_r3.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k30_r4.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k30_r5.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k30_r6.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k40_r3.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k40_r4.csv"
-)
-CSV=${INSTANCES[$((SLURM_ARRAY_TASK_ID - 1))]}
+if ! task_config=$(
+  python slurm_campaign.py task dive --task "$SLURM_ARRAY_TASK_ID"
+); then
+  fatal "could not resolve the tracked dive task manifest"
+fi
+IFS=$'\t' read -r CSV PRICE TAG JOB_NAME <<< "$task_config"
+[ -n "$CSV" ] && [ -n "$PRICE" ] && [ -n "$JOB_NAME" ] \
+  || fatal "tracked dive task manifest returned an empty field"
+
+# The named launcher assigns this before submission. Repeat the update so a
+# direct/requeued array task is still identifiable in squeue and sacct.
+if command -v scontrol >/dev/null 2>&1; then
+  scontrol update \
+    JobId="${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}" \
+    JobName="$JOB_NAME" \
+    || echo "[WARN] could not update Slurm job name to $JOB_NAME" >&2
+fi
+
 NAME=$(basename "$CSV" .csv)
 [ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing — regenerate duty_unions_big first"
+[ -f "$ROOT/data/$PRICE" ] || fatal "$PRICE missing"
 
 ROUND_WALL="${DIVE_ROUND_WALL:-5400}"
 THETA="${DIVE_THETA:-0.7}"
 RCEPS="${DIVE_RC_EPS:-5}"
+CAMPAIGN_TAG="${EVSP_SLURM_RUN_TAG:-direct_${SLURM_ARRAY_JOB_ID}}"
+[[ "$CAMPAIGN_TAG" =~ ^[A-Za-z0-9_.-]+$ ]] \
+  || fatal "unsafe EVSP_SLURM_RUN_TAG=$CAMPAIGN_TAG"
+OUTDIR="$ROOT/src/results/exact_dive/$CAMPAIGN_TAG"
+mkdir -p "$OUTDIR"
 
 echo "[SLURM $SLURM_ARRAY_TASK_ID] dive $NAME round_wall=${ROUND_WALL}s theta=$THETA rc_eps=$RCEPS"
 python -u run_exact_dive.py \
   --csv "$CSV" \
-  --prices_csv hourly_prices_flat.csv \
+  --prices_csv "$PRICE" \
   --soc-step 15 \
   --block-min 10 \
   --rc-eps "$RCEPS" \
   --theta "$THETA" \
   --round-wall-s "$ROUND_WALL" \
   --global-wall-s 75600 \
-  --run-tag "dive_${NAME}_${SLURM_ARRAY_TASK_ID}" \
-  --out "results/exact_dive/${NAME}_dive_summary.json"
+  --run-tag "${CAMPAIGN_TAG}_dive_${NAME}_${SLURM_ARRAY_TASK_ID}" \
+  --out "$OUTDIR/${NAME}_dive_summary.json"

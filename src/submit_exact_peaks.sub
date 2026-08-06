@@ -1,7 +1,6 @@
 #!/bin/bash
 # Phase-2 pilot: exact CG under time-varying charging prices.
 # Instances: k08_r3, k13_r2 (duty_unions) and k15_r6 (duty_unions_big).
-# Query:  sacct -X --name=peak-pilot -S today
 # Prices: flat control + single-peak 08/12/18 Gaussian curves.
 # 3 instances x 4 curves = 12 tasks, coarse grid, tolerance-terminated
 # (rc-eps 5). Deliverable per task: pool + final LP + charging events, from
@@ -9,9 +8,10 @@
 # behavior the old stag-batch Gantt plots suggested, now with delayed-start
 # charging native to the network.
 #
-#   export EVSP_DR_ROOT=$HOME/EVSP-DR
-#   cd $EVSP_DR_ROOT/src && sbatch submit_exact_peaks.sub
-#SBATCH -J peak-pilot
+# From the repository root, validate first and submit through the named launcher:
+#   python src/slurm_campaign.py submit peaks
+#   python src/slurm_campaign.py submit peaks --submit
+#SBATCH -J XP-UNNAMED
 #SBATCH -o %x_%A_%a.out
 #SBATCH -e %x_%A_%a.err
 #SBATCH --open-mode=append
@@ -49,31 +49,33 @@ echo "[diag] conda env: $activated  $(python -V 2>&1)"
 set -e
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 
-INSTANCES=(
-  "duty_unions/Practice_Custom_DutyUnion_k08_r3.csv"
-  "duty_unions/Practice_Custom_DutyUnion_k13_r2.csv"
-  "duty_unions_big/Practice_Custom_DutyUnion_k15_r6.csv"
-)
-PRICES=(
-  hourly_prices_flat.csv
-  hourly_prices_single_peak_08.csv
-  hourly_prices_single_peak_12.csv
-  hourly_prices_single_peak_18.csv
-)
-TAGS=(flat peak08 peak12 peak18)
+if ! task_config=$(
+  python slurm_campaign.py task peaks --task "$SLURM_ARRAY_TASK_ID"
+); then
+  fatal "could not resolve the tracked peak task manifest"
+fi
+IFS=$'\t' read -r CSV PRICE TAG JOB_NAME <<< "$task_config"
+[ -n "$CSV" ] && [ -n "$PRICE" ] && [ -n "$TAG" ] && [ -n "$JOB_NAME" ] \
+  || fatal "tracked peak task manifest returned an empty field"
 
-TASK0=$((SLURM_ARRAY_TASK_ID - 1))
-INST_IDX=$((TASK0 % 3))
-PRICE_IDX=$((TASK0 / 3))
+# The named launcher assigns this before submission. Repeat the update so a
+# direct/requeued array task is still identifiable in squeue and sacct.
+if command -v scontrol >/dev/null 2>&1; then
+  scontrol update \
+    JobId="${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}" \
+    JobName="$JOB_NAME" \
+    || echo "[WARN] could not update Slurm job name to $JOB_NAME" >&2
+fi
 
-CSV=${INSTANCES[$INST_IDX]}
-PRICE=${PRICES[$PRICE_IDX]}
-TAG=${TAGS[$PRICE_IDX]}
 NAME=$(basename "$CSV" .csv)
 
-[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing — regenerate the k=3..13 union set first"
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing — campaign preflight should have stopped submission"
+[ -f "$ROOT/data/$PRICE" ] || fatal "$PRICE missing"
 
-OUTDIR="$ROOT/src/results/exact_peaks"
+CAMPAIGN_TAG="${EVSP_SLURM_RUN_TAG:-direct_${SLURM_ARRAY_JOB_ID}}"
+[[ "$CAMPAIGN_TAG" =~ ^[A-Za-z0-9_.-]+$ ]] \
+  || fatal "unsafe EVSP_SLURM_RUN_TAG=$CAMPAIGN_TAG"
+OUTDIR="$ROOT/src/results/exact_peaks/$CAMPAIGN_TAG"
 mkdir -p "$OUTDIR"
 
 echo "[SLURM $SLURM_ARRAY_TASK_ID] $NAME under $TAG"

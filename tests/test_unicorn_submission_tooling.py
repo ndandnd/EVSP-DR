@@ -61,6 +61,8 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn("#SBATCH --open-mode=append", job_text)
         self.assertIn("#SBATCH --mail-type=FAIL,TIME_LIMIT", job_text)
         self.assertIn("EVSP_ALLOW_PREEMPTIBLE_MIP", job_text)
+        self.assertIn("#SBATCH --job-name=MIP-UNNAMED", job_text)
+        self.assertIn("non-semantic MIP job name", job_text)
         self.assertIn("run_exact_pool_mip.py", job_text)
         self.assertIn("--require-singleton-partition", job_text)
         self.assertNotIn("sbatch --wrap=", job_text)
@@ -118,6 +120,9 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             )
             self.assertIn("--partition=scaglione", completed.stdout)
             self.assertIn("--no-requeue", completed.stdout)
+            self.assertIn("--job-name=MP", completed.stdout)
+            self.assertNotIn("EXACTMIP", completed.stdout)
+            self.assertNotIn("FULLCOVER", completed.stdout)
             self.assertIn("[dry-run]", completed.stdout)
 
     def test_submitted_campaign_stages_and_hashes_immutable_pool(self):
@@ -169,6 +174,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertTrue(staged_result.is_file())
             self.assertTrue(staged_journal.is_file())
             self.assertEqual(manifest["job_id"], "12345")
+            self.assertTrue(manifest["job_name"].startswith("MP"))
             self.assertTrue(manifest["submitted"])
             self.assertEqual(
                 manifest["source_journal_sha256"],

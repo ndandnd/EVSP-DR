@@ -86,6 +86,11 @@ python src/cluster_campaign.py mip \
   --minutes 120 --submit
 ```
 
+The launcher derives a <=15-character semantic Slurm name from the frozen
+pool metadata instead of using `EXACTMIP` or `FULLCOVER`. The name exposes
+cover versus partition, k/r instance, battery, reserve, and time limit; the
+campaign manifest retains the full paths and hashes.
+
 The launcher pads the allocation by ten minutes, gives Gurobi the requested
 minutes, uses eight threads, enforces exact partitioning, and passes
 `--partition=scaglione --no-requeue`. A Gurobi requeue would restart from zero;

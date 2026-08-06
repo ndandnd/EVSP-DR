@@ -437,6 +437,51 @@ campaign directory under `src/results/cluster_campaigns/`. Source and staged
 SHA-256 hashes are recorded before `sbatch`; a changing source or reused
 campaign name is rejected rather than overwritten.
 
+The launcher also assigns a compact semantic name. Examples are
+`MC30r2G24R2T60` for a 60-minute cover MIP on k30/r2 with a 240 kWh battery
+and 20% reserve, and `MP40r1G30R0T120` for the corresponding 120-minute strict
+partition MIP. `MC` means MIP-cover and `MP` means MIP-partition; battery is in
+tens of kWh and reserve is in tenths. Do not override this with a generic name
+such as `FULLCOVER`; the worker rejects non-semantic MIP names.
+
+## Semantic names for exact arrays
+
+Do not submit `submit_exact_dive.sub` or `submit_exact_peaks.sub` directly.
+Use the dry-run-first launcher, which validates every selected CSV and tariff
+before allocating nodes and assigns each configuration its own <=15-character
+name while it is still pending:
+
+```bash
+python src/slurm_campaign.py submit dive
+python src/slurm_campaign.py submit dive --submit
+
+python src/slurm_campaign.py submit peaks
+python src/slurm_campaign.py submit peaks --submit
+```
+
+Examples are `XD-30r1-t70` (exact dive, k30/r1, theta 0.70) and
+`XP-13r2-p08` (price pilot, k13/r2, 08:00 peak). Each configuration is a
+named element of one array. The launcher submits the array held, renames every
+element, and releases it only after every name succeeds. A naming failure
+therefore leaves the whole array safely held rather than partly running. A JSON
+submission manifest records the array/task mapping, input hashes, relevant
+environment settings, and exact Git commit under `src/results/slurm_campaigns/`.
+The worker receives the resolved checkout path and run tag explicitly; pricing
+status files and journals are isolated below that run tag rather than shared
+between campaigns.
+
+Peak tasks 3/6/9/12 use k15/r6 from `data/duty_unions_big/`; the failed
+2026-08-05 campaign incorrectly looked under `data/duty_unions/`. The tracked
+manifest uses the corrected path, and its preflight refuses the entire selected
+campaign before `sbatch` if any instance or tariff is absent.
+
+Use a wide-enough accounting view; the names are capped at 15 characters:
+
+```bash
+sacct -S today \
+  --format=JobID%18,JobName%16,State%18,Elapsed,ExitCode,MaxRSS
+```
+
 Passing a different price file only to the final MIP is rejected: reselecting
 old-price columns can miss newly attractive routes and is not a valid savings
 experiment. `EVSP_ALLOW_RESTRICTED_POOL_REPRICE=1` exists only for an explicitly
