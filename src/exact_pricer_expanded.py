@@ -467,6 +467,46 @@ def run_cg(args) -> dict:
               flush=True)
     journal = open(journal_path, "a") if journal_path else None
 
+    # Per-iteration stopping-rule instrumentation: append-only CSV so the
+    # timing campaign can reconstruct the full LP trajectory with wall time.
+    iters_csv = None
+    if args.out:
+        iters_path = Path(str(args.out) + ".iters.csv")
+        fresh = not (args.resume and iters_path.exists())
+        iters_csv = open(iters_path, "a")
+        if fresh:
+            iters_csv.write("elapsed_s,iteration,lp_obj,route_weight,"
+                            "artificials,min_rc,pool_columns\n")
+
+    # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
+    # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.
+    snapshot_marks = sorted(
+        float(m) for m in str(args.snapshot_at_minutes or "").split(",")
+        if m.strip())
+
+    def _freeze_snapshot(mark):
+        if not args.out:
+            return
+        import shutil
+        stem = Path(str(args.out).replace(".json", ""))
+        snap_json = Path(f"{stem}.m{int(mark)}.snapshot.json")
+        _write_partial(f"snapshot_m{int(mark)}")
+        shutil.copyfile(args.out, snap_json)
+        if journal:
+            journal.flush()
+        if journal_path and journal_path.exists():
+            shutil.copyfile(journal_path,
+                            Path(f"{stem}.m{int(mark)}.snapshot.json.columns.jsonl"))
+        # snapshots need trip_ids for the MIP loader
+        with open(snap_json) as fh:
+            snap = json.load(fh)
+        snap["trip_ids"] = trips
+        snap["columns_journal"] = f"{stem}.m{int(mark)}.snapshot.json.columns.jsonl"
+        with open(snap_json, "w") as fh:
+            json.dump(snap, fh, indent=1)
+        print(f"[EXACT] froze snapshot at {mark:g} min: {snap_json.name}",
+              flush=True)
+
     singleton_seeds, missing_singletons = direct_singleton_seed_records(
         problem,
         g_kwh=args.g_kwh,
@@ -562,6 +602,14 @@ def run_cg(args) -> dict:
         history.append({"iter": iteration, "lp_obj": lp.objective,
                         "route_weight": lp.route_weight,
                         "artificials": lp.artificial_total, "min_rc": min_rc})
+        if iters_csv:
+            iters_csv.write(f"{time.time() - t0:.2f},{iteration},"
+                            f"{lp.objective:.6f},{lp.route_weight:.9f},"
+                            f"{lp.artificial_total:.6f},{min_rc:.6f},{len(pool)}\n")
+            iters_csv.flush()
+        while snapshot_marks and (time.time() - t0) >= snapshot_marks[0] * 60:
+            mark = snapshot_marks.pop(0)
+            _freeze_snapshot(mark)
         if iteration % 10 == 0 or min_rc >= -args.rc_eps:
             print(f"[EXACT] it {iteration:3d}: obj={lp.objective:,.2f} "
                   f"weight={lp.route_weight:.4f} art={lp.artificial_total:.2f} "
@@ -697,6 +745,10 @@ def main(argv=None) -> int:
     parser.add_argument("--min-soc-frac", type=float, default=0.0,
                         help="SOC reserve as a fraction of capacity (FDL notes "
                              "require 0.2 for duties over 20h).")
+    parser.add_argument("--snapshot-at-minutes", default=None,
+                        help="Comma-separated elapsed-minute marks at which to "
+                             "freeze immutable pool snapshots (status+journal), "
+                             "e.g. 15,60,180,360 for MIP-budget calibration.")
     parser.add_argument("--resume", action="store_true",
                         help="Reload the column journal next to --out and "
                              "continue from that pool.")

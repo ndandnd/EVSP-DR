@@ -1,0 +1,53 @@
+#!/bin/bash
+# Strict fleet-first two-stage partition MIPs over every journaled pool,
+# sequentially in one job (each small MIP is minutes). Safe to rerun: pools
+# with existing *_mip.json are skipped. Submit AFTER (or with a dependency
+# on) the repool-small array:
+#   sbatch --dependency=afterany:<repool_jobid> submit_mip_sweep.sub
+# Query:  sacct -X --name=mip-sweep -S today
+#SBATCH -J mip-sweep
+#SBATCH -o %x_%A.out
+#SBATCH -e %x_%A.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=32G
+#SBATCH --partition=default_partition
+#SBATCH -t 20:00:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+python -c "import gurobipy" 2>/dev/null || fatal "env lacks gurobipy"
+
+set -e
+export OMP_NUM_THREADS=4
+
+python -u run_pool_mip_sweep.py \
+  "results/repool_small/*.json" \
+  "results/repool_small/*.snapshot.json" \
+  "results/stuck_pairs_soc25/*.json" \
+  "results/exact_peaks/*.json" \
+  "results/exact_big/*res*.json" \
+  --timelimit 900 --threads 4

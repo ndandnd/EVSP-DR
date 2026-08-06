@@ -1,0 +1,87 @@
+#!/bin/bash
+# Re-price every small instance WITH pool persistence + instrumentation, at
+# strict tolerance, so strict partition MIPs finally have journaled inputs
+# (all pair/k<=15 pools predate persistence). Timed snapshots at 15/60/180
+# minutes feed the CG-vs-MIP budget calibration.
+# Query:  sacct -X --name=repool-small -S today
+#
+# Layout: 1-20 pairs coarse | 21-40 pairs fine | 41-64 unions k3/5/8/13 coarse
+#         65-88 same unions fine | 89-94 k15 r1-r6 coarse (duty_unions_big)
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_repool_small.sub
+#SBATCH -J repool-small
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=24G
+#SBATCH --partition=default_partition
+#SBATCH -t 16:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-94
+#SBATCH --requeue
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+PAIRS_FILE="$ROOT/data/duty_pairs/pairs.txt"
+UNIONS_FILE="$ROOT/data/duty_unions/unions.txt"
+[ -s "$PAIRS_FILE" ] || fatal "missing $PAIRS_FILE (make_duty_pair_instances.py --pairs 20)"
+[ -s "$UNIONS_FILE" ] || fatal "missing $UNIONS_FILE (make_duty_pair_instances.py --union-sizes 3,5,8,13 --per-size 6)"
+
+TID=$SLURM_ARRAY_TASK_ID
+SOC=15; BLOCK=10
+if   [ "$TID" -le 20 ]; then
+  CSV="duty_pairs/$(sed -n "${TID}p" "$PAIRS_FILE")"
+elif [ "$TID" -le 40 ]; then
+  CSV="duty_pairs/$(sed -n "$((TID - 20))p" "$PAIRS_FILE")"; SOC=5; BLOCK=5
+elif [ "$TID" -le 64 ]; then
+  CSV="duty_unions/$(sed -n "$((TID - 40))p" "$UNIONS_FILE")"
+elif [ "$TID" -le 88 ]; then
+  CSV="duty_unions/$(sed -n "$((TID - 64))p" "$UNIONS_FILE")"; SOC=5; BLOCK=5
+else
+  CSV="duty_unions_big/Practice_Custom_DutyUnion_k15_r$((TID - 88)).csv"
+fi
+NAME=$(basename "$CSV" .csv)
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+
+OUTDIR="$ROOT/src/results/repool_small"
+mkdir -p "$OUTDIR"
+
+echo "[SLURM $TID] repool $NAME soc=$SOC block=$BLOCK strict eps"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step "$SOC" \
+  --block-min "$BLOCK" \
+  --rc-eps 0.0001 \
+  --max-iters 200000 \
+  --wall-limit-s 54000 \
+  --checkpoint-every 25 \
+  --snapshot-at-minutes 15,60,180 \
+  --resume \
+  --out "$OUTDIR/${NAME}_soc${SOC}_b${BLOCK}.json"

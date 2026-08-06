@@ -1,0 +1,71 @@
+#!/bin/bash
+# SOC-grid sensitivity for the three discretization-blocked pairs
+# (13302_13325, 13302_13406, 13405_13413): known 2-bus covers exist (GIRO's
+# own duties are model-feasible) but the 5 kWh floor cannot express them.
+# Tests 2.5 kWh / 5 min. Query:  sacct -X --name=pairs-soc25 -S today
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_stuck_pairs.sub
+#SBATCH -J pairs-soc25
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=48G
+#SBATCH --partition=default_partition
+#SBATCH -t 23:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-3
+#SBATCH --requeue
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+PAIRS=(
+  "Practice_Custom_DutyPair_13302_13325.csv"
+  "Practice_Custom_DutyPair_13302_13406.csv"
+  "Practice_Custom_DutyPair_13405_13413.csv"
+)
+CSV="duty_pairs/${PAIRS[$((SLURM_ARRAY_TASK_ID - 1))]}"
+NAME=$(basename "$CSV" .csv)
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+
+OUTDIR="$ROOT/src/results/stuck_pairs_soc25"
+mkdir -p "$OUTDIR"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $NAME at 2.5 kWh / 5 min, strict eps"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step 2.5 \
+  --block-min 5 \
+  --rc-eps 0.0001 \
+  --max-iters 200000 \
+  --wall-limit-s 79200 \
+  --checkpoint-every 25 \
+  --snapshot-at-minutes 60,180,360 \
+  --resume \
+  --out "$OUTDIR/${NAME}_soc2p5_b5.json"
