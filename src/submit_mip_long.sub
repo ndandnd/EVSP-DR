@@ -1,0 +1,86 @@
+#!/bin/bash
+# Integrality-gap attack on the k=8/13/15 finals: per task, (1) enrich the
+# certified pool with 40 diversification rounds (pricing against perturbed
+# duals harvests complementary columns from alternative optimal vertices),
+# then (2) run a 3-hour single-stage strict-partition MIP. Single-stage is
+# correct for fleet-first: stored costs carry the 100k bus dominance.
+# The pre-enrichment certified status JSON is backed up alongside.
+# Query:  sacct -X --name=mip-long -S today
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_mip_long.sub
+#SBATCH -J mip-long
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=32G
+#SBATCH --partition=scaglione
+#SBATCH -t 04:30:00
+#SBATCH --cpus-per-task=8
+#SBATCH --array=1-18
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+python -c "import gurobipy" 2>/dev/null || fatal "env lacks gurobipy"
+
+set -e
+export OMP_NUM_THREADS=8
+
+TID=$SLURM_ARRAY_TASK_ID
+if   [ "$TID" -le 6 ]; then
+  K=08; R=$TID; SOC=5; BLOCK=5; DIR=duty_unions
+elif [ "$TID" -le 12 ]; then
+  K=13; R=$((TID - 6)); SOC=5; BLOCK=5; DIR=duty_unions
+else
+  K=15; R=$((TID - 12)); SOC=15; BLOCK=10; DIR=duty_unions_big
+fi
+NAME="Practice_Custom_DutyUnion_k${K}_r${R}"
+CSV="${DIR}/${NAME}.csv"
+RESULT="results/repool_small/${NAME}_soc${SOC}_b${BLOCK}.json"
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+[ -f "$RESULT" ] || fatal "$RESULT missing — repool this instance first"
+
+# Preserve the certified pre-enrichment record before the pricer rewrites it.
+cp -n "$RESULT" "${RESULT%.json}.certified_backup.json" || true
+
+echo "[SLURM $TID] enrich ${NAME} (soc=$SOC) with 40 diversify rounds"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step "$SOC" \
+  --block-min "$BLOCK" \
+  --rc-eps 5 \
+  --max-iters 1 \
+  --diversify-rounds 40 \
+  --resume \
+  --out "$RESULT"
+
+echo "[SLURM $TID] 3h single-stage strict partition MIP on enriched pool"
+python -u run_exact_pool_mip.py \
+  --result "$RESULT" \
+  --timelimit 10800 \
+  --threads 8 \
+  --out "${RESULT%.json}_long_mip.json"

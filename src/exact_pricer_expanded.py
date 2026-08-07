@@ -658,6 +658,50 @@ def run_cg(args) -> dict:
             break
         stall_count = 0
 
+    if args.diversify_rounds and pool:
+        import random as _random
+        rng = _random.Random(20260807)
+        base_lp = None
+        try:
+            routes_now = list(pool.values())
+            base_lp = solve_restricted_master_lp(
+                trip_ids=trips,
+                route_incidence=build_route_incidence(
+                    trip_ids=trips,
+                    route_trip_ids=[r["trips"] for r in routes_now]),
+                route_costs=[r["cost"] for r in routes_now],
+                artificial_penalty=BIG_M_PENALTY,
+            )
+        except Exception as exc:
+            print(f"[EXACT] diversify: base LP failed ({exc}); skipping", flush=True)
+        if base_lp is not None:
+            added_div = 0
+            for rnd in range(1, args.diversify_rounds + 1):
+                alpha = {t_: v * (1.0 + rng.uniform(-args.diversify_delta,
+                                                    args.diversify_delta))
+                         for t_, v in base_lp.trip_duals.items()}
+                for route in net.k_best_routes(alpha, k=args.columns_per_iter):
+                    cost = route["rc"] + sum(alpha.get(t_, 0.0)
+                                             for t_ in route["trips"])
+                    key = frozenset(route["trips"])
+                    if key not in pool or cost < pool[key]["cost"] - 1e-9:
+                        record = {
+                            "trips": route["trips"], "cost": cost,
+                            "route_nodes": route["route_nodes"],
+                            "charging_stops": route["charging_stops"],
+                            "charges_started": route["charges_started"],
+                            "found_iter": -rnd,
+                            "origin": "diversify",
+                        }
+                        pool[key] = record
+                        if journal:
+                            journal.write(json.dumps(record) + "\n")
+                        added_div += 1
+            if journal:
+                journal.flush()
+            print(f"[EXACT] diversify: {args.diversify_rounds} rounds added "
+                  f"{added_div} complementary columns", flush=True)
+
     if journal:
         journal.close()
 
@@ -746,6 +790,14 @@ def main(argv=None) -> int:
     parser.add_argument("--min-soc-frac", type=float, default=0.0,
                         help="SOC reserve as a fraction of capacity (FDL notes "
                              "require 0.2 for duties over 20h).")
+    parser.add_argument("--diversify-rounds", type=int, default=0,
+                        help="After the main loop, run N extra pricing rounds "
+                             "against randomly perturbed duals to harvest "
+                             "complementary columns (integrality repair; "
+                             "columns are journaled, certification claims "
+                             "are unaffected).")
+    parser.add_argument("--diversify-delta", type=float, default=0.15,
+                        help="Relative dual perturbation for diversify rounds.")
     parser.add_argument("--snapshot-at-minutes", default=None,
                         help="Comma-separated elapsed-minute marks at which to "
                              "freeze immutable pool snapshots (status+journal), "
