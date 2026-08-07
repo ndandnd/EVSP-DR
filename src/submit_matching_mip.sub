@@ -1,0 +1,96 @@
+#!/bin/bash
+# Integral backbone injection: per instance, (1) build a MATCHING cover with
+# a short runner call (model-derived, non-cheating, integral by construction),
+# (2) solve the strict partition MIP over the certified CG pool MERGED with
+# that cover. Pool-MIPs at k>=8 stall near singleton incumbents (3h bought
+# nothing over 15min); constructive covers supply the integral skeleton and
+# CG columns become cost-improving substitutions on top.
+# Tasks: 1-6 k08 | 7-12 k13 | 13-18 k15 | 19-24 k30 | 25-28 k40.
+# Query:  sacct -X --name=match-mip -S today
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_matching_mip.sub
+#SBATCH -J match-mip
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=40G
+#SBATCH --partition=scaglione
+#SBATCH -t 06:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --array=1-28
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+python -c "import gurobipy" 2>/dev/null || fatal "env lacks gurobipy"
+
+set -e
+export OMP_NUM_THREADS=8
+
+TID=$SLURM_ARRAY_TASK_ID
+if   [ "$TID" -le 6 ];  then K=08; R=$TID;          SOC=5;  BLOCK=5;  DIR=duty_unions
+elif [ "$TID" -le 12 ]; then K=13; R=$((TID - 6));  SOC=5;  BLOCK=5;  DIR=duty_unions
+elif [ "$TID" -le 18 ]; then K=15; R=$((TID - 12)); SOC=15; BLOCK=10; DIR=duty_unions_big
+elif [ "$TID" -le 24 ]; then K=30; R=$((TID - 18)); SOC=15; BLOCK=10; DIR=duty_unions_big
+else                         K=40; R=$((TID - 24)); SOC=15; BLOCK=10; DIR=duty_unions_big
+fi
+NAME="Practice_Custom_DutyUnion_k${K}_r${R}"
+CSV="${DIR}/${NAME}.csv"
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+
+# Locate the journaled pool: repool_small for k<=15, exact_big arms for k>=30.
+if [ "$TID" -le 18 ]; then
+  RESULT="results/repool_small/${NAME}_soc${SOC}_b${BLOCK}.json"
+else
+  RESULT=$(ls results/exact_big/${NAME}_soc15_b10*.json 2>/dev/null \
+           | grep -v -e snapshot -e _mip | head -1)
+fi
+[ -n "$RESULT" ] && [ -f "$RESULT" ] || fatal "no journaled pool found for $NAME"
+
+MATCHDIR="results/matching_covers/${NAME}"
+MATCHJSON=$(ls "$MATCHDIR"/*/routes_colgen_final_*.json 2>/dev/null | head -1)
+if [ -z "$MATCHJSON" ]; then
+  echo "[SLURM $TID] building MATCHING cover for $NAME"
+  mkdir -p "$MATCHDIR"
+  python -u run_ex_unicorn.py \
+    --csv "$CSV" --G 300 \
+    --master_backend scipy --skip_final_mip --matching \
+    --queue_order reduced_cost_bound --max_charge2trip 1560 \
+    --pricing_tiers "200000:30" --pricing_wall_per_iter 40 \
+    --active_time_limit_hours 0.02 --milestones_hours "" \
+    --prices_csv hourly_prices_flat.csv --price_tag flat \
+    --run_tag "matchseed_${NAME}" --results_root "$MATCHDIR" --no_resume
+  MATCHJSON=$(ls "$MATCHDIR"/*/routes_colgen_final_*.json 2>/dev/null | head -1)
+fi
+[ -n "$MATCHJSON" ] || fatal "matching run produced no routes JSON"
+
+echo "[SLURM $TID] strict partition MIP: pool $RESULT + cover $MATCHJSON"
+python -u run_exact_pool_mip.py \
+  --result "$RESULT" \
+  --extra-routes "$MATCHJSON" \
+  --timelimit 10800 \
+  --threads 8 \
+  --out "${RESULT%.json}_match_mip.json"

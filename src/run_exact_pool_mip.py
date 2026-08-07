@@ -141,6 +141,57 @@ def greedy_partition_start_indices(
     return selected
 
 
+def merge_extra_routes(routes, trips, extra_paths, prices_csv):
+    """Merge runner-format route dicts (e.g. MATCHING covers) into the pool.
+
+    Pool MIPs at k>=8 stall near singleton incumbents because CG pools lack an
+    integral backbone; constructive covers supply one. Costs are recomputed
+    with the exact master cost function so merged columns are comparable.
+    """
+
+    from config import (BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST,
+                        CHARGING_STATIONS)
+    from utils_v2 import calculate_truck_route_cost_accurate, load_station_hourly_prices
+
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    price_name = Path(prices_csv).name if prices_csv else "hourly_prices_flat.csv"
+    prices = load_station_hourly_prices(data_dir / price_name, CHARGING_STATIONS)
+    depot_curve = prices.get("PARX") or next(iter(prices.values()))
+
+    pool = {frozenset(r["trips"]): r for r in routes}
+    trip_set = set(trips)
+    merged = 0
+    for path in extra_paths:
+        with open(path) as fh:
+            payload = json.load(fh)
+        for route in payload.get("routes", []):
+            route_trips = [n for n in route.get("route", []) if isinstance(n, int)]
+            if not route_trips or not set(route_trips) <= trip_set:
+                continue
+            cost = calculate_truck_route_cost_accurate(
+                route, BUS_COST_KX, depot_curve,
+                charge_rate_kw=CHARGE_RATE_KW,
+                station_hourly_prices=prices,
+                charge_start_cost=CHARGE_START_COST,
+            )
+            key = frozenset(route_trips)
+            if key not in pool or cost < pool[key]["cost"] - 1e-9:
+                pool[key] = {
+                    "trips": route_trips,
+                    "cost": cost,
+                    "route_nodes": route.get("route", []),
+                    "charging_stops": route.get("charging_stops", {}),
+                    "charges_started": len(
+                        (route.get("charging_stops") or {}).get("stations", [])),
+                    "found_iter": 0,
+                    "origin": f"extra:{path.name[:40]}",
+                }
+                merged += 1
+    print(f"[MIP] merged {merged} extra route(s) from "
+          f"{len(extra_paths)} file(s) into the pool")
+    return list(pool.values())
+
+
 def finite_solver_value(value):
     """Map Gurobi infinity/sentinel values to JSON null."""
 
@@ -164,6 +215,16 @@ def main(argv=None) -> int:
         action="store_true",
         help="Refuse a pool that lacks one singleton column per trip.",
     )
+    parser.add_argument(
+        "--extra-routes",
+        type=Path,
+        action="append",
+        default=None,
+        help="Runner-format routes JSON (e.g. a --matching run's "
+             "routes_colgen_final_*.json) whose real columns are merged into "
+             "the pool before solving. Costs are recomputed with the exact "
+             "master cost function. Repeatable.",
+    )
     parser.add_argument("--validate-only", action="store_true")
     parser.add_argument(
         "--two-stage",
@@ -179,6 +240,9 @@ def main(argv=None) -> int:
         parser.error("--out must not overwrite --result")
 
     status, routes, trips = load_pool(args.result)
+    if args.extra_routes:
+        routes = merge_extra_routes(routes, trips, args.extra_routes,
+                                    status.get("prices_csv"))
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
     seed_partition = singleton_partition_indices(routes, trips)
