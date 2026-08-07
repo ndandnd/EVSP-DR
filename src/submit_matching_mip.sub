@@ -65,13 +65,17 @@ CSV="${DIR}/${NAME}.csv"
 if [ "$TID" -le 18 ]; then
   RESULT="results/repool_small/${NAME}_soc${SOC}_b${BLOCK}.json"
 else
-  RESULT=$(ls results/exact_big/${NAME}_soc15_b10*.json 2>/dev/null \
-           | grep -v -e snapshot -e _mip | head -1)
+  # find exits 0 on no-match (unlike ls), so this survives set -e + pipefail
+  RESULT=$(find results/exact_big -maxdepth 1 -name "${NAME}_soc15_b10*.json" \
+             ! -name '*snapshot*' ! -name '*_mip*' 2>/dev/null | sort | head -1 || true)
 fi
 [ -n "$RESULT" ] && [ -f "$RESULT" ] || fatal "no journaled pool found for $NAME"
 
 MATCHDIR="results/matching_covers/${NAME}"
-MATCHJSON=$(ls "$MATCHDIR"/*/routes_colgen_final_*.json 2>/dev/null | head -1)
+MATCHJSON=""
+if [ -d "$MATCHDIR" ]; then
+  MATCHJSON=$(find "$MATCHDIR" -name 'routes_colgen_final_*.json' 2>/dev/null | head -1 || true)
+fi
 if [ -z "$MATCHJSON" ]; then
   echo "[SLURM $TID] building MATCHING cover for $NAME"
   mkdir -p "$MATCHDIR"
@@ -83,7 +87,7 @@ if [ -z "$MATCHJSON" ]; then
     --active_time_limit_hours 0.02 --milestones_hours "" \
     --prices_csv hourly_prices_flat.csv --price_tag flat \
     --run_tag "matchseed_${NAME}" --results_root "$MATCHDIR" --no_resume
-  MATCHJSON=$(ls "$MATCHDIR"/*/routes_colgen_final_*.json 2>/dev/null | head -1)
+  MATCHJSON=$(find "$MATCHDIR" -name 'routes_colgen_final_*.json' 2>/dev/null | head -1 || true)
 fi
 [ -n "$MATCHJSON" ] || fatal "matching run produced no routes JSON"
 
