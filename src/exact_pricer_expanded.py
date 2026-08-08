@@ -470,9 +470,18 @@ def run_cg(args) -> dict:
     # Per-iteration stopping-rule instrumentation: append-only CSV so the
     # timing campaign can reconstruct the full LP trajectory with wall time.
     iters_csv = None
+    elapsed_offset = 0.0
     if args.out:
         iters_path = Path(str(args.out) + ".iters.csv")
         fresh = not (args.resume and iters_path.exists())
+        if not fresh:
+            # cumulative elapsed across resumes/requeues, so stopping curves
+            # stay monotone instead of restarting at zero
+            try:
+                last = iters_path.read_text().strip().rsplit("\n", 1)[-1]
+                elapsed_offset = float(last.split(",")[0])
+            except (ValueError, OSError, IndexError):
+                elapsed_offset = 0.0
         iters_csv = open(iters_path, "a")
         if fresh:
             iters_csv.write("elapsed_s,iteration,lp_obj,route_weight,"
@@ -490,6 +499,12 @@ def run_cg(args) -> dict:
         import shutil
         stem = Path(str(args.out).replace(".json", ""))
         snap_json = Path(f"{stem}.m{int(mark)}.snapshot.json")
+        if snap_json.exists():
+            # snapshots are immutable: a requeued run must never overwrite the
+            # original N-minute pool with a later one
+            print(f"[EXACT] snapshot {snap_json.name} already frozen — keeping "
+                  "the original", flush=True)
+            return
         _write_partial(f"snapshot_m{int(mark)}")
         shutil.copyfile(args.out, snap_json)
         if journal:
@@ -604,11 +619,11 @@ def run_cg(args) -> dict:
                         "route_weight": lp.route_weight,
                         "artificials": lp.artificial_total, "min_rc": min_rc})
         if iters_csv:
-            iters_csv.write(f"{time.time() - t0:.2f},{iteration},"
+            iters_csv.write(f"{elapsed_offset + time.time() - t0:.2f},{iteration},"
                             f"{lp.objective:.6f},{lp.route_weight:.9f},"
                             f"{lp.artificial_total:.6f},{min_rc:.6f},{len(pool)}\n")
             iters_csv.flush()
-        while snapshot_marks and (time.time() - t0) >= snapshot_marks[0] * 60:
+        while snapshot_marks and (elapsed_offset + time.time() - t0) >= snapshot_marks[0] * 60:
             mark = snapshot_marks.pop(0)
             _freeze_snapshot(mark)
         if iteration % 10 == 0 or min_rc >= -args.rc_eps:

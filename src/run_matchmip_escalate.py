@@ -63,9 +63,19 @@ def find_pool(row):
     return None
 
 
-def find_or_build_cover(row, dry):
+def pool_physics(pool: Path):
+    try:
+        with open(pool) as fh:
+            s = json.load(fh)
+        return float(s.get("g_kwh", 300.0)) or 300.0
+    except Exception:
+        return 300.0
+
+
+def find_or_build_cover(row, dry, g_kwh=300.0):
     name = row["csv"].split("/")[-1][:-4]
-    cover_dir = SRC / "results" / "matching_covers" / name
+    suffix = "" if int(g_kwh) == 300 else f"_g{int(g_kwh)}"
+    cover_dir = SRC / "results" / "matching_covers" / (name + suffix)
     hits = sorted(cover_dir.glob("*/routes_colgen_final_*.json")) \
         if cover_dir.exists() else []
     if hits:
@@ -74,7 +84,7 @@ def find_or_build_cover(row, dry):
         return None
     cover_dir.mkdir(parents=True, exist_ok=True)
     cmd = [sys.executable, "-u", str(SRC / "run_ex_unicorn.py"),
-           "--csv", row["csv"], "--G", "300",
+           "--csv", row["csv"], "--G", str(int(g_kwh)),
            "--master_backend", "scipy", "--skip_final_mip", "--matching",
            "--queue_order", "reduced_cost_bound", "--max_charge2trip", "1560",
            "--pricing_tiers", "200000:30", "--pricing_wall_per_iter", "40",
@@ -146,7 +156,8 @@ def main(argv=None) -> int:
                 print(f"[ORCH] would run {row['name']} pass {pass_no + 1} "
                       f"budget {budget}s (best so far: {got})", flush=True)
                 continue
-            cover = find_or_build_cover(row, args.dry_run)
+            cover = find_or_build_cover(row, args.dry_run,
+                                        g_kwh=pool_physics(pool))
             if cover is None:
                 print(f"[ORCH] {row['name']}: no cover available — skip",
                       flush=True)

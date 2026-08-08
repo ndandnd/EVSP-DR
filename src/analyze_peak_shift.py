@@ -74,6 +74,7 @@ def load_profile(result_path: Path):
         "route_weight": final_lp.get("route_weight"),
         "lp_obj": final_lp.get("objective"),
         "matched_routes": matched,
+        "unmatched_routes": len(final_lp["positive_routes"]) - matched,
         "total_kwh": total,
         "profile": profile,
     }
@@ -102,13 +103,14 @@ def main(argv=None) -> int:
         raise SystemExit("no analyzable results (need final_lp + journal)")
 
     def tariff_of(name: str):
-        m = re.search(r"_(flat|peak(\d{2}))", name)
+        m = re.search(r"_(flat|sek|peak(\d{2}))", name)
         if not m:
             return None, None
         return m.group(1), int(m.group(2)) if m.group(2) else None
 
     def instance_of(name: str) -> str:
-        return re.sub(r"_(flat|peak\d{2})\.json$", "", name)
+        name = re.sub(r"_(flat|sek|peak\d{2})\.json$", "", name)
+        return re.sub(r"_soc\d+(p\d+)?_b\d+\.json$", "", name)
 
     print(f"{'instance':<38} {'tariff':<8} {'kWh total':>10} "
           f"{'peak-window kWh':>16} {'peak %':>7}  (window = peak±"

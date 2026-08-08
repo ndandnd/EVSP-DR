@@ -141,17 +141,89 @@ def greedy_partition_start_indices(
     return selected
 
 
-def merge_extra_routes(routes, trips, extra_paths, prices_csv):
+def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
+                            horizon_min, rate_grace_min=1.0):
+    """Replay an injected route against the model graph and pool physics.
+
+    Checks every consecutive arc exists in the restricted adjacency, times
+    chain (fixed trip times; charging inside its [cst, cet] window at <= the
+    pool's charger power, with a small grace for Hastus minute rounding),
+    and continuous SOC never drops below the reserve. Returns None if valid,
+    else a short reason.
+    """
+    arc = {}
+    for u, arcs in problem.adjacency.items():
+        for v, travel, dh, _kind in arcs:
+            arc[(u, v)] = (travel, dh)
+
+    nodes = record.get("route_nodes") or []
+    if len(nodes) < 3:
+        return "route_nodes missing"
+    stops = record.get("charging_stops") or {}
+    st_list = list(zip(stops.get("stations", []), stops.get("cst", []),
+                       stops.get("cet", []), stops.get("kwh", [])))
+    si = 0
+    soc = float(g_kwh)
+    time_now = None  # depot departure is flexible
+    prev = nodes[0]
+    for v in nodes[1:]:
+        key = (prev, v) if not (isinstance(prev, str) and isinstance(v, str)
+                                and prev == v) else None
+        if key is not None and key not in arc:
+            return f"missing model arc {prev}->{v}"
+        travel, dh = arc.get(key, (0.0, 0.0))
+        soc -= dh
+        if soc < reserve_kwh - 1e-6:
+            return f"SOC {soc:.1f} < reserve before {v}"
+        if isinstance(v, int):
+            arrive_earliest = (time_now + travel) if time_now is not None else None
+            if arrive_earliest is not None and                     arrive_earliest > problem.start_min[v] + 1e-6:
+                return f"arrives {arrive_earliest:.0f} after trip {v} start"
+            soc -= problem.trip_energy[v]
+            if soc < reserve_kwh - 1e-6:
+                return f"SOC {soc:.1f} < reserve after trip {v}"
+            time_now = problem.end_min[v]
+        elif v != nodes[-1] or si < len(st_list):
+            if si < len(st_list) and st_list[si][0] == v:
+                _stn, cst, cet, kwh = st_list[si]
+                si += 1
+                if time_now is not None and time_now + travel > cst + rate_grace_min + 1e-6:
+                    return f"reaches {v} at {time_now + travel:.0f} after cst {cst}"
+                window = max(0.0, float(cet) - float(cst)) + rate_grace_min
+                if kwh > window * charge_kw / 60.0 + 1e-6:
+                    return (f"charge {kwh:.1f} kWh exceeds {charge_kw:.0f} kW "
+                            f"in {window:.0f} min at {v}")
+                soc = min(float(g_kwh), soc + float(kwh))
+                time_now = float(cet)
+            # station visit without a recorded stop = pure wait; allowed
+        prev = v
+    if time_now is not None and time_now > horizon_min + 1e-6:
+        return f"ends at {time_now:.0f} past horizon"
+    return None
+
+
+def merge_extra_routes(routes, trips, extra_paths, prices_csv, status=None):
     """Merge runner-format route dicts (e.g. MATCHING covers) into the pool.
 
     Pool MIPs at k>=8 stall near singleton incumbents because CG pools lack an
     integral backbone; constructive covers supply one. Costs are recomputed
-    with the exact master cost function so merged columns are comparable.
+    with the exact master cost function, and EVERY candidate is replayed
+    against the model graph under the POOL'S physics (g_kwh, charge_kw,
+    reserve) — routes that fail are refused, not warned about.
     """
 
+    from audit_giro_known_columns import HORIZON_MIN, build_problem
     from config import (BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST,
                         CHARGING_STATIONS)
     from utils_v2 import calculate_truck_route_cost_accurate, load_station_hourly_prices
+
+    status = status or {}
+    g_kwh = float(status.get("g_kwh", 300.0))
+    charge_kw = float(status.get("charge_kw", CHARGE_RATE_KW))
+    reserve_kwh = float(status.get("min_soc_frac", 0.0)) * g_kwh
+    problem = build_problem(
+        Path(__file__).resolve().parent.parent / "data", status["csv"],
+        max_station_to_trip_wait_min=HORIZON_MIN)
 
     data_dir = Path(__file__).resolve().parent.parent / "data"
     price_name = Path(prices_csv).name if prices_csv else "hourly_prices_flat.csv"
@@ -161,6 +233,7 @@ def merge_extra_routes(routes, trips, extra_paths, prices_csv):
     pool = {frozenset(r["trips"]): r for r in routes}
     trip_set = set(trips)
     merged = 0
+    rejected = 0
     for path in extra_paths:
         with open(path) as fh:
             payload = json.load(fh)
@@ -175,6 +248,19 @@ def merge_extra_routes(routes, trips, extra_paths, prices_csv):
                 charge_start_cost=CHARGE_START_COST,
             )
             key = frozenset(route_trips)
+            candidate = {
+                "trips": route_trips,
+                "route_nodes": route.get("route", []),
+                "charging_stops": route.get("charging_stops", {}),
+            }
+            reason = validate_injected_route(
+                problem, candidate, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN)
+            if reason is not None:
+                rejected += 1
+                if rejected <= 5:
+                    print(f"[MIP] REJECTED injected route ({len(route_trips)} "
+                          f"trips): {reason}")
+                continue
             if key not in pool or cost < pool[key]["cost"] - 1e-9:
                 pool[key] = {
                     "trips": route_trips,
@@ -187,8 +273,10 @@ def merge_extra_routes(routes, trips, extra_paths, prices_csv):
                     "origin": f"extra:{path.name[:40]}",
                 }
                 merged += 1
-    print(f"[MIP] merged {merged} extra route(s) from "
-          f"{len(extra_paths)} file(s) into the pool")
+    print(f"[MIP] merged {merged} extra route(s), REJECTED {rejected} as "
+          f"infeasible under pool physics (G={g_kwh:.0f} kWh, "
+          f"{charge_kw:.0f} kW, reserve {reserve_kwh:.0f}) from "
+          f"{len(extra_paths)} file(s)")
     return list(pool.values())
 
 
@@ -242,7 +330,7 @@ def main(argv=None) -> int:
     status, routes, trips = load_pool(args.result)
     if args.extra_routes:
         routes = merge_extra_routes(routes, trips, args.extra_routes,
-                                    status.get("prices_csv"))
+                                    status.get("prices_csv"), status)
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
     seed_partition = singleton_partition_indices(routes, trips)
