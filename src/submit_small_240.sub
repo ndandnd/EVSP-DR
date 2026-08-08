@@ -1,0 +1,81 @@
+#!/bin/bash
+# Realism arm at small scale: 240 kWh / 220 kW / 20% reserve on every pair
+# and union k=3..15 (flat prices, strict tolerance). Together with the
+# certified 300/300 results this yields the realism-tax table where
+# certificates exist. 50 tasks. Query:  sacct -X --name=cg-real240 -S today
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_small_240.sub
+#SBATCH -J cg-real240
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=24G
+#SBATCH --partition=default_partition
+#SBATCH -t 14:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-50
+#SBATCH --requeue
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+PAIRS_FILE="$ROOT/data/duty_pairs/pairs.txt"
+UNIONS_FILE="$ROOT/data/duty_unions/unions.txt"
+[ -s "$PAIRS_FILE" ] || fatal "missing $PAIRS_FILE"
+[ -s "$UNIONS_FILE" ] || fatal "missing $UNIONS_FILE"
+
+INST=$SLURM_ARRAY_TASK_ID
+if   [ "$INST" -le 20 ]; then
+  CSV="duty_pairs/$(sed -n "${INST}p" "$PAIRS_FILE")"
+elif [ "$INST" -le 44 ]; then
+  CSV="duty_unions/$(sed -n "$((INST - 20))p" "$UNIONS_FILE")"
+else
+  CSV="duty_unions_big/Practice_Custom_DutyUnion_k15_r$((INST - 44)).csv"
+fi
+NAME=$(basename "$CSV" .csv)
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+
+OUTDIR="$ROOT/src/results/real240_small"
+mkdir -p "$OUTDIR"
+
+echo "[SLURM $INST] $NAME at 240 kWh / 220 kW / 20% reserve"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step 15 \
+  --block-min 10 \
+  --g-kwh 240 \
+  --charge-kw 220 \
+  --min-soc-frac 0.2 \
+  --rc-eps 0.0001 \
+  --max-iters 200000 \
+  --wall-limit-s 46800 \
+  --checkpoint-every 25 \
+  --snapshot-at-minutes 60,180 \
+  --resume \
+  --out "$OUTDIR/${NAME}_g240_res0.2.json"

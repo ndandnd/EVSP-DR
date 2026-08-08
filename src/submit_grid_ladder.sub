@@ -1,0 +1,77 @@
+#!/bin/bash
+# Grid-resolution ladder: near-continuous optima + the last blocked pair.
+#   1-20 : all pairs at 2.5 kWh / 5 min (near-continuous pair optima)
+#   21   : 13405_13413 at 1 kWh / 5 min (the last discretization-blocked pair)
+#   22-27: k15 r1-r6 at 5 kWh / 5 min (fine-grid k15, previously coarse-only)
+# Query:  sacct -X --name=cg-gridlad -S today
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_grid_ladder.sub
+#SBATCH -J cg-gridlad
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=48G
+#SBATCH --partition=default_partition
+#SBATCH -t 22:00:00
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-27
+#SBATCH --requeue
+#SBATCH --mail-type=FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+PAIRS_FILE="$ROOT/data/duty_pairs/pairs.txt"
+[ -s "$PAIRS_FILE" ] || fatal "missing $PAIRS_FILE"
+
+TID=$SLURM_ARRAY_TASK_ID
+if   [ "$TID" -le 20 ]; then
+  CSV="duty_pairs/$(sed -n "${TID}p" "$PAIRS_FILE")"; SOC=2.5; BLOCK=5; TAGSOC="soc2p5"
+elif [ "$TID" -eq 21 ]; then
+  CSV="duty_pairs/Practice_Custom_DutyPair_13405_13413.csv"; SOC=1; BLOCK=5; TAGSOC="soc1"
+else
+  CSV="duty_unions_big/Practice_Custom_DutyUnion_k15_r$((TID - 21)).csv"; SOC=5; BLOCK=5; TAGSOC="soc5"
+fi
+NAME=$(basename "$CSV" .csv)
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+
+OUTDIR="$ROOT/src/results/grid_ladder"
+mkdir -p "$OUTDIR"
+
+echo "[SLURM $TID] $NAME at ${SOC} kWh / ${BLOCK} min (strict eps)"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step "$SOC" \
+  --block-min "$BLOCK" \
+  --rc-eps 0.0001 \
+  --max-iters 200000 \
+  --wall-limit-s 75600 \
+  --checkpoint-every 25 \
+  --snapshot-at-minutes 60,180,360 \
+  --resume \
+  --out "$OUTDIR/${NAME}_${TAGSOC}_b${BLOCK}.json"
