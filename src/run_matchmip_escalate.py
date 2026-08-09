@@ -72,6 +72,31 @@ def pool_physics(pool: Path):
         return 300.0
 
 
+def rerealize_cover(cover: Path, pool: Path):
+    """Re-optimize the cover's charging under the pool's exact physics.
+
+    Covers are built by the runner whose charge rate is fixed in config, so
+    even --G-matched covers plan charging a 220 kW pool cannot deliver and
+    get rejected wholesale at injection. Re-realization keeps each cover
+    route's trip sequence and re-derives stations/windows/amounts under the
+    pool's (G, kW, reserve); the output is injection-valid by construction.
+    """
+    g_kwh = pool_physics(pool)
+    out = cover.with_name(f"{cover.stem}_rrz_g{int(g_kwh)}.json")
+    if out.exists():
+        return out
+    rc = subprocess.run(
+        [sys.executable, "-u", str(SRC / "rerealize_routes.py"),
+         "--routes", str(cover), "--physics-from", str(pool),
+         "--prices", "hourly_prices_flat.csv", "--out", str(out)],
+        cwd=SRC).returncode
+    if rc not in (0, 3) or not out.exists():
+        print(f"[ORCH] cover re-realization failed (rc={rc}); using raw "
+              f"cover", flush=True)
+        return cover
+    return out
+
+
 def find_or_build_cover(row, dry, g_kwh=300.0):
     name = row["csv"].split("/")[-1][:-4]
     suffix = "" if int(g_kwh) == 300 else f"_g{int(g_kwh)}"
@@ -162,8 +187,9 @@ def main(argv=None) -> int:
                 print(f"[ORCH] {row['name']}: no cover available — skip",
                       flush=True)
                 continue
+            cover = rerealize_cover(cover, pool)
             out = Path(str(pool).replace(".json",
-                                         f"_match_mip_p{pass_no + 1}.json"))
+                                         f"_match_mip_rrz_p{pass_no + 1}.json"))
             if out.exists():
                 continue
             print(f"[ORCH] {row['name']} pass {pass_no + 1}: MIP {budget}s "

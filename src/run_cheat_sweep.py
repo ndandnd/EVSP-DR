@@ -36,6 +36,13 @@ TARIFF_POOLS = {
     "peak18": "results/tariff_matrix/{name}_peak18.json",
     "sek": "results/tariff_matrix/{name}_sek.json",
 }
+TARIFF_PRICES = {
+    "flat": "hourly_prices_flat.csv",
+    "peak08": "hourly_prices_single_peak_08.csv",
+    "peak12": "hourly_prices_single_peak_12.csv",
+    "peak18": "hourly_prices_single_peak_18.csv",
+    "sek": "hourly_prices_transdev_sek.csv",
+}
 
 
 def find_pool(pattern: str):
@@ -56,6 +63,34 @@ def ensure_seed(name: str, dirname: str, dry: bool):
          "--instance", f"{dirname}/{name}.csv", "--out", str(seed)],
         cwd=SRC).returncode
     return seed if rc == 0 and seed.exists() else None
+
+
+def ensure_rerealized_seed(seed: Path, pool: Path, tariff: str):
+    """Re-optimize the seed's charging under the pool's physics + tariff.
+
+    Recorded GIRO plans fail injection (Hastus rounding, missing arcs,
+    physics mismatch); the re-realized seed is injection-valid by
+    construction. Exit code 3 = some duties provably infeasible under this
+    physics; the valid subset is still a partial backbone worth injecting.
+    """
+    try:
+        with open(pool) as fh:
+            g_kwh = float(json.load(fh).get("g_kwh", 300.0)) or 300.0
+    except Exception:
+        g_kwh = 300.0
+    out = seed.with_name(f"{seed.stem}_rrz_g{int(g_kwh)}_{tariff}.json")
+    if out.exists():
+        return out
+    rc = subprocess.run(
+        [sys.executable, "-u", str(SRC / "rerealize_routes.py"),
+         "--routes", str(seed), "--physics-from", str(pool),
+         "--prices", TARIFF_PRICES[tariff], "--out", str(out)],
+        cwd=SRC).returncode
+    if rc not in (0, 3) or not out.exists():
+        print(f"[CHEAT] re-realization failed (rc={rc}) — falling back to "
+              f"raw seed", flush=True)
+        return seed
+    return out
 
 
 def main(argv=None) -> int:
@@ -84,7 +119,9 @@ def main(argv=None) -> int:
             print(f"[CHEAT] {name}/{tariff}: pool not landed yet — skip",
                   flush=True)
             continue
-        out = Path(str(pool).replace(".json", "_cheat_mip.json"))
+        # _rrz suffix: keeps pre-re-realization results as evidence and lets
+        # every cell rerun over the repaired (injection-valid) seed.
+        out = Path(str(pool).replace(".json", "_cheat_mip_rrz.json"))
         if out.exists():
             continue
         if args.dry_run:
@@ -95,8 +132,9 @@ def main(argv=None) -> int:
         if seed is None:
             print(f"[CHEAT] {name}: seed generation failed — skip", flush=True)
             continue
+        seed = ensure_rerealized_seed(seed, pool, tariff)
         print(f"[CHEAT] {name}/{tariff}: MIP {args.timelimit}s over "
-              f"{pool.name} + GIRO seed", flush=True)
+              f"{pool.name} + {seed.name}", flush=True)
         rc = subprocess.run(
             [sys.executable, "-u", str(SRC / "run_exact_pool_mip.py"),
              "--result", str(pool), "--extra-routes", str(seed),
