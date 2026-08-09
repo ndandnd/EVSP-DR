@@ -65,7 +65,7 @@ def ensure_seed(name: str, dirname: str, dry: bool):
     return seed if rc == 0 and seed.exists() else None
 
 
-def ensure_rerealized_seed(seed: Path, pool: Path, tariff: str):
+def ensure_rerealized_seed(seed: Path, pool: Path, tariff: str, csv: str):
     """Re-optimize the seed's charging under the pool's physics + tariff.
 
     Recorded GIRO plans fail injection (Hastus rounding, missing arcs,
@@ -84,6 +84,7 @@ def ensure_rerealized_seed(seed: Path, pool: Path, tariff: str):
     rc = subprocess.run(
         [sys.executable, "-u", str(SRC / "rerealize_routes.py"),
          "--routes", str(seed), "--physics-from", str(pool),
+         "--instance", csv,  # legacy pools may lack csv provenance
          "--prices", TARIFF_PRICES[tariff], "--out", str(out)],
         cwd=SRC).returncode
     if rc not in (0, 3) or not out.exists():
@@ -132,7 +133,8 @@ def main(argv=None) -> int:
         if seed is None:
             print(f"[CHEAT] {name}: seed generation failed — skip", flush=True)
             continue
-        seed = ensure_rerealized_seed(seed, pool, tariff)
+        seed = ensure_rerealized_seed(seed, pool, tariff,
+                                      f"{dirname}/{name}.csv")
         print(f"[CHEAT] {name}/{tariff}: MIP {args.timelimit}s over "
               f"{pool.name} + {seed.name}", flush=True)
         rc = subprocess.run(

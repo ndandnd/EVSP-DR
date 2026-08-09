@@ -1,0 +1,86 @@
+#!/bin/bash
+# Parity-scale tariff CG: k=30 (r1-6) and k=40 (r1-4) under the three
+# Gaussian peaks AND Karl's Transdev SEK curve = 40 tasks at the convention
+# physics (300/300/0). NO wall limit: each run terminates itself when
+# marginal returns die (best reduced cost and LP objective both improve
+# <5% / <1e-3% over a 2h window after artificials clear) or certifies.
+# Journals + snapshots + iters.csv land continuously; --resume + --requeue
+# make preemption safe. These pools are the Tier-3-at-scale inputs (joint
+# reroute+recharge under tariffs) for the decomposition experiment.
+# Query:  sacct -X --name=cg-bigtar -S today
+#
+#   export EVSP_DR_ROOT=$HOME/EVSP-DR
+#   cd $EVSP_DR_ROOT/src && sbatch submit_cg_bigtariffs.sub
+#SBATCH -J cg-bigtar
+#SBATCH -o %x_%A_%a.out
+#SBATCH -e %x_%A_%a.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --mem=40G
+#SBATCH --partition=default_partition
+#SBATCH --cpus-per-task=2
+#SBATCH --array=1-40
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -uo pipefail
+
+fatal() { echo "[FATAL task ${SLURM_ARRAY_TASK_ID:-?}] $*" >&2; exit 1; }
+
+echo "[diag] host=$(hostname) date=$(date '+%F %T')"
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+[ -d "$ROOT/src" ] || fatal "EVSP_DR_ROOT=$ROOT has no src/ dir"
+cd "$ROOT/src"
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source anaconda profile"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+[ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
+echo "[diag] conda env: $activated  $(python -V 2>&1)"
+
+set -e
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+# Instance index 0-9: 0-5 = k30 r1-6 | 6-9 = k40 r1-4
+TASK0=$((SLURM_ARRAY_TASK_ID - 1))
+INST=$((TASK0 % 10))
+TARIFF_IDX=$((TASK0 / 10))
+if [ "$INST" -le 5 ]; then
+  NAME="Practice_Custom_DutyUnion_k30_r$((INST + 1))"
+else
+  NAME="Practice_Custom_DutyUnion_k40_r$((INST - 5))"
+fi
+CSV="duty_unions_big/${NAME}.csv"
+[ -f "$ROOT/data/$CSV" ] || fatal "$CSV missing"
+
+PRICES=(hourly_prices_single_peak_08.csv hourly_prices_single_peak_12.csv
+        hourly_prices_single_peak_18.csv hourly_prices_transdev_sek.csv)
+TAGS=(peak08 peak12 peak18 sek)
+PRICE=${PRICES[$TARIFF_IDX]}
+TAG=${TAGS[$TARIFF_IDX]}
+
+OUTDIR="$ROOT/src/results/tariff_big"
+mkdir -p "$OUTDIR"
+
+echo "[SLURM $SLURM_ARRAY_TASK_ID] $NAME under $TAG (no wall limit; stall-stop 120min/5%)"
+python -u exact_pricer_expanded.py \
+  --csv "$CSV" \
+  --prices_csv "$PRICE" \
+  --soc-step 15 \
+  --block-min 10 \
+  --rc-eps 0.0001 \
+  --max-iters 200000 \
+  --stall-window-min 120 \
+  --stall-rc-frac 0.05 \
+  --stall-obj-frac 1e-5 \
+  --checkpoint-every 25 \
+  --snapshot-at-minutes 60,180,360,600,900 \
+  --resume \
+  --out "$OUTDIR/${NAME}_${TAG}.json"

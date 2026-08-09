@@ -49,4 +49,5 @@ set -e
 export OMP_NUM_THREADS=8
 
 python -u run_cheat_sweep.py \
-  --shard "$SLURM_ARRAY_TASK_ID" --shards 2 --global-wall-s 82800
+  --shard "$SLURM_ARRAY_TASK_ID" --shards 2 --global-wall-s 82800 \
+  --timelimit "${CHEAT_TIMELIMIT:-2700}"

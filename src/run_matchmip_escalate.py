@@ -72,7 +72,7 @@ def pool_physics(pool: Path):
         return 300.0
 
 
-def rerealize_cover(cover: Path, pool: Path):
+def rerealize_cover(cover: Path, pool: Path, csv: str):
     """Re-optimize the cover's charging under the pool's exact physics.
 
     Covers are built by the runner whose charge rate is fixed in config, so
@@ -88,6 +88,7 @@ def rerealize_cover(cover: Path, pool: Path):
     rc = subprocess.run(
         [sys.executable, "-u", str(SRC / "rerealize_routes.py"),
          "--routes", str(cover), "--physics-from", str(pool),
+         "--instance", csv,  # legacy pools may lack csv provenance
          "--prices", "hourly_prices_flat.csv", "--out", str(out)],
         cwd=SRC).returncode
     if rc not in (0, 3) or not out.exists():
@@ -187,7 +188,7 @@ def main(argv=None) -> int:
                 print(f"[ORCH] {row['name']}: no cover available — skip",
                       flush=True)
                 continue
-            cover = rerealize_cover(cover, pool)
+            cover = rerealize_cover(cover, pool, row["csv"])
             out = Path(str(pool).replace(".json",
                                          f"_match_mip_rrz_p{pass_no + 1}.json"))
             if out.exists():

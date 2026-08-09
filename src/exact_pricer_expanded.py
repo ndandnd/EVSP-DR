@@ -451,6 +451,7 @@ def run_cg(args) -> dict:
     trips = list(problem.trips)
     pool: dict[frozenset, dict] = {}
     history = []
+    stall_hist = []  # (elapsed_s, lp_obj, min_rc) for --stall-window-min
     certified = False
     stop_reason = "max_iters"
     stall_count = 0
@@ -634,6 +635,33 @@ def run_cg(args) -> dict:
             certified = best is not None
             stop_reason = "certified" if certified else "no_path"
             break
+        if args.stall_window_min and lp.artificial_total < 1e-6:
+            now = elapsed_offset + time.time() - t0
+            quarter = args.stall_window_min * 60.0 / 4.0
+            recent = [h for h in stall_hist if h[0] >= now - quarter]
+            old = [h for h in stall_hist
+                   if now - 4 * quarter <= h[0] <= now - 3 * quarter]
+            if recent and old:
+                rc_rec = min(h[2] for h in recent)   # most negative
+                rc_old = min(h[2] for h in old)
+                obj_rec = min(h[1] for h in recent)
+                obj_old = min(h[1] for h in old)
+                rc_impr = (abs(rc_old) - abs(rc_rec)) / max(1e-9, abs(rc_old))
+                obj_impr = (obj_old - obj_rec) / max(1.0, abs(obj_old))
+                if rc_impr < args.stall_rc_frac and obj_impr < args.stall_obj_frac:
+                    print(f"[EXACT] marginal returns stalled over "
+                          f"{args.stall_window_min:g} min: |min_rc| "
+                          f"{abs(rc_old):,.2f}->{abs(rc_rec):,.2f} "
+                          f"({100 * rc_impr:.1f}%), obj "
+                          f"{obj_old:,.2f}->{obj_rec:,.2f} "
+                          f"({100 * obj_impr:.4f}%) — stopping with an "
+                          "INCUMBENT (not a certificate)", flush=True)
+                    stop_reason = "stalled_marginal_returns"
+                    break
+            stall_hist.append((now, lp.objective, min_rc))
+        elif args.stall_window_min:
+            stall_hist.append((elapsed_offset + time.time() - t0,
+                               lp.objective, min_rc))
         added = 0
         for route in batch:
             cost = route["rc"] + sum(lp.trip_duals.get(t, 0.0) for t in route["trips"])
@@ -791,6 +819,19 @@ def main(argv=None) -> int:
         help="Trip-row sense in the exact-CG restricted master. Partition is "
              "the operational default; cover reproduces legacy campaigns.",
     )
+    parser.add_argument("--stall-window-min", type=float, default=None,
+                        help="Enable marginal-returns stopping: compare the "
+                             "best min_rc and LP objective of the most recent "
+                             "quarter-window against the quarter-window one "
+                             "full window ago; stop when both improved less "
+                             "than their thresholds and no artificials "
+                             "remain. Off by default.")
+    parser.add_argument("--stall-rc-frac", type=float, default=0.05,
+                        help="Relative |min_rc| improvement below which the "
+                             "pricing signal counts as stalled.")
+    parser.add_argument("--stall-obj-frac", type=float, default=1e-5,
+                        help="Relative LP-objective improvement below which "
+                             "the master counts as stalled.")
     parser.add_argument("--wall-limit-s", type=int, default=None,
                         help="Stop gracefully after this many seconds "
                              "(set below the Slurm limit so results get written).")
