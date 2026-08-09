@@ -162,7 +162,11 @@ def solve_restricted_master_lp(
     method: str = "highs-ds",
     coverage_sense: str = "cover",
     time_limit_s: float | None = None,
-    feasibility_tolerance: float = 1e-7,
+    # 1e-6, not 1e-7: HiGHS legitimately returns residuals just over 1e-7 on
+    # large resumed pools (observed 1.26e-7 at 29k columns), and on partition
+    # rows summing to 1.0 a 1e-6 residual moves the objective by <0.1 at our
+    # 1e5 cost scale — rejecting it turns a solved LP into master_failed.
+    feasibility_tolerance: float = 1e-6,
 ) -> RestrictedMasterLPResult:
     """Solve a covering or partitioning restricted-master LP.
 
