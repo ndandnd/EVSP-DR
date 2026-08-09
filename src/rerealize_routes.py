@@ -235,7 +235,16 @@ def rerealize_route(trip_seq, problem, arc, prices, g_kwh, charge_kw,
         used = [(j, x[x_idx[i, o, j]]) for j in range(len(opt["segments"]))
                 if x[x_idx[i, o, j]] > 1e-6]
         if not used:
-            used = [(0, 0.0)]  # pure wait: record one zero-kWh stop
+            # Pure wait — including zero-length windows (arrive == depart
+            # within grace), where the segment list is empty. One zero-kWh
+            # stop, floored so cet never lands past the latest departure.
+            t_wait = max(0.0, int(min(opt["arrive"], opt["depart"]) * 100) / 100)
+            route_nodes.append(opt["station"])
+            stops["stations"].append(opt["station"])
+            stops["cst"].append(t_wait)
+            stops["cet"].append(t_wait)
+            stops["kwh"].append(0.0)
+            continue
         for j, kwh in used:
             seg = opt["segments"][j]
             cst = round(seg["start"], 2)
