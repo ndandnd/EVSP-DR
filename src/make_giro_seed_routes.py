@@ -31,6 +31,7 @@ import pandas as pd
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 MASTER_CSV = DATA_DIR / "Par_VehicleDetails_Updated.csv"
 DEPOT_NODE = "PARX_0"
+MODEL_RATE_KW = 300.0  # duration-repair reference rate (see Recharge handling)
 STATION_BY_BASE = {"2190": "2190L_0", "2190L": "2190L_0", "4808": "4808_0",
                    "PARX": "PARX_1", "3127": "3127L_0", "3127L": "3127L_0",
                    "7880": "7880C_0", "7880C": "7880C_0", "JON": "JON_A_0",
@@ -138,8 +139,15 @@ def build_seeds(master, instance_csv: Path, out_path: Path):
                 node = _station_node(row.From1)
                 route_nodes.append(node)
                 charging["stations"].append(node)
-                charging["cst"].append(int(row.start_min))
-                charging["cet"].append(int(row.end_min))
+                cst = int(row.start_min)
+                # Hastus rounds recharge windows to whole minutes, so recorded
+                # kWh can imply >nominal rates (e.g. 72.2 kWh in "13 min" =
+                # 333 kW). Repair the duration to what the energy requires at
+                # the model rate; downstream validation still checks timing.
+                needed_min = float(row.recharge) / MODEL_RATE_KW * 60.0
+                cet = max(int(row.end_min), int(cst + needed_min + 0.999))
+                charging["cst"].append(cst)
+                charging["cet"].append(cet)
                 charging["kwh"].append(float(row.recharge))
         route_nodes.append(DEPOT_NODE)
         routes.append({
