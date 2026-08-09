@@ -312,8 +312,14 @@ def main(argv=None) -> int:
     out_routes, infeasible, planned = [], [], 0.0
     for r_i, route in enumerate(payload.get("routes", [])):
         trip_seq = [nd for nd in route.get("route", []) if isinstance(nd, int)]
-        record, cost_val, reason = rerealize_route(
-            trip_seq, problem, arc, prices, g_kwh, charge_kw, reserve_kwh)
+        try:
+            record, cost_val, reason = rerealize_route(
+                trip_seq, problem, arc, prices, g_kwh, charge_kw, reserve_kwh)
+        except Exception as exc:  # isolate: one bad route must not kill the file
+            import traceback
+            traceback.print_exc()
+            record, cost_val = None, None
+            reason = f"exception: {type(exc).__name__}: {exc}"
         if reason is not None:
             if reason == "MILP infeasible under physics":
                 # Probe the frontier: minimal battery or charger relaxation

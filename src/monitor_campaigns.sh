@@ -35,6 +35,14 @@ if [ -n "$OUTS" ]; then
 fi
 
 echo
+echo "--- exception identities in recent .err files ---"
+ERRS=$(find . -maxdepth 1 -name '*.err' -newermt "$SINCE" -size +0 2>/dev/null)
+if [ -n "$ERRS" ]; then
+  grep -hE '^[A-Za-z_.]+(Error|Exception|Exit)(:|$)' $ERRS 2>/dev/null |
+    sort | uniq -c | sort -rn | head -8
+fi
+
+echo
 echo "=== MIP verdicts: repaired (_rrz) vs pre-repair ==="
 python3 - <<'PY'
 import glob, json, re

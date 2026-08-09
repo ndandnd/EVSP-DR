@@ -19,6 +19,13 @@
 #SBATCH -n 1
 #SBATCH --mem=40G
 #SBATCH --partition=default_partition
+# An untimed job gets the PARTITION DEFAULT limit (killed all 40 tasks at
+# ~14h on first launch, verdict TIMEOUT). Ask for a week explicitly; the
+# stall-stop terminates runs long before that. If sbatch rejects this,
+# check `sinfo -p default_partition -o "%l"` (MaxTime) and override with
+# `sbatch -t <maxtime> submit_cg_bigtariffs.sub`. --resume makes
+# resubmission continue from the journals either way.
+#SBATCH -t 7-00:00:00
 #SBATCH --cpus-per-task=2
 #SBATCH --array=1-40
 #SBATCH --requeue

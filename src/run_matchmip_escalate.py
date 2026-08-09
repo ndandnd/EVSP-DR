@@ -130,6 +130,40 @@ def find_or_build_cover(row, dry, g_kwh=300.0):
     return hits[0] if hits else None
 
 
+def rerealized_giro_seed(csv: str, pool: Path):
+    """GIRO-duty partition for this instance, re-realized to pool physics.
+
+    A MATCHING cover may overlap trips, so it is not a partition-feasible
+    incumbent; the GIRO seed IS an exact partition by construction. Duties
+    the physics provably cannot carry are dropped (partial backbone), which
+    still anchors the MIP far below singleton soup.
+    """
+    name = csv.split("/")[-1][:-4]
+    seed = SRC / "results" / "giro_seeds" / f"{name}_giro_seed.json"
+    if not seed.exists():
+        rc = subprocess.run(
+            [sys.executable, "-u", str(SRC / "make_giro_seed_routes.py"),
+             "--instance", csv, "--out", str(seed)], cwd=SRC).returncode
+        if rc != 0 or not seed.exists():
+            print(f"[ORCH] GIRO seed generation failed for {name} (rc={rc})",
+                  flush=True)
+            return None
+    g_kwh = pool_physics(pool)
+    out = seed.with_name(f"{seed.stem}_rrz_g{int(g_kwh)}_orch.json")
+    if out.exists():
+        return out
+    rc = subprocess.run(
+        [sys.executable, "-u", str(SRC / "rerealize_routes.py"),
+         "--routes", str(seed), "--physics-from", str(pool),
+         "--instance", csv, "--prices", "hourly_prices_flat.csv",
+         "--out", str(out)], cwd=SRC).returncode
+    if rc not in (0, 3) or not out.exists():
+        print(f"[ORCH] seed re-realization failed (rc={rc}) — proceeding "
+              f"without seed", flush=True)
+        return None
+    return out
+
+
 def best_existing(pool: Path):
     best = None
     for out in glob.glob(str(pool).replace(".json", "_match_mip*.json")):
@@ -193,12 +227,16 @@ def main(argv=None) -> int:
                                          f"_match_mip_rrz_p{pass_no + 1}.json"))
             if out.exists():
                 continue
+            seed = rerealized_giro_seed(row["csv"], pool)
             print(f"[ORCH] {row['name']} pass {pass_no + 1}: MIP {budget}s "
-                  f"(best so far: {got})", flush=True)
+                  f"(best so far: {got}; seed: "
+                  f"{seed.name if seed else 'none'})", flush=True)
             cmd = [sys.executable, "-u", str(SRC / "run_exact_pool_mip.py"),
                    "--result", str(pool), "--extra-routes", str(cover),
                    "--timelimit", str(budget), "--threads", "8",
                    "--out", str(out)]
+            if seed is not None:
+                cmd += ["--extra-routes", str(seed)]
             rc = subprocess.run(cmd, cwd=SRC).returncode
             if rc != 0:
                 print(f"[ORCH] {row['name']}: MIP rc={rc}", flush=True)
