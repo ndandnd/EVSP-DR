@@ -222,6 +222,88 @@ class LegacyExactPoolMigrationTests(unittest.TestCase):
         self.assertEqual(self.journal.read_text(), original)
         self.assertFalse(self.destination.exists())
 
+    def test_losslessly_normalizes_complete_interior_dict_sequence(self):
+        preceding = (json.dumps(self.record1) + "\n").encode()
+        concatenated = (
+            json.dumps(self.record2) + json.dumps(self.record1) + "\n"
+        ).encode()
+        original = (
+            preceding + concatenated + (json.dumps(self.record2) + "\n").encode()
+        )
+        self.journal.write_bytes(original)
+
+        plan = self._plan()
+        preview_repairs = plan["repair_preview"]["journal"][
+            "lossless_interior_normalizations"
+        ]
+        self.assertEqual(len(preview_repairs), 1)
+        self.assertEqual(
+            preview_repairs[0]["original_offset"], len(preceding)
+        )
+        self.assertEqual(preview_repairs[0]["recovered_objects"], 2)
+        self.assertEqual(
+            preview_repairs[0]["original_line_sha256"],
+            hashlib.sha256(concatenated).hexdigest(),
+        )
+
+        attestation = apply_migration(plan)
+
+        self.assertEqual(self.journal.read_bytes(), original)
+        destination_journal = Path(str(self.destination) + ".columns.jsonl")
+        records = [
+            json.loads(line) for line in destination_journal.read_text().splitlines()
+        ]
+        self.assertEqual(
+            records, [self.record1, self.record2, self.record1, self.record2]
+        )
+        migrated = json.loads(self.destination.read_text())
+        self.assertEqual(migrated["columns"], 2)
+        self.assertFalse(migrated["certified_rc_optimal"])
+        self.assertIsNone(migrated["final_lp"])
+        self.assertTrue(attestation["repairs"]["journal"]["applied"])
+        self.assertEqual(
+            attestation["repairs"]["journal"][
+                "lossless_interior_normalizations"
+            ],
+            preview_repairs,
+        )
+        raw_journal = (
+            self.destination.parent
+            / f"{self.destination.name}.legacy_raw"
+            / "source_result.json.columns.jsonl"
+        )
+        self.assertEqual(raw_journal.read_bytes(), original)
+        repair = attestation["repairs"]["journal"]
+        changed_tail = raw_journal.parent / "journal_changed_tail.bin"
+        self.assertTrue(changed_tail.is_file())
+        self.assertEqual(changed_tail.stat().st_size, repair["original_tail_bytes"])
+        self.assertEqual(
+            hashlib.sha256(changed_tail.read_bytes()).hexdigest(),
+            repair["original_tail_sha256"],
+        )
+
+    def test_ambiguous_interior_sequences_still_fail_closed(self):
+        malformed_lines = (
+            json.dumps(self.record1) + '{"trips":',
+            json.dumps(self.record1) + "junk",
+            json.dumps(self.record1) + "[]",
+            json.dumps(self.record1) + json.dumps(self.record2) + "junk",
+            json.dumps(self.record1) + json.dumps(self.record2) + '{"trips":',
+        )
+        for index, malformed in enumerate(malformed_lines):
+            with self.subTest(malformed=malformed):
+                original = (
+                    malformed + "\n" + json.dumps(self.record2) + "\n"
+                )
+                self.journal.write_text(original)
+                self.destination = self.destination_dir / f"refused_{index}.json"
+
+                with self.assertRaisesRegex(DurableFileError, "before EOF"):
+                    self._plan()
+
+                self.assertEqual(self.journal.read_text(), original)
+                self.assertFalse(self.destination.exists())
+
     def test_missing_or_conflicting_witness_fails_closed(self):
         (self.results / "instance_witness.json").unlink()
         with self.assertRaisesRegex(MigrationError, "no authenticated"):

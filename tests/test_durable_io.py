@@ -45,6 +45,20 @@ class DurableIoTests(unittest.TestCase):
             with self.assertRaisesRegex(DurableFileError, "before EOF"):
                 read_jsonl_records(path, repair_trailing=True)
 
+    def test_current_resume_refuses_complete_concatenation_before_eof(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "columns.jsonl"
+            first = {"trips": [1], "cost": 1.0}
+            second = {"trips": [2], "cost": 2.0}
+            third = {"trips": [3], "cost": 3.0}
+            path.write_text(
+                json.dumps(first) + json.dumps(second) + "\n"
+                + json.dumps(third) + "\n"
+            )
+
+            with self.assertRaisesRegex(DurableFileError, "before EOF"):
+                read_jsonl_records(path, repair_trailing=True)
+
     def test_valid_final_jsonl_record_gets_newline_before_append(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "columns.jsonl"
