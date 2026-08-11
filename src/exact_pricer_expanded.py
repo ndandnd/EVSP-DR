@@ -1157,12 +1157,10 @@ def run_cg(args) -> dict:
                 route_trip_ids=[r["trips"] for r in routes],
             )
             lp = None
-            wall_exhausted_mid_master = False
             for method in method_order:
                 try:
                     method_limit = _remaining_wall_s(reserve_s=30.0)
                     if method_limit is not None and method_limit <= 0.0:
-                        wall_exhausted_mid_master = True
                         break
                     lp = solve_restricted_master_lp(
                         trip_ids=trips,
@@ -1178,11 +1176,13 @@ def run_cg(args) -> dict:
                     print(f"[EXACT] master failed with {method}: {exc}; "
                           "retrying with next method", flush=True)
             if lp is None:
-                if wall_exhausted_mid_master:
-                    # The wall budget expired between master attempts.  This is
-                    # a graceful timed stop, not evidence that every master
-                    # method failed; label it honestly so resumable wall stops
-                    # are never recorded as solver failures.
+                # Evaluate wall exhaustion at this exit path itself: the final
+                # method attempt may have consumed the remaining budget before
+                # raising, and there is no later loop iteration to notice.  A
+                # timed-out attempt is a graceful, resumable wall stop, not
+                # evidence that every master method failed.
+                remaining_wall_s = _remaining_wall_s(reserve_s=30.0)
+                if remaining_wall_s is not None and remaining_wall_s <= 0.0:
                     print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
                           "reached during the master solve — stopping "
                           "gracefully (partial result saved)", flush=True)

@@ -81,9 +81,17 @@ source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
 activated=""
 for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
   [ -n "$ENV" ] || continue
-  if conda activate "$ENV" 2>/dev/null; then activated=$ENV; break; fi
+  conda activate "$ENV" 2>/dev/null || continue
+  # An environment that activates but is not the validated Python 3.12
+  # runtime (e.g. a legacy 3.10 evsp_env) must not stop the search: keep
+  # trying later candidates instead of failing the whole job.
+  if python -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 12) else 1)' 2>/dev/null; then
+    activated=$ENV
+    break
+  fi
+  conda deactivate 2>/dev/null || true
 done
-[ -n "$activated" ] || fatal "no project conda environment could be activated"
+[ -n "$activated" ] || fatal "no Python 3.12 project conda environment could be activated"
 python -c 'import sys; assert sys.version_info[:2] == (3, 12), sys.version' \
   || fatal "recovery campaign requires the validated Python 3.12 runtime"
 echo "[RECOVERY] conda=$activated $(python -V 2>&1)"

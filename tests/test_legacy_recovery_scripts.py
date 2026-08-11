@@ -166,6 +166,71 @@ class LegacyRecoveryScriptTests(unittest.TestCase):
                 self.assertEqual(launcher["price_rel"], price)
                 self.assertEqual(launcher["source_cell"], f"{name}_{tag}")
 
+    def _extract_conda_selection_block(self) -> str:
+        match = re.search(
+            r'\nactivated=""\n.*?\ndone\n', self.job_text, re.DOTALL
+        )
+        self.assertIsNotNone(
+            match, "job script lost its conda environment selection loop"
+        )
+        return match.group(0)
+
+    def _run_conda_selection(self, *, env_pythons: dict) -> str:
+        """Execute the .sub's real selection loop with mocked conda/python.
+
+        ``env_pythons`` maps activatable environment names to the Python
+        version their activation would expose.  Returns the selected
+        environment name ('' when no candidate was accepted).
+        """
+
+        cases = "\n".join(
+            f'        {name}) CURRENT_PY={version}; return 0 ;;'
+            for name, version in env_pythons.items()
+        )
+        harness = (
+            "set -euo pipefail\n"
+            "CURRENT_PY=\"\"\n"
+            "conda() {\n"
+            "  case \"$1\" in\n"
+            "    activate)\n"
+            "      case \"$2\" in\n"
+            f"{cases}\n"
+            "        *) return 1 ;;\n"
+            "      esac ;;\n"
+            "    deactivate) CURRENT_PY=\"\"; return 0 ;;\n"
+            "  esac\n"
+            "}\n"
+            "python() { [ \"$CURRENT_PY\" = 3.12 ]; }\n"
+            + self._extract_conda_selection_block()
+            + "echo \"SELECTED=$activated\"\n"
+        )
+        completed = subprocess.run(
+            ["/bin/bash", "-c", harness], text=True, capture_output=True,
+            env={"PATH": "/usr/bin:/bin"},
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        match = re.search(r"SELECTED=(.*)", completed.stdout)
+        self.assertIsNotNone(match, completed.stdout)
+        return match.group(1).strip()
+
+    def test_conda_fallback_skips_activatable_non_python312_environment(self):
+        # A legacy 3.10 environment that activates first must not stop the
+        # search before the validated 3.12 candidate is tried.
+        selected = self._run_conda_selection(env_pythons={
+            "/home/nc437/evsp_env": "3.10",
+            "evsp_env312": "3.12",
+        })
+        self.assertEqual(selected, "evsp_env312")
+
+    def test_conda_fallback_selects_nothing_without_a_python312_candidate(self):
+        # With only non-3.12 environments activatable, the loop must leave
+        # $activated empty so the job fatals instead of running mismatched
+        # Python against the recovery artifacts.
+        selected = self._run_conda_selection(env_pythons={
+            "/home/nc437/evsp_env": "3.10",
+        })
+        self.assertEqual(selected, "")
+
     def test_launcher_defaults_to_dry_run_and_pins_both_commits(self):
         self.assertIn("SUBMIT=0", self.launcher_text)
         self.assertIn("--submit) SUBMIT=1", self.launcher_text)

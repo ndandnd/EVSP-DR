@@ -298,6 +298,18 @@ class ExactPricerResumeTests(unittest.TestCase):
             )
         self.assertEqual(result["stop_reason"], "wall_limit")
 
+    def test_wall_expiry_during_final_master_attempt_is_labeled_wall_limit(self):
+        # Boundary case: every method still receives a positive time limit
+        # (170s, 110s, 50s), so no mid-loop exhaustion break ever fires; the
+        # third and FINAL attempt consumes the remaining budget and then
+        # raises.  There is no later loop iteration to notice the expiry, so
+        # the exit path itself must classify this as a wall stop.
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self._run_master_labeling_case(
+                tmp, wall_limit_s=200, master_seconds_per_attempt=60.0,
+            )
+        self.assertEqual(result["stop_reason"], "wall_limit")
+
     def test_exhausting_all_master_methods_stays_labeled_master_failed(self):
         # With ample wall budget, failing every master method is a genuine
         # master failure and must keep its uncertified label.
