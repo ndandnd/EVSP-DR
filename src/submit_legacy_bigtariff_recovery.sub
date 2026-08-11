@@ -59,7 +59,10 @@ OUTDIR="$ROOT/src/results/legacy_recovery/job${ARRAY_JOB}/c${EXPECTED_COMMIT:0:1
 OUT="$OUTDIR/${NAME}_${TAG}.json"
 mkdir -p "$OUTDIR"
 command -v flock >/dev/null 2>&1 || fatal "flock is unavailable"
-exec 9>"$OUT.recovery.lock"
+# Open the lock fd in append mode: an O_TRUNC open would erase the current
+# owner's diagnostic record before this job even attempts (and loses) the
+# flock race.  The kernel lock, not the file contents, decides ownership.
+exec 9>>"$OUT.recovery.lock"
 if ! flock -n 9; then
   echo "[RECOVERY] SKIP_LOCKED another migration/pricer owns $OUT"
   exit 0
