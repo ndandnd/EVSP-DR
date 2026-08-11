@@ -161,6 +161,45 @@ class SnapshotControlTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "lost its iteration"):
                 prepare_snapshot_resume(snapshot, out, 60.0)
 
+    def test_incompatible_commit_does_not_repair_truncated_control(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            snapshot = folder / "source.m60.snapshot.json"
+            source_journal = folder / "source.columns.jsonl"
+            source_journal.write_text(
+                json.dumps({"trips": [1], "cost": 100000.0}) + "\n"
+            )
+            snapshot.write_text(json.dumps({
+                "csv": "sample.csv", "prices_csv": "prices.csv",
+                "soc_step": 5.0, "block_min": 10,
+                "g_kwh": 300.0, "charge_kw": 300.0,
+                "min_soc_frac": 0.0, "master_sense": "partition",
+                "trip_ids": [1], "columns": 1, "iterations": 1,
+                "wall_s": 3600.0, "columns_journal": str(source_journal),
+                "final": {"lp_obj": 100000.0, "route_weight": 1.0,
+                          "artificials": 0.0, "min_rc": -1.0},
+            }))
+            out = folder / "control.json"
+            prepare_snapshot_resume(
+                snapshot, out, 60.0, continuation_commit="commit-a"
+            )
+            out_journal = Path(str(out) + ".columns.jsonl")
+            with out_journal.open("ab") as handle:
+                handle.write(b'{"trips":')
+            iters = Path(str(out) + ".iters.csv")
+            with iters.open("ab") as handle:
+                handle.write(b"3700,2,")
+            journal_before = out_journal.read_bytes()
+            iters_before = iters.read_bytes()
+
+            with self.assertRaisesRegex(ValueError, "no artifact was repaired"):
+                prepare_snapshot_resume(
+                    snapshot, out, 60.0, continuation_commit="commit-b"
+                )
+
+            self.assertEqual(out_journal.read_bytes(), journal_before)
+            self.assertEqual(iters.read_bytes(), iters_before)
+
     def test_completion_requires_semantic_terminal_state(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "control.json"

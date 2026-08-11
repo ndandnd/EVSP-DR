@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from durable_io import (
+    DurableFileError,
     atomic_copy,
     atomic_write_json,
     atomic_write_text,
@@ -134,14 +135,6 @@ def prepare_snapshot_resume(snapshot: Path, out: Path,
     source_journal_sha = _sha256(source_journal)
     status_path_existed = out.exists()
     iteration_rows = []
-    if iters_path.exists() and iters_path.stat().st_size:
-        iteration_rows = load_iteration_log(
-            iters_path, repair_trailing=True
-        )
-    # Preparation writes exactly one synthetic anchor.  A second valid data
-    # row proves that exact pricing has begun, even if a hard preemption occurs
-    # before the first periodic status checkpoint updates stop_reason.
-    progress_started = len(iteration_rows) > 1
     existing = None
     if valid_json_object(out, ("stop_reason", "columns_journal")):
         with open(out) as fh:
@@ -164,11 +157,6 @@ def prepare_snapshot_resume(snapshot: Path, out: Path,
                 "its immutable source journal as a prefix; preserve it for "
                 "diagnosis and use a new output path"
             )
-        # A hard preemption may truncate only the last append. Preserve every
-        # complete record and refuse interior corruption.
-        read_jsonl_records(
-            out_journal, repair_trailing=True, collect=False
-        )
         if not iters_path.is_file():
             # Status is published after the initial journal copy but before
             # the synthetic anchor. Recover only that one provable preparation
@@ -183,6 +171,23 @@ def prepare_snapshot_resume(snapshot: Path, out: Path,
         prior_commit = parent.get("continuation_commit")
         if (continuation_commit is not None
                 and prior_commit != continuation_commit):
+            # Do not repair artifacts from a different code lineage merely to
+            # decide whether they can be replaced.  A malformed trajectory is
+            # ambiguous and therefore requires a new output path.
+            prior_rows = []
+            if iters_path.exists() and iters_path.stat().st_size:
+                try:
+                    prior_rows = load_iteration_log(
+                        iters_path, repair_trailing=False
+                    )
+                except DurableFileError as exc:
+                    raise ValueError(
+                        f"existing control {out} has an incompatible commit "
+                        "and a malformed trajectory; no artifact was repaired"
+                    ) from exc
+            # Preparation writes exactly one synthetic anchor.  A second valid
+            # data row proves that exact pricing has begun.
+            progress_started = len(prior_rows) > 1
             if (existing.get("stop_reason") == "prepared_snapshot_resume"
                     and not progress_started
                     and _sha256(out_journal) == source_journal_sha):
@@ -200,6 +205,17 @@ def prepare_snapshot_resume(snapshot: Path, out: Path,
             f"control status {out} is missing or corrupt while persisted "
             "control artifacts exist; preserve them for diagnosis and use a "
             "new output path"
+        )
+
+    if existing is not None:
+        # Source identity and continuation commit are now authenticated.  Only
+        # at this point may a hard-preemption tail be repaired.
+        if iters_path.exists() and iters_path.stat().st_size:
+            iteration_rows = load_iteration_log(
+                iters_path, repair_trailing=True
+            )
+        read_jsonl_records(
+            out_journal, repair_trailing=True, collect=False
         )
 
     initializing = existing is None

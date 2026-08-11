@@ -47,6 +47,8 @@ from durable_io import (
     DurableFileError,
     atomic_copy,
     atomic_write_json,
+    exclusive_output_lock,
+    flush_and_fsync,
     read_jsonl_records,
     valid_json_object,
 )
@@ -470,6 +472,7 @@ def load_iteration_log(path: Path, *, repair_trailing: bool) -> list[list[str]]:
                 f"{path} has unexpected iteration CSV header at byte "
                 f"{header_offset}: {decoded_header!r}"
             )
+        last_valid_had_newline = header.endswith(b"\n")
         while True:
             offset = fh.tell()
             line = fh.readline()
@@ -523,39 +526,196 @@ def load_iteration_log(path: Path, *, repair_trailing: bool) -> list[list[str]]:
         if repair_offset is not None:
             with open(path, "r+b") as fh:
                 fh.truncate(repair_offset)
-                fh.flush()
-                os.fsync(fh.fileno())
-        elif rows and not last_valid_had_newline:
+                flush_and_fsync(fh)
+        elif not last_valid_had_newline:
             with open(path, "ab") as fh:
                 fh.write(b"\n")
-                fh.flush()
-                os.fsync(fh.fileno())
+                flush_and_fsync(fh)
     return rows
+
+
+def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
+    """Describe why persisted exact-CG state cannot belong to this run.
+
+    This check deliberately depends only on the status and immutable model
+    inputs.  It must run before a journal or iteration log is repaired so an
+    incompatible or unidentified artifact is never modified as a side effect
+    of a failed ``--resume`` attempt.
+    """
+
+    if not isinstance(status, dict):
+        return ["status is missing, unreadable, or not a JSON object"]
+    mismatches = []
+    expected = {
+        "csv": args.csv,
+        "prices_csv": args.prices_csv,
+        "soc_step": args.soc_step,
+        "block_min": args.block_min,
+        "g_kwh": args.g_kwh,
+        "charge_kw": args.charge_kw,
+        "min_soc_frac": args.min_soc_frac,
+        "master_sense": args.master_sense,
+    }
+    for key, value in expected.items():
+        observed = status.get(key)
+        if isinstance(value, float):
+            try:
+                matches = math.isclose(
+                    float(observed), value, rel_tol=0.0, abs_tol=1e-9
+                )
+            except (TypeError, ValueError):
+                matches = False
+        else:
+            matches = observed == value
+        if not matches:
+            mismatches.append(
+                f"{key} differs (saved={observed!r}, current={value!r})"
+            )
+    if status.get("trip_ids") != trips:
+        mismatches.append("trip_ids differ from the current instance")
+    prior_provenance = status.get("provenance") or {}
+    if not isinstance(prior_provenance, dict):
+        mismatches.append("saved provenance is not a JSON object")
+        prior_provenance = {}
+    for key in ("instance_sha256", "prices_sha256"):
+        saved = prior_provenance.get(key)
+        current = provenance.get(key)
+        if saved != current:
+            mismatches.append(
+                f"{key} differs or is missing "
+                f"(saved={saved!r}, current={current!r})"
+            )
+    saved_commit = prior_provenance.get("git_commit")
+    current_commit = provenance.get("git_commit")
+    parent = status.get("resume_parent") or {}
+    if not isinstance(parent, dict):
+        mismatches.append("saved resume_parent is not a JSON object")
+        parent = {}
+    if (str(parent.get("schema", "")).startswith(
+            "evsp-dr-legacy-exact-pool-migration")
+            and (not saved_commit or not current_commit)):
+        mismatches.append(
+            "attested legacy migration is missing saved or current "
+            "git_commit identity"
+        )
+    if bool(saved_commit) != bool(current_commit):
+        mismatches.append(
+            "git_commit identity is present on only one side of resume "
+            f"(saved={saved_commit!r}, current={current_commit!r})"
+        )
+    elif (saved_commit and current_commit
+          and saved_commit != current_commit):
+        mismatches.append(
+            "git_commit differs; continue through an explicit, attested "
+            f"migration (saved={saved_commit}, current={current_commit})"
+        )
+    return mismatches
+
+
+def load_column_pool(records: list[dict], trip_ids: list[int]) -> dict:
+    """Validate journal records and retain the cheapest realization per set."""
+
+    pool: dict[frozenset, dict] = {}
+    allowed = set(trip_ids)
+    for index, record in enumerate(records, start=1):
+        record_trips = record.get("trips")
+        raw_cost = record.get("cost")
+        if not isinstance(record_trips, list):
+            raise DurableFileError(
+                f"column journal record {index} has no trips list"
+            )
+        if not record_trips and allowed:
+            raise DurableFileError(
+                f"column journal record {index} contains no trips"
+            )
+        try:
+            cost = float(raw_cost)
+        except (TypeError, ValueError) as exc:
+            raise DurableFileError(
+                f"column journal record {index} has a non-numeric cost"
+            ) from exc
+        if not math.isfinite(cost):
+            raise DurableFileError(
+                f"column journal record {index} has a non-finite cost"
+            )
+        try:
+            unique_trips = set(record_trips)
+        except TypeError as exc:
+            raise DurableFileError(
+                f"column journal record {index} contains an unhashable trip"
+            ) from exc
+        if len(record_trips) != len(unique_trips):
+            raise DurableFileError(
+                f"column journal record {index} repeats a trip"
+            )
+        unknown = [trip for trip in record_trips if trip not in allowed]
+        if unknown:
+            raise DurableFileError(
+                f"column journal record {index} contains trips outside the "
+                f"current instance: {unknown[:10]}"
+            )
+        key = frozenset(record_trips)
+        if key not in pool or cost < float(pool[key]["cost"]) - 1e-9:
+            pool[key] = record
+    return pool
+
+
+def resume_pool_mismatches(status, pool: dict) -> list[str]:
+    """Validate status claims that require the repaired journal contents."""
+
+    mismatches = []
+    try:
+        recorded_columns = int(status.get("columns", 0))
+    except (TypeError, ValueError):
+        recorded_columns = -1
+    if recorded_columns < 0:
+        mismatches.append("saved column count is invalid")
+    elif recorded_columns > len(pool):
+        mismatches.append(
+            f"saved status records {recorded_columns} columns but the journal "
+            f"contains only {len(pool)} unique incidences"
+        )
+    pool_keys = set(pool)
+    final_lp = status.get("final_lp") or {}
+    if not isinstance(final_lp, dict):
+        mismatches.append("saved final_lp is not a JSON object")
+        return mismatches
+    positive_routes = final_lp.get("positive_routes", [])
+    if not isinstance(positive_routes, list):
+        mismatches.append("saved final_lp positive_routes is not a list")
+        return mismatches
+    for route in positive_routes:
+        if not isinstance(route, dict):
+            mismatches.append("saved final_lp contains a non-object route")
+            break
+        try:
+            route_key = frozenset(route.get("trips", []))
+        except TypeError:
+            mismatches.append("saved final_lp route has invalid trips")
+            break
+        if route_key not in pool_keys:
+            mismatches.append(
+                "journal does not contain every positive route in final_lp"
+            )
+            break
+    return mismatches
 
 
 def run_cg(args) -> dict:
     t0 = time.time()
     prior_status = None
-    if args.resume and args.out and Path(args.out).exists():
+    out_path = Path(args.out) if args.out else None
+    journal_path = Path(str(args.out) + ".columns.jsonl") if args.out else None
+    iters_path = Path(str(args.out) + ".iters.csv") if args.out else None
+    if args.resume and out_path and out_path.exists():
         try:
-            with open(args.out) as fh:
+            with open(out_path) as fh:
                 prior_status = json.load(fh)
         except (OSError, ValueError):
             prior_status = None
     problem = build_problem(DATA_DIR, args.csv,
                             max_station_to_trip_wait_min=HORIZON_MIN)
-    prices = load_station_hourly_prices(DATA_DIR / args.prices_csv, CHARGING_STATIONS)
-    net = ExpandedNetwork(problem, prices,
-                          soc_step=args.soc_step, block_min=args.block_min,
-                          g_kwh=args.g_kwh, charge_kw=args.charge_kw,
-                          reserve_kwh=args.min_soc_frac * args.g_kwh)
     provenance = _provenance(args)
-    journal_path = Path(str(args.out) + ".columns.jsonl") if args.out else None
-    build_s = time.time() - t0
-    print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
-          f"(soc_step={args.soc_step}, block={args.block_min}min) "
-          f"built in {build_s:.1f}s", flush=True)
-
     trips = list(problem.trips)
     pool: dict[frozenset, dict] = {}
     history = []
@@ -566,19 +726,34 @@ def run_cg(args) -> dict:
     stall_count = 0
     method_order = ("highs-ds", "highs-ipm", "highs")
 
-    journal_record_count = 0
+    persisted_paths = [
+        path for path in (out_path, journal_path, iters_path)
+        if path is not None and path.exists()
+    ]
+    if persisted_paths and not args.resume:
+        rendered = ", ".join(str(path) for path in persisted_paths)
+        raise DurableFileError(
+            f"refusing to overwrite persisted exact-CG artifacts without "
+            f"--resume: {rendered}; use a new --out path"
+        )
+
+    identity_mismatches = resume_identity_mismatches(
+        prior_status, args, trips, provenance
+    )
+    if args.resume and persisted_paths and identity_mismatches:
+        raise DurableFileError(
+            f"refusing --resume for {journal_path} before modifying persisted "
+            "artifacts: " + "; ".join(identity_mismatches)
+        )
+
     if args.resume and journal_path and journal_path.exists():
         # A hard preemption can interrupt only the last append.  Repair that
-        # narrow case before reopening the journal; never hide interior
-        # corruption.
+        # narrow case only after status/input identity has been established;
+        # never hide interior corruption.
         journal_records = read_jsonl_records(
             journal_path, repair_trailing=True
         )
-        journal_record_count = len(journal_records)
-        for rec in journal_records:
-            key = frozenset(rec["trips"])
-            if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
-                pool[key] = rec
+        pool = load_column_pool(journal_records, trips)
         print(f"[EXACT] resumed {len(pool)} columns from {journal_path.name}",
               flush=True)
     # Do not open append handles until resume identity and any interrupted
@@ -588,13 +763,11 @@ def run_cg(args) -> dict:
     # Per-iteration stopping-rule instrumentation: append-only CSV so the
     # timing campaign can reconstruct the full LP trajectory with wall time.
     iters_csv = None
-    iters_path = None
     iters_fresh = False
     iteration_rows = []
     elapsed_offset = 0.0
     iteration_offset = 0
-    if args.out:
-        iters_path = Path(str(args.out) + ".iters.csv")
+    if out_path:
         iters_fresh = not (args.resume and iters_path.exists()
                            and iters_path.stat().st_size > 0)
         if not iters_fresh:
@@ -615,70 +788,20 @@ def run_cg(args) -> dict:
                     if math.isfinite(float(fields[5]))
                 ]
 
-    # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
-    # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.
-    requested_snapshot_marks = sorted(
-        float(m) for m in str(args.snapshot_at_minutes or "").split(",")
-        if m.strip())
-    snapshot_marks = []
-
-    def _compatible_prior_status(status):
-        if not isinstance(status, dict):
-            return False
-        expected = {
-            "csv": args.csv,
-            "prices_csv": args.prices_csv,
-            "soc_step": args.soc_step,
-            "block_min": args.block_min,
-            "g_kwh": args.g_kwh,
-            "charge_kw": args.charge_kw,
-            "min_soc_frac": args.min_soc_frac,
-            "master_sense": args.master_sense,
-        }
-        for key, value in expected.items():
-            observed = status.get(key)
-            if isinstance(value, float):
-                try:
-                    if not math.isclose(float(observed), value,
-                                        rel_tol=0.0, abs_tol=1e-9):
-                        return False
-                except (TypeError, ValueError):
-                    return False
-            elif observed != value:
-                return False
-        if status.get("trip_ids") != trips:
-            return False
-        prior_provenance = status.get("provenance") or {}
-        for key in ("instance_sha256", "prices_sha256"):
-            # A persisted pool cannot be resumed safely without an exact
-            # identity match for both model inputs.  Missing legacy hashes are
-            # intentionally incompatible rather than implicitly trusted.
-            if prior_provenance.get(key) != provenance.get(key):
-                return False
-        detail = status.get("final_lp") or {}
-        pool_keys = set(pool)
-        for route in detail.get("positive_routes", []):
-            if frozenset(route.get("trips", [])) not in pool_keys:
-                return False
-        return True
-
-    compatible_prior = _compatible_prior_status(prior_status)
-    persisted_iteration_rows = bool(iteration_rows)
-    persisted_status = bool(args.out and Path(args.out).exists())
-    if (args.resume
-            and (journal_record_count or persisted_iteration_rows
-                 or persisted_status)
-            and not compatible_prior):
-        if iters_csv:
-            iters_csv.close()
-        if journal:
-            journal.close()
+    pool_mismatches = (
+        resume_pool_mismatches(prior_status, pool)
+        if args.resume and persisted_paths else []
+    )
+    if pool_mismatches:
         raise DurableFileError(
-            f"refusing --resume for {journal_path}: persisted status, journal, "
-            "or iteration history exists but the prior status is missing or "
-            "incompatible with the current inputs, trip set, pool, and model "
-            "parameters"
+            f"refusing --resume for {journal_path}: "
+            + "; ".join(pool_mismatches)
         )
+
+    compatible_prior = bool(
+        args.resume and persisted_paths
+        and not identity_mismatches and not pool_mismatches
+    )
     if compatible_prior:
         try:
             elapsed_offset = max(
@@ -689,6 +812,30 @@ def run_cg(args) -> dict:
             )
         except (TypeError, ValueError):
             pass
+
+    network_t0 = time.time()
+    prices = load_station_hourly_prices(
+        DATA_DIR / args.prices_csv, CHARGING_STATIONS
+    )
+    net = ExpandedNetwork(
+        problem, prices,
+        soc_step=args.soc_step,
+        block_min=args.block_min,
+        g_kwh=args.g_kwh,
+        charge_kw=args.charge_kw,
+        reserve_kwh=args.min_soc_frac * args.g_kwh,
+    )
+    build_s = time.time() - network_t0
+    print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
+          f"(soc_step={args.soc_step}, block={args.block_min}min) "
+          f"built in {build_s:.1f}s", flush=True)
+
+    # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
+    # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.
+    requested_snapshot_marks = sorted(
+        float(m) for m in str(args.snapshot_at_minutes or "").split(",")
+        if m.strip())
+    snapshot_marks = []
 
     # Reconcile immutable snapshots only after the compatible prior status has
     # contributed its elapsed time.  This also handles the narrow publication
@@ -797,6 +944,7 @@ def run_cg(args) -> dict:
         print(f"[EXACT] recovered interrupted snapshot publication at "
               f"{mark:g} min: {snap_json.name}", flush=True)
 
+    resume_parent = (prior_status or {}).get("resume_parent")
     if args.resume and compatible_prior and args.out:
         # A terminal status from the previous allocation must not remain
         # visible while this allocation is actively extending its journal.
@@ -815,21 +963,51 @@ def run_cg(args) -> dict:
         atomic_write_json(Path(args.out), resume_status)
         print("[EXACT] published live resume status before extending the "
               "journal", flush=True)
+    elif args.out and not persisted_paths:
+        # A fresh run can be preempted after its first journal append but
+        # before the periodic checkpoint.  Publish identity first so that
+        # journal-ahead-of-status is safely resumable from iteration zero.
+        initial_status = {
+            "csv": args.csv,
+            "prices_csv": args.prices_csv,
+            "soc_step": args.soc_step,
+            "block_min": args.block_min,
+            "g_kwh": args.g_kwh,
+            "charge_kw": args.charge_kw,
+            "min_soc_frac": args.min_soc_frac,
+            "master_sense": args.master_sense,
+            "trip_ids": trips,
+            "iterations": 0,
+            "attempt_iterations": 0,
+            "certified_rc_optimal": False,
+            "final": None,
+            "columns": 0,
+            "columns_journal": str(journal_path),
+            "wall_s": time.time() - t0,
+            "attempt_wall_s": time.time() - t0,
+            "stop_reason": "initializing",
+            "history_tail": [],
+            "final_lp": None,
+            "final_lp_source": None,
+            "provenance": provenance,
+            "resume_parent": None,
+        }
+        atomic_write_json(Path(args.out), initial_status)
+        print("[EXACT] published initial identity before first journal append",
+              flush=True)
 
     journal = open(journal_path, "a") if journal_path else None
     if iters_path is not None:
         iters_csv = open(iters_path, "a")
         if iters_fresh:
             iters_csv.write(ITERATION_LOG_HEADER + "\n")
-            iters_csv.flush()
+            flush_and_fsync(iters_csv)
     if (compatible_prior
             and isinstance(prior_status.get("final_lp"), dict)):
         last_good_lp_detail = dict(prior_status["final_lp"])
         last_good_lp_detail["source"] = "compatible_prior_result"
         print("[EXACT] retained compatible prior final LP as a resume "
               "fallback", flush=True)
-    resume_parent = (prior_status or {}).get("resume_parent")
-
     def _serialize_lp(lp_result, lp_routes, *, source, iteration, pool_columns):
         return {
             "objective": lp_result.objective,
@@ -877,8 +1055,7 @@ def run_cg(args) -> dict:
             return
         _write_partial(f"snapshot_m{int(mark)}")
         if journal:
-            journal.flush()
-            os.fsync(journal.fileno())
+            flush_and_fsync(journal)
         if journal_path and journal_path.exists():
             atomic_copy(journal_path, snap_journal)
             # Validate the frozen copy before publishing the status JSON that
@@ -910,7 +1087,7 @@ def run_cg(args) -> dict:
                 journal.write(json.dumps(record) + "\n")
             seeds_added += 1
     if journal and seeds_added:
-        journal.flush()
+        flush_and_fsync(journal)
     print(
         f"[EXACT] direct-singleton seed: {len(singleton_seeds)}/{len(trips)} "
         f"trips feasible ({seeds_added} added to pool)",
@@ -939,6 +1116,7 @@ def run_cg(args) -> dict:
             "certified_rc_optimal": certified,
             "final": history[-1] if history else None,
             "columns": len(pool),
+            "columns_journal": str(journal_path) if journal_path else None,
             "wall_s": elapsed_offset + time.time() - t0,
             "attempt_wall_s": time.time() - t0,
             "stop_reason": status, "history_tail": history[-5:],
@@ -1025,7 +1203,7 @@ def run_cg(args) -> dict:
                             f"{global_iteration},"
                             f"{lp.objective:.6f},{lp.route_weight:.9f},"
                             f"{lp.artificial_total:.6f},{min_rc:.6f},{len(pool)}\n")
-            iters_csv.flush()
+            flush_and_fsync(iters_csv)
         while snapshot_marks and (elapsed_offset + time.time() - t0) >= snapshot_marks[0] * 60:
             mark = snapshot_marks.pop(0)
             _freeze_snapshot(mark)
@@ -1069,6 +1247,7 @@ def run_cg(args) -> dict:
             stall_hist.append((elapsed_offset + time.time() - t0,
                                lp.objective, min_rc))
         added = 0
+        added_charge_starts = []
         for route in batch:
             cost = route["rc"] + sum(lp.trip_duals.get(t, 0.0) for t in route["trips"])
             key = frozenset(route["trips"])
@@ -1085,10 +1264,12 @@ def run_cg(args) -> dict:
                 if journal:
                     journal.write(json.dumps(record) + "\n")
                 added += 1
+                added_charge_starts.append(route["charges_started"])
         if journal and added:
-            journal.flush()
-            if route["charges_started"] > MAX_DAILY_RECHARGES:
-                print(f"[EXACT] note: column uses {route['charges_started']} charge "
+            flush_and_fsync(journal)
+            max_charge_starts = max(added_charge_starts)
+            if max_charge_starts > MAX_DAILY_RECHARGES:
+                print(f"[EXACT] note: column uses {max_charge_starts} charge "
                       f"starts (> cap {MAX_DAILY_RECHARGES}).", flush=True)
         if added == 0:
             # Every returned incidence already in the pool at equal cost: the
@@ -1147,7 +1328,7 @@ def run_cg(args) -> dict:
                             journal.write(json.dumps(record) + "\n")
                         added_div += 1
             if journal:
-                journal.flush()
+                flush_and_fsync(journal)
             print(f"[EXACT] diversify: {args.diversify_rounds} rounds added "
                   f"{added_div} complementary columns", flush=True)
 
@@ -1291,9 +1472,22 @@ def main(argv=None) -> int:
                              "continue from that pool.")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
-    result = run_cg(args)
     if args.out:
-        atomic_write_json(args.out, result)
+        lock_metadata = {
+            "pid": os.getpid(),
+            "host": os.uname().nodename,
+            "started_epoch": time.time(),
+            "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
+            "slurm_array_job_id": os.environ.get("SLURM_ARRAY_JOB_ID"),
+            "slurm_array_task_id": os.environ.get("SLURM_ARRAY_TASK_ID"),
+            "slurm_restart_count": os.environ.get("SLURM_RESTART_COUNT"),
+            "expected_commit": os.environ.get("EVSP_EXPECTED_COMMIT"),
+        }
+        with exclusive_output_lock(args.out, lock_metadata):
+            result = run_cg(args)
+            atomic_write_json(args.out, result)
+    else:
+        result = run_cg(args)
     return 0
 
 

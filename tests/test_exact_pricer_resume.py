@@ -112,7 +112,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             journal.write_text(original)
 
             with self.assertRaisesRegex(
-                    DurableFileError, "prior status is missing or incompatible"):
+                    DurableFileError, "before modifying persisted artifacts"):
                 self._run_with_lightweight_problem(self._args(out))
 
             self.assertEqual(journal.read_text(), original)
@@ -125,21 +125,85 @@ class ExactPricerResumeTests(unittest.TestCase):
             journal.write_text(json.dumps(self._record()) + "\n")
 
             with self.assertRaisesRegex(
-                    DurableFileError, "prior status is missing or incompatible"):
+                    DurableFileError, "before modifying persisted artifacts"):
                 self._run_with_lightweight_problem(self._args(out))
 
-    def test_resume_rejects_a_changed_input_hash(self):
+    def test_attested_legacy_resume_requires_commit_identity(self):
+        status = self._status()
+        status["resume_parent"] = {
+            "schema": "evsp-dr-legacy-exact-pool-migration-v1"
+        }
+        args = self._args(Path("run.json"))
+
+        mismatches = exact.resume_identity_mismatches(
+            status,
+            args,
+            [],
+            {
+                "instance_sha256": "instance-hash",
+                "prices_sha256": "prices-hash",
+            },
+        )
+
+        self.assertIn(
+            "attested legacy migration is missing saved or current "
+            "git_commit identity",
+            mismatches,
+        )
+
+    def test_resume_rejects_changed_hash_without_repairing_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"
             status = self._status()
             status["provenance"]["prices_sha256"] = "changed-price-hash"
             out.write_text(json.dumps(status))
             journal = Path(str(out) + ".columns.jsonl")
-            journal.write_text(json.dumps(self._record()) + "\n")
+            journal_original = (
+                json.dumps(self._record()) + "\n" + '{"trips":'
+            )
+            journal.write_text(journal_original)
+            iters = Path(str(out) + ".iters.csv")
+            iters_original = (
+                exact.ITERATION_LOG_HEADER + "\n"
+                "10,1,100000,1,0,-1,1\n"
+                "11,2,"
+            )
+            iters.write_text(iters_original)
 
             with self.assertRaisesRegex(
-                    DurableFileError, "prior status is missing or incompatible"):
+                    DurableFileError, "prices_sha256 differs"):
                 self._run_with_lightweight_problem(self._args(out))
+
+            self.assertEqual(journal.read_text(), journal_original)
+            self.assertEqual(iters.read_text(), iters_original)
+
+    def test_resume_rejects_status_ahead_of_missing_journal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            status = self._status()
+            status["columns"] = 3
+            out.write_text(json.dumps(status))
+
+            with self.assertRaisesRegex(
+                    DurableFileError, "journal contains only 0"):
+                self._run_with_lightweight_problem(self._args(out))
+
+            self.assertFalse(Path(str(out) + ".columns.jsonl").exists())
+
+    def test_fresh_run_publishes_identity_before_first_append(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            args = self._args(out)
+            args.wall_limit_s = 1
+
+            self._run_with_lightweight_problem(args)
+
+            initial = json.loads(out.read_text())
+            self.assertEqual(initial["stop_reason"], "initializing")
+            self.assertEqual(initial["columns"], 0)
+            self.assertEqual(
+                initial["provenance"]["instance_sha256"], "instance-hash"
+            )
 
     def test_resume_accepts_journal_ahead_of_last_status_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
