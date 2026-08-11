@@ -1,0 +1,58 @@
+#!/bin/bash
+# One strict two-stage MIP on one immutable CG snapshot. No --requeue:
+# Gurobi branch-and-bound is not checkpointed, so this stays on Scaglione.
+#SBATCH -J MC-pool
+#SBATCH -o src/cluster_logs/overnight_correctness/%x_%j.out
+#SBATCH -e src/cluster_logs/overnight_correctness/%x_%j.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
+#SBATCH --partition=scaglione
+#SBATCH -t 06:20:00
+#SBATCH --no-requeue
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+if [ "$#" -ne 4 ]; then
+  echo "usage: sbatch $0 SNAPSHOT.json MIP_OUT.json MIP_SECONDS EXPECTED_COMMIT" >&2
+  exit 2
+fi
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+SNAPSHOT=$1
+OUTPUT=$2
+MIP_SECONDS=$3
+EXPECTED_COMMIT=$4
+if [[ "$SNAPSHOT" != /* ]]; then SNAPSHOT="$ROOT/$SNAPSHOT"; fi
+if [[ "$OUTPUT" != /* ]]; then OUTPUT="$ROOT/$OUTPUT"; fi
+cd "$ROOT/src"
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "tracked worktree changes would mix campaign code" >&2
+  exit 2
+fi
+if [ "$(git rev-parse HEAD)" != "$EXPECTED_COMMIT" ]; then
+  echo "checkout drifted from campaign commit $EXPECTED_COMMIT" >&2
+  exit 2
+fi
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  if [ -z "$ENV" ]; then continue; fi
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+if [ -z "$activated" ]; then
+  conda env list >&2
+  exit 1
+fi
+python -c "import gurobipy" 2>/dev/null
+export OMP_NUM_THREADS=8 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+python -u run_snapshot_pool_mip.py \
+  --snapshot "$SNAPSHOT" --out "$OUTPUT" \
+  --timelimit "$MIP_SECONDS" --threads 8

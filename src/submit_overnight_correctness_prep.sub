@@ -1,0 +1,68 @@
+#!/bin/bash
+# Compute-side preparation job. All journal validation, hashing, archiving,
+# and worker submission happens inside this allocation.
+#SBATCH -J OCprep
+#SBATCH -D /home/nc437/EVSP-DR
+#SBATCH -o OCprep_%j.out
+#SBATCH -e OCprep_%j.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=16G
+#SBATCH --partition=default_partition
+#SBATCH -t 12:00:00
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "usage: sbatch $0 EXPECTED_COMMIT" >&2
+  echo "preferred: bash src/launch_overnight_correctness.sh" >&2
+  exit 2
+fi
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+cd "$ROOT"
+
+# Slurm has to open stdout/stderr before the script can create directories.
+# It therefore opens two temporary root-level files; move the open files at
+# once so the checkout remains tidy.  The descriptors continue writing to the
+# moved files.  A requeue gets a distinct restart suffix.
+mkdir -p src/cluster_logs/overnight_correctness
+restart=${SLURM_RESTART_COUNT:-0}
+for stream in out err; do
+  temporary="$ROOT/OCprep_${SLURM_JOB_ID}.${stream}"
+  permanent="$ROOT/src/cluster_logs/overnight_correctness/OCprep_${SLURM_JOB_ID}_r${restart}.${stream}"
+  if [ -e "$temporary" ]; then mv -f "$temporary" "$permanent"; fi
+done
+
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "[PREP] tracked worktree changes exist; refusing a mixed-code campaign" >&2
+  exit 2
+fi
+expected_commit=$1
+if [ "$(git rev-parse HEAD)" != "$expected_commit" ]; then
+  echo "[PREP] checkout is not at requested commit $expected_commit" >&2
+  exit 2
+fi
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  if [ -z "$ENV" ]; then continue; fi
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+if [ -z "$activated" ]; then
+  conda env list >&2
+  exit 1
+fi
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export EVSP_DR_ROOT="$ROOT"
+export EVSP_EXPECTED_COMMIT="$expected_commit"
+export EVSP_CAMPAIGN_ID="job${SLURM_JOB_ID}"
+
+echo "[PREP] job=${SLURM_JOB_ID} restart=${restart} commit=${expected_commit} env=${activated}"
+bash src/prepare_overnight_correctness.sh

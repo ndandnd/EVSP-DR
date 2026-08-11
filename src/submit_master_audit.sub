@@ -1,0 +1,53 @@
+#!/bin/bash
+# One immutable-pool LP audit. Launch through launch_overnight_correctness.sh,
+# which supplies a semantic job name and creates the log directory.
+#SBATCH -J LA-pool
+#SBATCH -o src/cluster_logs/overnight_correctness/%x_%j.out
+#SBATCH -e src/cluster_logs/overnight_correctness/%x_%j.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=24G
+#SBATCH --partition=default_partition
+#SBATCH -t 02:00:00
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+if [ "$#" -ne 3 ]; then
+  echo "usage: sbatch $0 SOURCE_POOL.json AUDIT_OUT.json EXPECTED_COMMIT" >&2
+  exit 2
+fi
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+SOURCE=$1
+OUTPUT=$2
+EXPECTED_COMMIT=$3
+if [[ "$SOURCE" != /* ]]; then SOURCE="$ROOT/$SOURCE"; fi
+if [[ "$OUTPUT" != /* ]]; then OUTPUT="$ROOT/$OUTPUT"; fi
+cd "$ROOT/src"
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "tracked worktree changes would mix campaign code" >&2
+  exit 2
+fi
+if [ "$(git rev-parse HEAD)" != "$EXPECTED_COMMIT" ]; then
+  echo "checkout drifted from campaign commit $EXPECTED_COMMIT" >&2
+  exit 2
+fi
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  if [ -z "$ENV" ]; then continue; fi
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+if [ -z "$activated" ]; then
+  conda env list >&2
+  exit 1
+fi
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+python -u audit_exact_master_pool.py \
+  --result "$SOURCE" --out "$OUTPUT" --method-time-limit-s 1800

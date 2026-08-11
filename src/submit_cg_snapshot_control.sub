@@ -1,0 +1,58 @@
+#!/bin/bash
+# Isolated no-stall continuation from one immutable six-hour pool to 72h.
+#SBATCH -J CC-pool
+#SBATCH -o src/cluster_logs/overnight_correctness/%x_%j.out
+#SBATCH -e src/cluster_logs/overnight_correctness/%x_%j.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=48G
+#SBATCH --partition=default_partition
+#SBATCH -t 3-02:00:00
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+if [ "$#" -ne 4 ]; then
+  echo "usage: sbatch $0 SNAPSHOT.json SNAPSHOT_MINUTES CONTROL_OUT.json EXPECTED_COMMIT" >&2
+  exit 2
+fi
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+SNAPSHOT=$1
+SNAPSHOT_MINUTES=$2
+OUTPUT=$3
+EXPECTED_COMMIT=$4
+if [[ "$SNAPSHOT" != /* ]]; then SNAPSHOT="$ROOT/$SNAPSHOT"; fi
+if [[ "$OUTPUT" != /* ]]; then OUTPUT="$ROOT/$OUTPUT"; fi
+cd "$ROOT/src"
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "tracked worktree changes would mix campaign code" >&2
+  exit 2
+fi
+if [ "$(git rev-parse HEAD)" != "$EXPECTED_COMMIT" ]; then
+  echo "checkout drifted from campaign commit $EXPECTED_COMMIT" >&2
+  exit 2
+fi
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  if [ -z "$ENV" ]; then continue; fi
+  if conda activate "$ENV" 2>/dev/null; then activated="$ENV"; break; fi
+done
+if [ -z "$activated" ]; then
+  conda env list >&2
+  exit 1
+fi
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+python -u run_cg_snapshot_control.py \
+  --snapshot "$SNAPSHOT" \
+  --snapshot-minutes "$SNAPSHOT_MINUTES" \
+  --out "$OUTPUT" \
+  --total-wall-s 259200 \
+  --snapshot-at-minutes 720,1440,2880,4320 \
+  --expected-commit "$EXPECTED_COMMIT"

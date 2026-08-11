@@ -23,11 +23,32 @@ does not prove that a binary exact partition exists.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
+import platform
+import subprocess
 import time
 from collections import Counter
 from pathlib import Path
+
+from durable_io import atomic_write_json, read_jsonl_records
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def git_value(*args) -> str | None:
+    result = subprocess.run(
+        ["git", *args], cwd=Path(__file__).resolve().parent,
+        text=True, capture_output=True, check=False,
+    )
+    return result.stdout.strip() if result.returncode == 0 else None
 
 
 def resolve_pool_journal(result_path: Path, status: dict) -> Path:
@@ -73,12 +94,10 @@ def load_pool(result_path: Path):
 
     journal_path = resolve_pool_journal(result_path, status)
     pool = {}
-    with open(journal_path) as fh:
-        for line in fh:
-            rec = json.loads(line)
-            key = frozenset(rec["trips"])
-            if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
-                pool[key] = rec
+    for rec in read_jsonl_records(journal_path, repair_trailing=False):
+        key = frozenset(rec["trips"])
+        if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
+            pool[key] = rec
     trips = status.get("trip_ids")
     if trips is None:
         raise SystemExit(f"{result_path} lacks trip_ids; rerun with current code.")
@@ -142,15 +161,19 @@ def greedy_partition_start_indices(
 
 
 def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
-                            horizon_min, rate_grace_min=1.0):
+                            horizon_min, arrival_grace_min=1.0,
+                            rate_grace_min=0.0):
     """Replay an injected route against the model graph and pool physics.
 
     Checks every consecutive arc exists in the restricted adjacency, times
     chain (fixed trip times; charging inside its [cst, cet] window at <= the
-    pool's charger power, with a small grace for Hastus minute rounding),
+    pool's charger power.  A small arrival-time grace accommodates Hastus
+    minute rounding, but it does not create extra charging energy),
     and continuous SOC never drops below the reserve. Returns None if valid,
     else a short reason.
     """
+    from audit_giro_known_columns import DEPOT
+
     arc = {}
     for u, arcs in problem.adjacency.items():
         for v, travel, dh, _kind in arcs:
@@ -159,14 +182,43 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     nodes = record.get("route_nodes") or []
     if len(nodes) < 3:
         return "route_nodes missing"
+    if nodes[0] != DEPOT or nodes[-1] != DEPOT:
+        return "route must start and end at the depot"
     stops = record.get("charging_stops") or {}
-    st_list = list(zip(stops.get("stations", []), stops.get("cst", []),
-                       stops.get("cet", []), stops.get("kwh", [])))
+    stop_fields = [list(stops.get(name, []))
+                   for name in ("stations", "cst", "cet", "kwh")]
+    if len({len(values) for values in stop_fields}) != 1:
+        return "charging stop fields have different lengths"
+    st_list = list(zip(*stop_fields))
+    normalized_stops = []
+    for station, cst, cet, kwh in st_list:
+        try:
+            cst_value = float(cst)
+            cet_value = float(cet)
+            kwh_value = float(kwh)
+        except (TypeError, ValueError):
+            return f"non-numeric charging stop at {station}"
+        if not all(math.isfinite(value)
+                   for value in (cst_value, cet_value, kwh_value)):
+            return f"non-finite charging stop at {station}"
+        if cet_value < cst_value - 1e-6:
+            return f"charging stop at {station} ends before it starts"
+        if cst_value < -1e-6:
+            return f"charging stop at {station} starts before the horizon"
+        if cet_value > float(horizon_min) + 1e-6:
+            return f"charging stop at {station} ends past the horizon"
+        if kwh_value < -1e-6:
+            return f"negative charge {kwh_value:.1f} kWh at {station}"
+        normalized_stops.append(
+            (station, cst_value, cet_value, kwh_value)
+        )
+    st_list = normalized_stops
     si = 0
     soc = float(g_kwh)
     time_now = None  # depot departure is flexible
     prev = nodes[0]
-    for v in nodes[1:]:
+    for position, v in enumerate(nodes[1:], start=1):
+        is_last = position == len(nodes) - 1
         key = (prev, v) if not (isinstance(prev, str) and isinstance(v, str)
                                 and prev == v) else None
         if key is not None and key not in arc:
@@ -183,20 +235,33 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
             if soc < reserve_kwh - 1e-6:
                 return f"SOC {soc:.1f} < reserve after trip {v}"
             time_now = problem.end_min[v]
-        elif v != nodes[-1] or si < len(st_list):
+        elif is_last:
+            if time_now is not None:
+                time_now += travel
+        else:
             if si < len(st_list) and st_list[si][0] == v:
                 _stn, cst, cet, kwh = st_list[si]
                 si += 1
-                if time_now is not None and time_now + travel > cst + rate_grace_min + 1e-6:
+                if (time_now is not None
+                        and time_now + travel
+                        > float(cst) + arrival_grace_min + 1e-6):
                     return f"reaches {v} at {time_now + travel:.0f} after cst {cst}"
                 window = max(0.0, float(cet) - float(cst)) + rate_grace_min
                 if kwh > window * charge_kw / 60.0 + 1e-6:
                     return (f"charge {kwh:.1f} kWh exceeds {charge_kw:.0f} kW "
                             f"in {window:.0f} min at {v}")
-                soc = min(float(g_kwh), soc + float(kwh))
+                if soc + float(kwh) > float(g_kwh) + 1e-6:
+                    return (f"charge at {v} raises SOC to "
+                            f"{soc + float(kwh):.1f} > capacity {g_kwh:.1f}")
+                soc += float(kwh)
                 time_now = float(cet)
-            # station visit without a recorded stop = pure wait; allowed
+            elif time_now is not None:
+                # A station visit without a recorded stop is a pure-wait
+                # waypoint.  At minimum its inbound travel must advance time.
+                time_now += travel
         prev = v
+    if si != len(st_list):
+        return f"{len(st_list) - si} charging stop record(s) were not consumed"
     if time_now is not None and time_now > horizon_min + 1e-6:
         return f"ends at {time_now:.0f} past horizon"
     return None
@@ -243,7 +308,7 @@ def merge_extra_routes(routes, trips, extra_paths, prices_csv, status=None):
                 continue
             cost = calculate_truck_route_cost_accurate(
                 route, BUS_COST_KX, depot_curve,
-                charge_rate_kw=CHARGE_RATE_KW,
+                charge_rate_kw=charge_kw,
                 station_hourly_prices=prices,
                 charge_start_cost=CHARGE_START_COST,
             )
@@ -289,6 +354,33 @@ def finite_solver_value(value):
     return number
 
 
+def fleet_bound_proves_incumbent(
+    incumbent_buses: int,
+    lower_bound: float | None,
+    _status_code: int,
+) -> bool:
+    """Whether a minimization bound certifies the integer fleet incumbent."""
+
+    return (
+        lower_bound is not None
+        and math.isfinite(lower_bound)
+        and math.ceil(lower_bound - 1e-6) >= int(incumbent_buses)
+    )
+
+
+def optimal_scope(*, two_stage: bool, fleet_proven: bool,
+                  cost_stage_executed: bool, final_status: int) -> str:
+    """Name exactly what, if anything, the final status proves."""
+
+    if not two_stage:
+        return "full_pool_objective" if final_status == 2 else "none"
+    if not fleet_proven:
+        return "none"
+    if cost_stage_executed and final_status == 2:
+        return "full_pool_lexicographic"
+    return "fleet_only"
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--result", type=Path, required=True,
@@ -318,8 +410,8 @@ def main(argv=None) -> int:
         "--two-stage",
         action="store_true",
         help="Lexicographic solve: stage 1 minimizes the bus count alone; "
-             "stage 2 fixes that count as a budget and minimizes total cost. "
-             "Splits --timelimit roughly 40/60 between the stages.",
+             "stage 1 may use the full --timelimit. Stage 2 minimizes route "
+             "cost only if stage 1 proves the fleet early and time remains.",
     )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
@@ -327,10 +419,33 @@ def main(argv=None) -> int:
     if args.out is not None and args.out.resolve() == args.result.resolve():
         parser.error("--out must not overwrite --result")
 
+    # Bind the solve to immutable bytes.  If a caller mistakenly gives a live
+    # journal and it changes while being loaded, refuse the ambiguous result.
+    with open(args.result) as fh:
+        source_status = json.load(fh)
+    source_journal = resolve_pool_journal(args.result, source_status)
+    source_result_sha256 = file_sha256(args.result)
+    source_journal_sha256 = file_sha256(source_journal)
+    extra_route_sources = [
+        {"path": str(path), "sha256": file_sha256(path)}
+        for path in (args.extra_routes or [])
+    ]
+
     status, routes, trips = load_pool(args.result)
+    if (file_sha256(args.result) != source_result_sha256
+            or file_sha256(source_journal) != source_journal_sha256):
+        raise SystemExit(
+            "[MIP] source status or column journal changed while the pool was "
+            "being loaded; use an immutable snapshot and retry"
+        )
     if args.extra_routes:
         routes = merge_extra_routes(routes, trips, args.extra_routes,
                                     status.get("prices_csv"), status)
+        for recorded, path in zip(extra_route_sources, args.extra_routes):
+            if file_sha256(path) != recorded["sha256"]:
+                raise SystemExit(
+                    f"[MIP] extra route source changed while loading: {path}"
+                )
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
     seed_partition = singleton_partition_indices(routes, trips)
@@ -371,6 +486,18 @@ def main(argv=None) -> int:
 
     import gurobipy as gp
     from gurobipy import GRB
+    from config import BUS_COST_KX
+
+    # Gurobi's documented optimization status codes are stable integers.  Use
+    # the numbers here so reporting also works across installations where a
+    # newer symbolic constant is absent from an older gurobipy build.
+    status_names = {
+        1: "LOADED", 2: "OPTIMAL", 3: "INFEASIBLE", 4: "INF_OR_UNBD",
+        5: "UNBOUNDED", 6: "CUTOFF", 7: "ITERATION_LIMIT",
+        8: "NODE_LIMIT", 9: "TIME_LIMIT", 10: "SOLUTION_LIMIT",
+        11: "INTERRUPTED", 12: "NUMERIC", 13: "SUBOPTIMAL",
+        14: "INPROGRESS", 15: "USER_OBJ_LIMIT",
+    }
 
     t0 = time.time()
     m = gp.Model("exact_pool_mip")
@@ -394,67 +521,173 @@ def main(argv=None) -> int:
         else:
             m.addConstr(expr == 1, name=f"part_{t}")
     two_stage_detail = None
+    cost_stage_executed = False
+    cost_stage_has_solution = False
     if args.two_stage:
-        # Stage 1: pure fleet minimization. Charging never reaches 1% of a bus,
-        # but an explicit count objective lets Gurobi prove the fleet bound
-        # without dragging cost fractions through the branch-and-bound tree.
-        m.Params.TimeLimit = max(60, int(args.timelimit * 0.4))
-        m.setObjective(gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE)
+        # Fleet recovery is the primary experiment.  Stage 1 may consume the
+        # complete budget.  Cost optimization is allowed only after the
+        # integer fleet count has been proved, using whatever time remains.
+        m.Params.TimeLimit = args.timelimit
+        m.setObjective(
+            gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE
+        )
         m.optimize()
         if m.SolCount == 0:
-            raise SystemExit("[MIP] two-stage: stage 1 found no feasible fleet "
-                             "solution within its time slice")
+            raise SystemExit(
+                "[MIP] two-stage: stage 1 found no feasible fleet solution "
+                "within the time limit"
+            )
         stage1_buses = int(round(m.ObjVal))
         stage1_bound = finite_solver_value(m.ObjBound)
+        stage1_status = int(m.Status)
+        stage1_gap = finite_solver_value(m.MIPGap)
+        fleet_proven = fleet_bound_proves_incumbent(
+            stage1_buses, stage1_bound, stage1_status
+        )
         stage1_solution = [i for i in range(len(routes)) if a[i].X > 0.5]
-        print(f"[MIP] stage 1: fleet={stage1_buses} "
-              f"(bound {stage1_bound}, gap {finite_solver_value(m.MIPGap)})")
-        # Stage 2: cost minimization under the proven/incumbent fleet budget.
-        m.addConstr(gp.quicksum(a[i] for i in range(len(routes)))
-                    <= stage1_buses, name="fleet_budget")
-        for index in range(len(routes)):
-            a[index].Start = 1.0 if index in set(stage1_solution) else 0.0
-        m.Params.TimeLimit = max(60, int(args.timelimit * 0.6))
+        stage1_runtime_s = time.time() - t0
+        remaining_s = max(0.0, float(args.timelimit) - stage1_runtime_s)
+        print(
+            f"[MIP] stage 1: fleet={stage1_buses} "
+            f"(bound {stage1_bound}, gap {stage1_gap}, "
+            f"proven={fleet_proven}, remaining={remaining_s:.1f}s)"
+        )
         two_stage_detail = {
             "stage1_buses": stage1_buses,
             "stage1_bound": stage1_bound,
-            "stage1_runtime_s": time.time() - t0,
+            "stage1_status": stage1_status,
+            "stage1_status_name": status_names.get(
+                stage1_status, f"UNKNOWN_{stage1_status}"
+            ),
+            "stage1_gap": stage1_gap,
+            "fleet_proven": fleet_proven,
+            "stage1_runtime_s": stage1_runtime_s,
+            "stage2_executed": False,
+            "stage2_has_solution": False,
+            "stage2_skip_reason": None,
         }
-    m.setObjective(gp.quicksum(routes[i]["cost"] * a[i]
-                               for i in range(len(routes))), GRB.MINIMIZE)
-    m.optimize()
+        if fleet_proven and remaining_s >= 1.0:
+            m.addConstr(
+                gp.quicksum(a[i] for i in range(len(routes))) == stage1_buses,
+                name="fleet_budget",
+            )
+            stage1_set = set(stage1_solution)
+            for index in range(len(routes)):
+                a[index].Start = 1.0 if index in stage1_set else 0.0
+            variable_costs = [
+                route["cost"] - BUS_COST_KX for route in routes
+            ]
+            m.setObjective(
+                gp.quicksum(variable_costs[i] * a[i]
+                            for i in range(len(routes))),
+                GRB.MINIMIZE,
+            )
+            m.Params.TimeLimit = remaining_s
+            m.optimize()
+            cost_stage_executed = True
+            cost_stage_has_solution = m.SolCount > 0
+            two_stage_detail["stage2_executed"] = True
+            two_stage_detail["stage2_has_solution"] = cost_stage_has_solution
+        elif not fleet_proven:
+            two_stage_detail["stage2_skip_reason"] = "fleet_not_proven"
+        else:
+            two_stage_detail["stage2_skip_reason"] = "no_time_remaining"
+    else:
+        m.setObjective(
+            gp.quicksum(routes[i]["cost"] * a[i]
+                        for i in range(len(routes))),
+            GRB.MINIMIZE,
+        )
+        m.optimize()
+        fleet_proven = int(m.Status) == 2
 
-    status_code = int(m.Status)
-    # Gurobi's documented optimization status codes are stable integers.  Use
-    # the numbers here so reporting also works across installations where a
-    # newer symbolic constant is absent from an older gurobipy build.
-    status_names = {
-        1: "LOADED", 2: "OPTIMAL", 3: "INFEASIBLE", 4: "INF_OR_UNBD",
-        5: "UNBOUNDED", 6: "CUTOFF", 7: "ITERATION_LIMIT",
-        8: "NODE_LIMIT", 9: "TIME_LIMIT", 10: "SOLUTION_LIMIT",
-        11: "INTERRUPTED", 12: "NUMERIC", 13: "SUBOPTIMAL",
-        14: "INPROGRESS", 15: "USER_OBJ_LIMIT",
-    }
+    if args.two_stage and not cost_stage_executed:
+        chosen = list(stage1_solution)
+        status_code = stage1_status
+        solver_obj = float(stage1_buses)
+        solver_bound = stage1_bound
+        mip_gap = stage1_gap
+    elif args.two_stage and not cost_stage_has_solution:
+        # The proved fleet incumbent is still a valid deliverable even if the
+        # second optimizer fails to accept its warm start before interruption.
+        chosen = list(stage1_solution)
+        status_code = int(m.Status)
+        solver_obj = float(sum(
+            routes[i]["cost"] - BUS_COST_KX for i in chosen
+        ))
+        solver_bound = finite_solver_value(m.ObjBound)
+        mip_gap = (
+            max(0.0, solver_obj - solver_bound) / max(1.0, abs(solver_obj))
+            if solver_bound is not None else None
+        )
+    else:
+        status_code = int(m.Status)
+        chosen = [i for i in range(len(routes)) if a[i].X > 0.5] \
+            if m.SolCount > 0 else []
+        solver_obj = finite_solver_value(m.ObjVal) if m.SolCount > 0 else None
+        solver_bound = finite_solver_value(m.ObjBound)
+        mip_gap = finite_solver_value(m.MIPGap) if m.SolCount > 0 else None
+
     status_name = status_names.get(status_code, f"UNKNOWN_{status_code}")
-    chosen = [i for i in range(len(routes)) if a[i].X > 0.5] \
-        if m.SolCount > 0 else []
     over = {t: c for t, c in Counter(
         t for i in chosen for t in routes[i]["trips"]).items() if c > 1}
-    mip_obj = finite_solver_value(m.ObjVal) if m.SolCount > 0 else None
-    mip_bound = finite_solver_value(m.ObjBound)
-    mip_gap = finite_solver_value(m.MIPGap) if m.SolCount > 0 else None
+    mip_obj = (float(sum(routes[i]["cost"] for i in chosen))
+               if chosen else None)
+    if cost_stage_executed and solver_bound is not None and two_stage_detail:
+        mip_bound = (BUS_COST_KX * two_stage_detail["stage1_buses"]
+                     + solver_bound)
+        mip_bound_scope = "fixed_proven_fleet_variable_cost"
+    elif args.two_stage and solver_bound is not None:
+        # Route variable costs are nonnegative, so this is a valid but coarse
+        # lower bound on the full lexicographic objective.
+        mip_bound = BUS_COST_KX * solver_bound
+        mip_bound_scope = "fleet_count_only_coarse_cost_bound"
+    else:
+        mip_bound = solver_bound
+        mip_bound_scope = "full_pool_objective"
+    stage2_absolute_gap = (
+        max(0.0, solver_obj - solver_bound)
+        if (cost_stage_executed and solver_obj is not None
+            and solver_bound is not None) else None
+    )
+    if two_stage_detail is not None:
+        two_stage_detail.update({
+            "stage2_status": status_code if cost_stage_executed else None,
+            "stage2_status_name": status_name if cost_stage_executed else None,
+            "stage2_variable_obj": solver_obj if cost_stage_executed else None,
+            "stage2_variable_bound": (solver_bound
+                                      if cost_stage_executed else None),
+            "stage2_absolute_gap": stage2_absolute_gap,
+            "stage2_reported_incumbent_source": (
+                "stage2_solver" if cost_stage_has_solution
+                else ("stage1_fallback" if cost_stage_executed else None)
+            ),
+        })
     summary = {
         "source_result": str(args.result),
         "instance": status["csv"],
         "partitioning": not args.cover,
         "status": status_code,
         "status_name": status_name,
+        "optimal_scope": optimal_scope(
+            two_stage=args.two_stage,
+            fleet_proven=fleet_proven,
+            cost_stage_executed=cost_stage_executed,
+            final_status=status_code,
+        ),
         "mip_obj": mip_obj,
         "mip_bound": mip_bound,
+        "mip_bound_scope": mip_bound_scope,
         "mip_gap": mip_gap,
+        "absolute_cost_gap": stage2_absolute_gap,
         "buses": len(chosen),
-        "charging_cost": (mip_obj - 100000.0 * len(chosen))
+        "fleet_proven": fleet_proven,
+        "fleet_bound": (two_stage_detail.get("stage1_bound")
+                        if two_stage_detail else None),
+        "charging_cost": (mip_obj - BUS_COST_KX * len(chosen))
                          if chosen and mip_obj is not None else None,
+        "variable_route_cost": (mip_obj - BUS_COST_KX * len(chosen))
+                               if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
         "runtime_s": time.time() - t0,
         "pool_columns": len(routes),
@@ -462,12 +695,42 @@ def main(argv=None) -> int:
         "mip_start_used": bool(mip_start),
         "mip_start_buses": len(mip_start) if mip_start else None,
         "pool_preparation": status.get("pool_preparation"),
+        "source_cg_wall_s": status.get("wall_s"),
+        "source_cg_iterations": status.get("iterations"),
+        "source_snapshot_mark_minutes": status.get(
+            "snapshot_mark_minutes"
+        ),
         "two_stage": two_stage_detail,
         "pricer_provenance": status.get("provenance"),
+        "physics": {
+            "soc_step": status.get("soc_step"),
+            "block_min": status.get("block_min"),
+            "g_kwh": status.get("g_kwh"),
+            "charge_kw": status.get("charge_kw"),
+            "min_soc_frac": status.get("min_soc_frac"),
+            "prices_csv": status.get("prices_csv"),
+        },
+        "source_result_sha256": source_result_sha256,
+        "source_journal": str(source_journal),
+        "source_journal_sha256": source_journal_sha256,
+        "extra_route_sources": extra_route_sources,
+        "mip_provenance": {
+            "git_commit": git_value("rev-parse", "HEAD"),
+            "git_branch": git_value("branch", "--show-current"),
+            "git_dirty": bool(git_value("status", "--porcelain")),
+            "python": platform.python_version(),
+            "gurobi": ".".join(str(value) for value in gp.gurobi.version()),
+            "arguments": {
+                "timelimit": args.timelimit,
+                "mipgap": args.mipgap,
+                "threads": args.threads,
+                "two_stage": args.two_stage,
+                "cover": args.cover,
+            },
+        },
         "selected_routes": [routes[i] for i in chosen],
     }
-    with open(out, "w") as fh:
-        json.dump(summary, fh, indent=1)
+    atomic_write_json(out, summary)
     print(f"[MIP] status={status_name}({status_code}) buses={len(chosen)} "
           f"obj={summary['mip_obj']} gap={summary['mip_gap']} -> {out}")
     return 0

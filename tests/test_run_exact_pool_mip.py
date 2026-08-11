@@ -5,21 +5,39 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import ModuleType, SimpleNamespace
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from run_exact_pool_mip import (  # noqa: E402
+    fleet_bound_proves_incumbent,
     finite_solver_value,
     greedy_partition_start_indices,
     load_pool,
     main,
+    optimal_scope,
     singleton_partition_indices,
+    validate_injected_route,
 )
+from audit_giro_known_columns import DEPOT  # noqa: E402
 
 
 class ExactPoolMipTests(unittest.TestCase):
+    @staticmethod
+    def validation_problem(*, final_trip_end=100.0, return_minutes=10.0):
+        return SimpleNamespace(
+            adjacency={
+                DEPOT: [(1, 0.0, 0.0, "depot_trip")],
+                1: [(DEPOT, return_minutes, 0.0, "trip_depot")],
+            },
+            start_min={1: 0.0},
+            end_min={1: final_trip_end},
+            trip_energy={1: 0.0},
+        )
+
     def test_singletons_are_a_strict_partition_seed(self):
         routes = [
             {"trips": [1, 2], "cost": 1.0},
@@ -33,6 +51,41 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertIsNone(finite_solver_value(float("inf")))
         self.assertIsNone(finite_solver_value(1.7976931348623157e308))
         self.assertEqual(finite_solver_value(42.5), 42.5)
+
+    def test_integer_fleet_bound_can_prove_timeout_incumbent(self):
+        self.assertTrue(fleet_bound_proves_incumbent(40, 39.001, 9))
+        self.assertFalse(fleet_bound_proves_incumbent(40, 38.999, 9))
+        self.assertFalse(fleet_bound_proves_incumbent(40, None, 2))
+        self.assertTrue(fleet_bound_proves_incumbent(40, 40.0, 2))
+
+    def test_optimal_scope_never_overstates_unproven_fleet(self):
+        self.assertEqual(
+            optimal_scope(
+                two_stage=True,
+                fleet_proven=False,
+                cost_stage_executed=False,
+                final_status=9,
+            ),
+            "none",
+        )
+        self.assertEqual(
+            optimal_scope(
+                two_stage=True,
+                fleet_proven=True,
+                cost_stage_executed=False,
+                final_status=2,
+            ),
+            "fleet_only",
+        )
+        self.assertEqual(
+            optimal_scope(
+                two_stage=True,
+                fleet_proven=True,
+                cost_stage_executed=True,
+                final_status=2,
+            ),
+            "full_pool_lexicographic",
+        )
 
     def test_greedy_start_replaces_singletons_with_disjoint_routes(self):
         routes = [
@@ -132,7 +185,276 @@ class ExactPoolMipTests(unittest.TestCase):
                         "--result", str(result),
                         "--require-singleton-partition",
                         "--validate-only",
-                    ])
+                ])
+
+    def test_validator_counts_final_travel_to_depot_against_horizon(self):
+        problem = self.validation_problem(final_trip_end=100.0,
+                                          return_minutes=11.0)
+        verdict = validate_injected_route(
+            problem,
+            {"route_nodes": [DEPOT, 1, DEPOT], "charging_stops": {}},
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve_kwh=0.0,
+            horizon_min=110.0,
+        )
+        self.assertRegex(verdict, r"ends at 111.*past horizon")
+
+    def test_validator_rejects_unconsumed_charging_stop(self):
+        problem = self.validation_problem()
+        verdict = validate_injected_route(
+            problem,
+            {
+                "route_nodes": [DEPOT, 1, DEPOT],
+                "charging_stops": {
+                    "stations": ["unused"],
+                    "cst": [10.0],
+                    "cet": [11.0],
+                    "kwh": [1.0],
+                },
+            },
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve_kwh=0.0,
+            horizon_min=200.0,
+        )
+        self.assertRegex(verdict, r"1 charging stop record.*not consumed")
+
+    def test_validator_requires_depot_endpoints(self):
+        problem = self.validation_problem()
+        verdict = validate_injected_route(
+            problem,
+            {"route_nodes": ["elsewhere", 1, DEPOT], "charging_stops": {}},
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve_kwh=0.0,
+            horizon_min=200.0,
+        )
+        self.assertEqual(verdict, "route must start and end at the depot")
+
+    def test_validator_does_not_turn_arrival_grace_into_free_energy(self):
+        problem = SimpleNamespace(
+            adjacency={
+                DEPOT: [(1, 0.0, 0.0, "depot_trip")],
+                1: [("station", 0.0, 0.0, "trip_station")],
+                "station": [(DEPOT, 0.0, 0.0, "station_depot")],
+            },
+            start_min={1: 0.0},
+            end_min={1: 10.0},
+            trip_energy={1: 10.0},
+        )
+        verdict = validate_injected_route(
+            problem,
+            {
+                "route_nodes": [DEPOT, 1, "station", DEPOT],
+                "charging_stops": {
+                    "stations": ["station"],
+                    "cst": [10.0],
+                    "cet": [20.0],
+                    "kwh": [55.0],
+                },
+            },
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve_kwh=0.0,
+            horizon_min=100.0,
+        )
+        self.assertRegex(verdict, r"55.0 kWh exceeds 300 kW in 10 min")
+
+    def test_validator_rejects_charging_timestamp_outside_horizon(self):
+        problem = self.validation_problem()
+        verdict = validate_injected_route(
+            problem,
+            {
+                "route_nodes": [DEPOT, 1, DEPOT],
+                "charging_stops": {
+                    "stations": ["unused"],
+                    "cst": [-1.0],
+                    "cet": [1.0],
+                    "kwh": [0.0],
+                },
+            },
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve_kwh=0.0,
+            horizon_min=200.0,
+        )
+        self.assertRegex(verdict, r"starts before the horizon")
+
+    def run_fake_gurobi_mip(self, stages):
+        class FakeExpression:
+            def __init__(self, items):
+                self.items = list(items)
+
+            def __eq__(self, other):
+                return ("eq", self, other)
+
+            def __ge__(self, other):
+                return ("ge", self, other)
+
+        class FakeVariable:
+            def __init__(self, index):
+                self.index = index
+                self.Start = 0.0
+                self.X = 0.0
+
+            def __rmul__(self, coefficient):
+                return ("term", float(coefficient), self.index)
+
+        class FakeModel:
+            def __init__(self, _name):
+                self.Params = SimpleNamespace()
+                self.variables = {}
+                self.optimize_calls = 0
+                self.objectives = []
+                self.SolCount = 0
+                self.ObjVal = 0.0
+                self.ObjBound = 0.0
+                self.MIPGap = 0.0
+                self.Status = 1
+
+            def addVars(self, count, **_kwargs):
+                self.variables = {i: FakeVariable(i) for i in range(count)}
+                return self.variables
+
+            def addConstr(self, constraint, **_kwargs):
+                return constraint
+
+            def setObjective(self, expression, _sense):
+                self.objectives.append(expression)
+
+            def optimize(self):
+                stage = stages[self.optimize_calls]
+                self.optimize_calls += 1
+                self.Status = stage["status"]
+                self.SolCount = stage.get("solutions", 1)
+                self.ObjVal = stage["objective"]
+                self.ObjBound = stage["bound"]
+                self.MIPGap = stage.get("gap", 0.0)
+                selected = set(stage.get("selected", []))
+                for index, variable in self.variables.items():
+                    variable.X = 1.0 if index in selected else 0.0
+
+        models = []
+        fake_gp = ModuleType("gurobipy")
+
+        def make_model(name):
+            model = FakeModel(name)
+            models.append(model)
+            return model
+
+        fake_gp.Model = make_model
+        fake_gp.quicksum = lambda values: FakeExpression(list(values))
+        fake_gp.GRB = SimpleNamespace(BINARY=1, MINIMIZE=1)
+        fake_gp.gurobi = SimpleNamespace(version=lambda: (12, 0, 0))
+
+        temporary = tempfile.TemporaryDirectory()
+        folder = Path(temporary.name)
+        result = folder / "pool.snapshot.json"
+        journal = Path(str(result) + ".columns.jsonl")
+        routes = [
+            {"trips": [1], "cost": 100003.0},
+            {"trips": [2], "cost": 100004.0},
+        ]
+        journal.write_text("".join(json.dumps(route) + "\n" for route in routes))
+        result.write_text(json.dumps({
+            "csv": "tiny.csv",
+            "prices_csv": "hourly_prices_flat.csv",
+            "soc_step": 5.0,
+            "block_min": 10,
+            "g_kwh": 300.0,
+            "charge_kw": 300.0,
+            "min_soc_frac": 0.0,
+            "wall_s": 21637.5,
+            "iterations": 1200,
+            "snapshot_mark_minutes": 360.0,
+            "trip_ids": [1, 2],
+            "columns_journal": str(journal),
+        }))
+        out = folder / "mip.json"
+        with patch.dict(sys.modules, {"gurobipy": fake_gp}):
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = main([
+                    "--result", str(result), "--two-stage",
+                    "--timelimit", "60", "--out", str(out),
+                ])
+        payload = json.loads(out.read_text())
+        return temporary, models[0], payload, rc
+
+    def test_unproven_fleet_uses_full_primary_stage_and_skips_cost_stage(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 2.0,
+            "bound": 0.9,
+            "gap": 0.55,
+            "selected": [0, 1],
+        }])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 1)
+        self.assertFalse(payload["fleet_proven"])
+        self.assertFalse(payload["two_stage"]["stage2_executed"])
+        self.assertEqual(payload["status_name"], "TIME_LIMIT")
+        self.assertEqual(payload["optimal_scope"], "none")
+
+    def test_proven_fleet_runs_cost_stage_and_reconstructs_full_objective(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([
+            {
+                "status": 9,
+                "objective": 2.0,
+                "bound": 1.01,
+                "gap": 0.5,
+                "selected": [0, 1],
+            },
+            {
+                "status": 2,
+                "objective": 7.0,
+                "bound": 7.0,
+                "gap": 0.0,
+                "selected": [0, 1],
+            },
+        ])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 2)
+        self.assertTrue(payload["fleet_proven"])
+        self.assertEqual(payload["optimal_scope"], "full_pool_lexicographic")
+        self.assertEqual(payload["mip_obj"], 200007.0)
+        self.assertEqual(payload["mip_bound"], 200007.0)
+        self.assertEqual(payload["absolute_cost_gap"], 0.0)
+        self.assertEqual(payload["source_cg_wall_s"], 21637.5)
+        self.assertEqual(payload["source_cg_iterations"], 1200)
+        self.assertEqual(payload["source_snapshot_mark_minutes"], 360.0)
+        variable_terms = model.objectives[-1].items
+        self.assertEqual([term[1] for term in variable_terms], [3.0, 4.0])
+
+    def test_cost_stage_without_solution_preserves_proven_fleet_incumbent(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([
+            {
+                "status": 2,
+                "objective": 2.0,
+                "bound": 2.0,
+                "selected": [0, 1],
+            },
+            {
+                "status": 11,
+                "objective": 0.0,
+                "bound": 0.0,
+                "solutions": 0,
+                "selected": [],
+            },
+        ])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 2)
+        self.assertEqual(payload["buses"], 2)
+        self.assertTrue(payload["fleet_proven"])
+        self.assertEqual(payload["optimal_scope"], "fleet_only")
+        self.assertEqual(payload["mip_obj"], 200007.0)
+        self.assertEqual(
+            payload["two_stage"]["stage2_reported_incumbent_source"],
+            "stage1_fallback",
+        )
 
 
 if __name__ == "__main__":

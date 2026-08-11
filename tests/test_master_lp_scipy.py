@@ -1,6 +1,8 @@
 import sys
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -10,6 +12,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from master_lp_scipy import (  # noqa: E402
     RestrictedMasterInputError,
+    RestrictedMasterSolveError,
     build_route_incidence,
     solve_restricted_master_lp,
 )
@@ -118,6 +121,81 @@ class RestrictedMasterLPTests(unittest.TestCase):
         for value, reduced_cost in zip(result.route_values, route_reduced_costs):
             if value > 1e-8:
                 self.assertAlmostEqual(float(reduced_cost), 0.0, places=8)
+
+    @staticmethod
+    def fake_partition_result(x, marginal=5e-7, objective=1.0):
+        return SimpleNamespace(
+            success=True,
+            status=0,
+            x=np.asarray(x, dtype=float),
+            fun=float(objective),
+            message="synthetic optimal result",
+            eqlin=SimpleNamespace(marginals=np.asarray([marginal], dtype=float)),
+            ineqlin=None,
+        )
+
+    def test_raw_tiny_primal_values_are_not_deleted_before_feasibility_check(self):
+        # Raw coverage is exactly one.  The old implementation deleted both
+        # 0.75e-6 route values before checking coverage and then rejected its
+        # own modified solution with a 1.5e-6 row violation.
+        fake = self.fake_partition_result(
+            [0.9999985, 0.75e-6, 0.75e-6, 0.0],
+            marginal=5e-7,
+            objective=1.0,
+        )
+        incidence = np.ones((1, 3), dtype=float)
+        with patch("master_lp_scipy.linprog", return_value=fake):
+            result = solve_restricted_master_lp(
+                trip_ids=[11],
+                route_incidence=incidence,
+                route_costs=[1.0, 1.0, 1.0],
+                artificial_penalty=500.0,
+                coverage_sense="partition",
+                feasibility_tolerance=1e-6,
+            )
+
+        self.assertEqual(result.route_values, (0.9999985, 0.75e-6, 0.75e-6))
+        self.assertAlmostEqual(result.route_weight, 1.0)
+        self.assertAlmostEqual(result.trip_duals[11], 5e-7)
+        self.assertLessEqual(result.max_row_violation, 1e-12)
+        self.assertEqual(result.max_bound_violation, 0.0)
+        self.assertEqual(fake.x[1], 0.75e-6, "solver output must not be mutated")
+
+    def test_genuine_raw_partition_violation_is_still_rejected(self):
+        fake = self.fake_partition_result([0.999998, 0.0], marginal=1.0)
+        with patch("master_lp_scipy.linprog", return_value=fake):
+            with self.assertRaisesRegex(
+                RestrictedMasterSolveError,
+                r"maximum row violation=.*tolerance=1e-06",
+            ):
+                solve_restricted_master_lp(
+                    trip_ids=[11],
+                    route_incidence=np.ones((1, 1), dtype=float),
+                    route_costs=[1.0],
+                    artificial_penalty=500.0,
+                    coverage_sense="partition",
+                    feasibility_tolerance=1e-6,
+                )
+
+    def test_genuine_raw_lower_bound_violation_is_rejected(self):
+        # Coverage is exact, but the artificial variable violates its
+        # nonnegative lower bound by more than the audit tolerance.
+        fake = self.fake_partition_result(
+            [1.000002, -0.000002], marginal=1.0
+        )
+        with patch("master_lp_scipy.linprog", return_value=fake):
+            with self.assertRaisesRegex(
+                RestrictedMasterSolveError,
+                r"maximum bound violation=.*tolerance=1e-06",
+            ):
+                solve_restricted_master_lp(
+                    trip_ids=[11],
+                    route_incidence=np.ones((1, 1), dtype=float),
+                    route_costs=[1.0],
+                    artificial_penalty=500.0,
+                    coverage_sense="partition",
+                    feasibility_tolerance=1e-6,
+                )
 
     def test_input_errors_name_the_inconsistent_field(self):
         with self.assertRaisesRegex(RestrictedMasterInputError, "outside trip_ids"):

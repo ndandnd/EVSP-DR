@@ -12,6 +12,7 @@ logs/*
 !logs/.gitkeep
 src/logs/*
 !src/logs/.gitkeep
+src/cluster_logs/
 # Older launchers wrote Slurm output directly into the directory containing
 # the sbatch command.  Keep those files out of Git while they are archived.
 /*.out

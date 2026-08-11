@@ -47,6 +47,9 @@ class RestrictedMasterLPResult:
     solver_status: int
     message: str
     runtime_s: float
+    max_row_violation: float
+    max_bound_violation: float
+    feasibility_tolerance: float
     backend: LPBackendMetadata
 
     @property
@@ -162,10 +165,9 @@ def solve_restricted_master_lp(
     method: str = "highs-ds",
     coverage_sense: str = "cover",
     time_limit_s: float | None = None,
-    # 1e-6, not 1e-7: HiGHS legitimately returns residuals just over 1e-7 on
-    # large resumed pools (observed 1.26e-7 at 29k columns), and on partition
-    # rows summing to 1.0 a 1e-6 residual moves the objective by <0.1 at our
-    # 1e5 cost scale — rejecting it turns a solved LP into master_failed.
+    # Audit the RAW HiGHS primal at this tolerance.  Do not use this value as
+    # a cleanup threshold: individually tiny route weights can collectively
+    # be necessary for a partition row to sum to one.
     feasibility_tolerance: float = 1e-6,
 ) -> RestrictedMasterLPResult:
     """Solve a covering or partitioning restricted-master LP.
@@ -304,26 +306,57 @@ def solve_restricted_master_lp(
             f"SciPy/HiGHS returned no {marginal_label} marginals for trip duals"
         )
 
-    route_values_array = np.asarray(result.x[: len(costs)], dtype=float)
-    artificial_array = np.asarray(result.x[len(costs) :], dtype=float)
-    dual_array = dual_sign * np.asarray(marginal_result.marginals, dtype=float)
-    for values in (route_values_array, artificial_array, dual_array):
-        values[np.abs(values) < tolerance] = 0.0
+    # Keep solver values verbatim.  These are copies rather than views into
+    # result.x: besides making result.fun inconsistent with the returned
+    # solution, thresholding a view here used to mutate the solver result and
+    # could manufacture a row violation on large, highly fractional pools.
+    route_values_array = np.array(
+        result.x[: len(costs)], dtype=float, copy=True
+    )
+    artificial_array = np.array(
+        result.x[len(costs) :], dtype=float, copy=True
+    )
+    dual_array = dual_sign * np.array(
+        marginal_result.marginals, dtype=float, copy=True
+    )
+
+    if (not np.isfinite(route_values_array).all()
+            or not np.isfinite(artificial_array).all()
+            or not np.isfinite(dual_array).all()):
+        raise RestrictedMasterSolveError(
+            "SciPy/HiGHS returned non-finite primal or dual values"
+        )
+    minimum_primal = float(np.min(result.x)) if len(result.x) else 0.0
+    maximum_bound_violation = max(0.0, -minimum_primal)
+    if maximum_bound_violation > tolerance:
+        raise RestrictedMasterSolveError(
+            "SciPy/HiGHS returned a bound-infeasible solution: "
+            f"minimum primal={minimum_primal}, "
+            f"maximum bound violation={maximum_bound_violation}, "
+            f"tolerance={tolerance}, method={method}, "
+            f"rows={len(trips)}, columns={len(costs)}"
+        )
 
     coverage = incidence @ route_values_array + artificial_array
     if coverage_sense == "cover":
         minimum_coverage = float(np.min(coverage))
+        maximum_violation = max(0.0, 1.0 - minimum_coverage)
         if minimum_coverage < 1.0 - tolerance:
             raise RestrictedMasterSolveError(
                 "SciPy/HiGHS returned a coverage-infeasible solution: "
-                f"minimum coverage={minimum_coverage}"
+                f"minimum coverage={minimum_coverage}, "
+                f"maximum row violation={maximum_violation}, "
+                f"tolerance={tolerance}, method={method}, "
+                f"rows={len(trips)}, columns={len(costs)}"
             )
     else:
         maximum_violation = float(np.max(np.abs(coverage - 1.0)))
         if maximum_violation > tolerance:
             raise RestrictedMasterSolveError(
                 "SciPy/HiGHS returned a partition-infeasible solution: "
-                f"maximum row violation={maximum_violation}"
+                f"maximum row violation={maximum_violation}, "
+                f"tolerance={tolerance}, method={method}, "
+                f"rows={len(trips)}, columns={len(costs)}"
             )
 
     return RestrictedMasterLPResult(
@@ -338,6 +371,9 @@ def solve_restricted_master_lp(
         solver_status=int(result.status),
         message=str(result.message),
         runtime_s=runtime_s,
+        max_row_violation=maximum_violation,
+        max_bound_violation=maximum_bound_violation,
+        feasibility_tolerance=tolerance,
         backend=LPBackendMetadata(
             solver="scipy.optimize.linprog/HiGHS",
             method=method,

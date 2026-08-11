@@ -212,6 +212,12 @@ def main(argv=None) -> int:
                           f"(target {target}) — skip", flush=True)
                 continue
             budget = budgets[row["k"] <= 15][pass_no]
+            remaining = int(args.global_wall_s - (time.time() - t0) - 120)
+            if remaining < 60:
+                print("[ORCH] insufficient global wall for another MIP; "
+                      "stopping cleanly", flush=True)
+                return 0
+            budget = min(budget, remaining)
             if args.dry_run:
                 print(f"[ORCH] would run {row['name']} pass {pass_no + 1} "
                       f"budget {budget}s (best so far: {got})", flush=True)
@@ -234,6 +240,7 @@ def main(argv=None) -> int:
             cmd = [sys.executable, "-u", str(SRC / "run_exact_pool_mip.py"),
                    "--result", str(pool), "--extra-routes", str(cover),
                    "--timelimit", str(budget), "--threads", "8",
+                   "--two-stage",
                    "--out", str(out)]
             if seed is not None:
                 cmd += ["--extra-routes", str(seed)]

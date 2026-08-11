@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import time
 from pathlib import Path
 
@@ -42,6 +43,13 @@ from audit_giro_known_columns import (
     build_problem,
 )
 from config import BIG_M_PENALTY, BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST, CHARGING_STATIONS
+from durable_io import (
+    DurableFileError,
+    atomic_copy,
+    atomic_write_json,
+    read_jsonl_records,
+    valid_json_object,
+)
 from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
 from utils_v2 import base_station_name, load_station_hourly_prices
 
@@ -432,8 +440,108 @@ def _provenance(args) -> dict:
     }
 
 
+ITERATION_LOG_HEADER = (
+    "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,pool_columns"
+)
+
+
+def load_iteration_log(path: Path, *, repair_trailing: bool) -> list[list[str]]:
+    """Read the append-only CG trajectory with narrow tail repair.
+
+    Every data row has seven numeric fields.  Only an interrupted final row is
+    repairable; an invalid header or interior row is evidence corruption.
+    """
+
+    path = Path(path)
+    rows: list[list[str]] = []
+    repair_offset = None
+    last_valid_had_newline = True
+    with open(path, "rb") as fh:
+        header_offset = fh.tell()
+        header = fh.readline()
+        if not header:
+            return rows
+        try:
+            decoded_header = header.decode("utf-8").strip()
+        except UnicodeDecodeError as exc:
+            raise DurableFileError(f"{path} has a non-UTF8 CSV header") from exc
+        if decoded_header != ITERATION_LOG_HEADER:
+            raise DurableFileError(
+                f"{path} has unexpected iteration CSV header at byte "
+                f"{header_offset}: {decoded_header!r}"
+            )
+        while True:
+            offset = fh.tell()
+            line = fh.readline()
+            if not line:
+                break
+            if not line.strip():
+                last_valid_had_newline = line.endswith(b"\n")
+                continue
+            valid = True
+            try:
+                fields = line.decode("utf-8").strip().split(",")
+                if len(fields) != 7:
+                    valid = False
+                else:
+                    for index, field in enumerate(fields):
+                        value = float(field)
+                        # A pricing iteration with no source-to-sink path is
+                        # recorded as min_rc=+inf.  That is a meaningful
+                        # terminal observation, not CSV corruption.  No other
+                        # field may be infinite, and NaN/-inf are never valid.
+                        if index == 5:
+                            field_is_valid = (
+                                math.isfinite(value)
+                                or value == math.inf
+                            )
+                        else:
+                            field_is_valid = math.isfinite(value)
+                        if not field_is_valid:
+                            valid = False
+                            break
+            except (UnicodeDecodeError, ValueError):
+                valid = False
+            if not valid:
+                remainder = fh.read()
+                if remainder.strip():
+                    raise DurableFileError(
+                        f"{path} has malformed iteration data before EOF at "
+                        f"byte {offset}; refusing automatic repair"
+                    )
+                if not repair_trailing:
+                    raise DurableFileError(
+                        f"{path} has a malformed final iteration row at byte "
+                        f"{offset}"
+                    )
+                repair_offset = offset
+                break
+            rows.append(fields)
+            last_valid_had_newline = line.endswith(b"\n")
+
+    if repair_trailing:
+        if repair_offset is not None:
+            with open(path, "r+b") as fh:
+                fh.truncate(repair_offset)
+                fh.flush()
+                os.fsync(fh.fileno())
+        elif rows and not last_valid_had_newline:
+            with open(path, "ab") as fh:
+                fh.write(b"\n")
+                fh.flush()
+                os.fsync(fh.fileno())
+    return rows
+
+
 def run_cg(args) -> dict:
     t0 = time.time()
+    prior_status = None
+    if args.resume and args.out and Path(args.out).exists():
+        try:
+            with open(args.out) as fh:
+                prior_status = json.load(fh)
+        except (OSError, ValueError):
+            prior_status = None
     problem = build_problem(DATA_DIR, args.csv,
                             max_station_to_trip_wait_min=HORIZON_MIN)
     prices = load_station_hourly_prices(DATA_DIR / args.prices_csv, CHARGING_STATIONS)
@@ -452,74 +560,338 @@ def run_cg(args) -> dict:
     pool: dict[frozenset, dict] = {}
     history = []
     stall_hist = []  # (elapsed_s, lp_obj, min_rc) for --stall-window-min
+    last_good_lp_detail = None
     certified = False
     stop_reason = "max_iters"
     stall_count = 0
     method_order = ("highs-ds", "highs-ipm", "highs")
 
+    journal_record_count = 0
     if args.resume and journal_path and journal_path.exists():
-        with open(journal_path) as fh:
-            for line in fh:
-                rec = json.loads(line)
-                key = frozenset(rec["trips"])
-                if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
-                    pool[key] = rec
+        # A hard preemption can interrupt only the last append.  Repair that
+        # narrow case before reopening the journal; never hide interior
+        # corruption.
+        journal_records = read_jsonl_records(
+            journal_path, repair_trailing=True
+        )
+        journal_record_count = len(journal_records)
+        for rec in journal_records:
+            key = frozenset(rec["trips"])
+            if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
+                pool[key] = rec
         print(f"[EXACT] resumed {len(pool)} columns from {journal_path.name}",
               flush=True)
-    journal = open(journal_path, "a") if journal_path else None
+    # Do not open append handles until resume identity and any interrupted
+    # immutable snapshot publication have been validated.
+    journal = None
 
     # Per-iteration stopping-rule instrumentation: append-only CSV so the
     # timing campaign can reconstruct the full LP trajectory with wall time.
     iters_csv = None
+    iters_path = None
+    iters_fresh = False
+    iteration_rows = []
     elapsed_offset = 0.0
+    iteration_offset = 0
     if args.out:
         iters_path = Path(str(args.out) + ".iters.csv")
-        fresh = not (args.resume and iters_path.exists())
-        if not fresh:
-            # cumulative elapsed across resumes/requeues, so stopping curves
-            # stay monotone instead of restarting at zero
-            try:
-                last = iters_path.read_text().strip().rsplit("\n", 1)[-1]
-                elapsed_offset = float(last.split(",")[0])
-            except (ValueError, OSError, IndexError):
-                elapsed_offset = 0.0
-        iters_csv = open(iters_path, "a")
-        if fresh:
-            iters_csv.write("elapsed_s,iteration,lp_obj,route_weight,"
-                            "artificials,min_rc,pool_columns\n")
+        iters_fresh = not (args.resume and iters_path.exists()
+                           and iters_path.stat().st_size > 0)
+        if not iters_fresh:
+            iteration_rows = load_iteration_log(
+                iters_path, repair_trailing=True
+            )
+            if iteration_rows:
+                # Row count protects old resumed logs whose iteration number
+                # restarted at one; the last recorded number preserves a
+                # synthetic snapshot anchor such as iteration 1200.
+                elapsed_offset = float(iteration_rows[-1][0])
+                iteration_offset = max(
+                    len(iteration_rows), int(float(iteration_rows[-1][1]))
+                )
+                stall_hist = [
+                    (float(fields[0]), float(fields[2]), float(fields[5]))
+                    for fields in iteration_rows
+                    if math.isfinite(float(fields[5]))
+                ]
 
     # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
     # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.
-    snapshot_marks = sorted(
+    requested_snapshot_marks = sorted(
         float(m) for m in str(args.snapshot_at_minutes or "").split(",")
         if m.strip())
+    snapshot_marks = []
+
+    def _compatible_prior_status(status):
+        if not isinstance(status, dict):
+            return False
+        expected = {
+            "csv": args.csv,
+            "prices_csv": args.prices_csv,
+            "soc_step": args.soc_step,
+            "block_min": args.block_min,
+            "g_kwh": args.g_kwh,
+            "charge_kw": args.charge_kw,
+            "min_soc_frac": args.min_soc_frac,
+            "master_sense": args.master_sense,
+        }
+        for key, value in expected.items():
+            observed = status.get(key)
+            if isinstance(value, float):
+                try:
+                    if not math.isclose(float(observed), value,
+                                        rel_tol=0.0, abs_tol=1e-9):
+                        return False
+                except (TypeError, ValueError):
+                    return False
+            elif observed != value:
+                return False
+        if status.get("trip_ids") != trips:
+            return False
+        prior_provenance = status.get("provenance") or {}
+        for key in ("instance_sha256", "prices_sha256"):
+            # A persisted pool cannot be resumed safely without an exact
+            # identity match for both model inputs.  Missing legacy hashes are
+            # intentionally incompatible rather than implicitly trusted.
+            if prior_provenance.get(key) != provenance.get(key):
+                return False
+        detail = status.get("final_lp") or {}
+        pool_keys = set(pool)
+        for route in detail.get("positive_routes", []):
+            if frozenset(route.get("trips", [])) not in pool_keys:
+                return False
+        return True
+
+    compatible_prior = _compatible_prior_status(prior_status)
+    persisted_iteration_rows = bool(iteration_rows)
+    persisted_status = bool(args.out and Path(args.out).exists())
+    if (args.resume
+            and (journal_record_count or persisted_iteration_rows
+                 or persisted_status)
+            and not compatible_prior):
+        if iters_csv:
+            iters_csv.close()
+        if journal:
+            journal.close()
+        raise DurableFileError(
+            f"refusing --resume for {journal_path}: persisted status, journal, "
+            "or iteration history exists but the prior status is missing or "
+            "incompatible with the current inputs, trip set, pool, and model "
+            "parameters"
+        )
+    if compatible_prior:
+        try:
+            elapsed_offset = max(
+                elapsed_offset, float(prior_status.get("wall_s", 0.0))
+            )
+            iteration_offset = max(
+                iteration_offset, int(prior_status.get("iterations", 0))
+            )
+        except (TypeError, ValueError):
+            pass
+
+    # Reconcile immutable snapshots only after the compatible prior status has
+    # contributed its elapsed time.  This also handles the narrow publication
+    # interruption where the frozen journal copy landed but its status JSON did
+    # not: recovery is permitted only from the matching snapshot_mN status.
+    orphan_snapshots = []
+    if args.out:
+        snapshot_stem = Path(str(args.out).replace(".json", ""))
+        for mark in requested_snapshot_marks:
+            snap_json = Path(f"{snapshot_stem}.m{int(mark)}.snapshot.json")
+            snap_journal = Path(str(snap_json) + ".columns.jsonl")
+            if mark * 60.0 <= elapsed_offset + 1e-9:
+                if snap_json.exists():
+                    if (not valid_json_object(
+                            snap_json, ("trip_ids", "columns_journal"))
+                            or not snap_journal.exists()):
+                        if iters_csv:
+                            iters_csv.close()
+                        if journal:
+                            journal.close()
+                        raise DurableFileError(
+                            f"immutable snapshot {snap_json} is incomplete or "
+                            "corrupt; preserve it for diagnosis and choose a "
+                            "new output stem before resuming"
+                        )
+                    read_jsonl_records(
+                        snap_journal, repair_trailing=False, collect=False
+                    )
+                    print(f"[EXACT] snapshot {snap_json.name} already frozen — "
+                          "keeping the original", flush=True)
+                elif snap_journal.exists():
+                    orphan_snapshots.append((mark, snap_json, snap_journal))
+                else:
+                    print(f"[EXACT] snapshot mark {mark:g} min was crossed in "
+                          "an earlier allocation but no immutable snapshot "
+                          "exists — recording it as missed, not fabricating a "
+                          "late pool", flush=True)
+                continue
+            snapshot_marks.append(mark)
+    else:
+        snapshot_marks = requested_snapshot_marks
+
+    for mark, snap_json, snap_journal in orphan_snapshots:
+        expected_stop = f"snapshot_m{int(mark)}"
+        if (not compatible_prior
+                or prior_status.get("stop_reason") != expected_stop
+                or prior_status.get("trip_ids") != trips):
+            if iters_csv:
+                iters_csv.close()
+            if journal:
+                journal.close()
+            raise DurableFileError(
+                f"orphan snapshot journal {snap_journal} cannot be published: "
+                f"the compatible prior status must have stop_reason "
+                f"{expected_stop!r} and the same trip_ids"
+            )
+        orphan_records = read_jsonl_records(
+            snap_journal, repair_trailing=False
+        )
+        orphan_pool = set()
+        try:
+            for record in orphan_records:
+                record_trips = record["trips"]
+                record_cost = float(record["cost"])
+                if (not isinstance(record_trips, list)
+                        or not math.isfinite(record_cost)):
+                    raise ValueError("invalid trips or cost")
+                orphan_pool.add(frozenset(record_trips))
+        except (KeyError, TypeError, ValueError) as exc:
+            raise DurableFileError(
+                f"orphan snapshot journal {snap_journal} contains a record "
+                "without a valid trips list and finite cost"
+            ) from exc
+        try:
+            recorded_columns = int(prior_status["columns"])
+        except (KeyError, TypeError, ValueError) as exc:
+            if iters_csv:
+                iters_csv.close()
+            if journal:
+                journal.close()
+            raise DurableFileError(
+                f"orphan snapshot journal {snap_journal} has no trustworthy "
+                "column count in its prior status"
+            ) from exc
+        if recorded_columns < 0 or len(orphan_pool) != recorded_columns:
+            if iters_csv:
+                iters_csv.close()
+            if journal:
+                journal.close()
+            raise DurableFileError(
+                f"orphan snapshot journal {snap_journal} contains "
+                f"{len(orphan_pool)} unique route incidences, but the prior "
+                f"status records {recorded_columns} columns"
+            )
+        for route in (prior_status.get("final_lp") or {}).get(
+                "positive_routes", []):
+            if frozenset(route.get("trips", [])) not in orphan_pool:
+                raise DurableFileError(
+                    f"orphan snapshot journal {snap_journal} does not contain "
+                    "every positive route recorded by the prior status"
+                )
+        snapshot_status = dict(prior_status)
+        snapshot_status["columns_journal"] = str(snap_journal)
+        snapshot_status["snapshot_mark_minutes"] = mark
+        atomic_write_json(snap_json, snapshot_status)
+        print(f"[EXACT] recovered interrupted snapshot publication at "
+              f"{mark:g} min: {snap_json.name}", flush=True)
+
+    if args.resume and compatible_prior and args.out:
+        # A terminal status from the previous allocation must not remain
+        # visible while this allocation is actively extending its journal.
+        # Campaign discovery can therefore distinguish a live canonical pool
+        # from an immutable *.snapshot.json file.
+        resume_status = dict(prior_status)
+        resume_status.update({
+            "trip_ids": trips,
+            "columns": len(pool),
+            "columns_journal": str(journal_path),
+            "wall_s": elapsed_offset + time.time() - t0,
+            "attempt_wall_s": time.time() - t0,
+            "stop_reason": "resume_starting",
+            "provenance": provenance,
+        })
+        atomic_write_json(Path(args.out), resume_status)
+        print("[EXACT] published live resume status before extending the "
+              "journal", flush=True)
+
+    journal = open(journal_path, "a") if journal_path else None
+    if iters_path is not None:
+        iters_csv = open(iters_path, "a")
+        if iters_fresh:
+            iters_csv.write(ITERATION_LOG_HEADER + "\n")
+            iters_csv.flush()
+    if (compatible_prior
+            and isinstance(prior_status.get("final_lp"), dict)):
+        last_good_lp_detail = dict(prior_status["final_lp"])
+        last_good_lp_detail["source"] = "compatible_prior_result"
+        print("[EXACT] retained compatible prior final LP as a resume "
+              "fallback", flush=True)
+    resume_parent = (prior_status or {}).get("resume_parent")
+
+    def _serialize_lp(lp_result, lp_routes, *, source, iteration, pool_columns):
+        return {
+            "objective": lp_result.objective,
+            "route_weight": lp_result.route_weight,
+            "artificial_total": lp_result.artificial_total,
+            "positive_routes": [
+                {"trips": lp_routes[i]["trips"], "value": value,
+                 "cost": lp_routes[i]["cost"]}
+                for i, value in enumerate(lp_result.route_values)
+                if value > 0.0
+            ],
+            "trip_duals": {
+                str(key): value for key, value in lp_result.trip_duals.items()
+            },
+            "source": source,
+            "iteration": iteration,
+            "pool_columns": pool_columns,
+            "max_row_violation": lp_result.max_row_violation,
+            "max_bound_violation": lp_result.max_bound_violation,
+            "feasibility_tolerance": lp_result.feasibility_tolerance,
+            "master_method": lp_result.backend.method,
+        }
 
     def _freeze_snapshot(mark):
         if not args.out:
             return
-        import shutil
         stem = Path(str(args.out).replace(".json", ""))
         snap_json = Path(f"{stem}.m{int(mark)}.snapshot.json")
+        snap_journal = Path(str(snap_json) + ".columns.jsonl")
         if snap_json.exists():
             # snapshots are immutable: a requeued run must never overwrite the
             # original N-minute pool with a later one
+            if (not valid_json_object(
+                    snap_json, ("trip_ids", "columns_journal"))
+                    or not snap_journal.exists()):
+                raise DurableFileError(
+                    f"immutable snapshot {snap_json} is incomplete or corrupt; "
+                    "refusing to replace it silently"
+                )
+            read_jsonl_records(
+                snap_journal, repair_trailing=False, collect=False
+            )
             print(f"[EXACT] snapshot {snap_json.name} already frozen — keeping "
                   "the original", flush=True)
             return
         _write_partial(f"snapshot_m{int(mark)}")
-        shutil.copyfile(args.out, snap_json)
         if journal:
             journal.flush()
+            os.fsync(journal.fileno())
         if journal_path and journal_path.exists():
-            shutil.copyfile(journal_path,
-                            Path(f"{stem}.m{int(mark)}.snapshot.json.columns.jsonl"))
-        # snapshots need trip_ids for the MIP loader
-        with open(snap_json) as fh:
+            atomic_copy(journal_path, snap_journal)
+            # Validate the frozen copy before publishing the status JSON that
+            # makes the pair discoverable to launchers.
+            read_jsonl_records(
+                snap_journal, repair_trailing=False, collect=False
+            )
+        with open(args.out) as fh:
             snap = json.load(fh)
         snap["trip_ids"] = trips
-        snap["columns_journal"] = f"{stem}.m{int(mark)}.snapshot.json.columns.jsonl"
-        with open(snap_json, "w") as fh:
-            json.dump(snap, fh, indent=1)
+        snap["columns_journal"] = str(snap_journal)
+        snap["snapshot_mark_minutes"] = mark
+        atomic_write_json(snap_json, snap)
         print(f"[EXACT] froze snapshot at {mark:g} min: {snap_json.name}",
               flush=True)
 
@@ -562,24 +934,39 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "trip_ids": trips,
-            "iterations": len(history), "certified_rc_optimal": certified,
+            "iterations": iteration_offset + len(history),
+            "attempt_iterations": len(history),
+            "certified_rc_optimal": certified,
             "final": history[-1] if history else None,
-            "columns": len(pool), "wall_s": time.time() - t0,
+            "columns": len(pool),
+            "wall_s": elapsed_offset + time.time() - t0,
+            "attempt_wall_s": time.time() - t0,
             "stop_reason": status, "history_tail": history[-5:],
+            "final_lp": last_good_lp_detail,
+            "final_lp_source": (last_good_lp_detail or {}).get("source"),
+            "provenance": provenance,
+            "resume_parent": resume_parent,
         }
-        tmp = Path(str(args.out) + ".tmp")
-        with open(tmp, "w") as fh:
-            json.dump(partial, fh, indent=1)
-        tmp.replace(args.out)
+        atomic_write_json(args.out, partial)
     class _ArtificialOnlyLP:
         objective = len(trips) * BIG_M_PENALTY
         route_weight = 0.0
         artificial_total = float(len(trips))
         trip_duals = {t: float(BIG_M_PENALTY) for t in trips}
 
+    def _remaining_wall_s(reserve_s=0.0):
+        if not args.wall_limit_s:
+            return None
+        remaining = (
+            args.wall_limit_s - (elapsed_offset + time.time() - t0) - reserve_s
+        )
+        return max(0.0, remaining)
+
     for iteration in range(1, args.max_iters + 1):
-        if args.wall_limit_s and time.time() - t0 > args.wall_limit_s:
-            print(f"[EXACT] wall limit {args.wall_limit_s}s reached — stopping "
+        global_iteration = iteration_offset + iteration
+        if args.wall_limit_s and _remaining_wall_s(reserve_s=60.0) <= 0.0:
+            print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
+                  "reached (with a 60s serialization margin) — stopping "
                   "gracefully (partial result saved)", flush=True)
             stop_reason = "wall_limit"
             break
@@ -594,6 +981,9 @@ def run_cg(args) -> dict:
             lp = None
             for method in method_order:
                 try:
+                    method_limit = _remaining_wall_s(reserve_s=30.0)
+                    if method_limit is not None and method_limit <= 0.0:
+                        break
                     lp = solve_restricted_master_lp(
                         trip_ids=trips,
                         route_incidence=incidence,
@@ -601,6 +991,7 @@ def run_cg(args) -> dict:
                         artificial_penalty=BIG_M_PENALTY,
                         method=method,
                         coverage_sense=args.master_sense,
+                        time_limit_s=method_limit,
                     )
                     break
                 except Exception as exc:  # HiGHS can stall on degenerate pools
@@ -611,16 +1002,27 @@ def run_cg(args) -> dict:
                       flush=True)
                 stop_reason = "master_failed"
                 break
+            last_good_lp_detail = _serialize_lp(
+                lp, routes, source="last_good_iterate",
+                iteration=global_iteration, pool_columns=len(routes),
+            )
         else:
             lp = _ArtificialOnlyLP()
         batch = net.k_best_routes(lp.trip_duals, k=args.columns_per_iter)
         best = batch[0] if batch else None
         min_rc = best["rc"] if best else float("inf")
-        history.append({"iter": iteration, "lp_obj": lp.objective,
+        history.append({"iter": global_iteration,
+                        "attempt_iter": iteration,
+                        "lp_obj": lp.objective,
                         "route_weight": lp.route_weight,
-                        "artificials": lp.artificial_total, "min_rc": min_rc})
+                        "artificials": lp.artificial_total, "min_rc": min_rc,
+                        "max_row_violation": getattr(
+                            lp, "max_row_violation", 0.0),
+                        "max_bound_violation": getattr(
+                            lp, "max_bound_violation", 0.0)})
         if iters_csv:
-            iters_csv.write(f"{elapsed_offset + time.time() - t0:.2f},{iteration},"
+            iters_csv.write(f"{elapsed_offset + time.time() - t0:.2f},"
+                            f"{global_iteration},"
                             f"{lp.objective:.6f},{lp.route_weight:.9f},"
                             f"{lp.artificial_total:.6f},{min_rc:.6f},{len(pool)}\n")
             iters_csv.flush()
@@ -628,7 +1030,7 @@ def run_cg(args) -> dict:
             mark = snapshot_marks.pop(0)
             _freeze_snapshot(mark)
         if iteration % 10 == 0 or min_rc >= -args.rc_eps:
-            print(f"[EXACT] it {iteration:3d}: obj={lp.objective:,.2f} "
+            print(f"[EXACT] it {global_iteration:3d}: obj={lp.objective:,.2f} "
                   f"weight={lp.route_weight:.4f} art={lp.artificial_total:.2f} "
                   f"min_rc={min_rc:,.3f}", flush=True)
         if best is None or min_rc >= -args.rc_eps:
@@ -648,7 +1050,11 @@ def run_cg(args) -> dict:
                 obj_old = min(h[1] for h in old)
                 rc_impr = (abs(rc_old) - abs(rc_rec)) / max(1e-9, abs(rc_old))
                 obj_impr = (obj_old - obj_rec) / max(1.0, abs(obj_old))
-                if rc_impr < args.stall_rc_frac and obj_impr < args.stall_obj_frac:
+                # A negative rc_impr means the reduced-cost signal became
+                # stronger (more negative), which is evidence to continue,
+                # not evidence of a stall.
+                if (0.0 <= rc_impr < args.stall_rc_frac
+                        and obj_impr < args.stall_obj_frac):
                     print(f"[EXACT] marginal returns stalled over "
                           f"{args.stall_window_min:g} min: |min_rc| "
                           f"{abs(rc_old):,.2f}->{abs(rc_rec):,.2f} "
@@ -673,7 +1079,7 @@ def run_cg(args) -> dict:
                     "route_nodes": route["route_nodes"],
                     "charging_stops": route["charging_stops"],
                     "charges_started": route["charges_started"],
-                    "found_iter": iteration,
+                    "found_iter": global_iteration,
                 }
                 pool[key] = record
                 if journal:
@@ -745,36 +1151,53 @@ def run_cg(args) -> dict:
             print(f"[EXACT] diversify: {args.diversify_rounds} rounds added "
                   f"{added_div} complementary columns", flush=True)
 
+    if iters_csv:
+        iters_csv.close()
     if journal:
         journal.close()
 
     # Final LP over the persisted pool: store route values + duals so the
     # fractional solution is reconstructable without re-solving.
     final_lp_detail = None
+    final_lp_source = None
     routes = list(pool.values())
     if routes:
-        try:
-            lp_final = solve_restricted_master_lp(
-                trip_ids=trips,
-                route_incidence=build_route_incidence(
+        final_errors = []
+        for method in ("highs-ds", "highs-ipm", "highs"):
+            try:
+                method_limit = _remaining_wall_s(reserve_s=10.0)
+                if method_limit is not None and method_limit <= 0.0:
+                    final_errors.append("no application time remains")
+                    break
+                lp_final = solve_restricted_master_lp(
                     trip_ids=trips,
-                    route_trip_ids=[r["trips"] for r in routes]),
-                route_costs=[r["cost"] for r in routes],
-                artificial_penalty=BIG_M_PENALTY,
-                coverage_sense=args.master_sense,
-            )
-            final_lp_detail = {
-                "objective": lp_final.objective,
-                "route_weight": lp_final.route_weight,
-                "artificial_total": lp_final.artificial_total,
-                "positive_routes": [
-                    {"trips": routes[i]["trips"], "value": v,
-                     "cost": routes[i]["cost"]}
-                    for i, v in enumerate(lp_final.route_values) if v > 1e-9],
-                "trip_duals": {str(k): v for k, v in lp_final.trip_duals.items()},
-            }
-        except Exception as exc:
-            print(f"[EXACT] final LP re-solve failed: {exc}", flush=True)
+                    route_incidence=build_route_incidence(
+                        trip_ids=trips,
+                        route_trip_ids=[r["trips"] for r in routes]),
+                    route_costs=[r["cost"] for r in routes],
+                    artificial_penalty=BIG_M_PENALTY,
+                    coverage_sense=args.master_sense,
+                    method=method,
+                    time_limit_s=method_limit,
+                )
+                final_lp_detail = _serialize_lp(
+                    lp_final, routes, source="final_pool_resolve",
+                    iteration=iteration_offset + len(history),
+                    pool_columns=len(routes),
+                )
+                final_lp_source = "final_pool_resolve"
+                break
+            except Exception as exc:
+                final_errors.append(f"{method}: {exc}")
+        if final_lp_detail is None:
+            print("[EXACT] final LP re-solve failed with all methods: "
+                  + " | ".join(final_errors), flush=True)
+    if final_lp_detail is None and last_good_lp_detail is not None:
+        # This LP is a valid solution over an earlier/compatible restricted
+        # pool, but is not claimed optimal over the final enlarged pool.
+        final_lp_detail = dict(last_good_lp_detail)
+        final_lp_source = final_lp_detail.get("source", "last_good_iterate")
+        final_lp_detail["source"] = final_lp_source
 
     result = {
         "csv": args.csv,
@@ -786,16 +1209,20 @@ def run_cg(args) -> dict:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "trip_ids": trips,
-        "iterations": len(history),
+        "iterations": iteration_offset + len(history),
+        "attempt_iterations": len(history),
         "certified_rc_optimal": certified,
         "final": history[-1] if history else None,
         "columns": len(pool),
         "columns_journal": str(journal_path) if journal_path else None,
-        "wall_s": time.time() - t0,
+        "wall_s": elapsed_offset + time.time() - t0,
+        "attempt_wall_s": time.time() - t0,
         "stop_reason": stop_reason,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
+        "final_lp_source": final_lp_source,
         "provenance": provenance,
+        "resume_parent": resume_parent,
     }
     print(f"[EXACT] DONE: {json.dumps(result['final'], default=float)} "
           f"certified={certified} columns={len(pool)} "
@@ -833,8 +1260,9 @@ def main(argv=None) -> int:
                         help="Relative LP-objective improvement below which "
                              "the master counts as stalled.")
     parser.add_argument("--wall-limit-s", type=int, default=None,
-                        help="Stop gracefully after this many seconds "
-                             "(set below the Slurm limit so results get written).")
+                        help="Stop gracefully after this many cumulative "
+                             "journaled seconds across resumes (set below the "
+                             "Slurm limit so results get written).")
     parser.add_argument("--checkpoint-every", type=int, default=25,
                         help="Write the partial --out JSON every N iterations.")
     parser.add_argument("--g-kwh", type=float, default=300.0,
@@ -865,8 +1293,7 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     result = run_cg(args)
     if args.out:
-        with open(args.out, "w") as fh:
-            json.dump(result, fh, indent=1)
+        atomic_write_json(args.out, result)
     return 0
 
 

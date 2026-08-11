@@ -1,0 +1,55 @@
+#!/bin/bash
+# Batch-only evidence collection: archive compression and SHA256 never run on
+# the Unicorn login node.
+#SBATCH -J OCcollect
+#SBATCH -D /home/nc437/EVSP-DR
+#SBATCH -o src/cluster_logs/overnight_correctness/%x_%j.out
+#SBATCH -e src/cluster_logs/overnight_correctness/%x_%j.err
+#SBATCH --open-mode=append
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=8G
+#SBATCH --partition=default_partition
+#SBATCH -t 08:00:00
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+ROOT="${EVSP_DR_ROOT:-$HOME/EVSP-DR}"
+cd "$ROOT"
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "tracked worktree changes would mix campaign evidence" >&2
+  exit 2
+fi
+if [ ! -d src/cluster_logs/overnight_correctness ]; then
+  echo "campaign log directory is missing; run the prep job first" >&2
+  exit 2
+fi
+
+# Bind collection to the newest prep manifest by default.  An explicit first
+# argument may instead name the expected commit.
+latest_manifest=""
+for candidate in src/results/campaign_manifests/overnight_correctness_*.tsv; do
+  if [ ! -f "$candidate" ]; then continue; fi
+  if [ -z "$latest_manifest" ] || [ "$candidate" -nt "$latest_manifest" ]; then
+    latest_manifest=$candidate
+  fi
+done
+if [ -z "$latest_manifest" ]; then
+  echo "no overnight campaign manifest found" >&2
+  exit 2
+fi
+manifest_commit=$(sed -n 's/^# commit=//p' "$latest_manifest")
+expected_commit=${1:-$manifest_commit}
+if [ -z "$expected_commit" ] || [ "$(git rev-parse HEAD)" != "$expected_commit" ]; then
+  echo "checkout does not match campaign commit ${expected_commit:-UNKNOWN}" >&2
+  exit 2
+fi
+
+export EVSP_DR_ROOT="$ROOT"
+export EVSP_ARCHIVE_ID="${EVSP_ARCHIVE_ID:-job${SLURM_JOB_ID}}"
+echo "[COLLECT] job=${SLURM_JOB_ID} manifest=${latest_manifest} commit=${expected_commit}"
+bash src/collect_overnight_correctness.sh
