@@ -1157,10 +1157,12 @@ def run_cg(args) -> dict:
                 route_trip_ids=[r["trips"] for r in routes],
             )
             lp = None
+            wall_exhausted_mid_master = False
             for method in method_order:
                 try:
                     method_limit = _remaining_wall_s(reserve_s=30.0)
                     if method_limit is not None and method_limit <= 0.0:
+                        wall_exhausted_mid_master = True
                         break
                     lp = solve_restricted_master_lp(
                         trip_ids=trips,
@@ -1176,9 +1178,19 @@ def run_cg(args) -> dict:
                     print(f"[EXACT] master failed with {method}: {exc}; "
                           "retrying with next method", flush=True)
             if lp is None:
-                print("[EXACT] all master methods failed — stopping uncertified",
-                      flush=True)
-                stop_reason = "master_failed"
+                if wall_exhausted_mid_master:
+                    # The wall budget expired between master attempts.  This is
+                    # a graceful timed stop, not evidence that every master
+                    # method failed; label it honestly so resumable wall stops
+                    # are never recorded as solver failures.
+                    print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
+                          "reached during the master solve — stopping "
+                          "gracefully (partial result saved)", flush=True)
+                    stop_reason = "wall_limit"
+                else:
+                    print("[EXACT] all master methods failed — stopping "
+                          "uncertified", flush=True)
+                    stop_reason = "master_failed"
                 break
             last_good_lp_detail = _serialize_lp(
                 lp, routes, source="last_good_iterate",
