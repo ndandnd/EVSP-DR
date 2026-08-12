@@ -240,16 +240,18 @@ def _repair_report(original: bytes, repaired: bytes) -> dict:
     }
 
 
-def _strict_complete_dict_sequence(raw_line: bytes) -> tuple[bytes, int] | None:
-    """Normalize one line containing only two or more complete JSON objects.
+def _strict_complete_dict_sequence(
+    raw_line: bytes, *, minimum_objects: int = 2,
+) -> tuple[bytes, int] | None:
+    """Normalize one line containing only complete JSON dictionary objects.
 
     A legacy writer could be preempted after persisting a complete object but
     before its trailing newline.  The old resume reader accepted that valid
     EOF object, then append mode joined the next object directly to it.  This
-    helper recognizes only the lossless ``{...}{...}`` case: the whole
-    physical line must decode as dictionary objects with no partial suffix or
-    other junk.  Ambiguous data returns ``None`` and remains subject to the
-    normal fail-closed reader.
+    helper recognizes only a fully consumed sequence of dictionary objects;
+    callers choose whether one object or a true ``{...}{...}`` concatenation
+    is required.  Any partial suffix or other junk returns ``None`` and
+    remains subject to the normal fail-closed reader.
     """
 
     try:
@@ -272,20 +274,28 @@ def _strict_complete_dict_sequence(raw_line: bytes) -> tuple[bytes, int] | None:
         if not isinstance(value, dict):
             return None
         serialized.append(text[start:position].strip())
-    if len(serialized) < 2:
+    if len(serialized) < minimum_objects:
         return None
     normalized = "".join(f"{value}\n" for value in serialized).encode("utf-8")
     return normalized, len(serialized)
 
 
-def _normalize_lossless_interior_sequences(journal: Path) -> list[dict]:
-    """Normalize unambiguous legacy concatenations on a staged working copy.
+def _normalize_recoverable_legacy_lines(journal: Path) -> list[dict]:
+    """Recover all valid objects from unambiguous legacy physical lines.
 
     Current-code resume remains strict.  This migration-only pass runs after
-    the original journal has been copied and hashed.  It changes a malformed
-    interior physical line only when every byte is a sequence of two or more
-    complete dictionary objects; all partial, non-object, non-UTF-8, or junk
-    cases are left untouched so :func:`read_jsonl_records` refuses them.
+    the original journal has been copied and hashed.  It changes an interior
+    physical line only when every byte is a sequence of two or more complete
+    dictionary objects.  At any position, including EOF, it may also remove
+    an all-NUL prefix followed by one or more completely decodable dictionary
+    objects.  The latter handles an observed legacy preemption artifact
+    without discarding a valid column.
+    All partial, mixed-prefix, non-object, non-UTF-8, or junk cases are left
+    untouched for :func:`read_jsonl_records` to refuse as interior corruption
+    or handle under its pre-existing archived-tail quarantine policy.
+    Recovery is lossless at the JSON-object level, while normalization may
+    remove NUL padding or inter-object whitespace; the original bytes are
+    retained in the migration's raw archive and attested separately.
     """
 
     original = journal.read_bytes()
@@ -300,25 +310,46 @@ def _normalize_lossless_interior_sequences(journal: Path) -> list[dict]:
     for index, line in enumerate(lines):
         replacement = None
         recovered_objects = 0
-        if index < last_nonempty and line.strip():
+        kind = None
+        extra_metadata = {}
+        if line.strip():
             try:
                 json.loads(line)
             except (UnicodeDecodeError, json.JSONDecodeError):
-                decoded = _strict_complete_dict_sequence(line)
-                if decoded is not None:
-                    replacement, recovered_objects = decoded
+                if index < last_nonempty:
+                    decoded = _strict_complete_dict_sequence(line)
+                    if decoded is not None:
+                        replacement, recovered_objects = decoded
+                        kind = "complete_concatenated_dicts"
+                if replacement is None:
+                    nul_prefix_bytes = len(line) - len(line.lstrip(b"\0"))
+                    if nul_prefix_bytes:
+                        decoded = _strict_complete_dict_sequence(
+                            line[nul_prefix_bytes:], minimum_objects=1,
+                        )
+                        if decoded is not None:
+                            replacement, recovered_objects = decoded
+                            kind = "nul_prefix_before_complete_dicts"
+                            prefix = line[:nul_prefix_bytes]
+                            extra_metadata = {
+                                "discarded_nul_prefix_bytes": nul_prefix_bytes,
+                                "discarded_nul_prefix_sha256": _sha256_bytes(
+                                    prefix
+                                ),
+                            }
         if replacement is None:
             output.append(line)
         else:
             output.append(replacement)
             repairs.append({
-                "kind": "complete_concatenated_dicts",
+                "kind": kind,
                 "original_offset": offset,
                 "original_line_bytes": len(line),
                 "original_line_sha256": _sha256_bytes(line),
                 "normalized_line_bytes": len(replacement),
                 "normalized_line_sha256": _sha256_bytes(replacement),
                 "recovered_objects": recovered_objects,
+                **extra_metadata,
             })
         offset += len(line)
     if repairs:
@@ -332,7 +363,7 @@ def _repair_and_validate_working_copies(
     """Repair archived working copies and validate their usable prefix."""
 
     journal_before = journal.read_bytes()
-    interior_normalizations = _normalize_lossless_interior_sequences(journal)
+    line_normalizations = _normalize_recoverable_legacy_lines(journal)
     records = read_jsonl_records(
         journal,
         repair_trailing=True,
@@ -362,7 +393,7 @@ def _repair_and_validate_working_copies(
                 **_repair_report(journal_before, journal_after),
                 "complete_records": len(records),
                 "unique_incidences": len(pool),
-                "lossless_interior_normalizations": interior_normalizations,
+                "legacy_line_normalizations": line_normalizations,
             },
             "iters": {
                 **_repair_report(iters_before, iters_after),

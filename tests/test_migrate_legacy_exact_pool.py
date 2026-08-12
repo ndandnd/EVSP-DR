@@ -234,7 +234,7 @@ class LegacyExactPoolMigrationTests(unittest.TestCase):
 
         plan = self._plan()
         preview_repairs = plan["repair_preview"]["journal"][
-            "lossless_interior_normalizations"
+            "legacy_line_normalizations"
         ]
         self.assertEqual(len(preview_repairs), 1)
         self.assertEqual(
@@ -263,7 +263,7 @@ class LegacyExactPoolMigrationTests(unittest.TestCase):
         self.assertTrue(attestation["repairs"]["journal"]["applied"])
         self.assertEqual(
             attestation["repairs"]["journal"][
-                "lossless_interior_normalizations"
+                "legacy_line_normalizations"
             ],
             preview_repairs,
         )
@@ -302,6 +302,115 @@ class LegacyExactPoolMigrationTests(unittest.TestCase):
                     self._plan()
 
                 self.assertEqual(self.journal.read_text(), original)
+                self.assertFalse(self.destination.exists())
+
+    def test_recovers_nul_prefixed_complete_interior_record(self):
+        preceding = (json.dumps(self.record1) + "\n").encode()
+        padded = b"\0" * 1014 + (json.dumps(self.record2) + "\n").encode()
+        following = (json.dumps(self.record1) + "\n").encode()
+        original = preceding + padded + following
+        self.journal.write_bytes(original)
+
+        plan = self._plan()
+        repairs = plan["repair_preview"]["journal"][
+            "legacy_line_normalizations"
+        ]
+        self.assertEqual(len(repairs), 1)
+        repair = repairs[0]
+        self.assertEqual(repair["kind"], "nul_prefix_before_complete_dicts")
+        self.assertEqual(repair["original_offset"], len(preceding))
+        self.assertEqual(
+            repair["original_line_sha256"], hashlib.sha256(padded).hexdigest()
+        )
+        self.assertEqual(repair["discarded_nul_prefix_bytes"], 1014)
+        self.assertEqual(
+            repair["discarded_nul_prefix_sha256"],
+            hashlib.sha256(b"\0" * 1014).hexdigest(),
+        )
+        self.assertEqual(repair["recovered_objects"], 1)
+
+        attestation = apply_migration(plan)
+
+        self.assertEqual(self.journal.read_bytes(), original)
+        destination_journal = Path(str(self.destination) + ".columns.jsonl")
+        records = [
+            json.loads(line) for line in destination_journal.read_text().splitlines()
+        ]
+        self.assertEqual(records, [self.record1, self.record2, self.record1])
+        self.assertEqual(
+            attestation["repairs"]["journal"][
+                "legacy_line_normalizations"
+            ],
+            repairs,
+        )
+        raw_journal = (
+            self.destination.parent
+            / f"{self.destination.name}.legacy_raw"
+            / "source_result.json.columns.jsonl"
+        )
+        self.assertEqual(raw_journal.read_bytes(), original)
+
+    def test_recovers_nul_prefixed_complete_final_records(self):
+        cases = (
+            [self.record2],
+            [self.record2, self.record1],
+        )
+        for index, recovered in enumerate(cases):
+            with self.subTest(recovered=len(recovered)):
+                preceding = (json.dumps(self.record1) + "\n").encode()
+                padded = b"\0" * 1014 + "".join(
+                    json.dumps(record) for record in recovered
+                ).encode()
+                original = preceding + padded
+                self.journal.write_bytes(original)
+                self.destination = (
+                    self.destination_dir / f"nul_final_{index}.json"
+                )
+
+                plan = self._plan()
+                repairs = plan["repair_preview"]["journal"][
+                    "legacy_line_normalizations"
+                ]
+                self.assertEqual(len(repairs), 1)
+                self.assertEqual(
+                    repairs[0]["kind"], "nul_prefix_before_complete_dicts"
+                )
+                self.assertEqual(
+                    repairs[0]["recovered_objects"], len(recovered)
+                )
+
+                apply_migration(plan)
+
+                destination_journal = Path(
+                    str(self.destination) + ".columns.jsonl"
+                )
+                records = [
+                    json.loads(line)
+                    for line in destination_journal.read_text().splitlines()
+                ]
+                self.assertEqual(records, [self.record1, *recovered])
+                self.assertEqual(self.journal.read_bytes(), original)
+
+    def test_ambiguous_nul_prefixed_interior_data_still_fails_closed(self):
+        damaged_lines = (
+            b"\0" * 16 + b'{"trips":',
+            b"\0" * 16 + (json.dumps(self.record1) + "junk").encode(),
+            b"\0" * 16 + b"x" + json.dumps(self.record1).encode(),
+        )
+        for index, damaged in enumerate(damaged_lines):
+            with self.subTest(damaged=damaged):
+                original = damaged + b"\n" + (
+                    json.dumps(self.record2) + "\n"
+                ).encode()
+                self.journal.write_bytes(original)
+                self.destination = (
+                    self.destination_dir / f"nul_refused_{index}.json"
+                )
+
+                with self.assertRaisesRegex(DurableFileError, "before EOF"):
+                    self._plan()
+
+                self.assertEqual(self.journal.read_bytes(), original)
                 self.assertFalse(self.destination.exists())
 
     def test_missing_or_conflicting_witness_fails_closed(self):
