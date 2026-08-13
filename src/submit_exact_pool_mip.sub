@@ -28,18 +28,29 @@ fatal() {
     exit 2
 }
 
-if (( $# < 1 || $# > 4 )); then
-    fatal "Usage: sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON] [INITIAL_PARTITION_ROUTES]"
+if (( $# < 1 || $# > 5 )); then
+    fatal "Usage: sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON] [MIP_GAP] [INITIAL_PARTITION_ROUTES]"
 fi
 
 SUBMIT_DIR=${SLURM_SUBMIT_DIR:-$PWD}
 RESULT_ARG=$1
 MIP_SECONDS=${2:-7200}
 OUT_ARG=${3:-}
-INITIAL_PARTITION_ARG=${4:-}
+MIP_GAP=${4:-0.0001}
+INITIAL_PARTITION_ARG=${5:-}
 
 [[ "$MIP_SECONDS" =~ ^[1-9][0-9]*$ ]] \
     || fatal "MIP_SECONDS must be a positive integer; got '$MIP_SECONDS'"
+if ! python3 - "$MIP_GAP" <<'PY'
+import math
+import sys
+
+value = float(sys.argv[1])
+raise SystemExit(0 if math.isfinite(value) and 0.0 <= value < 1.0 else 1)
+PY
+then
+    fatal "MIP_GAP must be finite and in [0, 1); got '$MIP_GAP'"
+fi
 
 # Slurm records the submit directory before this worker changes directories.
 # Resolve relative input/output arguments against it so submission works from
@@ -93,6 +104,24 @@ fi
 [[ -f "$ROOT/src/run_exact_pool_mip.py" ]] \
     || fatal "EVSP_DR_ROOT=$ROOT has no src/run_exact_pool_mip.py"
 [[ -f "$RESULT" ]] || fatal "result JSON not found: $RESULT"
+
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:-}
+if [[ -n "${SLURM_JOB_ID:-}" && -z "$EXPECTED_COMMIT" ]]; then
+    fatal "submitted MIP job lacks EVSP_EXPECTED_COMMIT"
+fi
+OBSERVED_COMMIT=$(git -C "$ROOT" rev-parse --verify HEAD) \
+    || fatal "could not resolve MIP worker Git HEAD"
+if [[ -n "$EXPECTED_COMMIT" && "$OBSERVED_COMMIT" != "$EXPECTED_COMMIT" ]]; then
+    fatal "MIP worker commit mismatch: expected $EXPECTED_COMMIT, found $OBSERVED_COMMIT"
+fi
+if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=no)" ]]; then
+    fatal "MIP worker checkout has tracked modifications"
+fi
+if [[ "${EVSP_REQUIRE_DETACHED:-0}" == "1" || -n "${SLURM_JOB_ID:-}" ]]; then
+    if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+        fatal "MIP worker must run from an immutable detached checkout"
+    fi
+fi
 
 required_partition=${EVSP_MIP_REQUIRED_PARTITION:-scaglione}
 if [[ -n "${SLURM_JOB_ID:-}" &&
@@ -178,10 +207,13 @@ echo "[MIP job] slurm job   : ${SLURM_JOB_ID:-none}"
 echo "[MIP job] partition   : ${SLURM_JOB_PARTITION:-none}"
 echo "[MIP job] restart     : ${SLURM_RESTART_COUNT:-0}"
 echo "[MIP job] commit      : $(git rev-parse HEAD)"
+echo "[MIP job] expected    : ${EXPECTED_COMMIT:-none}"
+echo "[MIP job] observed    : $OBSERVED_COMMIT"
 echo "[MIP job] result      : $RESULT"
 echo "[MIP job] output      : $OUT"
 echo "[MIP job] seconds     : $MIP_SECONDS"
 echo "[MIP job] threads     : ${SLURM_CPUS_PER_TASK:-8}"
+echo "[MIP job] mip gap     : $MIP_GAP"
 echo "[MIP job] two stage   : $two_stage"
 echo "[MIP job] start routes: ${INITIAL_PARTITION:-none}"
 python --version
@@ -211,7 +243,7 @@ command=(
     --result "$RESULT"
     "${partition_guard[@]}"
     --timelimit "$MIP_SECONDS"
-    --mipgap "${EXACT_MIP_GAP:-0.0001}"
+    --mipgap "$MIP_GAP"
     --threads "${SLURM_CPUS_PER_TASK:-8}"
     --out "$OUT"
 )

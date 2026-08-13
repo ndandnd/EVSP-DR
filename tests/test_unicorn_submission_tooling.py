@@ -1,4 +1,6 @@
 import argparse
+import contextlib
+import io
 import json
 import subprocess
 import sys
@@ -37,6 +39,67 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn('--master_backend "$MASTER_BACKEND"', job_text)
         self.assertIn("preflight_command+=(--skip_gurobi)", job_text)
 
+    def test_mip_job_names_distinguish_all_four_controlled_arms(self):
+        status = {
+            "csv": "duty_unions_big/Practice_Custom_DutyUnion_k30_r2.csv",
+            "g_kwh": 300.0,
+            "min_soc_frac": 0.0,
+        }
+        names = {}
+        for two_stage, validated_start, arm in (
+            (False, False, "A"),
+            (True, False, "B"),
+            (False, True, "C"),
+            (True, True, "D"),
+        ):
+            name = cluster_campaign._mip_job_name(
+                status,
+                "partition",
+                30,
+                two_stage=two_stage,
+                validated_start=validated_start,
+            )
+            names[arm] = name
+            self.assertLessEqual(len(name), 15)
+            self.assertTrue(name.startswith(f"MP{arm}"), name)
+        self.assertEqual(len(set(names.values())), 4)
+
+    def test_reviewed_checkout_must_be_detached_and_tracked_clean(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp) / "repo"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(
+                ["git", "config", "user.name", "Test"], cwd=repo, check=True
+            )
+            subprocess.run(
+                ["git", "config", "user.email", "test@example.com"],
+                cwd=repo,
+                check=True,
+            )
+            tracked = repo / "solver.py"
+            tracked.write_text("reviewed = True\n")
+            subprocess.run(["git", "add", "solver.py"], cwd=repo, check=True)
+            subprocess.run(
+                ["git", "commit", "-q", "-m", "reviewed"],
+                cwd=repo,
+                check=True,
+            )
+
+            with self.assertRaisesRegex(SystemExit, "detached checkout"):
+                cluster_campaign._reviewed_checkout_identity(repo)
+
+            subprocess.run(
+                ["git", "checkout", "-q", "--detach"], cwd=repo, check=True
+            )
+            identity = cluster_campaign._reviewed_checkout_identity(repo)
+            self.assertTrue(identity["detached"])
+            self.assertTrue(identity["tracked_clean"])
+
+            tracked.write_text("reviewed = False\n")
+            with self.assertRaisesRegex(SystemExit, "tracked modifications"):
+                cluster_campaign._reviewed_checkout_identity(repo)
+
     def test_exact_jobs_requeue_and_resume_persisted_pools(self):
         for script_name in (
             "submit_exact_pairs.sub",
@@ -68,10 +131,16 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn("EXACT_MIP_TWO_STAGE", job_text)
         self.assertIn("--two-stage", job_text)
         self.assertIn("--initial-partition-routes", job_text)
+        self.assertIn("EVSP_EXPECTED_COMMIT", job_text)
+        self.assertIn("symbolic-ref -q HEAD", job_text)
+        self.assertIn("status --porcelain --untracked-files=no", job_text)
+        self.assertIn('--mipgap "$MIP_GAP"', job_text)
+        self.assertNotIn("EXACT_MIP_GAP:-", job_text)
         self.assertNotIn(
             '${4:-${EXACT_MIP_INITIAL_PARTITION:-}}', job_text
         )
-        self.assertIn('INITIAL_PARTITION_ARG=${4:-}', job_text)
+        self.assertIn('MIP_GAP=${4:-0.0001}', job_text)
+        self.assertIn('INITIAL_PARTITION_ARG=${5:-}', job_text)
         self.assertIn("EVSP_MIP_EXPECTED_RESULT_SHA256", job_text)
         self.assertIn("EVSP_MIP_EXPECTED_JOURNAL_SHA256", job_text)
         self.assertIn(
@@ -111,8 +180,23 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertNotEqual(completed.returncode, 0)
             self.assertIn("immutable *.snapshot.json", completed.stderr)
 
+    def test_mip_gap_has_fixed_default_and_rejects_invalid_values(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = Path(tmp) / "sample.snapshot.json"
+            result.write_text("{}\n")
+            args = cluster_campaign.parse_args([
+                "mip", "--result", str(result), "--minutes", "30",
+            ])
+            self.assertEqual(
+                args.mip_gap, cluster_campaign.DEFAULT_MIP_GAP
+            )
+            with self.assertRaises(SystemExit):
+                cluster_campaign.parse_args([
+                    "mip", "--result", str(result), "--minutes", "30",
+                    "--mip-gap", "nan",
+                ])
+
     def test_validated_cluster_launcher_is_dry_run_and_scaglione_only(self):
-        launcher = REPO_ROOT / "src" / "cluster_campaign.py"
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)
             result = folder / "sample.snapshot.json"
@@ -124,19 +208,40 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 "columns_journal": str(journal),
             }))
             journal.write_text(json.dumps({"trips": [1], "cost": 100000}) + "\n")
-            completed = subprocess.run(
-                [sys.executable, str(launcher), "mip", "--result", str(result),
-                 "--minutes", "5"],
-                text=True,
-                capture_output=True,
-                check=True,
+            args = argparse.Namespace(
+                result=result,
+                minutes=5,
+                mip_gap=0.0001,
+                cover=False,
+                two_stage=False,
+                initial_partition_routes=None,
+                campaign="dry_run",
+                submit=False,
             )
-            self.assertIn("--partition=scaglione", completed.stdout)
-            self.assertIn("--no-requeue", completed.stdout)
-            self.assertIn("--job-name=MP", completed.stdout)
-            self.assertNotIn("EXACTMIP", completed.stdout)
-            self.assertNotIn("FULLCOVER", completed.stdout)
-            self.assertIn("[dry-run]", completed.stdout)
+            identity = {
+                "expected_commit": "a" * 40,
+                "observed_commit": "a" * 40,
+                "detached": True,
+                "tracked_clean": True,
+            }
+            output = io.StringIO()
+            with (
+                mock.patch.object(
+                    cluster_campaign,
+                    "_reviewed_checkout_identity",
+                    return_value=identity,
+                ),
+                mock.patch.object(cluster_campaign, "_run_checked"),
+                contextlib.redirect_stdout(output),
+            ):
+                self.assertEqual(cluster_campaign.submit_mip(args), 0)
+            rendered = output.getvalue()
+            self.assertIn("--partition=scaglione", rendered)
+            self.assertIn("--no-requeue", rendered)
+            self.assertIn("--job-name=MPA", rendered)
+            self.assertIn("EVSP_EXPECTED_COMMIT=" + "a" * 40, rendered)
+            self.assertIn("0.0001", rendered)
+            self.assertIn("[dry-run]", rendered)
 
     def test_submitted_campaign_stages_and_hashes_immutable_pool(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -164,6 +269,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 result=result,
                 minutes=5,
                 cover=False,
+                mip_gap=0.0001,
                 two_stage=True,
                 initial_partition_routes=partition,
                 campaign="safe_campaign",
@@ -187,6 +293,16 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 mock.patch.object(
                     cluster_campaign, "_run_checked"
                 ) as run_checked,
+                mock.patch.object(
+                    cluster_campaign,
+                    "_reviewed_checkout_identity",
+                    return_value={
+                        "expected_commit": "a" * 40,
+                        "observed_commit": "a" * 40,
+                        "detached": True,
+                        "tracked_clean": True,
+                    },
+                ),
                 mock.patch.object(cluster_campaign.subprocess, "run", return_value=completed),
             ):
                 self.assertEqual(cluster_campaign.submit_mip(args), 0)
@@ -203,6 +319,15 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertTrue(manifest["job_name"].startswith("MP"))
             self.assertTrue(manifest["submitted"])
             self.assertTrue(manifest["two_stage"])
+            self.assertEqual(manifest["experiment_arm"], "D")
+            self.assertEqual(manifest["mip_gap"], 0.0001)
+            self.assertEqual(manifest["expected_git_commit"], "a" * 40)
+            self.assertEqual(
+                manifest["launcher_observed_git_commit"], "a" * 40
+            )
+            self.assertEqual(
+                manifest["pre_submission_observed_git_commit"], "a" * 40
+            )
             self.assertTrue(any(
                 "EXACT_MIP_TWO_STAGE=1" in argument
                 for argument in manifest["command"]
@@ -214,6 +339,11 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertIn(
                 "EXACT_MIP_INITIAL_PARTITION=,", export_argument
             )
+            self.assertIn("EXACT_MIP_GAP=,", export_argument)
+            self.assertIn(
+                "EVSP_EXPECTED_COMMIT=" + "a" * 40, export_argument
+            )
+            self.assertIn("EVSP_REQUIRE_DETACHED=1", export_argument)
             self.assertIn(
                 "EVSP_MIP_EXPECTED_RESULT_SHA256="
                 + manifest["input_result_sha256"],
@@ -232,6 +362,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertEqual(
                 manifest["command"][-1], str(staged_partition)
             )
+            self.assertEqual(manifest["command"][-2], "0.0001")
             self.assertEqual(
                 manifest["source_journal_sha256"],
                 manifest["input_journal_sha256"],

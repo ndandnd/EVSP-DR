@@ -52,6 +52,47 @@ def git_value(*args) -> str | None:
     return result.stdout.strip() if result.returncode == 0 else None
 
 
+def verified_mip_code_identity() -> dict:
+    """Bind a submitted solve to one clean reviewed Git commit."""
+
+    expected = os.environ.get("EVSP_EXPECTED_COMMIT")
+    slurm_job_id = os.environ.get("SLURM_JOB_ID")
+    require_detached = os.environ.get("EVSP_REQUIRE_DETACHED") == "1"
+    enforce = bool(expected or slurm_job_id or require_detached)
+    observed = git_value("rev-parse", "--verify", "HEAD")
+    tracked_status = git_value(
+        "status", "--porcelain", "--untracked-files=no"
+    )
+    branch = git_value("branch", "--show-current")
+    if (observed is None or len(observed) != 40
+            or any(character not in "0123456789abcdef"
+                   for character in observed)):
+        raise SystemExit("[MIP] solver has no verifiable Git HEAD")
+    if slurm_job_id and not expected:
+        raise SystemExit("[MIP] submitted solve lacks EVSP_EXPECTED_COMMIT")
+    if expected and observed != expected:
+        raise SystemExit(
+            f"[MIP] solver commit mismatch: expected {expected}, "
+            f"found {observed}"
+        )
+    if tracked_status is None:
+        raise SystemExit("[MIP] could not verify solver worktree state")
+    if enforce and tracked_status:
+        raise SystemExit("[MIP] solver checkout has tracked modifications")
+    if enforce and require_detached and branch:
+        raise SystemExit(
+            f"[MIP] solver must run detached; found branch {branch}"
+        )
+    return {
+        "expected_commit": expected,
+        "observed_commit": observed,
+        "branch": branch,
+        "detached": not bool(branch),
+        "tracked_clean": not bool(tracked_status),
+        "enforced": enforce,
+    }
+
+
 def resolve_pool_journal(result_path: Path, status: dict) -> Path:
     """Resolve the journal exactly as :func:`load_pool` will read it."""
 
@@ -834,6 +875,7 @@ def main(argv=None) -> int:
 
     if args.out is not None and args.out.resolve() == args.result.resolve():
         parser.error("--out must not overwrite --result")
+    code_identity = verified_mip_code_identity()
 
     # Bind the solve to immutable bytes.  If a caller mistakenly gives a live
     # journal and it changes while being loaded, refuse the ambiguous result.
@@ -1161,10 +1203,26 @@ def main(argv=None) -> int:
                 else ("stage1_fallback" if cost_stage_executed else None)
             ),
         })
+    final_code_identity = verified_mip_code_identity()
+    if (final_code_identity["observed_commit"]
+            != code_identity["observed_commit"]):
+        raise SystemExit("[MIP] solver commit changed during optimization")
+    code_identity["final_observed_commit"] = final_code_identity[
+        "observed_commit"
+    ]
+    code_identity["final_tracked_clean"] = final_code_identity[
+        "tracked_clean"
+    ]
     summary = {
         "source_result": str(args.result),
         "instance": status["csv"],
         "partitioning": not args.cover,
+        "experiment_arm": {
+            (False, False): "A",
+            (True, False): "B",
+            (False, True): "C",
+            (True, True): "D",
+        }[(args.two_stage, args.initial_partition_routes is not None)],
         "status": status_code,
         "status_name": status_name,
         "optimal_scope": optimal_scope(
@@ -1218,9 +1276,16 @@ def main(argv=None) -> int:
         "source_journal_sha256": source_journal_sha256,
         "extra_route_sources": extra_route_sources,
         "mip_provenance": {
-            "git_commit": git_value("rev-parse", "HEAD"),
-            "git_branch": git_value("branch", "--show-current"),
-            "git_dirty": bool(git_value("status", "--porcelain")),
+            "git_commit": code_identity["observed_commit"],
+            "expected_git_commit": code_identity["expected_commit"],
+            "observed_git_commit": code_identity["observed_commit"],
+            "final_observed_git_commit": code_identity[
+                "final_observed_commit"
+            ],
+            "git_branch": code_identity["branch"],
+            "git_detached": code_identity["detached"],
+            "git_dirty": not code_identity["tracked_clean"],
+            "tracked_clean_at_end": code_identity["final_tracked_clean"],
             "python": platform.python_version(),
             "gurobi": ".".join(str(value) for value in gp.gurobi.version()),
             "arguments": {

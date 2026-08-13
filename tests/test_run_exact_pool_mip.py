@@ -24,6 +24,7 @@ from run_exact_pool_mip import (  # noqa: E402
     optimal_scope,
     singleton_partition_indices,
     validate_injected_route,
+    verified_mip_code_identity,
 )
 from audit_giro_known_columns import DEPOT  # noqa: E402
 
@@ -54,6 +55,60 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertIsNone(finite_solver_value(float("inf")))
         self.assertIsNone(finite_solver_value(1.7976931348623157e308))
         self.assertEqual(finite_solver_value(42.5), 42.5)
+
+    def test_submitted_solver_rejects_commit_dirty_and_branch_mismatches(self):
+        def git_state(commit="a" * 40, status="", branch=""):
+            def value(*args):
+                if args[:2] == ("rev-parse", "--verify"):
+                    return commit
+                if args and args[0] == "status":
+                    return status
+                if args[:2] == ("branch", "--show-current"):
+                    return branch
+                return None
+            return value
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "b" * 40,
+                "EVSP_REQUIRE_DETACHED": "1",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_value",
+                side_effect=git_state(),
+            ),
+            self.assertRaisesRegex(SystemExit, "commit mismatch"),
+        ):
+            verified_mip_code_identity()
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "a" * 40,
+                "EVSP_REQUIRE_DETACHED": "1",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_value",
+                side_effect=git_state(status=" M src/run_exact_pool_mip.py"),
+            ),
+            self.assertRaisesRegex(SystemExit, "tracked modifications"),
+        ):
+            verified_mip_code_identity()
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "a" * 40,
+                "EVSP_REQUIRE_DETACHED": "1",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_value",
+                side_effect=git_state(branch="cursor/recovery-audit"),
+            ),
+            self.assertRaisesRegex(SystemExit, "must run detached"),
+        ):
+            verified_mip_code_identity()
 
     def test_integer_fleet_bound_can_prove_timeout_incumbent(self):
         self.assertTrue(fleet_bound_proves_incumbent(40, 39.001, 9))
@@ -707,6 +762,7 @@ class ExactPoolMipTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
 
         self.assertEqual(rc, 0)
+        self.assertEqual(payload["experiment_arm"], "D")
         self.assertEqual(model.variables[2].Start, 1.0)
         self.assertEqual(model.variables[0].Start, 0.0)
         self.assertEqual(payload["mip_start"]["kind"],

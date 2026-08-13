@@ -18,6 +18,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -31,6 +32,7 @@ from run_exact_pool_mip import resolve_pool_journal
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MIP_WORKER = REPO_ROOT / "src" / "submit_exact_pool_mip.sub"
 MIP_RUNNER = REPO_ROOT / "src" / "run_exact_pool_mip.py"
+DEFAULT_MIP_GAP = 1e-4
 
 
 def _nonempty_json(path_text: str) -> Path:
@@ -81,6 +83,8 @@ def _wall_time(minutes: int) -> str:
 def _run_checked(command: list[str]) -> None:
     environment = os.environ.copy()
     for name in (
+        "EVSP_EXPECTED_COMMIT",
+        "EVSP_REQUIRE_DETACHED",
         "EVSP_MIP_EXPECTED_RESULT_SHA256",
         "EVSP_MIP_EXPECTED_JOURNAL_SHA256",
         "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256",
@@ -91,13 +95,70 @@ def _run_checked(command: list[str]) -> None:
     )
 
 
+def _reviewed_checkout_identity(repo_root: Path) -> dict:
+    """Require an immutable, detached, tracked-clean reviewed checkout."""
+
+    def git(*arguments: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            ["git", *arguments],
+            cwd=repo_root,
+            check=False,
+            text=True,
+            capture_output=True,
+        )
+
+    head = git("rev-parse", "--verify", "HEAD")
+    commit = head.stdout.strip()
+    if (head.returncode != 0 or len(commit) != 40
+            or any(character not in "0123456789abcdef" for character in commit)):
+        raise SystemExit("MIP launcher has no verifiable 40-character Git HEAD")
+    symbolic = git("symbolic-ref", "-q", "HEAD")
+    if symbolic.returncode == 0:
+        raise SystemExit(
+            "MIP submission requires an immutable detached checkout; "
+            f"found {symbolic.stdout.strip()}"
+        )
+    if symbolic.returncode != 1:
+        raise SystemExit("could not verify that MIP launcher HEAD is detached")
+    tracked = git("status", "--porcelain", "--untracked-files=no")
+    if tracked.returncode != 0:
+        raise SystemExit("could not verify MIP launcher worktree state")
+    if tracked.stdout.strip():
+        raise SystemExit(
+            "MIP launcher checkout has tracked modifications; commit them "
+            "and use a clean detached checkout"
+        )
+    return {
+        "expected_commit": commit,
+        "observed_commit": commit,
+        "detached": True,
+        "tracked_clean": True,
+    }
+
+
 def _write_manifest(path: Path, record: dict) -> None:
     temporary = path.with_suffix(".json.tmp")
     temporary.write_text(json.dumps(record, indent=2) + "\n")
     temporary.replace(path)
 
 
-def _mip_job_name(status: dict, mode: str, minutes: int) -> str:
+def _mip_arm(two_stage: bool, validated_start: bool) -> str:
+    return {
+        (False, False): "A",
+        (True, False): "B",
+        (False, True): "C",
+        (True, True): "D",
+    }[(two_stage, validated_start)]
+
+
+def _mip_job_name(
+    status: dict,
+    mode: str,
+    minutes: int,
+    *,
+    two_stage: bool = False,
+    validated_start: bool = False,
+) -> str:
     """Build a compact name that exposes the MIP's scientific configuration."""
 
     source = str(status.get("csv", ""))
@@ -120,8 +181,9 @@ def _mip_job_name(status: dict, mode: str, minutes: int) -> str:
         battery, reserve = "x", "x"
 
     mode_tag = "C" if mode == "cover" else "P"
+    arm_tag = _mip_arm(two_stage, validated_start)
     duration = f"T{minutes}"
-    name = f"M{mode_tag}{case}G{battery}R{reserve}{duration}"
+    name = f"M{mode_tag}{arm_tag}{case}G{battery}R{reserve}{duration}"
     if len(name) > 15:
         digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         value = minutes
@@ -138,10 +200,10 @@ def _mip_job_name(status: dict, mode: str, minutes: int) -> str:
             duration = "H" + (encoded or "0")
         else:
             duration = "Z" + (encoded or "0")
-        name = f"M{mode_tag}{case}G{battery}R{reserve}{duration}"
+        name = f"M{mode_tag}{arm_tag}{case}G{battery}R{reserve}{duration}"
     if len(name) > 15:
         duration = "Q" + hashlib.sha256(str(minutes).encode()).hexdigest()[:2]
-        name = f"M{mode_tag}{case}G{battery}R{reserve}{duration}"
+        name = f"M{mode_tag}{arm_tag}{case}G{battery}R{reserve}{duration}"
     if not re.fullmatch(r"[A-Z][A-Za-z0-9]{0,14}", name):
         raise SystemExit(f"could not build a <=15-character MIP job name: {name}")
     return name
@@ -149,8 +211,17 @@ def _mip_job_name(status: dict, mode: str, minutes: int) -> str:
 
 def submit_mip(args: argparse.Namespace) -> int:
     result: Path = args.result
+    checkout_identity = _reviewed_checkout_identity(REPO_ROOT)
+    expected_commit = checkout_identity["expected_commit"]
     two_stage = bool(getattr(args, "two_stage", False))
     initial_partition = getattr(args, "initial_partition_routes", None)
+    experiment_arm = _mip_arm(
+        two_stage, initial_partition is not None
+    )
+    mip_gap = float(getattr(args, "mip_gap", DEFAULT_MIP_GAP))
+    if not math.isfinite(mip_gap) or not 0.0 <= mip_gap < 1.0:
+        raise SystemExit("--mip-gap must be finite and in [0, 1)")
+    mip_gap_text = format(mip_gap, ".17g")
     mode = "cover" if args.cover else "partition"
     timestamp = dt.datetime.now().astimezone().strftime("%Y%m%d_%H%M%S_%f")
     campaign = args.campaign or f"mip_{mode}_{timestamp}"
@@ -226,12 +297,21 @@ def submit_mip(args: argparse.Namespace) -> int:
     _run_checked(validation)
 
     wall = _wall_time(args.minutes)
-    job_name = _mip_job_name(status, mode, args.minutes)
+    job_name = _mip_job_name(
+        status,
+        mode,
+        args.minutes,
+        two_stage=two_stage,
+        validated_start=initial_partition is not None,
+    )
     export_value = (
         "ALL,EVSP_DR_ROOT=" + str(REPO_ROOT)
         + ",EXACT_MIP_COVER=" + ("1" if args.cover else "0")
         + ",EXACT_MIP_TWO_STAGE=" + ("1" if two_stage else "0")
         + ",EXACT_MIP_INITIAL_PARTITION="
+        + ",EXACT_MIP_GAP="
+        + ",EVSP_EXPECTED_COMMIT=" + expected_commit
+        + ",EVSP_REQUIRE_DETACHED=1"
         + ",EVSP_MIP_EXPECTED_RESULT_SHA256="
         + expected_input_result_sha256
         + ",EVSP_MIP_EXPECTED_JOURNAL_SHA256="
@@ -253,6 +333,7 @@ def submit_mip(args: argparse.Namespace) -> int:
         str(staged_result),
         str(args.minutes * 60),
         str(output),
+        mip_gap_text,
     ]
     if staged_initial_partition is not None:
         sbatch.append(str(staged_initial_partition))
@@ -262,7 +343,12 @@ def submit_mip(args: argparse.Namespace) -> int:
         "job_name": job_name,
         "created_at": dt.datetime.now().astimezone().isoformat(),
         "mode": mode,
+        "experiment_arm": experiment_arm,
         "two_stage": two_stage,
+        "mip_gap": mip_gap,
+        "checkout_identity": checkout_identity,
+        "expected_git_commit": expected_commit,
+        "launcher_observed_git_commit": checkout_identity["observed_commit"],
         "minutes": args.minutes,
         "partition": "scaglione",
         "requeue": False,
@@ -350,6 +436,16 @@ def submit_mip(args: argparse.Namespace) -> int:
         _write_manifest(manifest, record)
         raise
 
+    pre_submission_identity = _reviewed_checkout_identity(REPO_ROOT)
+    if pre_submission_identity["observed_commit"] != expected_commit:
+        record["staging_error"] = (
+            "launcher commit changed between preflight and submission"
+        )
+        _write_manifest(manifest, record)
+        raise SystemExit(record["staging_error"])
+    record["pre_submission_observed_git_commit"] = (
+        pre_submission_identity["observed_commit"]
+    )
     _write_manifest(manifest, record)
     try:
         completed = subprocess.run(
@@ -381,6 +477,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mip = subparsers.add_parser("mip", help="validate and submit one exact-pool MIP")
     mip.add_argument("--result", type=_nonempty_json, required=True)
     mip.add_argument("--minutes", type=int, required=True)
+    mip.add_argument(
+        "--mip-gap",
+        type=float,
+        default=DEFAULT_MIP_GAP,
+        help=f"Explicit relative MIP gap (default: {DEFAULT_MIP_GAP:g}).",
+    )
     mip.add_argument("--cover", action="store_true")
     mip.add_argument(
         "--two-stage",
@@ -399,6 +501,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     args = parser.parse_args(argv)
     if getattr(args, "minutes", 1) <= 0:
         parser.error("--minutes must be positive")
+    mip_gap = getattr(args, "mip_gap", DEFAULT_MIP_GAP)
+    if not math.isfinite(mip_gap) or not 0.0 <= mip_gap < 1.0:
+        parser.error("--mip-gap must be finite and in [0, 1)")
     return args
 
 
