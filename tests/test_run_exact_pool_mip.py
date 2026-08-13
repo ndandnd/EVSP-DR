@@ -1,4 +1,5 @@
 import contextlib
+import hashlib
 import io
 import json
 import sys
@@ -18,6 +19,7 @@ from run_exact_pool_mip import (  # noqa: E402
     greedy_partition_start_indices,
     load_pool,
     main,
+    merge_validated_partition_start,
     optimal_scope,
     singleton_partition_indices,
     validate_injected_route,
@@ -281,7 +283,142 @@ class ExactPoolMipTests(unittest.TestCase):
         )
         self.assertRegex(verdict, r"starts before the horizon")
 
-    def run_fake_gurobi_mip(self, stages):
+    def test_explicit_partition_loader_validates_and_hashes_every_route(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "partition.json"
+            path.write_text(json.dumps({"routes": [
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 2, DEPOT], "charging_stops": {}},
+            ]}))
+            problem = SimpleNamespace(
+                adjacency={
+                    DEPOT: [
+                        (1, 0.0, 0.0, "depot_trip"),
+                        (2, 0.0, 0.0, "depot_trip"),
+                    ],
+                    1: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                    2: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                },
+                start_min={1: 0.0, 2: 10.0},
+                end_min={1: 5.0, 2: 15.0},
+                trip_energy={1: 0.0, 2: 0.0},
+                trips=[1, 2],
+            )
+            status = {
+                "csv": "tiny.csv",
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+            }
+            pool = [
+                {"trips": [1], "cost": 100003.0},
+                {"trips": [2], "cost": 100004.0},
+            ]
+            with (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=problem,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.0}},
+                ),
+                patch(
+                    "utils_v2.calculate_truck_route_cost_accurate",
+                    return_value=100000.0,
+                ),
+            ):
+                merged, start, detail = merge_validated_partition_start(
+                    pool, [1, 2], path, "prices.csv", status
+                )
+
+            self.assertEqual(len(merged), 2)
+            self.assertEqual(len(start), 2)
+            self.assertEqual(
+                sorted(merged[index]["trips"] for index in start),
+                [[1], [2]],
+            )
+            self.assertEqual(detail["kind"], "validated_exact_partition")
+            self.assertEqual(detail["validated_bus_count"], 2)
+            self.assertEqual(detail["pool_columns_replaced"], 2)
+            self.assertEqual(
+                detail["source_sha256"],
+                hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+
+    def test_explicit_partition_loader_fails_closed_on_coverage_or_physics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            problem = SimpleNamespace(
+                adjacency={
+                    DEPOT: [
+                        (1, 0.0, 0.0, "depot_trip"),
+                        (2, 0.0, 0.0, "depot_trip"),
+                    ],
+                    1: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                    2: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                },
+                start_min={1: 0.0, 2: 10.0},
+                end_min={1: 5.0, 2: 15.0},
+                trip_energy={1: 0.0, 2: 0.0},
+                trips=[1, 2],
+            )
+            status = {
+                "csv": "tiny.csv",
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+            }
+            missing = folder / "missing.json"
+            missing.write_text(json.dumps({"routes": [
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+            ]}))
+            invalid = folder / "invalid.json"
+            invalid.write_text(json.dumps({"routes": [
+                {"route": ["elsewhere", 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 2, DEPOT], "charging_stops": {}},
+            ]}))
+            repeated = folder / "repeated.json"
+            repeated.write_text(json.dumps({"routes": [
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 2, DEPOT], "charging_stops": {}},
+            ]}))
+            common_patches = (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=problem,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.0}},
+                ),
+                patch(
+                    "utils_v2.calculate_truck_route_cost_accurate",
+                    return_value=100000.0,
+                ),
+            )
+            with common_patches[0], common_patches[1], common_patches[2]:
+                with self.assertRaisesRegex(
+                    SystemExit, "not an exact partition"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], missing, "prices.csv", status
+                    )
+                with self.assertRaisesRegex(
+                    SystemExit, "failed physical validation"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], invalid, "prices.csv", status
+                    )
+                with self.assertRaisesRegex(
+                    SystemExit, "not an exact partition"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], repeated, "prices.csv", status
+                    )
+
+    def run_fake_gurobi_mip(self, stages, *, explicit_start=False):
         class FakeExpression:
             def __init__(self, items):
                 self.items = list(items)
@@ -323,9 +460,15 @@ class ExactPoolMipTests(unittest.TestCase):
             def setObjective(self, expression, _sense):
                 self.objectives.append(expression)
 
-            def optimize(self):
+            def cbGet(self, _what):
+                return self.callback_message
+
+            def optimize(self, callback=None):
                 stage = stages[self.optimize_calls]
                 self.optimize_calls += 1
+                self.callback_message = stage.get("start_message", "")
+                if callback is not None and self.callback_message:
+                    callback(self, 6)
                 self.Status = stage["status"]
                 self.SolCount = stage.get("solutions", 1)
                 self.ObjVal = stage["objective"]
@@ -345,7 +488,11 @@ class ExactPoolMipTests(unittest.TestCase):
 
         fake_gp.Model = make_model
         fake_gp.quicksum = lambda values: FakeExpression(list(values))
-        fake_gp.GRB = SimpleNamespace(BINARY=1, MINIMIZE=1)
+        fake_gp.GRB = SimpleNamespace(
+            BINARY=1,
+            MINIMIZE=1,
+            Callback=SimpleNamespace(MESSAGE=6, MSG_STRING=6001),
+        )
         fake_gp.gurobi = SimpleNamespace(version=lambda: (12, 0, 0))
 
         temporary = tempfile.TemporaryDirectory()
@@ -372,14 +519,66 @@ class ExactPoolMipTests(unittest.TestCase):
             "columns_journal": str(journal),
         }))
         out = folder / "mip.json"
-        with patch.dict(sys.modules, {"gurobipy": fake_gp}):
+        arguments = [
+            "--result", str(result), "--two-stage",
+            "--timelimit", "60", "--out", str(out),
+        ]
+        explicit_patch = contextlib.nullcontext()
+        if explicit_start:
+            partition = folder / "partition.json"
+            partition.write_text(json.dumps({"routes": []}))
+            merged_routes = [
+                *routes,
+                {"trips": [1, 2], "cost": 100005.0},
+            ]
+            detail = {
+                "kind": "validated_exact_partition",
+                "source": str(partition),
+                "source_sha256": "partition-sha",
+                "validated": True,
+                "validated_bus_count": 1,
+                "expected_full_objective": 100005.0,
+            }
+            explicit_patch = patch(
+                "run_exact_pool_mip.merge_validated_partition_start",
+                return_value=(merged_routes, [2], detail),
+            )
+            arguments.extend([
+                "--initial-partition-routes", str(partition),
+            ])
+        with patch.dict(sys.modules, {"gurobipy": fake_gp}), explicit_patch:
             with contextlib.redirect_stdout(io.StringIO()):
-                rc = main([
-                    "--result", str(result), "--two-stage",
-                    "--timelimit", "60", "--out", str(out),
-                ])
+                rc = main(arguments)
         payload = json.loads(out.read_text())
         return temporary, models[0], payload, rc
+
+    def test_explicit_partition_is_assigned_and_solver_acceptance_recorded(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 1.0,
+            "bound": 0.0,
+            "gap": 1.0,
+            "selected": [2],
+            "start_message": (
+                "Loaded user MIP start with objective 1"
+            ),
+        }], explicit_start=True)
+        self.addCleanup(temporary.cleanup)
+
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.variables[2].Start, 1.0)
+        self.assertEqual(model.variables[0].Start, 0.0)
+        self.assertEqual(payload["mip_start"]["kind"],
+                         "validated_exact_partition")
+        self.assertEqual(payload["mip_start"]["validated_bus_count"], 1)
+        self.assertEqual(payload["mip_start"]["assigned_variable_count"], 3)
+        self.assertEqual(payload["mip_start"]["selected_variable_count"], 1)
+        self.assertTrue(
+            payload["mip_start"]["solver_acceptance"]["accepted"]
+        )
+        self.assertEqual(
+            payload["mip_start"]["solver_acceptance"]["status"], "accepted"
+        )
 
     def test_unproven_fleet_uses_full_primary_stage_and_skips_cost_stage(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([{

@@ -65,6 +65,9 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn("non-semantic MIP job name", job_text)
         self.assertIn("run_exact_pool_mip.py", job_text)
         self.assertIn("--require-singleton-partition", job_text)
+        self.assertIn("EXACT_MIP_TWO_STAGE", job_text)
+        self.assertIn("--two-stage", job_text)
+        self.assertIn("--initial-partition-routes", job_text)
         self.assertNotIn("sbatch --wrap=", job_text)
         subprocess.run(["/bin/bash", "-n", str(script)], check=True)
 
@@ -140,10 +143,19 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 "columns_journal": str(journal),
             }))
             journal.write_text(json.dumps({"trips": [1], "cost": 100000}) + "\n")
+            partition = source / "validated_partition.json"
+            partition.write_text(json.dumps({
+                "routes": [{
+                    "route": ["PARX_0", 1, "PARX_0"],
+                    "charging_stops": {},
+                }],
+            }))
             args = argparse.Namespace(
                 result=result,
                 minutes=5,
                 cover=False,
+                two_stage=True,
+                initial_partition_routes=partition,
                 campaign="safe_campaign",
                 submit=True,
             )
@@ -162,7 +174,9 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                     "MIP_RUNNER",
                     repo / "src" / "run_exact_pool_mip.py",
                 ),
-                mock.patch.object(cluster_campaign, "_run_checked"),
+                mock.patch.object(
+                    cluster_campaign, "_run_checked"
+                ) as run_checked,
                 mock.patch.object(cluster_campaign.subprocess, "run", return_value=completed),
             ):
                 self.assertEqual(cluster_campaign.submit_mip(args), 0)
@@ -171,19 +185,46 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             manifest = json.loads((campaign / "submission.json").read_text())
             staged_result = Path(manifest["input_result"])
             staged_journal = Path(manifest["input_journal"])
+            staged_partition = Path(manifest["input_initial_partition"])
             self.assertTrue(staged_result.is_file())
             self.assertTrue(staged_journal.is_file())
+            self.assertTrue(staged_partition.is_file())
             self.assertEqual(manifest["job_id"], "12345")
             self.assertTrue(manifest["job_name"].startswith("MP"))
             self.assertTrue(manifest["submitted"])
+            self.assertTrue(manifest["two_stage"])
+            self.assertTrue(any(
+                "EXACT_MIP_TWO_STAGE=1" in argument
+                for argument in manifest["command"]
+            ))
+            self.assertEqual(
+                manifest["command"][-1], str(staged_partition)
+            )
             self.assertEqual(
                 manifest["source_journal_sha256"],
                 manifest["input_journal_sha256"],
             )
             self.assertEqual(
+                manifest["initial_partition_source_sha256"],
+                manifest["input_initial_partition_sha256"],
+            )
+            self.assertEqual(
                 json.loads(staged_result.read_text())["columns_journal"],
                 str(staged_journal),
             )
+            validation_commands = [
+                call.args[0] for call in run_checked.call_args_list
+            ]
+            self.assertEqual(len(validation_commands), 2)
+            for validation_command in validation_commands:
+                self.assertIn(
+                    "--initial-partition-routes", validation_command
+                )
+                self.assertNotIn(
+                    "--require-singleton-partition", validation_command
+                )
+            self.assertIn(str(partition), validation_commands[0])
+            self.assertIn(str(staged_partition), validation_commands[1])
 
     def test_cluster_campaign_refuses_existing_or_dot_campaign(self):
         with tempfile.TemporaryDirectory() as tmp:

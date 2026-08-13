@@ -48,6 +48,20 @@ def _nonempty_json(path_text: str) -> Path:
     return path
 
 
+def _nonempty_routes_json(path_text: str) -> Path:
+    path = Path(path_text).expanduser()
+    if not path.is_absolute():
+        path = REPO_ROOT / path
+    path = path.resolve()
+    if not path.is_file() or path.stat().st_size == 0:
+        raise argparse.ArgumentTypeError(f"file is missing or empty: {path}")
+    if path.suffix.lower() != ".json":
+        raise argparse.ArgumentTypeError(
+            f"expected a routes JSON file: {path}"
+        )
+    return path
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -125,6 +139,8 @@ def _mip_job_name(status: dict, mode: str, minutes: int) -> str:
 
 def submit_mip(args: argparse.Namespace) -> int:
     result: Path = args.result
+    two_stage = bool(getattr(args, "two_stage", False))
+    initial_partition = getattr(args, "initial_partition_routes", None)
     mode = "cover" if args.cover else "partition"
     timestamp = dt.datetime.now().astimezone().strftime("%Y%m%d_%H%M%S_%f")
     campaign = args.campaign or f"mip_{mode}_{timestamp}"
@@ -145,6 +161,10 @@ def submit_mip(args: argparse.Namespace) -> int:
     status = json.loads(source_result_bytes)
     source_journal = resolve_pool_journal(result, status).resolve()
     staged_journal = input_dir / source_journal.name
+    staged_initial_partition = (
+        input_dir / f"initial_partition_{initial_partition.name}"
+        if initial_partition is not None else None
+    )
     output = campaign_root / f"{result.stem}_{mode}_{args.minutes}m.json"
     manifest = campaign_root / "submission.json"
 
@@ -152,6 +172,9 @@ def submit_mip(args: argparse.Namespace) -> int:
         raise SystemExit("refusing to overwrite the input result")
     if staged_result == staged_journal:
         raise SystemExit("snapshot and journal names collide")
+    if (staged_initial_partition is not None
+            and staged_initial_partition in {staged_result, staged_journal}):
+        raise SystemExit("staged initial partition name collides with pool inputs")
     if campaign_root.exists() or log_dir.exists():
         raise SystemExit(
             f"campaign or log directory already exists; choose a new name: {campaign}"
@@ -166,11 +189,24 @@ def submit_mip(args: argparse.Namespace) -> int:
     ]
     if not args.cover:
         validation.append("--require-singleton-partition")
+    if initial_partition is not None:
+        # The supplied exact partition is a stronger feasibility witness than
+        # singleton fallback, and the runner validates every route physically.
+        if "--require-singleton-partition" in validation:
+            validation.remove("--require-singleton-partition")
+        validation.extend([
+            "--initial-partition-routes", str(initial_partition),
+        ])
     print("[preflight]", " ".join(validation), flush=True)
     _run_checked(validation)
 
     wall = _wall_time(args.minutes)
     job_name = _mip_job_name(status, mode, args.minutes)
+    export_value = (
+        "ALL,EVSP_DR_ROOT=" + str(REPO_ROOT)
+        + ",EXACT_MIP_COVER=" + ("1" if args.cover else "0")
+        + ",EXACT_MIP_TWO_STAGE=" + ("1" if two_stage else "0")
+    )
     sbatch = [
         "sbatch",
         "--parsable",
@@ -180,21 +216,27 @@ def submit_mip(args: argparse.Namespace) -> int:
         f"--job-name={job_name}",
         f"--output={log_dir}/%x_%j.out",
         f"--error={log_dir}/%x_%j.err",
-        "--export=ALL,EVSP_DR_ROOT=" + str(REPO_ROOT) +
-        ",EXACT_MIP_COVER=" + ("1" if args.cover else "0"),
+        "--export=" + export_value,
         str(MIP_WORKER),
         str(staged_result),
         str(args.minutes * 60),
         str(output),
     ]
+    if staged_initial_partition is not None:
+        sbatch.append(str(staged_initial_partition))
 
     source_result_sha256 = hashlib.sha256(source_result_bytes).hexdigest()
     source_journal_sha256 = _sha256(source_journal)
+    source_initial_partition_sha256 = (
+        _sha256(initial_partition)
+        if initial_partition is not None else None
+    )
     record = {
         "campaign": campaign,
         "job_name": job_name,
         "created_at": dt.datetime.now().astimezone().isoformat(),
         "mode": mode,
+        "two_stage": two_stage,
         "minutes": args.minutes,
         "partition": "scaglione",
         "requeue": False,
@@ -206,6 +248,17 @@ def submit_mip(args: argparse.Namespace) -> int:
         "input_result_sha256": None,
         "input_journal": str(staged_journal),
         "input_journal_sha256": None,
+        "initial_partition_source": (
+            str(initial_partition) if initial_partition is not None else None
+        ),
+        "initial_partition_source_sha256": (
+            source_initial_partition_sha256
+        ),
+        "input_initial_partition": (
+            str(staged_initial_partition)
+            if staged_initial_partition is not None else None
+        ),
+        "input_initial_partition_sha256": None,
         "output": str(output),
         "logs": str(log_dir),
         "command": sbatch,
@@ -225,23 +278,44 @@ def submit_mip(args: argparse.Namespace) -> int:
     input_dir.mkdir()
     log_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source_journal, staged_journal)
+    if staged_initial_partition is not None:
+        shutil.copyfile(initial_partition, staged_initial_partition)
     staged_status = dict(status)
     staged_status["columns_journal"] = str(staged_journal)
     staged_result.write_text(json.dumps(staged_status, indent=2) + "\n")
 
     # A snapshot is expected to be immutable. Refuse submission if either
     # source changed while its campaign copy was being staged.
+    initial_partition_changed = (
+        initial_partition is not None
+        and (
+            _sha256(initial_partition) != source_initial_partition_sha256
+            or _sha256(staged_initial_partition)
+            != source_initial_partition_sha256
+        )
+    )
     if (_sha256(result) != source_result_sha256 or
             _sha256(source_journal) != source_journal_sha256 or
-            _sha256(staged_journal) != source_journal_sha256):
-        record["staging_error"] = "source snapshot or journal changed while staging"
+            _sha256(staged_journal) != source_journal_sha256 or
+            initial_partition_changed):
+        record["staging_error"] = (
+            "source snapshot, journal, or initial partition changed while staging"
+        )
         _write_manifest(manifest, record)
         raise SystemExit(record["staging_error"])
 
     record["input_result_sha256"] = _sha256(staged_result)
     record["input_journal_sha256"] = _sha256(staged_journal)
+    if staged_initial_partition is not None:
+        record["input_initial_partition_sha256"] = _sha256(
+            staged_initial_partition
+        )
     staged_validation = list(validation)
     staged_validation[staged_validation.index(str(result))] = str(staged_result)
+    if initial_partition is not None:
+        staged_validation[
+            staged_validation.index(str(initial_partition))
+        ] = str(staged_initial_partition)
     print("[staged-preflight]", " ".join(staged_validation), flush=True)
     try:
         _run_checked(staged_validation)
@@ -282,6 +356,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     mip.add_argument("--result", type=_nonempty_json, required=True)
     mip.add_argument("--minutes", type=int, required=True)
     mip.add_argument("--cover", action="store_true")
+    mip.add_argument(
+        "--two-stage",
+        action="store_true",
+        help="Minimize fleet first, then cost only after fleet proof.",
+    )
+    mip.add_argument(
+        "--initial-partition-routes",
+        type=_nonempty_routes_json,
+        help="Runner-format routes JSON that must validate as an exact "
+             "partition and becomes the explicit MIP start.",
+    )
     mip.add_argument("--campaign")
     mip.add_argument("--submit", action="store_true")
     mip.set_defaults(handler=submit_mip)
