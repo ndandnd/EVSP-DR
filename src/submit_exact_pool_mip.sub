@@ -36,7 +36,7 @@ SUBMIT_DIR=${SLURM_SUBMIT_DIR:-$PWD}
 RESULT_ARG=$1
 MIP_SECONDS=${2:-7200}
 OUT_ARG=${3:-}
-INITIAL_PARTITION_ARG=${4:-${EXACT_MIP_INITIAL_PARTITION:-}}
+INITIAL_PARTITION_ARG=${4:-}
 
 [[ "$MIP_SECONDS" =~ ^[1-9][0-9]*$ ]] \
     || fatal "MIP_SECONDS must be a positive integer; got '$MIP_SECONDS'"
@@ -123,6 +123,55 @@ export PYTHONUNBUFFERED=1
 mkdir -p "$(dirname "$OUT")"
 cd "$ROOT/src"
 
+verify_expected_hash() {
+    local label=$1
+    local path=$2
+    local expected=$3
+    [[ -n "$expected" ]] || return 0
+    [[ -f "$path" ]] || fatal "$label is missing: $path"
+    local actual
+    actual=$(sha256sum "$path")
+    actual=${actual%% *}
+    [[ "$actual" == "$expected" ]] \
+        || fatal "$label hash mismatch: expected $expected, found $actual"
+}
+
+# Authenticate the staged status before trusting its recorded journal path.
+verify_expected_hash \
+    "staged result" "$RESULT" "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}"
+
+SOURCE_JOURNAL=$(python - "$RESULT" "$ROOT/src" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, sys.argv[2])
+from run_exact_pool_mip import resolve_pool_journal
+
+result = Path(sys.argv[1])
+with result.open() as handle:
+    status = json.load(handle)
+print(resolve_pool_journal(result, status).resolve())
+PY
+)
+
+verify_campaign_inputs() {
+    verify_expected_hash \
+        "staged result" "$RESULT" "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}"
+    verify_expected_hash \
+        "staged journal" "$SOURCE_JOURNAL" \
+        "${EVSP_MIP_EXPECTED_JOURNAL_SHA256:-}"
+    if [[ -n "${EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256:-}" ]]; then
+        [[ -n "$INITIAL_PARTITION" ]] \
+            || fatal "expected initial partition hash but no path was supplied"
+        verify_expected_hash \
+            "staged initial partition" "$INITIAL_PARTITION" \
+            "$EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
+    fi
+}
+
+verify_campaign_inputs
+
 echo "[MIP job] start       : $(date --iso-8601=seconds 2>/dev/null || date)"
 echo "[MIP job] host        : $(hostname)"
 echo "[MIP job] slurm job   : ${SLURM_JOB_ID:-none}"
@@ -155,6 +204,7 @@ validation=(
     --validate-only
 )
 "${validation[@]}"
+verify_campaign_inputs
 
 command=(
     python -u run_exact_pool_mip.py

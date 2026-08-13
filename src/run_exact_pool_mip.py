@@ -26,6 +26,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import platform
 import subprocess
 import time
@@ -92,16 +93,62 @@ def load_pool(result_path: Path):
     with open(result_path) as fh:
         status = json.load(fh)
 
-    journal_path = resolve_pool_journal(result_path, status)
-    pool = {}
-    for rec in read_jsonl_records(journal_path, repair_trailing=False):
-        key = frozenset(rec["trips"])
-        if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
-            pool[key] = rec
     trips = status.get("trip_ids")
     if trips is None:
         raise SystemExit(f"{result_path} lacks trip_ids; rerun with current code.")
-    return status, list(pool.values()), [int(t) for t in trips]
+    trips = [int(trip) for trip in trips]
+    if len(trips) != len(set(trips)):
+        raise SystemExit(f"{result_path} repeats a trip in trip_ids")
+    allowed = set(trips)
+    journal_path = resolve_pool_journal(result_path, status)
+    pool = {}
+    records = read_jsonl_records(journal_path, repair_trailing=False)
+    for ordinal, rec in enumerate(records, start=1):
+        if not isinstance(rec, dict):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} is not a JSON object"
+            )
+        route_trips = rec.get("trips")
+        if not isinstance(route_trips, list) or not route_trips:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has no nonempty trips list"
+            )
+        if any(
+                not isinstance(trip, int) or isinstance(trip, bool)
+                for trip in route_trips):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has non-integer trips"
+            )
+        try:
+            unique_trips = set(route_trips)
+        except TypeError as exc:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has unhashable trips"
+            ) from exc
+        if len(route_trips) != len(unique_trips):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} repeats a trip"
+            )
+        unknown = [trip for trip in route_trips if trip not in allowed]
+        if unknown:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} contains trips outside "
+                f"the snapshot: {unknown[:15]}"
+            )
+        try:
+            cost = float(rec["cost"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has invalid cost"
+            ) from exc
+        if not math.isfinite(cost):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has non-finite cost"
+            )
+        key = frozenset(route_trips)
+        if key not in pool or cost < float(pool[key]["cost"]) - 1e-9:
+            pool[key] = rec
+    return status, list(pool.values()), trips
 
 
 def singleton_partition_indices(routes: list[dict], trips: list[int]) -> list[int]:
@@ -351,6 +398,8 @@ def merge_validated_partition_start(
     partition_path,
     prices_csv,
     status=None,
+    *,
+    data_dir=None,
 ):
     """Merge and select one explicitly supplied exact-partition start.
 
@@ -362,7 +411,7 @@ def merge_validated_partition_start(
     """
 
     from audit_giro_known_columns import HORIZON_MIN, build_problem
-    from config import (BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST,
+    from config import (BUS_COST_KX, CHARGE_START_COST,
                         CHARGING_STATIONS)
     from utils_v2 import (
         calculate_truck_route_cost_accurate,
@@ -387,28 +436,120 @@ def merge_validated_partition_start(
         )
 
     status = status or {}
-    g_kwh = float(status.get("g_kwh", 300.0))
-    charge_kw = float(status.get("charge_kw", CHARGE_RATE_KW))
-    reserve_kwh = float(status.get("min_soc_frac", 0.0)) * g_kwh
+    required = (
+        "csv", "prices_csv", "soc_step", "block_min",
+        "g_kwh", "charge_kw", "min_soc_frac",
+    )
+    missing = [field for field in required if status.get(field) is None]
+    if missing:
+        raise SystemExit(
+            f"[MIP] pool snapshot lacks required start-validation fields: "
+            f"{missing}"
+        )
+    if prices_csv is not None and str(prices_csv) != str(status["prices_csv"]):
+        raise SystemExit(
+            "[MIP] requested start-validation prices differ from the pool "
+            "snapshot"
+        )
+    try:
+        g_kwh = float(status["g_kwh"])
+        charge_kw = float(status["charge_kw"])
+        reserve_frac = float(status["min_soc_frac"])
+        soc_step = float(status["soc_step"])
+        block_min = float(status["block_min"])
+    except (TypeError, ValueError) as exc:
+        raise SystemExit(
+            "[MIP] pool snapshot has non-numeric physics"
+        ) from exc
+    if (not all(math.isfinite(value) for value in (
+            g_kwh, charge_kw, reserve_frac, soc_step, block_min))
+            or g_kwh <= 0.0 or charge_kw <= 0.0
+            or soc_step <= 0.0 or block_min <= 0.0
+            or not 0.0 <= reserve_frac <= 1.0):
+        raise SystemExit("[MIP] pool snapshot has invalid or non-finite physics")
+    reserve_kwh = reserve_frac * g_kwh
+
+    provenance = status.get("provenance")
+    if not isinstance(provenance, dict):
+        raise SystemExit(
+            "[MIP] pool snapshot lacks hashed input provenance"
+        )
+    data_dir = Path(
+        data_dir
+        if data_dir is not None
+        else Path(__file__).resolve().parent.parent / "data"
+    ).resolve()
+
+    def verified_data_file(relative, hash_field, label):
+        expected_hash = provenance.get(hash_field)
+        if not isinstance(expected_hash, str) or len(expected_hash) != 64:
+            raise SystemExit(
+                f"[MIP] pool snapshot lacks {hash_field} provenance"
+            )
+        candidate = (data_dir / str(relative)).resolve()
+        try:
+            candidate.relative_to(data_dir)
+        except ValueError as exc:
+            raise SystemExit(
+                f"[MIP] pool {label} escapes the data directory: {relative}"
+            ) from exc
+        if not candidate.is_file():
+            raise SystemExit(
+                f"[MIP] pool {label} is missing: {candidate}"
+            )
+        actual_hash = file_sha256(candidate)
+        if actual_hash != expected_hash:
+            raise SystemExit(
+                f"[MIP] pool {label} hash mismatch: expected "
+                f"{expected_hash}, found {actual_hash}"
+            )
+        return candidate
+
+    instance_path = verified_data_file(
+        status["csv"], "instance_sha256", "instance"
+    )
+    prices_path = verified_data_file(
+        status["prices_csv"], "prices_sha256", "prices"
+    )
     problem = build_problem(
-        Path(__file__).resolve().parent.parent / "data",
-        status["csv"],
+        data_dir,
+        str(instance_path.relative_to(data_dir)),
         max_station_to_trip_wait_min=HORIZON_MIN,
     )
     trip_set = set(trips)
-    if set(problem.trips) != trip_set:
+    if list(problem.trips) != list(trips):
         raise SystemExit(
             "[MIP] initial partition validation reconstructed a different "
-            "trip set from the pool snapshot"
+            "ordered trip set from the pool snapshot"
         )
-    data_dir = Path(__file__).resolve().parent.parent / "data"
-    price_name = (
-        Path(prices_csv).name if prices_csv else "hourly_prices_flat.csv"
-    )
+    for trip in problem.trips:
+        values = (
+            float(problem.start_min[trip]),
+            float(problem.end_min[trip]),
+            float(problem.trip_energy[trip]),
+        )
+        if (not all(math.isfinite(value) for value in values)
+                or values[2] < 0.0 or values[1] < values[0]):
+            raise SystemExit(
+                f"[MIP] reconstructed instance has invalid trip data for {trip}"
+            )
     prices = load_station_hourly_prices(
-        data_dir / price_name, CHARGING_STATIONS
+        prices_path, CHARGING_STATIONS
     )
     depot_curve = prices.get("PARX") or next(iter(prices.values()))
+    arc_deadhead = {}
+    for node, arcs in problem.adjacency.items():
+        for successor, travel, deadhead_kwh, _kind in arcs:
+            travel = float(travel)
+            deadhead_kwh = float(deadhead_kwh)
+            if (not math.isfinite(travel)
+                    or not math.isfinite(deadhead_kwh)
+                    or travel < 0.0 or deadhead_kwh < 0.0):
+                raise SystemExit(
+                    f"[MIP] reconstructed instance has invalid arc data "
+                    f"{node}->{successor}"
+                )
+            arc_deadhead[(node, successor)] = deadhead_kwh
 
     validated = []
     counts = Counter()
@@ -461,8 +602,25 @@ def merge_validated_partition_start(
                 f"[MIP] initial partition route {ordinal} failed physical "
                 f"validation: {reason}"
             )
+        recomputed_deadhead_kwh = 0.0
+        for left, right in zip(nodes, nodes[1:]):
+            if isinstance(left, str) and isinstance(right, str) and left == right:
+                continue
+            try:
+                recomputed_deadhead_kwh += arc_deadhead[(left, right)]
+            except KeyError as exc:
+                # ``validate_injected_route`` should already have refused it;
+                # keep pricing independently fail-closed.
+                raise SystemExit(
+                    f"[MIP] initial partition route {ordinal} has no "
+                    f"deadhead-energy arc {left}->{right}"
+                ) from exc
+        pricing_route = dict(route)
+        pricing_route["route"] = nodes
+        pricing_route["route_nodes"] = nodes
+        pricing_route["deadhead_kwh"] = recomputed_deadhead_kwh
         cost = calculate_truck_route_cost_accurate(
-            route,
+            pricing_route,
             BUS_COST_KX,
             depot_curve,
             charge_rate_kw=charge_kw,
@@ -477,6 +635,7 @@ def merge_validated_partition_start(
         validated.append({
             **candidate,
             "cost": float(cost),
+            "deadhead_kwh": recomputed_deadhead_kwh,
             "charges_started": len(
                 (route.get("charging_stops") or {}).get("stations", [])
             ),
@@ -549,7 +708,12 @@ def optimize_with_start_audit(model, GRB, *, start_supplied: bool) -> dict:
         model.optimize()
         return {"status": "not_supplied", "accepted": None, "messages": []}
 
-    audit = {"status": "not_observed", "accepted": None, "messages": []}
+    audit = {
+        "status": "not_observed",
+        "accepted": None,
+        "rejection_observed": False,
+        "messages": [],
+    }
     callback_api = getattr(GRB, "Callback", None)
     can_capture = (
         callback_api is not None
@@ -575,11 +739,15 @@ def optimize_with_start_audit(model, GRB, *, start_supplied: bool) -> dict:
             audit["status"] = "accepted"
             audit["accepted"] = True
         elif "User MIP start violates constraint" in message:
-            audit["status"] = "rejected_infeasible"
-            audit["accepted"] = False
+            audit["rejection_observed"] = True
+            if audit["accepted"] is not True:
+                audit["status"] = "rejected_infeasible"
+                audit["accepted"] = False
         elif "User MIP start did not produce a new incumbent" in message:
-            audit["status"] = "not_loaded_as_incumbent"
-            audit["accepted"] = False
+            audit["rejection_observed"] = True
+            if audit["accepted"] is not True:
+                audit["status"] = "not_loaded_as_incumbent"
+                audit["accepted"] = False
 
     model.optimize(callback)
     return audit
@@ -674,6 +842,37 @@ def main(argv=None) -> int:
     source_journal = resolve_pool_journal(args.result, source_status)
     source_result_sha256 = file_sha256(args.result)
     source_journal_sha256 = file_sha256(source_journal)
+    expected_result_sha256 = os.environ.get(
+        "EVSP_MIP_EXPECTED_RESULT_SHA256"
+    )
+    expected_journal_sha256 = os.environ.get(
+        "EVSP_MIP_EXPECTED_JOURNAL_SHA256"
+    )
+    if (expected_result_sha256
+            and source_result_sha256 != expected_result_sha256):
+        raise SystemExit(
+            "[MIP] staged result does not match its submission-manifest hash"
+        )
+    if (expected_journal_sha256
+            and source_journal_sha256 != expected_journal_sha256):
+        raise SystemExit(
+            "[MIP] staged journal does not match its submission-manifest hash"
+        )
+    expected_initial_partition_sha256 = os.environ.get(
+        "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
+    )
+    if expected_initial_partition_sha256:
+        if args.initial_partition_routes is None:
+            raise SystemExit(
+                "[MIP] submission expects an initial partition but none was "
+                "supplied"
+            )
+        if (file_sha256(args.initial_partition_routes)
+                != expected_initial_partition_sha256):
+            raise SystemExit(
+                "[MIP] staged initial partition does not match its "
+                "submission-manifest hash"
+            )
     extra_route_sources = [
         {"path": str(path), "sha256": file_sha256(path)}
         for path in (args.extra_routes or [])
@@ -991,7 +1190,11 @@ def main(argv=None) -> int:
         "runtime_s": time.time() - t0,
         "pool_columns": len(routes),
         "singleton_partition_columns": len(seed_partition),
-        "mip_start_used": bool(mip_start),
+        "mip_start_assigned": bool(mip_start),
+        "mip_start_used": (
+            (initial_partition_start.get("solver_acceptance") or {})
+            .get("accepted") is True
+        ),
         "mip_start_buses": len(mip_start) if mip_start else None,
         "mip_start": initial_partition_start,
         "pool_preparation": status.get("pool_preparation"),

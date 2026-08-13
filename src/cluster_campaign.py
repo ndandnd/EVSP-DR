@@ -18,6 +18,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -78,7 +79,16 @@ def _wall_time(minutes: int) -> str:
 
 
 def _run_checked(command: list[str]) -> None:
-    subprocess.run(command, cwd=REPO_ROOT, check=True)
+    environment = os.environ.copy()
+    for name in (
+        "EVSP_MIP_EXPECTED_RESULT_SHA256",
+        "EVSP_MIP_EXPECTED_JOURNAL_SHA256",
+        "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256",
+    ):
+        environment.pop(name, None)
+    subprocess.run(
+        command, cwd=REPO_ROOT, check=True, env=environment
+    )
 
 
 def _write_manifest(path: Path, record: dict) -> None:
@@ -180,6 +190,21 @@ def submit_mip(args: argparse.Namespace) -> int:
             f"campaign or log directory already exists; choose a new name: {campaign}"
         )
 
+    source_result_sha256 = hashlib.sha256(source_result_bytes).hexdigest()
+    source_journal_sha256 = _sha256(source_journal)
+    source_initial_partition_sha256 = (
+        _sha256(initial_partition)
+        if initial_partition is not None else None
+    )
+    staged_status = dict(status)
+    staged_status["columns_journal"] = str(staged_journal)
+    staged_result_bytes = (
+        json.dumps(staged_status, indent=2) + "\n"
+    ).encode()
+    expected_input_result_sha256 = hashlib.sha256(
+        staged_result_bytes
+    ).hexdigest()
+
     validation = [
         sys.executable,
         str(MIP_RUNNER),
@@ -206,6 +231,13 @@ def submit_mip(args: argparse.Namespace) -> int:
         "ALL,EVSP_DR_ROOT=" + str(REPO_ROOT)
         + ",EXACT_MIP_COVER=" + ("1" if args.cover else "0")
         + ",EXACT_MIP_TWO_STAGE=" + ("1" if two_stage else "0")
+        + ",EXACT_MIP_INITIAL_PARTITION="
+        + ",EVSP_MIP_EXPECTED_RESULT_SHA256="
+        + expected_input_result_sha256
+        + ",EVSP_MIP_EXPECTED_JOURNAL_SHA256="
+        + source_journal_sha256
+        + ",EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256="
+        + (source_initial_partition_sha256 or "")
     )
     sbatch = [
         "sbatch",
@@ -225,12 +257,6 @@ def submit_mip(args: argparse.Namespace) -> int:
     if staged_initial_partition is not None:
         sbatch.append(str(staged_initial_partition))
 
-    source_result_sha256 = hashlib.sha256(source_result_bytes).hexdigest()
-    source_journal_sha256 = _sha256(source_journal)
-    source_initial_partition_sha256 = (
-        _sha256(initial_partition)
-        if initial_partition is not None else None
-    )
     record = {
         "campaign": campaign,
         "job_name": job_name,
@@ -245,9 +271,9 @@ def submit_mip(args: argparse.Namespace) -> int:
         "source_journal": str(source_journal),
         "source_journal_sha256": source_journal_sha256,
         "input_result": str(staged_result),
-        "input_result_sha256": None,
+        "input_result_sha256": expected_input_result_sha256,
         "input_journal": str(staged_journal),
-        "input_journal_sha256": None,
+        "input_journal_sha256": source_journal_sha256,
         "initial_partition_source": (
             str(initial_partition) if initial_partition is not None else None
         ),
@@ -258,7 +284,9 @@ def submit_mip(args: argparse.Namespace) -> int:
             str(staged_initial_partition)
             if staged_initial_partition is not None else None
         ),
-        "input_initial_partition_sha256": None,
+        "input_initial_partition_sha256": (
+            source_initial_partition_sha256
+        ),
         "output": str(output),
         "logs": str(log_dir),
         "command": sbatch,
@@ -280,9 +308,7 @@ def submit_mip(args: argparse.Namespace) -> int:
     shutil.copyfile(source_journal, staged_journal)
     if staged_initial_partition is not None:
         shutil.copyfile(initial_partition, staged_initial_partition)
-    staged_status = dict(status)
-    staged_status["columns_journal"] = str(staged_journal)
-    staged_result.write_text(json.dumps(staged_status, indent=2) + "\n")
+    staged_result.write_bytes(staged_result_bytes)
 
     # A snapshot is expected to be immutable. Refuse submission if either
     # source changed while its campaign copy was being staged.

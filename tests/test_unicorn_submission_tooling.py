@@ -68,6 +68,16 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn("EXACT_MIP_TWO_STAGE", job_text)
         self.assertIn("--two-stage", job_text)
         self.assertIn("--initial-partition-routes", job_text)
+        self.assertNotIn(
+            '${4:-${EXACT_MIP_INITIAL_PARTITION:-}}', job_text
+        )
+        self.assertIn('INITIAL_PARTITION_ARG=${4:-}', job_text)
+        self.assertIn("EVSP_MIP_EXPECTED_RESULT_SHA256", job_text)
+        self.assertIn("EVSP_MIP_EXPECTED_JOURNAL_SHA256", job_text)
+        self.assertIn(
+            "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256", job_text
+        )
+        self.assertGreaterEqual(job_text.count("verify_campaign_inputs"), 3)
         self.assertNotIn("sbatch --wrap=", job_text)
         subprocess.run(["/bin/bash", "-n", str(script)], check=True)
 
@@ -197,6 +207,28 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 "EXACT_MIP_TWO_STAGE=1" in argument
                 for argument in manifest["command"]
             ))
+            export_argument = next(
+                argument for argument in manifest["command"]
+                if argument.startswith("--export=")
+            )
+            self.assertIn(
+                "EXACT_MIP_INITIAL_PARTITION=,", export_argument
+            )
+            self.assertIn(
+                "EVSP_MIP_EXPECTED_RESULT_SHA256="
+                + manifest["input_result_sha256"],
+                export_argument,
+            )
+            self.assertIn(
+                "EVSP_MIP_EXPECTED_JOURNAL_SHA256="
+                + manifest["input_journal_sha256"],
+                export_argument,
+            )
+            self.assertIn(
+                "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256="
+                + manifest["input_initial_partition_sha256"],
+                export_argument,
+            )
             self.assertEqual(
                 manifest["command"][-1], str(staged_partition)
             )
