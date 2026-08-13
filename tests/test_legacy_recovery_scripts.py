@@ -1,14 +1,16 @@
 """Guardrails for the legacy big-tariff recovery launcher and Slurm job.
 
 These scripts encode the requeue, locking, and WAIT-vs-fatal semantics of the
-task-22/24/32 recovery.  They previously had no test coverage, so regressions
+task-22/24/32/34 recovery.  They previously had no test coverage, so regressions
 in the task->cell mapping or the witness-wait classification could only be
 noticed on Unicorn.
 """
 
 import re
+import os
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -150,9 +152,10 @@ class LegacyRecoveryScriptTests(unittest.TestCase):
     def test_task_mapping_matches_original_array_in_both_scripts(self):
         launcher_cells = self._launcher_cells()
         job_cells = self._job_cells()
-        self.assertEqual(sorted(launcher_cells), [22, 24, 32])
-        self.assertEqual(sorted(job_cells), [22, 24, 32])
-        for task in (22, 24, 32):
+        expected_tasks = [22, 24, 32, 34]
+        self.assertEqual(sorted(launcher_cells), expected_tasks)
+        self.assertEqual(sorted(job_cells), expected_tasks)
+        for task in expected_tasks:
             with self.subTest(task=task):
                 name, tag, price = original_array_cell(task)
                 job = job_cells[task]
@@ -165,6 +168,140 @@ class LegacyRecoveryScriptTests(unittest.TestCase):
                 )
                 self.assertEqual(launcher["price_rel"], price)
                 self.assertEqual(launcher["source_cell"], f"{name}_{tag}")
+
+    def test_launcher_accepts_all_recoverable_tasks_by_default(self):
+        self.assertIn('TASKS="22,24,32,34"', self.launcher_text)
+        self.assertIn(
+            "Subset of 22,24,32,34 (default: 22,24,32,34)",
+            self.launcher_text,
+        )
+
+    def _run_launcher_with_mocked_queue(
+        self, queue_output: str, *, task: int = 24
+    ):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            continuation = tmp_path / "continuation"
+            legacy = tmp_path / "legacy"
+            fake_bin = tmp_path / "bin"
+            marker = tmp_path / "sbatch-called"
+            fake_bin.mkdir()
+
+            (continuation / "src").mkdir(parents=True)
+            (continuation / "data" / "duty_unions_big").mkdir(parents=True)
+            (legacy / "src" / "results" / "tariff_big").mkdir(parents=True)
+            (continuation / "data" / "duty_unions_big" /
+             "Practice_Custom_DutyUnion_k30_r4.csv").touch()
+            for price in (
+                "hourly_prices_single_peak_18.csv",
+                "hourly_prices_transdev_sek.csv",
+            ):
+                (continuation / "data" / price).touch()
+            for tag in ("peak18", "sek"):
+                source = (
+                    legacy / "src" / "results" / "tariff_big" /
+                    f"Practice_Custom_DutyUnion_k30_r4_{tag}.json"
+                )
+                for suffix in ("", ".columns.jsonl", ".iters.csv"):
+                    Path(f"{source}{suffix}").touch()
+
+            fake_git = fake_bin / "git"
+            fake_git.write_text(
+                "#!/bin/bash\n"
+                "set -eu\n"
+                "root=\n"
+                "if [ \"${1:-}\" = -C ]; then root=$2; shift 2; fi\n"
+                "if [ \"${1:-}\" = diff ]; then exit 0; fi\n"
+                "if [ \"${1:-}\" = rev-parse ]; then\n"
+                "  case \"${2:-}\" in\n"
+                "    --show-toplevel) printf '%s\\n' \"$FAKE_CONTINUATION_ROOT\" ;;\n"
+                "    HEAD)\n"
+                "      if [ \"$root\" = \"$FAKE_LEGACY_ROOT\" ]; then\n"
+                "        printf '%s\\n' \"$FAKE_LEGACY_COMMIT\"\n"
+                "      else\n"
+                "        printf '%s\\n' \"$FAKE_CONTINUATION_COMMIT\"\n"
+                "      fi ;;\n"
+                "    *\\^\\{commit\\}) printf '%s\\n' \"$FAKE_LEGACY_COMMIT\" ;;\n"
+                "    *) exit 91 ;;\n"
+                "  esac\n"
+                "  exit 0\n"
+                "fi\n"
+                "exit 92\n"
+            )
+            fake_squeue = fake_bin / "squeue"
+            fake_squeue.write_text(
+                "#!/bin/bash\n"
+                "printf '%s' \"${FAKE_SQUEUE_OUTPUT:-}\"\n"
+            )
+            fake_sbatch = fake_bin / "sbatch"
+            fake_sbatch.write_text(
+                "#!/bin/bash\n"
+                "printf 'called\\n' >> \"$FAKE_SBATCH_MARKER\"\n"
+                "printf '999999\\n'\n"
+            )
+            for executable in (fake_git, fake_squeue, fake_sbatch):
+                executable.chmod(0o755)
+
+            env = os.environ.copy()
+            env.update({
+                "PATH": f"{fake_bin}:/usr/bin:/bin",
+                "FAKE_CONTINUATION_ROOT": str(continuation),
+                "FAKE_LEGACY_ROOT": str(legacy),
+                "FAKE_CONTINUATION_COMMIT": "b" * 40,
+                "FAKE_LEGACY_COMMIT": "a" * 40,
+                "FAKE_SQUEUE_OUTPUT": queue_output,
+                "FAKE_SBATCH_MARKER": str(marker),
+                "USER": "test-user",
+            })
+            completed = subprocess.run(
+                [
+                    "/bin/bash", str(LAUNCHER),
+                    "--continuation-root", str(continuation),
+                    "--source-root", str(legacy),
+                    "--legacy-ref", "legacy-ref",
+                    "--tasks", str(task),
+                    "--submit",
+                ],
+                text=True,
+                capture_output=True,
+                env=env,
+            )
+            return completed, marker.exists()
+
+    def test_active_task_from_older_commit_prevents_duplicate_submission(self):
+        completed, sbatch_called = self._run_launcher_with_mocked_queue(
+            "812345|R24-30r4-p18-cf31513\n"
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertFalse(sbatch_called)
+        self.assertIn(
+            "[RECOVERY] SKIP_ACTIVE task=24 "
+            "name=R24-30r4-p18-cf31513 job=812345",
+            completed.stdout,
+        )
+
+    def test_multiple_active_task_jobs_fail_closed(self):
+        completed, sbatch_called = self._run_launcher_with_mocked_queue(
+            "812345|R24-30r4-p18-cf31513\n"
+            "812346|R24-30r4-p18-cabcdef\n"
+        )
+        self.assertEqual(completed.returncode, 2)
+        self.assertFalse(sbatch_called)
+        self.assertIn(
+            "multiple active recovery jobs for task 24; refusing submission",
+            completed.stderr,
+        )
+
+    def test_explicit_task34_reaches_submission_path(self):
+        completed, sbatch_called = self._run_launcher_with_mocked_queue(
+            "", task=34
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertTrue(sbatch_called)
+        self.assertIn(
+            "[RECOVERY] task=34 job=R34-30r4-sek-cbbbbbb",
+            completed.stdout,
+        )
 
     def _extract_conda_selection_block(self) -> str:
         match = re.search(
