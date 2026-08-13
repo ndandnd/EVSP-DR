@@ -52,6 +52,16 @@ def git_value(*args) -> str | None:
     return result.stdout.strip() if result.returncode == 0 else None
 
 
+def git_result(*args) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", *args],
+        cwd=Path(__file__).resolve().parent,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
 def verified_mip_code_identity() -> dict:
     """Bind a submitted solve to one clean reviewed Git commit."""
 
@@ -59,12 +69,13 @@ def verified_mip_code_identity() -> dict:
     slurm_job_id = os.environ.get("SLURM_JOB_ID")
     require_detached = os.environ.get("EVSP_REQUIRE_DETACHED") == "1"
     enforce = bool(expected or slurm_job_id or require_detached)
-    observed = git_value("rev-parse", "--verify", "HEAD")
-    tracked_status = git_value(
+    head_result = git_result("rev-parse", "--verify", "HEAD")
+    observed = head_result.stdout.strip()
+    tracked_result = git_result(
         "status", "--porcelain", "--untracked-files=no"
     )
-    branch = git_value("branch", "--show-current")
-    if (observed is None or len(observed) != 40
+    symbolic_result = git_result("symbolic-ref", "-q", "HEAD")
+    if (head_result.returncode != 0 or len(observed) != 40
             or any(character not in "0123456789abcdef"
                    for character in observed)):
         raise SystemExit("[MIP] solver has no verifiable Git HEAD")
@@ -75,11 +86,20 @@ def verified_mip_code_identity() -> dict:
             f"[MIP] solver commit mismatch: expected {expected}, "
             f"found {observed}"
         )
-    if tracked_status is None:
+    if tracked_result.returncode != 0:
         raise SystemExit("[MIP] could not verify solver worktree state")
+    tracked_status = tracked_result.stdout.strip()
     if enforce and tracked_status:
         raise SystemExit("[MIP] solver checkout has tracked modifications")
-    if enforce and require_detached and branch:
+    if symbolic_result.returncode == 0:
+        branch = symbolic_result.stdout.strip()
+        detached = False
+    elif symbolic_result.returncode == 1:
+        branch = ""
+        detached = True
+    else:
+        raise SystemExit("[MIP] could not verify detached solver HEAD")
+    if enforce and (require_detached or slurm_job_id) and not detached:
         raise SystemExit(
             f"[MIP] solver must run detached; found branch {branch}"
         )
@@ -87,7 +107,7 @@ def verified_mip_code_identity() -> dict:
         "expected_commit": expected,
         "observed_commit": observed,
         "branch": branch,
-        "detached": not bool(branch),
+        "detached": detached,
         "tracked_clean": not bool(tracked_status),
         "enforced": enforce,
     }
@@ -890,6 +910,11 @@ def main(argv=None) -> int:
     expected_journal_sha256 = os.environ.get(
         "EVSP_MIP_EXPECTED_JOURNAL_SHA256"
     )
+    if os.environ.get("SLURM_JOB_ID"):
+        if not expected_result_sha256 or not expected_journal_sha256:
+            raise SystemExit(
+                "[MIP] submitted solve lacks required input hashes"
+            )
     if (expected_result_sha256
             and source_result_sha256 != expected_result_sha256):
         raise SystemExit(
@@ -903,6 +928,12 @@ def main(argv=None) -> int:
     expected_initial_partition_sha256 = os.environ.get(
         "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
     )
+    if (os.environ.get("SLURM_JOB_ID")
+            and args.initial_partition_routes is not None
+            and not expected_initial_partition_sha256):
+        raise SystemExit(
+            "[MIP] submitted initial partition lacks required hash"
+        )
     if expected_initial_partition_sha256:
         if args.initial_partition_routes is None:
             raise SystemExit(
@@ -1234,6 +1265,7 @@ def main(argv=None) -> int:
         "mip_obj": mip_obj,
         "mip_bound": mip_bound,
         "mip_bound_scope": mip_bound_scope,
+        "requested_mip_gap": args.mipgap,
         "mip_gap": mip_gap,
         "absolute_cost_gap": stage2_absolute_gap,
         "buses": len(chosen),

@@ -2,6 +2,7 @@ import argparse
 import contextlib
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -100,6 +101,29 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "tracked modifications"):
                 cluster_campaign._reviewed_checkout_identity(repo)
 
+    def test_local_preflight_drops_slurm_and_submission_identity(self):
+        completed = subprocess.CompletedProcess(
+            args=["python"], returncode=0
+        )
+        with (
+            mock.patch.dict(os.environ, {
+                "SLURM_JOB_ID": "interactive-allocation",
+                "EVSP_EXPECTED_COMMIT": "f" * 40,
+                "EVSP_REQUIRE_DETACHED": "1",
+            }, clear=False),
+            mock.patch.object(
+                cluster_campaign.subprocess,
+                "run",
+                return_value=completed,
+            ) as run,
+        ):
+            cluster_campaign._run_checked(["python", "--version"])
+
+        environment = run.call_args.kwargs["env"]
+        self.assertNotIn("SLURM_JOB_ID", environment)
+        self.assertNotIn("EVSP_EXPECTED_COMMIT", environment)
+        self.assertNotIn("EVSP_REQUIRE_DETACHED", environment)
+
     def test_exact_jobs_requeue_and_resume_persisted_pools(self):
         for script_name in (
             "submit_exact_pairs.sub",
@@ -143,6 +167,8 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn('INITIAL_PARTITION_ARG=${5:-}', job_text)
         self.assertIn("EVSP_MIP_EXPECTED_RESULT_SHA256", job_text)
         self.assertIn("EVSP_MIP_EXPECTED_JOURNAL_SHA256", job_text)
+        self.assertIn("EVSP_MIP_EXPECTED_WORKER_SHA256", job_text)
+        self.assertIn("EVSP_MIP_EXPECTED_RUNNER_SHA256", job_text)
         self.assertIn(
             "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256", job_text
         )
@@ -231,6 +257,13 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                     "_reviewed_checkout_identity",
                     return_value=identity,
                 ),
+                mock.patch.object(
+                    cluster_campaign,
+                    "_reviewed_git_blob",
+                    side_effect=lambda _root, _commit, relative: (
+                        REPO_ROOT / relative
+                    ).read_bytes(),
+                ),
                 mock.patch.object(cluster_campaign, "_run_checked"),
                 contextlib.redirect_stdout(output),
             ):
@@ -247,6 +280,13 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp) / "repo"
             repo.mkdir()
+            (repo / "src").mkdir()
+            (repo / "src" / "submit_exact_pool_mip.sub").write_bytes(
+                b"#!/bin/bash\n"
+            )
+            (repo / "src" / "run_exact_pool_mip.py").write_bytes(
+                b"#!/bin/bash\n"
+            )
             source = Path(tmp) / "source"
             source.mkdir()
             result = source / "sample.partition_ready.snapshot.json"
@@ -269,7 +309,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 result=result,
                 minutes=5,
                 cover=False,
-                mip_gap=0.0001,
+                mip_gap=0.0125,
                 two_stage=True,
                 initial_partition_routes=partition,
                 campaign="safe_campaign",
@@ -303,6 +343,11 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                         "tracked_clean": True,
                     },
                 ),
+                mock.patch.object(
+                    cluster_campaign,
+                    "_reviewed_git_blob",
+                    return_value=b"#!/bin/bash\n",
+                ),
                 mock.patch.object(cluster_campaign.subprocess, "run", return_value=completed),
             ):
                 self.assertEqual(cluster_campaign.submit_mip(args), 0)
@@ -312,15 +357,23 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             staged_result = Path(manifest["input_result"])
             staged_journal = Path(manifest["input_journal"])
             staged_partition = Path(manifest["input_initial_partition"])
+            staged_worker = Path(manifest["input_worker"])
             self.assertTrue(staged_result.is_file())
             self.assertTrue(staged_journal.is_file())
             self.assertTrue(staged_partition.is_file())
+            self.assertTrue(staged_worker.is_file())
+            self.assertEqual(
+                manifest["reviewed_worker_sha256"],
+                manifest["input_worker_sha256"],
+            )
+            self.assertIn(str(staged_worker), manifest["command"])
             self.assertEqual(manifest["job_id"], "12345")
+            self.assertEqual(manifest["submission_state"], "submitted")
             self.assertTrue(manifest["job_name"].startswith("MP"))
             self.assertTrue(manifest["submitted"])
             self.assertTrue(manifest["two_stage"])
             self.assertEqual(manifest["experiment_arm"], "D")
-            self.assertEqual(manifest["mip_gap"], 0.0001)
+            self.assertEqual(manifest["requested_mip_gap"], 0.0125)
             self.assertEqual(manifest["expected_git_commit"], "a" * 40)
             self.assertEqual(
                 manifest["launcher_observed_git_commit"], "a" * 40
@@ -336,14 +389,24 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 argument for argument in manifest["command"]
                 if argument.startswith("--export=")
             )
-            self.assertIn(
-                "EXACT_MIP_INITIAL_PARTITION=,", export_argument
-            )
-            self.assertIn("EXACT_MIP_GAP=,", export_argument)
+            self.assertFalse(export_argument.startswith("--export=ALL"))
+            self.assertNotIn(",ALL,", export_argument)
+            self.assertNotIn("EXACT_MIP_INITIAL_PARTITION", export_argument)
+            self.assertNotIn("EXACT_MIP_GAP", export_argument)
             self.assertIn(
                 "EVSP_EXPECTED_COMMIT=" + "a" * 40, export_argument
             )
             self.assertIn("EVSP_REQUIRE_DETACHED=1", export_argument)
+            self.assertIn(
+                "EVSP_MIP_EXPECTED_WORKER_SHA256="
+                + manifest["reviewed_worker_sha256"],
+                export_argument,
+            )
+            self.assertIn(
+                "EVSP_MIP_EXPECTED_RUNNER_SHA256="
+                + manifest["reviewed_runner_sha256"],
+                export_argument,
+            )
             self.assertIn(
                 "EVSP_MIP_EXPECTED_RESULT_SHA256="
                 + manifest["input_result_sha256"],
@@ -362,7 +425,7 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
             self.assertEqual(
                 manifest["command"][-1], str(staged_partition)
             )
-            self.assertEqual(manifest["command"][-2], "0.0001")
+            self.assertEqual(manifest["command"][-2], "0.012500000000000001")
             self.assertEqual(
                 manifest["source_journal_sha256"],
                 manifest["input_journal_sha256"],

@@ -85,6 +85,7 @@ def _run_checked(command: list[str]) -> None:
     for name in (
         "EVSP_EXPECTED_COMMIT",
         "EVSP_REQUIRE_DETACHED",
+        "SLURM_JOB_ID",
         "EVSP_MIP_EXPECTED_RESULT_SHA256",
         "EVSP_MIP_EXPECTED_JOURNAL_SHA256",
         "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256",
@@ -134,6 +135,22 @@ def _reviewed_checkout_identity(repo_root: Path) -> dict:
         "detached": True,
         "tracked_clean": True,
     }
+
+
+def _reviewed_git_blob(
+    repo_root: Path, commit: str, relative_path: str,
+) -> bytes:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{relative_path}"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode != 0 or not result.stdout:
+        raise SystemExit(
+            f"could not read reviewed Git blob {commit}:{relative_path}"
+        )
+    return result.stdout
 
 
 def _write_manifest(path: Path, record: dict) -> None:
@@ -213,6 +230,19 @@ def submit_mip(args: argparse.Namespace) -> int:
     result: Path = args.result
     checkout_identity = _reviewed_checkout_identity(REPO_ROOT)
     expected_commit = checkout_identity["expected_commit"]
+    reviewed_worker_bytes = _reviewed_git_blob(
+        REPO_ROOT, expected_commit, "src/submit_exact_pool_mip.sub"
+    )
+    reviewed_worker_sha256 = hashlib.sha256(
+        reviewed_worker_bytes
+    ).hexdigest()
+    reviewed_runner_sha256 = hashlib.sha256(_reviewed_git_blob(
+        REPO_ROOT, expected_commit, "src/run_exact_pool_mip.py"
+    )).hexdigest()
+    if _sha256(MIP_WORKER) != reviewed_worker_sha256:
+        raise SystemExit("working-tree MIP worker differs from reviewed Git blob")
+    if _sha256(MIP_RUNNER) != reviewed_runner_sha256:
+        raise SystemExit("working-tree MIP runner differs from reviewed Git blob")
     two_stage = bool(getattr(args, "two_stage", False))
     initial_partition = getattr(args, "initial_partition_routes", None)
     experiment_arm = _mip_arm(
@@ -242,6 +272,7 @@ def submit_mip(args: argparse.Namespace) -> int:
     status = json.loads(source_result_bytes)
     source_journal = resolve_pool_journal(result, status).resolve()
     staged_journal = input_dir / source_journal.name
+    staged_worker = input_dir / "submit_exact_pool_mip.reviewed.sub"
     staged_initial_partition = (
         input_dir / f"initial_partition_{initial_partition.name}"
         if initial_partition is not None else None
@@ -304,14 +335,16 @@ def submit_mip(args: argparse.Namespace) -> int:
         two_stage=two_stage,
         validated_start=initial_partition is not None,
     )
+    # Do not include ALL: Slurm gives inherited values precedence over explicit
+    # assignments when ALL is present, which could silently change the arm.
     export_value = (
-        "ALL,EVSP_DR_ROOT=" + str(REPO_ROOT)
+        "HOME,PATH,USER,EVSP_DR_ROOT=" + str(REPO_ROOT)
         + ",EXACT_MIP_COVER=" + ("1" if args.cover else "0")
         + ",EXACT_MIP_TWO_STAGE=" + ("1" if two_stage else "0")
-        + ",EXACT_MIP_INITIAL_PARTITION="
-        + ",EXACT_MIP_GAP="
         + ",EVSP_EXPECTED_COMMIT=" + expected_commit
         + ",EVSP_REQUIRE_DETACHED=1"
+        + ",EVSP_MIP_EXPECTED_WORKER_SHA256=" + reviewed_worker_sha256
+        + ",EVSP_MIP_EXPECTED_RUNNER_SHA256=" + reviewed_runner_sha256
         + ",EVSP_MIP_EXPECTED_RESULT_SHA256="
         + expected_input_result_sha256
         + ",EVSP_MIP_EXPECTED_JOURNAL_SHA256="
@@ -329,7 +362,7 @@ def submit_mip(args: argparse.Namespace) -> int:
         f"--output={log_dir}/%x_%j.out",
         f"--error={log_dir}/%x_%j.err",
         "--export=" + export_value,
-        str(MIP_WORKER),
+        str(staged_worker),
         str(staged_result),
         str(args.minutes * 60),
         str(output),
@@ -345,8 +378,14 @@ def submit_mip(args: argparse.Namespace) -> int:
         "mode": mode,
         "experiment_arm": experiment_arm,
         "two_stage": two_stage,
-        "mip_gap": mip_gap,
+        "requested_mip_gap": mip_gap,
         "checkout_identity": checkout_identity,
+        "reviewed_worker_git_path": "src/submit_exact_pool_mip.sub",
+        "reviewed_worker_sha256": reviewed_worker_sha256,
+        "reviewed_runner_git_path": "src/run_exact_pool_mip.py",
+        "reviewed_runner_sha256": reviewed_runner_sha256,
+        "input_worker": str(staged_worker),
+        "input_worker_sha256": reviewed_worker_sha256,
         "expected_git_commit": expected_commit,
         "launcher_observed_git_commit": checkout_identity["observed_commit"],
         "minutes": args.minutes,
@@ -376,6 +415,7 @@ def submit_mip(args: argparse.Namespace) -> int:
         "output": str(output),
         "logs": str(log_dir),
         "command": sbatch,
+        "submission_state": "planned",
         "submitted": False,
         "job_id": None,
     }
@@ -391,6 +431,8 @@ def submit_mip(args: argparse.Namespace) -> int:
     campaign_root.mkdir(exist_ok=False)
     input_dir.mkdir()
     log_dir.mkdir(parents=True, exist_ok=True)
+    staged_worker.write_bytes(reviewed_worker_bytes)
+    staged_worker.chmod(0o500)
     shutil.copyfile(source_journal, staged_journal)
     if staged_initial_partition is not None:
         shutil.copyfile(initial_partition, staged_initial_partition)
@@ -409,9 +451,11 @@ def submit_mip(args: argparse.Namespace) -> int:
     if (_sha256(result) != source_result_sha256 or
             _sha256(source_journal) != source_journal_sha256 or
             _sha256(staged_journal) != source_journal_sha256 or
+            _sha256(staged_worker) != reviewed_worker_sha256 or
             initial_partition_changed):
         record["staging_error"] = (
-            "source snapshot, journal, or initial partition changed while staging"
+            "source snapshot, journal, reviewed worker, or initial partition "
+            "changed while staging"
         )
         _write_manifest(manifest, record)
         raise SystemExit(record["staging_error"])
@@ -446,6 +490,10 @@ def submit_mip(args: argparse.Namespace) -> int:
     record["pre_submission_observed_git_commit"] = (
         pre_submission_identity["observed_commit"]
     )
+    record["submission_state"] = "attempting"
+    record["submission_attempted_at"] = (
+        dt.datetime.now().astimezone().isoformat()
+    )
     _write_manifest(manifest, record)
     try:
         completed = subprocess.run(
@@ -457,15 +505,18 @@ def submit_mip(args: argparse.Namespace) -> int:
         )
     except subprocess.CalledProcessError as exc:
         record["submission_error"] = (exc.stderr or str(exc)).strip()
+        record["submission_state"] = "failed"
         _write_manifest(manifest, record)
         raise SystemExit(f"sbatch failed: {record['submission_error']}") from exc
     job_id = completed.stdout.strip().split(";", 1)[0]
     if not job_id:
         record["submission_error"] = "sbatch returned no job id"
+        record["submission_state"] = "failed"
         _write_manifest(manifest, record)
         raise SystemExit(record["submission_error"])
     record["submitted"] = True
     record["job_id"] = job_id
+    record["submission_state"] = "submitted"
     _write_manifest(manifest, record)
     print(f"[submitted] job={job_id} manifest={manifest}", flush=True)
     return 0

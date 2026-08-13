@@ -28,6 +28,17 @@ fatal() {
     exit 2
 }
 
+EXPECTED_WORKER_SHA256=${EVSP_MIP_EXPECTED_WORKER_SHA256:-}
+if [[ -n "${SLURM_JOB_ID:-}" && -z "$EXPECTED_WORKER_SHA256" ]]; then
+    fatal "submitted MIP job lacks expected worker hash"
+fi
+if [[ -n "$EXPECTED_WORKER_SHA256" ]]; then
+    ACTUAL_WORKER_SHA256=$(sha256sum "$0")
+    ACTUAL_WORKER_SHA256=${ACTUAL_WORKER_SHA256%% *}
+    [[ "$ACTUAL_WORKER_SHA256" == "$EXPECTED_WORKER_SHA256" ]] \
+        || fatal "MIP worker script hash mismatch: expected $EXPECTED_WORKER_SHA256, found $ACTUAL_WORKER_SHA256"
+fi
+
 if (( $# < 1 || $# > 5 )); then
     fatal "Usage: sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON] [MIP_GAP] [INITIAL_PARTITION_ROUTES]"
 fi
@@ -109,17 +120,25 @@ EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:-}
 if [[ -n "${SLURM_JOB_ID:-}" && -z "$EXPECTED_COMMIT" ]]; then
     fatal "submitted MIP job lacks EVSP_EXPECTED_COMMIT"
 fi
-OBSERVED_COMMIT=$(git -C "$ROOT" rev-parse --verify HEAD) \
-    || fatal "could not resolve MIP worker Git HEAD"
+if ! OBSERVED_COMMIT=$(git -C "$ROOT" rev-parse --verify HEAD); then
+    fatal "could not resolve MIP worker Git HEAD"
+fi
 if [[ -n "$EXPECTED_COMMIT" && "$OBSERVED_COMMIT" != "$EXPECTED_COMMIT" ]]; then
     fatal "MIP worker commit mismatch: expected $EXPECTED_COMMIT, found $OBSERVED_COMMIT"
 fi
-if [[ -n "$(git -C "$ROOT" status --porcelain --untracked-files=no)" ]]; then
+if ! TRACKED_STATUS=$(git -C "$ROOT" status --porcelain --untracked-files=no); then
+    fatal "could not verify MIP worker tracked state"
+fi
+if [[ -n "$TRACKED_STATUS" ]]; then
     fatal "MIP worker checkout has tracked modifications"
 fi
 if [[ "${EVSP_REQUIRE_DETACHED:-0}" == "1" || -n "${SLURM_JOB_ID:-}" ]]; then
     if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
         fatal "MIP worker must run from an immutable detached checkout"
+    else
+        symbolic_status=$?
+        [[ "$symbolic_status" -eq 1 ]] \
+            || fatal "could not verify detached MIP worker HEAD"
     fi
 fi
 
@@ -166,6 +185,13 @@ verify_expected_hash() {
 }
 
 # Authenticate the staged status before trusting its recorded journal path.
+if [[ -n "${SLURM_JOB_ID:-}" &&
+      -z "${EVSP_MIP_EXPECTED_RUNNER_SHA256:-}" ]]; then
+    fatal "submitted MIP job lacks expected runner hash"
+fi
+verify_expected_hash \
+    "reviewed MIP runner" "$ROOT/src/run_exact_pool_mip.py" \
+    "${EVSP_MIP_EXPECTED_RUNNER_SHA256:-}"
 verify_expected_hash \
     "staged result" "$RESULT" "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}"
 
@@ -185,6 +211,16 @@ PY
 )
 
 verify_campaign_inputs() {
+    if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+        [[ -n "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}" ]] \
+            || fatal "submitted MIP job lacks expected result hash"
+        [[ -n "${EVSP_MIP_EXPECTED_JOURNAL_SHA256:-}" ]] \
+            || fatal "submitted MIP job lacks expected journal hash"
+        if [[ -n "$INITIAL_PARTITION" ]]; then
+            [[ -n "${EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256:-}" ]] \
+                || fatal "submitted MIP start lacks expected hash"
+        fi
+    fi
     verify_expected_hash \
         "staged result" "$RESULT" "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}"
     verify_expected_hash \

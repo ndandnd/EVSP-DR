@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -57,15 +58,32 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertEqual(finite_solver_value(42.5), 42.5)
 
     def test_submitted_solver_rejects_commit_dirty_and_branch_mismatches(self):
-        def git_state(commit="a" * 40, status="", branch=""):
+        def git_state(
+            commit="a" * 40,
+            status="",
+            branch="",
+            *,
+            status_returncode=0,
+        ):
             def value(*args):
                 if args[:2] == ("rev-parse", "--verify"):
-                    return commit
+                    return subprocess.CompletedProcess(
+                        args, 0, stdout=commit + "\n", stderr=""
+                    )
                 if args and args[0] == "status":
-                    return status
-                if args[:2] == ("branch", "--show-current"):
-                    return branch
-                return None
+                    return subprocess.CompletedProcess(
+                        args, status_returncode, stdout=status, stderr=""
+                    )
+                if args[:2] == ("symbolic-ref", "-q"):
+                    return subprocess.CompletedProcess(
+                        args,
+                        0 if branch else 1,
+                        stdout=(branch + "\n") if branch else "",
+                        stderr="",
+                    )
+                return subprocess.CompletedProcess(
+                    args, 1, stdout="", stderr="unsupported"
+                )
             return value
 
         with (
@@ -75,7 +93,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 "EVSP_REQUIRE_DETACHED": "1",
             }, clear=False),
             patch(
-                "run_exact_pool_mip.git_value",
+                "run_exact_pool_mip.git_result",
                 side_effect=git_state(),
             ),
             self.assertRaisesRegex(SystemExit, "commit mismatch"),
@@ -86,10 +104,10 @@ class ExactPoolMipTests(unittest.TestCase):
             patch.dict(os.environ, {
                 "SLURM_JOB_ID": "123",
                 "EVSP_EXPECTED_COMMIT": "a" * 40,
-                "EVSP_REQUIRE_DETACHED": "1",
+                "EVSP_REQUIRE_DETACHED": "0",
             }, clear=False),
             patch(
-                "run_exact_pool_mip.git_value",
+                "run_exact_pool_mip.git_result",
                 side_effect=git_state(status=" M src/run_exact_pool_mip.py"),
             ),
             self.assertRaisesRegex(SystemExit, "tracked modifications"),
@@ -100,10 +118,26 @@ class ExactPoolMipTests(unittest.TestCase):
             patch.dict(os.environ, {
                 "SLURM_JOB_ID": "123",
                 "EVSP_EXPECTED_COMMIT": "a" * 40,
-                "EVSP_REQUIRE_DETACHED": "1",
+                "EVSP_REQUIRE_DETACHED": "0",
             }, clear=False),
             patch(
-                "run_exact_pool_mip.git_value",
+                "run_exact_pool_mip.git_result",
+                side_effect=git_state(status_returncode=2),
+            ),
+            self.assertRaisesRegex(
+                SystemExit, "could not verify solver worktree"
+            ),
+        ):
+            verified_mip_code_identity()
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "a" * 40,
+                "EVSP_REQUIRE_DETACHED": "0",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_result",
                 side_effect=git_state(branch="cursor/recovery-audit"),
             ),
             self.assertRaisesRegex(SystemExit, "must run detached"),
@@ -252,6 +286,32 @@ class ExactPoolMipTests(unittest.TestCase):
                 }, clear=False),
                 self.assertRaisesRegex(
                     SystemExit, "submission-manifest hash"
+                ),
+            ):
+                main(["--result", str(result), "--validate-only"])
+
+            identity = {
+                "expected_commit": "a" * 40,
+                "observed_commit": "a" * 40,
+                "branch": "",
+                "detached": True,
+                "tracked_clean": True,
+                "enforced": True,
+            }
+            with (
+                patch.dict(os.environ, {
+                    "SLURM_JOB_ID": "123",
+                    "EVSP_EXPECTED_COMMIT": "a" * 40,
+                    "EVSP_REQUIRE_DETACHED": "1",
+                    "EVSP_MIP_EXPECTED_RESULT_SHA256": "",
+                    "EVSP_MIP_EXPECTED_JOURNAL_SHA256": "",
+                }, clear=False),
+                patch(
+                    "run_exact_pool_mip.verified_mip_code_identity",
+                    return_value=identity,
+                ),
+                self.assertRaisesRegex(
+                    SystemExit, "lacks required input hashes"
                 ),
             ):
                 main(["--result", str(result), "--validate-only"])
@@ -609,7 +669,9 @@ class ExactPoolMipTests(unittest.TestCase):
                         data_dir=data_dir,
                     )
 
-    def run_fake_gurobi_mip(self, stages, *, explicit_start=False):
+    def run_fake_gurobi_mip(
+        self, stages, *, explicit_start=False, mip_gap=0.0001,
+    ):
         class FakeExpression:
             def __init__(self, items):
                 self.items = list(items)
@@ -716,7 +778,8 @@ class ExactPoolMipTests(unittest.TestCase):
         out = folder / "mip.json"
         arguments = [
             "--result", str(result), "--two-stage",
-            "--timelimit", "60", "--out", str(out),
+            "--timelimit", "60", "--mipgap", str(mip_gap),
+            "--out", str(out),
         ]
         explicit_patch = contextlib.nullcontext()
         if explicit_start:
@@ -758,11 +821,12 @@ class ExactPoolMipTests(unittest.TestCase):
                 "Loaded user MIP start with objective 1",
                 "User MIP start did not produce a new incumbent solution",
             ],
-        }], explicit_start=True)
+        }], explicit_start=True, mip_gap=0.0125)
         self.addCleanup(temporary.cleanup)
 
         self.assertEqual(rc, 0)
         self.assertEqual(payload["experiment_arm"], "D")
+        self.assertEqual(payload["requested_mip_gap"], 0.0125)
         self.assertEqual(model.variables[2].Start, 1.0)
         self.assertEqual(model.variables[0].Start, 0.0)
         self.assertEqual(payload["mip_start"]["kind"],

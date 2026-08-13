@@ -13,12 +13,12 @@ route-space certificate.
 
 ## Experimental factors
 
-| Arm | Objective | Initial partition | Expected Slurm name prefix |
+| Arm | Objective | Pool/start treatment | Expected Slurm name prefix |
 |---|---|---|---|
 | A | single-stage stored route cost | deterministic pool-greedy | `MPA` |
 | B | two-stage fleet then cost | deterministic pool-greedy | `MPB` |
-| C | single-stage stored route cost | validated exact partition | `MPC` |
-| D | two-stage fleet then cost | validated exact partition | `MPD` |
+| C | single-stage stored route cost | merge validated partition columns and use them as the explicit start | `MPC` |
+| D | two-stage fleet then cost | merge validated partition columns and use them as the explicit start | `MPD` |
 
 All arms use 1,800 solver seconds, eight worker threads, MIP gap `0.0001`,
 partition `scaglione`, no requeue, identical snapshot bytes, and one reviewed
@@ -28,8 +28,11 @@ detached Git commit.
 
 1. **Objective effect:** B improves the fleet bound and/or integer incumbent
    relative to A because fleet count is optimized directly.
-2. **Integral-backbone effect:** C improves the first/final incumbent relative
-   to A if the raw pool lacks a useful exact partition.
+2. **Integral-backbone treatment:** C improves the first/final incumbent
+   relative to A if the raw pool lacks a useful exact partition or contains
+   one that Gurobi fails to assemble.  This is not automatically a pure
+   warm-start comparison because missing supplied incidences are merged into
+   C/D's feasible column set.
 3. **Combined effect:** D performs best if both limitations matter.
 4. If C/D load the validated start but do not materially improve on A/B, the
    principal limitation is downstream branch-and-bound/formulation behavior,
@@ -40,9 +43,12 @@ detached Git commit.
 - Treat an arm as invalid if its expected/observed Git commits differ, tracked
   code is dirty, its input hashes differ from the manifest, or its start is
   rejected/not observed.
-- Compare B-A for the objective effect, C-A for the start effect, D-B for the
-  start effect under two-stage optimization, and D-C for the objective effect
-  with the same validated start.
+- Compare B-A for the objective effect.  Compare C-A and D-B for the combined
+  partition-column augmentation plus explicit-start treatment; D-C remains
+  the objective effect under the same augmented pool/start.
+- Use `mip_start.pool_columns_added/replaced/reused` to classify the treatment.
+  Only when `added=0` and `replaced=0` do C-A and D-B hold the feasible
+  incidence set fixed closely enough to interpret mainly as a start effect.
 - Primary metrics: accepted start bus count/objective, first incumbent, final
   buses, stage-1 fleet bound, root relaxation, nodes, simplex iterations, and
   wall time.  Do not compare charging cost unless fleet counts match.
@@ -153,8 +159,10 @@ python -u src/cluster_campaign.py mip \
 Review the four printed plans for:
 
 - distinct `MPA`/`MPB`/`MPC`/`MPD` names, each at most 15 characters;
-- the same `EVSP_EXPECTED_COMMIT`, snapshot/journal hashes, 1,800 seconds,
-  eight worker threads, and explicit gap `0.0001`;
+- the same `EVSP_EXPECTED_COMMIT`, source snapshot hash, journal hash, 1,800
+  seconds, eight worker threads, and explicit requested gap `0.0001`;
+- campaign-specific staged-result hashes (expected to differ because each
+  staged status embeds its own absolute journal path);
 - no `--submit`, no `sbatch` execution, and no output overwrite;
 - C/D reporting the same validated start hash and bus count.
 
@@ -165,15 +173,16 @@ For campaign name `NAME`:
 ```text
 src/results/cluster_campaigns/NAME/submission.json
 src/results/cluster_campaigns/NAME/<snapshot>_partition_30m.json
-src/results/cluster_campaigns/NAME/input/<staged snapshot/journal/start>
+src/results/cluster_campaigns/NAME/input/<staged worker/snapshot/journal/start>
 src/logs/cluster_campaigns/NAME/<semantic-name>_<job-id>.out
 src/logs/cluster_campaigns/NAME/<semantic-name>_<job-id>.err
 ```
 
 Each manifest must record expected/observed commit, detached/clean state,
-explicit MIP gap, staged hashes, objective mode, start mode, and exact worker
-command.  Each result must independently record observed/expected commit and
-MIP-start acceptance evidence.
+explicit `requested_mip_gap`, staged hashes, objective mode, start treatment,
+reviewed worker/runner hashes, and exact worker command.  Each result must independently record
+observed/expected commit, requested versus achieved gap, and MIP-start
+acceptance evidence.
 
 ## Explicitly out of scope
 
