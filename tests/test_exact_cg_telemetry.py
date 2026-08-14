@@ -195,6 +195,16 @@ class ExactCgTelemetryTests(unittest.TestCase):
             for path, original in source_bytes.items():
                 self.assertEqual(path.read_bytes(), original)
 
+            args.out = journal
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(
+                    ValueError, "must not overwrite"
+                ),
+            ):
+                profiler.profile(args)
+            self.assertEqual(journal.read_bytes(), source_bytes[journal])
+
 
 if __name__ == "__main__":
     unittest.main()

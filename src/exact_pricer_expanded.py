@@ -880,10 +880,14 @@ def run_cg(args) -> dict:
             for path in (out_path, journal_path, iters_path)
             if path is not None
         }
+        protected.update({
+            (DATA_DIR / args.csv).resolve(),
+            (DATA_DIR / args.prices_csv).resolve(),
+        })
         if resolved_telemetry in protected:
             raise DurableFileError(
-                "phase telemetry must not overwrite status, journal, or "
-                "iteration artifacts"
+                "phase telemetry must not overwrite model inputs or persisted "
+                "status/journal/iteration artifacts"
             )
         telemetry = PhaseTelemetry(
             resolved_telemetry,

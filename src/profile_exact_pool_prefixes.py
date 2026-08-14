@@ -73,8 +73,6 @@ def ordered_unique_prefixes(
 
 def profile(args) -> dict:
     result_path = args.result.expanduser().resolve()
-    if args.out is not None and args.out.expanduser().resolve() == result_path:
-        raise ValueError("--out must not overwrite the source status")
     status_raw = result_path.read_bytes()
     status = json.loads(status_raw)
     if not isinstance(status, dict):
@@ -82,6 +80,15 @@ def profile(args) -> dict:
     journal_path = resolve_pool_journal(result_path, status).resolve()
     instance_path = (DATA_DIR / str(status["csv"])).resolve()
     prices_path = (DATA_DIR / str(status["prices_csv"])).resolve()
+    if args.out is not None:
+        output_path = args.out.expanduser().resolve()
+        protected = {
+            result_path, journal_path, instance_path, prices_path,
+        }
+        if output_path in protected:
+            raise ValueError(
+                "--out must not overwrite status, journal, instance, or tariff"
+            )
     data_root = DATA_DIR.resolve()
     for label, path in (("instance", instance_path), ("prices", prices_path)):
         try:

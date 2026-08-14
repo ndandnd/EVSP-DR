@@ -137,6 +137,19 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = parse_args(argv)
+    if args.out is not None:
+        output_path = args.out.expanduser().resolve()
+        protected = {
+            (args.data_dir / csv_name).expanduser().resolve()
+            for csv_name in args.csv
+        }
+        protected.add(
+            (args.prices_data_dir / args.prices_csv).expanduser().resolve()
+        )
+        if output_path in protected:
+            raise ValueError(
+                "--out must not overwrite benchmark instance or tariff inputs"
+            )
     payload = {
         "schema": SCHEMA,
         "configuration": {
