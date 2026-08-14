@@ -18,11 +18,12 @@ import statistics
 import subprocess
 import tempfile
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 from config import BIG_M_PENALTY
 from durable_io import (
-    exclusive_output_lock,
+    DurableFileError,
     flush_and_fsync,
     read_jsonl_records,
 )
@@ -82,6 +83,41 @@ def _assert_solutions_agree(
                 f"successful master solutions disagree for {context}: "
                 f"{field}={reference[field]} versus {candidate[field]}"
             )
+
+
+@contextmanager
+def _reserve_output_lock(output_path: Path, metadata: dict):
+    """Atomically reserve a new output without opening any existing inode."""
+
+    lock_path = Path(str(output_path) + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    try:
+        descriptor = os.open(lock_path, flags, 0o600)
+    except FileExistsError as exc:
+        raise DurableFileError(
+            f"profiler output lock already exists: {lock_path}"
+        ) from exc
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+            payload = {
+                **metadata,
+                "output": str(output_path),
+                "lock_path": str(lock_path),
+                "pid": os.getpid(),
+                "created_epoch_s": time.time(),
+            }
+            json.dump(payload, handle, sort_keys=True)
+            handle.write("\n")
+            flush_and_fsync(handle)
+            yield lock_path
+    finally:
+        # The reservation remains as diagnostic evidence. A failed or
+        # interrupted profile must use a new output path rather than guessing
+        # whether an existing reservation is stale.
+        pass
 
 
 def _resolve_sources(args):
@@ -518,7 +554,7 @@ def run_profile(args) -> dict:
         "expected_result_sha256": args.expected_result_sha256,
         "expected_journal_sha256": args.expected_journal_sha256,
     }
-    with exclusive_output_lock(output_path, metadata):
+    with _reserve_output_lock(output_path, metadata):
         if output_path.exists():
             raise FileExistsError(
                 f"refusing to overwrite existing profiler output: {output_path}"

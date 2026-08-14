@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -480,24 +481,18 @@ class ExactCgTelemetryTests(unittest.TestCase):
                 root / "lock-alias"
             )
             output = result.parent / "profile.json"
-            alias_journal = Path(str(output) + ".lock")
-            alias_journal.write_bytes(journal.read_bytes())
-            status["columns_journal"] = str(alias_journal)
-            result.write_text(json.dumps(status))
-            alias_args.expected_result_sha256 = hashlib.sha256(
-                result.read_bytes()
-            ).hexdigest()
-            alias_args.expected_journal_sha256 = hashlib.sha256(
-                alias_journal.read_bytes()
-            ).hexdigest()
+            alias_lock = Path(str(output) + ".lock")
+            os.link(journal, alias_lock)
             alias_args.out = output
-            original_alias = alias_journal.read_bytes()
+            original_journal = journal.read_bytes()
             with (
                 patch.object(profiler, "DATA_DIR", data),
-                self.assertRaisesRegex(ValueError, "lock path aliases"),
+                self.assertRaisesRegex(
+                    DurableFileError, "lock already exists"
+                ),
             ):
                 profiler.run_profile(alias_args)
-            self.assertEqual(alias_journal.read_bytes(), original_alias)
+            self.assertEqual(journal.read_bytes(), original_journal)
 
             raced_output = root / "raced-profile.json"
 
@@ -521,7 +516,7 @@ class ExactCgTelemetryTests(unittest.TestCase):
             with (
                 exclusive_output_lock(existing_output, {"owner": "test"}),
                 self.assertRaisesRegex(
-                    DurableFileError, "another process"
+                    DurableFileError, "lock already exists"
                 ),
             ):
                 profiler.run_profile(output_args)

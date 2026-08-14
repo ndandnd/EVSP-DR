@@ -75,6 +75,7 @@ test "$(git -C "$PROFILE_ROOT" rev-parse HEAD)" = \
   "$EXPECTED_REVIEWED_COMMIT"
 test -z "$(git -C "$PROFILE_ROOT" branch --show-current)"
 test -z "$(git -C "$PROFILE_ROOT" status --porcelain --untracked-files=no)"
+test "$(sha256sum "$SNAP" | awk '{print $1}')" = "$EXPECTED_STATUS_SHA"
 
 readarray -t INPUTS < <(python3 - "$SNAP" "$PROFILE_ROOT/src" <<'PY'
 import json, sys
@@ -96,6 +97,10 @@ EXPECTED_CSV_SHA=${INPUTS[2]}
 EXPECTED_PRICES_SHA=${INPUTS[3]}
 JOURNAL=${INPUTS[4]}
 
+test "$(sha256sum "$JOURNAL" | awk '{print $1}')" = "$EXPECTED_JOURNAL_SHA"
+[[ "$CSV" != /* && "$CSV" != *".."* ]]
+[[ "$PRICES" != /* && "$PRICES" != *".."* ]]
+
 mkdir -p "$PROFILE_ROOT/data/$(dirname "$CSV")"
 rsync -a --ignore-existing \
   "$SOURCE_ROOT/data/$CSV" "$PROFILE_ROOT/data/$CSV"
@@ -107,8 +112,6 @@ test "$(sha256sum "$PROFILE_ROOT/data/$CSV" | awk '{print $1}')" = \
 test "$(sha256sum "$PROFILE_ROOT/data/$PRICES" | awk '{print $1}')" = \
   "$EXPECTED_PRICES_SHA"
 
-test "$(sha256sum "$SNAP" | awk '{print $1}')" = "$EXPECTED_STATUS_SHA"
-test "$(sha256sum "$JOURNAL" | awk '{print $1}')" = "$EXPECTED_JOURNAL_SHA"
 OUT="$PROFILE_ROOT/src/results/profiles/$(basename "$SNAP").prefix-profile.json"
 test ! -e "$OUT"
 
