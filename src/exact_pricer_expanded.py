@@ -939,15 +939,6 @@ def run_cg(args) -> dict:
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
           f"built in {build_s:.1f}s", flush=True)
-    if telemetry is not None:
-        telemetry.phase(
-            "network_build",
-            build_s,
-            pool_columns=len(pool),
-            network_nodes=len(net.node_meta),
-            network_arcs=net.n_arcs,
-        )
-
     def _record_phase(
         name,
         duration_s,
@@ -989,6 +980,12 @@ def run_cg(args) -> dict:
             detached_telemetry_overhead_s += (
                 time.perf_counter() - warning_started
             )
+
+    _record_phase(
+        "network_build",
+        build_s,
+        pool_columns=len(pool),
+    )
 
     # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
     # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.

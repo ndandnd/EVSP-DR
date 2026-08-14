@@ -445,7 +445,7 @@ class ExactPricerResumeTests(unittest.TestCase):
         self.assertEqual(without["final"], with_slow_telemetry["final"])
         self.assertEqual(without["wall_s"], with_slow_telemetry["wall_s"])
 
-    def test_telemetry_failure_is_not_misclassified_as_master_failure(self):
+    def test_network_telemetry_failure_does_not_abort_cg(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"
             status = self._status()
@@ -491,7 +491,7 @@ class ExactPricerResumeTests(unittest.TestCase):
                     pass
 
                 def phase(self, name, *_args, **_kwargs):
-                    if name == "master_attempt":
+                    if name == "network_build":
                         raise OSError("synthetic telemetry failure")
 
             with (
