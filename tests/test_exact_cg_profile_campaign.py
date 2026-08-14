@@ -124,7 +124,20 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
                 [job["label"] for job in manifest["jobs"]],
                 ["historical", "ca", "cs", "pa", "ps"],
             )
+            expected_prefixes = {
+                "historical": "PFhist-",
+                "ca": "PFca-",
+                "cs": "PFcs-",
+                "pa": "PFpa-",
+                "ps": "PFps-",
+            }
             for job in manifest["jobs"]:
+                self.assertTrue(
+                    job["job_name"].startswith(
+                        expected_prefixes[job["label"]]
+                    )
+                )
+                self.assertLessEqual(len(job["job_name"]), 15)
                 spec = job["job_spec"]
                 self.assertEqual(
                     spec["source_hashes"], job["source_hashes"]

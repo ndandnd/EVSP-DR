@@ -150,7 +150,14 @@ install_input() {
     local destination="$ROOT/data/$relative"
     mkdir -p "$(dirname "$destination")"
     if [[ ! -e "$destination" ]]; then
-        cp --no-clobber "$source" "$destination"
+        local temporary="${destination}.profile-input.${SLURM_JOB_ID:-$$}"
+        cp --no-clobber "$source" "$temporary"
+        verify_hash "temporary checkout input $relative" "$temporary" "$expected"
+        if ! ln "$temporary" "$destination" 2>/dev/null; then
+            [[ -e "$destination" ]] \
+                || fatal "could not atomically install data/$relative"
+        fi
+        rm -f "$temporary"
     fi
     verify_hash "checkout input $relative" "$destination" "$expected"
 }
