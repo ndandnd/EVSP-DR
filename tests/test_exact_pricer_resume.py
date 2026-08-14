@@ -40,6 +40,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             diversify_rounds=0,
             diversify_delta=0.15,
             snapshot_at_minutes=snapshot_marks,
+            phase_telemetry=None,
             resume=True,
             out=out,
         )
@@ -291,6 +292,79 @@ class ExactPricerResumeTests(unittest.TestCase):
         self.assertEqual(result["final"]["artificials"], 1.0)
         self.assertIn("initial pool: artificial-only", output.getvalue())
 
+    def test_phase_telemetry_does_not_change_result_or_certification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            telemetry_path = Path(tmp) / "phases.jsonl"
+
+            def execute(path):
+                args = self._args(Path("unused.json"))
+                args.out = None
+                args.resume = False
+                args.initial_pool = "artificial"
+                args.phase_telemetry = path
+                problem = SimpleNamespace(trips=[1], adjacency={})
+
+                def k_best(_duals, *, k, phase_callback=None):
+                    if phase_callback is not None:
+                        phase_callback(
+                            "pricing_shortest_path", 0.1,
+                            {"path_found": False},
+                        )
+                        phase_callback(
+                            "pricing_extra_columns", 0.0,
+                            {"sink_candidates": 0, "returned_routes": 0},
+                        )
+                    return []
+
+                network = SimpleNamespace(
+                    node_meta=[], n_arcs=0, k_best_routes=k_best,
+                )
+                provenance = {
+                    "instance_sha256": "instance-hash",
+                    "prices_sha256": "prices-hash",
+                    "git_commit": "a" * 40,
+                }
+                with (
+                    patch.object(exact, "build_problem", return_value=problem),
+                    patch.object(
+                        exact, "load_station_hourly_prices", return_value={}
+                    ),
+                    patch.object(
+                        exact, "ExpandedNetwork", return_value=network
+                    ),
+                    patch.object(
+                        exact, "_provenance", return_value=provenance
+                    ),
+                    patch.object(
+                        exact,
+                        "direct_singleton_seed_records",
+                        side_effect=AssertionError(
+                            "artificial mode must not build singletons"
+                        ),
+                    ),
+                ):
+                    return exact.run_cg(args)
+
+            without = execute(None)
+            with_telemetry = execute(telemetry_path)
+
+            for payload in (without, with_telemetry):
+                payload.pop("wall_s")
+                payload.pop("attempt_wall_s")
+            self.assertEqual(without, with_telemetry)
+            self.assertFalse(with_telemetry["certified_rc_optimal"])
+            records = [
+                json.loads(line)
+                for line in telemetry_path.read_text().splitlines()
+            ]
+            phases = {
+                record.get("phase") for record in records
+                if record.get("record_type") == "phase"
+            }
+            self.assertIn("network_build", phases)
+            self.assertIn("pricing_shortest_path", phases)
+            self.assertIn("pricing_extra_columns", phases)
+
     def test_resume_accepts_journal_ahead_of_last_status_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"
@@ -340,6 +414,9 @@ class ExactPricerResumeTests(unittest.TestCase):
                 self.now = 1000.0
 
             def time(self):
+                return self.now
+
+            def perf_counter(self):
                 return self.now
 
         fake_time = _FakeTime()
@@ -477,6 +554,9 @@ class ExactPricerResumeTests(unittest.TestCase):
                 self.now = 1000.0
 
             def time(self):
+                return self.now
+
+            def perf_counter(self):
                 return self.now
 
         fake_time = _FakeTime()
