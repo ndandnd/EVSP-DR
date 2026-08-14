@@ -32,12 +32,14 @@ EXPECTED_SPEC_SHA=$2
 ROOT=${EVSP_DR_ROOT:-}
 EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:-}
 PYTHON=${EVSP_PROFILE_PYTHON:-}
+EXPECTED_ENV_SHA=${EVSP_PROFILE_ENV_SHA256:-}
 
 [[ -n "$ROOT" && -d "$ROOT/src" ]] \
     || fatal "EVSP_DR_ROOT must name the reviewed checkout"
 [[ -n "$EXPECTED_COMMIT" ]] || fatal "missing EVSP_EXPECTED_COMMIT"
 [[ -n "$PYTHON" && -x "$PYTHON" ]] \
     || fatal "EVSP_PROFILE_PYTHON is missing or not executable"
+[[ -n "$EXPECTED_ENV_SHA" ]] || fatal "missing EVSP_PROFILE_ENV_SHA256"
 [[ -f "$JOB_SPEC" ]] || fatal "job spec is missing: $JOB_SPEC"
 
 if [[ -n "${SLURM_JOB_ID:-}" &&
@@ -82,11 +84,13 @@ spec_sha=$(sha256sum "$JOB_SPEC")
 spec_sha=${spec_sha%% *}
 [[ "$spec_sha" == "$EXPECTED_SPEC_SHA" ]] || fatal "job spec hash mismatch"
 
-"$PYTHON" - <<'PY' || fatal "profile environment must be Python 3.12 with dependencies"
-import sys
-assert sys.version_info[:2] == (3, 12), sys.version
-import numpy, pandas, scipy  # noqa: F401
-PY
+ENVIRONMENT_JSON=$("$PYTHON" "$ROOT/src/exact_cg_profile_environment.py") \
+    || fatal "profile environment validation failed"
+OBSERVED_ENV_SHA=$(printf '%s' "$ENVIRONMENT_JSON" | "$PYTHON" -c \
+    'import json,sys; print(json.load(sys.stdin)["identity_sha256"])') \
+    || fatal "profile environment identity is invalid"
+[[ "$OBSERVED_ENV_SHA" == "$EXPECTED_ENV_SHA" ]] \
+    || fatal "profile environment identity mismatch"
 
 readarray -t SPEC < <("$PYTHON" - "$JOB_SPEC" <<'PY'
 import json, sys
@@ -145,24 +149,14 @@ verify_hash "staged journal" "$JOURNAL" "$JOURNAL_SHA"
 verify_hash "staged instance" "$INSTANCE" "$INSTANCE_SHA"
 verify_hash "staged prices" "$PRICES" "$PRICES_SHA"
 
-install_input() {
-    local source=$1 relative=$2 expected=$3
-    local destination="$ROOT/data/$relative"
-    mkdir -p "$(dirname "$destination")"
-    if [[ ! -e "$destination" ]]; then
-        local temporary="${destination}.profile-input.${SLURM_JOB_ID:-$$}"
-        cp --no-clobber "$source" "$temporary"
-        verify_hash "temporary checkout input $relative" "$temporary" "$expected"
-        if ! ln "$temporary" "$destination" 2>/dev/null; then
-            [[ -e "$destination" ]] \
-                || fatal "could not atomically install data/$relative"
-        fi
-        rm -f "$temporary"
-    fi
-    verify_hash "checkout input $relative" "$destination" "$expected"
-}
-install_input "$INSTANCE" "$CSV" "$INSTANCE_SHA"
-install_input "$PRICES" "$PRICES_CSV" "$PRICES_SHA"
+"$PYTHON" "$ROOT/src/install_exact_cg_profile_input.py" \
+    --source "$INSTANCE" --data-root "$ROOT/data" \
+    --relative "$CSV" --sha256 "$INSTANCE_SHA" \
+    || fatal "could not install staged instance"
+"$PYTHON" "$ROOT/src/install_exact_cg_profile_input.py" \
+    --source "$PRICES" --data-root "$ROOT/data" \
+    --relative "$PRICES_CSV" --sha256 "$PRICES_SHA" \
+    || fatal "could not install staged prices"
 
 export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
@@ -184,3 +178,5 @@ cd "$ROOT"
     --repeat "$REPEAT" \
     --time-limit-s "$TIME_LIMIT" \
     --out "$OUT"
+
+echo "[PROFILE] DONE label=$LABEL output=$OUT"

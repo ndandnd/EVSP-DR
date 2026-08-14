@@ -24,6 +24,7 @@ from run_exact_pool_mip import resolve_pool_journal
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PROFILE_CORE_COMMIT = "702491e2b9fa548b75a8b140ba5a4213c06df24f"
+HISTORICAL_COMPARATOR_COMMIT = "f43475b732c3fbc8447a30845834a7d9e8822ef3"
 WORKER_GIT_PATH = "src/submit_exact_cg_profile.sub"
 LABEL_ARGUMENTS = (
     ("historical", "historical"),
@@ -38,6 +39,12 @@ JOB_TAGS = {
     "cs": "cs",
     "pa": "pa",
     "ps": "ps",
+}
+EXPECTED_TREATMENTS = {
+    "ca": ("cover", "artificial"),
+    "cs": ("cover", "singletons"),
+    "pa": ("partition", "artificial"),
+    "ps": ("partition", "singletons"),
 }
 PREFIXES = [1000, 5000, 10000, 25000, 50000]
 METHODS = ["highs", "highs-ds", "highs-ipm"]
@@ -121,9 +128,7 @@ def validated_python(path: Path) -> dict:
     check = subprocess.run(
         [
             str(path),
-            "-c",
-            "import sys; assert sys.version_info[:2] == (3, 12); "
-            "import numpy, pandas, scipy; print(sys.version.split()[0])",
+            str(REPO_ROOT / "src/exact_cg_profile_environment.py"),
         ],
         text=True,
         capture_output=True,
@@ -134,7 +139,13 @@ def validated_python(path: Path) -> dict:
             f"profile environment validation failed: "
             f"{(check.stderr or check.stdout).strip()}"
         )
-    return {"path": str(path), "version": check.stdout.strip()}
+    try:
+        identity = json.loads(check.stdout)
+    except json.JSONDecodeError as exc:
+        raise SystemExit("profile environment returned invalid identity") from exc
+    if identity.get("python_executable") != str(path):
+        raise SystemExit("profile environment executable identity mismatch")
+    return identity
 
 
 def _safe_relative(value: str, label: str) -> Path:
@@ -174,6 +185,42 @@ def _write_new(path: Path, payload: bytes, *, executable: bool = False) -> None:
         path.chmod(0o500)
 
 
+def _approval_payload(manifest: dict) -> dict:
+    jobs = []
+    for job in manifest["jobs"]:
+        jobs.append({
+            key: value for key, value in job.items()
+            if key not in {
+                "staged_result_bytes", "job_spec_bytes",
+                "job_id", "submission_state", "submission_error",
+                "reconciled_slurm_state",
+            }
+        })
+    return {
+        "schema": "evsp-dr-exact-cg-profile-approved-plan-v1",
+        "campaign": manifest["campaign"],
+        "checkout_identity": manifest["checkout_identity"],
+        "profile_core_commit": manifest["profile_core_commit"],
+        "worker": manifest["worker"],
+        "worker_sha256": manifest["worker_sha256"],
+        "python": manifest["python"],
+        "runtime_environment": manifest["runtime_environment"],
+        "resources": manifest["resources"],
+        "profiler": manifest["profiler"],
+        "jobs": jobs,
+    }
+
+
+def _approval_bytes(payload: dict) -> bytes:
+    return json.dumps(
+        payload, sort_keys=True, separators=(",", ":")
+    ).encode()
+
+
+def _approval_sha256(payload: dict) -> str:
+    return hashlib.sha256(_approval_bytes(payload)).hexdigest()
+
+
 def _snapshot_plan(
     label: str,
     source_result: Path,
@@ -206,6 +253,50 @@ def _snapshot_plan(
     if (provenance.get("instance_sha256") != source_hashes["instance"]
             or provenance.get("prices_sha256") != source_hashes["prices"]):
         raise SystemExit(f"{label}: data bytes do not match provenance")
+    provenance_args = provenance.get("args") or {}
+    if not isinstance(provenance_args, dict):
+        raise SystemExit(f"{label}: provenance args is not an object")
+    cg_controls = {
+        "columns_per_iter": provenance_args.get("columns_per_iter"),
+        "rc_eps": provenance_args.get("rc_eps"),
+    }
+    if cg_controls != {"columns_per_iter": 30, "rc_eps": 0.0001}:
+        raise SystemExit(
+            f"{label}: unexpected CG controls {cg_controls}"
+        )
+    if label in EXPECTED_TREATMENTS:
+        expected_master, expected_pool = EXPECTED_TREATMENTS[label]
+        if status.get("master_sense") != expected_master:
+            raise SystemExit(
+                f"{label}: expected master_sense={expected_master}, found "
+                f"{status.get('master_sense')!r}"
+            )
+        if status.get("initial_pool") != expected_pool:
+            raise SystemExit(
+                f"{label}: expected initial_pool={expected_pool}, found "
+                f"{status.get('initial_pool')!r}"
+            )
+        if float(status.get("snapshot_mark_minutes", -1)) != 360.0:
+            raise SystemExit(f"{label}: expected six-hour snapshot mark")
+    else:
+        # The archived exact_big comparator predates explicit fields; source
+        # commit f43475b used covering and artificial-only initialization.
+        if provenance.get("git_commit") != HISTORICAL_COMPARATOR_COMMIT:
+            raise SystemExit("historical: unexpected source commit")
+        if status.get("master_sense") not in (None, "cover"):
+            raise SystemExit("historical: expected legacy covering master")
+        if status.get("initial_pool") not in (None, "artificial"):
+            raise SystemExit("historical: expected legacy artificial start")
+        if status.get("stop_reason") != "wall_limit":
+            raise SystemExit("historical: expected terminal wall-limit result")
+        if float(status.get("wall_s", 0.0)) < 79200.0:
+            raise SystemExit("historical: comparator is younger than 22 hours")
+    snapshot_identity = {
+        key: status.get(key) for key in (
+            "soc_step", "block_min", "g_kwh", "charge_kw",
+            "min_soc_frac",
+        )
+    }
 
     cell_root = campaign_root / "input" / label
     staged_result = cell_root / source_result.name
@@ -216,6 +307,14 @@ def _snapshot_plan(
     job_spec_path = cell_root / "job.json"
     staged_status = dict(status)
     staged_status["columns_journal"] = str(staged_journal)
+    status_overrides = {}
+    if label == "historical":
+        staged_status["master_sense"] = "cover"
+        staged_status["initial_pool"] = "artificial"
+        status_overrides = {
+            "master_sense": "cover",
+            "initial_pool": "artificial",
+        }
     staged_result_raw = (
         json.dumps(staged_status, indent=2) + "\n"
     ).encode()
@@ -223,6 +322,9 @@ def _snapshot_plan(
         "label": label,
         "source_result": str(source_result),
         "source_hashes": source_hashes,
+        "snapshot_identity": snapshot_identity,
+        "snapshot_mark_minutes": status.get("snapshot_mark_minutes"),
+        "cg_controls": cg_controls,
         "staged_result": str(staged_result),
         "staged_result_sha256": sha256_bytes(staged_result_raw),
         "staged_journal": str(staged_journal),
@@ -241,6 +343,7 @@ def _snapshot_plan(
         "expected_commit": expected_commit,
         "profile_core_commit": PROFILE_CORE_COMMIT,
         "python": python_info,
+        "status_overrides": status_overrides,
     }
     job_spec_raw = (json.dumps(job_spec, indent=2) + "\n").encode()
     return {
@@ -250,6 +353,9 @@ def _snapshot_plan(
         "source_instance": str(source_instance),
         "source_prices": str(source_prices),
         "source_hashes": source_hashes,
+        "snapshot_identity": snapshot_identity,
+        "snapshot_mark_minutes": status.get("snapshot_mark_minutes"),
+        "cg_controls": cg_controls,
         "staged_result": str(staged_result),
         "staged_journal": str(staged_journal),
         "staged_instance": str(staged_instance),
@@ -288,6 +394,11 @@ def launch(args) -> dict:
         label: getattr(args, argument)
         for label, argument in LABEL_ARGUMENTS
     }
+    resolved_snapshots = [
+        path.expanduser().resolve() for path in snapshots.values()
+    ]
+    if len(resolved_snapshots) != len(set(resolved_snapshots)):
+        raise SystemExit("historical/CA/CS/PA/PS snapshots must be distinct")
     plans = [
         _snapshot_plan(
             label,
@@ -303,26 +414,81 @@ def launch(args) -> dict:
     outputs = [plan["output"] for plan in plans]
     if len(outputs) != len(set(outputs)):
         raise SystemExit("profile outputs are not unique")
+    for hash_kind in ("result", "journal"):
+        digests = {
+            plan["source_hashes"][hash_kind] for plan in plans
+        }
+        if len(digests) != len(plans):
+            raise SystemExit(
+                f"historical/CA/CS/PA/PS {hash_kind} bytes must be distinct"
+            )
+    reference_identity = plans[0]["snapshot_identity"]
+    reference_instance_hash = plans[0]["source_hashes"]["instance"]
+    reference_prices_hash = plans[0]["source_hashes"]["prices"]
+    for plan in plans[1:]:
+        if plan["snapshot_identity"] != reference_identity:
+            raise SystemExit(
+                f"{plan['label']}: snapshot model identity differs from "
+                "historical comparator"
+            )
+        if (plan["source_hashes"]["instance"] != reference_instance_hash
+                or plan["source_hashes"]["prices"] != reference_prices_hash):
+            raise SystemExit(
+                f"{plan['label']}: instance/tariff bytes differ from "
+                "historical comparator"
+            )
+    relative_bindings = {}
+    for plan in plans:
+        for kind, relative_key, hash_key in (
+            ("instance", "csv", "instance"),
+            ("prices", "prices_csv", "prices"),
+        ):
+            relative = plan["job_spec"][relative_key]
+            digest = plan["source_hashes"][hash_key]
+            binding_key = (kind, relative)
+            previous = relative_bindings.get(binding_key)
+            if previous is not None and previous != digest:
+                raise SystemExit(
+                    f"conflicting hashes for shared data path {relative}"
+                )
+            relative_bindings[binding_key] = digest
 
     worker_bytes = reviewed_worker_bytes(identity["expected_commit"])
     worker_sha = sha256_bytes(worker_bytes)
     staged_worker = campaign_root / "input" / "submit_exact_cg_profile.sub"
+    runtime_environment = {
+        "HOME": os.environ.get("HOME", str(Path.home())),
+        "USER": os.environ.get("USER", ""),
+        "PATH": "/usr/local/bin:/usr/bin:/bin",
+    }
     for label, value in (
         ("repository path", str(REPO_ROOT)),
-        ("Python path", python_info["path"]),
+        ("Python path", python_info["python_executable"]),
+        *runtime_environment.items(),
     ):
         if "," in value:
             raise SystemExit(
                 f"{label} contains a comma and is unsafe for Slurm export"
             )
     for plan in plans:
-        short = identity["expected_commit"][:6]
-        job_name = f"PF{JOB_TAGS[plan['label']]}-{short}"
+        campaign_token = hashlib.sha256(campaign.encode()).hexdigest()[:4]
+        short = identity["expected_commit"][:2]
+        job_name = (
+            f"PF{JOB_TAGS[plan['label']]}-{campaign_token}-{short}"
+        )
         if len(job_name) > 15:
             raise SystemExit(f"profile job name exceeds 15 characters: {job_name}")
+        slurm_comment = (
+            f"EVSPPF:{campaign}:{plan['label']}:"
+            f"{plan['source_hashes']['result'][:12]}"
+        )
         export = (
-            "HOME,PATH,USER,EVSP_DR_ROOT=" + str(REPO_ROOT)
-            + ",EVSP_PROFILE_PYTHON=" + python_info["path"]
+            "HOME=" + runtime_environment["HOME"]
+            + ",USER=" + runtime_environment["USER"]
+            + ",PATH=" + runtime_environment["PATH"]
+            + ",EVSP_DR_ROOT=" + str(REPO_ROOT)
+            + ",EVSP_PROFILE_PYTHON=" + python_info["python_executable"]
+            + ",EVSP_PROFILE_ENV_SHA256=" + python_info["identity_sha256"]
             + ",EVSP_EXPECTED_COMMIT=" + identity["expected_commit"]
             + ",EVSP_PROFILE_EXPECTED_WORKER_SHA256=" + worker_sha
         )
@@ -337,6 +503,7 @@ def launch(args) -> dict:
             f"--mem={args.mem_gb}G",
             f"--time={_wall_time(args.job_hours)}",
             f"--job-name={job_name}",
+            f"--comment={slurm_comment}",
             f"--output={log_root}/%x_%j.out",
             f"--error={log_root}/%x_%j.err",
             "--export=" + export,
@@ -345,6 +512,7 @@ def launch(args) -> dict:
             plan["job_spec_sha256"],
         ]
         plan["job_name"] = job_name
+        plan["slurm_comment"] = slurm_comment
         plan["command"] = command
 
     manifest = {
@@ -356,7 +524,9 @@ def launch(args) -> dict:
         "profile_core_commit": PROFILE_CORE_COMMIT,
         "worker": str(staged_worker),
         "worker_sha256": worker_sha,
+        "log_root": str(log_root),
         "python": python_info,
+        "runtime_environment": runtime_environment,
         "resources": {
             "partition": "default_partition",
             "cpus": 1,
@@ -374,11 +544,30 @@ def launch(args) -> dict:
         },
         "jobs": plans,
     }
+    approval = _approval_payload(manifest)
+    approval_sha256 = _approval_sha256(approval)
+    manifest["approval_sha256"] = approval_sha256
     for plan in plans:
         print("[profile-plan]", " ".join(plan["command"]))
     if not args.submit:
+        print("[approval-plan]")
+        print(json.dumps(approval, indent=2))
+        print(f"[approval-sha256] {approval_sha256}")
+        if args.plan_out is not None:
+            _write_new(
+                args.plan_out.expanduser().resolve(),
+                _approval_bytes(approval),
+            )
         print("[dry-run] validated five pools; add --submit only after review")
         return manifest
+    if not args.approved_plan_sha256:
+        raise SystemExit(
+            "--submit requires --approved-plan-sha256 from reviewed dry-run"
+        )
+    if args.approved_plan_sha256.lower() != approval_sha256:
+        raise SystemExit(
+            "current campaign plan differs from approved dry-run SHA-256"
+        )
 
     campaign_root.mkdir(parents=True, exist_ok=False)
     log_root.mkdir(parents=True, exist_ok=False)
@@ -425,6 +614,7 @@ def launch(args) -> dict:
     )
     for plan in plans:
         plan["submission_state"] = "attempting"
+        _replace_manifest(manifest_path, manifest)
         _write_new(
             campaign_root / f".{plan['label']}.attempt.json",
             (json.dumps({
@@ -451,6 +641,9 @@ def launch(args) -> dict:
             )
         job_id = completed.stdout.strip().split(";", 1)[0]
         if not job_id:
+            plan["submission_state"] = "failed"
+            plan["submission_error"] = "sbatch returned no job id"
+            _replace_manifest(manifest_path, manifest)
             raise SystemExit(f"{plan['label']}: sbatch returned no job id")
         plan["job_id"] = job_id
         plan["submission_state"] = "submitted"
@@ -490,6 +683,8 @@ def parse_args(argv=None):
     parser.add_argument("--repeat", type=int, default=3)
     parser.add_argument("--mem-gb", type=int, default=64)
     parser.add_argument("--job-hours", type=int, default=24)
+    parser.add_argument("--plan-out", type=Path)
+    parser.add_argument("--approved-plan-sha256")
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
     if (not math.isfinite(args.solve_limit_s)
@@ -501,6 +696,13 @@ def parse_args(argv=None):
         parser.error("--mem-gb must be in [40, 64]")
     if args.job_hours <= 0:
         parser.error("--job-hours must be positive")
+    if args.approved_plan_sha256 is not None:
+        value = args.approved_plan_sha256.lower()
+        if (len(value) != 64
+                or any(character not in "0123456789abcdef"
+                       for character in value)):
+            parser.error("--approved-plan-sha256 must be 64 hex characters")
+        args.approved_plan_sha256 = value
     return args
 
 

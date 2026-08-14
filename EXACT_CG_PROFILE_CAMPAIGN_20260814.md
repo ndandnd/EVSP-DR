@@ -49,6 +49,7 @@ CA=/absolute/path/to/ca-m360.snapshot.json
 CS=/absolute/path/to/cs-m360.snapshot.json
 PA=/absolute/path/to/pa-m360.snapshot.json
 PS=/absolute/path/to/ps-m360.snapshot.json
+PLAN="$HOME/profile-plans/k40_master_factorial_m360_profile.plan.json"
 
 cd "$PROFILE_ROOT"
 python -u src/launch_exact_cg_profile_campaign.py \
@@ -59,7 +60,8 @@ python -u src/launch_exact_cg_profile_campaign.py \
   --solve-limit-s 1800 \
   --repeat 3 \
   --mem-gb 64 \
-  --job-hours 24
+  --job-hours 24 \
+  --plan-out "$PLAN"
 ```
 
 Review must confirm:
@@ -72,9 +74,33 @@ Review must confirm:
 - expected packaging commit and pinned profiler-core commit;
 - `--no-requeue`, no phase telemetry, and no `--submit`.
 
-Only after explicit authorization, rerun the same command with `--submit`.
-Every retry must use a fresh `--campaign`; outputs and reservations are
-intentionally non-resumable/no-clobber.
+The dry run prints and writes the canonical approval plan.  Review it and
+preserve its checksum:
+
+```bash
+PLAN_SHA=$(sha256sum "$PLAN" | awk '{print $1}')
+echo "$PLAN_SHA  $PLAN"
+```
+
+Only after explicit authorization, rerun the exact same launcher command with
+`--approved-plan-sha256 "$PLAN_SHA" --submit`.  The launcher recomputes the
+complete plan and refuses before staging or `sbatch` if any source byte,
+option, path, commit, worker, environment, resource, or command changed.
+Every retry must use a fresh `--campaign` and fresh approved plan; outputs and
+reservations are intentionally non-resumable/no-clobber.
+
+If the launcher is interrupted while `sbatch` may have accepted a job, do not
+start a fresh campaign until reconciling the campaign-unique job names:
+
+```bash
+python -u src/reconcile_exact_cg_profile_campaign.py \
+  --campaign-root "$PROFILE_ROOT/src/results/exact_cg_profiles/k40_master_factorial_m360_profile"
+
+# After reviewing exactly one match per unresolved job:
+python -u src/reconcile_exact_cg_profile_campaign.py \
+  --campaign-root "$PROFILE_ROOT/src/results/exact_cg_profiles/k40_master_factorial_m360_profile" \
+  --apply
+```
 
 ## Read-only monitoring and summary
 
@@ -103,10 +129,12 @@ python -u src/archive_exact_cg_profile_campaign.py \
   --out "$HOME/archives/k40_master_factorial_m360_profile.tar.gz"
 ```
 
-The helper refuses existing archive artifacts, verifies source files remain
-unchanged while archiving, and writes a sidecar manifest containing expected
-commit, profiler-core commit, campaign manifest hash, every file checksum, and
-archive checksum.
+The helper requires five structurally valid completed outputs and the campaign
+log directory, refuses existing archives, and verifies no file appears,
+disappears, or changes while archiving.  One atomically published tarball
+contains `ARCHIVE_MANIFEST.json` with expected commit, profiler-core commit,
+campaign manifest hash, and every campaign/log checksum; the printed result
+records the archive checksum.
 
 ## Explicit limits
 

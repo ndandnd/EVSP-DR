@@ -7,6 +7,11 @@ import argparse
 import json
 from pathlib import Path
 
+from exact_cg_profile_results import (
+    validate_campaign_manifest,
+    validate_profile_payload,
+)
+
 
 FIELDS = (
     "label", "prefix", "method", "outcome", "successful_repetitions",
@@ -20,6 +25,21 @@ FIELDS = (
 def summarize(campaign_root: Path) -> list[dict]:
     root = campaign_root.expanduser().resolve()
     manifest = json.loads((root / "campaign.json").read_text())
+    manifest_errors = validate_campaign_manifest(manifest)
+    if not isinstance(manifest, dict):
+        return [{
+            "label": None,
+            "outcome": "invalid_manifest",
+            "failure_count": len(manifest_errors),
+            "failures": " | ".join(manifest_errors),
+        }]
+    if manifest_errors:
+        return [{
+            "label": None,
+            "outcome": "invalid_manifest",
+            "failure_count": len(manifest_errors),
+            "failures": " | ".join(manifest_errors),
+        }]
     rows = []
     for job in manifest.get("jobs") or []:
         label = job["label"]
@@ -40,6 +60,18 @@ def summarize(campaign_root: Path) -> list[dict]:
                 "outcome": "invalid_output",
                 "failure_count": 1,
                 "failures": repr(exc),
+            })
+            continue
+        validation_errors = [
+            *manifest_errors,
+            *validate_profile_payload(payload, job, manifest),
+        ]
+        if validation_errors:
+            rows.append({
+                "label": label,
+                "outcome": "invalid_profile",
+                "failure_count": len(validation_errors),
+                "failures": " | ".join(validation_errors),
             })
             continue
         for prefix in payload.get("profiles") or []:

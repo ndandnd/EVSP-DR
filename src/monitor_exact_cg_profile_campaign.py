@@ -8,6 +8,11 @@ import json
 import subprocess
 from pathlib import Path
 
+from exact_cg_profile_results import (
+    validate_campaign_manifest,
+    validate_profile_payload,
+)
+
 
 def _accounting(job_ids: list[str]) -> dict[str, dict]:
     if not job_ids:
@@ -42,6 +47,31 @@ def _accounting(job_ids: list[str]) -> dict[str, dict]:
 def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
     root = campaign_root.expanduser().resolve()
     manifest = json.loads((root / "campaign.json").read_text())
+    manifest_errors = validate_campaign_manifest(manifest)
+    if not isinstance(manifest, dict):
+        return [{
+            "label": None,
+            "job_id": None,
+            "job_name": None,
+            "submission_state": "invalid_manifest",
+            "slurm": None,
+            "output": None,
+            "output_exists": False,
+            "artifact": None,
+            "manifest_errors": manifest_errors,
+        }]
+    if manifest_errors:
+        return [{
+            "label": None,
+            "job_id": None,
+            "job_name": None,
+            "submission_state": "invalid_manifest",
+            "slurm": None,
+            "output": None,
+            "output_exists": False,
+            "artifact": None,
+            "manifest_errors": manifest_errors,
+        }]
     jobs = manifest.get("jobs") or []
     ids = [str(job["job_id"]) for job in jobs if job.get("job_id")]
     accounting = _accounting(ids) if query_slurm else {}
@@ -53,13 +83,28 @@ def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
         if output.is_file():
             try:
                 payload = json.loads(output.read_text())
+                validation_errors = validate_profile_payload(
+                    payload, job, manifest
+                )
                 artifact = {
                     "valid_json": isinstance(payload, dict),
-                    "schema": payload.get("schema"),
-                    "source_unchanged": payload.get("source_unchanged"),
+                    "valid_profile": not validation_errors,
+                    "schema": (
+                        payload.get("schema")
+                        if isinstance(payload, dict) else None
+                    ),
+                    "source_unchanged": (
+                        payload.get("source_unchanged")
+                        if isinstance(payload, dict) else None
+                    ),
+                    "errors": validation_errors,
                 }
             except (OSError, ValueError):
-                artifact = {"valid_json": False}
+                artifact = {
+                    "valid_json": False,
+                    "valid_profile": False,
+                    "errors": ["output is not valid JSON"],
+                }
         row = {
             "label": job["label"],
             "job_id": job_id or None,
@@ -69,6 +114,7 @@ def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
             "output": str(output),
             "output_exists": output.is_file(),
             "artifact": artifact,
+            "manifest_errors": manifest_errors,
         }
         if "_error" in accounting:
             row["accounting_error"] = accounting["_error"]["error"]
@@ -89,6 +135,7 @@ def main(argv=None) -> int:
     fields = (
         "label", "job_id", "job_name", "submission_state", "state",
         "elapsed", "exit_code", "max_rss", "output_exists",
+        "valid_profile", "validation_errors", "manifest_errors",
     )
     print("\t".join(fields))
     for row in rows:
@@ -99,6 +146,15 @@ def main(argv=None) -> int:
             "elapsed": slurm.get("elapsed"),
             "exit_code": slurm.get("exit_code"),
             "max_rss": slurm.get("max_rss"),
+            "valid_profile": (
+                (row.get("artifact") or {}).get("valid_profile")
+            ),
+            "validation_errors": " | ".join(
+                (row.get("artifact") or {}).get("errors") or []
+            ),
+            "manifest_errors": " | ".join(
+                row.get("manifest_errors") or []
+            ),
         }
         print("\t".join(
             "" if values.get(field) is None else str(values[field])
