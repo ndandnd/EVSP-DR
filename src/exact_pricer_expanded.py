@@ -954,6 +954,7 @@ def run_cg(args) -> dict:
         if telemetry is None:
             return
         try:
+            resolved_details = details() if callable(details) else details
             telemetry.phase(
                 name,
                 duration_s,
@@ -966,7 +967,7 @@ def run_cg(args) -> dict:
                 network_nodes=len(net.node_meta),
                 network_arcs=net.n_arcs,
                 outcome=outcome,
-                details=details,
+                details=resolved_details,
             )
         except Exception as exc:
             detached_telemetry_overhead_s += telemetry.overhead_s
@@ -1166,7 +1167,7 @@ def run_cg(args) -> dict:
                 "iteration_log_fsync",
                 time.perf_counter() - started,
                 iteration=iteration_offset,
-                details={"header": True},
+                details=lambda: {"header": True},
             )
     if (compatible_prior
             and isinstance(prior_status.get("final_lp"), dict)):
@@ -1247,13 +1248,15 @@ def run_cg(args) -> dict:
                 "snapshot",
                 time.perf_counter() - started,
                 outcome="error",
-                details={"mark_minutes": mark, "error": repr(exc)},
+                details=lambda: {
+                    "mark_minutes": mark, "error": repr(exc),
+                },
             )
             raise
         _record_phase(
             "snapshot",
             time.perf_counter() - started,
-            details={"mark_minutes": mark},
+            details=lambda: {"mark_minutes": mark},
         )
 
     def _elapsed_s():
@@ -1291,7 +1294,9 @@ def run_cg(args) -> dict:
                 "journal_fsync",
                 time.perf_counter() - started,
                 iteration=iteration_offset,
-                details={"records": seeds_added, "origin": "singleton_seed"},
+                details=lambda: {
+                    "records": seeds_added, "origin": "singleton_seed",
+                },
             )
         print(
             f"[EXACT] direct-singleton seed: "
@@ -1353,7 +1358,7 @@ def run_cg(args) -> dict:
             "status_checkpoint",
             time.perf_counter() - started,
             iteration=iteration_offset + len(history),
-            details={"stop_reason": status},
+            details=lambda: {"stop_reason": status},
         )
     class _ArtificialOnlyLP:
         objective = len(trips) * BIG_M_PENALTY
@@ -1417,7 +1422,7 @@ def run_cg(args) -> dict:
                 iteration=global_iteration,
                 pool_columns=len(routes),
                 incidence_nnz=incidence_nnz,
-                details={
+                details=lambda: {
                     "rows": incidence_shape[0],
                     "columns": incidence_shape[1],
                 },
@@ -1450,7 +1455,7 @@ def run_cg(args) -> dict:
                             attempt=master_attempt,
                             pool_columns=len(routes),
                             incidence_nnz=incidence_nnz,
-                            details={
+                            details=lambda: {
                                 "method": method,
                                 "time_limit_s": method_limit,
                                 "snapshot_limited": snapshot_limited,
@@ -1472,7 +1477,7 @@ def run_cg(args) -> dict:
                             pool_columns=len(routes),
                             incidence_nnz=incidence_nnz,
                             outcome="error",
-                            details={
+                            details=lambda: {
                                 "method": method,
                                 "time_limit_s": method_limit,
                                 "snapshot_limited": snapshot_limited,
@@ -1635,7 +1640,7 @@ def run_cg(args) -> dict:
             iteration=global_iteration,
             pool_columns=len(pool),
             incidence_nnz=incidence_nnz,
-            details={
+            details=lambda: {
                 "candidate_routes": len(batch),
                 "inserted_or_replaced": added,
             },
@@ -1649,7 +1654,9 @@ def run_cg(args) -> dict:
                 iteration=global_iteration,
                 pool_columns=len(pool),
                 incidence_nnz=incidence_nnz,
-                details={"records": added, "origin": "pricing"},
+                details=lambda: {
+                    "records": added, "origin": "pricing",
+                },
             )
             max_charge_starts = max(added_charge_starts)
             if max_charge_starts > MAX_DAILY_RECHARGES:
@@ -1697,7 +1704,7 @@ def run_cg(args) -> dict:
                     iteration=iteration_offset + len(history),
                     pool_columns=len(routes_now),
                     incidence_nnz=diversify_nnz,
-                    details={"purpose": "diversify"},
+                    details=lambda: {"purpose": "diversify"},
                 )
                 diversify_attempt += 1
                 started = time.perf_counter()
@@ -1716,7 +1723,7 @@ def run_cg(args) -> dict:
                         attempt=diversify_attempt,
                         pool_columns=len(routes_now),
                         incidence_nnz=diversify_nnz,
-                        details={
+                        details=lambda: {
                             "method": "highs-ds",
                             "purpose": "diversify",
                             "time_limit_s": method_limit,
@@ -1736,7 +1743,7 @@ def run_cg(args) -> dict:
                         pool_columns=len(routes_now),
                         incidence_nnz=diversify_nnz,
                         outcome="error",
-                        details={
+                        details=lambda: {
                             "method": "highs-ds",
                             "purpose": "diversify",
                             "time_limit_s": method_limit,
@@ -1771,7 +1778,7 @@ def run_cg(args) -> dict:
                             duration_s,
                             iteration=iteration_offset + len(history),
                             pool_columns=len(pool),
-                            details={
+                            details=lambda: {
                                 **details,
                                 "purpose": "diversify",
                                 "round": rnd,
@@ -1807,7 +1814,7 @@ def run_cg(args) -> dict:
                     "journal_fsync",
                     time.perf_counter() - started,
                     iteration=iteration_offset + len(history),
-                    details={
+                    details=lambda: {
                         "records": added_div,
                         "origin": "diversify",
                     },
@@ -1843,7 +1850,9 @@ def run_cg(args) -> dict:
                     iteration=iteration_offset + len(history),
                     pool_columns=len(routes),
                     incidence_nnz=final_nnz,
-                    details={"purpose": "final_resolve", "method": method},
+                    details=lambda: {
+                        "purpose": "final_resolve", "method": method,
+                    },
                 )
                 final_attempt += 1
                 started = time.perf_counter()
@@ -1864,7 +1873,7 @@ def run_cg(args) -> dict:
                         attempt=final_attempt,
                         pool_columns=len(routes),
                         incidence_nnz=final_nnz,
-                        details={
+                        details=lambda: {
                             "purpose": "final_resolve",
                             "method": method,
                             "time_limit_s": method_limit,
@@ -1889,7 +1898,7 @@ def run_cg(args) -> dict:
                         pool_columns=len(routes),
                         incidence_nnz=final_nnz,
                         outcome="error",
-                        details={
+                        details=lambda: {
                             "purpose": "final_resolve",
                             "method": method,
                             "time_limit_s": method_limit,

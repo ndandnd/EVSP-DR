@@ -14,7 +14,11 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import profile_exact_pool_prefixes as profiler  # noqa: E402
 import benchmark_exact_pricing as pricing_benchmark  # noqa: E402
-from durable_io import read_jsonl_records  # noqa: E402
+from durable_io import (  # noqa: E402
+    DurableFileError,
+    exclusive_output_lock,
+    read_jsonl_records,
+)
 from exact_cg_telemetry import PhaseTelemetry  # noqa: E402
 
 
@@ -170,8 +174,12 @@ class ExactCgTelemetryTests(unittest.TestCase):
                 "csv": "instance.csv",
                 "prices_csv": "prices.csv",
                 "trip_ids": [1, 2],
+                "columns": 2,
                 "master_sense": "partition",
                 "columns_journal": str(journal),
+                "final_lp": {
+                    "positive_routes": [{"trips": [1], "value": 1.0}],
+                },
                 "provenance": {
                     "instance_sha256": hashlib.sha256(
                         instance.read_bytes()
@@ -203,6 +211,13 @@ class ExactCgTelemetryTests(unittest.TestCase):
                 prefixes=[1, 2, 5],
                 methods=["highs", "highs-ds", "highs-ipm"],
                 time_limit_s=None,
+                repeat=3,
+                expected_result_sha256=hashlib.sha256(
+                    result.read_bytes()
+                ).hexdigest(),
+                expected_journal_sha256=hashlib.sha256(
+                    journal.read_bytes()
+                ).hexdigest(),
                 out=None,
             )
             with (
@@ -216,7 +231,11 @@ class ExactCgTelemetryTests(unittest.TestCase):
 
             self.assertEqual(
                 methods,
-                ["highs", "highs-ds", "highs-ipm"] * 2,
+                (
+                    ["highs"] * 3
+                    + ["highs-ds"] * 3
+                    + ["highs-ipm"] * 3
+                ) * 2,
             )
             self.assertTrue(payload["source_unchanged"])
             self.assertEqual(
@@ -226,15 +245,186 @@ class ExactCgTelemetryTests(unittest.TestCase):
             for path, original in source_bytes.items():
                 self.assertEqual(path.read_bytes(), original)
 
+            def disagree(**kwargs):
+                offset = 1.0 if kwargs["method"] == "highs-ipm" else 0.0
+                return SimpleNamespace(
+                    runtime_s=0.01,
+                    objective=200000.0 + offset,
+                    route_weight=2.0,
+                    artificial_total=0.0,
+                    max_row_violation=0.0,
+                    max_bound_violation=0.0,
+                )
+
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                patch.object(
+                    profiler, "solve_restricted_master_lp",
+                    side_effect=disagree,
+                ),
+                self.assertRaisesRegex(
+                    ValueError, "solutions disagree"
+                ),
+            ):
+                profiler.profile(args)
+
             args.out = journal
             with (
                 patch.object(profiler, "DATA_DIR", data),
                 self.assertRaisesRegex(
-                    ValueError, "must not overwrite"
+                    FileExistsError, "refusing to overwrite"
                 ),
             ):
                 profiler.profile(args)
             self.assertEqual(journal.read_bytes(), source_bytes[journal])
+
+    def test_profiler_rejects_unbound_or_inconsistent_sources_and_outputs(self):
+        def fixture(root: Path, *, result_name="pool.snapshot.json"):
+            data = root / "data"
+            data.mkdir(parents=True)
+            instance = data / "instance.csv"
+            prices = data / "prices.csv"
+            instance.write_text("instance\n")
+            prices.write_text("prices\n")
+            result = root / result_name
+            journal = Path(str(result) + ".columns.jsonl")
+            journal.write_text(
+                json.dumps({"trips": [1], "cost": 100000.0}) + "\n"
+            )
+            status = {
+                "csv": "instance.csv",
+                "prices_csv": "prices.csv",
+                "trip_ids": [1],
+                "columns": 1,
+                "master_sense": "partition",
+                "columns_journal": str(journal),
+                "final_lp": {
+                    "positive_routes": [{"trips": [1], "value": 1.0}],
+                },
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            result.write_text(json.dumps(status))
+            args = Namespace(
+                result=result,
+                prefixes=[1],
+                methods=["highs"],
+                time_limit_s=None,
+                repeat=1,
+                expected_result_sha256=hashlib.sha256(
+                    result.read_bytes()
+                ).hexdigest(),
+                expected_journal_sha256=hashlib.sha256(
+                    journal.read_bytes()
+                ).hexdigest(),
+                out=None,
+            )
+            return data, result, journal, status, args
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            data, _result, _journal, _status, live_args = fixture(
+                root / "live", result_name="pool.json"
+            )
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "immutable"),
+            ):
+                profiler.profile(live_args)
+
+            data, _result, _journal, _status, hash_args = fixture(
+                root / "hash"
+            )
+            hash_args.expected_result_sha256 = "0" * 64
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "status hash"),
+            ):
+                profiler.profile(hash_args)
+
+            data, result, journal, status, sibling_args = fixture(
+                root / "sibling"
+            )
+            correct_dir = result.parent / "correct"
+            correct_dir.mkdir()
+            correct = correct_dir / "recorded.columns.jsonl"
+            correct.write_bytes(journal.read_bytes())
+            wrong_sibling = result.parent / correct.name
+            wrong_sibling.write_text(
+                json.dumps({"trips": [1], "cost": 999999.0}) + "\n"
+            )
+            status["columns_journal"] = str(correct)
+            result.write_text(json.dumps(status))
+            sibling_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            sibling_args.expected_journal_sha256 = hashlib.sha256(
+                correct.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "journal hash"),
+            ):
+                profiler.profile(sibling_args)
+
+            data, result, _journal, status, count_args = fixture(
+                root / "count"
+            )
+            status["columns"] = 2
+            result.write_text(json.dumps(status))
+            count_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "contains 1 unique"),
+            ):
+                profiler.profile(count_args)
+
+            data, result, _journal, status, positive_args = fixture(
+                root / "positive"
+            )
+            status["trip_ids"] = [1, 2]
+            status["final_lp"]["positive_routes"] = [
+                {"trips": [2], "value": 1.0},
+            ]
+            result.write_text(json.dumps(status))
+            positive_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "missing from journal"),
+            ):
+                profiler.profile(positive_args)
+
+            data, _result, _journal, _status, output_args = fixture(
+                root / "output"
+            )
+            output = root / "existing-profile.json"
+            output.write_text("preserve\n")
+            output_args.out = output
+            with self.assertRaisesRegex(
+                FileExistsError, "refusing to overwrite"
+            ):
+                profiler.run_profile(output_args)
+            self.assertEqual(output.read_text(), "preserve\n")
+
+            output.unlink()
+            with (
+                exclusive_output_lock(output, {"owner": "test"}),
+                self.assertRaisesRegex(
+                    DurableFileError, "another process"
+                ),
+            ):
+                profiler.run_profile(output_args)
 
 
 if __name__ == "__main__":

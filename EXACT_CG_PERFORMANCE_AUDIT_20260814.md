@@ -24,13 +24,23 @@ before any tail repair.  Telemetry I/O overhead is excluded from CG
 wall/snapshot/stall clocks; if later telemetry I/O fails, telemetry disables
 itself with a warning rather than changing solver fallback or stop reasons.
 
+**Operational limit:** current per-phase telemetry fsyncs every row and is
+approved only for short, bounded diagnostic runs.  Do not enable it on the
+22--24 hour CA/CS/PA/PS campaigns; thousands of synchronous shared-filesystem
+writes can consume substantial real Slurm allocation time even though that
+overhead is excluded from CG's logical stopping clocks.  Aggregation is a
+future change, not part of this correction pass.
+
 ## Read-only frozen-pool prefix profiler
 
 ```bash
 python -u src/profile_exact_pool_prefixes.py \
   --result /absolute/path/to/immutable.snapshot.json \
+  --expected-result-sha256 <64-hex-status-hash> \
+  --expected-journal-sha256 <64-hex-journal-hash> \
   --prefixes 1000,5000,10000,25000,50000 \
   --methods highs,highs-ds,highs-ipm \
+  --repeat 3 \
   --out /separate/path/prefix_profile.json
 ```
 
@@ -40,6 +50,73 @@ method.  It records incidence time/size/nonzeros, total and backend solve time,
 LP values/violations, peak RSS, and errors.  Status, journal, instance, and
 tariff hashes are checked before and after; source files are never repaired or
 opened for writing.
+
+### Guarded Unicorn staging
+
+Use a reviewed detached checkout and a compute allocation.  Never switch the
+checkout that owns a running campaign.
+
+```bash
+set -euo pipefail
+
+PROFILE_ROOT="$HOME/EVSP-DR-exact-profile-<reviewed-sha12>"
+SOURCE_ROOT="$HOME/EVSP-DR-legacy-recovery-bab7bfe"
+SNAP="/absolute/path/to/immutable.snapshot.json"
+
+test -z "$(git -C "$PROFILE_ROOT" branch --show-current)"
+test -z "$(git -C "$PROFILE_ROOT" status --porcelain --untracked-files=no)"
+
+readarray -t INPUTS < <(python3 - "$SNAP" "$PROFILE_ROOT/src" <<'PY'
+import json, sys
+from pathlib import Path
+sys.path.insert(0, sys.argv[2])
+from run_exact_pool_mip import resolve_pool_journal
+source = Path(sys.argv[1])
+status = json.load(open(sys.argv[1]))
+print(status["csv"])
+print(status["prices_csv"])
+print(status["provenance"]["instance_sha256"])
+print(status["provenance"]["prices_sha256"])
+print(resolve_pool_journal(source, status).resolve())
+PY
+)
+CSV=${INPUTS[0]}
+PRICES=${INPUTS[1]}
+EXPECTED_CSV_SHA=${INPUTS[2]}
+EXPECTED_PRICES_SHA=${INPUTS[3]}
+JOURNAL=${INPUTS[4]}
+
+mkdir -p "$PROFILE_ROOT/data/$(dirname "$CSV")"
+rsync -a --ignore-existing \
+  "$SOURCE_ROOT/data/$CSV" "$PROFILE_ROOT/data/$CSV"
+rsync -a --ignore-existing \
+  "$SOURCE_ROOT/data/$PRICES" "$PROFILE_ROOT/data/$PRICES"
+
+test "$(sha256sum "$PROFILE_ROOT/data/$CSV" | awk '{print $1}')" = \
+  "$EXPECTED_CSV_SHA"
+test "$(sha256sum "$PROFILE_ROOT/data/$PRICES" | awk '{print $1}')" = \
+  "$EXPECTED_PRICES_SHA"
+
+STATUS_SHA=$(sha256sum "$SNAP" | awk '{print $1}')
+JOURNAL_SHA=$(sha256sum "$JOURNAL" | awk '{print $1}')
+OUT="$PROFILE_ROOT/src/results/profiles/$(basename "$SNAP").prefix-profile.json"
+test ! -e "$OUT"
+
+cd "$PROFILE_ROOT"
+python -u src/profile_exact_pool_prefixes.py \
+  --result "$SNAP" \
+  --expected-result-sha256 "$STATUS_SHA" \
+  --expected-journal-sha256 "$JOURNAL_SHA" \
+  --prefixes 1000,5000,10000,25000,50000 \
+  --methods highs,highs-ds,highs-ipm \
+  --repeat 3 \
+  --out "$OUT"
+```
+
+The profiler itself rechecks the copied instance/tariff against status
+provenance, reconstructs the complete unique-incidence pool, validates
+`status["columns"]` and every positive `final_lp` route, refuses an existing or
+concurrently owned output, and rehashes all sources after profiling.
 
 ## Deterministic pricing microbenchmark
 

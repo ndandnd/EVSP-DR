@@ -805,7 +805,7 @@ class ExactPricerResumeTests(unittest.TestCase):
 
     def test_successful_master_crossing_mark_freezes_pre_solve_lp(self):
         with tempfile.TemporaryDirectory() as tmp:
-            result, snapshot, limits, _, _ = (
+            result, snapshot, limits, methods, _ = (
                 self._run_spanning_master_snapshot_case(
                     tmp, fail_first=False,
                 )
@@ -813,6 +813,11 @@ class ExactPricerResumeTests(unittest.TestCase):
             frozen = json.loads(snapshot.read_text())
 
         self.assertLessEqual(limits[0], 10.0)
+        self.assertEqual(result["stop_reason"], "no_path")
+        # One successful main-loop attempt plus the expected final re-solve;
+        # neither falls back to IPM/auto. ``solved_lp`` deliberately has no
+        # runtime_s, proving disabled telemetry does not eagerly access it.
+        self.assertEqual(methods, ["highs-ds", "highs-ds"])
         self.assertEqual(frozen["final_lp"]["objective"], 100000.0)
         self.assertEqual(
             frozen["final_lp"]["source"], "compatible_prior_result"

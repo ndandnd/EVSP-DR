@@ -13,12 +13,17 @@ import hashlib
 import json
 import math
 import platform
+import statistics
 import subprocess
 import time
 from pathlib import Path
 
 from config import BIG_M_PENALTY
-from durable_io import atomic_write_json, read_jsonl_records
+from durable_io import (
+    atomic_write_json,
+    exclusive_output_lock,
+    read_jsonl_records,
+)
 from exact_cg_telemetry import peak_rss_bytes
 from exact_pricer_expanded import DATA_DIR, load_column_pool
 from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
@@ -26,6 +31,8 @@ from run_exact_pool_mip import resolve_pool_journal
 
 
 SCHEMA = "evsp-dr-frozen-pool-prefix-profile-v1"
+AGREEMENT_REL_TOL = 1e-9
+AGREEMENT_ABS_TOL = 1e-6
 
 
 def sha256_file(path: Path) -> str:
@@ -45,6 +52,34 @@ def _git(*args: str) -> str | None:
         check=False,
     )
     return result.stdout.strip() if result.returncode == 0 else None
+
+
+def _solution_signature(solved) -> dict:
+    return {
+        "objective": float(solved.objective),
+        "route_weight": float(solved.route_weight),
+        "artificial_total": float(solved.artificial_total),
+        "max_row_violation": float(solved.max_row_violation),
+        "max_bound_violation": float(solved.max_bound_violation),
+    }
+
+
+def _assert_solutions_agree(
+    reference: dict,
+    candidate: dict,
+    *,
+    context: str,
+) -> None:
+    for field in reference:
+        if not math.isclose(
+                reference[field],
+                candidate[field],
+                rel_tol=AGREEMENT_REL_TOL,
+                abs_tol=AGREEMENT_ABS_TOL):
+            raise ValueError(
+                f"successful master solutions disagree for {context}: "
+                f"{field}={reference[field]} versus {candidate[field]}"
+            )
 
 
 def ordered_unique_prefixes(
@@ -73,6 +108,10 @@ def ordered_unique_prefixes(
 
 def profile(args) -> dict:
     result_path = args.result.expanduser().resolve()
+    if not result_path.name.endswith(".snapshot.json"):
+        raise ValueError(
+            "profiler requires an immutable *.snapshot.json source"
+        )
     status_raw = result_path.read_bytes()
     status = json.loads(status_raw)
     if not isinstance(status, dict):
@@ -82,6 +121,10 @@ def profile(args) -> dict:
     prices_path = (DATA_DIR / str(status["prices_csv"])).resolve()
     if args.out is not None:
         output_path = args.out.expanduser().resolve()
+        if output_path.exists():
+            raise FileExistsError(
+                f"refusing to overwrite existing profiler output: {output_path}"
+            )
         protected = {
             result_path, journal_path, instance_path, prices_path,
         }
@@ -111,6 +154,14 @@ def profile(args) -> dict:
         "instance": sha256_file(instance_path),
         "prices": sha256_file(prices_path),
     }
+    if before["result"] != args.expected_result_sha256:
+        raise ValueError(
+            "source status hash does not match --expected-result-sha256"
+        )
+    if before["journal"] != args.expected_journal_sha256:
+        raise ValueError(
+            "resolved journal hash does not match --expected-journal-sha256"
+        )
     provenance = status.get("provenance") or {}
     if (provenance.get("instance_sha256") != before["instance"]
             or provenance.get("prices_sha256") != before["prices"]):
@@ -120,6 +171,52 @@ def profile(args) -> dict:
         journal_path, repair_trailing=False
     )
     trip_ids = [int(trip) for trip in status["trip_ids"]]
+    full_pool = load_column_pool(records, trip_ids)
+    recorded_columns = status.get("columns")
+    if (not isinstance(recorded_columns, int)
+            or isinstance(recorded_columns, bool)
+            or recorded_columns < 0):
+        raise ValueError("snapshot columns must be a nonnegative integer")
+    if len(full_pool) != recorded_columns:
+        raise ValueError(
+            f"snapshot records {recorded_columns} columns but its journal "
+            f"contains {len(full_pool)} unique incidences"
+        )
+    final_lp = status.get("final_lp")
+    if final_lp is not None and not isinstance(final_lp, dict):
+        raise ValueError("snapshot final_lp must be an object or null")
+    positive_routes = (final_lp or {}).get("positive_routes", [])
+    if not isinstance(positive_routes, list):
+        raise ValueError("snapshot final_lp positive_routes must be a list")
+    pool_keys = set(full_pool)
+    allowed_trips = set(trip_ids)
+    for ordinal, route in enumerate(positive_routes, start=1):
+        if not isinstance(route, dict) or not isinstance(
+                route.get("trips"), list):
+            raise ValueError(
+                f"snapshot positive route {ordinal} has invalid trips"
+            )
+        try:
+            trips = route["trips"]
+            key = frozenset(trips)
+        except TypeError as exc:
+            raise ValueError(
+                f"snapshot positive route {ordinal} has unhashable trips"
+            ) from exc
+        if not trips or len(trips) != len(key):
+            raise ValueError(
+                f"snapshot positive route {ordinal} has empty/repeated trips"
+            )
+        unknown = [trip for trip in trips if trip not in allowed_trips]
+        if unknown:
+            raise ValueError(
+                f"snapshot positive route {ordinal} has unknown trips: "
+                f"{unknown[:10]}"
+            )
+        if key not in pool_keys:
+            raise ValueError(
+                f"snapshot positive route {ordinal} is missing from journal"
+            )
     prefixes = ordered_unique_prefixes(records, trip_ids, args.prefixes)
     rows = []
     for target in args.prefixes:
@@ -143,41 +240,87 @@ def profile(args) -> dict:
             + incidence.indptr.nbytes
         )
         methods = []
+        successful_signatures = []
         for method in args.methods:
-            started = time.perf_counter()
-            try:
-                solved = solve_restricted_master_lp(
-                    trip_ids=trip_ids,
-                    route_incidence=incidence,
-                    route_costs=[route["cost"] for route in routes],
-                    artificial_penalty=BIG_M_PENALTY,
-                    method=method,
-                    coverage_sense=status.get(
-                        "master_sense", "partition"
-                    ),
-                    time_limit_s=args.time_limit_s,
-                )
-            except Exception as exc:
-                methods.append({
-                    "method": method,
-                    "outcome": "error",
+            repetitions = []
+            method_signature = None
+            for repetition in range(1, args.repeat + 1):
+                started = time.perf_counter()
+                try:
+                    solved = solve_restricted_master_lp(
+                        trip_ids=trip_ids,
+                        route_incidence=incidence,
+                        route_costs=[route["cost"] for route in routes],
+                        artificial_penalty=BIG_M_PENALTY,
+                        method=method,
+                        coverage_sense=status.get(
+                            "master_sense", "partition"
+                        ),
+                        time_limit_s=args.time_limit_s,
+                    )
+                except Exception as exc:
+                    repetitions.append({
+                        "repetition": repetition,
+                        "outcome": "error",
+                        "total_s": time.perf_counter() - started,
+                        "error": repr(exc),
+                        "peak_rss_bytes": peak_rss_bytes(),
+                    })
+                    continue
+                signature = _solution_signature(solved)
+                if method_signature is None:
+                    method_signature = signature
+                else:
+                    _assert_solutions_agree(
+                        method_signature,
+                        signature,
+                        context=f"prefix {target}, method {method} repeats",
+                    )
+                repetitions.append({
+                    "repetition": repetition,
+                    "outcome": "ok",
                     "total_s": time.perf_counter() - started,
-                    "error": repr(exc),
+                    "backend_s": solved.runtime_s,
+                    **signature,
                     "peak_rss_bytes": peak_rss_bytes(),
                 })
-                continue
+            successful = [
+                repetition for repetition in repetitions
+                if repetition["outcome"] == "ok"
+            ]
+            if len(successful) == args.repeat and method_signature is not None:
+                successful_signatures.append((method, method_signature))
+            totals = [repetition["total_s"] for repetition in successful]
+            backends = [repetition["backend_s"] for repetition in successful]
             methods.append({
                 "method": method,
-                "outcome": "ok",
-                "total_s": time.perf_counter() - started,
-                "backend_s": solved.runtime_s,
-                "objective": solved.objective,
-                "route_weight": solved.route_weight,
-                "artificial_total": solved.artificial_total,
-                "max_row_violation": solved.max_row_violation,
-                "max_bound_violation": solved.max_bound_violation,
-                "peak_rss_bytes": peak_rss_bytes(),
+                "outcome": (
+                    "ok" if len(successful) == args.repeat else "error"
+                ),
+                "successful_repetitions": len(successful),
+                "requested_repetitions": args.repeat,
+                "repetitions": repetitions,
+                "solution": method_signature,
+                "timing": ({
+                    "total_min_s": min(totals),
+                    "total_median_s": statistics.median(totals),
+                    "total_max_s": max(totals),
+                    "backend_min_s": min(backends),
+                    "backend_median_s": statistics.median(backends),
+                    "backend_max_s": max(backends),
+                } if totals else None),
             })
+        if successful_signatures:
+            reference_method, reference = successful_signatures[0]
+            for method, signature in successful_signatures[1:]:
+                _assert_solutions_agree(
+                    reference,
+                    signature,
+                    context=(
+                        f"prefix {target}, methods "
+                        f"{reference_method} versus {method}"
+                    ),
+                )
         rows.append({
             "prefix_columns": target,
             "available": True,
@@ -212,6 +355,15 @@ def profile(args) -> dict:
         "physical_records": len(records),
         "requested_prefixes": args.prefixes,
         "methods": args.methods,
+        "repeat": args.repeat,
+        "agreement_tolerance": {
+            "relative": AGREEMENT_REL_TOL,
+            "absolute": AGREEMENT_ABS_TOL,
+            "fields": [
+                "objective", "route_weight", "artificial_total",
+                "max_row_violation", "max_bound_violation",
+            ],
+        },
         "time_limit_s": args.time_limit_s,
         "profiles": rows,
         "provenance": {
@@ -224,8 +376,28 @@ def profile(args) -> dict:
 
 
 def parse_args(argv=None):
+    def sha256_value(value):
+        normalized = value.strip().lower()
+        if (len(normalized) != 64
+                or any(character not in "0123456789abcdef"
+                       for character in normalized)):
+            raise argparse.ArgumentTypeError(
+                "expected a 64-character SHA-256"
+            )
+        return normalized
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--result", type=Path, required=True)
+    parser.add_argument(
+        "--expected-result-sha256",
+        type=sha256_value,
+        required=True,
+    )
+    parser.add_argument(
+        "--expected-journal-sha256",
+        type=sha256_value,
+        required=True,
+    )
     parser.add_argument(
         "--prefixes",
         default="1000,5000,10000,25000,50000",
@@ -237,6 +409,7 @@ def parse_args(argv=None):
         help="Comma-separated cold SciPy/HiGHS methods.",
     )
     parser.add_argument("--time-limit-s", type=float, default=None)
+    parser.add_argument("--repeat", type=int, default=3)
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
     try:
@@ -257,14 +430,42 @@ def parse_args(argv=None):
             and (not math.isfinite(args.time_limit_s)
                  or args.time_limit_s <= 0.0)):
         parser.error("--time-limit-s must be positive and finite")
+    if args.repeat <= 0:
+        parser.error("--repeat must be positive")
     return args
+
+
+def run_profile(args) -> dict:
+    if args.out is None:
+        return profile(args)
+    output_path = args.out.expanduser().resolve()
+    if output_path.exists():
+        raise FileExistsError(
+            f"refusing to overwrite existing profiler output: {output_path}"
+        )
+    metadata = {
+        "operation": "frozen_pool_prefix_profile",
+        "source_result": str(args.result.expanduser().resolve()),
+        "expected_result_sha256": args.expected_result_sha256,
+        "expected_journal_sha256": args.expected_journal_sha256,
+    }
+    with exclusive_output_lock(output_path, metadata):
+        if output_path.exists():
+            raise FileExistsError(
+                f"refusing to overwrite existing profiler output: {output_path}"
+            )
+        payload = profile(args)
+        if output_path.exists():
+            raise FileExistsError(
+                f"profiler output appeared during run: {output_path}"
+            )
+        atomic_write_json(output_path, payload)
+        return payload
 
 
 def main(argv=None) -> int:
     args = parse_args(argv)
-    payload = profile(args)
-    if args.out is not None:
-        atomic_write_json(args.out, payload)
+    payload = run_profile(args)
     print(json.dumps(payload, indent=2))
     return 0
 
