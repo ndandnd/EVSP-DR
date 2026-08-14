@@ -1,0 +1,179 @@
+#!/bin/bash
+# Profile one immutable exact-CG pool. Submit only through
+# launch_exact_cg_profile_campaign.py, which stages and hashes every input.
+#SBATCH --job-name=PF-UNNAMED
+#SBATCH --output=src/logs/exact_cg_profiles/%x_%j.out
+#SBATCH --error=src/logs/exact_cg_profiles/%x_%j.err
+#SBATCH --open-mode=append
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=64G
+#SBATCH --partition=default_partition
+#SBATCH --time=1-00:00:00
+#SBATCH --no-requeue
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+PROFILE_CORE_COMMIT=702491e2b9fa548b75a8b140ba5a4213c06df24f
+
+fatal() {
+    echo "[PROFILE] FATAL: $*" >&2
+    exit 2
+}
+
+if [[ "$#" -ne 2 ]]; then
+    fatal "usage: $0 JOB_SPEC_JSON EXPECTED_JOB_SPEC_SHA256"
+fi
+JOB_SPEC=$1
+EXPECTED_SPEC_SHA=$2
+ROOT=${EVSP_DR_ROOT:-}
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:-}
+PYTHON=${EVSP_PROFILE_PYTHON:-}
+
+[[ -n "$ROOT" && -d "$ROOT/src" ]] \
+    || fatal "EVSP_DR_ROOT must name the reviewed checkout"
+[[ -n "$EXPECTED_COMMIT" ]] || fatal "missing EVSP_EXPECTED_COMMIT"
+[[ -n "$PYTHON" && -x "$PYTHON" ]] \
+    || fatal "EVSP_PROFILE_PYTHON is missing or not executable"
+[[ -f "$JOB_SPEC" ]] || fatal "job spec is missing: $JOB_SPEC"
+
+if [[ -n "${SLURM_JOB_ID:-}" &&
+      -z "${EVSP_PROFILE_EXPECTED_WORKER_SHA256:-}" ]]; then
+    fatal "submitted profile job lacks expected worker hash"
+fi
+if [[ -n "${EVSP_PROFILE_EXPECTED_WORKER_SHA256:-}" ]]; then
+    worker_sha=$(sha256sum "$0")
+    worker_sha=${worker_sha%% *}
+    [[ "$worker_sha" == "$EVSP_PROFILE_EXPECTED_WORKER_SHA256" ]] \
+        || fatal "worker hash mismatch"
+fi
+
+observed_commit=$(git -C "$ROOT" rev-parse --verify HEAD) \
+    || fatal "cannot resolve checkout HEAD"
+[[ "$observed_commit" == "$EXPECTED_COMMIT" ]] \
+    || fatal "commit mismatch: expected $EXPECTED_COMMIT, found $observed_commit"
+if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+    fatal "profile worker requires a detached checkout"
+else
+    symbolic_status=$?
+    [[ "$symbolic_status" -eq 1 ]] \
+        || fatal "cannot verify detached checkout"
+fi
+tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no) \
+    || fatal "cannot verify tracked worktree state"
+[[ -z "$tracked" ]] || fatal "profile checkout has tracked modifications"
+git -C "$ROOT" merge-base --is-ancestor "$PROFILE_CORE_COMMIT" HEAD \
+    || fatal "reviewed profiler core is not an ancestor of HEAD"
+CORE_PATHS=(
+    src/profile_exact_pool_prefixes.py
+    src/exact_pricer_expanded.py
+    src/exact_cg_telemetry.py
+    src/master_lp_scipy.py
+)
+git -C "$ROOT" diff --quiet "$PROFILE_CORE_COMMIT" -- "${CORE_PATHS[@]}" \
+    || fatal "profiler core differs from reviewed commit $PROFILE_CORE_COMMIT"
+git -C "$ROOT" diff --cached --quiet "$PROFILE_CORE_COMMIT" -- "${CORE_PATHS[@]}" \
+    || fatal "staged profiler core differs from reviewed commit"
+
+spec_sha=$(sha256sum "$JOB_SPEC")
+spec_sha=${spec_sha%% *}
+[[ "$spec_sha" == "$EXPECTED_SPEC_SHA" ]] || fatal "job spec hash mismatch"
+
+"$PYTHON" - <<'PY' || fatal "profile environment must be Python 3.12 with dependencies"
+import sys
+assert sys.version_info[:2] == (3, 12), sys.version
+import numpy, pandas, scipy  # noqa: F401
+PY
+
+readarray -t SPEC < <("$PYTHON" - "$JOB_SPEC" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+for key in (
+    "label", "staged_result", "staged_result_sha256",
+    "staged_journal", "staged_journal_sha256",
+    "staged_instance", "staged_instance_sha256", "csv",
+    "staged_prices", "staged_prices_sha256", "prices_csv",
+    "output", "prefixes", "methods", "repeat", "time_limit_s",
+    "expected_commit", "profile_core_commit",
+):
+    value = d[key]
+    print(",".join(str(item) for item in value) if isinstance(value, list) else value)
+PY
+)
+
+LABEL=${SPEC[0]}
+RESULT=${SPEC[1]}
+RESULT_SHA=${SPEC[2]}
+JOURNAL=${SPEC[3]}
+JOURNAL_SHA=${SPEC[4]}
+INSTANCE=${SPEC[5]}
+INSTANCE_SHA=${SPEC[6]}
+CSV=${SPEC[7]}
+PRICES=${SPEC[8]}
+PRICES_SHA=${SPEC[9]}
+PRICES_CSV=${SPEC[10]}
+OUT=${SPEC[11]}
+PREFIXES=${SPEC[12]}
+METHODS=${SPEC[13]}
+REPEAT=${SPEC[14]}
+TIME_LIMIT=${SPEC[15]}
+SPEC_COMMIT=${SPEC[16]}
+SPEC_CORE_COMMIT=${SPEC[17]}
+
+[[ "$SPEC_COMMIT" == "$EXPECTED_COMMIT" ]] || fatal "spec commit mismatch"
+[[ "$SPEC_CORE_COMMIT" == "$PROFILE_CORE_COMMIT" ]] \
+    || fatal "spec profiler-core mismatch"
+[[ "$CSV" != /* && "$CSV" != *".."* ]] || fatal "unsafe csv path"
+[[ "$PRICES_CSV" != /* && "$PRICES_CSV" != *".."* ]] \
+    || fatal "unsafe prices path"
+
+verify_hash() {
+    local label=$1 path=$2 expected=$3
+    [[ -f "$path" ]] || fatal "$label is missing: $path"
+    local actual
+    actual=$(sha256sum "$path")
+    actual=${actual%% *}
+    [[ "$actual" == "$expected" ]] \
+        || fatal "$label hash mismatch: expected $expected, found $actual"
+}
+
+verify_hash "staged result" "$RESULT" "$RESULT_SHA"
+verify_hash "staged journal" "$JOURNAL" "$JOURNAL_SHA"
+verify_hash "staged instance" "$INSTANCE" "$INSTANCE_SHA"
+verify_hash "staged prices" "$PRICES" "$PRICES_SHA"
+
+install_input() {
+    local source=$1 relative=$2 expected=$3
+    local destination="$ROOT/data/$relative"
+    mkdir -p "$(dirname "$destination")"
+    if [[ ! -e "$destination" ]]; then
+        cp --no-clobber "$source" "$destination"
+    fi
+    verify_hash "checkout input $relative" "$destination" "$expected"
+}
+install_input "$INSTANCE" "$CSV" "$INSTANCE_SHA"
+install_input "$PRICES" "$PRICES_CSV" "$PRICES_SHA"
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+unset EVSP_PHASE_TELEMETRY || true
+
+echo "[PROFILE] label=$LABEL host=$(hostname) job=${SLURM_JOB_ID:-none}"
+echo "[PROFILE] expected_commit=$EXPECTED_COMMIT observed_commit=$observed_commit"
+echo "[PROFILE] python=$("$PYTHON" -V 2>&1) repeat=$REPEAT limit=$TIME_LIMIT"
+
+cd "$ROOT"
+"$PYTHON" -u src/profile_exact_pool_prefixes.py \
+    --result "$RESULT" \
+    --expected-result-sha256 "$RESULT_SHA" \
+    --expected-journal-sha256 "$JOURNAL_SHA" \
+    --prefixes "$PREFIXES" \
+    --methods "$METHODS" \
+    --repeat "$REPEAT" \
+    --time-limit-s "$TIME_LIMIT" \
+    --out "$OUT"
