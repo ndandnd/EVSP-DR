@@ -2,12 +2,14 @@ import sys
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from audit_giro_known_columns import DEPOT  # noqa: E402
+import exact_pricer_expanded as exact  # noqa: E402
 from exact_pricer_expanded import direct_singleton_seed_records  # noqa: E402
 from prepare_exact_pool_mip import (  # noqa: E402
     default_output_path,
@@ -43,6 +45,18 @@ class ExactPoolSeedTests(unittest.TestCase):
         self.assertEqual(seeds[0]["route_nodes"], [DEPOT, 1, DEPOT])
         self.assertEqual(seeds[0]["cost"], 100000.0)
         self.assertEqual(seeds[0]["origin"], "exact_direct_singleton_seed")
+
+    def test_cli_defaults_to_singleton_initial_pool(self):
+        captured = []
+
+        def _capture(args):
+            captured.append(args)
+            return {}
+
+        with patch.object(exact, "run_cg", side_effect=_capture):
+            self.assertEqual(exact.main(["--csv", "instance.csv"]), 0)
+
+        self.assertEqual(captured[0].initial_pool, "singletons")
 
     def test_merging_seeds_is_idempotent(self):
         seed = {"trips": [1], "cost": 100000.0, "origin": "seed"}

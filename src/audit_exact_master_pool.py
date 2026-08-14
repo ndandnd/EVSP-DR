@@ -1,9 +1,9 @@
 """Re-solve one persisted exact-CG restricted master without pricing.
 
 This is the cheap gate before resuming multi-day pricing.  It loads the exact
-column journal referenced by a status/snapshot JSON, solves the partition LP
-with each requested HiGHS method, and records raw row residuals.  It never
-modifies the source pool and does not require Gurobi.
+column journal referenced by a status/snapshot JSON, solves the requested
+covering or partitioning LP with each requested HiGHS method, and records raw
+row residuals.  It never modifies the source pool and does not require Gurobi.
 """
 
 from __future__ import annotations
@@ -74,7 +74,8 @@ def freeze_audit_source(source: Path, destination_dir: Path,
 
 
 def audit_pool(result_path: Path, methods, feasibility_tolerance: float,
-               method_time_limit_s: float | None = None) -> dict:
+               method_time_limit_s: float | None = None,
+               master_sense: str = "partition") -> dict:
     with open(result_path) as fh:
         source_status = json.load(fh)
     journal_path = resolve_pool_journal(result_path, source_status)
@@ -102,13 +103,22 @@ def audit_pool(result_path: Path, methods, feasibility_tolerance: float,
                 route_costs=costs,
                 artificial_penalty=BIG_M_PENALTY,
                 method=method,
-                coverage_sense="partition",
+                coverage_sense=master_sense,
                 feasibility_tolerance=feasibility_tolerance,
                 time_limit_s=method_time_limit_s,
             )
             raw_coverage = incidence @ np.asarray(lp.route_values) + np.asarray(
                 [lp.artificial_values[trip] for trip in trips]
             )
+            raw_overcoverage = np.maximum(0.0, raw_coverage - 1.0)
+            if master_sense == "cover":
+                recomputed_row_violation = float(
+                    np.max(np.maximum(0.0, 1.0 - raw_coverage))
+                )
+            else:
+                recomputed_row_violation = float(
+                    np.max(np.abs(raw_coverage - 1.0))
+                )
             method_results.append({
                 "method": method,
                 "success": True,
@@ -120,9 +130,11 @@ def audit_pool(result_path: Path, methods, feasibility_tolerance: float,
                 ),
                 "max_row_violation": lp.max_row_violation,
                 "max_bound_violation": lp.max_bound_violation,
-                "recomputed_max_row_violation": float(
-                    np.max(np.abs(raw_coverage - 1.0))
-                ),
+                "recomputed_max_row_violation": recomputed_row_violation,
+                "max_overcoverage": float(np.max(raw_overcoverage)),
+                "overcovered_rows": int(np.count_nonzero(
+                    raw_overcoverage > feasibility_tolerance
+                )),
                 "runtime_s": lp.runtime_s,
             })
         except Exception as exc:
@@ -151,6 +163,7 @@ def audit_pool(result_path: Path, methods, feasibility_tolerance: float,
         },
         "trip_count": len(trips),
         "pool_columns": len(routes),
+        "master_sense": master_sense,
         "feasibility_tolerance": feasibility_tolerance,
         "method_time_limit_s": method_time_limit_s,
         "artificial_penalty": BIG_M_PENALTY,
@@ -171,6 +184,11 @@ def main(argv=None) -> int:
     parser.add_argument("--result", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--methods", default="highs-ds,highs-ipm,highs")
+    parser.add_argument(
+        "--master-sense",
+        choices=("cover", "partition"),
+        default="partition",
+    )
     parser.add_argument("--feasibility-tolerance", type=float, default=1e-6)
     parser.add_argument("--method-time-limit-s", type=float, default=None)
     args = parser.parse_args(argv)
@@ -182,7 +200,7 @@ def main(argv=None) -> int:
     )
     report = audit_pool(
         frozen_result, methods, args.feasibility_tolerance,
-        args.method_time_limit_s,
+        args.method_time_limit_s, args.master_sense,
     )
     report["original_source"] = original_source
     report["original_source_result_sha256"] = original_source["result_sha256"]

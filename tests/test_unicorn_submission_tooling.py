@@ -137,6 +137,48 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
                 self.assertIn("#SBATCH --mail-type=REQUEUE,FAIL", job_text)
                 self.assertIn("--resume", job_text)
 
+    def test_k40_factorial_has_four_named_isolated_resume_arms(self):
+        launcher = REPO_ROOT / "src" / "launch_k40_factorial.sh"
+        worker = REPO_ROOT / "src" / "submit_k40_factorial.sub"
+        prep = REPO_ROOT / "src" / "submit_k40_factorial_prep.sub"
+        monitor = REPO_ROOT / "src" / "monitor_k40_factorial.sh"
+
+        launch_text = launcher.read_text()
+        worker_text = worker.read_text()
+        prep_text = prep.read_text()
+
+        for name, sense, initial in (
+            ("K40-CA24", "cover", "artificial"),
+            ("K40-CS24", "cover", "singletons"),
+            ("K40-PA24", "partition", "artificial"),
+            ("K40-PS24", "partition", "singletons"),
+        ):
+            self.assertIn(
+                f"submit_arm {name} {sense} {initial}", launch_text
+            )
+        self.assertNotIn("--export=ALL", launch_text)
+        self.assertIn("--dependency=\"afterok:$PREP_JOB\"", launch_text)
+        self.assertIn("--initial-pool \"$INITIAL_POOL\"", worker_text)
+        self.assertIn("--master-sense \"$MASTER_SENSE\"", worker_text)
+        self.assertIn("--wall-limit-s 90000", worker_text)
+        self.assertIn(
+            "--snapshot-at-minutes 60,180,360,720,1320,1440", worker_text
+        )
+        self.assertIn("--resume", worker_text)
+        self.assertIn("#SBATCH --requeue", worker_text)
+        self.assertIn(".allocations.tsv", worker_text)
+        self.assertIn("historical 22-hour comparison", monitor.read_text())
+        self.assertIn("primary 24-hour snapshots", monitor.read_text())
+        self.assertIn("--union-sizes 20,30,40", prep_text)
+        self.assertIn("--per-size 2", prep_text)
+        self.assertIn("--seed 20260803", prep_text)
+        self.assertIn(
+            "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+            prep_text,
+        )
+        for script in (launcher, worker, prep, monitor):
+            subprocess.run(["/bin/bash", "-n", str(script)], check=True)
+
     def test_exact_pool_mip_uses_scaglione_without_requeue(self):
         script = REPO_ROOT / "src" / "submit_exact_pool_mip.sub"
         job_text = script.read_text()

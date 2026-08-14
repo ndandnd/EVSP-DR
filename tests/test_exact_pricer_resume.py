@@ -1,8 +1,10 @@
+import io
 import json
 import sys
 import tempfile
 import unittest
 from argparse import Namespace
+from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -26,6 +28,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             columns_per_iter=1,
             rc_eps=1e-4,
             master_sense="partition",
+            initial_pool="singletons",
             stall_window_min=None,
             stall_rc_frac=0.05,
             stall_obj_frac=1e-5,
@@ -58,6 +61,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             "charge_kw": 300.0,
             "min_soc_frac": 0.0,
             "master_sense": "partition",
+            "initial_pool": "singletons",
             "trip_ids": [],
             "iterations": 1,
             "columns": 1,
@@ -151,6 +155,48 @@ class ExactPricerResumeTests(unittest.TestCase):
             mismatches,
         )
 
+    def test_resume_rejects_changed_initial_pool_mode(self):
+        status = self._status()
+        args = self._args(Path("run.json"))
+        args.initial_pool = "artificial"
+
+        mismatches = exact.resume_identity_mismatches(
+            status,
+            args,
+            [],
+            {
+                "instance_sha256": "instance-hash",
+                "prices_sha256": "prices-hash",
+            },
+        )
+
+        self.assertIn(
+            "initial_pool differs (saved='singletons', "
+            "current='artificial')",
+            mismatches,
+        )
+
+    def test_legacy_missing_initial_pool_is_singleton_only(self):
+        status = self._status()
+        del status["initial_pool"]
+        args = self._args(Path("run.json"))
+        provenance = {
+            "instance_sha256": "instance-hash",
+            "prices_sha256": "prices-hash",
+        }
+
+        self.assertEqual(
+            exact.resume_identity_mismatches(status, args, [], provenance),
+            [],
+        )
+
+        args.initial_pool = "artificial"
+        self.assertIn(
+            "initial_pool differs (saved='singletons', "
+            "current='artificial')",
+            exact.resume_identity_mismatches(status, args, [], provenance),
+        )
+
     def test_resume_rejects_changed_hash_without_repairing_artifacts(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"
@@ -201,9 +247,49 @@ class ExactPricerResumeTests(unittest.TestCase):
             initial = json.loads(out.read_text())
             self.assertEqual(initial["stop_reason"], "initializing")
             self.assertEqual(initial["columns"], 0)
+            self.assertEqual(initial["initial_pool"], "singletons")
             self.assertEqual(
                 initial["provenance"]["instance_sha256"], "instance-hash"
             )
+
+    def test_artificial_initial_pool_skips_singleton_construction(self):
+        args = self._args(Path("unused.json"))
+        args.out = None
+        args.resume = False
+        args.initial_pool = "artificial"
+        problem = SimpleNamespace(trips=[1], adjacency={})
+        network = SimpleNamespace(
+            node_meta=[], n_arcs=0,
+            k_best_routes=lambda _duals, *, k: [],
+        )
+        provenance = {
+            "instance_sha256": "instance-hash",
+            "prices_sha256": "prices-hash",
+        }
+        output = io.StringIO()
+
+        with (
+            patch.object(exact, "build_problem", return_value=problem),
+            patch.object(exact, "load_station_hourly_prices", return_value={}),
+            patch.object(exact, "ExpandedNetwork", return_value=network),
+            patch.object(exact, "_provenance", return_value=provenance),
+            patch.object(
+                exact, "direct_singleton_seed_records",
+                side_effect=AssertionError("singletons must not be built"),
+            ),
+            patch.object(
+                exact, "solve_restricted_master_lp",
+                side_effect=AssertionError("empty real pool needs no master"),
+            ),
+            redirect_stdout(output),
+        ):
+            result = exact.run_cg(args)
+
+        self.assertEqual(result["initial_pool"], "artificial")
+        self.assertEqual(result["columns"], 0)
+        self.assertEqual(result["final"]["route_weight"], 0.0)
+        self.assertEqual(result["final"]["artificials"], 1.0)
+        self.assertIn("initial pool: artificial-only", output.getvalue())
 
     def test_resume_accepts_journal_ahead_of_last_status_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -357,6 +443,145 @@ class ExactPricerResumeTests(unittest.TestCase):
                     self._args(out, snapshot_marks="60")
                 )
             self.assertFalse(snapshot.exists())
+
+    def _run_spanning_master_snapshot_case(self, tmp, *, fail_first):
+        out = Path(tmp) / "run.json"
+        snapshot = Path(tmp) / "run.m1440.snapshot.json"
+        status = self._status()
+        status.update({
+            "trip_ids": [1],
+            "wall_s": 86390.0,
+            "iterations": 1,
+            "final_lp": {
+                "objective": 100000.0,
+                "route_weight": 1.0,
+                "artificial_total": 0.0,
+                "positive_routes": [
+                    {"trips": [1], "value": 1.0, "cost": 100000.0}
+                ],
+                "trip_duals": {"1": 100000.0},
+                "source": "prior_durable_lp",
+            },
+        })
+        out.write_text(json.dumps(status))
+        record = dict(self._record())
+        record["trips"] = [1]
+        Path(str(out) + ".columns.jsonl").write_text(
+            json.dumps(record) + "\n"
+        )
+        args = self._args(out, snapshot_marks="1440")
+        args.wall_limit_s = 200000
+
+        class _FakeTime:
+            def __init__(self):
+                self.now = 1000.0
+
+            def time(self):
+                return self.now
+
+        fake_time = _FakeTime()
+        limits = []
+        methods = []
+        retry_saw_snapshot = []
+        calls = 0
+        solved_lp = SimpleNamespace(
+            objective=90000.0,
+            route_weight=1.0,
+            artificial_total=0.0,
+            trip_duals={1: 90000.0},
+            route_values=[1.0],
+            max_row_violation=0.0,
+            max_bound_violation=0.0,
+            feasibility_tolerance=1e-7,
+            backend=SimpleNamespace(method="synthetic"),
+        )
+
+        def _master(*_args, **kwargs):
+            nonlocal calls
+            calls += 1
+            limits.append(kwargs.get("time_limit_s"))
+            methods.append(kwargs.get("method"))
+            if calls == 1:
+                self.assertFalse(snapshot.exists())
+                fake_time.now += 15.0
+                if fail_first:
+                    raise RuntimeError("synthetic master timeout")
+                return solved_lp
+            retry_saw_snapshot.append(snapshot.exists())
+            if fail_first:
+                raise RuntimeError("synthetic retry failure")
+            return solved_lp
+
+        problem = SimpleNamespace(trips=[1], adjacency={})
+        network = SimpleNamespace(
+            node_meta=[], n_arcs=0,
+            k_best_routes=lambda _duals, *, k: [],
+        )
+        provenance = {
+            "instance_sha256": "instance-hash",
+            "prices_sha256": "prices-hash",
+        }
+        with (
+            patch.object(exact, "time", fake_time),
+            patch.object(exact, "build_problem", return_value=problem),
+            patch.object(exact, "load_station_hourly_prices", return_value={}),
+            patch.object(exact, "ExpandedNetwork", return_value=network),
+            patch.object(exact, "_provenance", return_value=provenance),
+            patch.object(
+                exact, "direct_singleton_seed_records",
+                return_value=([], [1]),
+            ),
+            patch.object(exact, "build_route_incidence", return_value=None),
+            patch.object(
+                exact, "solve_restricted_master_lp", side_effect=_master,
+            ),
+        ):
+            result = exact.run_cg(args)
+
+        return result, snapshot, limits, methods, retry_saw_snapshot
+
+    def test_master_exception_crossing_m1440_freezes_pre_attempt_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result, snapshot, limits, methods, retry_saw_snapshot = (
+                self._run_spanning_master_snapshot_case(
+                    tmp, fail_first=True,
+                )
+            )
+            frozen = json.loads(snapshot.read_text())
+            frozen_journal = Path(frozen["columns_journal"])
+
+            self.assertEqual(frozen["stop_reason"], "snapshot_m1440")
+            self.assertEqual(frozen["columns"], 1)
+            self.assertEqual(frozen["final_lp"]["objective"], 100000.0)
+            self.assertEqual(
+                frozen["final_lp"]["source"], "compatible_prior_result"
+            )
+            self.assertEqual(
+                len(frozen_journal.read_text().splitlines()), 1
+            )
+
+        self.assertEqual(result["stop_reason"], "master_failed")
+        self.assertGreater(limits[0], 0.0)
+        self.assertLessEqual(limits[0], 10.0)
+        self.assertEqual(methods[:2], ["highs-ds", "highs-ds"])
+        self.assertTrue(retry_saw_snapshot)
+        self.assertTrue(retry_saw_snapshot[0])
+
+    def test_successful_master_crossing_mark_freezes_pre_solve_lp(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result, snapshot, limits, _, _ = (
+                self._run_spanning_master_snapshot_case(
+                    tmp, fail_first=False,
+                )
+            )
+            frozen = json.loads(snapshot.read_text())
+
+        self.assertLessEqual(limits[0], 10.0)
+        self.assertEqual(frozen["final_lp"]["objective"], 100000.0)
+        self.assertEqual(
+            frozen["final_lp"]["source"], "compatible_prior_result"
+        )
+        self.assertEqual(result["final_lp"]["objective"], 90000.0)
 
 
 if __name__ == "__main__":

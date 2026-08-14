@@ -1,0 +1,132 @@
+#!/bin/bash
+# One arm of the controlled k40 master-sense x initialization factorial.
+# Submitted by launch_k40_factorial.sh; do not invoke by hand.
+#SBATCH --job-name=K40-UNSET
+#SBATCH --partition=default_partition
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=40G
+#SBATCH --time=1-02:00:00
+#SBATCH --open-mode=append
+#SBATCH --requeue
+#SBATCH --mail-type=REQUEUE,FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+fatal() {
+  echo "[K40-FACTORIAL] FATAL: $*" >&2
+  exit 2
+}
+
+ROOT=${EVSP_DR_ROOT:?EVSP_DR_ROOT is required}
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:?EVSP_EXPECTED_COMMIT is required}
+CAMPAIGN=${K40_FACTORIAL_CAMPAIGN:?K40_FACTORIAL_CAMPAIGN is required}
+MASTER_SENSE=${K40_MASTER_SENSE:?K40_MASTER_SENSE is required}
+INITIAL_POOL=${K40_INITIAL_POOL:?K40_INITIAL_POOL is required}
+
+case "$MASTER_SENSE" in
+  cover|partition) ;;
+  *) fatal "invalid master sense: $MASTER_SENSE" ;;
+esac
+case "$INITIAL_POOL" in
+  artificial|singletons) ;;
+  *) fatal "invalid initial pool: $INITIAL_POOL" ;;
+esac
+
+cd "$ROOT"
+[ "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT" ] \
+  || fatal "checkout commit differs from $EXPECTED_COMMIT"
+if git symbolic-ref -q HEAD >/dev/null; then
+  fatal "campaign checkout must be detached"
+fi
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  fatal "tracked checkout is dirty"
+fi
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source Anaconda"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  conda activate "$ENV" 2>/dev/null || continue
+  if python -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 12) else 1)' 2>/dev/null; then
+    activated=$ENV
+    break
+  fi
+  conda deactivate 2>/dev/null || true
+done
+[ -n "$activated" ] \
+  || fatal "no Python 3.12 project conda environment could be activated"
+python -c 'import pandas, scipy; import sys; assert sys.version_info[:2] == (3, 12)' \
+  || fatal "Python 3.12 environment lacks pandas/scipy"
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
+
+INSTANCE=data/duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv
+PRICES=data/hourly_prices_flat.csv
+EXPECTED_INSTANCE_SHA=3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd
+EXPECTED_PRICES_SHA=1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200
+
+[ -f "$INSTANCE" ] || fatal "prep output $INSTANCE is missing"
+INSTANCE_SHA=$(sha256sum "$INSTANCE" | awk '{print $1}')
+PRICES_SHA=$(sha256sum "$PRICES" | awk '{print $1}')
+[ "$INSTANCE_SHA" = "$EXPECTED_INSTANCE_SHA" ] \
+  || fatal "k40_r1 input hash mismatch"
+[ "$PRICES_SHA" = "$EXPECTED_PRICES_SHA" ] \
+  || fatal "flat-price input hash mismatch"
+
+case "${MASTER_SENSE}_${INITIAL_POOL}" in
+  cover_artificial) ARM=CA ;;
+  cover_singletons) ARM=CS ;;
+  partition_artificial) ARM=PA ;;
+  partition_singletons) ARM=PS ;;
+  *) fatal "unmapped factorial arm" ;;
+esac
+
+RESULT_DIR="$ROOT/src/results/k40_factorial/$CAMPAIGN"
+mkdir -p "$RESULT_DIR"
+OUT="$RESULT_DIR/k40r1_flat_${ARM}.json"
+ALLOCATION_LOG="$RESULT_DIR/k40r1_flat_${ARM}.allocations.tsv"
+HOST_NAME=$(hostname -f 2>/dev/null || hostname)
+CPU_MODEL=$(awk -F: '/model name/ {sub(/^[[:space:]]+/, "", $2); print $2; exit}' \
+  /proc/cpuinfo 2>/dev/null || true)
+if [ ! -s "$ALLOCATION_LOG" ]; then
+  printf 'utc\tjob_id\trestart\thost\tcpu_model\tinstance_sha256\tprices_sha256\n' \
+    > "$ALLOCATION_LOG"
+fi
+printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
+  "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  "$SLURM_JOB_ID" "${SLURM_RESTART_COUNT:-0}" "$HOST_NAME" "$CPU_MODEL" \
+  "$INSTANCE_SHA" "$PRICES_SHA" >> "$ALLOCATION_LOG"
+
+echo "[K40-FACTORIAL] job=${SLURM_JOB_ID} restart=${SLURM_RESTART_COUNT:-0} arm=$ARM"
+echo "[K40-FACTORIAL] master=$MASTER_SENSE initial_pool=$INITIAL_POOL"
+echo "[K40-FACTORIAL] host=$HOST_NAME cpu=$CPU_MODEL"
+echo "[K40-FACTORIAL] campaign=$CAMPAIGN commit=$EXPECTED_COMMIT out=$OUT"
+
+python -u src/exact_pricer_expanded.py \
+  --csv duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv \
+  --prices_csv hourly_prices_flat.csv \
+  --soc-step 15 \
+  --block-min 10 \
+  --g-kwh 300 \
+  --charge-kw 300 \
+  --min-soc-frac 0 \
+  --master-sense "$MASTER_SENSE" \
+  --initial-pool "$INITIAL_POOL" \
+  --rc-eps 0.0001 \
+  --columns_per_iter 30 \
+  --max-iters 200000 \
+  --wall-limit-s 90000 \
+  --checkpoint-every 25 \
+  --snapshot-at-minutes 60,180,360,720,1320,1440 \
+  --resume \
+  --out "$OUT"
+
+echo "[K40-FACTORIAL] DONE arm=$ARM result=$OUT"
