@@ -1,0 +1,79 @@
+{
+  "schema": "evsp-dr-exact-pricing-before-after-v1",
+  "environment": {
+    "os": "linux",
+    "python": "3.12.3",
+    "soc_step_kwh": 15.0,
+    "block_minutes": 10,
+    "columns_requested": 30,
+    "warmup": 1,
+    "repetitions": 3,
+    "dual_value": 100000.0
+  },
+  "before_commit": "ec2411101bc2d9b310c8a4d8f3c721974b048d9a",
+  "after_worktree_base_commit": "ec2411101bc2d9b310c8a4d8f3c721974b048d9a",
+  "cases": [
+    {
+      "name": "pair_13301_13302",
+      "csv": "Practice_Custom_TwoDuty_13301_13302.csv",
+      "trips": 86,
+      "network_nodes": 21328,
+      "network_arcs": 1077619,
+      "sink_arcs": 21111,
+      "before_pricing_seconds": [
+        0.055452747001254465,
+        0.055494223001005594,
+        0.05583733100138488
+      ],
+      "after_pricing_seconds": [
+        0.042751424000016414,
+        0.0435321569966618,
+        0.04591223199895467
+      ],
+      "before_median_s": 0.055494223001005594,
+      "after_median_s": 0.0435321569966618,
+      "median_speedup_ratio": 1.2747868892704097,
+      "median_reduction_percent": 21.55551579508922,
+      "before_route_sha256": "152e5691becae2953166d586827b570b5d3593cf5d5967c77846e92775cd63e5",
+      "after_route_sha256": "152e5691becae2953166d586827b570b5d3593cf5d5967c77846e92775cd63e5",
+      "routes_exactly_equal": true,
+      "best_reduced_cost_before": -4499913.039999999,
+      "best_reduced_cost_after": -4499913.039999999
+    },
+    {
+      "name": "synthetic_k8_s20260802_r01",
+      "csv": "performance_benchmarks/Practice_SyntheticRandom_8bus_s20260802_r01.csv",
+      "generator": {
+        "script": "src/generate_random_goal1_instances.py",
+        "size": 8,
+        "replicate": 1,
+        "seed": 20260802,
+        "scientific_scope": "synthetic scaling benchmark, not a verified service day"
+      },
+      "trips": 206,
+      "network_nodes": 23594,
+      "network_arcs": 2341240,
+      "sink_arcs": 23266,
+      "before_pricing_seconds": [
+        0.11257335700065596,
+        0.11349169199820608,
+        0.112925240999175
+      ],
+      "after_pricing_seconds": [
+        0.08766946000105236,
+        0.08832979799990426,
+        0.08876223600236699
+      ],
+      "before_median_s": 0.112925240999175,
+      "after_median_s": 0.08832979799990426,
+      "median_speedup_ratio": 1.278450121659934,
+      "median_reduction_percent": 21.780288252340707,
+      "before_route_sha256": "3817e143f5cdcf881c85a0a3b79048f4c3b70a7fc3754a9660b0a4b41c333732",
+      "after_route_sha256": "3817e143f5cdcf881c85a0a3b79048f4c3b70a7fc3754a9660b0a4b41c333732",
+      "routes_exactly_equal": true,
+      "best_reduced_cost_before": -4999911.552000001,
+      "best_reduced_cost_after": -4999911.552000001
+    }
+  ],
+  "interpretation": "Local microbenchmark only. Exact route/cost/charging hashes match; timing is not a cluster performance claim."
+}

@@ -143,6 +143,9 @@ class ExpandedNetwork:
                  g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW,
                  reserve_kwh: float = 0.0):
         self.problem = problem
+        self.trip_position = {
+            trip: position for position, trip in enumerate(problem.trips)
+        }
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
@@ -222,9 +225,13 @@ class ExpandedNetwork:
     def _build_arcs(self):
         p = self.problem
         grid, floor = self.grid, self._floor
-        # out[node] = list of (succ_id, base_cost, trip_entered_or_-1)
+        # out[node] = list of (succ_id, base_cost, dense_trip_dual_index_or_-1)
         self.out: list[list] = [[] for _ in self.node_meta]
-        add = lambda u, v, cost, trip=-1: self.out[u].append((v, cost, trip))
+        def add(u, v, cost, trip=-1):
+            dual_index = (
+                self.trip_position[trip] if trip >= 0 else -1
+            )
+            self.out[u].append((v, cost, dual_index))
 
         # source -> trip
         for trip, (travel, dh) in self.depot_trip.items():
@@ -297,10 +304,19 @@ class ExpandedNetwork:
                     add(u, 1, cost)
 
         self.n_arcs = sum(len(a) for a in self.out)
+        self.sink_arcs = tuple(
+            (u, cost)
+            for u, arcs in enumerate(self.out[2:], start=2)
+            for successor, cost, _dual_index in arcs
+            if successor == self.SINK
+        )
 
     # ── exact pricing pass ────────────────────────────────────────────────
     def min_reduced_cost_route(self, alpha: dict[int, float]):
         INF = float("inf")
+        dense_duals = [
+            float(alpha.get(trip, 0.0)) for trip in self.problem.trips
+        ]
         value = [INF] * len(self.node_meta)
         parent: list[tuple[int, int] | None] = [None] * len(self.node_meta)
         value[0] = 0.0
@@ -308,11 +324,14 @@ class ExpandedNetwork:
             vu = value[u]
             if vu == INF:
                 continue
-            for v, cost, trip in self.out[u]:
-                cand = vu + cost - (alpha.get(trip, 0.0) if trip >= 0 else 0.0)
+            for v, cost, dual_index in self.out[u]:
+                cand = (
+                    vu + cost
+                    - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
+                )
                 if cand < value[v] - 1e-12:
                     value[v] = cand
-                    parent[v] = (u, trip)
+                    parent[v] = (u, dual_index)
         if value[1] == INF:
             return None
 
@@ -413,12 +432,10 @@ class ExpandedNetwork:
         started = time.perf_counter()
         value, _walk = best.pop("_value"), best.pop("_walk")
         candidates = []
-        for u in range(2, len(self.node_meta)):
+        for u, cost in self.sink_arcs:
             if value[u] == float("inf"):
                 continue
-            for v, cost, _trip in self.out[u]:
-                if v == 1:
-                    candidates.append((value[u] + cost, u))
+            candidates.append((value[u] + cost, u))
         candidates.sort()
         routes, seen = [best], {frozenset(best["trips"])}
         for rc, u in candidates[: max(4 * k, 200)]:

@@ -60,3 +60,17 @@ Telemetry identifies where live CG iterations spend time.  Prefix profiling
 isolates cold incidence/RMP scaling.  The pricing benchmark measures only the
 expanded-network pass and existing candidate extraction.  None is a pricing
 certificate or an integer-schedule result.
+
+## Commit-B local benchmark result
+
+`analysis/exact_cg_performance_20260814/benchmark_comparison.json` contains
+the exact before/after repetitions and route hashes.
+
+| Case | Before median | After median | Reduction | Route hash |
+|---|---:|---:|---:|---|
+| Two-duty pair (86 trips) | 0.05549 s | 0.04353 s | 21.6% | unchanged |
+| Reproducible synthetic k8 (206 trips) | 0.11293 s | 0.08833 s | 21.8% | unchanged |
+
+These are local microbenchmarks, not cluster throughput claims.  The synthetic
+k8 input is generated with seed `20260802`, size 8, replicate 1 and is not
+committed as a dataset.

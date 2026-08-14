@@ -100,11 +100,7 @@ def benchmark_case(args, csv_name: str) -> dict:
         "network_build_s": network_build_s,
         "network_nodes": len(network.node_meta),
         "network_arcs": network.n_arcs,
-        "sink_arcs": sum(
-            successor == network.SINK
-            for arcs in network.out
-            for successor, _cost, _trip in arcs
-        ),
+        "sink_arcs": len(network.sink_arcs),
         "repeat": args.repeat,
         "warmup": args.warmup,
         "pricing_seconds": durations,
