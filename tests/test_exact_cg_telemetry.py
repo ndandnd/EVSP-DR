@@ -239,8 +239,23 @@ class ExactCgTelemetryTests(unittest.TestCase):
             )
             self.assertTrue(payload["source_unchanged"])
             self.assertEqual(
+                payload["schema"],
+                "evsp-dr-frozen-pool-prefix-profile-v2",
+            )
+            self.assertEqual(
                 [row["available"] for row in payload["profiles"]],
                 [True, True, False],
+            )
+            first_method = payload["profiles"][0]["methods"][0]
+            self.assertEqual(len(first_method["repetitions"]), 3)
+            self.assertEqual(first_method["successful_repetitions"], 3)
+            self.assertLessEqual(
+                first_method["timing"]["total_min_s"],
+                first_method["timing"]["total_median_s"],
+            )
+            self.assertLessEqual(
+                first_method["timing"]["total_median_s"],
+                first_method["timing"]["total_max_s"],
             )
             for path, original in source_bytes.items():
                 self.assertEqual(path.read_bytes(), original)
@@ -261,6 +276,36 @@ class ExactCgTelemetryTests(unittest.TestCase):
                 patch.object(
                     profiler, "solve_restricted_master_lp",
                     side_effect=disagree,
+                ),
+                self.assertRaisesRegex(
+                    ValueError, "solutions disagree"
+                ),
+            ):
+                profiler.profile(args)
+
+            calls_by_method = {}
+
+            def partial_disagreement(**kwargs):
+                method = kwargs["method"]
+                calls_by_method[method] = calls_by_method.get(method, 0) + 1
+                if method == "highs-ipm" and calls_by_method[method] > 1:
+                    raise RuntimeError("synthetic later repetition failure")
+                return SimpleNamespace(
+                    runtime_s=0.01,
+                    objective=(
+                        200001.0 if method == "highs-ipm" else 200000.0
+                    ),
+                    route_weight=2.0,
+                    artificial_total=0.0,
+                    max_row_violation=0.0,
+                    max_bound_violation=0.0,
+                )
+
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                patch.object(
+                    profiler, "solve_restricted_master_lp",
+                    side_effect=partial_disagreement,
                 ),
                 self.assertRaisesRegex(
                     ValueError, "solutions disagree"
@@ -405,21 +450,76 @@ class ExactCgTelemetryTests(unittest.TestCase):
             ):
                 profiler.profile(positive_args)
 
+            data, _result, journal, _status, type_args = fixture(
+                root / "types"
+            )
+            journal.write_text(
+                json.dumps({"trips": [True], "cost": 100000.0}) + "\n"
+            )
+            type_args.expected_journal_sha256 = hashlib.sha256(
+                journal.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "unique integer trips"),
+            ):
+                profiler.profile(type_args)
+
             data, _result, _journal, _status, output_args = fixture(
                 root / "output"
             )
-            output = root / "existing-profile.json"
-            output.write_text("preserve\n")
-            output_args.out = output
+            existing_output = root / "existing-profile.json"
+            existing_output.write_text("preserve\n")
+            output_args.out = existing_output
             with self.assertRaisesRegex(
                 FileExistsError, "refusing to overwrite"
             ):
                 profiler.run_profile(output_args)
-            self.assertEqual(output.read_text(), "preserve\n")
 
-            output.unlink()
+            data, result, journal, status, alias_args = fixture(
+                root / "lock-alias"
+            )
+            output = result.parent / "profile.json"
+            alias_journal = Path(str(output) + ".lock")
+            alias_journal.write_bytes(journal.read_bytes())
+            status["columns_journal"] = str(alias_journal)
+            result.write_text(json.dumps(status))
+            alias_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            alias_args.expected_journal_sha256 = hashlib.sha256(
+                alias_journal.read_bytes()
+            ).hexdigest()
+            alias_args.out = output
+            original_alias = alias_journal.read_bytes()
             with (
-                exclusive_output_lock(output, {"owner": "test"}),
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "lock path aliases"),
+            ):
+                profiler.run_profile(alias_args)
+            self.assertEqual(alias_journal.read_bytes(), original_alias)
+
+            raced_output = root / "raced-profile.json"
+
+            def racing_link(_source, destination):
+                Path(destination).write_text("competitor\n")
+                raise FileExistsError(destination)
+
+            with (
+                patch.object(profiler.os, "link", side_effect=racing_link),
+                self.assertRaisesRegex(
+                    FileExistsError, "created concurrently"
+                ),
+            ):
+                profiler._write_json_no_clobber(
+                    raced_output, {"result": "ours"}
+                )
+            self.assertEqual(raced_output.read_text(), "competitor\n")
+            self.assertEqual(existing_output.read_text(), "preserve\n")
+
+            existing_output.unlink()
+            with (
+                exclusive_output_lock(existing_output, {"owner": "test"}),
                 self.assertRaisesRegex(
                     DurableFileError, "another process"
                 ),

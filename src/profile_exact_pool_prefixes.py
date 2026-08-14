@@ -12,16 +12,18 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import platform
 import statistics
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 
 from config import BIG_M_PENALTY
 from durable_io import (
-    atomic_write_json,
     exclusive_output_lock,
+    flush_and_fsync,
     read_jsonl_records,
 )
 from exact_cg_telemetry import peak_rss_bytes
@@ -30,7 +32,7 @@ from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
 from run_exact_pool_mip import resolve_pool_journal
 
 
-SCHEMA = "evsp-dr-frozen-pool-prefix-profile-v1"
+SCHEMA = "evsp-dr-frozen-pool-prefix-profile-v2"
 AGREEMENT_REL_TOL = 1e-9
 AGREEMENT_ABS_TOL = 1e-6
 
@@ -82,6 +84,31 @@ def _assert_solutions_agree(
             )
 
 
+def _resolve_sources(args):
+    """Resolve source paths without modifying any source or lock file."""
+
+    result_path = args.result.expanduser().resolve()
+    if not result_path.name.endswith(".snapshot.json"):
+        raise ValueError(
+            "profiler requires an immutable *.snapshot.json source"
+        )
+    status_raw = result_path.read_bytes()
+    status = json.loads(status_raw)
+    if not isinstance(status, dict):
+        raise ValueError("source result is not a JSON object")
+    journal_path = resolve_pool_journal(result_path, status).resolve()
+    instance_path = (DATA_DIR / str(status["csv"])).resolve()
+    prices_path = (DATA_DIR / str(status["prices_csv"])).resolve()
+    return (
+        result_path,
+        status_raw,
+        status,
+        journal_path,
+        instance_path,
+        prices_path,
+    )
+
+
 def ordered_unique_prefixes(
     records: list[dict],
     trip_ids: list[int],
@@ -107,18 +134,14 @@ def ordered_unique_prefixes(
 
 
 def profile(args) -> dict:
-    result_path = args.result.expanduser().resolve()
-    if not result_path.name.endswith(".snapshot.json"):
-        raise ValueError(
-            "profiler requires an immutable *.snapshot.json source"
-        )
-    status_raw = result_path.read_bytes()
-    status = json.loads(status_raw)
-    if not isinstance(status, dict):
-        raise ValueError("source result is not a JSON object")
-    journal_path = resolve_pool_journal(result_path, status).resolve()
-    instance_path = (DATA_DIR / str(status["csv"])).resolve()
-    prices_path = (DATA_DIR / str(status["prices_csv"])).resolve()
+    (
+        result_path,
+        status_raw,
+        status,
+        journal_path,
+        instance_path,
+        prices_path,
+    ) = _resolve_sources(args)
     if args.out is not None:
         output_path = args.out.expanduser().resolve()
         if output_path.exists():
@@ -170,7 +193,32 @@ def profile(args) -> dict:
     records = read_jsonl_records(
         journal_path, repair_trailing=False
     )
-    trip_ids = [int(trip) for trip in status["trip_ids"]]
+    raw_trip_ids = status.get("trip_ids")
+    if (not isinstance(raw_trip_ids, list) or not raw_trip_ids
+            or any(not isinstance(trip, int) or isinstance(trip, bool)
+                   for trip in raw_trip_ids)
+            or len(raw_trip_ids) != len(set(raw_trip_ids))):
+        raise ValueError(
+            "snapshot trip_ids must be a nonempty list of unique integers"
+        )
+    trip_ids = list(raw_trip_ids)
+    allowed_trip_ids = set(trip_ids)
+    for ordinal, record in enumerate(records, start=1):
+        record_trips = record.get("trips")
+        if (not isinstance(record_trips, list) or not record_trips
+                or any(not isinstance(trip, int) or isinstance(trip, bool)
+                       for trip in record_trips)
+                or len(record_trips) != len(set(record_trips))):
+            raise ValueError(
+                f"journal record {ordinal} must contain unique integer trips"
+            )
+        unknown = [
+            trip for trip in record_trips if trip not in allowed_trip_ids
+        ]
+        if unknown:
+            raise ValueError(
+                f"journal record {ordinal} has unknown trips: {unknown[:10]}"
+            )
     full_pool = load_column_pool(records, trip_ids)
     recorded_columns = status.get("columns")
     if (not isinstance(recorded_columns, int)
@@ -189,7 +237,7 @@ def profile(args) -> dict:
     if not isinstance(positive_routes, list):
         raise ValueError("snapshot final_lp positive_routes must be a list")
     pool_keys = set(full_pool)
-    allowed_trips = set(trip_ids)
+    allowed_trips = allowed_trip_ids
     for ordinal, route in enumerate(positive_routes, start=1):
         if not isinstance(route, dict) or not isinstance(
                 route.get("trips"), list):
@@ -206,6 +254,11 @@ def profile(args) -> dict:
         if not trips or len(trips) != len(key):
             raise ValueError(
                 f"snapshot positive route {ordinal} has empty/repeated trips"
+            )
+        if any(not isinstance(trip, int) or isinstance(trip, bool)
+               for trip in trips):
+            raise ValueError(
+                f"snapshot positive route {ordinal} has non-integer trips"
             )
         unknown = [trip for trip in trips if trip not in allowed_trips]
         if unknown:
@@ -288,7 +341,7 @@ def profile(args) -> dict:
                 repetition for repetition in repetitions
                 if repetition["outcome"] == "ok"
             ]
-            if len(successful) == args.repeat and method_signature is not None:
+            if method_signature is not None:
                 successful_signatures.append((method, method_signature))
             totals = [repetition["total_s"] for repetition in successful]
             backends = [repetition["backend_s"] for repetition in successful]
@@ -439,6 +492,22 @@ def run_profile(args) -> dict:
     if args.out is None:
         return profile(args)
     output_path = args.out.expanduser().resolve()
+    (
+        result_path,
+        _status_raw,
+        _status,
+        journal_path,
+        instance_path,
+        prices_path,
+    ) = _resolve_sources(args)
+    protected = {
+        result_path, journal_path, instance_path, prices_path,
+    }
+    lock_path = Path(str(output_path) + ".lock").resolve()
+    if output_path in protected or lock_path in protected:
+        raise ValueError(
+            "profiler output or lock path aliases a protected source"
+        )
     if output_path.exists():
         raise FileExistsError(
             f"refusing to overwrite existing profiler output: {output_path}"
@@ -459,8 +528,38 @@ def run_profile(args) -> dict:
             raise FileExistsError(
                 f"profiler output appeared during run: {output_path}"
             )
-        atomic_write_json(output_path, payload)
+        _write_json_no_clobber(output_path, payload)
         return payload
+
+
+def _write_json_no_clobber(path: Path, payload: dict) -> None:
+    """Publish a complete JSON file atomically without replacing any inode."""
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.tmp.",
+            delete=False,
+        ) as handle:
+            temporary = Path(handle.name)
+            json.dump(payload, handle, indent=1)
+            handle.write("\n")
+            flush_and_fsync(handle)
+        try:
+            os.link(temporary, path)
+        except FileExistsError as exc:
+            raise FileExistsError(
+                f"refusing to overwrite profiler output created concurrently: "
+                f"{path}"
+            ) from exc
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
 
 
 def main(argv=None) -> int:

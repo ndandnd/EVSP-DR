@@ -59,10 +59,20 @@ checkout that owns a running campaign.
 ```bash
 set -euo pipefail
 
-PROFILE_ROOT="$HOME/EVSP-DR-exact-profile-<reviewed-sha12>"
+: "${EXPECTED_REVIEWED_COMMIT:?export independently reviewed 40-char commit}"
+: "${EXPECTED_STATUS_SHA:?export status SHA from campaign manifest/archive}"
+: "${EXPECTED_JOURNAL_SHA:?export journal SHA from campaign manifest/archive}"
+[[ "$EXPECTED_REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+[[ "$EXPECTED_STATUS_SHA" =~ ^[0-9a-f]{64}$ ]]
+[[ "$EXPECTED_JOURNAL_SHA" =~ ^[0-9a-f]{64}$ ]]
+test -n "${SLURM_JOB_ID:-}"
+
+PROFILE_ROOT="$HOME/EVSP-DR-exact-profile-${EXPECTED_REVIEWED_COMMIT:0:12}"
 SOURCE_ROOT="$HOME/EVSP-DR-legacy-recovery-bab7bfe"
 SNAP="/absolute/path/to/immutable.snapshot.json"
 
+test "$(git -C "$PROFILE_ROOT" rev-parse HEAD)" = \
+  "$EXPECTED_REVIEWED_COMMIT"
 test -z "$(git -C "$PROFILE_ROOT" branch --show-current)"
 test -z "$(git -C "$PROFILE_ROOT" status --porcelain --untracked-files=no)"
 
@@ -97,16 +107,16 @@ test "$(sha256sum "$PROFILE_ROOT/data/$CSV" | awk '{print $1}')" = \
 test "$(sha256sum "$PROFILE_ROOT/data/$PRICES" | awk '{print $1}')" = \
   "$EXPECTED_PRICES_SHA"
 
-STATUS_SHA=$(sha256sum "$SNAP" | awk '{print $1}')
-JOURNAL_SHA=$(sha256sum "$JOURNAL" | awk '{print $1}')
+test "$(sha256sum "$SNAP" | awk '{print $1}')" = "$EXPECTED_STATUS_SHA"
+test "$(sha256sum "$JOURNAL" | awk '{print $1}')" = "$EXPECTED_JOURNAL_SHA"
 OUT="$PROFILE_ROOT/src/results/profiles/$(basename "$SNAP").prefix-profile.json"
 test ! -e "$OUT"
 
 cd "$PROFILE_ROOT"
 python -u src/profile_exact_pool_prefixes.py \
   --result "$SNAP" \
-  --expected-result-sha256 "$STATUS_SHA" \
-  --expected-journal-sha256 "$JOURNAL_SHA" \
+  --expected-result-sha256 "$EXPECTED_STATUS_SHA" \
+  --expected-journal-sha256 "$EXPECTED_JOURNAL_SHA" \
   --prefixes 1000,5000,10000,25000,50000 \
   --methods highs,highs-ds,highs-ipm \
   --repeat 3 \
@@ -117,6 +127,9 @@ The profiler itself rechecks the copied instance/tariff against status
 provenance, reconstructs the complete unique-incidence pool, validates
 `status["columns"]` and every positive `final_lp` route, refuses an existing or
 concurrently owned output, and rehashes all sources after profiling.
+`EXPECTED_STATUS_SHA` and `EXPECTED_JOURNAL_SHA` must come from an independent
+campaign manifest/release attestation; never derive the expected journal hash
+from the same resolver/path selection being tested.
 
 ## Deterministic pricing microbenchmark
 
