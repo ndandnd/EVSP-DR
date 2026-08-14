@@ -907,6 +907,21 @@ def run_cg(args) -> dict:
                 "initial_pool": args.initial_pool,
             },
         )
+    detached_telemetry_overhead_s = 0.0
+
+    def _telemetry_overhead_s():
+        return (
+            detached_telemetry_overhead_s
+            + (telemetry.overhead_s if telemetry is not None else 0.0)
+        )
+
+    def _attempt_elapsed_s():
+        return max(
+            0.0, time.time() - t0 - _telemetry_overhead_s()
+        )
+
+    def _cumulative_elapsed_s():
+        return elapsed_offset + _attempt_elapsed_s()
 
     network_t0 = time.time()
     prices = load_station_hourly_prices(
@@ -944,20 +959,36 @@ def run_cg(args) -> dict:
         outcome="ok",
         details=None,
     ):
+        nonlocal telemetry, detached_telemetry_overhead_s
         if telemetry is None:
             return
-        telemetry.phase(
-            name,
-            duration_s,
-            iteration=iteration,
-            attempt=attempt,
-            pool_columns=len(pool) if pool_columns is None else pool_columns,
-            incidence_nnz=incidence_nnz,
-            network_nodes=len(net.node_meta),
-            network_arcs=net.n_arcs,
-            outcome=outcome,
-            details=details,
-        )
+        try:
+            telemetry.phase(
+                name,
+                duration_s,
+                iteration=iteration,
+                attempt=attempt,
+                pool_columns=(
+                    len(pool) if pool_columns is None else pool_columns
+                ),
+                incidence_nnz=incidence_nnz,
+                network_nodes=len(net.node_meta),
+                network_arcs=net.n_arcs,
+                outcome=outcome,
+                details=details,
+            )
+        except Exception as exc:
+            detached_telemetry_overhead_s += telemetry.overhead_s
+            telemetry = None
+            warning_started = time.perf_counter()
+            print(
+                f"[EXACT] WARNING: phase telemetry disabled after I/O error: "
+                f"{exc}",
+                flush=True,
+            )
+            detached_telemetry_overhead_s += (
+                time.perf_counter() - warning_started
+            )
 
     # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
     # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.
@@ -1085,8 +1116,8 @@ def run_cg(args) -> dict:
             "trip_ids": trips,
             "columns": len(pool),
             "columns_journal": str(journal_path),
-            "wall_s": elapsed_offset + time.time() - t0,
-            "attempt_wall_s": time.time() - t0,
+            "wall_s": _cumulative_elapsed_s(),
+            "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": "resume_starting",
             "provenance": provenance,
         })
@@ -1114,8 +1145,8 @@ def run_cg(args) -> dict:
             "final": None,
             "columns": 0,
             "columns_journal": str(journal_path),
-            "wall_s": time.time() - t0,
-            "attempt_wall_s": time.time() - t0,
+            "wall_s": _attempt_elapsed_s(),
+            "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": "initializing",
             "history_tail": [],
             "final_lp": None,
@@ -1229,7 +1260,7 @@ def run_cg(args) -> dict:
         )
 
     def _elapsed_s():
-        return elapsed_offset + time.time() - t0
+        return _cumulative_elapsed_s()
 
     def _freeze_crossed_snapshots():
         """Publish every due mark from the last completed durable state."""
@@ -1312,8 +1343,8 @@ def run_cg(args) -> dict:
             "final": history[-1] if history else None,
             "columns": len(pool),
             "columns_journal": str(journal_path) if journal_path else None,
-            "wall_s": elapsed_offset + time.time() - t0,
-            "attempt_wall_s": time.time() - t0,
+            "wall_s": _cumulative_elapsed_s(),
+            "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": status, "history_tail": history[-5:],
             "final_lp": last_good_lp_detail,
             "final_lp_source": (last_good_lp_detail or {}).get("source"),
@@ -1337,7 +1368,7 @@ def run_cg(args) -> dict:
         if not args.wall_limit_s:
             return None
         remaining = (
-            args.wall_limit_s - (elapsed_offset + time.time() - t0) - reserve_s
+            args.wall_limit_s - _cumulative_elapsed_s() - reserve_s
         )
         return max(0.0, remaining)
 
@@ -1529,7 +1560,7 @@ def run_cg(args) -> dict:
                         "max_bound_violation": getattr(
                             lp, "max_bound_violation", 0.0)})
         if iters_csv:
-            iters_csv.write(f"{elapsed_offset + time.time() - t0:.2f},"
+            iters_csv.write(f"{_cumulative_elapsed_s():.2f},"
                             f"{global_iteration},"
                             f"{lp.objective:.6f},{lp.route_weight:.9f},"
                             f"{lp.artificial_total:.6f},{min_rc:.6f},{len(pool)}\n")
@@ -1551,7 +1582,7 @@ def run_cg(args) -> dict:
             stop_reason = "certified" if certified else "no_path"
             break
         if args.stall_window_min and lp.artificial_total < 1e-6:
-            now = elapsed_offset + time.time() - t0
+            now = _cumulative_elapsed_s()
             quarter = args.stall_window_min * 60.0 / 4.0
             recent = [h for h in stall_hist if h[0] >= now - quarter]
             old = [h for h in stall_hist
@@ -1579,7 +1610,7 @@ def run_cg(args) -> dict:
                     break
             stall_hist.append((now, lp.objective, min_rc))
         elif args.stall_window_min:
-            stall_hist.append((elapsed_offset + time.time() - t0,
+            stall_hist.append((_cumulative_elapsed_s(),
                                lp.objective, min_rc))
         added = 0
         added_charge_starts = []
@@ -1911,8 +1942,8 @@ def run_cg(args) -> dict:
         "final": history[-1] if history else None,
         "columns": len(pool),
         "columns_journal": str(journal_path) if journal_path else None,
-        "wall_s": elapsed_offset + time.time() - t0,
-        "attempt_wall_s": time.time() - t0,
+        "wall_s": _cumulative_elapsed_s(),
+        "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,

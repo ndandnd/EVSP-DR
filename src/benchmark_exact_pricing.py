@@ -75,7 +75,16 @@ def benchmark_case(args, csv_name: str) -> dict:
         reserve_kwh=args.reserve * args.g_kwh,
     )
     network_build_s = time.perf_counter() - network_started
-    duals = {trip: float(args.dual_value) for trip in problem.trips}
+    if args.dual_mode == "constant":
+        duals = {trip: float(args.dual_value) for trip in problem.trips}
+    else:
+        duals = {
+            trip: float(
+                args.dual_value
+                + (((position + 1) * 7919) % 10000 - 5000)
+            )
+            for position, trip in enumerate(problem.trips)
+        }
 
     for _ in range(args.warmup):
         network.k_best_routes(duals, k=args.columns)
@@ -126,6 +135,11 @@ def parse_args(argv=None):
     parser.add_argument("--reserve", type=float, default=0.0)
     parser.add_argument("--columns", type=int, default=30)
     parser.add_argument("--dual-value", type=float, default=BUS_COST_KX)
+    parser.add_argument(
+        "--dual-mode",
+        choices=("constant", "heterogeneous"),
+        default="constant",
+    )
     parser.add_argument("--warmup", type=int, default=1)
     parser.add_argument("--repeat", type=int, default=3)
     parser.add_argument("--out", type=Path)
@@ -165,6 +179,7 @@ def main(argv=None) -> int:
             "reserve": args.reserve,
             "columns": args.columns,
             "dual_value": args.dual_value,
+            "dual_mode": args.dual_mode,
         },
         "provenance": {
             "git_commit": _git("rev-parse", "HEAD"),

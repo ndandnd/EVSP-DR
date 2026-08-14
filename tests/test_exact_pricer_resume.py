@@ -365,6 +365,162 @@ class ExactPricerResumeTests(unittest.TestCase):
             self.assertIn("pricing_shortest_path", phases)
             self.assertIn("pricing_extra_columns", phases)
 
+    def test_telemetry_io_time_does_not_cross_wall_boundary(self):
+        class _FakeTime:
+            def __init__(self):
+                self.now = 1000.0
+
+            def time(self):
+                return self.now
+
+            def perf_counter(self):
+                return self.now
+
+        def execute(enabled):
+            fake_time = _FakeTime()
+
+            class SlowTelemetry:
+                def __init__(self, *_args, **_kwargs):
+                    self.overhead_s = 0.0
+
+                def phase(self, *_args, **_kwargs):
+                    fake_time.now += 120.0
+                    self.overhead_s += 120.0
+
+            args = self._args(Path("unused.json"))
+            args.out = None
+            args.resume = False
+            args.initial_pool = "artificial"
+            args.wall_limit_s = 120
+            args.phase_telemetry = (
+                Path("slow.phases.jsonl") if enabled else None
+            )
+            problem = SimpleNamespace(trips=[1], adjacency={})
+
+            def k_best(_duals, *, k, phase_callback=None):
+                if phase_callback is not None:
+                    phase_callback(
+                        "pricing_shortest_path", 0.0,
+                        {"path_found": False},
+                    )
+                    phase_callback(
+                        "pricing_extra_columns", 0.0,
+                        {"sink_candidates": 0, "returned_routes": 0},
+                    )
+                return []
+
+            network = SimpleNamespace(
+                node_meta=[], n_arcs=0, k_best_routes=k_best,
+            )
+            provenance = {
+                "instance_sha256": "instance-hash",
+                "prices_sha256": "prices-hash",
+                "git_commit": "a" * 40,
+            }
+            with (
+                patch.object(exact, "time", fake_time),
+                patch.object(exact, "PhaseTelemetry", SlowTelemetry),
+                patch.object(exact, "build_problem", return_value=problem),
+                patch.object(
+                    exact, "load_station_hourly_prices", return_value={}
+                ),
+                patch.object(exact, "ExpandedNetwork", return_value=network),
+                patch.object(exact, "_provenance", return_value=provenance),
+                patch.object(
+                    exact,
+                    "direct_singleton_seed_records",
+                    side_effect=AssertionError(
+                        "artificial mode must not build singletons"
+                    ),
+                ),
+            ):
+                return exact.run_cg(args)
+
+        without = execute(False)
+        with_slow_telemetry = execute(True)
+
+        self.assertEqual(without["stop_reason"], "no_path")
+        self.assertEqual(with_slow_telemetry["stop_reason"], "no_path")
+        self.assertEqual(without["iterations"], with_slow_telemetry["iterations"])
+        self.assertEqual(without["final"], with_slow_telemetry["final"])
+        self.assertEqual(without["wall_s"], with_slow_telemetry["wall_s"])
+
+    def test_telemetry_failure_is_not_misclassified_as_master_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            status = self._status()
+            status["trip_ids"] = [1]
+            status["columns"] = 1
+            out.write_text(json.dumps(status))
+            record = dict(self._record())
+            record["trips"] = [1]
+            Path(str(out) + ".columns.jsonl").write_text(
+                json.dumps(record) + "\n"
+            )
+            args = self._args(out)
+            args.phase_telemetry = Path(tmp) / "phases.jsonl"
+            args.wall_limit_s = None
+            problem = SimpleNamespace(trips=[1], adjacency={})
+            network = SimpleNamespace(
+                node_meta=[],
+                n_arcs=0,
+                k_best_routes=lambda _duals, *, k, **_kwargs: [],
+            )
+            provenance = {
+                "instance_sha256": "instance-hash",
+                "prices_sha256": "prices-hash",
+            }
+            backend = SimpleNamespace(method="highs-ds")
+            lp = SimpleNamespace(
+                objective=100000.0,
+                route_weight=1.0,
+                artificial_total=0.0,
+                trip_duals={1: 100000.0},
+                route_values=[1.0],
+                max_row_violation=0.0,
+                max_bound_violation=0.0,
+                feasibility_tolerance=1e-6,
+                backend=backend,
+                runtime_s=0.01,
+            )
+
+            class FailingTelemetry:
+                overhead_s = 0.0
+
+                def __init__(self, *_args, **_kwargs):
+                    pass
+
+                def phase(self, name, *_args, **_kwargs):
+                    if name == "master_attempt":
+                        raise OSError("synthetic telemetry failure")
+
+            with (
+                patch.object(exact, "PhaseTelemetry", FailingTelemetry),
+                patch.object(exact, "build_problem", return_value=problem),
+                patch.object(
+                    exact, "load_station_hourly_prices", return_value={}
+                ),
+                patch.object(exact, "ExpandedNetwork", return_value=network),
+                patch.object(exact, "_provenance", return_value=provenance),
+                patch.object(
+                    exact, "direct_singleton_seed_records",
+                    return_value=([], [1]),
+                ),
+                patch.object(
+                    exact, "build_route_incidence",
+                    return_value=SimpleNamespace(
+                        nnz=1, shape=(1, 1),
+                    ),
+                ),
+                patch.object(
+                    exact, "solve_restricted_master_lp",
+                    return_value=lp,
+                ),
+            ):
+                result = exact.run_cg(args)
+
+            self.assertEqual(result["stop_reason"], "no_path")
+
     def test_resume_accepts_journal_ahead_of_last_status_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"

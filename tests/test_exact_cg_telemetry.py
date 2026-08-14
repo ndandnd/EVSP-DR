@@ -65,6 +65,7 @@ class ExactCgTelemetryTests(unittest.TestCase):
             reserve=0.0,
             columns=30,
             dual_value=100000.0,
+            dual_mode="constant",
             warmup=0,
             repeat=1,
         )
@@ -82,6 +83,21 @@ class ExactCgTelemetryTests(unittest.TestCase):
         )
         self.assertAlmostEqual(
             result["best_route"]["rc"], -4499913.039999999, places=6
+        )
+
+        args.dual_mode = "heterogeneous"
+        heterogeneous = pricing_benchmark.benchmark_case(
+            args, "Practice_Custom_TwoDuty_13301_13302.csv"
+        )
+        self.assertEqual(heterogeneous["returned_routes"], 30)
+        self.assertEqual(
+            heterogeneous["route_sha256"],
+            "5a4c6434a2dc70cfb2195b3cfaf516848217e01e6e409a57b98ec65deb19fc2c",
+        )
+        self.assertAlmostEqual(
+            heterogeneous["best_route"]["rc"],
+            -4530091.575999999,
+            places=6,
         )
 
     def test_sidecar_repairs_only_trailing_row_and_resumes_identity(self):
@@ -103,6 +119,21 @@ class ExactCgTelemetryTests(unittest.TestCase):
             )
             self.assertEqual(records[-1]["phase"], "master_attempt")
             self.assertEqual(records[-1]["session"], 2)
+
+    def test_foreign_truncated_sidecar_is_rejected_without_modification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "foreign.jsonl"
+            PhaseTelemetry(path, identity={"output": "foreign.json"})
+            with path.open("ab") as handle:
+                handle.write(b'{"schema":')
+            original = path.read_bytes()
+
+            with self.assertRaisesRegex(
+                ValueError, "belongs to different work"
+            ):
+                PhaseTelemetry(path, identity={"output": "current.json"})
+
+            self.assertEqual(path.read_bytes(), original)
 
     def test_ordered_prefixes_preserve_first_reached_pool_semantics(self):
         records = [

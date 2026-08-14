@@ -34,6 +34,8 @@ class PhaseTelemetry:
     """Append-only, identity-bound telemetry sidecar."""
 
     def __init__(self, path: Path, *, identity: dict):
+        initialization_started = time.perf_counter()
+        self.overhead_s = 0.0
         self.path = Path(path).expanduser().resolve()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.identity = dict(identity)
@@ -41,30 +43,49 @@ class PhaseTelemetry:
             self.identity, sort_keys=True, separators=(",", ":")
         ).encode()
         self.identity_sha256 = hashlib.sha256(encoded).hexdigest()
-        existing = []
+        session_count = 0
         if self.path.exists() and self.path.stat().st_size:
-            existing = read_jsonl_records(
-                self.path, repair_trailing=True
-            )
-            starts = [
-                record for record in existing
-                if record.get("record_type") == "session_start"
-            ]
-            if not starts:
+            with self.path.open("rb") as handle:
+                while True:
+                    offset = handle.tell()
+                    line = handle.readline()
+                    if not line:
+                        break
+                    if not line.strip():
+                        continue
+                    try:
+                        record = json.loads(line)
+                    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                        if handle.read().strip():
+                            raise DurableFileError(
+                                f"telemetry has malformed data before EOF at "
+                                f"byte {offset}: {self.path}"
+                            ) from exc
+                        # Do not repair until every complete session identity
+                        # has been authenticated below.
+                        break
+                    if not isinstance(record, dict):
+                        raise DurableFileError(
+                            f"telemetry row at byte {offset} is not an object"
+                        )
+                    if record.get("identity_sha256") != self.identity_sha256:
+                        raise DurableFileError(
+                            "telemetry sidecar belongs to different work: "
+                            f"{self.path}"
+                        )
+                    if record.get("record_type") == "session_start":
+                        session_count += 1
+            if session_count == 0:
                 raise DurableFileError(
                     f"telemetry sidecar has no session identity: {self.path}"
                 )
-            if any(
-                    record.get("identity_sha256") != self.identity_sha256
-                    for record in starts):
-                raise DurableFileError(
-                    f"telemetry sidecar belongs to different work: {self.path}"
-                )
-        self.session = 1 + sum(
-            record.get("record_type") == "session_start"
-            for record in existing
-        )
-        self.started_perf = time.perf_counter()
+            # Identity is now proven. Normalize only the matching sidecar's
+            # interrupted final row/missing final newline.
+            read_jsonl_records(
+                self.path, repair_trailing=True, collect=False
+            )
+        self.session = 1 + session_count
+        self.started_perf = initialization_started
         self._append({
             "schema": SCHEMA,
             "record_type": "session_start",
@@ -77,6 +98,7 @@ class PhaseTelemetry:
             "epoch_s": time.time(),
             "peak_rss_bytes": peak_rss_bytes(),
         })
+        self.overhead_s += time.perf_counter() - initialization_started
 
     def _append(self, payload: dict) -> None:
         with self.path.open("a", encoding="utf-8") as handle:
@@ -98,23 +120,30 @@ class PhaseTelemetry:
         outcome: str = "ok",
         details: dict | None = None,
     ) -> None:
-        record = {
-            "schema": SCHEMA,
-            "record_type": "phase",
-            "session": self.session,
-            "identity_sha256": self.identity_sha256,
-            "phase": str(name),
-            "duration_s": float(duration_s),
-            "elapsed_session_s": time.perf_counter() - self.started_perf,
-            "epoch_s": time.time(),
-            "iteration": iteration,
-            "attempt": attempt,
-            "pool_columns": pool_columns,
-            "incidence_nnz": incidence_nnz,
-            "network_nodes": network_nodes,
-            "network_arcs": network_arcs,
-            "peak_rss_bytes": peak_rss_bytes(),
-            "outcome": outcome,
-            "details": dict(details or {}),
-        }
-        self._append(record)
+        started = time.perf_counter()
+        try:
+            record = {
+                "schema": SCHEMA,
+                "record_type": "phase",
+                "session": self.session,
+                "identity_sha256": self.identity_sha256,
+                "phase": str(name),
+                "duration_s": float(duration_s),
+                "elapsed_session_s": (
+                    time.perf_counter() - self.started_perf - self.overhead_s
+                ),
+                "telemetry_overhead_before_s": self.overhead_s,
+                "epoch_s": time.time(),
+                "iteration": iteration,
+                "attempt": attempt,
+                "pool_columns": pool_columns,
+                "incidence_nnz": incidence_nnz,
+                "network_nodes": network_nodes,
+                "network_arcs": network_arcs,
+                "peak_rss_bytes": peak_rss_bytes(),
+                "outcome": outcome,
+                "details": dict(details or {}),
+            }
+            self._append(record)
+        finally:
+            self.overhead_s += time.perf_counter() - started

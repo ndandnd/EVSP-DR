@@ -19,7 +19,10 @@ master attempt, exact shortest-path pricing, extra-column extraction, route
 insertion, journal/iteration fsyncs, status checkpoints, snapshots, pool size,
 incidence nonzeros, network nodes/arcs, and process peak RSS.  Every JSONL row
 is fsynced.  On reopen, only an interrupted final row is repairable and the
-session identity must match.
+session identity must match.  Existing session identity is checked read-only
+before any tail repair.  Telemetry I/O overhead is excluded from CG
+wall/snapshot/stall clocks; if later telemetry I/O fails, telemetry disables
+itself with a warning rather than changing solver fallback or stop reasons.
 
 ## Read-only frozen-pool prefix profiler
 
