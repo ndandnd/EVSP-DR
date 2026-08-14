@@ -40,7 +40,7 @@ report_states() {
   echo "=== $title ==="
   printf 'arm\tstop\thours\titers\tcolumns\tweight\tartificials\tmin_rc\n'
   for arm in CA CS PA PS; do
-    result="$RESULT_DIR/k40r1_flat_${arm}${suffix}"
+    result="$RESULT_DIR/k40r2_flat_${arm}${suffix}"
     if [ ! -s "$result" ]; then
       printf '%s\tPENDING\n' "$arm"
       continue

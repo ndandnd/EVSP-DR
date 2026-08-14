@@ -18,9 +18,9 @@ historical code difference.
 
 ## Frozen comparison cell
 
-- Instance: `Practice_Custom_DutyUnion_k40_r1.csv`
-- Deterministic generator: the historical `exact_big` sequence, seed
-  `20260803`, sizes `20,30,40`, two replicates per size
+- Instance: `Practice_Custom_DutyUnion_k40_r2.csv`
+- Deterministic generator: the archived `duty_unions_big` sequence, seed
+  `20260803`, sizes `15,20,30,40`, six requested replicates per size
 - Required instance SHA-256:
   `3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd`
 - Trips: 947
@@ -36,10 +36,13 @@ historical code difference.
 - Immutable snapshots: 1, 3, 6, 12, 22, and 24 hours; 22 hours matches the
   historical `exact_big` application wall
 
-The generator's random state advances across requested sizes. Generating only
-size 40 produces a different file under the same `k40_r1` name; the prep job
-therefore reproduces the full historical size sequence and rejects any input
-whose bytes do not match the frozen hash above.
+The generator's random state advances across requested sizes. The prep job
+therefore reproduces the full archived sequence and rejects any input whose
+bytes do not match the frozen hash above. The first campaign launched from
+commit `eb85ca0` generated these exact 947-trip bytes under the temporary name
+`k40_r1`; its results remain valid by hash and must be compared with the
+historical **k40_r2** result (LP route weight 39.252981 after about 22 hours),
+not the historical k40_r1 result. Later launches use the correct r2 name.
 
 ## Arms and Slurm names
 

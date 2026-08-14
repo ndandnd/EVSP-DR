@@ -58,12 +58,12 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
 python -u src/make_duty_pair_instances.py \
-  --union-sizes 20,30,40 \
-  --per-size 2 \
+  --union-sizes 15,20,30,40 \
+  --per-size 6 \
   --seed 20260803 \
   --union-dir-name duty_unions_big
 
-INSTANCE=data/duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv
+INSTANCE=data/duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv
 PRICES=data/hourly_prices_flat.csv
 EXPECTED_INSTANCE_SHA=3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd
 EXPECTED_PRICES_SHA=1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200
@@ -71,7 +71,7 @@ EXPECTED_PRICES_SHA=1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f
 INSTANCE_SHA=$(sha256sum "$INSTANCE" | awk '{print $1}')
 PRICES_SHA=$(sha256sum "$PRICES" | awk '{print $1}')
 [ "$INSTANCE_SHA" = "$EXPECTED_INSTANCE_SHA" ] \
-  || fatal "k40_r1 hash $INSTANCE_SHA differs from $EXPECTED_INSTANCE_SHA"
+  || fatal "k40_r2 hash $INSTANCE_SHA differs from $EXPECTED_INSTANCE_SHA"
 [ "$PRICES_SHA" = "$EXPECTED_PRICES_SHA" ] \
   || fatal "flat-price hash $PRICES_SHA differs from $EXPECTED_PRICES_SHA"
 

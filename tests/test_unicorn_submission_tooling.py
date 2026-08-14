@@ -169,8 +169,8 @@ class UnicornSubmissionToolingTests(unittest.TestCase):
         self.assertIn(".allocations.tsv", worker_text)
         self.assertIn("historical 22-hour comparison", monitor.read_text())
         self.assertIn("primary 24-hour snapshots", monitor.read_text())
-        self.assertIn("--union-sizes 20,30,40", prep_text)
-        self.assertIn("--per-size 2", prep_text)
+        self.assertIn("--union-sizes 15,20,30,40", prep_text)
+        self.assertIn("--per-size 6", prep_text)
         self.assertIn("--seed 20260803", prep_text)
         self.assertIn(
             "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",

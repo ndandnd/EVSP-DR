@@ -68,7 +68,7 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
 
-INSTANCE=data/duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv
+INSTANCE=data/duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv
 PRICES=data/hourly_prices_flat.csv
 EXPECTED_INSTANCE_SHA=3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd
 EXPECTED_PRICES_SHA=1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200
@@ -77,7 +77,7 @@ EXPECTED_PRICES_SHA=1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f
 INSTANCE_SHA=$(sha256sum "$INSTANCE" | awk '{print $1}')
 PRICES_SHA=$(sha256sum "$PRICES" | awk '{print $1}')
 [ "$INSTANCE_SHA" = "$EXPECTED_INSTANCE_SHA" ] \
-  || fatal "k40_r1 input hash mismatch"
+  || fatal "k40_r2 input hash mismatch"
 [ "$PRICES_SHA" = "$EXPECTED_PRICES_SHA" ] \
   || fatal "flat-price input hash mismatch"
 
@@ -91,8 +91,8 @@ esac
 
 RESULT_DIR="$ROOT/src/results/k40_factorial/$CAMPAIGN"
 mkdir -p "$RESULT_DIR"
-OUT="$RESULT_DIR/k40r1_flat_${ARM}.json"
-ALLOCATION_LOG="$RESULT_DIR/k40r1_flat_${ARM}.allocations.tsv"
+OUT="$RESULT_DIR/k40r2_flat_${ARM}.json"
+ALLOCATION_LOG="$RESULT_DIR/k40r2_flat_${ARM}.allocations.tsv"
 HOST_NAME=$(hostname -f 2>/dev/null || hostname)
 CPU_MODEL=$(awk -F: '/model name/ {sub(/^[[:space:]]+/, "", $2); print $2; exit}' \
   /proc/cpuinfo 2>/dev/null || true)
@@ -111,7 +111,7 @@ echo "[K40-FACTORIAL] host=$HOST_NAME cpu=$CPU_MODEL"
 echo "[K40-FACTORIAL] campaign=$CAMPAIGN commit=$EXPECTED_COMMIT out=$OUT"
 
 python -u src/exact_pricer_expanded.py \
-  --csv duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv \
+  --csv duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv \
   --prices_csv hourly_prices_flat.csv \
   --soc-step 15 \
   --block-min 10 \
