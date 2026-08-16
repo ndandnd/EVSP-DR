@@ -1,4 +1,5 @@
 import errno
+import hashlib
 import json
 import os
 import sys
@@ -255,6 +256,37 @@ class PortableBundleTests(unittest.TestCase):
                 '{"racer":true}\n',
             )
             self.assertFalse((bundle / "completion.json").exists())
+
+    def test_reserved_names_and_non_strict_completion_types_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with self.assertRaises(ValueError):
+                publish_bundle(
+                    root / "reserved",
+                    members={".publication.lock": b"x"},
+                    metadata={},
+                )
+            bundle = root / "typed"
+            bundle.mkdir()
+            (bundle / "result.json").write_text("{}")
+            (bundle / "completion.json").write_text(json.dumps({
+                "schema": "evsp-dr-portable-bundle-completion-v1",
+                "protocol": {
+                    "destination_reserved_by": "mkdir",
+                    "member_publication":
+                        "same-directory-temp-plus-hardlink-noreplace",
+                    "commit_marker": "completion.json-published-last",
+                    "renameat2_required": 0,
+                },
+                "members": {
+                    "result.json": {
+                        "sha256": hashlib.sha256(b"{}").hexdigest(),
+                        "size": True,
+                    }
+                },
+                "metadata": {"bad": float("nan")},
+            }))
+            self.assertEqual(inspect_bundle(bundle)["state"], "invalid")
 
 
 if __name__ == "__main__":

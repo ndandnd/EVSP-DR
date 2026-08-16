@@ -37,6 +37,10 @@ class IncompleteBundleError(BundlePublicationError):
     pass
 
 
+def _reject_json_constant(value):
+    raise ValueError(f"non-finite JSON constant is forbidden: {value}")
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -65,7 +69,7 @@ def _safe_member(name: str) -> Path:
         or path.is_absolute()
         or ".." in path.parts
         or len(path.parts) != 1
-        or path.name == "completion.json"
+        or path.name in {"completion.json", ".publication.lock"}
         or str(path) != name
     ):
         raise ValueError(f"unsafe/reserved bundle member: {name!r}")
@@ -375,7 +379,9 @@ def inspect_bundle(
                     raise ValueError("result member is not an object")
                 if recoverable_validator is not None:
                     recoverable_validator(result_payload)
-            except (OSError, ValueError, TypeError) as exc:
+            except (
+                OSError, ValueError, TypeError, BundlePublicationError
+            ) as exc:
                 corruption_errors.append(str(exc))
         missing_required = []
         for name in safe_required:
@@ -420,8 +426,13 @@ def inspect_bundle(
                 corruption_errors.append(
                     f"bundle entry is symlinked: {present}"
                 )
+            elif present != ".publication.lock":
+                corruption_errors.append(
+                    f"bundle entry is non-regular: {present}"
+                )
         if corruption_errors:
             candidate_invalid = True
+            recoverable = False
         state = {
             "state": (
                 "recoverable_validated"
@@ -439,8 +450,10 @@ def inspect_bundle(
         completion_raw, _completion_size = _read_at(
             bundle_fd, "completion.json"
         )
-        completion = json.loads(completion_raw)
-    except (OSError, ValueError) as exc:
+        completion = json.loads(
+            completion_raw, parse_constant=_reject_json_constant
+        )
+    except (OSError, ValueError, BundlePublicationError) as exc:
         os.close(bundle_fd)
         return {
             "state": "invalid",
@@ -462,13 +475,20 @@ def inspect_bundle(
     else:
         members = completion["members"]
         protocol = completion.get("protocol")
-        if protocol != {
+        if (
+            type(protocol) is not dict
+            or type(protocol.get("destination_reserved_by")) is not str
+            or type(protocol.get("member_publication")) is not str
+            or type(protocol.get("commit_marker")) is not str
+            or type(protocol.get("renameat2_required")) is not bool
+            or protocol != {
             "destination_reserved_by": "mkdir",
             "member_publication":
                 "same-directory-temp-plus-hardlink-noreplace",
             "commit_marker": "completion.json-published-last",
             "renameat2_required": False,
-        }:
+            }
+        ):
             errors.append("completion protocol attestation is invalid")
     for name, expected in members.items():
         try:
@@ -582,13 +602,22 @@ def publish_bundle(
     flags = os.O_RDONLY | os.O_DIRECTORY
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
-    destination_fd = os.open(path.name, flags, dir_fd=parent_fd)
+    try:
+        destination_fd = os.open(path.name, flags, dir_fd=parent_fd)
+    except Exception:
+        os.close(parent_fd)
+        raise
     lock_flags = os.O_RDWR | os.O_CREAT
     if hasattr(os, "O_NOFOLLOW"):
         lock_flags |= os.O_NOFOLLOW
-    lock_fd = os.open(
-        ".publication.lock", lock_flags, 0o600, dir_fd=destination_fd
-    )
+    try:
+        lock_fd = os.open(
+            ".publication.lock", lock_flags, 0o600, dir_fd=destination_fd
+        )
+    except Exception:
+        os.close(destination_fd)
+        os.close(parent_fd)
+        raise
     try:
         fcntl.flock(lock_fd, fcntl.LOCK_EX)
         if not reserved:
@@ -641,10 +670,16 @@ def publish_bundle(
             )
         os.fsync(destination_fd)
     finally:
-        fcntl.flock(lock_fd, fcntl.LOCK_UN)
-        os.close(lock_fd)
-        os.close(destination_fd)
-        os.close(parent_fd)
+        try:
+            fcntl.flock(lock_fd, fcntl.LOCK_UN)
+        finally:
+            try:
+                os.close(lock_fd)
+            finally:
+                try:
+                    os.close(destination_fd)
+                finally:
+                    os.close(parent_fd)
     inspection = inspect_bundle(
         path, required_members=tuple(sorted(normalized))
     )
