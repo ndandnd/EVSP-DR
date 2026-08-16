@@ -44,14 +44,14 @@ def _safe_match(root: Path, path: Path) -> bool:
     return path.is_file()
 
 
-def _hash_beneath(root: Path, path: Path) -> str:
+def _hash_beneath(root_fd: int, root: Path, path: Path) -> str:
     relative = path.relative_to(root)
     directory_flags = os.O_RDONLY | os.O_DIRECTORY
     file_flags = os.O_RDONLY
     if hasattr(os, "O_NOFOLLOW"):
         directory_flags |= os.O_NOFOLLOW
         file_flags |= os.O_NOFOLLOW
-    descriptor = os.open(root, directory_flags)
+    descriptor = os.dup(root_fd)
     try:
         for part in relative.parts[:-1]:
             next_descriptor = os.open(
@@ -101,15 +101,23 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(root),
             })
             continue
+        root_flags = os.O_RDONLY | os.O_DIRECTORY
+        if hasattr(os, "O_NOFOLLOW"):
+            root_flags |= os.O_NOFOLLOW
+        root_fd = os.open(root, root_flags)
         glob_path = Path(request["glob"])
         if glob_path.is_absolute() or ".." in glob_path.parts:
             raise ValueError(
                 f"unsafe collection glob: {request['glob']}"
             )
-        matches = sorted(
-            path for path in root.glob(request["glob"])
-            if _safe_match(root, path)
-        )
+        try:
+            matches = sorted(
+                path for path in root.glob(request["glob"])
+                if _safe_match(root, path)
+            )
+        except Exception:
+            os.close(root_fd)
+            raise
         if not matches:
             collection.append({
                 "request_id": request.get("request_id"),
@@ -117,6 +125,7 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(root),
                 "glob": request["glob"],
             })
+            os.close(root_fd)
             continue
         run_pattern = (
             re.compile(request["run_id_regex"])
@@ -153,7 +162,7 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "artifact_role": relative,
                 "path": str(path),
                 "artifact_type": request["artifact_type"],
-                "expected_sha256": _hash_beneath(root, path),
+                "expected_sha256": _hash_beneath(root_fd, root, path),
                 "required": request.get("required", False),
                 "metadata": metadata,
             })
@@ -164,6 +173,7 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(path),
                 "sha256": artifacts[-1]["expected_sha256"],
             })
+        os.close(root_fd)
     return {
         **{
             key: value for key, value in template.items()
