@@ -256,12 +256,17 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             result.update({
                 "fleet_proven": True,
                 "optimal_scope": "full_pool_lexicographic",
-                "status_name": "TIME_LIMIT",
-                "mip_gap": 0.1,
-                "absolute_cost_gap": 10.0,
+                "status_name": "OPTIMAL",
+                "mip_gap": 0.0,
+                "absolute_cost_gap": 0.0,
+                "mip_bound": result["mip_obj"],
                 "two_stage": {
                     "stage2_executed": True,
-                    "stage2_status": 9,
+                    "stage2_status": 2,
+                    "stage1_buses": result["buses"],
+                    "stage2_variable_obj": 1.0,
+                    "stage2_variable_bound": 1.0,
+                    "stage2_absolute_gap": 0.0,
                 },
             })
             result_path.write_text(json.dumps(result))

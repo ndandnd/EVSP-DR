@@ -16,6 +16,8 @@ import tempfile
 from collections import defaultdict
 from pathlib import Path
 
+from config import BUS_COST_KX
+
 
 CHECKPOINT_FIELDS = (
     "campaign", "cell_id", "scale", "replicate", "arm",
@@ -154,6 +156,10 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
             detail.get("stage2_absolute_gap")
             if isinstance(detail, dict) else None
         )
+        stage1_buses = (
+            detail.get("stage1_buses")
+            if isinstance(detail, dict) else None
+        )
         if (
             result.get("status_name") != "OPTIMAL"
             or not isinstance(detail, dict)
@@ -171,6 +177,19 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
             or stage_gap != 0.0
             or not math.isclose(
                 stage_obj, stage_bound, rel_tol=1e-10, abs_tol=1e-6
+            )
+            or not isinstance(stage1_buses, int)
+            or not math.isclose(
+                mip_obj,
+                BUS_COST_KX * stage1_buses + stage_obj,
+                rel_tol=1e-10,
+                abs_tol=1e-6,
+            )
+            or not math.isclose(
+                mip_bound,
+                BUS_COST_KX * stage1_buses + stage_bound,
+                rel_tol=1e-10,
+                abs_tol=1e-6,
             )
             or not math.isclose(
                 mip_obj - mip_bound,
