@@ -663,8 +663,8 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 "legacy-dp-20bus-200cols": "187",
                 "legacy-dp-30bus-200cols": "33",
                 "legacy-dp-43bus-200cols": "19",
-                "legacy-dp-10b-rnd001": "565",
-                "legacy-dp-10b-rnd002": "529",
+                "legacy-dp-10b-rnd001": "564",
+                "legacy-dp-10b-rnd002": "528",
             }
             self.assertEqual(
                 {

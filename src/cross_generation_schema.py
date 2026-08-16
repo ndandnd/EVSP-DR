@@ -158,6 +158,9 @@ def _tail_safe_csv(payload: bytes) -> tuple[tuple[str, ...], list[dict], dict]:
     unterminated = not payload.endswith((b"\n", b"\r"))
     for index, line_bytes in enumerate(physical_lines[1:], start=2):
         final_line = index == len(physical_lines)
+        if final_line and unterminated:
+            tail_dropped = True
+            break
         try:
             line = line_bytes.decode("utf-8").rstrip("\r\n")
         except UnicodeDecodeError as exc:
