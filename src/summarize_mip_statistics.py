@@ -140,6 +140,20 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
         raise ValueError(f"{job['cell_id']} has invalid two-stage scope")
     if result.get("optimal_scope") == "full_pool_lexicographic":
         detail = result.get("two_stage")
+        mip_obj = _float(result.get("mip_obj"))
+        mip_bound = _float(result.get("mip_bound"))
+        stage_obj = _float(
+            detail.get("stage2_variable_obj")
+            if isinstance(detail, dict) else None
+        )
+        stage_bound = _float(
+            detail.get("stage2_variable_bound")
+            if isinstance(detail, dict) else None
+        )
+        stage_gap = _float(
+            detail.get("stage2_absolute_gap")
+            if isinstance(detail, dict) else None
+        )
         if (
             result.get("status_name") != "OPTIMAL"
             or not isinstance(detail, dict)
@@ -147,6 +161,23 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
             or detail.get("stage2_status") != 2
             or _float(result.get("mip_gap")) != 0.0
             or _float(result.get("absolute_cost_gap")) != 0.0
+            or mip_obj is None
+            or mip_bound is None
+            or not math.isclose(
+                mip_obj, mip_bound, rel_tol=1e-10, abs_tol=1e-6
+            )
+            or stage_obj is None
+            or stage_bound is None
+            or stage_gap != 0.0
+            or not math.isclose(
+                stage_obj, stage_bound, rel_tol=1e-10, abs_tol=1e-6
+            )
+            or not math.isclose(
+                mip_obj - mip_bound,
+                float(result["absolute_cost_gap"]),
+                rel_tol=0.0,
+                abs_tol=1e-6,
+            )
         ):
             raise ValueError(
                 f"{job['cell_id']} lacks optimal cost-stage closure"
