@@ -91,6 +91,7 @@ for key in (
     "instance","instance_sha256","instance_relative",
     "tariff","tariff_sha256","tariff_relative",
     "validated_start","validated_start_sha256","output","progress_dir",
+    "matrix","source_label","source_master_sense","source_initial_pool",
 ):
     value=d.get(key)
     print("" if value is None else value)
@@ -121,10 +122,14 @@ START=${FIELDS[15]}
 START_SHA=${FIELDS[16]}
 OUT=${FIELDS[17]}
 PROGRESS=${FIELDS[18]}
-RUNNER_SHA=${FIELDS[19]}
-SPEC_WORKER_SHA=${FIELDS[20]}
-SPEC_COMMIT=${FIELDS[21]}
-PYTHON_SHA=${FIELDS[22]}
+MATRIX=${FIELDS[19]}
+SOURCE_LABEL=${FIELDS[20]}
+SOURCE_MASTER_SENSE=${FIELDS[21]}
+SOURCE_INITIAL_POOL=${FIELDS[22]}
+RUNNER_SHA=${FIELDS[23]}
+SPEC_WORKER_SHA=${FIELDS[24]}
+SPEC_COMMIT=${FIELDS[25]}
+PYTHON_SHA=${FIELDS[26]}
 
 [[ "$SPEC_COMMIT" == "$EXPECTED_COMMIT" ]] || fatal "spec commit mismatch"
 [[ "$SPEC_WORKER_SHA" == "$EXPECTED_WORKER_SHA" ]] \
@@ -170,6 +175,18 @@ if [[ "$ARM" == "GIRO" ]]; then
   verify_hash "validated start" "$START" "$START_SHA"
 else
   [[ -z "$START" && -z "$START_SHA" ]] || fatal "RAW arm received a start"
+fi
+if [[ "$MATRIX" == "raw_k40" ]]; then
+  [[ "$ARM" == "RAW" ]] || fatal "raw_k40 cell is not RAW"
+  [[ "$TIME_LIMIT" == "28800" ]] || fatal "raw_k40 budget is not eight hours"
+  [[ "$SOURCE_LABEL" =~ ^R[12]_C[AS]$ ]] \
+    || fatal "raw_k40 source label is invalid"
+  [[ "$SOURCE_MASTER_SENSE" == "cover" ]] \
+    || fatal "raw_k40 source master is not cover"
+  case "$SOURCE_LABEL:$SOURCE_INITIAL_POOL" in
+    R1_CA:artificial|R2_CA:artificial|R1_CS:singletons|R2_CS:singletons) ;;
+    *) fatal "raw_k40 source initializer/label mismatch" ;;
+  esac
 fi
 [[ ! -e "$OUT" ]] || fatal "output already exists"
 [[ ! -e "$PROGRESS" ]] || fatal "progress directory already exists"
@@ -238,9 +255,10 @@ solver_pid=""
 trap - USR1 TERM INT
 [[ "$solver_rc" -eq 0 ]] || fatal "solver exited with status $solver_rc"
 
-if ! "$PYTHON" - "$OUT" "$PROGRESS" "$STATUS_SHA" "$JOURNAL_SHA" "$ARM" <<'PY'
+if ! "$PYTHON" - "$OUT" "$PROGRESS" "$STATUS_SHA" "$JOURNAL_SHA" \
+    "$ARM" "$MATRIX" "$TIME_LIMIT" <<'PY'
 import json, pathlib, sys
-out, progress, status_sha, journal_sha, arm = sys.argv[1:]
+out, progress, status_sha, journal_sha, arm, matrix, time_limit = sys.argv[1:]
 d=json.load(open(out))
 if d.get("partitioning") is not True:
     raise SystemExit("result is not strict partitioning")
@@ -252,6 +270,27 @@ if arm == "GIRO":
     start=d.get("mip_start") or {}
     if start.get("kind") != "validated_exact_partition":
         raise SystemExit("GIRO result lacks validated exact start")
+if matrix == "raw_k40":
+    start=d.get("mip_start") or {}
+    arguments=(d.get("mip_provenance") or {}).get("arguments") or {}
+    if arm != "RAW":
+        raise SystemExit("raw_k40 result is not RAW")
+    if start.get("kind") not in {"none", "greedy_pool_partition"}:
+        raise SystemExit("raw_k40 result used a prohibited start")
+    if start.get("source") is not None or start.get("source_sha256") is not None:
+        raise SystemExit("raw_k40 result records an external start")
+    if d.get("extra_route_sources") != []:
+        raise SystemExit("raw_k40 result contains extra routes")
+    if arguments.get("initial_partition_routes") is not None:
+        raise SystemExit("raw_k40 runner received an initial partition")
+    if (
+        arguments.get("cover") is not False
+        or arguments.get("two_stage") is not True
+        or int(arguments.get("timelimit", -1)) != int(time_limit)
+    ):
+        raise SystemExit("raw_k40 solver arguments changed")
+    if int(d.get("source_snapshot_mark_minutes", -1)) != 1440:
+        raise SystemExit("raw_k40 result does not use the 24-hour pool")
 if not pathlib.Path(progress, "final.json").is_file():
     raise SystemExit("progress final.json is missing")
 if d.get("incumbent_found"):

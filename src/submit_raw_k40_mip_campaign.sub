@@ -1,0 +1,115 @@
+#!/bin/bash
+# Prepare, machine-validate, and submit the four RAW k40 MIP cells.
+#SBATCH --job-name=RK40PREP
+#SBATCH --partition=scaglione
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=8G
+#SBATCH --time=01:00:00
+#SBATCH --no-requeue
+#SBATCH --open-mode=append
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+fatal() {
+  echo "[RAW-K40-LAUNCHER] FATAL: $*" >&2
+  exit 2
+}
+
+[[ "$#" -eq 6 ]] || fatal \
+  "usage: $0 RUN_ROOT EXPECTED_COMMIT SOURCE_ROOT PYTHON RESERVATIONS HOME"
+RUN_ROOT=$1
+EXPECTED_COMMIT=$2
+SOURCE_ROOT=$3
+PYTHON=$4
+RESERVATIONS=$5
+APPROVED_HOME=$6
+
+export HOME=$APPROVED_HOME
+export USER=${SLURM_JOB_USER:?SLURM_JOB_USER is required}
+export PATH=/usr/local/bin:/usr/bin:/bin
+
+[[ -d "$RUN_ROOT/.git" || -f "$RUN_ROOT/.git" ]] \
+  || fatal "run root is not a Git worktree"
+[[ -d "$SOURCE_ROOT/src/results/k40_factorial" ]] \
+  || fatal "frozen k40 factorial root is missing"
+[[ -x "$PYTHON" ]] || fatal "approved Python is not executable"
+observed_commit=$(git -C "$RUN_ROOT" rev-parse --verify HEAD) \
+  || fatal "cannot resolve run-root commit"
+[[ "$observed_commit" == "$EXPECTED_COMMIT" ]] || fatal "commit mismatch"
+if git -C "$RUN_ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "run root must be detached"
+else
+  symbolic_status=$?
+  [[ "$symbolic_status" -eq 1 ]] || fatal "cannot verify detached checkout"
+fi
+tracked=$(git -C "$RUN_ROOT" status --porcelain --untracked-files=no) \
+  || fatal "cannot verify tracked checkout"
+[[ -z "$tracked" ]] || fatal "run root has tracked modifications"
+"$PYTHON" -c \
+  'import sys, gurobipy; assert sys.version_info[:2] == (3, 12)' \
+  || fatal "Python 3.12/Gurobi environment is unavailable"
+
+campaign="rawk40_${SLURM_JOB_ID}_${EXPECTED_COMMIT:0:8}"
+plan_dir="$APPROVED_HOME/raw-k40-mip-plans"
+mkdir -p "$plan_dir"
+plan="$plan_dir/$campaign.plan.json"
+dry_log="$plan_dir/$campaign.dry-run.log"
+
+campaign_one="k40fx_20260814T140232Z_eb85ca0c"
+campaign_two="k40fx_20260814T191933Z_eb85ca0c"
+common=(
+  "$PYTHON" -u "$RUN_ROOT/src/launch_mip_statistics_campaign.py"
+  --mode raw_k40
+  --campaign "$campaign"
+  --root "k40_factorial=$SOURCE_ROOT/src/results/k40_factorial"
+  --data-root "$RUN_ROOT/data"
+  --data-root "$SOURCE_ROOT/data"
+  --python "$PYTHON"
+  --reservation-root "$RESERVATIONS"
+  --raw-k40-status \
+    "R1_CA=$SOURCE_ROOT/src/results/k40_factorial/$campaign_one/k40r1_flat_CA.m1440.snapshot.json"
+  --raw-k40-status \
+    "R1_CS=$SOURCE_ROOT/src/results/k40_factorial/$campaign_one/k40r1_flat_CS.m1440.snapshot.json"
+  --raw-k40-status \
+    "R2_CA=$SOURCE_ROOT/src/results/k40_factorial/$campaign_two/k40r1_flat_CA.m1440.snapshot.json"
+  --raw-k40-status \
+    "R2_CS=$SOURCE_ROOT/src/results/k40_factorial/$campaign_two/k40r1_flat_CS.m1440.snapshot.json"
+)
+
+[[ ! -e "$plan" && ! -e "$dry_log" ]] \
+  || fatal "campaign plan already exists"
+"${common[@]}" --plan-out "$plan" >"$dry_log" \
+  || fatal "dry-run plan generation failed"
+"$PYTHON" "$RUN_ROOT/src/validate_raw_k40_mip_plan.py" \
+  "$plan" --expected-commit "$EXPECTED_COMMIT" \
+  || fatal "machine validation rejected the plan"
+approved_sha=$(sha256sum "$plan" | awk '{print $1}')
+[[ "$approved_sha" =~ ^[0-9a-f]{64}$ ]] || fatal "invalid plan digest"
+
+echo "[RAW-K40-LAUNCHER] plan=$plan"
+echo "[RAW-K40-LAUNCHER] approval_sha256=$approved_sha"
+"${common[@]}" \
+  --approved-plan-sha256 "$approved_sha" \
+  --submit \
+  || fatal "approved campaign submission failed"
+
+manifest="$RUN_ROOT/src/results/mip_statistics/$campaign/campaign.json"
+[[ -s "$manifest" ]] || fatal "submitted campaign manifest is missing"
+"$PYTHON" - "$manifest" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+if d.get("submitted") is not True:
+    raise SystemExit("campaign manifest is not fully submitted")
+print("[RAW-K40-LAUNCHER] submitted jobs")
+for job in d["jobs"]:
+    print(
+        f"  {job['source']['raw_k40_label']}: "
+        f"job={job['job_id']} name={job['job_name']} "
+        f"cell={job['cell_id']}"
+    )
+print(f"[RAW-K40-LAUNCHER] manifest={sys.argv[1]}")
+PY

@@ -11,6 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import launch_mip_statistics_campaign as launcher  # noqa: E402
+import validate_raw_k40_mip_plan as raw_validator  # noqa: E402
 from mip_statistics_inventory import (  # noqa: E402
     inventory,
     representative_candidates,
@@ -20,6 +21,48 @@ from mip_statistics_inventory import (  # noqa: E402
 
 
 class MIPStatisticsCampaignTests(unittest.TestCase):
+    def _raw_k40_candidate(self, label: str, root: Path):
+        spec = launcher.RAW_K40_SPECS[label]
+        initial_pool = spec["initial_pool"]
+        return {
+            "candidate_id": f"candidate-{label}",
+            "available": True,
+            "source_family": "k40_factorial",
+            "status_path": str(
+                root / spec["campaign"] / spec["filename"]
+            ),
+            "status_sha256": ("1" if label.endswith("CA") else "2") * 64,
+            "journal_path": str(root / f"{label}.columns.jsonl"),
+            "journal_sha256": ("3" if label.startswith("R1") else "4") * 64,
+            "instance_path": str(root / "data/duty_unions_big/k40.csv"),
+            "instance_sha256": launcher.RAW_K40_INSTANCE_SHA256,
+            "tariff_path": str(root / "data/hourly_prices_flat.csv"),
+            "tariff_sha256": launcher.RAW_K40_TARIFF_SHA256,
+            "source_commit": launcher.RAW_K40_SOURCE_COMMIT,
+            "scale": 40,
+            "replicate": "r2",
+            "trip_count": 947,
+            "trip_set_sha256": "5" * 64,
+            "age_hours": 24.0,
+            "actual_wall_s": 86400.0,
+            "snapshot_mark_minutes": 1440,
+            "stop_reason": "snapshot_m1440",
+            "physics": {
+                "soc_step": 15.0,
+                "block_min": 10,
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+            },
+            "treatment": {
+                "master_sense": "cover",
+                "initial_pool": initial_pool,
+            },
+            "csv": "duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv",
+            "prices_csv": "hourly_prices_flat.csv",
+            "certified_rc_optimal": False,
+        }
+
     def _candidate(
         self,
         root: Path,
@@ -231,6 +274,128 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 plan["fresh_exact_cg_preparations"]
             ))
 
+    def test_explicit_raw_k40_plan_has_four_unaugmented_eight_hour_jobs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidates = {
+                label: self._raw_k40_candidate(label, root)
+                for label in launcher.RAW_K40_SPECS
+            }
+            for label, candidate in candidates.items():
+                candidate["replicate"] = launcher.RAW_K40_SPECS[label][
+                    "replicate"
+                ]
+                candidate["raw_k40_label"] = label
+            payload = {
+                "candidates": [],
+                "selection_rule": "irrelevant",
+                "missing_roots": [{"source_family": "unrelated"}],
+                "missing_slots": [{"source_family": "unrelated"}],
+            }
+            identity = {
+                "expected_commit": "b" * 40,
+                "reviewed_base_commit": launcher.REVIEWED_BASE,
+                "detached": True,
+                "branch": "",
+                "tracked_clean": True,
+            }
+            with (
+                patch.object(launcher, "REPO_ROOT", root),
+                patch.object(launcher, "CODE_PATHS", ()),
+                patch.object(
+                    launcher,
+                    "_python_identity",
+                    return_value={
+                        "available": True,
+                        "executable": str(Path(sys.executable).resolve()),
+                        "executable_sha256": "e" * 64,
+                        "version": "3.12.test",
+                        "gurobi_version": "test",
+                    },
+                ),
+            ):
+                plan = launcher.build_plan(
+                    payload,
+                    mode="raw_k40",
+                    campaign="raw-k40-test",
+                    start_map={},
+                    identity=identity,
+                    explicit_raw_candidates=candidates,
+                )
+            self.assertFalse(plan["blocked"])
+            self.assertEqual(len(plan["jobs"]), 4)
+            self.assertEqual(plan["fresh_exact_cg_preparations"], [])
+            self.assertEqual(set(plan["selected_candidates"]), {
+                "R1_CA", "R1_CS", "R2_CA", "R2_CS",
+            })
+            self.assertFalse(plan["raw_k40_guards"]["giro_columns_allowed"])
+            for job in plan["jobs"]:
+                self.assertEqual(job["arm"], "RAW")
+                self.assertEqual(job["matrix"], "raw_k40")
+                self.assertEqual(job["time_limit_s"], 28800)
+                self.assertIsNone(job["validated_start"])
+                self.assertIsNone(job["staged_start"])
+                self.assertEqual(job["execution"]["arm"], "RAW")
+                self.assertEqual(job["execution"]["matrix"], "raw_k40")
+                self.assertEqual(job["execution"]["time_limit_s"], 28800)
+                self.assertLessEqual(len(job["job_name"]), 15)
+                self.assertIn("K40", job["job_name"])
+            summary = raw_validator.validate_plan(
+                plan, expected_commit="b" * 40
+            )
+            self.assertEqual(
+                {row["label"] for row in summary},
+                {"R1_CA", "R1_CS", "R2_CA", "R2_CS"},
+            )
+
+            plan["jobs"][0]["validated_start"] = {"path": "giro.json"}
+            with self.assertRaisesRegex(ValueError, "external partition start"):
+                raw_validator.validate_plan(
+                    plan, expected_commit="b" * 40
+                )
+
+    def test_raw_k40_candidate_resolution_preserves_campaign_and_initializer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            assignments = {}
+            candidates = {}
+            for label, spec in launcher.RAW_K40_SPECS.items():
+                path = root / spec["campaign"] / spec["filename"]
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.touch()
+                assignments[label] = path
+                candidates[str(path.resolve())] = self._raw_k40_candidate(
+                    label, root
+                )
+
+            def validated(path, **_kwargs):
+                return candidates[str(Path(path).resolve())]
+
+            with patch.object(
+                launcher, "validate_candidate", side_effect=validated
+            ):
+                selected = launcher.resolve_raw_k40_candidates(
+                    assignments, data_roots=[root / "data"]
+                )
+            self.assertEqual(set(selected), set(launcher.RAW_K40_SPECS))
+            self.assertEqual(selected["R1_CA"]["replicate"], "R1")
+            self.assertEqual(selected["R2_CS"]["replicate"], "R2")
+            self.assertEqual(
+                selected["R1_CA"]["treatment"]["initial_pool"],
+                "artificial",
+            )
+            self.assertEqual(
+                selected["R2_CS"]["treatment"]["initial_pool"],
+                "singletons",
+            )
+
+            bad = dict(assignments)
+            bad["R1_CA"] = assignments["R1_CS"]
+            with self.assertRaisesRegex(ValueError, "distinct"):
+                launcher.resolve_raw_k40_candidates(
+                    bad, data_roots=[root / "data"]
+                )
+
     def test_missing_or_partial_start_blocks_giro(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -307,6 +472,18 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         self.assertIn("APPROVED_PLAN", text)
         self.assertIn("REQUESTED_CELL", text)
         self.assertNotIn("JOB_SPEC", text)
+        self.assertNotIn("--extra-routes", text)
+        self.assertIn("raw_k40 source initializer/label mismatch", text)
+        self.assertIn(
+            'unset EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256', text
+        )
+        raw_launcher = (
+            REPO_ROOT / "src/submit_raw_k40_mip_campaign.sub"
+        ).read_text()
+        self.assertIn("--mode raw_k40", raw_launcher)
+        self.assertIn("--no-requeue", raw_launcher)
+        self.assertNotIn("--giro-start", raw_launcher)
+        self.assertIn("validate_raw_k40_mip_plan.py", raw_launcher)
         launcher_text = (
             REPO_ROOT / "src/launch_mip_statistics_campaign.py"
         ).read_text()

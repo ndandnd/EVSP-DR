@@ -24,6 +24,7 @@ from mip_statistics_inventory import (
     representative_candidates,
     select_age_candidate,
     sha256_file,
+    validate_candidate,
 )
 from run_exact_pool_mip import (
     load_pool,
@@ -47,6 +48,7 @@ CODE_PATHS = (
     "src/pricing_dp_og.py",
     "src/install_exact_cg_profile_input.py",
     "src/mip_statistics_environment.py",
+    "src/validate_raw_k40_mip_plan.py",
 )
 DEFAULT_ROOTS = {
     "repool_small": REPO_ROOT / "results/repool_small",
@@ -54,6 +56,41 @@ DEFAULT_ROOTS = {
     "k40_factorial": REPO_ROOT / "results/k40_factorial",
     "bigtar_snapshots": REPO_ROOT / "results/bigtar_snapshots",
     "fresh_preparation": REPO_ROOT / "results/mip_statistics_prep",
+}
+
+RAW_K40_BUDGET_HOURS = 8
+RAW_K40_INSTANCE_SHA256 = (
+    "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
+)
+RAW_K40_TARIFF_SHA256 = (
+    "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+)
+RAW_K40_SOURCE_COMMIT = "eb85ca0cc439956939ba6bf9c42958808d89aadd"
+RAW_K40_SPECS = {
+    "R1_CA": {
+        "campaign": "k40fx_20260814T140232Z_eb85ca0c",
+        "filename": "k40r1_flat_CA.m1440.snapshot.json",
+        "replicate": "R1",
+        "initial_pool": "artificial",
+    },
+    "R1_CS": {
+        "campaign": "k40fx_20260814T140232Z_eb85ca0c",
+        "filename": "k40r1_flat_CS.m1440.snapshot.json",
+        "replicate": "R1",
+        "initial_pool": "singletons",
+    },
+    "R2_CA": {
+        "campaign": "k40fx_20260814T191933Z_eb85ca0c",
+        "filename": "k40r1_flat_CA.m1440.snapshot.json",
+        "replicate": "R2",
+        "initial_pool": "artificial",
+    },
+    "R2_CS": {
+        "campaign": "k40fx_20260814T191933Z_eb85ca0c",
+        "filename": "k40r1_flat_CS.m1440.snapshot.json",
+        "replicate": "R2",
+        "initial_pool": "singletons",
+    },
 }
 
 
@@ -229,6 +266,101 @@ def _parse_assignments(values, *, value_type=Path) -> dict:
     return parsed
 
 
+def resolve_raw_k40_candidates(
+    assignments: dict[str, Path],
+    *,
+    data_roots: list[Path],
+) -> dict[str, dict]:
+    """Validate the four explicit, non-GIRO k40 factorial snapshots."""
+
+    expected_labels = set(RAW_K40_SPECS)
+    if set(assignments) != expected_labels:
+        missing = sorted(expected_labels - set(assignments))
+        extra = sorted(set(assignments) - expected_labels)
+        raise ValueError(
+            "raw-k40 requires exactly R1_CA,R1_CS,R2_CA,R2_CS; "
+            f"missing={missing}, extra={extra}"
+        )
+    resolved_paths = [
+        path.expanduser().resolve() for path in assignments.values()
+    ]
+    if len(resolved_paths) != len(set(resolved_paths)):
+        raise ValueError("raw-k40 snapshot paths must be distinct")
+
+    selected = {}
+    for label, spec in RAW_K40_SPECS.items():
+        path = assignments[label].expanduser().resolve()
+        if (
+            path.name != spec["filename"]
+            or path.parent.name != spec["campaign"]
+        ):
+            raise ValueError(
+                f"{label} path does not identify its frozen campaign cell"
+            )
+        candidate = validate_candidate(
+            path,
+            source_family="k40_factorial",
+            data_roots=data_roots,
+        )
+        treatment = candidate.get("treatment") or {}
+        physics = candidate.get("physics") or {}
+        expected_physics = {
+            "soc_step": 15.0,
+            "block_min": 10.0,
+            "g_kwh": 300.0,
+            "charge_kw": 300.0,
+            "min_soc_frac": 0.0,
+        }
+        if (
+            candidate.get("scale") != 40
+            or candidate.get("trip_count") != 947
+            or candidate.get("instance_sha256")
+            != RAW_K40_INSTANCE_SHA256
+            or candidate.get("tariff_sha256")
+            != RAW_K40_TARIFF_SHA256
+            or candidate.get("source_commit") != RAW_K40_SOURCE_COMMIT
+            or candidate.get("snapshot_mark_minutes") != 1440
+            or not math.isclose(
+                float(candidate.get("age_hours", math.nan)),
+                24.0,
+                rel_tol=0.0,
+                abs_tol=1e-9,
+            )
+            or candidate.get("stop_reason") != "snapshot_m1440"
+            or treatment.get("master_sense") != "cover"
+            or treatment.get("initial_pool") != spec["initial_pool"]
+            or Path(str(candidate.get("prices_csv") or "")).name
+            != "hourly_prices_flat.csv"
+            or any(
+                not math.isclose(
+                    float(physics.get(key, math.nan)),
+                    expected,
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+                for key, expected in expected_physics.items()
+            )
+        ):
+            raise ValueError(f"{label} does not match the frozen raw-k40 cell")
+        candidate = dict(candidate)
+        candidate["inventory_replicate"] = candidate.get("replicate")
+        candidate["replicate"] = spec["replicate"]
+        candidate["raw_k40_label"] = label
+        selected[label] = candidate
+
+    identity_fields = (
+        "instance_sha256", "tariff_sha256", "trip_set_sha256", "trip_count",
+        "csv", "prices_csv",
+    )
+    if any(
+        selected[label].get(field) != selected["R1_CA"].get(field)
+        for label in selected
+        for field in identity_fields
+    ):
+        raise ValueError("raw-k40 snapshots do not share one frozen instance")
+    return selected
+
+
 def _python_identity(path: Path) -> dict:
     executable = path.expanduser().resolve()
     try:
@@ -365,6 +497,15 @@ def _rep_code(value: str) -> str:
 
 
 def _job_name(job, campaign: str) -> str:
+    if job.get("matrix") == "raw_k40":
+        label = str(job["source"]["raw_k40_label"]).replace("_", "")
+        nonce = hashlib.sha256(
+            f"{campaign}|{job['cell_id']}".encode()
+        ).hexdigest()[:2].upper()
+        name = f"RK40{label}8H{nonce}"
+        if len(name) > 15:
+            raise ValueError(f"Slurm name exceeds 15 characters: {name}")
+        return name
     age = (
         f"A{int(round(job['age_hours'])):02d}"
         if job.get("matrix") == "secondary" else ""
@@ -436,10 +577,15 @@ def _job_from_candidate(
                 start = _validated_start(start_path, candidate)
             except (OSError, ValueError) as exc:
                 blocked.append(f"validated_giro_start_invalid: {exc}")
-    cell = (
-        f"k{candidate['scale']}_{candidate['replicate']}_{arm.lower()}"
-        + (f"_a{age_label}" if age_label is not None else "")
-    )
+    if matrix == "raw_k40":
+        cell = (
+            f"k40_{candidate['raw_k40_label'].lower()}_raw_m1440"
+        )
+    else:
+        cell = (
+            f"k{candidate['scale']}_{candidate['replicate']}_{arm.lower()}"
+            + (f"_a{age_label}" if age_label is not None else "")
+        )
     return {
         "cell_id": cell,
         "matrix": matrix,
@@ -467,6 +613,7 @@ def build_plan(
     campaign: str,
     start_map: dict,
     identity: dict,
+    explicit_raw_candidates: dict[str, dict] | None = None,
     python_path: Path = Path(sys.executable),
     reservation_root: Path = Path(
         "/share/evsp-dr/mip-statistics-execution-reservations"
@@ -511,6 +658,19 @@ def build_plan(
                     matrix="secondary",
                     age_label=label,
                 ))
+    elif mode == "raw_k40":
+        if set(explicit_raw_candidates or {}) != set(RAW_K40_SPECS):
+            raise ValueError("raw_k40 mode requires four explicit candidates")
+        preparations = []
+        for label in RAW_K40_SPECS:
+            candidate = explicit_raw_candidates[label]
+            jobs.append(_job_from_candidate(
+                candidate,
+                arm="RAW",
+                budget_hours=RAW_K40_BUDGET_HOURS,
+                start_map={},
+                matrix="raw_k40",
+            ))
     else:
         raise ValueError(mode)
     campaign_root = (
@@ -590,6 +750,14 @@ def build_plan(
         job["execution"] = {
             "cell_id": job["cell_id"],
             "arm": job["arm"],
+            "matrix": job["matrix"],
+            "source_label": job["source"].get("raw_k40_label"),
+            "source_master_sense": (
+                job["source"].get("treatment") or {}
+            ).get("master_sense"),
+            "source_initial_pool": (
+                job["source"].get("treatment") or {}
+            ).get("initial_pool"),
             "scale": job["scale"],
             "replicate": job["replicate"],
             "time_limit_s": job["time_limit_s"],
@@ -633,9 +801,10 @@ def build_plan(
                 "identity_sha256"
             ),
         })).hexdigest()
-    missing_scales = [
-        scale for scale in PILOT_BUDGET_HOURS if scale not in selected
-    ]
+    missing_scales = (
+        [scale for scale in PILOT_BUDGET_HOURS if scale not in selected]
+        if mode == "pilot" else []
+    )
     expected_secondary_cells = len(SECONDARY_SCALES) * len(SECONDARY_AGES)
     missing_matrix_cells = (
         expected_secondary_cells - len(jobs)
@@ -649,11 +818,22 @@ def build_plan(
         "log_root": str(log_root),
         "checkout_identity": identity,
         "inventory_sha256": inventory_sha,
-        "selection_rule": inventory_payload["selection_rule"],
-        "selected_candidates": {
-            str(scale): candidate["candidate_id"]
-            for scale, candidate in selected.items()
-        },
+        "selection_rule": (
+            "four explicit hash-validated raw k40 factorial m1440 cells"
+            if mode == "raw_k40"
+            else inventory_payload["selection_rule"]
+        ),
+        "selected_candidates": (
+            {
+                label: candidate["candidate_id"]
+                for label, candidate in (explicit_raw_candidates or {}).items()
+            }
+            if mode == "raw_k40"
+            else {
+                str(scale): candidate["candidate_id"]
+                for scale, candidate in selected.items()
+            }
+        ),
         "fresh_exact_cg_preparations": preparations,
         "resources": {
             "partition": "scaglione",
@@ -679,10 +859,28 @@ def build_plan(
         "blocked": (
             any(job["blocked_reasons"] for job in jobs)
             or (bool(jobs) and not python_identity["available"])
-            or bool(inventory_payload.get("missing_roots"))
-            or bool(inventory_payload.get("missing_slots"))
+            or (
+                mode != "raw_k40"
+                and bool(inventory_payload.get("missing_roots"))
+            )
+            or (
+                mode != "raw_k40"
+                and bool(inventory_payload.get("missing_slots"))
+            )
             or (mode == "pilot" and bool(missing_scales))
             or (mode == "secondary" and missing_matrix_cells > 0)
+        ),
+        "raw_k40_guards": (
+            {
+                "giro_columns_allowed": False,
+                "extra_routes_allowed": False,
+                "initial_partition_allowed": False,
+                "strict_partitioning": True,
+                "budget_seconds": RAW_K40_BUDGET_HOURS * 3600,
+                "expected_trip_count": 947,
+                "expected_snapshot_minutes": 1440,
+            }
+            if mode == "raw_k40" else None
         ),
         "global_route_space_optimality_claimed": False,
     }
@@ -854,13 +1052,22 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--mode", choices=("inventory", "pilot", "secondary"),
+        "--mode", choices=("inventory", "pilot", "secondary", "raw_k40"),
         required=True,
     )
     parser.add_argument("--campaign")
     parser.add_argument("--root", action="append", default=[])
     parser.add_argument("--data-root", type=Path, action="append")
     parser.add_argument("--giro-start", action="append", default=[])
+    parser.add_argument(
+        "--raw-k40-status",
+        action="append",
+        default=[],
+        help=(
+            "Explicit LABEL=SNAPSHOT for R1_CA,R1_CS,R2_CA,R2_CS; "
+            "required only in raw_k40 mode."
+        ),
+    )
     parser.add_argument("--inventory-out", type=Path)
     parser.add_argument("--plan-out", type=Path)
     parser.add_argument("--python", type=Path, default=Path(sys.executable))
@@ -875,7 +1082,11 @@ def parse_args(argv=None):
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
     if args.mode != "inventory" and not args.campaign:
-        parser.error("pilot/secondary modes require --campaign")
+        parser.error("non-inventory modes require --campaign")
+    if args.mode == "raw_k40" and len(args.raw_k40_status) != 4:
+        parser.error("raw_k40 mode requires four --raw-k40-status values")
+    if args.mode != "raw_k40" and args.raw_k40_status:
+        parser.error("--raw-k40-status is valid only in raw_k40 mode")
     if args.submit and not args.approved_plan_sha256:
         parser.error("--submit requires --approved-plan-sha256")
     return args
@@ -886,7 +1097,23 @@ def main(argv=None) -> int:
     roots = dict(DEFAULT_ROOTS)
     roots.update(_parse_assignments(args.root))
     data_roots = args.data_root or [REPO_ROOT / "data"]
-    payload = inventory(roots, data_roots=data_roots)
+    raw_assignments = (
+        _parse_assignments(args.raw_k40_status)
+        if args.mode == "raw_k40" else None
+    )
+    if raw_assignments is not None:
+        # Explicit RAW mode validates only the four named immutable inputs.
+        # A broad inventory would re-read unrelated large journals and could
+        # accidentally make the approved plan depend on unrelated files.
+        payload = {
+            "schema": "evsp-dr-mip-statistics-explicit-raw-k40-v1",
+            "candidates": [],
+            "selection_rule": "explicit raw-k40 inputs only",
+            "missing_roots": [],
+            "missing_slots": [],
+        }
+    else:
+        payload = inventory(roots, data_roots=data_roots)
     if args.inventory_out:
         _write_new_atomic(
             args.inventory_out,
@@ -897,12 +1124,26 @@ def main(argv=None) -> int:
         return 0
     identity = checkout_identity(require_detached=args.submit)
     start_map = _parse_assignments(args.giro_start)
+    if args.mode == "raw_k40" and start_map:
+        raise SystemExit("raw_k40 mode forbids --giro-start")
+    explicit_raw_candidates = None
+    if args.mode == "raw_k40":
+        explicit_raw_candidates = resolve_raw_k40_candidates(
+            raw_assignments,
+            data_roots=data_roots,
+        )
+        payload = dict(payload)
+        payload["explicit_raw_k40_candidates"] = {
+            label: candidate["candidate_id"]
+            for label, candidate in explicit_raw_candidates.items()
+        }
     plan = build_plan(
         payload,
         mode=args.mode,
         campaign=args.campaign,
         start_map=start_map,
         identity=identity,
+        explicit_raw_candidates=explicit_raw_candidates,
         python_path=args.python,
         reservation_root=args.reservation_root,
     )
