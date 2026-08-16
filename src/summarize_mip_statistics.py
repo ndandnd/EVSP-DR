@@ -25,7 +25,8 @@ CHECKPOINT_FIELDS = (
     "budget_hours", "checkpoint_elapsed_s", "observed_total_elapsed_s",
     "latest_statistics_observed_s",
     "stage", "incumbent_state", "incumbent_fleet",
-    "incumbent_objective", "fleet_bound", "objective_bound",
+    "incumbent_objective", "statistics_incumbent_fleet",
+    "fleet_bound", "objective_bound",
     "fleet_gap", "node_count", "solution_count",
     "first_feasible_incumbent_s", "route_vector_sha256",
     "solver_ended_before_checkpoint",
@@ -333,6 +334,30 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     )
                 incumbent = payload.get("incumbent") or {}
                 stats = payload.get("latest_statistics") or {}
+                statistics_fleet = _float(
+                    stats.get("statistics_incumbent_fleet")
+                )
+                statistics_bound = _float(stats.get("fleet_bound"))
+                statistics_gap = _float(stats.get("fleet_gap"))
+                if (
+                    statistics_fleet is not None
+                    and statistics_bound is not None
+                    and statistics_gap is not None
+                ):
+                    expected_gap = (
+                        max(0.0, statistics_fleet - statistics_bound)
+                        / max(1.0, statistics_fleet)
+                    )
+                    if not math.isclose(
+                        statistics_gap,
+                        expected_gap,
+                        rel_tol=1e-9,
+                        abs_tol=1e-9,
+                    ):
+                        raise ValueError(
+                            f"checkpoint statistics fleet gap mismatch: "
+                            f"{checkpoint_path}"
+                        )
                 checkpoint_rows.append({
                     "campaign": campaign,
                     "cell_id": job["cell_id"],
@@ -357,6 +382,9 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     "incumbent_state": payload.get("incumbent_state"),
                     "incumbent_fleet": incumbent.get("fleet"),
                     "incumbent_objective": incumbent.get("objective"),
+                    "statistics_incumbent_fleet": stats.get(
+                        "statistics_incumbent_fleet"
+                    ),
                     "fleet_bound": stats.get("fleet_bound"),
                     "objective_bound": stats.get("objective_bound"),
                     "fleet_gap": stats.get("fleet_gap"),
@@ -410,7 +438,11 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         for row in checkpoint_rows:
             if row["cell_id"] != job["cell_id"]:
                 continue
-            fleet = _float(row["incumbent_fleet"])
+            fleet = _float(row["statistics_incumbent_fleet"])
+            if fleet is None:
+                # Checkpoints written before this additive field used only
+                # the route-vector incumbent.
+                fleet = _float(row["incumbent_fleet"])
             bound = _float(row["fleet_bound"])
             if (
                 fleet is not None and bound is not None
@@ -542,6 +574,14 @@ def _plot(staging: Path, checkpoint_rows, final_rows) -> None:
             x, [row["incumbent_fleet"] for row in rows],
             where="post", label=f"{cell} incumbent",
         )
+        statistics_incumbents = [
+            row["statistics_incumbent_fleet"] for row in rows
+        ]
+        if any(value is not None for value in statistics_incumbents):
+            ax.step(
+                x, statistics_incumbents, where="post",
+                linestyle="-.", label=f"{cell} statistics incumbent",
+            )
         bounds = [row["fleet_bound"] for row in rows]
         if any(value is not None for value in bounds):
             ax.step(x, bounds, where="post", linestyle="--",

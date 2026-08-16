@@ -89,6 +89,7 @@ class MIPProgressRecorder:
         self.stage = None
         self.stage_started = self.started
         self.latest_stats = {
+            "statistics_incumbent_fleet": None,
             "fleet_bound": None,
             "objective_bound": None,
             "fleet_gap": None,
@@ -136,6 +137,7 @@ class MIPProgressRecorder:
         self.stage = stage
         self.stage_started = self.started + now_elapsed
         self.latest_stats.update({
+            "statistics_incumbent_fleet": None,
             "fleet_bound": None,
             "objective_bound": None,
             "fleet_gap": None,
@@ -182,6 +184,7 @@ class MIPProgressRecorder:
         *,
         elapsed_s: float,
         stage_elapsed_s: float,
+        statistics_incumbent_fleet=None,
         fleet_bound=None,
         objective_bound=None,
         fleet_gap=None,
@@ -190,6 +193,9 @@ class MIPProgressRecorder:
     ) -> None:
         elapsed = max(0.0, float(elapsed_s))
         updates = {
+            "statistics_incumbent_fleet": self._finite(
+                statistics_incumbent_fleet
+            ),
             "fleet_bound": self._finite(fleet_bound),
             "objective_bound": self._finite(objective_bound),
             "fleet_gap": self._finite(fleet_gap),
@@ -312,6 +318,7 @@ class MIPProgressRecorder:
         ), None)
         if event is None:
             return {
+                "statistics_incumbent_fleet": None,
                 "fleet_bound": None,
                 "objective_bound": None,
                 "fleet_gap": None,
@@ -455,6 +462,34 @@ class GurobiProgressObserver:
         self.recorder = recorder
         self.GRB = GRB
         self.variables = variables
+        if hasattr(variables, "items"):
+            entries = list(variables.items())
+            try:
+                entries.sort(key=lambda item: int(item[0]))
+                self.variable_entries = [
+                    (int(key), key, variable)
+                    for key, variable in entries
+                ]
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "MIP variables must use integer route-index keys"
+                ) from exc
+        else:
+            self.variable_entries = [
+                (index, index, variable)
+                for index, variable in enumerate(list(variables))
+            ]
+        route_indices = [
+            route_index
+            for route_index, _key, _variable in self.variable_entries
+        ]
+        if (
+            route_indices != list(range(len(routes)))
+            or len(self.variable_entries) != len(routes)
+        ):
+            raise ValueError(
+                "MIP variables do not align one-to-one with route indices"
+            )
         self.routes = routes
         self.bus_cost = float(bus_cost)
         self.stage = stage
@@ -462,6 +497,40 @@ class GurobiProgressObserver:
         self.termination = termination
         self.statistics_throttle_s = float(statistics_throttle_s)
         self.last_statistics_s = -math.inf
+
+    def _selected_route_indices(self, values) -> list[int]:
+        if hasattr(values, "items"):
+            selected = []
+            for route_index, key, variable in self.variable_entries:
+                if key in values:
+                    value = values[key]
+                elif variable in values:
+                    value = values[variable]
+                else:
+                    raise ValueError(
+                        f"callback solution lacks route variable {key!r}"
+                    )
+                if float(value) > 0.5:
+                    selected.append(route_index)
+            return selected
+        sequence = list(values)
+        if len(sequence) != len(self.variable_entries):
+            raise ValueError(
+                "callback solution length differs from route variables"
+            )
+        return [
+            route_index
+            for (route_index, _key, _variable), value
+            in zip(self.variable_entries, sequence)
+            if float(value) > 0.5
+        ]
+
+    def _statistics_incumbent_fleet(self, best, *, route_fleet=None):
+        if self.stage == "fleet":
+            return MIPProgressRecorder._finite(best)
+        if self.stage == "cost":
+            return self.fixed_fleet
+        return route_fleet
 
     @staticmethod
     def _get(model, callback_api, name, default=None):
@@ -489,10 +558,10 @@ class GurobiProgressObserver:
             except Exception:
                 values = None
             if values is not None:
-                indices = [
-                    index for index, value in enumerate(values)
-                    if float(value) > 0.5
-                ]
+                try:
+                    indices = self._selected_route_indices(values)
+                except (KeyError, TypeError, ValueError):
+                    return
                 fleet = len(indices)
                 objective = float(sum(
                     self.routes[index]["cost"] for index in indices
@@ -501,6 +570,14 @@ class GurobiProgressObserver:
                     model, callback_api, "MIPSOL_OBJBND"
                 )
                 finite_bound = MIPProgressRecorder._finite(bound)
+                statistics_incumbent_fleet = (
+                    self._statistics_incumbent_fleet(
+                        self._get(
+                            model, callback_api, "MIPSOL_OBJBST"
+                        ),
+                        route_fleet=fleet,
+                    )
+                )
                 fleet_bound = (
                     finite_bound if self.stage == "fleet"
                     else self.fixed_fleet
@@ -517,13 +594,24 @@ class GurobiProgressObserver:
                     )
                 )
                 gap = (
-                    max(0.0, fleet - float(fleet_bound))
-                    / max(1.0, float(fleet))
-                    if fleet_bound is not None else None
+                    max(
+                        0.0,
+                        float(statistics_incumbent_fleet)
+                        - float(fleet_bound),
+                    )
+                    / max(1.0, float(statistics_incumbent_fleet))
+                    if (
+                        statistics_incumbent_fleet is not None
+                        and fleet_bound is not None
+                    )
+                    else None
                 )
                 self.recorder.observe_stats(
                     elapsed_s=elapsed,
                     stage_elapsed_s=stage_elapsed,
+                    statistics_incumbent_fleet=(
+                        statistics_incumbent_fleet
+                    ),
                     fleet_bound=fleet_bound,
                     objective_bound=objective_bound,
                     fleet_gap=gap,
@@ -557,7 +645,7 @@ class GurobiProgressObserver:
         bound = self._get(model, callback_api, f"{prefix}_OBJBND")
         finite_bound = MIPProgressRecorder._finite(bound)
         if self.stage == "fleet":
-            incumbent_fleet = MIPProgressRecorder._finite(best)
+            incumbent_fleet = self._statistics_incumbent_fleet(best)
             fleet_bound = finite_bound
             objective_bound = None
         elif self.stage == "cost":
@@ -583,6 +671,7 @@ class GurobiProgressObserver:
         self.recorder.observe_stats(
             elapsed_s=elapsed,
             stage_elapsed_s=stage_elapsed,
+            statistics_incumbent_fleet=incumbent_fleet,
             fleet_bound=fleet_bound,
             objective_bound=objective_bound,
             fleet_gap=gap,
