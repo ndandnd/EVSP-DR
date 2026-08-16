@@ -99,6 +99,7 @@ class MIPProgressRecorder:
         self.latest_incumbent = None
         self.first_feasible_s = None
         self.incumbent_events = []
+        self.incumbent_observations = []
         self.statistics_events = []
         self.stage_events = []
         self.emitted = set()
@@ -217,6 +218,7 @@ class MIPProgressRecorder:
             "statistics": dict(self.latest_stats),
         })
         self.publish_due(elapsed)
+        self._publish_latest("statistics", elapsed)
 
     def record_incumbent(
         self,
@@ -287,6 +289,7 @@ class MIPProgressRecorder:
             }
         )
         self.latest_incumbent = incumbent
+        self.incumbent_observations.append(dict(incumbent))
         if should_append:
             self.incumbent_events.append(dict(incumbent))
         self._publish_latest(kind, float(elapsed_s))
@@ -298,7 +301,7 @@ class MIPProgressRecorder:
 
     def _incumbent_snapshot(self, checkpoint_s: float) -> tuple[str, dict | None]:
         incumbent = next((
-            event for event in reversed(self.incumbent_events)
+            event for event in reversed(self.incumbent_observations)
             if event["total_elapsed_s"] <= checkpoint_s + 1e-9
         ), None)
         if incumbent is None:

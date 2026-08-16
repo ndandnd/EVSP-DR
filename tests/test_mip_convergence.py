@@ -275,8 +275,8 @@ class MIPConvergenceTests(unittest.TestCase):
                 Callback.MIPSOL_OBJBND: 1.0,
                 Callback.MIPSOL_NODCNT: 7.0,
                 Callback.MIPSOL_SOLCNT: 1,
-                Callback.MIP_OBJBST: 2.0,
-                Callback.MIP_OBJBND: 1.0,
+                Callback.MIP_OBJBST: 1.0,
+                Callback.MIP_OBJBND: 0.5,
                 Callback.MIP_NODCNT: 9.0,
                 Callback.MIP_SOLCNT: 1,
             }
@@ -334,9 +334,9 @@ class MIPConvergenceTests(unittest.TestCase):
             clock.now = 20.0
             observer(model, Callback.MIP)
             self.assertEqual(
-                recorder.latest_stats["statistics_incumbent_fleet"], 2.0
+                recorder.latest_stats["statistics_incumbent_fleet"], 1.0
             )
-            self.assertEqual(recorder.latest_stats["fleet_bound"], 1.0)
+            self.assertEqual(recorder.latest_stats["fleet_bound"], 0.5)
             self.assertAlmostEqual(recorder.latest_stats["fleet_gap"], 0.5)
 
             latest = json.loads(
@@ -345,7 +345,11 @@ class MIPConvergenceTests(unittest.TestCase):
             self.assertEqual(latest["incumbent"]["fleet"], 2)
             self.assertEqual(
                 latest["latest_statistics"]["statistics_incumbent_fleet"],
-                2.0,
+                1.0,
+            )
+            self.assertNotEqual(
+                latest["incumbent"]["fleet"],
+                latest["latest_statistics"]["statistics_incumbent_fleet"],
             )
             self.assertAlmostEqual(
                 latest["latest_statistics"]["fleet_gap"],
@@ -359,6 +363,65 @@ class MIPConvergenceTests(unittest.TestCase):
                     "statistics_incumbent_fleet"
                 ],
             )
+
+    def test_equal_quality_solver_route_replaces_t0_snapshot(self):
+        class Callback:
+            MIPSOL = 1
+            MIPSOL_OBJBST = 10
+            MIPSOL_OBJBND = 11
+            MIPSOL_NODCNT = 12
+            MIPSOL_SOLCNT = 13
+
+        class GRB:
+            pass
+
+        GRB.Callback = Callback
+
+        class Model:
+            def cbGet(self, key):
+                return {
+                    Callback.MIPSOL_OBJBST: 2.0,
+                    Callback.MIPSOL_OBJBND: 1.0,
+                    Callback.MIPSOL_NODCNT: 0.0,
+                    Callback.MIPSOL_SOLCNT: 1,
+                }[key]
+
+            def cbGetSolution(self, _variables):
+                return {0: 0.0, 1: 1.0, 2: 1.0}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            recorder, clock = self._recorder(
+                Path(tmp) / "progress", limit=300
+            )
+            recorder.transition_stage("fleet", elapsed_s=0.0)
+            recorder.record_initial_incumbent(
+                [0, 1],
+                objective=200005.0,
+                fleet=2,
+                kind="validated_partition_at_t0",
+            )
+            recorder.emit_zero()
+            observer = GurobiProgressObserver(
+                recorder,
+                GRB=GRB,
+                variables={0: object(), 1: object(), 2: object()},
+                routes=[
+                    {"cost": 100002.0},
+                    {"cost": 100003.0},
+                    {"cost": 100002.0},
+                ],
+                bus_cost=100000.0,
+                stage="fleet",
+            )
+            clock.now = 10.0
+            observer(Model(), Callback.MIPSOL)
+            latest = json.loads(
+                (recorder.directory / "latest.json").read_text()
+            )
+            self.assertEqual(
+                latest["incumbent"]["selected_route_indices"], [1, 2]
+            )
+            self.assertEqual(len(latest["incumbent_improvements"]), 1)
 
     def test_gurobi_infinity_sentinel_is_not_a_finite_bound(self):
         self.assertIsNone(MIPProgressRecorder._finite(1e100))
