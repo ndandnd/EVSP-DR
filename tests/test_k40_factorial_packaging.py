@@ -18,6 +18,7 @@ import exact_mip_environment as mip_environment  # noqa: E402
 import launch_k40_factorial_mip_screen as mip_launcher  # noqa: E402
 import summarize_k40_factorial as summarizer  # noqa: E402
 import k40_factorial_artifacts as artifacts  # noqa: E402
+import k40_factorial_mip_result as mip_result  # noqa: E402
 import monitor_k40_factorial_mip_screen as mip_monitor  # noqa: E402
 import prepare_k40_factorial_giro_start as seed_preparer  # noqa: E402
 import reconcile_k40_factorial_mip_screen as mip_reconcile  # noqa: E402
@@ -124,6 +125,10 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "artificial_total": artificials,
                 "source": "final_pool_resolve",
                 "pool_columns": len(lp_columns),
+                "max_row_violation": 0.0,
+                "max_bound_violation": 0.0,
+                "feasibility_tolerance": 1e-7,
+                "master_method": "highs",
                 "positive_routes": [{
                     "trips": column["trips"],
                     "value": column["value"],
@@ -726,7 +731,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
             self.assertEqual(escalation["budget_seconds"], 7200)
             self.assertTrue(all(
                 len(job["job_name"]) <= 15
-                and job["job_name"].endswith("H02")
+                and job["job_name"].endswith("2")
                 for job in escalation["jobs"]
             ))
 
@@ -903,6 +908,29 @@ class K40FactorialPackagingTests(unittest.TestCase):
             self.assertIsNotNone(row["validation_error"])
             self.assertIsNone(row["buses"])
 
+    def test_shared_mip_schema_and_bundle_no_clobber(self):
+        with self.assertRaisesRegex(ValueError, "solver status name"):
+            mip_result.validate_scientific_result(
+                {
+                    "partitioning": True,
+                    "route_space_scope":
+                        "finite_augmented_snapshot_pool_only",
+                },
+                {},
+                {},
+            )
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source"
+            destination = Path(tmp) / "destination"
+            source.mkdir()
+            destination.mkdir()
+            with self.assertRaises(FileExistsError):
+                mip_result.rename_directory_noreplace(
+                    source, destination
+                )
+            self.assertTrue(source.is_dir())
+            self.assertTrue(destination.is_dir())
+
     def test_reconciliation_rejects_empty_and_ambiguous_campaigns(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -920,13 +948,18 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 for treatment in ("CA", "CS")
                 for mark in (360, 720, 1440)
             ]
+            nonce = "abcdefghijk"
             for index, (rep, treatment, mark) in enumerate(cells):
+                age = {360: "6", 720: "C", 1440: "O"}[mark]
                 jobs.append({
                     "label": f"{rep}_{treatment}_m{mark}",
                     "replicate": rep,
                     "treatment": treatment,
                     "snapshot_mark_minutes": mark,
-                    "job_name": f"Kabc{index:02d}",
+                    "job_name": (
+                        f"{nonce}{rep[-1]}"
+                        f"{'A' if treatment == 'CA' else 'S'}{age}3"
+                    ),
                     "slurm_comment": f"comment{index}",
                     "submission_state": (
                         "attempting" if index == 0 else "planned"
@@ -937,6 +970,8 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "schema": "evsp-dr-k40-factorial-mip-campaign-v1",
                 "campaign": "test",
                 "mode": "screen",
+                "budget_seconds": 1800,
+                "job_name_nonce": nonce,
                 "submission_user": "tester",
                 "created_at": "2026-08-16T00:00:00+00:00",
                 "jobs": jobs,

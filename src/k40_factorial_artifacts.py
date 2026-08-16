@@ -40,13 +40,6 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _load_object(path: Path) -> dict:
-    payload = json.loads(path.read_bytes())
-    if not isinstance(payload, dict):
-        raise ValueError(f"JSON artifact is not an object: {path}")
-    return payload
-
-
 def _load_object_with_sha(path: Path) -> tuple[dict, str]:
     raw = path.read_bytes()
     payload = json.loads(raw)
@@ -147,8 +140,14 @@ def _validate_journal(
     coverage = {trip: 0.0 for trip in trip_ids}
     detail_source = final_lp.get("source")
     if require_lp_provenance:
+        allowed_sources = {
+            "final_pool_resolve",
+            "last_good_iterate",
+            "compatible_prior_result",
+        }
         if (
             not isinstance(detail_source, str)
+            or detail_source not in allowed_sources
             or status.get("final_lp_source") != detail_source
         ):
             raise ValueError(f"final LP source provenance mismatch: {path}")
@@ -169,6 +168,33 @@ def _validate_journal(
             raise ValueError(
                 f"final LP pool column provenance mismatch: {path}"
             )
+        try:
+            feasibility_tolerance = float(
+                final_lp["feasibility_tolerance"]
+            )
+            max_row_violation = float(final_lp["max_row_violation"])
+            max_bound_violation = float(final_lp["max_bound_violation"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(
+                f"final LP feasibility provenance is invalid: {path}"
+            ) from exc
+        if (
+            not all(math.isfinite(value) for value in (
+                feasibility_tolerance,
+                max_row_violation,
+                max_bound_violation,
+            ))
+            or feasibility_tolerance <= 0.0
+            or max_row_violation < 0.0
+            or max_bound_violation < 0.0
+            or max_row_violation > feasibility_tolerance + 1e-12
+            or max_bound_violation > feasibility_tolerance + 1e-12
+        ):
+            raise ValueError(
+                f"final LP feasibility tolerance was exceeded: {path}"
+            )
+    else:
+        feasibility_tolerance = 1e-7
     for route in positive:
         if not isinstance(route, dict):
             raise ValueError(f"final LP route is invalid: {path}")
@@ -229,11 +255,29 @@ def _validate_journal(
     if master_sense not in {"cover", "partition"}:
         raise ValueError(f"unknown master sense for LP validation: {path}")
     if master_sense == "partition" and any(
-            value > 1.0 + 1e-6 for value in coverage.values()):
+            value > 1.0 + feasibility_tolerance
+            for value in coverage.values()):
         raise ValueError(f"partition LP overcovers a trip: {path}")
+    if artificials == 0.0:
+        if master_sense == "partition":
+            row_violation = max(
+                abs(value - 1.0) for value in coverage.values()
+            )
+        else:
+            row_violation = max(
+                max(0.0, 1.0 - value) for value in coverage.values()
+            )
+        if row_violation > feasibility_tolerance + 1e-12:
+            raise ValueError(
+                f"artificial-free LP violates a trip row: {path}"
+            )
     total_deficit = sum(max(0.0, 1.0 - value) for value in coverage.values())
     if not math.isclose(
-            total_deficit, artificials, rel_tol=1e-8, abs_tol=1e-5):
+            total_deficit,
+            artificials,
+            rel_tol=1e-8,
+            abs_tol=max(1e-7, feasibility_tolerance * len(trip_ids)),
+    ):
         raise ValueError(
             f"final LP trip coverage disagrees with artificials: {path}"
         )
@@ -250,9 +294,12 @@ def _validate_journal(
     return effective, journal_digest.hexdigest()
 
 
-def _read_tsv(path: Path) -> list[dict]:
-    with path.open(newline="") as handle:
-        return list(csv.DictReader(handle, delimiter="\t"))
+def _read_tsv_with_sha(path: Path) -> tuple[list[dict], str]:
+    raw = path.read_bytes()
+    rows = list(csv.DictReader(
+        io.StringIO(raw.decode()), delimiter="\t"
+    ))
+    return rows, hashlib.sha256(raw).hexdigest()
 
 
 def _metric(status: dict, key: str):
@@ -471,8 +518,7 @@ def _find_arm_status(
     return existing[0], "k40r1" in existing[0].name
 
 
-def _validate_input_manifest(path: Path) -> dict:
-    manifest = _load_object(path)
+def _validate_input_manifest(path: Path, manifest: dict) -> dict:
     if manifest.get("seed") != 20260803:
         raise ValueError(f"input manifest seed mismatch: {path}")
     if manifest.get("source") != "Par_VehicleDetails_Updated.csv":
@@ -622,7 +668,7 @@ def validate_campaign(
     for path in (launch_path, prep_path, input_manifest):
         if not path.is_file():
             raise ValueError(f"campaign manifest is missing: {path}")
-    launch = _read_tsv(launch_path)
+    launch, launch_sha = _read_tsv_with_sha(launch_path)
     if len(launch) != 5:
         raise ValueError(f"campaign launch must contain prep plus four arms: {root}")
     prep_launch = [row for row in launch if row.get("role") == "prep"]
@@ -651,19 +697,21 @@ def validate_campaign(
         or any(not str(job_id).isdigit() for job_id in job_ids)
     ):
         raise ValueError(f"campaign job IDs are invalid or duplicated: {root}")
+    prep_raw = prep_path.read_bytes()
+    prep_sha = hashlib.sha256(prep_raw).hexdigest()
     prep = {}
-    with prep_path.open(newline="") as handle:
-        for row in csv.reader(handle, delimiter="\t"):
-            if len(row) != 2 or row[0] in prep:
-                raise ValueError(f"prep attestation is malformed: {prep_path}")
-            prep[row[0]] = row[1]
+    for row in csv.reader(io.StringIO(prep_raw.decode()), delimiter="\t"):
+        if len(row) != 2 or row[0] in prep:
+            raise ValueError(f"prep attestation is malformed: {prep_path}")
+        prep[row[0]] = row[1]
     if prep.get("git_commit") != FACTORIAL_COMMIT:
         raise ValueError(f"unexpected factorial commit: {root}")
     if prep.get("instance_sha256") != INSTANCE_SHA256:
         raise ValueError(f"prep instance hash mismatch: {root}")
     if prep.get("prices_sha256") != PRICES_SHA256:
         raise ValueError(f"prep tariff hash mismatch: {root}")
-    manifest_entry = _validate_input_manifest(input_manifest)
+    manifest, input_manifest_sha = _load_object_with_sha(input_manifest)
+    manifest_entry = _validate_input_manifest(input_manifest, manifest)
     repo_root = root.parents[3]
     instance_path = (
         repo_root / "data/duty_unions_big" / manifest_entry["csv"]
@@ -685,9 +733,9 @@ def validate_campaign(
         launch_path, prep_path, input_manifest, instance_path, prices_path
     }
     validated_file_hashes = {
-        str(launch_path.resolve()): sha256_file(launch_path),
-        str(prep_path.resolve()): sha256_file(prep_path),
-        str(input_manifest.resolve()): sha256_file(input_manifest),
+        str(launch_path.resolve()): launch_sha,
+        str(prep_path.resolve()): prep_sha,
+        str(input_manifest.resolve()): input_manifest_sha,
         str(instance_path): INSTANCE_SHA256,
         str(prices_path): PRICES_SHA256,
     }

@@ -92,6 +92,11 @@ def _validate_manifest(manifest: dict) -> list[dict]:
         raise ValueError("escalation campaign job count is invalid")
     if mode not in {"screen", "escalation"}:
         raise ValueError("MIP campaign mode is invalid")
+    if (
+        (mode == "screen" and manifest.get("budget_seconds") != 1800)
+        or (mode == "escalation" and manifest.get("budget_seconds") != 7200)
+    ):
+        raise ValueError("MIP campaign budget/mode mismatch")
     if not isinstance(manifest.get("submission_user"), str) \
             or not manifest["submission_user"]:
         raise ValueError("MIP campaign submission user is invalid")
@@ -104,6 +109,9 @@ def _validate_manifest(manifest: dict) -> list[dict]:
             raise ValueError(f"MIP campaign {field} values are invalid")
     if any(len(job["job_name"]) > 15 for job in jobs):
         raise ValueError("MIP campaign has an overlong Slurm job name")
+    nonce = manifest.get("job_name_nonce")
+    if not isinstance(nonce, str) or len(nonce) != 11:
+        raise ValueError("MIP campaign job-name nonce is invalid")
     expected_cells = {
         (rep, treatment, mark)
         for rep in ("R1", "R2")
@@ -129,6 +137,14 @@ def _validate_manifest(manifest: dict) -> list[dict]:
         )
         if job["label"] != expected_label:
             raise ValueError("MIP campaign label/cell mismatch")
+        expected_name = (
+            f"{nonce}{job['replicate'][-1]}"
+            f"{'A' if job['treatment'] == 'CA' else 'S'}"
+            f"{ {360: '6', 720: 'C', 1440: 'O'}[job['snapshot_mark_minutes']] }"
+            f"{'3' if manifest.get('budget_seconds') == 1800 else '2'}"
+        )
+        if job["job_name"] != expected_name:
+            raise ValueError("MIP campaign Slurm name/cell mismatch")
     return jobs
 
 

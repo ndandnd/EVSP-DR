@@ -11,6 +11,8 @@ import math
 import subprocess
 from pathlib import Path
 
+from k40_factorial_mip_result import validate_scientific_result
+
 
 FIELDS = (
     "label", "replicate", "treatment", "snapshot_mark_minutes",
@@ -115,6 +117,7 @@ def _validated_result(
     ):
         raise ValueError("result MIP-start evidence is incomplete")
     source = json.loads(Path(spec["staged_result"]).read_text())
+    validate_scientific_result(result, spec, source)
     selected = result.get("selected_routes")
     if not isinstance(selected, list) or not selected:
         raise ValueError("result selected routes are missing")

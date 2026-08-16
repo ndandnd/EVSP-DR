@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import datetime as dt
 import hashlib
 import json
@@ -212,12 +213,12 @@ def _validate_start(
 
 
 def _cell_name(
-    campaign: str, rep: str, arm: str, mark: int, budget: int
+    nonce: str, rep: str, arm: str, mark: int, budget: int
 ) -> str:
-    age = {360: "06", 720: "12", 1440: "24"}[mark]
-    budget_tag = "M30" if budget == 1800 else "H02"
-    nonce = hashlib.sha256(campaign.encode()).hexdigest()[:6]
-    name = f"K{nonce}{rep[-1]}{arm}{age}{budget_tag}"
+    age = {360: "6", 720: "C", 1440: "O"}[mark]
+    treatment = {"CA": "A", "CS": "S"}[arm]
+    budget_tag = "3" if budget == 1800 else "2"
+    name = f"{nonce}{rep[-1]}{treatment}{age}{budget_tag}"
     if len(name) > 15:
         raise SystemExit(f"MIP job name exceeds 15 characters: {name}")
     return name
@@ -364,6 +365,22 @@ def launch(args) -> dict:
                 f"{label} contains a comma and is unsafe for Slurm export"
             )
     shared_start = root / "input/common/validated_start.json"
+    nonce_payload = json.dumps({
+        "campaign": campaign,
+        "mode": args.mode,
+        "budget_seconds": budget,
+        "expected_commit": identity["expected_commit"],
+        "runner_sha256": identity["run_exact_pool_mip_sha256"],
+        "validated_start_sha256": start["sha256"],
+        "replicate_campaigns": {
+            rep: validated[rep]["campaign"] for rep in ("R1", "R2")
+        },
+    }, sort_keys=True, separators=(",", ":")).encode()
+    job_name_nonce = base64.urlsafe_b64encode(
+        hashlib.sha256(nonce_payload).digest()[:8]
+    ).decode().rstrip("=")
+    if len(job_name_nonce) != 11:
+        raise SystemExit("internal Slurm nonce encoding failure")
     plans = []
     for rep, arm, mark in cells:
         row = next(
@@ -445,7 +462,7 @@ def launch(args) -> dict:
         }
         spec_raw = (json.dumps(spec, indent=2) + "\n").encode()
         spec_path = cell_root / "job.json"
-        job_name = _cell_name(campaign, rep, arm, mark, budget)
+        job_name = _cell_name(job_name_nonce, rep, arm, mark, budget)
         comment = (
             f"EVSPK40MIP:{campaign}:{label}:{hashes['result'][:12]}"
         )
@@ -512,6 +529,7 @@ def launch(args) -> dict:
         "python": python_identity,
         "worker": str(worker),
         "worker_sha256": worker_sha,
+        "job_name_nonce": job_name_nonce,
         "validated_start": {
             key: value for key, value in start.items() if key != "raw"
         },

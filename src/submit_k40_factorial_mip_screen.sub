@@ -166,6 +166,11 @@ if ! "$PYTHON" - "$RAW" "$OUT" "$RESULT" "$SPEC_PATH" \
     "$EXPECTED_SPEC_SHA" "$EXPECTED_WORKER_SHA" <<'PY'
 import collections, hashlib, json, math, os, sys, tempfile
 raw, out, source, spec_path, spec_sha, worker_sha = sys.argv[1:]
+sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from k40_factorial_mip_result import (  # noqa: E402
+    rename_directory_noreplace,
+    validate_scientific_result,
+)
 
 def fail(message):
     raise SystemExit(message)
@@ -250,6 +255,7 @@ d["completion_attestation"] = {
     "runner_sha256": spec["runner_sha256"],
     "validated_start_sha256": spec["staged_start_sha256"],
 }
+validate_scientific_result(d, spec, s)
 encoded = (json.dumps(d, indent=2) + "\n").encode()
 directory = os.path.dirname(out)
 staging = tempfile.mkdtemp(
@@ -279,7 +285,10 @@ try:
 finally:
     os.close(staging_fd)
 try:
-    os.rename(staging, out)
+    rename_directory_noreplace(
+        __import__("pathlib").Path(staging),
+        __import__("pathlib").Path(out),
+    )
 except FileExistsError:
     fail("validated output bundle already exists")
 parent = os.open(directory, os.O_RDONLY)

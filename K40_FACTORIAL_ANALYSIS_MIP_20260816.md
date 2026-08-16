@@ -96,7 +96,9 @@ python -u src/launch_k40_factorial_mip_screen.py \
 
 The plan contains exactly 12 cells: two replicates × CA/CS × m360/m720/m1440.
 Names encode a campaign nonce plus replicate/treatment/age/budget and remain
-under 15 characters.
+at 15 characters. The first 11 URL-safe characters encode a 64-bit
+approval-input nonce; the final four characters explicitly encode replicate,
+CA/CS initializer, 6/12/24-hour age, and 30-minute/two-hour budget.
 All cells use strict binary partitioning, validated 40-duty start, two-stage
 fleet-first objective, 1,800 seconds, eight threads, Scaglione, no artificials,
 and no requeue.
