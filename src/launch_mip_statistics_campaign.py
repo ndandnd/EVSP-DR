@@ -174,10 +174,9 @@ def _existing_execution_comments() -> set[str]:
 
 
 def _reserve_execution_digests(plan: dict, plan_sha: str) -> list[Path]:
-    root = (
-        REPO_ROOT
-        / "src/results/mip_statistics/execution_reservations"
-    )
+    root = Path(plan["shared_reservation_root"]).expanduser().resolve()
+    if REPO_ROOT.resolve() == root or REPO_ROOT.resolve() in root.parents:
+        raise SystemExit("execution reservation root must be cluster-shared")
     root.mkdir(parents=True, exist_ok=True)
     reservations = []
     try:
@@ -469,6 +468,9 @@ def build_plan(
     start_map: dict,
     identity: dict,
     python_path: Path = Path(sys.executable),
+    reservation_root: Path = Path(
+        "/share/evsp-dr/mip-statistics-execution-reservations"
+    ),
 ) -> dict:
     if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,79}", campaign):
         raise ValueError("campaign name must be a safe relative identifier")
@@ -666,6 +668,9 @@ def build_plan(
         "code_hashes": code_hashes,
         "python_identity": python_identity,
         "environment_whitelist": environment,
+        "shared_reservation_root": str(
+            reservation_root.expanduser().resolve()
+        ),
         "jobs": jobs,
         "missing_scales": missing_scales,
         "missing_matrix_cells": missing_matrix_cells,
@@ -859,6 +864,13 @@ def parse_args(argv=None):
     parser.add_argument("--inventory-out", type=Path)
     parser.add_argument("--plan-out", type=Path)
     parser.add_argument("--python", type=Path, default=Path(sys.executable))
+    parser.add_argument(
+        "--reservation-root",
+        type=Path,
+        default=Path(
+            "/share/evsp-dr/mip-statistics-execution-reservations"
+        ),
+    )
     parser.add_argument("--approved-plan-sha256")
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
@@ -892,6 +904,7 @@ def main(argv=None) -> int:
         start_map=start_map,
         identity=identity,
         python_path=args.python,
+        reservation_root=args.reservation_root,
     )
     plan_raw = _canonical(plan)
     plan_sha = hashlib.sha256(plan_raw).hexdigest()

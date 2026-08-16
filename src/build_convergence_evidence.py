@@ -32,6 +32,10 @@ INSTANCE_SHA256 = "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb3
 TARIFF_SHA256 = "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
 HISTORICAL_ROUTE_WEIGHT = 39.252026205592166
 EXPECTED_K40_TRIPS = 947
+EXPECTED_FACTORIAL_CAMPAIGNS = {
+    "k40fx_20260814T140232Z_eb85ca0c": "k40r1",
+    "k40fx_20260814T191933Z_eb85ca0c": "k40r2",
+}
 CHECKPOINTS = {
     "h1": 60,
     "h3": 180,
@@ -488,8 +492,17 @@ def _factorial_rows(
                 "reason": "factorial_campaign_missing",
             })
             continue
+        expected_campaign_prefix = EXPECTED_FACTORIAL_CAMPAIGNS.get(
+            campaign.name
+        )
+        if expected_campaign_prefix is None:
+            raise ValueError(
+                f"unexpected factorial campaign identity: {campaign.name}"
+            )
         campaign_identity = _validate_factorial_campaign(campaign)
         expected_prefix = campaign_identity["prefix"]
+        if expected_prefix != expected_campaign_prefix:
+            raise ValueError("factorial campaign stem/replicate mismatch")
         if any(
             set(campaign_identity["job_ids"]) & set(existing)
             for existing in replicate_job_ids
@@ -637,38 +650,10 @@ def _artifact_scale(path: Path, payload: dict) -> tuple[str, int | str] | None:
     return None
 
 
-def _trusted_artifact(path: Path) -> bool:
-    sidecar = Path(str(path) + ".sha256")
-    if sidecar.is_file():
-        expected = sidecar.read_text().strip().split()[0]
-        return expected == sha256_file(path)
-    for parent in path.parents:
-        manifest_path = parent / "ARCHIVE_MANIFEST.json"
-        if not manifest_path.is_file():
-            continue
-        try:
-            manifest = json.loads(manifest_path.read_text())
-        except (OSError, ValueError):
-            return False
-        members = manifest.get("members")
-        if not isinstance(members, dict):
-            return False
-        relative = str(path.relative_to(parent))
-        expected = members.get(relative)
-        if expected is None:
-            matches = [
-                digest for name, digest in members.items()
-                if name.endswith("/" + relative) or name == relative
-            ]
-            if len(matches) != 1:
-                return False
-            expected = matches[0]
-        return expected == sha256_file(path)
-    return False
-
-
-def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
-    if not path.is_file() or not _trusted_artifact(path):
+def _validated_scale_flags(
+    path: Path, payload: dict, *, trusted: bool = False
+) -> dict | None:
+    if not path.is_file() or not trusted:
         return None
     if "partitioning" in payload:
         if payload.get("partitioning") is not True:
@@ -692,7 +677,9 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
         ):
             return None
         source_status = json.loads(source_result.read_text())
-        source_flags = _validated_scale_flags(source_result, source_status)
+        source_flags = _validated_scale_flags(
+            source_result, source_status, trusted=True
+        )
         if source_flags is None:
             return None
         try:
@@ -858,13 +845,24 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
     }
 
 
-def _verified_scale_evidence(paths: list[Path]) -> list[dict]:
+def _verified_scale_evidence(
+    paths: list[Path],
+    trusted_source_hashes: dict[str, str] | None = None,
+) -> list[dict]:
+    trusted_source_hashes = trusted_source_hashes or {}
     found = defaultdict(list)
     temporary_dirs = []
     scan_roots = []
     for raw in paths:
         path = raw.expanduser().resolve()
         if not path.exists():
+            continue
+        expected_source_sha = trusted_source_hashes.get(str(path))
+        observed_source_sha = (
+            sha256_file(path) if path.is_file()
+            else sha256_directory(path)
+        )
+        if expected_source_sha != observed_source_sha:
             continue
         if path.is_file() and tarfile.is_tarfile(path):
             temporary = tempfile.TemporaryDirectory()
@@ -903,7 +901,9 @@ def _verified_scale_evidence(paths: list[Path]) -> list[dict]:
         for candidate, payload in payloads:
             if not isinstance(payload, dict):
                 continue
-            flags = _validated_scale_flags(candidate, payload)
+            flags = _validated_scale_flags(
+                candidate, payload, trusted=True
+            )
             if flags is None:
                 continue
             scale = flags.get("validated_scale")
@@ -1133,6 +1133,7 @@ def build(
     legacy_analysis: Path,
     release_archives: list[Path],
     verified_artifacts: list[Path],
+    trusted_source_hashes: dict[str, str] | None = None,
     output_dir: Path,
     generation_command: str,
     replace_output=False,
@@ -1215,7 +1216,13 @@ def build(
         path for path in [legacy, *release_archives, *verified_artifacts]
         if path.exists()
     ]
-    small_rows = _verified_scale_evidence(scale_inputs)
+    normalized_trust = {
+        str(Path(path).expanduser().resolve()): digest.lower()
+        for path, digest in (trusted_source_hashes or {}).items()
+    }
+    small_rows = _verified_scale_evidence(
+        scale_inputs, normalized_trust
+    )
     staging = Path(tempfile.mkdtemp(
         dir=output.parent, prefix=f".{output.name}.tmp."
     ))
@@ -1251,6 +1258,7 @@ def build(
         provenance = {
             "schema": "evsp-dr-convergence-evidence-v1",
             "source_artifacts": _input_records(source_paths),
+            "trusted_source_sha256": normalized_trust,
             "factorial_commit": FACTORIAL_COMMIT,
             "historical_commit": HISTORICAL_COMMIT,
             "instance_sha256": INSTANCE_SHA256,
@@ -1341,6 +1349,12 @@ def parse_args(argv=None):
         "--verified-artifact", type=Path, action="append", default=[]
     )
     parser.add_argument(
+        "--trusted-source-sha256",
+        action="append",
+        default=[],
+        help="Out-of-band PATH=SHA256 for each release/verified source.",
+    )
+    parser.add_argument(
         "--out-dir", type=Path,
         default=Path("analysis/convergence_evidence_20260815"),
     )
@@ -1351,6 +1365,20 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = parse_args(argv)
+    trusted = {}
+    for value in args.trusted_source_sha256:
+        if "=" not in value:
+            raise SystemExit(
+                "--trusted-source-sha256 requires PATH=SHA256"
+            )
+        path, digest = value.split("=", 1)
+        if (
+            len(digest) != 64
+            or any(character not in "0123456789abcdef"
+                   for character in digest.lower())
+        ):
+            raise SystemExit("trusted source SHA-256 is malformed")
+        trusted[path] = digest.lower()
     command_argv = (
         sys.argv if argv is None
         else ["build_convergence_evidence.py", *argv]
@@ -1361,6 +1389,7 @@ def main(argv=None) -> int:
         legacy_analysis=args.legacy_analysis,
         release_archives=args.release_archive,
         verified_artifacts=args.verified_artifact,
+        trusted_source_hashes=trusted,
         output_dir=args.out_dir,
         generation_command=shlex.join(command_argv),
         replace_output=args.replace_output,

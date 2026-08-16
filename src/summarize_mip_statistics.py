@@ -134,6 +134,10 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
         raise ValueError(
             f"{job['cell_id']} proof flag/scope are inconsistent"
         )
+    if result.get("optimal_scope") not in {
+        "none", "fleet_only", "full_pool_lexicographic"
+    }:
+        raise ValueError(f"{job['cell_id']} has invalid two-stage scope")
 
 
 def _rename_noreplace(source: Path, destination: Path) -> None:
@@ -173,7 +177,12 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     manifest_jobs = {
         job["cell_id"]: job for job in manifest.get("jobs") or []
     }
-    if set(manifest_jobs) != set(approved_jobs):
+    if (
+        len(manifest.get("jobs") or []) != len(manifest_jobs)
+        or len(approved.get("jobs") or []) != len(approved_jobs)
+        or len(manifest_jobs) != len(approved_jobs)
+        or set(manifest_jobs) != set(approved_jobs)
+    ):
         raise ValueError("campaign job set differs from approved plan")
     for key in (
         "campaign", "mode", "checkout_identity", "worker_sha256",

@@ -130,7 +130,11 @@ class ConvergenceEvidenceTests(unittest.TestCase):
         (data / "flat.csv").write_bytes(self.tariff)
         campaigns = []
         for replicate in (1, 2):
-            campaign = repo / "results" / f"campaign{replicate}"
+            campaign = repo / "results" / (
+                "k40fx_20260814T140232Z_eb85ca0c"
+                if replicate == 1
+                else "k40fx_20260814T191933Z_eb85ca0c"
+            )
             campaign.mkdir(parents=True)
             prefix = "k40r1" if replicate == 1 else "k40r2"
             launch_rows = [

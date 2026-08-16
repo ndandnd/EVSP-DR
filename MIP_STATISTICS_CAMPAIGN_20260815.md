@@ -56,6 +56,8 @@ fi
 ROOT="$HOME/EVSP-DR-mip-statistics"
 RELEASES="$ROOT/releases"
 mkdir -p "$RELEASES"
+RELEASE_ARGS=()
+TRUST_ARGS=()
 
 # Populate these paths from reviewed release assets; never substitute a
 # similarly named pool. Verify published SHA-256 values before extraction.
@@ -74,6 +76,10 @@ do
     test -e "$checksum" || continue
     checksum_count=$((checksum_count + 1))
     (cd "$RELEASES/$archive" && sha256sum -c "$(basename "$checksum")")
+    asset="${checksum%.sha256}"
+    digest=$(awk '{print $1}' "$checksum")
+    RELEASE_ARGS+=(--release-archive "$asset")
+    TRUST_ARGS+=(--trusted-source-sha256 "$asset=$digest")
   done
   [[ "$checksum_count" -gt 0 ]] || {
     echo "MISSING reviewed *.tar.gz.sha256 for $archive" >&2
@@ -125,9 +131,8 @@ python -u src/build_convergence_evidence.py \
   --factorial-campaign "$ROOT/results/k40_factorial/k40fx_20260814T191933Z_eb85ca0c" \
   --historical "$ROOT/results/exact_big/Practice_Custom_DutyUnion_k40_r2_soc15_b10_g300_res0.0.json" \
   --legacy-analysis analysis/legacy_exact_20260805 \
-  --release-archive "$RELEASES/results-exact_big_mip_20260805T135556Z" \
-  --release-archive "$RELEASES/results-cg-bigtar-867334-final-20260814" \
-  --release-archive "$RELEASES/results-goal1-overnight-single-duty-20260803" \
+  "${RELEASE_ARGS[@]}" \
+  "${TRUST_ARGS[@]}" \
   --out-dir "$ROOT/review/convergence-evidence"
 ```
 
