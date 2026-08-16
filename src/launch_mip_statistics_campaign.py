@@ -366,6 +366,14 @@ def build_plan(
         sha256_file(WORKER_PATH) if WORKER_PATH.is_file() else None
     )
     runner_sha = sha256_file(RUNNER_PATH)
+    missing_scales = [
+        scale for scale in PILOT_BUDGET_HOURS if scale not in selected
+    ]
+    expected_secondary_cells = len(SECONDARY_SCALES) * len(SECONDARY_AGES)
+    missing_matrix_cells = (
+        expected_secondary_cells - len(jobs)
+        if mode == "secondary" else 0
+    )
     plan = {
         "schema": "evsp-dr-mip-statistics-approved-plan-v1",
         "campaign": campaign,
@@ -391,10 +399,13 @@ def build_plan(
         "runner": str(RUNNER_PATH),
         "runner_sha256": runner_sha,
         "jobs": jobs,
-        "missing_scales": [
-            scale for scale in PILOT_BUDGET_HOURS if scale not in selected
-        ],
-        "blocked": any(job["blocked_reasons"] for job in jobs),
+        "missing_scales": missing_scales,
+        "missing_matrix_cells": missing_matrix_cells,
+        "blocked": (
+            any(job["blocked_reasons"] for job in jobs)
+            or (mode == "pilot" and bool(missing_scales))
+            or (mode == "secondary" and missing_matrix_cells > 0)
+        ),
         "global_route_space_optimality_claimed": False,
     }
     return plan
