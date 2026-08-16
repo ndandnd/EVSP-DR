@@ -33,6 +33,19 @@ CAMPAIGN="$SOURCE_ROOT/src/results/k40_factorial_mip/k40fx_mip2h_20260816T035618
 PROBE_ROOT="$SOURCE_ROOT/src/results/publication_probe_20260816"
 REVIEW_ROOT="$RECOVERY_ROOT/review/k40fx_mip2h_20260816T035618Z"
 mkdir -p "$PROBE_ROOT" "$REVIEW_ROOT"
+verify_receipt() {
+  local artifact=$1 receipt=$2 expected_name digest name extra
+  expected_name=$(basename "$artifact")
+  read -r digest name extra < "$receipt"
+  [[ -z "${extra:-}" && "$name" == "$expected_name" ]] || {
+    echo "Receipt does not name exactly $expected_name" >&2
+    return 2
+  }
+  [[ "$(sha256sum "$artifact" | awk '{print $1}')" == "$digest" ]] || {
+    echo "Receipt digest mismatch for $artifact" >&2
+    return 2
+  }
+}
 
 [[ -n "${APPROVED_PORTABLE_BUNDLE_SHA256:-}" ]] || {
   echo "Set APPROVED_PORTABLE_BUNDLE_SHA256 to the reviewed src/portable_bundle.py hash." >&2
@@ -50,7 +63,7 @@ if [[ ! -f "$PROBE_REPORT" ]]; then
     --out "$PROBE_REPORT"
 fi
 python - "$PROBE_REPORT" "$APPROVED_PORTABLE_BUNDLE_SHA256" "$PROBE_ROOT" <<'PY'
-import json,sys
+import json,re,sys
 d=json.load(open(sys.argv[1]))
 expected = {
   "portable_protocol": "complete_valid",
@@ -120,9 +133,8 @@ python -u src/launch_mip_statistics_campaign.py \
   (set -C; cd "$(dirname "$INVENTORY_OUT")" && \
     sha256sum "$(basename "$INVENTORY_OUT")" > "$(basename "$INVENTORY_OUT").sha256")
 fi
-(cd "$(dirname "$INVENTORY_OUT")" && \
-  test -f "$(basename "$INVENTORY_OUT").sha256" && \
-  sha256sum -c "$(basename "$INVENTORY_OUT").sha256")
+test -f "$INVENTORY_OUT.sha256"
+verify_receipt "$INVENTORY_OUT" "$INVENTORY_OUT.sha256"
 
 # Dry run only: one k40 RAW cell and the identical pool plus GIRO columns/start.
 # The 1,800-second limit gives checkpoint marks 0, 5, 15, and 30 minutes.
@@ -147,11 +159,10 @@ python -u src/launch_mip_statistics_campaign.py \
   (set -C; cd "$(dirname "$PILOT_OUT")" && \
     sha256sum "$(basename "$PILOT_OUT")" > "$(basename "$PILOT_OUT").sha256")
 fi
-(cd "$(dirname "$PILOT_OUT")" && \
-  test -f "$(basename "$PILOT_OUT").sha256" && \
-  sha256sum -c "$(basename "$PILOT_OUT").sha256")
+test -f "$PILOT_OUT.sha256"
+verify_receipt "$PILOT_OUT" "$PILOT_OUT.sha256"
 python - "$PILOT_OUT" <<'PY'
-import json,sys
+import json,re,sys
 d=json.load(open(sys.argv[1]))
 jobs=d.get("jobs")
 if (
@@ -164,15 +175,25 @@ if (
     or {job.get("scale") for job in jobs} != {40}
     or any(job.get("time_limit_s") != 1800 for job in jobs)
     or any(job.get("partitioning") != "strict_exact_once" for job in jobs)
-    or any(job.get("blocked_reasons") for job in jobs)
+    or any(
+      type(job.get("blocked_reasons")) is not list
+      or job["blocked_reasons"] != []
+      for job in jobs
+    )
     or {
       job.get("arm"): job.get("augmentation_changes_column_set")
       for job in jobs
     } != {"RAW": False, "GIRO": True}
     or len({
-      (job.get("source") or {}).get("status_sha256")
-      for job in jobs
+      (job.get("source") or {}).get("status_sha256") for job in jobs
     }) != 1
+    or any(
+      not re.fullmatch(
+        r"[0-9a-f]{64}",
+        str((job.get("source") or {}).get("status_sha256") or ""),
+      )
+      for job in jobs
+    )
 ):
     raise SystemExit("two-cell pilot plan is blocked or malformed")
 PY

@@ -388,7 +388,10 @@ def inspect_bundle(
                     raise ValueError("result member is not an object")
                 if recoverable_validator is not None:
                     recoverable_validator(result_payload)
-            except Exception as exc:
+            except BaseException as exc:
+                if not isinstance(exc, Exception):
+                    os.close(bundle_fd)
+                    raise
                 corruption_errors.append(str(exc))
         missing_required = []
         for name in safe_required:
@@ -637,6 +640,14 @@ def publish_bundle(
         raise
     try:
         fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        try:
+            _hash_at(destination_fd, "completion.json")
+        except FileNotFoundError:
+            pass
+        else:
+            raise BundleExistsError(
+                f"completion marker already exists: {path}"
+            )
         if not reserved:
             inspection = inspect_bundle(path)
             if inspection["state"] == "complete_valid":
