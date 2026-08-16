@@ -34,15 +34,21 @@ PROBE_ROOT="$SOURCE_ROOT/src/results/publication_probe_20260816"
 REVIEW_ROOT="$RECOVERY_ROOT/review/k40fx_mip2h_20260816T035618Z"
 mkdir -p "$PROBE_ROOT" "$REVIEW_ROOT"
 
-if [[ ! -f "$REVIEW_ROOT/filesystem-capability.json" ]]; then
+[[ -n "${APPROVED_PORTABLE_BUNDLE_SHA256:-}" ]] || {
+  echo "Set APPROVED_PORTABLE_BUNDLE_SHA256 to the reviewed src/portable_bundle.py hash." >&2
+  exit 2
+}
+PROBE_REPORT="$REVIEW_ROOT/filesystem-capability.${APPROVED_PORTABLE_BUNDLE_SHA256}.json"
+if [[ ! -f "$PROBE_REPORT" ]]; then
   python -u src/probe_portable_publication.py \
     --directory "$PROBE_ROOT" \
-    --out "$REVIEW_ROOT/filesystem-capability.json"
+    --out "$PROBE_REPORT"
 fi
-python - "$REVIEW_ROOT/filesystem-capability.json" <<'PY'
+python - "$PROBE_REPORT" "$APPROVED_PORTABLE_BUNDLE_SHA256" <<'PY'
 import json,sys
 d=json.load(open(sys.argv[1]))
 assert d["portable_protocol"] == "complete_valid"
+assert d["implementation_sha256"] == sys.argv[2]
 PY
 
 [[ -n "${APPROVED_SOURCE_CAMPAIGN_SHA256:-}" ]] || {
@@ -83,6 +89,8 @@ python -u src/recover_k40_factorial_mip_campaign.py \
   --apply \
   --approved-plan-sha256 "$APPROVED_RECOVERY_PLAN_SHA256"
 
+INVENTORY_OUT="$REVIEW_ROOT/inventory.${APPROVED_RECOVERY_PLAN_SHA256}.json"
+if [[ ! -f "$INVENTORY_OUT" ]]; then
 python -u src/launch_mip_statistics_campaign.py \
   --mode inventory \
   --root "repool_small=$SOURCE_ROOT/src/results/repool_small" \
@@ -91,10 +99,18 @@ python -u src/launch_mip_statistics_campaign.py \
   --root "bigtar_snapshots=$SOURCE_ROOT/src/results/bigtar_snapshots" \
   --root "fresh_preparation=$SOURCE_ROOT/src/results/mip_statistics_prep" \
   --data-root "$SOURCE_ROOT/data" \
-  --inventory-out "$REVIEW_ROOT/inventory.json"
+  --inventory-out "$INVENTORY_OUT"
+fi
+(cd "$(dirname "$INVENTORY_OUT")" && \
+  test -f "$(basename "$INVENTORY_OUT").sha256" || \
+  sha256sum "$(basename "$INVENTORY_OUT")" > "$(basename "$INVENTORY_OUT").sha256")
+(cd "$(dirname "$INVENTORY_OUT")" && \
+  sha256sum -c "$(basename "$INVENTORY_OUT").sha256")
 
 # Dry run only: one k40 RAW cell and the identical pool plus GIRO columns/start.
 # The 1,800-second limit gives checkpoint marks 0, 5, 15, and 30 minutes.
+PILOT_OUT="$REVIEW_ROOT/two-cell-pilot-plan.${APPROVED_RECOVERY_PLAN_SHA256}.json"
+if [[ ! -f "$PILOT_OUT" ]]; then
 python -u src/launch_mip_statistics_campaign.py \
   --mode two-cell \
   --campaign k40-publication-two-cell-review \
@@ -106,7 +122,13 @@ python -u src/launch_mip_statistics_campaign.py \
   --data-root "$SOURCE_ROOT/data" \
   --giro-start "40=$CAMPAIGN/input/common/validated_start.json" \
   --python "$HOME/evsp_env/bin/python" \
-  --plan-out "$REVIEW_ROOT/two-cell-pilot-plan.json"
+  --plan-out "$PILOT_OUT"
+fi
+(cd "$(dirname "$PILOT_OUT")" && \
+  test -f "$(basename "$PILOT_OUT").sha256" || \
+  sha256sum "$(basename "$PILOT_OUT")" > "$(basename "$PILOT_OUT").sha256")
+(cd "$(dirname "$PILOT_OUT")" && \
+  sha256sum -c "$(basename "$PILOT_OUT").sha256")
 ```
 
 Afterward, run the read-only strict check

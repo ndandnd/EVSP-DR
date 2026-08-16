@@ -6,12 +6,17 @@ import collections
 import hashlib
 import json
 import math
+import re
 from pathlib import Path
 
 from config import BUS_COST_KX
 from durable_io import read_jsonl_records
-from portable_bundle import publish_bundle
-from run_exact_pool_mip import validate_final_selected_routes
+from portable_bundle import completion_bytes, publish_bundle
+from run_exact_pool_mip import (
+    load_pool,
+    merge_validated_partition_start,
+    validate_final_selected_routes,
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -37,6 +42,11 @@ def validate_scientific_result(
         raise ValueError("MIP result status hash mismatch")
     if result.get("source_journal_sha256") != spec["staged_journal_sha256"]:
         raise ValueError("MIP result journal hash mismatch")
+    relative = Path(spec["csv"])
+    instance = Path(spec["staged_instance"]).resolve()
+    data_root = instance
+    for _part in relative.parts:
+        data_root = data_root.parent
     provenance = source_status.get("provenance")
     if (
         not isinstance(provenance, dict)
@@ -119,18 +129,61 @@ def validate_scientific_result(
             or any(
                 not isinstance(column, dict)
                 or type(column.get("index")) is not int
-                or not isinstance(column.get("sha256"), str)
-                or len(column["sha256"]) != 64
+                or not re.fullmatch(
+                    r"[0-9a-f]{64}", str(column.get("sha256") or "")
+                )
                 for column in columns
             )
+            or len({column["index"] for column in columns}) != 40
+            or len({column["sha256"] for column in columns}) != 40
         ):
             raise ValueError("actual start columns are malformed")
     elif (
         not isinstance(hashes, list)
         or len(hashes) != 40
-        or any(not isinstance(value, str) or len(value) != 64 for value in hashes)
+        or any(
+            not re.fullmatch(r"[0-9a-f]{64}", str(value or ""))
+            for value in hashes
+        )
+        or len(set(hashes)) != 40
     ):
         raise ValueError("actual start column hashes are missing")
+    loaded_status, pool_routes, loaded_trips = load_pool(
+        Path(spec["staged_result"])
+    )
+    if loaded_status != source_status:
+        raise ValueError("loaded source status differs from staged status")
+    merged_routes, start_indices, start_detail = (
+        merge_validated_partition_start(
+            pool_routes,
+            loaded_trips,
+            Path(spec["staged_start"]),
+            spec["prices_csv"],
+            source_status,
+            data_dir=data_root,
+        )
+    )
+    expected_hashes = start_detail.get("actual_start_column_hashes")
+    if expected_hashes is None:
+        expected_hashes = [
+            hashlib.sha256(json.dumps(
+                {
+                    "trips": merged_routes[index]["trips"],
+                    "route_nodes": merged_routes[index]["route_nodes"],
+                    "charging_stops": merged_routes[index]["charging_stops"],
+                    "cost": merged_routes[index]["cost"],
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode()).hexdigest()
+            for index in start_indices
+        ]
+    observed_hashes = (
+        [column["sha256"] for column in columns]
+        if isinstance(columns, list) else hashes
+    )
+    if observed_hashes != expected_hashes:
+        raise ValueError("actual start column hashes differ from replay")
     selected = result.get("selected_routes")
     buses = result.get("buses")
     if not isinstance(selected, list) or type(buses) is not int:
@@ -151,6 +204,19 @@ def validate_scientific_result(
     ):
         raise ValueError("result is not a 40-route exact scheduled partition")
     full_objective = 0.0
+    merged_identities = {
+        hashlib.sha256(json.dumps(
+            {
+                "trips": route.get("trips"),
+                "route_nodes": route.get("route_nodes", route.get("route", [])),
+                "charging_stops": route.get("charging_stops", {}),
+                "cost": float(route.get("cost")),
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()).hexdigest()
+        for route in merged_routes
+    }
     for route in selected:
         key = frozenset(route.get("trips") or [])
         cost = float(route.get("cost"))
@@ -163,6 +229,22 @@ def validate_scientific_result(
             for candidate in pool_costs[key]
         ):
             raise ValueError("selected route cost differs from journal")
+        identity = hashlib.sha256(json.dumps(
+            {
+                "trips": route.get("trips"),
+                "route_nodes": route.get(
+                    "route_nodes", route.get("route", [])
+                ),
+                "charging_stops": route.get("charging_stops", {}),
+                "cost": cost,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode()).hexdigest()
+        if identity not in merged_identities:
+            raise ValueError(
+                "selected route identity differs from reconstructed pool"
+            )
         full_objective += cost
     if result.get("fleet_proven") is not True:
         raise ValueError("40-bus fleet is not proven over the finite pool")
@@ -237,11 +319,6 @@ def validate_scientific_result(
         or float(result.get("mip_gap")) != 0.0
     ):
         raise ValueError("MIP result is not solver-optimal")
-    relative = Path(spec["csv"])
-    instance = Path(spec["staged_instance"]).resolve()
-    data_root = instance
-    for _part in relative.parts:
-        data_root = data_root.parent
     validate_final_selected_routes(
         source_status,
         trip_ids,
@@ -288,19 +365,38 @@ def publish_result_bundle(
     allow_existing_incomplete: bool,
 ) -> dict:
     validate_scientific_result(result, spec, source_status)
-    encoded = (json.dumps(result, indent=2, sort_keys=True) + "\n").encode()
+    members, metadata, _completion_sha = result_bundle_material(
+        result=result,
+        spec=spec,
+        recovery=recovery,
+    )
     return publish_bundle(
         destination,
-        members={"result.json": encoded},
-        metadata={
-            "kind": "k40-factorial-mip-result",
-            "job_spec_sha256": recovery["job_spec_sha256"],
-            "worker_sha256": recovery["worker_sha256"],
-            "runner_sha256": spec["runner_sha256"],
-            "original_job_id": recovery["original_job_id"],
-            "raw_sha256": recovery["raw_sha256"],
-            "recovery_commit": recovery["recovery_commit"],
-            "recovery_method": recovery["recovery_method"],
-        },
+        members=members,
+        metadata=metadata,
         allow_existing_incomplete=allow_existing_incomplete,
     )
+
+
+def result_bundle_material(
+    *,
+    result: dict,
+    spec: dict,
+    recovery: dict,
+) -> tuple[dict[str, bytes], dict, str]:
+    encoded = (json.dumps(result, indent=2, sort_keys=True) + "\n").encode()
+    members = {"result.json": encoded}
+    metadata = {
+        "kind": "k40-factorial-mip-result",
+        "job_spec_sha256": recovery["job_spec_sha256"],
+        "worker_sha256": recovery["worker_sha256"],
+        "runner_sha256": spec["runner_sha256"],
+        "original_job_id": recovery["original_job_id"],
+        "raw_sha256": recovery["raw_sha256"],
+        "recovery_commit": recovery["recovery_commit"],
+        "recovery_method": recovery["recovery_method"],
+    }
+    completion_sha = hashlib.sha256(
+        completion_bytes(members, metadata)
+    ).hexdigest()
+    return members, metadata, completion_sha

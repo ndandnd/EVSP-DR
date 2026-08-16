@@ -1,5 +1,6 @@
 import errno
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -212,6 +213,10 @@ class PortableBundleTests(unittest.TestCase):
             (destination / "completion.json").symlink_to(outside)
             state = inspect_bundle(destination)
             self.assertEqual(state["state"], "invalid")
+            state = inspect_bundle(
+                destination, result_member="../outside.json"
+            )
+            self.assertEqual(state["state"], "invalid")
 
     def test_concurrent_member_creation_cannot_be_overwritten(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -219,9 +224,15 @@ class PortableBundleTests(unittest.TestCase):
             original_link = __import__("os").link
 
             def race_link(source, destination, **kwargs):
-                destination = Path(destination)
-                if destination.name == "result.json" and not destination.exists():
-                    destination.write_text('{"racer":true}\n')
+                if destination == "result.json":
+                    descriptor = os.open(
+                        destination,
+                        os.O_WRONLY | os.O_CREAT | os.O_EXCL,
+                        0o600,
+                        dir_fd=kwargs["dst_dir_fd"],
+                    )
+                    with os.fdopen(descriptor, "w") as handle:
+                        handle.write('{"racer":true}\n')
                 return original_link(source, destination, **kwargs)
 
             with (

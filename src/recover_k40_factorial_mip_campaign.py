@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -13,6 +15,7 @@ from durable_io import flush_and_fsync
 from k40_factorial_mip_result import (
     enrich_result,
     publish_result_bundle,
+    result_bundle_material,
     sha256_file,
     validate_scientific_result,
 )
@@ -96,18 +99,32 @@ def _verify_file(path_value, expected, label) -> Path:
 def _preserved_inventory(paths: list[Path]) -> list[dict]:
     inventory = []
     for path in paths:
+        if path.is_symlink():
+            raise ValueError(f"preserved source is symlinked: {path}")
         if path.is_file():
             inventory.append({
                 "path": str(path),
                 "kind": "file",
                 "sha256": sha256_file(path),
+                "size": path.stat().st_size,
             })
         elif path.is_dir():
-            members = {
-                str(member.relative_to(path)): sha256_file(member)
-                for member in sorted(path.rglob("*"))
-                if member.is_file() and not member.is_symlink()
-            }
+            members = {}
+            for member in sorted(path.rglob("*")):
+                if member.is_symlink():
+                    raise ValueError(
+                        f"preserved staging member is symlinked: {member}"
+                    )
+                if member.is_file():
+                    members[str(member.relative_to(path))] = {
+                        "sha256": sha256_file(member),
+                        "size": member.stat().st_size,
+                        "type": "file",
+                    }
+                elif member.is_dir():
+                    members[str(member.relative_to(path))] = {
+                        "type": "directory"
+                    }
             inventory.append({
                 "path": str(path),
                 "kind": "directory",
@@ -217,6 +234,28 @@ def _prepare_job(
             "recovery": recovery,
             "preserved_sources": preserved,
         }
+        _members, expected_metadata, expected_completion_sha = (
+            result_bundle_material(
+                result=result,
+                spec=spec,
+                recovery=recovery,
+            )
+        )
+        prepared["expected_completion_metadata"] = expected_metadata
+        prepared["expected_completion_sha256"] = expected_completion_sha
+        existing_result = output / "result.json"
+        if (
+            os.path.lexists(existing_result)
+            and (
+                not existing_result.is_file()
+                or existing_result.is_symlink()
+                or sha256_file(existing_result)
+                != prepared["result_sha256"]
+            )
+        ):
+            raise ValueError(
+                "existing partial result differs from approved recovery result"
+            )
         publication_state = state["state"]
         if publication_state == "complete_valid":
             committed = _load_object(output / "result.json")
@@ -226,14 +265,13 @@ def _prepare_job(
                 )
             completion = state.get("completion") or {}
             metadata = completion.get("metadata") or {}
+            committed_members = completion.get("members") or {}
             attestation = committed.get("completion_attestation") or {}
             if (
-                metadata.get("job_spec_sha256") != job["spec_sha256"]
-                or metadata.get("worker_sha256")
-                != manifest["worker_sha256"]
-                or metadata.get("runner_sha256") != spec["runner_sha256"]
-                or metadata.get("original_job_id")
-                != str(job.get("job_id") or "")
+                set(committed_members) != {"result.json"}
+                or metadata != expected_metadata
+                or state.get("completion_sha256")
+                != expected_completion_sha
                 or attestation.get("job_spec_sha256")
                 != job["spec_sha256"]
                 or attestation.get("raw_sha256") != raw_sha
@@ -243,7 +281,15 @@ def _prepare_job(
                 )
     except (OSError, ValueError, KeyError, TypeError) as exc:
         errors.append(str(exc))
-        publication_state = state["state"]
+        publication_state = (
+            "invalid"
+            if (
+                state["state"] == "complete_valid"
+                or os.path.lexists(output / "result.json")
+            )
+            else state["state"]
+        )
+        prepared = None
     return ({
         "label": job.get("label"),
         "job_id": str(job.get("job_id") or ""),
@@ -255,6 +301,9 @@ def _prepare_job(
         "raw_sha256": raw_sha,
         "recovered_result_sha256": (
             prepared["result_sha256"] if prepared else None
+        ),
+        "expected_completion_sha256": (
+            prepared["expected_completion_sha256"] if prepared else None
         ),
         "preserved_sources": preserved,
         "verified_hashes": verified_hashes,
@@ -298,6 +347,29 @@ def build_recovery_plan(
         output = Path(str(job.get("output") or "")).expanduser().resolve()
         if root not in output.parents:
             raise ValueError(f"job output escapes campaign root: {output}")
+        match = re.fullmatch(r"(R[12])_(CA|CS)_m(360|720|1440)", job["label"])
+        if match is None:
+            raise ValueError(f"invalid cell label: {job['label']}")
+        replicate, treatment, mark = (
+            match.group(1), match.group(2), int(match.group(3))
+        )
+        spec = job.get("spec")
+        if (
+            not isinstance(spec, dict)
+            or job.get("replicate") != replicate
+            or job.get("treatment") != treatment
+            or int(job.get("snapshot_mark_minutes", -1)) != mark
+            or spec.get("label") != job["label"]
+            or spec.get("replicate") != replicate
+            or spec.get("treatment") != treatment
+            or int(spec.get("snapshot_mark_minutes", -1)) != mark
+            or int(spec.get("time_limit_s", -1)) != 7200
+            or int(spec.get("threads", -1)) != 8
+            or Path(str(spec.get("output") or "")).resolve() != output
+            or output.parent != root / "outputs"
+            or output.name != f"{job['label']}.mip.bundle"
+        ):
+            raise ValueError(f"cell manifest/spec identity mismatch: {job['label']}")
     recovery_commit = _git_commit(require_clean=require_clean)
     rows = []
     prepared = {}
@@ -354,7 +426,8 @@ def _recovery_intent(plan: dict) -> dict:
             key: row.get(key) for key in (
                 "label", "job_id", "destination", "recovery_method",
                 "candidate_path", "raw_sha256", "recovered_result_sha256",
-                "preserved_sources", "verified_hashes",
+                "expected_completion_sha256", "preserved_sources",
+                "verified_hashes",
             )
         } for row in plan["jobs"]],
         "reruns_gurobi": False,
@@ -390,17 +463,32 @@ def apply_recovery(
     existing_record = root / "recovery" / f"{approved_plan_sha256}.json"
     if existing_record.is_file():
         record = _load_object(existing_record)
-        expected_receipts = [{
-            "label": row["label"],
-            "destination": row["destination"],
-            "result_sha256": row["recovered_result_sha256"],
-            "completion_sha256": inspect_bundle(
-                Path(row["destination"]),
-                required_members=("result.json",),
-            ).get("completion_sha256"),
-        } for row in plan["jobs"]]
+        expected_receipts = []
+        for row in plan["jobs"]:
+            destination = Path(row["destination"])
+            actual_result = sha256_file(destination / "result.json")
+            actual_completion = sha256_file(
+                destination / "completion.json"
+            )
+            if (
+                actual_result != row["recovered_result_sha256"]
+                or actual_completion
+                != row["expected_completion_sha256"]
+            ):
+                raise ValueError("completed bundle differs from recovery intent")
+            expected_receipts.append({
+                "label": row["label"],
+                "destination": row["destination"],
+                "result_sha256": actual_result,
+                "completion_sha256": actual_completion,
+            })
         if (
-            record.get("schema")
+            set(record) != {
+                "schema", "recovery_plan_sha256", "recovery_commit",
+                "recovered", "skipped_complete",
+                "raw_and_staging_preserved", "reran_gurobi", "receipts",
+            }
+            or record.get("schema")
             != "evsp-dr-k40-factorial-mip-recovery-record-v1"
             or record.get("recovery_commit") != plan["recovery_commit"]
             or record.get("recovery_plan_sha256")
@@ -408,6 +496,12 @@ def apply_recovery(
             or record.get("raw_and_staging_preserved") is not True
             or record.get("reran_gurobi") is not False
             or record.get("receipts") != expected_receipts
+            or set(record.get("recovered") or [])
+            & set(record.get("skipped_complete") or [])
+            or (
+                set(record.get("recovered") or [])
+                | set(record.get("skipped_complete") or [])
+            ) != {row["label"] for row in plan["jobs"]}
             or any(
                 inspect_bundle(
                     Path(row["destination"]),
@@ -445,6 +539,15 @@ def apply_recovery(
             recovery=payload["recovery"],
             allow_existing_incomplete=True,
         )
+        if (
+            sha256_file(Path(row["destination"]) / "result.json")
+            != row["recovered_result_sha256"]
+            or sha256_file(Path(row["destination"]) / "completion.json")
+            != row["expected_completion_sha256"]
+        ):
+            raise ValueError(
+                f"{row['label']} published bytes differ from recovery intent"
+            )
         after = _preserved_inventory([
             Path(item["path"]) for item in before
         ])
@@ -464,11 +567,12 @@ def apply_recovery(
         "receipts": [{
             "label": row["label"],
             "destination": row["destination"],
-            "result_sha256": row["recovered_result_sha256"],
-            "completion_sha256": inspect_bundle(
-                Path(row["destination"]),
-                required_members=("result.json",),
-            ).get("completion_sha256"),
+            "result_sha256": sha256_file(
+                Path(row["destination"]) / "result.json"
+            ),
+            "completion_sha256": sha256_file(
+                Path(row["destination"]) / "completion.json"
+            ),
         } for row in plan["jobs"]],
     }
     record_path = root / "recovery" / f"{observed_sha}.json"

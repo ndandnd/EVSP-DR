@@ -18,7 +18,8 @@ def main(argv=None) -> int:
     result = capability_probe(args.directory)
     encoded = json.dumps(result, indent=2) + "\n"
     if args.out:
-        args.out.parent.mkdir(parents=True, exist_ok=True)
+        if not args.out.parent.is_dir():
+            raise SystemExit("probe --out parent must already exist")
         atomic_write_new_file(args.out, encoded.encode())
     print(encoded, end="")
     return 0 if result["ready_for_recovery_probe_only"] else 2

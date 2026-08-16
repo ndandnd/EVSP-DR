@@ -17,6 +17,30 @@ from portable_bundle import inspect_bundle  # noqa: E402
 
 class K40RecoveryTests(unittest.TestCase):
     @staticmethod
+    def _fake_merge(_routes, trips, *_args, **_kwargs):
+        variable = 1746.666836618
+        merged = [{
+            "trips": [trip],
+            "cost": 100000.0 + variable / 40.0,
+            "route_nodes": ["PARX_0", trip, "PARX_0"],
+            "charging_stops": {},
+        } for trip in trips]
+        return merged, list(range(40)), {
+            "actual_start_column_hashes": [
+                f"{trip:064x}" for trip in range(40)
+            ]
+        }
+
+    def setUp(self):
+        self.enterContext(patch(
+            "k40_factorial_mip_result.merge_validated_partition_start",
+            side_effect=self._fake_merge,
+        ))
+        self.enterContext(patch(
+            "k40_factorial_mip_result.validate_final_selected_routes"
+        ))
+
+    @staticmethod
     def _source_sha(campaign):
         return hashlib.sha256(
             (campaign / "campaign.json").read_bytes()
@@ -67,6 +91,8 @@ class K40RecoveryTests(unittest.TestCase):
                 "csv": "instance.csv",
                 "prices_csv": "prices.csv",
                 "trip_ids": list(range(40)),
+                "columns": 40,
+                "columns_journal": str(journal),
                 "g_kwh": 300.0,
                 "charge_kw": 300.0,
                 "min_soc_frac": 0.0,
@@ -118,6 +144,7 @@ class K40RecoveryTests(unittest.TestCase):
                 "expected_commit": recovery.SOURCE_CAMPAIGN_COMMIT,
                 "csv": "instance.csv",
                 "prices_csv": "prices.csv",
+                "output": str(output),
             }
             spec_path = cell / "job.json"
             spec_raw = (json.dumps(spec, indent=2) + "\n").encode()
@@ -182,6 +209,9 @@ class K40RecoveryTests(unittest.TestCase):
             )
             jobs.append({
                 "label": label,
+                "replicate": replicate,
+                "treatment": treatment,
+                "snapshot_mark_minutes": mark,
                 "job_id": job_id,
                 "output": str(output),
                 "spec": spec,

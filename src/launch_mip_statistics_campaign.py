@@ -938,7 +938,7 @@ def main(argv=None) -> int:
         _write_new_atomic(args.plan_out, plan_raw)
     if not args.submit:
         print("[dry-run] no Slurm jobs submitted")
-        return 0
+        return 2 if args.mode == "two-cell" and plan["blocked"] else 0
     if args.approved_plan_sha256 != plan_sha:
         raise SystemExit("current plan differs from approved SHA-256")
     _stage_and_submit(plan, plan_sha)

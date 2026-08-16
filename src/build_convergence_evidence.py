@@ -21,7 +21,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from durable_io import read_jsonl_records
-from portable_bundle import publish_bundle
+from portable_bundle import inspect_bundle, publish_bundle
 from run_exact_pool_mip import resolve_pool_journal
 
 
@@ -903,6 +903,16 @@ def _verified_scale_evidence(
         for candidate, payload in payloads:
             if not isinstance(payload, dict):
                 continue
+            if "partitioning" in payload:
+                bundle = inspect_bundle(
+                    candidate.parent,
+                    required_members=(candidate.name,),
+                )
+                if (
+                    candidate.name != "result.json"
+                    or bundle["state"] != "complete_valid"
+                ):
+                    continue
             flags = _validated_scale_flags(
                 candidate, payload, trusted=True
             )

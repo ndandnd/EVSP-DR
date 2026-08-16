@@ -100,9 +100,17 @@ def main(argv=None) -> int:
         source_campaign_sha256=args.source_campaign_sha256,
         query_slurm=not args.no_slurm,
     )
+    allowed = (
+        {"complete_valid_output"}
+        if args.require_complete
+        else {"complete_valid_output", "recoverable_validated_raw"}
+    )
+    exit_code = 0 if all(
+        row["outcome"] in allowed for row in rows
+    ) else 2
     if args.format == "json":
         print(json.dumps(rows, indent=2))
-        return 0
+        return exit_code
     fields = (
         "label", "job_id", "outcome", "publication_state",
         "recoverable", "recovery_method", "candidate_path",
@@ -115,12 +123,7 @@ def main(argv=None) -> int:
             else ("" if row.get(field) is None else str(row[field]))
             for field in fields
         ))
-    allowed = (
-        {"complete_valid_output"}
-        if args.require_complete
-        else {"complete_valid_output", "recoverable_validated_raw"}
-    )
-    return 0 if all(row["outcome"] in allowed for row in rows) else 2
+    return exit_code
 
 
 if __name__ == "__main__":
