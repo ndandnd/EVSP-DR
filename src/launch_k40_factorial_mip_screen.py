@@ -11,6 +11,7 @@ import math
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from durable_io import flush_and_fsync
@@ -25,7 +26,6 @@ from launch_exact_cg_profile_campaign import (
     reviewed_checkout_identity,
     sha256_bytes,
     sha256_file,
-    validated_python,
 )
 from run_exact_pool_mip import resolve_pool_journal
 
@@ -55,7 +55,6 @@ def _mip_identity() -> dict:
     ).returncode != 0:
         raise SystemExit("reviewed MIP core is not an ancestor")
     core_paths = (
-        "src/run_exact_pool_mip.py",
         "src/master_lp_scipy.py",
         "src/config.py",
         "src/audit_giro_known_columns.py",
@@ -63,30 +62,36 @@ def _mip_identity() -> dict:
         "src/durable_io.py",
     )
     if _git("diff", "--quiet", MIP_CORE_COMMIT, "--", *core_paths).returncode:
-        raise SystemExit("MIP core differs from reviewed commit")
+        raise SystemExit("unmodified MIP dependencies differ from reviewed commit")
     identity["mip_core_commit"] = MIP_CORE_COMMIT
+    identity["run_exact_pool_mip_sha256"] = sha256_file(
+        REPO_ROOT / "src/run_exact_pool_mip.py"
+    )
     return identity
 
 
 def _mip_python(path: Path) -> dict:
-    identity = validated_python(path)
+    executable = path.expanduser().resolve()
     result = subprocess.run(
         [
-            identity["python_executable"], "-c",
-            "import gurobipy as gp; "
-            "print('.'.join(map(str, gp.gurobi.version())))",
+            str(executable),
+            str(REPO_ROOT / "src/exact_mip_environment.py"),
         ],
         text=True,
         capture_output=True,
         check=False,
     )
     if result.returncode != 0:
-        raise SystemExit("MIP Python environment lacks gurobipy")
-    identity["gurobi_version"] = result.stdout.strip()
-    encoded = (
-        identity["identity_sha256"] + "|" + identity["gurobi_version"]
-    ).encode()
-    identity["mip_identity_sha256"] = hashlib.sha256(encoded).hexdigest()
+        raise SystemExit(
+            "MIP Python environment validation failed: "
+            + (result.stderr.strip() or result.stdout.strip())
+        )
+    try:
+        identity = json.loads(result.stdout)
+    except ValueError as exc:
+        raise SystemExit("MIP environment identity is not JSON") from exc
+    if identity.get("python_executable") != str(executable):
+        raise SystemExit("MIP environment reported a different executable")
     return identity
 
 
@@ -137,7 +142,7 @@ def _validate_start(
     routes = payload.get("routes")
     if not isinstance(routes, list) or not routes:
         raise SystemExit("validated start has no routes")
-    if payload.get("infeasible") not in (None, []):
+    if "infeasible" not in payload or payload.get("infeasible") != []:
         raise SystemExit("validated start contains infeasible/partial routes")
     if payload.get("source") != "rerealized":
         raise SystemExit("validated start is not marked re-realized")
@@ -185,7 +190,9 @@ def _validate_start(
             or int(attestation.get("trip_count", -1)) != len(trip_ids)
         ):
             raise SystemExit("validated start attestation mismatch")
-        for key in ("snapshot_sha256", "journal_sha256"):
+        for key in (
+            "snapshot_sha256", "journal_sha256", "runner_sha256"
+        ):
             value = str(attestation.get(key) or "")
             if (
                 len(value) != 64
@@ -204,10 +211,13 @@ def _validate_start(
     }
 
 
-def _cell_name(rep: str, arm: str, mark: int, budget: int) -> str:
+def _cell_name(
+    campaign: str, rep: str, arm: str, mark: int, budget: int
+) -> str:
     age = {360: "06", 720: "12", 1440: "24"}[mark]
     budget_tag = "M30" if budget == 1800 else "H02"
-    name = f"K{rep[-1]}{arm}{age}{budget_tag}"
+    nonce = hashlib.sha256(campaign.encode()).hexdigest()[:3]
+    name = f"K{nonce}{rep[-1]}{arm}{age}{budget_tag}"
     if len(name) > 15:
         raise SystemExit(f"MIP job name exceeds 15 characters: {name}")
     return name
@@ -248,6 +258,51 @@ def _canonical_plan(payload: dict) -> bytes:
     ).encode()
 
 
+def _approval_payload(manifest: dict) -> dict:
+    return {
+        **{
+            key: value for key, value in manifest.items()
+            if key not in {
+                "created_at", "submitted", "jobs", "approval_sha256"
+            }
+        },
+        "jobs": [{
+            key: value for key, value in plan.items()
+            if key not in {
+                "staged_result_bytes", "spec_bytes", "job_id",
+                "submission_state", "submission_error",
+                "reconciled_slurm_state",
+                "pre_submission_observed_git_commit",
+            }
+        } for plan in manifest["jobs"]],
+    }
+
+
+def _write_new_atomic(path: Path, payload: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=path.parent, prefix=f".{path.name}.tmp.", delete=False
+        ) as handle:
+            temporary = Path(handle.name)
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        try:
+            os.link(temporary, path)
+        except FileExistsError as exc:
+            raise SystemExit(f"refusing to overwrite plan: {path}") from exc
+        parent = os.open(path.parent, os.O_RDONLY)
+        try:
+            os.fsync(parent)
+        finally:
+            os.close(parent)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
+
+
 def launch(args) -> dict:
     identity = _mip_identity()
     python_identity = _mip_python(args.python)
@@ -258,6 +313,13 @@ def launch(args) -> dict:
         rep: validate_campaign(path, replicate=rep)
         for rep, path in replicates.items()
     }
+    if (
+        validated["R1"]["trip_set_sha256"]
+        != validated["R2"]["trip_set_sha256"]
+    ):
+        raise SystemExit("replicate trip sets differ")
+    if set(validated["R1"]["job_ids"]) & set(validated["R2"]["job_ids"]):
+        raise SystemExit("replicate Slurm job identities overlap")
     first_rows = validated["R1"]["rows"]
     trip_ids = json.loads(
         Path(first_rows[0]["status_path"]).read_text()
@@ -266,6 +328,8 @@ def launch(args) -> dict:
     if (
         start["attestation"].get("reviewed_checkout_commit")
         != identity["expected_commit"]
+        or start["attestation"].get("runner_sha256")
+        != identity["run_exact_pool_mip_sha256"]
     ):
         raise SystemExit(
             "validated start was prepared by a different checkout commit"
@@ -308,12 +372,29 @@ def launch(args) -> dict:
         )
         source_result = Path(row["status_path"])
         status_raw = source_result.read_bytes()
+        if sha256_bytes(status_raw) != row["status_sha256"]:
+            raise SystemExit(
+                f"{rep}/{arm}/m{mark}: validated snapshot changed"
+            )
         status = json.loads(status_raw)
         if status.get("trip_ids") != trip_ids:
             raise SystemExit(
                 f"{rep}/{arm}/m{mark}: trip set differs across cells"
             )
         source_journal = resolve_pool_journal(source_result, status).resolve()
+        if (
+            str(source_journal) != row["journal_path"]
+            or sha256_file(source_journal) != row["journal_sha256"]
+            or status.get("master_sense") != "cover"
+            or status.get("initial_pool") != (
+                "artificial" if arm == "CA" else "singletons"
+            )
+            or status.get("snapshot_mark_minutes") != mark
+            or status.get("stop_reason") != f"snapshot_m{mark}"
+        ):
+            raise SystemExit(
+                f"{rep}/{arm}/m{mark}: validated artifact identity changed"
+            )
         csv_relative = _safe_relative(status["csv"], "csv")
         prices_relative = _safe_relative(status["prices_csv"], "prices")
         source_instance = _find_input(source_result, csv_relative)
@@ -360,10 +441,11 @@ def launch(args) -> dict:
             "mip_gap": MIP_GAP,
             "expected_commit": identity["expected_commit"],
             "mip_core_commit": MIP_CORE_COMMIT,
+            "runner_sha256": identity["run_exact_pool_mip_sha256"],
         }
         spec_raw = (json.dumps(spec, indent=2) + "\n").encode()
         spec_path = cell_root / "job.json"
-        job_name = _cell_name(rep, arm, mark, budget)
+        job_name = _cell_name(campaign, rep, arm, mark, budget)
         comment = (
             f"EVSPK40MIP:{campaign}:{label}:{hashes['result'][:12]}"
         )
@@ -375,7 +457,7 @@ def launch(args) -> dict:
             + ",EVSP_EXPECTED_COMMIT=" + identity["expected_commit"]
             + ",EVSP_MIP_PYTHON=" + python_identity["python_executable"]
             + ",EVSP_MIP_ENV_SHA256="
-            + python_identity["mip_identity_sha256"]
+            + python_identity["identity_sha256"]
             + ",EVSP_MIP_EXPECTED_WORKER_SHA256=" + worker_sha
         )
         command = [
@@ -432,18 +514,7 @@ def launch(args) -> dict:
         "budget_seconds": budget,
         "jobs": plans,
     }
-    approved = {
-        **{key: value for key, value in manifest.items()
-           if key not in {"created_at", "submitted", "jobs"}},
-        "jobs": [{
-            key: value for key, value in plan.items()
-            if key not in {
-                "staged_result_bytes", "spec_bytes",
-                "job_id", "submission_state", "submission_error",
-                "reconciled_slurm_state",
-            }
-        } for plan in plans],
-    }
+    approved = _approval_payload(manifest)
     approval_raw = _canonical_plan(approved)
     approval_sha = hashlib.sha256(approval_raw).hexdigest()
     manifest["approval_sha256"] = approval_sha
@@ -454,7 +525,9 @@ def launch(args) -> dict:
         print(json.dumps(approved, indent=2))
         print(f"[approval-sha256] {approval_sha}")
         if args.plan_out:
-            _write_new(args.plan_out.expanduser().resolve(), approval_raw)
+            _write_new_atomic(
+                args.plan_out.expanduser().resolve(), approval_raw
+            )
         print("[dry-run] no MIP jobs submitted")
         return manifest
     if args.approved_plan_sha256 != approval_sha:
@@ -503,7 +576,23 @@ def launch(args) -> dict:
     _write_new(
         manifest_path, (json.dumps(manifest, indent=2) + "\n").encode()
     )
-    for plan in plans:
+    _submit_pending(root, manifest, manifest_path)
+    print(f"[submitted] {manifest_path}")
+    return manifest
+
+
+def _submit_pending(root: Path, manifest: dict, manifest_path: Path) -> None:
+    identity = manifest["checkout_identity"]
+    worker = Path(manifest["worker"])
+    worker_sha = manifest["worker_sha256"]
+    start_sha = manifest["validated_start"]["sha256"]
+    for plan in manifest["jobs"]:
+        if plan.get("job_id"):
+            continue
+        if plan.get("submission_state") != "planned":
+            raise SystemExit(
+                f"{plan['label']}: reconcile ambiguous submission before resume"
+            )
         plan["submission_state"] = "attempting"
         _replace_manifest(manifest_path, manifest)
         _write_new(
@@ -529,9 +618,11 @@ def launch(args) -> dict:
         if (
             pre_submit_identity["expected_commit"]
             != identity["expected_commit"]
+            or pre_submit_identity["run_exact_pool_mip_sha256"]
+            != identity["run_exact_pool_mip_sha256"]
             or sha256_file(worker) != worker_sha
             or sha256_file(Path(plan["spec_path"])) != plan["spec_sha256"]
-            or sha256_file(shared_start) != start["sha256"]
+            or sha256_file(Path(plan["spec"]["staged_start"])) != start_sha
             or not staged_inputs_clean
         ):
             plan["submission_state"] = "failed"
@@ -563,10 +654,10 @@ def launch(args) -> dict:
         plan["job_id"] = job_id
         plan["submission_state"] = "submitted"
         _replace_manifest(manifest_path, manifest)
-    manifest["submitted"] = True
+    manifest["submitted"] = all(
+        job.get("job_id") for job in manifest["jobs"]
+    )
     _replace_manifest(manifest_path, manifest)
-    print(f"[submitted] {manifest_path}")
-    return manifest
 
 
 def _replace_manifest(path: Path, payload: dict) -> None:
@@ -586,13 +677,75 @@ def _parse_sha(value: str) -> str:
     return value
 
 
+def resume_campaign(args) -> dict:
+    from reconcile_k40_factorial_mip_screen import reconcile
+
+    root = args.resume_campaign.expanduser().resolve()
+    manifest_path = root / "campaign.json"
+    manifest = json.loads(manifest_path.read_text())
+    approved = _approval_payload(manifest)
+    approval_sha = hashlib.sha256(_canonical_plan(approved)).hexdigest()
+    if approval_sha != manifest.get("approval_sha256"):
+        raise SystemExit("persisted campaign differs from its approval SHA-256")
+    identity = _mip_identity()
+    if (
+        identity["expected_commit"]
+        != manifest["checkout_identity"]["expected_commit"]
+        or identity["run_exact_pool_mip_sha256"]
+        != manifest["checkout_identity"]["run_exact_pool_mip_sha256"]
+    ):
+        raise SystemExit("resume checkout differs from approved campaign")
+    python_identity = _mip_python(
+        Path(manifest["python"]["python_executable"])
+    )
+    if python_identity != manifest["python"]:
+        raise SystemExit("resume MIP environment differs from approved campaign")
+    worker = Path(manifest["worker"])
+    if (
+        not worker.is_file()
+        or sha256_file(worker) != manifest["worker_sha256"]
+    ):
+        raise SystemExit("resume worker differs from approved campaign")
+    for job in manifest.get("jobs") or []:
+        spec_path = Path(job["spec_path"])
+        if (
+            not spec_path.is_file()
+            or sha256_file(spec_path) != job["spec_sha256"]
+            or json.loads(spec_path.read_text()) != job["spec"]
+        ):
+            raise SystemExit(f"{job.get('label')}: staged job spec changed")
+    reconciliation = reconcile(root, apply=args.submit)
+    if reconciliation["unresolved"]:
+        raise SystemExit(
+            "ambiguous Slurm acceptance remains unresolved; retry "
+            "reconciliation after accounting catches up"
+        )
+    if args.submit:
+        if args.approved_plan_sha256 != approval_sha:
+            raise SystemExit("resume plan differs from approved SHA-256")
+        manifest = json.loads(manifest_path.read_text())
+        _submit_pending(root, manifest, manifest_path)
+        print(f"[submitted-pending] {manifest_path}")
+    else:
+        print(json.dumps({
+            "approval_sha256": approval_sha,
+            "reconciliation": reconciliation,
+        }, indent=2))
+        print("[dry-run] no pending MIP jobs submitted")
+    return manifest
+
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--replicate", action="append", required=True,
+        "--replicate", action="append",
         help="R1=/campaign/dir and R2=/campaign/dir",
     )
-    parser.add_argument("--validated-start", type=Path, required=True)
+    parser.add_argument("--validated-start", type=Path)
+    parser.add_argument(
+        "--resume-campaign", type=Path,
+        help="Existing partially submitted campaign to reconcile/resume.",
+    )
     parser.add_argument(
         "--mode", choices=("screen", "escalation"), default="screen"
     )
@@ -608,11 +761,24 @@ def parse_args(argv=None):
     args = parser.parse_args(argv)
     if args.submit and not args.approved_plan_sha256:
         parser.error("--submit requires --approved-plan-sha256")
+    if args.resume_campaign:
+        if args.replicate or args.validated_start or args.cell or args.campaign:
+            parser.error(
+                "--resume-campaign cannot be combined with plan inputs"
+            )
+    elif not args.replicate or args.validated_start is None:
+        parser.error(
+            "new plans require two --replicate values and --validated-start"
+        )
     return args
 
 
 def main(argv=None) -> int:
-    launch(parse_args(argv))
+    args = parse_args(argv)
+    if args.resume_campaign:
+        resume_campaign(args)
+    else:
+        launch(args)
     return 0
 
 

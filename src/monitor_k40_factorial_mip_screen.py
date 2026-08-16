@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -12,9 +13,10 @@ from pathlib import Path
 FIELDS = (
     "label", "replicate", "treatment", "snapshot_mark_minutes",
     "budget_seconds", "job_id", "slurm_state", "elapsed", "exit_code",
-    "output_exists", "status_name", "buses", "fleet_bound", "fleet_proven",
+    "output_exists", "output_valid", "validation_error",
+    "status_name", "buses", "fleet_bound", "fleet_proven",
     "mip_obj", "mip_bound", "mip_gap", "runtime_s", "start_accepted",
-    "optimal_scope",
+    "start_column_hashes", "optimal_scope", "route_space_scope",
 )
 
 
@@ -57,14 +59,39 @@ def rows(campaign_root: Path, *, query_slurm=True) -> list[dict]:
         slurm = accounting.get(job_id, {})
         output = Path(job["output"])
         result = {}
+        output_valid = False
+        validation_error = None
         if output.is_file():
             try:
                 loaded = json.loads(output.read_text())
-                result = loaded if isinstance(loaded, dict) else {}
-            except (OSError, ValueError):
-                pass
+                completion_path = Path(str(output) + ".complete.json")
+                completion = json.loads(completion_path.read_text())
+                output_sha = hashlib.sha256(output.read_bytes()).hexdigest()
+                if not isinstance(loaded, dict):
+                    raise ValueError("MIP result is not a JSON object")
+                if not isinstance(completion, dict):
+                    raise ValueError("completion sidecar is not a JSON object")
+                attestation = loaded.get("completion_attestation")
+                if (
+                    completion.get("schema")
+                    != "evsp-dr-k40-factorial-mip-completion-v1"
+                    or completion.get("output_sha256") != output_sha
+                    or not isinstance(attestation, dict)
+                    or attestation.get("job_spec_sha256")
+                    != job["spec_sha256"]
+                    or loaded.get("route_space_scope")
+                    != "finite_augmented_snapshot_pool_only"
+                ):
+                    raise ValueError("completion attestation mismatch")
+                result = loaded
+                output_valid = True
+            except (OSError, ValueError, KeyError) as exc:
+                validation_error = str(exc)
         acceptance = (
             (result.get("mip_start") or {}).get("solver_acceptance") or {}
+        )
+        start_columns = (
+            (result.get("mip_start") or {}).get("actual_start_columns") or []
         )
         output_rows.append({
             "label": job["label"],
@@ -77,6 +104,8 @@ def rows(campaign_root: Path, *, query_slurm=True) -> list[dict]:
             "elapsed": slurm.get("elapsed"),
             "exit_code": slurm.get("exit_code"),
             "output_exists": output.is_file(),
+            "output_valid": output_valid,
+            "validation_error": validation_error,
             "status_name": result.get("status_name"),
             "buses": result.get("buses"),
             "fleet_bound": result.get("fleet_bound"),
@@ -86,7 +115,9 @@ def rows(campaign_root: Path, *, query_slurm=True) -> list[dict]:
             "mip_gap": result.get("mip_gap"),
             "runtime_s": result.get("runtime_s"),
             "start_accepted": acceptance.get("accepted"),
+            "start_column_hashes": len(start_columns) or None,
             "optimal_scope": result.get("optimal_scope"),
+            "route_space_scope": result.get("route_space_scope"),
         })
     return output_rows
 

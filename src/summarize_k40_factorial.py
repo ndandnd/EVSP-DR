@@ -8,6 +8,7 @@ import csv
 import io
 import json
 import os
+import shutil
 import statistics
 import tempfile
 from collections import defaultdict
@@ -30,6 +31,9 @@ FIELDS = (
     "feasible_route_weight", "certified", "stop_reason",
     "final_lp_source",
     "historical_delta",
+    "actual_wall_s_n", "objective_n", "route_weight_n",
+    "artificials_n", "min_reduced_cost_n",
+    "feasible_route_weight_n", "historical_delta_n",
     "actual_wall_s_min", "actual_wall_s_max",
     "objective_min", "objective_max",
     "route_weight_min", "route_weight_max",
@@ -40,11 +44,11 @@ FIELDS = (
 )
 
 
-def _number_summary(values):
+def _number_summary(values, *, expected_count: int):
     values = [float(value) for value in values if value is not None]
-    if not values:
-        return None, None, None
-    return statistics.mean(values), min(values), max(values)
+    if len(values) != expected_count:
+        return None, None, None, len(values)
+    return statistics.mean(values), min(values), max(values), len(values)
 
 
 def summarize(campaign_dirs: list[Path], historical_path: Path) -> dict:
@@ -58,6 +62,15 @@ def summarize(campaign_dirs: list[Path], historical_path: Path) -> dict:
         validate_campaign(path, replicate=f"R{index}")
         for index, path in enumerate(resolved, start=1)
     ]
+    identities = {
+        campaign["trip_set_sha256"] for campaign in campaigns
+    } | {historical["trip_set_sha256"]}
+    if len(identities) != 1:
+        raise ValueError(
+            "factorial replicates and historical comparator have mixed trip sets"
+        )
+    if set(campaigns[0]["job_ids"]) & set(campaigns[1]["job_ids"]):
+        raise ValueError("factorial replicates reuse Slurm job IDs")
     rows = [row for campaign in campaigns for row in campaign["rows"]]
     for row in rows:
         row["historical_delta"] = (
@@ -92,12 +105,14 @@ def summarize(campaign_dirs: list[Path], historical_path: Path) -> dict:
             "objective", "route_weight", "artificials",
             "min_reduced_cost", "feasible_route_weight", "historical_delta",
         ):
-            mean, minimum, maximum = _number_summary(
-                row.get(field) for row in group
+            mean, minimum, maximum, count = _number_summary(
+                (row.get(field) for row in group),
+                expected_count=len(campaigns),
             )
             aggregate[field] = mean
             aggregate[f"{field}_min"] = minimum
             aggregate[f"{field}_max"] = maximum
+            aggregate[f"{field}_n"] = count
         aggregates.append(aggregate)
 
     certified_rows = sum(row["certified"] for row in rows)
@@ -233,36 +248,51 @@ def _write_new(path: Path, payload: bytes) -> None:
 
 def publish(payload: dict, output_prefix: Path) -> dict:
     prefix = output_prefix.expanduser().resolve()
+    bundle = Path(str(prefix) + ".bundle")
     outputs = {
-        "json": Path(str(prefix) + ".json"),
-        "csv": Path(str(prefix) + ".csv"),
-        "markdown": Path(str(prefix) + ".md"),
+        "json": bundle / "summary.json",
+        "csv": bundle / "summary.csv",
+        "markdown": bundle / "summary.md",
     }
-    for path in outputs.values():
-        if path.exists() or Path(str(path) + ".lock").exists():
-            raise FileExistsError(f"output/lock already exists: {path}")
-    locks = []
+    lock = Path(str(bundle) + ".lock")
+    bundle.parent.mkdir(parents=True, exist_ok=True)
+    if os.path.lexists(bundle) or os.path.lexists(lock):
+        raise FileExistsError(f"output bundle/lock already exists: {bundle}")
+    descriptor = os.open(
+        lock,
+        os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        | (os.O_NOFOLLOW if hasattr(os, "O_NOFOLLOW") else 0),
+        0o600,
+    )
+    os.close(descriptor)
+    staging = Path(tempfile.mkdtemp(
+        dir=bundle.parent, prefix=f".{bundle.name}.tmp."
+    ))
     try:
-        for path in outputs.values():
-            lock = Path(str(path) + ".lock")
-            lock.parent.mkdir(parents=True, exist_ok=True)
-            descriptor = os.open(
-                lock,
-                os.O_WRONLY | os.O_CREAT | os.O_EXCL
-                | (os.O_NOFOLLOW if hasattr(os, "O_NOFOLLOW") else 0),
-                0o600,
-            )
-            os.close(descriptor)
-            locks.append(lock)
         _write_new(
-            outputs["json"],
+            staging / "summary.json",
             (json.dumps(payload, indent=2) + "\n").encode(),
         )
-        _write_new(outputs["csv"], _csv_bytes(payload))
-        _write_new(outputs["markdown"], _markdown_bytes(payload))
+        _write_new(staging / "summary.csv", _csv_bytes(payload))
+        _write_new(staging / "summary.md", _markdown_bytes(payload))
+        directory = os.open(staging, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+        if os.path.lexists(bundle):
+            raise FileExistsError(f"refusing to overwrite bundle: {bundle}")
+        os.rename(staging, bundle)
+        parent = os.open(bundle.parent, os.O_RDONLY)
+        try:
+            os.fsync(parent)
+        finally:
+            os.close(parent)
     except Exception:
-        # Locks intentionally remain, making partial publication explicit and
-        # forcing a fresh output prefix.
+        if staging.exists():
+            shutil.rmtree(staging)
+        # The lock intentionally remains: an interrupted attempt needs a new
+        # prefix rather than an ambiguous in-place retry.
         raise
     return {key: str(path) for key, path in outputs.items()}
 

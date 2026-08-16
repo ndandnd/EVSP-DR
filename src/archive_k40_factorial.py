@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import io
 import json
@@ -16,7 +17,11 @@ import tarfile
 import tempfile
 from pathlib import Path
 
-from k40_factorial_artifacts import validate_campaign, validate_historical
+from k40_factorial_artifacts import (
+    _validate_trajectory,
+    validate_campaign,
+    validate_historical,
+)
 
 
 def sha256_file(path: Path) -> str:
@@ -24,6 +29,23 @@ def sha256_file(path: Path) -> str:
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _regular_files(root: Path) -> list[Path]:
+    files = []
+    for path in root.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"refusing symlink in archive source: {path}")
+        if path.is_file():
+            files.append(path)
+    return sorted(files)
+
+
+def _hash_stream(handle) -> str:
+    digest = hashlib.sha256()
+    for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+        digest.update(chunk)
     return digest.hexdigest()
 
 
@@ -38,25 +60,105 @@ def _git(*args: str) -> str | None:
     return result.stdout.strip() if result.returncode == 0 else None
 
 
-def _campaign_log_files(campaign_dir: Path) -> list[Path]:
+def _validate_compute_allocation() -> None:
+    job_id = os.environ.get("SLURM_JOB_ID")
+    hostname = platform.node().split(".", 1)[0]
+    if not job_id:
+        raise RuntimeError("archive helper must run in a Slurm allocation")
+    if "login" in hostname.lower():
+        raise RuntimeError("archive helper refuses Unicorn login nodes")
+    job = subprocess.run(
+        ["scontrol", "show", "job", "-o", job_id],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if job.returncode != 0 or "JobState=RUNNING" not in job.stdout:
+        raise RuntimeError("could not verify a live running Slurm allocation")
+    fields = dict(
+        token.split("=", 1)
+        for token in job.stdout.split()
+        if "=" in token
+    )
+    node_list = fields.get("NodeList")
+    if not node_list or node_list == "(null)":
+        raise RuntimeError("Slurm allocation has no compute nodes")
+    hosts = subprocess.run(
+        ["scontrol", "show", "hostnames", node_list],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    allocated = {
+        line.strip().split(".", 1)[0]
+        for line in hosts.stdout.splitlines() if line.strip()
+    }
+    if hosts.returncode != 0 or hostname not in allocated:
+        raise RuntimeError("current host is not assigned to the Slurm job")
+    if _git("symbolic-ref", "-q", "HEAD") is not None:
+        raise RuntimeError("archive checkout must be detached")
+    if _git("status", "--porcelain", "--untracked-files=no") != "":
+        raise RuntimeError("archive checkout has tracked changes")
+
+
+def _campaign_log_files(
+    campaign_dir: Path,
+    launch_rows: list[dict],
+) -> list[Path]:
     root = campaign_dir.resolve()
     try:
         repo_root = root.parents[3]
     except IndexError as exc:
         raise ValueError(f"cannot infer repository root from {root}") from exc
-    candidates = (
-        repo_root / "src/cluster_logs/k40_factorial" / root.name,
-        repo_root / "src/logs/k40_factorial" / root.name,
-    )
-    files = []
-    for candidate in candidates:
-        if candidate.is_dir():
-            files.extend(
-                path for path in candidate.rglob("*") if path.is_file()
-            )
-    if not files:
+    log_root = repo_root / "src/cluster_logs/k40_factorial" / root.name
+    if not log_root.is_dir():
         raise ValueError(f"campaign logs are missing for {root}")
+    files = _regular_files(log_root)
+    for row in launch_rows:
+        stem = f"{row['job_name']}_{row['job_id']}"
+        stdout = log_root / f"{stem}.out"
+        stderr = log_root / f"{stem}.err"
+        if not stdout.is_file() or not stderr.is_file():
+            raise ValueError(f"matching stdout/stderr are missing for {stem}")
+        marker = (
+            "[K40-PREP] READY"
+            if row["role"] == "prep"
+            else "[K40-FACTORIAL] DONE"
+        )
+        if marker not in stdout.read_text(errors="replace"):
+            raise ValueError(f"completion marker is missing from {stdout}")
     return files
+
+
+def _validate_accounting(path: Path, campaigns: list[dict]) -> None:
+    required_ids = {
+        str(job_id)
+        for campaign in campaigns
+        for job_id in campaign["job_ids"]
+    }
+    records = {}
+    with path.open(newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="|")
+        required_fields = {"JobIDRaw", "JobName", "State", "ExitCode"}
+        if not required_fields.issubset(reader.fieldnames or ()):
+            raise ValueError(
+                "Slurm accounting must be pipe-delimited sacct output with "
+                "JobIDRaw,JobName,State,ExitCode"
+            )
+        for row in reader:
+            job_id = str(row.get("JobIDRaw") or "")
+            if "." not in job_id and job_id:
+                records[job_id] = row
+    missing = required_ids - set(records)
+    if missing:
+        raise ValueError(f"Slurm accounting is missing jobs: {sorted(missing)}")
+    for job_id in required_ids:
+        row = records[job_id]
+        if (
+            not str(row.get("State") or "").startswith("COMPLETED")
+            or row.get("ExitCode") != "0:0"
+        ):
+            raise ValueError(f"Slurm job {job_id} did not complete cleanly")
 
 
 def _publish_archive(
@@ -70,11 +172,14 @@ def _publish_archive(
     if output.exists():
         raise FileExistsError(f"archive output already exists: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
+    resolved_roots = [root.resolve() for root in watched_roots]
     watched_before = {
         str(path.resolve())
-        for root in watched_roots
-        for path in root.rglob("*")
-        if path.is_file()
+        for path in sources.values()
+        if any(
+            path.resolve() == root or root in path.resolve().parents
+            for root in resolved_roots
+        )
     }
     temporary_archive = None
     with tempfile.TemporaryDirectory(
@@ -147,16 +252,6 @@ def _publish_archive(
                     raise RuntimeError(
                         f"source changed while archiving: {source_path}"
                     )
-            watched_after = {
-                str(path.resolve())
-                for root in watched_roots
-                for path in root.rglob("*")
-                if path.is_file()
-            }
-            if watched_after != watched_before:
-                raise RuntimeError(
-                    "campaign/log file set changed while archiving"
-                )
             with tarfile.open(temporary_archive, "r:gz") as tar:
                 names = set(tar.getnames())
                 if names != {*hashes, "ARCHIVE_MANIFEST.json"}:
@@ -167,20 +262,50 @@ def _publish_archive(
                 if archived_manifest != internal_manifest:
                     raise RuntimeError("archive internal manifest mismatch")
                 for member, expected in hashes.items():
-                    digest = hashlib.sha256(
-                        tar.extractfile(member).read()
-                    ).hexdigest()
+                    extracted = tar.extractfile(member)
+                    if extracted is None:
+                        raise RuntimeError(f"archive member is missing: {member}")
+                    digest = _hash_stream(extracted)
                     if digest != expected:
                         raise RuntimeError(
                             f"archive member checksum mismatch: {member}"
                         )
+            with temporary_archive.open("rb") as handle:
+                os.fsync(handle.fileno())
             archive_sha = sha256_file(temporary_archive)
+            for member, source_path in sources.items():
+                if sha256_file(source_path) != hashes[member]:
+                    raise RuntimeError(
+                        f"source changed during archive verification: "
+                        f"{source_path}"
+                    )
+            watched_after = {
+                str(path.resolve())
+                for root in resolved_roots
+                for path in _regular_files(root)
+            }
+            if watched_after != watched_before:
+                raise RuntimeError(
+                    "campaign/log file set changed while archiving"
+                )
+            if (
+                _git("rev-parse", "HEAD")
+                != archive_metadata["created_by_commit"]
+                or _git("status", "--porcelain", "--untracked-files=no")
+                != archive_metadata["created_by_git_status"]
+            ):
+                raise RuntimeError("Git identity changed while archiving")
             try:
                 os.link(temporary_archive, output)
             except FileExistsError as exc:
                 raise FileExistsError(
                     f"refusing to overwrite archive: {output}"
                 ) from exc
+            parent = os.open(output.parent, os.O_RDONLY)
+            try:
+                os.fsync(parent)
+            finally:
+                os.close(parent)
         finally:
             if temporary_archive is not None and temporary_archive.exists():
                 temporary_archive.unlink()
@@ -207,10 +332,7 @@ def archive(
     if len(set(resolved_campaigns)) != 2:
         raise ValueError("factorial campaign directories must be distinct")
     if require_compute:
-        if not os.environ.get("SLURM_JOB_ID"):
-            raise RuntimeError("archive helper must run in a Slurm allocation")
-        if "login" in platform.node().lower():
-            raise RuntimeError("archive helper refuses Unicorn login nodes")
+        _validate_compute_allocation()
     accounting = accounting.expanduser().resolve()
     if not accounting.is_file():
         raise ValueError(f"Slurm accounting input is missing: {accounting}")
@@ -218,30 +340,35 @@ def archive(
         validate_campaign(path, replicate=f"R{index}")
         for index, path in enumerate(resolved_campaigns, start=1)
     ]
+    if set(validated[0]["job_ids"]) & set(validated[1]["job_ids"]):
+        raise ValueError("factorial campaigns reuse Slurm job IDs")
+    if validated[0]["trip_set_sha256"] != validated[1]["trip_set_sha256"]:
+        raise ValueError("factorial campaigns have mixed trip sets")
     historical_record = validate_historical(historical)
+    if (
+        historical_record["trip_set_sha256"]
+        != validated[0]["trip_set_sha256"]
+    ):
+        raise ValueError("historical and factorial trip sets differ")
+    _validate_accounting(accounting, validated)
     sources: dict[str, Path] = {}
     watched_roots = []
     for campaign in validated:
         campaign_root = Path(campaign["campaign_dir"])
         watched_roots.append(campaign_root)
-        for source in campaign_root.rglob("*"):
-            if not source.is_file():
-                continue
+        for source in _regular_files(campaign_root):
             member = str(
                 Path("campaigns") / campaign["replicate"]
                 / source.relative_to(campaign_root)
             )
             sources[member] = source
         repo_root = campaign_root.parents[3]
-        campaign_logs = _campaign_log_files(campaign_root)
-        watched_roots.extend(
-            candidate for candidate in (
-                repo_root / "src/cluster_logs/k40_factorial"
-                / campaign_root.name,
-                repo_root / "src/logs/k40_factorial"
-                / campaign_root.name,
-            )
-            if candidate.is_dir()
+        campaign_logs = _campaign_log_files(
+            campaign_root, campaign["launch"]
+        )
+        watched_roots.append(
+            repo_root / "src/cluster_logs/k40_factorial"
+            / campaign_root.name
         )
         for log in campaign_logs:
             member = str(
@@ -249,6 +376,14 @@ def archive(
                 / log.relative_to(repo_root)
             )
             sources[member] = log
+        sources[
+            str(Path("inputs") / campaign["replicate"]
+                / Path(campaign["instance_path"]).name)
+        ] = Path(campaign["instance_path"])
+        sources[
+            str(Path("inputs") / campaign["replicate"]
+                / Path(campaign["prices_path"]).name)
+        ] = Path(campaign["prices_path"])
     historical_path = Path(historical_record["status_path"])
     for source_text in historical_record["files"]:
         source = Path(source_text)
@@ -256,6 +391,10 @@ def archive(
     historical_iters = Path(str(historical_path) + ".iters.csv")
     if not historical_iters.is_file():
         raise ValueError("historical iteration trajectory is missing")
+    _validate_trajectory(
+        historical_iters,
+        json.loads(historical_path.read_text()),
+    )
     sources[
         str(Path("historical") / historical_iters.name)
     ] = historical_iters

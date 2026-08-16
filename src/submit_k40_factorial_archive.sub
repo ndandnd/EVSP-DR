@@ -24,12 +24,17 @@ fatal() {
 ROOT=${EVSP_DR_ROOT:?EVSP_DR_ROOT is required}
 EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:?EVSP_EXPECTED_COMMIT is required}
 PYTHON=${EVSP_PROFILE_PYTHON:?EVSP_PROFILE_PYTHON is required}
-[[ "$(git -C "$ROOT" rev-parse HEAD)" == "$EXPECTED_COMMIT" ]] \
-  || fatal "commit mismatch"
+observed_commit=$(git -C "$ROOT" rev-parse --verify HEAD) \
+  || fatal "cannot resolve commit"
+[[ "$observed_commit" == "$EXPECTED_COMMIT" ]] || fatal "commit mismatch"
 if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
   fatal "archive checkout must be detached"
+else
+  symbolic_status=$?
+  [[ "$symbolic_status" -eq 1 ]] || fatal "cannot verify detached checkout"
 fi
-tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no)
+tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no) \
+  || fatal "cannot verify tracked checkout"
 [[ -z "$tracked" ]] || fatal "archive checkout has tracked changes"
 "$PYTHON" -c 'import sys; assert sys.version_info[:2] == (3, 12)' \
   || fatal "archive Python must be 3.12"
@@ -41,3 +46,7 @@ cd "$ROOT"
   --historical "$3" \
   --slurm-accounting "$4" \
   --out "$5"
+[[ "$(git -C "$ROOT" rev-parse --verify HEAD)" == "$EXPECTED_COMMIT" ]] \
+  || fatal "commit changed during archive"
+[[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=no)" ]] \
+  || fatal "tracked checkout changed during archive"

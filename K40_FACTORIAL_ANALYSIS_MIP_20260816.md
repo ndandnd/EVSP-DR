@@ -11,6 +11,9 @@ This package is dry-run/read-only by default.  No command below submits the
 Visible `k40r1` stems are accepted only as the documented naming error; all
 statuses must carry intended k40-r2 instance SHA
 `3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd`.
+Generation provenance is pinned to full commit
+`eb85ca0cc439956939ba6bf9c42958808d89aadd`, 947 trips, the deterministic
+seed-20260803 manifest entry, flat-tariff bytes, and actual source-data bytes.
 
 ## Read-only factorial summary
 
@@ -22,14 +25,27 @@ python -u src/summarize_k40_factorial.py \
   --out-prefix /new/output/path/k40_factorial_summary
 ```
 
-JSON/CSV/Markdown publication is atomic and no-clobber.  Route weight,
+JSON/CSV/Markdown are published together under
+`k40_factorial_summary.bundle/` by one atomic directory rename; a failed
+publication exposes no partial bundle and a lock prevents in-place retries.
+Route weight,
 artificials, objective, and minimum reduced cost remain separate.  Deltas from
 historical `39.252026205592166` use artificial-free m1320 rows and recorded
 `wall_s`, never nominal filename age.
 
 ## Compute-node archive
 
-First save the desired `sacct` output as an immutable input.  The helper refuses
+First save canonical pipe-delimited accounting for all ten prep/arm jobs as an
+immutable input:
+
+```bash
+sacct -X -P -j JOB_IDS \
+  --format=JobIDRaw,JobName,State,Elapsed,ExitCode,MaxRSS \
+  > /absolute/path/to/sacct-accounting.txt
+```
+
+The helper requires every root job to be `COMPLETED` with exit `0:0`, matching
+stdout/stderr and completion markers. It refuses
 login nodes, existing output, changed sources, symlinks, or missing trajectories
 and logs.  It embeds SHA-256 for every campaign/historical/log/accounting member
 and verifies the completed archive before atomic publication.
@@ -79,7 +95,8 @@ python -u src/launch_k40_factorial_mip_screen.py \
 ```
 
 The plan contains exactly 12 cells: two replicates × CA/CS × m360/m720/m1440.
-Names encode replicate/treatment/age/budget and remain under 15 characters.
+Names encode a campaign nonce plus replicate/treatment/age/budget and remain
+under 15 characters.
 All cells use strict binary partitioning, validated 40-duty start, two-stage
 fleet-first objective, 1,800 seconds, eight threads, Scaglione, no artificials,
 and no requeue.
@@ -124,7 +141,21 @@ python -u src/reconcile_k40_factorial_mip_screen.py \
 
 Use reconciliation before any retry if `sbatch` may have accepted a job before
 its ID reached `campaign.json`.  A fresh campaign name and new approval plan
-are mandatory for every retry.
+are mandatory for definitively failed new attempts. If reconciliation uniquely
+recovers an accepted job, remaining planned 30-minute cells can be submitted
+without duplicating recorded cells:
 
-MIP results are finite augmented-pool statements only; never global route-space
-optimality claims.
+```bash
+python -u src/launch_k40_factorial_mip_screen.py \
+  --resume-campaign /path/to/campaign \
+  --approved-plan-sha256 "$PLAN_SHA" \
+  --submit
+```
+
+Without `--submit`, this resume command is read-only and only reports
+recorded/pending/ambiguous jobs.
+
+Only results with a hash-bound completion sidecar are valid. MIP results record
+the 40 actual supplied start-column hashes and carry
+`route_space_scope=finite_augmented_snapshot_pool_only`; they are never global
+route-space optimality claims.

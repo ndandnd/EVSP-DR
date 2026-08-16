@@ -17,6 +17,7 @@ from k40_factorial_artifacts import (
     sha256_file,
 )
 from launch_k40_factorial_mip_screen import _mip_identity, _validate_start
+from install_exact_cg_profile_input import install
 from run_exact_pool_mip import resolve_pool_journal
 from run_snapshot_pool_mip import _verify_snapshot_problem_inputs
 
@@ -57,8 +58,39 @@ def prepare(snapshot: Path, output: Path, python: Path) -> dict:
         "snapshot_sha256": sha256_file(snapshot),
         "journal_sha256": sha256_file(source_journal),
     }
+    data_root = REPO_ROOT / "data"
+    relative_instance = Path(str(status.get("csv") or ""))
+    relative_prices = Path(str(status.get("prices_csv") or ""))
+    if (
+        relative_instance.is_absolute()
+        or ".." in relative_instance.parts
+        or relative_prices.is_absolute()
+        or ".." in relative_prices.parts
+    ):
+        raise SystemExit("snapshot contains unsafe data paths")
+
+    def locate(relative: Path) -> Path:
+        for parent in snapshot.parents:
+            candidate = parent / "data" / relative
+            if candidate.is_file():
+                return candidate.resolve()
+        raise SystemExit(f"cannot locate source data/{relative}")
+
+    source_instance = locate(relative_instance)
+    source_prices = locate(relative_prices)
+    if (
+        sha256_file(source_instance) != INSTANCE_SHA256
+        or sha256_file(source_prices) != PRICES_SHA256
+    ):
+        raise SystemExit("source snapshot data hashes mismatch")
+    install(
+        source_instance, data_root, relative_instance, INSTANCE_SHA256
+    )
+    install(
+        source_prices, data_root, relative_prices, PRICES_SHA256
+    )
     input_hashes = _verify_snapshot_problem_inputs(
-        status, data_dir=REPO_ROOT / "data"
+        status, data_dir=data_root
     )
     if (
         input_hashes.get("instance_sha256") != INSTANCE_SHA256
@@ -104,6 +136,7 @@ def prepare(snapshot: Path, output: Path, python: Path) -> dict:
             "schema": "evsp-dr-k40-factorial-giro-start-v1",
             "reviewed_checkout_commit": identity["expected_commit"],
             "mip_core_commit": identity["mip_core_commit"],
+            "runner_sha256": identity["run_exact_pool_mip_sha256"],
             **source_hashes,
             **input_hashes,
             "source_snapshot": str(snapshot),
@@ -137,8 +170,10 @@ def prepare(snapshot: Path, output: Path, python: Path) -> dict:
             sha256_file(snapshot) != source_hashes["snapshot_sha256"]
             or sha256_file(source_journal) != source_hashes["journal_sha256"]
             or _verify_snapshot_problem_inputs(
-                status, data_dir=REPO_ROOT / "data"
+                status, data_dir=data_root
             ) != input_hashes
+            or sha256_file(source_instance) != INSTANCE_SHA256
+            or sha256_file(source_prices) != PRICES_SHA256
         ):
             raise SystemExit("source changed while preparing GIRO start")
         try:

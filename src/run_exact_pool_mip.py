@@ -712,31 +712,23 @@ def merge_validated_partition_start(
             f"missing={missing[:15]}, repeated={list(repeated.items())[:15]}"
         )
 
-    pool = {frozenset(route["trips"]): route for route in routes}
-    selected_keys = []
-    added = replaced = reused = 0
+    existing_keys = {frozenset(route["trips"]) for route in routes}
+    merged = list(routes)
+    start_indices = []
+    added = preserved_duplicate = 0
     for record in validated:
         key = frozenset(record["trips"])
-        selected_keys.append(key)
-        if key not in pool:
-            pool[key] = record
+        if key not in existing_keys:
             added += 1
-        elif record["cost"] < float(pool[key]["cost"]) - 1e-9:
-            pool[key] = record
-            replaced += 1
         else:
-            reused += 1
-
-    merged = list(pool.values())
-    index_by_key = {
-        frozenset(route["trips"]): index
-        for index, route in enumerate(merged)
-    }
-    start_indices = [index_by_key[key] for key in selected_keys]
-    if len(set(start_indices)) != len(validated):
-        raise SystemExit(
-            "[MIP] supplied initial partition collapsed to duplicate incidences"
-        )
+            # Preserve the supplied route record even when the pool already
+            # has a cheaper column with identical trip incidence. A MIP start
+            # names variables, not incidences; substituting the existing
+            # column would silently change the requested charging schedule.
+            preserved_duplicate += 1
+        start_indices.append(len(merged))
+        merged.append(record)
+        existing_keys.add(key)
     if hashlib.sha256(path.read_bytes()).hexdigest() != source_sha256:
         raise SystemExit(
             f"[MIP] initial partition source changed while loading: {path}"
@@ -752,12 +744,30 @@ def merge_validated_partition_start(
             sum(merged[index]["cost"] for index in start_indices)
         ),
         "pool_columns_added": added,
-        "pool_columns_replaced": replaced,
-        "pool_columns_reused": reused,
+        "pool_columns_replaced": 0,
+        "pool_columns_reused": 0,
+        "pool_duplicate_incidences_preserved": preserved_duplicate,
+        "actual_start_columns": [
+            {
+                "index": index,
+                "sha256": hashlib.sha256(json.dumps(
+                    {
+                        "trips": merged[index]["trips"],
+                        "route_nodes": merged[index]["route_nodes"],
+                        "charging_stops": merged[index]["charging_stops"],
+                        "cost": merged[index]["cost"],
+                    },
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode()).hexdigest(),
+            }
+            for index in start_indices
+        ],
     }
     print(
         f"[MIP] validated exact-partition start: {len(start_indices)} buses "
-        f"from {path} (added {added}, replaced {replaced}, reused {reused})"
+        f"from {path} (added {added}, preserved duplicate incidences "
+        f"{preserved_duplicate})"
     )
     return merged, start_indices, detail
 
