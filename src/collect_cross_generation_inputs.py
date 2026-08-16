@@ -144,16 +144,29 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
             relative = str(path.relative_to(root))
             if run_pattern:
                 match = run_pattern.search(relative)
-                if match is None or "run_id" not in match.groupdict():
+                if match is None or (
+                    not request.get("run_id_template")
+                    and "run_id" not in match.groupdict()
+                ):
                     collection.append({
                         "request_id": request["request_id"],
                         "status": "run_id_regex_mismatch",
                         "path": str(path),
                     })
                     continue
+                if request.get("run_id_template"):
+                    captured = request["run_id_template"].format(
+                        **match.groupdict()
+                    )
+                else:
+                    if "run_id" not in match.groupdict():
+                        raise ValueError(
+                            "run_id_regex lacks run_id capture"
+                        )
+                    captured = match.group("run_id")
                 run_id = (
                     f"{request.get('run_id_namespace', request['request_id'])}:"
-                    f"{match.group('run_id')}"
+                    f"{captured}"
                 )
             else:
                 run_id = (

@@ -250,6 +250,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 "charge_kw": 300,
                 "reserve_frac": 0,
             },
+            "instance_csv": "instance.csv",
             "provenance": {"instance_sha256": "b" * 64},
         }))
         replay_artifact_sha = self._sha(replay_artifact)

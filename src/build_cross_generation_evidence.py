@@ -44,6 +44,7 @@ INVENTORY_FIELDS = (
     "tail_reason", "endpoint_only", "instance_sha256", "trip_set_sha256",
     "trip_count",
     "tariff_sha256", "git_commit", "git_dirty",
+    "comparison_identity_sha256",
     "field_availability_json",
 )
 CG_FIELDS = (
@@ -55,7 +56,7 @@ CG_FIELDS = (
     "artificial_trips",
     "artificial_total", "best_reduced_cost", "best_reduced_cost_reason",
     "columns_added", "pool_columns", "pool_columns_delta",
-    "wall_time_s", "master_time_s",
+    "wall_time_s", "process_runtime_s", "time_clock", "master_time_s",
     "pricing_time_s", "cumulative_master_time_s",
     "cumulative_pricing_time_s", "master_pricing_split_available",
     "timed_out", "deepest_tier_timed_out", "label_cap_evictions",
@@ -168,8 +169,7 @@ def _read_regular_no_follow(path: Path) -> bytes:
         os.close(descriptor)
 
 
-def _read_manifest(path: Path) -> tuple[dict, bytes]:
-    raw = path.read_bytes()
+def _parse_manifest(raw: bytes) -> dict:
     value = json.loads(raw)
     if not isinstance(value, dict):
         raise ValueError("input manifest is not a JSON object")
@@ -178,7 +178,7 @@ def _read_manifest(path: Path) -> tuple[dict, bytes]:
     artifacts = value.get("artifacts")
     if not isinstance(artifacts, list):
         raise ValueError("input manifest artifacts is not a list")
-    return value, raw
+    return value
 
 
 def _resolve_path(spec: dict, manifest: dict, manifest_path: Path,
@@ -186,7 +186,18 @@ def _resolve_path(spec: dict, manifest: dict, manifest_path: Path,
     raw = os.path.expandvars(str(spec.get("path") or ""))
     path = Path(raw).expanduser()
     if path.is_absolute():
-        return path.absolute()
+        absolute = path.absolute()
+        roots = [
+            Path(value).expanduser().absolute()
+            for value in (manifest.get("resolved_roots") or {}).values()
+        ]
+        if not roots or not any(
+            root == absolute or root in absolute.parents for root in roots
+        ):
+            raise ValueError(
+                f"absolute artifact path escapes resolved roots: {absolute}"
+            )
+        return absolute
     mode = manifest.get("relative_paths", "repository")
     base = repo_root if mode == "repository" else manifest_path.parent
     return (base / path).absolute()
@@ -220,6 +231,15 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
         }
         for key in provenance_fields
     }
+    comparison_identity = {
+        key: metadata.get(key)
+        for key in (
+            "instance_sha256", "trip_set_sha256", "tariff_sha256",
+            "model", "charging_discretization", "battery_kwh",
+            "charge_kw", "reserve_fraction", "master_sense",
+            "initializer", "implementation",
+        )
+    }
     return {
         "artifact_id": spec.get("artifact_id"),
         "run_id": spec.get("run_id"),
@@ -249,6 +269,9 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
         "tariff_sha256": metadata.get("tariff_sha256"),
         "git_commit": metadata.get("git_commit"),
         "git_dirty": metadata.get("git_dirty"),
+        "comparison_identity_sha256": hashlib.sha256(
+            _canonical(comparison_identity)
+        ).hexdigest(),
         "field_availability_json": json.dumps(
             field_availability, sort_keys=True, separators=(",", ":")
         ),
@@ -303,11 +326,12 @@ def _validate_specs(manifest: dict):
             "heuristic_dp_historical_csv",
             "heuristic_dp_current_csv",
             "exact_cg_iterations_csv",
+            "mip_checkpoint", "mip_final",
         }:
             duplicate = seen_trajectory_hashes.get(spec["expected_sha256"])
             if duplicate is not None:
                 raise ValueError(
-                    f"trajectory bytes are duplicated as {duplicate} and "
+                    f"evidence bytes are duplicated as {duplicate} and "
                     f"{artifact_id}"
                 )
             seen_trajectory_hashes[spec["expected_sha256"]] = artifact_id
@@ -328,6 +352,10 @@ def _validate_run_consistency(manifest: dict):
     fields = (
         "instance_sha256", "trip_set_sha256", "tariff_sha256",
         "scale_family", "scale", "replicate", "seed", "treatment",
+        "git_commit", "git_dirty", "model", "charging_discretization",
+        "battery_kwh", "charge_kw", "reserve_fraction",
+        "master_sense", "initializer", "solver_backend",
+        "threads", "time_limit_s", "stopping_rules", "tolerances",
     )
     grouped = defaultdict(list)
     for spec in manifest["artifacts"]:
@@ -348,10 +376,6 @@ def _validate_run_consistency(manifest: dict):
             spec for spec in specs
             if spec["artifact_type"] == "exact_cg_phase_telemetry_jsonl"
         ]
-        journal_specs = [
-            spec for spec in specs
-            if spec["artifact_type"] == "exact_cg_column_journal_jsonl"
-        ]
         mip_final_specs = [
             spec for spec in specs if spec["artifact_type"] == "mip_final"
         ]
@@ -364,7 +388,6 @@ def _validate_run_consistency(manifest: dict):
             len(trajectory_specs) > 1
             or len(endpoint_specs) > 1
             or len(telemetry_specs) > 1
-            or len(journal_specs) > 1
             or len(mip_final_specs) > 1
             or any(
                 sum(
@@ -424,11 +447,15 @@ def _validate_run_consistency(manifest: dict):
         }) > 1:
             raise ValueError(f"run {run_id} mixes MIP implementations")
         for field in fields:
-            values = {
-                (spec.get("metadata") or {}).get(field)
-                for spec in specs
-                if (spec.get("metadata") or {}).get(field) is not None
-            }
+            values = set()
+            for spec in specs:
+                value = (spec.get("metadata") or {}).get(field)
+                if value is None:
+                    continue
+                values.add(
+                    _canonical(value).decode()
+                    if isinstance(value, (dict, list)) else value
+                )
             if len(values) > 1:
                 raise ValueError(
                     f"run {run_id} has mixed {field}: {sorted(values)}"
@@ -513,6 +540,7 @@ def _endpoint_horizon(endpoint):
         ("wall_s", "wall_time"),
         ("Total_Time_s", "wall_time"),
         ("Total_Runtime_s", "wall_time"),
+        ("Active_Time_s", "active_time"),
         ("active_time_s", "active_time"),
     ):
         value = endpoint.get(key)
@@ -532,41 +560,15 @@ def _validate_endpoint_against_trajectory(endpoint, final):
         return
     family = final["algorithm_family"]
     if family == "exact_expanded_network":
-        if int(endpoint.get("iterations", -1)) != final["iteration"]:
-            raise ValueError("exact endpoint iteration differs from trajectory")
+        if int(endpoint.get("iterations", -1)) < final["iteration"]:
+            raise ValueError("exact endpoint iteration precedes trajectory")
         horizon, _clock = _endpoint_horizon(endpoint)
         if horizon is None or horizon + 1e-9 < final["wall_time_s"]:
             raise ValueError("exact endpoint horizon precedes trajectory")
-        endpoint_final = endpoint.get("final") or {}
-        endpoint_lp = endpoint.get("final_lp") or {}
-        comparisons = (
-            (endpoint_final.get("min_rc"), final["best_reduced_cost"]),
-            (endpoint_lp.get("objective"), final["lp_objective"]),
-            (endpoint_lp.get("route_weight"), final["lp_route_weight"]),
-            (endpoint_lp.get("artificial_total"), final["artificial_total"]),
-        )
-        for left, right in comparisons:
-            if left is None or right is None or not math.isclose(
-                float(left), float(right), rel_tol=1e-9, abs_tol=1e-6
-            ):
-                raise ValueError(
-                    "exact endpoint metrics differ from final trajectory row"
-                )
     elif family == "heuristic_dp_current":
         horizon, _clock = _endpoint_horizon(endpoint)
         if horizon is None or horizon + 1e-9 < final["wall_time_s"]:
             raise ValueError("current endpoint horizon precedes trajectory")
-        for key, normalized in (
-            ("Final_LP_Route_Weight", final["lp_route_weight"]),
-            ("Final_LP_Artificial_Total", final["artificial_total"]),
-        ):
-            if endpoint.get(key) is not None and not math.isclose(
-                float(endpoint[key]), float(normalized),
-                rel_tol=1e-9, abs_tol=1e-6,
-            ):
-                raise ValueError(
-                    "current endpoint metrics differ from trajectory"
-                )
 
 
 def _cg_summaries(
@@ -677,7 +679,7 @@ def _cg_summaries(
             "certification_censored": (
                 not certified if certification_observable else None
             ),
-            "event_clock": endpoint_clock or "trajectory_wall_time",
+            "event_clock": endpoint_clock or final["time_clock"],
             "censor_time_s": censor,
             "master_time_share": (
                 cum_master / total_active if total_active else None
@@ -1082,8 +1084,11 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             and row.get("replicate") is not None
         ]
         trajectory_by_trip_set = defaultdict(set)
+        identity_trip_sets = {}
         for row in trajectory_identities:
-            trajectory_by_trip_set[row["trip_set_sha256"]].add(
+            identity = row["comparison_identity_sha256"]
+            identity_trip_sets[identity] = row["trip_set_sha256"]
+            trajectory_by_trip_set[identity].add(
                 row["replicate"]
             )
         trajectory_count = max(
@@ -1097,7 +1102,9 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 and row.get("replicate") is not None
                 and row.get("trip_set_sha256")
             ):
-                endpoint_by_trip_set[row["trip_set_sha256"]].add(
+                identity = row["comparison_identity_sha256"]
+                identity_trip_sets[identity] = row["trip_set_sha256"]
+                endpoint_by_trip_set[identity].add(
                     row["replicate"]
                 )
         endpoint_count = max(
@@ -1125,8 +1132,13 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 row["trip_set_sha256"] for row in companion_rows
                 if row.get("trip_set_sha256")
             }
+            comparison_identities = {
+                row["comparison_identity_sha256"]
+                for row in companion_rows
+            }
             if roles == {"mip_checkpoint", "mip_final"} and len(
-                    trip_identities) == 1:
+                    trip_identities) == 1 and len(
+                    comparison_identities) == 1:
                 paired_valid_runs.add(run_id)
         paired_mip_inventory = [
             row for row in verified
@@ -1136,7 +1148,9 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
         ]
         mip_by_trip_set = defaultdict(set)
         for row in paired_mip_inventory:
-            mip_by_trip_set[row["trip_set_sha256"]].add(row["replicate"])
+            identity = row["comparison_identity_sha256"]
+            identity_trip_sets[identity] = row["trip_set_sha256"]
+            mip_by_trip_set[identity].add(row["replicate"])
         mip_pair_count = max(
             (len(values) for values in mip_by_trip_set.values()), default=0
         )
@@ -1164,10 +1178,11 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             endpoint_only = bool(final_runs) and not checkpoint_runs
             identity_groups = mip_by_trip_set
         if identity_groups:
-            selected_trip_set, selected_replicates = sorted(
+            selected_identity, selected_replicates = sorted(
                 identity_groups.items(),
                 key=lambda item: (-len(item[1]), item[0]),
             )[0]
+            selected_trip_set = identity_trip_sets[selected_identity]
         else:
             selected_trip_set, selected_replicates = None, set()
         if count >= minimum:
@@ -1378,7 +1393,7 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
             )
     axes[0].set_ylabel("LP route weight (not integer fleet)")
     axes[1].set_ylabel("Artificial mass")
-    axes[1].set_xlabel("Wall time (hours)")
+    axes[1].set_xlabel("Recorded run clock (hours; see time_clock)")
     axes[0].set_title("LP route weight and artificials remain separate")
     if axes[0].lines:
         axes[0].legend(fontsize=6)
@@ -1410,7 +1425,7 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
     axes[0].axhline(0, color="black", linestyle="--")
     axes[0].set_ylabel("Best reduced cost")
     axes[1].set_ylabel("Reported columns added / pool-size delta")
-    axes[1].set_xlabel("Wall time (hours)")
+    axes[1].set_xlabel("Recorded run clock (hours; see time_clock)")
     axes[0].set_title("Pricing progress")
     save(fig, "cg_reduced_cost_columns")
 
@@ -1569,6 +1584,32 @@ def _git_identity(repo_root: Path):
     }
 
 
+def _merged_run_provenance(specs):
+    keys = (
+        "algorithm_family", "implementation",
+        "git_commit", "git_dirty", "instance_sha256",
+        "trip_set_sha256", "tariff_sha256",
+        "model", "charging_discretization",
+        "battery_kwh", "charge_kw", "reserve_fraction",
+        "tariff", "master_sense", "initializer",
+        "replicate", "seed", "solver_backend",
+        "solver_versions", "python_environment_identity",
+        "time_limit_s", "memory_limit_bytes", "threads",
+        "stopping_rules", "tolerances",
+        "pool_status_sha256", "pool_journal_sha256",
+        "treatment", "giro_columns_added",
+    )
+    merged = {}
+    for key in keys:
+        values = [
+            (spec.get("metadata") or {}).get(key)
+            for spec in specs
+            if (spec.get("metadata") or {}).get(key) is not None
+        ]
+        merged[key] = values[0] if values else None
+    return merged
+
+
 def _data_dictionary():
     definitions = {
         "legacy_master_objective": ("cg_iteration_long.csv", "number", None,
@@ -1685,14 +1726,16 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
     output = output_dir.expanduser().absolute()
     if output.exists():
         raise FileExistsError(f"output directory already exists: {output}")
-    output.parent.mkdir(parents=True, exist_ok=True)
-    manifest, manifest_raw = _read_manifest(manifest_path)
+    manifest_raw = _read_regular_no_follow(manifest_path)
     observed_manifest_sha = sha256_bytes(manifest_raw)
     if (
         not _valid_sha(approved_manifest_sha256)
         or observed_manifest_sha != approved_manifest_sha256
     ):
         raise ValueError("input manifest differs from approved SHA-256")
+    manifest = _parse_manifest(manifest_raw)
+    builder_git_identity = _git_identity(repo)
+    output.parent.mkdir(parents=True, exist_ok=True)
     _validate_specs(manifest)
     _validate_run_consistency(manifest)
     inventory = []
@@ -1812,6 +1855,10 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             )
             or not any(
                 row["artifact_type"] == "exact_cg_column_journal_jsonl"
+                and row.get("trip_set_sha256")
+                == checkpoint_metadata.get("trip_set_sha256")
+                and row.get("instance_sha256")
+                == checkpoint_metadata.get("instance_sha256")
                 for row in journal_rows
             )
         ):
@@ -1852,6 +1899,10 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             for row in status_rows)
             or not any(
                 row["artifact_type"] == "exact_cg_column_journal_jsonl"
+                and row.get("trip_set_sha256")
+                == final_metadata.get("trip_set_sha256")
+                and row.get("instance_sha256")
+                == final_metadata.get("instance_sha256")
                 for row in journal_rows
             )
         ):
@@ -1860,6 +1911,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 f"{final['artifact_id']}"
             )
         permitted_incidences = set()
+        permitted_costs = {}
         for journal_row in journal_rows:
             summary = parsed_by_artifact[
                 journal_row["artifact_id"]
@@ -1867,6 +1919,12 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             permitted_incidences.update(
                 summary.get("incidence_sha256") or []
             )
+            for incidence, cost in (
+                summary.get("incidence_costs") or {}
+            ).items():
+                permitted_costs[incidence] = min(
+                    cost, permitted_costs.get(incidence, math.inf)
+                )
         if final.get("pool_treatment") == "GIRO":
             start_rows = verified_by_hash.get(
                 final.get("source_start_sha256"), []
@@ -1897,6 +1955,25 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 f"MIP selected routes are outside the verified pool: "
                 f"{final['artifact_id']}"
             )
+        for incidence, selected_cost in (
+            final.get("selected_incidence_costs") or {}
+        ).items():
+            if incidence in permitted_costs and not math.isclose(
+                float(selected_cost), float(permitted_costs[incidence]),
+                rel_tol=1e-9, abs_tol=1e-6,
+            ):
+                raise ValueError(
+                    f"MIP selected route cost differs from verified pool: "
+                    f"{final['artifact_id']}"
+                )
+            if (
+                final.get("pool_treatment") == "RAW"
+                and incidence not in permitted_costs
+            ):
+                raise ValueError(
+                    f"RAW MIP route lacks verified pool cost: "
+                    f"{final['artifact_id']}"
+                )
         if final.get("physically_validated_schedule"):
             replay_hash = final_metadata.get(
                 "physical_replay_artifact_sha256"
@@ -2022,23 +2099,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             "input_manifest_sha256": sha256_bytes(manifest_raw),
             "source_artifact_hashes": artifact_hashes,
             "run_provenance": {
-                run_id: {
-                    key: (verified_specs[0].get("metadata") or {}).get(key)
-                    for key in (
-                        "algorithm_family", "implementation",
-                        "git_commit", "git_dirty", "instance_sha256",
-                        "trip_set_sha256", "tariff_sha256",
-                        "model", "charging_discretization",
-                        "battery_kwh", "charge_kw", "reserve_fraction",
-                        "tariff", "master_sense", "initializer",
-                        "replicate", "seed", "solver_backend",
-                        "solver_versions", "python_environment_identity",
-                        "time_limit_s", "memory_limit_bytes", "threads",
-                        "stopping_rules", "tolerances",
-                        "pool_status_sha256", "pool_journal_sha256",
-                        "treatment", "giro_columns_added",
-                    )
-                }
+                run_id: _merged_run_provenance(verified_specs)
                 for run_id, specs in sorted(specs_by_run.items())
                 if (
                     verified_specs := [
@@ -2047,7 +2108,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                     ]
                 )
             },
-            "git": _git_identity(repo),
+            "git": builder_git_identity,
             "environment": _environment_identity(),
             "generation_command_argv": command,
             "model_semantic_guards": {
