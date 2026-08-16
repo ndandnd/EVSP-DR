@@ -11,7 +11,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import cross_generation_schema as schemas  # noqa: E402
-from build_cross_generation_evidence import build  # noqa: E402
+from build_cross_generation_evidence import build as _build  # noqa: E402
+
+
+def build(manifest, output, **kwargs):
+    kwargs.setdefault(
+        "approved_manifest_sha256",
+        hashlib.sha256(Path(manifest).read_bytes()).hexdigest(),
+    )
+    return _build(manifest, output, **kwargs)
 
 
 class CrossGenerationEvidenceTests(unittest.TestCase):
@@ -96,7 +104,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             },
         }))
         telemetry = root / "telemetry.jsonl"
-        telemetry_identity = {"run": "exact-run"}
+        telemetry_identity = {
+            "run": "exact-run",
+            "git_commit": "a" * 40,
+            "instance_sha256": "b" * 64,
+            "prices_sha256": "c" * 64,
+        }
         telemetry_sha = hashlib.sha256(json.dumps(
             telemetry_identity, sort_keys=True, separators=(",", ":")
         ).encode()).hexdigest()
@@ -120,6 +133,13 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 "outcome": "ok",
             }) + "\n"
         )
+        exact_journal = root / "exact.json.columns.jsonl"
+        exact_journal.write_text(json.dumps({
+            "trips": list(range(8)),
+            "cost": 800100,
+        }) + "\n")
+        pool_status_sha = self._sha(exact_endpoint)
+        pool_journal_sha = self._sha(exact_journal)
         checkpoint = root / "checkpoint.json"
         checkpoint.write_text(json.dumps({
             "schema": schemas.MIP_CHECKPOINT_SCHEMA,
@@ -132,6 +152,8 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "stage": "fleet",
             "incumbent_state": "reused_most_recent_earlier_incumbent",
             "incumbent": {
+                "total_elapsed_s": 0,
+                "stage_elapsed_s": 0,
                 "fleet": 8,
                 "objective": 800100,
                 "route_vector_sha256": "e" * 64,
@@ -146,8 +168,8 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "first_feasible_incumbent_s": 0,
             "solver_ended_before_checkpoint": False,
             "metadata": {
-                "source_result_sha256": "f" * 64,
-                "source_journal_sha256": "1" * 64,
+                "source_result_sha256": pool_status_sha,
+                "source_journal_sha256": pool_journal_sha,
                 "source_initial_partition_sha256": None,
                 "git_commit": "2" * 40,
                 "experiment_arm": "B",
@@ -168,9 +190,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "status_name": "OPTIMAL",
             "optimal_scope": "fleet_only",
             "runtime_s": 300,
-            "selected_routes": [{"trips": [index]} for index in range(8)],
-            "source_result_sha256": "f" * 64,
-            "source_journal_sha256": "1" * 64,
+            "selected_routes": [
+                {"trips": [index], "cost": 100012.5}
+                for index in range(8)
+            ],
+            "source_result_sha256": pool_status_sha,
+            "source_journal_sha256": pool_journal_sha,
             "mip_provenance": {
                 "observed_git_commit": "2" * 40,
                 "arguments": {
@@ -191,6 +216,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "schema": "release",
             "files": {"artifact.bin": "5" * 64},
         }))
+        replay_artifact_sha = self._sha(manifest_artifact)
         common_exact = {
             "algorithm_family": "exact_expanded_network",
             "implementation": "exact_pricer",
@@ -239,6 +265,8 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                        "exact_cg_iterations_csv", common_exact),
             self._spec("exact-endpoint", "exact-run", exact_endpoint,
                        "endpoint_json", common_exact),
+            self._spec("exact-journal", "exact-run", exact_journal,
+                       "exact_cg_column_journal_jsonl", common_exact),
             self._spec("telemetry", "exact-run", telemetry,
                        "exact_cg_phase_telemetry_jsonl", common_exact),
             self._spec("mip-checkpoint", "mip-run", checkpoint,
@@ -248,12 +276,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "scale_family": "union", "scale": 8,
                            "replicate": "r1", "treatment": "RAW",
                            "git_commit": "2" * 40,
-                           "pool_status_sha256": "f" * 64,
-                           "pool_journal_sha256": "1" * 64,
-                           "trip_set_sha256": "4" * 64,
+                           "pool_status_sha256": pool_status_sha,
+                           "pool_journal_sha256": pool_journal_sha,
+                           "trip_set_sha256": trip_sha,
                            "trip_count": 8,
                            "physical_replay_validated": True,
-                           "physical_replay_artifact_sha256": "6" * 64,
+                           "physical_replay_artifact_sha256": replay_artifact_sha,
                        }),
             self._spec("mip-final", "mip-run", mip_final,
                        "mip_final", {
@@ -262,12 +290,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "scale_family": "union", "scale": 8,
                            "replicate": "r1", "treatment": "RAW",
                            "git_commit": "2" * 40,
-                           "pool_status_sha256": "f" * 64,
-                           "pool_journal_sha256": "1" * 64,
-                           "trip_set_sha256": "4" * 64,
+                           "pool_status_sha256": pool_status_sha,
+                           "pool_journal_sha256": pool_journal_sha,
+                           "trip_set_sha256": trip_sha,
                            "trip_count": 8,
                            "physical_replay_validated": True,
-                           "physical_replay_artifact_sha256": "6" * 64,
+                           "physical_replay_artifact_sha256": replay_artifact_sha,
                        }),
             self._spec("release", "release-run", manifest_artifact,
                        "artifact_manifest_json", {
@@ -328,7 +356,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 manifest, output, repo_root=REPO_ROOT,
                 command=["synthetic-test"],
             )
-            self.assertEqual(result["verified_artifacts"], 9)
+            self.assertEqual(result["verified_artifacts"], 10)
             required = (
                 "artifact_inventory.csv", "cg_iteration_long.csv",
                 "cg_run_summary.csv", "mip_checkpoint_long.csv",

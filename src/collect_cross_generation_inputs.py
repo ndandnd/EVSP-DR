@@ -12,14 +12,6 @@ import stat
 from pathlib import Path
 
 
-def _sha(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def _assignments(values):
     result = {}
     for value in values:
@@ -29,7 +21,7 @@ def _assignments(values):
         if not name or name in result:
             raise ValueError(f"duplicate/empty root alias: {name}")
         path = Path(raw).expanduser().absolute()
-        if path.is_symlink():
+        if path.is_symlink() or path.resolve() != path:
             raise ValueError(f"root alias is symlinked: {path}")
         result[name] = path
     return result
@@ -50,6 +42,40 @@ def _safe_match(root: Path, path: Path) -> bool:
         if stat.S_ISLNK(mode):
             return False
     return path.is_file()
+
+
+def _hash_beneath(root: Path, path: Path) -> str:
+    relative = path.relative_to(root)
+    directory_flags = os.O_RDONLY | os.O_DIRECTORY
+    file_flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        directory_flags |= os.O_NOFOLLOW
+        file_flags |= os.O_NOFOLLOW
+    descriptor = os.open(root, directory_flags)
+    try:
+        for part in relative.parts[:-1]:
+            next_descriptor = os.open(
+                part, directory_flags, dir_fd=descriptor
+            )
+            os.close(descriptor)
+            descriptor = next_descriptor
+        file_descriptor = os.open(
+            relative.name, file_flags, dir_fd=descriptor
+        )
+        try:
+            mode = os.fstat(file_descriptor).st_mode
+            if not stat.S_ISREG(mode):
+                raise ValueError(f"artifact is not regular: {path}")
+            digest = hashlib.sha256()
+            with os.fdopen(os.dup(file_descriptor), "rb") as handle:
+                for chunk in iter(
+                        lambda: handle.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            return digest.hexdigest()
+        finally:
+            os.close(file_descriptor)
+    finally:
+        os.close(descriptor)
 
 
 def collect(template_path: Path, roots: dict[str, Path]) -> dict:
@@ -127,7 +153,7 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "artifact_role": relative,
                 "path": str(path),
                 "artifact_type": request["artifact_type"],
-                "expected_sha256": _sha(path),
+                "expected_sha256": _hash_beneath(root, path),
                 "required": request.get("required", False),
                 "metadata": metadata,
             })
