@@ -7,7 +7,6 @@ import hashlib
 import io
 import json
 import math
-import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -189,7 +188,16 @@ def _tail_safe_jsonl(payload: bytes) -> tuple[list[dict], dict]:
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             incomplete_prefix = (
                 isinstance(exc, json.JSONDecodeError)
-                and exc.pos >= max(0, len(line) - 1)
+                and line.lstrip().startswith((b"{", b"["))
+                and (
+                    exc.pos >= max(0, len(line) - 1)
+                    or exc.msg.startswith((
+                        "Unterminated string",
+                        "Expecting value",
+                        "Expecting ',' delimiter",
+                        "Expecting property name",
+                    ))
+                )
                 or isinstance(exc, UnicodeDecodeError)
                 and exc.end >= len(line)
             )
@@ -306,8 +314,20 @@ def _validate_cg_rows(rows: list[dict], schema: str) -> None:
             raise ValueError("CG iterations are duplicated/decreasing")
         previous_iteration = iteration
         if schema == "heuristic_dp_historical":
-            if row["legacy_master_objective"] is None:
-                raise ValueError("legacy master objective is required")
+            if (
+                row["legacy_master_objective"] is None
+                or row["master_time_s"] is None
+                or row["pricing_time_s"] is None
+                or row["cumulative_master_time_s"] is None
+                or row["cumulative_pricing_time_s"] is None
+                or row["columns_added"] is None
+                or (
+                    row["best_reduced_cost"] is None
+                    and row["best_reduced_cost_reason"]
+                    != "no_finite_pricing_path"
+                )
+            ):
+                raise ValueError("legacy core iteration metrics are required")
             if (
                 row["legacy_master_improvement"] is None
                 and iteration != 1
@@ -317,14 +337,42 @@ def _validate_cg_rows(rows: list[dict], schema: str) -> None:
                     "iteration 1"
                 )
         elif schema == "heuristic_dp_current":
-            if row["master_objective_before_add"] is None:
-                raise ValueError("current master objective is required")
+            if (
+                row["master_objective_before_add"] is None
+                or row["lp_route_weight"] is None
+                or row["artificial_total"] is None
+                or row["peak_trip_concurrency"] is None
+                or row["master_time_s"] is None
+                or row["pricing_time_s"] is None
+                or row["cumulative_master_time_s"] is None
+                or row["cumulative_pricing_time_s"] is None
+                or row["columns_added"] is None
+                or (
+                    row["best_reduced_cost"] is None
+                    and row["best_reduced_cost_reason"]
+                    != "no_finite_pricing_path"
+                )
+            ):
+                raise ValueError("current core iteration metrics are required")
+            if (
+                row["master_improvement_before_add"] is None
+                and iteration != 1
+            ):
+                raise ValueError(
+                    "current infinite/missing improvement is valid only at "
+                    "iteration 1"
+                )
         elif schema == "exact_expanded_network":
             if (
                 row["lp_objective"] is None
                 or row["lp_route_weight"] is None
                 or row["artificial_total"] is None
                 or row["pool_columns"] is None
+                or (
+                    row["best_reduced_cost"] is None
+                    and row["best_reduced_cost_reason"]
+                    != "no_finite_pricing_path"
+                )
             ):
                 raise ValueError("exact iteration metrics are required")
         for key in (
@@ -365,6 +413,46 @@ def _validate_cg_rows(rows: list[dict], schema: str) -> None:
             minimum <= mean <= maximum
         ):
             raise ValueError("returned trip count min/mean/max are inconsistent")
+        if schema == "heuristic_dp_current":
+            highest = row["highest_tier_reached"]
+            if highest is None or not 0 <= highest <= 3:
+                raise ValueError("highest pricing tier is outside 0..3")
+            tiers = json.loads(row["tier_statistics_json"])
+            for tier in range(1, 4):
+                prefix = f"Tier{tier}_"
+                for suffix, kind in TIER_SUFFIX_TYPES.items():
+                    value = tiers[prefix + suffix]
+                    if (
+                        value is not None
+                        and kind in {"number", "integer"}
+                        and value < 0
+                    ):
+                        raise ValueError("tier timing/count is negative")
+                returned = tiers[prefix + "Returned"]
+                accepted = tiers[prefix + "Accepted"]
+                if (
+                    returned is not None and accepted is not None
+                    and accepted > returned
+                ):
+                    raise ValueError("tier accepted routes exceed returned")
+                tmin = tiers[prefix + "Returned_Trip_Count_Min"]
+                tmean = tiers[prefix + "Returned_Trip_Count_Mean"]
+                tmax = tiers[prefix + "Returned_Trip_Count_Max"]
+                if all(v is not None for v in (tmin, tmean, tmax)) and not (
+                    tmin <= tmean <= tmax
+                ):
+                    raise ValueError("tier trip-count statistics are inconsistent")
+            if highest:
+                prefix = f"Tier{highest}_"
+                if (
+                    tiers[prefix + "Label_Cap_Evictions"]
+                    != row["label_cap_evictions"]
+                    or tiers[prefix + "Exhaustive"]
+                    != row["pricing_exhaustive"]
+                ):
+                    raise ValueError(
+                        "deepest-tier aggregate instrumentation mismatch"
+                    )
 
 
 def parse_legacy_heuristic_csv(payload: bytes, spec: dict) -> dict:
@@ -608,6 +696,8 @@ def parse_phase_telemetry(payload: bytes, spec: dict) -> dict:
     )
     if len(identities) != 1:
         raise ValueError("phase telemetry contains multiple identities")
+    if set(sessions) != set(range(1, len(sessions) + 1)):
+        raise ValueError("phase telemetry sessions are not contiguous")
     if expected_identity is not None and identities != {expected_identity}:
         raise ValueError("phase telemetry identity differs from manifest")
     manifest_metadata = spec.get("metadata") or {}
@@ -624,15 +714,20 @@ def parse_phase_telemetry(payload: bytes, spec: dict) -> dict:
             )
     phases = []
     previous_elapsed = defaultdict(lambda: -math.inf)
+    seen_sessions = set()
     for row in records:
         if row.get("schema") != TELEMETRY_SCHEMA:
             raise ValueError("phase telemetry schema mismatch")
-        if row.get("record_type") != "phase":
+        record_type = row.get("record_type")
+        if record_type == "session_start":
+            seen_sessions.add(row["session"])
             continue
+        if record_type != "phase":
+            raise ValueError("phase telemetry record_type is unknown")
         session = row.get("session")
         if (
             type(session) is not int
-            or session not in sessions
+            or session not in seen_sessions
             or row.get("identity_sha256") != sessions[session]
         ):
             raise ValueError("phase telemetry record has mixed identity")
@@ -799,6 +894,10 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
         checkpoint_elapsed > observed_elapsed + 1e-9
     ):
         raise ValueError("live checkpoint precedes its nominal mark")
+    if value["solver_ended_before_checkpoint"] != (
+        observed_elapsed + 1e-9 < checkpoint_elapsed
+    ):
+        raise ValueError("MIP ended-before-checkpoint flag is inconsistent")
     normalized_stats = {}
     for key in (
         "fleet_bound", "objective_bound", "fleet_gap",
@@ -836,6 +935,17 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
         )
         if total_elapsed > observed_elapsed + 1e-9:
             raise ValueError("MIP incumbent is observed after checkpoint write")
+        if total_elapsed > checkpoint_elapsed + 1e-9:
+            raise ValueError("MIP incumbent is observed after nominal mark")
+        expected_state = (
+            "current_incumbent_at_checkpoint"
+            if math.isclose(
+                total_elapsed, checkpoint_elapsed, abs_tol=1e-9
+            )
+            else "reused_most_recent_earlier_incumbent"
+        )
+        if value["incumbent_state"] != expected_state:
+            raise ValueError("MIP incumbent state/timestamp is inconsistent")
     elif value.get("incumbent") is not None:
         raise ValueError("no-incumbent checkpoint contains an incumbent")
     first_feasible = value.get("first_feasible_incumbent_s")
@@ -845,6 +955,8 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
         )
         if first_feasible > observed_elapsed + 1e-9:
             raise ValueError("first feasible time exceeds observed time")
+    if not has_incumbent and first_feasible is not None:
+        raise ValueError("no-incumbent checkpoint has first-feasible time")
     row = {
         "artifact_id": spec["artifact_id"],
         "run_id": spec["run_id"],
@@ -877,6 +989,7 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
             "source_initial_partition_sha256"
         ),
         "experiment_arm": metadata.get("experiment_arm"),
+        "git_commit": metadata.get("git_commit"),
         "observational_only": True,
     }
     return {"mip_rows": [row], "tail": {}, "schema": "mip_checkpoint"}
@@ -897,7 +1010,9 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         if not required.issubset(value):
             raise ValueError("MIP final is missing required fields")
         metadata = spec.get("metadata") or {}
-        mip_provenance = value.get("mip_provenance") or {}
+        mip_provenance = value.get("mip_provenance")
+        if not isinstance(mip_provenance, dict):
+            raise ValueError("MIP final provenance is not an object")
         for expected_key, observed in (
             ("git_commit", mip_provenance.get("observed_git_commit")),
             ("pool_status_sha256", value.get("source_result_sha256")),
@@ -917,13 +1032,23 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "D" if treatment == "GIRO" else "B"
         ):
             raise ValueError("MIP final experiment arm mismatch")
-        start = value.get("mip_start") or {}
+        start_raw = value.get("mip_start")
+        if start_raw is not None and not isinstance(start_raw, dict):
+            raise ValueError("MIP start evidence is not an object")
+        start = start_raw or {}
         expected_start = metadata.get("pool_start_sha256")
         if treatment == "GIRO":
             if (
                 not _hex64(expected_start)
                 or start.get("kind") != "validated_exact_partition"
                 or start.get("source_sha256") != expected_start
+                or (
+                    int(start.get("pool_columns_added", 0))
+                    + int(start.get(
+                        "pool_duplicate_incidences_preserved", 0
+                    ))
+                    <= 0
+                )
             ):
                 raise ValueError("GIRO MIP final start identity mismatch")
         elif (
@@ -985,7 +1110,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         normalized_numbers = {}
         for key in ("mip_obj", "mip_bound", "mip_gap", "runtime_s"):
             raw = value.get(key)
-            if raw is None and not incumbent_found:
+            if raw is None and not incumbent_found and key != "runtime_s":
                 normalized_numbers[key] = None
                 continue
             number = _number(raw)
@@ -1019,6 +1144,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             fleet_bound = _number(fleet_bound)
             if (
                 not incumbent_found or fleet_bound is None
+                or fleet_bound > buses + 1e-6
                 or math.ceil(fleet_bound - 1e-6) < buses
             ):
                 raise ValueError("MIP fleet proof does not close")
@@ -1029,6 +1155,21 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "full_pool_objective",
         }:
             raise ValueError("MIP objective bound scope is invalid")
+        if (
+            optimal_scope == "full_pool_lexicographic"
+            and bound_scope != "fixed_proven_fleet_variable_cost"
+        ):
+            raise ValueError("full MIP proof has the wrong bound scope")
+        if (
+            optimal_scope == "fleet_only"
+            and bound_scope != "fleet_count_only_coarse_cost_bound"
+        ):
+            raise ValueError("fleet-only proof has the wrong bound scope")
+        status_name = value.get("status_name")
+        if incumbent_found and status_name in {
+            "INFEASIBLE", "INF_OR_UNBD", "UNBOUNDED"
+        }:
+            raise ValueError("MIP incumbent contradicts solver status")
         arguments = mip_provenance.get("arguments")
         if (
             not isinstance(arguments, dict)
@@ -1047,6 +1188,15 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         ):
             raise ValueError(
                 "MIP physical replay claim lacks validation artifact hash"
+            )
+        if (
+            physical is True
+            and not _hex64(metadata.get(
+                "physical_replay_route_vector_sha256"
+            ))
+        ):
+            raise ValueError(
+                "MIP physical replay claim lacks route-vector hash"
             )
         if incumbent_found and not math.isclose(
             selected_cost,
@@ -1092,14 +1242,19 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "physical_replay_artifact_sha256": metadata.get(
                 "physical_replay_artifact_sha256"
             ),
+            "physical_replay_route_vector_sha256": metadata.get(
+                "physical_replay_route_vector_sha256"
+            ),
             "source_result_sha256": value.get("source_result_sha256"),
             "source_journal_sha256": value.get("source_journal_sha256"),
+            "source_start_sha256": expected_start,
             "pool_treatment": (
                 treatment
             ),
             "giro_columns_added": (
                 treatment == "GIRO"
             ),
+            "git_commit": mip_provenance.get("observed_git_commit"),
         }
         return {"mip_finals": [row], "tail": {}, "schema": "mip_final"}
     if hint == "endpoint_json":
@@ -1229,8 +1384,14 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             or value.get("infeasible") not in (None, [])
         ):
             raise ValueError("validated route artifact is missing/partial")
+        route_vector_sha = hashlib.sha256(json.dumps(
+            routes, sort_keys=True, separators=(",", ":")
+        ).encode()).hexdigest()
         return {
-            "checkpoint": value,
+            "checkpoint": {
+                **value,
+                "route_vector_sha256": route_vector_sha,
+            },
             "tail": {},
             "schema": "route_validation_json",
         }
@@ -1264,44 +1425,4 @@ def parse_artifact(payload: bytes, spec: dict) -> dict:
         raise ValueError(
             f"unsupported artifact_type {spec.get('artifact_type')!r}"
         )
-    try:
-        return parser(payload, spec)
-    except ValueError as exc:
-        typed_tail_error = str(exc).startswith((
-            "invalid numeric value",
-            "invalid integer value",
-            "invalid boolean value",
-            "non-finite numeric value",
-        ))
-        last_line = payload.rsplit(b"\n", 1)[-1].decode(
-            "utf-8", errors="ignore"
-        )
-        partial_numeric = any(
-            re.fullmatch(
-                r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)[eE][+-]?",
-                token.strip(),
-            )
-            or re.fullmatch(r"[+-]?\d+\.", token.strip())
-            for token in last_line.split(",")
-        )
-        if (
-            typed_tail_error
-            and partial_numeric
-            and
-            spec.get("artifact_type") in {
-                "heuristic_dp_historical_csv",
-                "heuristic_dp_current_csv",
-                "exact_cg_iterations_csv",
-            }
-            and not payload.endswith((b"\n", b"\r"))
-            and b"\n" in payload
-        ):
-            truncated = payload.rsplit(b"\n", 1)[0] + b"\n"
-            result = parser(truncated, spec)
-            result["tail"] = {
-                "tail_dropped": True,
-                "tail_reason": "interrupted_final_typed_csv_record",
-                "unterminated_final_line": True,
-            }
-            return result
-        raise
+    return parser(payload, spec)

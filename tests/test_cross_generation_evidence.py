@@ -216,7 +216,17 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "schema": "release",
             "files": {"artifact.bin": "5" * 64},
         }))
-        replay_artifact_sha = self._sha(manifest_artifact)
+        replay_artifact = root / "replay.json"
+        replay_routes = [{"route": ["PARX_0", index, "PARX_0"]}
+                         for index in range(8)]
+        replay_artifact.write_text(json.dumps({
+            "routes": replay_routes,
+            "infeasible": [],
+        }))
+        replay_artifact_sha = self._sha(replay_artifact)
+        replay_vector_sha = hashlib.sha256(json.dumps(
+            replay_routes, sort_keys=True, separators=(",", ":")
+        ).encode()).hexdigest()
         common_exact = {
             "algorithm_family": "exact_expanded_network",
             "implementation": "exact_pricer",
@@ -282,6 +292,8 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "trip_count": 8,
                            "physical_replay_validated": True,
                            "physical_replay_artifact_sha256": replay_artifact_sha,
+                           "physical_replay_route_vector_sha256":
+                               replay_vector_sha,
                        }),
             self._spec("mip-final", "mip-run", mip_final,
                        "mip_final", {
@@ -296,12 +308,21 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "trip_count": 8,
                            "physical_replay_validated": True,
                            "physical_replay_artifact_sha256": replay_artifact_sha,
+                           "physical_replay_route_vector_sha256":
+                               replay_vector_sha,
                        }),
             self._spec("release", "release-run", manifest_artifact,
                        "artifact_manifest_json", {
                            "algorithm_family": "artifact_manifest",
                            "implementation": "release",
                            "scale_family": None, "scale": None,
+                       }),
+            self._spec("replay", "replay-run", replay_artifact,
+                       "route_validation_json", {
+                           "algorithm_family": "mip_finite_pool",
+                           "implementation": "validated_replay",
+                           "scale_family": "union", "scale": 8,
+                           "replicate": "r1",
                        }),
         ]
         expectations = [
@@ -356,7 +377,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 manifest, output, repo_root=REPO_ROOT,
                 command=["synthetic-test"],
             )
-            self.assertEqual(result["verified_artifacts"], 10)
+            self.assertEqual(result["verified_artifacts"], 11)
             required = (
                 "artifact_inventory.csv", "cg_iteration_long.csv",
                 "cg_run_summary.csv", "mip_checkpoint_long.csv",

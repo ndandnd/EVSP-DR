@@ -158,6 +158,12 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "duplicated/decreasing"):
             schemas.parse_artifact(payload, spec)
+        bad_tail = (
+            ",".join(schemas.EXACT_ITER_HEADER) + "\n"
+            "1,1,10,1,0,nan,2"
+        ).encode()
+        with self.assertRaisesRegex(ValueError, "non-finite"):
+            schemas.parse_artifact(bad_tail, spec)
 
 
 if __name__ == "__main__":
