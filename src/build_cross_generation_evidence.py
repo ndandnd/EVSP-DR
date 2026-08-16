@@ -95,7 +95,8 @@ MIP_CHECKPOINT_FIELDS = (
     "scale_family", "scale", "replicate", "treatment",
     "checkpoint_elapsed_s", "observed_total_elapsed_s",
     "statistics_observed_s", "stage", "incumbent_state",
-    "incumbent_fleet", "incumbent_objective", "fleet_bound",
+    "incumbent_fleet", "incumbent_objective", "incumbent_observed_s",
+    "fleet_bound",
     "objective_bound", "fleet_gap", "node_count", "solution_count",
     "route_vector_sha256", "first_feasible_s",
     "solver_ended_before_checkpoint", "source_result_sha256",
@@ -132,6 +133,8 @@ COVERAGE_FIELDS = (
 RERUN_FIELDS = (
     *COVERAGE_FIELDS,
     "rerun_required", "additional_replicates", "recommended_budget_s",
+    "selected_trip_set_sha256", "existing_replicate_ids",
+    "proposed_replicate_ids",
     "recommended_stopping_rule", "common_model_assumptions",
     "dry_run_only", "command_available", "command_blocked_reason",
     "command_argv_json",
@@ -321,8 +324,6 @@ def _validate_specs(manifest: dict):
             raise ValueError(
                 f"k40 artifact {artifact_id} is not the fixed 947-trip case"
             )
-
-
 def _validate_run_consistency(manifest: dict):
     fields = (
         "instance_sha256", "trip_set_sha256", "tariff_sha256",
@@ -354,12 +355,24 @@ def _validate_run_consistency(manifest: dict):
         mip_final_specs = [
             spec for spec in specs if spec["artifact_type"] == "mip_final"
         ]
+        singular_types = {
+            "run_checkpoint_json",
+            "mip_pool_status_json",
+            "route_validation_json",
+        }
         if (
             len(trajectory_specs) > 1
             or len(endpoint_specs) > 1
             or len(telemetry_specs) > 1
             or len(journal_specs) > 1
             or len(mip_final_specs) > 1
+            or any(
+                sum(
+                    spec["artifact_type"] == artifact_type
+                    for spec in specs
+                ) > 1
+                for artifact_type in singular_types
+            )
         ):
             raise ValueError(f"run {run_id} has duplicate evidence roles")
         trajectory_types = {
@@ -424,7 +437,9 @@ def _validate_run_consistency(manifest: dict):
 
 def _embedded_provenance_mismatches(parsed: dict, spec: dict) -> list[str]:
     endpoint = parsed.get("endpoint")
-    if endpoint is None and parsed.get("schema") == "exact_cg_snapshot_json":
+    if endpoint is None and parsed.get("schema") in {
+        "exact_cg_snapshot_json", "mip_pool_status_json"
+    }:
         endpoint = parsed.get("checkpoint")
     if not isinstance(endpoint, dict):
         return []
@@ -512,6 +527,48 @@ def _endpoint_horizon(endpoint):
     return None, None
 
 
+def _validate_endpoint_against_trajectory(endpoint, final):
+    if not isinstance(endpoint, dict):
+        return
+    family = final["algorithm_family"]
+    if family == "exact_expanded_network":
+        if int(endpoint.get("iterations", -1)) != final["iteration"]:
+            raise ValueError("exact endpoint iteration differs from trajectory")
+        horizon, _clock = _endpoint_horizon(endpoint)
+        if horizon is None or horizon + 1e-9 < final["wall_time_s"]:
+            raise ValueError("exact endpoint horizon precedes trajectory")
+        endpoint_final = endpoint.get("final") or {}
+        endpoint_lp = endpoint.get("final_lp") or {}
+        comparisons = (
+            (endpoint_final.get("min_rc"), final["best_reduced_cost"]),
+            (endpoint_lp.get("objective"), final["lp_objective"]),
+            (endpoint_lp.get("route_weight"), final["lp_route_weight"]),
+            (endpoint_lp.get("artificial_total"), final["artificial_total"]),
+        )
+        for left, right in comparisons:
+            if left is None or right is None or not math.isclose(
+                float(left), float(right), rel_tol=1e-9, abs_tol=1e-6
+            ):
+                raise ValueError(
+                    "exact endpoint metrics differ from final trajectory row"
+                )
+    elif family == "heuristic_dp_current":
+        horizon, _clock = _endpoint_horizon(endpoint)
+        if horizon is None or horizon + 1e-9 < final["wall_time_s"]:
+            raise ValueError("current endpoint horizon precedes trajectory")
+        for key, normalized in (
+            ("Final_LP_Route_Weight", final["lp_route_weight"]),
+            ("Final_LP_Artificial_Total", final["artificial_total"]),
+        ):
+            if endpoint.get(key) is not None and not math.isclose(
+                float(endpoint[key]), float(normalized),
+                rel_tol=1e-9, abs_tol=1e-6,
+            ):
+                raise ValueError(
+                    "current endpoint metrics differ from trajectory"
+                )
+
+
 def _cg_summaries(
     cg_rows, endpoints, telemetry_by_run, specs_by_run,
     parsed_artifact_ids,
@@ -524,6 +581,7 @@ def _cg_summaries(
         rows.sort(key=lambda value: (value["iteration"], value["artifact_id"]))
         final = rows[-1]
         endpoint = endpoints.get(run_id)
+        _validate_endpoint_against_trajectory(endpoint, final)
         termination_raw = _termination_from_endpoint(endpoint)
         termination, termination_reason = normalize_termination(termination_raw)
         certified = _certification_from_endpoint(endpoint)
@@ -738,8 +796,12 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
                 f"MIP checkpoint/final identity mismatch: {final['run_id']}"
             )
         proof_times = [
-            row["statistics_observed_s"] for row in rows
+            max(
+                row["statistics_observed_s"],
+                row["incumbent_observed_s"],
+            ) for row in rows
             if row["statistics_observed_s"] is not None
+            and row["incumbent_observed_s"] is not None
             and row["incumbent_fleet"] is not None
             and row["fleet_bound"] is not None
             and math.ceil(float(row["fleet_bound"]) - 1e-6)
@@ -830,10 +892,7 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             ),
             "partitioning": None,
             "physically_validated_schedule": None,
-            "giro_columns_added": (
-                True if exemplar["treatment"] == "GIRO"
-                else False if exemplar["treatment"] == "RAW" else None
-            ),
+            "giro_columns_added": None,
             "pool_scope": (
                 "finite_giro_augmented_pool"
                 if exemplar["treatment"] == "GIRO"
@@ -859,9 +918,21 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             "source_result_sha256": exemplar["source_result_sha256"],
             "source_journal_sha256": exemplar["source_journal_sha256"],
             "source_start_sha256": exemplar["source_start_sha256"],
-            "source_status_artifact_id": "",
-            "source_journal_artifact_id": "",
-            "physical_replay_artifact_id": "",
+            "source_status_artifact_id": " | ".join(
+                hash_to_artifact_ids.get(
+                    exemplar["source_result_sha256"], []
+                )
+            ),
+            "source_journal_artifact_id": " | ".join(
+                hash_to_artifact_ids.get(
+                    exemplar["source_journal_sha256"], []
+                )
+            ),
+            "physical_replay_artifact_id": " | ".join(
+                hash_to_artifact_ids.get(
+                    exemplar["source_start_sha256"], []
+                )
+            ),
             "final_artifact_id": None,
             "checkpoint_artifact_ids": " | ".join(sorted({
                 row["artifact_id"] for row in rows
@@ -948,11 +1019,11 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             or observed.get("algorithm_family") == "artifact_manifest"
             or observed.get("scale") is None
             or observed.get("artifact_type") in {
-                "endpoint_json",
                 "artifact_manifest_json",
                 "exact_cg_phase_telemetry_jsonl",
                 "exact_cg_column_journal_jsonl",
                 "exact_cg_snapshot_json",
+                "mip_pool_status_json",
                 "run_checkpoint_json",
                 "route_validation_json",
             }
@@ -1087,9 +1158,18 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
         if required == "trajectory":
             count = trajectory_count
             endpoint_only = endpoint_count > 0 and count == 0
+            identity_groups = trajectory_by_trip_set
         else:
             count = mip_pair_count
             endpoint_only = bool(final_runs) and not checkpoint_runs
+            identity_groups = mip_by_trip_set
+        if identity_groups:
+            selected_trip_set, selected_replicates = sorted(
+                identity_groups.items(),
+                key=lambda item: (-len(item[1]), item[0]),
+            )[0]
+        else:
+            selected_trip_set, selected_replicates = None, set()
         if count >= minimum:
             status = "available"
             reason = None
@@ -1100,15 +1180,19 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             status = "insufficient_replicates"
             reason = f"{count} verified replicates; {minimum} required"
         else:
-            status = "not_available"
             matching_present = [
                 row for row in verified if matches(row)
             ]
-            reason = (
-                "verified artifact exists but trip-set identity is unavailable"
-                if matching_present and not trip_sets
-                else "no verified artifact for the exact algorithm/scale slot"
-            )
+            if matching_present and not trip_sets:
+                status = "identity_unavailable"
+                reason = (
+                    "verified artifact exists but trip-set identity is unavailable"
+                )
+            else:
+                status = "not_available"
+                reason = (
+                    "no verified artifact for the exact algorithm/scale slot"
+                )
         row = {
             **expected,
             "size_class": expected.get("size_class") or (
@@ -1120,8 +1204,8 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             "minimum_replicates": minimum,
             "trajectory_replicates": trajectory_count,
             "endpoint_replicates": endpoint_count,
-            "mip_checkpoint_replicates": len(checkpoint_runs),
-            "mip_final_replicates": len(final_runs),
+            "mip_checkpoint_replicates": mip_pair_count,
+            "mip_final_replicates": mip_pair_count,
             "verified_trip_sets": len(trip_sets),
             "replicate_semantics": replicate_semantics,
             "coverage_status": status,
@@ -1221,6 +1305,14 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             "rerun_required": status != "available",
             "additional_replicates": additional,
             "recommended_budget_s": recommended,
+            "selected_trip_set_sha256": selected_trip_set,
+            "existing_replicate_ids": " | ".join(
+                sorted(str(value) for value in selected_replicates)
+            ),
+            "proposed_replicate_ids": " | ".join(
+                f"new-replicate-{index}"
+                for index in range(1, additional + 1)
+            ),
             "recommended_stopping_rule": stopping,
             "common_model_assumptions": (
                 "300 kWh, 300 kW, zero reserve, 15 kWh SOC grid, "
@@ -1411,9 +1503,10 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
     matrix = np.full((len(algorithms), len(scales)), np.nan)
     status_values = {
         "not_available": 0,
-        "endpoint_only_rerun_required": 1,
-        "insufficient_replicates": 2,
-        "available": 3,
+        "identity_unavailable": 1,
+        "endpoint_only_rerun_required": 2,
+        "insufficient_replicates": 3,
+        "available": 4,
     }
     for row in coverage:
         i = algorithms.index(
@@ -1425,10 +1518,11 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
     fig, ax = plt.subplots(figsize=(max(8, len(scales) * 0.7), 5))
     cmap = plt.get_cmap("RdYlGn").copy()
     cmap.set_bad(color="lightgray")
-    image = ax.imshow(matrix, aspect="auto", vmin=0, vmax=3, cmap=cmap)
-    colorbar = fig.colorbar(image, ax=ax, ticks=[0, 1, 2, 3])
+    image = ax.imshow(matrix, aspect="auto", vmin=0, vmax=4, cmap=cmap)
+    colorbar = fig.colorbar(image, ax=ax, ticks=[0, 1, 2, 3, 4])
     colorbar.ax.set_yticklabels([
-        "missing", "endpoint only", "insufficient reps", "available"
+        "missing", "identity unavailable", "endpoint only",
+        "insufficient reps", "available"
     ])
     ax.set_xticks(range(len(scales)), scales, rotation=45, ha="right")
     ax.set_yticks(range(len(algorithms)), algorithms)
@@ -1660,7 +1754,10 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         mip_rows.extend(parsed.get("mip_rows") or [])
         mip_finals.extend(parsed.get("mip_finals") or [])
         telemetry_rows.extend(parsed.get("telemetry_rows") or [])
-        if parsed.get("endpoint") is not None:
+        if (
+            parsed.get("endpoint") is not None
+            and spec["artifact_type"] == "endpoint_json"
+        ):
             endpoints[spec["run_id"]] = parsed["endpoint"]
     required_ids = {
         spec["artifact_id"] for spec in manifest["artifacts"]
@@ -1691,7 +1788,53 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             and row["observed_sha256"]
         ):
             verified_by_hash[row["observed_sha256"]].append(row)
+    for checkpoint in mip_rows:
+        checkpoint_spec = next(
+            value for value in manifest["artifacts"]
+            if value["artifact_id"] == checkpoint["artifact_id"]
+        )
+        checkpoint_metadata = checkpoint_spec.get("metadata") or {}
+        status_rows = verified_by_hash.get(
+            checkpoint.get("source_result_sha256"), []
+        )
+        journal_rows = verified_by_hash.get(
+            checkpoint.get("source_journal_sha256"), []
+        )
+        if (
+            not any(
+                row["artifact_type"] in {
+                    "endpoint_json", "exact_cg_snapshot_json",
+                    "mip_pool_status_json",
+                }
+                and row.get("trip_set_sha256")
+                == checkpoint_metadata.get("trip_set_sha256")
+                for row in status_rows
+            )
+            or not any(
+                row["artifact_type"] == "exact_cg_column_journal_jsonl"
+                for row in journal_rows
+            )
+        ):
+            raise ValueError(
+                f"MIP checkpoint source artifacts are not verified: "
+                f"{checkpoint['artifact_id']}"
+            )
+        if checkpoint.get("treatment") == "GIRO" and not any(
+            row["artifact_type"] == "route_validation_json"
+            for row in verified_by_hash.get(
+                checkpoint.get("source_start_sha256"), []
+            )
+        ):
+            raise ValueError(
+                f"MIP checkpoint GIRO start is not verified: "
+                f"{checkpoint['artifact_id']}"
+            )
     for final in mip_finals:
+        final_spec = next(
+            value for value in manifest["artifacts"]
+            if value["artifact_id"] == final["artifact_id"]
+        )
+        final_metadata = final_spec.get("metadata") or {}
         status_rows = verified_by_hash.get(
             final.get("source_result_sha256"), []
         )
@@ -1700,8 +1843,13 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         )
         if (
             not any(row["artifact_type"] in {
-                "endpoint_json", "exact_cg_snapshot_json"
-            } for row in status_rows)
+                "endpoint_json", "exact_cg_snapshot_json",
+                "mip_pool_status_json",
+            } and row.get("trip_set_sha256")
+            == final_metadata.get("trip_set_sha256")
+            and row.get("instance_sha256")
+            == final_metadata.get("instance_sha256")
+            for row in status_rows)
             or not any(
                 row["artifact_type"] == "exact_cg_column_journal_jsonl"
                 for row in journal_rows
@@ -1711,12 +1859,46 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 f"MIP source pool artifacts are not verified: "
                 f"{final['artifact_id']}"
             )
-        if final.get("physically_validated_schedule"):
-            spec = next(
-                value for value in manifest["artifacts"]
-                if value["artifact_id"] == final["artifact_id"]
+        permitted_incidences = set()
+        for journal_row in journal_rows:
+            summary = parsed_by_artifact[
+                journal_row["artifact_id"]
+            ].get("journal_summary") or {}
+            permitted_incidences.update(
+                summary.get("incidence_sha256") or []
             )
-            replay_hash = (spec.get("metadata") or {}).get(
+        if final.get("pool_treatment") == "GIRO":
+            start_rows = verified_by_hash.get(
+                final.get("source_start_sha256"), []
+            )
+            if not any(
+                row["artifact_type"] == "route_validation_json"
+                and row.get("trip_set_sha256")
+                == final_metadata.get("trip_set_sha256")
+                and row.get("instance_sha256")
+                == final_metadata.get("instance_sha256")
+                for row in start_rows
+            ):
+                raise ValueError(
+                    f"MIP GIRO start artifact is not verified: "
+                    f"{final['artifact_id']}"
+                )
+            for start_row in start_rows:
+                checkpoint = parsed_by_artifact[
+                    start_row["artifact_id"]
+                ].get("checkpoint") or {}
+                permitted_incidences.update(
+                    checkpoint.get("incidence_sha256") or []
+                )
+        if not set(final.get("selected_incidence_sha256") or []).issubset(
+            permitted_incidences
+        ):
+            raise ValueError(
+                f"MIP selected routes are outside the verified pool: "
+                f"{final['artifact_id']}"
+            )
+        if final.get("physically_validated_schedule"):
+            replay_hash = final_metadata.get(
                 "physical_replay_artifact_sha256"
             )
             replay_rows = [
@@ -1734,9 +1916,17 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 .get("route_vector_sha256")
                 for row in replay_rows
             }
+            replay_incidence_sets = {
+                tuple((parsed_by_artifact[row["artifact_id"]].get(
+                    "checkpoint"
+                ) or {}).get("incidence_sha256") or [])
+                for row in replay_rows
+            }
             if (
                 final.get("physical_replay_route_vector_sha256")
                 not in replay_vectors
+                or tuple(final.get("selected_incidence_sha256") or [])
+                not in replay_incidence_sets
             ):
                 raise ValueError(
                     f"MIP physical replay route vector is not verified: "

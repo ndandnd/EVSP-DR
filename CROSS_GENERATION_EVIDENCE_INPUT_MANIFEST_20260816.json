@@ -217,7 +217,9 @@
         "implementation": "exact_pricer",
         "scale_family": "union",
         "scale": 40,
-        "trip_count": 947
+        "trip_count": 947,
+        "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+        "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
       }
     },
     {
@@ -225,8 +227,8 @@
       "root_alias": "repool_small",
       "glob": "**/*.snapshot.json",
       "artifact_type": "exact_cg_snapshot_json",
-      "run_id_namespace": "exact-repool-snapshot",
-      "run_id_regex": "(?P<run_id>[^/]+?)\\.snapshot\\.json$",
+      "run_id_namespace": "exact-repool-small",
+      "run_id_regex": "(?P<run_id>[^/]+?)(?:\\.m\\d+)?\\.snapshot\\.json$",
       "required": false,
       "metadata": {
         "algorithm_family": "exact_expanded_network",
@@ -240,8 +242,24 @@
       "root_alias": "repool_small",
       "glob": "**/*.snapshot.json.columns.jsonl",
       "artifact_type": "exact_cg_column_journal_jsonl",
-      "run_id_namespace": "exact-repool-snapshot",
-      "run_id_regex": "(?P<run_id>[^/]+?)\\.snapshot\\.json\\.columns\\.jsonl$",
+      "run_id_namespace": "exact-repool-small",
+      "run_id_regex": "(?P<run_id>[^/]+?)(?:\\.m\\d+)?\\.snapshot\\.json\\.columns\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer",
+        "scale_family": "union",
+        "scale": null
+      }
+    },
+    {
+      "request_id": "exact-repool-prepared-journals",
+      "root_alias": "repool_small",
+      "glob": "**/*.columns.jsonl",
+      "exclude_regex": "\\.snapshot\\.json\\.columns\\.jsonl$",
+      "artifact_type": "exact_cg_column_journal_jsonl",
+      "run_id_namespace": "exact-repool-prepared",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.columns\\.jsonl$",
       "required": false,
       "metadata": {
         "algorithm_family": "exact_expanded_network",
@@ -307,7 +325,9 @@
         "implementation": "exact_pricer",
         "scale_family": "union",
         "scale": 40,
-        "trip_count": 947
+        "trip_count": 947,
+        "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+        "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
       }
     },
     {
@@ -323,7 +343,9 @@
         "implementation": "exact_pricer",
         "scale_family": "union",
         "scale": 40,
-        "trip_count": 947
+        "trip_count": 947,
+        "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+        "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
       }
     },
     {
@@ -337,8 +359,11 @@
       "metadata": {
         "algorithm_family": "exact_expanded_network",
         "implementation": "exact_pricer_phase_telemetry",
-        "scale_family": null,
-        "scale": null
+        "scale_family": "union",
+        "scale": 40,
+        "trip_count": 947,
+        "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+        "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
       }
     },
     {
@@ -391,7 +416,7 @@
       "request_id": "mip-source-status",
       "root_alias": "mip_campaign",
       "glob": "input/*/*.snapshot.json",
-      "artifact_type": "exact_cg_snapshot_json",
+      "artifact_type": "mip_pool_status_json",
       "run_id_namespace": "mip",
       "run_id_regex": "input/(?P<run_id>[^/]+)/[^/]+\\.snapshot\\.json$",
       "required": false,
@@ -422,10 +447,10 @@
     {
       "request_id": "mip-validated-start",
       "root_alias": "mip_campaign",
-      "glob": "input/common/validated_start.json",
+      "glob": "input/*/validated_start.json",
       "artifact_type": "route_validation_json",
       "run_id_namespace": "mip",
-      "run_id_regex": "input/(?P<run_id>common)/validated_start\\.json$",
+      "run_id_regex": "input/(?P<run_id>[^/]+)/validated_start\\.json$",
       "required": false,
       "metadata": {
         "algorithm_family": "mip_finite_pool",

@@ -31,6 +31,10 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         fields = sorted(schemas.CURRENT_HEURISTIC_REQUIRED)
         values = {field: "0" for field in fields}
         values.update({
+            field: "" for field in fields
+            if field.startswith(("Tier2_", "Tier3_"))
+        })
+        values.update({
             "Iteration": "1",
             "Master_Obj_Before_Add": "800000",
             "Master_Improvement_Before_Add": "1000",
@@ -93,7 +97,13 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "stop_reason": "certified",
             "certified_rc_optimal": True,
             "wall_s": 20,
+            "iterations": 2,
             "final": {"min_rc": 0.0},
+            "final_lp": {
+                "objective": 799000,
+                "route_weight": 7.9,
+                "artificial_total": 0,
+            },
             "trip_ids": trip_ids,
             "provenance": {
                 "git_commit": "a" * 40,
@@ -106,9 +116,19 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         telemetry = root / "telemetry.jsonl"
         telemetry_identity = {
             "run": "exact-run",
+            "output": "exact.json",
+            "csv": "instance.csv",
+            "prices_csv": "prices.csv",
             "git_commit": "a" * 40,
             "instance_sha256": "b" * 64,
             "prices_sha256": "c" * 64,
+            "soc_step": 15,
+            "block_min": 10,
+            "g_kwh": 300,
+            "charge_kw": 300,
+            "min_soc_frac": 0,
+            "master_sense": "cover",
+            "initial_pool": "singletons",
         }
         telemetry_sha = hashlib.sha256(json.dumps(
             telemetry_identity, sort_keys=True, separators=(",", ":")
@@ -134,10 +154,10 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             }) + "\n"
         )
         exact_journal = root / "exact.json.columns.jsonl"
-        exact_journal.write_text(json.dumps({
-            "trips": list(range(8)),
-            "cost": 800100,
-        }) + "\n")
+        exact_journal.write_text("".join(
+            json.dumps({"trips": [index], "cost": 100012.5}) + "\n"
+            for index in range(8)
+        ))
         pool_status_sha = self._sha(exact_endpoint)
         pool_journal_sha = self._sha(exact_journal)
         checkpoint = root / "checkpoint.json"
@@ -207,6 +227,9 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         endpoint_current = root / "current-endpoint.json"
         endpoint_current.write_text(json.dumps({
             "Termination_Reason": "stagnation_rolling_window",
+            "Total_Runtime_s": 10,
+            "Final_LP_Route_Weight": 8,
+            "Final_LP_Artificial_Total": 0,
             "Instance_SHA256": "b" * 64,
             "Price_SHA256": "c" * 64,
             "Git": {"commit": "a" * 40, "dirty": False},
@@ -222,6 +245,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         replay_artifact.write_text(json.dumps({
             "routes": replay_routes,
             "infeasible": [],
+            "physics": {
+                "g_kwh": 300,
+                "charge_kw": 300,
+                "reserve_frac": 0,
+            },
+            "provenance": {"instance_sha256": "b" * 64},
         }))
         replay_artifact_sha = self._sha(replay_artifact)
         replay_vector_sha = hashlib.sha256(json.dumps(
@@ -248,6 +277,9 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "implementation": "legacy_dp",
                            "scale_family": "union", "scale": 8,
                            "replicate": "r1",
+                           "trip_count": 8,
+                           "trip_set_sha256": trip_sha,
+                           "instance_sha256": "b" * 64,
                        }),
             self._spec("current", "current-run", current,
                        "heuristic_dp_current_csv", {
@@ -288,6 +320,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "git_commit": "2" * 40,
                            "pool_status_sha256": pool_status_sha,
                            "pool_journal_sha256": pool_journal_sha,
+                           "instance_sha256": "b" * 64,
                            "trip_set_sha256": trip_sha,
                            "trip_count": 8,
                            "physical_replay_validated": True,
@@ -304,6 +337,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "git_commit": "2" * 40,
                            "pool_status_sha256": pool_status_sha,
                            "pool_journal_sha256": pool_journal_sha,
+                           "instance_sha256": "b" * 64,
                            "trip_set_sha256": trip_sha,
                            "trip_count": 8,
                            "physical_replay_validated": True,
@@ -323,6 +357,9 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "implementation": "validated_replay",
                            "scale_family": "union", "scale": 8,
                            "replicate": "r1",
+                           "trip_count": 8,
+                           "trip_set_sha256": trip_sha,
+                           "instance_sha256": "b" * 64,
                        }),
         ]
         expectations = [
@@ -591,7 +628,21 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "artifact_type": "exact_cg_phase_telemetry_jsonl",
             "metadata": {},
         }
-        identity = {"run": "run"}
+        identity = {
+            "output": "result.json",
+            "csv": "instance.csv",
+            "prices_csv": "prices.csv",
+            "instance_sha256": "b" * 64,
+            "prices_sha256": "c" * 64,
+            "git_commit": "a" * 40,
+            "soc_step": 15,
+            "block_min": 10,
+            "g_kwh": 300,
+            "charge_kw": 300,
+            "min_soc_frac": 0,
+            "master_sense": "cover",
+            "initial_pool": "singletons",
+        }
         identity_sha = hashlib.sha256(json.dumps(
             identity, sort_keys=True, separators=(",", ":")
         ).encode()).hexdigest()
