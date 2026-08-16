@@ -85,6 +85,25 @@ def sha256_bytes(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def _schedule_fingerprint(routes: list[dict]) -> str:
+    projected = []
+    for route in routes:
+        nodes = route.get("route_nodes", route.get("route"))
+        charging = route.get("charging_stops", {})
+        if not isinstance(nodes, list) or not isinstance(charging, dict):
+            raise ValueError("physical schedule fields are missing")
+        projected.append({
+            "route_nodes": nodes,
+            "charging_stops": charging,
+        })
+    projected.sort(key=lambda value: json.dumps(
+        value, sort_keys=True, separators=(",", ":")
+    ))
+    return hashlib.sha256(json.dumps(
+        projected, sort_keys=True, separators=(",", ":")
+    ).encode()).hexdigest()
+
+
 def _number(value, *, allow_positive_infinity=False):
     if value in (None, ""):
         return None
@@ -866,9 +885,7 @@ def parse_column_journal(payload: bytes, spec: dict) -> dict:
         incidence_sha = hashlib.sha256(json.dumps(
             sorted(trips), separators=(",", ":")
         ).encode()).hexdigest()
-        incidence_costs[incidence_sha] = min(
-            cost, incidence_costs.get(incidence_sha, math.inf)
-        )
+        incidence_costs.setdefault(incidence_sha, set()).add(cost)
     return {
         "tail": tail,
         "schema": "exact_column_journal",
@@ -881,7 +898,10 @@ def parse_column_journal(payload: bytes, spec: dict) -> dict:
                 ).encode()).hexdigest()
                 for incidence in incidences
             ),
-            "incidence_costs": incidence_costs,
+            "incidence_costs": {
+                key: sorted(values)
+                for key, values in incidence_costs.items()
+            },
         },
     }
 
@@ -1300,6 +1320,18 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             raise ValueError(
                 "MIP physical replay claim lacks route-vector hash"
             )
+        selected_schedule_sha = (
+            _schedule_fingerprint(selected)
+            if physical is True and incumbent_found else None
+        )
+        if (
+            physical is True
+            and selected_schedule_sha
+            != metadata["physical_replay_route_vector_sha256"]
+        ):
+            raise ValueError(
+                "MIP selected physical schedule differs from replay hash"
+            )
         if incumbent_found and not math.isclose(
             selected_cost,
             normalized_numbers["mip_obj"],
@@ -1347,6 +1379,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "physical_replay_route_vector_sha256": metadata.get(
                 "physical_replay_route_vector_sha256"
             ),
+            "selected_schedule_sha256": selected_schedule_sha,
             "source_result_sha256": value.get("source_result_sha256"),
             "source_journal_sha256": value.get("source_journal_sha256"),
             "source_start_sha256": expected_start,
@@ -1564,9 +1597,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                 raise ValueError("validated route physics are incomplete")
         if not isinstance(value.get("instance_csv"), str):
             raise ValueError("validated route instance source is missing")
-        route_vector_sha = hashlib.sha256(json.dumps(
-            routes, sort_keys=True, separators=(",", ":")
-        ).encode()).hexdigest()
+        route_vector_sha = _schedule_fingerprint(routes)
         return {
             "checkpoint": {
                 **value,

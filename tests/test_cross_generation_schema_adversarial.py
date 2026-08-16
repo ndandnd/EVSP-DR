@@ -179,6 +179,61 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "non-finite"):
             schemas.parse_artifact(bad_tail, spec)
 
+    def test_operational_checkpoint_status_schemas(self):
+        provenance = {
+            "instance_sha256": "a" * 64,
+            "prices_sha256": "b" * 64,
+        }
+        snapshot = {
+            "provenance": provenance,
+            "trip_ids": [0],
+            "snapshot_mark_minutes": 60,
+            "stop_reason": "snapshot_m60",
+        }
+        parsed = schemas.parse_artifact(
+            json.dumps(snapshot).encode(),
+            {
+                "artifact_id": "snapshot",
+                "run_id": "run",
+                "artifact_type": "exact_cg_snapshot_json",
+                "metadata": {},
+            },
+        )
+        self.assertEqual(parsed["schema"], "exact_cg_snapshot_json")
+
+        pool_status = {
+            "provenance": provenance,
+            "trip_ids": [0],
+            "columns": 1,
+        }
+        parsed = schemas.parse_artifact(
+            json.dumps(pool_status).encode(),
+            {
+                "artifact_id": "pool",
+                "run_id": "run",
+                "artifact_type": "mip_pool_status_json",
+                "metadata": {},
+            },
+        )
+        self.assertEqual(parsed["schema"], "mip_pool_status_json")
+
+        checkpoint = {
+            "git": {"commit": "c" * 40, "dirty": False},
+            "iteration": 1,
+            "instance_sha256": "a" * 64,
+            "price_sha256": "b" * 64,
+        }
+        parsed = schemas.parse_artifact(
+            json.dumps(checkpoint).encode(),
+            {
+                "artifact_id": "checkpoint",
+                "run_id": "run",
+                "artifact_type": "run_checkpoint_json",
+                "metadata": {},
+            },
+        )
+        self.assertEqual(parsed["schema"], "run_checkpoint_json")
+
 
 if __name__ == "__main__":
     unittest.main()
