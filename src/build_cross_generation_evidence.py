@@ -14,6 +14,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import stat
 import tempfile
 from collections import defaultdict
 from pathlib import Path
@@ -29,6 +30,9 @@ OUTPUT_SCHEMA = "evsp-dr-cross-generation-evidence-v1"
 K40_INSTANCE_SHA256 = (
     "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 )
+K40_TRIP_SET_SHA256 = (
+    "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
+)
 INVENTORY_FIELDS = (
     "artifact_id", "run_id", "path", "artifact_type", "schema_family",
     "algorithm_family", "implementation", "treatment",
@@ -38,6 +42,7 @@ INVENTORY_FIELDS = (
     "tail_reason", "endpoint_only", "instance_sha256", "trip_set_sha256",
     "trip_count",
     "tariff_sha256", "git_commit", "git_dirty",
+    "field_availability_json",
 )
 CG_FIELDS = (
     "artifact_id", "run_id", "schema_family", "algorithm_family",
@@ -105,6 +110,8 @@ MIP_SUMMARY_FIELDS = (
     "giro_columns_added", "pool_scope", "first_feasible_s",
     "time_to_fleet_proof_s", "proof_censored", "censor_time_s",
     "source_result_sha256", "source_journal_sha256",
+    "source_status_artifact_id", "source_journal_artifact_id",
+    "physical_replay_artifact_id",
     "final_artifact_id", "checkpoint_artifact_ids",
 )
 COVERAGE_FIELDS = (
@@ -120,7 +127,8 @@ RERUN_FIELDS = (
     *COVERAGE_FIELDS,
     "rerun_required", "additional_replicates", "recommended_budget_s",
     "recommended_stopping_rule", "common_model_assumptions",
-    "dry_run_only", "command_argv_json",
+    "dry_run_only", "command_available", "command_blocked_reason",
+    "command_argv_json",
 )
 TELEMETRY_FIELDS = (
     "artifact_id", "run_id", "session", "phase", "duration_s",
@@ -135,6 +143,20 @@ def _canonical(payload) -> bytes:
     return json.dumps(
         payload, sort_keys=True, separators=(",", ":"), allow_nan=False
     ).encode()
+
+
+def _read_regular_no_follow(path: Path) -> bytes:
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(path, flags)
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise ValueError(f"artifact is not a regular file: {path}")
+        with os.fdopen(os.dup(descriptor), "rb") as handle:
+            return handle.read()
+    finally:
+        os.close(descriptor)
 
 
 def _read_manifest(path: Path) -> tuple[dict, bytes]:
@@ -172,6 +194,23 @@ def _valid_sha(value) -> bool:
 def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
     metadata = spec.get("metadata") or {}
     tail = (parsed or {}).get("tail") or {}
+    provenance_fields = (
+        "git_commit", "git_dirty", "instance_sha256",
+        "trip_set_sha256", "tariff_sha256", "seed",
+        "solver_backend", "python_environment_identity",
+        "time_limit_s", "memory_limit_bytes", "threads",
+    )
+    field_availability = {
+        key: {
+            "available": metadata.get(key) is not None,
+            "reason": (
+                None if metadata.get(key) is not None
+                else metadata.get("provenance_availability_reason")
+                or "not_recorded_in_source_or_reviewed_manifest"
+            ),
+        }
+        for key in provenance_fields
+    }
     return {
         "artifact_id": spec.get("artifact_id"),
         "run_id": spec.get("run_id"),
@@ -201,6 +240,9 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
         "tariff_sha256": metadata.get("tariff_sha256"),
         "git_commit": metadata.get("git_commit"),
         "git_dirty": metadata.get("git_dirty"),
+        "field_availability_json": json.dumps(
+            field_availability, sort_keys=True, separators=(",", ":")
+        ),
     }
 
 
@@ -266,6 +308,8 @@ def _validate_specs(manifest: dict):
             and (
                 metadata.get("trip_count") != 947
                 or metadata.get("instance_sha256") != K40_INSTANCE_SHA256
+                or metadata.get("trip_set_sha256")
+                != K40_TRIP_SET_SHA256
             )
         ):
             raise ValueError(
@@ -274,7 +318,10 @@ def _validate_specs(manifest: dict):
 
 
 def _validate_run_consistency(manifest: dict):
-    fields = ("instance_sha256", "trip_set_sha256", "tariff_sha256")
+    fields = (
+        "instance_sha256", "trip_set_sha256", "tariff_sha256",
+        "scale_family", "scale", "replicate", "seed",
+    )
     grouped = defaultdict(list)
     for spec in manifest["artifacts"]:
         grouped[spec["run_id"]].append(spec)
@@ -322,6 +369,21 @@ def _validate_run_consistency(manifest: dict):
         }
         if len(algorithms) > 1:
             raise ValueError(f"run {run_id} mixes algorithm families")
+        if trajectory_specs:
+            trajectory_implementation = (
+                trajectory_specs[0].get("metadata") or {}
+            ).get("implementation")
+            for companion in endpoint_specs:
+                implementation = (
+                    companion.get("metadata") or {}
+                ).get("implementation")
+                if (
+                    implementation is not None
+                    and implementation != trajectory_implementation
+                ):
+                    raise ValueError(
+                        f"run {run_id} endpoint implementation mismatch"
+                    )
         for field in fields:
             values = {
                 (spec.get("metadata") or {}).get(field)
@@ -422,7 +484,10 @@ def _endpoint_horizon(endpoint):
     return None, None
 
 
-def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
+def _cg_summaries(
+    cg_rows, endpoints, telemetry_by_run, specs_by_run,
+    parsed_artifact_ids,
+):
     grouped = defaultdict(list)
     for row in cg_rows:
         grouped[row["run_id"]].append(row)
@@ -466,13 +531,9 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
         )
         certification_observable = (
             isinstance(endpoint, dict)
-            and (
-                "certified_rc_optimal" in endpoint
-                or endpoint.get("Termination_Reason")
-                in {"rc_optimal_restricted"}
-                or endpoint.get("termination_reason")
-                in {"rc_optimal_restricted"}
-            )
+            and final["algorithm_family"] in {
+                "exact_expanded_network", "heuristic_dp_current"
+            }
         )
         cum_master = final["cumulative_master_time_s"]
         cum_pricing = final["cumulative_pricing_time_s"]
@@ -548,6 +609,7 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
             ),
             "source_artifact_ids": " | ".join(sorted({
                 spec["artifact_id"] for spec in specs_by_run[run_id]
+                if spec["artifact_id"] in parsed_artifact_ids
             })),
         })
     for run_id, endpoint in sorted(endpoints.items()):
@@ -592,13 +654,17 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
             "target_lp_weight_censored": None,
             "certification_observable": (
                 isinstance(endpoint, dict)
-                and "certified_rc_optimal" in endpoint
+                and metadata.get("algorithm_family") in {
+                    "exact_expanded_network", "heuristic_dp_current"
+                }
             ),
             "time_to_certification_s": horizon if certified else None,
             "certification_censored": (
                 not certified
                 if isinstance(endpoint, dict)
-                and "certified_rc_optimal" in endpoint
+                and metadata.get("algorithm_family") in {
+                    "exact_expanded_network", "heuristic_dp_current"
+                }
                 else None
             ),
             "event_clock": clock,
@@ -610,12 +676,13 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
             "phase_telemetry_reason": "no_trajectory_or_telemetry",
             "source_artifact_ids": " | ".join(sorted(
                 spec["artifact_id"] for spec in specs
+                if spec["artifact_id"] in parsed_artifact_ids
             )),
         })
     return summaries
 
 
-def _mip_summaries(mip_rows, mip_finals):
+def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
     checkpoints = defaultdict(list)
     for row in mip_rows:
         checkpoints[row["run_id"]].append(row)
@@ -679,6 +746,21 @@ def _mip_summaries(mip_rows, mip_finals):
             "checkpoint_artifact_ids": " | ".join(sorted({
                 row["artifact_id"] for row in rows
             })),
+            "source_status_artifact_id": " | ".join(
+                hash_to_artifact_ids.get(
+                    final.get("source_result_sha256"), []
+                )
+            ),
+            "source_journal_artifact_id": " | ".join(
+                hash_to_artifact_ids.get(
+                    final.get("source_journal_sha256"), []
+                )
+            ),
+            "physical_replay_artifact_id": " | ".join(
+                hash_to_artifact_ids.get(
+                    final.get("physical_replay_artifact_sha256"), []
+                )
+            ),
         })
     return summaries
 
@@ -943,6 +1025,10 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 "--wall-limit-s", str(recommended),
                 "--out", "<new-exact-output.json>",
             ]
+            command_available = False
+            command_blocked_reason = (
+                "resolve hash-bound instance/output paths before execution"
+            )
         elif expected["algorithm_family"] == "heuristic_dp_current":
             command = [
                 "python", "-u", "src/run_ex_unicorn.py",
@@ -956,6 +1042,10 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 "--skip_final_mip",
                 "--results_root", "<new-results-root>",
             ]
+            command_available = False
+            command_blocked_reason = (
+                "resolve declared queue/dominance and hash-bound paths"
+            )
         elif expected["algorithm_family"] == "mip_finite_pool":
             command = [
                 "python", "-u",
@@ -964,11 +1054,20 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 "--campaign", "<new-review-campaign>",
                 "--plan-out", "<new-plan.json>",
             ]
+            command_available = False
+            command_blocked_reason = (
+                "regenerate an unblocked reviewed plan with exact scale, "
+                "treatment, starts and approved budget"
+            )
         else:
             command = [
                 "UNAVAILABLE",
                 "historical implementation/model must be isolated or archived",
             ]
+            command_available = False
+            command_blocked_reason = (
+                "historical implementation/model is not available"
+            )
         reruns.append({
             **row,
             "rerun_required": status != "available",
@@ -981,6 +1080,8 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 "graph/model difference remains an isolated method factor"
             ),
             "dry_run_only": True,
+            "command_available": command_available,
+            "command_blocked_reason": command_blocked_reason,
             "command_argv_json": json.dumps(command, separators=(",", ":")),
         })
     return coverage, reruns
@@ -1152,13 +1253,14 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
     save(fig, "mip_final_fleet_by_scale_method")
 
     algorithms = sorted({
-        f"{row['algorithm_family']}:{row['implementation']}"
+        f"{row['algorithm_family']}:{row['implementation']}:"
+        f"{row.get('treatment') or '-'}"
         for row in coverage
     })
     scales = sorted({
         f"{row['scale_family']}:{row['scale']}" for row in coverage
     })
-    matrix = np.zeros((len(algorithms), len(scales)))
+    matrix = np.full((len(algorithms), len(scales)), np.nan)
     status_values = {
         "not_available": 0,
         "endpoint_only_rerun_required": 1,
@@ -1167,12 +1269,15 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
     }
     for row in coverage:
         i = algorithms.index(
-            f"{row['algorithm_family']}:{row['implementation']}"
+            f"{row['algorithm_family']}:{row['implementation']}:"
+            f"{row.get('treatment') or '-'}"
         )
         j = scales.index(f"{row['scale_family']}:{row['scale']}")
         matrix[i, j] = status_values.get(row["coverage_status"], 0)
     fig, ax = plt.subplots(figsize=(max(8, len(scales) * 0.7), 5))
-    image = ax.imshow(matrix, aspect="auto", vmin=0, vmax=3, cmap="RdYlGn")
+    cmap = plt.get_cmap("RdYlGn").copy()
+    cmap.set_bad(color="lightgray")
+    image = ax.imshow(matrix, aspect="auto", vmin=0, vmax=3, cmap=cmap)
     colorbar = fig.colorbar(image, ax=ax, ticks=[0, 1, 2, 3])
     colorbar.ax.set_yticklabels([
         "missing", "endpoint only", "insufficient reps", "available"
@@ -1252,6 +1357,13 @@ def _data_dictionary():
         "master_time_share": ("cg_run_summary.csv", "number", "fraction",
             "Computed only from explicitly measured master/pricing fields."
         ),
+        "pool_columns_delta": ("cg_iteration_long.csv", "number", "columns",
+            "Change in recorded exact-pool size between adjacent rows; not "
+            "the producer's per-iteration insertion count."
+        ),
+        "objective_bound_scope": ("mip_run_summary.csv", "string", None,
+            "Scope of the finite-pool MIP objective bound."
+        ),
         "censored": ("*_run_summary.csv", "boolean", None,
             "Target event was not observed by the verified run endpoint."
         ),
@@ -1325,7 +1437,7 @@ def _publish_staging(staging: Path, output: Path):
 
 
 def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
-          command: list[str], approved_manifest_sha256: str | None = None) -> dict:
+          command: list[str], approved_manifest_sha256: str) -> dict:
     manifest_path = input_manifest.expanduser().absolute()
     repo = repo_root.expanduser().absolute()
     output = output_dir.expanduser().absolute()
@@ -1335,8 +1447,8 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
     manifest, manifest_raw = _read_manifest(manifest_path)
     observed_manifest_sha = sha256_bytes(manifest_raw)
     if (
-        approved_manifest_sha256 is not None
-        and observed_manifest_sha != approved_manifest_sha256
+        not _valid_sha(approved_manifest_sha256)
+        or observed_manifest_sha != approved_manifest_sha256
     ):
         raise ValueError("input manifest differs from approved SHA-256")
     _validate_specs(manifest)
@@ -1353,19 +1465,24 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
     for spec in sorted(manifest["artifacts"], key=lambda value: value["artifact_id"]):
         specs_by_run[spec["run_id"]].append(spec)
         path = _resolve_path(spec, manifest, manifest_path, repo)
-        if not path.is_file():
+        if not os.path.lexists(path):
             inventory.append(_flatten_inventory(
                 spec, path, None, "missing",
                 spec.get("availability_reason") or "artifact_not_found",
             ))
             continue
-        if path.is_symlink() or path.resolve() != path:
+        mode = os.lstat(path).st_mode
+        if (
+            not stat.S_ISREG(mode)
+            or stat.S_ISLNK(mode)
+            or path.resolve() != path
+        ):
             inventory.append(_flatten_inventory(
                 spec, path, None, "rejected",
                 "symlinked/non-canonical artifact path",
             ))
             continue
-        raw = path.read_bytes()
+        raw = _read_regular_no_follow(path)
         observed = sha256_bytes(raw)
         artifact_hashes[spec["artifact_id"]] = observed
         if observed != spec["expected_sha256"]:
@@ -1419,11 +1536,51 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 for row in failures
             )
         )
+    verified_hashes = {
+        row["observed_sha256"] for row in inventory
+        if row["validation_status"] == "verified"
+    }
+    for final in mip_finals:
+        if (
+            final.get("source_result_sha256") not in verified_hashes
+            or final.get("source_journal_sha256") not in verified_hashes
+        ):
+            raise ValueError(
+                f"MIP source pool artifacts are not verified: "
+                f"{final['artifact_id']}"
+            )
+        if final.get("physically_validated_schedule"):
+            spec = next(
+                value for value in manifest["artifacts"]
+                if value["artifact_id"] == final["artifact_id"]
+            )
+            replay_hash = (spec.get("metadata") or {}).get(
+                "physical_replay_artifact_sha256"
+            )
+            if replay_hash not in verified_hashes:
+                raise ValueError(
+                    f"MIP physical replay artifact is not verified: "
+                    f"{final['artifact_id']}"
+                )
     telemetry_by_run = _group(telemetry_rows, "run_id")
     cg_summaries = _cg_summaries(
-        cg_rows, endpoints, telemetry_by_run, specs_by_run
+        cg_rows, endpoints, telemetry_by_run, specs_by_run,
+        set(parsed_by_artifact),
     )
-    mip_summaries = _mip_summaries(mip_rows, mip_finals)
+    hash_to_artifact_ids = defaultdict(list)
+    for inventory_row in inventory:
+        if (
+            inventory_row["validation_status"] == "verified"
+            and inventory_row["observed_sha256"]
+        ):
+            hash_to_artifact_ids[
+                inventory_row["observed_sha256"]
+            ].append(inventory_row["artifact_id"])
+    for values in hash_to_artifact_ids.values():
+        values.sort()
+    mip_summaries = _mip_summaries(
+        mip_rows, mip_finals, hash_to_artifact_ids
+    )
     coverage, reruns = _coverage_and_reruns(
         manifest, inventory, cg_rows, mip_rows, mip_finals
     )
@@ -1491,11 +1648,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         )
         provenance = {
             "schema": OUTPUT_SCHEMA,
-            "input_manifest": (
-                str(manifest_path.relative_to(repo))
-                if repo in manifest_path.parents
-                else str(manifest_path)
-            ),
+            "input_manifest": "input_manifest.json",
             "input_manifest_sha256": sha256_bytes(manifest_raw),
             "source_artifact_hashes": artifact_hashes,
             "run_provenance": {

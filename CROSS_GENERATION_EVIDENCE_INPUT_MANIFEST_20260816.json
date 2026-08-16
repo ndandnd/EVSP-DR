@@ -221,6 +221,36 @@
       }
     },
     {
+      "request_id": "exact-repool-snapshots",
+      "root_alias": "repool_small",
+      "glob": "**/*.snapshot.json",
+      "artifact_type": "exact_cg_snapshot_json",
+      "run_id_namespace": "exact-repool-snapshot",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.snapshot\\.json$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer",
+        "scale_family": "union",
+        "scale": null
+      }
+    },
+    {
+      "request_id": "exact-repool-journals",
+      "root_alias": "repool_small",
+      "glob": "**/*.snapshot.json.columns.jsonl",
+      "artifact_type": "exact_cg_column_journal_jsonl",
+      "run_id_namespace": "exact-repool-snapshot",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.snapshot\\.json\\.columns\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer",
+        "scale_family": "union",
+        "scale": null
+      }
+    },
+    {
       "request_id": "exact-big",
       "root_alias": "exact_big",
       "glob": "**/*.iters.csv",
@@ -299,7 +329,7 @@
     {
       "request_id": "exact-phase-telemetry",
       "root_alias": "k40_factorial",
-      "glob": "**/*k40r*_flat_*.jsonl",
+      "glob": "**/*k40r*_flat_*.telemetry.jsonl",
       "artifact_type": "exact_cg_phase_telemetry_jsonl",
       "run_id_namespace": "exact-k40",
       "run_id_regex": "(?P<run_id>k40r[12]_flat_[A-Z]{2}).*\\.jsonl$",
@@ -352,6 +382,54 @@
       "metadata": {
         "algorithm_family": "mip_finite_pool",
         "implementation": "two_stage_pool_mip",
+        "scale_family": "union",
+        "scale": 40,
+        "trip_count": 947
+      }
+    },
+    {
+      "request_id": "mip-source-status",
+      "root_alias": "mip_campaign",
+      "glob": "input/*/*.snapshot.json",
+      "artifact_type": "exact_cg_snapshot_json",
+      "run_id_namespace": "mip",
+      "run_id_regex": "input/(?P<run_id>[^/]+)/[^/]+\\.snapshot\\.json$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "mip_finite_pool",
+        "implementation": "two_stage_pool_mip",
+        "scale_family": "union",
+        "scale": 40,
+        "trip_count": 947
+      }
+    },
+    {
+      "request_id": "mip-source-journal",
+      "root_alias": "mip_campaign",
+      "glob": "input/*/*.snapshot.json.columns.jsonl",
+      "artifact_type": "exact_cg_column_journal_jsonl",
+      "run_id_namespace": "mip",
+      "run_id_regex": "input/(?P<run_id>[^/]+)/[^/]+\\.snapshot\\.json\\.columns\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "mip_finite_pool",
+        "implementation": "two_stage_pool_mip",
+        "scale_family": "union",
+        "scale": 40,
+        "trip_count": 947
+      }
+    },
+    {
+      "request_id": "mip-validated-start",
+      "root_alias": "mip_campaign",
+      "glob": "input/common/validated_start.json",
+      "artifact_type": "route_validation_json",
+      "run_id_namespace": "mip",
+      "run_id_regex": "input/(?P<run_id>common)/validated_start\\.json$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "mip_finite_pool",
+        "implementation": "validated_giro_start",
         "scale_family": "union",
         "scale": 40,
         "trip_count": 947
