@@ -236,7 +236,6 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "Final_LP_Route_Weight": 8,
             "Final_LP_Artificial_Total": 0,
             "Instance_SHA256": "b" * 64,
-            "Price_SHA256": "c" * 64,
             "Git": {"commit": "a" * 40, "dirty": False},
         }))
         manifest_artifact = root / "release-manifest.json"
@@ -411,6 +410,9 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "trip_count": 8,
                            "trip_set_sha256": trip_sha,
                            "instance_sha256": "b" * 64,
+                           "battery_kwh": 300,
+                           "charge_kw": 300,
+                           "reserve_fraction": 0,
                        }),
         ]
         expectations = [

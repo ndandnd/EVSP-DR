@@ -7,6 +7,7 @@ import hashlib
 import io
 import json
 import math
+import re
 from collections import defaultdict
 from pathlib import Path
 
@@ -1595,6 +1596,23 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         for key in ("g_kwh", "charge_kw", "reserve_frac"):
             if _number(physics.get(key)) is None:
                 raise ValueError("validated route physics are incomplete")
+        for metadata_key, physics_key in (
+            ("battery_kwh", "g_kwh"),
+            ("charge_kw", "charge_kw"),
+            ("reserve_fraction", "reserve_frac"),
+        ):
+            if (
+                metadata.get(metadata_key) is None
+                or not math.isclose(
+                    float(metadata[metadata_key]),
+                    float(physics[physics_key]),
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+            ):
+                raise ValueError(
+                    "validated route physics differ from reviewed metadata"
+                )
         if not isinstance(value.get("instance_csv"), str):
             raise ValueError("validated route instance source is missing")
         route_vector_sha = _schedule_fingerprint(routes)
@@ -1638,4 +1656,35 @@ def parse_artifact(payload: bytes, spec: dict) -> dict:
         raise ValueError(
             f"unsupported artifact_type {spec.get('artifact_type')!r}"
         )
-    return parser(payload, spec)
+    try:
+        return parser(payload, spec)
+    except ValueError:
+        is_csv = spec.get("artifact_type") in {
+            "heuristic_dp_historical_csv",
+            "heuristic_dp_current_csv",
+            "exact_cg_iterations_csv",
+        }
+        last_line = payload.rsplit(b"\n", 1)[-1].decode(
+            "utf-8", errors="ignore"
+        )
+        partial_numeric = any(
+            re.fullmatch(
+                r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)[eE][+-]?",
+                token.strip(),
+            )
+            or re.fullmatch(r"[+-]?\d+\.", token.strip())
+            for token in last_line.split(",")
+        )
+        if (
+            is_csv and partial_numeric
+            and not payload.endswith((b"\n", b"\r"))
+            and b"\n" in payload
+        ):
+            result = parser(payload.rsplit(b"\n", 1)[0] + b"\n", spec)
+            result["tail"] = {
+                "tail_dropped": True,
+                "tail_reason": "interrupted_final_numeric_token",
+                "unterminated_final_line": True,
+            }
+            return result
+        raise
