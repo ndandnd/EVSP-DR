@@ -16,6 +16,8 @@ import os
 import re
 import secrets
 import shutil
+import subprocess
+import sys
 import tempfile
 import stat
 from pathlib import Path
@@ -815,19 +817,22 @@ def capability_probe(
         lock_path = probe_root / "flock.lock"
         lock_fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
         fcntl.flock(lock_fd, fcntl.LOCK_EX)
-        pid = os.fork()
-        if pid == 0:
-            child_fd = os.open(lock_path, os.O_RDWR)
-            try:
-                try:
-                    fcntl.flock(child_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except BlockingIOError:
-                    os._exit(0)
-                os._exit(1)
-            finally:
-                os.close(child_fd)
-        _pid, status = os.waitpid(pid, 0)
-        flock_exclusive = os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0
+        child = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                "import fcntl,os,sys\n"
+                "fd=os.open(sys.argv[1],os.O_RDWR)\n"
+                "try:\n"
+                " fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)\n"
+                "except BlockingIOError:\n"
+                " raise SystemExit(0)\n"
+                "raise SystemExit(1)",
+                str(lock_path),
+            ],
+            check=False,
+        )
+        flock_exclusive = child.returncode == 0
         fcntl.flock(lock_fd, fcntl.LOCK_UN)
         os.close(lock_fd)
         publication = publish_bundle(
