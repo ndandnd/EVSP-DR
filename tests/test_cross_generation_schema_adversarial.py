@@ -176,7 +176,7 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
             ",".join(schemas.EXACT_ITER_HEADER) + "\n"
             "1,1,10,1,0,nan,2"
         ).encode()
-        with self.assertRaisesRegex(ValueError, "no complete"):
+        with self.assertRaisesRegex(ValueError, "non-finite"):
             schemas.parse_artifact(bad_tail, spec)
         interrupted_numeric = (
             ",".join(schemas.EXACT_ITER_HEADER) + "\n"
@@ -228,6 +228,7 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
         checkpoint = {
             "git": {"commit": "c" * 40, "dirty": False},
             "iteration": 1,
+            "trip_ids": [0],
             "instance_sha256": "a" * 64,
             "price_sha256": "b" * 64,
         }

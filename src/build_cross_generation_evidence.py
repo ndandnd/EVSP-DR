@@ -1969,7 +1969,6 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             )
         permitted_incidences = set()
         permitted_costs = defaultdict(set)
-        giro_incidences = set()
         for journal_row in journal_rows:
             summary = parsed_by_artifact[
                 journal_row["artifact_id"]
@@ -2004,9 +2003,6 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 permitted_incidences.update(
                     checkpoint.get("incidence_sha256") or []
                 )
-                giro_incidences.update(
-                    checkpoint.get("incidence_sha256") or []
-                )
         if not set(final.get("selected_incidence_sha256") or []).issubset(
             permitted_incidences
         ):
@@ -2017,9 +2013,13 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         for incidence, selected_cost in (
             final.get("selected_incidence_costs") or {}
         ).items():
+            selected_from_giro = (
+                final.get("selected_column_hashes", {}).get(incidence)
+                in set(final.get("giro_start_column_hashes") or [])
+            )
             if (
                 incidence in permitted_costs
-                and incidence not in giro_incidences
+                and not selected_from_giro
                 and not math.isclose(
                 float(selected_cost),
                 min(float(cost) for cost in permitted_costs[incidence]),
@@ -2037,6 +2037,15 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             ):
                 raise ValueError(
                     f"RAW MIP route lacks verified pool cost: "
+                    f"{final['artifact_id']}"
+                )
+            if (
+                final.get("pool_treatment") == "GIRO"
+                and incidence not in permitted_costs
+                and not selected_from_giro
+            ):
+                raise ValueError(
+                    f"GIRO MIP route lacks verified source cost: "
                     f"{final['artifact_id']}"
                 )
         if final.get("physically_validated_schedule"):

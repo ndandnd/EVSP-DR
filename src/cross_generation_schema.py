@@ -158,9 +158,6 @@ def _tail_safe_csv(payload: bytes) -> tuple[tuple[str, ...], list[dict], dict]:
     unterminated = not payload.endswith((b"\n", b"\r"))
     for index, line_bytes in enumerate(physical_lines[1:], start=2):
         final_line = index == len(physical_lines)
-        if final_line and unterminated:
-            tail_dropped = True
-            break
         try:
             line = line_bytes.decode("utf-8").rstrip("\r\n")
         except UnicodeDecodeError as exc:
@@ -1160,6 +1157,14 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                 or start.get("assignment_complete") is not True
                 or not isinstance(start.get("solver_acceptance"), dict)
                 or start["solver_acceptance"].get("accepted") is not True
+                or not isinstance(
+                    start.get("actual_start_column_hashes"), list
+                )
+                or not start["actual_start_column_hashes"]
+                or any(
+                    not _hex64(value)
+                    for value in start["actual_start_column_hashes"]
+                )
             ):
                 raise ValueError("GIRO MIP final start identity mismatch")
         elif (
@@ -1178,6 +1183,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         selected = value.get("selected_routes")
         selected_incidence_hashes = []
         selected_incidence_costs = {}
+        selected_column_hashes = {}
         if incumbent_found:
             if (
                 type(buses) is not int or buses <= 0
@@ -1223,6 +1229,14 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                 ).encode()).hexdigest()
                 selected_incidence_hashes.append(incidence_sha)
                 selected_incidence_costs[incidence_sha] = cost
+                selected_column_hashes[incidence_sha] = hashlib.sha256(
+                    json.dumps({
+                        "trips": route["trips"],
+                        "route_nodes": route.get("route_nodes"),
+                        "charging_stops": route.get("charging_stops"),
+                        "cost": cost,
+                    }, sort_keys=True, separators=(",", ":")).encode()
+                ).hexdigest()
         elif buses is not None or selected not in (None, []):
             raise ValueError("MIP no-incumbent result contains a schedule")
         normalized_numbers = {}
@@ -1397,6 +1411,10 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                 selected_incidence_hashes
             ),
             "selected_incidence_costs": selected_incidence_costs,
+            "selected_column_hashes": selected_column_hashes,
+            "giro_start_column_hashes": (
+                start.get("actual_start_column_hashes") or []
+            ),
             "git_commit": mip_provenance.get("observed_git_commit"),
         }
         return {"mip_finals": [row], "tail": {}, "schema": "mip_final"}
@@ -1500,7 +1518,12 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         git = value.get("git")
         if (
             not isinstance(git, dict)
+            or not isinstance(git.get("commit"), str)
+            or len(git["commit"]) != 40
+            or type(git.get("dirty")) is not bool
             or not isinstance(value.get("iteration"), int)
+            or not isinstance(value.get("trip_ids"), list)
+            or not value["trip_ids"]
             or not _hex64(value.get("instance_sha256"))
             or not _hex64(value.get("price_sha256"))
         ):
