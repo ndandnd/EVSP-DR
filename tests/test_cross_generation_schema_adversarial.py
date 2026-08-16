@@ -178,6 +178,14 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
         ).encode()
         with self.assertRaisesRegex(ValueError, "non-finite"):
             schemas.parse_artifact(bad_tail, spec)
+        interrupted_numeric = (
+            ",".join(schemas.EXACT_ITER_HEADER) + "\n"
+            "1,1,10,1,0,-1,2\n"
+            "2,2,9,1,0,2e,3"
+        ).encode()
+        parsed = schemas.parse_artifact(interrupted_numeric, spec)
+        self.assertTrue(parsed["tail"]["tail_dropped"])
+        self.assertEqual(len(parsed["cg_rows"]), 1)
 
     def test_operational_checkpoint_status_schemas(self):
         provenance = {

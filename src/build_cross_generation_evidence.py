@@ -473,6 +473,24 @@ def _validate_run_consistency(manifest: dict):
 
 
 def _embedded_provenance_mismatches(parsed: dict, spec: dict) -> list[str]:
+    if parsed.get("schema") == "run_checkpoint_json":
+        checkpoint = parsed.get("checkpoint") or {}
+        metadata = spec.get("metadata") or {}
+        observed = {
+            "instance_sha256": checkpoint.get("instance_sha256"),
+            "tariff_sha256": checkpoint.get("price_sha256"),
+            "git_commit": (checkpoint.get("git") or {}).get("commit"),
+            "git_dirty": (checkpoint.get("git") or {}).get("dirty"),
+        }
+        if isinstance(checkpoint.get("trip_ids"), list):
+            observed["trip_set_sha256"] = hashlib.sha256(json.dumps(
+                checkpoint["trip_ids"], separators=(",", ":")
+            ).encode()).hexdigest()
+        return [
+            f"{key}: manifest={metadata[key]} artifact={value}"
+            for key, value in observed.items()
+            if metadata.get(key) is not None and metadata[key] != value
+        ]
     endpoint = parsed.get("endpoint")
     if endpoint is None and parsed.get("schema") in {
         "exact_cg_snapshot_json", "mip_pool_status_json"
@@ -511,8 +529,15 @@ def _embedded_provenance_mismatches(parsed: dict, spec: dict) -> list[str]:
     mismatches = []
     for key, value in observed.items():
         expected = metadata.get(key)
+        unavailable_in_schema = (
+            key == "tariff_sha256"
+            and metadata.get("algorithm_family")
+            == "heuristic_dp_current"
+            and value is None
+        )
         if (
             expected is not None
+            and not unavailable_in_schema
             and not (
                 key in {"trip_set_sha256", "trip_count"}
                 and not isinstance(trip_ids, list)
@@ -1979,12 +2004,11 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         for incidence, selected_cost in (
             final.get("selected_incidence_costs") or {}
         ).items():
-            if incidence in permitted_costs and not any(
-                math.isclose(
-                    float(selected_cost), float(permitted_cost),
-                    rel_tol=1e-9, abs_tol=1e-6,
-                )
-                for permitted_cost in permitted_costs[incidence]
+            if incidence in permitted_costs and not math.isclose(
+                float(selected_cost),
+                min(float(cost) for cost in permitted_costs[incidence]),
+                rel_tol=1e-9,
+                abs_tol=1e-6,
             ):
                 raise ValueError(
                     f"MIP selected route cost differs from verified pool: "

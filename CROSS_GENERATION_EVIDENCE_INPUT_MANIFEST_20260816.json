@@ -241,7 +241,7 @@
     {
       "request_id": "exact-repool-terminals",
       "root_alias": "repool_small",
-      "glob": "**/*_res*.json",
+      "glob": "**/*_soc*_b*.json",
       "exclude_regex": "(?:\\.snapshot|_mip|match_mip|_rrz).*\\.json$",
       "artifact_type": "endpoint_json",
       "run_id_namespace": "exact-repool-small",
