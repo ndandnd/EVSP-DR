@@ -2046,19 +2046,6 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                     f"MIP selected route cost differs from verified pool: "
                     f"{final['artifact_id']}"
                 )
-        if final.get("pool_treatment") == "GIRO":
-            final["objective_source_bound"] = not has_unrecomputed_giro_cost
-            final["objective_validation_reason"] = (
-                None if not has_unrecomputed_giro_cost
-                else "GIRO route costs runner-attested but not independently "
-                "recomputed from source tariff/physics"
-            )
-            if (
-                has_unrecomputed_giro_cost
-                and final.get("optimal_scope")
-                == "full_pool_lexicographic"
-            ):
-                final["optimal_scope"] = "fleet_only"
             if (
                 final.get("pool_treatment") == "RAW"
                 and incidence not in permitted_costs
@@ -2076,6 +2063,19 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                     f"GIRO MIP route lacks verified source cost: "
                     f"{final['artifact_id']}"
                 )
+        if final.get("pool_treatment") == "GIRO":
+            final["objective_source_bound"] = not has_unrecomputed_giro_cost
+            final["objective_validation_reason"] = (
+                None if not has_unrecomputed_giro_cost
+                else "GIRO route costs runner-attested but not independently "
+                "recomputed from source tariff/physics"
+            )
+            if (
+                has_unrecomputed_giro_cost
+                and final.get("optimal_scope")
+                == "full_pool_lexicographic"
+            ):
+                final["optimal_scope"] = "fleet_only"
         if final.get("physically_validated_schedule"):
             replay_hash = final_metadata.get(
                 "physical_replay_artifact_sha256"
