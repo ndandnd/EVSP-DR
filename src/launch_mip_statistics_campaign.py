@@ -25,17 +25,31 @@ from mip_statistics_inventory import (
     select_age_candidate,
     sha256_file,
 )
+from run_exact_pool_mip import (
+    load_pool,
+    merge_validated_partition_start,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REVIEWED_BASE = "ae736fbc9c5fef71f39d7d758b7062355c485313"
 WORKER_PATH = REPO_ROOT / "src/submit_mip_statistics.sub"
 RUNNER_PATH = REPO_ROOT / "src/run_exact_pool_mip.py"
+CODE_PATHS = (
+    "src/run_exact_pool_mip.py",
+    "src/mip_convergence.py",
+    "src/durable_io.py",
+    "src/audit_giro_known_columns.py",
+    "src/config.py",
+    "src/utils_v2.py",
+    "src/master_lp_scipy.py",
+)
 DEFAULT_ROOTS = {
     "repool_small": REPO_ROOT / "results/repool_small",
     "exact_big": REPO_ROOT / "results/exact_big",
     "k40_factorial": REPO_ROOT / "results/k40_factorial",
     "bigtar_snapshots": REPO_ROOT / "results/bigtar_snapshots",
+    "fresh_preparation": REPO_ROOT / "results/mip_statistics_prep",
 }
 
 
@@ -52,6 +66,7 @@ def _git(*args, binary=False):
 def checkout_identity(*, require_detached: bool) -> dict:
     head = _git("rev-parse", "--verify", "HEAD")
     status = _git("status", "--porcelain", "--untracked-files=no")
+    untracked = _git("status", "--porcelain", "--untracked-files=all")
     symbolic = _git("symbolic-ref", "-q", "HEAD")
     ancestor = _git(
         "merge-base", "--is-ancestor", REVIEWED_BASE, "HEAD"
@@ -61,12 +76,23 @@ def checkout_identity(*, require_detached: bool) -> dict:
         head.returncode != 0
         or len(commit) != 40
         or status.returncode != 0
+        or untracked.returncode != 0
         or status.stdout.strip()
         or ancestor.returncode != 0
     ):
         raise SystemExit(
             "checkout must be tracked-clean and descend from reviewed base"
         )
+    untracked_imports = [
+        line for line in untracked.stdout.splitlines()
+        if line.startswith("?? ")
+        and (
+            re.fullmatch(r"src/.*\.py", line[3:])
+            or re.fullmatch(r"src/.*\.sub", line[3:])
+        )
+    ]
+    if untracked_imports:
+        raise SystemExit("checkout contains untracked importable worker code")
     if symbolic.returncode == 0:
         detached = False
         branch = symbolic.stdout.strip()
@@ -141,6 +167,56 @@ def _parse_assignments(values, *, value_type=Path) -> dict:
     return parsed
 
 
+def _python_identity(path: Path) -> dict:
+    executable = path.expanduser().resolve()
+    try:
+        result = subprocess.run(
+            [
+                str(executable), "-c",
+                "import json,platform,sys\n"
+                "try:\n"
+                " import gurobipy as gp\n"
+                " g='.'.join(map(str,gp.gurobi.version()))\n"
+                "except Exception:\n"
+                " g=None\n"
+                "print(json.dumps({'version':platform.python_version(),"
+                "'major_minor':list(sys.version_info[:2]),'gurobi':g}))",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError as exc:
+        return {
+            "available": False,
+            "executable": str(executable),
+            "reason": str(exc),
+        }
+    if result.returncode != 0 or not executable.is_file():
+        return {
+            "available": False,
+            "executable": str(executable),
+            "reason": result.stderr.strip() or "python unavailable",
+        }
+    details = json.loads(result.stdout)
+    return {
+        "available": (
+            details["major_minor"] == [3, 12]
+            and details["gurobi"] is not None
+        ),
+        "executable": str(executable),
+        "executable_sha256": sha256_file(executable),
+        "version": details["version"],
+        "gurobi_version": details["gurobi"],
+    }
+
+
+def _safe_export_value(label: str, value: str) -> str:
+    if any(character in value for character in (",", "\n", "\r", "\0")):
+        raise ValueError(f"{label} is unsafe for Slurm --export")
+    return value
+
+
 def _validated_start(path: Path, candidate: dict) -> dict:
     source = path.expanduser().resolve()
     raw = source.read_bytes()
@@ -190,12 +266,42 @@ def _validated_start(path: Path, candidate: dict) -> dict:
             counts[trip] += 1
     if any(count != 1 for count in counts.values()):
         raise ValueError(f"GIRO start is not an exact partition: {source}")
+    detail = _physical_start_validation(source, candidate)
     return {
         "path": str(source),
         "sha256": hashlib.sha256(raw).hexdigest(),
         "route_count": len(routes),
         "trip_set_sha256": candidate["trip_set_sha256"],
+        "physical_replay_validated": True,
+        "validated_bus_count": detail["validated_bus_count"],
+        "expected_full_objective": detail["expected_full_objective"],
     }
+
+
+def _physical_start_validation(path: Path, candidate: dict) -> dict:
+    relative = Path(candidate["csv"])
+    instance = Path(candidate["instance_path"]).resolve()
+    data_root = instance
+    for _part in relative.parts:
+        data_root = data_root.parent
+    if (data_root / relative).resolve() != instance:
+        raise ValueError("cannot establish GIRO validation data root")
+    tariff = (data_root / candidate["prices_csv"]).resolve()
+    if (
+        not tariff.is_file()
+        or sha256_file(tariff) != candidate["tariff_sha256"]
+    ):
+        raise ValueError("GIRO validation tariff differs from candidate")
+    status, routes, trips = load_pool(Path(candidate["status_path"]))
+    _merged, _indices, detail = merge_validated_partition_start(
+        routes,
+        trips,
+        path,
+        candidate["prices_csv"],
+        status,
+        data_dir=data_root,
+    )
+    return detail
 
 
 def _rep_code(value: str) -> str:
@@ -306,7 +412,10 @@ def build_plan(
     campaign: str,
     start_map: dict,
     identity: dict,
+    python_path: Path = Path(sys.executable),
 ) -> dict:
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,79}", campaign):
+        raise ValueError("campaign name must be a safe relative identifier")
     selected = representative_candidates(inventory_payload)
     preparations = [_fresh_preparation(scale) for scale in (10, 20)]
     jobs = []
@@ -352,6 +461,13 @@ def build_plan(
     log_root = (
         REPO_ROOT / "src/logs/mip_statistics" / campaign
     ).resolve()
+    if (
+        (REPO_ROOT / "src/results/mip_statistics").resolve()
+        not in campaign_root.parents
+        or (REPO_ROOT / "src/logs/mip_statistics").resolve()
+        not in log_root.parents
+    ):
+        raise ValueError("campaign paths escape designated namespaces")
     for job in jobs:
         job["job_name"] = _job_name(job, campaign)
         cell_root = campaign_root / "input" / job["cell_id"]
@@ -376,7 +492,6 @@ def build_plan(
                 str(cell_root / "validated_start.json")
                 if job["validated_start"] else None
             ),
-            "job_spec": str(cell_root / "job.json"),
             "output": str(
                 campaign_root / "outputs" / f"{job['cell_id']}.json"
             ),
@@ -393,6 +508,53 @@ def build_plan(
         sha256_file(WORKER_PATH) if WORKER_PATH.is_file() else None
     )
     runner_sha = sha256_file(RUNNER_PATH)
+    python_identity = _python_identity(python_path)
+    environment = {
+        "HOME": _safe_export_value(
+            "HOME", os.environ.get("HOME", str(Path.home()))
+        ),
+        "USER": _safe_export_value(
+            "USER", os.environ.get("USER", "")
+        ),
+        "PATH": "/usr/local/bin:/usr/bin:/bin",
+        "EVSP_DR_ROOT": _safe_export_value(
+            "EVSP_DR_ROOT", str(REPO_ROOT)
+        ),
+        "EVSP_EXPECTED_COMMIT": identity["expected_commit"],
+        "EVSP_MIP_PYTHON": _safe_export_value(
+            "EVSP_MIP_PYTHON", python_identity["executable"]
+        ),
+    }
+    code_hashes = {
+        path: sha256_file(REPO_ROOT / path) for path in CODE_PATHS
+    }
+    for job in jobs:
+        job["execution"] = {
+            "cell_id": job["cell_id"],
+            "arm": job["arm"],
+            "scale": job["scale"],
+            "replicate": job["replicate"],
+            "time_limit_s": job["time_limit_s"],
+            "threads": 8,
+            "mip_gap": job["mip_gap"],
+            "status": job["staged_status"],
+            "status_sha256": job["source"]["status_sha256"],
+            "journal": job["staged_journal"],
+            "journal_sha256": job["source"]["journal_sha256"],
+            "instance": job["staged_instance"],
+            "instance_sha256": job["source"]["instance_sha256"],
+            "instance_relative": job["source"]["csv"],
+            "tariff": job["staged_tariff"],
+            "tariff_sha256": job["source"]["tariff_sha256"],
+            "tariff_relative": job["source"]["prices_csv"],
+            "validated_start": job["staged_start"],
+            "validated_start_sha256": (
+                job["validated_start"]["sha256"]
+                if job["validated_start"] else None
+            ),
+            "output": job["output"],
+            "progress_dir": job["progress_dir"],
+        }
     missing_scales = [
         scale for scale in PILOT_BUDGET_HOURS if scale not in selected
     ]
@@ -425,11 +587,19 @@ def build_plan(
         "worker_sha256": worker_sha,
         "runner": str(RUNNER_PATH),
         "runner_sha256": runner_sha,
+        "code_hashes": code_hashes,
+        "python_identity": python_identity,
+        "environment_whitelist": environment,
         "jobs": jobs,
         "missing_scales": missing_scales,
         "missing_matrix_cells": missing_matrix_cells,
+        "inventory_missing_roots": inventory_payload.get("missing_roots") or [],
+        "inventory_missing_slots": inventory_payload.get("missing_slots") or [],
         "blocked": (
             any(job["blocked_reasons"] for job in jobs)
+            or (bool(jobs) and not python_identity["available"])
+            or bool(inventory_payload.get("missing_roots"))
+            or bool(inventory_payload.get("missing_slots"))
             or (mode == "pilot" and bool(missing_scales))
             or (mode == "secondary" and missing_matrix_cells > 0)
         ),
@@ -447,6 +617,9 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     logs = Path(plan["log_root"])
     if root.exists() or logs.exists():
         raise SystemExit("campaign already exists; reruns need a new name")
+    observed_identity = checkout_identity(require_detached=True)
+    if observed_identity != plan["checkout_identity"]:
+        raise SystemExit("submission checkout differs from approved plan")
     if plan["worker_sha256"] is None:
         raise SystemExit("worker is not committed/available")
     root.mkdir(parents=True, exist_ok=False)
@@ -455,11 +628,21 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     runner = root / "input/run_exact_pool_mip.py"
     _write_new_atomic(worker, WORKER_PATH.read_bytes(), executable=True)
     _write_new_atomic(runner, RUNNER_PATH.read_bytes())
+    reviewed_code = root / "input/reviewed_code"
+    for relative, expected in plan["code_hashes"].items():
+        source_path = REPO_ROOT / relative
+        if sha256_file(source_path) != expected:
+            raise SystemExit(f"reviewed code changed before staging: {relative}")
+        staged_path = reviewed_code / relative
+        _write_new_atomic(staged_path, source_path.read_bytes())
+        if sha256_file(staged_path) != expected:
+            raise SystemExit(f"staged code hash mismatch: {relative}")
     plan_path = root / "approved-plan.json"
     plan_raw = _canonical(plan)
     _write_new_atomic(plan_path, plan_raw)
     if hashlib.sha256(plan_raw).hexdigest() != plan_sha:
         raise SystemExit("staged approval plan hash mismatch")
+    # Phase 1: stage and verify every cell before any call to sbatch.
     for job in plan["jobs"]:
         source = job["source"]
         copies = (
@@ -485,79 +668,61 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
             _write_new_atomic(
                 Path(job["staged_start"]), start_path.read_bytes()
             )
-        spec = {
-            "schema": "evsp-dr-mip-statistics-job-v1",
-            "cell_id": job["cell_id"],
-            "arm": job["arm"],
-            "scale": job["scale"],
-            "replicate": job["replicate"],
-            "time_limit_s": job["time_limit_s"],
-            "threads": 8,
-            "mip_gap": job["mip_gap"],
-            "status": job["staged_status"],
-            "status_sha256": source["status_sha256"],
-            "journal": job["staged_journal"],
-            "journal_sha256": source["journal_sha256"],
-            "instance": job["staged_instance"],
-            "instance_sha256": source["instance_sha256"],
-            "instance_relative": source["csv"],
-            "tariff": job["staged_tariff"],
-            "tariff_sha256": source["tariff_sha256"],
-            "tariff_relative": source["prices_csv"],
-            "validated_start": job["staged_start"],
-            "validated_start_sha256": (
-                job["validated_start"]["sha256"]
-                if job["validated_start"] else None
-            ),
-            "runner_sha256": plan["runner_sha256"],
-            "worker_sha256": plan["worker_sha256"],
-            "approved_plan_sha256": plan_sha,
-            "approved_plan": str(plan_path),
-            "output": job["output"],
-            "progress_dir": job["progress_dir"],
-            "expected_commit": plan["checkout_identity"][
-                "expected_commit"
-            ],
-        }
-        spec_raw = (json.dumps(spec, indent=2) + "\n").encode()
-        _write_new_atomic(Path(job["job_spec"]), spec_raw)
-        spec_sha = hashlib.sha256(spec_raw).hexdigest()
-        export = (
-            "HOME=" + os.environ.get("HOME", str(Path.home()))
-            + ",USER=" + os.environ.get("USER", "")
-            + ",PATH=/usr/local/bin:/usr/bin:/bin"
-            + ",EVSP_DR_ROOT=" + str(REPO_ROOT)
-            + ",EVSP_EXPECTED_COMMIT="
-            + plan["checkout_identity"]["expected_commit"]
-            + ",EVSP_MIP_EXPECTED_WORKER_SHA256="
-            + plan["worker_sha256"]
-        )
+            if sha256_file(Path(job["staged_start"])) != (
+                    job["validated_start"]["sha256"]):
+                raise SystemExit(f"{job['cell_id']}: staged start mismatch")
+        execution = job["execution"]
+        for path_key, hash_key in (
+            ("status", "status_sha256"),
+            ("journal", "journal_sha256"),
+            ("instance", "instance_sha256"),
+            ("tariff", "tariff_sha256"),
+        ):
+            if sha256_file(Path(execution[path_key])) != execution[hash_key]:
+                raise SystemExit(
+                    f"{job['cell_id']}: execution input changed"
+                )
+    manifest = json.loads(json.dumps(plan))
+    manifest["approval_sha256"] = plan_sha
+    manifest["submitted"] = False
+    _replace_json(root / "campaign.json", manifest)
+
+    # Phase 2: only now may cells be submitted.
+    export_values = dict(plan["environment_whitelist"])
+    export_values["EVSP_MIP_EXPECTED_WORKER_SHA256"] = plan[
+        "worker_sha256"
+    ]
+    export = ",".join(
+        f"{key}={_safe_export_value(key, str(value))}"
+        for key, value in export_values.items()
+    )
+    for job, manifest_job in zip(plan["jobs"], manifest["jobs"]):
         wall_hours = job["budget_hours"]
+        comment = (
+            f"MSTAT:{plan_sha[:12]}:{hashlib.sha256(job['cell_id'].encode()).hexdigest()[:8]}"
+        )
         command = [
             "sbatch", "--parsable", "--partition=scaglione",
             "--no-requeue", "--signal=B:USR1@180",
             "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=64G",
             f"--time={wall_hours:02d}:10:00",
             f"--job-name={job['job_name']}",
+            f"--comment={comment}",
             f"--output={logs}/%x_%j.out",
             f"--error={logs}/%x_%j.err",
             "--export=" + export,
-            str(worker), job["job_spec"], spec_sha,
+            str(worker), str(plan_path), plan_sha, job["cell_id"],
         ]
-        job["submission_state"] = "attempting"
-        manifest = {
-            **plan,
-            "approval_sha256": plan_sha,
-            "submitted": False,
-        }
+        manifest_job["submission_state"] = "attempting"
+        manifest_job["deduplication_comment"] = comment
         _replace_json(root / "campaign.json", manifest)
         completed = subprocess.run(
             command, cwd=REPO_ROOT, text=True,
             capture_output=True, check=False,
         )
         if completed.returncode != 0:
-            job["submission_state"] = "failed"
-            job["submission_error"] = (
+            manifest_job["submission_state"] = "failed"
+            manifest_job["submission_error"] = (
                 completed.stderr or completed.stdout
             ).strip()
             _replace_json(root / "campaign.json", manifest)
@@ -565,8 +730,8 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         job_id = completed.stdout.strip().split(";", 1)[0]
         if not job_id.isdigit():
             raise SystemExit("sbatch returned an invalid job ID")
-        job["job_id"] = job_id
-        job["submission_state"] = "submitted"
+        manifest_job["job_id"] = job_id
+        manifest_job["submission_state"] = "submitted"
         _replace_json(root / "campaign.json", manifest)
     manifest["submitted"] = True
     _replace_json(root / "campaign.json", manifest)
@@ -585,6 +750,7 @@ def parse_args(argv=None):
     parser.add_argument("--giro-start", action="append", default=[])
     parser.add_argument("--inventory-out", type=Path)
     parser.add_argument("--plan-out", type=Path)
+    parser.add_argument("--python", type=Path, default=Path(sys.executable))
     parser.add_argument("--approved-plan-sha256")
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
@@ -617,6 +783,7 @@ def main(argv=None) -> int:
         campaign=args.campaign,
         start_map=start_map,
         identity=identity,
+        python_path=args.python,
     )
     plan_raw = _canonical(plan)
     plan_sha = hashlib.sha256(plan_raw).hexdigest()

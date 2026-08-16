@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import sys
 import tempfile
@@ -67,6 +68,7 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             )
             result = {
                 "partitioning": True,
+                "experiment_arm": "D" if arm == "GIRO" else "B",
                 "incumbent_found": True,
                 "status_name": "OPTIMAL",
                 "buses": 40 if arm == "GIRO" else 41,
@@ -81,9 +83,35 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                 ),
                 "source_result_sha256": source["status_sha256"],
                 "source_journal_sha256": source["journal_sha256"],
+                "mip_start": (
+                    {
+                        "kind": "validated_exact_partition",
+                        "source_sha256": "d" * 64,
+                    }
+                    if arm == "GIRO" else {
+                        "kind": "greedy_pool_partition",
+                        "source_sha256": None,
+                    }
+                ),
+                "mip_provenance": {
+                    "expected_git_commit": "e" * 40,
+                    "observed_git_commit": "e" * 40,
+                    "arguments": {
+                        "two_stage": True,
+                        "cover": False,
+                        "threads": 8,
+                    },
+                },
             }
             output.write_text(json.dumps(result))
-            jobs.append({
+            (progress / "final.json").write_text(json.dumps({
+                "final": {
+                    "incumbent_found": True,
+                    "buses": result["buses"],
+                    "fleet_proven": result["fleet_proven"],
+                }
+            }))
+            job = {
                 "cell_id": cell,
                 "scale": 40,
                 "replicate": "r1",
@@ -93,13 +121,26 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                 "budget_hours": 2,
                 "source": source,
                 "validated_start": (
-                    {"route_count": 40} if arm == "GIRO" else None
+                    {"route_count": 40, "sha256": "d" * 64}
+                    if arm == "GIRO" else None
                 ),
+                "execution": {"cell_id": cell},
                 "progress_dir": str(progress),
                 "output": str(output),
-            })
+            }
+            jobs.append(job)
+        approved = {
+            "campaign": "summary-test",
+            "jobs": jobs,
+        }
+        plan_raw = json.dumps(
+            approved, sort_keys=True, separators=(",", ":")
+        ).encode()
+        (campaign / "approved-plan.json").write_bytes(plan_raw)
         (campaign / "campaign.json").write_text(json.dumps({
             "campaign": "summary-test",
+            "approval_sha256": hashlib.sha256(plan_raw).hexdigest(),
+            "checkout_identity": {"expected_commit": "e" * 40},
             "jobs": jobs,
         }))
         return campaign
@@ -144,6 +185,40 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             result_path.write_text(json.dumps(result))
             with self.assertRaisesRegex(ValueError, "covering"):
                 summarize(campaign, root / "summary")
+
+    def test_swapped_arm_and_inconsistent_proof_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            manifest_path = campaign / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["jobs"][0]["output"], manifest["jobs"][1]["output"] = (
+                manifest["jobs"][1]["output"],
+                manifest["jobs"][0]["output"],
+            )
+            manifest_path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "approved plan"):
+                summarize(campaign, root / "swapped")
+
+            (root / "second").mkdir()
+            campaign = self._campaign(root / "second")
+            manifest = json.loads(
+                (campaign / "campaign.json").read_text()
+            )
+            raw_path = Path(manifest["jobs"][0]["output"])
+            result = json.loads(raw_path.read_text())
+            result.update({
+                "incumbent_found": False,
+                "buses": None,
+                "fleet_proven": True,
+                "fleet_bound": 40.0,
+                "optimal_scope": "none",
+            })
+            raw_path.write_text(json.dumps(result))
+            with self.assertRaisesRegex(
+                ValueError, "finite-pool proof|incumbent/bus"
+            ):
+                summarize(campaign, root / "bad-proof")
 
 
 if __name__ == "__main__":

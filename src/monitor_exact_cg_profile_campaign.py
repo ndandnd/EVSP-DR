@@ -156,7 +156,6 @@ def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
                 in {"COMPLETED", "FAILED", "CANCELLED", "TIMEOUT"}
                 and live.get("state")
                 in {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING"}
-                and not output.is_file()
             )
         )
         if live:

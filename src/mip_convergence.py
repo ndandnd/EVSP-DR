@@ -98,6 +98,8 @@ class MIPProgressRecorder:
         self.latest_incumbent = None
         self.first_feasible_s = None
         self.incumbent_events = []
+        self.statistics_events = []
+        self.stage_events = []
         self.emitted = set()
         self.disabled_reason = None
         self.finalized = False
@@ -117,7 +119,11 @@ class MIPProgressRecorder:
             number = float(value)
         except (TypeError, ValueError):
             return None
-        return number if math.isfinite(number) else None
+        return (
+            number
+            if math.isfinite(number) and abs(number) < 1e100
+            else None
+        )
 
     def transition_stage(self, stage: str, *, elapsed_s=None) -> None:
         if stage not in {"fleet", "cost", "single"}:
@@ -135,6 +141,18 @@ class MIPProgressRecorder:
             "fleet_gap": None,
             "node_count": 0.0,
             "solution_count": 0,
+        })
+        self.stage_events.append({
+            "total_elapsed_s": now_elapsed,
+            "stage": stage,
+        })
+        self.statistics_events.append({
+            "total_elapsed_s": now_elapsed,
+            "stage": stage,
+            "statistics": {
+                **self.latest_stats,
+                "stage_elapsed_s": 0.0,
+            },
         })
         self._publish_latest("stage_transition", now_elapsed)
 
@@ -187,6 +205,11 @@ class MIPProgressRecorder:
         self.latest_stats["stage_elapsed_s"] = max(
             0.0, float(stage_elapsed_s)
         )
+        self.statistics_events.append({
+            "total_elapsed_s": elapsed,
+            "stage": self.stage,
+            "statistics": dict(self.latest_stats),
+        })
         self.publish_due(elapsed)
 
     def record_incumbent(
@@ -268,7 +291,10 @@ class MIPProgressRecorder:
                 self._publish_checkpoint(mark, observed_elapsed_s=elapsed_s)
 
     def _incumbent_snapshot(self, checkpoint_s: float) -> tuple[str, dict | None]:
-        incumbent = self.latest_incumbent
+        incumbent = next((
+            event for event in reversed(self.incumbent_events)
+            if event["total_elapsed_s"] <= checkpoint_s + 1e-9
+        ), None)
         if incumbent is None:
             return "no_incumbent_yet", None
         if incumbent["total_elapsed_s"] > checkpoint_s + 1e-9:
@@ -278,6 +304,29 @@ class MIPProgressRecorder:
         else:
             state = "reused_most_recent_earlier_incumbent"
         return state, dict(incumbent)
+
+    def _statistics_snapshot(self, checkpoint_s: float) -> tuple[dict, float | None]:
+        event = next((
+            item for item in reversed(self.statistics_events)
+            if item["total_elapsed_s"] <= checkpoint_s + 1e-9
+        ), None)
+        if event is None:
+            return {
+                "fleet_bound": None,
+                "objective_bound": None,
+                "fleet_gap": None,
+                "node_count": 0.0,
+                "solution_count": 0,
+                "stage_elapsed_s": 0.0,
+            }, None
+        return dict(event["statistics"]), float(event["total_elapsed_s"])
+
+    def _stage_snapshot(self, checkpoint_s: float):
+        event = next((
+            item for item in reversed(self.stage_events)
+            if item["total_elapsed_s"] <= checkpoint_s + 1e-9
+        ), None)
+        return event["stage"] if event is not None else None
 
     def _payload(
         self,
@@ -294,12 +343,16 @@ class MIPProgressRecorder:
             else float(observed_elapsed_s or 0.0)
         )
         incumbent_state, incumbent = self._incumbent_snapshot(reference)
+        statistics, statistics_observed_s = self._statistics_snapshot(
+            reference
+        )
+        stage = self._stage_snapshot(reference)
         return {
             "schema": SCHEMA,
             "kind": kind,
             "observational_only": True,
             "gurobi_tree_restart_supported": False,
-            "stage": self.stage,
+            "stage": stage,
             "checkpoint_elapsed_s": checkpoint_s,
             "observed_total_elapsed_s": observed_elapsed_s,
             "observed_stage_elapsed_s": self.latest_stats.get(
@@ -311,7 +364,8 @@ class MIPProgressRecorder:
             "incumbent_state": incumbent_state,
             "incumbent": incumbent,
             "first_feasible_incumbent_s": self.first_feasible_s,
-            "latest_statistics": dict(self.latest_stats),
+            "latest_statistics": statistics,
+            "latest_statistics_observed_s": statistics_observed_s,
             "incumbent_improvements": list(self.incumbent_events),
             "metadata": dict(self.metadata),
             "disabled_reason": self.disabled_reason,

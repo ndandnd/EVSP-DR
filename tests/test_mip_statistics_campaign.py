@@ -129,6 +129,7 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         payload = {
             "candidates": [{
                 "scale": 8,
+                "source_family": "repool_small",
                 "instance_sha256": f"{index:064x}",
                 "trip_set_sha256": f"{index + 10:064x}",
                 "replicate": f"r{index}",
@@ -156,7 +157,29 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 "branch": "",
                 "tracked_clean": True,
             }
-            with patch.object(launcher, "REPO_ROOT", root):
+            with (
+                patch.object(launcher, "REPO_ROOT", root),
+                patch.object(
+                    launcher,
+                    "_physical_start_validation",
+                    return_value={
+                        "validated_bus_count": 8,
+                        "expected_full_objective": 800000.0,
+                    },
+                ),
+                patch.object(launcher, "CODE_PATHS", ()),
+                patch.object(
+                    launcher,
+                    "_python_identity",
+                    return_value={
+                        "available": True,
+                        "executable": str(Path(sys.executable).resolve()),
+                        "executable_sha256": "e" * 64,
+                        "version": "3.12.test",
+                        "gurobi_version": "test",
+                    },
+                ),
+            ):
                 plan = launcher.build_plan(
                     payload,
                     mode="pilot",
@@ -192,7 +215,21 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 "branch": "",
                 "tracked_clean": True,
             }
-            with patch.object(launcher, "REPO_ROOT", root):
+            with (
+                patch.object(launcher, "REPO_ROOT", root),
+                patch.object(launcher, "CODE_PATHS", ()),
+                patch.object(
+                    launcher,
+                    "_python_identity",
+                    return_value={
+                        "available": True,
+                        "executable": str(Path(sys.executable).resolve()),
+                        "executable_sha256": "e" * 64,
+                        "version": "3.12.test",
+                        "gurobi_version": "test",
+                    },
+                ),
+            ):
                 plan = launcher.build_plan(
                     payload,
                     mode="pilot",
@@ -237,10 +274,63 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         self.assertIn("#SBATCH --signal=B:USR1@180", text)
         self.assertIn("--two-stage", text)
         self.assertNotIn("--cover", text)
+        self.assertIn("APPROVED_PLAN", text)
+        self.assertIn("REQUESTED_CELL", text)
+        self.assertNotIn("JOB_SPEC", text)
         launcher_text = (
             REPO_ROOT / "src/launch_mip_statistics_campaign.py"
         ).read_text()
         self.assertNotIn("--export=ALL", launcher_text)
+        self.assertLess(
+            launcher_text.index("Phase 1: stage"),
+            launcher_text.index("Phase 2: only now"),
+        )
+
+    def test_campaign_name_escape_and_export_injection_are_rejected(self):
+        payload = {
+            "candidates": [],
+            "selection_rule": "median",
+            "missing_roots": [],
+            "missing_slots": [],
+        }
+        identity = {
+            "expected_commit": "b" * 40,
+            "reviewed_base_commit": launcher.REVIEWED_BASE,
+            "detached": True,
+            "branch": "",
+            "tracked_clean": True,
+        }
+        with self.assertRaisesRegex(ValueError, "safe relative"):
+            launcher.build_plan(
+                payload,
+                mode="pilot",
+                campaign="/tmp/escape",
+                start_map={},
+                identity=identity,
+            )
+        with (
+            patch.object(launcher, "CODE_PATHS", ()),
+            patch.object(
+                launcher,
+                "_python_identity",
+                return_value={
+                    "available": True,
+                    "executable": "/safe/python",
+                    "executable_sha256": "e" * 64,
+                    "version": "3.12",
+                    "gurobi_version": "test",
+                },
+            ),
+            patch.dict(launcher.os.environ, {"HOME": "/tmp/x,EVIL=1"}),
+            self.assertRaisesRegex(ValueError, "unsafe"),
+        ):
+            launcher.build_plan(
+                payload,
+                mode="pilot",
+                campaign="safe-campaign",
+                start_map={},
+                identity=identity,
+            )
 
 
 if __name__ == "__main__":

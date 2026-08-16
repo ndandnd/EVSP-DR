@@ -79,6 +79,19 @@ class MIPConvergenceTests(unittest.TestCase):
                     "checkpoint_0120m.json",
                 ],
             )
+            early = json.loads(
+                (recorder.directory / "checkpoint_0005m.json").read_text()
+            )
+            self.assertIsNone(
+                early["latest_statistics"]["fleet_bound"]
+            )
+            self.assertEqual(early["latest_statistics_observed_s"], 0.0)
+            current = json.loads(
+                (recorder.directory / "checkpoint_0120m.json").read_text()
+            )
+            self.assertEqual(
+                current["latest_statistics_observed_s"], 7200.0
+            )
 
     def test_multiple_fleet_improvements_between_marks(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -237,6 +250,10 @@ class MIPConvergenceTests(unittest.TestCase):
             self.assertEqual(
                 recorder.latest_stats["node_count"], 7.0
             )
+
+    def test_gurobi_infinity_sentinel_is_not_a_finite_bound(self):
+        self.assertIsNone(MIPProgressRecorder._finite(1e100))
+        self.assertIsNone(MIPProgressRecorder._finite(-1e100))
 
 
 if __name__ == "__main__":

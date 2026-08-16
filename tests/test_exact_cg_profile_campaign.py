@@ -655,7 +655,7 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
                 output = root / f"{label}.profile.json"
                 job = {
                     "label": label,
-                    "job_id": "123",
+                    "job_id": str(123 + len(jobs)),
                     "job_name": f"PF{label}-abcdef",
                     "submission_state": "submitted",
                     "output": str(output),
@@ -737,6 +737,11 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
                 ),
             ):
                 precedence = monitor.monitor(root, query_slurm=True)[0]
+                jobs[0]["output"] = original_output
+                (root / "campaign.json").write_text(json.dumps(manifest))
+                precedence_with_output = monitor.monitor(
+                    root, query_slurm=True
+                )[0]
             self.assertEqual(precedence["slurm"]["state"], "PENDING")
             self.assertEqual(
                 precedence["slurm"]["state_source"], "squeue"
@@ -747,6 +752,11 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
             self.assertTrue(precedence["state_disagreement"])
             self.assertTrue(
                 precedence["possible_stale_or_recycled_job_id"]
+            )
+            self.assertTrue(
+                precedence_with_output[
+                    "possible_stale_or_recycled_job_id"
+                ]
             )
             jobs[0]["output"] = original_output
             (root / "campaign.json").write_text(json.dumps(manifest))

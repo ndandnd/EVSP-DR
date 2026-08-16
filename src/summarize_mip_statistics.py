@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import ctypes
 import csv
+import errno
 import hashlib
 import json
 import math
@@ -19,6 +21,7 @@ CHECKPOINT_FIELDS = (
     "campaign", "cell_id", "scale", "replicate", "arm",
     "augmentation_changes_column_set", "cg_age_hours",
     "budget_hours", "checkpoint_elapsed_s", "observed_total_elapsed_s",
+    "latest_statistics_observed_s",
     "stage", "incumbent_state", "incumbent_fleet",
     "incumbent_objective", "fleet_bound", "objective_bound",
     "fleet_gap", "node_count", "solution_count",
@@ -49,8 +52,93 @@ def _float(value):
     return number if math.isfinite(number) else None
 
 
+def _validate_result(result: dict, job: dict, manifest: dict) -> None:
+    source = job["source"]
+    arm = job["arm"]
+    if result.get("partitioning") is not True:
+        raise ValueError(f"{job['cell_id']} is covering, not an integer schedule")
+    expected_arm = "D" if arm == "GIRO" else "B"
+    if result.get("experiment_arm") != expected_arm:
+        raise ValueError(f"{job['cell_id']} experiment arm mismatch")
+    if (
+        result.get("source_result_sha256") != source["status_sha256"]
+        or result.get("source_journal_sha256") != source["journal_sha256"]
+    ):
+        raise ValueError(f"{job['cell_id']} result source mismatch")
+    provenance = result.get("mip_provenance")
+    arguments = provenance.get("arguments") if isinstance(
+        provenance, dict
+    ) else None
+    if (
+        not isinstance(arguments, dict)
+        or arguments.get("two_stage") is not True
+        or arguments.get("cover") is not False
+        or int(arguments.get("threads", -1)) != 8
+        or provenance.get("observed_git_commit")
+        != manifest["checkout_identity"]["expected_commit"]
+        or provenance.get("expected_git_commit")
+        != manifest["checkout_identity"]["expected_commit"]
+    ):
+        raise ValueError(f"{job['cell_id']} solver provenance mismatch")
+    start = result.get("mip_start") or {}
+    if arm == "GIRO":
+        if (
+            start.get("kind") != "validated_exact_partition"
+            or start.get("source_sha256")
+            != job["validated_start"]["sha256"]
+        ):
+            raise ValueError(f"{job['cell_id']} GIRO start mismatch")
+    elif start.get("kind") == "validated_exact_partition":
+        raise ValueError(f"{job['cell_id']} RAW result used GIRO columns")
+    incumbent = result.get("incumbent_found") is True
+    buses = result.get("buses")
+    if incumbent != (isinstance(buses, int) and buses > 0):
+        raise ValueError(f"{job['cell_id']} incumbent/bus mismatch")
+    if result.get("fleet_proven") is True and (
+        not incumbent
+        or result.get("optimal_scope") not in {
+            "fleet_only", "full_pool_lexicographic"
+        }
+        or _float(result.get("fleet_bound")) is None
+        or math.ceil(float(result["fleet_bound"]) - 1e-6) < buses
+    ):
+        raise ValueError(f"{job['cell_id']} finite-pool proof is inconsistent")
+
+
+def _rename_noreplace(source: Path, destination: Path) -> None:
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = getattr(libc, "renameat2", None)
+    if renameat2 is None:
+        raise RuntimeError("atomic no-replace publication unavailable")
+    renameat2.argtypes = [
+        ctypes.c_int, ctypes.c_char_p,
+        ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
+    ]
+    renameat2.restype = ctypes.c_int
+    result = renameat2(
+        -100, os.fsencode(source), -100, os.fsencode(destination), 1
+    )
+    if result == 0:
+        return
+    error = ctypes.get_errno()
+    if error == errno.EEXIST:
+        raise FileExistsError(f"output directory exists: {destination}")
+    raise OSError(error, os.strerror(error), str(destination))
+
+
 def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     manifest = json.loads((root / "campaign.json").read_text())
+    plan_path = root / "approved-plan.json"
+    if not plan_path.is_file():
+        raise ValueError("campaign lacks immutable approved-plan.json")
+    plan_raw = plan_path.read_bytes()
+    plan_sha = hashlib.sha256(plan_raw).hexdigest()
+    if plan_sha != manifest.get("approval_sha256"):
+        raise ValueError("campaign approval SHA mismatch")
+    approved = json.loads(plan_raw)
+    approved_jobs = {
+        job["cell_id"]: job for job in approved.get("jobs") or []
+    }
     campaign = manifest["campaign"]
     checkpoint_rows = []
     final_rows = []
@@ -68,6 +156,15 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             )] = int(target)
     for job in sorted(
             manifest.get("jobs") or [], key=lambda item: item["cell_id"]):
+        approved_job = approved_jobs.get(job["cell_id"])
+        if approved_job is None or any(
+            job.get(key) != approved_job.get(key)
+            for key in (
+                "arm", "scale", "replicate", "source",
+                "validated_start", "execution", "output", "progress_dir",
+            )
+        ):
+            raise ValueError(f"{job['cell_id']} differs from approved plan")
         progress_dir = Path(job["progress_dir"])
         improvements = []
         if progress_dir.is_dir():
@@ -108,6 +205,9 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     "observed_total_elapsed_s": payload.get(
                         "observed_total_elapsed_s"
                     ),
+                    "latest_statistics_observed_s": payload.get(
+                        "latest_statistics_observed_s"
+                    ),
                     "stage": payload.get("stage"),
                     "incumbent_state": payload.get("incumbent_state"),
                     "incumbent_fleet": incumbent.get("fleet"),
@@ -130,17 +230,22 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 improvements = payload.get("incumbent_improvements") or []
         output = Path(job["output"])
         result = json.loads(output.read_text()) if output.is_file() else {}
-        if result and result.get("partitioning") is not True:
-            raise ValueError(
-                f"{job['cell_id']} is covering, not an integer schedule"
-            )
-        if result and (
-            result.get("source_result_sha256")
-            != job["source"]["status_sha256"]
-            or result.get("source_journal_sha256")
-            != job["source"]["journal_sha256"]
-        ):
-            raise ValueError(f"{job['cell_id']} result source mismatch")
+        if result:
+            _validate_result(result, job, manifest)
+            progress_final = progress_dir / "final.json"
+            if not progress_final.is_file():
+                raise ValueError(f"{job['cell_id']} lacks progress final.json")
+            progress_payload = json.loads(progress_final.read_text())
+            final = progress_payload.get("final") or {}
+            if (
+                final.get("incumbent_found")
+                != result.get("incumbent_found")
+                or final.get("buses") != result.get("buses")
+                or final.get("fleet_proven") != result.get("fleet_proven")
+            ):
+                raise ValueError(
+                    f"{job['cell_id']} final result/progress mismatch"
+                )
         key = (
             job["scale"], job["replicate"],
             job["source"]["status_sha256"],
@@ -167,7 +272,11 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 and math.ceil(bound - 1e-6) >= int(round(fleet))
                 and not row["solver_ended_before_checkpoint"]
             ):
-                proof_times.append(row["checkpoint_elapsed_s"])
+                proof_times.append(
+                    row["latest_statistics_observed_s"]
+                    if row["latest_statistics_observed_s"] is not None
+                    else row["checkpoint_elapsed_s"]
+                )
         final_rows.append({
             "campaign": campaign,
             "cell_id": job["cell_id"],
@@ -370,7 +479,7 @@ def summarize(
         (staging / "summary.json").write_text(
             json.dumps(notes, indent=2) + "\n"
         )
-        os.rename(staging, output)
+        _rename_noreplace(staging, output)
     finally:
         if staging.exists():
             shutil.rmtree(staging)

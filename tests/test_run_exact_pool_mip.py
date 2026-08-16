@@ -24,6 +24,7 @@ from run_exact_pool_mip import (  # noqa: E402
     merge_validated_partition_start,
     optimal_scope,
     singleton_partition_indices,
+    validate_final_selected_routes,
     validate_injected_route,
     verified_mip_code_identity,
 )
@@ -677,6 +678,55 @@ class ExactPoolMipTests(unittest.TestCase):
                         data_dir=data_dir,
                     )
 
+    def test_final_replay_rejects_incidence_mismatch_and_nonfinite_physics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp)
+            instance = data / "tiny.csv"
+            instance.write_text("tiny\n")
+            status = {
+                "csv": "tiny.csv",
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            base_problem = self.validation_problem()
+            problem = SimpleNamespace(
+                **vars(base_problem),
+                trips=[1, 2],
+            )
+            with patch(
+                "audit_giro_known_columns.build_problem",
+                return_value=problem,
+            ):
+                with self.assertRaisesRegex(
+                    SystemExit, "trip incidence differs"
+                ):
+                    validate_final_selected_routes(
+                        status,
+                        [1, 2],
+                        [{
+                            "trips": [1],
+                            "route_nodes": [DEPOT, 2, DEPOT],
+                            "charging_stops": {},
+                        }],
+                        data_dir=data,
+                    )
+                bad = {**status, "g_kwh": float("nan")}
+                with self.assertRaisesRegex(
+                    SystemExit, "invalid/non-finite"
+                ):
+                    validate_final_selected_routes(
+                        bad,
+                        [1, 2],
+                        [],
+                        data_dir=data,
+                    )
+
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
     ):
@@ -812,7 +862,11 @@ class ExactPoolMipTests(unittest.TestCase):
             arguments.extend([
                 "--initial-partition-routes", str(partition),
             ])
-        with patch.dict(sys.modules, {"gurobipy": fake_gp}), explicit_patch:
+        with (
+            patch.dict(sys.modules, {"gurobipy": fake_gp}),
+            explicit_patch,
+            patch("run_exact_pool_mip.validate_final_selected_routes"),
+        ):
             with contextlib.redirect_stdout(io.StringIO()):
                 rc = main(arguments)
         payload = json.loads(out.read_text())
@@ -947,6 +1001,29 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertFalse(payload["incumbent_found"])
         self.assertIsNone(payload["buses"])
         self.assertIsNone(payload["mip_obj"])
+        self.assertEqual(
+            payload["two_stage"]["stage2_skip_reason"],
+            "no_fleet_incumbent",
+        )
+
+    def test_validated_start_is_preserved_when_solver_reports_no_solution(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 0.0,
+            "bound": 1.0,
+            "gap": 1.0,
+            "solutions": 0,
+            "selected": [],
+        }], explicit_start=True)
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 1)
+        self.assertTrue(payload["incumbent_found"])
+        self.assertFalse(payload["solver_incumbent_found"])
+        self.assertEqual(
+            payload["incumbent_source"], "validated_start_fallback"
+        )
+        self.assertEqual(payload["buses"], 1)
         self.assertEqual(
             payload["two_stage"]["stage2_skip_reason"],
             "no_fleet_incumbent",

@@ -13,8 +13,10 @@ import json
 import math
 import os
 import re
+import shlex
 import shutil
 import subprocess
+import sys
 import tarfile
 import tempfile
 from collections import defaultdict
@@ -29,6 +31,7 @@ HISTORICAL_COMMIT = "f43475b732c3fbc8447a30845834a7d9e8822ef3"
 INSTANCE_SHA256 = "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 TARIFF_SHA256 = "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
 HISTORICAL_ROUTE_WEIGHT = 39.252026205592166
+EXPECTED_K40_TRIPS = 947
 CHECKPOINTS = {
     "h1": 60,
     "h3": 180,
@@ -187,6 +190,22 @@ def _validate_status(
             or status.get("initial_pool") != initial
         ):
             raise ValueError(f"treatment mismatch for {arm}: {path}")
+        args = provenance.get("args")
+        if not isinstance(args, dict) or (
+            args.get("master_sense") != sense
+            or args.get("initial_pool") != initial
+            or int(args.get("columns_per_iter", -1)) != 30
+            or not math.isclose(
+                float(args.get("rc_eps", math.nan)),
+                1e-4, rel_tol=0.0, abs_tol=1e-12,
+            )
+        ):
+            raise ValueError(f"provenance treatment/CG controls mismatch: {path}")
+    elif expected_commit == HISTORICAL_COMMIT:
+        if status.get("master_sense") not in (None, "cover") or (
+            status.get("initial_pool") not in (None, "artificial")
+        ):
+            raise ValueError("historical comparator treatment is contradictory")
     trip_ids = status.get("trip_ids")
     if (
         not isinstance(trip_ids, list)
@@ -194,6 +213,8 @@ def _validate_status(
         or len(trip_ids) != len(set(trip_ids))
     ):
         raise ValueError(f"invalid trip IDs: {path}")
+    if trip_ids != list(range(EXPECTED_K40_TRIPS)):
+        raise ValueError(f"unexpected k40 trip identity: {path}")
     wall_s = float(status.get("wall_s"))
     if not math.isfinite(wall_s) or wall_s < 0:
         raise ValueError(f"invalid actual wall_s: {path}")
@@ -211,7 +232,34 @@ def _validate_status(
         and journal != expected_journal
     ):
         raise ValueError(f"snapshot/journal pairing mismatch: {path}")
-    read_jsonl_records(journal, repair_trailing=False, collect=False)
+    records = read_jsonl_records(
+        journal, repair_trailing=False, collect=True
+    )
+    effective = {}
+    known = set(trip_ids)
+    for record in records:
+        trips = record.get("trips")
+        try:
+            cost = float(record["cost"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(f"invalid journal cost: {journal}") from exc
+        if (
+            not isinstance(trips, list)
+            or not trips
+            or any(
+                not isinstance(trip, int) or isinstance(trip, bool)
+                for trip in trips
+            )
+            or len(trips) != len(set(trips))
+            or any(trip not in known for trip in trips)
+            or not math.isfinite(cost)
+        ):
+            raise ValueError(f"invalid journal route: {journal}")
+        key = frozenset(trips)
+        if key not in effective or cost < effective[key]:
+            effective[key] = cost
+    if len(effective) != int(status.get("columns", -1)):
+        raise ValueError(f"journal/status column count mismatch: {path}")
     if require_data:
         instance = _find_data(path, status["csv"])
         tariff = _find_data(path, status["prices_csv"])
@@ -225,6 +273,42 @@ def _validate_status(
     min_rc = _finite(status, "min_rc")
     if artificials is None or artificials < 0:
         raise ValueError(f"invalid artificial total: {path}")
+    final_lp = status.get("final_lp")
+    if isinstance(final_lp, dict):
+        positive = final_lp.get("positive_routes")
+        if not isinstance(positive, list):
+            raise ValueError(f"invalid final LP routes: {path}")
+        reconstructed_weight = 0.0
+        reconstructed_objective = 0.0
+        for route in positive:
+            key = frozenset(route.get("trips") or [])
+            if key not in effective:
+                raise ValueError(f"final LP route absent from journal: {path}")
+            value = float(route.get("value"))
+            cost = float(route.get("cost"))
+            if (
+                not math.isfinite(value)
+                or value <= 0
+                or not any(
+                    math.isclose(
+                        cost, recorded["cost"],
+                        rel_tol=1e-10, abs_tol=1e-6,
+                    )
+                    for recorded in records
+                    if frozenset(recorded.get("trips") or []) == key
+                )
+            ):
+                raise ValueError(f"invalid final LP route metric: {path}")
+            reconstructed_weight += value
+            reconstructed_objective += value * cost
+        if not math.isclose(
+                reconstructed_weight, route_weight,
+                rel_tol=1e-9, abs_tol=1e-7):
+            raise ValueError(f"final LP route weight mismatch: {path}")
+        if not math.isclose(
+                reconstructed_objective + 500000.0 * artificials,
+                objective, rel_tol=1e-9, abs_tol=1e-3):
+            raise ValueError(f"final LP objective mismatch: {path}")
     certified = status.get("certified_rc_optimal") is True
     if certified and (
         min_rc is None or min_rc < -1e-4
@@ -249,7 +333,9 @@ def _validate_status(
         "min_reduced_cost": min_rc,
         "lp_feasible": lp_feasible,
         "target_reached_in_lp": (
-            route_weight is not None and route_weight <= scale + 1e-9
+            lp_feasible
+            and route_weight is not None
+            and route_weight <= scale + 1e-9
         ),
         "zero_artificials": lp_feasible,
         "pricing_certified": certified,
@@ -277,12 +363,66 @@ def _find_arm_path(
     return matches[0] if matches else None
 
 
+def _validate_factorial_campaign(campaign: Path) -> str:
+    launch_path = campaign / "launch.tsv"
+    prep_path = campaign / "prep_attestation.tsv"
+    if not launch_path.is_file() or not prep_path.is_file():
+        raise ValueError(f"factorial launch/prep manifest missing: {campaign}")
+    with launch_path.open(newline="") as handle:
+        launch = list(csv.DictReader(handle, delimiter="\t"))
+    if len(launch) != 5:
+        raise ValueError(f"factorial launch row count mismatch: {campaign}")
+    prep_rows = [row for row in launch if row.get("role") == "prep"]
+    arm_rows = [row for row in launch if row.get("role") == "arm"]
+    if (
+        len(prep_rows) != 1
+        or prep_rows[0].get("job_name") != "K40-PREP"
+    ):
+        raise ValueError(f"factorial prep launch mismatch: {campaign}")
+    for arm, (sense, initial) in ARMS.items():
+        matches = [
+            row for row in arm_rows
+            if row.get("job_name") == f"K40-{arm}24"
+            and row.get("master_sense") == sense
+            and row.get("initial_pool") == initial
+        ]
+        if len(matches) != 1:
+            raise ValueError(f"factorial launch treatment mismatch: {arm}")
+    attestation = {}
+    with prep_path.open(newline="") as handle:
+        for row in csv.reader(handle, delimiter="\t"):
+            if len(row) != 2 or row[0] in attestation:
+                raise ValueError("factorial prep attestation malformed")
+            attestation[row[0]] = row[1]
+    if (
+        attestation.get("git_commit") != FACTORIAL_COMMIT
+        or attestation.get("instance_sha256") != INSTANCE_SHA256
+        or attestation.get("prices_sha256") != TARIFF_SHA256
+    ):
+        raise ValueError("factorial prep attestation mismatch")
+    prefixes = {
+        path.name.split("_flat_", 1)[0]
+        for path in campaign.glob("k40r*_flat_*.json")
+    }
+    if len(prefixes) != 1 or prefixes.pop() not in {"k40r1", "k40r2"}:
+        raise ValueError("factorial campaign mixes/omits k40r1/k40r2 stems")
+    return next(iter({
+        path.name.split("_flat_", 1)[0]
+        for path in campaign.glob("k40r*_flat_*.json")
+    }))
+
+
 def _factorial_rows(
     campaigns: list[Path],
     *,
     allow_missing: bool,
 ) -> tuple[list[dict], list[dict]]:
     rows, missing = [], []
+    resolved_campaigns = [
+        campaign.expanduser().resolve() for campaign in campaigns
+    ]
+    if len(set(resolved_campaigns)) != len(resolved_campaigns):
+        raise ValueError("factorial replicate campaign paths must be distinct")
     expected_trip_set = None
     for replicate_index, raw_campaign in enumerate(campaigns, start=1):
         campaign = raw_campaign.expanduser().resolve()
@@ -293,7 +433,9 @@ def _factorial_rows(
                 "reason": "factorial_campaign_missing",
             })
             continue
+        expected_prefix = _validate_factorial_campaign(campaign)
         for arm, (sense, initial) in ARMS.items():
+            previous_wall = -math.inf
             checkpoints = [
                 (label, mark, f".m{mark}.snapshot.json")
                 for label, mark in CHECKPOINTS.items()
@@ -308,12 +450,19 @@ def _factorial_rows(
                         "reason": "checkpoint_missing",
                     })
                     continue
+                if not path.name.startswith(expected_prefix + "_flat_"):
+                    raise ValueError("factorial replicate stem changed")
                 record = _validate_status(
                     path,
                     expected_commit=FACTORIAL_COMMIT,
                     arm=arm,
                     mark_minutes=mark,
                 )
+                if record["actual_wall_s"] < previous_wall:
+                    raise ValueError(
+                        f"factorial checkpoint chronology regressed: {path}"
+                    )
+                previous_wall = record["actual_wall_s"]
                 if expected_trip_set is None:
                     expected_trip_set = record["trip_ids"]
                 elif record["trip_ids"] != expected_trip_set:
@@ -407,60 +556,192 @@ def _artifact_scale(path: Path, payload: dict) -> tuple[str, int | str] | None:
     return None
 
 
+def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
+    if not path.is_file():
+        return None
+    if "partitioning" in payload:
+        if payload.get("partitioning") is not True:
+            return None
+        provenance = payload.get("mip_provenance")
+        if not isinstance(provenance, dict):
+            return None
+        commit = provenance.get("git_commit")
+        if not isinstance(commit, str) or not re.fullmatch(
+                r"[0-9a-f]{40}", commit):
+            return None
+        source_result = Path(str(payload.get("source_result") or ""))
+        source_journal = Path(str(payload.get("source_journal") or ""))
+        if not source_result.is_file() or not source_journal.is_file():
+            return None
+        if (
+            sha256_file(source_result)
+            != payload.get("source_result_sha256")
+            or sha256_file(source_journal)
+            != payload.get("source_journal_sha256")
+        ):
+            return None
+        source_status = json.loads(source_result.read_text())
+        trip_ids = source_status.get("trip_ids")
+        if not isinstance(trip_ids, list) or not trip_ids:
+            return None
+        counts = defaultdict(int)
+        for route in payload.get("selected_routes") or []:
+            for trip in route.get("trips") or []:
+                counts[trip] += 1
+        integer = (
+            payload.get("incumbent_found") is True
+            and set(counts) == set(trip_ids)
+            and all(counts[trip] == 1 for trip in trip_ids)
+        )
+        proof = (
+            integer
+            and payload.get("fleet_proven") is True
+            and payload.get("optimal_scope") in {
+                "fleet_only", "full_pool_lexicographic"
+            }
+        )
+        return {
+            "target_reached_in_lp": None,
+            "zero_artificials": None,
+            "pricing_certified": None,
+            "exact_integer_partition_found": integer,
+            "finite_pool_fleet_proven": proof,
+        }
+    provenance = payload.get("provenance")
+    if not isinstance(provenance, dict):
+        return None
+    if (
+        not re.fullmatch(r"[0-9a-f]{40}", str(provenance.get("git_commit") or ""))
+        or not re.fullmatch(
+            r"[0-9a-f]{64}", str(provenance.get("instance_sha256") or "")
+        )
+        or not re.fullmatch(
+            r"[0-9a-f]{64}", str(provenance.get("prices_sha256") or "")
+        )
+    ):
+        return None
+    trip_ids = payload.get("trip_ids")
+    if (
+        not isinstance(trip_ids, list)
+        or not trip_ids
+        or any(
+            not isinstance(trip, int) or isinstance(trip, bool)
+            for trip in trip_ids
+        )
+        or len(trip_ids) != len(set(trip_ids))
+    ):
+        return None
+    for key in (
+        "soc_step", "block_min", "g_kwh", "charge_kw", "min_soc_frac",
+    ):
+        try:
+            if not math.isfinite(float(payload[key])):
+                return None
+        except (KeyError, TypeError, ValueError):
+            return None
+    try:
+        journal = resolve_pool_journal(path, payload).resolve()
+    except SystemExit:
+        return None
+    if not journal.is_file():
+        return None
+    try:
+        read_jsonl_records(journal, repair_trailing=False, collect=False)
+    except Exception:
+        return None
+    instance = _find_data(path, payload.get("csv"))
+    tariff = _find_data(path, payload.get("prices_csv"))
+    if (
+        instance is None
+        or tariff is None
+        or sha256_file(instance) != provenance["instance_sha256"]
+        or sha256_file(tariff) != provenance["prices_sha256"]
+    ):
+        return None
+    route_weight = _finite(payload, "route_weight")
+    artificials = _finite(payload, "artificials")
+    if artificials is None or artificials < 0:
+        return None
+    certified = payload.get("certified_rc_optimal") is True
+    min_rc = _finite(payload, "min_rc")
+    if certified and (min_rc is None or min_rc < -1e-4):
+        return None
+    match = _artifact_scale(path, payload)
+    numeric_scale = match[1] if match and isinstance(match[1], int) else None
+    feasible = artificials == 0.0
+    return {
+        "target_reached_in_lp": (
+            feasible
+            and numeric_scale is not None
+            and route_weight is not None
+            and route_weight <= numeric_scale + 1e-9
+        ),
+        "zero_artificials": feasible,
+        "pricing_certified": certified,
+        "exact_integer_partition_found": False,
+        "finite_pool_fleet_proven": False,
+    }
+
+
 def _verified_scale_evidence(paths: list[Path]) -> list[dict]:
     found = defaultdict(list)
+    temporary_dirs = []
+    scan_roots = []
     for raw in paths:
         path = raw.expanduser().resolve()
         if not path.exists():
             continue
-        payloads = []
         if path.is_file() and tarfile.is_tarfile(path):
+            temporary = tempfile.TemporaryDirectory()
+            temporary_dirs.append(temporary)
+            extracted_root = Path(temporary.name)
             with tarfile.open(path, "r:*") as archive:
                 for member in sorted(
                         archive.getmembers(), key=lambda item: item.name):
+                    member_path = Path(member.name)
                     if (
                         not member.isfile()
-                        or not member.name.endswith(".json")
+                        or member_path.is_absolute()
+                        or ".." in member_path.parts
                     ):
                         continue
-                    extracted = archive.extractfile(member)
-                    if extracted is None:
+                    source = archive.extractfile(member)
+                    if source is None:
                         continue
-                    try:
-                        payloads.append((
-                            Path(f"{path}!{member.name}"),
-                            json.loads(extracted.read()),
-                        ))
-                    except (UnicodeDecodeError, ValueError):
-                        continue
+                    destination = extracted_root / member_path
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    with destination.open("xb") as handle:
+                        shutil.copyfileobj(source, handle)
+            scan_roots.append((extracted_root, path))
         else:
-            files = [path] if path.is_file() else sorted(
-                path.rglob("*.json")
-            )
-            for candidate in files:
-                try:
-                    payloads.append((
-                        candidate, json.loads(candidate.read_text())
-                    ))
-                except (OSError, ValueError):
-                    continue
+            scan_roots.append((path, None))
+    for path, archive_source in scan_roots:
+        payloads = []
+        files = [path] if path.is_file() else sorted(path.rglob("*.json"))
+        for candidate in files:
+            try:
+                payloads.append((
+                    candidate, json.loads(candidate.read_text())
+                ))
+            except (OSError, ValueError):
+                continue
         for candidate, payload in payloads:
             if not isinstance(payload, dict):
                 continue
             scale = _artifact_scale(candidate, payload)
             if scale is None:
                 continue
-            provenance = payload.get("provenance") or payload.get(
-                "pricer_provenance"
-            )
-            if (
-                not isinstance(provenance, dict)
-                or not provenance.get("git_commit")
-                or not provenance.get("instance_sha256")
-                or not provenance.get("prices_sha256")
-            ):
+            flags = _validated_scale_flags(candidate, payload)
+            if flags is None:
                 continue
-            found[scale].append((candidate, payload))
+            display = (
+                Path(
+                    f"{archive_source}!"
+                    f"{candidate.relative_to(path)}"
+                )
+                if archive_source is not None else candidate
+            )
+            found[scale].append((display, payload, flags))
     required = [
         ("single", "single duties"),
         ("pair", "pairs"),
@@ -477,30 +758,24 @@ def _verified_scale_evidence(paths: list[Path]) -> list[dict]:
             ]
         )
         target = any(
-            (
-                _finite(payload, "route_weight") is not None
-                and _finite(payload, "route_weight")
-                <= (value if isinstance(value, int) else math.inf)
-            )
-            for _path, payload in records
+            flags["target_reached_in_lp"] is True
+            for _path, _payload, flags in records
         )
         zero_art = any(
-            _finite(payload, "artificials") == 0.0
-            for _path, payload in records
+            flags["zero_artificials"] is True
+            for _path, _payload, flags in records
         )
         pricing = any(
-            payload.get("certified_rc_optimal") is True
-            for _path, payload in records
+            flags["pricing_certified"] is True
+            for _path, _payload, flags in records
         )
         integer = any(
-            payload.get("partitioning") is True
-            and payload.get("incumbent_found") is True
-            for _path, payload in records
+            flags["exact_integer_partition_found"] is True
+            for _path, _payload, flags in records
         )
         proof = any(
-            payload.get("partitioning") is True
-            and payload.get("fleet_proven") is True
-            for _path, payload in records
+            flags["finite_pool_fleet_proven"] is True
+            for _path, _payload, flags in records
         )
         rows.append({
             "scale_family": family,
@@ -513,13 +788,15 @@ def _verified_scale_evidence(paths: list[Path]) -> list[dict]:
             "exact_integer_partition_found": integer if records else None,
             "finite_pool_fleet_proven": proof if records else None,
             "source_artifacts": " | ".join(
-                str(path) for path, _payload in records
+                str(path) for path, _payload, _flags in records
             ),
             "notes": (
                 "Proof, when present, is finite-pool only."
                 if records else "No verified supplied artifact."
             ),
         })
+    for temporary in temporary_dirs:
+        temporary.cleanup()
     return rows
 
 
@@ -591,8 +868,9 @@ def _figures(staging: Path, rows: list[dict], historical: dict | None) -> None:
             )
     ax.axhline(40.0, color="black", linestyle="--",
                label="40-duty LP reference")
-    ax.axhline(HISTORICAL_ROUTE_WEIGHT, color="purple", linestyle=":",
-               label="Historical 39.2520 LP endpoint")
+    if historical is not None:
+        ax.axhline(HISTORICAL_ROUTE_WEIGHT, color="purple", linestyle=":",
+                   label="Historical 39.2520 LP endpoint")
     if not grouped:
         ax.text(0.5, 0.5, "Validated k40 inputs not available",
                 transform=ax.transAxes, ha="center")
@@ -753,6 +1031,11 @@ def build(
                 "input": str(resolved),
                 "reason": "verified_artifact_missing",
             })
+    if missing and not allow_missing:
+        raise ValueError(
+            "required evidence inputs are missing: "
+            + json.dumps(missing[:10])
+        )
     scale_inputs = [
         path for path in [legacy, *release_archives, *verified_artifacts]
         if path.exists()
@@ -877,7 +1160,7 @@ def parse_args(argv=None):
         "--out-dir", type=Path,
         default=Path("analysis/convergence_evidence_20260815"),
     )
-    parser.add_argument("--generation-command", required=True)
+    parser.add_argument("--generation-command")
     parser.add_argument("--replace-output", action="store_true")
     parser.add_argument("--allow-missing-inputs", action="store_true")
     return parser.parse_args(argv)
@@ -885,6 +1168,10 @@ def parse_args(argv=None):
 
 def main(argv=None) -> int:
     args = parse_args(argv)
+    command_argv = (
+        sys.argv if argv is None
+        else ["build_convergence_evidence.py", *argv]
+    )
     result = build(
         factorial_campaigns=args.factorial_campaign,
         historical_path=args.historical,
@@ -892,7 +1179,9 @@ def main(argv=None) -> int:
         release_archives=args.release_archive,
         verified_artifacts=args.verified_artifact,
         output_dir=args.out_dir,
-        generation_command=args.generation_command,
+        generation_command=(
+            args.generation_command or shlex.join(command_argv)
+        ),
         replace_output=args.replace_output,
         allow_missing=args.allow_missing_inputs,
     )

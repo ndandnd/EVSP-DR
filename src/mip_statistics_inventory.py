@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import re
+from collections import defaultdict
 from pathlib import Path
 
 from durable_io import read_jsonl_records
@@ -23,6 +24,20 @@ PILOT_BUDGET_HOURS = {
 }
 SECONDARY_SCALES = (20, 30, 40)
 SECONDARY_AGES = (1, 3, 6, (10, 12), (15, 24))
+EXPECTED_SOURCE_SCALES = {
+    "repool_small": (8, 13, 15),
+    "exact_big": (30, 40),
+    "k40_factorial": (40,),
+    "bigtar_snapshots": (30, 40),
+    "fresh_preparation": (10, 20),
+}
+PILOT_ALLOWED_FAMILIES = {
+    8: {"repool_small"},
+    13: {"repool_small"},
+    15: {"repool_small"},
+    30: {"exact_big", "bigtar_snapshots"},
+    40: {"exact_big", "k40_factorial", "bigtar_snapshots"},
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -118,11 +133,11 @@ def validate_candidate(
     if (
         not isinstance(trip_ids, list)
         or not trip_ids
-        or len(trip_ids) != len(set(trip_ids))
         or any(
             not isinstance(trip, int) or isinstance(trip, bool)
             for trip in trip_ids
         )
+        or len(trip_ids) != len(set(trip_ids))
     ):
         raise ValueError("status has invalid trip IDs")
     provenance = status.get("provenance")
@@ -150,6 +165,42 @@ def validate_candidate(
     if path.name.endswith(".snapshot.json") and journal != expected_sibling:
         raise ValueError("snapshot does not use its immutable sibling journal")
     read_jsonl_records(journal, repair_trailing=False, collect=False)
+    known_trips = set(trip_ids)
+    incidences = {}
+    with journal.open("rb") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            trips = record.get("trips") if isinstance(record, dict) else None
+            if (
+                not isinstance(trips, list)
+                or not trips
+                or any(
+                    not isinstance(trip, int) or isinstance(trip, bool)
+                    for trip in trips
+                )
+                or len(trips) != len(set(trips))
+                or any(trip not in known_trips for trip in trips)
+            ):
+                raise ValueError(
+                    f"journal line {line_number} has invalid trips"
+                )
+            try:
+                cost = float(record["cost"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ValueError(
+                    f"journal line {line_number} has invalid cost"
+                ) from exc
+            if not math.isfinite(cost) or cost < 0:
+                raise ValueError(
+                    f"journal line {line_number} has non-finite cost"
+                )
+            key = frozenset(trips)
+            if key not in incidences or cost < incidences[key]:
+                incidences[key] = cost
+    if len(incidences) != int(status.get("columns", -1)):
+        raise ValueError("journal unique incidence count differs from status")
     instance = _find_data_file(path, status.get("csv"), data_roots)
     tariff = _find_data_file(path, status.get("prices_csv"), data_roots)
     if instance is None or tariff is None:
@@ -165,6 +216,16 @@ def validate_candidate(
         "master_sense": status.get("master_sense"),
         "initial_pool": status.get("initial_pool"),
     }
+    if path.name.endswith(".snapshot.json"):
+        match = re.search(r"\.m(\d+)\.snapshot\.json$", path.name)
+        if (
+            match is None
+            or int(match.group(1))
+            != int(round(float(status.get("snapshot_mark_minutes"))))
+            or status.get("stop_reason")
+            != f"snapshot_m{int(match.group(1))}"
+        ):
+            raise ValueError("snapshot filename/mark/stop reason mismatch")
     return {
         "candidate_id": hashlib.sha256(
             (str(path) + hashlib.sha256(raw).hexdigest()).encode()
@@ -222,6 +283,9 @@ def inventory(
     candidates = []
     missing_roots = []
     rejected = []
+    unknown = set(roots) - set(EXPECTED_SOURCE_SCALES)
+    if unknown:
+        raise ValueError(f"unknown inventory source families: {sorted(unknown)}")
     for family, root_value in sorted(roots.items()):
         root = root_value.expanduser().resolve()
         if not root.exists():
@@ -247,20 +311,38 @@ def inventory(
                     source_family=family,
                     data_roots=data_roots,
                 ))
-            except (OSError, ValueError, SystemExit) as exc:
+            except (OSError, TypeError, ValueError, SystemExit) as exc:
                 rejected.append({
                     "source_family": family,
                     "path": str(path.resolve()),
                     "reason": str(exc),
                 })
-    expected = {
-        "repool_small": (8, 13, 15),
-        "exact_big": (30, 40),
-        "k40_factorial": (40,),
-        "bigtar_snapshots": (30, 40),
-    }
+    trajectory_groups = defaultdict(list)
+    for candidate in candidates:
+        trajectory_groups[(
+            candidate["source_family"],
+            candidate["scale"],
+            candidate["replicate"],
+            candidate["instance_sha256"],
+        )].append(candidate)
+    mixed_ids = set()
+    for key, values in trajectory_groups.items():
+        if len({value["trip_set_sha256"] for value in values}) > 1:
+            mixed_ids.update(value["candidate_id"] for value in values)
+            rejected.append({
+                "source_family": key[0],
+                "path": None,
+                "reason": (
+                    f"trajectory trip set changed for scale={key[1]} "
+                    f"replicate={key[2]}"
+                ),
+            })
+    candidates = [
+        candidate for candidate in candidates
+        if candidate["candidate_id"] not in mixed_ids
+    ]
     missing_slots = []
-    for family, scales in expected.items():
+    for family, scales in EXPECTED_SOURCE_SCALES.items():
         for scale in scales:
             if not any(
                 candidate["source_family"] == family
@@ -271,6 +353,24 @@ def inventory(
                     "source_family": family,
                     "scale": scale,
                     "reason": "no_verified_candidate",
+                })
+    for scale in SECONDARY_SCALES:
+        required_family = (
+            "fresh_preparation" if scale == 20 else "bigtar_snapshots"
+        )
+        for target in SECONDARY_AGES:
+            allowed = target if isinstance(target, tuple) else (target,)
+            if not any(
+                candidate["source_family"] == required_family
+                and candidate["scale"] == scale
+                and candidate.get("age_hours") in allowed
+                for candidate in candidates
+            ):
+                missing_slots.append({
+                    "source_family": required_family,
+                    "scale": scale,
+                    "age_hours": list(allowed),
+                    "reason": "no_verified_age_candidate",
                 })
     return {
         "schema": "evsp-dr-mip-statistics-inventory-v1",
@@ -307,6 +407,7 @@ def representative_candidates(inventory_payload: dict) -> dict[int, dict]:
     for candidate in inventory_payload.get("candidates") or []:
         key = (
             candidate["scale"],
+            candidate["source_family"],
             candidate["instance_sha256"],
             candidate["trip_set_sha256"],
             candidate["replicate"],
@@ -322,9 +423,12 @@ def representative_candidates(inventory_payload: dict) -> dict[int, dict]:
             latest[key] = candidate
     selected = {}
     for scale in PILOT_BUDGET_HOURS:
+        if scale not in PILOT_ALLOWED_FAMILIES:
+            continue
         choices = [
             candidate for key, candidate in latest.items()
             if key[0] == scale
+            and candidate["source_family"] in PILOT_ALLOWED_FAMILIES[scale]
         ]
         choices.sort(key=lambda item: (
             item["trip_count"], item["instance_sha256"],
@@ -345,9 +449,12 @@ def select_age_candidate(
     matching = [
         candidate for candidate in candidates
         if candidate["scale"] == scale
+        and candidate["source_family"] == (
+            "fresh_preparation" if scale == 20 else "bigtar_snapshots"
+        )
         and candidate.get("age_hours") is not None
         and any(
-            abs(float(candidate["age_hours"]) - age) <= 0.15
+            abs(float(candidate["age_hours"]) - age) <= 1e-9
             for age in allowed
         )
     ]

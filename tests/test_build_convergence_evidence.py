@@ -26,6 +26,9 @@ class ConvergenceEvidenceTests(unittest.TestCase):
         self.enterContext(patch.object(
             evidence, "TARIFF_SHA256", self.tariff_sha
         ))
+        self.enterContext(patch.object(
+            evidence, "EXPECTED_K40_TRIPS", 1
+        ))
 
     def _status(
         self,
@@ -41,7 +44,7 @@ class ConvergenceEvidenceTests(unittest.TestCase):
         )
         journal = Path(str(path) + ".columns.jsonl")
         journal.write_text(json.dumps({
-            "trips": [1], "cost": 100000.0,
+            "trips": [0], "cost": 100000.0,
         }) + "\n")
         artificials = 5.0 if arm == "PA" else 0.0
         route_weight = (
@@ -62,7 +65,7 @@ class ConvergenceEvidenceTests(unittest.TestCase):
             "min_soc_frac": 0.0,
             "master_sense": sense,
             "initial_pool": initial,
-            "trip_ids": [1],
+            "trip_ids": [0],
             "columns": 1,
             "columns_journal": str(journal),
             "wall_s": wall_s,
@@ -85,7 +88,11 @@ class ConvergenceEvidenceTests(unittest.TestCase):
                 + artificials * 500000,
                 "route_weight": route_weight,
                 "artificial_total": artificials,
-                "positive_routes": [],
+                "positive_routes": [{
+                    "trips": [0],
+                    "value": route_weight,
+                    "cost": 100000.0,
+                }],
             },
             "provenance": {
                 "git_commit": (
@@ -94,6 +101,12 @@ class ConvergenceEvidenceTests(unittest.TestCase):
                 ),
                 "instance_sha256": self.instance_sha,
                 "prices_sha256": self.tariff_sha,
+                "args": {
+                    "master_sense": sense,
+                    "initial_pool": initial,
+                    "columns_per_iter": 30,
+                    "rc_eps": 0.0001,
+                },
             },
         }
         path.write_text(json.dumps(status))
@@ -109,6 +122,24 @@ class ConvergenceEvidenceTests(unittest.TestCase):
             campaign = repo / "results" / f"campaign{replicate}"
             campaign.mkdir(parents=True)
             prefix = "k40r1" if replicate == 1 else "k40r2"
+            launch_rows = [
+                "role\tjob_id\tjob_name\tmaster_sense\tinitial_pool",
+                f"prep\t{replicate}00\tK40-PREP\t-\t-",
+            ]
+            for index, (arm, (sense, initial)) in enumerate(
+                    evidence.ARMS.items(), start=1):
+                launch_rows.append(
+                    f"arm\t{replicate}0{index}\tK40-{arm}24\t"
+                    f"{sense}\t{initial}"
+                )
+            (campaign / "launch.tsv").write_text(
+                "\n".join(launch_rows) + "\n"
+            )
+            (campaign / "prep_attestation.tsv").write_text(
+                f"git_commit\t{evidence.FACTORIAL_COMMIT}\n"
+                f"instance_sha256\t{self.instance_sha}\n"
+                f"prices_sha256\t{self.tariff_sha}\n"
+            )
             for arm in evidence.ARMS:
                 for mark in evidence.CHECKPOINTS.values():
                     self._status(
@@ -276,6 +307,35 @@ class ConvergenceEvidenceTests(unittest.TestCase):
                     hashlib.sha256((outputs[1] / name).read_bytes()).hexdigest(),
                     name,
                 )
+
+    def test_forged_scale_json_is_not_verified(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            forged = root / "fake_k8.json"
+            forged.write_text(json.dumps({
+                "csv": "fake_k8.csv",
+                "trip_ids": [0],
+                "soc_step": 15,
+                "block_min": 10,
+                "g_kwh": 300,
+                "charge_kw": 300,
+                "min_soc_frac": 0,
+                "certified_rc_optimal": True,
+                "partitioning": True,
+                "fleet_proven": True,
+                "provenance": {
+                    "git_commit": "a" * 40,
+                    "instance_sha256": "b" * 64,
+                    "prices_sha256": "c" * 64,
+                },
+            }))
+            rows = evidence._verified_scale_evidence([root])
+            k8 = next(
+                row for row in rows
+                if row["scale_family"] == "union" and row["scale"] == 8
+            )
+            self.assertEqual(k8["availability"], "not available")
+            self.assertIsNone(k8["finite_pool_fleet_proven"])
 
 
 if __name__ == "__main__":

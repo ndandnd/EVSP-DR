@@ -69,36 +69,61 @@ do
       --repo ndandnd/EVSP-DR \
       --dir "$RELEASES/$archive"
   fi
+  test -f "$RELEASES/$archive/SHA256SUMS" || {
+    echo "MISSING reviewed SHA256SUMS for $archive" >&2
+    exit 2
+  }
+  (cd "$RELEASES/$archive" && sha256sum -c SHA256SUMS)
+  mkdir -p "$RELEASES/$archive/extracted"
+  for asset in "$RELEASES/$archive"/*.tar.gz; do
+    test -e "$asset" || continue
+    tar -xzf "$asset" -C "$RELEASES/$archive/extracted"
+  done
 done
 
 python -u src/launch_mip_statistics_campaign.py \
   --mode inventory \
-  --root "repool_small=$ROOT/results/repool_small" \
-  --root "exact_big=$ROOT/results/exact_big" \
+  --root "repool_small=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/repool_small" \
+  --root "exact_big=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/exact_big" \
   --root "k40_factorial=$ROOT/results/k40_factorial" \
-  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814/extracted" \
+  --root "fresh_preparation=$ROOT/results/mip_statistics_prep" \
   --inventory-out "$ROOT/review/mip-statistics-inventory.json"
 
 python -u src/launch_mip_statistics_campaign.py \
   --mode pilot --campaign mipstats-pilot-review \
-  --root "repool_small=$ROOT/results/repool_small" \
-  --root "exact_big=$ROOT/results/exact_big" \
+  --root "repool_small=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/repool_small" \
+  --root "exact_big=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/exact_big" \
   --root "k40_factorial=$ROOT/results/k40_factorial" \
-  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814/extracted" \
+  --root "fresh_preparation=$ROOT/results/mip_statistics_prep" \
   --giro-start "8=$ROOT/starts/k8-giro-rerealized.json" \
   --giro-start "13=$ROOT/starts/k13-giro-rerealized.json" \
   --giro-start "15=$ROOT/starts/k15-giro-rerealized.json" \
   --giro-start "30=$ROOT/starts/k30-giro-rerealized.json" \
   --giro-start "40=$ROOT/starts/k40-giro-rerealized.json" \
+  --python "$HOME/evsp_env/bin/python" \
   --plan-out "$ROOT/review/mipstats-pilot.plan.json"
 
 python -u src/launch_mip_statistics_campaign.py \
   --mode secondary --campaign mipstats-age-review \
-  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814/extracted" \
+  --root "fresh_preparation=$ROOT/results/mip_statistics_prep" \
   --giro-start "20=$ROOT/starts/k20-giro-rerealized.json" \
   --giro-start "30=$ROOT/starts/k30-giro-rerealized.json" \
   --giro-start "40=$ROOT/starts/k40-giro-rerealized.json" \
+  --python "$HOME/evsp_env/bin/python" \
   --plan-out "$ROOT/review/mipstats-age.plan.json"
+
+python -u src/build_convergence_evidence.py \
+  --factorial-campaign "$ROOT/results/k40_factorial/k40fx_20260814T140232Z_eb85ca0c" \
+  --factorial-campaign "$ROOT/results/k40_factorial/k40fx_20260814T191933Z_eb85ca0c" \
+  --historical "$ROOT/results/exact_big/Practice_Custom_DutyUnion_k40_r2_soc15_b10_g300_res0.0.json" \
+  --legacy-analysis analysis/legacy_exact_20260805 \
+  --release-archive "$RELEASES/results-exact_big_mip_20260805T135556Z" \
+  --release-archive "$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --release-archive "$RELEASES/results-goal1-overnight-single-duty-20260803" \
+  --out-dir "$ROOT/review/convergence-evidence"
 ```
 
 Submission requires rerunning an identical, complete, unblocked plan from a
