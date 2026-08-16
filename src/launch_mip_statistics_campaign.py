@@ -7,6 +7,7 @@ import argparse
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -148,10 +149,31 @@ def _validated_start(path: Path, candidate: dict) -> dict:
     if (
         not isinstance(routes, list)
         or not routes
-        or payload.get("infeasible") not in (None, [])
+        or payload.get("infeasible") != []
+        or payload.get("source") != "rerealized"
     ):
         raise ValueError(f"GIRO start is missing/partial: {source}")
     status = json.loads(Path(candidate["status_path"]).read_text())
+    physics = payload.get("physics")
+    if not isinstance(physics, dict):
+        raise ValueError(f"GIRO start lacks re-realized physics: {source}")
+    for start_key, candidate_key in (
+        ("g_kwh", "g_kwh"),
+        ("charge_kw", "charge_kw"),
+        ("reserve_frac", "min_soc_frac"),
+    ):
+        if not math.isclose(
+            float(physics.get(start_key, math.nan)),
+            float(candidate["physics"][candidate_key]),
+            rel_tol=0.0,
+            abs_tol=1e-9,
+        ):
+            raise ValueError(f"GIRO start physics mismatch: {source}")
+    if (
+        Path(str(payload.get("prices_csv") or "")).name
+        != Path(str(candidate["prices_csv"])).name
+    ):
+        raise ValueError(f"GIRO start tariff mismatch: {source}")
     expected = set(status["trip_ids"])
     counts = {trip: 0 for trip in expected}
     for route in routes:

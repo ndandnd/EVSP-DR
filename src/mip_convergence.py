@@ -446,15 +446,19 @@ class GurobiProgressObserver:
                 bound = self._get(
                     model, callback_api, "MIPSOL_OBJBND"
                 )
+                finite_bound = MIPProgressRecorder._finite(bound)
                 fleet_bound = (
-                    bound if self.stage == "fleet"
+                    finite_bound if self.stage == "fleet"
                     else self.fixed_fleet
                 )
                 objective_bound = (
                     None if self.stage == "fleet"
                     else (
-                        self.bus_cost * int(self.fixed_fleet) + float(bound)
-                        if bound is not None and self.fixed_fleet is not None
+                        self.bus_cost * int(self.fixed_fleet) + finite_bound
+                        if (
+                            finite_bound is not None
+                            and self.fixed_fleet is not None
+                        )
                         else None
                     )
                 )
@@ -497,16 +501,17 @@ class GurobiProgressObserver:
         self.last_statistics_s = elapsed
         best = self._get(model, callback_api, f"{prefix}_OBJBST")
         bound = self._get(model, callback_api, f"{prefix}_OBJBND")
+        finite_bound = MIPProgressRecorder._finite(bound)
         if self.stage == "fleet":
             incumbent_fleet = MIPProgressRecorder._finite(best)
-            fleet_bound = bound
+            fleet_bound = finite_bound
             objective_bound = None
         elif self.stage == "cost":
             incumbent_fleet = self.fixed_fleet
             fleet_bound = self.fixed_fleet
             objective_bound = (
-                self.bus_cost * int(self.fixed_fleet) + float(bound)
-                if bound is not None and self.fixed_fleet is not None
+                self.bus_cost * int(self.fixed_fleet) + finite_bound
+                if finite_bound is not None and self.fixed_fleet is not None
                 else None
             )
         else:
@@ -514,7 +519,7 @@ class GurobiProgressObserver:
                 self.recorder.latest_incumbent or {}
             ).get("fleet")
             fleet_bound = None
-            objective_bound = bound
+            objective_bound = finite_bound
         gap = (
             max(0.0, float(incumbent_fleet) - float(fleet_bound))
             / max(1.0, float(incumbent_fleet))

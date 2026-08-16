@@ -90,6 +90,13 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 },
             } for trip in range(trips)],
             "infeasible": [],
+            "source": "rerealized",
+            "physics": {
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "reserve_frac": 0.0,
+            },
+            "prices_csv": "hourly_prices_flat.csv",
         }))
         return path
 

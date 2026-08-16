@@ -515,7 +515,7 @@ class ExactPoolMipTests(unittest.TestCase):
                     data_dir=data_dir,
                 )
 
-            self.assertEqual(len(merged), 2)
+            self.assertEqual(len(merged), 4)
             self.assertEqual(len(start), 2)
             self.assertEqual(
                 sorted(merged[index]["trips"] for index in start),
@@ -523,7 +523,15 @@ class ExactPoolMipTests(unittest.TestCase):
             )
             self.assertEqual(detail["kind"], "validated_exact_partition")
             self.assertEqual(detail["validated_bus_count"], 2)
-            self.assertEqual(detail["pool_columns_replaced"], 2)
+            self.assertEqual(detail["pool_columns_replaced"], 0)
+            self.assertEqual(
+                detail["pool_duplicate_incidences_preserved"], 2
+            )
+            self.assertEqual(len(detail["actual_start_column_hashes"]), 2)
+            self.assertTrue(all(
+                merged[index]["origin"].startswith("initial_partition:")
+                for index in start
+            ))
             self.assertEqual(priced_deadhead, [5.0, 9.0])
             self.assertEqual(
                 detail["source_sha256"],
