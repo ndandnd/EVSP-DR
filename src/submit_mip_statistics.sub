@@ -1,0 +1,271 @@
+#!/bin/bash
+# Hash-bound worker for one strict MIP convergence-statistics cell.
+#SBATCH --job-name=MSTAT-UNSET
+#SBATCH --partition=scaglione
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=04:10:00
+#SBATCH --no-requeue
+#SBATCH --signal=B:USR1@180
+#SBATCH --open-mode=append
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+fatal() {
+  echo "[MIP-STATS] FATAL: $*" >&2
+  exit 2
+}
+
+[[ "$#" -eq 3 ]] \
+  || fatal "usage: $0 APPROVED_PLAN EXPECTED_PLAN_SHA256 CELL_ID"
+PLAN=$1
+EXPECTED_PLAN_SHA=$2
+REQUESTED_CELL=$3
+ROOT=${EVSP_DR_ROOT:?EVSP_DR_ROOT is required}
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:?EVSP_EXPECTED_COMMIT is required}
+EXPECTED_WORKER_SHA=${EVSP_MIP_EXPECTED_WORKER_SHA256:?worker hash required}
+
+worker_sha=$(sha256sum "$0" | awk '{print $1}')
+[[ "$worker_sha" == "$EXPECTED_WORKER_SHA" ]] || fatal "worker hash mismatch"
+plan_sha=$(sha256sum "$PLAN" | awk '{print $1}')
+[[ "$plan_sha" == "$EXPECTED_PLAN_SHA" ]] || fatal "approved plan hash mismatch"
+observed_commit=$(git -C "$ROOT" rev-parse --verify HEAD) \
+  || fatal "cannot resolve Git HEAD"
+[[ "$observed_commit" == "$EXPECTED_COMMIT" ]] || fatal "commit mismatch"
+if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "MIP statistics checkout must be detached"
+else
+  symbolic_status=$?
+  [[ "$symbolic_status" -eq 1 ]] || fatal "cannot verify detached checkout"
+fi
+tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no) \
+  || fatal "cannot verify tracked checkout"
+[[ -z "$tracked" ]] || fatal "checkout has tracked modifications"
+untracked_imports=$(git -C "$ROOT" status --porcelain --untracked-files=all \
+  | awk '$1 == "??" && $2 ~ /\\.(py|pth|so|sub)$/ {print}')
+[[ -z "$untracked_imports" ]] \
+  || fatal "checkout has untracked importable worker code"
+
+PYTHON=${EVSP_MIP_PYTHON:-}
+if [[ -z "$PYTHON" ]]; then
+  PYTHON=$(command -v python) || fatal "python is unavailable"
+fi
+"$PYTHON" -c \
+  'import sys, gurobipy; assert sys.version_info[:2] == (3, 12)' \
+  || fatal "Python 3.12/Gurobi environment unavailable"
+"$PYTHON" - "$PLAN" <<'PY' || fatal "worker environment differs from plan"
+import json,os,sys
+plan=json.load(open(sys.argv[1]))
+for key,value in (plan.get("environment_whitelist") or {}).items():
+    if os.environ.get(key) != str(value):
+        raise SystemExit(f"{key} mismatch")
+PY
+observed_environment=$(
+  "$PYTHON" "$ROOT/src/mip_statistics_environment.py"
+) || fatal "could not compute MIP environment identity"
+"$PYTHON" - "$PLAN" "$observed_environment" <<'PY' \
+  || fatal "MIP environment identity differs from plan"
+import json,sys
+observed=json.loads(sys.argv[2])
+plan=json.load(open(sys.argv[1]))
+if observed != plan.get("python_identity"):
+    raise SystemExit("environment identity mismatch")
+PY
+
+readarray -t FIELDS < <("$PYTHON" - "$PLAN" "$REQUESTED_CELL" <<'PY'
+import json,sys
+plan=json.load(open(sys.argv[1]))
+matches=[job for job in plan.get("jobs",[]) if job.get("cell_id")==sys.argv[2]]
+if len(matches)!=1:
+    raise SystemExit("approved plan does not contain exactly one requested cell")
+d=matches[0].get("execution")
+if not isinstance(d,dict):
+    raise SystemExit("approved cell lacks execution descriptor")
+for key in (
+    "cell_id","arm","time_limit_s","threads","mip_gap",
+    "status","status_sha256","journal","journal_sha256",
+    "instance","instance_sha256","instance_relative",
+    "tariff","tariff_sha256","tariff_relative",
+    "validated_start","validated_start_sha256","output","progress_dir",
+):
+    value=d.get(key)
+    print("" if value is None else value)
+for value in (
+    plan.get("runner_sha256"), plan.get("worker_sha256"),
+    (plan.get("checkout_identity") or {}).get("expected_commit"),
+    (plan.get("python_identity") or {}).get("executable_sha256"),
+):
+    print("" if value is None else value)
+PY
+)
+CELL=${FIELDS[0]}
+ARM=${FIELDS[1]}
+TIME_LIMIT=${FIELDS[2]}
+THREADS=${FIELDS[3]}
+MIP_GAP=${FIELDS[4]}
+STATUS=${FIELDS[5]}
+STATUS_SHA=${FIELDS[6]}
+JOURNAL=${FIELDS[7]}
+JOURNAL_SHA=${FIELDS[8]}
+INSTANCE=${FIELDS[9]}
+INSTANCE_SHA=${FIELDS[10]}
+INSTANCE_REL=${FIELDS[11]}
+TARIFF=${FIELDS[12]}
+TARIFF_SHA=${FIELDS[13]}
+TARIFF_REL=${FIELDS[14]}
+START=${FIELDS[15]}
+START_SHA=${FIELDS[16]}
+OUT=${FIELDS[17]}
+PROGRESS=${FIELDS[18]}
+RUNNER_SHA=${FIELDS[19]}
+SPEC_WORKER_SHA=${FIELDS[20]}
+SPEC_COMMIT=${FIELDS[21]}
+PYTHON_SHA=${FIELDS[22]}
+
+[[ "$SPEC_COMMIT" == "$EXPECTED_COMMIT" ]] || fatal "spec commit mismatch"
+[[ "$SPEC_WORKER_SHA" == "$EXPECTED_WORKER_SHA" ]] \
+  || fatal "spec worker hash mismatch"
+[[ "$ARM" == "RAW" || "$ARM" == "GIRO" ]] || fatal "invalid arm"
+[[ "$THREADS" == "8" ]] || fatal "statistics campaign requires 8 threads"
+[[ "$CELL" == "$REQUESTED_CELL" ]] || fatal "cell descriptor mismatch"
+[[ "$INSTANCE_REL" != /* && "$INSTANCE_REL" != *".."* ]] \
+  || fatal "unsafe instance relative path"
+[[ "$TARIFF_REL" != /* && "$TARIFF_REL" != *".."* ]] \
+  || fatal "unsafe tariff relative path"
+
+verify_hash() {
+  local label=$1 path=$2 expected=$3
+  [[ -f "$path" ]] || fatal "$label missing: $path"
+  local actual
+  actual=$(sha256sum "$path" | awk '{print $1}')
+  [[ "$actual" == "$expected" ]] || fatal "$label hash mismatch"
+}
+verify_hash "status" "$STATUS" "$STATUS_SHA"
+verify_hash "journal" "$JOURNAL" "$JOURNAL_SHA"
+verify_hash "instance" "$INSTANCE" "$INSTANCE_SHA"
+verify_hash "tariff" "$TARIFF" "$TARIFF_SHA"
+verify_hash "approved plan" "$PLAN" "$EXPECTED_PLAN_SHA"
+verify_hash "worker" "$0" "$SPEC_WORKER_SHA"
+verify_hash "runner" "$ROOT/src/run_exact_pool_mip.py" "$RUNNER_SHA"
+verify_hash "staged runner" \
+  "$(dirname "$PLAN")/input/run_exact_pool_mip.py" "$RUNNER_SHA"
+verify_hash "approved Python" "$PYTHON" "$PYTHON_SHA"
+while IFS=$'\t' read -r relative expected; do
+  verify_hash "checkout code $relative" "$ROOT/$relative" "$expected"
+  verify_hash "staged code $relative" \
+    "$(dirname "$PLAN")/input/reviewed_code/$relative" "$expected"
+done < <("$PYTHON" - "$PLAN" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+for path,digest in sorted((d.get("code_hashes") or {}).items()):
+    print(f"{path}\t{digest}")
+PY
+)
+if [[ "$ARM" == "GIRO" ]]; then
+  [[ -n "$START" && -n "$START_SHA" ]] || fatal "GIRO arm lacks start"
+  verify_hash "validated start" "$START" "$START_SHA"
+else
+  [[ -z "$START" && -z "$START_SHA" ]] || fatal "RAW arm received a start"
+fi
+[[ ! -e "$OUT" ]] || fatal "output already exists"
+[[ ! -e "$PROGRESS" ]] || fatal "progress directory already exists"
+
+"$PYTHON" "$ROOT/src/install_exact_cg_profile_input.py" \
+  --source "$INSTANCE" --data-root "$ROOT/data" \
+  --relative "$INSTANCE_REL" --sha256 "$INSTANCE_SHA" \
+  || fatal "instance installation failed"
+"$PYTHON" "$ROOT/src/install_exact_cg_profile_input.py" \
+  --source "$TARIFF" --data-root "$ROOT/data" \
+  --relative "$TARIFF_REL" --sha256 "$TARIFF_SHA" \
+  || fatal "tariff installation failed"
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
+export EVSP_REQUIRE_DETACHED=1
+export EVSP_MIP_EXPECTED_RESULT_SHA256="$STATUS_SHA"
+export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$JOURNAL_SHA"
+if [[ "$ARM" == "GIRO" ]]; then
+  export EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256="$START_SHA"
+else
+  unset EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256 || true
+fi
+
+command=(
+  "$PYTHON" -u "$ROOT/src/run_exact_pool_mip.py"
+  --result "$STATUS"
+  --two-stage
+  --timelimit "$TIME_LIMIT"
+  --threads "$THREADS"
+  --mipgap "$MIP_GAP"
+  --progress-dir "$PROGRESS"
+  --out "$OUT"
+)
+if [[ "$ARM" == "GIRO" ]]; then
+  command+=(--initial-partition-routes "$START")
+fi
+
+echo "[MIP-STATS] cell=$CELL arm=$ARM host=$(hostname) job=${SLURM_JOB_ID:-none}"
+cd "$ROOT"
+solver_pid=""
+forward_warning() {
+  if [[ -n "$solver_pid" ]]; then
+    kill -USR1 "$solver_pid" 2>/dev/null || true
+  fi
+}
+trap forward_warning USR1 TERM INT
+"${command[@]}" &
+solver_pid=$!
+solver_rc=0
+while true; do
+  wait_rc=0
+  wait "$solver_pid" || wait_rc=$?
+  if kill -0 "$solver_pid" 2>/dev/null; then
+    continue
+  fi
+  solver_rc=$wait_rc
+  break
+done
+solver_pid=""
+trap - USR1 TERM INT
+[[ "$solver_rc" -eq 0 ]] || fatal "solver exited with status $solver_rc"
+
+if ! "$PYTHON" - "$OUT" "$PROGRESS" "$STATUS_SHA" "$JOURNAL_SHA" "$ARM" <<'PY'
+import json, pathlib, sys
+out, progress, status_sha, journal_sha, arm = sys.argv[1:]
+d=json.load(open(out))
+if d.get("partitioning") is not True:
+    raise SystemExit("result is not strict partitioning")
+if d.get("source_result_sha256") != status_sha:
+    raise SystemExit("result status hash mismatch")
+if d.get("source_journal_sha256") != journal_sha:
+    raise SystemExit("result journal hash mismatch")
+if arm == "GIRO":
+    start=d.get("mip_start") or {}
+    if start.get("kind") != "validated_exact_partition":
+        raise SystemExit("GIRO result lacks validated exact start")
+if not pathlib.Path(progress, "final.json").is_file():
+    raise SystemExit("progress final.json is missing")
+if d.get("incumbent_found"):
+    counts={}
+    source=json.load(open(d["source_result"]))
+    for route in d.get("selected_routes") or []:
+        for trip in route.get("trips") or []:
+            counts[trip]=counts.get(trip,0)+1
+    if set(counts) != set(source["trip_ids"]):
+        raise SystemExit("selected routes have wrong trip set")
+    if any(counts[trip] != 1 for trip in source["trip_ids"]):
+        raise SystemExit("selected routes are not exact once-only")
+PY
+then
+  fatal "result validation failed"
+fi
+echo "[MIP-STATS] DONE cell=$CELL output=$OUT progress=$PROGRESS"

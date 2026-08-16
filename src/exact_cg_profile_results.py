@@ -41,6 +41,8 @@ def validate_campaign_manifest(manifest) -> list[str]:
     if not isinstance(jobs, list):
         return [*errors, "campaign jobs is not a list"]
     labels = []
+    job_ids = []
+    job_names = []
     malformed_job = False
     for job in jobs:
         if not isinstance(job, dict):
@@ -51,6 +53,14 @@ def validate_campaign_manifest(manifest) -> list[str]:
             malformed_job = True
         else:
             labels.append(label)
+        job_id = job.get("job_id")
+        if job_id is not None:
+            if not str(job_id).isdigit():
+                malformed_job = True
+            else:
+                job_ids.append(str(job_id))
+        if isinstance(job.get("job_name"), str):
+            job_names.append(job["job_name"])
         if (not isinstance(job.get("output"), str)
                 or not isinstance(job.get("job_name"), str)
                 or not isinstance(job.get("job_spec"), dict)):
@@ -61,6 +71,10 @@ def validate_campaign_manifest(manifest) -> list[str]:
         errors.append("campaign does not contain exactly historical/CA/CS/PA/PS")
     if len(labels) != len(set(labels)):
         errors.append("campaign contains duplicate labels")
+    if len(job_ids) != len(set(job_ids)):
+        errors.append("campaign contains duplicate Slurm job IDs")
+    if len(job_names) != len(set(job_names)):
+        errors.append("campaign contains duplicate Slurm job names")
     identity = manifest.get("checkout_identity")
     if not isinstance(identity, dict):
         errors.append("campaign checkout_identity is not an object")

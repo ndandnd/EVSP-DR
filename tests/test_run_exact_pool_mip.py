@@ -24,6 +24,7 @@ from run_exact_pool_mip import (  # noqa: E402
     merge_validated_partition_start,
     optimal_scope,
     singleton_partition_indices,
+    validate_final_selected_routes,
     validate_injected_route,
     verified_mip_code_identity,
 )
@@ -515,7 +516,7 @@ class ExactPoolMipTests(unittest.TestCase):
                     data_dir=data_dir,
                 )
 
-            self.assertEqual(len(merged), 2)
+            self.assertEqual(len(merged), 4)
             self.assertEqual(len(start), 2)
             self.assertEqual(
                 sorted(merged[index]["trips"] for index in start),
@@ -523,7 +524,15 @@ class ExactPoolMipTests(unittest.TestCase):
             )
             self.assertEqual(detail["kind"], "validated_exact_partition")
             self.assertEqual(detail["validated_bus_count"], 2)
-            self.assertEqual(detail["pool_columns_replaced"], 2)
+            self.assertEqual(detail["pool_columns_replaced"], 0)
+            self.assertEqual(
+                detail["pool_duplicate_incidences_preserved"], 2
+            )
+            self.assertEqual(len(detail["actual_start_column_hashes"]), 2)
+            self.assertTrue(all(
+                merged[index]["origin"].startswith("initial_partition:")
+                for index in start
+            ))
             self.assertEqual(priced_deadhead, [5.0, 9.0])
             self.assertEqual(
                 detail["source_sha256"],
@@ -669,8 +678,58 @@ class ExactPoolMipTests(unittest.TestCase):
                         data_dir=data_dir,
                     )
 
+    def test_final_replay_rejects_incidence_mismatch_and_nonfinite_physics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp)
+            instance = data / "tiny.csv"
+            instance.write_text("tiny\n")
+            status = {
+                "csv": "tiny.csv",
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            base_problem = self.validation_problem()
+            problem = SimpleNamespace(
+                **vars(base_problem),
+                trips=[1, 2],
+            )
+            with patch(
+                "audit_giro_known_columns.build_problem",
+                return_value=problem,
+            ):
+                with self.assertRaisesRegex(
+                    SystemExit, "trip incidence differs"
+                ):
+                    validate_final_selected_routes(
+                        status,
+                        [1, 2],
+                        [{
+                            "trips": [1],
+                            "route_nodes": [DEPOT, 2, DEPOT],
+                            "charging_stops": {},
+                        }],
+                        data_dir=data,
+                    )
+                bad = {**status, "g_kwh": float("nan")}
+                with self.assertRaisesRegex(
+                    SystemExit, "invalid/non-finite"
+                ):
+                    validate_final_selected_routes(
+                        bad,
+                        [1, 2],
+                        [],
+                        data_dir=data,
+                    )
+
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
+        two_stage=True,
     ):
         class FakeExpression:
             def __init__(self, items):
@@ -777,10 +836,12 @@ class ExactPoolMipTests(unittest.TestCase):
         }))
         out = folder / "mip.json"
         arguments = [
-            "--result", str(result), "--two-stage",
+            "--result", str(result),
             "--timelimit", "60", "--mipgap", str(mip_gap),
             "--out", str(out),
         ]
+        if two_stage:
+            arguments.append("--two-stage")
         explicit_patch = contextlib.nullcontext()
         if explicit_start:
             partition = folder / "partition.json"
@@ -804,7 +865,11 @@ class ExactPoolMipTests(unittest.TestCase):
             arguments.extend([
                 "--initial-partition-routes", str(partition),
             ])
-        with patch.dict(sys.modules, {"gurobipy": fake_gp}), explicit_patch:
+        with (
+            patch.dict(sys.modules, {"gurobipy": fake_gp}),
+            explicit_patch,
+            patch("run_exact_pool_mip.validate_final_selected_routes"),
+        ):
             with contextlib.redirect_stdout(io.StringIO()):
                 rc = main(arguments)
         payload = json.loads(out.read_text())
@@ -922,6 +987,68 @@ class ExactPoolMipTests(unittest.TestCase):
             payload["two_stage"]["stage2_reported_incumbent_source"],
             "stage1_fallback",
         )
+
+    def test_two_stage_no_incumbent_still_writes_final_result(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 0.0,
+            "bound": 1.0,
+            "gap": 1.0,
+            "solutions": 0,
+            "selected": [],
+        }])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 1)
+        self.assertEqual(payload["status_name"], "TIME_LIMIT")
+        self.assertFalse(payload["incumbent_found"])
+        self.assertIsNone(payload["buses"])
+        self.assertIsNone(payload["mip_obj"])
+        self.assertEqual(
+            payload["two_stage"]["stage2_skip_reason"],
+            "no_fleet_incumbent",
+        )
+
+    def test_validated_start_is_preserved_when_solver_reports_no_solution(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 0.0,
+            "bound": 1.0,
+            "gap": 1.0,
+            "solutions": 0,
+            "selected": [],
+        }], explicit_start=True)
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 1)
+        self.assertTrue(payload["incumbent_found"])
+        self.assertFalse(payload["solver_incumbent_found"])
+        self.assertEqual(
+            payload["incumbent_source"], "validated_start_fallback"
+        )
+        self.assertEqual(payload["buses"], 1)
+        self.assertEqual(
+            payload["two_stage"]["stage2_skip_reason"],
+            "no_fleet_incumbent",
+        )
+
+    def test_single_stage_preserves_validated_start_without_solver_solution(self):
+        temporary, _model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 0.0,
+            "bound": 100000.0,
+            "gap": 1.0,
+            "solutions": 0,
+            "selected": [],
+        }], explicit_start=True, two_stage=False)
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertTrue(payload["incumbent_found"])
+        self.assertFalse(payload["solver_incumbent_found"])
+        self.assertEqual(
+            payload["incumbent_source"], "validated_start_fallback"
+        )
+        self.assertEqual(payload["buses"], 1)
 
 
 if __name__ == "__main__":
