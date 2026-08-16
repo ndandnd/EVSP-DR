@@ -30,8 +30,15 @@ APPROVED_HOME=$6
 
 export HOME=$APPROVED_HOME
 export USER=${SLURM_JOB_USER:?SLURM_JOB_USER is required}
-export PATH=/usr/local/bin:/usr/bin:/bin
+# Keep the Slurm-provided PATH: Unicorn installs squeue/sacct/sbatch outside
+# the minimal system directories. Python import paths are still cleared below.
+export PATH=${PATH:?Slurm-provided PATH is required}
 unset PYTHONHOME PYTHONPATH || true
+
+for command_name in git sha256sum squeue sacct sbatch; do
+  command -v "$command_name" >/dev/null 2>&1 \
+    || fatal "required command is unavailable: $command_name"
+done
 
 [[ -d "$RUN_ROOT/.git" || -f "$RUN_ROOT/.git" ]] \
   || fatal "run root is not a Git worktree"

@@ -484,6 +484,11 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         self.assertIn("--no-requeue", raw_launcher)
         self.assertNotIn("--giro-start", raw_launcher)
         self.assertIn("validate_raw_k40_mip_plan.py", raw_launcher)
+        self.assertIn("Slurm-provided PATH is required", raw_launcher)
+        self.assertIn("git sha256sum squeue sacct sbatch", raw_launcher)
+        self.assertNotIn(
+            "export PATH=/usr/local/bin:/usr/bin:/bin", raw_launcher
+        )
         launcher_text = (
             REPO_ROOT / "src/launch_mip_statistics_campaign.py"
         ).read_text()
