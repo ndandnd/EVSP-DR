@@ -218,6 +218,12 @@ class PortableBundleTests(unittest.TestCase):
             )
             self.assertEqual(state["state"], "invalid")
 
+            lock_bundle = root / "lock-bundle"
+            lock_bundle.mkdir()
+            (lock_bundle / ".publication.lock").symlink_to(outside)
+            state = inspect_bundle(lock_bundle)
+            self.assertEqual(state["state"], "invalid")
+
     def test_concurrent_member_creation_cannot_be_overwritten(self):
         with tempfile.TemporaryDirectory() as tmp:
             bundle = Path(tmp) / "bundle"

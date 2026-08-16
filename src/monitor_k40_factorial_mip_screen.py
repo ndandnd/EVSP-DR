@@ -8,7 +8,10 @@ import json
 import subprocess
 from pathlib import Path
 
-from recover_k40_factorial_mip_campaign import build_recovery_plan
+from recover_k40_factorial_mip_campaign import (
+    build_recovery_plan,
+    validate_existing_recovery,
+)
 
 
 def _accounting(job_ids: list[str]) -> dict:
@@ -107,25 +110,13 @@ def main(argv=None) -> int:
                 "--require-complete requires "
                 "--approved-recovery-plan-sha256"
             )
-        record_path = (
-            args.campaign_root.expanduser().resolve()
-            / "recovery"
-            / f"{args.approved_recovery_plan_sha256}.json"
-        )
         try:
-            record = json.loads(record_path.read_text())
+            validate_existing_recovery(
+                args.campaign_root,
+                source_campaign_sha256=args.source_campaign_sha256,
+                approved_plan_sha256=args.approved_recovery_plan_sha256,
+            )
         except (OSError, ValueError):
-            record = {}
-        receipt_labels = {
-            receipt.get("label")
-            for receipt in record.get("receipts") or []
-            if isinstance(receipt, dict)
-        }
-        if (
-            record.get("recovery_plan_sha256")
-            != args.approved_recovery_plan_sha256
-            or receipt_labels != {row["label"] for row in rows}
-        ):
             for row in rows:
                 row["outcome"] = "missing_or_invalid_result"
                 row["errors"] = [

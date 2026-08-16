@@ -447,6 +447,40 @@ class K40RecoveryTests(unittest.TestCase):
                 )
             self.assertEqual(len(record["receipts"]), 12)
 
+    def test_forged_recovery_record_is_rejected_by_strict_validation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            campaign = self._fixture(Path(tmp))
+            source_sha = self._source_sha(campaign)
+            with (
+                patch.object(recovery, "_git_commit", return_value="e" * 40),
+                patch(
+                    "k40_factorial_mip_result.validate_final_selected_routes"
+                ),
+            ):
+                plan, _prepared = recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=source_sha
+                )
+                plan_sha = hashlib.sha256(
+                    recovery._canonical(recovery._recovery_intent(plan))
+                ).hexdigest()
+                recovery.apply_recovery(
+                    campaign,
+                    approved_plan_sha256=plan_sha,
+                    source_campaign_sha256=source_sha,
+                )
+                record_path = campaign / "recovery" / f"{plan_sha}.json"
+                record = json.loads(record_path.read_text())
+                record["completed_labels"] = []
+                record_path.write_text(json.dumps(record))
+                with self.assertRaisesRegex(
+                    ValueError, "exact expected record"
+                ):
+                    recovery.validate_existing_recovery(
+                        campaign,
+                        source_campaign_sha256=source_sha,
+                        approved_plan_sha256=plan_sha,
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()

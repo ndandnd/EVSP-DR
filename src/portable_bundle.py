@@ -230,7 +230,10 @@ def completion_bytes(members: dict[str, bytes], metadata: dict) -> bytes:
         },
         "metadata": metadata,
     }
-    return (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode()
+    return (
+        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False)
+        + "\n"
+    ).encode()
 
 
 def inspect_bundle(
@@ -290,6 +293,29 @@ def inspect_bundle(
             "state": "invalid", "path": str(path),
             "recoverable": False, "errors": [str(exc)],
         }
+    try:
+        lock_mode = os.stat(
+            ".publication.lock",
+            dir_fd=bundle_fd,
+            follow_symlinks=False,
+        ).st_mode
+    except FileNotFoundError:
+        lock_mode = None
+    except OSError as exc:
+        os.close(bundle_fd)
+        return {
+            "state": "invalid", "path": str(path),
+            "recoverable": False, "errors": [str(exc)],
+        }
+    if lock_mode is not None and (
+        not stat.S_ISREG(lock_mode) or stat.S_ISLNK(lock_mode)
+    ):
+        os.close(bundle_fd)
+        return {
+            "state": "invalid", "path": str(path),
+            "recoverable": False,
+            "errors": ["publication lock is non-regular/symlinked"],
+        }
     completion_path = path / "completion.json"
     try:
         completion_mode = os.stat(
@@ -332,7 +358,7 @@ def inspect_bundle(
             ).st_mode
         except FileNotFoundError:
             candidate_mode = None
-        except OSError as exc:
+        except (OSError, BundlePublicationError) as exc:
             corruption_errors.append(str(exc))
             candidate_mode = None
         if candidate_mode is not None and stat.S_ISLNK(candidate_mode):
@@ -379,6 +405,23 @@ def inspect_bundle(
             and recoverable_validator is not None
         )
         candidate_invalid = bool(corruption_errors)
+        present_members = []
+        for present in sorted(os.listdir(bundle_fd)):
+            try:
+                present_mode = os.stat(
+                    present, dir_fd=bundle_fd, follow_symlinks=False
+                ).st_mode
+            except OSError as exc:
+                corruption_errors.append(str(exc))
+                continue
+            if stat.S_ISREG(present_mode):
+                present_members.append(present)
+            elif stat.S_ISLNK(present_mode):
+                corruption_errors.append(
+                    f"bundle entry is symlinked: {present}"
+                )
+        if corruption_errors:
+            candidate_invalid = True
         state = {
             "state": (
                 "recoverable_validated"
@@ -388,10 +431,7 @@ def inspect_bundle(
             "path": str(path),
             "recoverable": recoverable,
             "errors": [*corruption_errors, *missing_errors],
-            "present_members": sorted(
-                str(member.relative_to(path))
-                for member in path.rglob("*") if member.is_file()
-            ),
+            "present_members": present_members,
         }
         os.close(bundle_fd)
         return state
@@ -443,7 +483,7 @@ def inspect_bundle(
                 follow_symlinks=False,
             )
             member_mode = member_status.st_mode
-        except OSError as exc:
+        except (OSError, BundlePublicationError) as exc:
             errors.append(f"committed member unreadable: {name}: {exc}")
             continue
         if not stat.S_ISREG(member_mode) or stat.S_ISLNK(member_mode):
@@ -468,7 +508,7 @@ def inspect_bundle(
                 digest != expected.get("sha256")
                 or size != expected.get("size")
             )
-        except OSError as exc:
+        except (OSError, BundlePublicationError) as exc:
             errors.append(f"committed member unreadable: {name}: {exc}")
             continue
         if mismatch:
@@ -508,6 +548,7 @@ def publish_bundle(
         if type(content) is not bytes:
             raise TypeError(f"bundle member {name} is not bytes")
         normalized[str(relative)] = content
+    completion = completion_bytes(normalized, metadata)
     if not path.parent.is_dir():
         raise BundlePublicationError(
             f"bundle parent must already exist: {path.parent}"
@@ -585,7 +626,6 @@ def publish_bundle(
         os.fsync(destination_fd)
         if fault_at == "before_completion":
             raise RuntimeError("injected interruption before completion")
-        completion = completion_bytes(normalized, metadata)
         try:
             _hash_at(destination_fd, "completion.json")
         except FileNotFoundError:

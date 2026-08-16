@@ -415,7 +415,8 @@ def build_recovery_plan(
 
 
 def _write_new(path: Path, payload: bytes) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.parent.is_dir():
+        raise ValueError(f"recovery record parent is missing: {path.parent}")
     atomic_write_new_file(path, payload)
 
 
@@ -581,6 +582,13 @@ def apply_recovery(
         } for row in plan["jobs"]],
     }
     record_path = root / "recovery" / f"{observed_sha}.json"
+    if not record_path.parent.exists():
+        root_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.mkdir("recovery", 0o700, dir_fd=root_fd)
+            os.fsync(root_fd)
+        finally:
+            os.close(root_fd)
     if record_path.exists():
         existing = _load_object(record_path)
         if existing != record:
@@ -590,6 +598,66 @@ def apply_recovery(
             record_path,
             (json.dumps(record, indent=2, sort_keys=True) + "\n").encode(),
         )
+    return record
+
+
+def validate_existing_recovery(
+    campaign_root: Path,
+    *,
+    source_campaign_sha256: str,
+    approved_plan_sha256: str,
+) -> dict:
+    root = campaign_root.expanduser().resolve()
+    plan, prepared = build_recovery_plan(
+        root,
+        source_campaign_sha256=source_campaign_sha256,
+    )
+    if hashlib.sha256(
+        _canonical(_recovery_intent(plan))
+    ).hexdigest() != approved_plan_sha256:
+        raise ValueError("current recovery intent differs from approved SHA")
+    record_path = root / "recovery" / f"{approved_plan_sha256}.json"
+    record = _load_object(record_path)
+    receipts = []
+    for row in plan["jobs"]:
+        destination = Path(row["destination"])
+        inspection = inspect_bundle(
+            destination, required_members=("result.json",)
+        )
+        if (
+            inspection["state"] != "complete_valid"
+            or row["label"] not in prepared
+            or sha256_file(destination / "result.json")
+            != row["recovered_result_sha256"]
+            or sha256_file(destination / "completion.json")
+            != row["expected_completion_sha256"]
+        ):
+            raise ValueError(f"{row['label']} complete bundle is invalid")
+        receipts.append({
+            "label": row["label"],
+            "original_job_id": row["job_id"],
+            "raw_sha256": row["raw_sha256"],
+            "recovery_method": row["recovery_method"],
+            "destination": row["destination"],
+            "result_sha256": row["recovered_result_sha256"],
+            "completion_sha256": row["expected_completion_sha256"],
+        })
+        if _preserved_inventory([
+            Path(item["path"])
+            for item in prepared[row["label"]]["preserved_sources"]
+        ]) != prepared[row["label"]]["preserved_sources"]:
+            raise ValueError(f"{row['label']} preserved inputs changed")
+    expected = {
+        "schema": "evsp-dr-k40-factorial-mip-recovery-record-v1",
+        "recovery_plan_sha256": approved_plan_sha256,
+        "recovery_commit": plan["recovery_commit"],
+        "completed_labels": [row["label"] for row in plan["jobs"]],
+        "raw_and_staging_preserved": True,
+        "reran_gurobi": False,
+        "receipts": receipts,
+    }
+    if record != expected:
+        raise ValueError("recovery record differs from exact expected record")
     return record
 
 
