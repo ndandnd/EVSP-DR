@@ -333,7 +333,12 @@ def build_plan(
     for job in jobs:
         job["job_name"] = _job_name(job, campaign)
         cell_root = campaign_root / "input" / job["cell_id"]
-        status_name = Path(job["source"]["status_path"]).name
+        source_status_name = Path(job["source"]["status_path"]).name
+        status_name = (
+            source_status_name
+            if source_status_name.endswith(".snapshot.json")
+            else f"{Path(source_status_name).stem}.frozen.snapshot.json"
+        )
         job.update({
             "staged_status": str(cell_root / status_name),
             "staged_journal": str(
