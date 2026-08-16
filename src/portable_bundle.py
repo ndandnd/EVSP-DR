@@ -388,9 +388,7 @@ def inspect_bundle(
                     raise ValueError("result member is not an object")
                 if recoverable_validator is not None:
                     recoverable_validator(result_payload)
-            except (
-                OSError, ValueError, TypeError, BundlePublicationError
-            ) as exc:
+            except Exception as exc:
                 corruption_errors.append(str(exc))
         missing_required = []
         for name in safe_required:

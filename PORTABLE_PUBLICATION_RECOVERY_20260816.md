@@ -104,6 +104,10 @@ python -u src/recover_k40_factorial_mip_campaign.py \
 
 INVENTORY_OUT="$REVIEW_ROOT/inventory.${APPROVED_RECOVERY_PLAN_SHA256}.json"
 if [[ ! -f "$INVENTORY_OUT" ]]; then
+  [[ ! -e "$INVENTORY_OUT.sha256" ]] || {
+    echo "Orphaned inventory receipt exists; refusing regeneration." >&2
+    exit 2
+  }
 python -u src/launch_mip_statistics_campaign.py \
   --mode inventory \
   --root "repool_small=$SOURCE_ROOT/src/results/repool_small" \
@@ -113,7 +117,7 @@ python -u src/launch_mip_statistics_campaign.py \
   --root "fresh_preparation=$SOURCE_ROOT/src/results/mip_statistics_prep" \
   --data-root "$SOURCE_ROOT/data" \
   --inventory-out "$INVENTORY_OUT"
-  (cd "$(dirname "$INVENTORY_OUT")" && \
+  (set -C; cd "$(dirname "$INVENTORY_OUT")" && \
     sha256sum "$(basename "$INVENTORY_OUT")" > "$(basename "$INVENTORY_OUT").sha256")
 fi
 (cd "$(dirname "$INVENTORY_OUT")" && \
@@ -124,6 +128,10 @@ fi
 # The 1,800-second limit gives checkpoint marks 0, 5, 15, and 30 minutes.
 PILOT_OUT="$REVIEW_ROOT/two-cell-pilot-plan.${APPROVED_RECOVERY_PLAN_SHA256}.json"
 if [[ ! -f "$PILOT_OUT" ]]; then
+  [[ ! -e "$PILOT_OUT.sha256" ]] || {
+    echo "Orphaned pilot receipt exists; refusing regeneration." >&2
+    exit 2
+  }
 python -u src/launch_mip_statistics_campaign.py \
   --mode two-cell \
   --campaign k40-publication-two-cell-review \
@@ -136,7 +144,7 @@ python -u src/launch_mip_statistics_campaign.py \
   --giro-start "40=$CAMPAIGN/input/common/validated_start.json" \
   --python "$HOME/evsp_env/bin/python" \
   --plan-out "$PILOT_OUT"
-  (cd "$(dirname "$PILOT_OUT")" && \
+  (set -C; cd "$(dirname "$PILOT_OUT")" && \
     sha256sum "$(basename "$PILOT_OUT")" > "$(basename "$PILOT_OUT").sha256")
 fi
 (cd "$(dirname "$PILOT_OUT")" && \
@@ -153,8 +161,18 @@ if (
     or not isinstance(jobs, list)
     or len(jobs) != 2
     or {job.get("arm") for job in jobs} != {"RAW", "GIRO"}
+    or {job.get("scale") for job in jobs} != {40}
     or any(job.get("time_limit_s") != 1800 for job in jobs)
     or any(job.get("partitioning") != "strict_exact_once" for job in jobs)
+    or any(job.get("blocked_reasons") for job in jobs)
+    or {
+      job.get("arm"): job.get("augmentation_changes_column_set")
+      for job in jobs
+    } != {"RAW": False, "GIRO": True}
+    or len({
+      (job.get("source") or {}).get("status_sha256")
+      for job in jobs
+    }) != 1
 ):
     raise SystemExit("two-cell pilot plan is blocked or malformed")
 PY

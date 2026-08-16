@@ -287,6 +287,19 @@ class PortableBundleTests(unittest.TestCase):
                 "metadata": {"bad": float("nan")},
             }))
             self.assertEqual(inspect_bundle(bundle)["state"], "invalid")
+
+    def test_recoverable_validator_exception_is_classified_invalid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / "bundle"
+            bundle.mkdir()
+            (bundle / "result.json").write_text("{}")
+            state = inspect_bundle(
+                bundle,
+                required_members=("result.json",),
+                recoverable_validator=lambda payload: payload["required"],
+            )
+            self.assertEqual(state["state"], "invalid")
+            self.assertFalse(state["recoverable"])
             (bundle / "completion.json").write_text(
                 '{"schema":"evsp-dr-portable-bundle-completion-v1",'
                 '"protocol":{"destination_reserved_by":"mkdir",'
