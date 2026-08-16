@@ -31,6 +31,7 @@ APPROVED_HOME=$6
 export HOME=$APPROVED_HOME
 export USER=${SLURM_JOB_USER:?SLURM_JOB_USER is required}
 export PATH=/usr/local/bin:/usr/bin:/bin
+unset PYTHONHOME PYTHONPATH || true
 
 [[ -d "$RUN_ROOT/.git" || -f "$RUN_ROOT/.git" ]] \
   || fatal "run root is not a Git worktree"
