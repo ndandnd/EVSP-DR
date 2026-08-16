@@ -94,7 +94,7 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
         raise ValueError(f"{job['cell_id']} RAW result used GIRO columns")
     incumbent = result.get("incumbent_found") is True
     buses = result.get("buses")
-    if incumbent != (isinstance(buses, int) and buses > 0):
+    if incumbent != (type(buses) is int and buses > 0):
         raise ValueError(f"{job['cell_id']} incumbent/bus mismatch")
     selected = result.get("selected_routes") or []
     if incumbent:
@@ -178,7 +178,7 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
             or not math.isclose(
                 stage_obj, stage_bound, rel_tol=1e-10, abs_tol=1e-6
             )
-            or not isinstance(stage1_buses, int)
+            or type(stage1_buses) is not int
             or stage1_buses != buses
             or not math.isclose(
                 mip_obj,
