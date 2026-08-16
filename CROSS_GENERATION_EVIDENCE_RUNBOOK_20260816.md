@@ -16,8 +16,8 @@ test ! -e "$OUT"
 python -u src/collect_cross_generation_inputs.py \
   --template CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json \
   --root "current_heuristic=$HOME/EVSP-DR-current/src/results" \
-  --root "repool_small=$HOME/EVSP-DR-k40mip-f40b120/results/repool_small" \
-  --root "exact_big=$HOME/EVSP-DR-k40mip-f40b120/results/exact_big" \
+  --root "repool_small=$HOME/EVSP-DR-k40mip-f40b120/src/results/repool_small" \
+  --root "exact_big=$HOME/EVSP-DR-k40mip-f40b120/src/results/exact_big" \
   --root "k40_factorial=$HOME/EVSP-DR-k40mip-f40b120/src/results/k40_factorial" \
   --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
   --root "releases=$HOME/EVSP-DR-releases" \

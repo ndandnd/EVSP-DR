@@ -211,7 +211,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "optimal_scope": "fleet_only",
             "runtime_s": 300,
             "selected_routes": [
-                {"trips": [index], "cost": 100012.5}
+                {
+                    "trips": [index],
+                    "cost": 100012.5,
+                    "route_nodes": ["PARX_0", index, "PARX_0"],
+                    "charging_stops": {},
+                }
                 for index in range(8)
             ],
             "source_result_sha256": pool_status_sha,
@@ -254,8 +259,15 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "provenance": {"instance_sha256": "b" * 64},
         }))
         replay_artifact_sha = self._sha(replay_artifact)
+        replay_projection = [{
+            "route_nodes": route["route"],
+            "charging_stops": {},
+        } for route in replay_routes]
+        replay_projection.sort(key=lambda value: json.dumps(
+            value, sort_keys=True, separators=(",", ":")
+        ))
         replay_vector_sha = hashlib.sha256(json.dumps(
-            replay_routes, sort_keys=True, separators=(",", ":")
+            replay_projection, sort_keys=True, separators=(",", ":")
         ).encode()).hexdigest()
         common_exact = {
             "algorithm_family": "exact_expanded_network",
@@ -270,6 +282,13 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "trip_set_sha256": trip_sha,
             "tariff_sha256": "c" * 64,
             "target_lp_weight": 8,
+            "model": "evsp",
+            "charging_discretization": "15kwh_10min",
+            "battery_kwh": 300,
+            "charge_kw": 300,
+            "reserve_fraction": 0,
+            "master_sense": "cover",
+            "initializer": "singletons",
         }
         artifacts = [
             self._spec("hist", "hist-run", historical,
@@ -281,6 +300,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "trip_count": 8,
                            "trip_set_sha256": trip_sha,
                            "instance_sha256": "b" * 64,
+                           "tariff_sha256": "c" * 64,
                        }),
             self._spec("current", "current-run", current,
                        "heuristic_dp_current_csv", {
@@ -291,6 +311,13 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "instance_sha256": "b" * 64,
                            "trip_set_sha256": "3" * 64,
                            "tariff_sha256": "c" * 64,
+                           "model": "evsp",
+                           "charging_discretization": "15kwh_10min",
+                           "battery_kwh": 300,
+                           "charge_kw": 300,
+                           "reserve_fraction": 0,
+                           "master_sense": "cover",
+                           "initializer": "singletons",
                        }),
             self._spec("current-endpoint", "current-run", endpoint_current,
                        "endpoint_json", {
@@ -303,6 +330,13 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "instance_sha256": "b" * 64,
                            "trip_set_sha256": "3" * 64,
                            "tariff_sha256": "c" * 64,
+                           "model": "evsp",
+                           "charging_discretization": "15kwh_10min",
+                           "battery_kwh": 300,
+                           "charge_kw": 300,
+                           "reserve_fraction": 0,
+                           "master_sense": "cover",
+                           "initializer": "singletons",
                        }),
             self._spec("exact", "exact-run", exact,
                        "exact_cg_iterations_csv", common_exact),
@@ -322,12 +356,20 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "pool_status_sha256": pool_status_sha,
                            "pool_journal_sha256": pool_journal_sha,
                            "instance_sha256": "b" * 64,
+                           "tariff_sha256": "c" * 64,
                            "trip_set_sha256": trip_sha,
                            "trip_count": 8,
                            "physical_replay_validated": True,
                            "physical_replay_artifact_sha256": replay_artifact_sha,
                            "physical_replay_route_vector_sha256":
                                replay_vector_sha,
+                           "model": "evsp",
+                           "charging_discretization": "15kwh_10min",
+                           "battery_kwh": 300,
+                           "charge_kw": 300,
+                           "reserve_fraction": 0,
+                           "master_sense": "partition",
+                           "initializer": "singletons",
                        }),
             self._spec("mip-final", "mip-run", mip_final,
                        "mip_final", {
@@ -339,12 +381,20 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "pool_status_sha256": pool_status_sha,
                            "pool_journal_sha256": pool_journal_sha,
                            "instance_sha256": "b" * 64,
+                           "tariff_sha256": "c" * 64,
                            "trip_set_sha256": trip_sha,
                            "trip_count": 8,
                            "physical_replay_validated": True,
                            "physical_replay_artifact_sha256": replay_artifact_sha,
                            "physical_replay_route_vector_sha256":
                                replay_vector_sha,
+                           "model": "evsp",
+                           "charging_discretization": "15kwh_10min",
+                           "battery_kwh": 300,
+                           "charge_kw": 300,
+                           "reserve_fraction": 0,
+                           "master_sense": "partition",
+                           "initializer": "singletons",
                        }),
             self._spec("release", "release-run", manifest_artifact,
                        "artifact_manifest_json", {

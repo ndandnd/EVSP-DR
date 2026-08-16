@@ -45,6 +45,7 @@ INVENTORY_FIELDS = (
     "trip_count",
     "tariff_sha256", "git_commit", "git_dirty",
     "comparison_identity_sha256",
+    "comparison_identity_complete",
     "field_availability_json",
 )
 CG_FIELDS = (
@@ -240,6 +241,12 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
             "initializer", "implementation",
         )
     }
+    comparison_required = (
+        "instance_sha256", "trip_set_sha256", "tariff_sha256",
+        "model", "charging_discretization", "battery_kwh",
+        "charge_kw", "reserve_fraction", "master_sense",
+        "initializer", "implementation",
+    )
     return {
         "artifact_id": spec.get("artifact_id"),
         "run_id": spec.get("run_id"),
@@ -272,6 +279,9 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
         "comparison_identity_sha256": hashlib.sha256(
             _canonical(comparison_identity)
         ).hexdigest(),
+        "comparison_identity_complete": all(
+            metadata.get(key) is not None for key in comparison_required
+        ),
         "field_availability_json": json.dumps(
             field_availability, sort_keys=True, separators=(",", ":")
         ),
@@ -537,11 +547,11 @@ def _endpoint_horizon(endpoint):
     if not isinstance(endpoint, dict):
         return None, None
     for key, clock in (
+        ("Active_Time_s", "active_time"),
+        ("active_time_s", "active_time"),
         ("wall_s", "wall_time"),
         ("Total_Time_s", "wall_time"),
         ("Total_Runtime_s", "wall_time"),
-        ("Active_Time_s", "active_time"),
-        ("active_time_s", "active_time"),
     ):
         value = endpoint.get(key)
         if value is None:
@@ -870,6 +880,14 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             row["checkpoint_elapsed_s"]
             if row["checkpoint_elapsed_s"] is not None else math.inf
         ))
+        for key in (
+            "source_result_sha256", "source_journal_sha256",
+            "source_start_sha256", "git_commit", "treatment",
+        ):
+            if len({row[key] for row in rows}) > 1:
+                raise ValueError(
+                    f"MIP checkpoint-only run has mixed {key}: {run_id}"
+                )
         exemplar = rows[-1]
         summaries.append({
             "run_id": run_id,
@@ -1082,6 +1100,7 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             and row["run_id"] in trajectory_run_ids
             and row.get("trip_set_sha256")
             and row.get("replicate") is not None
+            and row.get("comparison_identity_complete") is True
         ]
         trajectory_by_trip_set = defaultdict(set)
         identity_trip_sets = {}
@@ -1101,6 +1120,7 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 matches(row) and row["endpoint_only"]
                 and row.get("replicate") is not None
                 and row.get("trip_set_sha256")
+                and row.get("comparison_identity_complete") is True
             ):
                 identity = row["comparison_identity_sha256"]
                 identity_trip_sets[identity] = row["trip_set_sha256"]
@@ -1138,7 +1158,10 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             }
             if roles == {"mip_checkpoint", "mip_final"} and len(
                     trip_identities) == 1 and len(
-                    comparison_identities) == 1:
+                    comparison_identities) == 1 and all(
+                    row.get("comparison_identity_complete") is True
+                    for row in companion_rows
+                ):
                 paired_valid_runs.add(run_id)
         paired_mip_inventory = [
             row for row in verified
@@ -1911,7 +1934,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 f"{final['artifact_id']}"
             )
         permitted_incidences = set()
-        permitted_costs = {}
+        permitted_costs = defaultdict(set)
         for journal_row in journal_rows:
             summary = parsed_by_artifact[
                 journal_row["artifact_id"]
@@ -1919,12 +1942,10 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             permitted_incidences.update(
                 summary.get("incidence_sha256") or []
             )
-            for incidence, cost in (
+            for incidence, costs in (
                 summary.get("incidence_costs") or {}
             ).items():
-                permitted_costs[incidence] = min(
-                    cost, permitted_costs.get(incidence, math.inf)
-                )
+                permitted_costs[incidence].update(costs)
         if final.get("pool_treatment") == "GIRO":
             start_rows = verified_by_hash.get(
                 final.get("source_start_sha256"), []
@@ -1958,9 +1979,12 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         for incidence, selected_cost in (
             final.get("selected_incidence_costs") or {}
         ).items():
-            if incidence in permitted_costs and not math.isclose(
-                float(selected_cost), float(permitted_costs[incidence]),
-                rel_tol=1e-9, abs_tol=1e-6,
+            if incidence in permitted_costs and not any(
+                math.isclose(
+                    float(selected_cost), float(permitted_cost),
+                    rel_tol=1e-9, abs_tol=1e-6,
+                )
+                for permitted_cost in permitted_costs[incidence]
             ):
                 raise ValueError(
                     f"MIP selected route cost differs from verified pool: "
