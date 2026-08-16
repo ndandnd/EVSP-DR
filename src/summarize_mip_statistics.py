@@ -179,6 +179,7 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
                 stage_obj, stage_bound, rel_tol=1e-10, abs_tol=1e-6
             )
             or not isinstance(stage1_buses, int)
+            or stage1_buses != buses
             or not math.isclose(
                 mip_obj,
                 BUS_COST_KX * stage1_buses + stage_obj,
