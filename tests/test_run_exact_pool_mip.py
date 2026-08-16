@@ -923,6 +923,27 @@ class ExactPoolMipTests(unittest.TestCase):
             "stage1_fallback",
         )
 
+    def test_two_stage_no_incumbent_still_writes_final_result(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 0.0,
+            "bound": 1.0,
+            "gap": 1.0,
+            "solutions": 0,
+            "selected": [],
+        }])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(model.optimize_calls, 1)
+        self.assertEqual(payload["status_name"], "TIME_LIMIT")
+        self.assertFalse(payload["incumbent_found"])
+        self.assertIsNone(payload["buses"])
+        self.assertIsNone(payload["mip_obj"])
+        self.assertEqual(
+            payload["two_stage"]["stage2_skip_reason"],
+            "no_fleet_incumbent",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

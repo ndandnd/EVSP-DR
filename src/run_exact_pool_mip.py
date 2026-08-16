@@ -762,15 +762,17 @@ def merge_validated_partition_start(
     return merged, start_indices, detail
 
 
-def optimize_with_start_audit(model, GRB, *, start_supplied: bool) -> dict:
-    """Optimize while recording Gurobi's own MIP-start acceptance message."""
-
-    if not start_supplied:
-        model.optimize()
-        return {"status": "not_supplied", "accepted": None, "messages": []}
+def optimize_with_start_audit(
+    model,
+    GRB,
+    *,
+    start_supplied: bool,
+    progress_observer=None,
+) -> dict:
+    """Optimize with one composed start-audit/progress callback."""
 
     audit = {
-        "status": "not_observed",
+        "status": "not_observed" if start_supplied else "not_supplied",
         "accepted": None,
         "rejection_observed": False,
         "messages": [],
@@ -782,33 +784,40 @@ def optimize_with_start_audit(model, GRB, *, start_supplied: bool) -> dict:
         and hasattr(callback_api, "MSG_STRING")
         and callable(getattr(model, "cbGet", None))
     )
-    if not can_capture:
+    if not can_capture and progress_observer is None:
         model.optimize()
         return audit
 
     def callback(callback_model, where):
-        if where != callback_api.MESSAGE:
+        if progress_observer is not None:
+            progress_observer(callback_model, where)
+        if (
+            not start_supplied
+            or not can_capture
+            or where != callback_api.MESSAGE
+        ):
             return
         message = str(
             callback_model.cbGet(callback_api.MSG_STRING)
         ).strip()
-        if not message or "MIP start" not in message:
-            return
-        audit["messages"].append(message)
-        if ("Loaded user MIP start with objective" in message
-                or "User MIP start produced solution with objective" in message):
-            audit["status"] = "accepted"
-            audit["accepted"] = True
-        elif "User MIP start violates constraint" in message:
-            audit["rejection_observed"] = True
-            if audit["accepted"] is not True:
-                audit["status"] = "rejected_infeasible"
-                audit["accepted"] = False
-        elif "User MIP start did not produce a new incumbent" in message:
-            audit["rejection_observed"] = True
-            if audit["accepted"] is not True:
-                audit["status"] = "not_loaded_as_incumbent"
-                audit["accepted"] = False
+        if message and "MIP start" in message:
+            audit["messages"].append(message)
+            if (
+                "Loaded user MIP start with objective" in message
+                or "User MIP start produced solution with objective" in message
+            ):
+                audit["status"] = "accepted"
+                audit["accepted"] = True
+            elif "User MIP start violates constraint" in message:
+                audit["rejection_observed"] = True
+                if audit["accepted"] is not True:
+                    audit["status"] = "rejected_infeasible"
+                    audit["accepted"] = False
+            elif "User MIP start did not produce a new incumbent" in message:
+                audit["rejection_observed"] = True
+                if audit["accepted"] is not True:
+                    audit["status"] = "not_loaded_as_incumbent"
+                    audit["accepted"] = False
 
     model.optimize(callback)
     return audit
@@ -848,6 +857,68 @@ def optimal_scope(*, two_stage: bool, fleet_proven: bool,
     if cost_stage_executed and final_status == 2:
         return "full_pool_lexicographic"
     return "fleet_only"
+
+
+def validate_final_selected_routes(status, trips, selected_routes) -> None:
+    """Rebuild the instance and physically replay every final selected route."""
+
+    from audit_giro_known_columns import HORIZON_MIN, build_problem
+
+    provenance = status.get("provenance") or {}
+    data_dir = (Path(__file__).resolve().parent.parent / "data").resolve()
+    instance_path = (data_dir / str(status.get("csv"))).resolve()
+    try:
+        instance_path.relative_to(data_dir)
+    except ValueError as exc:
+        raise SystemExit("[MIP] final replay instance escapes data/") from exc
+    expected_hash = provenance.get("instance_sha256")
+    if (
+        not instance_path.is_file()
+        or not isinstance(expected_hash, str)
+        or file_sha256(instance_path) != expected_hash
+    ):
+        raise SystemExit("[MIP] final replay instance hash mismatch")
+    problem = build_problem(
+        data_dir,
+        str(instance_path.relative_to(data_dir)),
+        max_station_to_trip_wait_min=HORIZON_MIN,
+    )
+    if list(problem.trips) != list(trips):
+        raise SystemExit("[MIP] final replay reconstructed a different trip set")
+    try:
+        g_kwh = float(status["g_kwh"])
+        charge_kw = float(status["charge_kw"])
+        reserve_kwh = float(status["min_soc_frac"]) * g_kwh
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SystemExit("[MIP] final replay physics are invalid") from exc
+    counts = Counter()
+    for ordinal, route in enumerate(selected_routes, start=1):
+        route_trips = list(route.get("trips") or [])
+        counts.update(route_trips)
+        candidate = {
+            "trips": route_trips,
+            "route_nodes": route.get(
+                "route_nodes", route.get("route", [])
+            ),
+            "charging_stops": route.get("charging_stops", {}),
+        }
+        reason = validate_injected_route(
+            problem,
+            candidate,
+            g_kwh,
+            charge_kw,
+            reserve_kwh,
+            HORIZON_MIN,
+        )
+        if reason is not None:
+            raise SystemExit(
+                f"[MIP] final selected route {ordinal} failed physical "
+                f"replay: {reason}"
+            )
+    if any(counts[trip] != 1 for trip in trips):
+        raise SystemExit(
+            "[MIP] final selected routes do not cover every trip exactly once"
+        )
 
 
 def main(argv=None) -> int:
@@ -891,6 +962,13 @@ def main(argv=None) -> int:
              "cost only if stage 1 proves the fleet early and time remains.",
     )
     parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument(
+        "--progress-dir",
+        type=Path,
+        default=None,
+        help="Opt-in directory for atomic observational convergence "
+             "checkpoints (not a Gurobi tree restart).",
+    )
     args = parser.parse_args(argv)
 
     if args.out is not None and args.out.resolve() == args.result.resolve():
@@ -1034,10 +1112,35 @@ def main(argv=None) -> int:
 
     out = args.out or Path(str(args.result).replace(".json", "_mip.json"))
     out.parent.mkdir(parents=True, exist_ok=True)
+    progress_path = (
+        args.progress_dir.expanduser().resolve()
+        if args.progress_dir is not None else None
+    )
+    if progress_path is not None:
+        protected = {
+            args.result.resolve(),
+            source_journal.resolve(),
+            out.resolve(),
+            *(
+                path.resolve()
+                for path in (args.extra_routes or [])
+            ),
+        }
+        if args.initial_partition_routes is not None:
+            protected.add(args.initial_partition_routes.resolve())
+        if progress_path in protected:
+            parser.error("--progress-dir aliases a protected input/output")
+        if progress_path.exists():
+            parser.error("--progress-dir already exists; choose a new path")
 
     import gurobipy as gp
     from gurobipy import GRB
     from config import BUS_COST_KX
+    from mip_convergence import (
+        GurobiProgressObserver,
+        MIPProgressRecorder,
+        TerminationRequest,
+    )
 
     # Gurobi's documented optimization status codes are stable integers.  Use
     # the numbers here so reporting also works across installations where a
@@ -1055,6 +1158,43 @@ def main(argv=None) -> int:
     m.Params.TimeLimit = args.timelimit
     m.Params.MIPGap = args.mipgap
     m.Params.Threads = args.threads
+    experiment_arm = {
+        (False, False): "A",
+        (True, False): "B",
+        (False, True): "C",
+        (True, True): "D",
+    }[(args.two_stage, args.initial_partition_routes is not None)]
+    progress = None
+    termination = None
+    if progress_path is not None:
+        progress = MIPProgressRecorder(
+            progress_path,
+            time_limit_s=args.timelimit,
+            metadata={
+                "source_result_sha256": source_result_sha256,
+                "source_journal_sha256": source_journal_sha256,
+                "source_initial_partition_sha256": (
+                    expected_initial_partition_sha256
+                    or initial_partition_start.get("source_sha256")
+                ),
+                "extra_route_sources": extra_route_sources,
+                "gurobi_version": ".".join(
+                    str(value) for value in gp.gurobi.version()
+                ),
+                "parameters": {
+                    "time_limit_s": args.timelimit,
+                    "mip_gap": args.mipgap,
+                    "threads": args.threads,
+                    "two_stage": args.two_stage,
+                    "cover": args.cover,
+                },
+                "git_commit": code_identity["observed_commit"],
+                "expected_git_commit": code_identity["expected_commit"],
+                "experiment_arm": experiment_arm,
+            },
+        )
+        termination = TerminationRequest()
+        termination.install()
     a = m.addVars(len(routes), vtype=GRB.BINARY, name="a")
     if mip_start:
         start_set = set(mip_start)
@@ -1067,6 +1207,26 @@ def main(argv=None) -> int:
     initial_partition_start["selected_variable_count"] = (
         len(mip_start) if mip_start else 0
     )
+    if progress is not None:
+        progress.transition_stage(
+            "fleet" if args.two_stage else "single",
+            elapsed_s=0.0,
+        )
+        if mip_start:
+            progress.record_initial_incumbent(
+                list(mip_start),
+                objective=float(sum(
+                    routes[index]["cost"] for index in mip_start
+                )),
+                fleet=len(mip_start),
+                kind=(
+                    "validated_partition_at_t0"
+                    if initial_partition_start["kind"]
+                    == "validated_exact_partition"
+                    else "initial_mip_start_at_t0"
+                ),
+            )
+        progress.emit_zero()
     sense = ">" if args.cover else "="
     trip_rows = {t: [] for t in trips}
     for i, r in enumerate(routes):
@@ -1078,6 +1238,21 @@ def main(argv=None) -> int:
             m.addConstr(expr >= 1, name=f"cov_{t}")
         else:
             m.addConstr(expr == 1, name=f"part_{t}")
+
+    def progress_observer(stage, fixed_fleet=None):
+        if progress is None:
+            return None
+        return GurobiProgressObserver(
+            progress,
+            GRB=GRB,
+            variables=a,
+            routes=routes,
+            bus_cost=BUS_COST_KX,
+            stage=stage,
+            fixed_fleet=fixed_fleet,
+            termination=termination,
+        )
+
     two_stage_detail = None
     cost_stage_executed = False
     cost_stage_has_solution = False
@@ -1091,22 +1266,32 @@ def main(argv=None) -> int:
         )
         initial_partition_start["solver_acceptance"] = (
             optimize_with_start_audit(
-                m, GRB, start_supplied=bool(mip_start)
+                m,
+                GRB,
+                start_supplied=bool(mip_start),
+                progress_observer=progress_observer("fleet"),
             )
         )
-        if m.SolCount == 0:
-            raise SystemExit(
-                "[MIP] two-stage: stage 1 found no feasible fleet solution "
-                "within the time limit"
-            )
-        stage1_buses = int(round(m.ObjVal))
+        stage1_has_solution = m.SolCount > 0
+        stage1_buses = (
+            int(round(m.ObjVal)) if stage1_has_solution else None
+        )
         stage1_bound = finite_solver_value(m.ObjBound)
         stage1_status = int(m.Status)
-        stage1_gap = finite_solver_value(m.MIPGap)
-        fleet_proven = fleet_bound_proves_incumbent(
-            stage1_buses, stage1_bound, stage1_status
+        stage1_gap = (
+            finite_solver_value(m.MIPGap)
+            if stage1_has_solution else None
         )
-        stage1_solution = [i for i in range(len(routes)) if a[i].X > 0.5]
+        fleet_proven = (
+            fleet_bound_proves_incumbent(
+                stage1_buses, stage1_bound, stage1_status
+            )
+            if stage1_has_solution else False
+        )
+        stage1_solution = (
+            [i for i in range(len(routes)) if a[i].X > 0.5]
+            if stage1_has_solution else []
+        )
         stage1_runtime_s = time.time() - t0
         remaining_s = max(0.0, float(args.timelimit) - stage1_runtime_s)
         print(
@@ -1128,7 +1313,7 @@ def main(argv=None) -> int:
             "stage2_has_solution": False,
             "stage2_skip_reason": None,
         }
-        if fleet_proven and remaining_s >= 1.0:
+        if stage1_has_solution and fleet_proven and remaining_s >= 1.0:
             m.addConstr(
                 gp.quicksum(a[i] for i in range(len(routes))) == stage1_buses,
                 name="fleet_budget",
@@ -1145,8 +1330,17 @@ def main(argv=None) -> int:
                 GRB.MINIMIZE,
             )
             m.Params.TimeLimit = remaining_s
+            if progress is not None:
+                progress.transition_stage(
+                    "cost", elapsed_s=time.time() - t0
+                )
             stage2_start_acceptance = optimize_with_start_audit(
-                m, GRB, start_supplied=True
+                m,
+                GRB,
+                start_supplied=True,
+                progress_observer=progress_observer(
+                    "cost", fixed_fleet=stage1_buses
+                ),
             )
             cost_stage_executed = True
             cost_stage_has_solution = m.SolCount > 0
@@ -1155,6 +1349,8 @@ def main(argv=None) -> int:
             two_stage_detail["stage2_start_acceptance"] = (
                 stage2_start_acceptance
             )
+        elif not stage1_has_solution:
+            two_stage_detail["stage2_skip_reason"] = "no_fleet_incumbent"
         elif not fleet_proven:
             two_stage_detail["stage2_skip_reason"] = "fleet_not_proven"
         else:
@@ -1167,12 +1363,21 @@ def main(argv=None) -> int:
         )
         initial_partition_start["solver_acceptance"] = (
             optimize_with_start_audit(
-                m, GRB, start_supplied=bool(mip_start)
+                m,
+                GRB,
+                start_supplied=bool(mip_start),
+                progress_observer=progress_observer("single"),
             )
         )
         fleet_proven = int(m.Status) == 2
 
-    if args.two_stage and not cost_stage_executed:
+    if args.two_stage and not stage1_has_solution:
+        chosen = []
+        status_code = stage1_status
+        solver_obj = None
+        solver_bound = stage1_bound
+        mip_gap = None
+    elif args.two_stage and not cost_stage_executed:
         chosen = list(stage1_solution)
         status_code = stage1_status
         solver_obj = float(stage1_buses)
@@ -1200,8 +1405,12 @@ def main(argv=None) -> int:
         mip_gap = finite_solver_value(m.MIPGap) if m.SolCount > 0 else None
 
     status_name = status_names.get(status_code, f"UNKNOWN_{status_code}")
+    selected_routes = [routes[i] for i in chosen]
+    if selected_routes and not args.cover and progress is not None:
+        validate_final_selected_routes(status, trips, selected_routes)
     over = {t: c for t, c in Counter(
         t for i in chosen for t in routes[i]["trips"]).items() if c > 1}
+    has_incumbent = bool(chosen)
     mip_obj = (float(sum(routes[i]["cost"] for i in chosen))
                if chosen else None)
     if cost_stage_executed and solver_bound is not None and two_stage_detail:
@@ -1248,12 +1457,7 @@ def main(argv=None) -> int:
         "source_result": str(args.result),
         "instance": status["csv"],
         "partitioning": not args.cover,
-        "experiment_arm": {
-            (False, False): "A",
-            (True, False): "B",
-            (False, True): "C",
-            (True, True): "D",
-        }[(args.two_stage, args.initial_partition_routes is not None)],
+        "experiment_arm": experiment_arm,
         "status": status_code,
         "status_name": status_name,
         "optimal_scope": optimal_scope(
@@ -1268,7 +1472,8 @@ def main(argv=None) -> int:
         "requested_mip_gap": args.mipgap,
         "mip_gap": mip_gap,
         "absolute_cost_gap": stage2_absolute_gap,
-        "buses": len(chosen),
+        "buses": len(chosen) if has_incumbent else None,
+        "incumbent_found": has_incumbent,
         "fleet_proven": fleet_proven,
         "fleet_bound": (two_stage_detail.get("stage1_bound")
                         if two_stage_detail else None),
@@ -1332,10 +1537,50 @@ def main(argv=None) -> int:
                 ),
             },
         },
-        "selected_routes": [routes[i] for i in chosen],
+        "selected_routes": selected_routes,
+        "progress": (
+            {
+                "directory": str(progress_path),
+                "checkpoint_schedule_s": progress.schedule,
+                "observational_only": True,
+                "gurobi_tree_restart_supported": False,
+                "disabled_reason": progress.disabled_reason,
+                "termination_signal": (
+                    termination.signal_name if termination else None
+                ),
+            }
+            if progress is not None else None
+        ),
     }
     atomic_write_json(out, summary)
-    print(f"[MIP] status={status_name}({status_code}) buses={len(chosen)} "
+    if progress is not None:
+        progress.finalize(
+            elapsed_s=summary["runtime_s"],
+            final={
+                "status": status_code,
+                "status_name": status_name,
+                "incumbent_found": has_incumbent,
+                "buses": summary["buses"],
+                "mip_obj": mip_obj,
+                "mip_bound": mip_bound,
+                "mip_gap": mip_gap,
+                "fleet_proven": fleet_proven,
+                "optimal_scope": summary["optimal_scope"],
+                "selected_route_indices": list(chosen),
+                "route_vector_sha256": (
+                    hashlib.sha256(json.dumps(
+                        sorted(chosen), separators=(",", ":")
+                    ).encode()).hexdigest()
+                    if chosen else None
+                ),
+                "termination_signal": (
+                    termination.signal_name if termination else None
+                ),
+            },
+        )
+    if termination is not None:
+        termination.restore()
+    print(f"[MIP] status={status_name}({status_code}) buses={summary['buses']} "
           f"obj={summary['mip_obj']} gap={summary['mip_gap']} -> {out}")
     return 0
 
