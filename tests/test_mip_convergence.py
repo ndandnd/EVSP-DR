@@ -251,6 +251,115 @@ class MIPConvergenceTests(unittest.TestCase):
                 recorder.latest_stats["node_count"], 7.0
             )
 
+    def test_dict_solution_aligns_routes_and_separates_statistics_incumbent(self):
+        class Callback:
+            MIPSOL = 1
+            MIP = 2
+            MIPSOL_OBJBST = 10
+            MIPSOL_OBJBND = 11
+            MIPSOL_NODCNT = 12
+            MIPSOL_SOLCNT = 13
+            MIP_OBJBST = 20
+            MIP_OBJBND = 21
+            MIP_NODCNT = 22
+            MIP_SOLCNT = 23
+
+        class GRB:
+            pass
+
+        GRB.Callback = Callback
+
+        class Model:
+            values = {
+                Callback.MIPSOL_OBJBST: 2.0,
+                Callback.MIPSOL_OBJBND: 1.0,
+                Callback.MIPSOL_NODCNT: 7.0,
+                Callback.MIPSOL_SOLCNT: 1,
+                Callback.MIP_OBJBST: 2.0,
+                Callback.MIP_OBJBND: 1.0,
+                Callback.MIP_NODCNT: 9.0,
+                Callback.MIP_SOLCNT: 1,
+            }
+
+            def cbGet(self, key):
+                return self.values[key]
+
+            def cbGetSolution(self, variables):
+                self.observed_variables = variables
+                return {2: 1.0, 0: 0.0, 1: 1.0}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            recorder, clock = self._recorder(
+                Path(tmp) / "progress", limit=300
+            )
+            recorder.transition_stage("fleet", elapsed_s=0.0)
+            recorder.record_initial_incumbent(
+                [0, 1, 2],
+                objective=300006.0,
+                fleet=3,
+                kind="validated_partition_at_t0",
+            )
+            recorder.emit_zero()
+            variables = {
+                2: object(),
+                0: object(),
+                1: object(),
+            }
+            observer = GurobiProgressObserver(
+                recorder,
+                GRB=GRB,
+                variables=variables,
+                routes=[
+                    {"cost": 100001.0},
+                    {"cost": 100002.0},
+                    {"cost": 100003.0},
+                ],
+                bus_cost=100000.0,
+                stage="fleet",
+                statistics_throttle_s=0.0,
+            )
+            model = Model()
+            clock.now = 10.0
+            observer(model, Callback.MIPSOL)
+            self.assertIs(model.observed_variables, variables)
+            self.assertEqual(
+                recorder.latest_incumbent["selected_route_indices"], [1, 2]
+            )
+            self.assertEqual(recorder.latest_incumbent["fleet"], 2)
+            self.assertEqual(
+                [event["fleet"] for event in recorder.incumbent_events],
+                [3, 2],
+            )
+
+            clock.now = 20.0
+            observer(model, Callback.MIP)
+            self.assertEqual(
+                recorder.latest_stats["statistics_incumbent_fleet"], 2.0
+            )
+            self.assertEqual(recorder.latest_stats["fleet_bound"], 1.0)
+            self.assertAlmostEqual(recorder.latest_stats["fleet_gap"], 0.5)
+
+            latest = json.loads(
+                (recorder.directory / "latest.json").read_text()
+            )
+            self.assertEqual(latest["incumbent"]["fleet"], 2)
+            self.assertEqual(
+                latest["latest_statistics"]["statistics_incumbent_fleet"],
+                2.0,
+            )
+            self.assertAlmostEqual(
+                latest["latest_statistics"]["fleet_gap"],
+                (
+                    latest["latest_statistics"][
+                        "statistics_incumbent_fleet"
+                    ]
+                    - latest["latest_statistics"]["fleet_bound"]
+                )
+                / latest["latest_statistics"][
+                    "statistics_incumbent_fleet"
+                ],
+            )
+
     def test_gurobi_infinity_sentinel_is_not_a_finite_bound(self):
         self.assertIsNone(MIPProgressRecorder._finite(1e100))
         self.assertIsNone(MIPProgressRecorder._finite(-1e100))

@@ -49,6 +49,9 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                 },
                 "first_feasible_incumbent_s": 0.0,
                 "latest_statistics": {
+                    "statistics_incumbent_fleet": (
+                        40 if arm == "GIRO" else 41
+                    ),
                     "fleet_bound": 40.0,
                     "objective_bound": None,
                     "fleet_gap": 0.0 if arm == "GIRO" else 1 / 41,
@@ -184,6 +187,16 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             )
             with (output / "job_final.csv").open(newline="") as handle:
                 rows = list(csv.DictReader(handle))
+            with (output / "checkpoint_long.csv").open(
+                    newline="") as handle:
+                checkpoint_rows = list(csv.DictReader(handle))
+            self.assertEqual(
+                {
+                    row["arm"]: row["statistics_incumbent_fleet"]
+                    for row in checkpoint_rows
+                },
+                {"RAW": "41", "GIRO": "40"},
+            )
             self.assertEqual({row["arm"] for row in rows}, {"RAW", "GIRO"})
             raw = next(row for row in rows if row["arm"] == "RAW")
             giro = next(row for row in rows if row["arm"] == "GIRO")
@@ -201,6 +214,43 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                 self.assertTrue((output / f"{stem}.pdf").is_file())
             with self.assertRaises(FileExistsError):
                 summarize(campaign, output)
+
+    def test_legacy_checkpoint_without_statistics_incumbent_is_supported(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            for checkpoint_path in campaign.glob(
+                    "progress/*/checkpoint_*.json"):
+                checkpoint = json.loads(checkpoint_path.read_text())
+                checkpoint["latest_statistics"].pop(
+                    "statistics_incumbent_fleet"
+                )
+                checkpoint_path.write_text(json.dumps(checkpoint))
+            output = root / "legacy-summary"
+            summarize(campaign, output)
+            with (output / "checkpoint_long.csv").open(
+                    newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertTrue(all(
+                row["statistics_incumbent_fleet"] == "" for row in rows
+            ))
+
+    def test_statistics_incumbent_gap_mismatch_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            checkpoint_path = next(
+                campaign.glob("progress/*raw/checkpoint_*.json")
+            )
+            checkpoint = json.loads(checkpoint_path.read_text())
+            checkpoint["latest_statistics"][
+                "statistics_incumbent_fleet"
+            ] = 42
+            checkpoint_path.write_text(json.dumps(checkpoint))
+            with self.assertRaisesRegex(
+                ValueError, "statistics fleet gap mismatch"
+            ):
+                summarize(campaign, root / "summary")
 
     def test_covering_result_is_rejected_as_integer_schedule(self):
         with tempfile.TemporaryDirectory() as tmp:
