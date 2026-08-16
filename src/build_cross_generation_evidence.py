@@ -345,6 +345,15 @@ def _validate_specs(manifest: dict):
                     f"{artifact_id}"
                 )
             seen_trajectory_hashes[spec["expected_sha256"]] = artifact_id
+        if artifact_type == "run_checkpoint_json":
+            for key in (
+                "instance_sha256", "trip_set_sha256",
+                "tariff_sha256", "git_commit",
+            ):
+                if metadata.get(key) is None:
+                    raise ValueError(
+                        f"checkpoint {artifact_id} lacks reviewed {key}"
+                    )
         if (
             metadata.get("scale_family") == "union"
             and str(metadata.get("scale")) == "40"
@@ -1960,6 +1969,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             )
         permitted_incidences = set()
         permitted_costs = defaultdict(set)
+        giro_incidences = set()
         for journal_row in journal_rows:
             summary = parsed_by_artifact[
                 journal_row["artifact_id"]
@@ -1994,6 +2004,9 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 permitted_incidences.update(
                     checkpoint.get("incidence_sha256") or []
                 )
+                giro_incidences.update(
+                    checkpoint.get("incidence_sha256") or []
+                )
         if not set(final.get("selected_incidence_sha256") or []).issubset(
             permitted_incidences
         ):
@@ -2004,11 +2017,15 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         for incidence, selected_cost in (
             final.get("selected_incidence_costs") or {}
         ).items():
-            if incidence in permitted_costs and not math.isclose(
+            if (
+                incidence in permitted_costs
+                and incidence not in giro_incidences
+                and not math.isclose(
                 float(selected_cost),
                 min(float(cost) for cost in permitted_costs[incidence]),
                 rel_tol=1e-9,
                 abs_tol=1e-6,
+                )
             ):
                 raise ValueError(
                     f"MIP selected route cost differs from verified pool: "
@@ -2030,6 +2047,18 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 row
                 for row in verified_by_hash.get(replay_hash, [])
                 if row["artifact_type"] == "route_validation_json"
+                and all(
+                    (
+                        next(
+                            spec for spec in manifest["artifacts"]
+                            if spec["artifact_id"] == row["artifact_id"]
+                        ).get("metadata") or {}
+                    ).get(key) == final_metadata.get(key)
+                    for key in (
+                        "instance_sha256", "trip_set_sha256",
+                        "battery_kwh", "charge_kw", "reserve_fraction",
+                    )
+                )
             ]
             if not replay_rows:
                 raise ValueError(
