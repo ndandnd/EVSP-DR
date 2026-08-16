@@ -244,10 +244,7 @@ def _validate_status(
         raise ValueError("historical comparator is not a wall-limit endpoint")
     journal = resolve_pool_journal(path, status).resolve()
     expected_journal = Path(str(path) + ".columns.jsonl").resolve()
-    if not journal.is_file() or (
-        path.name.endswith(".snapshot.json")
-        and journal != expected_journal
-    ):
+    if not journal.is_file() or journal != expected_journal:
         raise ValueError(f"snapshot/journal pairing mismatch: {path}")
     records = read_jsonl_records(
         journal, repair_trailing=False, collect=True
@@ -291,6 +288,8 @@ def _validate_status(
     if artificials is None or artificials < 0:
         raise ValueError(f"invalid artificial total: {path}")
     final_lp = status.get("final_lp")
+    if not isinstance(final_lp, dict):
+        raise ValueError(f"final LP reconstruction is unavailable: {path}")
     if isinstance(final_lp, dict):
         positive = final_lp.get("positive_routes")
         if not isinstance(positive, list):
@@ -430,6 +429,13 @@ def _validate_factorial_campaign(campaign: Path) -> dict:
         ]
         if len(matches) != 1:
             raise ValueError(f"factorial launch treatment mismatch: {arm}")
+    arm_job_ids = {
+        arm: next(
+            row["job_id"] for row in arm_rows
+            if row.get("job_name") == f"K40-{arm}24"
+        )
+        for arm in ARMS
+    }
     attestation = {}
     with prep_path.open(newline="") as handle:
         for row in csv.reader(handle, delimiter="\t"):
@@ -452,7 +458,11 @@ def _validate_factorial_campaign(campaign: Path) -> dict:
         path.name.split("_flat_", 1)[0]
         for path in campaign.glob("k40r*_flat_*.json")
     }))
-    return {"prefix": prefix, "job_ids": job_ids}
+    return {
+        "prefix": prefix,
+        "job_ids": job_ids,
+        "arm_job_ids": arm_job_ids,
+    }
 
 
 def _factorial_rows(
@@ -488,6 +498,20 @@ def _factorial_rows(
         replicate_job_ids.append(campaign_identity["job_ids"])
         campaign_hashes = []
         for arm, (sense, initial) in ARMS.items():
+            allocation = campaign / f"{expected_prefix}_flat_{arm}.allocations.tsv"
+            if not allocation.is_file():
+                raise ValueError(f"factorial allocation log missing: {allocation}")
+            with allocation.open(newline="") as handle:
+                allocation_rows = list(csv.DictReader(handle, delimiter="\t"))
+            if not allocation_rows or any(
+                row.get("job_id") != campaign_identity["arm_job_ids"][arm]
+                or row.get("instance_sha256") != INSTANCE_SHA256
+                or row.get("prices_sha256") != TARIFF_SHA256
+                for row in allocation_rows
+            ):
+                raise ValueError(
+                    f"factorial allocation provenance mismatch: {allocation}"
+                )
             previous_wall = -math.inf
             checkpoints = [
                 (label, mark, f".m{mark}.snapshot.json")
@@ -600,7 +624,7 @@ def _historical(path: Path, *, allow_missing: bool) -> tuple[dict | None, list]:
 
 
 def _artifact_scale(path: Path, payload: dict) -> tuple[str, int | str] | None:
-    text = f"{path.name} {payload.get('instance', '')} {payload.get('csv', '')}"
+    text = f"{payload.get('instance', '')} {payload.get('csv', '')}"
     pair = re.search(r"(?:pair|DutyPair)", text, re.IGNORECASE)
     if pair:
         return "pair", "pair"
@@ -613,8 +637,38 @@ def _artifact_scale(path: Path, payload: dict) -> tuple[str, int | str] | None:
     return None
 
 
+def _trusted_artifact(path: Path) -> bool:
+    sidecar = Path(str(path) + ".sha256")
+    if sidecar.is_file():
+        expected = sidecar.read_text().strip().split()[0]
+        return expected == sha256_file(path)
+    for parent in path.parents:
+        manifest_path = parent / "ARCHIVE_MANIFEST.json"
+        if not manifest_path.is_file():
+            continue
+        try:
+            manifest = json.loads(manifest_path.read_text())
+        except (OSError, ValueError):
+            return False
+        members = manifest.get("members")
+        if not isinstance(members, dict):
+            return False
+        relative = str(path.relative_to(parent))
+        expected = members.get(relative)
+        if expected is None:
+            matches = [
+                digest for name, digest in members.items()
+                if name.endswith("/" + relative) or name == relative
+            ]
+            if len(matches) != 1:
+                return False
+            expected = matches[0]
+        return expected == sha256_file(path)
+    return False
+
+
 def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
-    if not path.is_file():
+    if not path.is_file() or not _trusted_artifact(path):
         return None
     if "partitioning" in payload:
         if payload.get("partitioning") is not True:
@@ -641,11 +695,22 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
         source_flags = _validated_scale_flags(source_result, source_status)
         if source_flags is None:
             return None
+        try:
+            paired = resolve_pool_journal(
+                source_result, source_status
+            ).resolve()
+        except SystemExit:
+            return None
+        if paired != source_journal.resolve():
+            return None
         trip_ids = source_status.get("trip_ids")
         if not isinstance(trip_ids, list) or not trip_ids:
             return None
         counts = defaultdict(int)
         for route in payload.get("selected_routes") or []:
+            key = frozenset(route.get("trips") or [])
+            if key not in source_flags["_incidences"]:
+                return None
             for trip in route.get("trips") or []:
                 counts[trip] += 1
         integer = (
@@ -723,8 +788,39 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
     if not journal.is_file():
         return None
     try:
-        read_jsonl_records(journal, repair_trailing=False, collect=False)
+        records = read_jsonl_records(
+            journal, repair_trailing=False, collect=True
+        )
     except Exception:
+        return None
+    known = set(trip_ids)
+    incidences = set()
+    covered = set()
+    for record in records:
+        trips = record.get("trips") if isinstance(record, dict) else None
+        if (
+            not isinstance(trips, list)
+            or not trips
+            or any(
+                not isinstance(trip, int) or isinstance(trip, bool)
+                for trip in trips
+            )
+            or len(trips) != len(set(trips))
+            or any(trip not in known for trip in trips)
+        ):
+            return None
+        try:
+            cost = float(record["cost"])
+        except (KeyError, TypeError, ValueError):
+            return None
+        if not math.isfinite(cost):
+            return None
+        incidences.add(frozenset(trips))
+        covered.update(trips)
+    if (
+        covered != known
+        or len(incidences) != int(payload.get("columns", -1))
+    ):
         return None
     instance = _find_data(path, payload.get("csv"))
     tariff = _find_data(path, payload.get("prices_csv"))
@@ -758,6 +854,7 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
         "exact_integer_partition_found": False,
         "finite_pool_fleet_proven": False,
         "validated_scale": _artifact_scale(path, payload),
+        "_incidences": incidences,
     }
 
 

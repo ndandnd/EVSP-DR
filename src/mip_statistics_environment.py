@@ -53,6 +53,7 @@ def identity() -> dict:
 
     executable = Path(sys.executable).resolve()
     payload = {
+        "available": True,
         "executable": str(executable),
         "executable_sha256": _sha(executable),
         "version": platform.python_version(),

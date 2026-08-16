@@ -173,6 +173,45 @@ def _existing_execution_comments() -> set[str]:
     return comments
 
 
+def _reserve_execution_digests(plan: dict, plan_sha: str) -> list[Path]:
+    root = (
+        REPO_ROOT
+        / "src/results/mip_statistics/execution_reservations"
+    )
+    root.mkdir(parents=True, exist_ok=True)
+    reservations = []
+    try:
+        for job in sorted(plan["jobs"], key=lambda item: item["cell_id"]):
+            path = root / f"{job['execution_digest']}.json"
+            payload = (json.dumps({
+                "schema": "evsp-dr-mip-statistics-reservation-v1",
+                "execution_digest": job["execution_digest"],
+                "approved_plan_sha256": plan_sha,
+                "cell_id": job["cell_id"],
+                "campaign": plan["campaign"],
+            }, sort_keys=True) + "\n").encode()
+            flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+            if hasattr(os, "O_NOFOLLOW"):
+                flags |= os.O_NOFOLLOW
+            try:
+                descriptor = os.open(path, flags, 0o600)
+            except FileExistsError as exc:
+                raise SystemExit(
+                    f"execution digest already reserved: "
+                    f"{job['execution_digest']}"
+                ) from exc
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(payload)
+                handle.flush()
+                os.fsync(handle.fileno())
+            reservations.append(path)
+    except Exception:
+        for path in reservations:
+            path.unlink(missing_ok=True)
+        raise
+    return reservations
+
+
 def _canonical(payload: dict) -> bytes:
     return json.dumps(
         payload, sort_keys=True, separators=(",", ":")
@@ -587,6 +626,7 @@ def build_plan(
             "threads": 8,
             "mip_gap": job["mip_gap"],
             "code_hashes": code_hashes,
+            "worker_sha256": worker_sha,
             "environment_identity_sha256": python_identity.get(
                 "identity_sha256"
             ),
@@ -761,6 +801,11 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
             "an identical execution digest already exists in Slurm; reconcile "
             "that job instead of submitting a duplicate"
         )
+    reservations = _reserve_execution_digests(plan, plan_sha)
+    manifest["execution_reservations"] = [
+        str(path) for path in reservations
+    ]
+    _replace_json(root / "campaign.json", manifest)
     for job, manifest_job in zip(plan["jobs"], manifest["jobs"]):
         wall_hours = job["budget_hours"]
         comment = f"MSTAT:{job['execution_digest'][:32]}"

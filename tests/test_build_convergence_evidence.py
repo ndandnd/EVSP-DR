@@ -152,6 +152,13 @@ class ConvergenceEvidenceTests(unittest.TestCase):
                 f"prices_sha256\t{self.tariff_sha}\n"
             )
             for arm in evidence.ARMS:
+                job_id = f"{replicate}0{list(evidence.ARMS).index(arm) + 1}"
+                (campaign / f"{prefix}_flat_{arm}.allocations.tsv").write_text(
+                    "utc\tjob_id\trestart\thost\tcpu_model\t"
+                    "instance_sha256\tprices_sha256\n"
+                    f"now\t{job_id}\t0\tnode\tcpu\t"
+                    f"{self.instance_sha}\t{self.tariff_sha}\n"
+                )
                 for mark in evidence.CHECKPOINTS.values():
                     self._status(
                         campaign / (

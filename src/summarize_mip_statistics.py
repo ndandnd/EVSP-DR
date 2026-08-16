@@ -127,6 +127,13 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
         or math.ceil(float(result["fleet_bound"]) - 1e-6) < buses
     ):
         raise ValueError(f"{job['cell_id']} finite-pool proof is inconsistent")
+    if (
+        result.get("optimal_scope")
+        in {"fleet_only", "full_pool_lexicographic"}
+    ) != (result.get("fleet_proven") is True):
+        raise ValueError(
+            f"{job['cell_id']} proof flag/scope are inconsistent"
+        )
 
 
 def _rename_noreplace(source: Path, destination: Path) -> None:
@@ -193,12 +200,14 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     for job in sorted(
             manifest.get("jobs") or [], key=lambda item: item["cell_id"]):
         approved_job = approved_jobs.get(job["cell_id"])
+        mutable_fields = {
+            "job_id", "submission_state", "submission_error",
+            "deduplication_comment",
+        }
         if approved_job is None or any(
-            job.get(key) != approved_job.get(key)
-            for key in (
-                "arm", "scale", "replicate", "source",
-                "validated_start", "execution", "output", "progress_dir",
-            )
+            job.get(key) != value
+            for key, value in approved_job.items()
+            if key not in mutable_fields
         ):
             raise ValueError(f"{job['cell_id']} differs from approved plan")
         progress_dir = Path(job["progress_dir"])
