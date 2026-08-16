@@ -1,0 +1,89 @@
+{
+  "factorial_commit": "eb85ca0cc439956939ba6bf9c42958808d89aadd",
+  "generation_command": "python3 -u src/build_convergence_evidence.py --explicit-inputs --allow-missing-inputs",
+  "historical_commit": "f43475b732c3fbc8447a30845834a7d9e8822ef3",
+  "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+  "missing_inputs": [
+    {
+      "input": "/home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial/k40fx_20260814T140232Z_eb85ca0c",
+      "reason": "factorial_campaign_missing"
+    },
+    {
+      "input": "/home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial/k40fx_20260814T191933Z_eb85ca0c",
+      "reason": "factorial_campaign_missing"
+    },
+    {
+      "input": "/home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/exact_big/Practice_Custom_DutyUnion_k40_r2_soc15_b10_g300_res0.0.json",
+      "reason": "historical_comparator_missing"
+    },
+    {
+      "input": "/workspace/releases/results-exact_big_mip_20260805T135556Z",
+      "reason": "release_archive_missing"
+    },
+    {
+      "input": "/workspace/releases/results-cg-bigtar-867334-final-20260814",
+      "reason": "release_archive_missing"
+    },
+    {
+      "input": "/workspace/releases/results-goal1-overnight-single-duty-20260803",
+      "reason": "release_archive_missing"
+    }
+  ],
+  "output_files": {
+    "README.md": "42beb9a10b8696808d481b39037aa9bfbdea2c03f7215708ab3648a90942d4e0",
+    "historical_endpoint_comparison.csv": "7abc9619757eafd6cef3be2d6084f04832040cddcb7e2c09d846978869f25d21",
+    "k40_convergence_cover.pdf": "9604dc1cc5b012baec2c3111bf953a1e3358381a9884acd1b8058f962d3b3a72",
+    "k40_convergence_cover.png": "c84f63a516aaa35290e36b434da3668f4add45f147fa79551e34d82f95ab0228",
+    "k40_factorial_trajectory.csv": "0f7235a2dec181f7c990f5b99ace74c76ab687110e2ebefe1205c95148e90c15",
+    "partition_failure_diagnostic.pdf": "bd5b68082719bfbd82ba1e08df37170676ac1abd47d0fe3dbafbb02e9d7790a3",
+    "partition_failure_diagnostic.png": "2007edac1682ff6ebe2dc987fc87f705350776cdef7dc537419c3641a6e31314",
+    "small_instance_certification.csv": "48f7dae4c9314d5930012d8774ed452d4a6823db7307466de0d48ebaa1f67855"
+  },
+  "schema": "evsp-dr-convergence-evidence-v1",
+  "scientific_guards": [
+    "Route weight and artificials are never combined.",
+    "Covering LP values are not integer schedules.",
+    "Pricing certification requires explicit true provenance.",
+    "Integer fleet proofs are finite-pool statements only.",
+    "Missing scale evidence remains not available."
+  ],
+  "source_artifacts": [
+    {
+      "available": false,
+      "path": "/home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial/k40fx_20260814T140232Z_eb85ca0c",
+      "sha256": null
+    },
+    {
+      "available": false,
+      "path": "/home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial/k40fx_20260814T191933Z_eb85ca0c",
+      "sha256": null
+    },
+    {
+      "available": false,
+      "path": "/home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/exact_big/Practice_Custom_DutyUnion_k40_r2_soc15_b10_g300_res0.0.json",
+      "sha256": null
+    },
+    {
+      "available": true,
+      "kind": "directory",
+      "path": "/workspace/analysis/legacy_exact_20260805",
+      "sha256": "4331932c9f749f13f80cb5bde5f6347baa16c054d382064ca8d5babb29101cc6"
+    },
+    {
+      "available": false,
+      "path": "/workspace/releases/results-exact_big_mip_20260805T135556Z",
+      "sha256": null
+    },
+    {
+      "available": false,
+      "path": "/workspace/releases/results-cg-bigtar-867334-final-20260814",
+      "sha256": null
+    },
+    {
+      "available": false,
+      "path": "/workspace/releases/results-goal1-overnight-single-duty-20260803",
+      "sha256": null
+    }
+  ],
+  "tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+}

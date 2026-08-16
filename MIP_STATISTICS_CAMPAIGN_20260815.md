@@ -1,0 +1,123 @@
+# Hash-gated MIP convergence-statistics campaign
+
+This package is inventory/read-only and dry-run by default. It was prepared
+from reviewed base `ae736fbc9c5fef71f39d7d758b7062355c485313`. No Slurm,
+Gurobi, or new exact-CG job was run while producing it.
+
+## Scientific scope
+
+The primary pilot selects one saved instance per available scale by the lower
+deterministic median of `(trip count, instance hash, replicate, candidate ID)`
+after collapsing each replicate to its latest immutable age. It never selects
+on LP or MIP outcome.
+
+Each selected source gets two strict-partition, two-stage treatments:
+
+- **RAW**: the frozen exact-CG journal only.
+- **GIRO**: the same journal plus one physically replayed, re-realized exact
+  GIRO partition, merged as columns and supplied as the explicit start.
+
+GIRO therefore changes the finite feasible column set; it is not merely a
+warm-start treatment. Any proof is limited to that named finite pool and is not
+global pricing optimality. Cover-master LP values are never integer schedules.
+
+Maximum primary budgets are k8 4h, k10 6h, k13 6h, k15 8h, k20 12h, k30
+18h, and k40 23h. k10/k20 remain blocked pending fresh exact-CG preparation
+from `Practice_10bus.csv` and `Practice_20bus.csv`. Those are explicitly
+first-N stress instances, not verified service-day samples. Preparation uses
+cover plus singleton discovery but every final MIP remains strict partitioning.
+
+The secondary matrix uses k20/k30/k40 ages 1/3/6/10-or-12/15-or-24 hours and a
+fixed two-hour GIRO-augmented strict MIP. Missing exact ages remain missing.
+
+## Convergence files
+
+`--progress-dir` writes atomic observational JSON at 0, 5, 15, 30, and 60
+minutes, then hourly through the requested limit, plus `latest.json` and
+`final.json`. The files contain stage, incumbent, fleet/objective bounds, nodes,
+solution count, first feasible time, improvements, selected indices, and route
+hashes. They are **not Gurobi tree checkpoints and cannot restart search**.
+The worker requests `SIGUSR1` before wall time; the callback asks Gurobi to
+terminate and then publishes the incumbent. Existing atomic files are the only
+claim made for SIGKILL or node loss.
+
+## Future guarded Unicorn fetch and dry run
+
+```bash
+set -euo pipefail
+
+# This block intentionally exits unless a human opts into read-only fetching.
+# It contains no --submit invocation.
+if [[ "${EVSP_FETCH_RELEASE_INPUTS:-0}" != "1" ]]; then
+  echo "Set EVSP_FETCH_RELEASE_INPUTS=1 only after reviewing release paths."
+  exit 0
+fi
+
+ROOT="$HOME/EVSP-DR-mip-statistics"
+RELEASES="$ROOT/releases"
+mkdir -p "$RELEASES"
+
+# Populate these paths from reviewed release assets; never substitute a
+# similarly named pool. Verify published SHA-256 values before extraction.
+for archive in \
+  results-exact_big_mip_20260805T135556Z \
+  results-cg-bigtar-867334-final-20260814 \
+  results-goal1-overnight-single-duty-20260803
+do
+  if [[ ! -e "$RELEASES/$archive" ]]; then
+    gh release download "$archive" \
+      --repo ndandnd/EVSP-DR \
+      --dir "$RELEASES/$archive"
+  fi
+done
+
+python -u src/launch_mip_statistics_campaign.py \
+  --mode inventory \
+  --root "repool_small=$ROOT/results/repool_small" \
+  --root "exact_big=$ROOT/results/exact_big" \
+  --root "k40_factorial=$ROOT/results/k40_factorial" \
+  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --inventory-out "$ROOT/review/mip-statistics-inventory.json"
+
+python -u src/launch_mip_statistics_campaign.py \
+  --mode pilot --campaign mipstats-pilot-review \
+  --root "repool_small=$ROOT/results/repool_small" \
+  --root "exact_big=$ROOT/results/exact_big" \
+  --root "k40_factorial=$ROOT/results/k40_factorial" \
+  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --giro-start "8=$ROOT/starts/k8-giro-rerealized.json" \
+  --giro-start "13=$ROOT/starts/k13-giro-rerealized.json" \
+  --giro-start "15=$ROOT/starts/k15-giro-rerealized.json" \
+  --giro-start "30=$ROOT/starts/k30-giro-rerealized.json" \
+  --giro-start "40=$ROOT/starts/k40-giro-rerealized.json" \
+  --plan-out "$ROOT/review/mipstats-pilot.plan.json"
+
+python -u src/launch_mip_statistics_campaign.py \
+  --mode secondary --campaign mipstats-age-review \
+  --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814" \
+  --giro-start "20=$ROOT/starts/k20-giro-rerealized.json" \
+  --giro-start "30=$ROOT/starts/k30-giro-rerealized.json" \
+  --giro-start "40=$ROOT/starts/k40-giro-rerealized.json" \
+  --plan-out "$ROOT/review/mipstats-age.plan.json"
+```
+
+Submission requires rerunning an identical, complete, unblocked plan from a
+detached tracked-clean checkout with both `--submit` and its exact
+`--approved-plan-sha256`. No such command appears above.
+
+## Summaries and coauthor evidence
+
+`src/summarize_mip_statistics.py` emits long checkpoint and one-row final CSVs,
+incumbent/bound curves, buses-versus-time curves, and a CG-age heatmap. It also
+reports time to the GIRO target, time strictly below it, and time to a
+finite-pool fleet proof.
+
+`src/build_convergence_evidence.py` creates
+`analysis/convergence_evidence_20260815/`. The tracked package in this branch is
+a deterministic missing-input placeholder because the two Unicorn factorial
+directories and three release archives are not present in the cloud checkout.
+Its README and provenance enumerate every unavailable source. Rebuild it from
+the explicit verified inputs before using its figures scientifically.
+
+A 72-hour continuation is intentionally out of scope until this evidence
+package and the controlled strict-MIP screen have been reviewed.

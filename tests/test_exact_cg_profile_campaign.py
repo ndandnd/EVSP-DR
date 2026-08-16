@@ -706,6 +706,51 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
             self.assertTrue(monitored[0]["artifact"]["valid_json"])
             self.assertTrue(monitored[0]["artifact"]["valid_profile"])
 
+            original_output = jobs[0]["output"]
+            jobs[0]["output"] = str(root / "not-yet-created.json")
+            (root / "campaign.json").write_text(json.dumps(manifest))
+            with (
+                patch.object(
+                    monitor,
+                    "_live_queue",
+                    return_value={
+                        "123": {
+                            "job_name": jobs[0]["job_name"],
+                            "state": "PENDING",
+                            "elapsed": "0:00",
+                            "reason_or_node": "Resources",
+                        }
+                    },
+                ),
+                patch.object(
+                    monitor,
+                    "_accounting",
+                    return_value={
+                        "123": {
+                            "job_name": jobs[0]["job_name"],
+                            "state": "COMPLETED",
+                            "elapsed": "1:00",
+                            "exit_code": "0:0",
+                            "max_rss": "1G",
+                        }
+                    },
+                ),
+            ):
+                precedence = monitor.monitor(root, query_slurm=True)[0]
+            self.assertEqual(precedence["slurm"]["state"], "PENDING")
+            self.assertEqual(
+                precedence["slurm"]["state_source"], "squeue"
+            )
+            self.assertEqual(
+                precedence["slurm"]["accounting_state"], "COMPLETED"
+            )
+            self.assertTrue(precedence["state_disagreement"])
+            self.assertTrue(
+                precedence["possible_stale_or_recycled_job_id"]
+            )
+            jobs[0]["output"] = original_output
+            (root / "campaign.json").write_text(json.dumps(manifest))
+
             jobs[0]["output"] = str(root / "invalid.json")
             Path(jobs[0]["output"]).write_text("{}")
             (root / "campaign.json").write_text(json.dumps(manifest))

@@ -1,0 +1,150 @@
+import csv
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from summarize_mip_statistics import summarize  # noqa: E402
+
+
+class MIPStatisticsSummaryTests(unittest.TestCase):
+    def _campaign(self, root: Path):
+        campaign = root / "campaign"
+        campaign.mkdir()
+        jobs = []
+        for arm in ("RAW", "GIRO"):
+            cell = f"k40_r1_{arm.lower()}"
+            progress = campaign / "progress" / cell
+            progress.mkdir(parents=True)
+            output = campaign / f"{cell}.json"
+            source = {
+                "status_sha256": "a" * 64,
+                "journal_sha256": "b" * 64,
+            }
+            checkpoint = {
+                "schema": "evsp-dr-mip-convergence-v1",
+                "stage": "fleet",
+                "checkpoint_elapsed_s": 300.0,
+                "observed_total_elapsed_s": 300.0,
+                "solver_ended_before_checkpoint": False,
+                "incumbent_state":
+                    "reused_most_recent_earlier_incumbent",
+                "incumbent": {
+                    "fleet": 40 if arm == "GIRO" else 41,
+                    "objective": 4000000.0,
+                    "route_vector_sha256": "c" * 64,
+                },
+                "first_feasible_incumbent_s": 0.0,
+                "latest_statistics": {
+                    "fleet_bound": 40.0,
+                    "objective_bound": None,
+                    "fleet_gap": 0.0 if arm == "GIRO" else 1 / 41,
+                    "node_count": 10,
+                    "solution_count": 1,
+                },
+                "incumbent_improvements": [{
+                    "stage": "fleet",
+                    "total_elapsed_s": 0.0 if arm == "GIRO" else 200.0,
+                    "stage_elapsed_s": 0.0 if arm == "GIRO" else 200.0,
+                    "fleet": 40 if arm == "GIRO" else 41,
+                    "objective": 4000000.0,
+                    "selected_route_indices": list(range(40)),
+                    "route_vector_sha256": "c" * 64,
+                    "event": "first_feasible",
+                }],
+                "metadata": {
+                    "source_result_sha256": source["status_sha256"],
+                    "source_journal_sha256": source["journal_sha256"],
+                },
+            }
+            (progress / "checkpoint_0005m.json").write_text(
+                json.dumps(checkpoint)
+            )
+            result = {
+                "partitioning": True,
+                "incumbent_found": True,
+                "status_name": "OPTIMAL",
+                "buses": 40 if arm == "GIRO" else 41,
+                "mip_obj": 4000000.0,
+                "mip_bound": 4000000.0,
+                "mip_gap": 0.0,
+                "fleet_bound": 40.0,
+                "fleet_proven": arm == "GIRO",
+                "runtime_s": 300.0,
+                "optimal_scope": (
+                    "fleet_only" if arm == "GIRO" else "none"
+                ),
+                "source_result_sha256": source["status_sha256"],
+                "source_journal_sha256": source["journal_sha256"],
+            }
+            output.write_text(json.dumps(result))
+            jobs.append({
+                "cell_id": cell,
+                "scale": 40,
+                "replicate": "r1",
+                "arm": arm,
+                "augmentation_changes_column_set": arm == "GIRO",
+                "age_hours": 6.0,
+                "budget_hours": 2,
+                "source": source,
+                "validated_start": (
+                    {"route_count": 40} if arm == "GIRO" else None
+                ),
+                "progress_dir": str(progress),
+                "output": str(output),
+            })
+        (campaign / "campaign.json").write_text(json.dumps({
+            "campaign": "summary-test",
+            "jobs": jobs,
+        }))
+        return campaign
+
+    def test_summary_emits_curves_and_separate_raw_giro_rows(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            output = root / "summary"
+            result = summarize(campaign, output)
+            self.assertEqual(result["jobs"], 2)
+            with (output / "job_final.csv").open(newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual({row["arm"] for row in rows}, {"RAW", "GIRO"})
+            raw = next(row for row in rows if row["arm"] == "RAW")
+            giro = next(row for row in rows if row["arm"] == "GIRO")
+            self.assertEqual(raw["route_space_scope"], "finite_raw_cg_pool")
+            self.assertEqual(
+                giro["route_space_scope"], "finite_augmented_pool"
+            )
+            self.assertEqual(giro["giro_target_buses"], "40")
+            for stem in (
+                "buses_vs_mip_time",
+                "incumbent_fleet_bound_curves",
+                "cg_age_final_buses_heatmap",
+            ):
+                self.assertTrue((output / f"{stem}.png").is_file())
+                self.assertTrue((output / f"{stem}.pdf").is_file())
+            with self.assertRaises(FileExistsError):
+                summarize(campaign, output)
+
+    def test_covering_result_is_rejected_as_integer_schedule(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            manifest = json.loads(
+                (campaign / "campaign.json").read_text()
+            )
+            result_path = Path(manifest["jobs"][0]["output"])
+            result = json.loads(result_path.read_text())
+            result["partitioning"] = False
+            result_path.write_text(json.dumps(result))
+            with self.assertRaisesRegex(ValueError, "covering"):
+                summarize(campaign, root / "summary")
+
+
+if __name__ == "__main__":
+    unittest.main()
