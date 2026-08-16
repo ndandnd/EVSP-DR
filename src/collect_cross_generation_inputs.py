@@ -84,6 +84,13 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
         raise ValueError("unexpected template schema")
     artifacts = list(template.get("artifacts") or [])
     collection = []
+    root_fds = {}
+    root_flags = os.O_RDONLY | os.O_DIRECTORY
+    if hasattr(os, "O_NOFOLLOW"):
+        root_flags |= os.O_NOFOLLOW
+    for alias, root in roots.items():
+        if root.is_dir() and not root.is_symlink() and root.resolve() == root:
+            root_fds[alias] = os.open(root, root_flags)
     for request in template.get("collection_requests") or []:
         alias = request.get("root_alias")
         root = roots.get(alias)
@@ -101,10 +108,7 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(root),
             })
             continue
-        root_flags = os.O_RDONLY | os.O_DIRECTORY
-        if hasattr(os, "O_NOFOLLOW"):
-            root_flags |= os.O_NOFOLLOW
-        root_fd = os.open(root, root_flags)
+        root_fd = root_fds[alias]
         glob_path = Path(request["glob"])
         if glob_path.is_absolute() or ".." in glob_path.parts:
             raise ValueError(
@@ -114,9 +118,15 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
             matches = sorted(
                 path for path in root.glob(request["glob"])
                 if _safe_match(root, path)
+                and (
+                    not request.get("exclude_regex")
+                    or not re.search(
+                        request["exclude_regex"],
+                        str(path.relative_to(root)),
+                    )
+                )
             )
         except Exception:
-            os.close(root_fd)
             raise
         if not matches:
             collection.append({
@@ -125,7 +135,6 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(root),
                 "glob": request["glob"],
             })
-            os.close(root_fd)
             continue
         run_pattern = (
             re.compile(request["run_id_regex"])
@@ -173,7 +182,8 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(path),
                 "sha256": artifacts[-1]["expected_sha256"],
             })
-        os.close(root_fd)
+    for descriptor in root_fds.values():
+        os.close(descriptor)
     return {
         **{
             key: value for key, value in template.items()

@@ -104,7 +104,21 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
             schemas.parse_artifact(json.dumps(payload).encode(), spec)
 
     def test_telemetry_recomputes_identity_and_rejects_bad_types(self):
-        identity = {"run": "one"}
+        identity = {
+            "output": "result.json",
+            "csv": "instance.csv",
+            "prices_csv": "prices.csv",
+            "instance_sha256": "b" * 64,
+            "prices_sha256": "c" * 64,
+            "git_commit": "a" * 40,
+            "soc_step": 15,
+            "block_min": 10,
+            "g_kwh": 300,
+            "charge_kw": 300,
+            "min_soc_frac": 0,
+            "master_sense": "cover",
+            "initial_pool": "singletons",
+        }
         wrong = "d" * 64
         rows = [
             {
