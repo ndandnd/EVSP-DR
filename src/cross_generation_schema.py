@@ -1386,6 +1386,12 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "fleet_proven": fleet_proven,
             "status_name": value.get("status_name"),
             "optimal_scope": optimal_scope,
+            "reported_optimal_scope": optimal_scope,
+            "objective_source_bound": treatment == "RAW",
+            "objective_validation_reason": (
+                None if treatment == "RAW"
+                else "pending_verified_giro_source_cost_binding"
+            ),
             "runtime_s": normalized_numbers["runtime_s"],
             "partitioning": True,
             "physically_validated_schedule": (
@@ -1682,14 +1688,30 @@ def parse_artifact(payload: bytes, spec: dict) -> dict:
         raise ValueError(
             f"unsupported artifact_type {spec.get('artifact_type')!r}"
         )
+    is_csv = spec.get("artifact_type") in {
+        "heuristic_dp_historical_csv",
+        "heuristic_dp_current_csv",
+        "exact_cg_iterations_csv",
+    }
+    if (
+        is_csv
+        and not payload.endswith((b"\n", b"\r"))
+        and not (spec.get("metadata") or {}).get(
+            "allow_complete_unterminated"
+        )
+    ):
+        if b"\n" not in payload:
+            raise ValueError("CSV has no committed data row")
+        result = parser(payload.rsplit(b"\n", 1)[0] + b"\n", spec)
+        result["tail"] = {
+            "tail_dropped": True,
+            "tail_reason": "uncommitted_unterminated_final_csv_row",
+            "unterminated_final_line": True,
+        }
+        return result
     try:
         return parser(payload, spec)
     except ValueError:
-        is_csv = spec.get("artifact_type") in {
-            "heuristic_dp_historical_csv",
-            "heuristic_dp_current_csv",
-            "exact_cg_iterations_csv",
-        }
         last_line = payload.rsplit(b"\n", 1)[-1].decode(
             "utf-8", errors="ignore"
         )

@@ -176,7 +176,7 @@ class CrossGenerationSchemaAdversarialTests(unittest.TestCase):
             ",".join(schemas.EXACT_ITER_HEADER) + "\n"
             "1,1,10,1,0,nan,2"
         ).encode()
-        with self.assertRaisesRegex(ValueError, "non-finite"):
+        with self.assertRaisesRegex(ValueError, "no complete"):
             schemas.parse_artifact(bad_tail, spec)
         interrupted_numeric = (
             ",".join(schemas.EXACT_ITER_HEADER) + "\n"

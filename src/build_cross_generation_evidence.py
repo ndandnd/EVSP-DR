@@ -111,6 +111,8 @@ MIP_SUMMARY_FIELDS = (
     "integer_fleet", "objective", "objective_bound",
     "objective_bound_scope", "gap",
     "fleet_bound", "fleet_proven", "status_name", "optimal_scope",
+    "reported_optimal_scope", "objective_source_bound",
+    "objective_validation_reason",
     "runtime_s", "partitioning", "physically_validated_schedule",
     "giro_columns_added", "pool_scope", "first_feasible_s",
     "time_to_fleet_proof_s", "proof_time_observable",
@@ -348,7 +350,7 @@ def _validate_specs(manifest: dict):
         if artifact_type == "run_checkpoint_json":
             for key in (
                 "instance_sha256", "trip_set_sha256",
-                "tariff_sha256", "git_commit",
+                "tariff_sha256", "git_commit", "git_dirty",
             ):
                 if metadata.get(key) is None:
                     raise ValueError(
@@ -941,6 +943,11 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             "fleet_proven": None,
             "status_name": None,
             "optimal_scope": None,
+            "reported_optimal_scope": None,
+            "objective_source_bound": None,
+            "objective_validation_reason": (
+                "checkpoint_only_without_validated_final_result"
+            ),
             "runtime_s": max(
                 row["observed_total_elapsed_s"] for row in rows
             ),
@@ -1704,6 +1711,10 @@ def _data_dictionary():
         "objective_bound_scope": ("mip_run_summary.csv", "string", None,
             "Scope of the finite-pool MIP objective bound."
         ),
+        "objective_source_bound": ("mip_run_summary.csv", "boolean", None,
+            "Whether every selected route cost was independently bound to a "
+            "verified source artifact; false for unrecomputed GIRO costs."
+        ),
         "censored": ("*_run_summary.csv", "boolean", None,
             "Target event was not observed by the verified run endpoint."
         ),
@@ -2010,12 +2021,16 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 f"MIP selected routes are outside the verified pool: "
                 f"{final['artifact_id']}"
             )
+        has_unrecomputed_giro_cost = False
         for incidence, selected_cost in (
             final.get("selected_incidence_costs") or {}
         ).items():
             selected_from_giro = (
                 final.get("selected_column_hashes", {}).get(incidence)
                 in set(final.get("giro_start_column_hashes") or [])
+            )
+            has_unrecomputed_giro_cost = (
+                has_unrecomputed_giro_cost or selected_from_giro
             )
             if (
                 incidence in permitted_costs
@@ -2031,6 +2046,19 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                     f"MIP selected route cost differs from verified pool: "
                     f"{final['artifact_id']}"
                 )
+        if final.get("pool_treatment") == "GIRO":
+            final["objective_source_bound"] = not has_unrecomputed_giro_cost
+            final["objective_validation_reason"] = (
+                None if not has_unrecomputed_giro_cost
+                else "GIRO route costs runner-attested but not independently "
+                "recomputed from source tariff/physics"
+            )
+            if (
+                has_unrecomputed_giro_cost
+                and final.get("optimal_scope")
+                == "full_pool_lexicographic"
+            ):
+                final["optimal_scope"] = "fleet_only"
             if (
                 final.get("pool_treatment") == "RAW"
                 and incidence not in permitted_costs
