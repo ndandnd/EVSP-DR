@@ -246,6 +246,28 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             ):
                 summarize(campaign, root / "bad-proof")
 
+            (root / "third").mkdir()
+            campaign = self._campaign(root / "third")
+            manifest = json.loads(
+                (campaign / "campaign.json").read_text()
+            )
+            result_path = Path(manifest["jobs"][1]["output"])
+            result = json.loads(result_path.read_text())
+            result.update({
+                "fleet_proven": True,
+                "optimal_scope": "full_pool_lexicographic",
+                "status_name": "TIME_LIMIT",
+                "mip_gap": 0.1,
+                "absolute_cost_gap": 10.0,
+                "two_stage": {
+                    "stage2_executed": True,
+                    "stage2_status": 9,
+                },
+            })
+            result_path.write_text(json.dumps(result))
+            with self.assertRaisesRegex(ValueError, "cost-stage closure"):
+                summarize(campaign, root / "bad-cost-proof")
+
 
 if __name__ == "__main__":
     unittest.main()

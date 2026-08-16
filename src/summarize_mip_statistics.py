@@ -138,6 +138,19 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
         "none", "fleet_only", "full_pool_lexicographic"
     }:
         raise ValueError(f"{job['cell_id']} has invalid two-stage scope")
+    if result.get("optimal_scope") == "full_pool_lexicographic":
+        detail = result.get("two_stage")
+        if (
+            result.get("status_name") != "OPTIMAL"
+            or not isinstance(detail, dict)
+            or detail.get("stage2_executed") is not True
+            or detail.get("stage2_status") != 2
+            or _float(result.get("mip_gap")) != 0.0
+            or _float(result.get("absolute_cost_gap")) != 0.0
+        ):
+            raise ValueError(
+                f"{job['cell_id']} lacks optimal cost-stage closure"
+            )
 
 
 def _rename_noreplace(source: Path, destination: Path) -> None:

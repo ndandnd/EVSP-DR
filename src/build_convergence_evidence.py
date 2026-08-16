@@ -548,6 +548,30 @@ def _factorial_rows(
                     arm=arm,
                     mark_minutes=mark,
                 )
+                status_provenance = record["status"]["provenance"]
+                recorded_job_id = status_provenance.get("slurm_job_id")
+                expected_job_id = campaign_identity["arm_job_ids"][arm]
+                if (
+                    recorded_job_id is not None
+                    and str(recorded_job_id) != str(expected_job_id)
+                ):
+                    raise ValueError(
+                        f"status/launch Slurm job ID mismatch: {path}"
+                    )
+                recorded_out = (
+                    status_provenance.get("args") or {}
+                ).get("out")
+                if recorded_out:
+                    out_path = Path(str(recorded_out))
+                    if (
+                        campaign.name not in out_path.parts
+                        or not out_path.name.startswith(
+                            f"{expected_prefix}_flat_{arm}"
+                        )
+                    ):
+                        raise ValueError(
+                            f"status output provenance/campaign mismatch: {path}"
+                        )
                 if record["actual_wall_s"] < previous_wall:
                     raise ValueError(
                         f"factorial checkpoint chronology regressed: {path}"
