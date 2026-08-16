@@ -593,4 +593,3 @@ class GurobiProgressObserver:
                 model, callback_api, f"{prefix}_SOLCNT"
             ),
         )
-
