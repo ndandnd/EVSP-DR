@@ -127,7 +127,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "pool_columns": len(lp_columns),
                 "max_row_violation": 0.0,
                 "max_bound_violation": 0.0,
-                "feasibility_tolerance": 1e-7,
+                "feasibility_tolerance": 1e-6,
                 "master_method": "highs",
                 "positive_routes": [{
                     "trips": column["trips"],
@@ -796,6 +796,18 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 + "\n"
             )
             with self.assertRaisesRegex(ValueError, "invalid journal trips"):
+                artifacts.validate_campaign(r1, replicate="R1")
+
+    def test_lp_cannot_self_select_a_loose_feasibility_tolerance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            _repo, r1, _r2, _historical = self._repo_fixture(Path(tmp))
+            snapshot = r1 / "k40r1_flat_CA.m360.snapshot.json"
+            status = json.loads(snapshot.read_text())
+            status["final_lp"]["feasibility_tolerance"] = 1.0
+            snapshot.write_text(json.dumps(status))
+            with self.assertRaisesRegex(
+                ValueError, "feasibility tolerance was exceeded"
+            ):
                 artifacts.validate_campaign(r1, replicate="R1")
 
     def test_mixed_feasibility_does_not_create_one_replicate_mean(self):

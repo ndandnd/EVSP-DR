@@ -184,7 +184,10 @@ def _validate_journal(
                 max_row_violation,
                 max_bound_violation,
             ))
-            or feasibility_tolerance <= 0.0
+            or not math.isclose(
+                feasibility_tolerance, 1e-6,
+                rel_tol=0.0, abs_tol=1e-15,
+            )
             or max_row_violation < 0.0
             or max_bound_violation < 0.0
             or max_row_violation > feasibility_tolerance + 1e-12
@@ -270,6 +273,15 @@ def _validate_journal(
         if row_violation > feasibility_tolerance + 1e-12:
             raise ValueError(
                 f"artificial-free LP violates a trip row: {path}"
+            )
+        if require_lp_provenance and not math.isclose(
+            max_row_violation,
+            row_violation,
+            rel_tol=0.0,
+            abs_tol=feasibility_tolerance,
+        ):
+            raise ValueError(
+                f"recorded/recomputed LP row violation mismatch: {path}"
             )
     total_deficit = sum(max(0.0, 1.0 - value) for value in coverage.values())
     if not math.isclose(

@@ -352,7 +352,7 @@ def launch(args) -> dict:
     if root.exists() or logs.exists():
         raise SystemExit("MIP campaign exists; retries need a fresh name")
     budget = 1800 if args.mode == "screen" else 7200
-    cells = _selected_cells(args, validated)
+    cells = sorted(_selected_cells(args, validated))
     worker = root / "input/submit_k40_factorial_mip_screen.sub"
     worker_bytes = _worker_bytes(identity["expected_commit"])
     worker_sha = sha256_bytes(worker_bytes)
@@ -372,6 +372,28 @@ def launch(args) -> dict:
         "expected_commit": identity["expected_commit"],
         "runner_sha256": identity["run_exact_pool_mip_sha256"],
         "validated_start_sha256": start["sha256"],
+        "worker_sha256": worker_sha,
+        "environment_sha256": python_identity["identity_sha256"],
+        "selected_cells": [
+            {
+                "replicate": rep,
+                "treatment": arm,
+                "snapshot_mark_minutes": mark,
+                "status_sha256": next(
+                    row["status_sha256"]
+                    for row in validated[rep]["rows"]
+                    if row["arm"] == arm
+                    and row["checkpoint"] == f"m{mark}"
+                ),
+                "journal_sha256": next(
+                    row["journal_sha256"]
+                    for row in validated[rep]["rows"]
+                    if row["arm"] == arm
+                    and row["checkpoint"] == f"m{mark}"
+                ),
+            }
+            for rep, arm, mark in cells
+        ],
         "replicate_campaigns": {
             rep: validated[rep]["campaign"] for rep in ("R1", "R2")
         },
