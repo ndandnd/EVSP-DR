@@ -69,11 +69,16 @@ do
       --repo ndandnd/EVSP-DR \
       --dir "$RELEASES/$archive"
   fi
-  test -f "$RELEASES/$archive/SHA256SUMS" || {
-    echo "MISSING reviewed SHA256SUMS for $archive" >&2
+  checksum_count=0
+  for checksum in "$RELEASES/$archive"/*.tar.gz.sha256; do
+    test -e "$checksum" || continue
+    checksum_count=$((checksum_count + 1))
+    (cd "$RELEASES/$archive" && sha256sum -c "$(basename "$checksum")")
+  done
+  [[ "$checksum_count" -gt 0 ]] || {
+    echo "MISSING reviewed *.tar.gz.sha256 for $archive" >&2
     exit 2
   }
-  (cd "$RELEASES/$archive" && sha256sum -c SHA256SUMS)
   mkdir -p "$RELEASES/$archive/extracted"
   for asset in "$RELEASES/$archive"/*.tar.gz; do
     test -e "$asset" || continue
@@ -83,8 +88,8 @@ done
 
 python -u src/launch_mip_statistics_campaign.py \
   --mode inventory \
-  --root "repool_small=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/repool_small" \
-  --root "exact_big=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/exact_big" \
+  --root "repool_small=$ROOT/verified/repool_small" \
+  --root "exact_big=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/exact_big_mip_20260805T135556Z/pools" \
   --root "k40_factorial=$ROOT/results/k40_factorial" \
   --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814/extracted" \
   --root "fresh_preparation=$ROOT/results/mip_statistics_prep" \
@@ -92,8 +97,8 @@ python -u src/launch_mip_statistics_campaign.py \
 
 python -u src/launch_mip_statistics_campaign.py \
   --mode pilot --campaign mipstats-pilot-review \
-  --root "repool_small=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/repool_small" \
-  --root "exact_big=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/results/exact_big" \
+  --root "repool_small=$ROOT/verified/repool_small" \
+  --root "exact_big=$RELEASES/results-exact_big_mip_20260805T135556Z/extracted/exact_big_mip_20260805T135556Z/pools" \
   --root "k40_factorial=$ROOT/results/k40_factorial" \
   --root "bigtar_snapshots=$RELEASES/results-cg-bigtar-867334-final-20260814/extracted" \
   --root "fresh_preparation=$ROOT/results/mip_statistics_prep" \

@@ -729,6 +729,7 @@ class ExactPoolMipTests(unittest.TestCase):
 
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
+        two_stage=True,
     ):
         class FakeExpression:
             def __init__(self, items):
@@ -835,10 +836,12 @@ class ExactPoolMipTests(unittest.TestCase):
         }))
         out = folder / "mip.json"
         arguments = [
-            "--result", str(result), "--two-stage",
+            "--result", str(result),
             "--timelimit", "60", "--mipgap", str(mip_gap),
             "--out", str(out),
         ]
+        if two_stage:
+            arguments.append("--two-stage")
         explicit_patch = contextlib.nullcontext()
         if explicit_start:
             partition = folder / "partition.json"
@@ -1028,6 +1031,24 @@ class ExactPoolMipTests(unittest.TestCase):
             payload["two_stage"]["stage2_skip_reason"],
             "no_fleet_incumbent",
         )
+
+    def test_single_stage_preserves_validated_start_without_solver_solution(self):
+        temporary, _model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 0.0,
+            "bound": 100000.0,
+            "gap": 1.0,
+            "solutions": 0,
+            "selected": [],
+        }], explicit_start=True, two_stage=False)
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertTrue(payload["incumbent_found"])
+        self.assertFalse(payload["solver_incumbent_found"])
+        self.assertEqual(
+            payload["incumbent_source"], "validated_start_fallback"
+        )
+        self.assertEqual(payload["buses"], 1)
 
 
 if __name__ == "__main__":

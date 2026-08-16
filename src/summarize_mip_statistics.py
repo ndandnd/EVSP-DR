@@ -94,6 +94,30 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
     buses = result.get("buses")
     if incumbent != (isinstance(buses, int) and buses > 0):
         raise ValueError(f"{job['cell_id']} incumbent/bus mismatch")
+    selected = result.get("selected_routes") or []
+    if incumbent:
+        status_path = Path(job["execution"]["status"])
+        if (
+            not status_path.is_file()
+            or _sha(status_path)
+            != job["execution"]["status_sha256"]
+        ):
+            raise ValueError(f"{job['cell_id']} staged status hash mismatch")
+        source_status = json.loads(status_path.read_text())
+        trip_ids = source_status.get("trip_ids")
+        counts = defaultdict(int)
+        for route in selected:
+            for trip in route.get("trips") or []:
+                counts[trip] += 1
+        if (
+            len(selected) != buses
+            or not isinstance(trip_ids, list)
+            or set(counts) != set(trip_ids)
+            or any(counts[trip] != 1 for trip in trip_ids)
+        ):
+            raise ValueError(
+                f"{job['cell_id']} selected routes are not an exact partition"
+            )
     if result.get("fleet_proven") is True and (
         not incumbent
         or result.get("optimal_scope") not in {
@@ -139,6 +163,18 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     approved_jobs = {
         job["cell_id"]: job for job in approved.get("jobs") or []
     }
+    manifest_jobs = {
+        job["cell_id"]: job for job in manifest.get("jobs") or []
+    }
+    if set(manifest_jobs) != set(approved_jobs):
+        raise ValueError("campaign job set differs from approved plan")
+    for key in (
+        "campaign", "mode", "checkout_identity", "worker_sha256",
+        "runner_sha256", "code_hashes", "python_identity",
+        "environment_whitelist",
+    ):
+        if manifest.get(key) != approved.get(key):
+            raise ValueError(f"campaign {key} differs from approved plan")
     campaign = manifest["campaign"]
     checkpoint_rows = []
     final_rows = []
@@ -185,6 +221,33 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 ):
                     raise ValueError(
                         f"checkpoint source mismatch: {checkpoint_path}"
+                    )
+                expected_arm = "D" if job["arm"] == "GIRO" else "B"
+                parameters = metadata.get("parameters")
+                if (
+                    metadata.get("experiment_arm") != expected_arm
+                    or metadata.get("git_commit")
+                    != manifest["checkout_identity"]["expected_commit"]
+                    or not isinstance(parameters, dict)
+                    or parameters.get("two_stage") is not True
+                    or parameters.get("cover") is not False
+                    or int(parameters.get("threads", -1)) != 8
+                    or (
+                        job["arm"] == "GIRO"
+                        and metadata.get(
+                            "source_initial_partition_sha256"
+                        ) != job["validated_start"]["sha256"]
+                    )
+                    or (
+                        job["arm"] == "RAW"
+                        and metadata.get(
+                            "source_initial_partition_sha256"
+                        ) is not None
+                    )
+                ):
+                    raise ValueError(
+                        f"checkpoint treatment/provenance mismatch: "
+                        f"{checkpoint_path}"
                     )
                 incumbent = payload.get("incumbent") or {}
                 stats = payload.get("latest_statistics") or {}
@@ -272,10 +335,23 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 and math.ceil(bound - 1e-6) >= int(round(fleet))
                 and not row["solver_ended_before_checkpoint"]
             ):
+                observed = row["latest_statistics_observed_s"]
+                if observed is None:
+                    raise ValueError(
+                        f"{job['cell_id']} proving checkpoint lacks "
+                        "statistics observation time"
+                    )
+                if (
+                    observed < 0
+                    or observed > row["observed_total_elapsed_s"] + 1e-9
+                    or observed > row["checkpoint_elapsed_s"] + 1e-9
+                ):
+                    raise ValueError(
+                        f"{job['cell_id']} proving checkpoint timestamp "
+                        "is inconsistent"
+                    )
                 proof_times.append(
-                    row["latest_statistics_observed_s"]
-                    if row["latest_statistics_observed_s"] is not None
-                    else row["checkpoint_elapsed_s"]
+                    observed
                 )
         final_rows.append({
             "campaign": campaign,
@@ -439,10 +515,12 @@ def summarize(
 ) -> dict:
     root = campaign_root.expanduser().resolve()
     output = output_dir.expanduser().resolve()
+    if replace_output:
+        raise ValueError(
+            "MIP statistics summaries are immutable; choose a new output path"
+        )
     if output.exists():
-        if not replace_output:
-            raise FileExistsError(f"output directory exists: {output}")
-        shutil.rmtree(output)
+        raise FileExistsError(f"output directory exists: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest, checkpoints, finals = _load_campaign(root)
     staging = Path(tempfile.mkdtemp(

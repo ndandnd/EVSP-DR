@@ -14,6 +14,7 @@ import launch_mip_statistics_campaign as launcher  # noqa: E402
 from mip_statistics_inventory import (  # noqa: E402
     inventory,
     representative_candidates,
+    select_age_candidate,
     validate_candidate,
 )
 
@@ -124,6 +125,35 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                     source_family="repool_small",
                     data_roots=[data],
                 )
+
+    def test_inventory_rejects_row_incomplete_pool_and_live_age_cell(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            status, data = self._candidate(root, trips=2)
+            payload = json.loads(status.read_text())
+            journal = Path(payload["columns_journal"])
+            journal.write_text(json.dumps({
+                "trips": [0], "cost": 100000.0,
+            }) + "\n")
+            with self.assertRaisesRegex(ValueError, "cover every"):
+                validate_candidate(
+                    status,
+                    source_family="repool_small",
+                    data_roots=[data],
+                )
+            live_candidate = {
+                "scale": 20,
+                "source_family": "fresh_preparation",
+                "age_hours": 1.0,
+                "status_path": str(root / "k20_r1.json"),
+                "trip_count": 2,
+                "instance_sha256": "a" * 64,
+                "replicate": "r1",
+                "candidate_id": "live",
+            }
+            self.assertIsNone(select_age_candidate(
+                [live_candidate], scale=20, target=1
+            ))
 
     def test_representative_selection_uses_lower_median_trip_count(self):
         payload = {

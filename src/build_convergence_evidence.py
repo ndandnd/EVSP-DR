@@ -174,6 +174,8 @@ def _validate_status(
         raise ValueError(f"instance hash mismatch: {path}")
     if provenance.get("prices_sha256") != TARIFF_SHA256:
         raise ValueError(f"tariff hash mismatch: {path}")
+    if provenance.get("git_dirty") is not False:
+        raise ValueError(f"source checkout is dirty/unknown: {path}")
     for key, expected in (
         ("soc_step", 15.0), ("block_min", 10.0),
         ("g_kwh", 300.0), ("charge_kw", 300.0),
@@ -199,8 +201,15 @@ def _validate_status(
                 float(args.get("rc_eps", math.nan)),
                 1e-4, rel_tol=0.0, abs_tol=1e-12,
             )
+            or str(args.get("csv")) != str(status.get("csv"))
+            or str(args.get("prices_csv")) != str(status.get("prices_csv"))
+            or float(args.get("g_kwh", math.nan)) != 300.0
+            or float(args.get("charge_kw", math.nan)) != 300.0
+            or float(args.get("min_soc_frac", math.nan)) != 0.0
         ):
             raise ValueError(f"provenance treatment/CG controls mismatch: {path}")
+        if provenance.get("git_branch") not in (None, ""):
+            raise ValueError(f"factorial source was not detached: {path}")
     elif expected_commit == HISTORICAL_COMMIT:
         if status.get("master_sense") not in (None, "cover") or (
             status.get("initial_pool") not in (None, "artificial")
@@ -225,6 +234,14 @@ def _validate_status(
             or wall_s + 1e-6 < mark_minutes * 60
         ):
             raise ValueError(f"checkpoint identity mismatch: {path}")
+    elif arm is not None and status.get("stop_reason") not in {
+        "wall_limit", "certified", "stalled", "no_path",
+    }:
+        raise ValueError(f"canonical factorial status is not terminal: {path}")
+    elif expected_commit == HISTORICAL_COMMIT and (
+        status.get("stop_reason") != "wall_limit"
+    ):
+        raise ValueError("historical comparator is not a wall-limit endpoint")
     journal = resolve_pool_journal(path, status).resolve()
     expected_journal = Path(str(path) + ".columns.jsonl").resolve()
     if not journal.is_file() or (
@@ -280,6 +297,7 @@ def _validate_status(
             raise ValueError(f"invalid final LP routes: {path}")
         reconstructed_weight = 0.0
         reconstructed_objective = 0.0
+        coverage = {trip: 0.0 for trip in trip_ids}
         for route in positive:
             key = frozenset(route.get("trips") or [])
             if key not in effective:
@@ -301,6 +319,8 @@ def _validate_status(
                 raise ValueError(f"invalid final LP route metric: {path}")
             reconstructed_weight += value
             reconstructed_objective += value * cost
+            for trip in key:
+                coverage[trip] += value
         if not math.isclose(
                 reconstructed_weight, route_weight,
                 rel_tol=1e-9, abs_tol=1e-7):
@@ -309,6 +329,22 @@ def _validate_status(
                 reconstructed_objective + 500000.0 * artificials,
                 objective, rel_tol=1e-9, abs_tol=1e-3):
             raise ValueError(f"final LP objective mismatch: {path}")
+        if artificials == 0.0:
+            sense = status.get("master_sense", "cover")
+            if sense == "partition":
+                valid_rows = all(
+                    abs(value - 1.0) <= 1e-6
+                    for value in coverage.values()
+                )
+            else:
+                valid_rows = all(
+                    value >= 1.0 - 1e-6
+                    for value in coverage.values()
+                )
+            if not valid_rows:
+                raise ValueError(
+                    f"artificial-free LP violates master rows: {path}"
+                )
     certified = status.get("certified_rc_optimal") is True
     if certified and (
         min_rc is None or min_rc < -1e-4
@@ -363,7 +399,7 @@ def _find_arm_path(
     return matches[0] if matches else None
 
 
-def _validate_factorial_campaign(campaign: Path) -> str:
+def _validate_factorial_campaign(campaign: Path) -> dict:
     launch_path = campaign / "launch.tsv"
     prep_path = campaign / "prep_attestation.tsv"
     if not launch_path.is_file() or not prep_path.is_file():
@@ -372,6 +408,12 @@ def _validate_factorial_campaign(campaign: Path) -> str:
         launch = list(csv.DictReader(handle, delimiter="\t"))
     if len(launch) != 5:
         raise ValueError(f"factorial launch row count mismatch: {campaign}")
+    job_ids = [str(row.get("job_id") or "") for row in launch]
+    if (
+        any(not job_id.isdigit() for job_id in job_ids)
+        or len(job_ids) != len(set(job_ids))
+    ):
+        raise ValueError("factorial launch job IDs are invalid/duplicated")
     prep_rows = [row for row in launch if row.get("role") == "prep"]
     arm_rows = [row for row in launch if row.get("role") == "arm"]
     if (
@@ -406,10 +448,11 @@ def _validate_factorial_campaign(campaign: Path) -> str:
     }
     if len(prefixes) != 1 or prefixes.pop() not in {"k40r1", "k40r2"}:
         raise ValueError("factorial campaign mixes/omits k40r1/k40r2 stems")
-    return next(iter({
+    prefix = next(iter({
         path.name.split("_flat_", 1)[0]
         for path in campaign.glob("k40r*_flat_*.json")
     }))
+    return {"prefix": prefix, "job_ids": job_ids}
 
 
 def _factorial_rows(
@@ -424,6 +467,8 @@ def _factorial_rows(
     if len(set(resolved_campaigns)) != len(resolved_campaigns):
         raise ValueError("factorial replicate campaign paths must be distinct")
     expected_trip_set = None
+    replicate_job_ids = []
+    replicate_status_hashes = []
     for replicate_index, raw_campaign in enumerate(campaigns, start=1):
         campaign = raw_campaign.expanduser().resolve()
         replicate = f"R{replicate_index}"
@@ -433,7 +478,15 @@ def _factorial_rows(
                 "reason": "factorial_campaign_missing",
             })
             continue
-        expected_prefix = _validate_factorial_campaign(campaign)
+        campaign_identity = _validate_factorial_campaign(campaign)
+        expected_prefix = campaign_identity["prefix"]
+        if any(
+            set(campaign_identity["job_ids"]) & set(existing)
+            for existing in replicate_job_ids
+        ):
+            raise ValueError("factorial replicates reuse Slurm job IDs")
+        replicate_job_ids.append(campaign_identity["job_ids"])
+        campaign_hashes = []
         for arm, (sense, initial) in ARMS.items():
             previous_wall = -math.inf
             checkpoints = [
@@ -509,6 +562,10 @@ def _factorial_rows(
                         record["trip_ids"], separators=(",", ":")
                     ).encode()).hexdigest(),
                 })
+                campaign_hashes.append(record["status_sha256"])
+        if campaign_hashes in replicate_status_hashes:
+            raise ValueError("factorial replicate artifact matrices are identical")
+        replicate_status_hashes.append(campaign_hashes)
     if missing and not allow_missing:
         raise ValueError(
             "required factorial checkpoints are missing: "
@@ -581,6 +638,9 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
         ):
             return None
         source_status = json.loads(source_result.read_text())
+        source_flags = _validated_scale_flags(source_result, source_status)
+        if source_flags is None:
+            return None
         trip_ids = source_status.get("trip_ids")
         if not isinstance(trip_ids, list) or not trip_ids:
             return None
@@ -593,6 +653,9 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
             and set(counts) == set(trip_ids)
             and all(counts[trip] == 1 for trip in trip_ids)
         )
+        buses = payload.get("buses")
+        if integer and buses != len(payload.get("selected_routes") or []):
+            return None
         proof = (
             integer
             and payload.get("fleet_proven") is True
@@ -600,12 +663,26 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
                 "fleet_only", "full_pool_lexicographic"
             }
         )
+        arguments = provenance.get("arguments")
+        if (
+            not isinstance(arguments, dict)
+            or arguments.get("cover") is not False
+            or not isinstance(arguments.get("two_stage"), bool)
+        ):
+            return None
+        bound = payload.get("fleet_bound")
+        if proof and (
+            not isinstance(bound, (int, float))
+            or math.ceil(float(bound) - 1e-6) < int(buses)
+        ):
+            return None
         return {
             "target_reached_in_lp": None,
             "zero_artificials": None,
             "pricing_certified": None,
             "exact_integer_partition_found": integer,
             "finite_pool_fleet_proven": proof,
+            "validated_scale": source_flags["validated_scale"],
         }
     provenance = payload.get("provenance")
     if not isinstance(provenance, dict):
@@ -680,6 +757,7 @@ def _validated_scale_flags(path: Path, payload: dict) -> dict | None:
         "pricing_certified": certified,
         "exact_integer_partition_found": False,
         "finite_pool_fleet_proven": False,
+        "validated_scale": _artifact_scale(path, payload),
     }
 
 
@@ -728,11 +806,11 @@ def _verified_scale_evidence(paths: list[Path]) -> list[dict]:
         for candidate, payload in payloads:
             if not isinstance(payload, dict):
                 continue
-            scale = _artifact_scale(candidate, payload)
-            if scale is None:
-                continue
             flags = _validated_scale_flags(candidate, payload)
             if flags is None:
+                continue
+            scale = flags.get("validated_scale")
+            if scale is None:
                 continue
             display = (
                 Path(
@@ -1081,6 +1159,15 @@ def build(
             "instance_sha256": INSTANCE_SHA256,
             "tariff_sha256": TARIFF_SHA256,
             "generation_command": generation_command,
+            "builder_path": str(Path(__file__).resolve()),
+            "builder_sha256": sha256_file(Path(__file__).resolve()),
+            "builder_git_commit": subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=Path(__file__).resolve().parent,
+                text=True,
+                capture_output=True,
+                check=False,
+            ).stdout.strip(),
             "missing_inputs": missing,
             "output_files": {},
             "scientific_guards": [
@@ -1160,7 +1247,6 @@ def parse_args(argv=None):
         "--out-dir", type=Path,
         default=Path("analysis/convergence_evidence_20260815"),
     )
-    parser.add_argument("--generation-command")
     parser.add_argument("--replace-output", action="store_true")
     parser.add_argument("--allow-missing-inputs", action="store_true")
     return parser.parse_args(argv)
@@ -1179,9 +1265,7 @@ def main(argv=None) -> int:
         release_archives=args.release_archive,
         verified_artifacts=args.verified_artifact,
         output_dir=args.out_dir,
-        generation_command=(
-            args.generation_command or shlex.join(command_argv)
-        ),
+        generation_command=shlex.join(command_argv),
         replace_output=args.replace_output,
         allow_missing=args.allow_missing_inputs,
     )

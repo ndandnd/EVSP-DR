@@ -201,6 +201,10 @@ def validate_candidate(
                 incidences[key] = cost
     if len(incidences) != int(status.get("columns", -1)):
         raise ValueError("journal unique incidence count differs from status")
+    covered = set().union(*(set(key) for key in incidences)) \
+        if incidences else set()
+    if covered != known_trips:
+        raise ValueError("journal does not cover every status trip")
     instance = _find_data_file(path, status.get("csv"), data_roots)
     tariff = _find_data_file(path, status.get("prices_csv"), data_roots)
     if instance is None or tariff is None:
@@ -453,6 +457,9 @@ def select_age_candidate(
             "fresh_preparation" if scale == 20 else "bigtar_snapshots"
         )
         and candidate.get("age_hours") is not None
+        and str(candidate.get("status_path", "")).endswith(
+            ".snapshot.json"
+        )
         and any(
             abs(float(candidate["age_hours"]) - age) <= 1e-9
             for age in allowed

@@ -21,7 +21,7 @@ def _accounting(job_ids: list[str]) -> dict[str, dict]:
         [
             "sacct", "-X", "-n", "-P",
             "-j", ",".join(job_ids),
-            "--format=JobID,JobName,State,Elapsed,ExitCode,MaxRSS",
+            "--format=JobID,JobName,State,Elapsed,ExitCode,MaxRSS,Comment",
         ],
         text=True,
         capture_output=True,
@@ -32,7 +32,7 @@ def _accounting(job_ids: list[str]) -> dict[str, dict]:
     records = {}
     for line in result.stdout.splitlines():
         fields = line.split("|")
-        if len(fields) < 6 or "." in fields[0]:
+        if len(fields) < 7 or "." in fields[0]:
             continue
         records[fields[0]] = {
             "job_name": fields[1],
@@ -40,6 +40,7 @@ def _accounting(job_ids: list[str]) -> dict[str, dict]:
             "elapsed": fields[3],
             "exit_code": fields[4],
             "max_rss": fields[5],
+            "comment": fields[6],
         }
     return records
 
@@ -50,7 +51,7 @@ def _live_queue(job_ids: list[str]) -> dict[str, dict]:
     result = subprocess.run(
         [
             "squeue", "-h", "-j", ",".join(job_ids),
-            "-o", "%i|%j|%T|%M|%R",
+            "-o", "%i|%j|%T|%M|%R|%k",
         ],
         text=True,
         capture_output=True,
@@ -61,13 +62,14 @@ def _live_queue(job_ids: list[str]) -> dict[str, dict]:
     records = {}
     for line in result.stdout.splitlines():
         fields = line.split("|")
-        if len(fields) < 5:
+        if len(fields) < 6:
             continue
         records[fields[0]] = {
             "job_name": fields[1],
             "state": fields[2],
             "elapsed": fields[3],
             "reason_or_node": fields[4],
+            "comment": fields[5],
         }
     return records
 
@@ -137,6 +139,7 @@ def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
         live = live_queue.get(job_id)
         accounted = accounting.get(job_id)
         expected_name = job.get("job_name")
+        expected_comment = job.get("slurm_comment")
         state_disagreement = bool(
             live and accounted
             and live.get("state") != accounted.get("state")
@@ -148,8 +151,17 @@ def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
                 and accounted.get("job_name") != expected_name
             )
         )
+        comment_disagreement = bool(
+            not expected_comment
+            or (live and live.get("comment") != expected_comment)
+            or (
+                accounted
+                and accounted.get("comment") != expected_comment
+            )
+        )
         possible_stale = bool(
             name_disagreement
+            or comment_disagreement
             or (
                 live and accounted
                 and accounted.get("state", "").split("+", 1)[0]
@@ -189,6 +201,7 @@ def monitor(campaign_root: Path, *, query_slurm: bool = True) -> list[dict]:
             "accounting_slurm": accounted,
             "state_disagreement": state_disagreement,
             "job_name_disagreement": name_disagreement,
+            "slurm_comment_disagreement": comment_disagreement,
             "possible_stale_or_recycled_job_id": possible_stale,
             "output": str(output),
             "output_exists": output.is_file(),

@@ -43,6 +43,10 @@ CODE_PATHS = (
     "src/config.py",
     "src/utils_v2.py",
     "src/master_lp_scipy.py",
+    "src/matching_init.py",
+    "src/pricing_dp_og.py",
+    "src/install_exact_cg_profile_input.py",
+    "src/mip_statistics_environment.py",
 )
 DEFAULT_ROOTS = {
     "repool_small": REPO_ROOT / "results/repool_small",
@@ -86,10 +90,7 @@ def checkout_identity(*, require_detached: bool) -> dict:
     untracked_imports = [
         line for line in untracked.stdout.splitlines()
         if line.startswith("?? ")
-        and (
-            re.fullmatch(r"src/.*\.py", line[3:])
-            or re.fullmatch(r"src/.*\.sub", line[3:])
-        )
+        and re.search(r"\.(?:py|pth|so|sub)$", line[3:])
     ]
     if untracked_imports:
         raise SystemExit("checkout contains untracked importable worker code")
@@ -149,6 +150,29 @@ def _replace_json(path: Path, payload: dict) -> None:
     os.replace(temporary, path)
 
 
+def _existing_execution_comments() -> set[str]:
+    comments = set()
+    for command in (
+        ["squeue", "-h", "-o", "%k"],
+        [
+            "sacct", "-X", "-n", "-P", "--starttime", "2026-01-01",
+            "--format=Comment",
+        ],
+    ):
+        result = subprocess.run(
+            command, text=True, capture_output=True, check=False
+        )
+        if result.returncode != 0:
+            raise SystemExit(
+                "cannot query Slurm execution-deduplication comments"
+            )
+        comments.update(
+            line.strip().split("|", 1)[0]
+            for line in result.stdout.splitlines() if line.strip()
+        )
+    return comments
+
+
 def _canonical(payload: dict) -> bytes:
     return json.dumps(
         payload, sort_keys=True, separators=(",", ":")
@@ -172,15 +196,8 @@ def _python_identity(path: Path) -> dict:
     try:
         result = subprocess.run(
             [
-                str(executable), "-c",
-                "import json,platform,sys\n"
-                "try:\n"
-                " import gurobipy as gp\n"
-                " g='.'.join(map(str,gp.gurobi.version()))\n"
-                "except Exception:\n"
-                " g=None\n"
-                "print(json.dumps({'version':platform.python_version(),"
-                "'major_minor':list(sys.version_info[:2]),'gurobi':g}))",
+                str(executable),
+                str(REPO_ROOT / "src/mip_statistics_environment.py"),
             ],
             text=True,
             capture_output=True,
@@ -198,17 +215,17 @@ def _python_identity(path: Path) -> dict:
             "executable": str(executable),
             "reason": result.stderr.strip() or "python unavailable",
         }
+    if result.returncode != 0:
+        return {
+            "available": False,
+            "executable": str(executable),
+            "executable_sha256": (
+                sha256_file(executable) if executable.is_file() else None
+            ),
+            "reason": result.stderr.strip() or result.stdout.strip(),
+        }
     details = json.loads(result.stdout)
-    return {
-        "available": (
-            details["major_minor"] == [3, 12]
-            and details["gurobi"] is not None
-        ),
-        "executable": str(executable),
-        "executable_sha256": sha256_file(executable),
-        "version": details["version"],
-        "gurobi_version": details["gurobi"],
-    }
+    return {"available": True, **details}
 
 
 def _safe_export_value(label: str, value: str) -> str:
@@ -555,6 +572,25 @@ def build_plan(
             "output": job["output"],
             "progress_dir": job["progress_dir"],
         }
+        job["execution_digest"] = hashlib.sha256(_canonical({
+            "arm": job["arm"],
+            "scale": job["scale"],
+            "source_status_sha256": job["source"]["status_sha256"],
+            "source_journal_sha256": job["source"]["journal_sha256"],
+            "instance_sha256": job["source"]["instance_sha256"],
+            "tariff_sha256": job["source"]["tariff_sha256"],
+            "validated_start_sha256": (
+                job["validated_start"]["sha256"]
+                if job["validated_start"] else None
+            ),
+            "time_limit_s": job["time_limit_s"],
+            "threads": 8,
+            "mip_gap": job["mip_gap"],
+            "code_hashes": code_hashes,
+            "environment_identity_sha256": python_identity.get(
+                "identity_sha256"
+            ),
+        })).hexdigest()
     missing_scales = [
         scale for scale in PILOT_BUDGET_HOURS if scale not in selected
     ]
@@ -626,8 +662,18 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     logs.mkdir(parents=True, exist_ok=False)
     worker = root / "input/submit_mip_statistics.sub"
     runner = root / "input/run_exact_pool_mip.py"
+    if (
+        sha256_file(WORKER_PATH) != plan["worker_sha256"]
+        or sha256_file(RUNNER_PATH) != plan["runner_sha256"]
+    ):
+        raise SystemExit("approved worker/runner changed before staging")
     _write_new_atomic(worker, WORKER_PATH.read_bytes(), executable=True)
     _write_new_atomic(runner, RUNNER_PATH.read_bytes())
+    if (
+        sha256_file(worker) != plan["worker_sha256"]
+        or sha256_file(runner) != plan["runner_sha256"]
+    ):
+        raise SystemExit("staged worker/runner hash mismatch")
     reviewed_code = root / "input/reviewed_code"
     for relative, expected in plan["code_hashes"].items():
         source_path = REPO_ROOT / relative
@@ -682,6 +728,13 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
                 raise SystemExit(
                     f"{job['cell_id']}: execution input changed"
                 )
+    if (
+        sha256_file(worker) != plan["worker_sha256"]
+        or sha256_file(RUNNER_PATH) != plan["runner_sha256"]
+        or sha256_file(Path(plan["python_identity"]["executable"]))
+        != plan["python_identity"]["executable_sha256"]
+    ):
+        raise SystemExit("worker/runner/Python changed before submission")
     manifest = json.loads(json.dumps(plan))
     manifest["approval_sha256"] = plan_sha
     manifest["submitted"] = False
@@ -696,11 +749,21 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         f"{key}={_safe_export_value(key, str(value))}"
         for key, value in export_values.items()
     )
+    existing_comments = _existing_execution_comments()
+    planned_comments = {
+        f"MSTAT:{job['execution_digest'][:32]}"
+        for job in plan["jobs"]
+    }
+    if len(planned_comments) != len(plan["jobs"]):
+        raise SystemExit("approved plan contains duplicate execution digests")
+    if existing_comments & planned_comments:
+        raise SystemExit(
+            "an identical execution digest already exists in Slurm; reconcile "
+            "that job instead of submitting a duplicate"
+        )
     for job, manifest_job in zip(plan["jobs"], manifest["jobs"]):
         wall_hours = job["budget_hours"]
-        comment = (
-            f"MSTAT:{plan_sha[:12]}:{hashlib.sha256(job['cell_id'].encode()).hexdigest()[:8]}"
-        )
+        comment = f"MSTAT:{job['execution_digest'][:32]}"
         command = [
             "sbatch", "--parsable", "--partition=scaglione",
             "--no-requeue", "--signal=B:USR1@180",

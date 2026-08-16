@@ -49,7 +49,11 @@ class ConvergenceEvidenceTests(unittest.TestCase):
         artificials = 5.0 if arm == "PA" else 0.0
         route_weight = (
             evidence.HISTORICAL_ROUTE_WEIGHT
-            if historical else (11.58 if arm == "PA" else 40.0)
+            if historical
+            else (
+                11.58 if arm == "PA"
+                else (1.0 if sense == "partition" else 40.0)
+            )
         )
         wall_s = (
             79348.0 if historical
@@ -101,7 +105,14 @@ class ConvergenceEvidenceTests(unittest.TestCase):
                 ),
                 "instance_sha256": self.instance_sha,
                 "prices_sha256": self.tariff_sha,
+                "git_dirty": False,
+                "git_branch": "",
                 "args": {
+                    "csv": "synthetic/k40.csv",
+                    "prices_csv": "flat.csv",
+                    "g_kwh": 300.0,
+                    "charge_kw": 300.0,
+                    "min_soc_frac": 0.0,
                     "master_sense": sense,
                     "initial_pool": initial,
                     "columns_per_iter": 30,

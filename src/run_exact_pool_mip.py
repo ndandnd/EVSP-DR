@@ -1285,6 +1285,10 @@ def main(argv=None) -> int:
     two_stage_detail = None
     cost_stage_executed = False
     cost_stage_has_solution = False
+    validated_start_available = (
+        initial_partition_start["kind"] == "validated_exact_partition"
+        and bool(mip_start)
+    )
     if args.two_stage:
         # Fleet recovery is the primary experiment.  Stage 1 may consume the
         # complete budget.  Cost optimization is allowed only after the
@@ -1304,9 +1308,7 @@ def main(argv=None) -> int:
         stage1_has_solution = m.SolCount > 0
         validated_start_fallback = (
             not stage1_has_solution
-            and initial_partition_start["kind"]
-            == "validated_exact_partition"
-            and bool(mip_start)
+            and validated_start_available
         )
         stage1_buses = (
             int(round(m.ObjVal))
@@ -1339,7 +1341,10 @@ def main(argv=None) -> int:
                 max(0.0, stage1_buses - stage1_bound)
                 / max(1.0, stage1_buses)
             )
-        stage1_runtime_s = time.time() - t0
+        stage1_runtime_s = (
+            progress.elapsed_s() if progress is not None
+            else time.time() - t0
+        )
         remaining_s = max(0.0, float(args.timelimit) - stage1_runtime_s)
         print(
             f"[MIP] stage 1: fleet={stage1_buses} "
@@ -1392,7 +1397,7 @@ def main(argv=None) -> int:
             m.Params.TimeLimit = remaining_s
             if progress is not None:
                 progress.transition_stage(
-                    "cost", elapsed_s=time.time() - t0
+                    "cost", elapsed_s=progress.elapsed_s()
                 )
             stage2_start_acceptance = optimize_with_start_audit(
                 m,
@@ -1466,6 +1471,20 @@ def main(argv=None) -> int:
             max(0.0, solver_obj - solver_bound) / max(1.0, abs(solver_obj))
             if solver_bound is not None else None
         )
+    elif (
+        not args.two_stage
+        and m.SolCount == 0
+        and validated_start_available
+    ):
+        chosen = list(mip_start)
+        status_code = int(m.Status)
+        solver_obj = float(sum(routes[index]["cost"] for index in chosen))
+        solver_bound = finite_solver_value(m.ObjBound)
+        mip_gap = (
+            max(0.0, solver_obj - solver_bound)
+            / max(1.0, abs(solver_obj))
+            if solver_bound is not None else None
+        )
     else:
         status_code = int(m.Status)
         chosen = [i for i in range(len(routes)) if a[i].X > 0.5] \
@@ -1488,9 +1507,9 @@ def main(argv=None) -> int:
     )
     incumbent_source = (
         "validated_start_fallback"
-        if args.two_stage
-        and not stage1_has_solution
-        and validated_start_fallback
+        if validated_start_available
+        and not solver_incumbent_found
+        and has_incumbent
         else ("solver" if has_incumbent else None)
     )
     mip_obj = (float(sum(routes[i]["cost"] for i in chosen))
@@ -1566,7 +1585,10 @@ def main(argv=None) -> int:
         "variable_route_cost": (mip_obj - BUS_COST_KX * len(chosen))
                                if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
-        "runtime_s": time.time() - t0,
+        "runtime_s": (
+            progress.elapsed_s() if progress is not None
+            else time.time() - t0
+        ),
         "pool_columns": len(routes),
         "singleton_partition_columns": len(seed_partition),
         "mip_start_assigned": bool(mip_start),

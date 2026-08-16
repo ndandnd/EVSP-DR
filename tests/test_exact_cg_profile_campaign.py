@@ -657,6 +657,7 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
                     "label": label,
                     "job_id": str(123 + len(jobs)),
                     "job_name": f"PF{label}-abcdef",
+                    "slurm_comment": f"PROFILE:{label}:abcdef",
                     "submission_state": "submitted",
                     "output": str(output),
                     "job_spec": {
@@ -719,6 +720,7 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
                             "state": "PENDING",
                             "elapsed": "0:00",
                             "reason_or_node": "Resources",
+                            "comment": jobs[0]["slurm_comment"],
                         }
                     },
                 ),
@@ -732,6 +734,7 @@ class ExactCgProfileCampaignTests(unittest.TestCase):
                             "elapsed": "1:00",
                             "exit_code": "0:0",
                             "max_rss": "1G",
+                            "comment": jobs[0]["slurm_comment"],
                         }
                     },
                 ),

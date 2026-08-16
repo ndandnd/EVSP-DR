@@ -46,7 +46,7 @@ tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no) \
   || fatal "cannot verify tracked checkout"
 [[ -z "$tracked" ]] || fatal "checkout has tracked modifications"
 untracked_imports=$(git -C "$ROOT" status --porcelain --untracked-files=all \
-  | awk '$1 == "??" && ($2 ~ /^src\\/.*\\.py$/ || $2 ~ /^src\\/.*\\.sub$/) {print}')
+  | awk '$1 == "??" && $2 ~ /\\.(py|pth|so|sub)$/ {print}')
 [[ -z "$untracked_imports" ]] \
   || fatal "checkout has untracked importable worker code"
 
@@ -63,6 +63,17 @@ plan=json.load(open(sys.argv[1]))
 for key,value in (plan.get("environment_whitelist") or {}).items():
     if os.environ.get(key) != str(value):
         raise SystemExit(f"{key} mismatch")
+PY
+observed_environment=$(
+  "$PYTHON" "$ROOT/src/mip_statistics_environment.py"
+) || fatal "could not compute MIP environment identity"
+"$PYTHON" - "$PLAN" "$observed_environment" <<'PY' \
+  || fatal "MIP environment identity differs from plan"
+import json,sys
+observed=json.loads(sys.argv[2])
+plan=json.load(open(sys.argv[1]))
+if observed != plan.get("python_identity"):
+    raise SystemExit("environment identity mismatch")
 PY
 
 readarray -t FIELDS < <("$PYTHON" - "$PLAN" "$REQUESTED_CELL" <<'PY'
@@ -214,7 +225,15 @@ trap forward_warning USR1 TERM INT
 "${command[@]}" &
 solver_pid=$!
 solver_rc=0
-wait "$solver_pid" || solver_rc=$?
+while true; do
+  wait_rc=0
+  wait "$solver_pid" || wait_rc=$?
+  if kill -0 "$solver_pid" 2>/dev/null; then
+    continue
+  fi
+  solver_rc=$wait_rc
+  break
+done
 solver_pid=""
 trap - USR1 TERM INT
 [[ "$solver_rc" -eq 0 ]] || fatal "solver exited with status $solver_rc"

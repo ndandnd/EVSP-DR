@@ -23,8 +23,14 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             progress = campaign / "progress" / cell
             progress.mkdir(parents=True)
             output = campaign / f"{cell}.json"
+            status_path = campaign / f"{cell}.source.json"
+            status_path.write_text(json.dumps({
+                "trip_ids": list(range(40)),
+            }))
             source = {
-                "status_sha256": "a" * 64,
+                "status_sha256": hashlib.sha256(
+                    status_path.read_bytes()
+                ).hexdigest(),
                 "journal_sha256": "b" * 64,
             }
             checkpoint = {
@@ -48,6 +54,7 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                     "node_count": 10,
                     "solution_count": 1,
                 },
+                "latest_statistics_observed_s": 300.0,
                 "incumbent_improvements": [{
                     "stage": "fleet",
                     "total_elapsed_s": 0.0 if arm == "GIRO" else 200.0,
@@ -61,6 +68,16 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                 "metadata": {
                     "source_result_sha256": source["status_sha256"],
                     "source_journal_sha256": source["journal_sha256"],
+                    "source_initial_partition_sha256": (
+                        "d" * 64 if arm == "GIRO" else None
+                    ),
+                    "experiment_arm": "D" if arm == "GIRO" else "B",
+                    "git_commit": "e" * 40,
+                    "parameters": {
+                        "two_stage": True,
+                        "cover": False,
+                        "threads": 8,
+                    },
                 },
             }
             (progress / "checkpoint_0005m.json").write_text(
@@ -71,7 +88,7 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                 "experiment_arm": "D" if arm == "GIRO" else "B",
                 "incumbent_found": True,
                 "status_name": "OPTIMAL",
-                "buses": 40 if arm == "GIRO" else 41,
+                "buses": 40,
                 "mip_obj": 4000000.0,
                 "mip_bound": 4000000.0,
                 "mip_gap": 0.0,
@@ -102,6 +119,10 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                         "threads": 8,
                     },
                 },
+                "selected_routes": [{
+                    "trips": [trip],
+                    "charging_stops": {},
+                } for trip in range(40)],
             }
             output.write_text(json.dumps(result))
             (progress / "final.json").write_text(json.dumps({
@@ -124,13 +145,18 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
                     {"route_count": 40, "sha256": "d" * 64}
                     if arm == "GIRO" else None
                 ),
-                "execution": {"cell_id": cell},
+                "execution": {
+                    "cell_id": cell,
+                    "status": str(status_path),
+                    "status_sha256": source["status_sha256"],
+                },
                 "progress_dir": str(progress),
                 "output": str(output),
             }
             jobs.append(job)
         approved = {
             "campaign": "summary-test",
+            "checkout_identity": {"expected_commit": "e" * 40},
             "jobs": jobs,
         }
         plan_raw = json.dumps(
