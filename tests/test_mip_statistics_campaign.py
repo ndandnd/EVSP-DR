@@ -421,6 +421,39 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 identity=identity,
             )
 
+    def test_blocked_two_cell_dry_run_does_not_persist_plan(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan_out = Path(tmp) / "blocked-plan.json"
+            with (
+                patch.object(
+                    launcher,
+                    "inventory",
+                    return_value={"schema": "inventory"},
+                ),
+                patch.object(
+                    launcher,
+                    "checkout_identity",
+                    return_value={"expected_commit": "a" * 40},
+                ),
+                patch.object(
+                    launcher,
+                    "build_plan",
+                    return_value={
+                        "blocked": True,
+                        "jobs": [],
+                        "campaign": "blocked",
+                    },
+                ),
+                patch("builtins.print"),
+            ):
+                rc = launcher.main([
+                    "--mode", "two-cell",
+                    "--campaign", "blocked-two-cell",
+                    "--plan-out", str(plan_out),
+                ])
+            self.assertEqual(rc, 2)
+            self.assertFalse(plan_out.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

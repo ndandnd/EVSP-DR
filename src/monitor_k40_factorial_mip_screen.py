@@ -92,6 +92,7 @@ def main(argv=None) -> int:
     parser.add_argument("--campaign-root", type=Path, required=True)
     parser.add_argument("--source-campaign-sha256", required=True)
     parser.add_argument("--require-complete", action="store_true")
+    parser.add_argument("--approved-recovery-plan-sha256")
     parser.add_argument("--no-slurm", action="store_true")
     parser.add_argument("--format", choices=("json", "tsv"), default="tsv")
     args = parser.parse_args(argv)
@@ -100,6 +101,37 @@ def main(argv=None) -> int:
         source_campaign_sha256=args.source_campaign_sha256,
         query_slurm=not args.no_slurm,
     )
+    if args.require_complete:
+        if not args.approved_recovery_plan_sha256:
+            parser.error(
+                "--require-complete requires "
+                "--approved-recovery-plan-sha256"
+            )
+        record_path = (
+            args.campaign_root.expanduser().resolve()
+            / "recovery"
+            / f"{args.approved_recovery_plan_sha256}.json"
+        )
+        try:
+            record = json.loads(record_path.read_text())
+        except (OSError, ValueError):
+            record = {}
+        receipt_labels = {
+            receipt.get("label")
+            for receipt in record.get("receipts") or []
+            if isinstance(receipt, dict)
+        }
+        if (
+            record.get("recovery_plan_sha256")
+            != args.approved_recovery_plan_sha256
+            or receipt_labels != {row["label"] for row in rows}
+        ):
+            for row in rows:
+                row["outcome"] = "missing_or_invalid_result"
+                row["errors"] = [
+                    *(row.get("errors") or []),
+                    "approved recovery record/receipts are missing or invalid",
+                ]
     allowed = (
         {"complete_valid_output"}
         if args.require_complete

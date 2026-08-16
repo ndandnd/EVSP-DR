@@ -143,7 +143,10 @@ def _candidate_result(
     raw = Path(str(output) + f".raw.{job_id}")
     temporary_dirs = sorted(output.parent.glob(f".{output.name}.tmp.*"))
     preserved = _preserved_inventory(
-        [path for path in [raw, *temporary_dirs] if path.exists()]
+        [
+            path for path in [raw, *temporary_dirs]
+            if os.path.lexists(path)
+        ]
     )
     if raw.is_file():
         return raw, "raw_result", preserved
@@ -175,6 +178,11 @@ def _prepare_job(
     raw_sha = None
     verified_hashes = {}
     try:
+        if state["state"] == "invalid":
+            raise ValueError(
+                "existing destination is invalid: "
+                + " | ".join(state.get("errors") or [])
+            )
         spec_path = _verify_file(
             job["spec_path"], job["spec_sha256"], "job spec"
         )
@@ -478,6 +486,9 @@ def apply_recovery(
                 raise ValueError("completed bundle differs from recovery intent")
             expected_receipts.append({
                 "label": row["label"],
+                "original_job_id": row["job_id"],
+                "raw_sha256": row["raw_sha256"],
+                "recovery_method": row["recovery_method"],
                 "destination": row["destination"],
                 "result_sha256": actual_result,
                 "completion_sha256": actual_completion,
@@ -485,7 +496,7 @@ def apply_recovery(
         if (
             set(record) != {
                 "schema", "recovery_plan_sha256", "recovery_commit",
-                "recovered", "skipped_complete",
+                "completed_labels",
                 "raw_and_staging_preserved", "reran_gurobi", "receipts",
             }
             or record.get("schema")
@@ -496,12 +507,8 @@ def apply_recovery(
             or record.get("raw_and_staging_preserved") is not True
             or record.get("reran_gurobi") is not False
             or record.get("receipts") != expected_receipts
-            or set(record.get("recovered") or [])
-            & set(record.get("skipped_complete") or [])
-            or (
-                set(record.get("recovered") or [])
-                | set(record.get("skipped_complete") or [])
-            ) != {row["label"] for row in plan["jobs"]}
+            or record.get("completed_labels")
+            != [row["label"] for row in plan["jobs"]]
             or any(
                 inspect_bundle(
                     Path(row["destination"]),
@@ -519,11 +526,8 @@ def apply_recovery(
             ]) != payload["preserved_sources"]:
                 raise ValueError("preserved raw/staging source changed")
         return record
-    recovered = []
-    skipped_complete = []
     for row in plan["jobs"]:
         if row["publication_state"] == "complete_valid":
-            skipped_complete.append(row["label"])
             continue
         if not row["recoverable"]:
             raise ValueError(
@@ -555,17 +559,18 @@ def apply_recovery(
             raise ValueError(
                 f"{row['label']} raw/staging sources changed during recovery"
             )
-        recovered.append(row["label"])
     record = {
         "schema": "evsp-dr-k40-factorial-mip-recovery-record-v1",
         "recovery_plan_sha256": observed_sha,
         "recovery_commit": plan["recovery_commit"],
-        "recovered": recovered,
-        "skipped_complete": skipped_complete,
+        "completed_labels": [row["label"] for row in plan["jobs"]],
         "raw_and_staging_preserved": True,
         "reran_gurobi": False,
         "receipts": [{
             "label": row["label"],
+            "original_job_id": row["job_id"],
+            "raw_sha256": row["raw_sha256"],
+            "recovery_method": row["recovery_method"],
             "destination": row["destination"],
             "result_sha256": sha256_file(
                 Path(row["destination"]) / "result.json"

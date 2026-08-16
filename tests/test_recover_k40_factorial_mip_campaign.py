@@ -272,7 +272,7 @@ class K40RecoveryTests(unittest.TestCase):
                     approved_plan_sha256=plan_sha,
                     source_campaign_sha256=source_sha,
                 )
-            self.assertEqual(len(record["recovered"]), 12)
+            self.assertEqual(len(record["completed_labels"]), 12)
             self.assertEqual(repeated, record)
             self.assertTrue(all(path.is_file() for path in raw_paths))
             for job in plan["jobs"]:

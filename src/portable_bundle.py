@@ -13,6 +13,7 @@ import fcntl
 import hashlib
 import json
 import os
+import re
 import secrets
 import shutil
 import tempfile
@@ -56,6 +57,8 @@ def _fsync_directory(path: Path) -> None:
 
 
 def _safe_member(name: str) -> Path:
+    if type(name) is not str:
+        raise ValueError("bundle member name must be a plain string")
     path = Path(name)
     if (
         not name
@@ -63,6 +66,7 @@ def _safe_member(name: str) -> Path:
         or ".." in path.parts
         or len(path.parts) != 1
         or path.name == "completion.json"
+        or str(path) != name
     ):
         raise ValueError(f"unsafe/reserved bundle member: {name!r}")
     return path
@@ -120,6 +124,21 @@ def _hash_at(directory_fd: int, name: str) -> tuple[str, int]:
             for chunk in iter(lambda: handle.read(1024 * 1024), b""):
                 digest.update(chunk)
         return digest.hexdigest(), os.fstat(descriptor).st_size
+    finally:
+        os.close(descriptor)
+
+
+def _read_at(directory_fd: int, name: str) -> tuple[bytes, int]:
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(name, flags, dir_fd=directory_fd)
+    try:
+        status = os.fstat(descriptor)
+        if not stat.S_ISREG(status.st_mode):
+            raise BundlePublicationError(f"member is not regular: {name}")
+        with os.fdopen(os.dup(descriptor), "rb") as handle:
+            return handle.read(), status.st_size
     finally:
         os.close(descriptor)
 
@@ -264,17 +283,28 @@ def inspect_bundle(
             "recoverable": False,
             "errors": ["destination is not a regular directory"],
         }
-    completion_path = path / "completion.json"
     try:
-        completion_mode = os.lstat(completion_path).st_mode
-    except FileNotFoundError:
-        completion_mode = None
+        bundle_fd = _open_directory_chain(path)
     except OSError as exc:
         return {
             "state": "invalid", "path": str(path),
             "recoverable": False, "errors": [str(exc)],
         }
+    completion_path = path / "completion.json"
+    try:
+        completion_mode = os.stat(
+            "completion.json", dir_fd=bundle_fd, follow_symlinks=False
+        ).st_mode
+    except FileNotFoundError:
+        completion_mode = None
+    except OSError as exc:
+        os.close(bundle_fd)
+        return {
+            "state": "invalid", "path": str(path),
+            "recoverable": False, "errors": [str(exc)],
+        }
     if completion_mode is not None and stat.S_ISLNK(completion_mode):
+        os.close(bundle_fd)
         return {
             "state": "invalid",
             "path": str(path),
@@ -282,6 +312,7 @@ def inspect_bundle(
             "errors": ["completion.json is symlinked"],
         }
     if completion_mode is not None and not stat.S_ISREG(completion_mode):
+        os.close(bundle_fd)
         return {
             "state": "invalid",
             "path": str(path),
@@ -294,7 +325,11 @@ def inspect_bundle(
         result_payload = None
         candidate = path / safe_result_member
         try:
-            candidate_mode = os.lstat(candidate).st_mode
+            candidate_mode = os.stat(
+                safe_result_member,
+                dir_fd=bundle_fd,
+                follow_symlinks=False,
+            ).st_mode
         except FileNotFoundError:
             candidate_mode = None
         except OSError as exc:
@@ -306,7 +341,10 @@ def inspect_bundle(
             corruption_errors.append("result member is present but non-regular")
         elif candidate_mode is not None:
             try:
-                result_payload = json.loads(candidate.read_text())
+                result_raw, _size = _read_at(
+                    bundle_fd, safe_result_member
+                )
+                result_payload = json.loads(result_raw)
                 if not isinstance(result_payload, dict):
                     raise ValueError("result member is not an object")
                 if recoverable_validator is not None:
@@ -317,7 +355,9 @@ def inspect_bundle(
         for name in safe_required:
             required_path = path / name
             try:
-                required_mode = os.lstat(required_path).st_mode
+                required_mode = os.stat(
+                    name, dir_fd=bundle_fd, follow_symlinks=False
+                ).st_mode
             except FileNotFoundError:
                 missing_required.append(name)
                 continue
@@ -338,8 +378,8 @@ def inspect_bundle(
             and not missing_errors
             and recoverable_validator is not None
         )
-        candidate_invalid = candidate_mode is not None and bool(corruption_errors)
-        return {
+        candidate_invalid = bool(corruption_errors)
+        state = {
             "state": (
                 "recoverable_validated"
                 if recoverable
@@ -353,10 +393,15 @@ def inspect_bundle(
                 for member in path.rglob("*") if member.is_file()
             ),
         }
+        os.close(bundle_fd)
+        return state
     try:
-        completion_raw = completion_path.read_bytes()
+        completion_raw, _completion_size = _read_at(
+            bundle_fd, "completion.json"
+        )
         completion = json.loads(completion_raw)
     except (OSError, ValueError) as exc:
+        os.close(bundle_fd)
         return {
             "state": "invalid",
             "path": str(path),
@@ -366,9 +411,11 @@ def inspect_bundle(
     errors = []
     if (
         not isinstance(completion, dict)
+        or set(completion) != {"schema", "protocol", "members", "metadata"}
         or completion.get("schema") != COMPLETION_SCHEMA
         or not isinstance(completion.get("members"), dict)
         or not completion.get("members")
+        or not isinstance(completion.get("metadata"), dict)
     ):
         errors.append("completion schema/members are invalid")
         members = {}
@@ -389,9 +436,13 @@ def inspect_bundle(
         except ValueError as exc:
             errors.append(str(exc))
             continue
-        member = path / relative
         try:
-            member_mode = os.lstat(member).st_mode
+            member_status = os.stat(
+                str(relative),
+                dir_fd=bundle_fd,
+                follow_symlinks=False,
+            )
+            member_mode = member_status.st_mode
         except OSError as exc:
             errors.append(f"committed member unreadable: {name}: {exc}")
             continue
@@ -401,10 +452,21 @@ def inspect_bundle(
         if not isinstance(expected, dict):
             errors.append(f"invalid committed metadata: {name}")
             continue
+        if (
+            set(expected) != {"sha256", "size"}
+            or not re.fullmatch(
+                r"[0-9a-f]{64}", str(expected.get("sha256") or "")
+            )
+            or type(expected.get("size")) is not int
+            or expected["size"] < 0
+        ):
+            errors.append(f"invalid committed metadata: {name}")
+            continue
         try:
+            digest, size = _hash_at(bundle_fd, str(relative))
             mismatch = (
-                sha256_file(member) != expected.get("sha256")
-                or member.stat().st_size != expected.get("size")
+                digest != expected.get("sha256")
+                or size != expected.get("size")
             )
         except OSError as exc:
             errors.append(f"committed member unreadable: {name}: {exc}")
@@ -414,7 +476,7 @@ def inspect_bundle(
     for name in safe_required:
         if name not in members:
             errors.append(f"required member not committed: {name}")
-    return {
+    result = {
         "state": "complete_valid" if not errors else "invalid",
         "path": str(path),
         "recoverable": False,
@@ -422,6 +484,8 @@ def inspect_bundle(
         "completion_sha256": hashlib.sha256(completion_raw).hexdigest(),
         "completion": completion,
     }
+    os.close(bundle_fd)
+    return result
 
 
 def publish_bundle(
@@ -436,10 +500,12 @@ def publish_bundle(
     _reject_symlink_components(path.parent, allow_missing_leaf=False)
     if not members:
         raise ValueError("portable bundle requires at least one member")
+    if type(members) is not dict or type(metadata) is not dict:
+        raise TypeError("bundle members and metadata must be plain dictionaries")
     normalized = {}
     for name, content in members.items():
         relative = _safe_member(name)
-        if not isinstance(content, bytes):
+        if type(content) is not bytes:
             raise TypeError(f"bundle member {name} is not bytes")
         normalized[str(relative)] = content
     if not path.parent.is_dir():
@@ -551,6 +617,40 @@ def publish_bundle(
     return inspection
 
 
+def read_committed_member(destination: Path, member_name: str) -> bytes:
+    name = str(_safe_member(member_name))
+    path = _absolute_lexical(destination)
+    inspection = inspect_bundle(path, required_members=(name,))
+    if inspection["state"] != "complete_valid":
+        raise BundlePublicationError(
+            f"bundle is not complete/valid: {inspection['errors']}"
+        )
+    directory_fd = _open_directory_chain(path)
+    try:
+        completion_raw, _size = _read_at(
+            directory_fd, "completion.json"
+        )
+        if hashlib.sha256(completion_raw).hexdigest() != inspection[
+            "completion_sha256"
+        ]:
+            raise BundlePublicationError(
+                "completion marker changed during committed read"
+            )
+        completion = json.loads(completion_raw)
+        payload, size = _read_at(directory_fd, name)
+        expected = completion["members"][name]
+        if (
+            hashlib.sha256(payload).hexdigest() != expected["sha256"]
+            or size != expected["size"]
+        ):
+            raise BundlePublicationError(
+                "committed member changed during read"
+            )
+        return payload
+    finally:
+        os.close(directory_fd)
+
+
 def legacy_renameat2_diagnostic(parent: Path) -> dict:
     """Report renameat2 behavior without making it part of publication."""
 
@@ -594,6 +694,39 @@ def capability_probe(
     bundle = probe_root / "bundle"
     try:
         legacy = renameat2_probe(probe_root)
+        hardlink_dir = probe_root / "hardlink"
+        hardlink_dir.mkdir()
+        first = hardlink_dir / "first.tmp"
+        second = hardlink_dir / "second.tmp"
+        final = hardlink_dir / "final"
+        first.write_bytes(b"first")
+        second.write_bytes(b"second")
+        os.link(first, final)
+        try:
+            os.link(second, final)
+        except FileExistsError:
+            hardlink_noreplace = final.read_bytes() == b"first"
+        else:
+            hardlink_noreplace = False
+
+        lock_path = probe_root / "flock.lock"
+        lock_fd = os.open(lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+        fcntl.flock(lock_fd, fcntl.LOCK_EX)
+        pid = os.fork()
+        if pid == 0:
+            child_fd = os.open(lock_path, os.O_RDWR)
+            try:
+                try:
+                    fcntl.flock(child_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    os._exit(0)
+                os._exit(1)
+            finally:
+                os.close(child_fd)
+        _pid, status = os.waitpid(pid, 0)
+        flock_exclusive = os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0
+        fcntl.flock(lock_fd, fcntl.LOCK_UN)
+        os.close(lock_fd)
         publication = publish_bundle(
             bundle,
             members={"result.json": b'{"probe":true}\n'},
@@ -607,8 +740,12 @@ def capability_probe(
             ),
             "portable_protocol": publication["state"],
             "legacy_renameat2": legacy,
+            "hardlink_noreplace": hardlink_noreplace,
+            "flock_exclusive": flock_exclusive,
             "ready_for_recovery_probe_only": (
                 publication["state"] == "complete_valid"
+                and hardlink_noreplace
+                and flock_exclusive
             ),
         }
     finally:

@@ -38,17 +38,26 @@ mkdir -p "$PROBE_ROOT" "$REVIEW_ROOT"
   echo "Set APPROVED_PORTABLE_BUNDLE_SHA256 to the reviewed src/portable_bundle.py hash." >&2
   exit 2
 }
+[[ "$(sha256sum src/portable_bundle.py | awk '{print $1}')" \
+   == "$APPROVED_PORTABLE_BUNDLE_SHA256" ]] || {
+  echo "Current portable_bundle.py differs from approved hash." >&2
+  exit 2
+}
 PROBE_REPORT="$REVIEW_ROOT/filesystem-capability.${APPROVED_PORTABLE_BUNDLE_SHA256}.json"
 if [[ ! -f "$PROBE_REPORT" ]]; then
   python -u src/probe_portable_publication.py \
     --directory "$PROBE_ROOT" \
     --out "$PROBE_REPORT"
 fi
-python - "$PROBE_REPORT" "$APPROVED_PORTABLE_BUNDLE_SHA256" <<'PY'
+python - "$PROBE_REPORT" "$APPROVED_PORTABLE_BUNDLE_SHA256" "$PROBE_ROOT" <<'PY'
 import json,sys
 d=json.load(open(sys.argv[1]))
 assert d["portable_protocol"] == "complete_valid"
 assert d["implementation_sha256"] == sys.argv[2]
+assert d["parent"] == __import__("os").path.realpath(sys.argv[3])
+assert d["hardlink_noreplace"] is True
+assert d["flock_exclusive"] is True
+assert d["ready_for_recovery_probe_only"] is True
 PY
 
 [[ -n "${APPROVED_SOURCE_CAMPAIGN_SHA256:-}" ]] || {
@@ -134,5 +143,7 @@ fi
 Afterward, run the read-only strict check
 `monitor_k40_factorial_mip_screen.py --campaign-root "$CAMPAIGN"
 --source-campaign-sha256 "$APPROVED_SOURCE_CAMPAIGN_SHA256"
---require-complete`. It reports complete valid outputs, recoverable validated
+--require-complete
+--approved-recovery-plan-sha256 "$APPROVED_RECOVERY_PLAN_SHA256"`. It reports
+complete valid outputs, recoverable validated
 raw outputs, incomplete publication, and missing/invalid results separately.

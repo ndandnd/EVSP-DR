@@ -934,7 +934,9 @@ def main(argv=None) -> int:
     plan_sha = hashlib.sha256(plan_raw).hexdigest()
     print(json.dumps(plan, indent=2))
     print(f"[approval-sha256] {plan_sha}")
-    if args.plan_out:
+    if args.plan_out and not (
+        args.mode == "two-cell" and plan["blocked"]
+    ):
         _write_new_atomic(args.plan_out, plan_raw)
     if not args.submit:
         print("[dry-run] no Slurm jobs submitted")

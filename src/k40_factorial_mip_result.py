@@ -122,32 +122,22 @@ def validate_scientific_result(
     ):
         raise ValueError("validated start evidence is incomplete/rejected")
     columns = start.get("actual_start_columns")
-    hashes = start.get("actual_start_column_hashes")
-    if isinstance(columns, list):
-        if (
-            len(columns) != 40
-            or any(
-                not isinstance(column, dict)
-                or type(column.get("index")) is not int
-                or not re.fullmatch(
-                    r"[0-9a-f]{64}", str(column.get("sha256") or "")
-                )
-                for column in columns
-            )
-            or len({column["index"] for column in columns}) != 40
-            or len({column["sha256"] for column in columns}) != 40
-        ):
-            raise ValueError("actual start columns are malformed")
-    elif (
-        not isinstance(hashes, list)
-        or len(hashes) != 40
+    if (
+        not isinstance(columns, list)
+        or len(columns) != 40
         or any(
-            not re.fullmatch(r"[0-9a-f]{64}", str(value or ""))
-            for value in hashes
+            not isinstance(column, dict)
+            or set(column) != {"index", "sha256"}
+            or type(column.get("index")) is not int
+            or not re.fullmatch(
+                r"[0-9a-f]{64}", str(column.get("sha256") or "")
+            )
+            for column in columns
         )
-        or len(set(hashes)) != 40
+        or len({column["index"] for column in columns}) != 40
+        or len({column["sha256"] for column in columns}) != 40
     ):
-        raise ValueError("actual start column hashes are missing")
+        raise ValueError("actual start columns are malformed")
     loaded_status, pool_routes, loaded_trips = load_pool(
         Path(spec["staged_result"])
     )
@@ -178,12 +168,12 @@ def validate_scientific_result(
             ).encode()).hexdigest()
             for index in start_indices
         ]
-    observed_hashes = (
-        [column["sha256"] for column in columns]
-        if isinstance(columns, list) else hashes
-    )
-    if observed_hashes != expected_hashes:
-        raise ValueError("actual start column hashes differ from replay")
+    expected_columns = [
+        {"index": index, "sha256": digest}
+        for index, digest in zip(start_indices, expected_hashes)
+    ]
+    if columns != expected_columns:
+        raise ValueError("actual start columns differ from replay")
     selected = result.get("selected_routes")
     buses = result.get("buses")
     if not isinstance(selected, list) or type(buses) is not int:

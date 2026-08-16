@@ -21,7 +21,10 @@ from collections import defaultdict
 from pathlib import Path
 
 from durable_io import read_jsonl_records
-from portable_bundle import inspect_bundle, publish_bundle
+from portable_bundle import (
+    publish_bundle,
+    read_committed_member,
+)
 from run_exact_pool_mip import resolve_pool_journal
 
 
@@ -895,6 +898,14 @@ def _verified_scale_evidence(
         files = [path] if path.is_file() else sorted(path.rglob("*.json"))
         for candidate in files:
             try:
+                if candidate.name == "result.json":
+                    raw = read_committed_member(
+                        candidate.parent, "result.json"
+                    )
+                    payloads.append((
+                        candidate, json.loads(raw)
+                    ))
+                    continue
                 payloads.append((
                     candidate, json.loads(candidate.read_text())
                 ))
@@ -904,14 +915,7 @@ def _verified_scale_evidence(
             if not isinstance(payload, dict):
                 continue
             if "partitioning" in payload:
-                bundle = inspect_bundle(
-                    candidate.parent,
-                    required_members=(candidate.name,),
-                )
-                if (
-                    candidate.name != "result.json"
-                    or bundle["state"] != "complete_valid"
-                ):
+                if candidate.name != "result.json":
                     continue
             flags = _validated_scale_flags(
                 candidate, payload, trusted=True
