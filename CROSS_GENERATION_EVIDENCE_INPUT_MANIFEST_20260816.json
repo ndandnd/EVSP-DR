@@ -133,7 +133,7 @@
     {
       "request_id": "current-heuristic-k10",
       "root_alias": "current_heuristic",
-      "glob": "**/*10*pricing*cols*.csv",
+      "glob": "**/pricing_*10*cols*.csv",
       "artifact_type": "heuristic_dp_current_csv",
       "run_id_namespace": "current-heuristic",
       "run_id_regex": "(?P<run_id>[^/]+)/[^/]+\\.csv$",
@@ -148,7 +148,7 @@
     {
       "request_id": "current-heuristic-k20",
       "root_alias": "current_heuristic",
-      "glob": "**/*20*pricing*cols*.csv",
+      "glob": "**/pricing_*20*cols*.csv",
       "artifact_type": "heuristic_dp_current_csv",
       "run_id_namespace": "current-heuristic",
       "run_id_regex": "(?P<run_id>[^/]+)/[^/]+\\.csv$",
@@ -286,6 +286,7 @@
       "request_id": "exact-big-endpoints",
       "root_alias": "exact_big",
       "glob": "**/*soc*_res*.json",
+      "exclude_regex": "(?:\\.snapshot|_mip)\\.json$",
       "artifact_type": "endpoint_json",
       "run_id_namespace": "exact-big",
       "run_id_regex": "(?P<run_id>[^/]+?)\\.json$",
@@ -399,10 +400,11 @@
     {
       "request_id": "mip-checkpoints",
       "root_alias": "mip_campaign",
-      "glob": "progress/**/checkpoint_*.json",
+      "glob": "*/progress/**/checkpoint_*.json",
       "artifact_type": "mip_checkpoint",
       "run_id_namespace": "mip",
-      "run_id_regex": "progress/(?P<run_id>[^/]+)/checkpoint_\\d+m\\.json$",
+      "run_id_regex": "(?P<campaign>[^/]+)/progress/(?P<cell>[^/]+)/checkpoint_\\d+m\\.json$",
+      "run_id_template": "{campaign}:{cell}",
       "required": false,
       "metadata": {
         "algorithm_family": "mip_finite_pool",
@@ -415,10 +417,11 @@
     {
       "request_id": "mip-source-status",
       "root_alias": "mip_campaign",
-      "glob": "input/*/*.snapshot.json",
+      "glob": "*/input/*/*.snapshot.json",
       "artifact_type": "mip_pool_status_json",
       "run_id_namespace": "mip",
-      "run_id_regex": "input/(?P<run_id>[^/]+)/[^/]+\\.snapshot\\.json$",
+      "run_id_regex": "(?P<campaign>[^/]+)/input/(?P<cell>[^/]+)/[^/]+\\.snapshot\\.json$",
+      "run_id_template": "{campaign}:{cell}",
       "required": false,
       "metadata": {
         "algorithm_family": "mip_finite_pool",
@@ -431,10 +434,11 @@
     {
       "request_id": "mip-source-journal",
       "root_alias": "mip_campaign",
-      "glob": "input/*/*.snapshot.json.columns.jsonl",
+      "glob": "*/input/*/*.snapshot.json.columns.jsonl",
       "artifact_type": "exact_cg_column_journal_jsonl",
       "run_id_namespace": "mip",
-      "run_id_regex": "input/(?P<run_id>[^/]+)/[^/]+\\.snapshot\\.json\\.columns\\.jsonl$",
+      "run_id_regex": "(?P<campaign>[^/]+)/input/(?P<cell>[^/]+)/[^/]+\\.snapshot\\.json\\.columns\\.jsonl$",
+      "run_id_template": "{campaign}:{cell}",
       "required": false,
       "metadata": {
         "algorithm_family": "mip_finite_pool",
@@ -447,10 +451,11 @@
     {
       "request_id": "mip-validated-start",
       "root_alias": "mip_campaign",
-      "glob": "input/*/validated_start.json",
+      "glob": "*/input/*/validated_start.json",
       "artifact_type": "route_validation_json",
       "run_id_namespace": "mip",
-      "run_id_regex": "input/(?P<run_id>[^/]+)/validated_start\\.json$",
+      "run_id_regex": "(?P<campaign>[^/]+)/input/(?P<cell>[^/]+)/validated_start\\.json$",
+      "run_id_template": "{campaign}:{cell}",
       "required": false,
       "metadata": {
         "algorithm_family": "mip_finite_pool",
@@ -463,10 +468,11 @@
     {
       "request_id": "mip-finals",
       "root_alias": "mip_campaign",
-      "glob": "outputs/*.json",
+      "glob": "*/outputs/*.json",
       "artifact_type": "mip_final",
       "run_id_namespace": "mip",
-      "run_id_regex": "outputs/(?P<run_id>[^/]+)\\.json$",
+      "run_id_regex": "(?P<campaign>[^/]+)/outputs/(?P<cell>[^/]+)\\.json$",
+      "run_id_template": "{campaign}:{cell}",
       "required": false,
       "metadata": {
         "algorithm_family": "mip_finite_pool",

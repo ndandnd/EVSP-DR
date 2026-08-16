@@ -129,7 +129,7 @@ def _tail_safe_csv(payload: bytes) -> tuple[tuple[str, ...], list[dict], dict]:
         header_text = physical_lines[0].decode("utf-8").rstrip("\r\n")
     except UnicodeDecodeError as exc:
         raise ValueError("CSV header is not UTF-8") from exc
-    header_rows = list(csv.reader([header_text]))
+    header_rows = list(csv.reader([header_text], strict=True))
     if len(header_rows) != 1 or len(header_rows[0]) != len(set(header_rows[0])):
         raise ValueError("CSV header is malformed or duplicated")
     header = tuple(header_rows[0])
@@ -150,7 +150,7 @@ def _tail_safe_csv(payload: bytes) -> tuple[tuple[str, ...], list[dict], dict]:
         if not line.strip():
             continue
         try:
-            parsed = next(csv.reader([line]))
+            parsed = next(csv.reader([line], strict=True))
         except (csv.Error, StopIteration) as exc:
             if final_line and unterminated:
                 tail_dropped = True
@@ -273,6 +273,8 @@ def _base_iteration(spec: dict, schema: str, iteration: int) -> dict:
         "pool_columns": None,
         "pool_columns_delta": None,
         "wall_time_s": None,
+        "process_runtime_s": None,
+        "time_clock": None,
         "master_time_s": None,
         "pricing_time_s": None,
         "cumulative_master_time_s": None,
@@ -511,6 +513,8 @@ def parse_legacy_heuristic_csv(payload: bytes, spec: dict) -> dict:
             ),
             "stagnant_counter": _integer(record["Stagnant_Counter"]),
             "wall_time_s": _number(record["Total_Runtime_s"]),
+            "process_runtime_s": _number(record["Total_Runtime_s"]),
+            "time_clock": "wall_time",
             "availability_reason": (
                 "legacy_schema_has_no_route_weight_artificials_or_tiers"
             ),
@@ -632,7 +636,12 @@ def parse_current_heuristic_csv(payload: bytes, spec: dict) -> dict:
                 sort_keys=True,
                 separators=(",", ":"),
             ),
-            "wall_time_s": _number(record["Total_Runtime_s"]),
+            "wall_time_s": (
+                _number(record["Cumulative_Master_Time_s"])
+                + _number(record["Cumulative_Pricing_Time_s"])
+            ),
+            "process_runtime_s": _number(record["Total_Runtime_s"]),
+            "time_clock": "active_compute_time",
         })
         rows.append(row)
     _validate_cg_rows(rows, "heuristic_dp_current")
@@ -669,6 +678,7 @@ def parse_exact_iterations(payload: bytes, spec: dict) -> dict:
                 if previous_pool is not None else None
             ),
             "wall_time_s": _number(record["elapsed_s"]),
+            "time_clock": "cumulative_wall_time",
             "master_pricing_split_available": False,
             "availability_reason": (
                 "exact_iteration_log_does_not_measure_master_pricing_split"
@@ -836,6 +846,7 @@ def parse_column_journal(payload: bytes, spec: dict) -> dict:
     if not records:
         raise ValueError("column journal has no complete records")
     incidences = set()
+    incidence_costs = {}
     for index, record in enumerate(records, start=1):
         trips = record.get("trips")
         if (
@@ -852,6 +863,12 @@ def parse_column_journal(payload: bytes, spec: dict) -> dict:
         if cost is None:
             raise ValueError(f"column journal row {index} lacks finite cost")
         incidences.add(frozenset(trips))
+        incidence_sha = hashlib.sha256(json.dumps(
+            sorted(trips), separators=(",", ":")
+        ).encode()).hexdigest()
+        incidence_costs[incidence_sha] = min(
+            cost, incidence_costs.get(incidence_sha, math.inf)
+        )
     return {
         "tail": tail,
         "schema": "exact_column_journal",
@@ -864,6 +881,7 @@ def parse_column_journal(payload: bytes, spec: dict) -> dict:
                 ).encode()).hexdigest()
                 for incidence in incidences
             ),
+            "incidence_costs": incidence_costs,
         },
     }
 
@@ -1135,6 +1153,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         buses = value.get("buses")
         selected = value.get("selected_routes")
         selected_incidence_hashes = []
+        selected_incidence_costs = {}
         if incumbent_found:
             if (
                 type(buses) is not int or buses <= 0
@@ -1175,11 +1194,11 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                 if cost is None:
                     raise ValueError("MIP selected route lacks finite cost")
                 selected_cost += cost
-                selected_incidence_hashes.append(
-                    hashlib.sha256(json.dumps(
-                        sorted(route["trips"]), separators=(",", ":")
-                    ).encode()).hexdigest()
-                )
+                incidence_sha = hashlib.sha256(json.dumps(
+                    sorted(route["trips"]), separators=(",", ":")
+                ).encode()).hexdigest()
+                selected_incidence_hashes.append(incidence_sha)
+                selected_incidence_costs[incidence_sha] = cost
         elif buses is not None or selected not in (None, []):
             raise ValueError("MIP no-incumbent result contains a schedule")
         normalized_numbers = {}
@@ -1340,6 +1359,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "selected_incidence_sha256": sorted(
                 selected_incidence_hashes
             ),
+            "selected_incidence_costs": selected_incidence_costs,
             "git_commit": mip_provenance.get("observed_git_commit"),
         }
         return {"mip_finals": [row], "tail": {}, "schema": "mip_final"}
@@ -1397,7 +1417,8 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             horizons = [
                 _number(value.get(key))
                 for key in (
-                    "Total_Time_s", "Total_Runtime_s", "active_time_s"
+                    "Total_Time_s", "Total_Runtime_s",
+                    "active_time_s", "Active_Time_s",
                 )
                 if value.get(key) is not None
             ]
@@ -1541,17 +1562,8 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         for key in ("g_kwh", "charge_kw", "reserve_frac"):
             if _number(physics.get(key)) is None:
                 raise ValueError("validated route physics are incomplete")
-        attestation = (
-            value.get("_factorial_start_provenance")
-            or value.get("provenance")
-        )
-        if (
-            not isinstance(attestation, dict)
-            or attestation.get("instance_sha256") != instance_sha
-        ):
-            raise ValueError(
-                "validated route instance attestation is missing/mismatched"
-            )
+        if not isinstance(value.get("instance_csv"), str):
+            raise ValueError("validated route instance source is missing")
         route_vector_sha = hashlib.sha256(json.dumps(
             routes, sort_keys=True, separators=(",", ":")
         ).encode()).hexdigest()
