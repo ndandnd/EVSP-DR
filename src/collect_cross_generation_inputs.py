@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 from pathlib import Path
 
 
@@ -27,8 +28,28 @@ def _assignments(values):
         name, raw = value.split("=", 1)
         if not name or name in result:
             raise ValueError(f"duplicate/empty root alias: {name}")
-        result[name] = Path(raw).expanduser().absolute()
+        path = Path(raw).expanduser().absolute()
+        if path.is_symlink():
+            raise ValueError(f"root alias is symlinked: {path}")
+        result[name] = path
     return result
+
+
+def _safe_match(root: Path, path: Path) -> bool:
+    resolved_root = root.resolve()
+    resolved = path.resolve()
+    if resolved_root not in resolved.parents:
+        return False
+    current = root
+    for part in path.relative_to(root).parts:
+        current = current / part
+        try:
+            mode = os.lstat(current).st_mode
+        except OSError:
+            return False
+        if stat.S_ISLNK(mode):
+            return False
+    return path.is_file()
 
 
 def collect(template_path: Path, roots: dict[str, Path]) -> dict:
@@ -54,9 +75,14 @@ def collect(template_path: Path, roots: dict[str, Path]) -> dict:
                 "path": str(root),
             })
             continue
+        glob_path = Path(request["glob"])
+        if glob_path.is_absolute() or ".." in glob_path.parts:
+            raise ValueError(
+                f"unsafe collection glob: {request['glob']}"
+            )
         matches = sorted(
             path for path in root.glob(request["glob"])
-            if path.is_file() and not path.is_symlink()
+            if _safe_match(root, path)
         )
         if not matches:
             collection.append({
@@ -133,13 +159,23 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     result = collect(args.template, _assignments(args.root))
     args.out_manifest.parent.mkdir(parents=True, exist_ok=True)
+    temporary = args.out_manifest.with_name(
+        f".{args.out_manifest.name}.tmp.{os.getpid()}"
+    )
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-    descriptor = os.open(args.out_manifest, flags, 0o600)
+    descriptor = os.open(temporary, flags, 0o600)
     with os.fdopen(descriptor, "w") as handle:
         json.dump(result, handle, indent=2, sort_keys=True)
         handle.write("\n")
         handle.flush()
         os.fsync(handle.fileno())
+    try:
+        os.link(temporary, args.out_manifest, follow_symlinks=False)
+    finally:
+        temporary.unlink(missing_ok=True)
+    parent_fd = os.open(args.out_manifest.parent, os.O_RDONLY | os.O_DIRECTORY)
+    os.fsync(parent_fd)
+    os.close(parent_fd)
     print(json.dumps({
         "out_manifest": str(args.out_manifest),
         "artifacts": len(result["artifacts"]),

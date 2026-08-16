@@ -81,6 +81,45 @@ class CrossGenerationCollectorTests(unittest.TestCase):
                     "--out-manifest", str(output),
                 ])
 
+    def test_collector_rejects_escape_glob_and_symlinked_artifact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            outside = root / "outside"
+            source.mkdir()
+            outside.mkdir()
+            (outside / "escape.csv").write_text("x\n")
+            template = root / "template.json"
+            template.write_text(json.dumps({
+                "schema": "evsp-dr-cross-generation-input-manifest-v1",
+                "artifacts": [],
+                "collection_requests": [{
+                    "request_id": "escape",
+                    "root_alias": "source",
+                    "glob": "../outside/*.csv",
+                    "artifact_type": "heuristic_dp_current_csv",
+                }],
+            }))
+            with self.assertRaisesRegex(ValueError, "unsafe"):
+                collect(template, {"source": source})
+
+            template.write_text(json.dumps({
+                "schema": "evsp-dr-cross-generation-input-manifest-v1",
+                "artifacts": [],
+                "collection_requests": [{
+                    "request_id": "safe",
+                    "root_alias": "source",
+                    "glob": "*.csv",
+                    "artifact_type": "heuristic_dp_current_csv",
+                }],
+            }))
+            (source / "link.csv").symlink_to(outside / "escape.csv")
+            result = collect(template, {"source": source})
+            self.assertEqual(result["artifacts"], [])
+            self.assertEqual(
+                result["collection_report"][0]["status"], "no_matches"
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
