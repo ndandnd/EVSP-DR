@@ -1,0 +1,43 @@
+#!/bin/bash
+# Archive two completed k40 factorial campaigns on a compute node.
+# Submit manually only after reviewing all paths; no requeue/resume.
+#SBATCH --job-name=K40-FX-ARCH
+#SBATCH --partition=default_partition
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=32G
+#SBATCH --time=04:00:00
+#SBATCH --no-requeue
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+fatal() {
+  echo "[K40-ARCHIVE] FATAL: $*" >&2
+  exit 2
+}
+
+[[ "$#" -eq 5 ]] \
+  || fatal "usage: $0 CAMPAIGN1 CAMPAIGN2 HISTORICAL ACCOUNTING OUT_TAR_GZ"
+ROOT=${EVSP_DR_ROOT:?EVSP_DR_ROOT is required}
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:?EVSP_EXPECTED_COMMIT is required}
+PYTHON=${EVSP_PROFILE_PYTHON:?EVSP_PROFILE_PYTHON is required}
+[[ "$(git -C "$ROOT" rev-parse HEAD)" == "$EXPECTED_COMMIT" ]] \
+  || fatal "commit mismatch"
+if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "archive checkout must be detached"
+fi
+tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no)
+[[ -z "$tracked" ]] || fatal "archive checkout has tracked changes"
+"$PYTHON" -c 'import sys; assert sys.version_info[:2] == (3, 12)' \
+  || fatal "archive Python must be 3.12"
+
+cd "$ROOT"
+"$PYTHON" -u src/archive_k40_factorial.py \
+  --campaign-dir "$1" \
+  --campaign-dir "$2" \
+  --historical "$3" \
+  --slurm-accounting "$4" \
+  --out "$5"
