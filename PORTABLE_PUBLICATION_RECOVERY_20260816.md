@@ -52,12 +52,16 @@ fi
 python - "$PROBE_REPORT" "$APPROVED_PORTABLE_BUNDLE_SHA256" "$PROBE_ROOT" <<'PY'
 import json,sys
 d=json.load(open(sys.argv[1]))
-assert d["portable_protocol"] == "complete_valid"
-assert d["implementation_sha256"] == sys.argv[2]
-assert d["parent"] == __import__("os").path.realpath(sys.argv[3])
-assert d["hardlink_noreplace"] is True
-assert d["flock_exclusive"] is True
-assert d["ready_for_recovery_probe_only"] is True
+expected = {
+  "portable_protocol": "complete_valid",
+  "implementation_sha256": sys.argv[2],
+  "parent": __import__("os").path.realpath(sys.argv[3]),
+  "hardlink_noreplace": True,
+  "flock_exclusive": True,
+  "ready_for_recovery_probe_only": True,
+}
+if any(d.get(key) != value for key, value in expected.items()):
+    raise SystemExit("publication probe report does not match approval")
 PY
 
 [[ -n "${APPROVED_SOURCE_CAMPAIGN_SHA256:-}" ]] || {
@@ -109,11 +113,11 @@ python -u src/launch_mip_statistics_campaign.py \
   --root "fresh_preparation=$SOURCE_ROOT/src/results/mip_statistics_prep" \
   --data-root "$SOURCE_ROOT/data" \
   --inventory-out "$INVENTORY_OUT"
+  (cd "$(dirname "$INVENTORY_OUT")" && \
+    sha256sum "$(basename "$INVENTORY_OUT")" > "$(basename "$INVENTORY_OUT").sha256")
 fi
 (cd "$(dirname "$INVENTORY_OUT")" && \
-  test -f "$(basename "$INVENTORY_OUT").sha256" || \
-  sha256sum "$(basename "$INVENTORY_OUT")" > "$(basename "$INVENTORY_OUT").sha256")
-(cd "$(dirname "$INVENTORY_OUT")" && \
+  test -f "$(basename "$INVENTORY_OUT").sha256" && \
   sha256sum -c "$(basename "$INVENTORY_OUT").sha256")
 
 # Dry run only: one k40 RAW cell and the identical pool plus GIRO columns/start.
@@ -132,12 +136,28 @@ python -u src/launch_mip_statistics_campaign.py \
   --giro-start "40=$CAMPAIGN/input/common/validated_start.json" \
   --python "$HOME/evsp_env/bin/python" \
   --plan-out "$PILOT_OUT"
+  (cd "$(dirname "$PILOT_OUT")" && \
+    sha256sum "$(basename "$PILOT_OUT")" > "$(basename "$PILOT_OUT").sha256")
 fi
 (cd "$(dirname "$PILOT_OUT")" && \
-  test -f "$(basename "$PILOT_OUT").sha256" || \
-  sha256sum "$(basename "$PILOT_OUT")" > "$(basename "$PILOT_OUT").sha256")
-(cd "$(dirname "$PILOT_OUT")" && \
+  test -f "$(basename "$PILOT_OUT").sha256" && \
   sha256sum -c "$(basename "$PILOT_OUT").sha256")
+python - "$PILOT_OUT" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+jobs=d.get("jobs")
+if (
+    d.get("schema") != "evsp-dr-mip-statistics-approved-plan-v1"
+    or d.get("mode") != "two-cell"
+    or d.get("blocked") is not False
+    or not isinstance(jobs, list)
+    or len(jobs) != 2
+    or {job.get("arm") for job in jobs} != {"RAW", "GIRO"}
+    or any(job.get("time_limit_s") != 1800 for job in jobs)
+    or any(job.get("partitioning") != "strict_exact_once" for job in jobs)
+):
+    raise SystemExit("two-cell pilot plan is blocked or malformed")
+PY
 ```
 
 Afterward, run the read-only strict check

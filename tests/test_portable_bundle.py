@@ -287,6 +287,17 @@ class PortableBundleTests(unittest.TestCase):
                 "metadata": {"bad": float("nan")},
             }))
             self.assertEqual(inspect_bundle(bundle)["state"], "invalid")
+            (bundle / "completion.json").write_text(
+                '{"schema":"evsp-dr-portable-bundle-completion-v1",'
+                '"protocol":{"destination_reserved_by":"mkdir",'
+                '"member_publication":"same-directory-temp-plus-hardlink-noreplace",'
+                '"commit_marker":"completion.json-published-last",'
+                '"renameat2_required":true,"renameat2_required":false},'
+                '"members":{"result.json":{"sha256":"'
+                + hashlib.sha256(b"{}").hexdigest()
+                + '","size":2}},"metadata":{}}'
+            )
+            self.assertEqual(inspect_bundle(bundle)["state"], "invalid")
 
 
 if __name__ == "__main__":

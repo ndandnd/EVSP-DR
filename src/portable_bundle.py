@@ -41,6 +41,15 @@ def _reject_json_constant(value):
     raise ValueError(f"non-finite JSON constant is forbidden: {value}")
 
 
+def _strict_json_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key is forbidden: {key}")
+        result[key] = value
+    return result
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -412,7 +421,12 @@ def inspect_bundle(
         )
         candidate_invalid = bool(corruption_errors)
         present_members = []
-        for present in sorted(os.listdir(bundle_fd)):
+        try:
+            directory_entries = sorted(os.listdir(bundle_fd))
+        except OSError as exc:
+            corruption_errors.append(str(exc))
+            directory_entries = []
+        for present in directory_entries:
             try:
                 present_mode = os.stat(
                     present, dir_fd=bundle_fd, follow_symlinks=False
@@ -426,7 +440,7 @@ def inspect_bundle(
                 corruption_errors.append(
                     f"bundle entry is symlinked: {present}"
                 )
-            elif present != ".publication.lock":
+            else:
                 corruption_errors.append(
                     f"bundle entry is non-regular: {present}"
                 )
@@ -451,7 +465,9 @@ def inspect_bundle(
             bundle_fd, "completion.json"
         )
         completion = json.loads(
-            completion_raw, parse_constant=_reject_json_constant
+            completion_raw,
+            parse_constant=_reject_json_constant,
+            object_pairs_hook=_strict_json_object,
         )
     except (OSError, ValueError, BundlePublicationError) as exc:
         os.close(bundle_fd)
@@ -599,6 +615,9 @@ def publish_bundle(
             raise IncompleteBundleError(
                 f"existing destination is not recoverable: {path}"
             )
+    except Exception:
+        os.close(parent_fd)
+        raise
     flags = os.O_RDONLY | os.O_DIRECTORY
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW

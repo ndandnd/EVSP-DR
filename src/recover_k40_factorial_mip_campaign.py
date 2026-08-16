@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 from pathlib import Path
 
@@ -85,6 +86,20 @@ def _load_object(path: Path) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"JSON artifact is not an object: {path}")
     return value
+
+
+def _read_no_follow(path: Path) -> bytes:
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(path, flags)
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise ValueError(f"artifact is not regular: {path}")
+        with os.fdopen(os.dup(descriptor), "rb") as handle:
+            return handle.read()
+    finally:
+        os.close(descriptor)
 
 
 def _verify_file(path_value, expected, label) -> Path:
@@ -218,8 +233,40 @@ def _prepare_job(
         candidate, method, preserved = _candidate_result(job, spec)
         if candidate is None:
             raise ValueError("no raw result or temporary result bundle found")
-        raw_sha = sha256_file(candidate)
-        raw = _load_object(candidate)
+        candidate_raw = _read_no_follow(candidate)
+        raw_sha = hashlib.sha256(candidate_raw).hexdigest()
+        preserved_entry = next(
+            (
+                item for item in preserved
+                if item["path"] == str(candidate)
+                and item["kind"] == "file"
+            ),
+            None,
+        )
+        if preserved_entry is None:
+            for item in preserved:
+                if item["kind"] != "directory":
+                    continue
+                directory = Path(item["path"])
+                if directory in candidate.parents:
+                    relative = str(candidate.relative_to(directory))
+                    member = item["members"].get(relative)
+                    if member and member.get("type") == "file":
+                        preserved_entry = {
+                            "sha256": member["sha256"],
+                            "size": member["size"],
+                        }
+                    break
+        if preserved_entry is None:
+            raise ValueError("raw result is absent from preservation inventory")
+        if (
+            preserved_entry["sha256"] != raw_sha
+            or preserved_entry["size"] != len(candidate_raw)
+        ):
+            raise ValueError("raw result changed while being inventoried")
+        raw = json.loads(candidate_raw)
+        if not isinstance(raw, dict):
+            raise ValueError("raw result is not a JSON object")
         recovery = {
             "job_spec_sha256": job["spec_sha256"],
             "worker_sha256": manifest["worker_sha256"],
