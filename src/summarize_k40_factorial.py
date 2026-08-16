@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import csv
+import ctypes
+import errno
 import io
 import json
 import os
@@ -123,7 +125,8 @@ def summarize(campaign_dirs: list[Path], historical_path: Path) -> dict:
         ),
         (
             "Route weight is reported independently of artificials; "
-            "feasible_route_weight is null whenever artificials exceed 1e-6."
+            "feasible_route_weight is non-null only when recorded artificials "
+            "are exactly zero."
         ),
         (
             "Deltas from 39.252026205592166 are reported only for real "
@@ -246,6 +249,29 @@ def _write_new(path: Path, payload: bytes) -> None:
             temporary.unlink()
 
 
+def _rename_noreplace(source: Path, destination: Path) -> None:
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = getattr(libc, "renameat2", None)
+    if renameat2 is None:
+        raise RuntimeError("atomic no-replace directory publication unavailable")
+    renameat2.argtypes = [
+        ctypes.c_int, ctypes.c_char_p,
+        ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
+    ]
+    renameat2.restype = ctypes.c_int
+    result = renameat2(
+        -100, os.fsencode(source),
+        -100, os.fsencode(destination),
+        1,
+    )
+    if result == 0:
+        return
+    error = ctypes.get_errno()
+    if error == errno.EEXIST:
+        raise FileExistsError(f"refusing to overwrite bundle: {destination}")
+    raise OSError(error, os.strerror(error), str(destination))
+
+
 def publish(payload: dict, output_prefix: Path) -> dict:
     prefix = output_prefix.expanduser().resolve()
     bundle = Path(str(prefix) + ".bundle")
@@ -280,9 +306,7 @@ def publish(payload: dict, output_prefix: Path) -> dict:
             os.fsync(directory)
         finally:
             os.close(directory)
-        if os.path.lexists(bundle):
-            raise FileExistsError(f"refusing to overwrite bundle: {bundle}")
-        os.rename(staging, bundle)
+        _rename_noreplace(staging, bundle)
         parent = os.open(bundle.parent, os.O_RDONLY)
         try:
             os.fsync(parent)

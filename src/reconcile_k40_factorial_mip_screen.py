@@ -21,16 +21,25 @@ def _run(command: list[str]) -> str:
     return completed.stdout
 
 
-def _query(job_name: str, start_date: str, expected_comment: str) -> list[dict]:
+def _query(
+    job_name: str,
+    start_date: str,
+    expected_comment: str,
+    expected_user: str,
+) -> list[dict]:
     matches = {}
     for line in _run([
-        "squeue", "-h", "--name", job_name, "-o", "%i|%j|%T|%k",
+        "squeue", "-h", "--name", job_name, "-o", "%i|%j|%T|%u|%k",
     ]).splitlines():
         fields = line.split("|")
-        if len(fields) < 4 or fields[1] != job_name:
+        if (
+            len(fields) < 5
+            or fields[1] != job_name
+            or fields[3] != expected_user
+        ):
             continue
-        comment = fields[3]
-        if comment not in {"", "(null)", expected_comment}:
+        comment = fields[4]
+        if comment != expected_comment:
             continue
         matches[fields[0]] = {
             "job_id": fields[0],
@@ -42,17 +51,18 @@ def _query(job_name: str, start_date: str, expected_comment: str) -> list[dict]:
     for line in _run([
         "sacct", "-X", "-n", "-P", "--name", job_name,
         "--starttime", start_date,
-        "--format=JobIDRaw,JobName,State,Submit,Start,Elapsed,ExitCode,Comment",
+        "--format=JobIDRaw,JobName,State,Submit,Start,Elapsed,ExitCode,User,Comment",
     ]).splitlines():
         fields = line.split("|")
         if (
-            len(fields) < 8
+            len(fields) < 9
             or "." in fields[0]
             or fields[1] != job_name
+            or fields[7] != expected_user
         ):
             continue
-        comment = fields[7]
-        if comment not in {"", "(null)", expected_comment}:
+        comment = fields[8]
+        if comment != expected_comment:
             continue
         matches[fields[0]] = {
             "job_id": fields[0],
@@ -62,6 +72,7 @@ def _query(job_name: str, start_date: str, expected_comment: str) -> list[dict]:
             "start": fields[4],
             "elapsed": fields[5],
             "exit_code": fields[6],
+            "user": fields[7],
             "comment": comment,
             "source": "sacct",
         }
@@ -81,6 +92,9 @@ def _validate_manifest(manifest: dict) -> list[dict]:
         raise ValueError("escalation campaign job count is invalid")
     if mode not in {"screen", "escalation"}:
         raise ValueError("MIP campaign mode is invalid")
+    if not isinstance(manifest.get("submission_user"), str) \
+            or not manifest["submission_user"]:
+        raise ValueError("MIP campaign submission user is invalid")
     for field in ("label", "job_name", "slurm_comment"):
         values = [job.get(field) for job in jobs]
         if (
@@ -90,6 +104,31 @@ def _validate_manifest(manifest: dict) -> list[dict]:
             raise ValueError(f"MIP campaign {field} values are invalid")
     if any(len(job["job_name"]) > 15 for job in jobs):
         raise ValueError("MIP campaign has an overlong Slurm job name")
+    expected_cells = {
+        (rep, treatment, mark)
+        for rep in ("R1", "R2")
+        for treatment in ("CA", "CS")
+        for mark in (360, 720, 1440)
+    }
+    actual_cells = {
+        (
+            job.get("replicate"),
+            job.get("treatment"),
+            job.get("snapshot_mark_minutes"),
+        )
+        for job in jobs
+    }
+    if len(actual_cells) != len(jobs) or not actual_cells <= expected_cells:
+        raise ValueError("MIP campaign contains invalid/duplicate cells")
+    if mode == "screen" and actual_cells != expected_cells:
+        raise ValueError("screen campaign does not contain the exact 12 cells")
+    for job in jobs:
+        expected_label = (
+            f"{job['replicate']}_{job['treatment']}_"
+            f"m{job['snapshot_mark_minutes']}"
+        )
+        if job["label"] != expected_label:
+            raise ValueError("MIP campaign label/cell mismatch")
     return jobs
 
 
@@ -123,7 +162,10 @@ def reconcile(campaign_root: Path, *, apply: bool = False) -> dict:
             pending.append({"label": job["label"]})
             continue
         matches = _query(
-            job["job_name"], start_date, job["slurm_comment"]
+            job["job_name"],
+            start_date,
+            job["slurm_comment"],
+            manifest["submission_user"],
         )
         if len(matches) != 1:
             unresolved.append({

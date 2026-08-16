@@ -10,12 +10,6 @@ import platform
 import sys
 from pathlib import Path
 
-import gurobipy
-import numpy
-import pandas
-import scipy
-
-
 def _sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -49,6 +43,11 @@ def _distribution_sha256(name: str) -> str:
 
 
 def environment_identity() -> dict:
+    import gurobipy
+    import numpy
+    import pandas
+    import scipy
+
     if sys.version_info[:2] != (3, 12):
         raise RuntimeError(f"Python 3.12 required, found {sys.version}")
     executable = Path(sys.executable).resolve()

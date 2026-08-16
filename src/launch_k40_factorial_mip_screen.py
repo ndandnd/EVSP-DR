@@ -216,7 +216,7 @@ def _cell_name(
 ) -> str:
     age = {360: "06", 720: "12", 1440: "24"}[mark]
     budget_tag = "M30" if budget == 1800 else "H02"
-    nonce = hashlib.sha256(campaign.encode()).hexdigest()[:3]
+    nonce = hashlib.sha256(campaign.encode()).hexdigest()[:6]
     name = f"K{nonce}{rep[-1]}{arm}{age}{budget_tag}"
     if len(name) > 15:
         raise SystemExit(f"MIP job name exceeds 15 characters: {name}")
@@ -414,7 +414,7 @@ def launch(args) -> dict:
         staged_journal = cell_root / source_journal.name
         staged_instance = cell_root / "data" / csv_relative
         staged_prices = cell_root / "data" / prices_relative
-        output = root / "outputs" / f"{label}.mip.json"
+        output = root / "outputs" / f"{label}.mip.bundle"
         # Snapshot bytes remain exact. resolve_pool_journal intentionally
         # prefers the staged sibling for immutable *.snapshot.json files.
         staged_status_raw = status_raw
@@ -497,12 +497,16 @@ def launch(args) -> dict:
             "job_id": None,
             "submission_state": "planned",
         })
+    submission_user = os.environ.get("USER")
+    if not submission_user:
+        raise SystemExit("USER is required for Slurm reconciliation identity")
     manifest = {
         "schema": "evsp-dr-k40-factorial-mip-campaign-v1",
         "campaign": campaign,
         "mode": args.mode,
         "created_at": dt.datetime.now().astimezone().isoformat(),
         "submitted": False,
+        "submission_user": submission_user,
         "checkout_identity": identity,
         "mip_core_commit": MIP_CORE_COMMIT,
         "python": python_identity,
@@ -582,6 +586,8 @@ def launch(args) -> dict:
 
 
 def _submit_pending(root: Path, manifest: dict, manifest_path: Path) -> None:
+    from reconcile_k40_factorial_mip_screen import _query
+
     identity = manifest["checkout_identity"]
     worker = Path(manifest["worker"])
     worker_sha = manifest["worker_sha256"]
@@ -593,17 +599,6 @@ def _submit_pending(root: Path, manifest: dict, manifest_path: Path) -> None:
             raise SystemExit(
                 f"{plan['label']}: reconcile ambiguous submission before resume"
             )
-        plan["submission_state"] = "attempting"
-        _replace_manifest(manifest_path, manifest)
-        _write_new(
-            root / f".{plan['label']}.attempt.json",
-            (json.dumps({
-                "label": plan["label"],
-                "job_name": plan["job_name"],
-                "slurm_comment": plan["slurm_comment"],
-                "command": plan["command"],
-            }, indent=2) + "\n").encode(),
-        )
         pre_submit_identity = _mip_identity()
         staged_inputs_clean = (
             sha256_file(Path(plan["staged_result"]))
@@ -625,12 +620,32 @@ def _submit_pending(root: Path, manifest: dict, manifest_path: Path) -> None:
             or sha256_file(Path(plan["spec"]["staged_start"])) != start_sha
             or not staged_inputs_clean
         ):
-            plan["submission_state"] = "failed"
-            plan["submission_error"] = (
-                "checkout/worker/spec/start changed before sbatch"
+            raise SystemExit(
+                "checkout/worker/spec/start changed before sbatch; "
+                "no submission was attempted"
             )
-            _replace_manifest(manifest_path, manifest)
-            raise SystemExit(plan["submission_error"])
+        existing = _query(
+            plan["job_name"],
+            str(manifest["created_at"])[:10],
+            plan["slurm_comment"],
+            manifest["submission_user"],
+        )
+        if existing:
+            raise SystemExit(
+                f"{plan['label']}: matching Slurm job already exists; "
+                "reconcile before submission"
+            )
+        plan["submission_state"] = "attempting"
+        _replace_manifest(manifest_path, manifest)
+        _write_new(
+            root / f".{plan['label']}.attempt.json",
+            (json.dumps({
+                "label": plan["label"],
+                "job_name": plan["job_name"],
+                "slurm_comment": plan["slurm_comment"],
+                "command": plan["command"],
+            }, indent=2) + "\n").encode(),
+        )
         plan["pre_submission_observed_git_commit"] = (
             pre_submit_identity["observed_commit"]
         )

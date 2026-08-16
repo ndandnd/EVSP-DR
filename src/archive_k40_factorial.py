@@ -104,7 +104,7 @@ def _validate_compute_allocation() -> None:
 def _campaign_log_files(
     campaign_dir: Path,
     launch_rows: list[dict],
-) -> list[Path]:
+) -> tuple[list[Path], dict[str, str]]:
     root = campaign_dir.resolve()
     try:
         repo_root = root.parents[3]
@@ -125,19 +125,22 @@ def _campaign_log_files(
             if row["role"] == "prep"
             else "[K40-FACTORIAL] DONE"
         )
-        if marker not in stdout.read_text(errors="replace"):
+        if marker not in stdout.read_bytes().decode(errors="replace"):
             raise ValueError(f"completion marker is missing from {stdout}")
-    return files
+    return files, {
+        str(path.resolve()): sha256_file(path) for path in files
+    }
 
 
-def _validate_accounting(path: Path, campaigns: list[dict]) -> None:
-    required_ids = {
-        str(job_id)
+def _validate_accounting(path: Path, campaigns: list[dict]) -> str:
+    required = {
+        str(row["job_id"]): row["job_name"]
         for campaign in campaigns
-        for job_id in campaign["job_ids"]
+        for row in campaign["launch"]
     }
     records = {}
-    with path.open(newline="") as handle:
+    raw = path.read_bytes()
+    with io.StringIO(raw.decode(), newline="") as handle:
         reader = csv.DictReader(handle, delimiter="|")
         required_fields = {"JobIDRaw", "JobName", "State", "ExitCode"}
         if not required_fields.issubset(reader.fieldnames or ()):
@@ -148,17 +151,23 @@ def _validate_accounting(path: Path, campaigns: list[dict]) -> None:
         for row in reader:
             job_id = str(row.get("JobIDRaw") or "")
             if "." not in job_id and job_id:
+                if job_id in records:
+                    raise ValueError(
+                        f"Slurm accounting duplicates root job {job_id}"
+                    )
                 records[job_id] = row
-    missing = required_ids - set(records)
+    missing = set(required) - set(records)
     if missing:
         raise ValueError(f"Slurm accounting is missing jobs: {sorted(missing)}")
-    for job_id in required_ids:
+    for job_id, job_name in required.items():
         row = records[job_id]
         if (
             not str(row.get("State") or "").startswith("COMPLETED")
             or row.get("ExitCode") != "0:0"
+            or row.get("JobName") != job_name
         ):
             raise ValueError(f"Slurm job {job_id} did not complete cleanly")
+    return hashlib.sha256(raw).hexdigest()
 
 
 def _publish_archive(
@@ -167,6 +176,7 @@ def _publish_archive(
     archive_metadata: dict,
     watched_roots: list[Path],
     virtual_members: dict[str, bytes],
+    expected_source_hashes: dict[str, str],
 ) -> dict:
     output = output.expanduser().resolve()
     if output.exists():
@@ -202,6 +212,16 @@ def _publish_archive(
                 raise ValueError(f"duplicate archive member: {member}")
             if source_path.is_symlink():
                 raise ValueError(f"refusing symlinked source: {source_path}")
+            expected_source = expected_source_hashes.get(
+                str(source_path.resolve())
+            )
+            if (
+                expected_source is not None
+                and sha256_file(source_path) != expected_source
+            ):
+                raise RuntimeError(
+                    f"validated source changed before staging: {source_path}"
+                )
             flags = os.O_RDONLY
             if hasattr(os, "O_NOFOLLOW"):
                 flags |= os.O_NOFOLLOW
@@ -350,10 +370,14 @@ def archive(
         != validated[0]["trip_set_sha256"]
     ):
         raise ValueError("historical and factorial trip sets differ")
-    _validate_accounting(accounting, validated)
+    accounting_sha = _validate_accounting(accounting, validated)
     sources: dict[str, Path] = {}
     watched_roots = []
+    expected_source_hashes = {str(accounting): accounting_sha}
     for campaign in validated:
+        expected_source_hashes.update(
+            campaign["validated_file_hashes"]
+        )
         campaign_root = Path(campaign["campaign_dir"])
         watched_roots.append(campaign_root)
         for source in _regular_files(campaign_root):
@@ -363,9 +387,10 @@ def archive(
             )
             sources[member] = source
         repo_root = campaign_root.parents[3]
-        campaign_logs = _campaign_log_files(
+        campaign_logs, log_hashes = _campaign_log_files(
             campaign_root, campaign["launch"]
         )
+        expected_source_hashes.update(log_hashes)
         watched_roots.append(
             repo_root / "src/cluster_logs/k40_factorial"
             / campaign_root.name
@@ -385,16 +410,27 @@ def archive(
                 / Path(campaign["prices_path"]).name)
         ] = Path(campaign["prices_path"])
     historical_path = Path(historical_record["status_path"])
+    expected_source_hashes.update(
+        historical_record["validated_file_hashes"]
+    )
     for source_text in historical_record["files"]:
         source = Path(source_text)
         sources[str(Path("historical") / source.name)] = source
     historical_iters = Path(str(historical_path) + ".iters.csv")
     if not historical_iters.is_file():
         raise ValueError("historical iteration trajectory is missing")
-    _validate_trajectory(
+    if (
+        sha256_file(historical_path)
+        != historical_record["status_sha256"]
+    ):
+        raise RuntimeError("historical status changed before trajectory validation")
+    historical_trajectory_sha = _validate_trajectory(
         historical_iters,
         json.loads(historical_path.read_text()),
     )
+    expected_source_hashes[
+        str(historical_iters.resolve())
+    ] = historical_trajectory_sha
     sources[
         str(Path("historical") / historical_iters.name)
     ] = historical_iters
@@ -415,7 +451,7 @@ def archive(
             for record in validated
         ],
         "historical": historical_record,
-        "slurm_accounting_sha256": sha256_file(accounting),
+        "slurm_accounting_sha256": accounting_sha,
     }
     resolved_output = output.expanduser().resolve()
     if any(
@@ -432,6 +468,7 @@ def archive(
             "git/commit.txt": (git_commit + "\n").encode(),
             "git/tracked-status.txt": (git_status + "\n").encode(),
         },
+        expected_source_hashes,
     )
 
 

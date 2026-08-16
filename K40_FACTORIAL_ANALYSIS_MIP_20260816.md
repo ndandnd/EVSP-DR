@@ -155,7 +155,9 @@ python -u src/launch_k40_factorial_mip_screen.py \
 Without `--submit`, this resume command is read-only and only reports
 recorded/pending/ambiguous jobs.
 
-Only results with a hash-bound completion sidecar are valid. MIP results record
-the 40 actual supplied start-column hashes and carry
+Each MIP result and its hash-bound completion attestation are published
+together in one atomic `*.mip.bundle/`; a partial raw result is never treated
+as complete. Valid results record the 40 actual supplied start-column hashes
+and carry
 `route_space_scope=finite_augmented_snapshot_pool_only`; they are never global
 route-space optimality claims.

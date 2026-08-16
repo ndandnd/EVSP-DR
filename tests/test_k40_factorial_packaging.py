@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import archive_k40_factorial as archiver  # noqa: E402
+import exact_mip_environment as mip_environment  # noqa: E402
 import launch_k40_factorial_mip_screen as mip_launcher  # noqa: E402
 import summarize_k40_factorial as summarizer  # noqa: E402
 import k40_factorial_artifacts as artifacts  # noqa: E402
@@ -44,6 +45,28 @@ class K40FactorialPackagingTests(unittest.TestCase):
             patch.object(artifacts, "PRICES_SHA256", self.prices_sha)
         )
 
+    @staticmethod
+    def _chunks(values, count):
+        return [
+            values[index * len(values) // count:
+                   (index + 1) * len(values) // count]
+            for index in range(count)
+        ]
+
+    def _factorial_lp_columns(self, arm, mark):
+        trips = list(range(947))
+        if arm == "PA" and mark == 1320:
+            full = self._chunks(trips[:925], 10)
+            return [
+                *({"trips": route, "value": 1.0} for route in full),
+                {"trips": trips[925:937], "value": 0.6},
+                {"trips": trips[937:947], "value": 0.98},
+            ]
+        return [
+            {"trips": route, "value": 1.0}
+            for route in self._chunks(trips, 40)
+        ]
+
     def _status(
         self,
         *,
@@ -54,14 +77,21 @@ class K40FactorialPackagingTests(unittest.TestCase):
         replicate_offset=0.0,
         csv_name="Practice_Custom_DutyUnion_k40_r1.csv",
         journal_cost=100000.0,
+        lp_columns=None,
     ):
         sense, initial = ARMS[arm]
-        artificials = 5.0 if arm == "PA" and mark == 1320 else 0.0
-        weight = (
-            11.58 if artificials else 40.0 + MARKS.index(mark) / 10
-            + replicate_offset
-        )
+        lp_columns = lp_columns or self._factorial_lp_columns(arm, mark)
+        coverage = {trip: 0.0 for trip in range(947)}
+        for column in lp_columns:
+            for trip in column["trips"]:
+                coverage[trip] += column["value"]
+        artificials = sum(max(0.0, 1.0 - value) for value in coverage.values())
+        weight = sum(column["value"] for column in lp_columns)
         objective = weight * journal_cost + artificials * 500000.0
+        certified = (
+            terminal and arm == "CA" and replicate_offset == 0
+        )
+        min_rc = 0.0 if certified else -100.0 + mark / 100.0
         return {
             "csv": f"duty_unions_big/{csv_name}",
             "prices_csv": "hourly_prices_flat.csv",
@@ -72,31 +102,35 @@ class K40FactorialPackagingTests(unittest.TestCase):
             "min_soc_frac": 0.0,
             "master_sense": sense,
             "initial_pool": initial,
-            "trip_ids": list(range(1, 948)),
+            "trip_ids": list(range(947)),
             "iterations": mark,
-            "columns": 1,
+            "columns": len(lp_columns),
             "wall_s": mark * 60.0 + replicate_offset * 60.0,
-            "stop_reason": "wall_limit" if terminal else f"snapshot_m{mark}",
-            "snapshot_mark_minutes": None if terminal else float(mark),
-            "certified_rc_optimal": (
-                arm == "CA" and mark == 1440 and replicate_offset == 0
+            "stop_reason": (
+                "certified" if certified
+                else ("wall_limit" if terminal else f"snapshot_m{mark}")
             ),
+            "snapshot_mark_minutes": None if terminal else float(mark),
+            "certified_rc_optimal": certified,
             "final": {
                 "lp_obj": objective,
                 "route_weight": weight,
                 "artificials": artificials,
-                "min_rc": -100.0 + mark / 100.0,
+                "min_rc": min_rc,
             },
             "final_lp": {
                 "objective": objective,
                 "route_weight": weight,
                 "artificial_total": artificials,
+                "source": "final_pool_resolve",
+                "pool_columns": len(lp_columns),
                 "positive_routes": [{
-                    "trips": [1],
-                    "value": weight,
+                    "trips": column["trips"],
+                    "value": column["value"],
                     "cost": journal_cost,
-                }],
+                } for column in lp_columns],
             },
+            "final_lp_source": "final_pool_resolve",
             "columns_journal": str(journal),
             "provenance": {
                 "git_commit": FACTORIAL_COMMIT,
@@ -175,9 +209,14 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 )
                 journal = Path(str(status_path) + ".columns.jsonl")
                 journal_cost = 100000.0 + mark
-                journal.write_text(json.dumps({
-                    "trips": [1], "cost": journal_cost,
-                }) + "\n")
+                lp_columns = self._factorial_lp_columns(arm, mark)
+                journal.write_text("".join(
+                    json.dumps({
+                        "trips": column["trips"],
+                        "cost": journal_cost,
+                    }) + "\n"
+                    for column in lp_columns
+                ))
                 status_path.write_text(json.dumps(self._status(
                     journal=journal,
                     arm=arm,
@@ -185,13 +224,18 @@ class K40FactorialPackagingTests(unittest.TestCase):
                     replicate_offset=replicate_offset,
                     csv_name=csv_name,
                     journal_cost=journal_cost,
+                    lp_columns=lp_columns,
                 )))
             terminal = root / f"{stem_prefix}_{arm}.json"
             journal = Path(str(terminal) + ".columns.jsonl")
             journal_cost = 200000.0
-            journal.write_text(json.dumps({
-                "trips": [1], "cost": journal_cost,
-            }) + "\n")
+            lp_columns = self._factorial_lp_columns(arm, 1440)
+            journal.write_text("".join(
+                json.dumps({
+                    "trips": column["trips"], "cost": journal_cost,
+                }) + "\n"
+                for column in lp_columns
+            ))
             terminal.write_text(json.dumps(self._status(
                 journal=journal,
                 arm=arm,
@@ -200,6 +244,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 replicate_offset=replicate_offset,
                 csv_name=csv_name,
                 journal_cost=journal_cost,
+                lp_columns=lp_columns,
             )))
             terminal_status = json.loads(terminal.read_text())
             final = terminal_status["final"]
@@ -207,7 +252,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,"
                 f"pool_columns\n1,1440,{final['lp_obj']:.6f},"
                 f"{final['route_weight']:.9f},{final['artificials']:.6f},"
-                f"{final['min_rc']:.6f},1\n"
+                f"{final['min_rc']:.6f},{len(lp_columns)}\n"
             )
             (root / f"{stem_prefix}_{arm}.allocations.tsv").write_text(
                 "utc\tjob_id\trestart\thost\tcpu_model\t"
@@ -234,9 +279,22 @@ class K40FactorialPackagingTests(unittest.TestCase):
         root.mkdir()
         status_path = root / "k40r2_flat_final.json"
         journal = Path(str(status_path) + ".columns.jsonl")
-        journal.write_text(json.dumps({
-            "trips": [1], "cost": 100000.0,
-        }) + "\n")
+        historical_columns = [
+            *(
+                {"trips": route, "value": 1.0}
+                for route in self._chunks(list(range(947)), 39)
+            ),
+            {
+                "trips": [0],
+                "value": HISTORICAL_WEIGHT - 39.0,
+            },
+        ]
+        journal.write_text("".join(
+            json.dumps({
+                "trips": column["trips"], "cost": 100000.0,
+            }) + "\n"
+            for column in historical_columns
+        ))
         objective = HISTORICAL_WEIGHT * 100000.0
         status = {
             "csv": "duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv",
@@ -246,9 +304,9 @@ class K40FactorialPackagingTests(unittest.TestCase):
             "g_kwh": 300.0,
             "charge_kw": 300.0,
             "min_soc_frac": 0.0,
-            "trip_ids": list(range(1, 948)),
+            "trip_ids": list(range(947)),
             "iterations": 1428,
-            "columns": 1,
+            "columns": len(historical_columns),
             "wall_s": 79348.0,
             "stop_reason": "wall_limit",
             "certified_rc_optimal": False,
@@ -263,14 +321,15 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "route_weight": HISTORICAL_WEIGHT,
                 "artificial_total": 0.0,
                 "positive_routes": [{
-                    "trips": [1],
-                    "value": HISTORICAL_WEIGHT,
+                    "trips": column["trips"],
+                    "value": column["value"],
                     "cost": 100000.0,
-                }],
+                } for column in historical_columns],
             },
             "columns_journal": str(journal),
             "provenance": {
                 "git_commit": HISTORICAL_COMMIT,
+                "git_dirty": False,
                 "instance_sha256": self.instance_sha,
                 "prices_sha256": self.prices_sha,
                 "rc_eps": 0.0001,
@@ -296,7 +355,8 @@ class K40FactorialPackagingTests(unittest.TestCase):
         Path(str(status_path) + ".iters.csv").write_text(
             "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,"
             f"pool_columns\n1,1428,{objective:.6f},"
-            f"{HISTORICAL_WEIGHT:.9f},0.000000,-1.000000,1\n"
+            f"{HISTORICAL_WEIGHT:.9f},0.000000,-1.000000,"
+            f"{len(historical_columns)}\n"
         )
         return status_path
 
@@ -365,9 +425,14 @@ class K40FactorialPackagingTests(unittest.TestCase):
             accounting.write_text(
                 "JobIDRaw|JobName|State|Elapsed|ExitCode|MaxRSS\n"
                 + "\n".join(
-                    f"{job_id}|job|COMPLETED|01:00:00|0:0|1G"
-                    for job_id in [
-                        *range(100, 105), *range(200, 205)
+                    f"{job_id}|{job_name}|COMPLETED|01:00:00|0:0|1G"
+                    for base in (100, 200)
+                    for job_id, job_name in [
+                        (base, "K40-PREP"),
+                        *(
+                            (base + index, f"K40-{arm}24")
+                            for index, arm in enumerate(ARMS, start=1)
+                        ),
                     ]
                 )
                 + "\n"
@@ -389,6 +454,33 @@ class K40FactorialPackagingTests(unittest.TestCase):
             )
             self.assertIn("slurm/accounting.txt", record["members"])
 
+    def test_archive_rejects_source_changed_after_validation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "source"
+            root.mkdir()
+            source = root / "status.json"
+            source.write_text('{"valid": true}\n')
+            expected = hashlib.sha256(source.read_bytes()).hexdigest()
+            source.write_text("{}\n")
+            commit = archiver._git("rev-parse", "HEAD")
+            status = archiver._git(
+                "status", "--porcelain", "--untracked-files=no"
+            )
+            with self.assertRaisesRegex(
+                RuntimeError, "changed before staging"
+            ):
+                archiver._publish_archive(
+                    {"campaign/status.json": source},
+                    Path(tmp) / "archive.tar.gz",
+                    {
+                        "created_by_commit": commit,
+                        "created_by_git_status": status,
+                    },
+                    [root],
+                    {},
+                    {str(source.resolve()): expected},
+                )
+
     def _validated_start(
         self,
         root: Path,
@@ -399,7 +491,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
         instance_sha = instance_sha or self.instance_sha
         prices_sha = prices_sha or self.prices_sha
         buckets = [[] for _ in range(40)]
-        for index, trip in enumerate(range(1, 948)):
+        for index, trip in enumerate(range(947)):
             buckets[index % 40].append(trip)
         routes = [{
             "route": ["PARX_0", *trips, "PARX_0"],
@@ -548,7 +640,8 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 ),
                 self.assertRaisesRegex(
                     (SystemExit, ValueError),
-                    "differs from approved|cost disagrees with journal",
+                    "differs from approved|cost disagrees with journal|"
+                    "journal/status column mismatch",
                 ),
                 contextlib.redirect_stdout(io.StringIO()),
             ):
@@ -646,7 +739,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
             partial.write_text(json.dumps(payload))
             with self.assertRaisesRegex(SystemExit, "not an exact partition"):
                 mip_launcher._validate_start(
-                    partial, list(range(1, 948))
+                    partial, list(range(947))
                 )
             missing_marker = self._validated_start(
                 Path(tmp) / "missing-marker"
@@ -656,7 +749,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
             missing_marker.write_text(json.dumps(missing_payload))
             with self.assertRaisesRegex(SystemExit, "infeasible/partial"):
                 mip_launcher._validate_start(
-                    missing_marker, list(range(1, 948))
+                    missing_marker, list(range(947))
                 )
 
             ca_snapshot = (
@@ -681,14 +774,15 @@ class K40FactorialPackagingTests(unittest.TestCase):
             snapshot = r1 / "k40r1_flat_CA.m360.snapshot.json"
             status = json.loads(snapshot.read_text())
             journal = Path(status["columns_journal"])
-            original = json.loads(journal.read_text())
+            original_lines = journal.read_text().splitlines()
+            original = json.loads(original_lines[0])
             journal.write_text(
                 json.dumps({
-                    "trips": [1],
+                    "trips": original["trips"],
                     "cost": original["cost"] + 1000.0,
                 })
                 + "\n"
-                + json.dumps(original)
+                + "\n".join(original_lines)
                 + "\n"
             )
             artifacts.validate_campaign(r1, replicate="R1")
@@ -704,12 +798,24 @@ class K40FactorialPackagingTests(unittest.TestCase):
             _repo, r1, r2, historical = self._repo_fixture(Path(tmp))
             snapshot = r2 / "k40r2_flat_PA.m1320.snapshot.json"
             status = json.loads(snapshot.read_text())
+            columns = self._factorial_lp_columns("PS", 1320)
+            cost = status["final_lp"]["positive_routes"][0]["cost"]
+            Path(status["columns_journal"]).write_text("".join(
+                json.dumps({"trips": column["trips"], "cost": cost}) + "\n"
+                for column in columns
+            ))
             status["final"]["artificials"] = 0.0
+            status["final"]["route_weight"] = 40.0
             status["final_lp"]["artificial_total"] = 0.0
-            status["final_lp"]["objective"] = (
-                status["final_lp"]["route_weight"]
-                * status["final_lp"]["positive_routes"][0]["cost"]
-            )
+            status["final_lp"]["route_weight"] = 40.0
+            status["final_lp"]["pool_columns"] = len(columns)
+            status["final_lp"]["positive_routes"] = [{
+                "trips": column["trips"],
+                "value": 1.0,
+                "cost": cost,
+            } for column in columns]
+            status["columns"] = len(columns)
+            status["final_lp"]["objective"] = 40.0 * cost
             status["final"]["lp_obj"] = status["final_lp"]["objective"]
             snapshot.write_text(json.dumps(status))
             payload = summarizer.summarize([r1, r2], historical)
@@ -745,15 +851,40 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 summarizer.publish(payload, prefix)
             self.assertFalse(Path(str(prefix) + ".bundle").exists())
             self.assertTrue(Path(str(prefix) + ".bundle.lock").exists())
+            source = Path(tmp) / "source-dir"
+            destination = Path(tmp) / "destination-dir"
+            source.mkdir()
+            destination.mkdir()
+            with self.assertRaises(FileExistsError):
+                summarizer._rename_noreplace(source, destination)
+            self.assertTrue(source.is_dir())
+            self.assertTrue(destination.is_dir())
 
     def test_monitor_rejects_unattested_output(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            output = root / "cell.json"
-            output.write_text("{}\n")
+            output = root / "cell.mip.bundle"
+            output.mkdir()
+            result_path = output / "result.json"
+            result_path.write_text("{}\n")
+            spec_path = root / "job.json"
+            spec_path.write_text("{}\n")
+            spec_sha = hashlib.sha256(spec_path.read_bytes()).hexdigest()
+            (output / "completion.json").write_text(json.dumps({
+                "schema": "evsp-dr-k40-factorial-mip-completion-v1",
+                "output_bundle": str(output),
+                "result_member": "result.json",
+                "output_sha256": hashlib.sha256(
+                    result_path.read_bytes()
+                ).hexdigest(),
+                "job_spec_sha256": spec_sha,
+                "worker_sha256": "b" * 64,
+            }))
             (root / "campaign.json").write_text(json.dumps({
                 "schema": "evsp-dr-k40-factorial-mip-campaign-v1",
                 "budget_seconds": 1800,
+                "worker_sha256": "b" * 64,
+                "checkout_identity": {"expected_commit": "a" * 40},
                 "jobs": [{
                     "label": "R1_CA_m360",
                     "replicate": "R1",
@@ -761,7 +892,9 @@ class K40FactorialPackagingTests(unittest.TestCase):
                     "snapshot_mark_minutes": 360,
                     "job_id": "123",
                     "output": str(output),
-                    "spec_sha256": "a" * 64,
+                    "spec": {},
+                    "spec_path": str(spec_path),
+                    "spec_sha256": spec_sha,
                 }],
             }))
             row = mip_monitor.rows(root, query_slurm=False)[0]
@@ -781,9 +914,18 @@ class K40FactorialPackagingTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "no jobs"):
                 mip_reconcile.reconcile(root)
             jobs = []
-            for index in range(12):
+            cells = [
+                (rep, treatment, mark)
+                for rep in ("R1", "R2")
+                for treatment in ("CA", "CS")
+                for mark in (360, 720, 1440)
+            ]
+            for index, (rep, treatment, mark) in enumerate(cells):
                 jobs.append({
-                    "label": f"cell{index}",
+                    "label": f"{rep}_{treatment}_m{mark}",
+                    "replicate": rep,
+                    "treatment": treatment,
+                    "snapshot_mark_minutes": mark,
                     "job_name": f"Kabc{index:02d}",
                     "slurm_comment": f"comment{index}",
                     "submission_state": (
@@ -795,6 +937,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "schema": "evsp-dr-k40-factorial-mip-campaign-v1",
                 "campaign": "test",
                 "mode": "screen",
+                "submission_user": "tester",
                 "created_at": "2026-08-16T00:00:00+00:00",
                 "jobs": jobs,
             }))
@@ -862,6 +1005,8 @@ class K40FactorialPackagingTests(unittest.TestCase):
                 "run_exact_pool_mip_sha256": "b" * 64,
             }
             manifest = {
+                "created_at": "2026-08-16T00:00:00+00:00",
+                "submission_user": "tester",
                 "checkout_identity": identity,
                 "worker": str(worker),
                 "worker_sha256": hashlib.sha256(
@@ -889,6 +1034,9 @@ class K40FactorialPackagingTests(unittest.TestCase):
                     "run",
                     return_value=completed,
                 ) as submit,
+                patch.object(
+                    mip_reconcile, "_query", return_value=[]
+                ),
             ):
                 mip_launcher._submit_pending(
                     root, manifest, manifest_path
@@ -920,7 +1068,7 @@ class K40FactorialPackagingTests(unittest.TestCase):
             snapshot = r1 / "k40r1_flat_CA.m360.snapshot.json"
             output = Path(tmp) / "shared-start.json"
             buckets = [[] for _ in range(40)]
-            for index, trip in enumerate(range(1, 948)):
+            for index, trip in enumerate(range(947)):
                 buckets[index % 40].append(trip)
             routes = [{
                 "route": ["PARX_0", *trips, "PARX_0"],
@@ -995,6 +1143,30 @@ class K40FactorialPackagingTests(unittest.TestCase):
                     seed_preparer.prepare(
                         snapshot, output, Path(sys.executable)
                     )
+
+    def test_mip_environment_hash_detects_same_version_content_change(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            package = root / "package/module.py"
+            package.parent.mkdir()
+            package.write_text("VERSION = '1.0'\nVALUE = 1\n")
+
+            class FakeDistribution:
+                files = [Path("package/module.py")]
+
+                @staticmethod
+                def locate_file(relative):
+                    return root / relative
+
+            with patch.object(
+                mip_environment.importlib.metadata,
+                "distribution",
+                return_value=FakeDistribution(),
+            ):
+                before = mip_environment._distribution_sha256("fake")
+                package.write_text("VERSION = '1.0'\nVALUE = 2\n")
+                after = mip_environment._distribution_sha256("fake")
+            self.assertNotEqual(before, after)
 
 
 if __name__ == "__main__":

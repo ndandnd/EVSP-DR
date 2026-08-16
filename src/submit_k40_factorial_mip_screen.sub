@@ -252,43 +252,36 @@ d["completion_attestation"] = {
 }
 encoded = (json.dumps(d, indent=2) + "\n").encode()
 directory = os.path.dirname(out)
-with tempfile.NamedTemporaryFile(
-    dir=directory, prefix="." + os.path.basename(out) + ".tmp.",
-    delete=False,
-) as handle:
-    temporary = handle.name
+staging = tempfile.mkdtemp(
+    dir=directory, prefix="." + os.path.basename(out) + ".tmp."
+)
+result_path = os.path.join(staging, "result.json")
+with open(result_path, "xb") as handle:
     handle.write(encoded)
     handle.flush()
     os.fsync(handle.fileno())
-try:
-    os.link(temporary, out)
-except FileExistsError:
-    fail("validated output already exists")
-finally:
-    os.unlink(temporary)
 output_sha = hashlib.sha256(encoded).hexdigest()
-complete = out + ".complete.json"
 completion = (json.dumps({
     "schema": "evsp-dr-k40-factorial-mip-completion-v1",
-    "output": out,
+    "output_bundle": out,
+    "result_member": "result.json",
     "output_sha256": output_sha,
     "job_spec_sha256": spec_sha,
     "worker_sha256": worker_sha,
 }, indent=2) + "\n").encode()
-with tempfile.NamedTemporaryFile(
-    dir=directory, prefix="." + os.path.basename(complete) + ".tmp.",
-    delete=False,
-) as handle:
-    temporary = handle.name
+with open(os.path.join(staging, "completion.json"), "xb") as handle:
     handle.write(completion)
     handle.flush()
     os.fsync(handle.fileno())
+staging_fd = os.open(staging, os.O_RDONLY)
 try:
-    os.link(temporary, complete)
-except FileExistsError:
-    fail("completion sidecar already exists")
+    os.fsync(staging_fd)
 finally:
-    os.unlink(temporary)
+    os.close(staging_fd)
+try:
+    os.rename(staging, out)
+except FileExistsError:
+    fail("validated output bundle already exists")
 parent = os.open(directory, os.O_RDONLY)
 try:
     os.fsync(parent)
