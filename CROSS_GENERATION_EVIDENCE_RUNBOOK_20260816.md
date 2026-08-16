@@ -19,7 +19,6 @@ python -u src/collect_cross_generation_inputs.py \
   --root "repool_small=$HOME/EVSP-DR-k40mip-f40b120/results/repool_small" \
   --root "exact_big=$HOME/EVSP-DR-k40mip-f40b120/results/exact_big" \
   --root "k40_factorial=$HOME/EVSP-DR-k40mip-f40b120/src/results/k40_factorial" \
-  --root "exact_telemetry=$HOME/EVSP-DR-k40mip-f40b120/src/results/exact_cg_telemetry" \
   --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
   --root "releases=$HOME/EVSP-DR-releases" \
   --out-manifest "$OUT"
@@ -34,6 +33,7 @@ not be guessed from filenames.
 ## Rebuild
 
 Run `src/build_cross_generation_evidence.py --input-manifest <reviewed.json>
+--approved-input-manifest-sha256 <out-of-band-sha256>
 --out-dir <new-empty-directory>`. Output publication is create-only and includes
 `completion.json`, normalized CSVs, provenance, compatibility documentation,
 coverage audit, dry-run rerun plan, and deterministic figures.

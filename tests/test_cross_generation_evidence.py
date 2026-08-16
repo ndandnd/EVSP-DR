@@ -20,9 +20,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         return hashlib.sha256(path.read_bytes()).hexdigest()
 
     def _write_current_csv(self, path):
-        fields = sorted(schemas.CURRENT_HEURISTIC_REQUIRED) + [
-            "Tier1_Time_s", "Tier1_Exhaustive"
-        ]
+        fields = sorted(schemas.CURRENT_HEURISTIC_REQUIRED)
         values = {field: "0" for field in fields}
         values.update({
             "Iteration": "1",
@@ -86,27 +84,35 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         exact_endpoint.write_text(json.dumps({
             "stop_reason": "certified",
             "certified_rc_optimal": True,
+            "wall_s": 20,
+            "final": {"min_rc": 0.0},
             "trip_ids": trip_ids,
             "provenance": {
                 "git_commit": "a" * 40,
                 "git_dirty": False,
                 "instance_sha256": "b" * 64,
                 "prices_sha256": "c" * 64,
+                "rc_eps": 0.0001,
             },
         }))
         telemetry = root / "telemetry.jsonl"
+        telemetry_identity = {"run": "exact-run"}
+        telemetry_sha = hashlib.sha256(json.dumps(
+            telemetry_identity, sort_keys=True, separators=(",", ":")
+        ).encode()).hexdigest()
         telemetry.write_text(
             json.dumps({
                 "schema": schemas.TELEMETRY_SCHEMA,
                 "record_type": "session_start",
-                "session": "s1",
-                "identity_sha256": "d" * 64,
+                "session": 1,
+                "identity_sha256": telemetry_sha,
+                "identity": telemetry_identity,
             }) + "\n"
             + json.dumps({
                 "schema": schemas.TELEMETRY_SCHEMA,
                 "record_type": "phase",
-                "session": "s1",
-                "identity_sha256": "d" * 64,
+                "session": 1,
+                "identity_sha256": telemetry_sha,
                 "phase": "pricing",
                 "duration_s": 5,
                 "elapsed_session_s": 5,
@@ -119,6 +125,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "schema": schemas.MIP_CHECKPOINT_SCHEMA,
             "kind": "checkpoint",
             "observational_only": True,
+            "gurobi_tree_restart_supported": False,
             "checkpoint_elapsed_s": 300,
             "observed_total_elapsed_s": 300,
             "latest_statistics_observed_s": 300,
@@ -149,10 +156,12 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         mip_final = root / "mip.json"
         mip_final.write_text(json.dumps({
             "partitioning": True,
+            "experiment_arm": "B",
             "incumbent_found": True,
             "buses": 8,
             "mip_obj": 800100,
             "mip_bound": 800100,
+            "mip_bound_scope": "fleet_count_only_coarse_cost_bound",
             "mip_gap": 0,
             "fleet_bound": 8,
             "fleet_proven": True,
@@ -164,6 +173,10 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "source_journal_sha256": "1" * 64,
             "mip_provenance": {
                 "observed_git_commit": "2" * 40,
+                "arguments": {
+                    "cover": False,
+                    "two_stage": True,
+                },
             },
         }))
         endpoint_current = root / "current-endpoint.json"
@@ -176,7 +189,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         manifest_artifact = root / "release-manifest.json"
         manifest_artifact.write_text(json.dumps({
             "schema": "release",
-            "files": {},
+            "files": {"artifact.bin": "5" * 64},
         }))
         common_exact = {
             "algorithm_family": "exact_expanded_network",
@@ -207,6 +220,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "scale_family": "union", "scale": 8,
                            "replicate": "r1",
                            "instance_sha256": "b" * 64,
+                           "trip_set_sha256": "3" * 64,
                            "tariff_sha256": "c" * 64,
                        }),
             self._spec("current-endpoint", "current-run", endpoint_current,
@@ -218,6 +232,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "git_commit": "a" * 40,
                            "git_dirty": False,
                            "instance_sha256": "b" * 64,
+                           "trip_set_sha256": "3" * 64,
                            "tariff_sha256": "c" * 64,
                        }),
             self._spec("exact", "exact-run", exact,
@@ -235,7 +250,10 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "git_commit": "2" * 40,
                            "pool_status_sha256": "f" * 64,
                            "pool_journal_sha256": "1" * 64,
+                           "trip_set_sha256": "4" * 64,
+                           "trip_count": 8,
                            "physical_replay_validated": True,
+                           "physical_replay_artifact_sha256": "6" * 64,
                        }),
             self._spec("mip-final", "mip-run", mip_final,
                        "mip_final", {
@@ -246,7 +264,10 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "git_commit": "2" * 40,
                            "pool_status_sha256": "f" * 64,
                            "pool_journal_sha256": "1" * 64,
+                           "trip_set_sha256": "4" * 64,
+                           "trip_count": 8,
                            "physical_replay_validated": True,
+                           "physical_replay_artifact_sha256": "6" * 64,
                        }),
             self._spec("release", "release-run", manifest_artifact,
                        "artifact_manifest_json", {
@@ -261,7 +282,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             self._expect("exact_expanded_network", "exact_pricer",
                          "trajectory"),
             self._expect("mip_finite_pool", "raw",
-                         "mip_checkpoint_and_final"),
+                         "mip_checkpoint_and_final", treatment="RAW"),
         ]
         manifest = root / "manifest.json"
         manifest.write_text(json.dumps({
@@ -285,10 +306,11 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         }
 
     @staticmethod
-    def _expect(family, implementation, evidence):
+    def _expect(family, implementation, evidence, treatment=None):
         return {
             "algorithm_family": family,
             "implementation": implementation,
+            "treatment": treatment,
             "scale_family": "union",
             "scale": 8,
             "comparison_group": "synthetic-k8",
@@ -345,9 +367,22 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             with (output / "artifact_coverage_matrix.csv").open(
                     newline="") as handle:
                 coverage = list(csv.DictReader(handle))
+            designed = [
+                row for row in coverage
+                if row["comparison_group"] == "synthetic-k8"
+            ]
+            self.assertEqual(len(designed), 3)
             self.assertTrue(all(
-                row["coverage_status"] == "available" for row in coverage
+                row["coverage_status"] == "available" for row in designed
             ))
+            historical_outside = next(
+                row for row in coverage
+                if row["algorithm_family"] == "heuristic_dp_historical"
+            )
+            self.assertEqual(
+                historical_outside["size_class"],
+                "observed_outside_design",
+            )
             second = root / "output-second"
             build(
                 manifest, second, repo_root=REPO_ROOT,
@@ -371,10 +406,16 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             manifest_path = self._fixture(root)
+            with self.assertRaisesRegex(ValueError, "approved SHA"):
+                build(
+                    manifest_path, root / "bad-manifest-approval",
+                    repo_root=REPO_ROOT, command=["test"],
+                    approved_manifest_sha256="0" * 64,
+                )
             manifest = json.loads(manifest_path.read_text())
             manifest["artifacts"][0]["expected_sha256"] = "0" * 64
             manifest_path.write_text(json.dumps(manifest))
-            with self.assertRaisesRegex(ValueError, "required artifacts"):
+            with self.assertRaisesRegex(ValueError, "listed artifacts"):
                 build(
                     manifest_path, root / "bad-hash", repo_root=REPO_ROOT,
                     command=["test"],
@@ -412,7 +453,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             manifest = json.loads(manifest_path.read_text())
             historical = root / "historical.csv"
             historical.write_text(
-                historical.read_text() + "2,broken\n"
+                historical.read_text() + "2,broken"
             )
             manifest["artifacts"][0]["expected_sha256"] = self._sha(historical)
             manifest_path.write_text(json.dumps(manifest))
@@ -435,7 +476,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             )
             manifest["artifacts"][0]["expected_sha256"] = self._sha(historical)
             manifest_path.write_text(json.dumps(manifest))
-            with self.assertRaisesRegex(ValueError, "required artifacts"):
+            with self.assertRaisesRegex(ValueError, "listed artifacts"):
                 build(
                     manifest_path, root / "interior-output",
                     repo_root=REPO_ROOT, command=["test"],
@@ -459,6 +500,40 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             self.assertTrue(all(
                 row["validation_status"] == "verified" for row in rows
             ))
+            expected_hashes = {
+                "legacy-pricing-20bus":
+                    "577221ac9115af65e77bf5fc7baabf6a55e45d886c3a5bd8dc763d162c6ca9ed",
+                "legacy-pricing-30bus":
+                    "8a15fcf53b840c386b15f63b1e092f3f16828807d8bbb49078dc0b899dee1540",
+                "legacy-pricing-43bus":
+                    "5f46e1e793282eeb0f91b24e7f60dee8aa97edcda414483f638031b64ad62e8f",
+                "legacy-pricing-10b-rnd001":
+                    "29206f9318de13ca3787a9e6cd39b6e952a9514e34f1f68b76b9b8c46b4cae96",
+                "legacy-pricing-10b-rnd002":
+                    "49793c62b64eef9dc57c9248104d58f27fa3349fb3c01165011c9bb7b93cdb52",
+            }
+            self.assertEqual(
+                {row["artifact_id"]: row["observed_sha256"] for row in rows},
+                expected_hashes,
+            )
+            with (output / "cg_run_summary.csv").open(newline="") as handle:
+                summaries = {
+                    row["run_id"]: row for row in csv.DictReader(handle)
+                }
+            expected_iterations = {
+                "legacy-dp-20bus-200cols": "187",
+                "legacy-dp-30bus-200cols": "33",
+                "legacy-dp-43bus-200cols": "19",
+                "legacy-dp-10b-rnd001": "565",
+                "legacy-dp-10b-rnd002": "529",
+            }
+            self.assertEqual(
+                {
+                    run_id: summaries[run_id]["iteration_count"]
+                    for run_id in expected_iterations
+                },
+                expected_iterations,
+            )
 
     def test_telemetry_tail_and_disabled_availability_are_explicit(self):
         spec = {
@@ -467,16 +542,23 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "artifact_type": "exact_cg_phase_telemetry_jsonl",
             "metadata": {},
         }
+        identity = {"run": "run"}
+        identity_sha = hashlib.sha256(json.dumps(
+            identity, sort_keys=True, separators=(",", ":")
+        ).encode()).hexdigest()
         payload = (
             json.dumps({
                 "schema": schemas.TELEMETRY_SCHEMA,
                 "record_type": "session_start",
-                "identity_sha256": "a" * 64,
+                "session": 1,
+                "identity_sha256": identity_sha,
+                "identity": identity,
             }) + "\n"
             + json.dumps({
                 "schema": schemas.TELEMETRY_SCHEMA,
                 "record_type": "phase",
-                "identity_sha256": "a" * 64,
+                "session": 1,
+                "identity_sha256": identity_sha,
                 "phase": "master",
                 "duration_s": 1,
                 "elapsed_session_s": 1,
@@ -527,7 +609,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 if item["artifact_id"] == "current"
             )["expected_sha256"] = self._sha(current)
             manifest_path.write_text(json.dumps(manifest))
-            with self.assertRaisesRegex(ValueError, "required artifacts"):
+            with self.assertRaisesRegex(ValueError, "listed artifacts"):
                 build(
                     manifest_path, root / "missing-field",
                     repo_root=REPO_ROOT, command=["test"],
@@ -540,7 +622,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 if item["artifact_id"] == "mip-final"
             )["metadata"]["pool_status_sha256"] = "9" * 64
             manifest_path.write_text(json.dumps(manifest))
-            with self.assertRaisesRegex(ValueError, "required artifacts"):
+            with self.assertRaisesRegex(ValueError, "listed artifacts"):
                 build(
                     manifest_path, root / "mip-mismatch-output",
                     repo_root=REPO_ROOT, command=["test"],

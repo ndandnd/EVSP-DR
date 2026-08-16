@@ -176,6 +176,21 @@
       }
     },
     {
+      "request_id": "current-heuristic-checkpoints",
+      "root_alias": "current_heuristic",
+      "glob": "**/ckpt_latest_*.json",
+      "artifact_type": "run_checkpoint_json",
+      "run_id_namespace": "current-heuristic",
+      "run_id_regex": "(?P<run_id>[^/]+)/ckpt_latest_[^/]+\\.json$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "heuristic_dp_current",
+        "implementation": "instrumented_dp",
+        "scale_family": null,
+        "scale": null
+      }
+    },
+    {
       "request_id": "exact-repool-small",
       "root_alias": "repool_small",
       "glob": "**/*.iters.csv",
@@ -220,6 +235,36 @@
       }
     },
     {
+      "request_id": "exact-big-endpoints",
+      "root_alias": "exact_big",
+      "glob": "**/*soc*_res*.json",
+      "artifact_type": "endpoint_json",
+      "run_id_namespace": "exact-big",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.json$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer",
+        "scale_family": "union",
+        "scale": null
+      }
+    },
+    {
+      "request_id": "exact-big-journals",
+      "root_alias": "exact_big",
+      "glob": "**/*soc*_res*.json.columns.jsonl",
+      "artifact_type": "exact_cg_column_journal_jsonl",
+      "run_id_namespace": "exact-big",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.json\\.columns\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer",
+        "scale_family": "union",
+        "scale": null
+      }
+    },
+    {
       "request_id": "exact-k40-factorial",
       "root_alias": "k40_factorial",
       "glob": "**/*.iters.csv",
@@ -236,16 +281,63 @@
       }
     },
     {
+      "request_id": "exact-k40-factorial-journals",
+      "root_alias": "k40_factorial",
+      "glob": "**/k40r[12]_flat_[A-Z][A-Z].json.columns.jsonl",
+      "artifact_type": "exact_cg_column_journal_jsonl",
+      "run_id_namespace": "exact-k40",
+      "run_id_regex": "(?P<run_id>k40r[12]_flat_[A-Z]{2})\\.json\\.columns\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer",
+        "scale_family": "union",
+        "scale": 40,
+        "trip_count": 947
+      }
+    },
+    {
       "request_id": "exact-phase-telemetry",
-      "root_alias": "exact_telemetry",
-      "glob": "**/*.jsonl",
+      "root_alias": "k40_factorial",
+      "glob": "**/*k40r*_flat_*.jsonl",
       "artifact_type": "exact_cg_phase_telemetry_jsonl",
-      "run_id_regex": "(?P<run_id>[^/]+?)\\.jsonl$",
+      "run_id_namespace": "exact-k40",
+      "run_id_regex": "(?P<run_id>k40r[12]_flat_[A-Z]{2}).*\\.jsonl$",
       "required": false,
       "metadata": {
         "algorithm_family": "exact_expanded_network",
         "implementation": "exact_pricer_phase_telemetry",
         "scale_family": null,
+        "scale": null
+      }
+    },
+    {
+      "request_id": "exact-big-telemetry",
+      "root_alias": "exact_big",
+      "glob": "**/*.telemetry.jsonl",
+      "artifact_type": "exact_cg_phase_telemetry_jsonl",
+      "run_id_namespace": "exact-big",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.json\\.telemetry\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer_phase_telemetry",
+        "scale_family": "union",
+        "scale": null
+      }
+    },
+    {
+      "request_id": "exact-repool-telemetry",
+      "root_alias": "repool_small",
+      "glob": "**/*.telemetry.jsonl",
+      "artifact_type": "exact_cg_phase_telemetry_jsonl",
+      "run_id_namespace": "exact-repool-small",
+      "run_id_regex": "(?P<run_id>[^/]+?)\\.json\\.telemetry\\.jsonl$",
+      "required": false,
+      "metadata": {
+        "algorithm_family": "exact_expanded_network",
+        "implementation": "exact_pricer_phase_telemetry",
+        "scale_family": "union",
         "scale": null
       }
     },

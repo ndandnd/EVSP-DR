@@ -26,9 +26,13 @@ from cross_generation_schema import (
 
 
 OUTPUT_SCHEMA = "evsp-dr-cross-generation-evidence-v1"
+K40_INSTANCE_SHA256 = (
+    "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
+)
 INVENTORY_FIELDS = (
     "artifact_id", "run_id", "path", "artifact_type", "schema_family",
-    "algorithm_family", "implementation", "scale_family", "scale",
+    "algorithm_family", "implementation", "treatment",
+    "scale_family", "scale",
     "replicate", "seed", "expected_sha256", "observed_sha256",
     "available", "validation_status", "reason", "tail_dropped",
     "tail_reason", "endpoint_only", "instance_sha256", "trip_set_sha256",
@@ -40,9 +44,11 @@ CG_FIELDS = (
     "implementation", "scale_family", "scale", "replicate", "seed",
     "iteration", "legacy_master_objective", "legacy_master_improvement",
     "master_objective_before_add", "master_improvement_before_add",
-    "lp_objective", "lp_route_weight", "artificial_trips",
+    "lp_objective", "lp_route_weight", "peak_trip_concurrency",
+    "artificial_trips",
     "artificial_total", "best_reduced_cost", "best_reduced_cost_reason",
-    "columns_added", "pool_columns", "wall_time_s", "master_time_s",
+    "columns_added", "pool_columns", "pool_columns_delta",
+    "wall_time_s", "master_time_s",
     "pricing_time_s", "cumulative_master_time_s",
     "cumulative_pricing_time_s", "master_pricing_split_available",
     "timed_out", "deepest_tier_timed_out", "label_cap_evictions",
@@ -66,10 +72,13 @@ CG_SUMMARY_FIELDS = (
     "final_best_reduced_cost", "final_pool_columns",
     "termination_category", "termination_raw", "termination_reason",
     "pricing_certified", "zero_artificials_reached",
+    "zero_artificials_observable",
     "time_to_zero_artificials_s", "zero_artificials_censored",
     "target_lp_weight", "target_lp_weight_reached",
+    "target_lp_weight_observable",
     "time_to_target_lp_weight_s", "target_lp_weight_censored",
-    "time_to_certification_s", "certification_censored",
+    "certification_observable", "time_to_certification_s",
+    "certification_censored", "event_clock",
     "censor_time_s", "master_time_share", "pricing_time_share",
     "timing_split_available", "phase_telemetry_available",
     "phase_telemetry_reason", "source_artifact_ids",
@@ -89,15 +98,18 @@ MIP_CHECKPOINT_FIELDS = (
 MIP_SUMMARY_FIELDS = (
     "run_id", "algorithm_family", "implementation", "scale_family",
     "scale", "replicate", "treatment", "incumbent_found",
-    "integer_fleet", "objective", "objective_bound", "gap",
+    "integer_fleet", "objective", "objective_bound",
+    "objective_bound_scope", "gap",
     "fleet_bound", "fleet_proven", "status_name", "optimal_scope",
     "runtime_s", "partitioning", "physically_validated_schedule",
     "giro_columns_added", "pool_scope", "first_feasible_s",
     "time_to_fleet_proof_s", "proof_censored", "censor_time_s",
     "source_result_sha256", "source_journal_sha256",
+    "final_artifact_id", "checkpoint_artifact_ids",
 )
 COVERAGE_FIELDS = (
-    "algorithm_family", "implementation", "scale_family", "scale",
+    "algorithm_family", "implementation", "treatment",
+    "scale_family", "scale",
     "size_class", "comparison_group", "model_difference", "required_evidence",
     "minimum_replicates", "trajectory_replicates", "endpoint_replicates",
     "mip_checkpoint_replicates", "mip_final_replicates",
@@ -113,7 +125,9 @@ RERUN_FIELDS = (
 TELEMETRY_FIELDS = (
     "artifact_id", "run_id", "session", "phase", "duration_s",
     "elapsed_session_s", "iteration", "attempt", "pool_columns",
-    "peak_rss_bytes", "outcome", "identity_sha256",
+    "incidence_nnz", "network_nodes", "network_arcs",
+    "telemetry_overhead_before_s", "peak_rss_bytes",
+    "outcome", "identity_sha256",
 )
 
 
@@ -161,11 +175,12 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
     return {
         "artifact_id": spec.get("artifact_id"),
         "run_id": spec.get("run_id"),
-        "path": str(path),
+        "path": str(spec.get("path")),
         "artifact_type": spec.get("artifact_type"),
         "schema_family": (parsed or {}).get("schema"),
         "algorithm_family": metadata.get("algorithm_family"),
         "implementation": metadata.get("implementation"),
+        "treatment": metadata.get("treatment"),
         "scale_family": metadata.get("scale_family"),
         "scale": metadata.get("scale"),
         "replicate": metadata.get("replicate"),
@@ -192,6 +207,7 @@ def _flatten_inventory(spec, path, observed, status, reason, parsed=None):
 def _validate_specs(manifest: dict):
     seen_artifacts = set()
     seen_roles = set()
+    seen_trajectory_hashes = {}
     for spec in manifest["artifacts"]:
         if not isinstance(spec, dict):
             raise ValueError("artifact specification is not an object")
@@ -203,6 +219,7 @@ def _validate_specs(manifest: dict):
             or not isinstance(run_id, str) or not run_id
             or not isinstance(artifact_type, str)
             or not _valid_sha(spec.get("expected_sha256"))
+            or type(spec.get("required", False)) is not bool
         ):
             raise ValueError("artifact identity/hash is malformed")
         if artifact_id in seen_artifacts:
@@ -217,10 +234,39 @@ def _validate_specs(manifest: dict):
         seen_artifacts.add(artifact_id)
         seen_roles.add(role)
         metadata = spec.get("metadata") or {}
+        if artifact_type in {
+            "heuristic_dp_historical_csv",
+            "heuristic_dp_current_csv",
+            "exact_cg_iterations_csv",
+            "mip_checkpoint", "mip_final",
+        }:
+            for key in (
+                "algorithm_family", "implementation",
+                "scale_family", "scale", "replicate",
+            ):
+                if metadata.get(key) is None:
+                    raise ValueError(
+                        f"artifact {artifact_id} lacks reviewed metadata {key}"
+                    )
+        if artifact_type in {
+            "heuristic_dp_historical_csv",
+            "heuristic_dp_current_csv",
+            "exact_cg_iterations_csv",
+        }:
+            duplicate = seen_trajectory_hashes.get(spec["expected_sha256"])
+            if duplicate is not None:
+                raise ValueError(
+                    f"trajectory bytes are duplicated as {duplicate} and "
+                    f"{artifact_id}"
+                )
+            seen_trajectory_hashes[spec["expected_sha256"]] = artifact_id
         if (
             metadata.get("scale_family") == "union"
             and str(metadata.get("scale")) == "40"
-            and metadata.get("trip_count") != 947
+            and (
+                metadata.get("trip_count") != 947
+                or metadata.get("instance_sha256") != K40_INSTANCE_SHA256
+            )
         ):
             raise ValueError(
                 f"k40 artifact {artifact_id} is not the fixed 947-trip case"
@@ -233,6 +279,49 @@ def _validate_run_consistency(manifest: dict):
     for spec in manifest["artifacts"]:
         grouped[spec["run_id"]].append(spec)
     for run_id, specs in grouped.items():
+        trajectory_specs = [
+            spec for spec in specs
+            if spec["artifact_type"] in {
+                "heuristic_dp_historical_csv",
+                "heuristic_dp_current_csv",
+                "exact_cg_iterations_csv",
+            }
+        ]
+        endpoint_specs = [
+            spec for spec in specs if spec["artifact_type"] == "endpoint_json"
+        ]
+        telemetry_specs = [
+            spec for spec in specs
+            if spec["artifact_type"] == "exact_cg_phase_telemetry_jsonl"
+        ]
+        journal_specs = [
+            spec for spec in specs
+            if spec["artifact_type"] == "exact_cg_column_journal_jsonl"
+        ]
+        mip_final_specs = [
+            spec for spec in specs if spec["artifact_type"] == "mip_final"
+        ]
+        if (
+            len(trajectory_specs) > 1
+            or len(endpoint_specs) > 1
+            or len(telemetry_specs) > 1
+            or len(journal_specs) > 1
+            or len(mip_final_specs) > 1
+        ):
+            raise ValueError(f"run {run_id} has duplicate evidence roles")
+        trajectory_types = {
+            spec["artifact_type"] for spec in trajectory_specs
+        }
+        if len(trajectory_types) > 1:
+            raise ValueError(f"run {run_id} mixes trajectory schemas")
+        algorithms = {
+            (spec.get("metadata") or {}).get("algorithm_family")
+            for spec in specs
+            if (spec.get("metadata") or {}).get("algorithm_family")
+            not in (None, "artifact_manifest")
+        }
+        if len(algorithms) > 1:
+            raise ValueError(f"run {run_id} mixes algorithm families")
         for field in fields:
             values = {
                 (spec.get("metadata") or {}).get(field)
@@ -280,7 +369,14 @@ def _embedded_provenance_mismatches(parsed: dict, spec: dict) -> list[str]:
     mismatches = []
     for key, value in observed.items():
         expected = metadata.get(key)
-        if expected is not None and value is not None and expected != value:
+        if (
+            expected is not None
+            and not (
+                key in {"trip_set_sha256", "trip_count"}
+                and not isinstance(trip_ids, list)
+            )
+            and expected != value
+        ):
             mismatches.append(f"{key}: manifest={expected} artifact={value}")
     return mismatches
 
@@ -305,6 +401,27 @@ def _certification_from_endpoint(endpoint):
     )
 
 
+def _endpoint_horizon(endpoint):
+    if not isinstance(endpoint, dict):
+        return None, None
+    for key, clock in (
+        ("wall_s", "wall_time"),
+        ("Total_Time_s", "wall_time"),
+        ("Total_Runtime_s", "wall_time"),
+        ("active_time_s", "active_time"),
+    ):
+        value = endpoint.get(key)
+        if value is None:
+            continue
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(number) and number >= 0:
+            return number, clock
+    return None, None
+
+
 def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
     grouped = defaultdict(list)
     for row in cg_rows:
@@ -317,6 +434,7 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
         termination_raw = _termination_from_endpoint(endpoint)
         termination, termination_reason = normalize_termination(termination_raw)
         certified = _certification_from_endpoint(endpoint)
+        endpoint_horizon, endpoint_clock = _endpoint_horizon(endpoint)
         metadata = (specs_by_run[run_id][0].get("metadata") or {})
         tolerance = float(metadata.get("artificial_tolerance", 1e-6))
         target = metadata.get("target_lp_weight")
@@ -335,7 +453,27 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
             and row["artificial_total"] <= tolerance
             and row["wall_time_s"] is not None
         ]
-        censor = final["wall_time_s"]
+        censor = max(
+            value for value in (final["wall_time_s"], endpoint_horizon)
+            if value is not None
+        )
+        zero_observable = any(
+            row["artificial_total"] is not None for row in rows
+        )
+        target_observable = (
+            target is not None and zero_observable
+            and any(row["lp_route_weight"] is not None for row in rows)
+        )
+        certification_observable = (
+            isinstance(endpoint, dict)
+            and (
+                "certified_rc_optimal" in endpoint
+                or endpoint.get("Termination_Reason")
+                in {"rc_optimal_restricted"}
+                or endpoint.get("termination_reason")
+                in {"rc_optimal_restricted"}
+            )
+        )
         cum_master = final["cumulative_master_time_s"]
         cum_pricing = final["cumulative_pricing_time_s"]
         total_active = (
@@ -371,16 +509,28 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
             "termination_reason": termination_reason,
             "pricing_certified": certified,
             "zero_artificials_reached": bool(zero_times),
+            "zero_artificials_observable": zero_observable,
             "time_to_zero_artificials_s": min(zero_times) if zero_times else None,
-            "zero_artificials_censored": not bool(zero_times),
+            "zero_artificials_censored": (
+                not bool(zero_times) if zero_observable else None
+            ),
             "target_lp_weight": target,
             "target_lp_weight_reached": bool(target_times),
+            "target_lp_weight_observable": target_observable,
             "time_to_target_lp_weight_s": (
                 min(target_times) if target_times else None
             ),
-            "target_lp_weight_censored": not bool(target_times),
-            "time_to_certification_s": censor if certified else None,
-            "certification_censored": not certified,
+            "target_lp_weight_censored": (
+                not bool(target_times) if target_observable else None
+            ),
+            "certification_observable": certification_observable,
+            "time_to_certification_s": (
+                endpoint_horizon if certified else None
+            ),
+            "certification_censored": (
+                not certified if certification_observable else None
+            ),
+            "event_clock": endpoint_clock or "trajectory_wall_time",
             "censor_time_s": censor,
             "master_time_share": (
                 cum_master / total_active if total_active else None
@@ -397,8 +547,70 @@ def _cg_summaries(cg_rows, endpoints, telemetry_by_run, specs_by_run):
                 else "telemetry_disabled_or_not_supplied"
             ),
             "source_artifact_ids": " | ".join(sorted({
-                row["artifact_id"] for row in rows
+                spec["artifact_id"] for spec in specs_by_run[run_id]
             })),
+        })
+    for run_id, endpoint in sorted(endpoints.items()):
+        if run_id in grouped:
+            continue
+        specs = specs_by_run[run_id]
+        metadata = specs[0].get("metadata") or {}
+        horizon, clock = _endpoint_horizon(endpoint)
+        termination_raw = _termination_from_endpoint(endpoint)
+        termination, reason = normalize_termination(termination_raw)
+        certified = _certification_from_endpoint(endpoint)
+        summaries.append({
+            "run_id": run_id,
+            "algorithm_family": metadata.get("algorithm_family"),
+            "implementation": metadata.get("implementation"),
+            "schema_family": "endpoint_only",
+            "scale_family": metadata.get("scale_family"),
+            "scale": metadata.get("scale"),
+            "replicate": metadata.get("replicate"),
+            "seed": metadata.get("seed"),
+            "iteration_count": 0,
+            "final_wall_time_s": horizon,
+            "final_legacy_master_objective": None,
+            "final_master_objective_before_add": None,
+            "final_lp_objective": None,
+            "final_lp_route_weight": None,
+            "final_artificial_total": None,
+            "final_best_reduced_cost": None,
+            "final_pool_columns": None,
+            "termination_category": termination,
+            "termination_raw": termination_raw,
+            "termination_reason": reason,
+            "pricing_certified": certified,
+            "zero_artificials_reached": None,
+            "zero_artificials_observable": False,
+            "time_to_zero_artificials_s": None,
+            "zero_artificials_censored": None,
+            "target_lp_weight": metadata.get("target_lp_weight"),
+            "target_lp_weight_reached": None,
+            "target_lp_weight_observable": False,
+            "time_to_target_lp_weight_s": None,
+            "target_lp_weight_censored": None,
+            "certification_observable": (
+                isinstance(endpoint, dict)
+                and "certified_rc_optimal" in endpoint
+            ),
+            "time_to_certification_s": horizon if certified else None,
+            "certification_censored": (
+                not certified
+                if isinstance(endpoint, dict)
+                and "certified_rc_optimal" in endpoint
+                else None
+            ),
+            "event_clock": clock,
+            "censor_time_s": horizon,
+            "master_time_share": None,
+            "pricing_time_share": None,
+            "timing_split_available": False,
+            "phase_telemetry_available": False,
+            "phase_telemetry_reason": "no_trajectory_or_telemetry",
+            "source_artifact_ids": " | ".join(sorted(
+                spec["artifact_id"] for spec in specs
+            )),
         })
     return summaries
 
@@ -416,6 +628,17 @@ def _mip_summaries(mip_rows, mip_finals):
                 if value["checkpoint_elapsed_s"] is not None else math.inf
             ),
         )
+        if any(
+            row["treatment"] != final["treatment"]
+            or row["source_result_sha256"]
+            != final["source_result_sha256"]
+            or row["source_journal_sha256"]
+            != final["source_journal_sha256"]
+            for row in rows
+        ):
+            raise ValueError(
+                f"MIP checkpoint/final identity mismatch: {final['run_id']}"
+            )
         proof_times = [
             row["statistics_observed_s"] for row in rows
             if row["statistics_observed_s"] is not None
@@ -423,7 +646,12 @@ def _mip_summaries(mip_rows, mip_finals):
             and row["fleet_bound"] is not None
             and math.ceil(float(row["fleet_bound"]) - 1e-6)
             >= int(row["incumbent_fleet"])
+            and row["solver_ended_before_checkpoint"] is False
         ]
+        if proof_times and final.get("fleet_proven") is not True:
+            raise ValueError(
+                f"MIP checkpoint/final proof mismatch: {final['run_id']}"
+            )
         first_feasible = [
             row["first_feasible_s"] for row in rows
             if row["first_feasible_s"] is not None
@@ -447,6 +675,10 @@ def _mip_summaries(mip_rows, mip_finals):
             ),
             "proof_censored": final.get("fleet_proven") is not True,
             "censor_time_s": runtime,
+            "final_artifact_id": final["artifact_id"],
+            "checkpoint_artifact_ids": " | ".join(sorted({
+                row["artifact_id"] for row in rows
+            })),
         })
     return summaries
 
@@ -457,11 +689,17 @@ def _default_coverage_expectations():
         *[("union", value) for value in (5, 8, 10, 13, 15, 20, 30, 40)],
     )
     algorithms = (
-        ("heuristic_dp_historical", "legacy_dp", "trajectory"),
-        ("heuristic_dp_current", "instrumented_dp", "trajectory"),
-        ("exact_expanded_network", "exact_pricer", "trajectory"),
-        ("mip_finite_pool", "raw", "mip_checkpoint_and_final"),
-        ("mip_finite_pool", "giro", "mip_checkpoint_and_final"),
+        ("heuristic_dp_historical", "legacy_dp", None, "trajectory"),
+        ("heuristic_dp_current", "instrumented_dp", None, "trajectory"),
+        ("exact_expanded_network", "exact_pricer", None, "trajectory"),
+        (
+            "mip_finite_pool", "two_stage_pool_mip",
+            "RAW", "mip_checkpoint_and_final"
+        ),
+        (
+            "mip_finite_pool", "two_stage_pool_mip",
+            "GIRO", "mip_checkpoint_and_final"
+        ),
     )
     def size_class(scale_family, scale):
         if str(scale) == "40":
@@ -477,6 +715,7 @@ def _default_coverage_expectations():
     return [{
         "algorithm_family": family,
         "implementation": implementation,
+        "treatment": treatment,
         "scale_family": scale_family,
         "scale": scale,
         "size_class": size_class(scale_family, scale),
@@ -489,17 +728,61 @@ def _default_coverage_expectations():
         "required_evidence": required,
         "minimum_replicates": 3,
     } for scale_family, scale in scales
-      for family, implementation, required in algorithms]
+      for family, implementation, treatment, required in algorithms]
 
 
 def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
-    expectations = (
+    expectations = list(
         manifest.get("coverage_expectations")
         or _default_coverage_expectations()
     )
     verified = [
         row for row in inventory if row["validation_status"] == "verified"
     ]
+    expected_keys = {
+        (
+            row["algorithm_family"], row["implementation"],
+            row.get("treatment"), row["scale_family"], str(row["scale"]),
+        )
+        for row in expectations
+    }
+    for observed in verified:
+        key = (
+            observed.get("algorithm_family"),
+            observed.get("implementation"),
+            observed.get("treatment"),
+            observed.get("scale_family"),
+            str(observed.get("scale")),
+        )
+        if (
+            key in expected_keys
+            or observed.get("algorithm_family") == "artifact_manifest"
+            or observed.get("scale") is None
+            or observed.get("artifact_type") in {
+                "endpoint_json",
+                "artifact_manifest_json",
+                "exact_cg_phase_telemetry_jsonl",
+            }
+        ):
+            continue
+        expectations.append({
+            "algorithm_family": key[0],
+            "implementation": key[1],
+            "treatment": key[2],
+            "scale_family": key[3],
+            "scale": observed.get("scale"),
+            "size_class": "observed_outside_design",
+            "comparison_group": (
+                f"observed:{key[0]}:{key[1]}:{key[3]}:{key[4]}"
+            ),
+            "model_difference": "observed artifact outside reviewed design matrix",
+            "required_evidence": (
+                "mip_checkpoint_and_final"
+                if key[0] == "mip_finite_pool" else "trajectory"
+            ),
+            "minimum_replicates": 1,
+        })
+        expected_keys.add(key)
     coverage = []
     reruns = []
     observed_runtime = defaultdict(list)
@@ -518,22 +801,53 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
             return (
                 row.get("algorithm_family") == expected["algorithm_family"]
                 and row.get("implementation") == expected["implementation"]
+                and row.get("treatment") == expected.get("treatment")
                 and row.get("scale_family") == expected["scale_family"]
                 and str(row.get("scale")) == str(expected["scale"])
             )
-        trajectory_reps = {
-            row["replicate"] for row in cg_rows if matches(row)
+        trajectory_run_ids = {
+            row["run_id"] for row in cg_rows if matches(row)
         }
+        trajectory_identities = [
+            row for row in verified
+            if matches(row)
+            and row["run_id"] in trajectory_run_ids
+            and row.get("trip_set_sha256")
+            and row.get("replicate") is not None
+        ]
+        trajectory_by_trip_set = defaultdict(set)
+        for row in trajectory_identities:
+            trajectory_by_trip_set[row["trip_set_sha256"]].add(
+                row["replicate"]
+            )
+        trajectory_count = max(
+            (len(values) for values in trajectory_by_trip_set.values()),
+            default=0,
+        )
         endpoint_reps = {
             row["replicate"] for row in verified
             if matches(row) and row["endpoint_only"]
+            and row.get("replicate") is not None
         }
-        checkpoint_reps = {
-            row["replicate"] for row in mip_rows if matches(row)
+        checkpoint_runs = {
+            row["run_id"] for row in mip_rows if matches(row)
         }
-        final_reps = {
-            row["replicate"] for row in mip_finals if matches(row)
+        final_runs = {
+            row["run_id"] for row in mip_finals if matches(row)
         }
+        paired_mip_runs = checkpoint_runs & final_runs
+        paired_mip_inventory = [
+            row for row in verified
+            if matches(row) and row["run_id"] in paired_mip_runs
+            and row.get("trip_set_sha256")
+            and row.get("replicate") is not None
+        ]
+        mip_by_trip_set = defaultdict(set)
+        for row in paired_mip_inventory:
+            mip_by_trip_set[row["trip_set_sha256"]].add(row["replicate"])
+        mip_pair_count = max(
+            (len(values) for values in mip_by_trip_set.values()), default=0
+        )
         matching_inventory = [row for row in verified if matches(row)]
         trip_sets = {
             row["trip_set_sha256"] for row in matching_inventory
@@ -550,11 +864,11 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
         required = expected["required_evidence"]
         minimum = int(expected.get("minimum_replicates", 3))
         if required == "trajectory":
-            count = len(trajectory_reps)
+            count = trajectory_count
             endpoint_only = bool(endpoint_reps) and count == 0
         else:
-            count = min(len(checkpoint_reps), len(final_reps))
-            endpoint_only = bool(final_reps) and not checkpoint_reps
+            count = mip_pair_count
+            endpoint_only = bool(final_runs) and not checkpoint_runs
         if count >= minimum:
             status = "available"
             reason = None
@@ -576,10 +890,10 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 } else "medium"
             ),
             "minimum_replicates": minimum,
-            "trajectory_replicates": len(trajectory_reps),
+            "trajectory_replicates": trajectory_count,
             "endpoint_replicates": len(endpoint_reps),
-            "mip_checkpoint_replicates": len(checkpoint_reps),
-            "mip_final_replicates": len(final_reps),
+            "mip_checkpoint_replicates": len(checkpoint_runs),
+            "mip_final_replicates": len(final_runs),
             "verified_trip_sets": len(trip_sets),
             "replicate_semantics": replicate_semantics,
             "coverage_status": status,
@@ -623,23 +937,30 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
                 "--soc-step", "15", "--block-min", "10",
                 "--g-kwh", "300", "--charge-kw", "300",
                 "--min-soc-frac", "0",
+                "--stall-window-min", "30",
+                "--stall-rc-frac", "0.05",
+                "--stall-obj-frac", "1e-5",
                 "--wall-limit-s", str(recommended),
                 "--out", "<new-exact-output.json>",
             ]
         elif expected["algorithm_family"] == "heuristic_dp_current":
             command = [
                 "python", "-u", "src/run_ex_unicorn.py",
-                "--instance", "<hash-bound-instance.csv>",
-                "--queue-order", "<declared>",
-                "--dominance-mode", "<declared>",
-                "--active-time-limit-hours",
+                "--csv", "<hash-bound-instance.csv>",
+                "--G", "300",
+                "--prices_csv", "hourly_prices_flat.csv",
+                "--queue_order", "<declared>",
+                "--dominance_mode", "<declared>",
+                "--active_time_limit_hours",
                 f"{recommended / 3600:g}",
+                "--skip_final_mip",
+                "--results_root", "<new-results-root>",
             ]
         elif expected["algorithm_family"] == "mip_finite_pool":
             command = [
                 "python", "-u",
                 "src/launch_mip_statistics_campaign.py",
-                "--mode", "two-cell",
+                "--mode", "pilot",
                 "--campaign", "<new-review-campaign>",
                 "--plan-out", "<new-plan.json>",
             ]
@@ -738,9 +1059,16 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
                 [row["columns_added"] for row in values],
                 where="post", label=run_id,
             )
+        if any(row["pool_columns_delta"] is not None for row in values):
+            axes[1].step(
+                [row["wall_time_s"] / 3600 for row in values],
+                [row["pool_columns_delta"] for row in values],
+                where="post", linestyle=":",
+                label=f"{run_id} pool-size delta",
+            )
     axes[0].axhline(0, color="black", linestyle="--")
     axes[0].set_ylabel("Best reduced cost")
-    axes[1].set_ylabel("Columns added")
+    axes[1].set_ylabel("Reported columns added / pool-size delta")
     axes[1].set_xlabel("Wall time (hours)")
     axes[0].set_title("Pricing progress")
     save(fig, "cg_reduced_cost_columns")
@@ -775,11 +1103,23 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
 
     fig, ax = plt.subplots(figsize=(8, 4.5))
     for run_id, rows in sorted(_group(mip_rows, "run_id").items()):
+        rows = [
+            row for row in rows
+            if row["solver_ended_before_checkpoint"] is False
+        ]
         rows = sorted(rows, key=lambda row: (
-            row["checkpoint_elapsed_s"]
-            if row["checkpoint_elapsed_s"] is not None else math.inf
+            row["statistics_observed_s"]
+            if row["statistics_observed_s"] is not None
+            else row["observed_total_elapsed_s"]
         ))
-        x = [row["checkpoint_elapsed_s"] / 3600 for row in rows]
+        x = [
+            (
+                row["statistics_observed_s"]
+                if row["statistics_observed_s"] is not None
+                else row["observed_total_elapsed_s"]
+            ) / 3600
+            for row in rows
+        ]
         ax.step(x, [row["incumbent_fleet"] for row in rows],
                 where="post", label=f"{run_id} incumbent")
         ax.step(x, [row["fleet_bound"] for row in rows],
@@ -819,15 +1159,24 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
         f"{row['scale_family']}:{row['scale']}" for row in coverage
     })
     matrix = np.zeros((len(algorithms), len(scales)))
+    status_values = {
+        "not_available": 0,
+        "endpoint_only_rerun_required": 1,
+        "insufficient_replicates": 2,
+        "available": 3,
+    }
     for row in coverage:
         i = algorithms.index(
             f"{row['algorithm_family']}:{row['implementation']}"
         )
         j = scales.index(f"{row['scale_family']}:{row['scale']}")
-        matrix[i, j] = 1 if row["coverage_status"] == "available" else 0
+        matrix[i, j] = status_values.get(row["coverage_status"], 0)
     fig, ax = plt.subplots(figsize=(max(8, len(scales) * 0.7), 5))
-    image = ax.imshow(matrix, aspect="auto", vmin=0, vmax=1, cmap="RdYlGn")
-    fig.colorbar(image, ax=ax, label="Verified trajectory coverage")
+    image = ax.imshow(matrix, aspect="auto", vmin=0, vmax=3, cmap="RdYlGn")
+    colorbar = fig.colorbar(image, ax=ax, ticks=[0, 1, 2, 3])
+    colorbar.ax.set_yticklabels([
+        "missing", "endpoint only", "insufficient reps", "available"
+    ])
     ax.set_xticks(range(len(scales)), scales, rotation=45, ha="right")
     ax.set_yticks(range(len(algorithms)), algorithms)
     ax.set_title("Explicit artifact/missingness coverage matrix")
@@ -933,35 +1282,50 @@ def _publish_staging(staging: Path, output: Path):
     if output.exists():
         raise FileExistsError(f"output directory already exists: {output}")
     output.mkdir(mode=0o755)
-    for source in sorted(staging.iterdir()):
-        if not source.is_file():
-            continue
-        os.link(source, output / source.name)
-    output_fd = os.open(output, os.O_RDONLY | os.O_DIRECTORY)
-    os.fsync(output_fd)
-    completion = {
-        "schema": "evsp-dr-cross-generation-output-completion-v1",
-        "members": {
-            path.name: hashlib.sha256(path.read_bytes()).hexdigest()
-            for path in sorted(output.iterdir()) if path.is_file()
-        },
-    }
-    completion_raw = (
-        json.dumps(completion, indent=2, sort_keys=True) + "\n"
-    ).encode()
-    temporary = output / f".completion.json.tmp.{os.getpid()}"
-    with temporary.open("xb") as handle:
-        handle.write(completion_raw)
-        handle.flush()
-        os.fsync(handle.fileno())
-    os.link(temporary, output / "completion.json")
-    temporary.unlink()
-    os.fsync(output_fd)
-    os.close(output_fd)
+    parent_fd = os.open(output.parent, os.O_RDONLY | os.O_DIRECTORY)
+    os.fsync(parent_fd)
+    os.close(parent_fd)
+    try:
+        for source in sorted(staging.iterdir()):
+            if not source.is_file():
+                continue
+            with source.open("rb") as handle:
+                os.fsync(handle.fileno())
+            os.link(source, output / source.name)
+        output_fd = os.open(output, os.O_RDONLY | os.O_DIRECTORY)
+        os.fsync(output_fd)
+        completion = {
+            "schema": "evsp-dr-cross-generation-output-completion-v1",
+            "members": {
+                path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in sorted(output.iterdir()) if path.is_file()
+            },
+        }
+        completion_raw = (
+            json.dumps(completion, indent=2, sort_keys=True) + "\n"
+        ).encode()
+        temporary = output / f".completion.json.tmp.{os.getpid()}"
+        with temporary.open("xb") as handle:
+            handle.write(completion_raw)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.link(temporary, output / "completion.json")
+        temporary.unlink()
+        os.fsync(output_fd)
+        os.close(output_fd)
+    except Exception:
+        if not (output / "completion.json").exists():
+            shutil.rmtree(output, ignore_errors=True)
+            parent_fd = os.open(
+                output.parent, os.O_RDONLY | os.O_DIRECTORY
+            )
+            os.fsync(parent_fd)
+            os.close(parent_fd)
+        raise
 
 
 def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
-          command: list[str]) -> dict:
+          command: list[str], approved_manifest_sha256: str | None = None) -> dict:
     manifest_path = input_manifest.expanduser().absolute()
     repo = repo_root.expanduser().absolute()
     output = output_dir.expanduser().absolute()
@@ -969,6 +1333,12 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         raise FileExistsError(f"output directory already exists: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     manifest, manifest_raw = _read_manifest(manifest_path)
+    observed_manifest_sha = sha256_bytes(manifest_raw)
+    if (
+        approved_manifest_sha256 is not None
+        and observed_manifest_sha != approved_manifest_sha256
+    ):
+        raise ValueError("input manifest differs from approved SHA-256")
     _validate_specs(manifest)
     _validate_run_consistency(manifest)
     inventory = []
@@ -987,6 +1357,12 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
             inventory.append(_flatten_inventory(
                 spec, path, None, "missing",
                 spec.get("availability_reason") or "artifact_not_found",
+            ))
+            continue
+        if path.is_symlink() or path.resolve() != path:
+            inventory.append(_flatten_inventory(
+                spec, path, None, "rejected",
+                "symlinked/non-canonical artifact path",
             ))
             continue
         raw = path.read_bytes()
@@ -1030,12 +1406,17 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         if row["artifact_id"] in required_ids
         and row["validation_status"] != "verified"
     ]
-    if failed_required:
+    rejected_present = [
+        row for row in inventory
+        if row["validation_status"] == "rejected"
+    ]
+    if failed_required or rejected_present:
+        failures = failed_required or rejected_present
         raise ValueError(
-            "required artifacts failed validation: "
+            "listed artifacts failed validation: "
             + " | ".join(
                 f"{row['artifact_id']}: {row['reason']}"
-                for row in failed_required
+                for row in failures
             )
         )
     telemetry_by_run = _group(telemetry_rows, "run_id")
@@ -1081,6 +1462,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                    cg_summaries)
         _write_csv(staging / "coauthor_mip_endpoints.csv", MIP_SUMMARY_FIELDS,
                    mip_summaries)
+        (staging / "input_manifest.json").write_bytes(manifest_raw)
         _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage)
         schema_text = """# Cross-generation normalized schema
 
@@ -1099,7 +1481,8 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         rerun_plan = {
             "schema": "evsp-dr-cross-generation-rerun-plan-v1",
             "dry_run_only": True,
-            "input_manifest_sha256": sha256_bytes(manifest_raw),
+            "input_manifest_sha256": observed_manifest_sha,
+            "approved_input_manifest_sha256": approved_manifest_sha256,
             "jobs": reruns,
             "submits_jobs": False,
         }
@@ -1108,12 +1491,16 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         )
         provenance = {
             "schema": OUTPUT_SCHEMA,
-            "input_manifest": str(manifest_path),
+            "input_manifest": (
+                str(manifest_path.relative_to(repo))
+                if repo in manifest_path.parents
+                else str(manifest_path)
+            ),
             "input_manifest_sha256": sha256_bytes(manifest_raw),
             "source_artifact_hashes": artifact_hashes,
             "run_provenance": {
                 run_id: {
-                    key: (specs[0].get("metadata") or {}).get(key)
+                    key: (verified_specs[0].get("metadata") or {}).get(key)
                     for key in (
                         "algorithm_family", "implementation",
                         "git_commit", "git_dirty", "instance_sha256",
@@ -1130,6 +1517,12 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                     )
                 }
                 for run_id, specs in sorted(specs_by_run.items())
+                if (
+                    verified_specs := [
+                        spec for spec in specs
+                        if spec["artifact_id"] in parsed_by_artifact
+                    ]
+                )
             },
             "git": _git_identity(repo),
             "environment": _environment_identity(),
@@ -1179,21 +1572,27 @@ def main(argv=None) -> int:
     parser.add_argument("--input-manifest", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument(
+        "--approved-input-manifest-sha256", required=True
+    )
+    parser.add_argument(
         "--repo-root", type=Path,
         default=Path(__file__).resolve().parents[1],
     )
     args = parser.parse_args(argv)
     command = [
         "python", "-u", "src/build_cross_generation_evidence.py",
-        "--input-manifest", str(args.input_manifest),
-        "--out-dir", str(args.out_dir),
-        "--repo-root", str(args.repo_root),
+        "--input-manifest", "<INPUT_MANIFEST>",
+        "--approved-input-manifest-sha256",
+        args.approved_input_manifest_sha256,
+        "--out-dir", "<OUTPUT_DIR>",
+        "--repo-root", "<REPO_ROOT>",
     ]
     result = build(
         args.input_manifest,
         args.out_dir,
         repo_root=args.repo_root,
         command=command,
+        approved_manifest_sha256=args.approved_input_manifest_sha256,
     )
     print(json.dumps(result, indent=2))
     return 0
