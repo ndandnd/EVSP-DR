@@ -273,6 +273,64 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             )
             self.assertTrue(plan["blocked"])
 
+    def test_two_cell_k40_plan_is_raw_giro_and_thirty_minutes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            status, data = self._candidate(root, scale=40, trips=8)
+            payload = inventory(
+                {"k40_factorial": status.parent},
+                data_roots=[data],
+            )
+            start = self._start(root, 8)
+            identity = {
+                "expected_commit": "b" * 40,
+                "reviewed_base_commit": launcher.REVIEWED_BASE,
+                "detached": True,
+                "branch": "",
+                "tracked_clean": True,
+            }
+            with (
+                patch.object(launcher, "REPO_ROOT", root),
+                patch.object(launcher, "CODE_PATHS", ()),
+                patch.object(
+                    launcher,
+                    "_physical_start_validation",
+                    return_value={
+                        "validated_bus_count": 8,
+                        "expected_full_objective": 800000.0,
+                    },
+                ),
+                patch.object(
+                    launcher,
+                    "_python_identity",
+                    return_value={
+                        "available": True,
+                        "executable": str(Path(sys.executable).resolve()),
+                        "executable_sha256": "e" * 64,
+                        "identity_sha256": "f" * 64,
+                        "version": "3.12",
+                        "gurobi_version": "test",
+                    },
+                ),
+            ):
+                plan = launcher.build_plan(
+                    payload,
+                    mode="two-cell",
+                    campaign="k40-two-cell",
+                    start_map={"40": start},
+                    identity=identity,
+                )
+            self.assertEqual(len(plan["jobs"]), 2)
+            self.assertEqual(
+                {job["arm"] for job in plan["jobs"]}, {"RAW", "GIRO"}
+            )
+            self.assertTrue(all(
+                job["time_limit_s"] == 1800 for job in plan["jobs"]
+            ))
+            self.assertTrue(all(
+                "M30" in job["job_name"] for job in plan["jobs"]
+            ))
+
     def test_duplicate_campaign_and_blocked_plan_refuse_submission(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

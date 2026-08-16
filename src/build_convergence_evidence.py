@@ -4,9 +4,7 @@
 from __future__ import annotations
 
 import argparse
-import ctypes
 import csv
-import errno
 import hashlib
 import io
 import json
@@ -23,6 +21,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from durable_io import read_jsonl_records
+from portable_bundle import publish_bundle
 from run_exact_pool_mip import resolve_pool_journal
 
 
@@ -93,27 +92,6 @@ def sha256_directory(path: Path) -> str:
         digest.update(sha256_file(member).encode())
         digest.update(b"\n")
     return digest.hexdigest()
-
-
-def _rename_noreplace(source: Path, destination: Path) -> None:
-    libc = ctypes.CDLL(None, use_errno=True)
-    renameat2 = getattr(libc, "renameat2", None)
-    if renameat2 is None:
-        raise RuntimeError("atomic no-replace publication unavailable")
-    renameat2.argtypes = [
-        ctypes.c_int, ctypes.c_char_p,
-        ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
-    ]
-    renameat2.restype = ctypes.c_int
-    result = renameat2(
-        -100, os.fsencode(source), -100, os.fsencode(destination), 1
-    )
-    if result == 0:
-        return
-    error = ctypes.get_errno()
-    if error == errno.EEXIST:
-        raise FileExistsError(f"output exists: {destination}")
-    raise OSError(error, os.strerror(error), str(destination))
 
 
 def _json_object(path: Path) -> tuple[dict, str]:
@@ -1166,10 +1144,12 @@ def build(
     if len(factorial_campaigns) != 2:
         raise ValueError("exactly two factorial campaign paths are required")
     output = output_dir.expanduser().resolve()
+    if replace_output:
+        raise ValueError(
+            "evidence packages are immutable; choose a new output directory"
+        )
     if output.exists():
-        if not replace_output:
-            raise FileExistsError(f"output exists: {output}")
-        shutil.rmtree(output)
+        raise FileExistsError(f"output exists: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     rows, missing = _factorial_rows(
         factorial_campaigns, allow_missing=allow_missing
@@ -1347,7 +1327,20 @@ from filenames or neighboring instances.
         (staging / "provenance.json").write_text(
             json.dumps(provenance, indent=2, sort_keys=True) + "\n"
         )
-        _rename_noreplace(staging, output)
+        members = {
+            path.name: path.read_bytes()
+            for path in sorted(staging.iterdir())
+            if path.is_file()
+        }
+        publish_bundle(
+            output,
+            members=members,
+            metadata={
+                "kind": "convergence-evidence",
+                "builder_sha256": provenance["builder_sha256"],
+                "builder_git_commit": provenance["builder_git_commit"],
+            },
+        )
     finally:
         if staging.exists():
             shutil.rmtree(staging)

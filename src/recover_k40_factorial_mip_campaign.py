@@ -1,0 +1,385 @@
+#!/usr/bin/env python3
+"""Dry-run-first recovery of validated k40 MIP raw results; never solves."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import tempfile
+from pathlib import Path
+
+from durable_io import flush_and_fsync
+from k40_factorial_mip_result import (
+    enrich_result,
+    publish_result_bundle,
+    sha256_file,
+    validate_scientific_result,
+)
+from portable_bundle import inspect_bundle
+
+
+def _canonical(payload: dict) -> bytes:
+    return json.dumps(
+        payload, sort_keys=True, separators=(",", ":")
+    ).encode()
+
+
+def _approval_payload(manifest: dict) -> dict:
+    return {
+        **{
+            key: value for key, value in manifest.items()
+            if key not in {
+                "created_at", "submitted", "jobs", "approval_sha256"
+            }
+        },
+        "jobs": [{
+            key: value for key, value in job.items()
+            if key not in {
+                "staged_result_bytes", "spec_bytes", "job_id",
+                "submission_state", "submission_error",
+                "reconciled_slurm_state",
+                "pre_submission_observed_git_commit",
+            }
+        } for job in manifest.get("jobs") or []],
+    }
+
+
+def _git_commit(*, require_clean: bool) -> str:
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=Path(__file__).resolve().parent,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    commit = result.stdout.strip()
+    if result.returncode != 0 or len(commit) != 40:
+        raise RuntimeError("recovery checkout has no valid Git commit")
+    status = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"],
+        cwd=Path(__file__).resolve().parent,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if status.returncode != 0 or (
+        require_clean and status.stdout.strip()
+    ):
+        raise RuntimeError("recovery checkout has tracked modifications")
+    return commit
+
+
+def _load_object(path: Path) -> dict:
+    value = json.loads(path.read_text())
+    if not isinstance(value, dict):
+        raise ValueError(f"JSON artifact is not an object: {path}")
+    return value
+
+
+def _verify_file(path_value, expected, label) -> Path:
+    path = Path(str(path_value)).expanduser().resolve()
+    if not path.is_file():
+        raise ValueError(f"{label} missing: {path}")
+    if sha256_file(path) != expected:
+        raise ValueError(f"{label} hash mismatch: {path}")
+    return path
+
+
+def _candidate_result(job: dict, spec: dict) -> tuple[Path | None, str | None]:
+    output = Path(job["output"]).expanduser().resolve()
+    job_id = str(job.get("job_id") or "")
+    raw_candidates = sorted(output.parent.glob(output.name + ".raw.*"))
+    if job_id:
+        exact = [
+            path for path in raw_candidates
+            if path.name.endswith("." + job_id)
+        ]
+        if exact:
+            raw_candidates = exact
+    if len(raw_candidates) == 1:
+        return raw_candidates[0], "raw_result"
+    if len(raw_candidates) > 1:
+        raise ValueError("multiple ambiguous raw output candidates")
+    temporary_dirs = sorted(output.parent.glob(f".{output.name}.tmp.*"))
+    result_candidates = [
+        directory / "result.json"
+        for directory in temporary_dirs
+        if directory.is_dir() and (directory / "result.json").is_file()
+    ]
+    if len(result_candidates) == 1:
+        return result_candidates[0], "failed_temporary_bundle"
+    if len(result_candidates) > 1:
+        raise ValueError("multiple ambiguous temporary result bundles")
+    return None, None
+
+
+def _prepare_job(
+    root: Path,
+    manifest: dict,
+    job: dict,
+    recovery_commit: str,
+) -> tuple[dict, dict | None]:
+    errors = []
+    prepared = None
+    output = Path(job["output"]).expanduser().resolve()
+    state = inspect_bundle(output)
+    if state["state"] == "complete_valid":
+        try:
+            result = _load_object(output / "result.json")
+            spec = job["spec"]
+            source = _load_object(Path(spec["staged_result"]))
+            validate_scientific_result(result, spec, source)
+        except (OSError, ValueError, KeyError) as exc:
+            state = {**state, "state": "invalid", "errors": [str(exc)]}
+        else:
+            return ({
+                "label": job["label"],
+                "job_id": str(job.get("job_id") or ""),
+                "destination": str(output),
+                "publication_state": "complete_valid",
+                "recoverable": False,
+                "recovery_method": "already_complete",
+                "errors": [],
+            }, None)
+    try:
+        spec_path = _verify_file(
+            job["spec_path"], job["spec_sha256"], "job spec"
+        )
+        spec = _load_object(spec_path)
+        if spec != job["spec"]:
+            raise ValueError("job spec differs from campaign manifest")
+        for path_key, hash_key, label in (
+            ("staged_result", "staged_result_sha256", "status"),
+            ("staged_journal", "staged_journal_sha256", "journal"),
+            ("staged_instance", "staged_instance_sha256", "instance"),
+            ("staged_prices", "staged_prices_sha256", "tariff"),
+            ("staged_start", "staged_start_sha256", "validated start"),
+        ):
+            _verify_file(spec[path_key], spec[hash_key], label)
+        worker = _verify_file(
+            manifest["worker"],
+            manifest["worker_sha256"],
+            "reviewed worker",
+        )
+        checkout_root = root.parents[3]
+        runner = _verify_file(
+            checkout_root / "src/run_exact_pool_mip.py",
+            spec["runner_sha256"],
+            "reviewed runner",
+        )
+        del worker, runner
+        candidate, method = _candidate_result(job, spec)
+        if candidate is None:
+            raise ValueError("no raw result or temporary result bundle found")
+        raw_sha = sha256_file(candidate)
+        raw = _load_object(candidate)
+        recovery = {
+            "job_spec_sha256": job["spec_sha256"],
+            "worker_sha256": manifest["worker_sha256"],
+            "original_job_id": str(job.get("job_id") or ""),
+            "raw_sha256": raw_sha,
+            "recovery_commit": recovery_commit,
+            "recovery_method": method,
+        }
+        result = enrich_result(raw, spec=spec, recovery=recovery)
+        source = _load_object(Path(spec["staged_result"]))
+        validate_scientific_result(result, spec, source)
+        result_raw = (
+            json.dumps(result, indent=2, sort_keys=True) + "\n"
+        ).encode()
+        prepared = {
+            "result": result,
+            "result_sha256": hashlib.sha256(result_raw).hexdigest(),
+            "spec": spec,
+            "source": source,
+            "recovery": recovery,
+        }
+        publication_state = state["state"]
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        errors.append(str(exc))
+        publication_state = state["state"]
+        method = None
+        candidate = None
+        raw_sha = None
+    return ({
+        "label": job.get("label"),
+        "job_id": str(job.get("job_id") or ""),
+        "destination": str(output),
+        "publication_state": publication_state,
+        "recoverable": prepared is not None,
+        "recovery_method": method,
+        "candidate_path": str(candidate) if candidate else None,
+        "raw_sha256": raw_sha,
+        "recovered_result_sha256": (
+            prepared["result_sha256"] if prepared else None
+        ),
+        "errors": errors,
+    }, prepared)
+
+
+def build_recovery_plan(
+    campaign_root: Path, *, require_clean=False
+) -> tuple[dict, dict]:
+    root = campaign_root.expanduser().resolve()
+    manifest_path = root / "campaign.json"
+    manifest = _load_object(manifest_path)
+    if manifest.get("schema") != "evsp-dr-k40-factorial-mip-campaign-v1":
+        raise ValueError("unexpected k40 factorial campaign schema")
+    approval = hashlib.sha256(
+        _canonical(_approval_payload(manifest))
+    ).hexdigest()
+    if approval != manifest.get("approval_sha256"):
+        raise ValueError("campaign differs from its approval SHA-256")
+    jobs = manifest.get("jobs")
+    if not isinstance(jobs, list) or len(jobs) != 12:
+        raise ValueError("recovery requires the exact 12-cell campaign")
+    recovery_commit = _git_commit(require_clean=require_clean)
+    rows = []
+    prepared = {}
+    for job in sorted(jobs, key=lambda value: value["label"]):
+        row, payload = _prepare_job(
+            root, manifest, job, recovery_commit
+        )
+        rows.append(row)
+        if payload is not None:
+            prepared[job["label"]] = payload
+    plan = {
+        "schema": "evsp-dr-k40-factorial-mip-recovery-plan-v1",
+        "campaign": manifest["campaign"],
+        "campaign_root": str(root),
+        "source_campaign_approval_sha256": approval,
+        "source_commit": manifest.get("checkout_identity", {}).get(
+            "expected_commit"
+        ),
+        "recovery_commit": recovery_commit,
+        "jobs": rows,
+        "recoverable_count": sum(row["recoverable"] for row in rows),
+        "complete_count": sum(
+            row["publication_state"] == "complete_valid" for row in rows
+        ),
+        "invalid_or_missing_count": sum(
+            not row["recoverable"]
+            and row["publication_state"] != "complete_valid"
+            for row in rows
+        ),
+        "reruns_gurobi": False,
+        "preserves_raw_and_staging": True,
+    }
+    return plan, prepared
+
+
+def _write_new(path: Path, payload: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=path.parent, prefix=f".{path.name}.tmp.", delete=False
+        ) as handle:
+            temporary = Path(handle.name)
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.link(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+
+
+def apply_recovery(
+    campaign_root: Path,
+    *,
+    approved_plan_sha256: str,
+) -> dict:
+    root = campaign_root.expanduser().resolve()
+    existing_record = root / "recovery" / f"{approved_plan_sha256}.json"
+    if existing_record.is_file():
+        record = _load_object(existing_record)
+        if (
+            record.get("recovery_plan_sha256")
+            == approved_plan_sha256
+            and record.get("raw_and_staging_preserved") is True
+            and record.get("reran_gurobi") is False
+        ):
+            return record
+        raise ValueError("existing recovery record is invalid")
+    plan, prepared = build_recovery_plan(
+        campaign_root, require_clean=True
+    )
+    plan_raw = _canonical(plan)
+    observed_sha = hashlib.sha256(plan_raw).hexdigest()
+    if observed_sha != approved_plan_sha256:
+        raise ValueError("current recovery plan differs from approved SHA-256")
+    recovered = []
+    skipped_complete = []
+    for row in plan["jobs"]:
+        if row["publication_state"] == "complete_valid":
+            skipped_complete.append(row["label"])
+            continue
+        if not row["recoverable"]:
+            raise ValueError(
+                f"{row['label']} is not recoverable: {row['errors']}"
+            )
+        payload = prepared[row["label"]]
+        publish_result_bundle(
+            Path(row["destination"]),
+            result=payload["result"],
+            spec=payload["spec"],
+            source_status=payload["source"],
+            recovery=payload["recovery"],
+            allow_existing_incomplete=True,
+        )
+        recovered.append(row["label"])
+    record = {
+        "schema": "evsp-dr-k40-factorial-mip-recovery-record-v1",
+        "recovery_plan_sha256": observed_sha,
+        "recovery_commit": plan["recovery_commit"],
+        "recovered": recovered,
+        "skipped_complete": skipped_complete,
+        "raw_and_staging_preserved": True,
+        "reran_gurobi": False,
+    }
+    record_path = root / "recovery" / f"{observed_sha}.json"
+    if record_path.exists():
+        existing = _load_object(record_path)
+        if existing != record:
+            raise ValueError("existing recovery record differs")
+    else:
+        _write_new(
+            record_path,
+            (json.dumps(record, indent=2, sort_keys=True) + "\n").encode(),
+        )
+    return record
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--campaign-root", type=Path, required=True)
+    parser.add_argument("--plan-out", type=Path)
+    parser.add_argument("--apply", action="store_true")
+    parser.add_argument("--approved-plan-sha256")
+    args = parser.parse_args(argv)
+    plan, _prepared = build_recovery_plan(args.campaign_root)
+    plan_raw = _canonical(plan)
+    plan_sha = hashlib.sha256(plan_raw).hexdigest()
+    print(json.dumps(plan, indent=2))
+    print(f"[recovery-plan-sha256] {plan_sha}")
+    if args.plan_out:
+        _write_new(args.plan_out, plan_raw)
+    if not args.apply:
+        print("[dry-run] no bundles published; no Gurobi solve invoked")
+        return 0 if plan["invalid_or_missing_count"] == 0 else 2
+    if not args.approved_plan_sha256:
+        parser.error("--apply requires --approved-plan-sha256")
+    record = apply_recovery(
+        args.campaign_root,
+        approved_plan_sha256=args.approved_plan_sha256,
+    )
+    print(json.dumps(record, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -12,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import build_convergence_evidence as evidence  # noqa: E402
+from portable_bundle import inspect_bundle  # noqa: E402
 
 
 class ConvergenceEvidenceTests(unittest.TestCase):
@@ -212,6 +213,9 @@ class ConvergenceEvidenceTests(unittest.TestCase):
                 root, output
             )
             self.assertEqual(result["trajectory_rows"], 56)
+            self.assertEqual(
+                inspect_bundle(output)["state"], "complete_valid"
+            )
             required = (
                 "k40_factorial_trajectory.csv",
                 "small_instance_certification.csv",

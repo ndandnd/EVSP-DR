@@ -11,6 +11,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from summarize_mip_statistics import summarize  # noqa: E402
+from portable_bundle import inspect_bundle  # noqa: E402
 
 
 class MIPStatisticsSummaryTests(unittest.TestCase):
@@ -178,6 +179,9 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             output = root / "summary"
             result = summarize(campaign, output)
             self.assertEqual(result["jobs"], 2)
+            self.assertEqual(
+                inspect_bundle(output)["state"], "complete_valid"
+            )
             with (output / "job_final.csv").open(newline="") as handle:
                 rows = list(csv.DictReader(handle))
             self.assertEqual({row["arm"] for row in rows}, {"RAW", "GIRO"})

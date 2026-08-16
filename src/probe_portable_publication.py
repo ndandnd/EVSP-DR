@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""Tiny compute-node probe for portable completion-marker publication."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from portable_bundle import capability_probe
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--directory", type=Path, required=True)
+    parser.add_argument("--out", type=Path)
+    args = parser.parse_args(argv)
+    result = capability_probe(args.directory)
+    encoded = json.dumps(result, indent=2) + "\n"
+    if args.out:
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        with args.out.open("x") as handle:
+            handle.write(encoded)
+    print(encoded, end="")
+    return 0 if result["ready_for_recovery_probe_only"] else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

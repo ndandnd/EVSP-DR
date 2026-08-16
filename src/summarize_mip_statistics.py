@@ -4,9 +4,7 @@
 from __future__ import annotations
 
 import argparse
-import ctypes
 import csv
-import errno
 import hashlib
 import json
 import math
@@ -17,6 +15,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from config import BUS_COST_KX
+from portable_bundle import publish_bundle
 
 
 CHECKPOINT_FIELDS = (
@@ -202,27 +201,6 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
             raise ValueError(
                 f"{job['cell_id']} lacks optimal cost-stage closure"
             )
-
-
-def _rename_noreplace(source: Path, destination: Path) -> None:
-    libc = ctypes.CDLL(None, use_errno=True)
-    renameat2 = getattr(libc, "renameat2", None)
-    if renameat2 is None:
-        raise RuntimeError("atomic no-replace publication unavailable")
-    renameat2.argtypes = [
-        ctypes.c_int, ctypes.c_char_p,
-        ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
-    ]
-    renameat2.restype = ctypes.c_int
-    result = renameat2(
-        -100, os.fsencode(source), -100, os.fsencode(destination), 1
-    )
-    if result == 0:
-        return
-    error = ctypes.get_errno()
-    if error == errno.EEXIST:
-        raise FileExistsError(f"output directory exists: {destination}")
-    raise OSError(error, os.strerror(error), str(destination))
 
 
 def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
@@ -639,7 +617,20 @@ def summarize(
         (staging / "summary.json").write_text(
             json.dumps(notes, indent=2) + "\n"
         )
-        _rename_noreplace(staging, output)
+        members = {
+            path.name: path.read_bytes()
+            for path in sorted(staging.iterdir())
+            if path.is_file()
+        }
+        publish_bundle(
+            output,
+            members=members,
+            metadata={
+                "kind": "mip-statistics-summary",
+                "campaign": manifest["campaign"],
+                "source_campaign_root": str(root),
+            },
+        )
     finally:
         if staging.exists():
             shutil.rmtree(staging)

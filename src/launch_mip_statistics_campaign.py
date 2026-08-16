@@ -370,12 +370,17 @@ def _job_name(job, campaign: str) -> str:
         if job.get("matrix") == "secondary" else ""
     )
     arm = "R" if job["arm"] == "RAW" else "G"
+    budget = (
+        f"M{int(round(job['budget_hours'] * 60)):02d}"
+        if job["budget_hours"] < 1
+        else f"H{int(job['budget_hours']):02d}"
+    )
     nonce = hashlib.sha256(
         f"{campaign}|{job['cell_id']}".encode()
     ).hexdigest()[:2].upper()
     name = (
         f"S{job['scale']:02d}{_rep_code(job['replicate'])}"
-        f"{arm}{job['budget_hours']:02d}H{age}{nonce}"
+        f"{arm}{budget}{age}{nonce}"
     )
     if len(name) > 15:
         raise ValueError(f"Slurm name exceeds 15 characters: {name}")
@@ -489,6 +494,17 @@ def build_plan(
                     budget_hours=budget,
                     start_map=start_map,
                     matrix="pilot",
+                ))
+    elif mode == "two-cell":
+        candidate = selected.get(40)
+        if candidate is not None:
+            for arm in ("RAW", "GIRO"):
+                jobs.append(_job_from_candidate(
+                    candidate,
+                    arm=arm,
+                    budget_hours=0.5,
+                    start_map=start_map,
+                    matrix="two-cell",
                 ))
     elif mode == "secondary":
         candidates = inventory_payload.get("candidates") or []
@@ -683,6 +699,7 @@ def build_plan(
             or bool(inventory_payload.get("missing_slots"))
             or (mode == "pilot" and bool(missing_scales))
             or (mode == "secondary" and missing_matrix_cells > 0)
+            or (mode == "two-cell" and selected.get(40) is None)
         ),
         "global_route_space_optimality_claimed": False,
     }
@@ -812,13 +829,15 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     ]
     _replace_json(root / "campaign.json", manifest)
     for job, manifest_job in zip(plan["jobs"], manifest["jobs"]):
-        wall_hours = job["budget_hours"]
+        wall_seconds = job["time_limit_s"] + 600
+        wall_hours, remainder = divmod(wall_seconds, 3600)
+        wall_minutes = remainder // 60
         comment = f"MSTAT:{job['execution_digest'][:32]}"
         command = [
             "sbatch", "--parsable", "--partition=scaglione",
             "--no-requeue", "--signal=B:USR1@180",
             "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=64G",
-            f"--time={wall_hours:02d}:10:00",
+            f"--time={wall_hours:02d}:{wall_minutes:02d}:00",
             f"--job-name={job['job_name']}",
             f"--comment={comment}",
             f"--output={logs}/%x_%j.out",
@@ -854,7 +873,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--mode", choices=("inventory", "pilot", "secondary"),
+        "--mode", choices=("inventory", "pilot", "secondary", "two-cell"),
         required=True,
     )
     parser.add_argument("--campaign")
