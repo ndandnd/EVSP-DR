@@ -1,7 +1,7 @@
 # MIP statistics campaign inventory (cloud dry run)
 
-`inventory-final.json`, `pilot-plan-final.json`, and
-`secondary-plan-final.json` are the canonical generated read-only artifacts
+`inventory-canonical.json`, `pilot-plan-canonical.json`, and
+`secondary-plan-canonical.json` are the canonical generated read-only artifacts
 from `src/launch_mip_statistics_campaign.py`.
 
 The cloud checkout does not contain the Unicorn result roots or release

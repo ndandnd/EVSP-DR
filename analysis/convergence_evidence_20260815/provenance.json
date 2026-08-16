@@ -1,7 +1,7 @@
 {
-  "builder_git_commit": "023761f2faef305c3b686885424f09a92ce081bb",
+  "builder_git_commit": "6f5e4e713a6827d6473a454155165888e1137d2d",
   "builder_path": "/workspace/src/build_convergence_evidence.py",
-  "builder_sha256": "4eac59dc607f665b325a5ae1aaa342d18b953c3221ffc9ee74b265dd461ab629",
+  "builder_sha256": "35a39be4a66c63c3a4cc9825cfe5b98ab29b05f7d04e0dd0a6c0bdc97f77f691",
   "factorial_commit": "eb85ca0cc439956939ba6bf9c42958808d89aadd",
   "generation_command": "src/build_convergence_evidence.py --factorial-campaign /home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial/k40fx_20260814T140232Z_eb85ca0c --factorial-campaign /home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial/k40fx_20260814T191933Z_eb85ca0c --historical /home/ubuntu/EVSP-DR-k40fx-eb85ca0/src/results/exact_big/Practice_Custom_DutyUnion_k40_r2_soc15_b10_g300_res0.0.json --legacy-analysis analysis/legacy_exact_20260805 --release-archive /workspace/releases/results-exact_big_mip_20260805T135556Z --release-archive /workspace/releases/results-cg-bigtar-867334-final-20260814 --release-archive /workspace/releases/results-goal1-overnight-single-duty-20260803 --out-dir analysis/convergence_evidence_20260815 --allow-missing-inputs --replace-output",
   "historical_commit": "f43475b732c3fbc8447a30845834a7d9e8822ef3",
