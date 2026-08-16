@@ -15,6 +15,7 @@ import os
 import secrets
 import shutil
 import tempfile
+import stat
 from pathlib import Path
 from typing import Callable
 
@@ -59,10 +60,32 @@ def _safe_member(name: str) -> Path:
         not name
         or path.is_absolute()
         or ".." in path.parts
+        or len(path.parts) != 1
         or path.name == "completion.json"
     ):
         raise ValueError(f"unsafe/reserved bundle member: {name!r}")
     return path
+
+
+def _absolute_lexical(path: Path) -> Path:
+    return Path(os.path.abspath(os.path.expanduser(str(path))))
+
+
+def _reject_symlink_components(path: Path, *, allow_missing_leaf: bool) -> None:
+    absolute = _absolute_lexical(path)
+    current = Path(absolute.anchor)
+    for index, part in enumerate(absolute.parts[1:]):
+        current = current / part
+        try:
+            mode = os.lstat(current).st_mode
+        except FileNotFoundError:
+            if allow_missing_leaf or index < len(absolute.parts[1:]) - 1:
+                continue
+            raise
+        if stat.S_ISLNK(mode):
+            raise BundlePublicationError(
+                f"symlinked path component is forbidden: {current}"
+            )
 
 
 def _atomic_member(path: Path, payload: bytes) -> None:
@@ -75,12 +98,37 @@ def _atomic_member(path: Path, payload: bytes) -> None:
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
-        if path.exists():
-            raise FileExistsError(f"bundle member already exists: {path}")
-        # Plain same-directory rename is widely supported on shared filesystems.
-        # The destination directory reservation makes this single-writer.
-        os.replace(temporary, path)
+        try:
+            os.link(temporary, path, follow_symlinks=False)
+        except FileExistsError:
+            if (
+                not path.is_file()
+                or path.is_symlink()
+                or sha256_file(path)
+                != hashlib.sha256(payload).hexdigest()
+                or path.stat().st_size != len(payload)
+            ):
+                raise FileExistsError(
+                    f"bundle member already differs/exists: {path}"
+                )
         _fsync_directory(path.parent)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def atomic_write_new_file(path: Path, payload: bytes) -> None:
+    destination = _absolute_lexical(path)
+    _reject_symlink_components(destination.parent, allow_missing_leaf=False)
+    temporary = destination.with_name(
+        f".{destination.name}.tmp.{os.getpid()}.{secrets.token_hex(6)}"
+    )
+    try:
+        with temporary.open("xb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.link(temporary, destination, follow_symlinks=False)
+        _fsync_directory(destination.parent)
     finally:
         temporary.unlink(missing_ok=True)
 
@@ -113,7 +161,16 @@ def inspect_bundle(
     recoverable_validator: Callable[[dict], None] | None = None,
     result_member: str = "result.json",
 ) -> dict:
-    path = Path(destination).expanduser().resolve()
+    path = _absolute_lexical(Path(destination))
+    try:
+        _reject_symlink_components(path, allow_missing_leaf=True)
+    except (BundlePublicationError, OSError) as exc:
+        return {
+            "state": "invalid",
+            "path": str(path),
+            "recoverable": False,
+            "errors": [str(exc)],
+        }
     if not path.exists():
         return {
             "state": "missing",
@@ -121,7 +178,16 @@ def inspect_bundle(
             "recoverable": False,
             "errors": [],
         }
-    if not path.is_dir() or path.is_symlink():
+    try:
+        destination_mode = os.lstat(path).st_mode
+    except OSError as exc:
+        return {
+            "state": "invalid",
+            "path": str(path),
+            "recoverable": False,
+            "errors": [str(exc)],
+        }
+    if not stat.S_ISDIR(destination_mode) or stat.S_ISLNK(destination_mode):
         return {
             "state": "invalid",
             "path": str(path),
@@ -129,11 +195,21 @@ def inspect_bundle(
             "errors": ["destination is not a regular directory"],
         }
     completion_path = path / "completion.json"
+    if completion_path.is_symlink():
+        return {
+            "state": "invalid",
+            "path": str(path),
+            "recoverable": False,
+            "errors": ["completion.json is symlinked"],
+        }
     if not completion_path.is_file():
-        errors = []
+        corruption_errors = []
+        missing_errors = []
         result_payload = None
         candidate = path / result_member
-        if candidate.is_file():
+        if candidate.exists() and candidate.is_symlink():
+            corruption_errors.append("result member is symlinked")
+        elif candidate.is_file():
             try:
                 result_payload = json.loads(candidate.read_text())
                 if not isinstance(result_payload, dict):
@@ -141,20 +217,21 @@ def inspect_bundle(
                 if recoverable_validator is not None:
                     recoverable_validator(result_payload)
             except (OSError, ValueError, TypeError) as exc:
-                errors.append(str(exc))
+                corruption_errors.append(str(exc))
         missing_required = [
             name for name in required_members if not (path / name).is_file()
         ]
         if missing_required:
-            errors.append(
+            missing_errors.append(
                 "missing required members: " + ", ".join(missing_required)
             )
         recoverable = (
             result_payload is not None
-            and not errors
+            and not corruption_errors
+            and not missing_errors
             and recoverable_validator is not None
         )
-        candidate_invalid = candidate.exists() and bool(errors)
+        candidate_invalid = candidate.exists() and bool(corruption_errors)
         return {
             "state": (
                 "recoverable_validated"
@@ -163,7 +240,7 @@ def inspect_bundle(
             ),
             "path": str(path),
             "recoverable": recoverable,
-            "errors": errors,
+            "errors": [*corruption_errors, *missing_errors],
             "present_members": sorted(
                 str(member.relative_to(path))
                 for member in path.rglob("*") if member.is_file()
@@ -184,6 +261,7 @@ def inspect_bundle(
         not isinstance(completion, dict)
         or completion.get("schema") != COMPLETION_SCHEMA
         or not isinstance(completion.get("members"), dict)
+        or not completion.get("members")
     ):
         errors.append("completion schema/members are invalid")
         members = {}
@@ -196,16 +274,26 @@ def inspect_bundle(
             errors.append(str(exc))
             continue
         member = path / relative
-        if not member.is_file() or member.is_symlink():
+        try:
+            member_mode = os.lstat(member).st_mode
+        except OSError as exc:
+            errors.append(f"committed member unreadable: {name}: {exc}")
+            continue
+        if not stat.S_ISREG(member_mode) or stat.S_ISLNK(member_mode):
             errors.append(f"committed member missing/non-regular: {name}")
             continue
         if not isinstance(expected, dict):
             errors.append(f"invalid committed metadata: {name}")
             continue
-        if (
-            sha256_file(member) != expected.get("sha256")
-            or member.stat().st_size != expected.get("size")
-        ):
+        try:
+            mismatch = (
+                sha256_file(member) != expected.get("sha256")
+                or member.stat().st_size != expected.get("size")
+            )
+        except OSError as exc:
+            errors.append(f"committed member unreadable: {name}: {exc}")
+            continue
+        if mismatch:
             errors.append(f"committed member hash/size mismatch: {name}")
     for name in required_members:
         if name not in members:
@@ -228,7 +316,8 @@ def publish_bundle(
     allow_existing_incomplete: bool = False,
     fault_at: str | None = None,
 ) -> dict:
-    path = Path(destination).expanduser().resolve()
+    path = _absolute_lexical(Path(destination))
+    _reject_symlink_components(path.parent, allow_missing_leaf=False)
     if not members:
         raise ValueError("portable bundle requires at least one member")
     normalized = {}
@@ -247,6 +336,10 @@ def publish_bundle(
         inspection = inspect_bundle(path)
         if inspection["state"] == "complete_valid":
             raise BundleExistsError(f"complete bundle already exists: {path}")
+        if inspection["state"] == "invalid":
+            raise IncompleteBundleError(
+                f"invalid existing bundle cannot be recovered: {path}"
+            )
         if not allow_existing_incomplete:
             raise IncompleteBundleError(
                 f"incomplete/invalid bundle already exists: {path}"

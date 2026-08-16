@@ -695,8 +695,13 @@ def build_plan(
         "blocked": (
             any(job["blocked_reasons"] for job in jobs)
             or (bool(jobs) and not python_identity["available"])
-            or bool(inventory_payload.get("missing_roots"))
-            or bool(inventory_payload.get("missing_slots"))
+            or (
+                mode != "two-cell"
+                and (
+                    bool(inventory_payload.get("missing_roots"))
+                    or bool(inventory_payload.get("missing_slots"))
+                )
+            )
             or (mode == "pilot" and bool(missing_scales))
             or (mode == "secondary" and missing_matrix_cells > 0)
             or (mode == "two-cell" and selected.get(40) is None)

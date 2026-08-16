@@ -330,6 +330,7 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             self.assertTrue(all(
                 "M30" in job["job_name"] for job in plan["jobs"]
             ))
+            self.assertFalse(plan["blocked"])
 
     def test_duplicate_campaign_and_blocked_plan_refuse_submission(self):
         with tempfile.TemporaryDirectory() as tmp:

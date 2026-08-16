@@ -9,7 +9,9 @@ import math
 from pathlib import Path
 
 from config import BUS_COST_KX
+from durable_io import read_jsonl_records
 from portable_bundle import publish_bundle
+from run_exact_pool_mip import validate_final_selected_routes
 
 
 def sha256_file(path: Path) -> str:
@@ -35,6 +37,62 @@ def validate_scientific_result(
         raise ValueError("MIP result status hash mismatch")
     if result.get("source_journal_sha256") != spec["staged_journal_sha256"]:
         raise ValueError("MIP result journal hash mismatch")
+    provenance = source_status.get("provenance")
+    if (
+        not isinstance(provenance, dict)
+        or provenance.get("instance_sha256")
+        != spec["staged_instance_sha256"]
+        or provenance.get("prices_sha256")
+        != spec["staged_prices_sha256"]
+    ):
+        raise ValueError("source status data provenance mismatch")
+    journal_records = read_jsonl_records(
+        Path(spec["staged_journal"]),
+        repair_trailing=False,
+        collect=True,
+    )
+    trip_ids = source_status.get("trip_ids")
+    if not isinstance(trip_ids, list) or not trip_ids:
+        raise ValueError("source status trip IDs are invalid")
+    known = set(trip_ids)
+    pool_costs = {}
+    for record in journal_records:
+        trips = record.get("trips") if isinstance(record, dict) else None
+        if (
+            not isinstance(trips, list)
+            or not trips
+            or any(trip not in known for trip in trips)
+        ):
+            raise ValueError("source journal contains invalid trip incidence")
+        cost = float(record.get("cost"))
+        if not math.isfinite(cost):
+            raise ValueError("source journal contains non-finite cost")
+        pool_costs.setdefault(frozenset(trips), []).append(cost)
+    start_payload = json.loads(Path(spec["staged_start"]).read_text())
+    start_routes = start_payload.get("routes")
+    if (
+        not isinstance(start_routes, list)
+        or len(start_routes) != 40
+        or start_payload.get("infeasible") not in (None, [])
+    ):
+        raise ValueError("validated start file is missing/partial")
+    start_counts = collections.Counter()
+    start_keys = set()
+    for route in start_routes:
+        nodes = route.get("route", route.get("route_nodes", []))
+        trips = [
+            node for node in nodes
+            if isinstance(node, int) and not isinstance(node, bool)
+        ]
+        if not trips or len(trips) != len(set(trips)):
+            raise ValueError("validated start route has invalid trips")
+        start_counts.update(trips)
+        start_keys.add(frozenset(trips))
+    if (
+        set(start_counts) != known
+        or any(start_counts[trip] != 1 for trip in trip_ids)
+    ):
+        raise ValueError("validated start is not an exact trip partition")
     expected_cell = {
         key: spec[key] for key in (
             "label", "replicate", "treatment", "snapshot_mark_minutes",
@@ -80,7 +138,6 @@ def validate_scientific_result(
     counts = collections.Counter(
         trip for route in selected for trip in route.get("trips", [])
     )
-    trip_ids = source_status.get("trip_ids")
     if (
         not isinstance(trip_ids, list)
         or buses != len(selected)
@@ -93,6 +150,20 @@ def validate_scientific_result(
         )
     ):
         raise ValueError("result is not a 40-route exact scheduled partition")
+    full_objective = 0.0
+    for route in selected:
+        key = frozenset(route.get("trips") or [])
+        cost = float(route.get("cost"))
+        if not math.isfinite(cost):
+            raise ValueError("selected route has non-finite cost")
+        if key not in pool_costs and key not in start_keys:
+            raise ValueError("selected route is absent from journal/start pool")
+        if key in pool_costs and key not in start_keys and not any(
+            math.isclose(cost, candidate, rel_tol=1e-10, abs_tol=1e-6)
+            for candidate in pool_costs[key]
+        ):
+            raise ValueError("selected route cost differs from journal")
+        full_objective += cost
     if result.get("fleet_proven") is not True:
         raise ValueError("40-bus fleet is not proven over the finite pool")
     fleet_bound = result.get("fleet_bound")
@@ -134,15 +205,49 @@ def validate_scientific_result(
         )
     ):
         raise ValueError("two-stage objective/bound closure is inconsistent")
-    provenance = result.get("mip_provenance")
-    if not isinstance(provenance, dict) or (
-        provenance.get("expected_git_commit")
-        != provenance.get("observed_git_commit")
-        or provenance.get("final_observed_git_commit")
-        != provenance.get("observed_git_commit")
-        or provenance.get("tracked_clean_at_end") is not True
+    if not math.isclose(
+        full_objective, float(full_obj), rel_tol=1e-10, abs_tol=1e-6
+    ):
+        raise ValueError("selected route costs do not reconstruct objective")
+    mip_provenance = result.get("mip_provenance")
+    arguments = (
+        mip_provenance.get("arguments")
+        if isinstance(mip_provenance, dict) else None
+    )
+    if not isinstance(mip_provenance, dict) or (
+        mip_provenance.get("expected_git_commit")
+        != spec.get("expected_commit")
+        or mip_provenance.get("observed_git_commit")
+        != spec.get("expected_commit")
+        or mip_provenance.get("final_observed_git_commit")
+        != spec.get("expected_commit")
+        or mip_provenance.get("tracked_clean_at_end") is not True
+        or not isinstance(mip_provenance.get("gurobi"), str)
+        or not mip_provenance["gurobi"]
+        or not isinstance(arguments, dict)
+        or arguments.get("two_stage") is not True
+        or arguments.get("cover") is not False
+        or int(arguments.get("threads", -1)) != int(spec["threads"])
+        or int(arguments.get("timelimit", -1)) != int(spec["time_limit_s"])
     ):
         raise ValueError("MIP Git provenance is inconsistent")
+    if (
+        result.get("status") != 2
+        or result.get("status_name") != "OPTIMAL"
+        or float(result.get("mip_gap")) != 0.0
+    ):
+        raise ValueError("MIP result is not solver-optimal")
+    relative = Path(spec["csv"])
+    instance = Path(spec["staged_instance"]).resolve()
+    data_root = instance
+    for _part in relative.parts:
+        data_root = data_root.parent
+    validate_final_selected_routes(
+        source_status,
+        trip_ids,
+        selected,
+        data_dir=data_root,
+    )
 
 
 def enrich_result(

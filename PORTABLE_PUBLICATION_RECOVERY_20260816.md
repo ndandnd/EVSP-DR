@@ -34,13 +34,38 @@ PROBE_ROOT="$SOURCE_ROOT/src/results/publication_probe_20260816"
 REVIEW_ROOT="$RECOVERY_ROOT/review/k40fx_mip2h_20260816T035618Z"
 mkdir -p "$PROBE_ROOT" "$REVIEW_ROOT"
 
-python -u src/probe_portable_publication.py \
-  --directory "$PROBE_ROOT" \
-  --out "$REVIEW_ROOT/filesystem-capability.json"
+if [[ ! -f "$REVIEW_ROOT/filesystem-capability.json" ]]; then
+  python -u src/probe_portable_publication.py \
+    --directory "$PROBE_ROOT" \
+    --out "$REVIEW_ROOT/filesystem-capability.json"
+fi
+python - "$REVIEW_ROOT/filesystem-capability.json" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+assert d["portable_protocol"] == "complete_valid"
+PY
 
-python -u src/recover_k40_factorial_mip_campaign.py \
-  --campaign-root "$CAMPAIGN" \
-  --plan-out "$REVIEW_ROOT/recovery-plan.json"
+[[ -n "${APPROVED_SOURCE_CAMPAIGN_SHA256:-}" ]] || {
+  OBSERVED_SOURCE_SHA=$(sha256sum "$CAMPAIGN/campaign.json" | awk '{print $1}')
+  echo "Set APPROVED_SOURCE_CAMPAIGN_SHA256=$OBSERVED_SOURCE_SHA after review." >&2
+  exit 2
+}
+[[ "$(sha256sum "$CAMPAIGN/campaign.json" | awk '{print $1}')" \
+   == "$APPROVED_SOURCE_CAMPAIGN_SHA256" ]] || {
+  echo "campaign.json differs from out-of-band approval." >&2
+  exit 2
+}
+
+if [[ ! -f "$REVIEW_ROOT/recovery-plan.json" ]]; then
+  python -u src/recover_k40_factorial_mip_campaign.py \
+    --campaign-root "$CAMPAIGN" \
+    --source-campaign-sha256 "$APPROVED_SOURCE_CAMPAIGN_SHA256" \
+    --plan-out "$REVIEW_ROOT/recovery-plan.json"
+else
+  python -u src/recover_k40_factorial_mip_campaign.py \
+    --campaign-root "$CAMPAIGN" \
+    --source-campaign-sha256 "$APPROVED_SOURCE_CAMPAIGN_SHA256"
+fi
 
 OBSERVED_RECOVERY_SHA=$(sha256sum "$REVIEW_ROOT/recovery-plan.json" | awk '{print $1}')
 [[ -n "${APPROVED_RECOVERY_PLAN_SHA256:-}" ]] || {
@@ -54,6 +79,7 @@ OBSERVED_RECOVERY_SHA=$(sha256sum "$REVIEW_ROOT/recovery-plan.json" | awk '{prin
 
 python -u src/recover_k40_factorial_mip_campaign.py \
   --campaign-root "$CAMPAIGN" \
+  --source-campaign-sha256 "$APPROVED_SOURCE_CAMPAIGN_SHA256" \
   --apply \
   --approved-plan-sha256 "$APPROVED_RECOVERY_PLAN_SHA256"
 
@@ -83,6 +109,8 @@ python -u src/launch_mip_statistics_campaign.py \
   --plan-out "$REVIEW_ROOT/two-cell-pilot-plan.json"
 ```
 
-Afterward, run `monitor_k40_factorial_mip_screen.py` read-only. It reports
-complete valid outputs, recoverable validated raw outputs, incomplete
-publication, and missing/invalid results separately.
+Afterward, run the read-only strict check
+`monitor_k40_factorial_mip_screen.py --campaign-root "$CAMPAIGN"
+--source-campaign-sha256 "$APPROVED_SOURCE_CAMPAIGN_SHA256"
+--require-complete`. It reports complete valid outputs, recoverable validated
+raw outputs, incomplete publication, and missing/invalid results separately.

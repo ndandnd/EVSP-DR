@@ -16,6 +16,12 @@ from portable_bundle import inspect_bundle  # noqa: E402
 
 
 class K40RecoveryTests(unittest.TestCase):
+    @staticmethod
+    def _source_sha(campaign):
+        return hashlib.sha256(
+            (campaign / "campaign.json").read_bytes()
+        ).hexdigest()
+
     def _fixture(self, root: Path, *, malformed_raw=False):
         repo = root / "repo"
         campaign = (
@@ -34,20 +40,43 @@ class K40RecoveryTests(unittest.TestCase):
         common = campaign / "input/common"
         common.mkdir(parents=True)
         start = common / "start.json"
-        start.write_text("{}")
+        start.write_text(json.dumps({
+            "routes": [{
+                "route": ["PARX_0", trip, "PARX_0"],
+                "charging_stops": {},
+            } for trip in range(40)],
+            "infeasible": [],
+        }))
         start_sha = hashlib.sha256(start.read_bytes()).hexdigest()
         jobs = []
-        for index in range(12):
-            label = f"cell{index:02d}"
+        cells = [
+            (replicate, treatment, mark)
+            for replicate in ("R1", "R2")
+            for treatment in ("CA", "CS")
+            for mark in (360, 720, 1440)
+        ]
+        for index, (replicate, treatment, mark) in enumerate(cells):
+            label = f"{replicate}_{treatment}_m{mark}"
             cell = campaign / "input" / label
             cell.mkdir()
             status = cell / "pool.snapshot.json"
             journal = Path(str(status) + ".columns.jsonl")
             instance = cell / "instance.csv"
             prices = cell / "prices.csv"
-            source_status = {"trip_ids": list(range(40))}
+            source_status = {
+                "csv": "instance.csv",
+                "prices_csv": "prices.csv",
+                "trip_ids": list(range(40)),
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {},
+            }
             status.write_text(json.dumps(source_status))
-            journal.write_text("{}\n")
+            journal.write_text("".join(json.dumps({
+                "trips": [trip],
+                "cost": 100000.0,
+            }) + "\n" for trip in range(40)))
             instance.write_text("instance\n")
             prices.write_text("prices\n")
             hashes = {
@@ -56,14 +85,22 @@ class K40RecoveryTests(unittest.TestCase):
                 "instance": hashlib.sha256(instance.read_bytes()).hexdigest(),
                 "prices": hashlib.sha256(prices.read_bytes()).hexdigest(),
             }
+            source_status["provenance"] = {
+                "instance_sha256": hashes["instance"],
+                "prices_sha256": hashes["prices"],
+            }
+            status.write_text(json.dumps(source_status))
+            hashes["status"] = hashlib.sha256(
+                status.read_bytes()
+            ).hexdigest()
             output = campaign / "outputs" / f"{label}.mip.bundle"
             output.parent.mkdir(exist_ok=True)
             job_id = str(1000 + index)
             spec = {
                 "label": label,
-                "replicate": "R1" if index < 6 else "R2",
-                "treatment": "CA" if index % 2 == 0 else "CS",
-                "snapshot_mark_minutes": (360, 720, 1440)[index % 3],
+                "replicate": replicate,
+                "treatment": treatment,
+                "snapshot_mark_minutes": mark,
                 "time_limit_s": 7200,
                 "threads": 8,
                 "mip_gap": 0.0001,
@@ -78,16 +115,21 @@ class K40RecoveryTests(unittest.TestCase):
                 "staged_start": str(start),
                 "staged_start_sha256": start_sha,
                 "runner_sha256": runner_sha,
+                "expected_commit": recovery.SOURCE_CAMPAIGN_COMMIT,
+                "csv": "instance.csv",
+                "prices_csv": "prices.csv",
             }
             spec_path = cell / "job.json"
             spec_raw = (json.dumps(spec, indent=2) + "\n").encode()
             spec_path.write_bytes(spec_raw)
             spec_sha = hashlib.sha256(spec_raw).hexdigest()
+            variable = 1746.666836618
             selected = [{
                 "trips": [trip],
+                "cost": 100000.0 + variable / 40.0,
+                "route_nodes": ["PARX_0", trip, "PARX_0"],
                 "charging_stops": {},
             } for trip in range(40)]
-            variable = 1746.666836618
             raw = {
                 "partitioning": True,
                 "source_result_sha256": hashes["status"],
@@ -116,12 +158,21 @@ class K40RecoveryTests(unittest.TestCase):
                 "mip_obj": 4000000.0 + variable,
                 "mip_bound": 4000000.0 + variable,
                 "mip_gap": 0.0,
+                "status": 2,
+                "status_name": "OPTIMAL",
                 "runtime_s": 110.0,
                 "mip_provenance": {
-                    "expected_git_commit": "f" * 40,
-                    "observed_git_commit": "f" * 40,
-                    "final_observed_git_commit": "f" * 40,
+                    "expected_git_commit": recovery.SOURCE_CAMPAIGN_COMMIT,
+                    "observed_git_commit": recovery.SOURCE_CAMPAIGN_COMMIT,
+                    "final_observed_git_commit": recovery.SOURCE_CAMPAIGN_COMMIT,
                     "tracked_clean_at_end": True,
+                    "gurobi": "12.0.0",
+                    "arguments": {
+                        "two_stage": True,
+                        "cover": False,
+                        "threads": 8,
+                        "timelimit": 7200,
+                    },
                 },
             }
             raw_path = Path(str(output) + f".raw.{job_id}")
@@ -141,7 +192,9 @@ class K40RecoveryTests(unittest.TestCase):
         manifest = {
             "schema": "evsp-dr-k40-factorial-mip-campaign-v1",
             "campaign": campaign.name,
-            "checkout_identity": {"expected_commit": "f" * 40},
+            "checkout_identity": {
+                "expected_commit": recovery.SOURCE_CAMPAIGN_COMMIT
+            },
             "worker": str(worker),
             "worker_sha256": worker_sha,
             "jobs": jobs,
@@ -155,16 +208,23 @@ class K40RecoveryTests(unittest.TestCase):
     def test_dry_run_and_approved_recovery_preserve_raw_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             campaign = self._fixture(Path(tmp))
+            source_sha = self._source_sha(campaign)
             with patch.object(
                 recovery, "_git_commit", return_value="e" * 40
+            ), patch(
+                "k40_factorial_mip_result.validate_final_selected_routes"
             ):
-                plan, _prepared = recovery.build_recovery_plan(campaign)
+                plan, _prepared = recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=source_sha
+                )
                 self.assertEqual(plan["recoverable_count"], 12)
                 self.assertEqual(plan["invalid_or_missing_count"], 0)
                 plan_sha = hashlib.sha256(
-                    recovery._canonical(plan)
+                    recovery._canonical(recovery._recovery_intent(plan))
                 ).hexdigest()
-                monitored = k40_monitor.monitor(campaign)
+                monitored = k40_monitor.monitor(
+                    campaign, source_campaign_sha256=source_sha
+                )
                 self.assertTrue(all(
                     row["outcome"] == "recoverable_validated_raw"
                     for row in monitored
@@ -173,10 +233,14 @@ class K40RecoveryTests(unittest.TestCase):
                     (campaign / "outputs").glob("*.raw.*")
                 )
                 record = recovery.apply_recovery(
-                    campaign, approved_plan_sha256=plan_sha
+                    campaign,
+                    approved_plan_sha256=plan_sha,
+                    source_campaign_sha256=source_sha,
                 )
                 repeated = recovery.apply_recovery(
-                    campaign, approved_plan_sha256=plan_sha
+                    campaign,
+                    approved_plan_sha256=plan_sha,
+                    source_campaign_sha256=source_sha,
                 )
             self.assertEqual(len(record["recovered"]), 12)
             self.assertEqual(repeated, record)
@@ -188,8 +252,12 @@ class K40RecoveryTests(unittest.TestCase):
                 )
             with patch.object(
                 recovery, "_git_commit", return_value="e" * 40
+            ), patch(
+                "k40_factorial_mip_result.validate_final_selected_routes"
             ):
-                monitored = k40_monitor.monitor(campaign)
+                monitored = k40_monitor.monitor(
+                    campaign, source_campaign_sha256=source_sha
+                )
             self.assertTrue(all(
                 row["outcome"] == "complete_valid_output"
                 for row in monitored
@@ -198,19 +266,28 @@ class K40RecoveryTests(unittest.TestCase):
     def test_malformed_raw_is_not_recoverable(self):
         with tempfile.TemporaryDirectory() as tmp:
             campaign = self._fixture(Path(tmp), malformed_raw=True)
+            source_sha = self._source_sha(campaign)
             with patch.object(
                 recovery, "_git_commit", return_value="e" * 40
+            ), patch(
+                "k40_factorial_mip_result.validate_final_selected_routes"
             ):
-                plan, _prepared = recovery.build_recovery_plan(campaign)
+                plan, _prepared = recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=source_sha
+                )
             self.assertEqual(plan["recoverable_count"], 11)
             self.assertEqual(plan["invalid_or_missing_count"], 1)
-            bad = next(row for row in plan["jobs"] if row["label"] == "cell00")
+            bad = next(
+                row for row in plan["jobs"]
+                if row["label"] == "R1_CA_m360"
+            )
             self.assertFalse(bad["recoverable"])
             self.assertTrue(bad["errors"])
 
     def test_failed_temporary_bundle_is_recoverable_without_raw(self):
         with tempfile.TemporaryDirectory() as tmp:
             campaign = self._fixture(Path(tmp))
+            source_sha = self._source_sha(campaign)
             manifest = json.loads(
                 (campaign / "campaign.json").read_text()
             )
@@ -223,8 +300,12 @@ class K40RecoveryTests(unittest.TestCase):
             raw.unlink()
             with patch.object(
                 recovery, "_git_commit", return_value="e" * 40
+            ), patch(
+                "k40_factorial_mip_result.validate_final_selected_routes"
             ):
-                plan, _prepared = recovery.build_recovery_plan(campaign)
+                plan, _prepared = recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=source_sha
+                )
             row = next(
                 item for item in plan["jobs"]
                 if item["label"] == job["label"]
@@ -238,6 +319,7 @@ class K40RecoveryTests(unittest.TestCase):
     def test_hash_mismatched_raw_is_not_recoverable(self):
         with tempfile.TemporaryDirectory() as tmp:
             campaign = self._fixture(Path(tmp))
+            source_sha = self._source_sha(campaign)
             manifest = json.loads(
                 (campaign / "campaign.json").read_text()
             )
@@ -248,8 +330,12 @@ class K40RecoveryTests(unittest.TestCase):
             raw.write_text(json.dumps(payload))
             with patch.object(
                 recovery, "_git_commit", return_value="e" * 40
+            ), patch(
+                "k40_factorial_mip_result.validate_final_selected_routes"
             ):
-                plan, _prepared = recovery.build_recovery_plan(campaign)
+                plan, _prepared = recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=source_sha
+                )
             row = next(
                 item for item in plan["jobs"]
                 if item["label"] == job["label"]
@@ -258,6 +344,78 @@ class K40RecoveryTests(unittest.TestCase):
             self.assertTrue(any(
                 "status hash mismatch" in error for error in row["errors"]
             ))
+
+    def test_out_of_band_campaign_hash_rejects_forged_manifest(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            campaign = self._fixture(Path(tmp))
+            approved_sha = self._source_sha(campaign)
+            path = campaign / "campaign.json"
+            manifest = json.loads(path.read_text())
+            manifest["campaign"] = "forged"
+            manifest["approval_sha256"] = hashlib.sha256(
+                recovery._canonical(recovery._approval_payload(manifest))
+            ).hexdigest()
+            path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(ValueError, "out-of-band"):
+                recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=approved_sha
+                )
+
+    def test_interrupted_apply_resumes_with_same_approved_intent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            campaign = self._fixture(Path(tmp))
+            source_sha = self._source_sha(campaign)
+            physical = patch(
+                "k40_factorial_mip_result.validate_final_selected_routes"
+            )
+            with patch.object(
+                recovery, "_git_commit", return_value="e" * 40
+            ), physical:
+                plan, _prepared = recovery.build_recovery_plan(
+                    campaign, source_campaign_sha256=source_sha
+                )
+                plan_sha = hashlib.sha256(
+                    recovery._canonical(recovery._recovery_intent(plan))
+                ).hexdigest()
+            original = recovery.publish_result_bundle
+            calls = 0
+
+            def interrupt_after_three(*args, **kwargs):
+                nonlocal calls
+                calls += 1
+                if calls == 4:
+                    raise RuntimeError("injected recovery interruption")
+                return original(*args, **kwargs)
+
+            with (
+                patch.object(recovery, "_git_commit", return_value="e" * 40),
+                patch(
+                    "k40_factorial_mip_result.validate_final_selected_routes"
+                ),
+                patch.object(
+                    recovery,
+                    "publish_result_bundle",
+                    side_effect=interrupt_after_three,
+                ),
+                self.assertRaisesRegex(RuntimeError, "interruption"),
+            ):
+                recovery.apply_recovery(
+                    campaign,
+                    approved_plan_sha256=plan_sha,
+                    source_campaign_sha256=source_sha,
+                )
+            with (
+                patch.object(recovery, "_git_commit", return_value="e" * 40),
+                patch(
+                    "k40_factorial_mip_result.validate_final_selected_routes"
+                ),
+            ):
+                record = recovery.apply_recovery(
+                    campaign,
+                    approved_plan_sha256=plan_sha,
+                    source_campaign_sha256=source_sha,
+                )
+            self.assertEqual(len(record["receipts"]), 12)
 
 
 if __name__ == "__main__":

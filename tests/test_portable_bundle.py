@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -152,6 +153,91 @@ class PortableBundleTests(unittest.TestCase):
                     metadata={},
                     allow_existing_incomplete=True,
                 )
+
+    def test_missing_required_member_is_incomplete_not_corrupt(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / "bundle"
+            bundle.mkdir()
+            (bundle / "result.json").write_text('{"ok":true}\n')
+            state = inspect_bundle(
+                bundle,
+                required_members=("result.json", "metrics.csv"),
+                recoverable_validator=lambda _payload: None,
+            )
+            self.assertEqual(state["state"], "incomplete_publication")
+            self.assertFalse(state["recoverable"])
+
+    def test_invalid_completion_is_rejected_before_any_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / "bundle"
+            bundle.mkdir()
+            (bundle / "completion.json").write_text("{}")
+            with self.assertRaises(IncompleteBundleError):
+                publish_bundle(
+                    bundle,
+                    members={"result.json": b'{"ok":true}\n'},
+                    metadata={},
+                    allow_existing_incomplete=True,
+                )
+            self.assertFalse((bundle / "result.json").exists())
+
+    def test_symlinked_destination_member_and_completion_are_invalid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            target = root / "target"
+            target.mkdir()
+            destination = root / "bundle"
+            destination.symlink_to(target, target_is_directory=True)
+            with self.assertRaises(IncompleteBundleError):
+                publish_bundle(
+                    destination,
+                    members={"result.json": b'{"ok":true}\n'},
+                    metadata={},
+                )
+            self.assertFalse((target / "result.json").exists())
+
+            destination.unlink()
+            destination.mkdir()
+            outside = root / "outside.json"
+            outside.write_text('{"ok":true}\n')
+            (destination / "result.json").symlink_to(outside)
+            state = inspect_bundle(
+                destination,
+                recoverable_validator=lambda _payload: None,
+            )
+            self.assertEqual(state["state"], "invalid")
+
+            (destination / "result.json").unlink()
+            (destination / "result.json").write_text('{"ok":true}\n')
+            (destination / "completion.json").symlink_to(outside)
+            state = inspect_bundle(destination)
+            self.assertEqual(state["state"], "invalid")
+
+    def test_concurrent_member_creation_cannot_be_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bundle = Path(tmp) / "bundle"
+            original_link = __import__("os").link
+
+            def race_link(source, destination, **kwargs):
+                destination = Path(destination)
+                if destination.name == "result.json" and not destination.exists():
+                    destination.write_text('{"racer":true}\n')
+                return original_link(source, destination, **kwargs)
+
+            with (
+                patch("portable_bundle.os.link", side_effect=race_link),
+                self.assertRaises(FileExistsError),
+            ):
+                publish_bundle(
+                    bundle,
+                    members={"result.json": b'{"ours":true}\n'},
+                    metadata={},
+                )
+            self.assertEqual(
+                (bundle / "result.json").read_text(),
+                '{"racer":true}\n',
+            )
+            self.assertFalse((bundle / "completion.json").exists())
 
 
 if __name__ == "__main__":

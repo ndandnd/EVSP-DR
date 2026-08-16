@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from portable_bundle import capability_probe
+from portable_bundle import atomic_write_new_file, capability_probe
 
 
 def main(argv=None) -> int:
@@ -19,8 +19,7 @@ def main(argv=None) -> int:
     encoded = json.dumps(result, indent=2) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        with args.out.open("x") as handle:
-            handle.write(encoded)
+        atomic_write_new_file(args.out, encoded.encode())
     print(encoded, end="")
     return 0 if result["ready_for_recovery_probe_only"] else 2
 
