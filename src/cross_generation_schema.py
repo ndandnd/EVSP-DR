@@ -937,6 +937,13 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
     treatment = expected_metadata.get("treatment")
     if treatment not in {"RAW", "MATCHING", "GIRO"}:
         raise ValueError("MIP checkpoint treatment is missing/invalid")
+    expected_augmentation = {
+        "RAW": "none",
+        "MATCHING": "matching_cover",
+        "GIRO": "giro_partition",
+    }[treatment]
+    if expected_metadata.get("augmentation_kind") != expected_augmentation:
+        raise ValueError("MIP checkpoint augmentation kind mismatch")
     expected_arm = "D" if treatment in {"MATCHING", "GIRO"} else "B"
     if metadata.get("experiment_arm") != expected_arm:
         raise ValueError("MIP checkpoint experiment arm mismatch")
@@ -1149,6 +1156,13 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         treatment = metadata.get("treatment")
         if treatment not in {"RAW", "MATCHING", "GIRO"}:
             raise ValueError("MIP final treatment is missing/invalid")
+        expected_augmentation = {
+            "RAW": "none",
+            "MATCHING": "matching_cover",
+            "GIRO": "giro_partition",
+        }[treatment]
+        if metadata.get("augmentation_kind") != expected_augmentation:
+            raise ValueError("MIP final augmentation kind mismatch")
         if value.get("partitioning") is not True:
             raise ValueError("covering MIP result is not a strict schedule")
         if value.get("experiment_arm") != (
@@ -1468,11 +1482,24 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                 raise ValueError("exact endpoint rc_eps is invalid")
             if (stop_reason == "certified") != certified_flag:
                 raise ValueError("exact endpoint certification is inconsistent")
+            final_lp = value.get("final_lp")
+            if final_lp is not None:
+                if not isinstance(final_lp, dict):
+                    raise ValueError("exact endpoint final_lp is malformed")
+                for key in (
+                    "objective", "route_weight", "artificial_total"
+                ):
+                    number = _number(final_lp.get(key))
+                    if number is None or number < 0:
+                        raise ValueError(
+                            f"exact endpoint final_lp {key} is invalid"
+                        )
             if certified_flag:
                 final = value.get("final") or {}
                 min_rc = _number(final.get("min_rc"))
                 if (
                     stop_reason != "certified"
+                    or not isinstance(final_lp, dict)
                     or min_rc is None
                     or min_rc < -rc_eps
                 ):
@@ -1512,6 +1539,24 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             ):
                 raise ValueError(
                     "current heuristic certification flag is inconsistent"
+                )
+            for key in (
+                "Final_LP_Route_Weight",
+                "Final_LP_Artificial_Total",
+                "LP_Obj",
+            ):
+                if value.get(key) is not None:
+                    number = _number(value[key])
+                    if number is None or number < 0:
+                        raise ValueError(
+                            f"current endpoint {key} is invalid"
+                        )
+            if termination == "rc_optimal_restricted" and (
+                _number(value.get("Final_LP_Route_Weight")) is None
+                or _number(value.get("Final_LP_Artificial_Total")) is None
+            ):
+                raise ValueError(
+                    "certified current endpoint lacks final LP metrics"
                 )
         return {
             "endpoint": value,

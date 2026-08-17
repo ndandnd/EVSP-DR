@@ -16,6 +16,7 @@ from archive_cross_generation_evidence import archive_evidence
 from build_cross_generation_evidence import build
 from collect_cross_generation_inputs import _assignments, collect
 from summarize_mip_statistics import _load_campaign
+from validate_raw_k40_mip_plan import validate_plan as validate_raw_k40_plan
 
 
 REQUIRED_ROOT_ALIASES = {
@@ -30,11 +31,22 @@ REQUIRED_ROOT_ALIASES = {
 
 def _assert_slurm_compute_node() -> None:
     job_id = os.environ.get("SLURM_JOB_ID")
-    node_list = os.environ.get("SLURM_JOB_NODELIST")
-    if not job_id or not node_list:
+    if not job_id:
         raise RuntimeError(
             "evidence worker requires a Slurm batch allocation"
         )
+    job = subprocess.run(
+        ["scontrol", "show", "job", "-o", job_id],
+        text=True, capture_output=True, check=True,
+    )
+    fields = {
+        token.split("=", 1)[0]: token.split("=", 1)[1]
+        for token in job.stdout.split()
+        if "=" in token
+    }
+    if fields.get("JobId") != job_id or not fields.get("NodeList"):
+        raise RuntimeError("SLURM_JOB_ID is not a readable allocation")
+    node_list = fields["NodeList"]
     result = subprocess.run(
         ["scontrol", "show", "hostnames", node_list],
         text=True, capture_output=True, check=True,
@@ -72,6 +84,16 @@ def _campaign_ready(
             f"campaign_mode_mismatch:{approved_plan.get('mode')}"
             f"!={expected_mode}"
         )
+    if expected_mode == "raw_k40":
+        try:
+            validate_raw_k40_plan(
+                approved_plan,
+                expected_commit=approved_plan["checkout_identity"][
+                    "expected_commit"
+                ],
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            return False, f"raw_k40_validation_failed:{exc}"
     jobs = manifest.get("jobs")
     if not isinstance(jobs, list) or not jobs:
         return False, "campaign_jobs_missing"
@@ -81,6 +103,7 @@ def _campaign_ready(
         if (
             not output.is_file()
             or not (progress / "final.json").is_file()
+            or not any(progress.glob("checkpoint_*.json"))
         ):
             return False, f"incomplete_cell:{job.get('cell_id')}"
     try:
@@ -116,6 +139,52 @@ def wait_for_campaigns(
                 f"MIP campaign incomplete after wait: {detail}"
             )
         time.sleep(max(1.0, float(poll_s)))
+
+
+def _require_campaign_artifacts(payload: dict, campaign: Path) -> None:
+    manifest = json.loads((campaign / "campaign.json").read_text())
+    artifacts = payload.get("artifacts") or []
+    by_type = {}
+    for artifact in artifacts:
+        raw = str(artifact.get("path") or "")
+        path = Path(raw).expanduser()
+        if not path.is_absolute():
+            continue
+        by_type.setdefault(artifact.get("artifact_type"), []).append(
+            path.resolve()
+        )
+    for job in manifest.get("jobs") or []:
+        cell = str(job.get("cell_id"))
+        output = Path(str(job.get("output") or "")).resolve()
+        progress = Path(str(job.get("progress_dir") or "")).resolve()
+        input_root = campaign / "input" / cell
+        if output not in by_type.get("mip_final", []):
+            raise ValueError(
+                f"reviewed manifest omits final output for {cell}"
+            )
+        if not any(
+            progress in path.parents
+            for path in by_type.get("mip_checkpoint", [])
+        ):
+            raise ValueError(
+                f"reviewed manifest omits checkpoints for {cell}"
+            )
+        if not any(
+            input_root in path.parents
+            for path in by_type.get("mip_pool_status_json", [])
+        ):
+            raise ValueError(
+                f"reviewed manifest omits source status for {cell}"
+            )
+        if not any(
+            input_root in path.parents
+            for path in by_type.get(
+                "exact_cg_column_journal_jsonl", []
+            )
+        ):
+            raise ValueError(
+                f"reviewed manifest omits source journal for {cell}"
+            )
 
 
 def _write_manifest(path: Path, payload: dict) -> None:
@@ -208,16 +277,8 @@ def main(argv=None) -> int:
     )
     if args.phase == "collect":
         payload = collect(args.template, roots)
-        collected_paths = [
-            Path(str(artifact.get("path"))).expanduser().resolve()
-            for artifact in payload.get("artifacts") or []
-            if Path(str(artifact.get("path"))).is_absolute()
-        ]
         for campaign in (current_campaign, raw_campaign):
-            if not any(campaign in path.parents for path in collected_paths):
-                raise ValueError(
-                    f"collected manifest omits named campaign: {campaign}"
-                )
+            _require_campaign_artifacts(payload, campaign)
         _write_manifest(args.manifest, payload)
         print(json.dumps({
             "phase": "collect",
@@ -238,16 +299,8 @@ def main(argv=None) -> int:
             "--build-out, and --archive-out"
         )
     reviewed_payload = json.loads(args.manifest.read_text())
-    reviewed_paths = [
-        Path(str(artifact.get("path"))).expanduser().resolve()
-        for artifact in reviewed_payload.get("artifacts") or []
-        if Path(str(artifact.get("path"))).is_absolute()
-    ]
     for campaign in (current_campaign, raw_campaign):
-        if not any(campaign in path.parents for path in reviewed_paths):
-            raise ValueError(
-                f"reviewed manifest omits named campaign: {campaign}"
-            )
+        _require_campaign_artifacts(reviewed_payload, campaign)
     result = build(
         args.manifest,
         args.build_out,
@@ -264,7 +317,10 @@ def main(argv=None) -> int:
         approved_manifest_sha256=args.approved_manifest_sha256,
     )
     archive = archive_evidence(
-        args.build_out, args.manifest, args.archive_out
+        args.build_out,
+        args.manifest,
+        args.archive_out,
+        (current_campaign, raw_campaign),
     )
     print(json.dumps({
         "phase": "build",

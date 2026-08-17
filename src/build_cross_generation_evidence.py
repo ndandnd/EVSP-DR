@@ -408,7 +408,7 @@ def _validate_run_consistency(manifest: dict):
         "master_sense", "initializer", "initial_pool", "solver_backend",
         "threads", "time_limit_s", "stopping_rules", "tolerances",
         "target_fleet", "trip_count", "cg_age_hours", "age_hours",
-        "artificial_tolerance",
+        "artificial_tolerance", "target_lp_weight", "augmentation_kind",
     )
     grouped = defaultdict(list)
     for spec in manifest["artifacts"]:
@@ -513,6 +513,20 @@ def _validate_run_consistency(manifest: dict):
                 raise ValueError(
                     f"run {run_id} has mixed {field}: {sorted(values)}"
                 )
+        for label, aliases in (
+            ("initialization", ("initializer", "initial_pool")),
+            ("cg_age", ("cg_age_hours", "age_hours")),
+        ):
+            values = {
+                (spec.get("metadata") or {}).get(alias)
+                for spec in specs
+                for alias in aliases
+                if (spec.get("metadata") or {}).get(alias) is not None
+            }
+            if len(values) > 1:
+                raise ValueError(
+                    f"run {run_id} has mixed {label}: {sorted(values)}"
+                )
 
 
 def _embedded_provenance_mismatches(parsed: dict, spec: dict) -> list[str]:
@@ -603,7 +617,7 @@ def _termination_from_endpoint(endpoint):
 
 def _certification_from_endpoint(endpoint):
     if not isinstance(endpoint, dict):
-        return False
+        return None
     return (
         endpoint.get("certified_rc_optimal") is True
         or endpoint.get("Termination_Reason") == "rc_optimal_restricted"
@@ -765,14 +779,18 @@ def _cg_summaries(
             "termination_raw": termination_raw,
             "termination_reason": termination_reason,
             "pricing_certified": certified,
-            "zero_artificials_reached": bool(zero_times),
+            "zero_artificials_reached": (
+                bool(zero_times) if zero_observable else None
+            ),
             "zero_artificials_observable": zero_observable,
             "time_to_zero_artificials_s": min(zero_times) if zero_times else None,
             "zero_artificials_censored": (
                 not bool(zero_times) if zero_observable else None
             ),
             "target_lp_weight": target,
-            "target_lp_weight_reached": bool(target_times),
+            "target_lp_weight_reached": (
+                bool(target_times) if target_observable else None
+            ),
             "target_lp_weight_observable": target_observable,
             "time_to_target_lp_weight_s": (
                 min(target_times) if target_times else None
@@ -2428,9 +2446,14 @@ def _data_dictionary():
             "Whether every selected route cost was independently bound to a "
             "verified source artifact; false for unrecomputed GIRO costs."
         ),
-        "censored": ("*_run_summary.csv", "boolean", None,
-            "Target event was not observed by the verified run endpoint."
-        ),
+        "certification_censored": ("cg_run_summary.csv", "boolean", None,
+            "Pricing certification was observable but not reached."),
+        "zero_artificials_censored": ("cg_run_summary.csv", "boolean", None,
+            "Zero artificial mass was observable but not reached."),
+        "target_lp_weight_censored": ("cg_run_summary.csv", "boolean", None,
+            "Explicit LP route-weight target was observable but not reached."),
+        "proof_censored": ("mip_run_summary.csv", "boolean", None,
+            "Finite-pool fleet proof was not observed before stopping."),
         "instance_sha256": ("artifact_inventory.csv", "string", None,
                             "Hash-bound instance identity; null when unavailable."),
         "trip_set_sha256": ("artifact_inventory.csv", "string", None,
@@ -2442,7 +2465,7 @@ def _data_dictionary():
         "termination_category": ("cg_run_summary.csv", "string", None,
                                  "Normalized terminal category with raw token retained separately."),
         "pool_scope": ("mip_run_summary.csv", "string", None,
-                       "Finite RAW or GIRO-augmented pool; never global route space."),
+                       "Finite RAW, MATCHING, or GIRO-augmented pool; never global route space."),
     }
     scale_definitions = {
         "target_fleet": ("number", "buses",
@@ -2975,7 +2998,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
   finite-pool fleet proof and global route-space optimality are distinct.
 - Master/pricing shares are populated only for schemas that measured both.
 - Missing instrumentation remains null with an availability reason.
-- RAW and GIRO-augmented pools are separate treatments.
+- RAW, MATCHING, and GIRO-augmented pools are separate treatments.
 - Time-to-event columns include explicit right-censoring fields.
 """
         (staging / "SCHEMA.md").write_text(schema_text)

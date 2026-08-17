@@ -18,7 +18,7 @@ into falsely equivalent columns.
 - Pricing certification does not prove a finite-pool integer master.
 - Finite-pool MIP optimality is not global route-space optimality.
 - An exact incidence partition is not a physically validated charging schedule.
-- RAW and GIRO-augmented MIP pools are separate treatments.
+- RAW, MATCHING, and GIRO-augmented MIP pools are separate treatments.
 - Legacy `Master_Obj` and current `Master_Obj_Before_Add` are retained in
   separate normalized columns.
 - Missing timing or provenance remains null with an availability reason.

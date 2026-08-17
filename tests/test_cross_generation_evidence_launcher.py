@@ -15,6 +15,7 @@ from launch_cross_generation_evidence import (  # noqa: E402
     build_sbatch_command,
 )
 from run_cross_generation_evidence_job import (  # noqa: E402
+    _campaign_ready,
     wait_for_campaigns,
 )
 
@@ -34,6 +35,29 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 wait_for_campaigns(
                     [(campaign, "pilot")], timeout_s=0, poll_s=1
                 )
+
+    def test_raw_campaign_requires_four_cell_raw_plan(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            campaign = Path(tmp) / "relabeled"
+            campaign.mkdir()
+            plan = {
+                "mode": "raw_k40",
+                "checkout_identity": {"expected_commit": "a" * 40},
+                "jobs": [],
+            }
+            raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            (campaign / "approved-plan.json").write_bytes(raw)
+            (campaign / "campaign.json").write_text(json.dumps({
+                "approval_sha256": hashlib.sha256(raw).hexdigest(),
+                "jobs": [],
+            }))
+            ready, reason = _campaign_ready(
+                campaign, expected_mode="raw_k40"
+            )
+            self.assertFalse(ready)
+            self.assertIn("raw_k40_validation_failed", reason)
 
     def test_archive_is_deterministic_checksummed_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:

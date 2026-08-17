@@ -84,6 +84,7 @@ def archive_evidence(
     build_dir: Path,
     input_manifest: Path,
     output_dir: Path,
+    campaign_roots: tuple[Path, ...] = (),
 ) -> dict:
     output = output_dir.expanduser().absolute()
     if os.path.lexists(output):
@@ -95,6 +96,12 @@ def archive_evidence(
             "archive manifest differs from manifest used by evidence build"
         )
     files["input_manifest.json"] = manifest_raw
+    for index, campaign_root in enumerate(campaign_roots, start=1):
+        campaign = campaign_root.expanduser().resolve()
+        for name in ("campaign.json", "approved-plan.json"):
+            files[
+                f"campaigns/{index:02d}-{campaign.name}/{name}"
+            ] = _read_regular(campaign / name)
     archive_manifest = {
         "schema": ARCHIVE_SCHEMA,
         "input_manifest_sha256": _sha(manifest_raw),
@@ -165,9 +172,11 @@ def main(argv=None) -> int:
     parser.add_argument("--build-dir", type=Path, required=True)
     parser.add_argument("--input-manifest", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
+    parser.add_argument("--campaign-root", type=Path, action="append", default=[])
     args = parser.parse_args(argv)
     print(json.dumps(archive_evidence(
-        args.build_dir, args.input_manifest, args.out_dir
+        args.build_dir, args.input_manifest, args.out_dir,
+        tuple(args.campaign_root),
     ), indent=2, sort_keys=True))
     return 0
 

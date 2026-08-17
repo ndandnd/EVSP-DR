@@ -15,10 +15,11 @@ APPROVED_MANIFEST_SHA256="${APPROVED_MANIFEST_SHA256:-}"
 BUILD_OUT="$HOME/evsp-evidence-builds/cross-generation-final"
 ARCHIVE_OUT="$HOME/evsp-evidence-archives/cross-generation-final"
 LOG_DIR="$HOME/evsp-evidence-logs"
+EVIDENCE_PHASE="${EVIDENCE_PHASE:-collect}"
 
 if [[ -z "$CURRENT_MIP_CAMPAIGN" || -z "$RAW_K40_CAMPAIGN" ]]; then
   echo "Set CURRENT_MIP_CAMPAIGN and RAW_K40_CAMPAIGN to explicit campaign directories." >&2
-else
+elif [[ "$EVIDENCE_PHASE" == "collect" ]]; then
   python -u src/launch_cross_generation_evidence.py \
     --phase collect \
     --template CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json \
@@ -35,11 +36,7 @@ else
     --log-dir "$LOG_DIR" \
     --expected-commit "$(git rev-parse HEAD)" \
     --submit
-fi
-
-# After the collection job succeeds, review/enrich the manifest and set its
-# out-of-band approved SHA. The build/archive job performs no CG or MIP solve.
-if [[ -n "$CURRENT_MIP_CAMPAIGN" && -n "$RAW_K40_CAMPAIGN" && -n "$APPROVED_MANIFEST_SHA256" && -f "$REVIEWED_MANIFEST" ]]; then
+elif [[ "$EVIDENCE_PHASE" == "build" && -n "$APPROVED_MANIFEST_SHA256" && -f "$REVIEWED_MANIFEST" ]]; then
   python -u src/launch_cross_generation_evidence.py \
     --phase build \
     --template CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json \
@@ -60,7 +57,7 @@ if [[ -n "$CURRENT_MIP_CAMPAIGN" && -n "$RAW_K40_CAMPAIGN" && -n "$APPROVED_MANI
     --expected-commit "$(git rev-parse HEAD)" \
     --submit
 else
-  echo "Build not submitted: review the collected manifest and set APPROVED_MANIFEST_SHA256."
+  echo "Nothing submitted. Use EVIDENCE_PHASE=collect, or review the manifest and use EVIDENCE_PHASE=build with APPROVED_MANIFEST_SHA256."
 fi
 ```
 
@@ -80,7 +77,7 @@ sidecar, `ARCHIVE_MANIFEST.json`, and `completion.json`.
 - Current instrumented heuristic-DP pricing CSVs and endpoint/checkpoint JSONs.
 - Exact `repool_small`, `exact_big`, and k40 factorial `.iters.csv`, status,
   journal and optional phase telemetry.
-- MIP campaign checkpoint/final artifacts with RAW/GIRO treatment metadata.
+- MIP campaign checkpoint/final artifacts with RAW/MATCHING/GIRO metadata.
 - Verified single-duty, exact-pair and small-union archive manifests.
 - Instance, trip-set and tariff hashes from immutable status/release manifests.
 - Git/worktree identity, solver/backend versions, resources and stopping rules.
