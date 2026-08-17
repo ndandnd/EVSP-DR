@@ -13,17 +13,32 @@ import sys
 from pathlib import Path
 
 from collect_cross_generation_inputs import _assignments
-from executable_identity import resolve_executable
+from executable_identity import (
+    resolve_executable,
+    run_bound_executable,
+    validate_executable,
+)
 from run_cross_generation_evidence_job import (
     REQUIRED_ROOT_ALIASES,
     parse_campaign_assignments,
 )
 
 
-def _git(repo: Path, git_executable: Path, *args) -> str:
-    result = subprocess.run(
-        [str(git_executable), *args], cwd=repo, text=True,
-        capture_output=True, check=True,
+def _git(
+    repo: Path,
+    git_executable: Path,
+    git_sha256: str,
+    *args,
+) -> str:
+    result = run_bound_executable(
+        git_executable,
+        expected_sha256=git_sha256,
+        label="git",
+        arguments=list(args),
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=True,
     )
     return result.stdout.strip()
 
@@ -88,6 +103,13 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         command="git",
         label="git",
     )
+    expected_git_sha = getattr(args, "expected_git_sha256", None)
+    if expected_git_sha is not None:
+        git_executable, git_sha = validate_executable(
+            git_executable,
+            expected_sha256=expected_git_sha,
+            label="git",
+        )
     scontrol_executable, scontrol_sha = resolve_executable(
         getattr(args, "scontrol_executable", None),
         command="scontrol",
@@ -215,20 +237,26 @@ def main(argv=None) -> int:
     )
     parser.add_argument("--expected-commit")
     parser.add_argument("--git-executable", type=Path)
+    parser.add_argument("--expected-git-sha256")
     parser.add_argument("--scontrol-executable", type=Path)
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
     repo = args.repo_root.expanduser().resolve()
-    git_executable, _git_sha = resolve_executable(
+    git_executable, git_sha = resolve_executable(
         args.git_executable, command="git", label="git"
     )
     args.git_executable = git_executable
-    observed_commit = _git(repo, git_executable, "rev-parse", "HEAD")
+    args.expected_git_sha256 = git_sha
+    observed_commit = _git(
+        repo, git_executable, git_sha, "rev-parse", "HEAD"
+    )
     if args.expected_commit is None:
         args.expected_commit = observed_commit
     if observed_commit != args.expected_commit:
         raise ValueError("launcher checkout differs from expected commit")
-    if _git(repo, git_executable, "status", "--porcelain"):
+    if _git(
+        repo, git_executable, git_sha, "status", "--porcelain"
+    ):
         raise ValueError("launcher checkout is not tracked-clean")
     sbatch, plan = build_sbatch_command(args)
     canonical = json.dumps(

@@ -6,6 +6,7 @@ import hashlib
 import os
 import shutil
 import stat
+import subprocess
 from pathlib import Path
 
 
@@ -14,6 +15,18 @@ def sha256_file(path: Path) -> str:
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _sha256_fd(descriptor: int) -> str:
+    digest = hashlib.sha256()
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    while True:
+        chunk = os.read(descriptor, 1024 * 1024)
+        if not chunk:
+            break
+        digest.update(chunk)
+    os.lseek(descriptor, 0, os.SEEK_SET)
     return digest.hexdigest()
 
 
@@ -26,6 +39,8 @@ def validate_executable(
     candidate = Path(path).expanduser()
     if not candidate.is_absolute():
         raise ValueError(f"{label} executable path must be absolute")
+    if candidate.is_symlink():
+        raise ValueError(f"{label} executable path must not be a symlink")
     resolved = candidate.resolve(strict=True)
     mode = os.stat(resolved, follow_symlinks=False).st_mode
     if not stat.S_ISREG(mode) or not os.access(resolved, os.X_OK):
@@ -48,5 +63,38 @@ def resolve_executable(
             f"{label} executable unavailable; pass its absolute path"
         )
     return validate_executable(
-        raw, expected_sha256=None, label=label
+        Path(raw).expanduser().resolve(),
+        expected_sha256=None,
+        label=label,
     )
+
+
+def run_bound_executable(
+    path: Path | str,
+    *,
+    expected_sha256: str,
+    label: str,
+    arguments: list[str],
+    **kwargs,
+) -> subprocess.CompletedProcess:
+    candidate, _observed = validate_executable(
+        path, expected_sha256=expected_sha256, label=label
+    )
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(candidate, flags)
+    try:
+        mode = os.fstat(descriptor).st_mode
+        if not stat.S_ISREG(mode) or not (mode & 0o111):
+            raise ValueError(f"{label} executable descriptor is invalid")
+        if _sha256_fd(descriptor) != expected_sha256:
+            raise ValueError(f"{label} executable SHA-256 mismatch")
+        executable = f"/proc/self/fd/{descriptor}"
+        return subprocess.run(
+            [executable, *arguments],
+            pass_fds=(descriptor,),
+            **kwargs,
+        )
+    finally:
+        os.close(descriptor)

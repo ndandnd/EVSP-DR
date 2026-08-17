@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -595,6 +596,19 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             manifest_path = self._fixture(root)
+            with self.assertRaisesRegex(
+                ValueError, "requires expected SHA-256"
+            ):
+                _build(
+                    manifest_path,
+                    root / "unbound-git",
+                    repo_root=REPO_ROOT,
+                    command=["test"],
+                    approved_manifest_sha256=hashlib.sha256(
+                        manifest_path.read_bytes()
+                    ).hexdigest(),
+                    git_executable=Path(shutil.which("git")).resolve(),
+                )
             with self.assertRaisesRegex(ValueError, "approved SHA"):
                 build(
                     manifest_path, root / "bad-manifest-approval",

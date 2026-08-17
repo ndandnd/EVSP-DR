@@ -12,7 +12,6 @@ import math
 import os
 import platform
 import shutil
-import subprocess
 import sys
 import stat
 import tempfile
@@ -24,7 +23,11 @@ from cross_generation_schema import (
     parse_artifact,
     sha256_bytes,
 )
-from executable_identity import resolve_executable, validate_executable
+from executable_identity import (
+    resolve_executable,
+    run_bound_executable,
+    validate_executable,
+)
 
 
 OUTPUT_SCHEMA = "evsp-dr-cross-generation-evidence-v1"
@@ -2386,11 +2389,17 @@ def _environment_identity():
 
 def _git_identity(repo_root: Path, git_executable: Path, git_sha256: str):
     def run(*args):
-        result = subprocess.run(
-            [str(git_executable), *args], cwd=repo_root, text=True,
-            capture_output=True, check=False,
+        result = run_bound_executable(
+            git_executable,
+            expected_sha256=git_sha256,
+            label="git",
+            arguments=list(args),
+            cwd=repo_root,
+            text=True,
+            capture_output=True,
+            check=True,
         )
-        return result.stdout.strip() if result.returncode == 0 else None
+        return result.stdout.strip()
     return {
         "commit": run("rev-parse", "HEAD"),
         "branch": run("branch", "--show-current"),
@@ -2617,6 +2626,14 @@ def build(
         or observed_manifest_sha != approved_manifest_sha256
     ):
         raise ValueError("input manifest differs from approved SHA-256")
+    if git_executable is None and expected_git_sha256 is not None:
+        raise ValueError(
+            "expected Git SHA-256 requires an explicit executable path"
+        )
+    if git_executable is not None and expected_git_sha256 is None:
+        raise ValueError(
+            "explicit Git executable requires expected SHA-256"
+        )
     if git_executable is None:
         resolved_git, observed_git_sha = resolve_executable(
             None, command="git", label="git"

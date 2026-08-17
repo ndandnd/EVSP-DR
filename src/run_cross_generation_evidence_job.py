@@ -8,14 +8,13 @@ import hashlib
 import json
 import os
 import platform
-import subprocess
 import time
 from pathlib import Path
 
 from archive_cross_generation_evidence import archive_evidence
 from build_cross_generation_evidence import build
 from collect_cross_generation_inputs import _assignments, collect
-from executable_identity import validate_executable
+from executable_identity import run_bound_executable, validate_executable
 from mip_convergence import checkpoint_schedule_s
 from summarize_mip_statistics import _load_campaign
 from validate_raw_k40_mip_plan import validate_plan as validate_raw_k40_plan
@@ -58,15 +57,23 @@ def parse_campaign_assignments(values: list[str]) -> list[tuple[Path, str]]:
     return campaigns
 
 
-def _assert_slurm_compute_node(scontrol_executable: Path) -> None:
+def _assert_slurm_compute_node(
+    scontrol_executable: Path,
+    scontrol_sha256: str,
+) -> None:
     job_id = os.environ.get("SLURM_JOB_ID")
     if not job_id:
         raise RuntimeError(
             "evidence worker requires a Slurm batch allocation"
         )
-    job = subprocess.run(
-        [str(scontrol_executable), "show", "job", "-o", job_id],
-        text=True, capture_output=True, check=True,
+    job = run_bound_executable(
+        scontrol_executable,
+        expected_sha256=scontrol_sha256,
+        label="scontrol",
+        arguments=["show", "job", "-o", job_id],
+        text=True,
+        capture_output=True,
+        check=True,
     )
     fields = {
         token.split("=", 1)[0]: token.split("=", 1)[1]
@@ -76,9 +83,14 @@ def _assert_slurm_compute_node(scontrol_executable: Path) -> None:
     if fields.get("JobId") != job_id or not fields.get("NodeList"):
         raise RuntimeError("SLURM_JOB_ID is not a readable allocation")
     node_list = fields["NodeList"]
-    result = subprocess.run(
-        [str(scontrol_executable), "show", "hostnames", node_list],
-        text=True, capture_output=True, check=True,
+    result = run_bound_executable(
+        scontrol_executable,
+        expected_sha256=scontrol_sha256,
+        label="scontrol",
+        arguments=["show", "hostnames", node_list],
+        text=True,
+        capture_output=True,
+        check=True,
     )
     allocated = {
         line.strip().split(".", 1)[0]
@@ -354,20 +366,32 @@ def main(argv=None) -> int:
         expected_sha256=args.expected_git_sha256,
         label="git",
     )
-    scontrol_executable, _scontrol_sha = validate_executable(
+    scontrol_executable, scontrol_sha = validate_executable(
         args.scontrol_executable,
         expected_sha256=args.expected_scontrol_sha256,
         label="scontrol",
     )
-    _assert_slurm_compute_node(scontrol_executable)
+    _assert_slurm_compute_node(scontrol_executable, scontrol_sha)
     repo = args.repo_root.expanduser().resolve()
-    observed_commit = subprocess.run(
-        [str(git_executable), "rev-parse", "HEAD"], cwd=repo, text=True,
-        capture_output=True, check=True,
+    observed_commit = run_bound_executable(
+        git_executable,
+        expected_sha256=git_sha,
+        label="git",
+        arguments=["rev-parse", "HEAD"],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=True,
     ).stdout.strip()
-    dirty = subprocess.run(
-        [str(git_executable), "status", "--porcelain"], cwd=repo, text=True,
-        capture_output=True, check=True,
+    dirty = run_bound_executable(
+        git_executable,
+        expected_sha256=git_sha,
+        label="git",
+        arguments=["status", "--porcelain"],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=True,
     ).stdout.strip()
     if observed_commit != args.expected_commit or dirty:
         raise RuntimeError(

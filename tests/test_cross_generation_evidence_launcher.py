@@ -15,7 +15,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from archive_cross_generation_evidence import archive_evidence  # noqa: E402
-from executable_identity import validate_executable  # noqa: E402
+from executable_identity import (  # noqa: E402
+    run_bound_executable,
+    sha256_file,
+    validate_executable,
+)
 from launch_cross_generation_evidence import (  # noqa: E402
     _dependency_job_ids,
     _parse_sbatch_job_id,
@@ -49,7 +53,9 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 {"PATH": "", "SLURM_JOB_ID": "123"},
                 clear=False,
             ):
-                _assert_slurm_compute_node(scontrol.resolve())
+                _assert_slurm_compute_node(
+                    scontrol.resolve(), sha256_file(scontrol)
+                )
 
     def test_repeatable_campaign_assignments(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -351,11 +357,21 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             self.assertEqual(
                 empty_path_plan["git_executable"], str(git_executable)
             )
+            original_sha = sha256_file(scontrol)
+            scontrol.write_text("#!/bin/sh\nexit 9\n")
+            scontrol.chmod(0o755)
             with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
                 validate_executable(
                     scontrol,
-                    expected_sha256="0" * 64,
+                    expected_sha256=original_sha,
                     label="scontrol",
+                )
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                run_bound_executable(
+                    scontrol,
+                    expected_sha256=original_sha,
+                    label="scontrol",
+                    arguments=["show", "job", "-o", "123"],
                 )
             args.root = args.root[:-1]
             with self.assertRaisesRegex(ValueError, "roots missing"):
