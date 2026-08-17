@@ -153,7 +153,12 @@ def wait_for_campaigns(
         time.sleep(max(1.0, float(poll_s)))
 
 
-def _require_campaign_artifacts(payload: dict, campaign: Path) -> None:
+def _require_campaign_artifacts(
+    payload: dict,
+    campaign: Path,
+    *,
+    require_reviewed_metadata: bool,
+) -> None:
     manifest = json.loads((campaign / "campaign.json").read_text())
     artifacts = payload.get("artifacts") or []
     by_type = {}
@@ -186,21 +191,45 @@ def _require_campaign_artifacts(payload: dict, campaign: Path) -> None:
             "MATCHING": "matching_cover",
             "GIRO": "giro_partition",
         }.get(arm)
-        if expected_augmentation is None or any(
-            (artifact.get("metadata") or {}).get("treatment") != arm
-            or (artifact.get("metadata") or {}).get("augmentation_kind")
-            != expected_augmentation
-            for artifact in final_artifacts
+        if require_reviewed_metadata and (
+            expected_augmentation is None or any(
+                (artifact.get("metadata") or {}).get("treatment") != arm
+                or (artifact.get("metadata") or {}).get("augmentation_kind")
+                != expected_augmentation
+                for artifact in final_artifacts
+            )
         ):
             raise ValueError(
                 f"reviewed manifest treatment differs from approved job {cell}"
             )
-        if not any(
-            progress in path.parents
-            for path in by_type.get("mip_checkpoint", [])
-        ):
+        budget_s = job.get("time_limit_s")
+        if budget_s is None and job.get("budget_hours") is not None:
+            budget_s = float(job["budget_hours"]) * 3600.0
+        expected_paths = {
+            progress / f"checkpoint_{int(round(mark / 60)):04d}m.json"
+            for mark in checkpoint_schedule_s(float(budget_s or 0.0))
+        }
+        checkpoint_artifacts = [
+            artifact for artifact in artifacts
+            if artifact.get("artifact_type") == "mip_checkpoint"
+            and Path(str(artifact.get("path"))).expanduser().resolve()
+            in expected_paths
+        ]
+        if {
+            Path(str(artifact.get("path"))).expanduser().resolve()
+            for artifact in checkpoint_artifacts
+        } != expected_paths:
             raise ValueError(
                 f"reviewed manifest omits checkpoints for {cell}"
+            )
+        if require_reviewed_metadata and any(
+            (artifact.get("metadata") or {}).get("treatment") != arm
+            or (artifact.get("metadata") or {}).get("augmentation_kind")
+            != expected_augmentation
+            for artifact in checkpoint_artifacts
+        ):
+            raise ValueError(
+                f"checkpoint treatment differs from approved job {cell}"
             )
         if not any(
             input_root in path.parents
@@ -320,7 +349,9 @@ def main(argv=None) -> int:
     if args.phase == "collect":
         payload = collect(args.template, roots)
         for campaign in (current_campaign, raw_campaign):
-            _require_campaign_artifacts(payload, campaign)
+            _require_campaign_artifacts(
+                payload, campaign, require_reviewed_metadata=False
+            )
         _write_manifest(args.manifest, payload)
         print(json.dumps({
             "phase": "collect",
@@ -342,7 +373,11 @@ def main(argv=None) -> int:
         )
     reviewed_payload = json.loads(args.manifest.read_text())
     for campaign in (current_campaign, raw_campaign):
-        _require_campaign_artifacts(reviewed_payload, campaign)
+        _require_campaign_artifacts(
+            reviewed_payload,
+            campaign,
+            require_reviewed_metadata=True,
+        )
     result = build(
         args.manifest,
         args.build_out,

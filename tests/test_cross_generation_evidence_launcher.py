@@ -16,6 +16,7 @@ from launch_cross_generation_evidence import (  # noqa: E402
 )
 from run_cross_generation_evidence_job import (  # noqa: E402
     _campaign_ready,
+    _require_campaign_artifacts,
     wait_for_campaigns,
 )
 
@@ -58,6 +59,65 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             )
             self.assertFalse(ready)
             self.assertIn("raw_k40_validation_failed", reason)
+
+    def test_collection_paths_precede_reviewed_treatment_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            campaign = Path(tmp) / "campaign"
+            progress = campaign / "progress/cell"
+            input_root = campaign / "input/cell"
+            output = campaign / "outputs/cell.json"
+            campaign.mkdir()
+            (campaign / "campaign.json").write_text(json.dumps({
+                "jobs": [{
+                    "cell_id": "cell",
+                    "arm": "RAW",
+                    "time_limit_s": 0,
+                    "output": str(output),
+                    "progress_dir": str(progress),
+                }],
+            }))
+            artifacts = [
+                {
+                    "artifact_type": "mip_final",
+                    "path": str(output),
+                    "metadata": {},
+                },
+                {
+                    "artifact_type": "mip_checkpoint",
+                    "path": str(progress / "checkpoint_0000m.json"),
+                    "metadata": {},
+                },
+                {
+                    "artifact_type": "mip_pool_status_json",
+                    "path": str(input_root / "pool.snapshot.json"),
+                    "metadata": {},
+                },
+                {
+                    "artifact_type": "exact_cg_column_journal_jsonl",
+                    "path": str(
+                        input_root / "pool.snapshot.json.columns.jsonl"
+                    ),
+                    "metadata": {},
+                },
+            ]
+            payload = {"artifacts": artifacts}
+            _require_campaign_artifacts(
+                payload, campaign, require_reviewed_metadata=False
+            )
+            with self.assertRaisesRegex(
+                ValueError, "treatment differs"
+            ):
+                _require_campaign_artifacts(
+                    payload, campaign, require_reviewed_metadata=True
+                )
+            for artifact in artifacts[:2]:
+                artifact["metadata"] = {
+                    "treatment": "RAW",
+                    "augmentation_kind": "none",
+                }
+            _require_campaign_artifacts(
+                payload, campaign, require_reviewed_metadata=True
+            )
 
     def test_archive_is_deterministic_checksummed_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:
