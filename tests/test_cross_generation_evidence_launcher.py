@@ -67,6 +67,13 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             input_root = campaign / "input/cell"
             output = campaign / "outputs/cell.json"
             campaign.mkdir()
+            progress.mkdir(parents=True)
+            input_root.mkdir(parents=True)
+            (progress / "checkpoint_0000m.json").write_text(json.dumps({
+                "schema": "evsp-dr-mip-convergence-v1",
+                "kind": "checkpoint",
+                "checkpoint_elapsed_s": 0.0,
+            }))
             (campaign / "campaign.json").write_text(json.dumps({
                 "jobs": [{
                     "cell_id": "cell",
@@ -118,6 +125,17 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             _require_campaign_artifacts(
                 payload, campaign, require_reviewed_metadata=True
             )
+            (progress / "checkpoint_0000m.json").write_text(json.dumps({
+                "schema": "evsp-dr-mip-convergence-v1",
+                "kind": "checkpoint",
+                "checkpoint_elapsed_s": 300.0,
+            }))
+            with self.assertRaisesRegex(
+                ValueError, "filename/payload mismatch"
+            ):
+                _require_campaign_artifacts(
+                    payload, campaign, require_reviewed_metadata=True
+                )
 
     def test_archive_is_deterministic_checksummed_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:

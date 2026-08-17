@@ -212,16 +212,36 @@ def _require_campaign_artifacts(
         checkpoint_artifacts = [
             artifact for artifact in artifacts
             if artifact.get("artifact_type") == "mip_checkpoint"
-            and Path(str(artifact.get("path"))).expanduser().resolve()
-            in expected_paths
+            and progress in Path(
+                str(artifact.get("path"))
+            ).expanduser().resolve().parents
         ]
-        if {
+        observed_paths = {
             Path(str(artifact.get("path"))).expanduser().resolve()
             for artifact in checkpoint_artifacts
-        } != expected_paths:
+        }
+        if observed_paths != expected_paths:
             raise ValueError(
-                f"reviewed manifest omits checkpoints for {cell}"
+                f"reviewed manifest checkpoint set differs for {cell}"
             )
+        expected_elapsed = {
+            progress / f"checkpoint_{int(round(mark / 60)):04d}m.json":
+                float(mark)
+            for mark in checkpoint_schedule_s(float(budget_s or 0.0))
+        }
+        for path in sorted(observed_paths):
+            checkpoint_payload = json.loads(path.read_text())
+            if (
+                checkpoint_payload.get("schema")
+                != "evsp-dr-mip-convergence-v1"
+                or checkpoint_payload.get("kind") != "checkpoint"
+                or float(checkpoint_payload.get(
+                    "checkpoint_elapsed_s", -1
+                )) != expected_elapsed[path]
+            ):
+                raise ValueError(
+                    f"checkpoint filename/payload mismatch for {cell}: {path}"
+                )
         if require_reviewed_metadata and any(
             (artifact.get("metadata") or {}).get("treatment") != arm
             or (artifact.get("metadata") or {}).get("augmentation_kind")
