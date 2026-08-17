@@ -516,6 +516,16 @@ def prepare_strict_partition_pool(
     reference_path = reference_data_dir / "Ref_dict.csv"
     deadhead_path = reference_data_dir / "par_ref_dhd.csv"
     provenance = status.get("provenance") or {}
+    if not reference_path.is_file() or not deadhead_path.is_file():
+        raise SystemExit(
+            "[MIP] physical pool preparation reference data missing"
+        )
+    observed_reference_sha = file_sha256(reference_path)
+    observed_deadhead_sha = file_sha256(deadhead_path)
+    source_reference_hashes_bound = (
+        isinstance(provenance.get("reference_sha256"), str)
+        and isinstance(provenance.get("deadhead_sha256"), str)
+    )
     if (
         not instance_path.is_file()
         or file_sha256(instance_path)
@@ -523,8 +533,15 @@ def prepare_strict_partition_pool(
         or not tariff_path.is_file()
         or file_sha256(tariff_path)
         != provenance.get("prices_sha256")
-        or not reference_path.is_file()
-        or not deadhead_path.is_file()
+        or (
+            source_reference_hashes_bound
+            and (
+                observed_reference_sha
+                != provenance["reference_sha256"]
+                or observed_deadhead_sha
+                != provenance["deadhead_sha256"]
+            )
+        )
     ):
         raise SystemExit(
             "[MIP] physical pool preparation input hash mismatch"
@@ -695,6 +712,13 @@ def prepare_strict_partition_pool(
         realized["continuous_realized_charging_blocks"] = costs[
             "continuous_realized_charging_blocks"
         ]
+        realized["continuous_realized_charging_blocks_json_bytes"] = len(
+            json.dumps(
+                realized["continuous_realized_charging_blocks"],
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode()
+        )
         persisted_block_count += len(
             realized["continuous_realized_charging_blocks"]
         )
@@ -764,17 +788,25 @@ def prepare_strict_partition_pool(
         "rejected_samples": rejected,
         "master_cost_semantics": "expanded_grid_cost_unchanged",
         "pricing_certificate_scope":
-            "conservative_expanded_grid_model_only",
+            (
+                "conservative_expanded_grid_model_only"
+                if status.get("certified_rc_optimal") is True
+                else "not_certified"
+            ),
+        "source_pricing_certified":
+            status.get("certified_rc_optimal") is True,
         "continuous_cost_pricing_certified": False,
         "persisted_charging_block_count": persisted_block_count,
-        "persisted_charging_block_json_bytes":
+        "persisted_charging_block_payload_bytes":
             persisted_block_json_bytes,
         "input_hashes": {
             "instance_sha256": file_sha256(instance_path),
             "prices_sha256": file_sha256(tariff_path),
             "reference_sha256": file_sha256(reference_path),
-            "deadhead_sha256": file_sha256(deadhead_path),
+            "deadhead_sha256": observed_deadhead_sha,
         },
+        "source_reference_hashes_bound":
+            source_reference_hashes_bound,
     }
     return accepted, audit
 
@@ -886,6 +918,11 @@ def merge_extra_routes(
                         "continuous_realized_cost",
                     "continuous_realized_cost": cost,
                     "continuous_realized_charging_blocks": blocks,
+                    "continuous_realized_charging_blocks_json_bytes":
+                        len(json.dumps(
+                            blocks, sort_keys=True,
+                            separators=(",", ":"),
+                        ).encode()),
                     "physical_realization": {
                         "status": "validated_continuous_injection",
                         "continuous_realized_charging_blocks_sha256":
@@ -1183,6 +1220,10 @@ def merge_validated_partition_start(
             "master_cost_semantics": "continuous_realized_cost",
             "continuous_realized_cost": float(cost),
             "continuous_realized_charging_blocks": blocks,
+            "continuous_realized_charging_blocks_json_bytes":
+                len(json.dumps(
+                    blocks, sort_keys=True, separators=(",", ":"),
+                ).encode()),
             "physical_realization": {
                 "status": "validated_continuous_injection",
                 "continuous_realized_charging_blocks_sha256":
@@ -1605,6 +1646,7 @@ def publish_rejected_physical_replay(
     augmentation_sources: list[dict],
     master_cost_semantics: str | None,
     source_pricing_certified: bool,
+    source_reference_hashes_bound: bool,
 ) -> Path:
     """Publish a non-feasible solver-incumbent diagnostic, never a final."""
 
@@ -1703,7 +1745,11 @@ def publish_rejected_physical_replay(
             (
                 "conservative_expanded_grid_model_only"
                 if source_pricing_certified
+                and source_reference_hashes_bound
                 and master_cost_semantics == "expanded_grid_cost"
+                else "source_grid_certificate_missing_reference_hash_binding"
+                if source_pricing_certified
+                and not source_reference_hashes_bound
                 else "source_grid_certificate_does_not_cover_augmented_pool"
                 if source_pricing_certified
                 else "not_certified"
@@ -1924,6 +1970,29 @@ def main(argv=None) -> int:
             f"{physical_pool_audit['rejected_columns']} rejected, "
             f"{physical_pool_audit['preparation_wall_s']:.3f}s"
         )
+    pool_master_cost_semantics = (
+        (physical_pool_audit or {}).get(
+            "post_augmentation_master_cost_semantics"
+        )
+        or (
+            next(iter({
+                route.get("master_cost_semantics") for route in routes
+            }))
+            if len({
+                route.get("master_cost_semantics") for route in routes
+            }) == 1
+            else "mixed_expanded_grid_and_continuous_augmented_cost"
+        )
+    )
+    if (
+        not args.two_stage
+        and pool_master_cost_semantics
+        == "mixed_expanded_grid_and_continuous_augmented_cost"
+    ):
+        raise SystemExit(
+            "[MIP] single-stage objective cannot mix expanded-grid and "
+            "continuous augmented route costs"
+        )
     print(f"[MIP] pool: {len(routes)} columns over {len(trips)} trips "
           f"(instance {status['csv']}, soc_step={status['soc_step']}, "
           f"certified={status.get('certified_rc_optimal')})")
@@ -2111,6 +2180,7 @@ def main(argv=None) -> int:
     two_stage_detail = None
     cost_stage_executed = False
     cost_stage_has_solution = False
+    gurobi_optimize_wall_s = []
     validated_start_available = (
         initial_partition_start["kind"] == "validated_exact_partition"
         and bool(mip_start)
@@ -2123,6 +2193,7 @@ def main(argv=None) -> int:
         m.setObjective(
             gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE
         )
+        optimize_started = time.perf_counter()
         initial_partition_start["solver_acceptance"] = (
             optimize_with_start_audit(
                 m,
@@ -2130,6 +2201,9 @@ def main(argv=None) -> int:
                 start_supplied=bool(mip_start),
                 progress_observer=progress_observer("fleet"),
             )
+        )
+        gurobi_optimize_wall_s.append(
+            time.perf_counter() - optimize_started
         )
         stage1_has_solution = m.SolCount > 0
         validated_start_fallback = (
@@ -2204,6 +2278,8 @@ def main(argv=None) -> int:
             and fleet_proven
             and remaining_s >= 1.0
             and not (termination and termination.requested)
+            and pool_master_cost_semantics
+            != "mixed_expanded_grid_and_continuous_augmented_cost"
         ):
             m.addConstr(
                 gp.quicksum(a[i] for i in range(len(routes))) == stage1_buses,
@@ -2225,6 +2301,7 @@ def main(argv=None) -> int:
                 progress.transition_stage(
                     "cost", elapsed_s=progress.elapsed_s()
                 )
+            optimize_started = time.perf_counter()
             stage2_start_acceptance = optimize_with_start_audit(
                 m,
                 GRB,
@@ -2232,6 +2309,9 @@ def main(argv=None) -> int:
                 progress_observer=progress_observer(
                     "cost", fixed_fleet=stage1_buses
                 ),
+            )
+            gurobi_optimize_wall_s.append(
+                time.perf_counter() - optimize_started
             )
             cost_stage_executed = True
             cost_stage_has_solution = m.SolCount > 0
@@ -2248,6 +2328,13 @@ def main(argv=None) -> int:
             two_stage_detail["stage2_skip_reason"] = "no_fleet_incumbent"
         elif not fleet_proven:
             two_stage_detail["stage2_skip_reason"] = "fleet_not_proven"
+        elif (
+            pool_master_cost_semantics
+            == "mixed_expanded_grid_and_continuous_augmented_cost"
+        ):
+            two_stage_detail["stage2_skip_reason"] = (
+                "mixed_route_cost_semantics"
+            )
         else:
             two_stage_detail["stage2_skip_reason"] = "no_time_remaining"
     else:
@@ -2256,6 +2343,7 @@ def main(argv=None) -> int:
                         for i in range(len(routes))),
             GRB.MINIMIZE,
         )
+        optimize_started = time.perf_counter()
         initial_partition_start["solver_acceptance"] = (
             optimize_with_start_audit(
                 m,
@@ -2263,6 +2351,9 @@ def main(argv=None) -> int:
                 start_supplied=bool(mip_start),
                 progress_observer=progress_observer("single"),
             )
+        )
+        gurobi_optimize_wall_s.append(
+            time.perf_counter() - optimize_started
         )
         fleet_proven = int(m.Status) == 2
 
@@ -2426,6 +2517,11 @@ def main(argv=None) -> int:
                 source_pricing_certified=(
                     status.get("certified_rc_optimal") is True
                 ),
+                source_reference_hashes_bound=(
+                    (physical_pool_audit or {}).get(
+                        "source_reference_hashes_bound"
+                    ) is True
+                ),
             )
             raise SystemExit(
                 f"{exc}; diagnostic={diagnostic_path}"
@@ -2458,20 +2554,20 @@ def main(argv=None) -> int:
         )
         else None
     )
-    selected_master_semantics = {
-        route.get("master_cost_semantics") for route in routes
-    }
-    master_cost_semantics = (
-        next(iter(selected_master_semantics))
-        if len(selected_master_semantics) == 1
-        else "mixed_expanded_grid_and_continuous_augmented_cost"
-        if selected_master_semantics
-        else None
+    master_cost_semantics = pool_master_cost_semantics
+    source_reference_hashes_bound = (
+        (physical_pool_audit or {}).get(
+            "source_reference_hashes_bound"
+        ) is True
     )
     pricing_certificate_scope = (
         "conservative_expanded_grid_model_only"
         if status.get("certified_rc_optimal") is True
+        and source_reference_hashes_bound
         and master_cost_semantics == "expanded_grid_cost"
+        else "source_grid_certificate_missing_reference_hash_binding"
+        if status.get("certified_rc_optimal") is True
+        and not source_reference_hashes_bound
         else "source_grid_certificate_does_not_cover_augmented_pool"
         if status.get("certified_rc_optimal") is True
         and master_cost_semantics is not None
@@ -2561,8 +2657,10 @@ def main(argv=None) -> int:
                                if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
         "runtime_s": solver_runtime_s,
+        "gurobi_optimize_wall_s": sum(gurobi_optimize_wall_s),
+        "gurobi_optimize_stage_wall_s": gurobi_optimize_wall_s,
         "source_hashing_wall_s": source_hashing_wall_s,
-        "end_to_end_runtime_s": (
+        "end_to_end_before_publication_s": (
             time.perf_counter() - end_to_end_started
         ),
         "pool_columns": len(routes),

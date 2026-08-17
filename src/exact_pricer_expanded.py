@@ -142,6 +142,7 @@ def direct_singleton_seed_records(
             },
             "continuous_realized_cost": float(BUS_COST_KX),
             "continuous_realized_charging_blocks": [],
+            "continuous_realized_charging_blocks_json_bytes": 2,
             "cost_semantics": "expanded_grid_cost",
             "master_cost_semantics": "expanded_grid_cost",
             "continuous_cost_pricing_certified": False,
@@ -546,6 +547,8 @@ def _provenance(args) -> dict:
         "scipy": scipy.__version__,
         "instance_sha256": _sha(DATA_DIR / args.csv),
         "prices_sha256": _sha(DATA_DIR / args.prices_csv),
+        "reference_sha256": _sha(DATA_DIR / "Ref_dict.csv"),
+        "deadhead_sha256": _sha(DATA_DIR / "par_ref_dhd.csv"),
         "rc_eps": args.rc_eps,
         "pricing_cost_semantics": "conservative_expanded_grid_cost",
         "charging_realization_schema":
@@ -1710,6 +1713,12 @@ def run_cg(args) -> dict:
                         costs["continuous_realized_cost"],
                     "continuous_realized_charging_blocks":
                         costs["continuous_realized_charging_blocks"],
+                    "continuous_realized_charging_blocks_json_bytes":
+                        len(json.dumps(
+                            costs["continuous_realized_charging_blocks"],
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        ).encode()),
                     "cost_semantics": "expanded_grid_cost",
                     "master_cost_semantics": "expanded_grid_cost",
                     "continuous_cost_pricing_certified": False,
@@ -1914,6 +1923,14 @@ def run_cg(args) -> dict:
                                 costs[
                                     "continuous_realized_charging_blocks"
                                 ],
+                            "continuous_realized_charging_blocks_json_bytes":
+                                len(json.dumps(
+                                    costs[
+                                        "continuous_realized_charging_blocks"
+                                    ],
+                                    sort_keys=True,
+                                    separators=(",", ":"),
+                                ).encode()),
                             "cost_semantics": "expanded_grid_cost",
                             "master_cost_semantics":
                                 "expanded_grid_cost",

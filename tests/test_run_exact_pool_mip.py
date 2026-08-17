@@ -85,6 +85,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 augmentation_sources=[],
                 master_cost_semantics="expanded_grid_cost",
                 source_pricing_certified=False,
+                source_reference_hashes_bound=False,
             )
             payload = json.loads(diagnostic.read_text())
             self.assertEqual(
@@ -118,6 +119,7 @@ class ExactPoolMipTests(unittest.TestCase):
                     augmentation_sources=[],
                     master_cost_semantics="expanded_grid_cost",
                     source_pricing_certified=False,
+                    source_reference_hashes_bound=False,
                 )
 
     def test_singletons_are_a_strict_partition_seed(self):
@@ -1045,8 +1047,10 @@ class ExactPoolMipTests(unittest.TestCase):
         )
         self.assertGreaterEqual(payload["source_hashing_wall_s"], 0.0)
         self.assertGreaterEqual(
-            payload["end_to_end_runtime_s"], payload["runtime_s"]
+            payload["end_to_end_before_publication_s"],
+            payload["runtime_s"],
         )
+        self.assertGreaterEqual(payload["gurobi_optimize_wall_s"], 0.0)
 
     def test_proven_fleet_runs_cost_stage_and_reconstructs_full_objective(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([
