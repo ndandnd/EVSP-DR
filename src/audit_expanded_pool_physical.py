@@ -151,10 +151,18 @@ def _selected_indices(campaign_root: Path | None, pool: str):
         "sha256": hashlib.sha256(raw).hexdigest(),
         "metadata": payload.get("metadata") or {},
         "selected_index_scope": (
-            "physically_admitted_pool"
-            if (payload.get("metadata") or {}).get(
-                "physical_pool_audit"
-            ) is not None
+            "augmented_pool_unresolved"
+            if (
+                (payload.get("metadata") or {}).get(
+                    "extra_route_sources"
+                )
+                or (payload.get("metadata") or {}).get(
+                    "source_initial_partition_sha256"
+                ) is not None
+            )
+            else "physically_admitted_pool"
+            if (payload.get("metadata") or {}).get("physical_pool_audit")
+            is not None
             else "archived_pre_physical_gate_pool"
         ),
         "route_vector_sha256": route_vector_sha,
@@ -225,13 +233,17 @@ def audit_pools(
                 ["git", "ls-files", "--error-unmatch", str(relative)],
                 cwd=repo_root, check=True, capture_output=True,
             )
-        if subprocess.run(
-            ["git", "diff", "--quiet", "--", *[
+        reference_status = subprocess.run(
+            ["git", "status", "--porcelain", "--", *[
                 str(path.relative_to(repo_root))
                 for path in reference_files
             ]],
             cwd=repo_root,
-        ).returncode != 0:
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.strip()
+        if reference_status:
             raise ValueError("reviewed reference data has local changes")
         if expected_pools != RAW_K40_POOLS:
             raise ValueError(
@@ -346,6 +358,15 @@ def audit_pools(
                             f"archive latest mismatch: {latest_member}"
                         )
                     selected_source["archive_member"] = latest_member
+                if (
+                    selected
+                    and selected_source["selected_index_scope"]
+                    == "augmented_pool_unresolved"
+                ):
+                    raise ValueError(
+                        f"selected indices belong to augmented pool for "
+                        f"{pool}; selected route identities are required"
+                    )
             archived_mip_pool = {}
             for raw_ordinal, candidate in enumerate(records, start=1):
                 key = frozenset(candidate.get("trips") or [])
