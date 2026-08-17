@@ -16,12 +16,18 @@ from build_cross_generation_evidence import (  # noqa: E402
     _scale_progress_rows,
     build as _build,
 )
+from executable_identity import sha256_file  # noqa: E402
 
 
 def build(manifest, output, **kwargs):
     kwargs.setdefault(
         "approved_manifest_sha256",
         hashlib.sha256(Path(manifest).read_bytes()).hexdigest(),
+    )
+    git_executable = Path(shutil.which("git")).resolve()
+    kwargs.setdefault("git_executable", git_executable)
+    kwargs.setdefault(
+        "expected_git_sha256", sha256_file(git_executable)
     )
     return _build(manifest, output, **kwargs)
 
@@ -597,7 +603,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             root = Path(tmp)
             manifest_path = self._fixture(root)
             with self.assertRaisesRegex(
-                ValueError, "requires expected SHA-256"
+                ValueError, "SHA-256 mismatch"
             ):
                 _build(
                     manifest_path,
@@ -608,6 +614,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                         manifest_path.read_bytes()
                     ).hexdigest(),
                     git_executable=Path(shutil.which("git")).resolve(),
+                    expected_git_sha256="0" * 64,
                 )
             with self.assertRaisesRegex(ValueError, "approved SHA"):
                 build(

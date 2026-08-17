@@ -24,7 +24,6 @@ from cross_generation_schema import (
     sha256_bytes,
 )
 from executable_identity import (
-    resolve_executable,
     run_bound_executable,
     validate_executable,
 )
@@ -2611,8 +2610,8 @@ def build(
     repo_root: Path,
     command: list[str],
     approved_manifest_sha256: str,
-    git_executable: Path | str | None = None,
-    expected_git_sha256: str | None = None,
+    git_executable: Path | str,
+    expected_git_sha256: str,
 ) -> dict:
     manifest_path = input_manifest.expanduser().absolute()
     repo = repo_root.expanduser().absolute()
@@ -2626,24 +2625,11 @@ def build(
         or observed_manifest_sha != approved_manifest_sha256
     ):
         raise ValueError("input manifest differs from approved SHA-256")
-    if git_executable is None and expected_git_sha256 is not None:
-        raise ValueError(
-            "expected Git SHA-256 requires an explicit executable path"
-        )
-    if git_executable is not None and expected_git_sha256 is None:
-        raise ValueError(
-            "explicit Git executable requires expected SHA-256"
-        )
-    if git_executable is None:
-        resolved_git, observed_git_sha = resolve_executable(
-            None, command="git", label="git"
-        )
-    else:
-        resolved_git, observed_git_sha = validate_executable(
-            git_executable,
-            expected_sha256=expected_git_sha256,
-            label="git",
-        )
+    resolved_git, observed_git_sha = validate_executable(
+        git_executable,
+        expected_sha256=expected_git_sha256,
+        label="git",
+    )
     manifest = _parse_manifest(manifest_raw)
     builder_git_identity = _git_identity(
         repo, resolved_git, observed_git_sha
@@ -3146,8 +3132,8 @@ def main(argv=None) -> int:
         "--repo-root", type=Path,
         default=Path(__file__).resolve().parents[1],
     )
-    parser.add_argument("--git-executable", type=Path)
-    parser.add_argument("--expected-git-sha256")
+    parser.add_argument("--git-executable", type=Path, required=True)
+    parser.add_argument("--expected-git-sha256", required=True)
     args = parser.parse_args(argv)
     command = [
         "python", "-u", "src/build_cross_generation_evidence.py",

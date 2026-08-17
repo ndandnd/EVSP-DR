@@ -3,6 +3,7 @@ import json
 import os
 import platform
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -35,6 +36,30 @@ from run_cross_generation_evidence_job import (  # noqa: E402
 
 
 class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
+    def test_bound_execution_uses_verified_bytes_after_source_mutation(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            executable = Path(tmp) / "tool"
+            original = b"#!/bin/sh\nexit 0\n"
+            executable.write_bytes(original)
+            executable.chmod(0o755)
+            expected = sha256_file(executable)
+
+            def fake_run(argv, **_kwargs):
+                executable.write_bytes(b"#!/bin/sh\nexit 9\n")
+                self.assertEqual(Path(argv[0]).read_bytes(), original)
+                return subprocess.CompletedProcess(argv, 0)
+
+            with patch(
+                "executable_identity.subprocess.run",
+                side_effect=fake_run,
+            ):
+                run_bound_executable(
+                    executable,
+                    expected_sha256=expected,
+                    label="tool",
+                    arguments=[],
+                )
+
     def test_compute_check_uses_absolute_scontrol_with_empty_path(self):
         with tempfile.TemporaryDirectory() as tmp:
             scontrol = Path(tmp) / "scontrol"

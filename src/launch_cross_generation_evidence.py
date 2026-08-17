@@ -115,6 +115,15 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         command="scontrol",
         label="scontrol",
     )
+    expected_scontrol_sha = getattr(
+        args, "expected_scontrol_sha256", None
+    )
+    if expected_scontrol_sha is not None:
+        scontrol_executable, scontrol_sha = validate_executable(
+            scontrol_executable,
+            expected_sha256=expected_scontrol_sha,
+            label="scontrol",
+        )
     wait_timeout_s = getattr(args, "wait_timeout_s", None)
     if wait_timeout_s is None:
         wait_timeout_s = 0.0 if dependency_ids else 86400.0
@@ -239,14 +248,18 @@ def main(argv=None) -> int:
     parser.add_argument("--git-executable", type=Path)
     parser.add_argument("--expected-git-sha256")
     parser.add_argument("--scontrol-executable", type=Path)
+    parser.add_argument("--expected-scontrol-sha256")
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
     repo = args.repo_root.expanduser().resolve()
+    supplied_git_sha = args.expected_git_sha256
     git_executable, git_sha = resolve_executable(
         args.git_executable, command="git", label="git"
     )
+    if supplied_git_sha is not None and supplied_git_sha != git_sha:
+        raise ValueError("git executable SHA-256 mismatch")
     args.git_executable = git_executable
-    args.expected_git_sha256 = git_sha
+    args.expected_git_sha256 = supplied_git_sha or git_sha
     observed_commit = _git(
         repo, git_executable, git_sha, "rev-parse", "HEAD"
     )

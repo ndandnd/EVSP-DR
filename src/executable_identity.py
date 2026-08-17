@@ -18,18 +18,6 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _sha256_fd(descriptor: int) -> str:
-    digest = hashlib.sha256()
-    os.lseek(descriptor, 0, os.SEEK_SET)
-    while True:
-        chunk = os.read(descriptor, 1024 * 1024)
-        if not chunk:
-            break
-        digest.update(chunk)
-    os.lseek(descriptor, 0, os.SEEK_SET)
-    return digest.hexdigest()
-
-
 def validate_executable(
     path: Path | str,
     *,
@@ -84,17 +72,32 @@ def run_bound_executable(
     if hasattr(os, "O_NOFOLLOW"):
         flags |= os.O_NOFOLLOW
     descriptor = os.open(candidate, flags)
+    memfd = None
     try:
         mode = os.fstat(descriptor).st_mode
         if not stat.S_ISREG(mode) or not (mode & 0o111):
             raise ValueError(f"{label} executable descriptor is invalid")
-        if _sha256_fd(descriptor) != expected_sha256:
+        if not hasattr(os, "memfd_create"):
+            raise RuntimeError("memfd_create is required for bound execution")
+        memfd = os.memfd_create(f"evsp-{label}")
+        digest = hashlib.sha256()
+        while True:
+            chunk = os.read(descriptor, 1024 * 1024)
+            if not chunk:
+                break
+            digest.update(chunk)
+            os.write(memfd, chunk)
+        if digest.hexdigest() != expected_sha256:
             raise ValueError(f"{label} executable SHA-256 mismatch")
-        executable = f"/proc/self/fd/{descriptor}"
+        os.fchmod(memfd, mode & 0o777)
+        os.lseek(memfd, 0, os.SEEK_SET)
+        executable = f"/proc/self/fd/{memfd}"
         return subprocess.run(
             [executable, *arguments],
-            pass_fds=(descriptor,),
+            pass_fds=(memfd,),
             **kwargs,
         )
     finally:
+        if memfd is not None:
+            os.close(memfd)
         os.close(descriptor)
