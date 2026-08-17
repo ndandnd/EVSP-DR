@@ -11,7 +11,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import cross_generation_schema as schemas  # noqa: E402
-from build_cross_generation_evidence import build as _build  # noqa: E402
+from build_cross_generation_evidence import (  # noqa: E402
+    _scale_progress_rows,
+    build as _build,
+)
 
 
 def build(manifest, output, **kwargs):
@@ -179,6 +182,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 "route_vector_sha256": "e" * 64,
             },
             "latest_statistics": {
+                    "statistics_incumbent_fleet": 8,
                 "fleet_bound": 8,
                 "objective_bound": None,
                 "fleet_gap": 0,
@@ -281,6 +285,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "trip_set_sha256": trip_sha,
             "tariff_sha256": "c" * 64,
             "target_lp_weight": 8,
+            "target_fleet": 8,
             "model": "evsp",
             "charging_discretization": "15kwh_10min",
             "battery_kwh": 300,
@@ -317,6 +322,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "reserve_fraction": 0,
                            "master_sense": "cover",
                            "initializer": "singletons",
+                           "target_fleet": 8,
                        }),
             self._spec("current-endpoint", "current-run", endpoint_current,
                        "endpoint_json", {
@@ -336,6 +342,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "reserve_fraction": 0,
                            "master_sense": "cover",
                            "initializer": "singletons",
+                           "target_fleet": 8,
                        }),
             self._spec("exact", "exact-run", exact,
                        "exact_cg_iterations_csv", common_exact),
@@ -369,6 +376,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "reserve_fraction": 0,
                            "master_sense": "partition",
                            "initializer": "singletons",
+                           "target_fleet": 8,
                        }),
             self._spec("mip-final", "mip-run", mip_final,
                        "mip_final", {
@@ -394,6 +402,7 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                            "reserve_fraction": 0,
                            "master_sense": "partition",
                            "initializer": "singletons",
+                           "target_fleet": 8,
                        }),
             self._spec("release", "release-run", manifest_artifact,
                        "artifact_manifest_json", {
@@ -471,15 +480,25 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             required = (
                 "artifact_inventory.csv", "cg_iteration_long.csv",
                 "cg_run_summary.csv", "mip_checkpoint_long.csv",
-                "mip_run_summary.csv", "data_dictionary.csv", "SCHEMA.md",
+                "mip_run_summary.csv", "phase_telemetry_long.csv",
+                "scale_progress_summary.csv",
+                "data_dictionary.csv", "SCHEMA.md",
                 "provenance.json", "missing_data_and_rerun_plan.csv",
-                "benchmark_rerun_plan.json", "completion.json",
-                "cg_route_weight_artificials.png",
-                "cg_reduced_cost_columns.png",
-                "cg_master_pricing_time_shares.png",
-                "mip_incumbent_fleet_bound.png",
-                "mip_final_fleet_by_scale_method.png",
-                "artifact_coverage_matrix.png",
+                "benchmark_rerun_plan.json", "figure_manifest.json",
+                "completion.json",
+            )
+            required += tuple(
+                f"{stem}.{extension}"
+                for stem in (
+                    "lp_route_weight_by_scale",
+                    "normalized_target_gap_by_scale",
+                    "artificial_mass_by_scale",
+                    "reduced_cost_columns_by_scale",
+                    "master_pricing_time_shares_by_scale",
+                    "mip_incumbent_bound_by_scale",
+                    "final_fleet_gap_by_scale",
+                )
+                for extension in ("png", "pdf")
             )
             self.assertTrue(all((output / name).is_file() for name in required))
             with (output / "cg_iteration_long.csv").open(newline="") as handle:
@@ -502,6 +521,35 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             self.assertEqual(exact_summary["pricing_certified"], "True")
             self.assertEqual(
                 exact_summary["phase_telemetry_available"], "True"
+            )
+            with (output / "scale_progress_summary.csv").open(
+                    newline="") as handle:
+                progress = list(csv.DictReader(handle))
+            self.assertTrue(any(
+                row["run_id"] == "exact-run"
+                and row["certified_lp_bound"] == "7.9"
+                and row["target_gap_basis"]
+                == "certified_lp_route_weight_bound"
+                for row in progress
+            ))
+            self.assertTrue(any(
+                row["run_id"] == "mip-run"
+                and row["mip_incumbent_fleet"] == "8"
+                and row["mip_proof_scope"].startswith("finite_pool")
+                for row in progress
+            ))
+            with (output / "mip_checkpoint_long.csv").open(
+                    newline="") as handle:
+                mip_checkpoints = list(csv.DictReader(handle))
+            self.assertEqual(
+                mip_checkpoints[0]["statistics_incumbent_fleet"], "8.0"
+            )
+            figure_manifest = json.loads(
+                (output / "figure_manifest.json").read_text()
+            )
+            self.assertEqual(
+                {row["status"] for row in figure_manifest["figures"]},
+                {"available"},
             )
             with (output / "artifact_coverage_matrix.csv").open(
                     newline="") as handle:
@@ -673,6 +721,23 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 },
                 expected_iterations,
             )
+            figure_manifest = json.loads(
+                (output / "figure_manifest.json").read_text()
+            )
+            omitted = [
+                row for row in figure_manifest["figures"]
+                if row["status"] == "omitted"
+            ]
+            self.assertTrue(omitted)
+            for row in omitted:
+                self.assertFalse((output / f"{row['stem']}.png").exists())
+                self.assertFalse((output / f"{row['stem']}.pdf").exists())
+            self.assertTrue(
+                (output / "artifact_coverage_matrix.csv").is_file()
+            )
+            self.assertTrue(
+                (output / "missing_data_and_rerun_plan.csv").is_file()
+            )
 
     def test_telemetry_tail_and_disabled_availability_are_explicit(self):
         spec = {
@@ -744,6 +809,33 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                 "telemetry_disabled_or_not_supplied",
             )
 
+    def test_legacy_mip_checkpoint_without_statistics_incumbent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest_path = self._fixture(root)
+            manifest = json.loads(manifest_path.read_text())
+            checkpoint_path = root / "checkpoint.json"
+            checkpoint = json.loads(checkpoint_path.read_text())
+            checkpoint["latest_statistics"].pop(
+                "statistics_incumbent_fleet"
+            )
+            checkpoint_path.write_text(json.dumps(checkpoint))
+            checkpoint_spec = next(
+                artifact for artifact in manifest["artifacts"]
+                if artifact["artifact_id"] == "mip-checkpoint"
+            )
+            checkpoint_spec["expected_sha256"] = self._sha(checkpoint_path)
+            manifest_path.write_text(json.dumps(manifest))
+            output = root / "legacy-checkpoint"
+            build(
+                manifest_path, output, repo_root=REPO_ROOT,
+                command=["test"],
+            )
+            with (output / "mip_checkpoint_long.csv").open(
+                    newline="") as handle:
+                row = next(csv.DictReader(handle))
+            self.assertEqual(row["statistics_incumbent_fleet"], "")
+
     def test_missing_current_field_and_mip_semantic_mismatch_fail(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -780,6 +872,92 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
                     manifest_path, root / "mip-mismatch-output",
                     repo_root=REPO_ROOT, command=["test"],
                 )
+
+    def test_scale_progress_keeps_instance_families_separate(self):
+        mip_summaries = []
+        specs = {}
+        for family, digest in (
+            ("first_n_stress", "1" * 64),
+            ("duty_union", "2" * 64),
+        ):
+            run_id = f"{family}-run"
+            mip_summaries.append({
+                "run_id": run_id,
+                "algorithm_family": "mip_finite_pool",
+                "implementation": "two_stage_pool_mip",
+                "scale_family": family,
+                "scale": 10,
+                "replicate": "r1",
+                "treatment": "RAW",
+                "integer_fleet": 10,
+                "fleet_bound": 10,
+                "fleet_proven": True,
+                "optimal_scope": "fleet_only",
+                "runtime_s": 1,
+                "physically_validated_schedule": True,
+                "proof_censored": False,
+                "status_name": "OPTIMAL",
+            })
+            specs[run_id] = [{
+                "metadata": {
+                    "target_fleet": 10,
+                    "trip_count": 100,
+                    "instance_sha256": digest,
+                    "trip_set_sha256": digest,
+                    "tariff_sha256": "3" * 64,
+                    "initializer": "singletons",
+                },
+            }]
+        rows = _scale_progress_rows(
+            [], [], [], mip_summaries, specs
+        )
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(
+            {row["instance_family"] for row in rows},
+            {"first_n_stress", "duty_union"},
+        )
+
+    def test_positive_artificials_block_lp_bound_and_target_gap(self):
+        run_id = "artificial-run"
+        rows = _scale_progress_rows(
+            [{
+                "run_id": run_id,
+                "wall_time_s": 10,
+                "iteration": 1,
+            }],
+            [{
+                "run_id": run_id,
+                "algorithm_family": "exact_expanded_network",
+                "implementation": "exact_pricer",
+                "scale_family": "duty_union",
+                "scale": 8,
+                "replicate": "r1",
+                "seed": 1,
+                "final_wall_time_s": 10,
+                "final_lp_route_weight": 7.5,
+                "final_artificial_total": 1.0,
+                "final_best_reduced_cost": 0.0,
+                "pricing_certified": True,
+                "termination_raw": "certified",
+                "certification_censored": False,
+                "source_artifact_ids": "status",
+            }],
+            [], [], {
+                run_id: [{
+                    "metadata": {
+                        "target_fleet": 8,
+                        "artificial_tolerance": 1e-6,
+                    },
+                }],
+            },
+        )
+        self.assertEqual(len(rows), 1)
+        self.assertIsNone(rows[0]["certified_lp_bound"])
+        self.assertIsNone(rows[0]["target_gap"])
+        self.assertEqual(
+            rows[0]["target_gap_basis"],
+            "unavailable_artificial_mass_positive_or_unknown",
+        )
 
 
 if __name__ == "__main__":

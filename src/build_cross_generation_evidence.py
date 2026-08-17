@@ -4,9 +4,7 @@
 from __future__ import annotations
 
 import argparse
-import ctypes
 import csv
-import errno
 import hashlib
 import importlib.metadata
 import json
@@ -98,12 +96,35 @@ MIP_CHECKPOINT_FIELDS = (
     "checkpoint_elapsed_s", "observed_total_elapsed_s",
     "statistics_observed_s", "stage", "incumbent_state",
     "incumbent_fleet", "incumbent_objective", "incumbent_observed_s",
-    "fleet_bound",
+    "statistics_incumbent_fleet", "fleet_bound",
     "objective_bound", "fleet_gap", "node_count", "solution_count",
     "route_vector_sha256", "first_feasible_s",
     "solver_ended_before_checkpoint", "source_result_sha256",
     "source_journal_sha256", "source_start_sha256", "experiment_arm",
     "git_commit", "observational_only",
+)
+SCALE_PROGRESS_FIELDS = (
+    "run_id", "instance_family", "scale", "target_fleet", "trip_count",
+    "instance_sha256", "trip_set_sha256", "tariff_sha256",
+    "algorithm_family", "implementation", "method", "master_sense",
+    "initialization", "treatment", "replicate", "seed",
+    "elapsed_s", "iteration", "restricted_master_route_weight",
+    "artificial_mass", "certified_lp_bound", "certified_lp_bound_scope",
+    "target_gap", "normalized_target_gap", "target_gap_basis",
+    "best_reduced_cost", "pricing_certified",
+    "mip_incumbent_fleet", "mip_finite_pool_bound",
+    "mip_finite_pool_gap", "mip_proof_scope",
+    "physical_validation_status", "stopping_reason",
+    "censored", "censoring_reason", "source_artifact_ids",
+)
+REQUIRED_FIGURE_STEMS = (
+    "lp_route_weight_by_scale",
+    "normalized_target_gap_by_scale",
+    "artificial_mass_by_scale",
+    "reduced_cost_columns_by_scale",
+    "master_pricing_time_shares_by_scale",
+    "mip_incumbent_bound_by_scale",
+    "final_fleet_gap_by_scale",
 )
 MIP_SUMMARY_FIELDS = (
     "run_id", "algorithm_family", "implementation", "scale_family",
@@ -1406,6 +1427,249 @@ def _coverage_and_reruns(manifest, inventory, cg_rows, mip_rows, mip_finals):
     return coverage, reruns
 
 
+def _run_metadata(specs):
+    merged = {}
+    for spec in specs:
+        for key, value in (spec.get("metadata") or {}).items():
+            if value is not None and key not in merged:
+                merged[key] = value
+    return merged
+
+
+def _scale_progress_rows(
+    cg_rows,
+    cg_summaries,
+    mip_rows,
+    mip_summaries,
+    specs_by_run,
+):
+    rows_by_run = _group(cg_rows, "run_id")
+    checkpoints_by_run = _group(mip_rows, "run_id")
+    candidates = []
+
+    def identity(summary):
+        metadata = _run_metadata(specs_by_run[summary["run_id"]])
+        age = metadata.get("cg_age_hours", metadata.get("age_hours"))
+        method = summary.get("implementation")
+        treatment = summary.get("treatment") or metadata.get("treatment")
+        if treatment:
+            method = f"{method}:{treatment}"
+        if age is not None:
+            method = f"{method}:cg_age_{age}h"
+        return metadata, method
+
+    for summary in cg_summaries:
+        run_id = summary["run_id"]
+        metadata, method = identity(summary)
+        trajectory = sorted(
+            rows_by_run.get(run_id, []),
+            key=lambda row: (row["wall_time_s"], row["iteration"]),
+        )
+        final = trajectory[-1] if trajectory else {}
+        route_weight = summary.get("final_lp_route_weight")
+        artificials = summary.get("final_artificial_total")
+        tolerance = float(metadata.get("artificial_tolerance", 1e-6))
+        artificial_free = (
+            artificials is not None and float(artificials) <= tolerance
+        )
+        pricing_certified = summary.get("pricing_certified") is True
+        certified_bound = (
+            route_weight
+            if route_weight is not None
+            and artificial_free
+            and pricing_certified
+            else None
+        )
+        target = metadata.get("target_fleet")
+        target_gap = None
+        normalized_gap = None
+        target_gap_basis = None
+        if target is not None and route_weight is not None and artificial_free:
+            target_gap = float(route_weight) - float(target)
+            normalized_gap = target_gap / max(1.0, float(target))
+            target_gap_basis = (
+                "certified_lp_route_weight_bound"
+                if certified_bound is not None
+                else "observed_artificial_free_restricted_master"
+            )
+        elif route_weight is not None and not artificial_free:
+            target_gap_basis = "unavailable_artificial_mass_positive_or_unknown"
+        candidates.append({
+            "run_id": run_id,
+            "instance_family": summary.get("scale_family"),
+            "scale": summary.get("scale"),
+            "target_fleet": target,
+            "trip_count": metadata.get("trip_count"),
+            "instance_sha256": metadata.get("instance_sha256"),
+            "trip_set_sha256": metadata.get("trip_set_sha256"),
+            "tariff_sha256": metadata.get("tariff_sha256"),
+            "algorithm_family": summary.get("algorithm_family"),
+            "implementation": summary.get("implementation"),
+            "method": method,
+            "master_sense": metadata.get("master_sense"),
+            "initialization": metadata.get(
+                "initializer", metadata.get("initial_pool")
+            ),
+            "treatment": metadata.get("treatment"),
+            "replicate": summary.get("replicate"),
+            "seed": summary.get("seed"),
+            "elapsed_s": summary.get("final_wall_time_s"),
+            "iteration": final.get("iteration"),
+            "restricted_master_route_weight": route_weight,
+            "artificial_mass": artificials,
+            "certified_lp_bound": certified_bound,
+            "certified_lp_bound_scope": (
+                "explicit_pricing_certificate_and_zero_artificials"
+                if certified_bound is not None else None
+            ),
+            "target_gap": target_gap,
+            "normalized_target_gap": normalized_gap,
+            "target_gap_basis": target_gap_basis,
+            "best_reduced_cost": summary.get("final_best_reduced_cost"),
+            "pricing_certified": summary.get("pricing_certified"),
+            "mip_incumbent_fleet": None,
+            "mip_finite_pool_bound": None,
+            "mip_finite_pool_gap": None,
+            "mip_proof_scope": None,
+            "physical_validation_status": "not_an_integer_schedule",
+            "stopping_reason": (
+                summary.get("termination_raw")
+                or summary.get("termination_category")
+            ),
+            "censored": summary.get("certification_censored"),
+            "censoring_reason": (
+                "pricing_certification_not_observed"
+                if summary.get("certification_censored") is True else None
+            ),
+            "source_artifact_ids": summary.get("source_artifact_ids"),
+        })
+
+    for summary in mip_summaries:
+        run_id = summary["run_id"]
+        metadata, method = identity(summary)
+        checkpoints = sorted(
+            checkpoints_by_run.get(run_id, []),
+            key=lambda row: (
+                row.get("statistics_observed_s")
+                if row.get("statistics_observed_s") is not None
+                else row.get("observed_total_elapsed_s") or 0.0
+            ),
+        )
+        latest = checkpoints[-1] if checkpoints else {}
+        incumbent = summary.get("integer_fleet")
+        if incumbent is None:
+            incumbent = latest.get("statistics_incumbent_fleet")
+        if incumbent is None:
+            incumbent = latest.get("incumbent_fleet")
+        bound = summary.get("fleet_bound")
+        if bound is None:
+            bound = latest.get("fleet_bound")
+        finite_pool_gap = None
+        if incumbent is not None and bound is not None:
+            finite_pool_gap = (
+                max(0.0, float(incumbent) - float(bound))
+                / max(1.0, float(incumbent))
+            )
+        target = metadata.get("target_fleet")
+        target_gap = (
+            float(incumbent) - float(target)
+            if incumbent is not None and target is not None else None
+        )
+        normalized_gap = (
+            target_gap / max(1.0, float(target))
+            if target_gap is not None else None
+        )
+        physical = summary.get("physically_validated_schedule")
+        candidates.append({
+            "run_id": run_id,
+            "instance_family": summary.get("scale_family"),
+            "scale": summary.get("scale"),
+            "target_fleet": target,
+            "trip_count": metadata.get("trip_count"),
+            "instance_sha256": metadata.get("instance_sha256"),
+            "trip_set_sha256": metadata.get("trip_set_sha256"),
+            "tariff_sha256": metadata.get("tariff_sha256"),
+            "algorithm_family": summary.get("algorithm_family"),
+            "implementation": summary.get("implementation"),
+            "method": method,
+            "master_sense": metadata.get("master_sense"),
+            "initialization": metadata.get(
+                "initializer", metadata.get("initial_pool")
+            ),
+            "treatment": summary.get("treatment"),
+            "replicate": summary.get("replicate"),
+            "seed": metadata.get("seed"),
+            "elapsed_s": summary.get("runtime_s"),
+            "iteration": None,
+            "restricted_master_route_weight": None,
+            "artificial_mass": None,
+            "certified_lp_bound": None,
+            "certified_lp_bound_scope": None,
+            "target_gap": target_gap,
+            "normalized_target_gap": normalized_gap,
+            "target_gap_basis": (
+                "finite_pool_proven_integer_fleet"
+                if summary.get("fleet_proven") is True
+                else "observed_finite_pool_integer_incumbent"
+                if incumbent is not None else None
+            ),
+            "best_reduced_cost": None,
+            "pricing_certified": metadata.get("pricing_certified"),
+            "mip_incumbent_fleet": incumbent,
+            "mip_finite_pool_bound": bound,
+            "mip_finite_pool_gap": finite_pool_gap,
+            "mip_proof_scope": (
+                f"finite_pool:{summary.get('optimal_scope')}"
+                if summary.get("optimal_scope") else "finite_pool"
+            ),
+            "physical_validation_status": (
+                "physically_validated"
+                if physical is True else "incidence_partition_only"
+                if physical is False else "unknown"
+            ),
+            "stopping_reason": (
+                summary.get("status_name")
+                or summary.get("summary_availability_reason")
+            ),
+            "censored": summary.get("proof_censored"),
+            "censoring_reason": (
+                "finite_pool_proof_not_observed"
+                if summary.get("proof_censored") is True else None
+            ),
+            "source_artifact_ids": " | ".join(filter(None, (
+                summary.get("final_artifact_id"),
+                summary.get("checkpoint_artifact_ids"),
+            ))),
+        })
+
+    grouped = {}
+    for row in candidates:
+        key = (
+            row["instance_family"],
+            row["instance_sha256"],
+            row["trip_set_sha256"],
+            row["tariff_sha256"],
+            row["method"],
+            row["initialization"],
+            row["replicate"],
+        )
+        previous = grouped.get(key)
+        elapsed = row["elapsed_s"]
+        previous_elapsed = previous["elapsed_s"] if previous else None
+        if previous is None or (
+            elapsed is not None
+            and (previous_elapsed is None or float(elapsed) > float(previous_elapsed))
+        ):
+            grouped[key] = row
+    return sorted(grouped.values(), key=lambda row: (
+        str(row["instance_family"]),
+        str(row["scale"]),
+        str(row["method"]),
+        str(row["initialization"]),
+        str(row["replicate"]),
+    ))
+
+
 def _write_csv(path: Path, fields, rows):
     with path.open("x", newline="") as handle:
         writer = csv.DictWriter(
@@ -1609,6 +1873,386 @@ def _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage):
     save(fig, "artifact_coverage_matrix")
 
 
+def _save_required_figures(
+    staging,
+    cg_rows,
+    mip_rows,
+    scale_rows,
+    specs_by_run,
+):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    pdf_metadata = {
+        "Creator": "EVSP-DR cross-generation evidence",
+        "CreationDate": None,
+        "ModDate": None,
+    }
+    report = []
+
+    def publish(fig, stem, *, available, reason=None):
+        if not available:
+            plt.close(fig)
+            report.append({
+                "stem": stem,
+                "status": "omitted",
+                "reason": reason,
+            })
+            return
+        fig.tight_layout()
+        fig.savefig(
+            staging / f"{stem}.png",
+            dpi=160,
+            metadata={"Software": "EVSP-DR"},
+        )
+        fig.savefig(staging / f"{stem}.pdf", metadata=pdf_metadata)
+        plt.close(fig)
+        report.append({
+            "stem": stem,
+            "status": "available",
+            "reason": None,
+        })
+
+    def scale_key(row):
+        return f"{row.get('scale_family')}:{row.get('scale')}"
+
+    def facets(keys, *, width=6.0, height=3.4):
+        ordered = sorted(set(keys))
+        if not ordered:
+            return ordered, None, []
+        columns = min(2, len(ordered))
+        rows = int(math.ceil(len(ordered) / columns))
+        fig, axes = plt.subplots(
+            rows, columns,
+            figsize=(width * columns, height * rows),
+            squeeze=False,
+        )
+        flattened = list(axes.flat)
+        for axis in flattened[len(ordered):]:
+            axis.set_visible(False)
+        return ordered, fig, flattened
+
+    metadata_by_run = {
+        run_id: _run_metadata(specs)
+        for run_id, specs in specs_by_run.items()
+    }
+    grouped_cg = _group(cg_rows, "run_id")
+
+    artificial_free = []
+    target_gap = []
+    artificial_rows = []
+    pricing_rows = []
+    for row in cg_rows:
+        metadata = metadata_by_run.get(row["run_id"], {})
+        artificials = row.get("artificial_total")
+        tolerance = float(metadata.get("artificial_tolerance", 1e-6))
+        if artificials is not None:
+            artificial_rows.append(row)
+        if (
+            row.get("lp_route_weight") is not None
+            and artificials is not None
+            and float(artificials) <= tolerance
+        ):
+            artificial_free.append(row)
+            target = metadata.get("target_fleet")
+            if target is not None:
+                target_gap.append({
+                    **row,
+                    "_normalized_gap": (
+                        float(row["lp_route_weight"]) - float(target)
+                    ) / max(1.0, float(target)),
+                })
+        if (
+            row.get("best_reduced_cost") is not None
+            or row.get("columns_added") is not None
+            or row.get("pool_columns_delta") is not None
+        ):
+            pricing_rows.append(row)
+
+    keys, fig, axes = facets(scale_key(row) for row in artificial_free)
+    if fig is None:
+        fig = plt.figure()
+    for key, axis in zip(keys, axes):
+        for run_id, rows in sorted(grouped_cg.items()):
+            values = sorted(
+                (
+                    row for row in artificial_free
+                    if row["run_id"] == run_id and scale_key(row) == key
+                ),
+                key=lambda row: row["wall_time_s"],
+            )
+            if values:
+                axis.plot(
+                    [row["wall_time_s"] / 3600 for row in values],
+                    [row["lp_route_weight"] for row in values],
+                    marker=".", label=run_id,
+                )
+        axis.set_title(key)
+        axis.set_xlabel("Recorded run clock (hours)")
+        axis.set_ylabel("Artificial-free LP route weight")
+        if axis.lines:
+            axis.legend(fontsize=5)
+    publish(
+        fig, "lp_route_weight_by_scale",
+        available=bool(artificial_free),
+        reason="no_verified_artificial_free_route_weight",
+    )
+
+    keys, fig, axes = facets(scale_key(row) for row in target_gap)
+    if fig is None:
+        fig = plt.figure()
+    for key, axis in zip(keys, axes):
+        for run_id in sorted({row["run_id"] for row in target_gap}):
+            values = sorted(
+                (
+                    row for row in target_gap
+                    if row["run_id"] == run_id and scale_key(row) == key
+                ),
+                key=lambda row: row["wall_time_s"],
+            )
+            if values:
+                axis.plot(
+                    [row["wall_time_s"] / 3600 for row in values],
+                    [row["_normalized_gap"] for row in values],
+                    marker=".", label=run_id,
+                )
+        axis.axhline(0, color="black", linestyle="--", linewidth=0.8)
+        axis.set_title(key)
+        axis.set_xlabel("Recorded run clock (hours)")
+        axis.set_ylabel("(observed route weight - target) / target")
+        if axis.lines:
+            axis.legend(fontsize=5)
+    publish(
+        fig, "normalized_target_gap_by_scale",
+        available=bool(target_gap),
+        reason="no_explicit_target_with_artificial_free_route_weight",
+    )
+
+    keys, fig, axes = facets(scale_key(row) for row in artificial_rows)
+    if fig is None:
+        fig = plt.figure()
+    for key, axis in zip(keys, axes):
+        for run_id in sorted({row["run_id"] for row in artificial_rows}):
+            values = sorted(
+                (
+                    row for row in artificial_rows
+                    if row["run_id"] == run_id and scale_key(row) == key
+                ),
+                key=lambda row: row["wall_time_s"],
+            )
+            if values:
+                axis.plot(
+                    [row["wall_time_s"] / 3600 for row in values],
+                    [row["artificial_total"] for row in values],
+                    marker=".", label=run_id,
+                )
+        axis.axhline(0, color="black", linestyle="--", linewidth=0.8)
+        axis.set_title(key)
+        axis.set_xlabel("Recorded run clock (hours)")
+        axis.set_ylabel("Artificial mass")
+        if axis.lines:
+            axis.legend(fontsize=5)
+    publish(
+        fig, "artificial_mass_by_scale",
+        available=bool(artificial_rows),
+        reason="no_verified_artificial_mass_series",
+    )
+
+    pricing_keys = sorted({scale_key(row) for row in pricing_rows})
+    if pricing_keys:
+        fig, axes = plt.subplots(
+            len(pricing_keys), 2,
+            figsize=(11, 3.4 * len(pricing_keys)),
+            squeeze=False,
+        )
+        for row_index, key in enumerate(pricing_keys):
+            rc_axis, column_axis = axes[row_index]
+            for run_id in sorted({row["run_id"] for row in pricing_rows}):
+                values = sorted(
+                    (
+                        row for row in pricing_rows
+                        if row["run_id"] == run_id and scale_key(row) == key
+                    ),
+                    key=lambda row: row["wall_time_s"],
+                )
+                rc_values = [
+                    row for row in values
+                    if row["best_reduced_cost"] is not None
+                ]
+                if rc_values:
+                    rc_axis.plot(
+                        [row["wall_time_s"] / 3600 for row in rc_values],
+                        [row["best_reduced_cost"] for row in rc_values],
+                        marker=".", label=run_id,
+                    )
+                column_values = [
+                    row for row in values
+                    if row["columns_added"] is not None
+                    or row["pool_columns_delta"] is not None
+                ]
+                if column_values:
+                    column_axis.step(
+                        [row["wall_time_s"] / 3600 for row in column_values],
+                        [
+                            row["columns_added"]
+                            if row["columns_added"] is not None
+                            else row["pool_columns_delta"]
+                            for row in column_values
+                        ],
+                        where="post", label=run_id,
+                    )
+            rc_axis.axhline(0, color="black", linestyle="--", linewidth=0.8)
+            rc_axis.set_title(f"{key} best reduced cost")
+            column_axis.set_title(f"{key} columns / pool-size delta")
+            rc_axis.set_ylabel("Reduced cost")
+            column_axis.set_ylabel("Columns")
+            for axis in (rc_axis, column_axis):
+                axis.set_xlabel("Recorded run clock (hours)")
+                if axis.lines:
+                    axis.legend(fontsize=5)
+    else:
+        fig = plt.figure()
+    publish(
+        fig, "reduced_cost_columns_by_scale",
+        available=bool(pricing_rows),
+        reason="no_verified_pricing_series",
+    )
+
+    shares = []
+    for run_id, rows in sorted(grouped_cg.items()):
+        measured = [
+            row for row in rows
+            if row["master_time_s"] is not None
+            and row["pricing_time_s"] is not None
+        ]
+        master = sum(row["master_time_s"] for row in measured)
+        pricing = sum(row["pricing_time_s"] for row in measured)
+        if master + pricing:
+            shares.append({
+                "run_id": run_id,
+                "scale": scale_key(measured[-1]),
+                "master": master / (master + pricing),
+                "pricing": pricing / (master + pricing),
+            })
+    fig, axis = plt.subplots(figsize=(max(8, len(shares) * 0.55), 4.8))
+    if shares:
+        labels = [
+            f"{row['scale']}:{row['run_id']}" for row in shares
+        ]
+        x = np.arange(len(shares))
+        master = [row["master"] for row in shares]
+        pricing = [row["pricing"] for row in shares]
+        axis.bar(x, master, label="Measured master")
+        axis.bar(x, pricing, bottom=master, label="Measured pricing")
+        axis.set_xticks(x, labels, rotation=45, ha="right", fontsize=6)
+        axis.legend()
+        axis.set_ylabel("Measured active-time share")
+    publish(
+        fig, "master_pricing_time_shares_by_scale",
+        available=bool(shares),
+        reason="no_measured_master_pricing_split",
+    )
+
+    live_mip = [
+        row for row in mip_rows
+        if row["solver_ended_before_checkpoint"] is False
+        and (
+            row.get("statistics_incumbent_fleet") is not None
+            or row.get("incumbent_fleet") is not None
+            or row.get("fleet_bound") is not None
+        )
+    ]
+    keys, fig, axes = facets(scale_key(row) for row in live_mip)
+    if fig is None:
+        fig = plt.figure()
+    for key, axis in zip(keys, axes):
+        for run_id in sorted({row["run_id"] for row in live_mip}):
+            values = sorted(
+                (
+                    row for row in live_mip
+                    if row["run_id"] == run_id and scale_key(row) == key
+                ),
+                key=lambda row: (
+                    row["statistics_observed_s"]
+                    if row["statistics_observed_s"] is not None
+                    else row["observed_total_elapsed_s"]
+                ),
+            )
+            if not values:
+                continue
+            x = [
+                (
+                    row["statistics_observed_s"]
+                    if row["statistics_observed_s"] is not None
+                    else row["observed_total_elapsed_s"]
+                ) / 3600
+                for row in values
+            ]
+            incumbent = [
+                row.get("statistics_incumbent_fleet")
+                if row.get("statistics_incumbent_fleet") is not None
+                else row.get("incumbent_fleet")
+                for row in values
+            ]
+            axis.step(
+                x, incumbent, where="post",
+                label=f"{run_id} statistics incumbent",
+            )
+            axis.step(
+                x, [row.get("fleet_bound") for row in values],
+                where="post", linestyle="--",
+                label=f"{run_id} finite-pool bound",
+            )
+        axis.set_title(key)
+        axis.set_xlabel("MIP observation time (hours)")
+        axis.set_ylabel("Finite-pool fleet")
+        if axis.lines:
+            axis.legend(fontsize=5)
+    publish(
+        fig, "mip_incumbent_bound_by_scale",
+        available=bool(live_mip),
+        reason="no_verified_live_mip_checkpoint_series",
+    )
+
+    final_gaps = [
+        row for row in scale_rows
+        if row["mip_incumbent_fleet"] is not None
+        and row["target_fleet"] is not None
+        and row["target_gap"] is not None
+    ]
+    fig, axis = plt.subplots(
+        figsize=(max(8, len(final_gaps) * 0.65), 4.8)
+    )
+    if final_gaps:
+        labels = [
+            f"{row['instance_family']}:{row['scale']}:"
+            f"{row['treatment']}:{row['replicate']}"
+            for row in final_gaps
+        ]
+        colors = [
+            {"RAW": "tab:blue", "MATCHING": "tab:orange",
+             "GIRO": "tab:green"}.get(row["treatment"], "tab:gray")
+            for row in final_gaps
+        ]
+        x = np.arange(len(final_gaps))
+        axis.bar(x, [row["target_gap"] for row in final_gaps], color=colors)
+        axis.axhline(0, color="black", linestyle="--", linewidth=0.8)
+        axis.set_xticks(x, labels, rotation=45, ha="right", fontsize=6)
+        axis.set_ylabel("Finite-pool incumbent fleet - explicit target")
+    publish(
+        fig, "final_fleet_gap_by_scale",
+        available=bool(final_gaps),
+        reason="no_verified_final_mip_with_explicit_target",
+    )
+    return {
+        "schema": "evsp-dr-cross-generation-figure-manifest-v1",
+        "required_stems": list(REQUIRED_FIGURE_STEMS),
+        "figures": report,
+    }
+
+
 def _group(rows, field):
     grouped = defaultdict(list)
     for row in rows:
@@ -1731,6 +2375,44 @@ def _data_dictionary():
         "pool_scope": ("mip_run_summary.csv", "string", None,
                        "Finite RAW or GIRO-augmented pool; never global route space."),
     }
+    scale_definitions = {
+        "target_fleet": ("number", "buses",
+            "Explicit reviewed target fleet; never inferred from a filename."),
+        "restricted_master_route_weight": ("number", "routes",
+            "Observed LP route weight; not a lower bound unless certified_lp_bound is populated."),
+        "artificial_mass": ("number", "artificial mass",
+            "Artificial mass at the reported restricted-master observation."),
+        "certified_lp_bound": ("number", "routes",
+            "Route-weight LP bound reported only with explicit pricing certification and zero artificials."),
+        "target_gap": ("number", "fleet units",
+            "Reported value minus explicit target; interpretation is named by target_gap_basis."),
+        "normalized_target_gap": ("number", "fraction",
+            "target_gap divided by the explicit target fleet."),
+        "target_gap_basis": ("string", None,
+            "Observed, certified-LP, or finite-pool provenance of the target gap."),
+        "mip_incumbent_fleet": ("number", "buses",
+            "Finite-pool MIP incumbent fleet, separate from LP route weight."),
+        "mip_finite_pool_bound": ("number", "buses",
+            "Fleet bound over the explicitly named finite pool."),
+        "mip_finite_pool_gap": ("number", "fraction",
+            "Relative fleet gap between finite-pool incumbent and bound."),
+        "mip_proof_scope": ("string", None,
+            "Proof scope prefixed finite_pool; never global route-space optimality."),
+        "physical_validation_status": ("string", None,
+            "Distinguishes replay-validated schedules from incidence partitions."),
+        "censored": ("boolean", None,
+            "Whether the named target event was not observed before stopping."),
+    }
+    for field in SCALE_PROGRESS_FIELDS:
+        if field in definitions:
+            continue
+        field_type, units, description = scale_definitions.get(
+            field,
+            ("string", None, f"Scale-progress field {field}."),
+        )
+        definitions[field] = (
+            "scale_progress_summary.csv", field_type, units, description
+        )
     return [{
         "field": field,
         "table": values[0],
@@ -1742,7 +2424,7 @@ def _data_dictionary():
 
 
 def _publish_staging(staging: Path, output: Path):
-    if output.exists():
+    if os.path.lexists(output):
         raise FileExistsError(f"output directory already exists: {output}")
     members = {}
     for source in sorted(staging.iterdir()):
@@ -1761,27 +2443,16 @@ def _publish_staging(staging: Path, output: Path):
         handle.write("\n")
         handle.flush()
         os.fsync(handle.fileno())
-    staging_fd = os.open(staging, os.O_RDONLY | os.O_DIRECTORY)
-    os.fsync(staging_fd)
-    os.close(staging_fd)
-    libc = ctypes.CDLL(None, use_errno=True)
-    renameat2 = getattr(libc, "renameat2", None)
-    if renameat2 is None:
-        raise RuntimeError("atomic no-replace directory publication unavailable")
-    renameat2.argtypes = [
-        ctypes.c_int, ctypes.c_char_p,
-        ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
-    ]
-    renameat2.restype = ctypes.c_int
-    if renameat2(
-        -100, os.fsencode(staging),
-        -100, os.fsencode(output),
-        1,
-    ) != 0:
-        error = ctypes.get_errno()
-        if error == errno.EEXIST:
-            raise FileExistsError(f"output directory exists: {output}")
-        raise OSError(error, os.strerror(error), str(output))
+    output.mkdir(mode=0o755)
+    for source in sorted(staging.iterdir()):
+        if source.name == "completion.json":
+            continue
+        os.link(source, output / source.name)
+    output_fd = os.open(output, os.O_RDONLY | os.O_DIRECTORY)
+    os.fsync(output_fd)
+    os.link(completion_path, output / "completion.json")
+    os.fsync(output_fd)
+    os.close(output_fd)
     parent_fd = os.open(output.parent, os.O_RDONLY | os.O_DIRECTORY)
     os.fsync(parent_fd)
     os.close(parent_fd)
@@ -2145,6 +2816,13 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
     coverage, reruns = _coverage_and_reruns(
         manifest, inventory, cg_rows, mip_rows, mip_finals
     )
+    scale_progress = _scale_progress_rows(
+        cg_rows,
+        cg_summaries,
+        mip_rows,
+        mip_summaries,
+        specs_by_run,
+    )
     staging = Path(tempfile.mkdtemp(
         dir=output.parent, prefix=f".{output.name}.tmp."
     ))
@@ -2165,6 +2843,11 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                    )))
         _write_csv(staging / "mip_run_summary.csv", MIP_SUMMARY_FIELDS,
                    mip_summaries)
+        _write_csv(
+            staging / "scale_progress_summary.csv",
+            SCALE_PROGRESS_FIELDS,
+            scale_progress,
+        )
         _write_csv(staging / "phase_telemetry_long.csv", TELEMETRY_FIELDS,
                    sorted(telemetry_rows, key=lambda row: (
                        row["run_id"], row["elapsed_session_s"]
@@ -2181,7 +2864,16 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         _write_csv(staging / "coauthor_mip_endpoints.csv", MIP_SUMMARY_FIELDS,
                    mip_summaries)
         (staging / "input_manifest.json").write_bytes(manifest_raw)
-        _save_figures(staging, cg_rows, mip_rows, mip_summaries, coverage)
+        figure_manifest = _save_required_figures(
+            staging,
+            cg_rows,
+            mip_rows,
+            scale_progress,
+            specs_by_run,
+        )
+        (staging / "figure_manifest.json").write_text(
+            json.dumps(figure_manifest, indent=2, sort_keys=True) + "\n"
+        )
         schema_text = """# Cross-generation normalized schema
 
 - `legacy_master_objective` preserves historical `Master_Obj`.
@@ -2234,6 +2926,9 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 "raw_equals_giro_augmented_pool": False,
             },
             "outputs": {},
+            "scale_progress_summary": "scale_progress_summary.csv",
+            "figure_manifest": "figure_manifest.json",
+            "required_figures": list(REQUIRED_FIGURE_STEMS),
         }
         for path in sorted(staging.iterdir()):
             if path.name == "provenance.json":
@@ -2261,6 +2956,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         ),
         "cg_iterations": len(cg_rows),
         "mip_checkpoints": len(mip_rows),
+        "scale_progress_rows": len(scale_progress),
         "rerun_slots": sum(row["rerun_required"] for row in reruns),
     }
 

@@ -990,6 +990,7 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
         raise ValueError("MIP ended-before-checkpoint flag is inconsistent")
     normalized_stats = {}
     for key in (
+        "statistics_incumbent_fleet",
         "fleet_bound", "objective_bound", "fleet_gap",
         "node_count", "solution_count",
     ):
@@ -1040,9 +1041,19 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
             raise ValueError("MIP incumbent state/timestamp is inconsistent")
         fleet_bound = normalized_stats["fleet_bound"]
         if fleet_bound is not None:
-            if fleet_bound > fleet + 1e-6:
-                raise ValueError("MIP fleet bound exceeds incumbent")
-            expected_gap = max(0.0, fleet - fleet_bound) / max(1.0, fleet)
+            gap_fleet = (
+                normalized_stats["statistics_incumbent_fleet"]
+                if normalized_stats["statistics_incumbent_fleet"] is not None
+                else fleet
+            )
+            if fleet_bound > gap_fleet + 1e-6:
+                raise ValueError(
+                    "MIP fleet bound exceeds statistics incumbent"
+                )
+            expected_gap = (
+                max(0.0, gap_fleet - fleet_bound)
+                / max(1.0, gap_fleet)
+            )
             gap = normalized_stats["fleet_gap"]
             if gap is not None and not math.isclose(
                 gap, expected_gap, rel_tol=1e-9, abs_tol=1e-9
@@ -1080,6 +1091,9 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
         "incumbent_fleet": incumbent.get("fleet"),
         "incumbent_objective": incumbent.get("objective"),
         "incumbent_observed_s": total_elapsed,
+        "statistics_incumbent_fleet": normalized_stats[
+            "statistics_incumbent_fleet"
+        ],
         "fleet_bound": normalized_stats["fleet_bound"],
         "objective_bound": normalized_stats["objective_bound"],
         "fleet_gap": normalized_stats["fleet_gap"],
