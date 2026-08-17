@@ -939,6 +939,34 @@ def audit_pools(
                 f"{count.get('deterministically_repairable', 0)} | "
                 f"{count.get('infeasible_after_realization', 0)} |"
             )
+        markdown.extend([
+            "",
+            "## Archived CS incumbents",
+            "",
+        ])
+        for pool in pool_summaries:
+            failures = pool["selected_recorded_failures"]
+            if not failures:
+                continue
+            first = min(
+                failures,
+                key=lambda item: item["selected_route_ordinal"],
+            )
+            markdown.append(
+                f"- **{pool['pool']}**: {len(failures)} of "
+                f"{pool['selected_incumbent_routes']} selected routes were "
+                "invalid as recorded; every one was deterministically "
+                "repairable. The first was selected route "
+                f"{first['selected_route_ordinal']}: "
+                f"`{first['recorded_reason']}`."
+            )
+        markdown.extend([
+            "",
+            "No journal route in any of the four pools was infeasible after "
+            "continuous realization. This does not make the archived CS "
+            "incumbents physical schedules: their stored schedules remain "
+            "invalid, and the CA pools remain finite-pool partition-infeasible.",
+        ])
         (staging / "ROOT_CAUSE.md").write_text("\n".join(markdown) + "\n")
         members = {
             path.name: _sha(path)
