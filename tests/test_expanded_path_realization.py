@@ -14,6 +14,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from audit_giro_known_columns import DEPOT, HORIZON_MIN  # noqa: E402
 from audit_expanded_pool_physical import audit_pools  # noqa: E402
 from expanded_path_realization import (  # noqa: E402
+    blocks_from_continuous_stops,
     realize_expanded_path,
     realized_costs,
     validate_continuous_charging_blocks,
@@ -160,6 +161,18 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         self.assertIn("exceeds 300 kW", validate_injected_route(
             p, record, 300, 300, 0, HORIZON_MIN
         ))
+        with self.assertRaisesRegex(ValueError, "after priced"):
+            blocks_from_continuous_stops(
+                {
+                    "charging_stops": {
+                        "stations": [station],
+                        "cst": [10], "cet": [20], "kwh": [45.0],
+                    },
+                },
+                station_prices={"S": {0: 0.1}},
+                charge_kw=300,
+                earliest_start_by_stop=[11.0],
+            )
         non_grid = {
             **record,
             "charging_stops": {
@@ -424,6 +437,13 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                 second, second_audit = prepare_strict_partition_pool(
                     status, [route], data_dir=data_dir
                 )
+                tampered = json.loads(json.dumps(prepared[0]))
+                tampered["continuous_realized_charging_blocks"][0][
+                    "realized_kwh"
+                ] += 1.0
+                rejected, rejected_audit = prepare_strict_partition_pool(
+                    status, [tampered], data_dir=data_dir
+                )
             self.assertEqual(len(prepared), 1)
             self.assertEqual(audit["deterministically_repaired"], 1)
             self.assertEqual(audit["rejected_columns"], 0)
@@ -451,6 +471,8 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                 prepared[0]["continuous_realized_cost"],
                 prepared[0]["expanded_grid_cost"],
             )
+            self.assertEqual(rejected, [])
+            self.assertEqual(rejected_audit["rejected_columns"], 1)
 
     def test_invalid_cheapest_duplicate_cannot_shadow_valid_column(self):
         station = "PARX_1"
