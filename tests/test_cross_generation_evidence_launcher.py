@@ -73,6 +73,8 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             self.assertEqual(_parse_sbatch_job_id("123;unicorn\n"), "123")
             with self.assertRaisesRegex(RuntimeError, "unexpected"):
                 _parse_sbatch_job_id("0;unicorn")
+            with self.assertRaisesRegex(RuntimeError, "unexpected"):
+                _parse_sbatch_job_id("123;unicorn\n456;other")
 
     def test_incomplete_live_campaign_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

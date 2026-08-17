@@ -62,6 +62,8 @@ def _dependency_job_ids(args) -> list[str]:
 
 def _parse_sbatch_job_id(response: str) -> str:
     raw = response.strip()
+    if not re.fullmatch(r"[0-9]+(?:;[A-Za-z0-9_.-]+)?", raw):
+        raise RuntimeError(f"unexpected sbatch response: {raw!r}")
     job_id = raw.split(";", 1)[0]
     if (
         not re.fullmatch(r"[0-9]+", job_id)
