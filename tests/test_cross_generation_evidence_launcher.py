@@ -47,11 +47,47 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             def fake_run(argv, **_kwargs):
                 executable.write_bytes(b"#!/bin/sh\nexit 9\n")
                 self.assertEqual(Path(argv[0]).read_bytes(), original)
+                descriptor = os.open(argv[0], os.O_WRONLY)
+                try:
+                    with self.assertRaises(OSError):
+                        os.write(descriptor, b"tamper")
+                finally:
+                    os.close(descriptor)
                 return subprocess.CompletedProcess(argv, 0)
 
             with patch(
                 "executable_identity.subprocess.run",
                 side_effect=fake_run,
+            ):
+                run_bound_executable(
+                    executable,
+                    expected_sha256=expected,
+                    label="tool",
+                    arguments=[],
+                )
+
+    def test_bound_execution_handles_short_memfd_writes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            executable = Path(tmp) / "tool"
+            original = b"#!/bin/sh\n" + b"# payload\n" * 20
+            executable.write_bytes(original)
+            executable.chmod(0o755)
+            expected = sha256_file(executable)
+            real_write = os.write
+
+            def short_write(descriptor, payload):
+                return real_write(descriptor, payload[:3])
+
+            def fake_run(argv, **_kwargs):
+                self.assertEqual(Path(argv[0]).read_bytes(), original)
+                return subprocess.CompletedProcess(argv, 0)
+
+            with (
+                patch("executable_identity.os.write", side_effect=short_write),
+                patch(
+                    "executable_identity.subprocess.run",
+                    side_effect=fake_run,
+                ),
             ):
                 run_bound_executable(
                     executable,

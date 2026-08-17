@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import fcntl
 import os
 import shutil
 import stat
@@ -79,17 +80,34 @@ def run_bound_executable(
             raise ValueError(f"{label} executable descriptor is invalid")
         if not hasattr(os, "memfd_create"):
             raise RuntimeError("memfd_create is required for bound execution")
-        memfd = os.memfd_create(f"evsp-{label}")
+        memfd = os.memfd_create(
+            f"evsp-{label}",
+            flags=os.MFD_CLOEXEC | os.MFD_ALLOW_SEALING,
+        )
         digest = hashlib.sha256()
         while True:
             chunk = os.read(descriptor, 1024 * 1024)
             if not chunk:
                 break
             digest.update(chunk)
-            os.write(memfd, chunk)
+            offset = 0
+            while offset < len(chunk):
+                written = os.write(memfd, chunk[offset:])
+                if written <= 0:
+                    raise OSError("short write while staging executable")
+                offset += written
         if digest.hexdigest() != expected_sha256:
             raise ValueError(f"{label} executable SHA-256 mismatch")
         os.fchmod(memfd, mode & 0o777)
+        seals = (
+            fcntl.F_SEAL_WRITE
+            | fcntl.F_SEAL_SHRINK
+            | fcntl.F_SEAL_GROW
+            | fcntl.F_SEAL_SEAL
+        )
+        fcntl.fcntl(memfd, fcntl.F_ADD_SEALS, seals)
+        if fcntl.fcntl(memfd, fcntl.F_GET_SEALS) != seals:
+            raise RuntimeError(f"{label} executable memfd sealing failed")
         os.lseek(memfd, 0, os.SEEK_SET)
         executable = f"/proc/self/fd/{memfd}"
         return subprocess.run(
