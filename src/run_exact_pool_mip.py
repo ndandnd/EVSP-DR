@@ -582,13 +582,22 @@ def prepare_strict_partition_pool(
             repaired_hashes.append(
                 realized["physical_realization"]["mapping_sha256"]
             )
+    deduplicated = deduplicate_pool(accepted)
+    ordered_pool_hash = hashlib.sha256(json.dumps([
+        hashlib.sha256(json.dumps({
+            "trips": route.get("trips"),
+            "route_nodes": route.get("route_nodes"),
+            "charging_stops": route.get("charging_stops"),
+            "cost": route.get("cost"),
+        }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        for route in deduplicated
+    ], separators=(",", ":")).encode()).hexdigest()
     audit = {
         "schema": "evsp-dr-strict-pool-physical-gate-v1",
         "total_columns": len(routes),
         "accepted_columns": len(accepted),
-        "mip_unique_accepted_columns": len(
-            deduplicate_pool(accepted)
-        ),
+        "mip_unique_accepted_columns": len(deduplicated),
+        "mip_ordered_pool_sha256": ordered_pool_hash,
         "valid_as_recorded": len(valid_hashes),
         "deterministically_repaired": len(repaired_hashes),
         "rejected_columns": len(rejected_hashes),

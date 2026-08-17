@@ -335,6 +335,9 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             self.assertEqual(audit["deterministically_repaired"], 1)
             self.assertEqual(audit["rejected_columns"], 0)
             self.assertEqual(
+                len(audit["mip_ordered_pool_sha256"]), 64
+            )
+            self.assertEqual(
                 audit["repaired_set_sha256"],
                 second_audit["repaired_set_sha256"],
             )

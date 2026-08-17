@@ -495,7 +495,7 @@ def audit_pools(
                         < float(admitted_pool[key][0]["cost"]) - 1e-9
                     ):
                         admitted_pool[key] = (
-                            record, ordinal, classification
+                            realized, ordinal, classification
                         )
                     if recorded_reason is None:
                         gate_valid_hashes.append(_canonical_sha({
@@ -630,6 +630,17 @@ def audit_pools(
                     sorted(gate_rejected_hashes)
                 ),
                 "mip_unique_accepted_columns": len(admitted_pool),
+                "mip_ordered_pool_sha256": _canonical_sha([
+                    _canonical_sha({
+                        "trips": record.get("trips"),
+                        "route_nodes": record.get("route_nodes"),
+                        "charging_stops":
+                            record.get("charging_stops"),
+                        "cost": record.get("cost"),
+                    })
+                    for record, _ordinal, _classification
+                    in admitted_pool.values()
+                ]),
             }
             if (
                 selected_source is not None
