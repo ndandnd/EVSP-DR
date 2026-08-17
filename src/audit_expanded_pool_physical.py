@@ -413,6 +413,9 @@ def audit_pools(
             admitted_pool = {}
             admitted_record_count = 0
             detail_by_ordinal = {}
+            gate_valid_hashes = []
+            gate_repaired_hashes = []
+            gate_rejected_hashes = []
             for ordinal, record in enumerate(records, start=1):
                 trips = list(record.get("trips") or [])
                 incidence_sha = _canonical_sha(sorted(trips))
@@ -494,6 +497,25 @@ def audit_pools(
                         admitted_pool[key] = (
                             record, ordinal, classification
                         )
+                    if recorded_reason is None:
+                        gate_valid_hashes.append(_canonical_sha({
+                            "trips": record.get("trips"),
+                            "route_nodes": record.get("route_nodes"),
+                            "charging_stops":
+                                record.get("charging_stops"),
+                            "cost": record.get("cost"),
+                        }))
+                    else:
+                        gate_repaired_hashes.append(
+                            mapping["mapping_sha256"]
+                        )
+                else:
+                    gate_rejected_hashes.append(_canonical_sha({
+                        "trips": record.get("trips"),
+                        "route_nodes": record.get("route_nodes"),
+                        "charging_stops": record.get("charging_stops"),
+                        "cost": record.get("cost"),
+                    }))
                 detail_by_ordinal[ordinal] = {
                     "incidence_sha256": incidence_sha,
                     "trips": trips,
@@ -591,6 +613,39 @@ def audit_pools(
                 ):
                     route_rows.append(route_row)
             unresolved_selected_indices = []
+            recomputed_gate = {
+                "total_columns": len(records),
+                "accepted_columns": admitted_record_count,
+                "valid_as_recorded": len(gate_valid_hashes),
+                "deterministically_repaired":
+                    len(gate_repaired_hashes),
+                "rejected_columns": len(gate_rejected_hashes),
+                "valid_set_sha256": _canonical_sha(
+                    sorted(gate_valid_hashes)
+                ),
+                "repaired_set_sha256": _canonical_sha(
+                    sorted(gate_repaired_hashes)
+                ),
+                "rejected_set_sha256": _canonical_sha(
+                    sorted(gate_rejected_hashes)
+                ),
+                "mip_unique_accepted_columns": len(admitted_pool),
+            }
+            if (
+                selected_source is not None
+                and selected_source["selected_index_scope"]
+                == "physically_admitted_pool"
+            ):
+                recorded_gate = selected_source["metadata"].get(
+                    "physical_pool_audit"
+                )
+                if not isinstance(recorded_gate, dict) or any(
+                    recorded_gate.get(key) != value
+                    for key, value in recomputed_gate.items()
+                ):
+                    raise ValueError(
+                        f"physical pool audit identity mismatch for {pool}"
+                    )
             if (
                 selected_source is not None
                 and selected_source["selected_index_scope"]
@@ -711,6 +766,7 @@ def audit_pools(
                 "mapping_set_sha256": _canonical_sha(sorted(mapping_hashes)),
                 "expanded_grid_cost_mismatch_count":
                     grid_cost_mismatches,
+                "recomputed_physical_pool_audit": recomputed_gate,
                 "cost_unavailable_count": cost_unavailable,
                 "physical_admission_rejected_records": (
                     len(records) - admitted_record_count
