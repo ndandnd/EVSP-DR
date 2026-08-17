@@ -125,6 +125,16 @@ def _selected_indices(campaign_root: Path | None, pool: str):
         and final.get("selected_route_indices") is not None
         else incumbent.get("selected_route_indices")
     ) or []
+    if (
+        any(
+            not isinstance(index, int)
+            or isinstance(index, bool)
+            or index < 0
+            for index in selected_indices
+        )
+        or len(selected_indices) != len(set(selected_indices))
+    ):
+        raise ValueError(f"invalid selected route indices: {latest}")
     route_vector_sha = (
         final.get("route_vector_sha256")
         if payload.get("kind") == "final"
@@ -197,9 +207,39 @@ def audit_pools(
             raise ValueError("archive SHA-256 mismatch")
         archive_sha256 = observed_archive_sha
         archive_members = _archive_member_hashes(archive_path)
+        repo_root = Path(__file__).resolve().parents[1]
+        reference_root = reference_data_dir.expanduser().resolve()
+        reference_files = [
+            reference_root / "Ref_dict.csv",
+            reference_root / "par_ref_dhd.csv",
+        ]
+        for reference_file in reference_files:
+            try:
+                relative = reference_file.relative_to(repo_root)
+            except ValueError as exc:
+                raise ValueError(
+                    "archive audit reference data must come from reviewed "
+                    "checkout"
+                ) from exc
+            subprocess.run(
+                ["git", "ls-files", "--error-unmatch", str(relative)],
+                cwd=repo_root, check=True, capture_output=True,
+            )
+        if subprocess.run(
+            ["git", "diff", "--quiet", "--", *[
+                str(path.relative_to(repo_root))
+                for path in reference_files
+            ]],
+            cwd=repo_root,
+        ).returncode != 0:
+            raise ValueError("reviewed reference data has local changes")
         if expected_pools != RAW_K40_POOLS:
             raise ValueError(
                 "verified RAW-k40 archive requires the exact four-pool set"
+            )
+        if campaign_root is None:
+            raise ValueError(
+                "verified RAW-k40 archive requires campaign_root"
             )
     try:
         for raw_status in sorted(
@@ -294,6 +334,18 @@ def audit_pools(
                     raise ValueError(
                         f"latest incumbent source mismatch for {pool}"
                     )
+                if archive_path is not None:
+                    latest_member = _archive_relative(
+                        Path(selected_source["path"])
+                    )
+                    if (
+                        archive_members.get(latest_member)
+                        != selected_source["sha256"]
+                    ):
+                        raise ValueError(
+                            f"archive latest mismatch: {latest_member}"
+                        )
+                    selected_source["archive_member"] = latest_member
             archived_mip_pool = {}
             for raw_ordinal, candidate in enumerate(records, start=1):
                 key = frozenset(candidate.get("trips") or [])
@@ -305,6 +357,18 @@ def audit_pools(
                 ):
                     archived_mip_pool[key] = (candidate, raw_ordinal)
             archived_mip_pool_values = list(archived_mip_pool.values())
+            if (
+                selected_source is not None
+                and selected_source["selected_index_scope"]
+                == "archived_pre_physical_gate_pool"
+                and any(
+                    route_index >= len(archived_mip_pool_values)
+                    for route_index in selected
+                )
+            ):
+                raise ValueError(
+                    f"selected index outside archived pool for {pool}"
+                )
             selected_raw_ordinals = (
                 {
                     archived_mip_pool_values[route_index][1]:
@@ -331,9 +395,20 @@ def audit_pools(
             for ordinal, record in enumerate(records, start=1):
                 trips = list(record.get("trips") or [])
                 incidence_sha = _canonical_sha(sorted(trips))
-                recorded_reason = validate_injected_route(
-                    problem, record, g_kwh, charge_kw,
-                    reserve_kwh, HORIZON_MIN, arc_map=arc_map,
+                route_nodes = record.get(
+                    "route_nodes", record.get("route", [])
+                )
+                node_trips = [
+                    node for node in route_nodes
+                    if isinstance(node, int) and not isinstance(node, bool)
+                ]
+                recorded_reason = (
+                    "trip incidence differs from route nodes"
+                    if node_trips != trips
+                    else validate_injected_route(
+                        problem, record, g_kwh, charge_kw,
+                        reserve_kwh, HORIZON_MIN, arc_map=arc_map,
+                    )
                 )
                 realized, detail = realize_expanded_path(
                     problem,
@@ -558,6 +633,11 @@ def audit_pools(
                         ),
                         "costs": detail["costs"],
                     })
+                if unresolved_selected_indices:
+                    raise ValueError(
+                        f"selected indices include augmented/unbound routes "
+                        f"for {pool}: {unresolved_selected_indices[:20]}"
+                    )
             if _sha(journal_path) != journal_before:
                 raise ValueError(f"journal changed during audit: {journal_path}")
             after_hashes = {
@@ -676,6 +756,7 @@ def audit_pools(
                 ).stdout.strip(),
                 "python": platform.python_version(),
                 "scipy": scipy.__version__,
+                "reference_data_source": "reviewed_git_checkout",
                 "implementation_sha256": {
                     name: _sha(Path(__file__).resolve().parent / name)
                     for name in (
