@@ -15,6 +15,7 @@ from pathlib import Path
 from archive_cross_generation_evidence import archive_evidence
 from build_cross_generation_evidence import build
 from collect_cross_generation_inputs import _assignments, collect
+from executable_identity import validate_executable
 from mip_convergence import checkpoint_schedule_s
 from summarize_mip_statistics import _load_campaign
 from validate_raw_k40_mip_plan import validate_plan as validate_raw_k40_plan
@@ -57,14 +58,14 @@ def parse_campaign_assignments(values: list[str]) -> list[tuple[Path, str]]:
     return campaigns
 
 
-def _assert_slurm_compute_node() -> None:
+def _assert_slurm_compute_node(scontrol_executable: Path) -> None:
     job_id = os.environ.get("SLURM_JOB_ID")
     if not job_id:
         raise RuntimeError(
             "evidence worker requires a Slurm batch allocation"
         )
     job = subprocess.run(
-        ["scontrol", "show", "job", "-o", job_id],
+        [str(scontrol_executable), "show", "job", "-o", job_id],
         text=True, capture_output=True, check=True,
     )
     fields = {
@@ -76,7 +77,7 @@ def _assert_slurm_compute_node() -> None:
         raise RuntimeError("SLURM_JOB_ID is not a readable allocation")
     node_list = fields["NodeList"]
     result = subprocess.run(
-        ["scontrol", "show", "hostnames", node_list],
+        [str(scontrol_executable), "show", "hostnames", node_list],
         text=True, capture_output=True, check=True,
     )
     allocated = {
@@ -343,15 +344,29 @@ def main(argv=None) -> int:
         default=Path(__file__).resolve().parents[1],
     )
     parser.add_argument("--expected-commit", required=True)
+    parser.add_argument("--git-executable", type=Path, required=True)
+    parser.add_argument("--expected-git-sha256", required=True)
+    parser.add_argument("--scontrol-executable", type=Path, required=True)
+    parser.add_argument("--expected-scontrol-sha256", required=True)
     args = parser.parse_args(argv)
-    _assert_slurm_compute_node()
+    git_executable, git_sha = validate_executable(
+        args.git_executable,
+        expected_sha256=args.expected_git_sha256,
+        label="git",
+    )
+    scontrol_executable, _scontrol_sha = validate_executable(
+        args.scontrol_executable,
+        expected_sha256=args.expected_scontrol_sha256,
+        label="scontrol",
+    )
+    _assert_slurm_compute_node(scontrol_executable)
     repo = args.repo_root.expanduser().resolve()
     observed_commit = subprocess.run(
-        ["git", "rev-parse", "HEAD"], cwd=repo, text=True,
+        [str(git_executable), "rev-parse", "HEAD"], cwd=repo, text=True,
         capture_output=True, check=True,
     ).stdout.strip()
     dirty = subprocess.run(
-        ["git", "status", "--porcelain"], cwd=repo, text=True,
+        [str(git_executable), "status", "--porcelain"], cwd=repo, text=True,
         capture_output=True, check=True,
     ).stdout.strip()
     if observed_commit != args.expected_commit or dirty:
@@ -446,6 +461,8 @@ def main(argv=None) -> int:
             "--archive-out", "<NEW_ARCHIVE_DIR>",
         ],
         approved_manifest_sha256=args.approved_manifest_sha256,
+        git_executable=git_executable,
+        expected_git_sha256=git_sha,
     )
     archive = archive_evidence(
         args.build_out,

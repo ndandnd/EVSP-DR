@@ -1,22 +1,28 @@
 import hashlib
 import json
+import os
+import platform
+import shutil
 import sys
 import tempfile
 import unittest
 from argparse import Namespace
 from pathlib import Path
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from archive_cross_generation_evidence import archive_evidence  # noqa: E402
+from executable_identity import validate_executable  # noqa: E402
 from launch_cross_generation_evidence import (  # noqa: E402
     _dependency_job_ids,
     _parse_sbatch_job_id,
     build_sbatch_command,
 )
 from run_cross_generation_evidence_job import (  # noqa: E402
+    _assert_slurm_compute_node,
     _campaign_ready,
     _require_campaign_artifacts,
     parse_campaign_assignments,
@@ -25,6 +31,26 @@ from run_cross_generation_evidence_job import (  # noqa: E402
 
 
 class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
+    def test_compute_check_uses_absolute_scontrol_with_empty_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            scontrol = Path(tmp) / "scontrol"
+            host = platform.node().split(".", 1)[0]
+            scontrol.write_text(
+                "#!/bin/sh\n"
+                "if [ \"$1\" = show ] && [ \"$2\" = job ]; then\n"
+                "  echo 'JobId=123 NodeList=test-node'\n"
+                "else\n"
+                f"  echo '{host}'\n"
+                "fi\n"
+            )
+            scontrol.chmod(0o755)
+            with patch.dict(
+                os.environ,
+                {"PATH": "", "SLURM_JOB_ID": "123"},
+                clear=False,
+            ):
+                _assert_slurm_compute_node(scontrol.resolve())
+
     def test_repeatable_campaign_assignments(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -251,6 +277,10 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             raw_campaign = root / "raw-campaign"
             current_campaign.mkdir()
             raw_campaign.mkdir()
+            scontrol = root / "scontrol"
+            scontrol.write_text("#!/bin/sh\nexit 0\n")
+            scontrol.chmod(0o755)
+            git_executable = Path(shutil.which("git")).resolve()
             args = Namespace(
                 repo_root=REPO_ROOT,
                 root=[
@@ -278,6 +308,8 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 memory="32G",
                 time_limit="24:00:00",
                 expected_commit="a" * 40,
+                git_executable=git_executable,
+                scontrol_executable=scontrol,
             )
             command, plan = build_sbatch_command(args)
             joined = " ".join(command)
@@ -285,6 +317,12 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             self.assertNotIn("run_exact_pool_mip.py", joined)
             self.assertNotIn("exact_pricer_expanded.py", joined)
             self.assertFalse(plan["submits_cg_or_mip_solves"])
+            self.assertEqual(
+                plan["scontrol_executable"], str(scontrol.resolve())
+            )
+            self.assertEqual(
+                plan["git_executable"], str(git_executable)
+            )
             authoritative = Namespace(**vars(args))
             authoritative.current_mip_campaign_root = None
             authoritative.raw_k40_campaign_root = None
@@ -305,6 +343,20 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 dependency_plan["campaigns"],
                 [{"mode": "raw_k40", "path": str(raw_campaign.resolve())}],
             )
+            with patch.dict(os.environ, {"PATH": ""}, clear=False):
+                empty_path_command, empty_path_plan = build_sbatch_command(
+                    authoritative
+                )
+            self.assertIn(str(scontrol.resolve()), " ".join(empty_path_command))
+            self.assertEqual(
+                empty_path_plan["git_executable"], str(git_executable)
+            )
+            with self.assertRaisesRegex(ValueError, "SHA-256 mismatch"):
+                validate_executable(
+                    scontrol,
+                    expected_sha256="0" * 64,
+                    label="scontrol",
+                )
             args.root = args.root[:-1]
             with self.assertRaisesRegex(ValueError, "roots missing"):
                 build_sbatch_command(args)

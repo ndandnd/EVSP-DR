@@ -24,6 +24,7 @@ from cross_generation_schema import (
     parse_artifact,
     sha256_bytes,
 )
+from executable_identity import resolve_executable, validate_executable
 
 
 OUTPUT_SCHEMA = "evsp-dr-cross-generation-evidence-v1"
@@ -2383,10 +2384,10 @@ def _environment_identity():
     }
 
 
-def _git_identity(repo_root: Path):
+def _git_identity(repo_root: Path, git_executable: Path, git_sha256: str):
     def run(*args):
         result = subprocess.run(
-            ["git", *args], cwd=repo_root, text=True,
+            [str(git_executable), *args], cwd=repo_root, text=True,
             capture_output=True, check=False,
         )
         return result.stdout.strip() if result.returncode == 0 else None
@@ -2394,6 +2395,8 @@ def _git_identity(repo_root: Path):
         "commit": run("rev-parse", "HEAD"),
         "branch": run("branch", "--show-current"),
         "dirty": bool(run("status", "--porcelain")),
+        "executable": str(git_executable),
+        "executable_sha256": git_sha256,
     }
 
 
@@ -2592,8 +2595,16 @@ def _publish_staging(staging: Path, output: Path):
     os.close(parent_fd)
 
 
-def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
-          command: list[str], approved_manifest_sha256: str) -> dict:
+def build(
+    input_manifest: Path,
+    output_dir: Path,
+    *,
+    repo_root: Path,
+    command: list[str],
+    approved_manifest_sha256: str,
+    git_executable: Path | str | None = None,
+    expected_git_sha256: str | None = None,
+) -> dict:
     manifest_path = input_manifest.expanduser().absolute()
     repo = repo_root.expanduser().absolute()
     output = output_dir.expanduser().absolute()
@@ -2606,8 +2617,20 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
         or observed_manifest_sha != approved_manifest_sha256
     ):
         raise ValueError("input manifest differs from approved SHA-256")
+    if git_executable is None:
+        resolved_git, observed_git_sha = resolve_executable(
+            None, command="git", label="git"
+        )
+    else:
+        resolved_git, observed_git_sha = validate_executable(
+            git_executable,
+            expected_sha256=expected_git_sha256,
+            label="git",
+        )
     manifest = _parse_manifest(manifest_raw)
-    builder_git_identity = _git_identity(repo)
+    builder_git_identity = _git_identity(
+        repo, resolved_git, observed_git_sha
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     _validate_specs(manifest)
     _validate_run_consistency(manifest)
@@ -3106,6 +3129,8 @@ def main(argv=None) -> int:
         "--repo-root", type=Path,
         default=Path(__file__).resolve().parents[1],
     )
+    parser.add_argument("--git-executable", type=Path)
+    parser.add_argument("--expected-git-sha256")
     args = parser.parse_args(argv)
     command = [
         "python", "-u", "src/build_cross_generation_evidence.py",
@@ -3114,6 +3139,10 @@ def main(argv=None) -> int:
         args.approved_input_manifest_sha256,
         "--out-dir", "<OUTPUT_DIR>",
         "--repo-root", "<REPO_ROOT>",
+        "--git-executable", "<ABSOLUTE_GIT>",
+        "--expected-git-sha256", (
+            args.expected_git_sha256 or "<GIT_SHA256>"
+        ),
     ]
     result = build(
         args.input_manifest,
@@ -3121,6 +3150,8 @@ def main(argv=None) -> int:
         repo_root=args.repo_root,
         command=command,
         approved_manifest_sha256=args.approved_input_manifest_sha256,
+        git_executable=args.git_executable,
+        expected_git_sha256=args.expected_git_sha256,
     )
     print(json.dumps(result, indent=2))
     return 0

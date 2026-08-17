@@ -13,15 +13,16 @@ import sys
 from pathlib import Path
 
 from collect_cross_generation_inputs import _assignments
+from executable_identity import resolve_executable
 from run_cross_generation_evidence_job import (
     REQUIRED_ROOT_ALIASES,
     parse_campaign_assignments,
 )
 
 
-def _git(repo: Path, *args) -> str:
+def _git(repo: Path, git_executable: Path, *args) -> str:
     result = subprocess.run(
-        ["git", *args], cwd=repo, text=True,
+        [str(git_executable), *args], cwd=repo, text=True,
         capture_output=True, check=True,
     )
     return result.stdout.strip()
@@ -82,6 +83,16 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         raise ValueError(f"explicit source roots missing: {missing}")
     campaigns = parse_campaign_assignments(_campaign_values(args))
     dependency_ids = _dependency_job_ids(args)
+    git_executable, git_sha = resolve_executable(
+        getattr(args, "git_executable", None),
+        command="git",
+        label="git",
+    )
+    scontrol_executable, scontrol_sha = resolve_executable(
+        getattr(args, "scontrol_executable", None),
+        command="scontrol",
+        label="scontrol",
+    )
     wait_timeout_s = getattr(args, "wait_timeout_s", None)
     if wait_timeout_s is None:
         wait_timeout_s = 0.0 if dependency_ids else 86400.0
@@ -105,6 +116,10 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         "--poll-s", str(args.poll_s),
         "--repo-root", str(repo),
         "--expected-commit", args.expected_commit,
+        "--git-executable", str(git_executable),
+        "--expected-git-sha256", git_sha,
+        "--scontrol-executable", str(scontrol_executable),
+        "--expected-scontrol-sha256", scontrol_sha,
     ]
     for campaign, mode in campaigns:
         worker_args.extend(["--campaign", f"{mode}={campaign}"])
@@ -145,6 +160,10 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         "python_executable": str(python),
         "python_sha256": hashlib.sha256(python.read_bytes()).hexdigest(),
         "expected_commit": args.expected_commit,
+        "git_executable": str(git_executable),
+        "git_sha256": git_sha,
+        "scontrol_executable": str(scontrol_executable),
+        "scontrol_sha256": scontrol_sha,
         "roots": {
             key: str(value) for key, value in sorted(roots.items())
         },
@@ -195,15 +214,21 @@ def main(argv=None) -> int:
         default=Path(__file__).resolve().parents[1],
     )
     parser.add_argument("--expected-commit")
+    parser.add_argument("--git-executable", type=Path)
+    parser.add_argument("--scontrol-executable", type=Path)
     parser.add_argument("--submit", action="store_true")
     args = parser.parse_args(argv)
     repo = args.repo_root.expanduser().resolve()
-    observed_commit = _git(repo, "rev-parse", "HEAD")
+    git_executable, _git_sha = resolve_executable(
+        args.git_executable, command="git", label="git"
+    )
+    args.git_executable = git_executable
+    observed_commit = _git(repo, git_executable, "rev-parse", "HEAD")
     if args.expected_commit is None:
         args.expected_commit = observed_commit
     if observed_commit != args.expected_commit:
         raise ValueError("launcher checkout differs from expected commit")
-    if _git(repo, "status", "--porcelain"):
+    if _git(repo, git_executable, "status", "--porcelain"):
         raise ValueError("launcher checkout is not tracked-clean")
     sbatch, plan = build_sbatch_command(args)
     canonical = json.dumps(
