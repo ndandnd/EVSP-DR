@@ -112,7 +112,11 @@ def realize_expanded_path(
             "classification": "infeasible_after_realization",
             "reason": "route nodes missing",
         }
-    stops = deepcopy(record.get("charging_stops") or {})
+    emitted_stops = deepcopy(record.get("charging_stops") or {})
+    stops = deepcopy(
+        record.get("expanded_grid_charging_stops")
+        or emitted_stops
+    )
     fields = {
         key: list(stops.get(key, []))
         for key in ("stations", "cst", "cet", "kwh")
@@ -149,18 +153,23 @@ def realize_expanded_path(
                 "reason": f"SOC below reserve before {node}",
             }
         if isinstance(node, int) and not isinstance(node, bool):
+            expanded_before_floor = grid_soc
             level = _floor_level(
                 grid_soc, soc_step=soc_step, levels=levels
             )
             floored = grid[level]
-            discarded = max(0.0, continuous_soc - floored)
+            discarded = max(0.0, expanded_before_floor - floored)
             total_discarded += discarded
             trace.append({
                 "event": "soc_floor",
                 "node": node,
                 "continuous_soc_before_floor": continuous_soc,
+                "expanded_soc_before_floor": expanded_before_floor,
                 "expanded_grid_soc": floored,
                 "discarded_residual_kwh": discarded,
+                "continuous_minus_grid_kwh": (
+                    continuous_soc - floored
+                ),
             })
             grid_soc = floored
             energy = float(problem.trip_energy[node])
@@ -188,19 +197,27 @@ def realize_expanded_path(
             if (
                 duration < -TOLERANCE
                 or abs(duration - block_count * block_min) > TOLERANCE
-                or block_count < 0
+                or abs(cst / block_min - round(cst / block_min)) > TOLERANCE
+                or block_count <= 0
             ):
                 return None, {
                     "classification": "infeasible_after_realization",
                     "reason": f"non-grid charging window at {node}",
                 }
+            expanded_before_floor = grid_soc
             entry_level = _floor_level(
                 grid_soc, soc_step=soc_step, levels=levels
             )
             grid_soc = grid[entry_level]
+            station_discarded = max(
+                0.0, expanded_before_floor - grid_soc
+            )
+            total_discarded += station_discarded
             block_trace = []
             grid_gain = 0.0
             realized_gain = 0.0
+            continuous_entry_soc = continuous_soc
+            grid_entry_soc = grid_soc
             for block_offset in range(block_count):
                 target_level = _floor_level(
                     min(g_kwh, grid_soc + block_kwh),
@@ -257,6 +274,10 @@ def realize_expanded_path(
                     if block_trace else grid_soc
                 ),
                 "recorded_grid_kwh": recorded,
+                "station_entry_discarded_residual_kwh":
+                    station_discarded,
+                "continuous_minus_grid_at_entry_kwh":
+                    continuous_entry_soc - grid_entry_soc,
                 "realized_kwh": round(realized_gain, 9),
                 "blocks": block_trace,
             })
@@ -273,7 +294,7 @@ def realize_expanded_path(
             "reason": "final SOC below reserve",
         }
     realized = deepcopy(record)
-    realized_stops = deepcopy(stops)
+    realized_stops = deepcopy(emitted_stops)
     realized_stops["kwh"] = realized_kwh
     realized["charging_stops"] = realized_stops
     changed = any(

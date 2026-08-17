@@ -33,7 +33,7 @@ import time
 from collections import Counter
 from pathlib import Path
 
-from durable_io import atomic_write_json, read_jsonl_records
+from durable_io import read_jsonl_records
 
 
 class PhysicalReplayError(SystemExit):
@@ -52,6 +52,26 @@ def file_sha256(path: Path) -> str:
         for chunk in iter(lambda: fh.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def write_new_json(path: Path, payload: dict) -> None:
+    """Durably publish one JSON artifact without replacing any path."""
+
+    if os.path.lexists(path):
+        raise FileExistsError(f"output already exists: {path}")
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    with temporary.open("x") as handle:
+        json.dump(payload, handle, sort_keys=True, indent=1)
+        handle.write("\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    try:
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    parent_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+    os.fsync(parent_fd)
+    os.close(parent_fd)
 
 
 def git_value(*args) -> str | None:
@@ -160,7 +180,7 @@ def resolve_pool_journal(result_path: Path, status: dict) -> Path:
     return journal_path
 
 
-def load_pool(result_path: Path):
+def load_pool(result_path: Path, *, deduplicate=True):
     with open(result_path) as fh:
         status = json.load(fh)
 
@@ -173,6 +193,7 @@ def load_pool(result_path: Path):
     allowed = set(trips)
     journal_path = resolve_pool_journal(result_path, status)
     pool = {}
+    validated_records = []
     records = read_jsonl_records(journal_path, repair_trailing=False)
     for ordinal, rec in enumerate(records, start=1):
         if not isinstance(rec, dict):
@@ -217,9 +238,28 @@ def load_pool(result_path: Path):
                 f"{journal_path} record {ordinal} has non-finite cost"
             )
         key = frozenset(route_trips)
+        validated_records.append(rec)
         if key not in pool or cost < float(pool[key]["cost"]) - 1e-9:
             pool[key] = rec
-    return status, list(pool.values()), trips
+    return (
+        status,
+        list(pool.values()) if deduplicate else validated_records,
+        trips,
+    )
+
+
+def deduplicate_pool(routes: list[dict]) -> list[dict]:
+    """Keep the cheapest physically admitted record per trip incidence."""
+
+    pool = {}
+    for route in routes:
+        key = frozenset(route["trips"])
+        if (
+            key not in pool
+            or float(route["cost"]) < float(pool[key]["cost"]) - 1e-9
+        ):
+            pool[key] = route
+    return list(pool.values())
 
 
 def singleton_partition_indices(routes: list[dict], trips: list[int]) -> list[int]:
@@ -366,7 +406,13 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
                         and time_now + travel
                         > float(cst) + arrival_grace_min + 1e-6):
                     return f"reaches {v} at {time_now + travel:.0f} after cst {cst}"
-                window = max(0.0, float(cet) - float(cst)) + rate_grace_min
+                effective_start = (
+                    max(float(cst), time_now + travel)
+                    if time_now is not None else float(cst)
+                )
+                window = max(
+                    0.0, float(cet) - effective_start
+                ) + rate_grace_min
                 if kwh > window * charge_kw / 60.0 + 1e-6:
                     return (f"charge {kwh:.1f} kWh exceeds {charge_kw:.0f} kW "
                             f"in {window:.0f} min at {v}")
@@ -449,9 +495,20 @@ def prepare_strict_partition_pool(
         route_sha = hashlib.sha256(json.dumps(
             route_identity, sort_keys=True, separators=(",", ":")
         ).encode()).hexdigest()
-        reason = validate_injected_route(
-            problem, route, g_kwh, charge_kw, reserve_kwh,
-            HORIZON_MIN, arc_map=arc_map,
+        route_nodes = route.get(
+            "route_nodes", route.get("route", [])
+        )
+        node_trips = [
+            node for node in route_nodes
+            if isinstance(node, int) and not isinstance(node, bool)
+        ]
+        reason = (
+            "trip incidence differs from route nodes"
+            if node_trips != list(route.get("trips") or [])
+            else validate_injected_route(
+                problem, route, g_kwh, charge_kw, reserve_kwh,
+                HORIZON_MIN, arc_map=arc_map,
+            )
         )
         realized, detail = realize_expanded_path(
             problem,
@@ -482,6 +539,23 @@ def prepare_strict_partition_pool(
                 costs = realized_costs(
                     route, detail["mapping"], station_prices=prices
                 )
+                if not math.isclose(
+                    costs["stored_expanded_grid_cost"],
+                    costs["recomputed_expanded_grid_cost"],
+                    rel_tol=1e-9,
+                    abs_tol=1e-6,
+                ):
+                    rejected_hashes.append(route_sha)
+                    if len(rejected) < 100:
+                        rejected.append({
+                            "route_index": index,
+                            "route_sha256": route_sha,
+                            "trips": route.get("trips"),
+                            "recorded_reason":
+                                "stored expanded-grid cost mismatch",
+                            "realization_reason": None,
+                        })
+                    continue
                 candidate["expanded_grid_cost"] = float(route["cost"])
                 candidate["continuous_realized_cost"] = costs[
                     "continuous_realized_cost"
@@ -510,6 +584,23 @@ def prepare_strict_partition_pool(
         costs = realized_costs(
             route, detail["mapping"], station_prices=prices
         )
+        if not math.isclose(
+            costs["stored_expanded_grid_cost"],
+            costs["recomputed_expanded_grid_cost"],
+            rel_tol=1e-9,
+            abs_tol=1e-6,
+        ):
+            rejected_hashes.append(route_sha)
+            if len(rejected) < 100:
+                rejected.append({
+                    "route_index": index,
+                    "route_sha256": route_sha,
+                    "trips": route.get("trips"),
+                    "recorded_reason": reason,
+                    "realization_reason":
+                        "stored expanded-grid cost mismatch",
+                })
+            continue
         realized["cost"] = float(route["cost"])
         realized["expanded_grid_cost"] = float(route["cost"])
         realized["continuous_realized_cost"] = costs[
@@ -532,6 +623,9 @@ def prepare_strict_partition_pool(
         "schema": "evsp-dr-strict-pool-physical-gate-v1",
         "total_columns": len(routes),
         "accepted_columns": len(accepted),
+        "mip_unique_accepted_columns": len(
+            deduplicate_pool(accepted)
+        ),
         "valid_as_recorded": len(valid_hashes),
         "deterministically_repaired": len(repaired_hashes),
         "rejected_columns": len(rejected_hashes),
@@ -1041,7 +1135,8 @@ def optimal_scope(*, two_stage: bool, fleet_proven: bool,
 
 
 def validate_final_selected_routes(
-    status, trips, selected_routes, *, data_dir=None
+    status, trips, selected_routes, *, data_dir=None,
+    reference_data_dir=None,
 ) -> None:
     """Rebuild the instance and physically replay every final selected route."""
 
@@ -1069,6 +1164,7 @@ def validate_final_selected_routes(
         data_dir,
         str(instance_path.relative_to(data_dir)),
         max_station_to_trip_wait_min=HORIZON_MIN,
+        reference_data_dir=reference_data_dir,
     )
     if list(problem.trips) != list(trips):
         raise SystemExit("[MIP] final replay reconstructed a different trip set")
@@ -1147,6 +1243,9 @@ def publish_rejected_physical_replay(
     source_journal_sha256: str,
     progress_path: Path | None,
     physical_pool_audit: dict | None,
+    bound_scope: str,
+    code_identity: dict,
+    augmentation_sources: list[dict],
 ) -> Path:
     """Publish a non-feasible solver-incumbent diagnostic, never a final."""
 
@@ -1163,6 +1262,15 @@ def publish_rejected_physical_replay(
                 })
     failing_route = error.route or {}
     selected_cost = sum(float(routes[index]["cost"]) for index in chosen)
+    selected_identities = [
+        hashlib.sha256(json.dumps({
+            "trips": routes[index].get("trips"),
+            "route_nodes": routes[index].get("route_nodes"),
+            "charging_stops": routes[index].get("charging_stops"),
+            "expanded_grid_cost": routes[index].get("cost"),
+        }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        for index in chosen
+    ]
     payload = {
         "schema": "evsp-dr-mip-rejected-physical-replay-v1",
         "kind": "rejected_physical_replay",
@@ -1180,7 +1288,9 @@ def publish_rejected_physical_replay(
             "buses": len(chosen),
             "expanded_grid_objective": selected_cost,
             "bound": solver_bound,
+            "bound_scope": bound_scope,
             "gap": mip_gap,
+            "selected_route_identity_sha256": selected_identities,
         },
         "failure": {
             "route_ordinal": error.route_ordinal,
@@ -1192,13 +1302,15 @@ def publish_rejected_physical_replay(
             "charging_stops": failing_route.get("charging_stops"),
         },
         "checkpoint_references": checkpoint_refs,
+        "augmentation_sources": augmentation_sources,
+        "code_identity": code_identity,
         "physical_pool_audit": physical_pool_audit,
         "master_cost_semantics": "expanded_grid_cost_unchanged",
         "pricing_certificate_scope":
             "conservative_expanded_grid_model_only",
         "continuous_cost_pricing_certified": False,
     }
-    atomic_write_json(diagnostic_path, payload)
+    write_new_json(diagnostic_path, payload)
     return diagnostic_path
 
 
@@ -1321,7 +1433,9 @@ def main(argv=None) -> int:
     ]
     initial_partition_start = None
 
-    status, routes, trips = load_pool(args.result)
+    status, routes, trips = load_pool(
+        args.result, deduplicate=args.cover
+    )
     physical_pool_audit = None
     if not args.cover:
         routes, physical_pool_audit = prepare_strict_partition_pool(
@@ -1335,6 +1449,10 @@ def main(argv=None) -> int:
             f"{physical_pool_audit['valid_as_recorded']} valid recorded, "
             f"{physical_pool_audit['deterministically_repaired']} repaired, "
             f"{physical_pool_audit['rejected_columns']} rejected"
+        )
+        routes = deduplicate_pool(routes)
+        physical_pool_audit["mip_unique_accepted_columns"] = len(
+            routes
         )
     if (file_sha256(args.result) != source_result_sha256
             or file_sha256(source_journal) != source_journal_sha256):
@@ -1416,6 +1534,8 @@ def main(argv=None) -> int:
         return 0
 
     out = args.out or Path(str(args.result).replace(".json", "_mip.json"))
+    if os.path.lexists(out):
+        raise SystemExit(f"[MIP] refusing to overwrite existing output: {out}")
     out.parent.mkdir(parents=True, exist_ok=True)
     progress_path = (
         args.progress_dir.expanduser().resolve()
@@ -1775,9 +1895,17 @@ def main(argv=None) -> int:
     if selected_routes and not args.cover:
         try:
             validate_final_selected_routes(
-                status, trips, selected_routes, data_dir=args.data_dir
+                status,
+                trips,
+                selected_routes,
+                data_dir=args.data_dir,
+                reference_data_dir=args.reference_data_dir,
             )
-        except PhysicalReplayError as exc:
+        except (PhysicalReplayError, SystemExit) as caught:
+            exc = (
+                caught if isinstance(caught, PhysicalReplayError)
+                else PhysicalReplayError(str(caught))
+            )
             diagnostic_path = publish_rejected_physical_replay(
                 out,
                 error=exc,
@@ -1790,6 +1918,26 @@ def main(argv=None) -> int:
                 source_journal_sha256=source_journal_sha256,
                 progress_path=progress_path,
                 physical_pool_audit=physical_pool_audit,
+                bound_scope=(
+                    "fixed_fleet_variable_cost"
+                    if cost_stage_executed
+                    else "fleet_count"
+                    if args.two_stage
+                    else "full_pool_objective"
+                ),
+                code_identity=code_identity,
+                augmentation_sources=[
+                    *extra_route_sources,
+                    *(
+                        [{
+                            "path": str(args.initial_partition_routes),
+                            "sha256":
+                                expected_initial_partition_sha256,
+                        }]
+                        if args.initial_partition_routes is not None
+                        else []
+                    ),
+                ],
             )
             if progress is not None:
                 progress.finalize(
@@ -1993,7 +2141,7 @@ def main(argv=None) -> int:
             if progress is not None else None
         ),
     }
-    atomic_write_json(out, summary)
+    write_new_json(out, summary)
     if progress is not None:
         progress.finalize(
             elapsed_s=summary["runtime_s"],

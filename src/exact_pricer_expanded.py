@@ -33,6 +33,7 @@ import json
 import math
 import os
 import time
+from copy import deepcopy
 from pathlib import Path
 
 from audit_giro_known_columns import (
@@ -398,6 +399,7 @@ class ExpandedNetwork:
                 charging["cst"].append(b0 * self.block_min)
                 charging["cet"].append((b1 + 1) * self.block_min)
                 charging["kwh"].append(round(soc - self.grid[lvl0], 6))
+            expanded_grid_charging = deepcopy(charging)
             realized, detail = realize_expanded_path(
                 self.problem,
                 {
@@ -422,13 +424,21 @@ class ExpandedNetwork:
                 realized["charging_stops"],
                 route_nodes,
                 detail["mapping"],
+                expanded_grid_charging,
             )
 
-        best_trips, best_charging, best_nodes, best_mapping = _walk(1)
+        (
+            best_trips,
+            best_charging,
+            best_nodes,
+            best_mapping,
+            best_grid_charging,
+        ) = _walk(1)
         return {"rc": value[1], "trips": best_trips,
                 "charging_stops": best_charging, "route_nodes": best_nodes,
                 "charges_started": len(best_charging["stations"]),
                 "_continuous_mapping": best_mapping,
+                "_expanded_grid_charging": best_grid_charging,
                 "_value": value, "_walk": _walk}
 
     def k_best_routes(
@@ -468,7 +478,13 @@ class ExpandedNetwork:
         for rc, u in candidates[: max(4 * k, 200)]:
             if len(routes) >= k or rc >= -1e-9:
                 break
-            trips, charging, route_nodes, mapping = _walk(u)
+            (
+                trips,
+                charging,
+                route_nodes,
+                mapping,
+                grid_charging,
+            ) = _walk(u)
             key = frozenset(trips)
             if key in seen:
                 continue
@@ -476,7 +492,8 @@ class ExpandedNetwork:
             routes.append({"rc": rc, "trips": trips,
                            "charging_stops": charging, "route_nodes": route_nodes,
                            "charges_started": len(charging["stations"]),
-                           "_continuous_mapping": mapping})
+                           "_continuous_mapping": mapping,
+                           "_expanded_grid_charging": grid_charging})
         if phase_callback is not None:
             phase_callback(
                 "pricing_extra_columns",
@@ -1660,6 +1677,8 @@ def run_cg(args) -> dict:
                     "cost": cost,
                     "route_nodes": route["route_nodes"],
                     "charging_stops": route["charging_stops"],
+                    "expanded_grid_charging_stops":
+                        route["_expanded_grid_charging"],
                     "charges_started": route["charges_started"],
                     "found_iter": global_iteration,
                 }

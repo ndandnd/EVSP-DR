@@ -1,3 +1,4 @@
+import hashlib
 import json
 import sys
 import tempfile
@@ -115,6 +116,63 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         self.assertIsNone(validate_injected_route(
             p, realized, 300, 300, 0, HORIZON_MIN
         ))
+        realized["expanded_grid_charging_stops"] = record[
+            "charging_stops"
+        ]
+        replayed, replay_detail = realize_expanded_path(
+            p, realized, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertEqual(
+            replayed["charging_stops"], realized["charging_stops"]
+        )
+        self.assertEqual(
+            replay_detail["mapping"]["recorded_total_kwh"], 15.0
+        )
+
+    def test_arrival_grace_does_not_create_charging_power(self):
+        station = "S"
+        p = SimpleNamespace(
+            trips=[0, 1],
+            trip_energy={0: 0.0, 1: 0.0},
+            start_min={0: 0.0, 1: 20.0},
+            end_min={0: 0.0, 1: 25.0},
+            adjacency={
+                DEPOT: [(0, 0.0, 0.0, "test")],
+                0: [(station, 11.0, 0.0, "test")],
+                station: [(1, 0.0, 0.0, "test")],
+                1: [(DEPOT, 0.0, 0.0, "test")],
+            },
+        )
+        record = {
+            "trips": [0, 1],
+            "route_nodes": [DEPOT, 0, station, 1, DEPOT],
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [50.0],
+            },
+        }
+        self.assertIn("exceeds 300 kW", validate_injected_route(
+            p, record, 300, 300, 0, HORIZON_MIN
+        ))
+        non_grid = {
+            **record,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [11],
+                "cet": [20],
+                "kwh": [45.0],
+            },
+            "cost": 100050.0,
+        }
+        realized, detail = realize_expanded_path(
+            p, non_grid, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertIsNone(realized)
+        self.assertIn("non-grid charging window", detail["reason"])
 
     def test_reserve_power_window_and_hash_determinism(self):
         station = "S"
@@ -193,7 +251,7 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                 "cet": [20],
                 "kwh": [15.0],
             },
-            "cost": 100020.0,
+            "cost": 100006.5,
         }
         status = {
             "csv": "instance.csv",
@@ -238,6 +296,55 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                 prepared[0]["expanded_grid_cost"],
             )
 
+    def test_invalid_cheapest_duplicate_cannot_shadow_valid_column(self):
+        station = "PARX_1"
+        nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem([14.5, 0.1], list(zip(nodes, nodes[1:])))
+        p.start_min[1] = 20.0
+        p.end_min[1] = 25.0
+        valid = {
+            "trips": [0, 1],
+            "route_nodes": nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [15.0],
+            },
+            "cost": 100006.5,
+        }
+        invalid = {
+            **valid,
+            "route_nodes": [DEPOT, 0, "BAD", 1, DEPOT],
+            "cost": 1.0,
+        }
+        status = {
+            "csv": "instance.csv",
+            "prices_csv": "prices.csv",
+            "g_kwh": 300,
+            "charge_kw": 300,
+            "min_soc_frac": 0,
+            "soc_step": 15,
+            "block_min": 10,
+        }
+        with (
+            patch(
+                "audit_giro_known_columns.build_problem",
+                return_value=p,
+            ),
+            patch(
+                "utils_v2.load_station_hourly_prices",
+                return_value={"PARX": {0: 0.1}},
+            ),
+        ):
+            prepared, audit = prepare_strict_partition_pool(
+                status, [invalid, valid], data_dir=REPO_ROOT / "data"
+            )
+        self.assertEqual(len(prepared), 1)
+        self.assertEqual(prepared[0]["cost"], valid["cost"])
+        self.assertEqual(audit["rejected_columns"], 1)
+        self.assertEqual(audit["mip_unique_accepted_columns"], 1)
+
     def test_bounded_pool_audit_publishes_machine_outputs(self):
         station = "PARX_1"
         route_nodes = [DEPOT, 0, station, 1, DEPOT]
@@ -256,12 +363,17 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                 "cet": [20],
                 "kwh": [15.0],
             },
-            "cost": 100020.0,
+            "cost": 100006.5,
         }
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             cell = root / "input/cell"
             cell.mkdir(parents=True)
+            data = cell / "data"
+            data.mkdir()
+            (data / "instance.csv").write_text("synthetic instance\n")
+            (data / "prices.csv").write_text("synthetic prices\n")
+            (root / "Ref_dict.csv").write_text("synthetic refs\n")
             status_path = cell / "pool.snapshot.json"
             journal = Path(str(status_path) + ".columns.jsonl")
             journal.write_text(json.dumps(route) + "\n")
@@ -279,9 +391,21 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             progress = root / "progress/cell"
             progress.mkdir(parents=True)
             (progress / "latest.json").write_text(json.dumps({
-                "incumbent": {"selected_route_indices": [0]},
+                "incumbent": {
+                    "selected_route_indices": [0],
+                    "route_vector_sha256": hashlib.sha256(b"[0]").hexdigest(),
+                },
+                "metadata": {
+                    "source_result_sha256": hashlib.sha256(
+                        status_path.read_bytes()
+                    ).hexdigest(),
+                    "source_journal_sha256": hashlib.sha256(
+                        journal.read_bytes()
+                    ).hexdigest(),
+                },
             }))
             output = root / "audit"
+            second_output = root / "audit-second"
             with (
                 patch(
                     "audit_expanded_pool_physical.build_problem",
@@ -301,6 +425,14 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                     archive_sha256="a" * 64,
                     route_detail="selected",
                 )
+                audit_pools(
+                    [status_path],
+                    output_dir=second_output,
+                    reference_data_dir=root,
+                    campaign_root=root,
+                    archive_sha256="a" * 64,
+                    route_detail="selected",
+                )
             self.assertEqual(
                 report["pools"][0]["counts"],
                 {"deterministically_repairable": 1},
@@ -309,6 +441,12 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             self.assertTrue((output / "pool_summary.csv").is_file())
             self.assertTrue((output / "ROOT_CAUSE.md").is_file())
             self.assertTrue((output / "completion.json").is_file())
+            for path in output.iterdir():
+                self.assertEqual(
+                    path.read_bytes(),
+                    (second_output / path.name).read_bytes(),
+                    path.name,
+                )
 
 
 if __name__ == "__main__":

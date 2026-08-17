@@ -80,6 +80,9 @@ class ExactPoolMipTests(unittest.TestCase):
                     "deterministically_repaired": 0,
                     "rejected_columns": 0,
                 },
+                bound_scope="fleet_count",
+                code_identity={"observed_commit": "c" * 40},
+                augmentation_sources=[],
             )
             payload = json.loads(diagnostic.read_text())
             self.assertEqual(
@@ -95,6 +98,23 @@ class ExactPoolMipTests(unittest.TestCase):
             self.assertEqual(
                 len(payload["checkpoint_references"]), 1
             )
+            with self.assertRaises(FileExistsError):
+                publish_rejected_physical_replay(
+                    root / "result.json",
+                    error=error,
+                    chosen=[0],
+                    routes=[route],
+                    status_name="TIME_LIMIT",
+                    solver_bound=0.5,
+                    mip_gap=0.5,
+                    source_result_sha256="a" * 64,
+                    source_journal_sha256="b" * 64,
+                    progress_path=progress,
+                    physical_pool_audit={},
+                    bound_scope="fleet_count",
+                    code_identity={"observed_commit": "c" * 40},
+                    augmentation_sources=[],
+                )
 
     def test_singletons_are_a_strict_partition_seed(self):
         routes = [

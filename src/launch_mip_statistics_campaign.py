@@ -38,6 +38,7 @@ WORKER_PATH = REPO_ROOT / "src/submit_mip_statistics.sub"
 RUNNER_PATH = REPO_ROOT / "src/run_exact_pool_mip.py"
 CODE_PATHS = (
     "src/run_exact_pool_mip.py",
+    "src/expanded_path_realization.py",
     "src/mip_convergence.py",
     "src/durable_io.py",
     "src/audit_giro_known_columns.py",
