@@ -935,16 +935,18 @@ def parse_mip_checkpoint(payload: bytes, spec: dict) -> dict:
         raise ValueError("MIP checkpoint metadata/statistics are invalid")
     expected_metadata = spec.get("metadata") or {}
     treatment = expected_metadata.get("treatment")
-    if treatment not in {"RAW", "GIRO"}:
+    if treatment not in {"RAW", "MATCHING", "GIRO"}:
         raise ValueError("MIP checkpoint treatment is missing/invalid")
-    expected_arm = "D" if treatment == "GIRO" else "B"
+    expected_arm = "D" if treatment in {"MATCHING", "GIRO"} else "B"
     if metadata.get("experiment_arm") != expected_arm:
         raise ValueError("MIP checkpoint experiment arm mismatch")
     observed_start = metadata.get("source_initial_partition_sha256")
     expected_start = expected_metadata.get("pool_start_sha256")
-    if treatment == "GIRO":
+    if treatment in {"MATCHING", "GIRO"}:
         if not _hex64(expected_start) or observed_start != expected_start:
-            raise ValueError("GIRO MIP checkpoint start identity mismatch")
+            raise ValueError(
+                "augmented MIP checkpoint start identity mismatch"
+            )
     elif observed_start is not None or expected_start is not None:
         raise ValueError("RAW MIP checkpoint contains GIRO start identity")
     for expected_key, observed in (
@@ -1145,12 +1147,12 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                     f"MIP final {expected_key} differs from manifest"
                 )
         treatment = metadata.get("treatment")
-        if treatment not in {"RAW", "GIRO"}:
+        if treatment not in {"RAW", "MATCHING", "GIRO"}:
             raise ValueError("MIP final treatment is missing/invalid")
         if value.get("partitioning") is not True:
             raise ValueError("covering MIP result is not a strict schedule")
         if value.get("experiment_arm") != (
-            "D" if treatment == "GIRO" else "B"
+            "D" if treatment in {"MATCHING", "GIRO"} else "B"
         ):
             raise ValueError("MIP final experiment arm mismatch")
         start_raw = value.get("mip_start")
@@ -1158,7 +1160,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             raise ValueError("MIP start evidence is not an object")
         start = start_raw or {}
         expected_start = metadata.get("pool_start_sha256")
-        if treatment == "GIRO":
+        if treatment in {"MATCHING", "GIRO"}:
             added = start.get("pool_columns_added")
             preserved = start.get("pool_duplicate_incidences_preserved", 0)
             if (
@@ -1180,7 +1182,9 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
                     for value in start["actual_start_column_hashes"]
                 )
             ):
-                raise ValueError("GIRO MIP final start identity mismatch")
+                raise ValueError(
+                    "augmented MIP final start identity mismatch"
+                )
         elif (
             expected_start is not None
             or start.get("kind") == "validated_exact_partition"
@@ -1372,11 +1376,13 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
         ):
             raise ValueError("MIP selected route costs do not match objective")
         extra_sources = value.get("extra_route_sources")
-        if treatment == "GIRO" and not (
+        if treatment in {"MATCHING", "GIRO"} and not (
             start.get("kind") == "validated_exact_partition"
             and _hex64(start.get("source_sha256"))
         ):
-            raise ValueError("GIRO MIP final lacks validated augmentation")
+            raise ValueError(
+                "augmented MIP final lacks validated augmentation"
+            )
         if treatment == "RAW" and extra_sources not in (None, []):
             raise ValueError("RAW MIP final includes extra route sources")
         row = {
@@ -1404,7 +1410,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             "objective_source_bound": treatment == "RAW",
             "objective_validation_reason": (
                 None if treatment == "RAW"
-                else "pending_verified_giro_source_cost_binding"
+                else "pending_verified_augmented_source_cost_binding"
             ),
             "runtime_s": normalized_numbers["runtime_s"],
             "partitioning": True,

@@ -32,7 +32,7 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 RuntimeError, "MIP campaign incomplete"
             ):
                 wait_for_campaigns(
-                    [campaign], timeout_s=0, poll_s=1
+                    [(campaign, "pilot")], timeout_s=0, poll_s=1
                 )
 
     def test_archive_is_deterministic_checksummed_and_no_clobber(self):
@@ -41,17 +41,21 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             build = root / "build"
             build.mkdir()
             payload = b"a,b\n1,2\n"
+            manifest = root / "manifest.json"
+            manifest.write_text(json.dumps({"schema": "input"}))
+            manifest_payload = manifest.read_bytes()
             (build / "artifact_inventory.csv").write_bytes(payload)
+            (build / "input_manifest.json").write_bytes(manifest_payload)
             (build / "completion.json").write_text(json.dumps({
                 "schema":
                     "evsp-dr-cross-generation-output-completion-v1",
                 "members": {
                     "artifact_inventory.csv":
                         hashlib.sha256(payload).hexdigest(),
+                    "input_manifest.json":
+                        hashlib.sha256(manifest_payload).hexdigest(),
                 },
             }))
-            manifest = root / "manifest.json"
-            manifest.write_text(json.dumps({"schema": "input"}))
             first = root / "archive-one"
             second = root / "archive-two"
             result_one = archive_evidence(build, manifest, first)
@@ -67,6 +71,11 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             self.assertTrue((first / "completion.json").is_file())
             with self.assertRaises(FileExistsError):
                 archive_evidence(build, manifest, first)
+            manifest.write_text(json.dumps({"schema": "changed"}))
+            with self.assertRaisesRegex(
+                ValueError, "differs from manifest used"
+            ):
+                archive_evidence(build, manifest, root / "archive-three")
 
     def test_launcher_requires_all_explicit_roots_and_submits_no_solves(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -98,6 +107,7 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 manifest=root / "manifest.json",
                 current_mip_campaign_root=root / "current-campaign",
                 raw_k40_campaign_root=root / "raw-campaign",
+                current_mip_mode="pilot",
                 wait_timeout_s=0,
                 poll_s=1,
                 log_dir=log_dir,

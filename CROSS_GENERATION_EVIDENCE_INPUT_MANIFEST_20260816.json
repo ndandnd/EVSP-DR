@@ -220,6 +220,7 @@
         "implementation": "exact_pricer",
         "scale_family": "union",
         "scale": 40,
+        "target_fleet": 40,
         "trip_count": 947,
         "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
         "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
@@ -346,6 +347,7 @@
         "implementation": "exact_pricer",
         "scale_family": "union",
         "scale": 40,
+        "target_fleet": 40,
         "trip_count": 947,
         "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
         "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
@@ -365,6 +367,7 @@
         "implementation": "exact_pricer",
         "scale_family": "union",
         "scale": 40,
+        "target_fleet": 40,
         "trip_count": 947,
         "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
         "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
@@ -384,6 +387,7 @@
         "implementation": "exact_pricer_phase_telemetry",
         "scale_family": "union",
         "scale": 40,
+        "target_fleet": 40,
         "trip_count": 947,
         "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
         "trip_set_sha256": "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
@@ -431,9 +435,9 @@
       "metadata": {
         "algorithm_family": "mip_finite_pool",
         "implementation": "two_stage_pool_mip",
-        "scale_family": "union",
-        "scale": 40,
-        "trip_count": 947
+        "scale_family": null,
+        "scale": null,
+        "trip_count": null
       }
     },
     {
@@ -448,9 +452,9 @@
       "metadata": {
         "algorithm_family": "mip_finite_pool",
         "implementation": "two_stage_pool_mip",
-        "scale_family": "union",
-        "scale": 40,
-        "trip_count": 947
+        "scale_family": null,
+        "scale": null,
+        "trip_count": null
       }
     },
     {
@@ -465,9 +469,9 @@
       "metadata": {
         "algorithm_family": "mip_finite_pool",
         "implementation": "two_stage_pool_mip",
-        "scale_family": "union",
-        "scale": 40,
-        "trip_count": 947
+        "scale_family": null,
+        "scale": null,
+        "trip_count": null
       }
     },
     {
@@ -482,9 +486,9 @@
       "metadata": {
         "algorithm_family": "mip_finite_pool",
         "implementation": "validated_giro_start",
-        "scale_family": "union",
-        "scale": 40,
-        "trip_count": 947
+        "scale_family": null,
+        "scale": null,
+        "trip_count": null
       }
     },
     {
@@ -499,9 +503,9 @@
       "metadata": {
         "algorithm_family": "mip_finite_pool",
         "implementation": "two_stage_pool_mip",
-        "scale_family": "union",
-        "scale": 40,
-        "trip_count": 947
+        "scale_family": null,
+        "scale": null,
+        "trip_count": null
       }
     },
     {

@@ -113,7 +113,8 @@ SCALE_PROGRESS_FIELDS = (
     "target_gap", "normalized_target_gap", "target_gap_basis",
     "best_reduced_cost", "pricing_certified",
     "mip_incumbent_fleet", "mip_finite_pool_bound",
-    "mip_finite_pool_gap", "mip_proof_scope",
+    "mip_finite_pool_gap", "mip_fleet_proven", "mip_partitioning",
+    "mip_proof_scope",
     "physical_validation_status", "stopping_reason",
     "censored", "censoring_reason", "source_artifact_ids",
 )
@@ -355,6 +356,14 @@ def _validate_specs(manifest: dict):
                     raise ValueError(
                         f"artifact {artifact_id} lacks reviewed metadata {key}"
                     )
+            if (
+                artifact_type != "heuristic_dp_historical_csv"
+                and metadata.get("initializer") is None
+                and metadata.get("initial_pool") is None
+            ):
+                raise ValueError(
+                    f"artifact {artifact_id} lacks reviewed initialization"
+                )
         if artifact_type in {
             "heuristic_dp_historical_csv",
             "heuristic_dp_current_csv",
@@ -396,8 +405,10 @@ def _validate_run_consistency(manifest: dict):
         "scale_family", "scale", "replicate", "seed", "treatment",
         "git_commit", "git_dirty", "model", "charging_discretization",
         "battery_kwh", "charge_kw", "reserve_fraction",
-        "master_sense", "initializer", "solver_backend",
+        "master_sense", "initializer", "initial_pool", "solver_backend",
         "threads", "time_limit_s", "stopping_rules", "tolerances",
+        "target_fleet", "trip_count", "cg_age_hours", "age_hours",
+        "artificial_tolerance",
     )
     grouped = defaultdict(list)
     for spec in manifest["artifacts"]:
@@ -698,6 +709,36 @@ def _cg_summaries(
             else None
         )
         telemetry = telemetry_by_run.get(run_id) or []
+        reported_objective = final["lp_objective"]
+        reported_route_weight = final["lp_route_weight"]
+        reported_artificials = final["artificial_total"]
+        reported_min_rc = final["best_reduced_cost"]
+        if isinstance(endpoint, dict):
+            endpoint_lp = endpoint.get("final_lp")
+            if isinstance(endpoint_lp, dict):
+                reported_objective = endpoint_lp.get(
+                    "objective", reported_objective
+                )
+                reported_route_weight = endpoint_lp.get(
+                    "route_weight", reported_route_weight
+                )
+                reported_artificials = endpoint_lp.get(
+                    "artificial_total", reported_artificials
+                )
+            endpoint_final = endpoint.get("final")
+            if isinstance(endpoint_final, dict):
+                reported_min_rc = endpoint_final.get(
+                    "min_rc", reported_min_rc
+                )
+            reported_route_weight = endpoint.get(
+                "Final_LP_Route_Weight", reported_route_weight
+            )
+            reported_artificials = endpoint.get(
+                "Final_LP_Artificial_Total", reported_artificials
+            )
+            reported_objective = endpoint.get(
+                "LP_Obj", reported_objective
+            )
         summaries.append({
             "run_id": run_id,
             "algorithm_family": final["algorithm_family"],
@@ -715,10 +756,10 @@ def _cg_summaries(
             "final_master_objective_before_add": final[
                 "master_objective_before_add"
             ],
-            "final_lp_objective": final["lp_objective"],
-            "final_lp_route_weight": final["lp_route_weight"],
-            "final_artificial_total": final["artificial_total"],
-            "final_best_reduced_cost": final["best_reduced_cost"],
+            "final_lp_objective": reported_objective,
+            "final_lp_route_weight": reported_route_weight,
+            "final_artificial_total": reported_artificials,
+            "final_best_reduced_cost": reported_min_rc,
             "final_pool_columns": final["pool_columns"],
             "termination_category": termination,
             "termination_raw": termination_raw,
@@ -864,19 +905,28 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             raise ValueError(
                 f"MIP checkpoint/final identity mismatch: {final['run_id']}"
             )
-        proof_times = [
-            max(
-                row["statistics_observed_s"],
-                row["incumbent_observed_s"],
-            ) for row in rows
-            if row["statistics_observed_s"] is not None
-            and row["incumbent_observed_s"] is not None
-            and row["incumbent_fleet"] is not None
-            and row["fleet_bound"] is not None
-            and math.ceil(float(row["fleet_bound"]) - 1e-6)
-            >= int(row["incumbent_fleet"])
-            and row["solver_ended_before_checkpoint"] is False
-        ]
+        proof_times = []
+        for row in rows:
+            statistics_fleet = row.get("statistics_incumbent_fleet")
+            fleet = (
+                statistics_fleet
+                if statistics_fleet is not None
+                else row.get("incumbent_fleet")
+            )
+            if (
+                row["statistics_observed_s"] is not None
+                and fleet is not None
+                and row["fleet_bound"] is not None
+                and math.ceil(float(row["fleet_bound"]) - 1e-6)
+                >= int(round(float(fleet)))
+                and row["solver_ended_before_checkpoint"] is False
+            ):
+                observed = row["statistics_observed_s"]
+                if row["incumbent_observed_s"] is not None:
+                    observed = max(
+                        observed, row["incumbent_observed_s"]
+                    )
+                proof_times.append(observed)
         if proof_times and final.get("fleet_proven") is not True:
             raise ValueError(
                 f"MIP checkpoint/final proof mismatch: {final['run_id']}"
@@ -890,7 +940,9 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             **final,
             "pool_scope": (
                 "finite_giro_augmented_pool"
-                if final.get("giro_columns_added")
+                if final.get("treatment") == "GIRO"
+                else "finite_matching_augmented_pool"
+                if final.get("treatment") == "MATCHING"
                 else "finite_raw_pool"
             ),
             "first_feasible_s": (
@@ -978,6 +1030,8 @@ def _mip_summaries(mip_rows, mip_finals, hash_to_artifact_ids):
             "pool_scope": (
                 "finite_giro_augmented_pool"
                 if exemplar["treatment"] == "GIRO"
+                else "finite_matching_augmented_pool"
+                if exemplar["treatment"] == "MATCHING"
                 else "finite_raw_pool"
                 if exemplar["treatment"] == "RAW" else None
             ),
@@ -1037,6 +1091,10 @@ def _default_coverage_expectations():
         (
             "mip_finite_pool", "two_stage_pool_mip",
             "RAW", "mip_checkpoint_and_final"
+        ),
+        (
+            "mip_finite_pool", "two_stage_pool_mip",
+            "MATCHING", "mip_checkpoint_and_final"
         ),
         (
             "mip_finite_pool", "two_stage_pool_mip",
@@ -1530,6 +1588,8 @@ def _scale_progress_rows(
             "mip_incumbent_fleet": None,
             "mip_finite_pool_bound": None,
             "mip_finite_pool_gap": None,
+            "mip_fleet_proven": None,
+            "mip_partitioning": None,
             "mip_proof_scope": None,
             "physical_validation_status": "not_an_integer_schedule",
             "stopping_reason": (
@@ -1618,9 +1678,13 @@ def _scale_progress_rows(
             "mip_incumbent_fleet": incumbent,
             "mip_finite_pool_bound": bound,
             "mip_finite_pool_gap": finite_pool_gap,
+            "mip_fleet_proven": summary.get("fleet_proven"),
+            "mip_partitioning": summary.get("partitioning"),
             "mip_proof_scope": (
                 f"finite_pool:{summary.get('optimal_scope')}"
-                if summary.get("optimal_scope") else "finite_pool"
+                if summary.get("fleet_proven") is True
+                and summary.get("optimal_scope")
+                else "finite_pool_unproven"
             ),
             "physical_validation_status": (
                 "physically_validated"
@@ -1646,21 +1710,23 @@ def _scale_progress_rows(
     for row in candidates:
         key = (
             row["instance_family"],
+            row["scale"],
             row["instance_sha256"],
             row["trip_set_sha256"],
             row["tariff_sha256"],
             row["method"],
+            row["master_sense"],
             row["initialization"],
             row["replicate"],
+            row["seed"],
         )
         previous = grouped.get(key)
-        elapsed = row["elapsed_s"]
-        previous_elapsed = previous["elapsed_s"] if previous else None
-        if previous is None or (
-            elapsed is not None
-            and (previous_elapsed is None or float(elapsed) > float(previous_elapsed))
-        ):
-            grouped[key] = row
+        if previous is not None and previous["run_id"] != row["run_id"]:
+            raise ValueError(
+                "duplicate scale-progress identity for runs "
+                f"{previous['run_id']} and {row['run_id']}"
+            )
+        grouped[key] = row
     return sorted(grouped.values(), key=lambda row: (
         str(row["instance_family"]),
         str(row["scale"]),
@@ -2221,6 +2287,7 @@ def _save_required_figures(
         if row["mip_incumbent_fleet"] is not None
         and row["target_fleet"] is not None
         and row["target_gap"] is not None
+        and row["mip_partitioning"] is True
     ]
     fig, axis = plt.subplots(
         figsize=(max(8, len(final_gaps) * 0.65), 4.8)
@@ -2306,6 +2373,8 @@ def _merged_run_provenance(specs):
         "stopping_rules", "tolerances",
         "pool_status_sha256", "pool_journal_sha256",
         "treatment", "giro_columns_added",
+        "target_fleet", "trip_count", "cg_age_hours", "age_hours",
+        "artificial_tolerance",
     )
     merged = {}
     for key in keys:
@@ -2403,17 +2472,19 @@ def _data_dictionary():
         "censored": ("boolean", None,
             "Whether the named target event was not observed before stopping."),
     }
-    for field in SCALE_PROGRESS_FIELDS:
-        if field in definitions:
-            continue
-        field_type, units, description = scale_definitions.get(
-            field,
-            ("string", None, f"Scale-progress field {field}."),
-        )
-        definitions[field] = (
-            "scale_progress_summary.csv", field_type, units, description
-        )
-    return [{
+    numeric_fields = {
+        "scale", "target_fleet", "trip_count", "seed",
+        "elapsed_s", "iteration", "restricted_master_route_weight",
+        "artificial_mass", "certified_lp_bound", "target_gap",
+        "normalized_target_gap", "best_reduced_cost",
+        "mip_incumbent_fleet", "mip_finite_pool_bound",
+        "mip_finite_pool_gap",
+    }
+    boolean_fields = {
+        "pricing_certified", "mip_fleet_proven",
+        "mip_partitioning", "censored",
+    }
+    rows = [{
         "field": field,
         "table": values[0],
         "type": values[1],
@@ -2421,6 +2492,26 @@ def _data_dictionary():
         "definition": values[3],
         "availability": "null unless explicitly measured/recorded",
     } for field, values in sorted(definitions.items())]
+    for field in SCALE_PROGRESS_FIELDS:
+        field_type, units, description = scale_definitions.get(
+            field,
+            (
+                "number" if field in numeric_fields
+                else "boolean" if field in boolean_fields
+                else "string",
+                None,
+                f"Scale-progress field {field}.",
+            ),
+        )
+        rows.append({
+            "field": field,
+            "table": "scale_progress_summary.csv",
+            "type": field_type,
+            "units": units,
+            "definition": description,
+            "availability": "null unless explicitly measured/recorded",
+        })
+    return sorted(rows, key=lambda row: (row["table"], row["field"]))
 
 
 def _publish_staging(staging: Path, output: Path):
@@ -2605,7 +2696,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 f"MIP checkpoint source artifacts are not verified: "
                 f"{checkpoint['artifact_id']}"
             )
-        if checkpoint.get("treatment") == "GIRO" and not any(
+        if checkpoint.get("treatment") in {"MATCHING", "GIRO"} and not any(
             row["artifact_type"] == "route_validation_json"
             for row in verified_by_hash.get(
                 checkpoint.get("source_start_sha256"), []
@@ -2662,7 +2753,7 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                 summary.get("incidence_costs") or {}
             ).items():
                 permitted_costs[incidence].update(costs)
-        if final.get("pool_treatment") == "GIRO":
+        if final.get("pool_treatment") in {"MATCHING", "GIRO"}:
             start_rows = verified_by_hash.get(
                 final.get("source_start_sha256"), []
             )
@@ -2726,19 +2817,19 @@ def build(input_manifest: Path, output_dir: Path, *, repo_root: Path,
                     f"{final['artifact_id']}"
                 )
             if (
-                final.get("pool_treatment") == "GIRO"
+                final.get("pool_treatment") in {"MATCHING", "GIRO"}
                 and incidence not in permitted_costs
                 and not selected_from_giro
             ):
                 raise ValueError(
-                    f"GIRO MIP route lacks verified source cost: "
+                    f"augmented MIP route lacks verified source cost: "
                     f"{final['artifact_id']}"
                 )
-        if final.get("pool_treatment") == "GIRO":
+        if final.get("pool_treatment") in {"MATCHING", "GIRO"}:
             final["objective_source_bound"] = not has_unrecomputed_giro_cost
             final["objective_validation_reason"] = (
                 None if not has_unrecomputed_giro_cost
-                else "GIRO route costs runner-attested but not independently "
+                else "augmented route costs runner-attested but not independently "
                 "recomputed from source tariff/physics"
             )
             if (

@@ -959,6 +959,45 @@ class CrossGenerationEvidenceTests(unittest.TestCase):
             "unavailable_artificial_mass_positive_or_unknown",
         )
 
+    def test_scale_progress_keeps_pool_treatments_separate(self):
+        summaries = []
+        specs = {}
+        for treatment in ("RAW", "MATCHING", "GIRO"):
+            run_id = f"run-{treatment.lower()}"
+            summaries.append({
+                "run_id": run_id,
+                "algorithm_family": "mip_finite_pool",
+                "implementation": "two_stage_pool_mip",
+                "scale_family": "duty_union",
+                "scale": 8,
+                "replicate": "r1",
+                "treatment": treatment,
+                "integer_fleet": 8,
+                "fleet_bound": 8,
+                "fleet_proven": True,
+                "partitioning": True,
+                "optimal_scope": "fleet_only",
+                "runtime_s": 1,
+                "physically_validated_schedule": True,
+                "proof_censored": False,
+                "status_name": "OPTIMAL",
+            })
+            specs[run_id] = [{
+                "metadata": {
+                    "target_fleet": 8,
+                    "trip_count": 80,
+                    "instance_sha256": "1" * 64,
+                    "trip_set_sha256": "2" * 64,
+                    "tariff_sha256": "3" * 64,
+                    "initializer": "singletons",
+                },
+            }]
+        rows = _scale_progress_rows([], [], [], summaries, specs)
+        self.assertEqual(
+            {row["treatment"] for row in rows},
+            {"RAW", "MATCHING", "GIRO"},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

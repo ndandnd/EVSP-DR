@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import platform
 import subprocess
 import time
 from pathlib import Path
@@ -27,7 +28,31 @@ REQUIRED_ROOT_ALIASES = {
 }
 
 
-def _campaign_ready(root: Path) -> tuple[bool, str]:
+def _assert_slurm_compute_node() -> None:
+    job_id = os.environ.get("SLURM_JOB_ID")
+    node_list = os.environ.get("SLURM_JOB_NODELIST")
+    if not job_id or not node_list:
+        raise RuntimeError(
+            "evidence worker requires a Slurm batch allocation"
+        )
+    result = subprocess.run(
+        ["scontrol", "show", "hostnames", node_list],
+        text=True, capture_output=True, check=True,
+    )
+    allocated = {
+        line.strip().split(".", 1)[0]
+        for line in result.stdout.splitlines() if line.strip()
+    }
+    host = platform.node().split(".", 1)[0]
+    if host not in allocated:
+        raise RuntimeError(
+            f"host {host} is not in Slurm allocation {job_id}"
+        )
+
+
+def _campaign_ready(
+    root: Path, *, expected_mode: str
+) -> tuple[bool, str]:
     campaign = root.expanduser().resolve()
     manifest_path = campaign / "campaign.json"
     plan_path = campaign / "approved-plan.json"
@@ -36,11 +61,17 @@ def _campaign_ready(root: Path) -> tuple[bool, str]:
     try:
         manifest = json.loads(manifest_path.read_text())
         plan_raw = plan_path.read_bytes()
+        approved_plan = json.loads(plan_raw)
     except (OSError, json.JSONDecodeError):
         return False, "campaign_metadata_unreadable"
     if hashlib.sha256(plan_raw).hexdigest() != manifest.get(
             "approval_sha256"):
         return False, "campaign_approval_sha_mismatch"
+    if approved_plan.get("mode") != expected_mode:
+        return False, (
+            f"campaign_mode_mismatch:{approved_plan.get('mode')}"
+            f"!={expected_mode}"
+        )
     jobs = manifest.get("jobs")
     if not isinstance(jobs, list) or not jobs:
         return False, "campaign_jobs_missing"
@@ -60,7 +91,7 @@ def _campaign_ready(root: Path) -> tuple[bool, str]:
 
 
 def wait_for_campaigns(
-    campaign_roots: list[Path],
+    campaigns: list[tuple[Path, str]],
     *,
     timeout_s: float,
     poll_s: float,
@@ -68,7 +99,11 @@ def wait_for_campaigns(
     deadline = time.monotonic() + max(0.0, float(timeout_s))
     while True:
         states = [
-            (root, *_campaign_ready(root)) for root in campaign_roots
+            (
+                root,
+                *_campaign_ready(root, expected_mode=expected_mode),
+            )
+            for root, expected_mode in campaigns
         ]
         if states and all(ready for _root, ready, _reason in states):
             return
@@ -85,14 +120,19 @@ def wait_for_campaigns(
 
 def _write_manifest(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
     descriptor = os.open(
-        path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
+        temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600
     )
     with os.fdopen(descriptor, "w") as handle:
         json.dump(payload, handle, indent=2, sort_keys=True)
         handle.write("\n")
         handle.flush()
         os.fsync(handle.fileno())
+    try:
+        os.link(temporary, path, follow_symlinks=False)
+    finally:
+        temporary.unlink(missing_ok=True)
     parent_fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
     os.fsync(parent_fd)
     os.close(parent_fd)
@@ -113,6 +153,11 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--raw-k40-campaign-root", type=Path, required=True
     )
+    parser.add_argument(
+        "--current-mip-mode",
+        choices=("pilot", "secondary"),
+        required=True,
+    )
     parser.add_argument("--wait-timeout-s", type=float, default=0.0)
     parser.add_argument("--poll-s", type=float, default=300.0)
     parser.add_argument(
@@ -121,10 +166,7 @@ def main(argv=None) -> int:
     )
     parser.add_argument("--expected-commit", required=True)
     args = parser.parse_args(argv)
-    if not os.environ.get("SLURM_JOB_ID"):
-        raise RuntimeError(
-            "cross-generation collection/build must run in a Slurm job"
-        )
+    _assert_slurm_compute_node()
     repo = args.repo_root.expanduser().resolve()
     observed_commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=repo, text=True,
@@ -144,16 +186,38 @@ def main(argv=None) -> int:
         raise ValueError(
             f"explicit source roots missing: {missing_aliases}"
         )
+    current_campaign = args.current_mip_campaign_root.expanduser().resolve()
+    raw_campaign = args.raw_k40_campaign_root.expanduser().resolve()
+    if current_campaign == raw_campaign:
+        raise ValueError("current and RAW-k40 campaigns must be distinct")
+    mip_root = roots["mip_campaign"].resolve()
+    if (
+        mip_root not in current_campaign.parents
+        or mip_root not in raw_campaign.parents
+    ):
+        raise ValueError(
+            "named campaigns must be contained by mip_campaign source root"
+        )
     wait_for_campaigns(
         [
-            args.current_mip_campaign_root,
-            args.raw_k40_campaign_root,
+            (current_campaign, args.current_mip_mode),
+            (raw_campaign, "raw_k40"),
         ],
         timeout_s=args.wait_timeout_s,
         poll_s=args.poll_s,
     )
     if args.phase == "collect":
         payload = collect(args.template, roots)
+        collected_paths = [
+            Path(str(artifact.get("path"))).expanduser().resolve()
+            for artifact in payload.get("artifacts") or []
+            if Path(str(artifact.get("path"))).is_absolute()
+        ]
+        for campaign in (current_campaign, raw_campaign):
+            if not any(campaign in path.parents for path in collected_paths):
+                raise ValueError(
+                    f"collected manifest omits named campaign: {campaign}"
+                )
         _write_manifest(args.manifest, payload)
         print(json.dumps({
             "phase": "collect",
@@ -173,6 +237,17 @@ def main(argv=None) -> int:
             "build requires --approved-manifest-sha256, "
             "--build-out, and --archive-out"
         )
+    reviewed_payload = json.loads(args.manifest.read_text())
+    reviewed_paths = [
+        Path(str(artifact.get("path"))).expanduser().resolve()
+        for artifact in reviewed_payload.get("artifacts") or []
+        if Path(str(artifact.get("path"))).is_absolute()
+    ]
+    for campaign in (current_campaign, raw_campaign):
+        if not any(campaign in path.parents for path in reviewed_paths):
+            raise ValueError(
+                f"reviewed manifest omits named campaign: {campaign}"
+            )
     result = build(
         args.manifest,
         args.build_out,

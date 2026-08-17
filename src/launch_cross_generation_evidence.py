@@ -6,9 +6,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import shlex
 import subprocess
+import sys
 from pathlib import Path
 
 from collect_cross_generation_inputs import _assignments
@@ -39,8 +39,9 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         )
     worker = repo / "src/run_cross_generation_evidence_job.py"
     worker_sha = hashlib.sha256(worker.read_bytes()).hexdigest()
+    python = Path(sys.executable).resolve()
     worker_args = [
-        "python", "-u", str(worker),
+        str(python), "-u", str(worker),
         "--phase", args.phase,
         "--template", str(args.template.expanduser().resolve()),
         "--manifest", str(args.manifest.expanduser().resolve()),
@@ -48,6 +49,7 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         str(args.current_mip_campaign_root.expanduser().resolve()),
         "--raw-k40-campaign-root",
         str(args.raw_k40_campaign_root.expanduser().resolve()),
+        "--current-mip-mode", args.current_mip_mode,
         "--wait-timeout-s", str(args.wait_timeout_s),
         "--poll-s", str(args.poll_s),
         "--repo-root", str(repo),
@@ -83,6 +85,8 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         "submits_cg_or_mip_solves": False,
         "worker": str(worker),
         "worker_sha256": worker_sha,
+        "python_executable": str(python),
+        "python_sha256": hashlib.sha256(python.read_bytes()).hexdigest(),
         "expected_commit": args.expected_commit,
         "roots": {
             key: str(value) for key, value in sorted(roots.items())
@@ -112,6 +116,11 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--raw-k40-campaign-root", type=Path, required=True
+    )
+    parser.add_argument(
+        "--current-mip-mode",
+        choices=("pilot", "secondary"),
+        required=True,
     )
     parser.add_argument("--wait-timeout-s", type=float, default=86400.0)
     parser.add_argument("--poll-s", type=float, default=300.0)

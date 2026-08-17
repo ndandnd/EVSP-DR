@@ -90,6 +90,10 @@ def archive_evidence(
         raise FileExistsError(f"archive output exists: {output}")
     files = _validated_build(build_dir)
     manifest_raw = _read_regular(input_manifest.expanduser().resolve())
+    if files.get("build/input_manifest.json") != manifest_raw:
+        raise ValueError(
+            "archive manifest differs from manifest used by evidence build"
+        )
     files["input_manifest.json"] = manifest_raw
     archive_manifest = {
         "schema": ARCHIVE_SCHEMA,

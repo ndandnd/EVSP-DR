@@ -29,6 +29,7 @@ else
     --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
     --root "releases=$HOME/EVSP-DR-releases" \
     --current-mip-campaign-root "$CURRENT_MIP_CAMPAIGN" \
+    --current-mip-mode "${CURRENT_MIP_MODE:-pilot}" \
     --raw-k40-campaign-root "$RAW_K40_CAMPAIGN" \
     --manifest "$REVIEWED_MANIFEST" \
     --log-dir "$LOG_DIR" \
@@ -49,6 +50,7 @@ if [[ -n "$CURRENT_MIP_CAMPAIGN" && -n "$RAW_K40_CAMPAIGN" && -n "$APPROVED_MANI
     --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
     --root "releases=$HOME/EVSP-DR-releases" \
     --current-mip-campaign-root "$CURRENT_MIP_CAMPAIGN" \
+    --current-mip-mode "${CURRENT_MIP_MODE:-pilot}" \
     --raw-k40-campaign-root "$RAW_K40_CAMPAIGN" \
     --manifest "$REVIEWED_MANIFEST" \
     --approved-manifest-sha256 "$APPROVED_MANIFEST_SHA256" \
