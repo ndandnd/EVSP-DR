@@ -45,11 +45,31 @@ def _campaign_values(args) -> list[str]:
 
 def _dependency_job_ids(args) -> list[str]:
     values = list(getattr(args, "after_job_id", []) or [])
-    if any(not re.fullmatch(r"[0-9]+", value) for value in values):
-        raise ValueError("Slurm dependency job IDs must be decimal integers")
-    if len(values) != len(set(values)):
+    if any(
+        not re.fullmatch(r"[0-9]+", value)
+        or int(value) <= 0
+        or str(int(value)) != value
+        for value in values
+    ):
+        raise ValueError(
+            "Slurm dependency job IDs must be canonical positive integers"
+        )
+    normalized = [str(int(value)) for value in values]
+    if len(normalized) != len(set(normalized)):
         raise ValueError("Slurm dependency job IDs must be unique")
-    return values
+    return normalized
+
+
+def _parse_sbatch_job_id(response: str) -> str:
+    raw = response.strip()
+    job_id = raw.split(";", 1)[0]
+    if (
+        not re.fullmatch(r"[0-9]+", job_id)
+        or int(job_id) <= 0
+        or str(int(job_id)) != job_id
+    ):
+        raise RuntimeError(f"unexpected sbatch response: {raw!r}")
+    return job_id
 
 
 def build_sbatch_command(args) -> tuple[list[str], dict]:
@@ -195,9 +215,7 @@ def main(argv=None) -> int:
     result = subprocess.run(
         sbatch, text=True, capture_output=True, check=True
     )
-    job_id = result.stdout.strip()
-    if not job_id.isdigit():
-        raise RuntimeError(f"unexpected sbatch response: {job_id!r}")
+    job_id = _parse_sbatch_job_id(result.stdout)
     print(json.dumps({
         "submitted_evidence_job_id": job_id,
         "phase": args.phase,

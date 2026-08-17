@@ -13,6 +13,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from archive_cross_generation_evidence import archive_evidence  # noqa: E402
 from launch_cross_generation_evidence import (  # noqa: E402
     _dependency_job_ids,
+    _parse_sbatch_job_id,
     build_sbatch_command,
 )
 from run_cross_generation_evidence_job import (  # noqa: E402
@@ -59,12 +60,19 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 parse_campaign_assignments([
                     f"pilot={root / 'missing'}"
                 ])
-            with self.assertRaisesRegex(ValueError, "decimal integers"):
+            with self.assertRaisesRegex(ValueError, "canonical positive"):
                 _dependency_job_ids(Namespace(after_job_id=["123x"]))
+            with self.assertRaisesRegex(ValueError, "canonical positive"):
+                _dependency_job_ids(Namespace(after_job_id=["0"]))
+            with self.assertRaisesRegex(ValueError, "canonical positive"):
+                _dependency_job_ids(Namespace(after_job_id=["0123"]))
             with self.assertRaisesRegex(ValueError, "must be unique"):
                 _dependency_job_ids(
                     Namespace(after_job_id=["123", "123"])
                 )
+            self.assertEqual(_parse_sbatch_job_id("123;unicorn\n"), "123")
+            with self.assertRaisesRegex(RuntimeError, "unexpected"):
+                _parse_sbatch_job_id("0;unicorn")
 
     def test_incomplete_live_campaign_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
