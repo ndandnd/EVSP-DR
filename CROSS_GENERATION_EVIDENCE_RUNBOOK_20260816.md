@@ -4,39 +4,74 @@ The collector is read-only with respect to computational artifacts. It hashes
 matched files and writes one new manifest. It does not repair tails, copy
 results, invoke solvers, or submit jobs.
 
-## Paste-ready Unicorn collection command
+## Paste-ready Unicorn Slurm launcher
 
 ```bash
-set -euo pipefail
 cd "$HOME/EVSP-DR-cross-generation-evidence"
-OUT="$HOME/evsp-evidence-manifests/cross-generation-20260816.json"
-mkdir -p "$(dirname "$OUT")"
-test ! -e "$OUT"
+CURRENT_MIP_CAMPAIGN="${CURRENT_MIP_CAMPAIGN:-}"
+RAW_K40_CAMPAIGN="${RAW_K40_CAMPAIGN:-}"
+REVIEWED_MANIFEST="$HOME/evsp-evidence-manifests/cross-generation-reviewed.json"
+APPROVED_MANIFEST_SHA256="${APPROVED_MANIFEST_SHA256:-}"
+BUILD_OUT="$HOME/evsp-evidence-builds/cross-generation-final"
+ARCHIVE_OUT="$HOME/evsp-evidence-archives/cross-generation-final"
+LOG_DIR="$HOME/evsp-evidence-logs"
 
-python -u src/collect_cross_generation_inputs.py \
-  --template CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json \
-  --root "current_heuristic=$HOME/EVSP-DR-current/src/results" \
-  --root "repool_small=$HOME/EVSP-DR-k40mip-f40b120/src/results/repool_small" \
-  --root "exact_big=$HOME/EVSP-DR-k40mip-f40b120/src/results/exact_big" \
-  --root "k40_factorial=$HOME/EVSP-DR-k40mip-f40b120/src/results/k40_factorial" \
-  --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
-  --root "releases=$HOME/EVSP-DR-releases" \
-  --out-manifest "$OUT"
+if [[ -z "$CURRENT_MIP_CAMPAIGN" || -z "$RAW_K40_CAMPAIGN" ]]; then
+  echo "Set CURRENT_MIP_CAMPAIGN and RAW_K40_CAMPAIGN to explicit campaign directories." >&2
+else
+  python -u src/launch_cross_generation_evidence.py \
+    --phase collect \
+    --template CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json \
+    --root "current_heuristic=$HOME/EVSP-DR-current/src/results" \
+    --root "repool_small=$HOME/EVSP-DR-k40mip-f40b120/src/results/repool_small" \
+    --root "exact_big=$HOME/EVSP-DR-k40mip-f40b120/src/results/exact_big" \
+    --root "k40_factorial=$HOME/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial" \
+    --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
+    --root "releases=$HOME/EVSP-DR-releases" \
+    --current-mip-campaign-root "$CURRENT_MIP_CAMPAIGN" \
+    --raw-k40-campaign-root "$RAW_K40_CAMPAIGN" \
+    --manifest "$REVIEWED_MANIFEST" \
+    --log-dir "$LOG_DIR" \
+    --expected-commit "$(git rev-parse HEAD)" \
+    --submit
+fi
 
-sha256sum "$OUT"
+# After the collection job succeeds, review/enrich the manifest and set its
+# out-of-band approved SHA. The build/archive job performs no CG or MIP solve.
+if [[ -n "$CURRENT_MIP_CAMPAIGN" && -n "$RAW_K40_CAMPAIGN" && -n "$APPROVED_MANIFEST_SHA256" && -f "$REVIEWED_MANIFEST" ]]; then
+  python -u src/launch_cross_generation_evidence.py \
+    --phase build \
+    --template CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json \
+    --root "current_heuristic=$HOME/EVSP-DR-current/src/results" \
+    --root "repool_small=$HOME/EVSP-DR-k40mip-f40b120/src/results/repool_small" \
+    --root "exact_big=$HOME/EVSP-DR-k40mip-f40b120/src/results/exact_big" \
+    --root "k40_factorial=$HOME/EVSP-DR-k40fx-eb85ca0/src/results/k40_factorial" \
+    --root "mip_campaign=$HOME/EVSP-DR-k40mip-f40b120/src/results/mip_statistics" \
+    --root "releases=$HOME/EVSP-DR-releases" \
+    --current-mip-campaign-root "$CURRENT_MIP_CAMPAIGN" \
+    --raw-k40-campaign-root "$RAW_K40_CAMPAIGN" \
+    --manifest "$REVIEWED_MANIFEST" \
+    --approved-manifest-sha256 "$APPROVED_MANIFEST_SHA256" \
+    --build-out "$BUILD_OUT" \
+    --archive-out "$ARCHIVE_OUT" \
+    --log-dir "$LOG_DIR" \
+    --expected-commit "$(git rev-parse HEAD)" \
+    --submit
+else
+  echo "Build not submitted: review the collected manifest and set APPROVED_MANIFEST_SHA256."
+fi
 ```
 
-Review `collection_report` and enrich null run metadata from immutable
-campaign/release manifests before analysis. Null hashes or scale identity must
-not be guessed from filenames.
+Both invocations submit only `run_cross_generation_evidence_job.py` to a
+Scaglione compute node. The worker waits for both named MIP campaigns to have
+validated outputs and `progress/final.json` for every cell; timeout, missing
+cells, or provenance errors fail closed. It never submits CG or MIP solves.
 
 ## Rebuild
 
-Run `src/build_cross_generation_evidence.py --input-manifest <reviewed.json>
---approved-input-manifest-sha256 <out-of-band-sha256>
---out-dir <new-empty-directory>`. Output publication is create-only and includes
-`completion.json`, normalized CSVs, provenance, compatibility documentation,
-coverage audit, dry-run rerun plan, and deterministic figures.
+The build job publishes a create-only evidence directory and a separate
+completion-marker archive directory containing `evidence.tar`, its SHA-256
+sidecar, `ARCHIVE_MANIFEST.json`, and `completion.json`.
 
 ## Inputs still expected from Unicorn/releases
 
