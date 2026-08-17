@@ -173,6 +173,13 @@ def realize_expanded_path(
             })
             grid_soc = floored
             energy = float(problem.trip_energy[node])
+            if grid_soc - energy < reserve_kwh - TOLERANCE:
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": (
+                        f"expanded grid SOC violates reserve after trip {node}"
+                    ),
+                }
             continuous_soc -= energy
             grid_soc -= energy
             if continuous_soc < reserve_kwh - TOLERANCE:
@@ -292,6 +299,11 @@ def realize_expanded_path(
         return None, {
             "classification": "infeasible_after_realization",
             "reason": "final SOC below reserve",
+        }
+    if grid_soc < reserve_kwh - TOLERANCE:
+        return None, {
+            "classification": "infeasible_after_realization",
+            "reason": "expanded grid final SOC below reserve",
         }
     realized = deepcopy(record)
     realized_stops = deepcopy(emitted_stops)

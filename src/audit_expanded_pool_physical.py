@@ -44,8 +44,10 @@ ROUTE_FIELDS = (
     "continuous_realized_cost", "expanded_minus_realized_cost",
 )
 POOL_FIELDS = (
-    "pool", "status_sha256", "journal_sha256", "journal_records",
-    "mip_unique_columns", "selected_incumbent_routes",
+    "pool", "status_sha256", "journal_sha256", "reference_sha256",
+    "deadhead_sha256", "journal_records",
+    "archived_mip_unique_columns", "mip_unique_columns",
+    "selected_incumbent_routes",
     "valid_as_recorded", "deterministically_repairable",
     "infeasible_after_realization", "mapping_set_sha256",
     "mip_unique_valid_as_recorded",
@@ -75,7 +77,13 @@ def _selected_indices(campaign_root: Path | None, pool: str):
     latest = campaign_root / "progress" / pool / "latest.json"
     if not latest.is_file():
         return {}, None
-    payload = json.loads(latest.read_text())
+    raw = latest.read_bytes()
+    payload = json.loads(raw)
+    if (
+        payload.get("schema") != "evsp-dr-mip-convergence-v1"
+        or payload.get("kind") != "latest"
+    ):
+        raise ValueError(f"invalid latest checkpoint payload: {latest}")
     incumbent = payload.get("incumbent") or {}
     return {
         int(index): ordinal
@@ -84,7 +92,7 @@ def _selected_indices(campaign_root: Path | None, pool: str):
         )
     }, {
         "path": str(latest),
-        "sha256": _sha(latest),
+        "sha256": hashlib.sha256(raw).hexdigest(),
         "metadata": payload.get("metadata") or {},
         "route_vector_sha256": incumbent.get("route_vector_sha256"),
     }
@@ -122,6 +130,10 @@ def audit_pools(
     route_rows = []
     pool_summaries = []
     observed_pool_names = set()
+    if archive_sha256 is not None and archive_path is None:
+        raise ValueError(
+            "archive_sha256 requires archive_path for verification"
+        )
     if archive_path is not None:
         observed_archive_sha = _sha(archive_path.expanduser().resolve())
         if (
@@ -131,7 +143,9 @@ def audit_pools(
             raise ValueError("archive SHA-256 mismatch")
         archive_sha256 = observed_archive_sha
     try:
-        for raw_status in statuses:
+        for raw_status in sorted(
+            statuses, key=lambda path: str(path.expanduser().resolve())
+        ):
             status_path = raw_status.expanduser().resolve()
             status_raw = status_path.read_bytes()
             status = json.loads(status_raw)
@@ -146,13 +160,28 @@ def audit_pools(
             reference_path = (
                 reference_data_dir.expanduser().resolve() / "Ref_dict.csv"
             )
+            deadhead_path = (
+                reference_data_dir.expanduser().resolve()
+                / "par_ref_dhd.csv"
+            )
             immutable_hashes = {
                 "status": hashlib.sha256(status_raw).hexdigest(),
                 "journal": journal_before,
                 "instance": _sha(instance_path),
                 "tariff": _sha(tariff_path),
                 "reference": _sha(reference_path),
+                "deadhead": _sha(deadhead_path),
             }
+            provenance = status.get("provenance") or {}
+            if (
+                provenance.get("instance_sha256")
+                != immutable_hashes["instance"]
+                or provenance.get("prices_sha256")
+                != immutable_hashes["tariff"]
+            ):
+                raise ValueError(
+                    f"status data provenance mismatch: {status_path}"
+                )
             problem = build_problem(
                 data_dir,
                 status["csv"],
@@ -192,19 +221,19 @@ def audit_pools(
                     raise ValueError(
                         f"latest incumbent source mismatch for {pool}"
                     )
-            mip_pool = {}
+            archived_mip_pool = {}
             for raw_ordinal, candidate in enumerate(records, start=1):
                 key = frozenset(candidate.get("trips") or [])
                 candidate_cost = float(candidate["cost"])
                 if (
-                    key not in mip_pool
+                    key not in archived_mip_pool
                     or candidate_cost
-                    < float(mip_pool[key][0]["cost"]) - 1e-9
+                    < float(archived_mip_pool[key][0]["cost"]) - 1e-9
                 ):
-                    mip_pool[key] = (candidate, raw_ordinal)
-            mip_pool_values = list(mip_pool.values())
+                    archived_mip_pool[key] = (candidate, raw_ordinal)
+            archived_mip_pool_values = list(archived_mip_pool.values())
             selected_raw_ordinals = {
-                mip_pool_values[route_index][1]: selected_ordinal
+                archived_mip_pool_values[route_index][1]: selected_ordinal
                 for route_index, selected_ordinal in selected.items()
             }
             counts = Counter()
@@ -213,6 +242,7 @@ def audit_pools(
             mapping_hashes = []
             classification_by_ordinal = {}
             grid_cost_mismatches = 0
+            admitted_pool = {}
             for ordinal, record in enumerate(records, start=1):
                 trips = list(record.get("trips") or [])
                 incidence_sha = _canonical_sha(sorted(trips))
@@ -249,6 +279,15 @@ def audit_pools(
                             abs_tol=1e-6,
                         ):
                             grid_cost_mismatches += 1
+                cost_matches = (
+                    bool(costs)
+                    and math.isclose(
+                        costs["stored_expanded_grid_cost"],
+                        costs["recomputed_expanded_grid_cost"],
+                        rel_tol=1e-9,
+                        abs_tol=1e-6,
+                    )
+                )
                 if recorded_reason is None:
                     classification = "valid_as_recorded"
                 elif realized is not None and realized_reason is None:
@@ -257,6 +296,20 @@ def audit_pools(
                     classification = "infeasible_after_realization"
                 counts[classification] += 1
                 classification_by_ordinal[ordinal] = classification
+                if (
+                    realized is not None
+                    and realized_reason is None
+                    and cost_matches
+                ):
+                    key = frozenset(trips)
+                    if (
+                        key not in admitted_pool
+                        or float(record["cost"])
+                        < float(admitted_pool[key][0]["cost"]) - 1e-9
+                    ):
+                        admitted_pool[key] = (
+                            record, ordinal, classification
+                        )
                 if mapping is not None:
                     mapping_hashes.append(mapping["mapping_sha256"])
                 selected_ordinal = selected_raw_ordinals.get(ordinal)
@@ -347,7 +400,16 @@ def audit_pools(
                 "instance": _sha(instance_path),
                 "tariff": _sha(tariff_path),
                 "reference": _sha(reference_path),
+                "deadhead": _sha(deadhead_path),
             }
+            if (
+                selected_source is not None
+                and _sha(Path(selected_source["path"]))
+                != selected_source["sha256"]
+            ):
+                raise ValueError(
+                    f"latest incumbent changed during audit: {pool}"
+                )
             if after_hashes != immutable_hashes:
                 raise ValueError(
                     f"source changed during audit: {status_path}"
@@ -361,14 +423,18 @@ def audit_pools(
                 "instance_sha256": immutable_hashes["instance"],
                 "tariff_sha256": immutable_hashes["tariff"],
                 "reference_sha256": immutable_hashes["reference"],
+                "deadhead_sha256": immutable_hashes["deadhead"],
                 "journal_records": len(records),
-                "mip_unique_columns": len(mip_pool),
+                "archived_mip_unique_columns":
+                    len(archived_mip_pool),
+                "mip_unique_columns": len(admitted_pool),
                 "selected_incumbent_routes": len(selected),
                 "selected_incumbent_source": selected_source,
                 "counts": dict(sorted(counts.items())),
                 "mip_unique_counts": dict(sorted(Counter(
-                    classification_by_ordinal[raw_ordinal]
-                    for _record, raw_ordinal in mip_pool_values
+                    classification
+                    for _record, _raw_ordinal, classification
+                    in admitted_pool.values()
                 ).items())),
                 "selected_recorded_failures": selected_failures,
                 "rejection_samples": rejection_samples,
@@ -385,11 +451,11 @@ def audit_pools(
             })
             if (
                 status.get("columns") is not None
-                and int(status["columns"]) != len(mip_pool)
+                and int(status["columns"]) != len(archived_mip_pool)
             ):
                 raise ValueError(
                     f"status column count mismatch for {pool}: "
-                    f"{status['columns']} != {len(mip_pool)}"
+                    f"{status['columns']} != {len(archived_mip_pool)}"
                 )
         if expected_pools is not None and observed_pool_names != expected_pools:
             raise ValueError(
@@ -400,6 +466,11 @@ def audit_pools(
             "schema": AUDIT_SCHEMA,
             "archive_sha256": archive_sha256,
             "read_only": True,
+            "route_detail": route_detail,
+            "expected_pools": (
+                sorted(expected_pools)
+                if expected_pools is not None else None
+            ),
             "pricing_certificate_conclusion": (
                 "Existing certified_rc_optimal applies only to the "
                 "conservative expanded-grid cost model. Continuous realized "
@@ -442,8 +513,12 @@ def audit_pools(
                     "pool": pool["pool"],
                     "status_sha256": pool["status_sha256"],
                     "journal_sha256": pool["journal_sha256"],
+                    "reference_sha256": pool["reference_sha256"],
+                    "deadhead_sha256": pool["deadhead_sha256"],
                     "journal_records": pool["journal_records"],
                     "mip_unique_columns": pool["mip_unique_columns"],
+                    "archived_mip_unique_columns":
+                        pool["archived_mip_unique_columns"],
                     "selected_incumbent_routes":
                         pool["selected_incumbent_routes"],
                     "valid_as_recorded":
@@ -494,7 +569,7 @@ def audit_pools(
             "",
             report["pricing_certificate_conclusion"],
             "",
-            "| Pool | Journal rows | Unique columns | Valid recorded | "
+            "| Pool | Journal rows | Admitted unique | Valid recorded | "
             "Repairable | Infeasible |",
             "|---|---:|---:|---:|---:|---:|",
         ]

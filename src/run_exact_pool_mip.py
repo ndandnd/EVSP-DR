@@ -527,49 +527,6 @@ def prepare_strict_partition_pool(
             )
             if realized is not None else detail.get("reason")
         )
-        if reason is None:
-            candidate = dict(route)
-            physical = {
-                "status": "valid_as_recorded",
-                "recorded_route_sha256": route_sha,
-                "master_cost_semantics": "expanded_grid_cost",
-                "continuous_cost_pricing_certified": False,
-            }
-            if realized is not None and realized_reason is None:
-                costs = realized_costs(
-                    route, detail["mapping"], station_prices=prices
-                )
-                if not math.isclose(
-                    costs["stored_expanded_grid_cost"],
-                    costs["recomputed_expanded_grid_cost"],
-                    rel_tol=1e-9,
-                    abs_tol=1e-6,
-                ):
-                    rejected_hashes.append(route_sha)
-                    if len(rejected) < 100:
-                        rejected.append({
-                            "route_index": index,
-                            "route_sha256": route_sha,
-                            "trips": route.get("trips"),
-                            "recorded_reason":
-                                "stored expanded-grid cost mismatch",
-                            "realization_reason": None,
-                        })
-                    continue
-                candidate["expanded_grid_cost"] = float(route["cost"])
-                candidate["continuous_realized_cost"] = costs[
-                    "continuous_realized_cost"
-                ]
-                physical.update({
-                    key: value for key, value in (
-                        realized.get("continuous_realization") or {}
-                    ).items()
-                })
-                physical["costs"] = costs
-            candidate["physical_realization"] = physical
-            accepted.append(candidate)
-            valid_hashes.append(route_sha)
-            continue
         if realized is None or realized_reason is not None:
             rejected_hashes.append(route_sha)
             if len(rejected) < 100:
@@ -610,15 +567,21 @@ def prepare_strict_partition_pool(
             "continuous_realization"
         )
         realized["physical_realization"].update({
-            "status": "deterministically_repaired",
+            "status": (
+                "valid_as_recorded_mapped"
+                if reason is None else "deterministically_repaired"
+            ),
             "recorded_route_sha256": route_sha,
             "recorded_replay_reason": reason,
             "costs": costs,
         })
         accepted.append(realized)
-        repaired_hashes.append(
-            realized["physical_realization"]["mapping_sha256"]
-        )
+        if reason is None:
+            valid_hashes.append(route_sha)
+        else:
+            repaired_hashes.append(
+                realized["physical_realization"]["mapping_sha256"]
+            )
     audit = {
         "schema": "evsp-dr-strict-pool-physical-gate-v1",
         "total_columns": len(routes),
@@ -647,7 +610,10 @@ def prepare_strict_partition_pool(
     return accepted, audit
 
 
-def merge_extra_routes(routes, trips, extra_paths, prices_csv, status=None):
+def merge_extra_routes(
+    routes, trips, extra_paths, prices_csv, status=None, *,
+    data_dir=None, reference_data_dir=None,
+):
     """Merge runner-format route dicts (e.g. MATCHING covers) into the pool.
 
     Pool MIPs at k>=8 stall near singleton incumbents because CG pools lack an
@@ -666,11 +632,19 @@ def merge_extra_routes(routes, trips, extra_paths, prices_csv, status=None):
     g_kwh = float(status.get("g_kwh", 300.0))
     charge_kw = float(status.get("charge_kw", CHARGE_RATE_KW))
     reserve_kwh = float(status.get("min_soc_frac", 0.0)) * g_kwh
+    data_dir = Path(
+        data_dir
+        if data_dir is not None
+        else Path(__file__).resolve().parent.parent / "data"
+    ).resolve()
+    reference_data_dir = Path(
+        reference_data_dir if reference_data_dir is not None else data_dir
+    ).resolve()
     problem = build_problem(
-        Path(__file__).resolve().parent.parent / "data", status["csv"],
-        max_station_to_trip_wait_min=HORIZON_MIN)
-
-    data_dir = Path(__file__).resolve().parent.parent / "data"
+        data_dir, status["csv"],
+        max_station_to_trip_wait_min=HORIZON_MIN,
+        reference_data_dir=reference_data_dir,
+    )
     price_name = Path(prices_csv).name if prices_csv else "hourly_prices_flat.csv"
     prices = load_station_hourly_prices(data_dir / price_name, CHARGING_STATIONS)
     depot_curve = prices.get("PARX") or next(iter(prices.values()))
@@ -733,6 +707,7 @@ def merge_validated_partition_start(
     status=None,
     *,
     data_dir=None,
+    reference_data_dir=None,
 ):
     """Merge and select one explicitly supplied exact-partition start.
 
@@ -812,6 +787,9 @@ def merge_validated_partition_start(
         if data_dir is not None
         else Path(__file__).resolve().parent.parent / "data"
     ).resolve()
+    reference_data_dir = Path(
+        reference_data_dir if reference_data_dir is not None else data_dir
+    ).resolve()
 
     def verified_data_file(relative, hash_field, label):
         expected_hash = provenance.get(hash_field)
@@ -848,6 +826,7 @@ def merge_validated_partition_start(
         data_dir,
         str(instance_path.relative_to(data_dir)),
         max_station_to_trip_wait_min=HORIZON_MIN,
+        reference_data_dir=reference_data_dir,
     )
     trip_set = set(trips)
     if list(problem.trips) != list(trips):
@@ -1253,12 +1232,39 @@ def publish_rejected_physical_replay(
         f"{out.name}.rejected_physical_replay.json"
     )
     checkpoint_refs = []
+    selected_vector_sha = hashlib.sha256(json.dumps(
+        sorted(chosen), separators=(",", ":")
+    ).encode()).hexdigest()
     if progress_path is not None and progress_path.is_dir():
-        for path in sorted(progress_path.glob("checkpoint_*.json")):
+        paths = list(progress_path.glob("checkpoint_*.json"))
+        paths.extend(
+            path for path in (
+                progress_path / "latest.json",
+                progress_path / "final.json",
+            ) if path.is_file()
+        )
+        for path in sorted(set(paths)):
             if path.is_file():
+                checkpoint_payload = json.loads(path.read_text())
+                checkpoint_incumbent = (
+                    checkpoint_payload.get("incumbent") or {}
+                )
+                checkpoint_final = (
+                    checkpoint_payload.get("final") or {}
+                )
+                observed_vector = (
+                    checkpoint_incumbent.get("route_vector_sha256")
+                    or checkpoint_final.get("route_vector_sha256")
+                )
                 checkpoint_refs.append({
                     "path": str(path),
                     "sha256": file_sha256(path),
+                    "kind": checkpoint_payload.get("kind"),
+                    "route_vector_sha256": observed_vector,
+                    "matches_rejected_incumbent": (
+                        observed_vector == selected_vector_sha
+                        if observed_vector is not None else None
+                    ),
                 })
     failing_route = error.route or {}
     selected_cost = sum(float(routes[index]["cost"]) for index in chosen)
@@ -1267,6 +1273,8 @@ def publish_rejected_physical_replay(
             "trips": routes[index].get("trips"),
             "route_nodes": routes[index].get("route_nodes"),
             "charging_stops": routes[index].get("charging_stops"),
+            "expanded_grid_charging_stops":
+                routes[index].get("expanded_grid_charging_stops"),
             "expanded_grid_cost": routes[index].get("cost"),
         }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         for index in chosen
@@ -1282,9 +1290,7 @@ def publish_rejected_physical_replay(
         "solver_incumbent": {
             "status_name": status_name,
             "selected_route_indices": list(chosen),
-            "route_vector_sha256": hashlib.sha256(json.dumps(
-                sorted(chosen), separators=(",", ":")
-            ).encode()).hexdigest(),
+            "route_vector_sha256": selected_vector_sha,
             "buses": len(chosen),
             "expanded_grid_objective": selected_cost,
             "bound": solver_bound,
@@ -1462,7 +1468,9 @@ def main(argv=None) -> int:
         )
     if args.extra_routes:
         routes = merge_extra_routes(routes, trips, args.extra_routes,
-                                    status.get("prices_csv"), status)
+                                    status.get("prices_csv"), status,
+                                    data_dir=args.data_dir,
+                                    reference_data_dir=args.reference_data_dir)
         for recorded, path in zip(extra_route_sources, args.extra_routes):
             if file_sha256(path) != recorded["sha256"]:
                 raise SystemExit(
@@ -1476,6 +1484,8 @@ def main(argv=None) -> int:
                 args.initial_partition_routes,
                 status.get("prices_csv"),
                 status,
+                data_dir=args.data_dir,
+                reference_data_dir=args.reference_data_dir,
             )
         )
     coverage = Counter(t for r in routes for t in r["trips"])
@@ -1534,7 +1544,10 @@ def main(argv=None) -> int:
         return 0
 
     out = args.out or Path(str(args.result).replace(".json", "_mip.json"))
-    if os.path.lexists(out):
+    rejected_out = out.with_name(
+        f"{out.name}.rejected_physical_replay.json"
+    )
+    if os.path.lexists(out) or os.path.lexists(rejected_out):
         raise SystemExit(f"[MIP] refusing to overwrite existing output: {out}")
     out.parent.mkdir(parents=True, exist_ok=True)
     progress_path = (
@@ -1906,6 +1919,42 @@ def main(argv=None) -> int:
                 caught if isinstance(caught, PhysicalReplayError)
                 else PhysicalReplayError(str(caught))
             )
+            diagnostic_path = out.with_name(
+                f"{out.name}.rejected_physical_replay.json"
+            )
+            final_code_identity = verified_mip_code_identity()
+            if (
+                final_code_identity["observed_commit"]
+                != code_identity["observed_commit"]
+                or not final_code_identity["tracked_clean"]
+            ):
+                raise SystemExit(
+                    "[MIP] solver code identity changed before rejection "
+                    "publication"
+                )
+            code_identity["final_observed_commit"] = (
+                final_code_identity["observed_commit"]
+            )
+            code_identity["final_tracked_clean"] = (
+                final_code_identity["tracked_clean"]
+            )
+            if progress is not None:
+                progress.finalize(
+                    elapsed_s=progress.elapsed_s(),
+                    final={
+                        "status": status_code,
+                        "status_name": "REJECTED_PHYSICAL_REPLAY",
+                        "incumbent_found": True,
+                        "physically_validated": False,
+                        "buses": len(chosen),
+                        "fleet_proven": fleet_proven,
+                        "selected_route_indices": list(chosen),
+                        "route_vector_sha256": hashlib.sha256(json.dumps(
+                            sorted(chosen), separators=(",", ":")
+                        ).encode()).hexdigest(),
+                        "rejected_diagnostic": str(diagnostic_path),
+                    },
+                )
             diagnostic_path = publish_rejected_physical_replay(
                 out,
                 error=exc,
@@ -1932,29 +1981,16 @@ def main(argv=None) -> int:
                         [{
                             "path": str(args.initial_partition_routes),
                             "sha256":
-                                expected_initial_partition_sha256,
+                                expected_initial_partition_sha256
+                                or (
+                                    initial_partition_start or {}
+                                ).get("source_sha256"),
                         }]
                         if args.initial_partition_routes is not None
                         else []
                     ),
                 ],
             )
-            if progress is not None:
-                progress.finalize(
-                    elapsed_s=progress.elapsed_s(),
-                    final={
-                        "status": status_code,
-                        "status_name": "REJECTED_PHYSICAL_REPLAY",
-                        "incumbent_found": True,
-                        "physically_validated": False,
-                        "buses": len(chosen),
-                        "fleet_proven": fleet_proven,
-                        "selected_route_indices": list(chosen),
-                        "rejected_diagnostic": str(diagnostic_path),
-                        "rejected_diagnostic_sha256":
-                            file_sha256(diagnostic_path),
-                    },
-                )
             raise SystemExit(
                 f"{exc}; diagnostic={diagnostic_path}"
             ) from exc

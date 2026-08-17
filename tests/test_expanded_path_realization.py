@@ -374,6 +374,9 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             (data / "instance.csv").write_text("synthetic instance\n")
             (data / "prices.csv").write_text("synthetic prices\n")
             (root / "Ref_dict.csv").write_text("synthetic refs\n")
+            (root / "par_ref_dhd.csv").write_text(
+                "synthetic deadhead\n"
+            )
             status_path = cell / "pool.snapshot.json"
             journal = Path(str(status_path) + ".columns.jsonl")
             journal.write_text(json.dumps(route) + "\n")
@@ -387,10 +390,20 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                 "block_min": 10,
                 "trip_ids": [0, 1],
                 "columns_journal": str(journal),
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        (data / "instance.csv").read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        (data / "prices.csv").read_bytes()
+                    ).hexdigest(),
+                },
             }))
             progress = root / "progress/cell"
             progress.mkdir(parents=True)
             (progress / "latest.json").write_text(json.dumps({
+                "schema": "evsp-dr-mip-convergence-v1",
+                "kind": "latest",
                 "incumbent": {
                     "selected_route_indices": [0],
                     "route_vector_sha256": hashlib.sha256(b"[0]").hexdigest(),
@@ -406,6 +419,11 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             }))
             output = root / "audit"
             second_output = root / "audit-second"
+            archive = root / "source.tar.gz"
+            archive.write_bytes(b"archive")
+            archive_sha = hashlib.sha256(
+                archive.read_bytes()
+            ).hexdigest()
             with (
                 patch(
                     "audit_expanded_pool_physical.build_problem",
@@ -422,7 +440,8 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                     output_dir=output,
                     reference_data_dir=root,
                     campaign_root=root,
-                    archive_sha256="a" * 64,
+                    archive_sha256=archive_sha,
+                    archive_path=archive,
                     route_detail="selected",
                 )
                 audit_pools(
@@ -430,7 +449,8 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                     output_dir=second_output,
                     reference_data_dir=root,
                     campaign_root=root,
-                    archive_sha256="a" * 64,
+                    archive_sha256=archive_sha,
+                    archive_path=archive,
                     route_detail="selected",
                 )
             self.assertEqual(
