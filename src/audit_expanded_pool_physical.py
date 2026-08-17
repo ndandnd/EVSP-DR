@@ -46,6 +46,7 @@ ROUTE_FIELDS = (
     "classification", "recorded_replay_valid", "recorded_replay_reason",
     "recorded_total_kwh", "realized_total_kwh",
     "discarded_grid_residual_kwh", "mapping_sha256",
+    "continuous_realized_charging_blocks_sha256",
     "stored_expanded_grid_cost", "recomputed_expanded_grid_cost",
     "expanded_grid_cost_matches_stored",
     "continuous_realized_cost", "expanded_minus_realized_cost",
@@ -454,7 +455,7 @@ def audit_pools(
                     )
                     if realized_reason is None:
                         costs = realized_costs(
-                            record, mapping, station_prices=prices
+                            realized, mapping, station_prices=prices
                         )
                         if not math.isclose(
                             costs["stored_expanded_grid_cost"],
@@ -582,6 +583,10 @@ def audit_pools(
                         mapping.get("mapping_sha256")
                         if mapping else None
                     ),
+                    "continuous_realized_charging_blocks_sha256":
+                        costs.get(
+                            "continuous_realized_charging_blocks_sha256"
+                        ),
                     "stored_expanded_grid_cost":
                         costs.get("stored_expanded_grid_cost"),
                     "recomputed_expanded_grid_cost":
@@ -925,6 +930,11 @@ def audit_pools(
             "## Cost and certificate conclusion",
             "",
             report["pricing_certificate_conclusion"],
+            "",
+            "Every admitted route persists compact tariff-bound continuous "
+            "charging blocks (station, block interval, realized/grid kWh, "
+            "tariff identity, and price) plus a deterministic block-schedule "
+            "SHA-256. Full SOC traces remain audit-only.",
             "",
             "| Pool | Journal rows | Admitted unique | Valid recorded | "
             "Repairable | Infeasible |",

@@ -539,7 +539,7 @@ def prepare_strict_partition_pool(
                 })
             continue
         costs = realized_costs(
-            route, detail["mapping"], station_prices=prices
+            realized, detail["mapping"], station_prices=prices
         )
         if not math.isclose(
             costs["stored_expanded_grid_cost"],
@@ -563,6 +563,9 @@ def prepare_strict_partition_pool(
         realized["continuous_realized_cost"] = costs[
             "continuous_realized_cost"
         ]
+        realized["continuous_realized_charging_blocks"] = costs[
+            "continuous_realized_charging_blocks"
+        ]
         realized["physical_realization"] = realized.pop(
             "continuous_realization"
         )
@@ -573,7 +576,16 @@ def prepare_strict_partition_pool(
             ),
             "recorded_route_sha256": route_sha,
             "recorded_replay_reason": reason,
-            "costs": costs,
+            "continuous_realized_charging_blocks_sha256": costs[
+                "continuous_realized_charging_blocks_sha256"
+            ],
+            "costs": {
+                key: value for key, value in costs.items()
+                if key not in {
+                    "continuous_realized_charging_blocks",
+                    "continuous_realized_charging_blocks_sha256",
+                }
+            },
         })
         accepted.append(realized)
         if reason is None:
@@ -635,6 +647,10 @@ def merge_extra_routes(
     from audit_giro_known_columns import HORIZON_MIN, build_problem
     from config import (BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST,
                         CHARGING_STATIONS)
+    from expanded_path_realization import (
+        blocks_from_continuous_stops,
+        validate_continuous_charging_blocks,
+    )
     from utils_v2 import calculate_truck_route_cost_accurate, load_station_hourly_prices
 
     status = status or {}
@@ -690,16 +706,40 @@ def merge_extra_routes(
                           f"trips): {reason}")
                 continue
             if key not in pool or cost < pool[key]["cost"] - 1e-9:
-                pool[key] = {
+                candidate_record = {
                     "trips": route_trips,
                     "cost": cost,
                     "route_nodes": route.get("route", []),
                     "charging_stops": route.get("charging_stops", {}),
+                    "deadhead_kwh": route.get("deadhead_kwh", 0.0),
                     "charges_started": len(
                         (route.get("charging_stops") or {}).get("stations", [])),
                     "found_iter": 0,
                     "origin": f"extra:{path.name[:40]}",
                 }
+                blocks = blocks_from_continuous_stops(
+                    candidate_record,
+                    station_prices=prices,
+                    charge_kw=charge_kw,
+                )
+                block_validation = validate_continuous_charging_blocks(
+                    candidate_record,
+                    blocks,
+                    station_prices=prices,
+                    charge_kw=charge_kw,
+                    expected_continuous_cost=cost,
+                )
+                candidate_record.update({
+                    "continuous_realized_cost": cost,
+                    "continuous_realized_charging_blocks": blocks,
+                    "physical_realization": {
+                        "status": "validated_continuous_injection",
+                        "continuous_realized_charging_blocks_sha256":
+                            block_validation["block_schedule_sha256"],
+                        "continuous_cost_pricing_certified": False,
+                    },
+                })
+                pool[key] = candidate_record
                 merged += 1
     print(f"[MIP] merged {merged} extra route(s), REJECTED {rejected} as "
           f"infeasible under pool physics (G={g_kwh:.0f} kWh, "
@@ -730,6 +770,10 @@ def merge_validated_partition_start(
     from audit_giro_known_columns import HORIZON_MIN, build_problem
     from config import (BUS_COST_KX, CHARGE_START_COST,
                         CHARGING_STATIONS)
+    from expanded_path_realization import (
+        blocks_from_continuous_stops,
+        validate_continuous_charging_blocks,
+    )
     from utils_v2 import (
         calculate_truck_route_cost_accurate,
         load_station_hourly_prices,
@@ -953,7 +997,7 @@ def merge_validated_partition_start(
                 f"[MIP] initial partition route {ordinal} has non-finite cost"
             )
         counts.update(route_trips)
-        validated.append({
+        validated_record = {
             **candidate,
             "cost": float(cost),
             "deadhead_kwh": recomputed_deadhead_kwh,
@@ -962,7 +1006,30 @@ def merge_validated_partition_start(
             ),
             "found_iter": 0,
             "origin": f"initial_partition:{path.name[:40]}",
+        }
+        blocks = blocks_from_continuous_stops(
+            validated_record,
+            station_prices=prices,
+            charge_kw=charge_kw,
+        )
+        block_validation = validate_continuous_charging_blocks(
+            validated_record,
+            blocks,
+            station_prices=prices,
+            charge_kw=charge_kw,
+            expected_continuous_cost=cost,
+        )
+        validated_record.update({
+            "continuous_realized_cost": float(cost),
+            "continuous_realized_charging_blocks": blocks,
+            "physical_realization": {
+                "status": "validated_continuous_injection",
+                "continuous_realized_charging_blocks_sha256":
+                    block_validation["block_schedule_sha256"],
+                "continuous_cost_pricing_certified": False,
+            },
         })
+        validated.append(validated_record)
 
     missing = [trip for trip in trips if counts[trip] == 0]
     repeated = {trip: counts[trip] for trip in trips if counts[trip] > 1}
@@ -1129,6 +1196,11 @@ def validate_final_selected_routes(
     """Rebuild the instance and physically replay every final selected route."""
 
     from audit_giro_known_columns import HORIZON_MIN, build_problem
+    from config import CHARGING_STATIONS
+    from expanded_path_realization import (
+        validate_continuous_charging_blocks,
+    )
+    from utils_v2 import load_station_hourly_prices
 
     provenance = status.get("provenance") or {}
     data_dir = Path(
@@ -1156,6 +1228,7 @@ def validate_final_selected_routes(
     )
     if list(problem.trips) != list(trips):
         raise SystemExit("[MIP] final replay reconstructed a different trip set")
+    prices = None
     try:
         g_kwh = float(status["g_kwh"])
         charge_kw = float(status["charge_kw"])
@@ -1210,6 +1283,60 @@ def validate_final_selected_routes(
                 message,
                 route_ordinal=ordinal,
                 reason=reason,
+                route=route,
+            )
+        blocks = route.get("continuous_realized_charging_blocks")
+        physical = route.get("physical_realization") or {}
+        expected_block_sha = physical.get(
+            "continuous_realized_charging_blocks_sha256"
+        )
+        if not isinstance(blocks, list) or not isinstance(
+            expected_block_sha, str
+        ):
+            raise PhysicalReplayError(
+                f"[MIP] final selected route {ordinal} lacks persisted "
+                "continuous charging blocks",
+                route_ordinal=ordinal,
+                reason="persisted continuous charging blocks missing",
+                route=route,
+            )
+        if prices is None:
+            try:
+                prices = load_station_hourly_prices(
+                    data_dir / Path(status["prices_csv"]).name,
+                    CHARGING_STATIONS,
+                )
+            except (KeyError, OSError, ValueError) as exc:
+                raise PhysicalReplayError(
+                    "[MIP] final replay tariff provenance is invalid",
+                    route_ordinal=ordinal,
+                    reason=str(exc),
+                    route=route,
+                ) from exc
+        try:
+            block_validation = validate_continuous_charging_blocks(
+                route,
+                blocks,
+                station_prices=prices,
+                charge_kw=charge_kw,
+                expected_continuous_cost=route.get(
+                    "continuous_realized_cost"
+                ),
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise PhysicalReplayError(
+                f"[MIP] final selected route {ordinal} has invalid "
+                f"continuous charging blocks: {exc}",
+                route_ordinal=ordinal,
+                reason=str(exc),
+                route=route,
+            ) from exc
+        if block_validation["block_schedule_sha256"] != expected_block_sha:
+            raise PhysicalReplayError(
+                f"[MIP] final selected route {ordinal} block schedule hash "
+                "mismatch",
+                route_ordinal=ordinal,
+                reason="continuous charging block schedule hash mismatch",
                 route=route,
             )
     if any(counts[trip] != 1 for trip in trips):
@@ -1323,6 +1450,10 @@ def publish_rejected_physical_replay(
         "augmentation_sources": augmentation_sources,
         "code_identity": code_identity,
         "physical_pool_audit": physical_pool_audit,
+        "physical_pool_preparation_wall_s": (
+            physical_pool_audit.get("preparation_wall_s")
+            if physical_pool_audit else None
+        ),
         "master_cost_semantics": "expanded_grid_cost_unchanged",
         "pricing_certificate_scope":
             "conservative_expanded_grid_model_only",
@@ -1456,11 +1587,15 @@ def main(argv=None) -> int:
     )
     physical_pool_audit = None
     if not args.cover:
+        physical_preparation_started = time.perf_counter()
         routes, physical_pool_audit = prepare_strict_partition_pool(
             status,
             routes,
             data_dir=args.data_dir,
             reference_data_dir=args.reference_data_dir,
+        )
+        physical_pool_audit["preparation_wall_s"] = (
+            time.perf_counter() - physical_preparation_started
         )
         print(
             "[MIP] physical pool gate: "
@@ -2126,6 +2261,10 @@ def main(argv=None) -> int:
         "mip_start": initial_partition_start,
         "pool_preparation": status.get("pool_preparation"),
         "physical_pool_audit": physical_pool_audit,
+        "physical_pool_preparation_wall_s": (
+            physical_pool_audit.get("preparation_wall_s")
+            if physical_pool_audit else None
+        ),
         "master_cost_semantics": "expanded_grid_cost_unchanged",
         "pricing_certificate_scope":
             "conservative_expanded_grid_model_only",

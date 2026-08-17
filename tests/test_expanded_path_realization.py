@@ -15,11 +15,14 @@ from audit_giro_known_columns import DEPOT, HORIZON_MIN  # noqa: E402
 from audit_expanded_pool_physical import audit_pools  # noqa: E402
 from expanded_path_realization import (  # noqa: E402
     realize_expanded_path,
+    realized_costs,
+    validate_continuous_charging_blocks,
 )
 from run_exact_pool_mip import (  # noqa: E402
     prepare_strict_partition_pool,
     validate_injected_route,
 )
+from utils_v2 import calculate_truck_route_cost_accurate  # noqa: E402
 
 
 def problem(trip_energy, edges):
@@ -198,6 +201,66 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         self.assertIsNone(realized)
         self.assertIn("emitted cst differs", detail["reason"])
 
+    def test_multiblock_tariff_schedule_reproduces_realized_cost(self):
+        station = "PARX_1"
+        nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem([70.0, 0.1], list(zip(nodes, nodes[1:])))
+        p.start_min[1] = 70.0
+        p.end_min[1] = 75.0
+        record = {
+            "trips": [0, 1],
+            "route_nodes": nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [50], "cet": [70], "kwh": [75.0],
+            },
+            "cost": 100024.5,
+        }
+        realized, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        prices = {"PARX": {0: 0.1, 1: 0.5}}
+        costs = realized_costs(
+            realized, detail["mapping"], station_prices=prices
+        )
+        blocks = costs["continuous_realized_charging_blocks"]
+        self.assertEqual(len(blocks), 2)
+        self.assertEqual(
+            [block["tariff_hour"] for block in blocks], [0, 1]
+        )
+        self.assertEqual(
+            [block["realized_kwh"] for block in blocks], [40.0, 30.0]
+        )
+        self.assertAlmostEqual(
+            costs["continuous_realized_cost"], 100024.0
+        )
+        aggregate_only = calculate_truck_route_cost_accurate(
+            realized,
+            100000.0,
+            prices["PARX"],
+            charge_rate_kw=300,
+            station_hourly_prices=prices,
+            charge_start_cost=5.0,
+        )
+        self.assertAlmostEqual(aggregate_only, 100020.0)
+        self.assertNotEqual(
+            aggregate_only, costs["continuous_realized_cost"]
+        )
+        validation = validate_continuous_charging_blocks(
+            realized,
+            blocks,
+            station_prices=prices,
+            charge_kw=300,
+            expected_continuous_cost=costs[
+                "continuous_realized_cost"
+            ],
+        )
+        self.assertEqual(
+            validation["block_schedule_sha256"],
+            costs["continuous_realized_charging_blocks_sha256"],
+        )
+
     def test_station_entry_uses_continuous_prefloor_reserve(self):
         station = "S"
         nodes = [DEPOT, 0, station, 1, DEPOT]
@@ -344,6 +407,15 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             self.assertEqual(prepared, second)
             self.assertEqual(
                 prepared[0]["cost"], route["cost"]
+            )
+            self.assertTrue(
+                prepared[0]["continuous_realized_charging_blocks"]
+            )
+            self.assertEqual(
+                len(prepared[0]["physical_realization"][
+                    "continuous_realized_charging_blocks_sha256"
+                ]),
+                64,
             )
             self.assertLess(
                 prepared[0]["continuous_realized_cost"],

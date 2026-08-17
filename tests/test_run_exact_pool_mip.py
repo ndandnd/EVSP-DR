@@ -1027,6 +1027,12 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertFalse(payload["two_stage"]["stage2_executed"])
         self.assertEqual(payload["status_name"], "TIME_LIMIT")
         self.assertEqual(payload["optimal_scope"], "none")
+        self.assertGreaterEqual(
+            payload["physical_pool_preparation_wall_s"], 0.0
+        )
+        self.assertEqual(
+            payload["physical_pool_audit"]["valid_as_recorded"], 2
+        )
 
     def test_proven_fleet_runs_cost_stage_and_reconstructs_full_objective(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([

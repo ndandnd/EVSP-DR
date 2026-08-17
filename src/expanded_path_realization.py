@@ -27,6 +27,9 @@ from utils_v2 import base_station_name
 
 
 REALIZATION_SCHEMA = "evsp-dr-expanded-path-continuous-realization-v1"
+BLOCK_SCHEDULE_SCHEMA = (
+    "evsp-dr-continuous-realized-charging-blocks-v1"
+)
 TOLERANCE = 1e-6
 
 
@@ -262,6 +265,9 @@ def realize_expanded_path(
                 realized_gain += necessary
                 block_trace.append({
                     "block_start_min": cst + block_offset * block_min,
+                    "block_end_min": (
+                        cst + (block_offset + 1) * block_min
+                    ),
                     "continuous_soc_before": continuous_before,
                     "expanded_grid_soc_before": target_soc - expanded_gain,
                     "expanded_target_soc": target_soc,
@@ -337,6 +343,8 @@ def realize_expanded_path(
         "realized_total_kwh": sum(realized_kwh),
         "discarded_grid_residual_kwh": total_discarded,
         "changed": changed,
+        "charge_kw": charge_kw,
+        "block_min": block_min,
         "trace": trace,
         "pricing_cost_semantics": "expanded_grid_cost_unchanged",
         "continuous_cost_pricing_certified": False,
@@ -357,6 +365,189 @@ def realize_expanded_path(
     }
 
 
+def _tariff_identity(station, minute, station_prices):
+    base = base_station_name(station)
+    curve = station_prices[base]
+    requested_hour = int(float(minute) // 60)
+    tariff_hour = (
+        requested_hour if requested_hour in curve else max(curve)
+    )
+    base_price = float(curve[tariff_hour])
+    return {
+        "tariff_hour": tariff_hour,
+        "tariff_key": f"{base}:{tariff_hour}",
+        "base_price_per_kwh": base_price,
+        "price_per_kwh": base_price * charge_cost_premium,
+    }
+
+
+def blocks_from_continuous_stops(
+    record: dict,
+    *,
+    station_prices: dict,
+    charge_kw: float,
+) -> list[dict]:
+    """Split continuous stop kWh into tariff-hour, power-bounded blocks."""
+
+    stops = record.get("charging_stops") or {}
+    fields = {
+        key: list(stops.get(key, []))
+        for key in ("stations", "cst", "cet", "kwh")
+    }
+    if len({len(value) for value in fields.values()}) != 1:
+        raise ValueError("charging stop fields have different lengths")
+    blocks = []
+    for stop_index, station in enumerate(fields["stations"]):
+        start = float(fields["cst"][stop_index])
+        end = float(fields["cet"][stop_index])
+        remaining = float(fields["kwh"][stop_index])
+        block_index = 0
+        cursor = start
+        while remaining > TOLERANCE:
+            hour_end = (int(cursor // 60) + 1) * 60.0
+            segment_end = min(end, hour_end)
+            capacity = max(0.0, segment_end - cursor) * charge_kw / 60.0
+            if capacity <= TOLERANCE:
+                raise ValueError("charging stop lacks time for recorded kWh")
+            energy = min(remaining, capacity)
+            actual_end = cursor + energy * 60.0 / charge_kw
+            blocks.append({
+                "schema": BLOCK_SCHEDULE_SCHEMA,
+                "stop_index": stop_index,
+                "block_index": block_index,
+                "station": station,
+                "start_min": cursor,
+                "end_min": actual_end,
+                "realized_kwh": energy,
+                "expanded_grid_kwh": energy,
+                **_tariff_identity(station, cursor, station_prices),
+            })
+            remaining -= energy
+            cursor = segment_end
+            block_index += 1
+        if remaining < -TOLERANCE:
+            raise ValueError("charging block allocation exceeded stop kWh")
+    validate_continuous_charging_blocks(
+        record,
+        blocks,
+        station_prices=station_prices,
+        charge_kw=charge_kw,
+    )
+    return blocks
+
+
+def validate_continuous_charging_blocks(
+    record: dict,
+    blocks: list[dict],
+    *,
+    station_prices: dict,
+    charge_kw: float,
+    expected_continuous_cost: float | None = None,
+) -> dict:
+    """Validate compact block provenance and recompute continuous route cost."""
+
+    stops = record.get("charging_stops") or {}
+    fields = {
+        key: list(stops.get(key, []))
+        for key in ("stations", "cst", "cet", "kwh")
+    }
+    if len({len(value) for value in fields.values()}) != 1:
+        raise ValueError("charging stop fields have different lengths")
+    grouped = {index: [] for index in range(len(fields["stations"]))}
+    previous_key = None
+    for block in blocks:
+        if block.get("schema") != BLOCK_SCHEDULE_SCHEMA:
+            raise ValueError("continuous charging block schema mismatch")
+        stop_index = block.get("stop_index")
+        block_index = block.get("block_index")
+        if (
+            not isinstance(stop_index, int)
+            or not isinstance(block_index, int)
+            or stop_index not in grouped
+        ):
+            raise ValueError("continuous charging block index is invalid")
+        key = (stop_index, block_index)
+        if previous_key is not None and key <= previous_key:
+            raise ValueError("continuous charging blocks are not ordered")
+        previous_key = key
+        station = fields["stations"][stop_index]
+        start = float(block["start_min"])
+        end = float(block["end_min"])
+        realized = float(block["realized_kwh"])
+        expanded = float(block["expanded_grid_kwh"])
+        if block.get("station") != station:
+            raise ValueError("continuous block station mismatch")
+        if (
+            start < float(fields["cst"][stop_index]) - TOLERANCE
+            or end > float(fields["cet"][stop_index]) + TOLERANCE
+            or end <= start
+        ):
+            raise ValueError("continuous block lies outside stop window")
+        capacity = (end - start) * float(charge_kw) / 60.0
+        if (
+            realized < -TOLERANCE
+            or expanded < -TOLERANCE
+            or realized > capacity + TOLERANCE
+            or expanded > capacity + TOLERANCE
+        ):
+            raise ValueError("continuous block violates charger power")
+        tariff = _tariff_identity(station, start, station_prices)
+        for tariff_key, expected in tariff.items():
+            observed = block.get(tariff_key)
+            if isinstance(expected, float):
+                if not math.isclose(
+                    float(observed), expected,
+                    rel_tol=1e-12, abs_tol=1e-12,
+                ):
+                    raise ValueError("continuous block tariff mismatch")
+            elif observed != expected:
+                raise ValueError("continuous block tariff identity mismatch")
+        grouped[stop_index].append(block)
+    realized_electricity = 0.0
+    expanded_electricity = 0.0
+    for stop_index, stop_blocks in grouped.items():
+        if not stop_blocks and abs(float(fields["kwh"][stop_index])) > TOLERANCE:
+            raise ValueError("aggregate stop has no continuous blocks")
+        block_sum = sum(float(block["realized_kwh"]) for block in stop_blocks)
+        if not math.isclose(
+            block_sum, float(fields["kwh"][stop_index]),
+            rel_tol=0.0, abs_tol=1e-6,
+        ):
+            raise ValueError("block kWh does not equal aggregate stop kWh")
+        realized_electricity += sum(
+            float(block["realized_kwh"])
+            * float(block["price_per_kwh"])
+            for block in stop_blocks
+        )
+        expanded_electricity += sum(
+            float(block["expanded_grid_kwh"])
+            * float(block["price_per_kwh"])
+            for block in stop_blocks
+        )
+    starts = len(fields["stations"])
+    fixed = BUS_COST_KX + starts * CHARGE_START_COST
+    continuous_cost = fixed + realized_electricity
+    if (
+        expected_continuous_cost is not None
+        and not math.isclose(
+            continuous_cost,
+            float(expected_continuous_cost),
+            rel_tol=1e-10,
+            abs_tol=1e-6,
+        )
+    ):
+        raise ValueError(
+            "continuous charging blocks do not reproduce realized cost"
+        )
+    return {
+        "continuous_realized_cost": continuous_cost,
+        "recomputed_expanded_grid_cost": fixed + expanded_electricity,
+        "realized_electricity_cost": realized_electricity,
+        "expanded_grid_electricity_cost": expanded_electricity,
+        "block_schedule_sha256": _canonical_sha(blocks),
+    }
+
+
 def realized_costs(
     record: dict,
     mapping: dict,
@@ -365,28 +556,48 @@ def realized_costs(
 ) -> dict:
     """Report grid and realized charging costs without changing master cost."""
 
-    grid_electricity = 0.0
-    realized_electricity = 0.0
+    blocks = []
+    stop_index = 0
     for event in mapping.get("trace", []):
         if event.get("event") != "charge_run":
             continue
         station = event["station"]
-        curve = station_prices[base_station_name(station)]
-        max_hour = max(curve)
-        for block in event["blocks"]:
-            hour = min(int(block["block_start_min"] // 60), max_hour)
-            price = float(curve[hour]) * charge_cost_premium
-            grid_electricity += block["expanded_grid_gain_kwh"] * price
-            realized_electricity += block["realized_kwh"] * price
-    starts = len((record.get("charging_stops") or {}).get("stations", []))
-    fixed = BUS_COST_KX + starts * CHARGE_START_COST
+        for block_index, block in enumerate(event["blocks"]):
+            tariff = _tariff_identity(
+                station, block["block_start_min"], station_prices
+            )
+            blocks.append({
+                "schema": BLOCK_SCHEDULE_SCHEMA,
+                "stop_index": stop_index,
+                "block_index": block_index,
+                "station": station,
+                "start_min": block["block_start_min"],
+                "end_min": block["block_end_min"],
+                "realized_kwh": block["realized_kwh"],
+                "expanded_grid_kwh":
+                    block["expanded_grid_gain_kwh"],
+                **tariff,
+            })
+        stop_index += 1
+    validation = validate_continuous_charging_blocks(
+        record,
+        blocks,
+        station_prices=station_prices,
+        charge_kw=float(mapping["charge_kw"]),
+    )
     return {
         "stored_expanded_grid_cost": float(record["cost"]),
-        "recomputed_expanded_grid_cost": fixed + grid_electricity,
-        "continuous_realized_cost": fixed + realized_electricity,
+        "recomputed_expanded_grid_cost":
+            validation["recomputed_expanded_grid_cost"],
+        "continuous_realized_cost":
+            validation["continuous_realized_cost"],
         "expanded_minus_realized_cost": (
-            grid_electricity - realized_electricity
+            validation["expanded_grid_electricity_cost"]
+            - validation["realized_electricity_cost"]
         ),
+        "continuous_realized_charging_blocks": blocks,
+        "continuous_realized_charging_blocks_sha256":
+            validation["block_schedule_sha256"],
         "master_cost_changed": False,
         "master_cost_semantics": "expanded_grid_cost",
         "continuous_cost_pricing_certified": False,

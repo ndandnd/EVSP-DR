@@ -1690,6 +1690,8 @@ def run_cg(args) -> dict:
                     "expanded_grid_cost": cost,
                     "continuous_realized_cost":
                         costs["continuous_realized_cost"],
+                    "continuous_realized_charging_blocks":
+                        costs["continuous_realized_charging_blocks"],
                     "cost_semantics": "expanded_grid_cost",
                     "continuous_cost_pricing_certified": False,
                     "physical_realization": {
@@ -1697,6 +1699,11 @@ def run_cg(args) -> dict:
                         if key != "trace"
                     },
                 })
+                record["physical_realization"][
+                    "continuous_realized_charging_blocks_sha256"
+                ] = costs[
+                    "continuous_realized_charging_blocks_sha256"
+                ]
                 pool[key] = record
                 if journal:
                     journal.write(json.dumps(record) + "\n")
@@ -1881,6 +1888,10 @@ def run_cg(args) -> dict:
                             "expanded_grid_cost": cost,
                             "continuous_realized_cost":
                                 costs["continuous_realized_cost"],
+                            "continuous_realized_charging_blocks":
+                                costs[
+                                    "continuous_realized_charging_blocks"
+                                ],
                             "cost_semantics": "expanded_grid_cost",
                             "continuous_cost_pricing_certified": False,
                             "physical_realization": {
@@ -1888,6 +1899,11 @@ def run_cg(args) -> dict:
                                 in mapping.items() if key_ != "trace"
                             },
                         })
+                        record["physical_realization"][
+                            "continuous_realized_charging_blocks_sha256"
+                        ] = costs[
+                            "continuous_realized_charging_blocks_sha256"
+                        ]
                         pool[key] = record
                         if journal:
                             journal.write(json.dumps(record) + "\n")
