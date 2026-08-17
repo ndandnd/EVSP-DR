@@ -15,6 +15,7 @@ from pathlib import Path
 from archive_cross_generation_evidence import archive_evidence
 from build_cross_generation_evidence import build
 from collect_cross_generation_inputs import _assignments, collect
+from mip_convergence import checkpoint_schedule_s
 from summarize_mip_statistics import _load_campaign
 from validate_raw_k40_mip_plan import validate_plan as validate_raw_k40_plan
 
@@ -100,10 +101,21 @@ def _campaign_ready(
     for job in jobs:
         output = Path(str(job.get("output") or ""))
         progress = Path(str(job.get("progress_dir") or ""))
+        budget_s = job.get("time_limit_s")
+        if budget_s is None and job.get("budget_hours") is not None:
+            budget_s = float(job["budget_hours"]) * 3600.0
+        expected_checkpoints = {
+            f"checkpoint_{int(round(mark / 60)):04d}m.json"
+            for mark in checkpoint_schedule_s(float(budget_s or 0.0))
+        }
+        observed_checkpoints = {
+            path.name for path in progress.glob("checkpoint_*.json")
+            if path.is_file()
+        }
         if (
             not output.is_file()
             or not (progress / "final.json").is_file()
-            or not any(progress.glob("checkpoint_*.json"))
+            or not expected_checkpoints.issubset(observed_checkpoints)
         ):
             return False, f"incomplete_cell:{job.get('cell_id')}"
     try:
@@ -158,9 +170,30 @@ def _require_campaign_artifacts(payload: dict, campaign: Path) -> None:
         output = Path(str(job.get("output") or "")).resolve()
         progress = Path(str(job.get("progress_dir") or "")).resolve()
         input_root = campaign / "input" / cell
-        if output not in by_type.get("mip_final", []):
+        final_artifacts = [
+            artifact for artifact in artifacts
+            if artifact.get("artifact_type") == "mip_final"
+            and Path(str(artifact.get("path"))).expanduser().resolve()
+            == output
+        ]
+        if not final_artifacts:
             raise ValueError(
                 f"reviewed manifest omits final output for {cell}"
+            )
+        arm = job.get("arm")
+        expected_augmentation = {
+            "RAW": "none",
+            "MATCHING": "matching_cover",
+            "GIRO": "giro_partition",
+        }.get(arm)
+        if expected_augmentation is None or any(
+            (artifact.get("metadata") or {}).get("treatment") != arm
+            or (artifact.get("metadata") or {}).get("augmentation_kind")
+            != expected_augmentation
+            for artifact in final_artifacts
+        ):
+            raise ValueError(
+                f"reviewed manifest treatment differs from approved job {cell}"
             )
         if not any(
             progress in path.parents
@@ -275,6 +308,15 @@ def main(argv=None) -> int:
         timeout_s=args.wait_timeout_s,
         poll_s=args.poll_s,
     )
+    campaign_hashes = {
+        str(campaign): {
+            name: hashlib.sha256(
+                (campaign / name).read_bytes()
+            ).hexdigest()
+            for name in ("campaign.json", "approved-plan.json")
+        }
+        for campaign in (current_campaign, raw_campaign)
+    }
     if args.phase == "collect":
         payload = collect(args.template, roots)
         for campaign in (current_campaign, raw_campaign):
@@ -321,6 +363,7 @@ def main(argv=None) -> int:
         args.manifest,
         args.archive_out,
         (current_campaign, raw_campaign),
+        campaign_hashes,
     )
     print(json.dumps({
         "phase": "build",

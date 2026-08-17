@@ -15,7 +15,7 @@ APPROVED_MANIFEST_SHA256="${APPROVED_MANIFEST_SHA256:-}"
 BUILD_OUT="$HOME/evsp-evidence-builds/cross-generation-final"
 ARCHIVE_OUT="$HOME/evsp-evidence-archives/cross-generation-final"
 LOG_DIR="$HOME/evsp-evidence-logs"
-EVIDENCE_PHASE="${EVIDENCE_PHASE:-collect}"
+EVIDENCE_PHASE="${EVIDENCE_PHASE:-}"
 
 if [[ -z "$CURRENT_MIP_CAMPAIGN" || -z "$RAW_K40_CAMPAIGN" ]]; then
   echo "Set CURRENT_MIP_CAMPAIGN and RAW_K40_CAMPAIGN to explicit campaign directories." >&2

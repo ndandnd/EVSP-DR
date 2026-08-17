@@ -85,6 +85,7 @@ def archive_evidence(
     input_manifest: Path,
     output_dir: Path,
     campaign_roots: tuple[Path, ...] = (),
+    campaign_hashes: dict[str, dict[str, str]] | None = None,
 ) -> dict:
     output = output_dir.expanduser().absolute()
     if os.path.lexists(output):
@@ -99,9 +100,16 @@ def archive_evidence(
     for index, campaign_root in enumerate(campaign_roots, start=1):
         campaign = campaign_root.expanduser().resolve()
         for name in ("campaign.json", "approved-plan.json"):
-            files[
-                f"campaigns/{index:02d}-{campaign.name}/{name}"
-            ] = _read_regular(campaign / name)
+            payload = _read_regular(campaign / name)
+            expected = (campaign_hashes or {}).get(
+                str(campaign), {}
+            ).get(name)
+            if expected is not None and _sha(payload) != expected:
+                raise ValueError(
+                    f"campaign metadata changed before archive: "
+                    f"{campaign}/{name}"
+                )
+            files[f"campaigns/{index:02d}-{campaign.name}/{name}"] = payload
     archive_manifest = {
         "schema": ARCHIVE_SCHEMA,
         "input_manifest_sha256": _sha(manifest_raw),

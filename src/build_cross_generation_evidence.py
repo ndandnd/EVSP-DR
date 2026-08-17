@@ -753,6 +753,26 @@ def _cg_summaries(
             reported_objective = endpoint.get(
                 "LP_Obj", reported_objective
             )
+        if reported_artificials is not None:
+            zero_observable = True
+            if (
+                float(reported_artificials) <= tolerance
+                and endpoint_horizon is not None
+            ):
+                zero_times.append(endpoint_horizon)
+        target_observable = (
+            target is not None
+            and zero_observable
+            and reported_route_weight is not None
+        )
+        if (
+            target_observable
+            and reported_artificials is not None
+            and float(reported_artificials) <= tolerance
+            and float(reported_route_weight) <= float(target)
+            and endpoint_horizon is not None
+        ):
+            target_times.append(endpoint_horizon)
         summaries.append({
             "run_id": run_id,
             "algorithm_family": final["algorithm_family"],
@@ -2444,7 +2464,7 @@ def _data_dictionary():
         ),
         "objective_source_bound": ("mip_run_summary.csv", "boolean", None,
             "Whether every selected route cost was independently bound to a "
-            "verified source artifact; false for unrecomputed GIRO costs."
+            "verified source artifact; false for unrecomputed augmented costs."
         ),
         "certification_censored": ("cg_run_summary.csv", "boolean", None,
             "Pricing certification was observable but not reached."),

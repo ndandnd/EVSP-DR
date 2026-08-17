@@ -1554,6 +1554,7 @@ def parse_json_artifact(payload: bytes, spec: dict) -> dict:
             if termination == "rc_optimal_restricted" and (
                 _number(value.get("Final_LP_Route_Weight")) is None
                 or _number(value.get("Final_LP_Artificial_Total")) is None
+                or _number(value.get("LP_Obj")) is None
             ):
                 raise ValueError(
                     "certified current endpoint lacks final LP metrics"
