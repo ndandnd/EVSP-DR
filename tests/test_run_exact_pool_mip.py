@@ -16,6 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from run_exact_pool_mip import (  # noqa: E402
+    PhysicalReplayError,
     fleet_bound_proves_incumbent,
     finite_solver_value,
     greedy_partition_start_indices,
@@ -23,6 +24,7 @@ from run_exact_pool_mip import (  # noqa: E402
     main,
     merge_validated_partition_start,
     optimal_scope,
+    publish_rejected_physical_replay,
     singleton_partition_indices,
     validate_final_selected_routes,
     validate_injected_route,
@@ -43,6 +45,56 @@ class ExactPoolMipTests(unittest.TestCase):
             end_min={1: final_trip_end},
             trip_energy={1: 0.0},
         )
+
+    def test_rejected_physical_replay_diagnostic_preserves_incumbent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            progress = root / "progress"
+            progress.mkdir()
+            checkpoint = progress / "checkpoint_0005m.json"
+            checkpoint.write_text(json.dumps({"kind": "checkpoint"}))
+            route = {
+                "trips": [1],
+                "route_nodes": [DEPOT, 1, DEPOT],
+                "charging_stops": {},
+                "cost": 100000.0,
+            }
+            error = PhysicalReplayError(
+                "failed replay",
+                route_ordinal=1,
+                reason="capacity exceeded",
+                route=route,
+            )
+            diagnostic = publish_rejected_physical_replay(
+                root / "result.json",
+                error=error,
+                chosen=[0],
+                routes=[route],
+                status_name="TIME_LIMIT",
+                solver_bound=0.5,
+                mip_gap=0.5,
+                source_result_sha256="a" * 64,
+                source_journal_sha256="b" * 64,
+                progress_path=progress,
+                physical_pool_audit={
+                    "deterministically_repaired": 0,
+                    "rejected_columns": 0,
+                },
+            )
+            payload = json.loads(diagnostic.read_text())
+            self.assertEqual(
+                payload["kind"], "rejected_physical_replay"
+            )
+            self.assertFalse(payload["physical_replay_validated"])
+            self.assertEqual(
+                payload["solver_incumbent"]["selected_route_indices"], [0]
+            )
+            self.assertEqual(
+                payload["failure"]["reason"], "capacity exceeded"
+            )
+            self.assertEqual(
+                len(payload["checkpoint_references"]), 1
+            )
 
     def test_singletons_are_a_strict_partition_seed(self):
         routes = [
@@ -334,7 +386,20 @@ class ExactPoolMipTests(unittest.TestCase):
                 {"trips": [2, 3], "cost": 1.0},
             )) + "\n")
 
-            with contextlib.redirect_stdout(io.StringIO()):
+            with (
+                patch(
+                    "run_exact_pool_mip.prepare_strict_partition_pool",
+                    side_effect=lambda _status, routes, **_kwargs: (
+                        routes,
+                        {
+                            "valid_as_recorded": len(routes),
+                            "deterministically_repaired": 0,
+                            "rejected_columns": 0,
+                        },
+                    ),
+                ),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
                 with self.assertRaisesRegex(
                     SystemExit, "singleton partition required"
                 ):
@@ -868,6 +933,20 @@ class ExactPoolMipTests(unittest.TestCase):
         with (
             patch.dict(sys.modules, {"gurobipy": fake_gp}),
             explicit_patch,
+            patch(
+                "run_exact_pool_mip.prepare_strict_partition_pool",
+                return_value=(
+                    routes,
+                    {
+                        "schema": "test-physical-gate",
+                        "total_columns": len(routes),
+                        "accepted_columns": len(routes),
+                        "valid_as_recorded": len(routes),
+                        "deterministically_repaired": 0,
+                        "rejected_columns": 0,
+                    },
+                ),
+            ),
             patch("run_exact_pool_mip.validate_final_selected_routes"),
         ):
             with contextlib.redirect_stdout(io.StringIO()):

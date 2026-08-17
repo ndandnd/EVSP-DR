@@ -37,7 +37,14 @@ class ExactCgTelemetryTests(unittest.TestCase):
         network = pricing_benchmark.ExpandedNetwork.__new__(
             pricing_benchmark.ExpandedNetwork
         )
-        network.problem = SimpleNamespace(trips=[10, 20])
+        network.problem = SimpleNamespace(
+            trips=[10, 20],
+            trip_energy={10: 0.0, 20: 0.0},
+            adjacency={
+                "PARX_0": [(10, 0.0, 0.0, "depot_trip")],
+                10: [("PARX_0", 0.0, 0.0, "trip_depot")],
+            },
+        )
         network.topo = [0, 2, 1]
         network.out = [
             [(2, 100.0, 0)],
@@ -50,6 +57,16 @@ class ExactCgTelemetryTests(unittest.TestCase):
             ("trip", 10, 0),
         ]
         network.grid = [0.0]
+        network.g = 300.0
+        network.charge_kw = 300.0
+        network.reserve = 0.0
+        network.soc_step = 15.0
+        network.block_min = 10
+        network.block_kwh = 50.0
+        network.continuous_arc_map = {
+            ("PARX_0", 10): (0.0, 0.0),
+            (10, "PARX_0"): (0.0, 0.0),
+        }
         duals = CountingDuals({10: 25.0, 20: 50.0})
 
         route = network.min_reduced_cost_route(duals)
@@ -84,7 +101,7 @@ class ExactCgTelemetryTests(unittest.TestCase):
         self.assertEqual(result["returned_routes"], 30)
         self.assertEqual(
             result["route_sha256"],
-            "152e5691becae2953166d586827b570b5d3593cf5d5967c77846e92775cd63e5",
+            "0a3537785c3661060f566080e98df84b0a68867f3fc8206ae7579e30e74c207d",
         )
         self.assertAlmostEqual(
             result["best_route"]["rc"], -4499913.039999999, places=6
@@ -97,7 +114,7 @@ class ExactCgTelemetryTests(unittest.TestCase):
         self.assertEqual(heterogeneous["returned_routes"], 30)
         self.assertEqual(
             heterogeneous["route_sha256"],
-            "5a4c6434a2dc70cfb2195b3cfaf516848217e01e6e409a57b98ec65deb19fc2c",
+            "0bad4b2560002989e258be1e4915d94df3b34cff2158185a1e1f5aa948d084ff",
         )
         self.assertAlmostEqual(
             heterogeneous["best_route"]["rc"],

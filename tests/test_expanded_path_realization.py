@@ -1,0 +1,315 @@
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from audit_giro_known_columns import DEPOT, HORIZON_MIN  # noqa: E402
+from audit_expanded_pool_physical import audit_pools  # noqa: E402
+from expanded_path_realization import (  # noqa: E402
+    realize_expanded_path,
+)
+from run_exact_pool_mip import (  # noqa: E402
+    prepare_strict_partition_pool,
+    validate_injected_route,
+)
+
+
+def problem(trip_energy, edges):
+    trips = list(range(len(trip_energy)))
+    adjacency = {}
+    for source, target in edges:
+        adjacency.setdefault(source, []).append(
+            (target, 0.0, 0.0, "test")
+        )
+    return SimpleNamespace(
+        trips=trips,
+        trip_energy=dict(enumerate(trip_energy)),
+        start_min={trip: trip * 10.0 for trip in trips},
+        end_min={trip: trip * 10.0 + 5.0 for trip in trips},
+        adjacency=adjacency,
+    )
+
+
+class ExpandedPathRealizationTests(unittest.TestCase):
+    def test_accumulated_floor_residual_repairs_large_overcharge(self):
+        station = "3127L_0"
+        route_nodes = [DEPOT, 0, 1, 2, station, 3, DEPOT]
+        p = problem(
+            [0.1, 0.1, 0.1, 0.1],
+            list(zip(route_nodes, route_nodes[1:])),
+        )
+        p.start_min[3] = 40.0
+        p.end_min[3] = 45.0
+        record = {
+            "trips": [0, 1, 2, 3],
+            "route_nodes": route_nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [30],
+                "cet": [40],
+                "kwh": [45.0],
+            },
+            "cost": 100035.0,
+        }
+        reason = validate_injected_route(
+            p, record, 300.0, 300.0, 0.0, HORIZON_MIN
+        )
+        self.assertIn("raises SOC to 344.7", reason)
+        realized, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertEqual(
+            detail["classification"], "deterministically_repairable"
+        )
+        self.assertAlmostEqual(
+            realized["charging_stops"]["kwh"][0], 0.3, places=6
+        )
+        self.assertIsNone(validate_injected_route(
+            p, realized, 300.0, 300.0, 0.0, HORIZON_MIN
+        ))
+        self.assertEqual(realized["trips"], record["trips"])
+        self.assertEqual(realized["route_nodes"], record["route_nodes"])
+        self.assertEqual(
+            realized["charging_stops"]["cst"],
+            record["charging_stops"]["cst"],
+        )
+
+    def test_sub_kwh_capacity_boundary_is_realized_exactly(self):
+        station = "2190L_0"
+        route_nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem(
+            [14.5, 0.1],
+            list(zip(route_nodes, route_nodes[1:])),
+        )
+        p.start_min[1] = 20.0
+        p.end_min[1] = 25.0
+        record = {
+            "trips": [0, 1],
+            "route_nodes": route_nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [15.0],
+            },
+            "cost": 100020.0,
+        }
+        self.assertIn("300.5", validate_injected_route(
+            p, record, 300, 300, 0, HORIZON_MIN
+        ))
+        realized, _detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertAlmostEqual(
+            realized["charging_stops"]["kwh"][0], 14.5, places=9
+        )
+        self.assertIsNone(validate_injected_route(
+            p, realized, 300, 300, 0, HORIZON_MIN
+        ))
+
+    def test_reserve_power_window_and_hash_determinism(self):
+        station = "S"
+        route_nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem(
+            [260.0, 50.0],
+            list(zip(route_nodes, route_nodes[1:])),
+        )
+        p.start_min[1] = 20.0
+        p.end_min[1] = 25.0
+        record = {
+            "trips": [0, 1],
+            "route_nodes": route_nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [45.0],
+            },
+            "cost": 100050.0,
+        }
+        rejected, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=50,
+            soc_step=15, block_min=10,
+        )
+        self.assertIsNone(rejected)
+        self.assertIn("reserve", detail["reason"])
+        rejected, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=30, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertIsNone(rejected)
+        self.assertIn("recorded charge", detail["reason"])
+
+        boundary = {
+            "trips": [0, 1],
+            "route_nodes": route_nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [30.0],
+            },
+            "cost": 100050.0,
+        }
+        p.trip_energy = {0: 20.0, 1: 10.0}
+        first, first_detail = realize_expanded_path(
+            p, boundary, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        second, second_detail = realize_expanded_path(
+            p, boundary, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertEqual(first, second)
+        self.assertEqual(
+            first_detail["mapping"]["mapping_sha256"],
+            second_detail["mapping"]["mapping_sha256"],
+        )
+
+    def test_strict_pool_gate_repairs_or_rejects_every_column(self):
+        station = "PARX_1"
+        route_nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem(
+            [14.5, 0.1],
+            list(zip(route_nodes, route_nodes[1:])),
+        )
+        p.start_min[1] = 20.0
+        p.end_min[1] = 25.0
+        route = {
+            "trips": [0, 1],
+            "route_nodes": route_nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [15.0],
+            },
+            "cost": 100020.0,
+        }
+        status = {
+            "csv": "instance.csv",
+            "prices_csv": "prices.csv",
+            "g_kwh": 300,
+            "charge_kw": 300,
+            "min_soc_frac": 0,
+            "soc_step": 15,
+            "block_min": 10,
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            with (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=p,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.1}},
+                ),
+            ):
+                prepared, audit = prepare_strict_partition_pool(
+                    status, [route], data_dir=data_dir
+                )
+                second, second_audit = prepare_strict_partition_pool(
+                    status, [route], data_dir=data_dir
+                )
+            self.assertEqual(len(prepared), 1)
+            self.assertEqual(audit["deterministically_repaired"], 1)
+            self.assertEqual(audit["rejected_columns"], 0)
+            self.assertEqual(
+                audit["repaired_set_sha256"],
+                second_audit["repaired_set_sha256"],
+            )
+            self.assertEqual(prepared, second)
+            self.assertEqual(
+                prepared[0]["cost"], route["cost"]
+            )
+            self.assertLess(
+                prepared[0]["continuous_realized_cost"],
+                prepared[0]["expanded_grid_cost"],
+            )
+
+    def test_bounded_pool_audit_publishes_machine_outputs(self):
+        station = "PARX_1"
+        route_nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem(
+            [14.5, 0.1],
+            list(zip(route_nodes, route_nodes[1:])),
+        )
+        p.start_min[1] = 20.0
+        p.end_min[1] = 25.0
+        route = {
+            "trips": [0, 1],
+            "route_nodes": route_nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10],
+                "cet": [20],
+                "kwh": [15.0],
+            },
+            "cost": 100020.0,
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cell = root / "input/cell"
+            cell.mkdir(parents=True)
+            status_path = cell / "pool.snapshot.json"
+            journal = Path(str(status_path) + ".columns.jsonl")
+            journal.write_text(json.dumps(route) + "\n")
+            status_path.write_text(json.dumps({
+                "csv": "instance.csv",
+                "prices_csv": "prices.csv",
+                "g_kwh": 300,
+                "charge_kw": 300,
+                "min_soc_frac": 0,
+                "soc_step": 15,
+                "block_min": 10,
+                "trip_ids": [0, 1],
+                "columns_journal": str(journal),
+            }))
+            progress = root / "progress/cell"
+            progress.mkdir(parents=True)
+            (progress / "latest.json").write_text(json.dumps({
+                "incumbent": {"selected_route_indices": [0]},
+            }))
+            output = root / "audit"
+            with (
+                patch(
+                    "audit_expanded_pool_physical.build_problem",
+                    return_value=p,
+                ),
+                patch(
+                    "audit_expanded_pool_physical."
+                    "load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.1}},
+                ),
+            ):
+                report = audit_pools(
+                    [status_path],
+                    output_dir=output,
+                    reference_data_dir=root,
+                    campaign_root=root,
+                    archive_sha256="a" * 64,
+                    route_detail="selected",
+                )
+            self.assertEqual(
+                report["pools"][0]["counts"],
+                {"deterministically_repairable": 1},
+            )
+            self.assertTrue((output / "route_audit.csv").is_file())
+            self.assertTrue((output / "pool_summary.csv").is_file())
+            self.assertTrue((output / "ROOT_CAUSE.md").is_file())
+            self.assertTrue((output / "completion.json").is_file())
+
+
+if __name__ == "__main__":
+    unittest.main()

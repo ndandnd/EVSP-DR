@@ -36,6 +36,16 @@ from pathlib import Path
 from durable_io import atomic_write_json, read_jsonl_records
 
 
+class PhysicalReplayError(SystemExit):
+    """Structured final replay rejection after a solver incumbent exists."""
+
+    def __init__(self, message, *, route_ordinal=None, reason=None, route=None):
+        super().__init__(message)
+        self.route_ordinal = route_ordinal
+        self.reason = reason or message
+        self.route = route
+
+
 def file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with open(path, "rb") as fh:
@@ -270,7 +280,7 @@ def greedy_partition_start_indices(
 
 def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
                             horizon_min, arrival_grace_min=1.0,
-                            rate_grace_min=0.0):
+                            rate_grace_min=0.0, arc_map=None):
     """Replay an injected route against the model graph and pool physics.
 
     Checks every consecutive arc exists in the restricted adjacency, times
@@ -282,10 +292,12 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     """
     from audit_giro_known_columns import DEPOT
 
-    arc = {}
-    for u, arcs in problem.adjacency.items():
-        for v, travel, dh, _kind in arcs:
-            arc[(u, v)] = (travel, dh)
+    arc = arc_map
+    if arc is None:
+        arc = {}
+        for u, arcs in problem.adjacency.items():
+            for v, travel, dh, _kind in arcs:
+                arc[(u, v)] = (travel, dh)
 
     nodes = record.get("route_nodes") or []
     if len(nodes) < 3:
@@ -373,6 +385,172 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     if time_now is not None and time_now > horizon_min + 1e-6:
         return f"ends at {time_now:.0f} past horizon"
     return None
+
+
+def prepare_strict_partition_pool(
+    status,
+    routes,
+    *,
+    data_dir=None,
+    reference_data_dir=None,
+):
+    """Replay or deterministically map every raw pool column before MIP use.
+
+    Stored master costs remain the expanded-grid costs.  Repaired continuous
+    schedules and their separately computed costs are provenance only; they do
+    not expand the scope of the existing reduced-cost certificate.
+    """
+
+    from audit_giro_known_columns import HORIZON_MIN, build_problem
+    from config import CHARGING_STATIONS
+    from expanded_path_realization import (
+        _arc_map,
+        realize_expanded_path,
+        realized_costs,
+    )
+    from utils_v2 import load_station_hourly_prices
+
+    data_dir = Path(
+        data_dir
+        if data_dir is not None
+        else Path(__file__).resolve().parent.parent / "data"
+    ).resolve()
+    reference_data_dir = Path(
+        reference_data_dir if reference_data_dir is not None else data_dir
+    ).resolve()
+    problem = build_problem(
+        data_dir,
+        status["csv"],
+        max_station_to_trip_wait_min=HORIZON_MIN,
+        reference_data_dir=reference_data_dir,
+    )
+    arc_map = _arc_map(problem)
+    prices = load_station_hourly_prices(
+        data_dir / Path(status["prices_csv"]).name,
+        CHARGING_STATIONS,
+    )
+    g_kwh = float(status["g_kwh"])
+    charge_kw = float(status["charge_kw"])
+    reserve_kwh = float(status["min_soc_frac"]) * g_kwh
+    soc_step = float(status["soc_step"])
+    block_min = int(status["block_min"])
+    accepted = []
+    valid_hashes = []
+    repaired_hashes = []
+    rejected_hashes = []
+    rejected = []
+    for index, route in enumerate(routes):
+        route_identity = {
+            "trips": route.get("trips"),
+            "route_nodes": route.get("route_nodes"),
+            "charging_stops": route.get("charging_stops"),
+            "cost": route.get("cost"),
+        }
+        route_sha = hashlib.sha256(json.dumps(
+            route_identity, sort_keys=True, separators=(",", ":")
+        ).encode()).hexdigest()
+        reason = validate_injected_route(
+            problem, route, g_kwh, charge_kw, reserve_kwh,
+            HORIZON_MIN, arc_map=arc_map,
+        )
+        realized, detail = realize_expanded_path(
+            problem,
+            route,
+            g_kwh=g_kwh,
+            charge_kw=charge_kw,
+            reserve_kwh=reserve_kwh,
+            soc_step=soc_step,
+            block_min=block_min,
+            arc_map=arc_map,
+        )
+        realized_reason = (
+            validate_injected_route(
+                problem, realized, g_kwh, charge_kw, reserve_kwh,
+                HORIZON_MIN, arc_map=arc_map,
+            )
+            if realized is not None else detail.get("reason")
+        )
+        if reason is None:
+            candidate = dict(route)
+            physical = {
+                "status": "valid_as_recorded",
+                "recorded_route_sha256": route_sha,
+                "master_cost_semantics": "expanded_grid_cost",
+                "continuous_cost_pricing_certified": False,
+            }
+            if realized is not None and realized_reason is None:
+                costs = realized_costs(
+                    route, detail["mapping"], station_prices=prices
+                )
+                candidate["expanded_grid_cost"] = float(route["cost"])
+                candidate["continuous_realized_cost"] = costs[
+                    "continuous_realized_cost"
+                ]
+                physical.update({
+                    key: value for key, value in (
+                        realized.get("continuous_realization") or {}
+                    ).items()
+                })
+                physical["costs"] = costs
+            candidate["physical_realization"] = physical
+            accepted.append(candidate)
+            valid_hashes.append(route_sha)
+            continue
+        if realized is None or realized_reason is not None:
+            rejected_hashes.append(route_sha)
+            if len(rejected) < 100:
+                rejected.append({
+                    "route_index": index,
+                    "route_sha256": route_sha,
+                    "trips": route.get("trips"),
+                    "recorded_reason": reason,
+                    "realization_reason": realized_reason,
+                })
+            continue
+        costs = realized_costs(
+            route, detail["mapping"], station_prices=prices
+        )
+        realized["cost"] = float(route["cost"])
+        realized["expanded_grid_cost"] = float(route["cost"])
+        realized["continuous_realized_cost"] = costs[
+            "continuous_realized_cost"
+        ]
+        realized["physical_realization"] = realized.pop(
+            "continuous_realization"
+        )
+        realized["physical_realization"].update({
+            "status": "deterministically_repaired",
+            "recorded_route_sha256": route_sha,
+            "recorded_replay_reason": reason,
+            "costs": costs,
+        })
+        accepted.append(realized)
+        repaired_hashes.append(
+            realized["physical_realization"]["mapping_sha256"]
+        )
+    audit = {
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "total_columns": len(routes),
+        "accepted_columns": len(accepted),
+        "valid_as_recorded": len(valid_hashes),
+        "deterministically_repaired": len(repaired_hashes),
+        "rejected_columns": len(rejected_hashes),
+        "valid_set_sha256": hashlib.sha256(json.dumps(
+            sorted(valid_hashes), separators=(",", ":")
+        ).encode()).hexdigest(),
+        "repaired_set_sha256": hashlib.sha256(json.dumps(
+            sorted(repaired_hashes), separators=(",", ":")
+        ).encode()).hexdigest(),
+        "rejected_set_sha256": hashlib.sha256(json.dumps(
+            sorted(rejected_hashes), separators=(",", ":")
+        ).encode()).hexdigest(),
+        "rejected_samples": rejected,
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope":
+            "conservative_expanded_grid_model_only",
+        "continuous_cost_pricing_certified": False,
+    }
+    return accepted, audit
 
 
 def merge_extra_routes(routes, trips, extra_paths, prices_csv, status=None):
@@ -940,14 +1118,88 @@ def validate_final_selected_routes(
             HORIZON_MIN,
         )
         if reason is not None:
-            raise SystemExit(
+            message = (
                 f"[MIP] final selected route {ordinal} failed physical "
                 f"replay: {reason}"
+            )
+            raise PhysicalReplayError(
+                message,
+                route_ordinal=ordinal,
+                reason=reason,
+                route=route,
             )
     if any(counts[trip] != 1 for trip in trips):
         raise SystemExit(
             "[MIP] final selected routes do not cover every trip exactly once"
         )
+
+
+def publish_rejected_physical_replay(
+    out: Path,
+    *,
+    error: PhysicalReplayError,
+    chosen: list[int],
+    routes: list[dict],
+    status_name: str,
+    solver_bound,
+    mip_gap,
+    source_result_sha256: str,
+    source_journal_sha256: str,
+    progress_path: Path | None,
+    physical_pool_audit: dict | None,
+) -> Path:
+    """Publish a non-feasible solver-incumbent diagnostic, never a final."""
+
+    diagnostic_path = out.with_name(
+        f"{out.name}.rejected_physical_replay.json"
+    )
+    checkpoint_refs = []
+    if progress_path is not None and progress_path.is_dir():
+        for path in sorted(progress_path.glob("checkpoint_*.json")):
+            if path.is_file():
+                checkpoint_refs.append({
+                    "path": str(path),
+                    "sha256": file_sha256(path),
+                })
+    failing_route = error.route or {}
+    selected_cost = sum(float(routes[index]["cost"]) for index in chosen)
+    payload = {
+        "schema": "evsp-dr-mip-rejected-physical-replay-v1",
+        "kind": "rejected_physical_replay",
+        "physical_replay_validated": False,
+        "incumbent_usable_as_physical_schedule": False,
+        "observational_only": True,
+        "source_result_sha256": source_result_sha256,
+        "source_journal_sha256": source_journal_sha256,
+        "solver_incumbent": {
+            "status_name": status_name,
+            "selected_route_indices": list(chosen),
+            "route_vector_sha256": hashlib.sha256(json.dumps(
+                sorted(chosen), separators=(",", ":")
+            ).encode()).hexdigest(),
+            "buses": len(chosen),
+            "expanded_grid_objective": selected_cost,
+            "bound": solver_bound,
+            "gap": mip_gap,
+        },
+        "failure": {
+            "route_ordinal": error.route_ordinal,
+            "reason": error.reason,
+            "trips": failing_route.get("trips"),
+            "route_nodes": failing_route.get(
+                "route_nodes", failing_route.get("route")
+            ),
+            "charging_stops": failing_route.get("charging_stops"),
+        },
+        "checkpoint_references": checkpoint_refs,
+        "physical_pool_audit": physical_pool_audit,
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope":
+            "conservative_expanded_grid_model_only",
+        "continuous_cost_pricing_certified": False,
+    }
+    atomic_write_json(diagnostic_path, payload)
+    return diagnostic_path
 
 
 def main(argv=None) -> int:
@@ -983,6 +1235,16 @@ def main(argv=None) -> int:
              "the pool and used explicitly as the complete MIP start.",
     )
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument(
+        "--data-dir", type=Path,
+        default=Path(__file__).resolve().parent.parent / "data",
+        help="Data root containing the hash-bound instance and tariff.",
+    )
+    parser.add_argument(
+        "--reference-data-dir", type=Path,
+        default=None,
+        help="Optional separate root containing Ref_dict.csv.",
+    )
     parser.add_argument(
         "--two-stage",
         action="store_true",
@@ -1060,6 +1322,20 @@ def main(argv=None) -> int:
     initial_partition_start = None
 
     status, routes, trips = load_pool(args.result)
+    physical_pool_audit = None
+    if not args.cover:
+        routes, physical_pool_audit = prepare_strict_partition_pool(
+            status,
+            routes,
+            data_dir=args.data_dir,
+            reference_data_dir=args.reference_data_dir,
+        )
+        print(
+            "[MIP] physical pool gate: "
+            f"{physical_pool_audit['valid_as_recorded']} valid recorded, "
+            f"{physical_pool_audit['deterministically_repaired']} repaired, "
+            f"{physical_pool_audit['rejected_columns']} rejected"
+        )
     if (file_sha256(args.result) != source_result_sha256
             or file_sha256(source_journal) != source_journal_sha256):
         raise SystemExit(
@@ -1217,6 +1493,7 @@ def main(argv=None) -> int:
                     "two_stage": args.two_stage,
                     "cover": args.cover,
                 },
+                "physical_pool_audit": physical_pool_audit,
                 "git_commit": code_identity["observed_commit"],
                 "expected_git_commit": code_identity["expected_commit"],
                 "experiment_arm": experiment_arm,
@@ -1496,7 +1773,43 @@ def main(argv=None) -> int:
     status_name = status_names.get(status_code, f"UNKNOWN_{status_code}")
     selected_routes = [routes[i] for i in chosen]
     if selected_routes and not args.cover:
-        validate_final_selected_routes(status, trips, selected_routes)
+        try:
+            validate_final_selected_routes(
+                status, trips, selected_routes, data_dir=args.data_dir
+            )
+        except PhysicalReplayError as exc:
+            diagnostic_path = publish_rejected_physical_replay(
+                out,
+                error=exc,
+                chosen=chosen,
+                routes=routes,
+                status_name=status_name,
+                solver_bound=solver_bound,
+                mip_gap=mip_gap,
+                source_result_sha256=source_result_sha256,
+                source_journal_sha256=source_journal_sha256,
+                progress_path=progress_path,
+                physical_pool_audit=physical_pool_audit,
+            )
+            if progress is not None:
+                progress.finalize(
+                    elapsed_s=progress.elapsed_s(),
+                    final={
+                        "status": status_code,
+                        "status_name": "REJECTED_PHYSICAL_REPLAY",
+                        "incumbent_found": True,
+                        "physically_validated": False,
+                        "buses": len(chosen),
+                        "fleet_proven": fleet_proven,
+                        "selected_route_indices": list(chosen),
+                        "rejected_diagnostic": str(diagnostic_path),
+                        "rejected_diagnostic_sha256":
+                            file_sha256(diagnostic_path),
+                    },
+                )
+            raise SystemExit(
+                f"{exc}; diagnostic={diagnostic_path}"
+            ) from exc
     over = {t: c for t, c in Counter(
         t for i in chosen for t in routes[i]["trips"]).items() if c > 1}
     has_incumbent = bool(chosen)
@@ -1514,6 +1827,17 @@ def main(argv=None) -> int:
     )
     mip_obj = (float(sum(routes[i]["cost"] for i in chosen))
                if chosen else None)
+    continuous_selected_costs = [
+        routes[index].get("continuous_realized_cost")
+        for index in chosen
+    ]
+    continuous_realized_mip_obj = (
+        float(sum(continuous_selected_costs))
+        if chosen and all(
+            value is not None for value in continuous_selected_costs
+        )
+        else None
+    )
     if cost_stage_executed and solver_bound is not None and two_stage_detail:
         mip_bound = (BUS_COST_KX * two_stage_detail["stage1_buses"]
                      + solver_bound)
@@ -1582,6 +1906,12 @@ def main(argv=None) -> int:
                         if two_stage_detail else None),
         "charging_cost": (mip_obj - BUS_COST_KX * len(chosen))
                          if chosen and mip_obj is not None else None,
+        "charging_cost_semantics": "expanded_grid_cost",
+        "continuous_realized_mip_obj": continuous_realized_mip_obj,
+        "continuous_realized_charging_cost": (
+            continuous_realized_mip_obj - BUS_COST_KX * len(chosen)
+            if continuous_realized_mip_obj is not None else None
+        ),
         "variable_route_cost": (mip_obj - BUS_COST_KX * len(chosen))
                                if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
@@ -1599,6 +1929,11 @@ def main(argv=None) -> int:
         "mip_start_buses": len(mip_start) if mip_start else None,
         "mip_start": initial_partition_start,
         "pool_preparation": status.get("pool_preparation"),
+        "physical_pool_audit": physical_pool_audit,
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "pricing_certificate_scope":
+            "conservative_expanded_grid_model_only",
+        "continuous_cost_pricing_certified": False,
         "source_cg_wall_s": status.get("wall_s"),
         "source_cg_iterations": status.get("iterations"),
         "source_snapshot_mark_minutes": status.get(

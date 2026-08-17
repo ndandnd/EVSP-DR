@@ -53,6 +53,11 @@ from durable_io import (
     valid_json_object,
 )
 from exact_cg_telemetry import PhaseTelemetry
+from expanded_path_realization import (
+    _arc_map as continuous_arc_map,
+    realize_expanded_path,
+    realized_costs,
+)
 from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
 from utils_v2 import base_station_name, load_station_hourly_prices
 
@@ -149,10 +154,12 @@ class ExpandedNetwork:
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
+        self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
         self.n_blocks = int(HORIZON_MIN) // self.block_min
         self.block_kwh = float(charge_kw) * self.block_min / 60.0
         self.prices = station_prices  # base station -> {hour: $/kWh}
+        self.continuous_arc_map = continuous_arc_map(problem)
 
         self.grid = [round(k * self.soc_step, 6)
                      for k in range(int(self.g / self.soc_step) + 1)]
@@ -391,17 +398,37 @@ class ExpandedNetwork:
                 charging["cst"].append(b0 * self.block_min)
                 charging["cet"].append((b1 + 1) * self.block_min)
                 charging["kwh"].append(round(soc - self.grid[lvl0], 6))
+            realized, detail = realize_expanded_path(
+                self.problem,
+                {
+                    "trips": trips,
+                    "charging_stops": charging,
+                    "route_nodes": route_nodes,
+                },
+                g_kwh=self.g,
+                charge_kw=self.charge_kw,
+                reserve_kwh=self.reserve,
+                soc_step=self.soc_step,
+                block_min=self.block_min,
+                arc_map=self.continuous_arc_map,
+            )
+            if realized is None:
+                raise RuntimeError(
+                    "expanded path has no deterministic continuous "
+                    f"realization: {detail.get('reason')}"
+                )
+            return (
+                trips,
+                realized["charging_stops"],
+                route_nodes,
+                detail["mapping"],
+            )
 
-            return trips, charging, route_nodes
-
-        best_trips, best_charging, best_nodes = _walk(1)
+        best_trips, best_charging, best_nodes, best_mapping = _walk(1)
         return {"rc": value[1], "trips": best_trips,
                 "charging_stops": best_charging, "route_nodes": best_nodes,
                 "charges_started": len(best_charging["stations"]),
-                "_value": value, "_walk": _walk}
-
-        best_trips, best_charges = _walk(1)
-        return {"rc": value[1], "trips": best_trips, "charges_started": best_charges,
+                "_continuous_mapping": best_mapping,
                 "_value": value, "_walk": _walk}
 
     def k_best_routes(
@@ -441,14 +468,15 @@ class ExpandedNetwork:
         for rc, u in candidates[: max(4 * k, 200)]:
             if len(routes) >= k or rc >= -1e-9:
                 break
-            trips, charging, route_nodes = _walk(u)
+            trips, charging, route_nodes, mapping = _walk(u)
             key = frozenset(trips)
             if key in seen:
                 continue
             seen.add(key)
             routes.append({"rc": rc, "trips": trips,
                            "charging_stops": charging, "route_nodes": route_nodes,
-                           "charges_started": len(charging["stations"])})
+                           "charges_started": len(charging["stations"]),
+                           "_continuous_mapping": mapping})
         if phase_callback is not None:
             phase_callback(
                 "pricing_extra_columns",
@@ -484,6 +512,12 @@ def _provenance(args) -> dict:
         "instance_sha256": _sha(DATA_DIR / args.csv),
         "prices_sha256": _sha(DATA_DIR / args.prices_csv),
         "rc_eps": args.rc_eps,
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "charging_realization_schema":
+            "evsp-dr-expanded-path-continuous-realization-v1",
+        "continuous_cost_pricing_certified": False,
+        "pricing_certificate_scope":
+            "conservative_expanded_grid_model_only",
         "args": {
             key: (str(value) if isinstance(value, Path) else value)
             for key, value in vars(args).items()
@@ -1629,6 +1663,21 @@ def run_cg(args) -> dict:
                     "charges_started": route["charges_started"],
                     "found_iter": global_iteration,
                 }
+                mapping = route["_continuous_mapping"]
+                costs = realized_costs(
+                    record, mapping, station_prices=prices
+                )
+                record.update({
+                    "expanded_grid_cost": cost,
+                    "continuous_realized_cost":
+                        costs["continuous_realized_cost"],
+                    "cost_semantics": "expanded_grid_cost",
+                    "continuous_cost_pricing_certified": False,
+                    "physical_realization": {
+                        key: value for key, value in mapping.items()
+                        if key != "trace"
+                    },
+                })
                 pool[key] = record
                 if journal:
                     journal.write(json.dumps(record) + "\n")

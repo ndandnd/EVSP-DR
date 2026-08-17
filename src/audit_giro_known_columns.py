@@ -168,6 +168,7 @@ def build_problem(
     *,
     max_trip2trip_min: float = 57.0,
     max_station_to_trip_wait_min: float = MAX_STATION_TO_TRIP_WAIT_MIN,
+    reference_data_dir: Path | None = None,
 ) -> ProblemData:
     """Reconstruct the exact issue20 restricted graph for one trip instance."""
 
@@ -197,7 +198,9 @@ def build_problem(
     start_block = {trip: start_min[trip] + 1 for trip in trips}
     end_block = {trip: end_min[trip] + 1 for trip in trips}
 
-    location_to_ref, ref_pairs, known_refs = _load_reference_lookup(data_dir)
+    location_to_ref, ref_pairs, known_refs = _load_reference_lookup(
+        reference_data_dir or data_dir
+    )
 
     def resolve_ref(value: Any) -> str | None:
         raw = _normal_token(value)
