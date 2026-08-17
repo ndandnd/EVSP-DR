@@ -56,6 +56,7 @@ from durable_io import (
 from exact_cg_telemetry import PhaseTelemetry
 from expanded_path_realization import (
     _arc_map as continuous_arc_map,
+    BLOCK_SCHEDULE_SCHEMA,
     charging_block_schedule_sha256,
     realize_expanded_path,
     realized_costs,
@@ -148,6 +149,8 @@ def direct_singleton_seed_records(
                 "status": "valid_as_recorded_mapped",
                 "continuous_realized_charging_blocks_sha256":
                     charging_block_schedule_sha256([]),
+                "continuous_realized_charging_blocks_schema":
+                    BLOCK_SCHEDULE_SCHEMA,
                 "continuous_cost_pricing_certified": False,
             },
             "charges_started": 0,
@@ -1720,6 +1723,9 @@ def run_cg(args) -> dict:
                 ] = costs[
                     "continuous_realized_charging_blocks_sha256"
                 ]
+                record["physical_realization"][
+                    "continuous_realized_charging_blocks_schema"
+                ] = BLOCK_SCHEDULE_SCHEMA
                 pool[key] = record
                 if journal:
                     journal.write(json.dumps(record) + "\n")
@@ -1922,6 +1928,9 @@ def run_cg(args) -> dict:
                         ] = costs[
                             "continuous_realized_charging_blocks_sha256"
                         ]
+                        record["physical_realization"][
+                            "continuous_realized_charging_blocks_schema"
+                        ] = BLOCK_SCHEDULE_SCHEMA
                         pool[key] = record
                         if journal:
                             journal.write(json.dumps(record) + "\n")

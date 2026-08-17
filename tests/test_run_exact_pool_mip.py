@@ -84,6 +84,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 code_identity={"observed_commit": "c" * 40},
                 augmentation_sources=[],
                 master_cost_semantics="expanded_grid_cost",
+                source_pricing_certified=False,
             )
             payload = json.loads(diagnostic.read_text())
             self.assertEqual(
@@ -116,6 +117,7 @@ class ExactPoolMipTests(unittest.TestCase):
                     code_identity={"observed_commit": "c" * 40},
                     augmentation_sources=[],
                     master_cost_semantics="expanded_grid_cost",
+                    source_pricing_certified=False,
                 )
 
     def test_singletons_are_a_strict_partition_seed(self):
@@ -770,14 +772,20 @@ class ExactPoolMipTests(unittest.TestCase):
             data = Path(tmp)
             instance = data / "tiny.csv"
             instance.write_text("tiny\n")
+            prices = data / "prices.csv"
+            prices.write_text("prices\n")
             status = {
                 "csv": "tiny.csv",
+                "prices_csv": "prices.csv",
                 "g_kwh": 300.0,
                 "charge_kw": 300.0,
                 "min_soc_frac": 0.0,
                 "provenance": {
                     "instance_sha256": hashlib.sha256(
                         instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices.read_bytes()
                     ).hexdigest(),
                 },
             }
@@ -1034,6 +1042,10 @@ class ExactPoolMipTests(unittest.TestCase):
         )
         self.assertEqual(
             payload["physical_pool_audit"]["valid_as_recorded"], 2
+        )
+        self.assertGreaterEqual(payload["source_hashing_wall_s"], 0.0)
+        self.assertGreaterEqual(
+            payload["end_to_end_runtime_s"], payload["runtime_s"]
         )
 
     def test_proven_fleet_runs_cost_stage_and_reconstructs_full_objective(self):

@@ -396,6 +396,18 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         }
         with tempfile.TemporaryDirectory() as tmp:
             data_dir = Path(tmp)
+            (data_dir / "instance.csv").write_text("instance\n")
+            (data_dir / "prices.csv").write_text("prices\n")
+            (data_dir / "Ref_dict.csv").write_text("refs\n")
+            (data_dir / "par_ref_dhd.csv").write_text("deadhead\n")
+            status["provenance"] = {
+                "instance_sha256": hashlib.sha256(
+                    (data_dir / "instance.csv").read_bytes()
+                ).hexdigest(),
+                "prices_sha256": hashlib.sha256(
+                    (data_dir / "prices.csv").read_bytes()
+                ).hexdigest(),
+            }
             with (
                 patch(
                     "audit_giro_known_columns.build_problem",
@@ -471,23 +483,37 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             "soc_step": 15,
             "block_min": 10,
         }
-        with (
-            patch(
-                "audit_giro_known_columns.build_problem",
-                return_value=p,
-            ),
-            patch(
-                "utils_v2.load_station_hourly_prices",
-                return_value={"PARX": {0: 0.1}},
-            ),
-        ):
-            prepared, audit = prepare_strict_partition_pool(
-                status, [invalid, valid], data_dir=REPO_ROOT / "data"
-            )
-        self.assertEqual(len(prepared), 1)
-        self.assertEqual(prepared[0]["cost"], valid["cost"])
-        self.assertEqual(audit["rejected_columns"], 1)
-        self.assertEqual(audit["mip_unique_accepted_columns"], 1)
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            (data_dir / "instance.csv").write_text("instance\n")
+            (data_dir / "prices.csv").write_text("prices\n")
+            (data_dir / "Ref_dict.csv").write_text("refs\n")
+            (data_dir / "par_ref_dhd.csv").write_text("deadhead\n")
+            status["provenance"] = {
+                "instance_sha256": hashlib.sha256(
+                    (data_dir / "instance.csv").read_bytes()
+                ).hexdigest(),
+                "prices_sha256": hashlib.sha256(
+                    (data_dir / "prices.csv").read_bytes()
+                ).hexdigest(),
+            }
+            with (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=p,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.1}},
+                ),
+            ):
+                prepared, audit = prepare_strict_partition_pool(
+                    status, [invalid, valid], data_dir=data_dir
+                )
+            self.assertEqual(len(prepared), 1)
+            self.assertEqual(prepared[0]["cost"], valid["cost"])
+            self.assertEqual(audit["rejected_columns"], 1)
+            self.assertEqual(audit["mip_unique_accepted_columns"], 1)
 
     def test_bounded_pool_audit_publishes_machine_outputs(self):
         station = "PARX_1"

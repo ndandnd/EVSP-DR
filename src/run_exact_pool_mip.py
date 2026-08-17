@@ -493,6 +493,7 @@ def prepare_strict_partition_pool(
     from audit_giro_known_columns import HORIZON_MIN, build_problem
     from config import CHARGING_STATIONS
     from expanded_path_realization import (
+        BLOCK_SCHEDULE_SCHEMA,
         _arc_map,
         realize_expanded_path,
         realized_costs,
@@ -507,6 +508,26 @@ def prepare_strict_partition_pool(
     reference_data_dir = Path(
         reference_data_dir if reference_data_dir is not None else data_dir
     ).resolve()
+    instance_path = (data_dir / str(status["csv"])).resolve()
+    tariff_path = (
+        data_dir / Path(str(status["prices_csv"])).name
+    ).resolve()
+    reference_path = reference_data_dir / "Ref_dict.csv"
+    deadhead_path = reference_data_dir / "par_ref_dhd.csv"
+    provenance = status.get("provenance") or {}
+    if (
+        not instance_path.is_file()
+        or file_sha256(instance_path)
+        != provenance.get("instance_sha256")
+        or not tariff_path.is_file()
+        or file_sha256(tariff_path)
+        != provenance.get("prices_sha256")
+        or not reference_path.is_file()
+        or not deadhead_path.is_file()
+    ):
+        raise SystemExit(
+            "[MIP] physical pool preparation input hash mismatch"
+        )
     problem = build_problem(
         data_dir,
         status["csv"],
@@ -515,7 +536,7 @@ def prepare_strict_partition_pool(
     )
     arc_map = _arc_map(problem)
     prices = load_station_hourly_prices(
-        data_dir / Path(status["prices_csv"]).name,
+        tariff_path,
         CHARGING_STATIONS,
     )
     g_kwh = float(status["g_kwh"])
@@ -528,6 +549,8 @@ def prepare_strict_partition_pool(
     repaired_hashes = []
     rejected_hashes = []
     rejected = []
+    persisted_block_count = 0
+    persisted_block_json_bytes = 0
     for index, route in enumerate(routes):
         route_identity = {
             "trips": route.get("trips"),
@@ -610,6 +633,14 @@ def prepare_strict_partition_pool(
         realized["continuous_realized_charging_blocks"] = costs[
             "continuous_realized_charging_blocks"
         ]
+        persisted_block_count += len(
+            realized["continuous_realized_charging_blocks"]
+        )
+        persisted_block_json_bytes += len(json.dumps(
+            realized["continuous_realized_charging_blocks"],
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode())
         realized["physical_realization"] = realized.pop(
             "continuous_realization"
         )
@@ -623,6 +654,8 @@ def prepare_strict_partition_pool(
             "continuous_realized_charging_blocks_sha256": costs[
                 "continuous_realized_charging_blocks_sha256"
             ],
+            "continuous_realized_charging_blocks_schema":
+                BLOCK_SCHEDULE_SCHEMA,
             "costs": {
                 key: value for key, value in costs.items()
                 if key not in {
@@ -671,6 +704,15 @@ def prepare_strict_partition_pool(
         "pricing_certificate_scope":
             "conservative_expanded_grid_model_only",
         "continuous_cost_pricing_certified": False,
+        "persisted_charging_block_count": persisted_block_count,
+        "persisted_charging_block_json_bytes":
+            persisted_block_json_bytes,
+        "input_hashes": {
+            "instance_sha256": file_sha256(instance_path),
+            "prices_sha256": file_sha256(tariff_path),
+            "reference_sha256": file_sha256(reference_path),
+            "deadhead_sha256": file_sha256(deadhead_path),
+        },
     }
     return accepted, audit
 
@@ -692,6 +734,7 @@ def merge_extra_routes(
     from config import (BUS_COST_KX, CHARGE_RATE_KW, CHARGE_START_COST,
                         CHARGING_STATIONS)
     from expanded_path_realization import (
+        BLOCK_SCHEDULE_SCHEMA,
         blocks_from_continuous_stops,
         validate_continuous_charging_blocks,
     )
@@ -785,6 +828,8 @@ def merge_extra_routes(
                         "status": "validated_continuous_injection",
                         "continuous_realized_charging_blocks_sha256":
                             block_validation["block_schedule_sha256"],
+                        "continuous_realized_charging_blocks_schema":
+                            BLOCK_SCHEDULE_SCHEMA,
                         "continuous_cost_pricing_certified": False,
                     },
                 })
@@ -820,6 +865,7 @@ def merge_validated_partition_start(
     from config import (BUS_COST_KX, CHARGE_START_COST,
                         CHARGING_STATIONS)
     from expanded_path_realization import (
+        BLOCK_SCHEDULE_SCHEMA,
         blocks_from_continuous_stops,
         validate_continuous_charging_blocks,
     )
@@ -1079,6 +1125,8 @@ def merge_validated_partition_start(
                 "status": "validated_continuous_injection",
                 "continuous_realized_charging_blocks_sha256":
                     block_validation["block_schedule_sha256"],
+                "continuous_realized_charging_blocks_schema":
+                    BLOCK_SCHEDULE_SCHEMA,
                 "continuous_cost_pricing_certified": False,
             },
         })
@@ -1244,13 +1292,14 @@ def optimal_scope(*, two_stage: bool, fleet_proven: bool,
 
 def validate_final_selected_routes(
     status, trips, selected_routes, *, data_dir=None,
-    reference_data_dir=None,
+    reference_data_dir=None, physical_pool_audit=None,
 ) -> None:
     """Rebuild the instance and physically replay every final selected route."""
 
     from audit_giro_known_columns import HORIZON_MIN, build_problem
     from config import CHARGING_STATIONS
     from expanded_path_realization import (
+        BLOCK_SCHEDULE_SCHEMA,
         validate_continuous_charging_blocks,
     )
     from utils_v2 import load_station_hourly_prices
@@ -1273,6 +1322,36 @@ def validate_final_selected_routes(
         or file_sha256(instance_path) != expected_hash
     ):
         raise SystemExit("[MIP] final replay instance hash mismatch")
+    tariff_path = (
+        data_dir / Path(str(status.get("prices_csv"))).name
+    ).resolve()
+    expected_tariff_hash = provenance.get("prices_sha256")
+    if (
+        not tariff_path.is_file()
+        or not isinstance(expected_tariff_hash, str)
+        or file_sha256(tariff_path) != expected_tariff_hash
+    ):
+        raise SystemExit("[MIP] final replay tariff hash mismatch")
+    if physical_pool_audit is not None:
+        expected_inputs = physical_pool_audit.get("input_hashes") or {}
+        reference_root = Path(
+            reference_data_dir
+            if reference_data_dir is not None else data_dir
+        ).resolve()
+        observed_inputs = {
+            "instance_sha256": file_sha256(instance_path),
+            "prices_sha256": file_sha256(tariff_path),
+            "reference_sha256": file_sha256(
+                reference_root / "Ref_dict.csv"
+            ),
+            "deadhead_sha256": file_sha256(
+                reference_root / "par_ref_dhd.csv"
+            ),
+        }
+        if observed_inputs != expected_inputs:
+            raise SystemExit(
+                "[MIP] final replay model inputs changed after preparation"
+            )
     problem = build_problem(
         data_dir,
         str(instance_path.relative_to(data_dir)),
@@ -1345,7 +1424,9 @@ def validate_final_selected_routes(
         )
         if not isinstance(blocks, list) or not isinstance(
             expected_block_sha, str
-        ):
+        ) or physical.get(
+            "continuous_realized_charging_blocks_schema"
+        ) != BLOCK_SCHEDULE_SCHEMA:
             raise PhysicalReplayError(
                 f"[MIP] final selected route {ordinal} lacks persisted "
                 "continuous charging blocks",
@@ -1371,7 +1452,7 @@ def validate_final_selected_routes(
         if prices is None:
             try:
                 prices = load_station_hourly_prices(
-                    data_dir / Path(status["prices_csv"]).name,
+                    tariff_path,
                     CHARGING_STATIONS,
                 )
             except (KeyError, OSError, ValueError) as exc:
@@ -1382,6 +1463,15 @@ def validate_final_selected_routes(
                     route=route,
                 ) from exc
         try:
+            arrivals = charging_stop_arrivals(problem, route)
+            if any(
+                float(block["start_min"])
+                < arrivals[int(block["stop_index"])] - 1e-6
+                for block in blocks
+            ):
+                raise ValueError(
+                    "continuous charging block begins before route arrival"
+                )
             block_validation = validate_continuous_charging_blocks(
                 route,
                 blocks,
@@ -1452,6 +1542,7 @@ def publish_rejected_physical_replay(
     code_identity: dict,
     augmentation_sources: list[dict],
     master_cost_semantics: str | None,
+    source_pricing_certified: bool,
 ) -> Path:
     """Publish a non-feasible solver-incumbent diagnostic, never a final."""
 
@@ -1549,8 +1640,11 @@ def publish_rejected_physical_replay(
         "pricing_certificate_scope":
             (
                 "conservative_expanded_grid_model_only"
-                if master_cost_semantics == "expanded_grid_cost"
-                else "none_for_mixed_or_continuous_augmented_pool"
+                if source_pricing_certified
+                and master_cost_semantics == "expanded_grid_cost"
+                else "source_grid_certificate_does_not_cover_augmented_pool"
+                if source_pricing_certified
+                else "not_certified"
             ),
         "continuous_cost_pricing_certified": False,
     }
@@ -1617,6 +1711,7 @@ def main(argv=None) -> int:
              "checkpoints (not a Gurobi tree restart).",
     )
     args = parser.parse_args(argv)
+    end_to_end_started = time.perf_counter()
 
     if args.out is not None and args.out.resolve() == args.result.resolve():
         parser.error("--out must not overwrite --result")
@@ -1624,11 +1719,15 @@ def main(argv=None) -> int:
 
     # Bind the solve to immutable bytes.  If a caller mistakenly gives a live
     # journal and it changes while being loaded, refuse the ambiguous result.
+    source_hashing_started = time.perf_counter()
     with open(args.result) as fh:
         source_status = json.load(fh)
     source_journal = resolve_pool_journal(args.result, source_status)
     source_result_sha256 = file_sha256(args.result)
     source_journal_sha256 = file_sha256(source_journal)
+    source_hashing_wall_s = (
+        time.perf_counter() - source_hashing_started
+    )
     expected_result_sha256 = os.environ.get(
         "EVSP_MIP_EXPECTED_RESULT_SHA256"
     )
@@ -1721,6 +1820,7 @@ def main(argv=None) -> int:
                 status,
                 data_dir=args.data_dir,
                 reference_data_dir=args.reference_data_dir,
+                physical_pool_audit=physical_pool_audit,
             )
         )
     coverage = Counter(t for r in routes for t in r["trips"])
@@ -2248,6 +2348,9 @@ def main(argv=None) -> int:
                     }) == 1
                     else "mixed_expanded_grid_and_continuous_augmented_cost"
                 ),
+                source_pricing_certified=(
+                    status.get("certified_rc_optimal") is True
+                ),
             )
             raise SystemExit(
                 f"{exc}; diagnostic={diagnostic_path}"
@@ -2293,10 +2396,14 @@ def main(argv=None) -> int:
     )
     pricing_certificate_scope = (
         "conservative_expanded_grid_model_only"
-        if master_cost_semantics == "expanded_grid_cost"
+        if status.get("certified_rc_optimal") is True
+        and master_cost_semantics == "expanded_grid_cost"
+        else "source_grid_certificate_does_not_cover_augmented_pool"
+        if status.get("certified_rc_optimal") is True
+        and master_cost_semantics is not None
+        else "not_certified"
+        if status.get("certified_rc_optimal") is not True
         else "none_for_mixed_or_continuous_augmented_pool"
-        if master_cost_semantics is not None
-        else None
     )
     if cost_stage_executed and solver_bound is not None and two_stage_detail:
         mip_bound = (BUS_COST_KX * two_stage_detail["stage1_buses"]
@@ -2380,12 +2487,9 @@ def main(argv=None) -> int:
                                if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
         "runtime_s": solver_runtime_s,
+        "source_hashing_wall_s": source_hashing_wall_s,
         "end_to_end_runtime_s": (
-            solver_runtime_s
-            + (
-                physical_pool_audit.get("preparation_wall_s", 0.0)
-                if physical_pool_audit else 0.0
-            )
+            time.perf_counter() - end_to_end_started
         ),
         "pool_columns": len(routes),
         "singleton_partition_columns": len(seed_partition),

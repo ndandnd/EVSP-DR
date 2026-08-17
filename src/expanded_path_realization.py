@@ -381,7 +381,6 @@ def _tariff_identity(station, minute, station_prices):
     return {
         "tariff_hour": tariff_hour,
         "tariff_key": f"{base}:{tariff_hour}",
-        "base_price_per_kwh": base_price,
         "price_per_kwh": base_price * charge_cost_premium,
     }
 
@@ -413,6 +412,15 @@ def blocks_from_continuous_stops(
             float(earliest_start_by_stop[stop_index])
             if earliest_start_by_stop is not None else start,
         )
+        if (
+            earliest_start_by_stop is not None
+            and float(earliest_start_by_stop[stop_index])
+            > start + TOLERANCE
+            and remaining > TOLERANCE
+        ):
+            raise ValueError(
+                "route arrives after priced charging start"
+            )
         if cursor > end + TOLERANCE:
             raise ValueError("charging stop begins after its window")
         while remaining > TOLERANCE:
@@ -424,7 +432,6 @@ def blocks_from_continuous_stops(
             energy = min(remaining, capacity)
             actual_end = cursor + energy * 60.0 / charge_kw
             blocks.append({
-                "schema": BLOCK_SCHEDULE_SCHEMA,
                 "stop_index": stop_index,
                 "block_index": block_index,
                 "station": station,
@@ -468,9 +475,8 @@ def validate_continuous_charging_blocks(
     grouped = {index: [] for index in range(len(fields["stations"]))}
     previous_key = None
     previous_end = {}
+    global_previous_end = None
     for block in blocks:
-        if block.get("schema") != BLOCK_SCHEDULE_SCHEMA:
-            raise ValueError("continuous charging block schema mismatch")
         stop_index = block.get("stop_index")
         block_index = block.get("block_index")
         if (
@@ -506,6 +512,12 @@ def validate_continuous_charging_blocks(
         ):
             raise ValueError("continuous charging blocks overlap")
         previous_end[stop_index] = end
+        if (
+            global_previous_end is not None
+            and start < global_previous_end - TOLERANCE
+        ):
+            raise ValueError("continuous charging blocks overlap across stops")
+        global_previous_end = end
         capacity = (end - start) * float(charge_kw) / 60.0
         if (
             realized < -TOLERANCE
@@ -610,7 +622,6 @@ def realized_costs(
                 station, block["block_start_min"], station_prices
             )
             blocks.append({
-                "schema": BLOCK_SCHEDULE_SCHEMA,
                 "stop_index": stop_index,
                 "block_index": block_index,
                 "station": station,
