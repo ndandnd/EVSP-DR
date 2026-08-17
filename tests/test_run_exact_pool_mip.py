@@ -83,6 +83,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 bound_scope="fleet_count",
                 code_identity={"observed_commit": "c" * 40},
                 augmentation_sources=[],
+                master_cost_semantics="expanded_grid_cost",
             )
             payload = json.loads(diagnostic.read_text())
             self.assertEqual(
@@ -114,6 +115,7 @@ class ExactPoolMipTests(unittest.TestCase):
                     bound_scope="fleet_count",
                     code_identity={"observed_commit": "c" * 40},
                     augmentation_sources=[],
+                    master_cost_semantics="expanded_grid_cost",
                 )
 
     def test_singletons_are_a_strict_partition_seed(self):

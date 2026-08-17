@@ -39,6 +39,10 @@ def _canonical_sha(payload) -> str:
     ).encode()).hexdigest()
 
 
+def charging_block_schedule_sha256(blocks: list[dict]) -> str:
+    return _canonical_sha(blocks)
+
+
 def _arc_map(problem):
     return {
         (source, target): (float(travel), float(deadhead))
@@ -326,6 +330,7 @@ def realize_expanded_path(
     realized_stops = deepcopy(emitted_stops)
     realized_stops["kwh"] = realized_kwh
     realized["charging_stops"] = realized_stops
+    realized["expanded_grid_charging_stops"] = deepcopy(stops)
     changed = any(
         abs(float(before) - float(after)) > TOLERANCE
         for before, after in zip(fields["kwh"], realized_kwh)
@@ -386,6 +391,7 @@ def blocks_from_continuous_stops(
     *,
     station_prices: dict,
     charge_kw: float,
+    earliest_start_by_stop: list[float] | None = None,
 ) -> list[dict]:
     """Split continuous stop kWh into tariff-hour, power-bounded blocks."""
 
@@ -402,7 +408,13 @@ def blocks_from_continuous_stops(
         end = float(fields["cet"][stop_index])
         remaining = float(fields["kwh"][stop_index])
         block_index = 0
-        cursor = start
+        cursor = max(
+            start,
+            float(earliest_start_by_stop[stop_index])
+            if earliest_start_by_stop is not None else start,
+        )
+        if cursor > end + TOLERANCE:
+            raise ValueError("charging stop begins after its window")
         while remaining > TOLERANCE:
             hour_end = (int(cursor // 60) + 1) * 60.0
             segment_end = min(end, hour_end)
@@ -455,6 +467,7 @@ def validate_continuous_charging_blocks(
         raise ValueError("charging stop fields have different lengths")
     grouped = {index: [] for index in range(len(fields["stations"]))}
     previous_key = None
+    previous_end = {}
     for block in blocks:
         if block.get("schema") != BLOCK_SCHEDULE_SCHEMA:
             raise ValueError("continuous charging block schema mismatch")
@@ -466,6 +479,10 @@ def validate_continuous_charging_blocks(
             or stop_index not in grouped
         ):
             raise ValueError("continuous charging block index is invalid")
+        if block_index != len(grouped[stop_index]):
+            raise ValueError(
+                "continuous charging block indices are not contiguous"
+            )
         key = (stop_index, block_index)
         if previous_key is not None and key <= previous_key:
             raise ValueError("continuous charging blocks are not ordered")
@@ -483,6 +500,12 @@ def validate_continuous_charging_blocks(
             or end <= start
         ):
             raise ValueError("continuous block lies outside stop window")
+        if (
+            stop_index in previous_end
+            and start < previous_end[stop_index] - TOLERANCE
+        ):
+            raise ValueError("continuous charging blocks overlap")
+        previous_end[stop_index] = end
         capacity = (end - start) * float(charge_kw) / 60.0
         if (
             realized < -TOLERANCE
@@ -492,6 +515,8 @@ def validate_continuous_charging_blocks(
         ):
             raise ValueError("continuous block violates charger power")
         tariff = _tariff_identity(station, start, station_prices)
+        if end > (int(start // 60) + 1) * 60.0 + TOLERANCE:
+            raise ValueError("continuous block crosses tariff hour")
         for tariff_key, expected in tariff.items():
             observed = block.get(tariff_key)
             if isinstance(expected, float):
@@ -514,6 +539,23 @@ def validate_continuous_charging_blocks(
             rel_tol=0.0, abs_tol=1e-6,
         ):
             raise ValueError("block kWh does not equal aggregate stop kWh")
+        expanded_sum = sum(
+            float(block["expanded_grid_kwh"])
+            for block in stop_blocks
+        )
+        expanded_stops = (
+            record.get("expanded_grid_charging_stops") or stops
+        )
+        expected_expanded = float(
+            (expanded_stops.get("kwh") or [])[stop_index]
+        )
+        if not math.isclose(
+            expanded_sum, expected_expanded,
+            rel_tol=0.0, abs_tol=1e-6,
+        ):
+            raise ValueError(
+                "block grid kWh does not equal expanded stop kWh"
+            )
         realized_electricity += sum(
             float(block["realized_kwh"])
             * float(block["price_per_kwh"])
@@ -544,7 +586,8 @@ def validate_continuous_charging_blocks(
         "recomputed_expanded_grid_cost": fixed + expanded_electricity,
         "realized_electricity_cost": realized_electricity,
         "expanded_grid_electricity_cost": expanded_electricity,
-        "block_schedule_sha256": _canonical_sha(blocks),
+        "block_schedule_sha256":
+            charging_block_schedule_sha256(blocks),
     }
 
 

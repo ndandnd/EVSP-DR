@@ -433,6 +433,49 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     return None
 
 
+def charging_stop_arrivals(problem, record) -> list[float]:
+    """Return actual earliest arrival for each persisted charging stop."""
+
+    arc = {
+        (source, target): (float(travel), float(deadhead))
+        for source, arcs in problem.adjacency.items()
+        for target, travel, deadhead, _kind in arcs
+    }
+    nodes = list(record.get("route_nodes", record.get("route", [])) or [])
+    stops = record.get("charging_stops") or {}
+    stations = list(stops.get("stations", []))
+    cets = list(stops.get("cet", []))
+    arrivals = []
+    stop_index = 0
+    time_now = None
+    previous = nodes[0]
+    for position, node in enumerate(nodes[1:], start=1):
+        is_last = position == len(nodes) - 1
+        key = None if (
+            isinstance(previous, str)
+            and isinstance(node, str)
+            and previous == node
+        ) else (previous, node)
+        travel = arc.get(key, (0.0, 0.0))[0]
+        if isinstance(node, int) and not isinstance(node, bool):
+            time_now = float(problem.end_min[node])
+        elif not is_last and stop_index < len(stations):
+            if stations[stop_index] == node:
+                arrival = (
+                    float(time_now + travel)
+                    if time_now is not None else 0.0
+                )
+                arrivals.append(arrival)
+                time_now = float(cets[stop_index])
+                stop_index += 1
+            elif time_now is not None:
+                time_now += travel
+        previous = node
+    if stop_index != len(stations):
+        raise ValueError("charging stop arrival mapping is incomplete")
+    return arrivals
+
+
 def prepare_strict_partition_pool(
     status,
     routes,
@@ -559,6 +602,7 @@ def prepare_strict_partition_pool(
                 })
             continue
         realized["cost"] = float(route["cost"])
+        realized["master_cost_semantics"] = "expanded_grid_cost"
         realized["expanded_grid_cost"] = float(route["cost"])
         realized["continuous_realized_cost"] = costs[
             "continuous_realized_cost"
@@ -721,6 +765,9 @@ def merge_extra_routes(
                     candidate_record,
                     station_prices=prices,
                     charge_kw=charge_kw,
+                    earliest_start_by_stop=charging_stop_arrivals(
+                        problem, candidate_record
+                    ),
                 )
                 block_validation = validate_continuous_charging_blocks(
                     candidate_record,
@@ -730,6 +777,8 @@ def merge_extra_routes(
                     expected_continuous_cost=cost,
                 )
                 candidate_record.update({
+                    "master_cost_semantics":
+                        "continuous_realized_cost",
                     "continuous_realized_cost": cost,
                     "continuous_realized_charging_blocks": blocks,
                     "physical_realization": {
@@ -1011,6 +1060,9 @@ def merge_validated_partition_start(
             validated_record,
             station_prices=prices,
             charge_kw=charge_kw,
+            earliest_start_by_stop=charging_stop_arrivals(
+                problem, validated_record
+            ),
         )
         block_validation = validate_continuous_charging_blocks(
             validated_record,
@@ -1020,6 +1072,7 @@ def merge_validated_partition_start(
             expected_continuous_cost=cost,
         )
         validated_record.update({
+            "master_cost_semantics": "continuous_realized_cost",
             "continuous_realized_cost": float(cost),
             "continuous_realized_charging_blocks": blocks,
             "physical_realization": {
@@ -1300,6 +1353,21 @@ def validate_final_selected_routes(
                 reason="persisted continuous charging blocks missing",
                 route=route,
             )
+        continuous_realized_cost = route.get(
+            "continuous_realized_cost"
+        )
+        if (
+            not isinstance(continuous_realized_cost, (int, float))
+            or isinstance(continuous_realized_cost, bool)
+            or not math.isfinite(float(continuous_realized_cost))
+        ):
+            raise PhysicalReplayError(
+                f"[MIP] final selected route {ordinal} lacks a finite "
+                "continuous realized cost",
+                route_ordinal=ordinal,
+                reason="continuous realized cost missing/non-finite",
+                route=route,
+            )
         if prices is None:
             try:
                 prices = load_station_hourly_prices(
@@ -1319,9 +1387,7 @@ def validate_final_selected_routes(
                 blocks,
                 station_prices=prices,
                 charge_kw=charge_kw,
-                expected_continuous_cost=route.get(
-                    "continuous_realized_cost"
-                ),
+                expected_continuous_cost=continuous_realized_cost,
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise PhysicalReplayError(
@@ -1337,6 +1403,30 @@ def validate_final_selected_routes(
                 "mismatch",
                 route_ordinal=ordinal,
                 reason="continuous charging block schedule hash mismatch",
+                route=route,
+            )
+        master_semantics = route.get("master_cost_semantics")
+        expected_master_cost = (
+            block_validation["recomputed_expanded_grid_cost"]
+            if master_semantics == "expanded_grid_cost"
+            else block_validation["continuous_realized_cost"]
+            if master_semantics == "continuous_realized_cost"
+            else None
+        )
+        if (
+            expected_master_cost is None
+            or not math.isclose(
+                float(route["cost"]),
+                float(expected_master_cost),
+                rel_tol=1e-9,
+                abs_tol=1e-6,
+            )
+        ):
+            raise PhysicalReplayError(
+                f"[MIP] final selected route {ordinal} master cost does "
+                "not match persisted charging blocks",
+                route_ordinal=ordinal,
+                reason="master cost/block schedule mismatch",
                 route=route,
             )
     if any(counts[trip] != 1 for trip in trips):
@@ -1361,6 +1451,7 @@ def publish_rejected_physical_replay(
     bound_scope: str,
     code_identity: dict,
     augmentation_sources: list[dict],
+    master_cost_semantics: str | None,
 ) -> Path:
     """Publish a non-feasible solver-incumbent diagnostic, never a final."""
 
@@ -1454,9 +1545,13 @@ def publish_rejected_physical_replay(
             physical_pool_audit.get("preparation_wall_s")
             if physical_pool_audit else None
         ),
-        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "master_cost_semantics": master_cost_semantics,
         "pricing_certificate_scope":
-            "conservative_expanded_grid_model_only",
+            (
+                "conservative_expanded_grid_model_only"
+                if master_cost_semantics == "expanded_grid_cost"
+                else "none_for_mixed_or_continuous_augmented_pool"
+            ),
         "continuous_cost_pricing_certified": False,
     }
     write_new_json(diagnostic_path, payload)
@@ -1582,26 +1677,19 @@ def main(argv=None) -> int:
     ]
     initial_partition_start = None
 
+    physical_preparation_started = (
+        time.perf_counter() if not args.cover else None
+    )
     status, routes, trips = load_pool(
         args.result, deduplicate=args.cover
     )
     physical_pool_audit = None
     if not args.cover:
-        physical_preparation_started = time.perf_counter()
         routes, physical_pool_audit = prepare_strict_partition_pool(
             status,
             routes,
             data_dir=args.data_dir,
             reference_data_dir=args.reference_data_dir,
-        )
-        physical_pool_audit["preparation_wall_s"] = (
-            time.perf_counter() - physical_preparation_started
-        )
-        print(
-            "[MIP] physical pool gate: "
-            f"{physical_pool_audit['valid_as_recorded']} valid recorded, "
-            f"{physical_pool_audit['deterministically_repaired']} repaired, "
-            f"{physical_pool_audit['rejected_columns']} rejected"
         )
         routes = deduplicate_pool(routes)
         physical_pool_audit["mip_unique_accepted_columns"] = len(
@@ -1655,6 +1743,18 @@ def main(argv=None) -> int:
                 if mip_start else None
             ),
         }
+    if physical_pool_audit is not None:
+        physical_pool_audit["post_augmentation_columns"] = len(routes)
+        physical_pool_audit["preparation_wall_s"] = (
+            time.perf_counter() - physical_preparation_started
+        )
+        print(
+            "[MIP] physical pool preparation: "
+            f"{physical_pool_audit['valid_as_recorded']} valid recorded, "
+            f"{physical_pool_audit['deterministically_repaired']} repaired, "
+            f"{physical_pool_audit['rejected_columns']} rejected, "
+            f"{physical_pool_audit['preparation_wall_s']:.3f}s"
+        )
     print(f"[MIP] pool: {len(routes)} columns over {len(trips)} trips "
           f"(instance {status['csv']}, soc_step={status['soc_step']}, "
           f"certified={status.get('certified_rc_optimal')})")
@@ -2137,6 +2237,17 @@ def main(argv=None) -> int:
                         else []
                     ),
                 ],
+                master_cost_semantics=(
+                    next(iter({
+                        routes[index].get("master_cost_semantics")
+                        for index in chosen
+                    }))
+                    if len({
+                        routes[index].get("master_cost_semantics")
+                        for index in chosen
+                    }) == 1
+                    else "mixed_expanded_grid_and_continuous_augmented_cost"
+                ),
             )
             raise SystemExit(
                 f"{exc}; diagnostic={diagnostic_path}"
@@ -2167,6 +2278,24 @@ def main(argv=None) -> int:
         if chosen and all(
             value is not None for value in continuous_selected_costs
         )
+        else None
+    )
+    selected_master_semantics = {
+        routes[index].get("master_cost_semantics")
+        for index in chosen
+    }
+    master_cost_semantics = (
+        next(iter(selected_master_semantics))
+        if len(selected_master_semantics) == 1
+        else "mixed_expanded_grid_and_continuous_augmented_cost"
+        if selected_master_semantics
+        else None
+    )
+    pricing_certificate_scope = (
+        "conservative_expanded_grid_model_only"
+        if master_cost_semantics == "expanded_grid_cost"
+        else "none_for_mixed_or_continuous_augmented_pool"
+        if master_cost_semantics is not None
         else None
     )
     if cost_stage_executed and solver_bound is not None and two_stage_detail:
@@ -2209,6 +2338,10 @@ def main(argv=None) -> int:
     code_identity["final_tracked_clean"] = final_code_identity[
         "tracked_clean"
     ]
+    solver_runtime_s = (
+        progress.elapsed_s() if progress is not None
+        else time.time() - t0
+    )
     summary = {
         "source_result": str(args.result),
         "instance": status["csv"],
@@ -2237,7 +2370,7 @@ def main(argv=None) -> int:
                         if two_stage_detail else None),
         "charging_cost": (mip_obj - BUS_COST_KX * len(chosen))
                          if chosen and mip_obj is not None else None,
-        "charging_cost_semantics": "expanded_grid_cost",
+        "charging_cost_semantics": master_cost_semantics,
         "continuous_realized_mip_obj": continuous_realized_mip_obj,
         "continuous_realized_charging_cost": (
             continuous_realized_mip_obj - BUS_COST_KX * len(chosen)
@@ -2246,9 +2379,13 @@ def main(argv=None) -> int:
         "variable_route_cost": (mip_obj - BUS_COST_KX * len(chosen))
                                if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
-        "runtime_s": (
-            progress.elapsed_s() if progress is not None
-            else time.time() - t0
+        "runtime_s": solver_runtime_s,
+        "end_to_end_runtime_s": (
+            solver_runtime_s
+            + (
+                physical_pool_audit.get("preparation_wall_s", 0.0)
+                if physical_pool_audit else 0.0
+            )
         ),
         "pool_columns": len(routes),
         "singleton_partition_columns": len(seed_partition),
@@ -2265,9 +2402,9 @@ def main(argv=None) -> int:
             physical_pool_audit.get("preparation_wall_s")
             if physical_pool_audit else None
         ),
-        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "master_cost_semantics": master_cost_semantics,
         "pricing_certificate_scope":
-            "conservative_expanded_grid_model_only",
+            pricing_certificate_scope,
         "continuous_cost_pricing_certified": False,
         "source_cg_wall_s": status.get("wall_s"),
         "source_cg_iterations": status.get("iterations"),

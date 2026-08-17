@@ -260,6 +260,24 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             validation["block_schedule_sha256"],
             costs["continuous_realized_charging_blocks_sha256"],
         )
+        overlapping = json.loads(json.dumps(blocks))
+        overlapping[1]["start_min"] = 55.0
+        with self.assertRaisesRegex(ValueError, "overlap"):
+            validate_continuous_charging_blocks(
+                realized,
+                overlapping,
+                station_prices=prices,
+                charge_kw=300,
+            )
+        wrong_grid = json.loads(json.dumps(blocks))
+        wrong_grid[0]["expanded_grid_kwh"] -= 1.0
+        with self.assertRaisesRegex(ValueError, "grid kWh"):
+            validate_continuous_charging_blocks(
+                realized,
+                wrong_grid,
+                station_prices=prices,
+                charge_kw=300,
+            )
 
     def test_station_entry_uses_continuous_prefloor_reserve(self):
         station = "S"

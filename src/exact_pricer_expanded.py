@@ -56,6 +56,7 @@ from durable_io import (
 from exact_cg_telemetry import PhaseTelemetry
 from expanded_path_realization import (
     _arc_map as continuous_arc_map,
+    charging_block_schedule_sha256,
     realize_expanded_path,
     realized_costs,
 )
@@ -134,6 +135,20 @@ def direct_singleton_seed_records(
             "route_nodes": [DEPOT, trip, DEPOT],
             "charging_stops": {
                 "stations": [], "cst": [], "cet": [], "kwh": [],
+            },
+            "expanded_grid_charging_stops": {
+                "stations": [], "cst": [], "cet": [], "kwh": [],
+            },
+            "continuous_realized_cost": float(BUS_COST_KX),
+            "continuous_realized_charging_blocks": [],
+            "cost_semantics": "expanded_grid_cost",
+            "master_cost_semantics": "expanded_grid_cost",
+            "continuous_cost_pricing_certified": False,
+            "physical_realization": {
+                "status": "valid_as_recorded_mapped",
+                "continuous_realized_charging_blocks_sha256":
+                    charging_block_schedule_sha256([]),
+                "continuous_cost_pricing_certified": False,
             },
             "charges_started": 0,
             "found_iter": 0,
@@ -1693,6 +1708,7 @@ def run_cg(args) -> dict:
                     "continuous_realized_charging_blocks":
                         costs["continuous_realized_charging_blocks"],
                     "cost_semantics": "expanded_grid_cost",
+                    "master_cost_semantics": "expanded_grid_cost",
                     "continuous_cost_pricing_certified": False,
                     "physical_realization": {
                         key: value for key, value in mapping.items()
@@ -1893,6 +1909,8 @@ def run_cg(args) -> dict:
                                     "continuous_realized_charging_blocks"
                                 ],
                             "cost_semantics": "expanded_grid_cost",
+                            "master_cost_semantics":
+                                "expanded_grid_cost",
                             "continuous_cost_pricing_certified": False,
                             "physical_realization": {
                                 key_: value for key_, value
