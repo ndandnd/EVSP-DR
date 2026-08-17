@@ -12,16 +12,60 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from archive_cross_generation_evidence import archive_evidence  # noqa: E402
 from launch_cross_generation_evidence import (  # noqa: E402
+    _dependency_job_ids,
     build_sbatch_command,
 )
 from run_cross_generation_evidence_job import (  # noqa: E402
     _campaign_ready,
     _require_campaign_artifacts,
+    parse_campaign_assignments,
     wait_for_campaigns,
 )
 
 
 class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
+    def test_repeatable_campaign_assignments(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            raw = root / "raw"
+            pilot = root / "pilot"
+            raw.mkdir()
+            pilot.mkdir()
+            one = parse_campaign_assignments([
+                f"raw_k40={raw}",
+            ])
+            self.assertEqual(one, [(raw.resolve(), "raw_k40")])
+            multiple = parse_campaign_assignments([
+                f"raw_k40={raw}",
+                f"pilot={pilot}",
+            ])
+            self.assertEqual(
+                multiple,
+                [(raw.resolve(), "raw_k40"), (pilot.resolve(), "pilot")],
+            )
+
+    def test_invalid_campaign_and_dependency_values_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = root / "campaign"
+            campaign.mkdir()
+            with self.assertRaisesRegex(ValueError, "at least one"):
+                parse_campaign_assignments([])
+            with self.assertRaisesRegex(ValueError, "unsupported"):
+                parse_campaign_assignments([f"other={campaign}"])
+            with self.assertRaisesRegex(ValueError, "must be absolute"):
+                parse_campaign_assignments(["pilot=relative/path"])
+            with self.assertRaisesRegex(ValueError, "not a directory"):
+                parse_campaign_assignments([
+                    f"pilot={root / 'missing'}"
+                ])
+            with self.assertRaisesRegex(ValueError, "decimal integers"):
+                _dependency_job_ids(Namespace(after_job_id=["123x"]))
+            with self.assertRaisesRegex(ValueError, "must be unique"):
+                _dependency_job_ids(
+                    Namespace(after_job_id=["123", "123"])
+                )
+
     def test_incomplete_live_campaign_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             campaign = Path(tmp) / "running"
@@ -193,6 +237,10 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                 path.mkdir()
             log_dir = root / "logs"
             log_dir.mkdir()
+            current_campaign = root / "current-campaign"
+            raw_campaign = root / "raw-campaign"
+            current_campaign.mkdir()
+            raw_campaign.mkdir()
             args = Namespace(
                 repo_root=REPO_ROOT,
                 root=[
@@ -207,8 +255,10 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
                     "CROSS_GENERATION_EVIDENCE_INPUT_MANIFEST_20260816.json"
                 ),
                 manifest=root / "manifest.json",
-                current_mip_campaign_root=root / "current-campaign",
-                raw_k40_campaign_root=root / "raw-campaign",
+                campaign=[],
+                after_job_id=[],
+                current_mip_campaign_root=current_campaign,
+                raw_k40_campaign_root=raw_campaign,
                 current_mip_mode="pilot",
                 wait_timeout_s=0,
                 poll_s=1,
@@ -225,6 +275,26 @@ class CrossGenerationEvidenceLauncherTests(unittest.TestCase):
             self.assertNotIn("run_exact_pool_mip.py", joined)
             self.assertNotIn("exact_pricer_expanded.py", joined)
             self.assertFalse(plan["submits_cg_or_mip_solves"])
+            authoritative = Namespace(**vars(args))
+            authoritative.current_mip_campaign_root = None
+            authoritative.raw_k40_campaign_root = None
+            authoritative.current_mip_mode = None
+            authoritative.campaign = [f"raw_k40={raw_campaign}"]
+            authoritative.after_job_id = ["101", "202"]
+            authoritative.wait_timeout_s = None
+            dependency_command, dependency_plan = build_sbatch_command(
+                authoritative
+            )
+            self.assertIn(
+                "--dependency=afterany:101:202", dependency_command
+            )
+            self.assertEqual(
+                dependency_plan["worker_wait_timeout_s"], 0.0
+            )
+            self.assertEqual(
+                dependency_plan["campaigns"],
+                [{"mode": "raw_k40", "path": str(raw_campaign.resolve())}],
+            )
             args.root = args.root[:-1]
             with self.assertRaisesRegex(ValueError, "roots missing"):
                 build_sbatch_command(args)

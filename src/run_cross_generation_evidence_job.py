@@ -28,6 +28,33 @@ REQUIRED_ROOT_ALIASES = {
     "mip_campaign",
     "releases",
 }
+SUPPORTED_CAMPAIGN_MODES = {"pilot", "secondary", "raw_k40"}
+
+
+def parse_campaign_assignments(values: list[str]) -> list[tuple[Path, str]]:
+    if not values:
+        raise ValueError("at least one --campaign MODE=ABSOLUTE_PATH is required")
+    campaigns = []
+    seen_paths = set()
+    for value in values:
+        if "=" not in value:
+            raise ValueError(
+                f"campaign must be MODE=ABSOLUTE_PATH: {value!r}"
+            )
+        mode, raw_path = value.split("=", 1)
+        if mode not in SUPPORTED_CAMPAIGN_MODES:
+            raise ValueError(f"unsupported campaign mode: {mode!r}")
+        path = Path(raw_path).expanduser()
+        if not path.is_absolute():
+            raise ValueError(f"campaign path must be absolute: {raw_path!r}")
+        path = path.resolve()
+        if not path.is_dir():
+            raise ValueError(f"campaign path is not a directory: {path}")
+        if path in seen_paths:
+            raise ValueError(f"campaign path supplied more than once: {path}")
+        seen_paths.add(path)
+        campaigns.append((path, mode))
+    return campaigns
 
 
 def _assert_slurm_compute_node() -> None:
@@ -298,16 +325,16 @@ def main(argv=None) -> int:
     parser.add_argument("--approved-manifest-sha256")
     parser.add_argument("--build-out", type=Path)
     parser.add_argument("--archive-out", type=Path)
+    parser.add_argument("--campaign", action="append", default=[])
     parser.add_argument(
-        "--current-mip-campaign-root", type=Path, required=True
+        "--current-mip-campaign-root", type=Path
     )
     parser.add_argument(
-        "--raw-k40-campaign-root", type=Path, required=True
+        "--raw-k40-campaign-root", type=Path
     )
     parser.add_argument(
         "--current-mip-mode",
         choices=("pilot", "secondary"),
-        required=True,
     )
     parser.add_argument("--wait-timeout-s", type=float, default=0.0)
     parser.add_argument("--poll-s", type=float, default=300.0)
@@ -337,23 +364,30 @@ def main(argv=None) -> int:
         raise ValueError(
             f"explicit source roots missing: {missing_aliases}"
         )
-    current_campaign = args.current_mip_campaign_root.expanduser().resolve()
-    raw_campaign = args.raw_k40_campaign_root.expanduser().resolve()
-    if current_campaign == raw_campaign:
-        raise ValueError("current and RAW-k40 campaigns must be distinct")
-    mip_root = roots["mip_campaign"].resolve()
-    if (
-        mip_root not in current_campaign.parents
-        or mip_root not in raw_campaign.parents
-    ):
-        raise ValueError(
-            "named campaigns must be contained by mip_campaign source root"
+    campaign_values = list(args.campaign)
+    if args.current_mip_campaign_root is not None:
+        if args.current_mip_mode is None:
+            raise ValueError(
+                "--current-mip-mode is required with compatibility "
+                "--current-mip-campaign-root"
+            )
+        campaign_values.append(
+            f"{args.current_mip_mode}="
+            f"{args.current_mip_campaign_root.expanduser().absolute()}"
         )
+    if args.raw_k40_campaign_root is not None:
+        campaign_values.append(
+            f"raw_k40={args.raw_k40_campaign_root.expanduser().absolute()}"
+        )
+    campaigns = parse_campaign_assignments(campaign_values)
+    mip_root = roots["mip_campaign"].resolve()
+    for campaign, _mode in campaigns:
+        if mip_root not in campaign.parents:
+            raise ValueError(
+                "named campaigns must be contained by mip_campaign source root"
+            )
     wait_for_campaigns(
-        [
-            (current_campaign, args.current_mip_mode),
-            (raw_campaign, "raw_k40"),
-        ],
+        campaigns,
         timeout_s=args.wait_timeout_s,
         poll_s=args.poll_s,
     )
@@ -364,11 +398,11 @@ def main(argv=None) -> int:
             ).hexdigest()
             for name in ("campaign.json", "approved-plan.json")
         }
-        for campaign in (current_campaign, raw_campaign)
+        for campaign, _mode in campaigns
     }
     if args.phase == "collect":
         payload = collect(args.template, roots)
-        for campaign in (current_campaign, raw_campaign):
+        for campaign, _mode in campaigns:
             _require_campaign_artifacts(
                 payload, campaign, require_reviewed_metadata=False
             )
@@ -392,7 +426,7 @@ def main(argv=None) -> int:
             "--build-out, and --archive-out"
         )
     reviewed_payload = json.loads(args.manifest.read_text())
-    for campaign in (current_campaign, raw_campaign):
+    for campaign, _mode in campaigns:
         _require_campaign_artifacts(
             reviewed_payload,
             campaign,
@@ -417,7 +451,7 @@ def main(argv=None) -> int:
         args.build_out,
         args.manifest,
         args.archive_out,
-        (current_campaign, raw_campaign),
+        tuple(campaign for campaign, _mode in campaigns),
         campaign_hashes,
     )
     print(json.dumps({

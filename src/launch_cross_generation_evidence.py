@@ -6,13 +6,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shlex
 import subprocess
 import sys
 from pathlib import Path
 
 from collect_cross_generation_inputs import _assignments
-from run_cross_generation_evidence_job import REQUIRED_ROOT_ALIASES
+from run_cross_generation_evidence_job import (
+    REQUIRED_ROOT_ALIASES,
+    parse_campaign_assignments,
+)
 
 
 def _git(repo: Path, *args) -> str:
@@ -23,12 +27,42 @@ def _git(repo: Path, *args) -> str:
     return result.stdout.strip()
 
 
+def _campaign_values(args) -> list[str]:
+    values = list(getattr(args, "campaign", []) or [])
+    current = getattr(args, "current_mip_campaign_root", None)
+    current_mode = getattr(args, "current_mip_mode", None)
+    raw = getattr(args, "raw_k40_campaign_root", None)
+    if current is not None:
+        if current_mode is None:
+            raise ValueError(
+                "compatibility current campaign requires current mode"
+            )
+        values.append(f"{current_mode}={current.expanduser().absolute()}")
+    if raw is not None:
+        values.append(f"raw_k40={raw.expanduser().absolute()}")
+    return values
+
+
+def _dependency_job_ids(args) -> list[str]:
+    values = list(getattr(args, "after_job_id", []) or [])
+    if any(not re.fullmatch(r"[0-9]+", value) for value in values):
+        raise ValueError("Slurm dependency job IDs must be decimal integers")
+    if len(values) != len(set(values)):
+        raise ValueError("Slurm dependency job IDs must be unique")
+    return values
+
+
 def build_sbatch_command(args) -> tuple[list[str], dict]:
     repo = args.repo_root.expanduser().resolve()
     roots = _assignments(args.root)
     missing = sorted(REQUIRED_ROOT_ALIASES - set(roots))
     if missing:
         raise ValueError(f"explicit source roots missing: {missing}")
+    campaigns = parse_campaign_assignments(_campaign_values(args))
+    dependency_ids = _dependency_job_ids(args)
+    wait_timeout_s = getattr(args, "wait_timeout_s", None)
+    if wait_timeout_s is None:
+        wait_timeout_s = 0.0 if dependency_ids else 86400.0
     if args.phase == "build" and (
         not args.approved_manifest_sha256
         or args.build_out is None
@@ -45,16 +79,13 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         "--phase", args.phase,
         "--template", str(args.template.expanduser().resolve()),
         "--manifest", str(args.manifest.expanduser().resolve()),
-        "--current-mip-campaign-root",
-        str(args.current_mip_campaign_root.expanduser().resolve()),
-        "--raw-k40-campaign-root",
-        str(args.raw_k40_campaign_root.expanduser().resolve()),
-        "--current-mip-mode", args.current_mip_mode,
-        "--wait-timeout-s", str(args.wait_timeout_s),
+        "--wait-timeout-s", str(wait_timeout_s),
         "--poll-s", str(args.poll_s),
         "--repo-root", str(repo),
         "--expected-commit", args.expected_commit,
     ]
+    for campaign, mode in campaigns:
+        worker_args.extend(["--campaign", f"{mode}={campaign}"])
     for alias, path in sorted(roots.items()):
         worker_args.extend(["--root", f"{alias}={path}"])
     if args.phase == "build":
@@ -77,8 +108,12 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         f"--output={args.log_dir.resolve()}/{job_name}-%j.out",
         f"--error={args.log_dir.resolve()}/{job_name}-%j.err",
         "--export=NONE",
-        f"--wrap={shlex.join(worker_args)}",
     ]
+    if dependency_ids:
+        sbatch.append(
+            f"--dependency=afterany:{':'.join(dependency_ids)}"
+        )
+    sbatch.append(f"--wrap={shlex.join(worker_args)}")
     plan = {
         "schema": "evsp-dr-cross-generation-slurm-plan-v1",
         "phase": args.phase,
@@ -91,12 +126,12 @@ def build_sbatch_command(args) -> tuple[list[str], dict]:
         "roots": {
             key: str(value) for key, value in sorted(roots.items())
         },
-        "current_mip_campaign_root": str(
-            args.current_mip_campaign_root.expanduser().resolve()
-        ),
-        "raw_k40_campaign_root": str(
-            args.raw_k40_campaign_root.expanduser().resolve()
-        ),
+        "campaigns": [
+            {"mode": mode, "path": str(campaign)}
+            for campaign, mode in campaigns
+        ],
+        "after_job_ids": dependency_ids,
+        "worker_wait_timeout_s": wait_timeout_s,
         "sbatch_argv": sbatch,
     }
     return sbatch, plan
@@ -112,17 +147,21 @@ def main(argv=None) -> int:
     parser.add_argument("--build-out", type=Path)
     parser.add_argument("--archive-out", type=Path)
     parser.add_argument(
-        "--current-mip-campaign-root", type=Path, required=True
+        "--campaign", action="append", default=[],
+        help="Repeatable MODE=ABSOLUTE_PATH; MODE is pilot, secondary, raw_k40.",
+    )
+    parser.add_argument("--after-job-id", action="append", default=[])
+    parser.add_argument(
+        "--current-mip-campaign-root", type=Path
     )
     parser.add_argument(
-        "--raw-k40-campaign-root", type=Path, required=True
+        "--raw-k40-campaign-root", type=Path
     )
     parser.add_argument(
         "--current-mip-mode",
         choices=("pilot", "secondary"),
-        required=True,
     )
-    parser.add_argument("--wait-timeout-s", type=float, default=86400.0)
+    parser.add_argument("--wait-timeout-s", type=float)
     parser.add_argument("--poll-s", type=float, default=300.0)
     parser.add_argument("--partition", default="scaglione")
     parser.add_argument("--cpus", type=int, default=4)
