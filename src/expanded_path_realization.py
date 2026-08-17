@@ -227,13 +227,6 @@ def realize_expanded_path(
                 grid_soc, soc_step=soc_step, levels=levels
             )
             grid_soc = grid[entry_level]
-            if grid_soc < reserve_kwh - TOLERANCE:
-                return None, {
-                    "classification": "infeasible_after_realization",
-                    "reason": (
-                        f"expanded grid SOC below reserve at {node}"
-                    ),
-                }
             station_discarded = max(
                 0.0, expanded_before_floor - grid_soc
             )

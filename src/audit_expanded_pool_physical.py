@@ -12,6 +12,7 @@ import os
 import platform
 import shutil
 import subprocess
+import tarfile
 import tempfile
 from collections import Counter
 from pathlib import Path
@@ -60,6 +61,7 @@ POOL_FIELDS = (
     "mip_unique_deterministically_repairable",
     "mip_unique_infeasible_after_realization",
     "expanded_grid_cost_mismatch_count",
+    "cost_unavailable_count", "physical_admission_rejected_records",
 )
 
 
@@ -75,6 +77,31 @@ def _canonical_sha(payload) -> str:
     return hashlib.sha256(json.dumps(
         payload, sort_keys=True, separators=(",", ":"), allow_nan=False
     ).encode()).hexdigest()
+
+
+def _archive_member_hashes(path: Path) -> dict[str, str]:
+    members = {}
+    with tarfile.open(path, "r:*") as archive:
+        for member in archive:
+            if not member.isfile():
+                continue
+            source = archive.extractfile(member)
+            if source is None:
+                raise ValueError(f"archive member unreadable: {member.name}")
+            digest = hashlib.sha256()
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+            members[member.name] = digest.hexdigest()
+    return members
+
+
+def _archive_relative(path: Path) -> str:
+    parts = path.resolve().parts
+    try:
+        index = parts.index("src")
+    except ValueError as exc:
+        raise ValueError(f"audited path is not under src/: {path}") from exc
+    return "/".join(parts[index:])
 
 
 def _selected_indices(campaign_root: Path | None, pool: str):
@@ -161,13 +188,15 @@ def audit_pools(
             "archive_sha256 requires archive_path for verification"
         )
     if archive_path is not None:
-        observed_archive_sha = _sha(archive_path.expanduser().resolve())
+        archive_path = archive_path.expanduser().resolve()
+        observed_archive_sha = _sha(archive_path)
         if (
             archive_sha256 is not None
             and observed_archive_sha != archive_sha256
         ):
             raise ValueError("archive SHA-256 mismatch")
         archive_sha256 = observed_archive_sha
+        archive_members = _archive_member_hashes(archive_path)
         if expected_pools != RAW_K40_POOLS:
             raise ValueError(
                 "verified RAW-k40 archive requires the exact four-pool set"
@@ -202,6 +231,20 @@ def audit_pools(
                 "reference": _sha(reference_path),
                 "deadhead": _sha(deadhead_path),
             }
+            archive_binding = {}
+            if archive_path is not None:
+                for label, source_path in (
+                    ("status", status_path),
+                    ("journal", journal_path),
+                    ("instance", instance_path),
+                    ("tariff", tariff_path),
+                ):
+                    member = _archive_relative(source_path)
+                    if archive_members.get(member) != immutable_hashes[label]:
+                        raise ValueError(
+                            f"archive member mismatch: {member}"
+                        )
+                    archive_binding[label] = member
             provenance = status.get("provenance") or {}
             if (
                 provenance.get("instance_sha256")
@@ -262,17 +305,29 @@ def audit_pools(
                 ):
                     archived_mip_pool[key] = (candidate, raw_ordinal)
             archived_mip_pool_values = list(archived_mip_pool.values())
-            selected_raw_ordinals = {
-                archived_mip_pool_values[route_index][1]: selected_ordinal
-                for route_index, selected_ordinal in selected.items()
-            }
+            selected_raw_ordinals = (
+                {
+                    archived_mip_pool_values[route_index][1]:
+                        selected_ordinal
+                    for route_index, selected_ordinal in selected.items()
+                }
+                if (
+                    selected_source is None
+                    or selected_source["selected_index_scope"]
+                    == "archived_pre_physical_gate_pool"
+                )
+                else {}
+            )
             counts = Counter()
             rejection_samples = []
             selected_failures = []
             mapping_hashes = []
             classification_by_ordinal = {}
             grid_cost_mismatches = 0
+            cost_unavailable = 0
             admitted_pool = {}
+            admitted_record_count = 0
+            detail_by_ordinal = {}
             for ordinal, record in enumerate(records, start=1):
                 trips = list(record.get("trips") or [])
                 incidence_sha = _canonical_sha(sorted(trips))
@@ -318,6 +373,8 @@ def audit_pools(
                         abs_tol=1e-6,
                     )
                 )
+                if not costs:
+                    cost_unavailable += 1
                 if recorded_reason is None:
                     classification = "valid_as_recorded"
                 elif realized is not None and realized_reason is None:
@@ -331,6 +388,7 @@ def audit_pools(
                     and realized_reason is None
                     and cost_matches
                 ):
+                    admitted_record_count += 1
                     key = frozenset(trips)
                     if (
                         key not in admitted_pool
@@ -340,6 +398,14 @@ def audit_pools(
                         admitted_pool[key] = (
                             record, ordinal, classification
                         )
+                detail_by_ordinal[ordinal] = {
+                    "incidence_sha256": incidence_sha,
+                    "trips": trips,
+                    "recorded_reason": recorded_reason,
+                    "classification": classification,
+                    "mapping": mapping,
+                    "costs": costs or None,
+                }
                 if mapping is not None:
                     mapping_hashes.append(mapping["mapping_sha256"])
                 selected_ordinal = selected_raw_ordinals.get(ordinal)
@@ -420,8 +486,78 @@ def audit_pools(
                     route_detail == "full"
                     or route_detail == "selected"
                     and selected_ordinal is not None
+                    or (
+                        route_detail == "selected"
+                        and selected_source is not None
+                        and selected_source["selected_index_scope"]
+                        == "physically_admitted_pool"
+                    )
                 ):
                     route_rows.append(route_row)
+            unresolved_selected_indices = []
+            if (
+                selected_source is not None
+                and selected_source["selected_index_scope"]
+                == "physically_admitted_pool"
+            ):
+                admitted_values = list(admitted_pool.values())
+                selected_raw_ordinals = {}
+                for route_index, selected_ordinal in selected.items():
+                    if route_index >= len(admitted_values):
+                        unresolved_selected_indices.append(route_index)
+                        continue
+                    selected_raw_ordinals[
+                        admitted_values[route_index][1]
+                    ] = selected_ordinal
+                selected_failures = []
+                for row in route_rows:
+                    if row["pool"] != pool:
+                        continue
+                    selected_ordinal = selected_raw_ordinals.get(
+                        int(row["ordinal"])
+                    )
+                    row["selected_in_solver_incumbent"] = (
+                        selected_ordinal is not None
+                    )
+                    row["selected_route_ordinal"] = selected_ordinal
+                if route_detail == "selected":
+                    route_rows[:] = [
+                        row for row in route_rows
+                        if row["pool"] != pool
+                        or row["selected_in_solver_incumbent"]
+                    ]
+                for raw_ordinal, selected_ordinal in (
+                    selected_raw_ordinals.items()
+                ):
+                    detail = detail_by_ordinal[raw_ordinal]
+                    if detail["recorded_reason"] is None:
+                        continue
+                    mapping = detail["mapping"]
+                    selected_failures.append({
+                        "selected_route_ordinal": selected_ordinal,
+                        "pool_route_index": (
+                            list(admitted_pool.values()).index(
+                                next(
+                                    value for value
+                                    in admitted_pool.values()
+                                    if value[1] == raw_ordinal
+                                )
+                            )
+                        ),
+                        "raw_journal_ordinal": raw_ordinal,
+                        "incidence_sha256":
+                            detail["incidence_sha256"],
+                        "recorded_reason": detail["recorded_reason"],
+                        "classification": detail["classification"],
+                        "mapping_sha256": (
+                            mapping.get("mapping_sha256")
+                            if mapping else None
+                        ),
+                        "soc_trace": (
+                            mapping.get("trace") if mapping else None
+                        ),
+                        "costs": detail["costs"],
+                    })
             if _sha(journal_path) != journal_before:
                 raise ValueError(f"journal changed during audit: {journal_path}")
             after_hashes = {
@@ -454,12 +590,15 @@ def audit_pools(
                 "tariff_sha256": immutable_hashes["tariff"],
                 "reference_sha256": immutable_hashes["reference"],
                 "deadhead_sha256": immutable_hashes["deadhead"],
+                "archive_member_binding": archive_binding,
                 "journal_records": len(records),
                 "archived_mip_unique_columns":
                     len(archived_mip_pool),
                 "mip_unique_columns": len(admitted_pool),
                 "selected_incumbent_routes": len(selected),
                 "selected_incumbent_source": selected_source,
+                "unresolved_selected_indices":
+                    unresolved_selected_indices,
                 "counts": dict(sorted(counts.items())),
                 "mip_unique_counts": dict(sorted(Counter(
                     classification
@@ -471,6 +610,10 @@ def audit_pools(
                 "mapping_set_sha256": _canonical_sha(sorted(mapping_hashes)),
                 "expanded_grid_cost_mismatch_count":
                     grid_cost_mismatches,
+                "cost_unavailable_count": cost_unavailable,
+                "physical_admission_rejected_records": (
+                    len(records) - admitted_record_count
+                ),
                 "physics": {
                     "g_kwh": g_kwh,
                     "charge_kw": charge_kw,
@@ -587,6 +730,10 @@ def audit_pools(
                         ),
                     "expanded_grid_cost_mismatch_count":
                         pool["expanded_grid_cost_mismatch_count"],
+                    "cost_unavailable_count":
+                        pool["cost_unavailable_count"],
+                    "physical_admission_rejected_records":
+                        pool["physical_admission_rejected_records"],
                 })
             handle.flush()
             os.fsync(handle.fileno())

@@ -198,10 +198,12 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         self.assertIsNone(realized)
         self.assertIn("emitted cst differs", detail["reason"])
 
-    def test_station_entry_requires_grid_reserve_not_continuous_residual(self):
+    def test_station_entry_uses_continuous_prefloor_reserve(self):
         station = "S"
         nodes = [DEPOT, 0, station, 1, DEPOT]
         p = problem([10.1, 0.1], list(zip(nodes, nodes[1:])))
+        p.start_min[1] = 20.0
+        p.end_min[1] = 25.0
         record = {
             "trips": [0, 1],
             "route_nodes": nodes,
@@ -215,8 +217,13 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             p, record, g_kwh=30, charge_kw=60, reserve_kwh=15,
             soc_step=10, block_min=10,
         )
-        self.assertIsNone(realized)
-        self.assertIn("grid SOC below reserve", detail["reason"])
+        self.assertIsNotNone(realized)
+        self.assertEqual(
+            detail["classification"], "deterministically_repairable"
+        )
+        self.assertIsNone(validate_injected_route(
+            p, realized, 30, 60, 15, HORIZON_MIN
+        ))
 
     def test_reserve_power_window_and_hash_determinism(self):
         station = "S"
