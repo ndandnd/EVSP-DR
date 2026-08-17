@@ -1253,9 +1253,12 @@ def publish_rejected_physical_replay(
                     checkpoint_payload.get("final") or {}
                 )
                 observed_vector = (
-                    checkpoint_incumbent.get("route_vector_sha256")
-                    or checkpoint_final.get("route_vector_sha256")
-                )
+                    checkpoint_final.get("route_vector_sha256")
+                    if checkpoint_payload.get("kind") == "final"
+                    else checkpoint_incumbent.get("route_vector_sha256")
+                ) or checkpoint_incumbent.get(
+                    "route_vector_sha256"
+                ) or checkpoint_final.get("route_vector_sha256")
                 checkpoint_refs.append({
                     "path": str(path),
                     "sha256": file_sha256(path),
@@ -1914,7 +1917,7 @@ def main(argv=None) -> int:
                 data_dir=args.data_dir,
                 reference_data_dir=args.reference_data_dir,
             )
-        except (PhysicalReplayError, SystemExit) as caught:
+        except (PhysicalReplayError, SystemExit, Exception) as caught:
             exc = (
                 caught if isinstance(caught, PhysicalReplayError)
                 else PhysicalReplayError(str(caught))

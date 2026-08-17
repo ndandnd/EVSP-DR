@@ -1867,10 +1867,27 @@ def run_cg(args) -> dict:
                             "trips": route["trips"], "cost": cost,
                             "route_nodes": route["route_nodes"],
                             "charging_stops": route["charging_stops"],
+                            "expanded_grid_charging_stops":
+                                route["_expanded_grid_charging"],
                             "charges_started": route["charges_started"],
                             "found_iter": -rnd,
                             "origin": "diversify",
                         }
+                        mapping = route["_continuous_mapping"]
+                        costs = realized_costs(
+                            record, mapping, station_prices=prices
+                        )
+                        record.update({
+                            "expanded_grid_cost": cost,
+                            "continuous_realized_cost":
+                                costs["continuous_realized_cost"],
+                            "cost_semantics": "expanded_grid_cost",
+                            "continuous_cost_pricing_certified": False,
+                            "physical_realization": {
+                                key_: value for key_, value
+                                in mapping.items() if key_ != "trace"
+                            },
+                        })
                         pool[key] = record
                         if journal:
                             journal.write(json.dumps(record) + "\n")

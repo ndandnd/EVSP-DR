@@ -33,6 +33,12 @@ import scipy
 
 
 AUDIT_SCHEMA = "evsp-dr-expanded-pool-physical-audit-v1"
+RAW_K40_POOLS = {
+    "k40_r1_ca_raw_m1440",
+    "k40_r1_cs_raw_m1440",
+    "k40_r2_ca_raw_m1440",
+    "k40_r2_cs_raw_m1440",
+}
 ROUTE_FIELDS = (
     "pool", "ordinal", "incidence_sha256", "trip_count",
     "selected_in_solver_incumbent", "selected_route_ordinal",
@@ -76,25 +82,45 @@ def _selected_indices(campaign_root: Path | None, pool: str):
         return {}, None
     latest = campaign_root / "progress" / pool / "latest.json"
     if not latest.is_file():
-        return {}, None
+        raise ValueError(f"missing latest checkpoint payload: {latest}")
     raw = latest.read_bytes()
     payload = json.loads(raw)
     if (
         payload.get("schema") != "evsp-dr-mip-convergence-v1"
-        or payload.get("kind") != "latest"
+        or payload.get("kind") not in {"latest", "final"}
     ):
         raise ValueError(f"invalid latest checkpoint payload: {latest}")
     incumbent = payload.get("incumbent") or {}
+    final = payload.get("final") or {}
+    selected_indices = (
+        final.get("selected_route_indices")
+        if payload.get("kind") == "final"
+        and final.get("selected_route_indices") is not None
+        else incumbent.get("selected_route_indices")
+    ) or []
+    route_vector_sha = (
+        final.get("route_vector_sha256")
+        if payload.get("kind") == "final"
+        and final.get("route_vector_sha256") is not None
+        else incumbent.get("route_vector_sha256")
+    )
     return {
         int(index): ordinal
         for ordinal, index in enumerate(
-            incumbent.get("selected_route_indices") or [], start=1
+            selected_indices, start=1
         )
     }, {
         "path": str(latest),
         "sha256": hashlib.sha256(raw).hexdigest(),
         "metadata": payload.get("metadata") or {},
-        "route_vector_sha256": incumbent.get("route_vector_sha256"),
+        "selected_index_scope": (
+            "physically_admitted_pool"
+            if (payload.get("metadata") or {}).get(
+                "physical_pool_audit"
+            ) is not None
+            else "archived_pre_physical_gate_pool"
+        ),
+        "route_vector_sha256": route_vector_sha,
     }
 
 
@@ -142,6 +168,10 @@ def audit_pools(
         ):
             raise ValueError("archive SHA-256 mismatch")
         archive_sha256 = observed_archive_sha
+        if expected_pools != RAW_K40_POOLS:
+            raise ValueError(
+                "verified RAW-k40 archive requires the exact four-pool set"
+            )
     try:
         for raw_status in sorted(
             statuses, key=lambda path: str(path.expanduser().resolve())
@@ -450,6 +480,11 @@ def audit_pools(
                 },
             })
             if (
+                archive_path is not None
+                and status.get("columns") is None
+            ):
+                raise ValueError(f"status lacks column count for {pool}")
+            if (
                 status.get("columns") is not None
                 and int(status["columns"]) != len(archived_mip_pool)
             ):
@@ -462,6 +497,12 @@ def audit_pools(
                 "pool set mismatch: "
                 f"{sorted(observed_pool_names)} != {sorted(expected_pools)}"
             )
+        if (
+            archive_path is not None
+            and _sha(archive_path.expanduser().resolve())
+            != archive_sha256
+        ):
+            raise ValueError("archive changed during audit")
         report = {
             "schema": AUDIT_SCHEMA,
             "archive_sha256": archive_sha256,

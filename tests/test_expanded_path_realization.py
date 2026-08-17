@@ -174,6 +174,50 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         self.assertIsNone(realized)
         self.assertIn("non-grid charging window", detail["reason"])
 
+    def test_emitted_windows_must_match_expanded_grid_path(self):
+        station = "S"
+        nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem([14.5, 0.1], list(zip(nodes, nodes[1:])))
+        record = {
+            "trips": [0, 1],
+            "route_nodes": nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [20], "cet": [30], "kwh": [14.5],
+            },
+            "expanded_grid_charging_stops": {
+                "stations": [station],
+                "cst": [10], "cet": [20], "kwh": [15.0],
+            },
+            "cost": 100006.5,
+        }
+        realized, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertIsNone(realized)
+        self.assertIn("emitted cst differs", detail["reason"])
+
+    def test_station_entry_requires_grid_reserve_not_continuous_residual(self):
+        station = "S"
+        nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem([10.1, 0.1], list(zip(nodes, nodes[1:])))
+        record = {
+            "trips": [0, 1],
+            "route_nodes": nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [10], "cet": [20], "kwh": [10.0],
+            },
+            "cost": 100006.0,
+        }
+        realized, detail = realize_expanded_path(
+            p, record, g_kwh=30, charge_kw=60, reserve_kwh=15,
+            soc_step=10, block_min=10,
+        )
+        self.assertIsNone(realized)
+        self.assertIn("grid SOC below reserve", detail["reason"])
+
     def test_reserve_power_window_and_hash_determinism(self):
         station = "S"
         route_nodes = [DEPOT, 0, station, 1, DEPOT]
@@ -419,11 +463,6 @@ class ExpandedPathRealizationTests(unittest.TestCase):
             }))
             output = root / "audit"
             second_output = root / "audit-second"
-            archive = root / "source.tar.gz"
-            archive.write_bytes(b"archive")
-            archive_sha = hashlib.sha256(
-                archive.read_bytes()
-            ).hexdigest()
             with (
                 patch(
                     "audit_expanded_pool_physical.build_problem",
@@ -440,8 +479,6 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                     output_dir=output,
                     reference_data_dir=root,
                     campaign_root=root,
-                    archive_sha256=archive_sha,
-                    archive_path=archive,
                     route_detail="selected",
                 )
                 audit_pools(
@@ -449,8 +486,6 @@ class ExpandedPathRealizationTests(unittest.TestCase):
                     output_dir=second_output,
                     reference_data_dir=root,
                     campaign_root=root,
-                    archive_sha256=archive_sha,
-                    archive_path=archive,
                     route_detail="selected",
                 )
             self.assertEqual(

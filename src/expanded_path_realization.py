@@ -117,6 +117,17 @@ def realize_expanded_path(
         record.get("expanded_grid_charging_stops")
         or emitted_stops
     )
+    if record.get("expanded_grid_charging_stops") is not None:
+        for key in ("stations", "cst", "cet"):
+            if list(emitted_stops.get(key, [])) != list(
+                stops.get(key, [])
+            ):
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": (
+                        f"emitted {key} differs from expanded-grid path"
+                    ),
+                }
     fields = {
         key: list(stops.get(key, []))
         for key in ("stations", "cst", "cet", "kwh")
@@ -216,6 +227,13 @@ def realize_expanded_path(
                 grid_soc, soc_step=soc_step, levels=levels
             )
             grid_soc = grid[entry_level]
+            if grid_soc < reserve_kwh - TOLERANCE:
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": (
+                        f"expanded grid SOC below reserve at {node}"
+                    ),
+                }
             station_discarded = max(
                 0.0, expanded_before_floor - grid_soc
             )
