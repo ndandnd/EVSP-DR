@@ -497,7 +497,6 @@ def prepare_strict_partition_pool(
     *,
     data_dir=None,
     reference_data_dir=None,
-    preserve_expanded_grid_cost=False,
 ):
     """Replay or deterministically map every raw pool column before MIP use.
 
@@ -978,6 +977,7 @@ def merge_validated_partition_start(
     *,
     data_dir=None,
     reference_data_dir=None,
+    preserve_expanded_grid_cost=False,
 ):
     """Merge and select one explicitly supplied exact-partition start.
 
