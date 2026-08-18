@@ -46,7 +46,7 @@ class MIPConvergenceTests(unittest.TestCase):
     def test_exact_checkpoint_cadence(self):
         self.assertEqual(
             checkpoint_schedule_s(4 * 3600),
-            [0.0, 300.0, 900.0, 1800.0, 3600.0,
+            [0.0, 60.0, 300.0, 900.0, 1800.0, 3600.0,
              7200.0, 10800.0, 14400.0],
         )
         with tempfile.TemporaryDirectory() as tmp:
@@ -72,6 +72,7 @@ class MIPConvergenceTests(unittest.TestCase):
                 [path.name for path in checkpoints],
                 [
                     "checkpoint_0000m.json",
+                    "checkpoint_0001m.json",
                     "checkpoint_0005m.json",
                     "checkpoint_0015m.json",
                     "checkpoint_0030m.json",

@@ -254,6 +254,8 @@ class K40CSOvernightTests(unittest.TestCase):
             "routes": routes,
             "source": launcher.GIRO40_AUGMENTED,
             "route_count": 40,
+            "partition_sha256": "a" * 64,
+            "route_set_sha256": "b" * 64,
             "continuous_cost_pricing_certified": False,
             "pricing_certificate_scope": "none_for_augmented_routes",
             "physics": {

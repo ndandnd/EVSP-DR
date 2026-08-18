@@ -54,6 +54,21 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def ordered_pool_sha256(routes) -> str:
+    route_hashes = [
+        hashlib.sha256(json.dumps({
+            "trips": route.get("trips"),
+            "route_nodes": route.get("route_nodes"),
+            "charging_stops": route.get("charging_stops"),
+            "cost": route.get("cost"),
+        }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        for route in routes
+    ]
+    return hashlib.sha256(json.dumps(
+        route_hashes, separators=(",", ":")
+    ).encode()).hexdigest()
+
+
 def write_new_json(path: Path, payload: dict) -> None:
     """Durably publish one JSON artifact without replacing any path."""
 
@@ -767,15 +782,7 @@ def prepare_strict_partition_pool(
                 realized["physical_realization"]["mapping_sha256"]
             )
     deduplicated = deduplicate_pool(accepted)
-    ordered_pool_hash = hashlib.sha256(json.dumps([
-        hashlib.sha256(json.dumps({
-            "trips": route.get("trips"),
-            "route_nodes": route.get("route_nodes"),
-            "charging_stops": route.get("charging_stops"),
-            "cost": route.get("cost"),
-        }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-        for route in deduplicated
-    ], separators=(",", ":")).encode()).hexdigest()
+    ordered_pool_hash = ordered_pool_sha256(deduplicated)
     input_hashes_after = {
         "instance_sha256": file_sha256(instance_path),
         "prices_sha256": file_sha256(tariff_path),
@@ -1382,6 +1389,8 @@ def optimize_with_start_audit(
 def finite_solver_value(value):
     """Map Gurobi infinity/sentinel values to JSON null."""
 
+    if value is None:
+        return None
     number = float(value)
     if not math.isfinite(number) or abs(number) >= 1e100:
         return None
@@ -1924,6 +1933,20 @@ def main(argv=None) -> int:
         physical_pool_audit["mip_unique_accepted_columns"] = len(
             routes
         )
+        recomputed_pool_hash = ordered_pool_sha256(routes)
+        recorded_pool_hash = physical_pool_audit.get(
+            "mip_ordered_pool_sha256"
+        )
+        if (
+            recorded_pool_hash is not None
+            and recorded_pool_hash != recomputed_pool_hash
+        ):
+            raise SystemExit(
+                "[MIP] physical pool identity changed after preparation"
+            )
+        physical_pool_audit["mip_ordered_pool_sha256"] = (
+            recomputed_pool_hash
+        )
         physical_pool_audit.update({
             "base_pool_column_count": len(routes),
             "base_pool_ordered_sha256":
@@ -1962,21 +1985,31 @@ def main(argv=None) -> int:
             )
         )
         if physical_pool_audit is not None:
+            added_route_count = initial_partition_start.get(
+                "added_giro_route_count", len(mip_start)
+            )
+            added_route_hash = initial_partition_start.get(
+                "added_giro_route_set_sha256"
+            ) or hashlib.sha256(json.dumps(
+                initial_partition_start.get(
+                    "actual_start_column_hashes", []
+                ),
+                separators=(",", ":"),
+            ).encode()).hexdigest()
+            assigned_route_count = initial_partition_start.get(
+                "assigned_mip_start_route_count", len(mip_start)
+            )
             physical_pool_audit.update({
                 "base_pool_column_count":
                     physical_pool_audit["mip_unique_accepted_columns"],
                 "base_pool_ordered_sha256":
                     physical_pool_audit["mip_ordered_pool_sha256"],
                 "added_giro_route_count":
-                    initial_partition_start["added_giro_route_count"],
+                    added_route_count,
                 "added_giro_route_set_sha256":
-                    initial_partition_start[
-                        "added_giro_route_set_sha256"
-                    ],
+                    added_route_hash,
                 "assigned_mip_start_route_count":
-                    initial_partition_start[
-                        "assigned_mip_start_route_count"
-                    ],
+                    assigned_route_count,
             })
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
@@ -2006,15 +2039,7 @@ def main(argv=None) -> int:
         physical_pool_audit["post_augmentation_columns"] = len(routes)
         physical_pool_audit["augmented_pool_column_count"] = len(routes)
         physical_pool_audit["augmented_pool_ordered_sha256"] = (
-            hashlib.sha256(json.dumps([
-                hashlib.sha256(json.dumps({
-                    "trips": route.get("trips"),
-                    "route_nodes": route.get("route_nodes"),
-                    "charging_stops": route.get("charging_stops"),
-                    "cost": route.get("cost"),
-                }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-                for route in routes
-            ], separators=(",", ":")).encode()).hexdigest()
+            ordered_pool_sha256(routes)
         )
         pool_semantics = {
             route.get("master_cost_semantics") for route in routes

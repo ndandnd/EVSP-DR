@@ -703,20 +703,35 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
         cell = job["cell_id"]
         arm = job["arm"]
         source = job["source"]
-        add(
-            "frozen_status", job["execution"]["status"],
-            cell_id=cell, arm=arm, expected=source["status_sha256"],
+        status_path = (
+            (job.get("execution") or {}).get("status")
+            or source.get("status_path")
         )
-        add(
-            "column_journal", job["execution"]["journal"],
-            cell_id=cell, arm=arm, expected=source["journal_sha256"],
+        journal_path = (
+            (job.get("execution") or {}).get("journal")
+            or source.get("journal_path")
         )
-        if job.get("validated_start"):
+        if status_path:
             add(
-                "giro40_partition", job["execution"]["validated_start"],
-                cell_id=cell, arm=arm,
-                expected=job["validated_start"]["sha256"],
+                "frozen_status", status_path,
+                cell_id=cell, arm=arm, expected=source["status_sha256"],
             )
+        if journal_path:
+            add(
+                "column_journal", journal_path,
+                cell_id=cell, arm=arm, expected=source["journal_sha256"],
+            )
+        if job.get("validated_start"):
+            start_path = (
+                (job.get("execution") or {}).get("validated_start")
+                or (job.get("validated_start") or {}).get("path")
+            )
+            if start_path:
+                add(
+                    "giro40_partition", start_path,
+                    cell_id=cell, arm=arm,
+                    expected=job["validated_start"]["sha256"],
+                )
         add("final_result", job["output"], cell_id=cell, arm=arm)
         progress = Path(job["progress_dir"])
         for artifact in sorted(progress.glob("checkpoint_*.json")):

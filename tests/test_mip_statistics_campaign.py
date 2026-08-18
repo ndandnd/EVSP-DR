@@ -354,7 +354,7 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                     plan, expected_commit="b" * 40
                 )
 
-    def test_raw_k40_physical_smoke_plan_is_four_30_minute_jobs(self):
+    def test_completed_physical_smoke_refuses_changed_runtime_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             candidates = {
@@ -379,18 +379,23 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 "branch": "",
                 "tracked_clean": True,
             }
-            with patch.object(
-                launcher,
-                "_python_identity",
-                return_value={
-                    "available": True,
-                    "executable": str(Path(sys.executable).resolve()),
-                    "executable_sha256": "e" * 64,
-                    "version": "3.12.test",
-                    "gurobi_version": "test",
-                },
+            with (
+                patch.object(
+                    launcher,
+                    "_python_identity",
+                    return_value={
+                        "available": True,
+                        "executable": str(Path(sys.executable).resolve()),
+                        "executable_sha256": "e" * 64,
+                        "version": "3.12.test",
+                        "gurobi_version": "test",
+                    },
+                ),
+                self.assertRaisesRegex(
+                    ValueError, "runtime differs from reviewed commit"
+                ),
             ):
-                plan = launcher.build_plan(
+                launcher.build_plan(
                     payload,
                     mode="raw_k40_smoke",
                     campaign="raw-k40-smoke-test",
@@ -398,24 +403,6 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                     identity=identity,
                     explicit_raw_candidates=candidates,
                 )
-            self.assertFalse(plan["blocked"])
-            self.assertEqual(
-                plan["physical_realization_review"]["commit"],
-                launcher.RAW_K40_PHYSICAL_COMMIT,
-            )
-            self.assertEqual(len(plan["jobs"]), 4)
-            for job in plan["jobs"]:
-                self.assertEqual(job["matrix"], "raw_k40_smoke")
-                self.assertEqual(job["time_limit_s"], 1800)
-                self.assertEqual(job["threads"], 8)
-                self.assertIn("30M", job["job_name"])
-                self.assertLessEqual(len(job["job_name"]), 15)
-            summary = raw_validator.validate_plan(
-                plan,
-                expected_commit="b" * 40,
-                expected_mode="raw_k40_smoke",
-            )
-            self.assertEqual(len(summary), 4)
 
     def test_raw_k40_candidate_resolution_preserves_campaign_and_initializer(self):
         with tempfile.TemporaryDirectory() as tmp:
