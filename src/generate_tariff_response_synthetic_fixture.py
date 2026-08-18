@@ -12,7 +12,7 @@ from expanded_path_realization import charging_block_schedule_sha256
 from tariff_response_core import PHYSICS, load_tariff_manifest, tariff_prices
 
 
-ROOT = REPO_ROOT / "analysis/tariff_response_synthetic_20260818"
+ROOT = REPO_ROOT / "analysis/tariff_response_synthetic_final_20260818"
 ALPHA_IDS = (
     "peak12_alpha_0p0",
     "peak12_alpha_0p25",
@@ -24,14 +24,20 @@ ALPHA_IDS = (
 
 def cell(tariff, tier, treatment, *, flexible=False):
     price = tariff_prices(tariff)["PARX"][12]
+    factor = (
+        1.0 if tier == "TIER0_GIRO_ORIGINAL"
+        else 0.8 if tier == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING"
+        else 0.6
+    )
+    energy = 10.0 * factor
     block = {
         "stop_index": 0,
         "block_index": 0,
         "station": "PARX_1",
         "start_min": 720.0,
         "end_min": 730.0,
-        "realized_kwh": 10.0,
-        "expanded_grid_kwh": 10.0,
+        "realized_kwh": energy,
+        "expanded_grid_kwh": energy,
         "tariff_hour": 12,
         "tariff_key": "PARX:12",
         "price_per_kwh": price,
@@ -52,7 +58,7 @@ def cell(tariff, tier, treatment, *, flexible=False):
                 "stations": ["PARX_1"] if blocks else [],
                 "cst": [720] if blocks else [],
                 "cet": [730] if blocks else [],
-                "kwh": [10] if blocks else [],
+                "kwh": [energy] if blocks else [],
             },
             "continuous_realized_charging_blocks": blocks,
             "recorded_charging_blocks": blocks,
@@ -62,14 +68,35 @@ def cell(tariff, tier, treatment, *, flexible=False):
                 None if tier == "TIER0_GIRO_ORIGINAL"
                 else tariff["sha256"]
             ),
+            "expanded_grid_cost":
+                100000 + (5 + energy * price if blocks else 0),
+            "continuous_realized_cost":
+                100000 + (5 + energy * price if blocks else 0),
+            "waiting_min": 20.0 * factor if index == 0 else 0.0,
+            "deadhead_min": 5.0 * factor if index == 0 else 0.0,
+            "deadhead_kwh": 2.0 * factor if index == 0 else 0.0,
+            "continuous_terminal_soc_kwh": 50.0,
         })
     buses = len(routes)
-    factor = (
-        1.0 if tier == "TIER0_GIRO_ORIGINAL"
-        else 0.8 if tier == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING"
-        else 0.6
-    )
-    charging = (5 + 10 * price) * factor
+    charging = 5 + energy * price
+    certificates = []
+    if tier == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING":
+        import hashlib
+        for route in routes:
+            payload = {
+                "certified": True,
+                "scope": "synthetic_discretized_fixed_duty",
+                "continuous_cost_optimality_certified": False,
+            }
+            digest = hashlib.sha256(json.dumps(
+                payload, sort_keys=True, separators=(",", ":")
+            ).encode()).hexdigest()
+            route["fixed_duty_certificate_sha256"] = digest
+            certificates.append({
+                "route_id": route["route_id"],
+                **payload,
+                "certificate_sha256": digest,
+            })
     return {
         "cell_id": f"{tier}-{tariff['tariff_id']}",
         "instance_id": "SYNTHETIC-k2-NOT-SCIENTIFIC",
@@ -86,13 +113,15 @@ def cell(tariff, tier, treatment, *, flexible=False):
             "continuous_replay_objective": buses * 100000 + charging,
             "charging_cost": charging,
             "continuous_charging_cost": charging,
-            "total_charged_kwh": 10.0,
-            "peak_window_kwh": 10.0 * factor,
-            "charging_kwh_by_hour_json": json.dumps({"12": 10.0}),
+            "total_charged_kwh": energy,
+            "peak_window_kwh": energy,
+            "charging_kwh_by_hour_json": json.dumps({"12": energy}),
             "charging_kwh_by_station_json": json.dumps(
-                {"PARX_1": 10.0}
+                {"PARX_1": energy}
             ),
             "charging_starts_by_hour_json": json.dumps({"12": 1}),
+            "terminal_soc_min_kwh": 50.0,
+            "terminal_soc_max_kwh": 50.0,
             "waiting_min": 20.0 * factor,
             "deadhead_min": 5.0 * factor,
             "deadhead_kwh": 2.0 * factor,
@@ -121,13 +150,7 @@ def cell(tariff, tier, treatment, *, flexible=False):
             if tier.startswith("TIER1")
             else "synthetic_finite_augmented_pool"
         ),
-        "fixed_duty_certificates": ([{
-            "duty_id": "synthetic-duty-0",
-            "certified": True,
-            "scope": "synthetic_discretized_fixed_duty",
-            "certificate_sha256": "c" * 64,
-            "continuous_cost_optimality_certified": False,
-        }] if tier.startswith("TIER1") else []),
+        "fixed_duty_certificates": certificates,
         "cg_iterations": ([{
             "iteration": 1,
             "elapsed_s": 1.0,
@@ -192,6 +215,7 @@ def main():
         ])
     manifest = {
         "schema": SCHEMA,
+        "synthetic": True,
         "warning": "SYNTHETIC FIXTURE — NOT EXPERIMENTAL EVIDENCE",
         "physics": PHYSICS,
         "tariff_manifest": "data/tariff_response/tariff_manifest.csv",

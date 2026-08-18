@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import tempfile
+import time
 from pathlib import Path
 
 from audit_giro_known_columns import HORIZON_MIN, build_problem
@@ -34,6 +35,7 @@ def prepare(
     reference_data_dir: Path,
     output_path: Path,
 ) -> dict:
+    started = time.perf_counter()
     instance_path = instance_path.expanduser().resolve()
     output_path = output_path.expanduser().resolve()
     if os.path.lexists(output_path):
@@ -55,6 +57,8 @@ def prepare(
         reference_data_dir=reference_data_dir,
     )
     prices = tariff_prices(tariff)
+    preprocessing_s = time.perf_counter() - started
+    pricing_started = time.perf_counter()
     optimized = []
     certificates = []
     for route in routes:
@@ -64,6 +68,7 @@ def prepare(
             prices,
             tariff_id=tariff_id,
             tariff_sha256=tariff["sha256"],
+            instance_sha256=instance_sha256,
             **{
                 key: PHYSICS[key]
                 for key in (
@@ -89,6 +94,7 @@ def prepare(
             "duty_id": route["duty_id"],
             **result["certificate"],
         })
+    pricing_s = time.perf_counter() - pricing_started
     payload = {
         "schema": SCHEMA,
         "source": (
@@ -120,7 +126,17 @@ def prepare(
                 reference_data_dir / "par_ref_dhd.csv"
             ),
         },
+        "runtime": {
+            "preprocessing_s": preprocessing_s,
+            "master_s": 0.0,
+            "pricing_s": pricing_s,
+            "postprocessing_s": 0.0,
+        },
     }
+    payload["runtime"]["postprocessing_s"] = max(
+        0.0,
+        time.perf_counter() - started - preprocessing_s - pricing_s,
+    )
     payload["partition_sha256"] = hashlib_sha(payload)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(

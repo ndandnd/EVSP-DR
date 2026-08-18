@@ -390,7 +390,7 @@ def evaluate_giro_original(
 
 def route_identity(routes: list[dict]) -> str:
     incidences = sorted(
-        canonical_sha(sorted(route["trips"])) for route in routes
+        canonical_sha(list(route["trips"])) for route in routes
     )
     return canonical_sha(incidences)
 
@@ -502,12 +502,16 @@ def route_response(baseline: list[dict], candidate: list[dict]) -> dict:
             for candidate_set in candidate_sets
         ),
         "selected_giro_columns": sum(
-            candidate_set in baseline_sets
-            for candidate_set in candidate_sets
+            tuple(route["trips"]) in {
+                tuple(original["trips"]) for original in baseline
+            }
+            for route in candidate
         ),
         "newly_generated_columns": sum(
-            candidate_set not in baseline_sets
-            for candidate_set in candidate_sets
+            tuple(route["trips"]) not in {
+                tuple(original["trips"]) for original in baseline
+            }
+            for route in candidate
         ),
         "baseline_route_identity_sha256": route_identity(baseline),
         "candidate_route_identity_sha256": route_identity(candidate),

@@ -7,6 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -32,6 +33,8 @@ from launch_tariff_response_pilot import (  # noqa: E402
     build_plan,
     submit,
 )
+import launch_tariff_response_pilot as pilot  # noqa: E402
+from assemble_tariff_response_campaign import assemble  # noqa: E402
 from tariff_response_core import (  # noqa: E402
     PHYSICS,
     evaluate_giro_original,
@@ -74,7 +77,7 @@ def price_curves(hour0=10.0, other=1.0):
     return {
         station.rsplit("_", 1)[0]: {
             hour: hour0 if hour == 0 else other
-            for hour in range(25)
+            for hour in range(27)
         }
         for station in STATIONS
     }
@@ -102,7 +105,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
             observed = tariff_prices(
                 self.tariff_by_id[tariff_id]
             )["PARX"]
-            for hour in range(25):
+            for hour in range(27):
                 self.assertAlmostEqual(
                     observed[hour],
                     flat[hour] + alpha * (peak[hour] - flat[hour]),
@@ -113,6 +116,15 @@ class TariffResponseExperimentTests(unittest.TestCase):
         )
         self.assertEqual(solar["PARX"][12], 0.0)
         self.assertEqual(solar["JON_A"][12], flat[12])
+        alpha2 = self.tariff_by_id["peak12_alpha_2p0"]
+        self.assertEqual(alpha2["has_negative_prices"], "True")
+        self.assertEqual(
+            alpha2["negative_price_policy"],
+            "allow_feasible_consumption_no_export",
+        )
+        self.assertTrue(all(
+            int(row["coverage_end_hour"]) == 26 for row in self.tariffs
+        ))
 
     def test_giro_original_is_exact_and_ambiguous_costs_stay_null(self):
         original = reconstruct_giro40_original(
@@ -141,6 +153,10 @@ class TariffResponseExperimentTests(unittest.TestCase):
             for row in rows
         ))
         self.assertFalse(peak["continuous_cost_pricing_certified"])
+        flat, _ = evaluate_giro_original(
+            original, self.tariff_by_id["flat"]
+        )
+        self.assertEqual(flat["scalar_cost_availability"], "available")
 
     def test_fixed_duty_dp_selects_delayed_charging_and_certifies_scope(self):
         result = optimize_fixed_duty(
@@ -183,6 +199,39 @@ class TariffResponseExperimentTests(unittest.TestCase):
         )
         self.assertEqual(result["expanded_grid_objective"], 100500.0)
 
+    def test_negative_alpha_terminal_consumption_is_explicitly_reported(self):
+        station = STATIONS[0]
+        problem = SimpleNamespace(
+            trips=[0],
+            trip_energy={0: 100.0},
+            start_min={0: 0.0},
+            end_min={0: 10.0},
+            adjacency={
+                DEPOT: [(0, 0.0, 0.0, "depot_trip")],
+                0: [
+                    (DEPOT, 0.0, 0.0, "trip_depot"),
+                    (station, 0.0, 0.0, "trip_station"),
+                ],
+                station: [(DEPOT, 0.0, 0.0, "station_depot")],
+            },
+        )
+        prices = {
+            value.rsplit("_", 1)[0]: {
+                hour: -1.0 for hour in range(27)
+            }
+            for value in STATIONS
+        }
+        result = optimize_fixed_duty(
+            problem, [0], prices,
+            tariff_id="negative", tariff_sha256="e" * 64,
+        )
+        self.assertGreater(
+            sum(result["route"]["charging_stops"]["kwh"]), 0.0
+        )
+        self.assertGreater(
+            result["route"]["continuous_terminal_soc_kwh"], 200.0
+        )
+
     def test_route_response_ignores_bus_labels(self):
         baseline = [
             {"bus": "A", "trips": [0, 1]},
@@ -210,7 +259,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
         tariff_path.write_text(
             "time_block,cost\n"
             + "\n".join(f"{hour},{1 if hour else 10}"
-                        for hour in range(25))
+                        for hour in range(27))
             + "\n"
         )
         tariff_sha = sha256_file(tariff_path)
@@ -219,11 +268,16 @@ class TariffResponseExperimentTests(unittest.TestCase):
             tariff_id="toy", tariff_sha256=tariff_sha,
         )
         route = result["route"]
+        route["duty_id"] = "toy-duty"
         payload = {
             "schema": "evsp-dr-tier1-fixed-duty-partition-v1",
             "routes": [route],
             "tariff": {"sha256": tariff_sha},
             "physics": PHYSICS,
+            "certificates": [{
+                "duty_id": "toy-duty",
+                **result["certificate"],
+            }],
             "continuous_cost_pricing_certified": False,
         }
         path = root / "seed.json"
@@ -241,7 +295,18 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 soc_step=15, block_min=10,
             )
             self.assertEqual(len(records), 1)
-            payload = json.loads(seed.read_text())
+            original = json.loads(seed.read_text())
+            payload = copy.deepcopy(original)
+            payload["routes"][0]["expanded_grid_cost"] -= 123.0
+            payload["routes"][0]["cost"] -= 123.0
+            seed.write_text(json.dumps(payload))
+            with self.assertRaisesRegex(ValueError, "provenance"):
+                validated_fixed_duty_seed_records(
+                    seed, toy_problem(), prices, tariff_path=tariff,
+                    g_kwh=300, charge_kw=300, reserve_kwh=0,
+                    soc_step=15, block_min=10,
+                )
+            payload = copy.deepcopy(original)
             payload["routes"][0]["cost_tariff_sha256"] = "0" * 64
             seed.write_text(json.dumps(payload))
             with self.assertRaisesRegex(ValueError, "seed route"):
@@ -264,14 +329,20 @@ class TariffResponseExperimentTests(unittest.TestCase):
         self, tariff, tier, treatment, *, route_flexible=False
     ):
         price = tariff_prices(tariff)["PARX"][12]
+        factor = (
+            1.0 if tier == "TIER0_GIRO_ORIGINAL"
+            else 0.8 if tier == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING"
+            else 0.6
+        )
+        energy = 10.0 * factor
         block = {
             "stop_index": 0,
             "block_index": 0,
             "station": "PARX_1",
             "start_min": 720.0,
             "end_min": 730.0,
-            "realized_kwh": 10.0,
-            "expanded_grid_kwh": 10.0,
+            "realized_kwh": energy,
+            "expanded_grid_kwh": energy,
             "tariff_hour": 12,
             "tariff_key": "PARX:12",
             "price_per_kwh": price,
@@ -295,7 +366,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     "stations": [] if not blocks else ["PARX_1"],
                     "cst": [] if not blocks else [720],
                     "cet": [] if not blocks else [730],
-                    "kwh": [] if not blocks else [10],
+                    "kwh": [] if not blocks else [energy],
                 },
                 "continuous_realized_charging_blocks": blocks,
                 "recorded_charging_blocks": blocks,
@@ -305,28 +376,52 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     None if tier == "TIER0_GIRO_ORIGINAL"
                     else tariff["sha256"]
                 ),
+                "expanded_grid_cost": (
+                    100000 + (5 + energy * price if blocks else 0)
+                ),
+                "continuous_realized_cost": (
+                    100000 + (5 + energy * price if blocks else 0)
+                ),
+                "waiting_min": 20.0 * factor if index == 0 else 0.0,
+                "deadhead_min": 5.0 * factor if index == 0 else 0.0,
+                "deadhead_kwh": 2.0 * factor if index == 0 else 0.0,
+                "continuous_terminal_soc_kwh": 50.0,
             })
         buses = len(routes)
-        charging = 5.0 + 10.0 * price
-        factor = (
-            1.0 if tier == "TIER0_GIRO_ORIGINAL"
-            else 0.8 if tier == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING"
-            else 0.6
-        )
+        charging = 5.0 + energy * price
+        certificates = []
+        if tier == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING":
+            for route in routes:
+                payload = {
+                    "certified": True,
+                    "scope": "synthetic_discretized_fixed_duty",
+                    "continuous_cost_optimality_certified": False,
+                }
+                digest = hashlib.sha256(json.dumps(
+                    payload, sort_keys=True, separators=(",", ":")
+                ).encode()).hexdigest()
+                route["fixed_duty_certificate_sha256"] = digest
+                certificates.append({
+                    "route_id": route["route_id"],
+                    **payload,
+                    "certificate_sha256": digest,
+                })
         metrics = {
             "buses": buses,
-            "grid_model_objective": buses * 100000 + charging * factor,
+            "grid_model_objective": buses * 100000 + charging,
             "continuous_replay_objective":
-                buses * 100000 + charging * factor,
-            "charging_cost": charging * factor,
-            "continuous_charging_cost": charging * factor,
-            "total_charged_kwh": 10.0,
-            "peak_window_kwh": 10.0 * factor,
-            "charging_kwh_by_hour_json": json.dumps({"12": 10.0}),
+                buses * 100000 + charging,
+            "charging_cost": charging,
+            "continuous_charging_cost": charging,
+            "total_charged_kwh": energy,
+            "peak_window_kwh": energy,
+            "charging_kwh_by_hour_json": json.dumps({"12": energy}),
             "charging_kwh_by_station_json": json.dumps(
-                {"PARX_1": 10.0}
+                {"PARX_1": energy}
             ),
             "charging_starts_by_hour_json": json.dumps({"12": 1}),
+            "terminal_soc_min_kwh": 50.0,
+            "terminal_soc_max_kwh": 50.0,
             "waiting_min": 20.0 * factor,
             "deadhead_min": 5.0 * factor,
             "deadhead_kwh": 2.0 * factor,
@@ -364,13 +459,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 if tier.startswith("TIER1")
                 else "finite_augmented_pool"
             ),
-            "fixed_duty_certificates": ([{
-                "duty_id": "d0",
-                "certified": True,
-                "scope": "discretized_fixed_duty",
-                "certificate_sha256": "c" * 64,
-                "continuous_cost_optimality_certified": False,
-            }] if tier.startswith("TIER1") else []),
+            "fixed_duty_certificates": certificates,
             "cg_iterations": ([{
                 "iteration": 1, "elapsed_s": 1.0,
                 "lp_obj": 1.0, "route_weight": buses,
@@ -418,6 +507,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 ])
             experiment = {
                 "schema": SCHEMA,
+                "synthetic": True,
                 "physics": PHYSICS,
                 "tariff_manifest": str(TARIFF_MANIFEST),
                 "tariff_manifest_sha256": sha256_file(TARIFF_MANIFEST),
@@ -444,6 +534,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "price_amplitude_response.png",
                 "price_amplitude_response.pdf",
                 "tariff_response_plot.csv",
+                "SYNTHETIC_ONLY.txt",
             }
             self.assertTrue(required <= {path.name for path in first.iterdir()})
             for name in required - {"provenance.json"}:
@@ -486,16 +577,50 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "reviewed_base":
                     "636dc0912f47e6ce85284fad3b36af30b4135887",
             }
-            plan = build_plan(
-                campaign="tariff-pilot-test",
-                instance_paths=paths,
-                instance_hashes=hashes,
-                tariff_manifest=TARIFF_MANIFEST,
-                identity=identity,
-                reservation_root=root / "reservations",
-                python_path=Path(sys.executable),
-                results_root=root / "results",
-            )
+            def fake_routes(_master, path):
+                scale = int(Path(path).stem[1:])
+                return [
+                    {"trips": [index]} for index in range(scale)
+                ]
+            with (
+                patch.object(
+                    pilot, "giro_routes_for_instance",
+                    side_effect=fake_routes,
+                ),
+                patch.object(
+                    pilot, "FROZEN_K40_INSTANCE_SHA256", hashes["k40"]
+                ),
+                patch.object(
+                    pilot.subprocess,
+                    "run",
+                    return_value=SimpleNamespace(
+                        returncode=0,
+                        stdout=json.dumps({
+                            "python": "3.12.3",
+                            "executable": str(Path(sys.executable).resolve()),
+                            "executable_sha256": sha256_file(
+                                Path(sys.executable).resolve()
+                            ),
+                            "numpy": "test", "pandas": "test",
+                            "scipy": "test", "matplotlib": "test",
+                            "gurobi": "test", "platform": "test",
+                            "machine": "test", "pythonpath": None,
+                            "numpy_build": None,
+                        }),
+                        stderr="",
+                    ),
+                ),
+            ):
+                plan = build_plan(
+                    campaign="tariff-pilot-test",
+                    instance_paths=paths,
+                    instance_hashes=hashes,
+                    tariff_manifest=TARIFF_MANIFEST,
+                    identity=identity,
+                    reservation_root=root / "reservations",
+                    python_path=Path(sys.executable),
+                    results_root=root / "results",
+                )
             self.assertEqual(plan["main_submission_job_count"], 111)
             self.assertEqual(plan["k40_preparation_job_count"], 33)
             self.assertFalse(plan["k40_mip_submission_allowed"])
@@ -510,6 +635,46 @@ class TariffResponseExperimentTests(unittest.TestCase):
             campaign_root.mkdir(parents=True)
             with self.assertRaisesRegex(ValueError, "already exists"):
                 submit(plan, "f" * 64, k40_preparation=False)
+            worker = (
+                REPO_ROOT / "src/submit_tariff_response_pilot.sub"
+            ).read_text()
+            self.assertIn("EVSP_MIP_EXPECTED_RESULT_SHA256", worker)
+            self.assertIn("EVSP_MIP_EXPECTED_JOURNAL_SHA256", worker)
+            self.assertIn("--strict-tariff-coverage", worker)
+            self.assertNotIn(
+                "command+=(--initial-partition-routes", worker
+            )
+            runner = (
+                REPO_ROOT / "src/run_exact_pool_mip.py"
+            ).read_text()
+            self.assertNotIn(
+                'data_dir / Path(str(status["prices_csv"])).name',
+                runner,
+            )
+
+    def test_real_campaign_assembler_rejects_incomplete_submission(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = {
+                "jobs": [{
+                    "job_key": "fixed",
+                    "separate_k40_gate": False,
+                }]
+            }
+            raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            (root / "approved-plan.json").write_bytes(raw)
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": hashlib.sha256(raw).hexdigest(),
+                "submitted_jobs": [],
+            }))
+            with self.assertRaisesRegex(ValueError, "incomplete"):
+                assemble(
+                    root,
+                    root / "manifest.json",
+                    root / "evidence",
+                )
 
 
 if __name__ == "__main__":

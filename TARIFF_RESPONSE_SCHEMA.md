@@ -19,6 +19,12 @@
 
 No tier claims that the continuously replayed charging cost is pricing-optimal.
 
+The required `alpha=2` extrapolation contains explicitly labeled negative
+prices. The manifest policy is `allow_feasible_consumption_no_export`; extra
+energy consumption is therefore a modeled response, not energy resale.
+Terminal SOC minima/maxima and charged kWh are mandatory outputs so this
+behavior cannot be hidden inside a cost comparison.
+
 ## Cost decomposition
 
 For matching instance and tariff identities:
@@ -30,7 +36,9 @@ total_price_aware_savings = Tier0 - Tier2_GIRO40_AUGMENTED
 ```
 
 Each formula is calculated separately for expanded-grid and continuous-replay
-costs. If any term is unavailable, the result remains null.
+costs. It is emitted only when all three tiers use the same fleet count and
+terminal policy; fleet changes are reported separately. If any term is
+unavailable, the result remains null.
 
 ## Route response
 

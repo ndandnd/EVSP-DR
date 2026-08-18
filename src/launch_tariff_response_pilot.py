@@ -14,11 +14,18 @@ import sys
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
-from tariff_response_core import PHYSICS, load_tariff_manifest
+from tariff_response_core import (
+    PHYSICS,
+    giro_routes_for_instance,
+    load_tariff_manifest,
+)
 
 
 SCHEMA = "evsp-dr-tariff-response-pilot-plan-v1"
 REVIEWED_BASE = "636dc0912f47e6ce85284fad3b36af30b4135887"
+FROZEN_K40_INSTANCE_SHA256 = (
+    "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
+)
 WORKER = REPO_ROOT / "src/submit_tariff_response_pilot.sub"
 CODE_PATHS = (
     "src/launch_tariff_response_pilot.py",
@@ -37,6 +44,8 @@ CODE_PATHS = (
     "src/master_lp_scipy.py",
     "src/utils_v2.py",
     "src/config.py",
+    "src/tariff_response_environment.py",
+    "src/assemble_tariff_response_campaign.py",
 )
 MATRIX_FIELDS = (
     "job_key", "phase", "scale", "tariff_id", "treatment",
@@ -219,11 +228,24 @@ def build_plan(
             or sha256_file(path) != expected
         ):
             raise ValueError(f"{key} instance hash mismatch")
+        expected_duties = int(key[1:])
+        routes = giro_routes_for_instance(
+            REPO_ROOT / "data/Par_VehicleDetails_Updated.csv",
+            path,
+        )
+        if len(routes) != expected_duties:
+            raise ValueError(
+                f"{key} instance has {len(routes)} GIRO duties"
+            )
+        if key == "k40" and expected != FROZEN_K40_INSTANCE_SHA256:
+            raise ValueError("k40 is not the frozen reviewed instance")
         instances[key] = {
             "path": str(path),
             "sha256": expected,
             "relative_path":
                 f"tariff_response_inputs/{key}_{expected[:12]}.csv",
+            "duty_count": len(routes),
+            "trip_count": sum(len(route["trips"]) for route in routes),
         }
     tariff_manifest = tariff_manifest.expanduser().resolve()
     tariffs = load_tariff_manifest(tariff_manifest)
@@ -231,14 +253,23 @@ def build_plan(
         raise ValueError("pilot tariff set differs")
     python_path = python_path.expanduser().resolve()
     version = subprocess.run(
-        [str(python_path), "-c", (
-            "import sys; print('.'.join(map(str,sys.version_info[:3])))"
-        )],
+        [
+            str(python_path), "-I", "-B",
+            str(REPO_ROOT / "src/tariff_response_environment.py"),
+        ],
         text=True, capture_output=True, check=False,
     )
     if (
         version.returncode != 0
-        or not version.stdout.strip().startswith("3.12.")
+        or not python_path.is_file()
+    ):
+        raise ValueError("pilot Python/Gurobi environment is unavailable")
+    try:
+        environment_identity = json.loads(version.stdout)
+    except json.JSONDecodeError as exc:
+        raise ValueError("pilot environment identity is invalid") from exc
+    if (
+        not str(environment_identity.get("python", "")).startswith("3.12.")
         or not python_path.is_file()
     ):
         raise ValueError("pilot requires an explicit Python 3.12")
@@ -313,6 +344,11 @@ def build_plan(
                     if treatment == "GIRO40-AUGMENTED" else None
                 ),
             ))
+    campaign_nonce = hashlib.sha256(campaign.encode()).hexdigest()[:2]
+    for job in jobs:
+        job["job_name"] = f"{job['job_name']}{campaign_nonce}"
+        if len(job["job_name"]) > 15:
+            raise ValueError("campaign-specific job name exceeds 15 chars")
     if len({job["job_key"] for job in jobs}) != len(jobs):
         raise ValueError("duplicate pilot jobs")
     code_hashes = {
@@ -324,7 +360,14 @@ def build_plan(
         dependency = job["dependency_key"]
         if dependency and dependency not in job_by_key:
             raise ValueError("job dependency is missing")
-        job["instance"] = instances[f"k{job['scale']}"]
+        instance = dict(instances[f"k{job['scale']}"])
+        instance["source_path"] = instance["path"]
+        job_root = k40_root if job["separate_k40_gate"] else root
+        instance["path"] = str(
+            job_root / "input/instances"
+            / Path(instance["relative_path"]).name
+        )
+        job["instance"] = instance
         job["seed_output"] = (
             job_by_key[dependency]["output"]
             if job["treatment"] in {
@@ -373,8 +416,9 @@ def build_plan(
         "python": {
             "path": str(python_path),
             "sha256": sha256_file(python_path),
-            "version": version.stdout.strip(),
+            "version": environment_identity["python"],
         },
+        "environment_identity": environment_identity,
         "jobs": jobs,
         "main_submission_job_count": sum(
             not job["separate_k40_gate"] for job in jobs
@@ -449,6 +493,23 @@ def submit(plan, plan_sha, *, k40_preparation):
     root.mkdir(parents=True)
     logs = root / "logs"
     logs.mkdir()
+    for job in selected:
+        source = Path(job["instance"]["source_path"])
+        staged = Path(job["instance"]["path"])
+        _copy_new(source, staged, job["instance"]["sha256"])
+    tariff_input = root / "input/tariffs"
+    _copy_new(
+        Path(plan["tariff_manifest"]),
+        tariff_input / "tariff_manifest.csv",
+        plan["tariff_manifest_sha256"],
+    )
+    for tariff in load_tariff_manifest(Path(plan["tariff_manifest"])):
+        source = REPO_ROOT / tariff["relative_path"]
+        _copy_new(
+            source,
+            tariff_input / Path(tariff["relative_path"]).name,
+            tariff["sha256"],
+        )
     plan_path = root / "approved-plan.json"
     plan_path.write_bytes(canonical(plan))
     manifest = {
@@ -461,18 +522,46 @@ def submit(plan, plan_sha, *, k40_preparation):
         "submitted_jobs": [],
         "reservations": [str(path) for path in reservations],
     }
-    (root / "campaign.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    for reservation in reservations:
+        _copy_new(
+            reservation,
+            root / "input/reservations" / reservation.name,
+            sha256_file(reservation),
+        )
+    manifest_path = root / "campaign.json"
+    _write_manifest(
+        manifest_path, manifest
     )
     job_ids = {}
+    gate = subprocess.run(
+        [
+            "sbatch", "--parsable", "--hold",
+            "--partition=default_partition", "--time=00:05:00",
+            f"--job-name=TRG{plan_sha[:6]}",
+            f"--output={logs}/gate_%j.out",
+            f"--error={logs}/gate_%j.err",
+            "--wrap=/bin/true",
+        ],
+        cwd=REPO_ROOT, text=True, capture_output=True, check=False,
+    )
+    gate_id = gate.stdout.strip().split(";", 1)[0]
+    if gate.returncode != 0 or not gate_id.isdigit():
+        manifest["gate_state"] = "ambiguous_held_gate"
+        manifest["gate_error"] = (gate.stderr or gate.stdout).strip()
+        _write_manifest(manifest_path, manifest)
+        raise RuntimeError(
+            "held submission gate outcome is ambiguous; reconcile before retry"
+        )
+    manifest["gate_job_id"] = gate_id
+    manifest["gate_state"] = "held"
+    _write_manifest(manifest_path, manifest)
     try:
         for job in selected:
             dependency = job["dependency_key"]
             command = [
                 "sbatch", "--parsable",
                 f"--partition={job['partition']}",
-                "--no-requeue",
-                "--signal=B:USR1@180",
+                "--requeue" if job["phase"] == "CG" else "--no-requeue",
                 f"--cpus-per-task={job['threads']}",
                 "--mem=48G",
                 f"--time={max(1, math_ceil(job['wall_limit_s']/60)+10)}",
@@ -481,12 +570,16 @@ def submit(plan, plan_sha, *, k40_preparation):
                 f"--output={logs}/%x_%j.out",
                 f"--error={logs}/%x_%j.err",
             ]
+            if job["phase"] in {"CG", "MIP"}:
+                command.append("--signal=B:USR1@180")
+            dependency_ids = [gate_id]
             if dependency:
                 if dependency not in job_ids:
                     raise ValueError("dependency was not submitted first")
-                command.append(
-                    f"--dependency=afterok:{job_ids[dependency]}"
-                )
+                dependency_ids.append(job_ids[dependency])
+            command.append(
+                "--dependency=afterok:" + ":".join(dependency_ids)
+            )
             command.extend([
                 str(WORKER), str(plan_path), plan_sha, job["job_key"],
                 plan["python"]["path"], plan["python"]["sha256"],
@@ -504,12 +597,61 @@ def submit(plan, plan_sha, *, k40_preparation):
             manifest["submitted_jobs"].append({
                 "job_key": job["job_key"], "job_id": job_id,
             })
-            (root / "campaign.json").write_text(
-                json.dumps(manifest, indent=2, sort_keys=True) + "\n"
-            )
-    except Exception:
+            _write_manifest(manifest_path, manifest)
+    except Exception as exc:
+        manifest["gate_state"] = "held_after_partial_submission"
+        manifest["submission_error"] = repr(exc)
+        _write_manifest(manifest_path, manifest)
         raise
+    release = subprocess.run(
+        ["scontrol", "release", gate_id],
+        cwd=REPO_ROOT, text=True, capture_output=True, check=False,
+    )
+    if release.returncode != 0:
+        manifest["gate_state"] = "held_release_failed"
+        manifest["gate_error"] = (
+            release.stderr or release.stdout
+        ).strip()
+        _write_manifest(manifest_path, manifest)
+        raise RuntimeError(
+            "submission gate release failed; experiment jobs remain blocked"
+        )
+    manifest["gate_state"] = "released"
+    _write_manifest(manifest_path, manifest)
     return manifest
+
+
+def _write_manifest(path, payload):
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    with temporary.open("x") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, path)
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+
+
+def _copy_new(source, target, expected_sha256):
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists():
+        if sha256_file(target) != expected_sha256:
+            raise ValueError(f"staged input hash mismatch: {target}")
+        return
+    descriptor = os.open(
+        target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
+    )
+    with source.open("rb") as reader, os.fdopen(descriptor, "wb") as writer:
+        for chunk in iter(lambda: reader.read(1024 * 1024), b""):
+            writer.write(chunk)
+        writer.flush()
+        os.fsync(writer.fileno())
+    if sha256_file(target) != expected_sha256:
+        raise ValueError(f"staged input copy mismatch: {target}")
 
 
 def math_ceil(value):

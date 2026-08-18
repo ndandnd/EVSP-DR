@@ -143,6 +143,17 @@ for scan_root in (root,root/"src"):
 if unsafe:
     raise SystemExit(sorted(set(unsafe))[:10])
 PY
+OBSERVED_ENV=$(
+  "$PYTHON" -I -B "$ROOT/src/tariff_response_environment.py"
+) || fatal "approved Python/Gurobi environment is unavailable"
+"$PYTHON" -I -B - "$PLAN" "$OBSERVED_ENV" <<'PY' \
+  || fatal "worker environment differs from approved plan"
+import json,sys
+plan=json.load(open(sys.argv[1]))
+observed=json.loads(sys.argv[2])
+if observed != plan.get("environment_identity"):
+    raise SystemExit("environment identity mismatch")
+PY
 [[ "$(sha256sum "$INSTANCE" | awk '{print $1}')" == "$INSTANCE_SHA" ]] \
   || fatal "instance hash mismatch"
 [[ "$(sha256sum "$TARIFF_MANIFEST" | awk '{print $1}')" == \
@@ -209,6 +220,7 @@ case "$PHASE" in
       --soc-step 15 --block-min 10
       --g-kwh 300 --charge-kw 300 --min-soc-frac 0
       --master-sense partition --initial-pool singletons
+      --strict-tariff-coverage
       --wall-limit-s "$((WALL_LIMIT - 300))"
       --checkpoint-every 25 --resume
       --phase-telemetry "$TELEMETRY"
@@ -216,23 +228,43 @@ case "$PHASE" in
     )
     if [[ "$TREATMENT" != "RAW" ]]; then
       [[ -s "$SEED" ]] || fatal "augmented CG seed is missing"
-      command+=(--validated-seed-routes "$SEED")
+      command+=(
+        --validated-seed-routes "$SEED"
+        --augmentation-label "$TREATMENT"
+      )
     fi
     ;;
   MIP)
     [[ "$SCALE" == "5" || "$SCALE" == "8" ]] \
       || fatal "k40 MIP is prohibited in tariff pilot"
     [[ -s "$CG_SOURCE" ]] || fatal "source CG status is missing"
+    CG_JOURNAL=$("$PYTHON" -I -B - "$CG_SOURCE" <<'PY'
+import json,pathlib,sys
+status=json.load(open(sys.argv[1]))
+raw=status.get("columns_journal")
+if not raw:
+    raise SystemExit("CG status lacks columns_journal")
+path=pathlib.Path(raw)
+if not path.is_absolute():
+    path=pathlib.Path(sys.argv[1]).resolve().parent/path
+print(path.resolve())
+PY
+    ) || fatal "cannot resolve source CG journal"
+    [[ -s "$CG_JOURNAL" ]] || fatal "source CG journal is missing"
+    export EVSP_MIP_EXPECTED_RESULT_SHA256
+    EVSP_MIP_EXPECTED_RESULT_SHA256=$(sha256sum "$CG_SOURCE" | awk '{print $1}')
+    export EVSP_MIP_EXPECTED_JOURNAL_SHA256
+    EVSP_MIP_EXPECTED_JOURNAL_SHA256=$(sha256sum "$CG_JOURNAL" | awk '{print $1}')
+    unset EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256 || true
     command=(
       "$PYTHON" -u "$ROOT/src/run_exact_pool_mip.py"
       --result "$CG_SOURCE" --two-stage
-      --timelimit "$SOLVER_LIMIT" --threads 8 --mipgap 0.0001
+      --timelimit "$SOLVER_LIMIT" --threads "$THREADS" --mipgap 0.0001
       --progress-dir "$PROGRESS" --out "$OUTPUT"
     )
-    if [[ "$TREATMENT" != "RAW" ]]; then
-      [[ -s "$SEED" ]] || fatal "augmented MIP seed is missing"
-      command+=(--initial-partition-routes "$SEED")
-    fi
+    # Augmented CG already contains the tariff-specific Tier-1 partition at
+    # expanded-grid costs. Re-appending it here would mix continuous and grid
+    # cost semantics and disable the cost stage.
     ;;
   *)
     fatal "unknown phase"
@@ -254,4 +286,47 @@ wait "$child" || status=$?
 child=""
 trap - USR1 TERM INT
 [[ "$status" -eq 0 ]] || fatal "cell command failed: $status"
+"$PYTHON" -I -B - "$OUTPUT" "$PHASE" "$PROGRESS" "$TELEMETRY" \
+  "$EXPECTED_PLAN_SHA" "$INSTANCE_SHA" "$TARIFF_SHA" <<'PY' \
+  || fatal "worker completion publication failed"
+import hashlib,json,os,pathlib,sys
+output,phase,progress,telemetry,plan_sha,instance_sha,tariff_sha=sys.argv[1:]
+paths=[]
+output_path=pathlib.Path(output)
+if output_path.is_dir():
+    paths.extend(path for path in output_path.rglob("*") if path.is_file())
+else:
+    paths.append(output_path)
+if phase=="CG":
+    paths.extend([
+        pathlib.Path(str(output_path)+".columns.jsonl"),
+        pathlib.Path(str(output_path)+".iters.csv"),
+        pathlib.Path(telemetry),
+    ])
+if phase=="MIP":
+    paths.extend(
+        path for path in pathlib.Path(progress).rglob("*") if path.is_file()
+    )
+if not paths or any(not path.is_file() for path in paths):
+    raise SystemExit("completion artifact set is incomplete")
+root=output_path if output_path.is_dir() else output_path.parent
+hashes={
+    str(path.resolve()):hashlib.sha256(path.read_bytes()).hexdigest()
+    for path in sorted(set(paths))
+}
+payload={
+    "schema":"evsp-dr-tariff-response-worker-completion-v1",
+    "phase":phase,
+    "plan_sha256":plan_sha,
+    "instance_sha256":instance_sha,
+    "tariff_sha256":tariff_sha or None,
+    "artifact_sha256":hashes,
+}
+target=pathlib.Path(str(output_path)+".worker-completion.json")
+with target.open("x") as handle:
+    json.dump(payload,handle,sort_keys=True,separators=(",",":"))
+    handle.write("\n")
+    handle.flush()
+    os.fsync(handle.fileno())
+PY
 echo "[TARIFF-RESPONSE] DONE phase=$PHASE scale=$SCALE tariff=$TARIFF_ID treatment=$TREATMENT"

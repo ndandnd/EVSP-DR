@@ -525,9 +525,13 @@ def prepare_strict_partition_pool(
         reference_data_dir if reference_data_dir is not None else data_dir
     ).resolve()
     instance_path = (data_dir / str(status["csv"])).resolve()
-    tariff_path = (
-        data_dir / Path(str(status["prices_csv"])).name
-    ).resolve()
+    tariff_path = (data_dir / str(status["prices_csv"])).resolve()
+    try:
+        tariff_path.relative_to(data_dir)
+    except ValueError as exc:
+        raise SystemExit(
+            "[MIP] physical pool tariff escapes data/"
+        ) from exc
     reference_path = reference_data_dir / "Ref_dict.csv"
     deadhead_path = reference_data_dir / "par_ref_dhd.csv"
     provenance = status.get("provenance") or {}
@@ -872,7 +876,9 @@ def merge_extra_routes(
         max_station_to_trip_wait_min=HORIZON_MIN,
         reference_data_dir=reference_data_dir,
     )
-    price_name = Path(prices_csv).name if prices_csv else "hourly_prices_flat.csv"
+    price_name = (
+        str(prices_csv) if prices_csv else "hourly_prices_flat.csv"
+    )
     prices = load_station_hourly_prices(data_dir / price_name, CHARGING_STATIONS)
     depot_curve = prices.get("PARX") or next(iter(prices.values()))
 
@@ -1458,8 +1464,12 @@ def validate_final_selected_routes(
     ):
         raise SystemExit("[MIP] final replay instance hash mismatch")
     tariff_path = (
-        data_dir / Path(str(status.get("prices_csv"))).name
+        data_dir / str(status.get("prices_csv"))
     ).resolve()
+    try:
+        tariff_path.relative_to(data_dir)
+    except ValueError as exc:
+        raise SystemExit("[MIP] final replay tariff escapes data/") from exc
     expected_tariff_hash = provenance.get("prices_sha256")
     if (
         not tariff_path.is_file()

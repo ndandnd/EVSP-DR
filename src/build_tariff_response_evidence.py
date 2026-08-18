@@ -26,6 +26,8 @@ from tariff_response_core import (
     savings_decomposition,
     tariff_prices,
 )
+from config import BUS_COST_KX, CHARGE_START_COST
+from utils_v2 import base_station_name
 
 
 SCHEMA = "evsp-dr-tariff-response-experiment-v1"
@@ -33,6 +35,7 @@ TIERS = {
     "TIER0_GIRO_ORIGINAL",
     "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING",
     "TIER2_RAW_ROUTE_CHARGING",
+    "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING",
     "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING",
 }
 STATION_COLORS = {
@@ -50,6 +53,7 @@ SUMMARY_FIELDS = (
     "continuous_charging_cost", "total_charged_kwh",
     "peak_window_kwh", "charging_kwh_by_hour_json",
     "charging_kwh_by_station_json", "charging_starts_by_hour_json",
+    "terminal_soc_min_kwh", "terminal_soc_max_kwh",
     "waiting_min", "deadhead_min", "deadhead_kwh",
     "charging_stops", "discretized_certification_status",
     "physical_replay_status", "terminal_soc_policy",
@@ -60,6 +64,7 @@ SUMMARY_FIELDS = (
     "charging_only_savings_continuous",
     "rerouting_increment_continuous",
     "total_price_aware_savings_continuous",
+    "fleet_change_from_tier1",
     "availability", "availability_reason",
 )
 BLOCK_FIELDS = (
@@ -149,6 +154,24 @@ def _finite(value, field):
     return number
 
 
+def _schedule_fingerprint(routes):
+    return hashlib.sha256(_canonical(sorted([
+        {
+            "trips": route.get("trips"),
+            "route_nodes": route.get("route_nodes", route.get("route")),
+            "charging_stops": route.get("charging_stops"),
+            "expanded_grid_cost": route.get("expanded_grid_cost"),
+            "continuous_realized_cost":
+                route.get("continuous_realized_cost"),
+            "continuous_realized_charging_blocks":
+                route.get("continuous_realized_charging_blocks"),
+        }
+        for route in routes
+    ], key=lambda item: (
+        item["trips"], item["expanded_grid_cost"] or 0
+    )))).hexdigest()
+
+
 def _source_path(value):
     path = Path(value).expanduser()
     return path.resolve() if path.is_absolute() else (REPO_ROOT / path).resolve()
@@ -222,6 +245,141 @@ def _validate_routes(cell, tariff):
             )
 
 
+def _validate_metrics(cell, tariff):
+    if cell["tier"] == "TIER0_GIRO_ORIGINAL":
+        return
+    prices = tariff_prices(tariff)
+    metrics = cell["metrics"]
+    grid_objective = 0.0
+    continuous_objective = 0.0
+    total_kwh = 0.0
+    stops = 0
+    waiting = 0.0
+    deadhead_min = 0.0
+    deadhead_kwh = 0.0
+    by_hour = defaultdict(float)
+    by_station = defaultdict(float)
+    starts_by_hour = defaultdict(int)
+    peak_start = (
+        int(tariff["peak_window_start_hour"]) * 60
+        if tariff["peak_window_start_hour"] != "" else None
+    )
+    peak_end = (
+        int(tariff["peak_window_end_hour"]) * 60
+        if tariff["peak_window_end_hour"] != "" else None
+    )
+    peak_kwh = 0.0 if peak_start is not None else None
+    terminal_soc = []
+    for route in cell["routes"]:
+        blocks = route["continuous_realized_charging_blocks"]
+        route_stops = route.get("charging_stops") or {}
+        starts = list(route_stops.get("cst") or [])
+        stations = list(route_stops.get("stations") or [])
+        if len(starts) != len(stations):
+            raise ValueError("charging start/station arrays differ")
+        stops += len(stations)
+        for start in starts:
+            starts_by_hour[str(int(float(start) // 60))] += 1
+        expanded_energy_cost = 0.0
+        continuous_energy_cost = 0.0
+        for block in blocks:
+            station = base_station_name(block["station"])
+            start = float(block["start_min"])
+            end = float(block["end_min"])
+            hour = int(start // 60)
+            realized = float(block["realized_kwh"])
+            expanded = float(block["expanded_grid_kwh"])
+            capacity = (end - start) * PHYSICS["charge_kw"] / 60.0
+            expected_price = prices[station].get(hour)
+            if (
+                expected_price is None
+                or int(block["tariff_hour"]) != hour
+                or not math.isclose(
+                    float(block["price_per_kwh"]), expected_price,
+                    rel_tol=1e-12, abs_tol=1e-12,
+                )
+                or end > (hour + 1) * 60 + 1e-9
+                or min(realized, expanded) < -1e-9
+                or max(realized, expanded) > capacity + 1e-6
+            ):
+                raise ValueError("charging block tariff/power mismatch")
+            expanded_energy_cost += expanded * expected_price
+            continuous_energy_cost += realized * expected_price
+            total_kwh += realized
+            by_hour[str(hour)] += realized
+            by_station[block["station"]] += realized
+            if (
+                peak_kwh is not None
+                and start >= peak_start and end <= peak_end
+            ):
+                peak_kwh += realized
+        route_grid = BUS_COST_KX + CHARGE_START_COST * len(stations) \
+            + expanded_energy_cost
+        route_continuous = BUS_COST_KX + CHARGE_START_COST * len(stations) \
+            + continuous_energy_cost
+        if (
+            not math.isclose(
+                float(route.get("expanded_grid_cost", math.nan)),
+                route_grid, rel_tol=1e-10, abs_tol=1e-6,
+            )
+            or not math.isclose(
+                float(route.get("continuous_realized_cost", math.nan)),
+                route_continuous, rel_tol=1e-10, abs_tol=1e-6,
+            )
+        ):
+            raise ValueError("route objective does not match charging blocks")
+        grid_objective += route_grid
+        continuous_objective += route_continuous
+        waiting += _finite(route.get("waiting_min"), "route waiting_min")
+        deadhead_min += _finite(
+            route.get("deadhead_min"), "route deadhead_min"
+        )
+        deadhead_kwh += _finite(
+            route.get("deadhead_kwh"), "route deadhead_kwh"
+        )
+        terminal_soc.append(_finite(
+            route.get("continuous_terminal_soc_kwh"),
+            "continuous_terminal_soc_kwh",
+        ))
+    expected_values = {
+        "grid_model_objective": grid_objective,
+        "continuous_replay_objective": continuous_objective,
+        "charging_cost": grid_objective - BUS_COST_KX * len(cell["routes"]),
+        "continuous_charging_cost":
+            continuous_objective - BUS_COST_KX * len(cell["routes"]),
+        "total_charged_kwh": total_kwh,
+        "waiting_min": waiting,
+        "deadhead_min": deadhead_min,
+        "deadhead_kwh": deadhead_kwh,
+        "charging_stops": stops,
+        "terminal_soc_min_kwh": min(terminal_soc),
+        "terminal_soc_max_kwh": max(terminal_soc),
+    }
+    if peak_kwh is not None:
+        expected_values["peak_window_kwh"] = peak_kwh
+    for field, expected in expected_values.items():
+        if not math.isclose(
+            _finite(metrics.get(field), field), float(expected),
+            rel_tol=1e-10, abs_tol=1e-6,
+        ):
+            raise ValueError(f"summary metric mismatch: {field}")
+    mappings = {
+        "charging_kwh_by_hour_json": dict(by_hour),
+        "charging_kwh_by_station_json": dict(by_station),
+        "charging_starts_by_hour_json": dict(starts_by_hour),
+    }
+    for field, expected in mappings.items():
+        observed = json.loads(metrics[field])
+        if set(observed) != set(expected) or any(
+            not math.isclose(
+                float(observed[key]), float(expected[key]),
+                rel_tol=1e-10, abs_tol=1e-6,
+            )
+            for key in expected
+        ):
+            raise ValueError(f"summary mapping mismatch: {field}")
+
+
 def _validate_cell(cell, tariffs):
     required = {
         "cell_id", "instance_id", "scale", "tariff_id", "tier",
@@ -251,14 +409,56 @@ def _validate_cell(cell, tariffs):
         and cell["treatment"] != "GIRO40-AUGMENTED"
     ):
         raise ValueError("augmented Tier 2 treatment mislabeled")
+    if (
+        cell["tier"] == "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING"
+        and cell["treatment"] != "GIRO-AUGMENTED"
+    ):
+        raise ValueError("augmented Tier 2 treatment mislabeled")
     _validate_routes(cell, tariff)
+    if cell["tier"] == "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING":
+        certificates = cell.get("fixed_duty_certificates")
+        if not isinstance(certificates, list) or len(certificates) != len(
+            cell["routes"]
+        ):
+            raise ValueError("Tier 1 certificate set is incomplete")
+        certificate_by_key = {
+            certificate.get("duty_id", certificate.get("route_id")):
+                certificate
+            for certificate in certificates
+        }
+        for route in cell["routes"]:
+            key = route.get("duty_id", route.get("route_id"))
+            certificate = certificate_by_key.get(key)
+            if not isinstance(certificate, dict):
+                raise ValueError("Tier 1 route certificate is missing")
+            payload = {
+                name: value for name, value in certificate.items()
+                if name not in {
+                    "certificate_sha256", "duty_id", "route_id"
+                }
+            }
+            expected = hashlib.sha256(_canonical(payload)).hexdigest()
+            if (
+                certificate.get("certified") is not True
+                or certificate.get(
+                    "continuous_cost_optimality_certified"
+                ) is not False
+                or certificate.get("certificate_sha256") != expected
+                or route.get("fixed_duty_certificate_sha256") != expected
+            ):
+                raise ValueError("Tier 1 certificate is invalid")
     metrics = cell["metrics"]
-    for field in (
-        "buses", "total_charged_kwh", "waiting_min",
-        "deadhead_min", "deadhead_kwh", "charging_stops",
+    numeric_fields = [
+        "buses", "total_charged_kwh", "charging_stops",
         "runtime_preprocessing_s", "runtime_master_s",
         "runtime_pricing_s", "runtime_postprocessing_s",
-    ):
+    ]
+    if cell["tier"] != "TIER0_GIRO_ORIGINAL":
+        numeric_fields.extend([
+            "waiting_min", "deadhead_min", "deadhead_kwh",
+            "terminal_soc_min_kwh", "terminal_soc_max_kwh",
+        ])
+    for field in numeric_fields:
         _finite(metrics[field], field)
     for field in (
         "charging_kwh_by_hour_json",
@@ -274,6 +474,7 @@ def _validate_cell(cell, tariffs):
             raise ValueError(f"{field} is unavailable/invalid") from exc
         if not isinstance(decoded, dict):
             raise ValueError(f"{field} is not a mapping")
+    _validate_metrics(cell, tariff)
     return tariff
 
 
@@ -299,7 +500,7 @@ def _stable_orders(baseline, routes):
     }
 
 
-def _figures(staging, cells, tariffs):
+def _figures(staging, cells, tariffs, *, synthetic=False):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -315,8 +516,11 @@ def _figures(staging, cells, tariffs):
         if {
             "TIER0_GIRO_ORIGINAL",
             "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING",
-            "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING",
         } <= set(tiers)
+        and bool({
+            "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING",
+            "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING",
+        } & set(tiers))
         and all(
             any(route.get("trip_blocks") for route in cell["routes"])
             for cell in tiers.values()
@@ -325,10 +529,15 @@ def _figures(staging, cells, tariffs):
     if not complete:
         raise ValueError("no complete cell with Gantt trip blocks")
     (instance_id, tariff_id), tiers = complete[0]
+    augmented_tier = (
+        "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING"
+        if "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING" in tiers
+        else "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING"
+    )
     panel_tiers = (
         "TIER0_GIRO_ORIGINAL",
         "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING",
-        "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING",
+        augmented_tier,
     )
     baseline = tiers[panel_tiers[0]]["routes"]
     gantt_rows = []
@@ -414,6 +623,12 @@ def _figures(staging, cells, tariffs):
         price_ax.tick_params(axis="y", labelsize=6)
     axes[-1].set_xlabel("minute of service day")
     fig.suptitle(f"{instance_id}: {tariff_id}")
+    if synthetic:
+        fig.text(
+            0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
+            ha="center", va="center", fontsize=28,
+            color="red", alpha=0.16, rotation=25,
+        )
     fig.tight_layout()
     png = staging / "gantt_three_tiers.png"
     pdf = staging / "gantt_three_tiers.pdf"
@@ -451,7 +666,14 @@ def _figures(staging, cells, tariffs):
             "deadhead_kwh": metrics.get("deadhead_kwh"),
         })
     required_alpha = {0.0, 0.25, 0.5, 1.0, 2.0}
-    if not required_alpha <= {row["alpha"] for row in alpha_rows}:
+    alpha_groups = defaultdict(set)
+    for row in alpha_rows:
+        alpha_groups[(
+            row["instance_id"], row["tier"], row["treatment"]
+        )].add(row["alpha"])
+    if not any(
+        required_alpha <= values for values in alpha_groups.values()
+    ):
         raise ValueError("alpha response cells are incomplete")
     response_fields = (
         "instance_id", "tariff_id", "tier", "treatment", "alpha",
@@ -475,7 +697,9 @@ def _figures(staging, cells, tariffs):
     fig, axes = plt.subplots(2, 3, figsize=(14, 8))
     grouped_rows = defaultdict(list)
     for row in alpha_rows:
-        grouped_rows[(row["tier"], row["treatment"])].append(row)
+        grouped_rows[(
+            row["instance_id"], row["tier"], row["treatment"]
+        )].append(row)
     for axis, (field, label) in zip(axes.flat, metrics):
         for key, rows in sorted(grouped_rows.items()):
             rows.sort(key=lambda row: row["alpha"])
@@ -491,6 +715,12 @@ def _figures(staging, cells, tariffs):
     handles, labels = axes.flat[0].get_legend_handles_labels()
     if handles:
         fig.legend(handles, labels, loc="lower right", fontsize=7)
+    if synthetic:
+        fig.text(
+            0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
+            ha="center", va="center", fontsize=28,
+            color="red", alpha=0.16, rotation=25,
+        )
     fig.tight_layout()
     fig.savefig(
         staging / "price_amplitude_response.png",
@@ -618,6 +848,7 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             continue
         for tier_name in (
             "TIER2_RAW_ROUTE_CHARGING",
+            "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING",
             "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING",
         ):
             tier2 = tiers.get(tier_name)
@@ -642,8 +873,9 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                 "trip_coassignment_jaccard"
             ]
         tier0 = tiers.get("TIER0_GIRO_ORIGINAL")
-        tier2 = tiers.get(
-            "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING"
+        tier2 = (
+            tiers.get("TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING")
+            or tiers.get("TIER2_GIRO_AUGMENTED_ROUTE_CHARGING")
         )
         if tier0 is None or tier2 is None:
             continue
@@ -651,11 +883,36 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             ("grid", "grid_model_objective"),
             ("continuous", "continuous_replay_objective"),
         ):
-            decomposition = savings_decomposition(
-                tier0["metrics"].get(field),
-                tier1["metrics"].get(field),
-                tier2["metrics"].get(field),
+            same_fleet = (
+                tier0["metrics"]["buses"]
+                == tier1["metrics"]["buses"]
+                == tier2["metrics"]["buses"]
+                and tier0["terminal_soc_policy"]
+                == tier1["terminal_soc_policy"]
+                == tier2["terminal_soc_policy"]
             )
+            decomposition = savings_decomposition(
+                tier0["metrics"].get(field) if same_fleet else None,
+                tier1["metrics"].get(field) if same_fleet else None,
+                tier2["metrics"].get(field) if same_fleet else None,
+            )
+            if not same_fleet:
+                target_row = summary_by[(
+                    tier2["instance_id"], tier2["tariff_id"],
+                    tier2["tier"],
+                )]
+                target_row["availability"] = "partial"
+                reasons = {
+                    value for value in str(
+                        target_row.get("availability_reason") or ""
+                    ).split(";") if value
+                }
+                reasons.add(
+                    "decomposition_unavailable_fleet_or_terminal_policy_changed"
+                )
+                target_row["availability_reason"] = ";".join(
+                    sorted(reasons)
+                )
             for name in (
                 "charging_only_savings", "rerouting_increment",
                 "total_price_aware_savings",
@@ -664,6 +921,11 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                     tier2["instance_id"], tier2["tariff_id"],
                     tier2["tier"],
                 )][f"{name}_{suffix}"] = decomposition[name]
+        summary_by[(
+            tier2["instance_id"], tier2["tariff_id"], tier2["tier"],
+        )]["fleet_change_from_tier1"] = (
+            tier2["metrics"]["buses"] - tier1["metrics"]["buses"]
+        )
 
     staging = Path(tempfile.mkdtemp(
         dir=output_dir.parent, prefix=f".{output_dir.name}.tmp."
@@ -692,7 +954,12 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                    CG_FIELDS, cg_rows)
         _write_csv(staging / "mip_checkpoint_long.csv",
                    MIP_FIELDS, mip_rows)
-        _figures(staging, cells, tariffs)
+        synthetic = manifest.get("synthetic") is True
+        _figures(staging, cells, tariffs, synthetic=synthetic)
+        if synthetic:
+            (staging / "SYNTHETIC_ONLY.txt").write_text(
+                "SYNTHETIC FIXTURE — NOT EXPERIMENTAL EVIDENCE.\n"
+            )
         dictionary = [
             {"field": "grid_model_objective",
              "definition": "Expanded-grid objective; certificate scope is tier-specific."},
@@ -720,6 +987,7 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             "size_bytes": len(raw),
         }]
         for cell in cells:
+            schedule_artifact_bound = False
             for artifact in cell.get("source_artifacts") or []:
                 path = _source_path(artifact["path"])
                 if (
@@ -734,6 +1002,30 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                     "sha256": artifact["sha256"],
                     "size_bytes": path.stat().st_size,
                 })
+                if artifact["role"] in {"tier1_seed", "mip_result"}:
+                    source_payload = json.loads(path.read_text())
+                    source_routes = (
+                        source_payload.get("routes")
+                        if artifact["role"] == "tier1_seed"
+                        else source_payload.get("selected_routes")
+                    )
+                    if (
+                        not isinstance(source_routes, list)
+                        or _schedule_fingerprint(source_routes)
+                        != _schedule_fingerprint(cell["routes"])
+                    ):
+                        raise ValueError(
+                            "cell routes differ from validated source artifact"
+                        )
+                    schedule_artifact_bound = True
+            if (
+                not synthetic
+                and cell["tier"] != "TIER0_GIRO_ORIGINAL"
+                and not schedule_artifact_bound
+            ):
+                raise ValueError(
+                    "optimized cell lacks a schedule-bound source artifact"
+                )
         _write_csv(
             staging / "artifact_inventory.csv",
             INVENTORY_FIELDS,
@@ -755,6 +1047,7 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             "tariff_manifest_sha256": sha256_file(tariff_manifest),
             "physics": PHYSICS,
             "continuous_cost_pricing_certified": False,
+            "synthetic": synthetic,
             "output_sha256": output_hashes,
         }
         (staging / "provenance.json").write_text(

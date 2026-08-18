@@ -46,8 +46,8 @@ src/analysis/
 *.pdf
 *.png
 *.numbers
-!analysis/tariff_response_synthetic_20260818/example_output/*.pdf
-!analysis/tariff_response_synthetic_20260818/example_output/*.png
+!analysis/tariff_response_synthetic_final_20260818/example_output/*.pdf
+!analysis/tariff_response_synthetic_final_20260818/example_output/*.png
 
 # Derived datasets and downloaded experiment material
 data/bus_outputs/
@@ -62,6 +62,7 @@ data/random_goal1_instances/
 /data/duty_unions/
 /data/duty_unions_big/
 /data/peel_tmp/
+/data/tariff_response_inputs/
 data/*.png
 # Private GIRO/Transdev source material. The public repository may contain
 # derived benchmark CSVs, but never publish the C1/Internal originals or email

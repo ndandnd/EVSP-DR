@@ -8,6 +8,7 @@ import json
 import math
 import time
 from dataclasses import dataclass
+from pathlib import Path
 
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, STATIONS
 from config import BUS_COST_KX, CHARGE_START_COST
@@ -99,6 +100,7 @@ def optimize_fixed_duty(
     block_min=10,
     tariff_id=None,
     tariff_sha256=None,
+    instance_sha256=None,
 ):
     started = time.perf_counter()
     trips = tuple(int(trip) for trip in trip_sequence)
@@ -114,13 +116,43 @@ def optimize_fixed_duty(
         != (300.0, 300.0, 0.0, 15.0, 10)
     ):
         raise ValueError("fixed-duty pilot physics differ")
+    required_hours = set(range(int(math.ceil(HORIZON_MIN / 60.0))))
     if any(
         set(curve) != set(range(max(curve) + 1))
-        or not set(range(24)) <= set(curve)
+        or not required_hours <= set(curve)
         for curve in station_prices.values()
     ):
         raise ValueError("tariff curves are incomplete")
     arcs = _arc_groups(problem)
+    problem_identity_sha256 = canonical_sha({
+        "trips": list(problem.trips),
+        "trip_energy": {
+            str(trip): float(problem.trip_energy[trip])
+            for trip in problem.trips
+        },
+        "start_min": {
+            str(trip): float(problem.start_min[trip])
+            for trip in problem.trips
+        },
+        "end_min": {
+            str(trip): float(problem.end_min[trip])
+            for trip in problem.trips
+        },
+        "adjacency": [
+            [
+                str(source), str(successor), float(travel),
+                float(energy), str(kind),
+            ]
+            for source, entries in sorted(
+                problem.adjacency.items(), key=lambda item: str(item[0])
+            )
+            for successor, travel, energy, kind in sorted(
+                entries, key=lambda item: (
+                    str(item[0]), float(item[1]), float(item[2]), str(item[3])
+                )
+            )
+        ],
+    })
     grid = [
         round(index * soc_step, 6)
         for index in range(int(g_kwh / soc_step) + 1)
@@ -159,7 +191,16 @@ def optimize_fixed_duty(
     }
     labels = 1
     transitions = 0
+    frontier_hashes = []
     for position, trip in enumerate(trips):
+        frontier_hashes.append(canonical_sha({
+            "position": position,
+            "trip": trip,
+            "states": [
+                [level, value[0]]
+                for level, value in sorted(states.items())
+            ],
+        }))
         final_gap = position == len(trips) - 1
         successor = None if final_gap else trips[position + 1]
         next_states = {}
@@ -409,6 +450,15 @@ def optimize_fixed_duty(
     ):
         raise ValueError("DP objective differs from expanded replay")
     continuous = costs["continuous_realized_charging_blocks"]
+    waiting_min = sum(
+        action.get("waiting_min", 0.0) for action in best_actions
+    )
+    deadhead_min = sum(
+        action.get("travel_min", 0.0) for action in best_actions
+    )
+    deadhead_kwh = sum(
+        action.get("deadhead_kwh", 0.0) for action in best_actions
+    )
     realized.update({
         "cost": float(best_cost),
         "expanded_grid_cost": float(best_cost),
@@ -418,6 +468,15 @@ def optimize_fixed_duty(
         "continuous_realized_charging_blocks": continuous,
         "master_cost_semantics": "expanded_grid_cost",
         "cost_tariff_sha256": tariff_sha256,
+        "continuous_terminal_soc_kwh": detail["mapping"][
+            "continuous_terminal_soc_kwh"
+        ],
+        "expanded_grid_terminal_soc_kwh": detail["mapping"][
+            "expanded_grid_terminal_soc_kwh"
+        ],
+        "waiting_min": waiting_min,
+        "deadhead_min": deadhead_min,
+        "deadhead_kwh": deadhead_kwh,
         "physical_realization": {
             **detail["mapping"],
             "status": "validated_continuous_fixed_duty",
@@ -429,8 +488,26 @@ def optimize_fixed_duty(
             "continuous_cost_pricing_certified": False,
         },
     })
+    selected_path_sha256 = canonical_sha({
+        "actions": list(best_actions),
+        "route_nodes": route_nodes,
+        "expanded_grid_charging_stops":
+            realized["expanded_grid_charging_stops"],
+    })
     certificate_payload = {
+        "schema": CERTIFICATE_SCHEMA,
+        "certified": True,
+        "scope":
+            "optimal_discretized_charging_for_fixed_trip_sequence",
+        "algorithm": "acyclic_dynamic_programming_exhaustive",
+        "implementation_sha256": hashlib.sha256(
+            Path(__file__).read_bytes()
+        ).hexdigest(),
         "trip_sequence": list(trips),
+        "instance_sha256": instance_sha256,
+        "problem_identity_sha256": problem_identity_sha256,
+        "selected_path_sha256": selected_path_sha256,
+        "state_frontier_sha256": canonical_sha(frontier_hashes),
         "tariff_id": tariff_id,
         "tariff_sha256": tariff_sha256,
         "physics": {
@@ -444,7 +521,10 @@ def optimize_fixed_duty(
         "objective": best_cost,
         "labels_accepted": labels,
         "transitions_evaluated": transitions,
+        "continuous_cost_optimality_certified": False,
     }
+    certificate_sha256 = canonical_sha(certificate_payload)
+    realized["fixed_duty_certificate_sha256"] = certificate_sha256
     return {
         "schema": RESULT_SCHEMA,
         "feasible": True,
@@ -452,25 +532,12 @@ def optimize_fixed_duty(
         "expanded_grid_objective": best_cost,
         "continuous_replay_objective":
             costs["continuous_realized_cost"],
-        "waiting_min": sum(
-            action.get("waiting_min", 0.0) for action in best_actions
-        ),
-        "deadhead_min": sum(
-            action.get("travel_min", 0.0) for action in best_actions
-        ),
-        "deadhead_kwh": sum(
-            action.get("deadhead_kwh", 0.0)
-            for action in best_actions
-        ),
+        "waiting_min": waiting_min,
+        "deadhead_min": deadhead_min,
+        "deadhead_kwh": deadhead_kwh,
         "certificate": {
-            "schema": CERTIFICATE_SCHEMA,
-            "certified": True,
-            "scope":
-                "optimal_discretized_charging_for_fixed_trip_sequence",
-            "algorithm": "acyclic_dynamic_programming_exhaustive",
-            "certificate_sha256": canonical_sha(certificate_payload),
             **certificate_payload,
-            "continuous_cost_optimality_certified": False,
+            "certificate_sha256": certificate_sha256,
         },
         "physical_replay_status": "validated",
         "runtime_s": time.perf_counter() - started,

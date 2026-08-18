@@ -28,6 +28,7 @@ from tariff_response_core import (
     tariff_prices,
 )
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
+from config import BUS_COST_KX
 
 
 SUMMARY_FIELDS = (
@@ -36,6 +37,7 @@ SUMMARY_FIELDS = (
     "continuous_charging_cost", "total_charged_kwh",
     "peak_window_kwh", "charging_kwh_by_hour_json",
     "charging_kwh_by_station_json", "charging_starts_by_hour_json",
+    "terminal_soc_min_kwh", "terminal_soc_max_kwh",
     "waiting_min", "deadhead_min",
     "deadhead_kwh", "charging_stops", "discretized_certification_status",
     "physical_replay_status", "terminal_soc_policy",
@@ -56,6 +58,9 @@ CERT_FIELDS = (
     "continuous_replay_objective", "labels_accepted",
     "transitions_evaluated", "physical_replay_status",
     "continuous_cost_optimality_certified",
+)
+FROZEN_K40_INSTANCE_SHA256 = (
+    "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 )
 DUTY_FIELDS = (
     "duty_id", "base_duty_id", "included_variant",
@@ -106,6 +111,8 @@ def run(
         raise FileExistsError(f"output exists: {output_dir}")
     if sha256_file(instance_path) != expected_instance_sha256:
         raise ValueError("instance SHA-256 mismatch")
+    if expected_instance_sha256 != FROZEN_K40_INSTANCE_SHA256:
+        raise ValueError("Tier 0/1 requires the frozen reviewed k40 instance")
     tariffs = load_tariff_manifest(tariff_manifest)
     original = reconstruct_giro40_original(master_path)
     data_dir = instance_path.parent
@@ -142,6 +149,8 @@ def run(
                 "charging_kwh_by_hour_json": None,
                 "charging_kwh_by_station_json": None,
                 "charging_starts_by_hour_json": None,
+                "terminal_soc_min_kwh": None,
+                "terminal_soc_max_kwh": None,
                 "waiting_min": None,
                 "deadhead_min": None,
                 "deadhead_kwh": None,
@@ -182,6 +191,7 @@ def run(
                     prices,
                     tariff_id=tariff["tariff_id"],
                     tariff_sha256=tariff["sha256"],
+                    instance_sha256=expected_instance_sha256,
                     **{
                         key: PHYSICS[key]
                         for key in (
@@ -197,6 +207,7 @@ def run(
                     )
                 result["duty_id"] = route["duty_id"]
                 result["route_order"] = route_order
+                result["route"]["duty_id"] = route["duty_id"]
                 route_results.append(result)
             pricing_s = time.perf_counter() - pricing_started
             postprocessing_started = time.perf_counter()
@@ -300,6 +311,14 @@ def run(
                 "charging_starts_by_hour_json": json.dumps(
                     starts_by_hour, sort_keys=True, separators=(",", ":")
                 ),
+                "terminal_soc_min_kwh": min(
+                    float(route["continuous_terminal_soc_kwh"])
+                    for route in routes
+                ),
+                "terminal_soc_max_kwh": max(
+                    float(route["continuous_terminal_soc_kwh"])
+                    for route in routes
+                ),
                 "waiting_min": sum(
                     result["waiting_min"] for result in route_results
                 ),
@@ -339,7 +358,11 @@ def run(
                 "routes": routes,
                 "route_identity_sha256": route_identity(routes),
                 "certificates": [
-                    result["certificate"] for result in route_results
+                    {
+                        "duty_id": result["duty_id"],
+                        **result["certificate"],
+                    }
+                    for result in route_results
                 ],
                 "continuous_cost_pricing_certified": False,
             }

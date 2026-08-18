@@ -147,8 +147,8 @@ else
   CAMPAIGN_ROOT="$RUN_ROOT/src/results/tariff_response/$CAMPAIGN"
 fi
 ARCHIVE_ROOT="$HOME/evsp_tariff_response_archives"
-BUNDLE="$ARCHIVE_ROOT/$CAMPAIGN.bundle"
-ARCHIVE_NAME="$CAMPAIGN.tar.gz"
+BUNDLE="$ARCHIVE_ROOT/$CAMPAIGN-$ARCHIVE_SCOPE.bundle"
+ARCHIVE_NAME="$CAMPAIGN-$ARCHIVE_SCOPE.tar.gz"
 
 if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   echo "Set the campaign's exact REVIEWED_COMMIT." >&2
@@ -168,11 +168,18 @@ expected=sys.argv[2]
 plan_raw=(root/"approved-plan.json").read_bytes()
 plan=json.loads(plan_raw)
 manifest=json.loads((root/"campaign.json").read_text())
+selected={
+    job["job_key"] for job in plan["jobs"]
+    if bool(job["separate_k40_gate"])
+    == (manifest.get("submission_scope")=="k40_preparation_only")
+}
+submitted={item["job_key"] for item in manifest["submitted_jobs"]}
 if (
     (plan.get("checkout_identity") or {}).get("commit") != expected
     or manifest.get("approval_sha256")
     != hashlib.sha256(plan_raw).hexdigest()
-    or not manifest.get("submitted_jobs")
+    or submitted != selected
+    or manifest.get("gate_state") != "released"
 ):
     raise SystemExit("campaign approval/commit is incomplete")
 jobs={job["job_key"]:job for job in plan["jobs"]}
@@ -181,10 +188,47 @@ for submitted in manifest["submitted_jobs"]:
     output=pathlib.Path(job["output"])
     if not output.exists():
         raise SystemExit(f"missing output: {job['job_key']}")
+    completion_path=pathlib.Path(str(output)+".worker-completion.json")
+    if not completion_path.is_file():
+        raise SystemExit(f"missing worker completion: {job['job_key']}")
+    completion=json.loads(completion_path.read_text())
+    if (
+        completion.get("schema")
+        !="evsp-dr-tariff-response-worker-completion-v1"
+        or completion.get("plan_sha256")
+        !=manifest.get("approval_sha256")
+    ):
+        raise SystemExit(f"invalid worker completion: {job['job_key']}")
+    for artifact,digest in completion.get("artifact_sha256",{}).items():
+        artifact_path=pathlib.Path(artifact)
+        if (
+            not artifact_path.is_file()
+            or hashlib.sha256(artifact_path.read_bytes()).hexdigest()!=digest
+        ):
+            raise SystemExit(f"worker artifact changed: {job['job_key']}")
+    if job["phase"]=="CG":
+        status=json.loads(output.read_text())
+        journal=pathlib.Path(status.get("columns_journal") or "")
+        if (
+            status.get("stop_reason") in {None,"resume_starting"}
+            or not journal.is_file()
+            or not pathlib.Path(str(output)+".iters.csv").is_file()
+            or not pathlib.Path(job["phase_telemetry"]).is_file()
+        ):
+            raise SystemExit(f"incomplete CG output: {job['job_key']}")
     if job["phase"]=="MIP" and not (
         pathlib.Path(job["progress_dir"])/"final.json"
     ).is_file():
         raise SystemExit(f"missing MIP progress: {job['job_key']}")
+for reservation in manifest.get("reservations") or []:
+    staged=root/"input/reservations"/pathlib.Path(reservation).name
+    if not staged.is_file():
+        raise SystemExit("staged execution reservation is missing")
+if (
+    manifest.get("submission_scope")=="main_k5_k8_pilot"
+    and not (root/"evidence/normalized/provenance.json").is_file()
+):
+    raise SystemExit("normalized main-scope evidence is missing")
 PY
 then
   echo "Campaign outputs or approval are incomplete." >&2
@@ -210,10 +254,31 @@ else
        "$PYTHON" -I -B - "$TMP_BUNDLE" "$BUNDLE" <<'PY'
 import ctypes, os, sys
 source,target=map(os.fsencode,sys.argv[1:])
+source_path=os.fsdecode(source)
+directories=[]
+for current,dirs,files in os.walk(source_path):
+    directories.append(current)
+    for child in files:
+        descriptor=os.open(os.path.join(current,child),os.O_RDONLY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+for current in reversed(directories):
+    descriptor=os.open(current,os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
 libc=ctypes.CDLL(None,use_errno=True)
 renameat2=getattr(libc,"renameat2",None)
 if renameat2 is None or renameat2(-100,source,-100,target,1) != 0:
     raise SystemExit("atomic no-clobber publication failed")
+parent=os.open(os.path.dirname(os.fsdecode(target)),os.O_RDONLY)
+try:
+    os.fsync(parent)
+finally:
+    os.close(parent)
 PY
     then
       TMP_BUNDLE=""
@@ -232,3 +297,28 @@ fi
 Tier-0 scalar costs are expected to remain unavailable for the real source
 whenever a recorded window crosses changing tariff hours or lacks tariff
 coverage. This is a correctness outcome, not a failed run.
+
+## Build normalized evidence after the main scope completes
+
+This command fails closed if any of the 111 main outputs is missing or if a
+schedule differs from its hash-bound Tier-1 seed/MIP result:
+
+```bash
+CAMPAIGN_ROOT="$RUN_ROOT/src/results/tariff_response/$CAMPAIGN"
+EVIDENCE_MANIFEST="$CAMPAIGN_ROOT/evidence/experiment-manifest.json"
+EVIDENCE_OUTPUT="$CAMPAIGN_ROOT/evidence/normalized"
+
+if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "Set the exact REVIEWED_COMMIT." >&2
+elif [[ -e "$EVIDENCE_MANIFEST" || -e "$EVIDENCE_OUTPUT" ]]; then
+  echo "Evidence output exists; refusing overwrite." >&2
+elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+       "$REVIEWED_COMMIT" assemble_tariff_response_campaign.py \
+       --campaign-root "$CAMPAIGN_ROOT" \
+       --manifest-out "$EVIDENCE_MANIFEST" \
+       --evidence-out "$EVIDENCE_OUTPUT"; then
+  echo "Normalized evidence build failed." >&2
+else
+  echo "NORMALIZED EVIDENCE: $EVIDENCE_OUTPUT"
+fi
+```
