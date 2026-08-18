@@ -413,6 +413,14 @@ def build_plan(
         "physics": PHYSICS,
         "tariff_manifest": str(tariff_manifest),
         "tariff_manifest_sha256": sha256_file(tariff_manifest),
+        "giro_master": {
+            "path": str(
+                REPO_ROOT / "data/Par_VehicleDetails_Updated.csv"
+            ),
+            "sha256": sha256_file(
+                REPO_ROOT / "data/Par_VehicleDetails_Updated.csv"
+            ),
+        },
         "instances": instances,
         "reservation_root": str(reservation_root.expanduser().resolve()),
         "worker": str(WORKER),
@@ -502,6 +510,11 @@ def submit(plan, plan_sha, *, k40_preparation):
         source = Path(job["instance"]["source_path"])
         staged = Path(job["instance"]["path"])
         _copy_new(source, staged, job["instance"]["sha256"])
+    _copy_new(
+        Path(plan["giro_master"]["path"]),
+        root / "input/source/Par_VehicleDetails_Updated.csv",
+        plan["giro_master"]["sha256"],
+    )
     tariff_input = root / "input/tariffs"
     _copy_new(
         Path(plan["tariff_manifest"]),
@@ -649,26 +662,36 @@ def _copy_new(source, target, expected_sha256):
         if sha256_file(target) != expected_sha256:
             raise ValueError(f"staged input hash mismatch: {target}")
         return
+    temporary = target.with_name(f".{target.name}.tmp.{os.getpid()}")
     descriptor = os.open(
-        target, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
+        temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
     )
     with source.open("rb") as reader, os.fdopen(descriptor, "wb") as writer:
         for chunk in iter(lambda: reader.read(1024 * 1024), b""):
             writer.write(chunk)
         writer.flush()
         os.fsync(writer.fileno())
-    if sha256_file(target) != expected_sha256:
-        raise ValueError(f"staged input copy mismatch: {target}")
+    try:
+        if sha256_file(temporary) != expected_sha256:
+            raise ValueError(f"staged input copy mismatch: {target}")
+        os.link(temporary, target)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _write_new_file(path, payload):
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
     descriptor = os.open(
-        path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
+        temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
     )
     with os.fdopen(descriptor, "wb") as handle:
         handle.write(payload)
         handle.flush()
         os.fsync(handle.fileno())
+    try:
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
     directory = os.open(path.parent, os.O_RDONLY)
     try:
         os.fsync(directory)

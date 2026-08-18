@@ -310,7 +310,11 @@ def assemble(campaign_root, output_manifest, evidence_output):
         row["tariff_id"]: row
         for row in load_tariff_manifest(Path(plan["tariff_manifest"]))
     }
-    master = REPO_ROOT / "data/Par_VehicleDetails_Updated.csv"
+    master = (
+        campaign_root / "input/source/Par_VehicleDetails_Updated.csv"
+    )
+    if sha256_file(master) != plan["giro_master"]["sha256"]:
+        raise ValueError("staged GIRO master hash mismatch")
     problems = {}
     giro_routes = {}
     for scale in (5, 8, 40):

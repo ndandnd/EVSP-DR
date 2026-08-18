@@ -12,7 +12,11 @@ from pathlib import Path
 
 
 def sha(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def relocated(path, *, declared_root, staged_root):
@@ -64,7 +68,12 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     reservations = manifest.get("reservations") or []
     staged_reservations = root / "input/reservations"
     files = sorted(staged_reservations.glob("*.json"))
-    if len(reservations) != len(selected) or len(files) != len(selected):
+    if (
+        len(reservations) != len(selected)
+        or len(files) != len(selected)
+        or {Path(path).name for path in reservations}
+        != {path.name for path in files}
+    ):
         raise ValueError("reservation count differs from selected jobs")
     reservation_jobs = set()
     for path in files:
@@ -83,6 +92,9 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     staged_tariff_manifest = root / "input/tariffs/tariff_manifest.csv"
     if sha(staged_tariff_manifest) != plan["tariff_manifest_sha256"]:
         raise ValueError("staged tariff manifest hash mismatch")
+    staged_master = root / "input/source/Par_VehicleDetails_Updated.csv"
+    if sha(staged_master) != plan["giro_master"]["sha256"]:
+        raise ValueError("staged GIRO master hash mismatch")
 
     for job in selected.values():
         instance = relocated(
@@ -129,9 +141,15 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
             if not staged.is_file() or sha(staged) != digest:
                 raise ValueError(f"worker artifact changed: {job['job_key']}")
             mapped[str(staged)] = digest
-        required = [output] if output.is_file() else []
+        required = set()
+        if output.is_dir():
+            required.update(
+                path for path in output.rglob("*") if path.is_file()
+            )
+        elif output.is_file():
+            required.add(output)
         if job["phase"] == "CG":
-            required.extend([
+            required.update([
                 Path(str(output) + ".columns.jsonl"),
                 Path(str(output) + ".iters.csv"),
                 relocated(
@@ -144,14 +162,15 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
             if status.get("stop_reason") in {None, "resume_starting"}:
                 raise ValueError(f"CG status is live: {job['job_key']}")
         elif job["phase"] == "MIP":
-            required.append(
-                relocated(
-                    job["progress_dir"],
-                    declared_root=declared_root,
-                    staged_root=root,
-                ) / "final.json"
+            progress = relocated(
+                job["progress_dir"],
+                declared_root=declared_root,
+                staged_root=root,
             )
-        if any(str(path) not in mapped for path in required):
+            required.update(
+                path for path in progress.rglob("*") if path.is_file()
+            )
+        if set(mapped) != {str(path) for path in required}:
             raise ValueError(f"completion artifact set incomplete: {job['job_key']}")
 
     if expected_scope == "main":
@@ -175,6 +194,11 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
             path = evidence / name
             if not path.is_file() or sha(path) != digest:
                 raise ValueError(f"normalized evidence changed: {name}")
+        normalized_files = {
+            path.name for path in evidence.iterdir() if path.is_file()
+        }
+        if normalized_files != set(output_hashes) | {"provenance.json"}:
+            raise ValueError("normalized evidence contains unindexed files")
         inventory = evidence / "artifact_inventory.csv"
         with inventory.open(newline="") as handle:
             rows = list(csv.DictReader(handle))
@@ -182,10 +206,11 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
             raise ValueError("artifact inventory is empty")
         for row in rows:
             path = Path(row["path"])
-            if declared_root == path or declared_root in path.parents:
-                path = relocated(
-                    path, declared_root=declared_root, staged_root=root
-                )
+            if not (declared_root == path or declared_root in path.parents):
+                raise ValueError("artifact inventory escapes staged campaign")
+            path = relocated(
+                path, declared_root=declared_root, staged_root=root
+            )
             if not path.is_file() or sha(path) != row["sha256"]:
                 raise ValueError("artifact inventory hash mismatch")
     return {

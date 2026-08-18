@@ -90,6 +90,7 @@ else
     echo "Explicit k5/k8/k40 paths or hashes are missing/mismatched." >&2
   else
     COMMON=(
+      env -u PYTHONPATH PYTHONNOUSERSITE=1
       "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py"
       "$REVIEWED_COMMIT"
       launch_tariff_response_pilot.py
@@ -169,7 +170,8 @@ else
   if [[ -z "$TMP_BUNDLE" || ! -d "$TMP_BUNDLE" ]] || \
      ! cp -a "$CAMPAIGN_ROOT" "$TMP_BUNDLE/campaign"; then
     echo "Archive staging failed." >&2
-  elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  elif ! env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+       "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
        "$REVIEWED_COMMIT" validate_tariff_response_archive.py \
        --campaign-root "$TMP_BUNDLE/campaign" \
        --expected-commit "$REVIEWED_COMMIT" \
@@ -245,10 +247,22 @@ After `sacct` proves the recorded gate job completed, reconcile without
 resubmitting:
 
 ```bash
-"$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-  "$REVIEWED_COMMIT" reconcile_tariff_response_gate.py \
-  --campaign-root "$RUN_ROOT/src/results/tariff_response/$CAMPAIGN" \
-  --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
+RECONCILE_SCOPE="${RECONCILE_SCOPE:-main}"
+if [[ "$RECONCILE_SCOPE" == "k40-preparation" ]]; then
+  RECONCILE_ROOT="$RUN_ROOT/src/results/tariff_response/$CAMPAIGN-k40prep"
+else
+  RECONCILE_ROOT="$RUN_ROOT/src/results/tariff_response/$CAMPAIGN"
+fi
+if [[ "$RECONCILE_SCOPE" != "main" && \
+      "$RECONCILE_SCOPE" != "k40-preparation" ]]; then
+  echo "RECONCILE_SCOPE must be main or k40-preparation." >&2
+else
+  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+    "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+    "$REVIEWED_COMMIT" reconcile_tariff_response_gate.py \
+    --campaign-root "$RECONCILE_ROOT" \
+    --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
+fi
 ```
 
 ## Build normalized evidence after the main scope completes
@@ -265,7 +279,8 @@ if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   echo "Set the exact REVIEWED_COMMIT." >&2
 elif [[ -e "$EVIDENCE_OUTPUT" ]]; then
   echo "Evidence output exists; refusing overwrite." >&2
-elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+elif ! env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+     "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
        "$REVIEWED_COMMIT" assemble_tariff_response_campaign.py \
        --campaign-root "$CAMPAIGN_ROOT" \
        --manifest-out "$EVIDENCE_MANIFEST" \
