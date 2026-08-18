@@ -381,6 +381,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             iterations = Path(str(output) + ".iters.csv")
             output.write_text(json.dumps({
                 "wall_s": 100.0, "stop_reason": "certified",
+                "snapshot_availability": {
+                    "5": "censored_solver_terminated_before_mark"
+                },
             }))
             journal.write_text("{}\n")
             iterations.write_text("header\n")

@@ -2408,6 +2408,24 @@ def run_cg(args) -> dict:
         final_lp_source = final_lp_detail.get("source", "last_good_iterate")
         final_lp_detail["source"] = final_lp_source
 
+    _freeze_crossed_snapshots()
+    snapshot_availability = {}
+    if args.out:
+        final_snapshot_stem = Path(str(args.out).replace(".json", ""))
+        for mark in requested_snapshot_marks:
+            snapshot = Path(
+                f"{final_snapshot_stem}.m{int(mark)}.snapshot.json"
+            )
+            journal_path_for_snapshot = Path(
+                str(snapshot) + ".columns.jsonl"
+            )
+            snapshot_availability[str(int(mark))] = (
+                "available"
+                if snapshot.is_file() and journal_path_for_snapshot.is_file()
+                else "censored_solver_terminated_before_mark"
+                if mark in snapshot_marks
+                else "missed_in_prior_allocation"
+            )
     if iters_csv:
         iters_csv.close()
     if journal:
@@ -2445,6 +2463,7 @@ def run_cg(args) -> dict:
         "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "termination_signal": termination["signal"],
+        "snapshot_availability": snapshot_availability,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
         "final_lp_source": final_lp_source,

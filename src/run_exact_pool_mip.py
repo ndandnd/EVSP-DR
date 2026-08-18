@@ -2985,7 +2985,10 @@ def main(argv=None) -> int:
             if progress is not None else None
         ),
     }
+    pending_result_path = None
     if progress is not None:
+        pending_result_path = progress_path / "result_pending.json"
+        write_new_json(pending_result_path, summary)
         progress.finalize(
             elapsed_s=summary["runtime_s"],
             final={
@@ -3010,7 +3013,18 @@ def main(argv=None) -> int:
                 ),
             },
         )
-    write_new_json(out, summary)
+    if pending_result_path is not None:
+        try:
+            os.link(pending_result_path, out)
+        except FileExistsError as exc:
+            raise FileExistsError(f"output already exists: {out}") from exc
+        directory = os.open(out.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    else:
+        write_new_json(out, summary)
     if termination is not None:
         termination.restore()
     print(f"[MIP] status={status_name}({status_code}) buses={summary['buses']} "

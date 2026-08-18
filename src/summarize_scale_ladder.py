@@ -860,11 +860,20 @@ def _validate_completion(job, plan_sha):
                     raise ValueError(
                         f"available CG snapshot missing: {job['job_key']} m{mark}"
                     )
-            elif availability == "censored_solver_terminated_before_mark":
+            elif availability in {
+                "censored_solver_terminated_before_mark",
+                "missed_in_prior_allocation",
+            }:
                 status = json.loads(output.read_text())
-                if float(status.get("wall_s", 0.0)) + 1e-6 >= mark * 60:
+                if (
+                    (status.get("snapshot_availability") or {}).get(
+                        str(int(mark))
+                    ) != availability
+                    or snapshot.exists()
+                    or Path(str(snapshot) + ".columns.jsonl").exists()
+                ):
                     raise ValueError(
-                        f"due CG snapshot mislabeled censored: {job['job_key']}"
+                        f"CG snapshot censoring mismatch: {job['job_key']}"
                     )
             else:
                 raise ValueError(

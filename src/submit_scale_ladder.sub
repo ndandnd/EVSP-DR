@@ -137,6 +137,12 @@ PY
   || fatal "instance installation failed"
 
 RECOVER_ONLY=0
+if [[ "$PHASE" == "MIP" && ! -e "$OUTPUT" && -d "$PROGRESS" && \
+      -s "$PROGRESS/final.json" && -s "$PROGRESS/result_pending.json" ]]; then
+  ln "$PROGRESS/result_pending.json" "$OUTPUT" \
+    || fatal "could not recover published MIP result"
+  RECOVER_ONLY=1
+fi
 if [[ "$PHASE" == "CG" ]]; then
   [[ ! -e "$OUTPUT.worker-completion.json" ]] \
     || fatal "completed CG already exists"
@@ -225,7 +231,7 @@ PY
     [[ -s "$JOURNAL" ]] || fatal "dependent CG journal missing"
     CG_COMPLETION="$CG_OUTPUT.worker-completion.json"
     [[ -s "$CG_COMPLETION" ]] || fatal "dependent CG completion missing"
-    readarray -t HANDOFF < <(
+    HANDOFF_RAW=$(
       "$PYTHON" -I -B - "$CG_COMPLETION" "$CG_OUTPUT" "$JOURNAL" \
         "$PLAN_SHA" "$INSTANCE_SHA" "$CG_JOB_KEY" <<'PY'
 import json,pathlib,sys
@@ -240,7 +246,7 @@ if (
 ):
     raise SystemExit("CG completion identity mismatch")
 hashes=completion.get("artifact_sha256") or {}
-for raw in sys.argv[2:]:
+for raw in sys.argv[2:4]:
     path=str(pathlib.Path(raw).resolve())
     digest=hashes.get(path)
     if not digest:
@@ -248,6 +254,7 @@ for raw in sys.argv[2:]:
     print(digest)
 PY
     ) || fatal "CG completion handoff invalid"
+    readarray -t HANDOFF <<<"$HANDOFF_RAW"
     export EVSP_MIP_EXPECTED_RESULT_SHA256
     EVSP_MIP_EXPECTED_RESULT_SHA256=${HANDOFF[0]}
     export EVSP_MIP_EXPECTED_JOURNAL_SHA256
@@ -273,7 +280,7 @@ source=next(item for item in plan["jobs"] if item["job_key"]==dependency)
 print(source["output"])
 print(source["job_key"])
 PY
-      )
+      ) || fatal "seed completion handoff invalid"
       SEED_OUTPUT=${SEED_DEP[0]}
       SEED_JOB_KEY=${SEED_DEP[1]}
       [[ -s "$SEED_OUTPUT" ]] || fatal "known partition missing"
@@ -300,7 +307,7 @@ if not value:
     raise SystemExit("seed handoff omitted")
 print(value)
 PY
-      )
+      ) || fatal "seed artifact handoff invalid"
       [[ "$(sha256sum "$SEED_OUTPUT" | awk '{print $1}')" == \
          "$EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256" ]] \
         || fatal "known partition changed"
@@ -370,7 +377,6 @@ if phase=="CG":
     plan=json.load(open(plan_path))
     job=next(item for item in plan["jobs"] if item["job_key"]==job_key)
     status=json.load(output.open())
-    elapsed=float(status.get("wall_s",0.0))
     snapshots=[
         (
             mark,
@@ -380,18 +386,21 @@ if phase=="CG":
     ]
     for mark,snapshot in snapshots:
         journal=pathlib.Path(str(snapshot)+".columns.jsonl")
-        due=float(mark)*60.0 <= elapsed+1e-6
-        if due and (not snapshot.is_file() or not journal.is_file()):
-            raise SystemExit(f"due CG snapshot missing: {snapshot}")
-        if snapshot.is_file() and journal.is_file():
+        reported=(status.get("snapshot_availability") or {}).get(
+            str(int(mark))
+        )
+        if reported=="available" and snapshot.is_file() and journal.is_file():
             paths.extend([snapshot,journal])
             snapshot_availability[str(mark)]="available"
-        elif due:
-            raise SystemExit(f"due CG snapshot incomplete: {snapshot}")
-        else:
+        elif reported in {
+            "censored_solver_terminated_before_mark",
+            "missed_in_prior_allocation",
+        } and not snapshot.exists() and not journal.exists():
             snapshot_availability[str(mark)]=(
-                "censored_solver_terminated_before_mark"
+                reported
             )
+        else:
+            raise SystemExit(f"CG snapshot status/files disagree: {snapshot}")
 if phase=="MIP":
     final_path=pathlib.Path(progress)/"final.json"
     if not final_path.is_file():
