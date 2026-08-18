@@ -25,6 +25,12 @@ INSTANCE_MANIFEST = (
     / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
 )
 LOCAL_CODE_PATHS = (
+    "src/prepare_scale_ladder_known_partition.py",
+    "src/audit_scale_ladder_known_membership.py",
+    "src/fixed_duty_expanded_optimizer.py",
+    "src/tariff_response_core.py",
+    "src/rerealize_routes.py",
+    "src/run_exact_pool_mip.py",
     "src/exact_pricer_expanded.py",
     "src/expanded_path_realization.py",
     "src/audit_giro_known_columns.py",
@@ -52,6 +58,7 @@ def _current_environment():
         "matplotlib": matplotlib.__version__,
         "platform": platform.platform(),
         "machine": platform.machine(),
+        "numpy_build": repr(getattr(numpy.__config__, "CONFIG", None)),
         "code_hashes": {
             path: sha256_file(REPO_ROOT / path)
             for path in LOCAL_CODE_PATHS
@@ -90,10 +97,6 @@ def _write_completion(job, plan_sha):
             json.loads(output.read_text()).get("snapshot_availability", {})
             if job["phase"] in {"CG", "CG_SENSITIVITY"} else {}
         ),
-        "snapshot_availability": (
-            json.loads(output.read_text()).get("snapshot_availability", {})
-            if job["phase"] in {"CG", "CG_SENSITIVITY"} else {}
-        ),
         "artifact_sha256": {
             str(path.resolve()): sha256_file(path) for path in paths
         },
@@ -102,18 +105,14 @@ def _write_completion(job, plan_sha):
     target.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
-def _run_seed_and_preflight(cell, root):
+def _run_seed_and_preflight(cell, root, membership):
     instance = Path(cell["instance"]["path"])
     seed = root / "outputs" / f"seed_{cell['cell_id']}.json"
     prepare(instance, cell["instance"]["instance_file_sha256"], seed)
     preflight = root / "outputs" / f"preflight_{cell['cell_id']}.json"
-    payload = audit(
-        instance,
-        cell["instance"]["instance_file_sha256"],
-        cell["scale"],
-        cell["selection_replicate"],
+    write_outputs(
+        membership, preflight, preflight.with_suffix(".csv")
     )
-    write_outputs(payload, preflight, preflight.with_suffix(".csv"))
 
 
 def _run_cg(job, budget_s):
@@ -203,6 +202,7 @@ def run(args):
                 "matplotlib": approved.get("matplotlib"),
                 "platform": approved.get("platform"),
                 "machine": approved.get("machine"),
+                "numpy_build": approved.get("numpy_build"),
                 "code_hashes": {
                     path: (reference_plan.get("code_hashes") or {}).get(path)
                     for path in LOCAL_CODE_PATHS
@@ -210,6 +210,7 @@ def run(args):
             }
     diagnostic_only = current_environment != reference_environment
     jobs = []
+    memberships = {}
     for cell in instances:
         jobs.append(
             {
@@ -232,6 +233,7 @@ def run(args):
             cell["scale"],
             cell["selection_replicate"],
         )
+        memberships[cell["cell_id"]] = membership
         grids = [(15.0, 10)]
         if (
             cell["scale"] <= 5
@@ -313,7 +315,9 @@ def run(args):
         max_workers=args.max_parallel
     ) as executor:
         list(executor.map(
-            lambda cell: _run_seed_and_preflight(cell, root),
+            lambda cell: _run_seed_and_preflight(
+                cell, root, memberships[cell["cell_id"]]
+            ),
             instances,
         ))
         cg_jobs = [

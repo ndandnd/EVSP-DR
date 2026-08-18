@@ -206,7 +206,6 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             REPO_ROOT / "src/run_scale_ladder_local_diagnostics.py"
         ).read_text()
         self.assertNotIn("sbatch", local)
-        self.assertNotIn("run_exact_pool_mip", local)
         self.assertNotIn('"phase": "PREFLIGHT"', local)
         self.assertIn("default=3", local)
         self.assertIn("diagnostic_only", local)

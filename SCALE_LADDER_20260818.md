@@ -94,9 +94,11 @@ else
 fi
 ```
 
-All arrays depend on one held gate. MIP array task `i` uses `aftercorr` on CG
-task `i`; KNOWN-PARTITION also depends on seed task `i`. The gate is released
-only after all four arrays are accepted.
+All six arrays depend on one held gate. Primary CG waits for the complete
+instance-level PREFLIGHT array; small-grid sensitivity also waits for that
+preflight. MIP array task `i` uses `aftercorr` on primary CG task `i`;
+KNOWN-PARTITION also depends on seed task `i`. The gate is released only after
+all six arrays are accepted.
 
 If submission stops with `gate_state=release_attempting` or
 `held_release_failed`, do not resubmit. After `sacct` proves the recorded gate
@@ -114,7 +116,7 @@ If accounting still shows `PENDING` and bound `scontrol` proves
 `Reason=JobHeldUser`, repeat that command with `--release-held-gate`; then run
 it once more after `sacct` records the gate as `COMPLETED`. For an
 accepted-but-unrecorded array, the reconciliation command first reconstructs
-all four array IDs from their plan/group-specific `squeue` comments.
+all six array IDs from their plan/group-specific `squeue` comments.
 If one or more arrays were never accepted, first rerun the reconciliation
 command with `--resume-missing-arrays` while the gate remains held.
 
