@@ -46,6 +46,8 @@ src/analysis/
 *.pdf
 *.png
 *.numbers
+!analysis/tariff_response_synthetic_20260818/example_output/*.pdf
+!analysis/tariff_response_synthetic_20260818/example_output/*.png
 
 # Derived datasets and downloaded experiment material
 data/bus_outputs/

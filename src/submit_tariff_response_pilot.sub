@@ -1,0 +1,257 @@
+#!/bin/bash
+# Hash-approved worker for one tariff-response pilot cell.
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --no-requeue
+#SBATCH --signal=B:USR1@180
+#SBATCH --open-mode=append
+
+set -euo pipefail
+
+fatal() {
+  echo "[TARIFF-RESPONSE] FATAL: $*" >&2
+  exit 2
+}
+
+[[ "$#" -eq 5 ]] \
+  || fatal "usage: worker PLAN PLAN_SHA JOB_KEY PYTHON PYTHON_SHA"
+PLAN=$1
+EXPECTED_PLAN_SHA=$2
+JOB_KEY=$3
+PYTHON=$4
+PYTHON_SHA=$5
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+
+[[ "$PYTHON" == /* && -x "$PYTHON" ]] || fatal "Python path is invalid"
+[[ "$(sha256sum "$PYTHON" | awk '{print $1}')" == "$PYTHON_SHA" ]] \
+  || fatal "Python hash mismatch"
+observed_plan_sha=$(sha256sum "$PLAN" | awk '{print $1}')
+[[ "$observed_plan_sha" == "$EXPECTED_PLAN_SHA" ]] \
+  || fatal "approved plan hash mismatch"
+
+readarray -t FIELDS < <("$PYTHON" -I -B - "$PLAN" "$JOB_KEY" <<'PY'
+import json,sys
+plan=json.load(open(sys.argv[1]))
+matches=[job for job in plan["jobs"] if job["job_key"]==sys.argv[2]]
+if len(matches)!=1:
+    raise SystemExit("plan does not contain exactly one job")
+job=matches[0]
+for value in (
+    (plan["checkout_identity"] or {}).get("commit"),
+    plan["tariff_manifest"], plan["tariff_manifest_sha256"],
+    job["phase"], job["scale"], job["tariff_id"],
+    job["tariff_relative_path"], job["tariff_sha256"],
+    job["treatment"], job["threads"], job["wall_limit_s"],
+    job["solver_limit_s"], job["instance"]["path"],
+    job["instance"]["sha256"], job["instance"]["relative_path"],
+    job["seed_output"], job["source_cg_output"], job["output"],
+    job["progress_dir"], job["phase_telemetry"],
+    plan["python"]["path"], plan["python"]["sha256"],
+    plan["worker_sha256"],
+):
+    print("" if value is None else value)
+PY
+) || fatal "could not parse approved job"
+
+EXPECTED_COMMIT=${FIELDS[0]}
+TARIFF_MANIFEST=${FIELDS[1]}
+TARIFF_MANIFEST_SHA=${FIELDS[2]}
+PHASE=${FIELDS[3]}
+SCALE=${FIELDS[4]}
+TARIFF_ID=${FIELDS[5]}
+TARIFF_REL=${FIELDS[6]}
+TARIFF_SHA=${FIELDS[7]}
+TREATMENT=${FIELDS[8]}
+THREADS=${FIELDS[9]}
+WALL_LIMIT=${FIELDS[10]}
+SOLVER_LIMIT=${FIELDS[11]}
+INSTANCE=${FIELDS[12]}
+INSTANCE_SHA=${FIELDS[13]}
+INSTANCE_REL=${FIELDS[14]}
+SEED=${FIELDS[15]}
+CG_SOURCE=${FIELDS[16]}
+OUTPUT=${FIELDS[17]}
+PROGRESS=${FIELDS[18]}
+TELEMETRY=${FIELDS[19]}
+PLAN_PYTHON=${FIELDS[20]}
+PLAN_PYTHON_SHA=${FIELDS[21]}
+PLAN_WORKER_SHA=${FIELDS[22]}
+[[ "$PLAN_PYTHON" == "$PYTHON" && "$PLAN_PYTHON_SHA" == "$PYTHON_SHA" ]] \
+  || fatal "Python differs from approved plan"
+[[ "$(sha256sum "$0" | awk '{print $1}')" == "$PLAN_WORKER_SHA" ]] \
+  || fatal "worker hash differs from approved plan"
+
+observed_commit=$(git -C "$ROOT" rev-parse HEAD) \
+  || fatal "cannot resolve checkout"
+[[ "$observed_commit" == "$EXPECTED_COMMIT" ]] || fatal "commit mismatch"
+if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "worker checkout must be detached"
+fi
+[[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=no)" ]] \
+  || fatal "worker checkout has tracked modifications"
+export PYTHONDONTWRITEBYTECODE=1
+while IFS=$'\t' read -r RELATIVE EXPECTED; do
+  [[ "$(sha256sum "$ROOT/$RELATIVE" | awk '{print $1}')" == "$EXPECTED" ]] \
+    || fatal "reviewed code hash mismatch: $RELATIVE"
+done < <("$PYTHON" -I -B - "$PLAN" <<'PY'
+import json,sys
+plan=json.load(open(sys.argv[1]))
+for path,digest in sorted((plan.get("code_sha256") or {}).items()):
+    print(f"{path}\t{digest}")
+PY
+)
+"$PYTHON" -I -B - "$ROOT" <<'PY' \
+  || fatal "checkout contains unreviewed runtime artifacts"
+import os,pathlib,subprocess,sys
+root=pathlib.Path(sys.argv[1]).resolve()
+tracked_result=subprocess.run(
+    ["git","ls-files","-z"],cwd=root,capture_output=True,check=False
+)
+if tracked_result.returncode != 0:
+    raise SystemExit("cannot enumerate tracked files")
+tracked={
+    value.decode() for value in tracked_result.stdout.split(b"\0") if value
+}
+unsafe=[]
+for scan_root in (root,root/"src"):
+    for current,dirs,files in os.walk(scan_root,followlinks=False):
+        current_path=pathlib.Path(current)
+        excluded={".git","results","logs"}
+        if current_path==root:
+            excluded.add("src")
+        kept=[]
+        for name in dirs:
+            path=current_path/name
+            relative=str(path.relative_to(root))
+            if name in excluded:
+                continue
+            if name=="__pycache__" or path.is_symlink():
+                unsafe.append(relative)
+            else:
+                kept.append(name)
+        dirs[:]=kept
+        for name in files:
+            path=current_path/name
+            relative=str(path.relative_to(root))
+            suffix=path.suffix.lower()
+            if (
+                path.is_symlink()
+                or suffix in {".pyc",".pyo",".so",".pth"}
+                or (suffix==".py" and relative not in tracked)
+            ):
+                unsafe.append(relative)
+if unsafe:
+    raise SystemExit(sorted(set(unsafe))[:10])
+PY
+[[ "$(sha256sum "$INSTANCE" | awk '{print $1}')" == "$INSTANCE_SHA" ]] \
+  || fatal "instance hash mismatch"
+[[ "$(sha256sum "$TARIFF_MANIFEST" | awk '{print $1}')" == \
+   "$TARIFF_MANIFEST_SHA" ]] || fatal "tariff manifest hash mismatch"
+if [[ -n "$TARIFF_REL" ]]; then
+  TARIFF_PATH="$ROOT/data/$TARIFF_REL"
+  [[ "$(sha256sum "$TARIFF_PATH" | awk '{print $1}')" == "$TARIFF_SHA" ]] \
+    || fatal "tariff hash mismatch"
+fi
+[[ ! -e "$OUTPUT" ]] || fatal "output already exists"
+if [[ -n "$PROGRESS" ]]; then
+  [[ ! -e "$PROGRESS" ]] || fatal "progress already exists"
+fi
+if [[ -n "$TELEMETRY" ]]; then
+  [[ ! -e "$TELEMETRY" ]] || fatal "telemetry already exists"
+fi
+
+"$PYTHON" -B "$ROOT/src/install_exact_cg_profile_input.py" \
+  --source "$INSTANCE" --data-root "$ROOT/data" \
+  --relative "$INSTANCE_REL" --sha256 "$INSTANCE_SHA" \
+  || fatal "instance staging failed"
+
+mkdir -p "$(dirname "$OUTPUT")"
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
+export EVSP_REQUIRE_DETACHED=1
+
+command=()
+case "$PHASE" in
+  FIXED_FULL)
+    [[ "$SCALE" == "40" && "$TREATMENT" == "FIXED" ]] \
+      || fatal "invalid fixed-full cell"
+    command=(
+      "$PYTHON" -B "$ROOT/src/run_fixed_giro_tariff_response.py"
+      --instance "$ROOT/data/$INSTANCE_REL"
+      --instance-sha256 "$INSTANCE_SHA"
+      --tariff-manifest "$TARIFF_MANIFEST"
+      --reference-data-dir "$ROOT/data"
+      --out-dir "$OUTPUT"
+    )
+    ;;
+  SEED)
+    [[ "$TREATMENT" == "GIRO-AUGMENTED" || \
+       "$TREATMENT" == "GIRO40-AUGMENTED" ]] \
+      || fatal "invalid seed treatment"
+    command=(
+      "$PYTHON" -B "$ROOT/src/prepare_tariff_fixed_duty_seed.py"
+      --instance "$ROOT/data/$INSTANCE_REL"
+      --instance-sha256 "$INSTANCE_SHA"
+      --tariff-manifest "$TARIFF_MANIFEST"
+      --tariff-id "$TARIFF_ID"
+      --reference-data-dir "$ROOT/data"
+      --out "$OUTPUT"
+    )
+    ;;
+  CG)
+    command=(
+      "$PYTHON" -u "$ROOT/src/exact_pricer_expanded.py"
+      --csv "$INSTANCE_REL"
+      --prices_csv "$TARIFF_REL"
+      --soc-step 15 --block-min 10
+      --g-kwh 300 --charge-kw 300 --min-soc-frac 0
+      --master-sense partition --initial-pool singletons
+      --wall-limit-s "$((WALL_LIMIT - 300))"
+      --checkpoint-every 25 --resume
+      --phase-telemetry "$TELEMETRY"
+      --out "$OUTPUT"
+    )
+    if [[ "$TREATMENT" != "RAW" ]]; then
+      [[ -s "$SEED" ]] || fatal "augmented CG seed is missing"
+      command+=(--validated-seed-routes "$SEED")
+    fi
+    ;;
+  MIP)
+    [[ "$SCALE" == "5" || "$SCALE" == "8" ]] \
+      || fatal "k40 MIP is prohibited in tariff pilot"
+    [[ -s "$CG_SOURCE" ]] || fatal "source CG status is missing"
+    command=(
+      "$PYTHON" -u "$ROOT/src/run_exact_pool_mip.py"
+      --result "$CG_SOURCE" --two-stage
+      --timelimit "$SOLVER_LIMIT" --threads 8 --mipgap 0.0001
+      --progress-dir "$PROGRESS" --out "$OUTPUT"
+    )
+    if [[ "$TREATMENT" != "RAW" ]]; then
+      [[ -s "$SEED" ]] || fatal "augmented MIP seed is missing"
+      command+=(--initial-partition-routes "$SEED")
+    fi
+    ;;
+  *)
+    fatal "unknown phase"
+    ;;
+esac
+
+child=""
+forward_signal() {
+  if [[ -n "$child" ]]; then
+    kill -USR1 "$child" 2>/dev/null || true
+  fi
+}
+trap forward_signal USR1 TERM INT
+cd "$ROOT"
+"${command[@]}" &
+child=$!
+status=0
+wait "$child" || status=$?
+child=""
+trap - USR1 TERM INT
+[[ "$status" -eq 0 ]] || fatal "cell command failed: $status"
+echo "[TARIFF-RESPONSE] DONE phase=$PHASE scale=$SCALE tariff=$TARIFF_ID treatment=$TREATMENT"

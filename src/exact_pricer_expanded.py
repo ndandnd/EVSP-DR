@@ -29,10 +29,12 @@ Usage (from src/):
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
 import time
+from collections import Counter
 from copy import deepcopy
 from pathlib import Path
 
@@ -60,12 +62,125 @@ from expanded_path_realization import (
     charging_block_schedule_sha256,
     realize_expanded_path,
     realized_costs,
+    validate_continuous_charging_blocks,
 )
 from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
+from run_exact_pool_mip import validate_injected_route
 from utils_v2 import base_station_name, load_station_hourly_prices
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 G_KWH = 300.0
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def validated_fixed_duty_seed_records(
+    path: Path,
+    problem,
+    station_prices,
+    *,
+    tariff_path: Path,
+    g_kwh: float,
+    charge_kw: float,
+    reserve_kwh: float,
+    soc_step: float,
+    block_min: int,
+):
+    """Load one tariff-specific exact partition as expanded-grid seed columns."""
+
+    source = path.expanduser().resolve()
+    raw = source.read_bytes()
+    payload = json.loads(raw)
+    routes = payload.get("routes")
+    physics = payload.get("physics") or {}
+    tariff = payload.get("tariff") or {}
+    if (
+        payload.get("schema") not in {
+            "evsp-dr-tier1-giro40-tariff-v1",
+            "evsp-dr-tier1-fixed-duty-partition-v1",
+        }
+        or not isinstance(routes, list)
+        or not routes
+        or payload.get("continuous_cost_pricing_certified") is not False
+        or tariff.get("sha256") != _file_sha256(tariff_path)
+        or any(
+            not math.isclose(
+                float(physics.get(key, math.nan)), expected,
+                rel_tol=0.0, abs_tol=1e-9,
+            )
+            for key, expected in (
+                ("g_kwh", g_kwh),
+                ("charge_kw", charge_kw),
+                ("reserve_kwh", reserve_kwh),
+                ("soc_step", soc_step),
+                ("block_min", block_min),
+            )
+        )
+    ):
+        raise ValueError("fixed-duty seed identity/physics/tariff mismatch")
+    trip_set = set(problem.trips)
+    counts = Counter()
+    accepted = []
+    for ordinal, route in enumerate(routes, start=1):
+        trips = list(route.get("trips") or [])
+        counts.update(trips)
+        if (
+            not trips
+            or len(trips) != len(set(trips))
+            or not set(trips) <= trip_set
+            or route.get("master_cost_semantics") != "expanded_grid_cost"
+            or route.get("cost_tariff_sha256") != tariff["sha256"]
+            or route.get("expanded_grid_cost") is None
+            or not math.isclose(
+                float(route.get("cost", math.nan)),
+                float(route["expanded_grid_cost"]),
+                rel_tol=1e-10, abs_tol=1e-6,
+            )
+        ):
+            raise ValueError(f"invalid fixed-duty seed route {ordinal}")
+        reason = validate_injected_route(
+            problem, route, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
+        )
+        if reason is not None:
+            raise ValueError(
+                f"fixed-duty seed route {ordinal} failed replay: {reason}"
+            )
+        blocks = route.get("continuous_realized_charging_blocks")
+        physical = route.get("physical_realization") or {}
+        validation = validate_continuous_charging_blocks(
+            route,
+            blocks,
+            station_prices=station_prices,
+            charge_kw=charge_kw,
+            expected_continuous_cost=route.get(
+                "continuous_realized_cost"
+            ),
+        )
+        if (
+            physical.get("continuous_cost_pricing_certified") is not False
+            or validation["block_schedule_sha256"] != physical.get(
+                "continuous_realized_charging_blocks_sha256"
+            )
+        ):
+            raise ValueError("fixed-duty seed block provenance mismatch")
+        accepted.append({
+            **route,
+            "cost": float(route["expanded_grid_cost"]),
+            "origin": "tariff_specific_fixed_duty_seed",
+            "seed_source_sha256": hashlib.sha256(raw).hexdigest(),
+        })
+    if (
+        set(counts) != trip_set
+        or any(counts[trip] != 1 for trip in trip_set)
+    ):
+        raise ValueError("fixed-duty seeds are not an exact partition")
+    return accepted, hashlib.sha256(raw).hexdigest()
 
 
 def direct_singleton_seed_records(
@@ -549,6 +664,11 @@ def _provenance(args) -> dict:
         "prices_sha256": _sha(DATA_DIR / args.prices_csv),
         "reference_sha256": _sha(DATA_DIR / "Ref_dict.csv"),
         "deadhead_sha256": _sha(DATA_DIR / "par_ref_dhd.csv"),
+        "validated_seed_routes_sha256": (
+            _sha(args.validated_seed_routes)
+            if getattr(args, "validated_seed_routes", None) is not None
+            else None
+        ),
         "rc_eps": args.rc_eps,
         "pricing_cost_semantics": "conservative_expanded_grid_cost",
         "charging_realization_schema":
@@ -683,6 +803,11 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "initial_pool": current_initial_pool,
+        "validated_seed_routes_sha256": (
+            _file_sha256(Path(args.validated_seed_routes))
+            if getattr(args, "validated_seed_routes", None) is not None
+            else None
+        ),
     }
     for key, value in expected.items():
         observed = status.get(key)
@@ -1186,6 +1311,14 @@ def run_cg(args) -> dict:
         resume_status = dict(prior_status)
         resume_status.update({
             "initial_pool": args.initial_pool,
+            "validated_seed_routes_sha256": provenance.get(
+                "validated_seed_routes_sha256"
+            ),
+            "column_pool_treatment": (
+                "GIRO-AUGMENTED"
+                if getattr(args, "validated_seed_routes", None)
+                else "RAW"
+            ),
             "trip_ids": trips,
             "columns": len(pool),
             "columns_journal": str(journal_path),
@@ -1211,6 +1344,14 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "validated_seed_routes_sha256": provenance.get(
+                "validated_seed_routes_sha256"
+            ),
+            "column_pool_treatment": (
+                "GIRO-AUGMENTED"
+                if getattr(args, "validated_seed_routes", None)
+                else "RAW"
+            ),
             "trip_ids": trips,
             "iterations": 0,
             "attempt_iterations": 0,
@@ -1347,6 +1488,38 @@ def run_cg(args) -> dict:
             frozen.append(mark)
         return frozen
 
+    validated_seed_sha256 = None
+    if getattr(args, "validated_seed_routes", None) is not None:
+        seed_records, validated_seed_sha256 = (
+            validated_fixed_duty_seed_records(
+                Path(args.validated_seed_routes),
+                problem,
+                prices,
+                tariff_path=DATA_DIR / args.prices_csv,
+                g_kwh=args.g_kwh,
+                charge_kw=args.charge_kw,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+                soc_step=args.soc_step,
+                block_min=args.block_min,
+            )
+        )
+        seed_added = 0
+        for record in seed_records:
+            key = frozenset(record["trips"])
+            if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
+                pool[key] = record
+                if journal:
+                    journal.write(json.dumps(record) + "\n")
+                seed_added += 1
+        if journal and seed_added:
+            flush_and_fsync(journal)
+        print(
+            "[EXACT] tariff-specific validated fixed-duty seeds: "
+            f"{len(seed_records)} routes ({seed_added} added), "
+            f"sha256={validated_seed_sha256}",
+            flush=True,
+        )
+
     if args.initial_pool == "singletons":
         singleton_seeds, missing_singletons = direct_singleton_seed_records(
             problem,
@@ -1413,6 +1586,14 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "validated_seed_routes_sha256": provenance.get(
+                "validated_seed_routes_sha256"
+            ),
+            "column_pool_treatment": (
+                "GIRO-AUGMENTED"
+                if getattr(args, "validated_seed_routes", None)
+                else "RAW"
+            ),
             "trip_ids": trips,
             "iterations": iteration_offset + len(history),
             "attempt_iterations": len(history),
@@ -2089,6 +2270,14 @@ def run_cg(args) -> dict:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "initial_pool": args.initial_pool,
+        "validated_seed_routes_sha256": provenance.get(
+            "validated_seed_routes_sha256"
+        ),
+        "column_pool_treatment": (
+            "GIRO-AUGMENTED"
+            if getattr(args, "validated_seed_routes", None)
+            else "RAW"
+        ),
         "trip_ids": trips,
         "iterations": iteration_offset + len(history),
         "attempt_iterations": len(history),
@@ -2133,6 +2322,15 @@ def main(argv=None) -> int:
         default="singletons",
         help="Initial real-column pool. Singletons preserves the operational "
              "default; artificial starts pricing from Big-M artificials only.",
+    )
+    parser.add_argument(
+        "--validated-seed-routes",
+        type=Path,
+        default=None,
+        help=(
+            "Tariff-specific Tier-1 exact partition to add as "
+            "GIRO-AUGMENTED expanded-grid columns."
+        ),
     )
     parser.add_argument("--stall-window-min", type=float, default=None,
                         help="Enable marginal-returns stopping: compare the "
