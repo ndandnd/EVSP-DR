@@ -38,6 +38,10 @@ from assemble_tariff_response_campaign import assemble  # noqa: E402
 from assemble_tariff_response_campaign import _aggregate  # noqa: E402
 from build_tariff_response_evidence import _schedule_fingerprint  # noqa: E402
 from reconcile_tariff_response_gate import reconcile  # noqa: E402
+from validate_tariff_response_archive import (  # noqa: E402
+    sha as archive_sha,
+    validate_reservations,
+)
 from tariff_response_core import (  # noqa: E402
     PHYSICS,
     evaluate_giro_original,
@@ -749,6 +753,40 @@ class TariffResponseExperimentTests(unittest.TestCase):
             self.assertEqual(
                 payload["gate_state"], "released_reconciled"
             )
+
+    def test_archive_rejects_symlinks_and_swapped_reservations(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            source.write_text("bytes")
+            linked = root / "linked"
+            linked.symlink_to(source)
+            with self.assertRaisesRegex(ValueError, "regular file"):
+                archive_sha(linked)
+            selected = {
+                "a": {"job_key": "a", "execution_digest": "a" * 64},
+                "b": {"job_key": "b", "execution_digest": "b" * 64},
+            }
+            files = [
+                root / f"{selected[key]['execution_digest']}.json"
+                for key in ("a", "b")
+            ]
+            for path, wrong in zip(files, ("b", "a")):
+                path.write_text(json.dumps({
+                    "schema":
+                        "evsp-dr-tariff-response-reservation-v1",
+                    "plan_sha256": "p" * 64,
+                    "job_key": wrong,
+                    "execution_digest":
+                        selected[wrong]["execution_digest"],
+                }))
+            with self.assertRaisesRegex(ValueError, "content"):
+                validate_reservations(
+                    files,
+                    [str(path) for path in files],
+                    selected,
+                    "p" * 64,
+                )
 
 
 if __name__ == "__main__":

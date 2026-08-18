@@ -466,18 +466,26 @@ def _reserve(plan, plan_sha, selected):
     try:
         for job in selected:
             path = root / f"{job['execution_digest']}.json"
+            temporary = root / (
+                f".{job['execution_digest']}.tmp.{os.getpid()}"
+            )
             descriptor = os.open(
-                path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
+                temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
             )
             with os.fdopen(descriptor, "w") as handle:
                 json.dump({
                     "schema": "evsp-dr-tariff-response-reservation-v1",
                     "plan_sha256": plan_sha,
                     "job_key": job["job_key"],
+                    "execution_digest": job["execution_digest"],
                 }, handle, sort_keys=True)
                 handle.write("\n")
                 handle.flush()
                 os.fsync(handle.fileno())
+            try:
+                os.link(temporary, path)
+            finally:
+                temporary.unlink(missing_ok=True)
             paths.append(path)
     except Exception:
         for path in paths:

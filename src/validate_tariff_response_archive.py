@@ -8,10 +8,13 @@ import csv
 import hashlib
 import json
 import re
+import stat
 from pathlib import Path
 
 
 def sha(path):
+    if path.is_symlink() or not stat.S_ISREG(path.stat(follow_symlinks=False).st_mode):
+        raise ValueError(f"artifact is not a regular file: {path}")
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
@@ -28,8 +31,44 @@ def relocated(path, *, declared_root, staged_root):
     return staged_root / relative
 
 
+def validate_reservations(files, reservations, selected, plan_sha):
+    if (
+        len(reservations) != len(selected)
+        or len(files) != len(selected)
+        or {Path(path).name for path in reservations}
+        != {path.name for path in files}
+    ):
+        raise ValueError("reservation count/names differ from selected jobs")
+    expected_reservations = {
+        f"{job['execution_digest']}.json": job
+        for job in selected.values()
+    }
+    reservation_jobs = set()
+    for path in files:
+        payload = json.loads(path.read_text())
+        expected_job = expected_reservations.get(path.name)
+        if (
+            payload.get("schema")
+            != "evsp-dr-tariff-response-reservation-v1"
+            or payload.get("plan_sha256") != plan_sha
+            or expected_job is None
+            or payload.get("job_key") != expected_job["job_key"]
+            or payload.get("execution_digest")
+            != expected_job["execution_digest"]
+        ):
+            raise ValueError("staged reservation content is invalid")
+        reservation_jobs.add(payload["job_key"])
+    if reservation_jobs != set(selected):
+        raise ValueError("staged reservations do not cover selected jobs")
+
+
 def validate(root: Path, expected_commit: str, expected_scope: str):
+    if root.is_symlink():
+        raise ValueError("staged archive root is a symlink")
     root = root.resolve()
+    for path in root.rglob("*"):
+        if path.is_symlink():
+            raise ValueError(f"staged archive contains a symlink: {path}")
     if expected_scope not in {"main", "k40-preparation"}:
         raise ValueError("unknown archive scope")
     plan_raw = (root / "approved-plan.json").read_bytes()
@@ -54,9 +93,22 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         if bool(job["separate_k40_gate"])
         == (expected_scope == "k40-preparation")
     }
+    submitted_rows = manifest.get("submitted_jobs") or []
     submitted = {
-        item["job_key"]: item for item in manifest.get("submitted_jobs") or []
+        item["job_key"]: item for item in submitted_rows
     }
+    if (
+        len(submitted_rows) != len(selected)
+        or len(submitted) != len(submitted_rows)
+        or len({
+            str(item.get("job_id")) for item in submitted_rows
+        }) != len(submitted_rows)
+        or any(
+            not str(item.get("job_id") or "").isdigit()
+            for item in submitted_rows
+        )
+    ):
+        raise ValueError("submitted job rows are duplicated or malformed")
     if set(submitted) != set(selected):
         raise ValueError("submitted job set is incomplete")
     declared_root = Path(
@@ -68,26 +120,7 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     reservations = manifest.get("reservations") or []
     staged_reservations = root / "input/reservations"
     files = sorted(staged_reservations.glob("*.json"))
-    if (
-        len(reservations) != len(selected)
-        or len(files) != len(selected)
-        or {Path(path).name for path in reservations}
-        != {path.name for path in files}
-    ):
-        raise ValueError("reservation count differs from selected jobs")
-    reservation_jobs = set()
-    for path in files:
-        payload = json.loads(path.read_text())
-        if (
-            payload.get("schema")
-            != "evsp-dr-tariff-response-reservation-v1"
-            or payload.get("plan_sha256") != plan_sha
-            or payload.get("job_key") not in selected
-        ):
-            raise ValueError("staged reservation content is invalid")
-        reservation_jobs.add(payload["job_key"])
-    if reservation_jobs != set(selected):
-        raise ValueError("staged reservations do not cover selected jobs")
+    validate_reservations(files, reservations, selected, plan_sha)
 
     staged_tariff_manifest = root / "input/tariffs/tariff_manifest.csv"
     if sha(staged_tariff_manifest) != plan["tariff_manifest_sha256"]:
