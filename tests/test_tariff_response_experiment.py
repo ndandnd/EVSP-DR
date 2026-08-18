@@ -582,10 +582,15 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "peak12_alpha_2p0",
             ):
                 tariff = self.tariff_by_id[tariff_id]
+                tier0 = self._synthetic_cell(
+                    tariff, "TIER0_GIRO_ORIGINAL", "GIRO_ORIGINAL"
+                )
+                if tariff_id == "peak12_alpha_2p0":
+                    tier0["metrics"]["charging_cost"] = None
+                    tier0["metrics"]["continuous_charging_cost"] = None
+                    tier0["metrics"]["terminal_surplus_total_kwh"] = None
                 cells.extend([
-                    self._synthetic_cell(
-                        tariff, "TIER0_GIRO_ORIGINAL", "GIRO_ORIGINAL"
-                    ),
+                    tier0,
                     self._synthetic_cell(
                         tariff,
                         "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING",
@@ -673,9 +678,14 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 and float(row["alpha_left"]) > 0.0
                 for row in elasticity_rows
             ))
-            self.assertTrue(all(
-                float(row["terminal_surplus_total_kwh"]) > 0.0
+            reported_surplus = [
+                float(row["terminal_surplus_total_kwh"])
                 for row in stress_rows
+                if row["terminal_surplus_total_kwh"] != ""
+            ]
+            self.assertTrue(reported_surplus)
+            self.assertTrue(all(
+                value > 0.0 for value in reported_surplus
             ))
             with (first / "tariff_response_summary.csv").open(
                 newline=""

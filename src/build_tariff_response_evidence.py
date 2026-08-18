@@ -1039,18 +1039,34 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
         ),
     ):
         offset = 0
+        unavailable = 0
         for instance, rows in sorted(stress_groups.items()):
-            labels_ = [
-                f"{row['tier']} / {row['treatment']}" for row in rows
+            available = [
+                row for row in rows if row[field] is not None
             ]
-            positions = list(range(offset, offset + len(rows)))
-            axis.bar(
-                positions,
-                [float(row[field]) for row in rows],
-                label=instance,
+            unavailable += len(rows) - len(available)
+            labels_ = [
+                f"{row['tier']} / {row['treatment']}"
+                for row in available
+            ]
+            positions = list(range(offset, offset + len(available)))
+            if available:
+                axis.bar(
+                    positions,
+                    [float(row[field]) for row in available],
+                    label=instance,
+                )
+                axis.set_xticks(
+                    positions, labels_, rotation=75, fontsize=6
+                )
+            offset += len(available) + 1
+        if unavailable:
+            axis.text(
+                0.01, 0.98,
+                f"{unavailable} stress rows unavailable (not imputed)",
+                transform=axis.transAxes, va="top", fontsize=7,
+                color="darkred",
             )
-            axis.set_xticks(positions, labels_, rotation=75, fontsize=6)
-            offset += len(rows) + 1
         axis.set_ylabel(label)
     stress_fig.suptitle(
         "NEGATIVE-PRICE STRESS (α=2) — EXCLUDED FROM PRIMARY RESULTS",
