@@ -63,8 +63,13 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
     _require(resources.get("requeue") is False, "requeue enabled")
     _require(
         resources.get("submission_release")
-        == "atomic_from_held_jobs",
+        == "single_held_four_task_array",
         "jobs are not held for one atomic release",
+    )
+    _require(
+        resources.get("array_tasks") == 4
+        and resources.get("array_slurm_wall_time") == "08:10:00",
+        "Slurm array shape/wall guard changed",
     )
     _require(
         resources.get("signal") == "B:USR1@180",

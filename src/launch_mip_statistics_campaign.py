@@ -16,6 +16,69 @@ import sys
 import tempfile
 from pathlib import Path
 
+
+_PREIMPORT_REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _preimport_runtime_artifacts(root: Path) -> list[str]:
+    tracked_result = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=root,
+        capture_output=True,
+        check=False,
+    )
+    tracked = (
+        {
+            value.decode()
+            for value in tracked_result.stdout.split(b"\0") if value
+        }
+        if tracked_result.returncode == 0 else set()
+    )
+    unsafe = (
+        [] if tracked_result.returncode == 0
+        else ["<cannot-enumerate-tracked-files>"]
+    )
+    for scan_root in (root, root / "src"):
+        if not scan_root.exists():
+            continue
+        for current, dirs, files in os.walk(scan_root, followlinks=False):
+            current_path = Path(current)
+            excluded = {".git", "results", "logs"}
+            if current_path == root:
+                excluded.add("src")
+            retained = []
+            for name in dirs:
+                path = current_path / name
+                relative = str(path.relative_to(root))
+                if name in excluded:
+                    continue
+                if name == "__pycache__" or path.is_symlink():
+                    unsafe.append(relative)
+                    continue
+                retained.append(name)
+            dirs[:] = retained
+            for name in files:
+                path = current_path / name
+                relative = str(path.relative_to(root))
+                suffix = path.suffix.lower()
+                if path.is_symlink():
+                    unsafe.append(relative)
+                elif suffix in {".pyc", ".pyo", ".so", ".pth"}:
+                    unsafe.append(relative)
+                elif suffix == ".py" and relative not in tracked:
+                    unsafe.append(relative)
+    return sorted(set(unsafe))
+
+
+if __name__ == "__main__":
+    _preimport_unsafe = _preimport_runtime_artifacts(_PREIMPORT_REPO_ROOT)
+    if _preimport_unsafe:
+        raise SystemExit(
+            "checkout contains unreviewed importable runtime artifacts before "
+            f"launcher import: {_preimport_unsafe[:10]}"
+        )
+
+
 from durable_io import flush_and_fsync
 from mip_statistics_inventory import (
     PILOT_BUDGET_HOURS,
@@ -38,6 +101,7 @@ REVIEWED_BASE = "ae736fbc9c5fef71f39d7d758b7062355c485313"
 WORKER_PATH = REPO_ROOT / "src/submit_mip_statistics.sub"
 RUNNER_PATH = REPO_ROOT / "src/run_exact_pool_mip.py"
 CODE_PATHS = (
+    "src/launch_mip_statistics_campaign.py",
     "src/run_exact_pool_mip.py",
     "src/expanded_path_realization.py",
     "src/mip_convergence.py",
@@ -152,35 +216,7 @@ def _git(*args, binary=False):
 
 
 def _unsafe_runtime_artifacts(root: Path) -> list[str]:
-    unsafe = []
-    scan_roots = [root, root / "src"]
-    for scan_root in scan_roots:
-        if not scan_root.exists():
-            continue
-        for current, dirs, files in os.walk(scan_root):
-            current_path = Path(current)
-            if current_path == root:
-                dirs[:] = [
-                    name for name in dirs
-                    if name not in {".git", "src", "results", "logs"}
-                ]
-            else:
-                dirs[:] = [
-                    name for name in dirs
-                    if name not in {".git", "results", "logs"}
-                ]
-            if current_path.name == "__pycache__":
-                unsafe.append(str(current_path.relative_to(root)))
-                dirs[:] = []
-                continue
-            for name in files:
-                if Path(name).suffix.lower() in {
-                    ".pyc", ".pyo", ".so", ".pth",
-                }:
-                    unsafe.append(str(
-                        (current_path / name).relative_to(root)
-                    ))
-    return sorted(set(unsafe))
+    return _preimport_runtime_artifacts(root)
 
 
 def checkout_identity(*, require_detached: bool) -> dict:
@@ -1101,7 +1137,18 @@ def build_plan(
             "threads": 8,
             "requeue": False,
             "signal": "B:USR1@180",
-            "submission_release": "atomic_from_held_jobs",
+            "submission_release": (
+                "single_held_four_task_array"
+                if mode == K40_CS_OVERNIGHT_MODE
+                else "held_jobs_released_after_submission"
+            ),
+            "array_tasks": (
+                4 if mode == K40_CS_OVERNIGHT_MODE else None
+            ),
+            "array_slurm_wall_time": (
+                _slurm_wall_time(K40_CS_RAW_BUDGET_HOURS)
+                if mode == K40_CS_OVERNIGHT_MODE else None
+            ),
         },
         "worker": str(WORKER_PATH),
         "worker_sha256": worker_sha,
@@ -1290,7 +1337,9 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     manifest["approval_sha256"] = plan_sha
     manifest["submitted"] = False
     manifest["submission_atomicity"] = (
-        "all_cells_held_until_every_sbatch_is_accepted"
+        "single_held_four_task_array_released_once"
+        if plan.get("mode") == K40_CS_OVERNIGHT_MODE
+        else "all_cells_held_until_every_sbatch_is_accepted"
     )
     _replace_json(root / "campaign.json", manifest)
 
@@ -1304,11 +1353,17 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         for key, value in export_values.items()
     )
     existing_comments = _existing_execution_comments()
-    planned_comments = {
-        f"MSTAT:{job['execution_digest'][:32]}"
-        for job in plan["jobs"]
-    }
-    if len(planned_comments) != len(plan["jobs"]):
+    if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
+        planned_comments = {f"MSTATARR:{plan_sha[:30]}"}
+    else:
+        planned_comments = {
+            f"MSTAT:{job['execution_digest'][:32]}"
+            for job in plan["jobs"]
+        }
+    if (
+        plan.get("mode") != K40_CS_OVERNIGHT_MODE
+        and len(planned_comments) != len(plan["jobs"])
+    ):
         raise SystemExit("approved plan contains duplicate execution digests")
     if existing_comments & planned_comments:
         raise SystemExit(
@@ -1324,6 +1379,118 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         str(path) for path in reservations
     ]
     _replace_json(root / "campaign.json", manifest)
+    if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
+        comment = next(iter(planned_comments))
+        array_name = (
+            "K40CSRG"
+            + hashlib.sha256(plan["campaign"].encode()).hexdigest()[:4].upper()
+        )
+        command = [
+            "sbatch", "--parsable", "--hold", "--array=0-3",
+            "--partition=scaglione", "--no-requeue",
+            "--signal=B:USR1@180", "--nodes=1", "--ntasks=1",
+            "--cpus-per-task=8", "--mem=64G",
+            f"--time={max(wall_times)}",
+            f"--job-name={array_name}",
+            f"--comment={comment}",
+            f"--output={logs}/%x_%A_%a.out",
+            f"--error={logs}/%x_%A_%a.err",
+            "--export=" + export,
+            str(worker), str(plan_path), plan_sha, "__ARRAY__",
+        ]
+        for manifest_job in manifest["jobs"]:
+            manifest_job["submission_state"] = "attempting_array"
+            manifest_job["deduplication_comment"] = comment
+        _replace_json(root / "campaign.json", manifest)
+        completed = subprocess.run(
+            command, cwd=REPO_ROOT, text=True,
+            capture_output=True, check=False,
+        )
+        array_id = completed.stdout.strip().split(";", 1)[0]
+        if completed.returncode != 0 or not array_id.isdigit():
+            for manifest_job in manifest["jobs"]:
+                manifest_job["submission_state"] = (
+                    "array_submit_failed"
+                    if completed.returncode != 0
+                    else "orphaned_held_array_unparsed"
+                )
+                manifest_job["submission_error"] = (
+                    completed.stderr or completed.stdout
+                ).strip()
+            if completed.returncode != 0:
+                for reservation in reservations:
+                    reservation.unlink(missing_ok=True)
+            _replace_json(root / "campaign.json", manifest)
+            raise SystemExit(
+                "held four-task array submission failed or returned an "
+                "unparseable ID; no task was released"
+            )
+        update_failed = None
+        for index, manifest_job in enumerate(manifest["jobs"]):
+            manifest_job["job_id"] = f"{array_id}_{index}"
+            manifest_job["submission_state"] = "held_array"
+            updated = subprocess.run(
+                [
+                    "scontrol", "update",
+                    f"JobId={array_id}_{index}",
+                    f"JobName={manifest_job['job_name']}",
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if updated.returncode != 0:
+                update_failed = (
+                    updated.stderr or updated.stdout
+                ).strip()
+                break
+        if update_failed is not None:
+            canceled = subprocess.run(
+                ["scancel", array_id],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            for manifest_job in manifest["jobs"]:
+                manifest_job["submission_state"] = (
+                    "array_canceled_before_release"
+                    if canceled.returncode == 0
+                    else "held_array_cancel_failed"
+                )
+                manifest_job["submission_error"] = update_failed
+            if canceled.returncode == 0:
+                for reservation in reservations:
+                    reservation.unlink(missing_ok=True)
+            _replace_json(root / "campaign.json", manifest)
+            raise SystemExit(
+                "held array task naming failed; no task was released"
+            )
+        released = subprocess.run(
+            ["scontrol", "release", array_id],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if released.returncode != 0:
+            for manifest_job in manifest["jobs"]:
+                manifest_job["submission_state"] = (
+                    "held_array_release_failed"
+                )
+                manifest_job["release_error"] = (
+                    released.stderr or released.stdout
+                ).strip()
+            _replace_json(root / "campaign.json", manifest)
+            raise SystemExit(
+                "single array release failed; all four tasks remain held"
+            )
+        for manifest_job in manifest["jobs"]:
+            manifest_job["submission_state"] = "released"
+        manifest["submitted"] = True
+        _replace_json(root / "campaign.json", manifest)
+        return manifest
     held_job_ids = []
 
     def cancel_known_held_jobs():

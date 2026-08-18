@@ -58,8 +58,17 @@ fi
 export PYTHONDONTWRITEBYTECODE=1
 "$PYTHON" -I -B - "$ROOT" <<'PY' \
   || fatal "checkout contains ignored/importable runtime artifacts"
-import os,pathlib,sys
+import os,pathlib,subprocess,sys
 root=pathlib.Path(sys.argv[1]).resolve()
+tracked_result=subprocess.run(
+    ["git","ls-files","-z"],cwd=root,capture_output=True,check=False
+)
+if tracked_result.returncode != 0:
+    raise SystemExit("cannot enumerate tracked files")
+tracked={
+    value.decode()
+    for value in tracked_result.stdout.split(b"\0") if value
+}
 unsafe=[]
 for scan_root in (root,root/"src"):
     if not scan_root.exists():
@@ -69,14 +78,27 @@ for scan_root in (root,root/"src"):
         excluded={".git","results","logs"}
         if current_path == root:
             excluded.add("src")
-        dirs[:]=[name for name in dirs if name not in excluded]
-        if current_path.name == "__pycache__":
-            unsafe.append(str(current_path.relative_to(root)))
-            dirs[:]=[]
-            continue
+        retained=[]
+        for name in dirs:
+            path=current_path/name
+            relative=str(path.relative_to(root))
+            if name in excluded:
+                continue
+            if name == "__pycache__" or path.is_symlink():
+                unsafe.append(relative)
+                continue
+            retained.append(name)
+        dirs[:]=retained
         for name in files:
-            if pathlib.Path(name).suffix.lower() in {".pyc",".pyo",".so",".pth"}:
-                unsafe.append(str((current_path/name).relative_to(root)))
+            path=current_path/name
+            relative=str(path.relative_to(root))
+            suffix=path.suffix.lower()
+            if path.is_symlink():
+                unsafe.append(relative)
+            elif suffix in {".pyc",".pyo",".so",".pth"}:
+                unsafe.append(relative)
+            elif suffix == ".py" and relative not in tracked:
+                unsafe.append(relative)
 if unsafe:
     raise SystemExit(f"unsafe runtime artifacts: {sorted(set(unsafe))[:10]}")
 PY
@@ -103,9 +125,18 @@ if observed != plan.get("python_identity"):
 PY
 
 readarray -t FIELDS < <("$PYTHON" - "$PLAN" "$REQUESTED_CELL" <<'PY'
-import json,sys
+import json,os,sys
 plan=json.load(open(sys.argv[1]))
-matches=[job for job in plan.get("jobs",[]) if job.get("cell_id")==sys.argv[2]]
+requested=sys.argv[2]
+jobs=plan.get("jobs",[])
+if requested == "__ARRAY__":
+    raw_index=os.environ.get("SLURM_ARRAY_TASK_ID","")
+    if not raw_index.isdigit():
+        raise SystemExit("array worker lacks a valid task index")
+    index=int(raw_index)
+    matches=[jobs[index]] if 0 <= index < len(jobs) else []
+else:
+    matches=[job for job in jobs if job.get("cell_id")==requested]
 if len(matches)!=1:
     raise SystemExit("approved plan does not contain exactly one requested cell")
 d=matches[0].get("execution")
@@ -163,7 +194,12 @@ PYTHON_SHA=${FIELDS[26]}
 [[ "$ARM" == "RAW" || "$ARM" == "GIRO" \
   || "$ARM" == "GIRO40-AUGMENTED" ]] || fatal "invalid arm"
 [[ "$THREADS" == "8" ]] || fatal "statistics campaign requires 8 threads"
-[[ "$CELL" == "$REQUESTED_CELL" ]] || fatal "cell descriptor mismatch"
+if [[ "$REQUESTED_CELL" == "__ARRAY__" ]]; then
+  [[ "${SLURM_ARRAY_TASK_ID:-}" =~ ^[0-3]$ ]] \
+    || fatal "array task index is invalid"
+else
+  [[ "$CELL" == "$REQUESTED_CELL" ]] || fatal "cell descriptor mismatch"
+fi
 [[ "$INSTANCE_REL" != /* && "$INSTANCE_REL" != *".."* ]] \
   || fatal "unsafe instance relative path"
 [[ "$TARIFF_REL" != /* && "$TARIFF_REL" != *".."* ]] \
@@ -409,20 +445,36 @@ if [[ "$MATRIX" == "k40_cs_overnight" ]]; then
     --time-limit-s "$TIME_LIMIT" --source-label "$SOURCE_LABEL" \
     || fatal "overnight result validation failed"
 fi
-"$PYTHON" - "$PROGRESS" "$WORKER_START_NS" "$STATUS_SHA" \
+"$PYTHON" - "$PROGRESS" "$OUT" "$WORKER_START_NS" "$STATUS_SHA" \
   "$JOURNAL_SHA" "$ARM" <<'PY' \
   || fatal "worker completion publication failed"
-import json,os,pathlib,sys,time
-progress,start_ns,status_sha,journal_sha,arm=sys.argv[1:]
+import hashlib,json,os,pathlib,sys,time
+progress,result_path,start_ns,status_sha,journal_sha,arm=sys.argv[1:]
+progress_path=pathlib.Path(progress)
+result_path=pathlib.Path(result_path)
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+progress_hashes={
+    path.name:sha(path)
+    for path in sorted([
+        *progress_path.glob("checkpoint_*.json"),
+        progress_path/"final.json",
+    ])
+}
 payload={
-    "schema":"evsp-dr-mip-worker-completion-v1",
+    "schema":"evsp-dr-mip-worker-completion-v2",
     "true_end_to_end_wall_s":(time.time_ns()-int(start_ns))/1e9,
     "source_result_sha256":status_sha,
     "source_journal_sha256":journal_sha,
     "arm":arm,
+    "result_sha256":sha(result_path),
+    "progress_artifact_sha256":progress_hashes,
+    "progress_set_sha256":hashlib.sha256(json.dumps(
+        progress_hashes,sort_keys=True,separators=(",",":")
+    ).encode()).hexdigest(),
     "result_and_progress_validation_passed":True,
 }
-path=pathlib.Path(progress)/"worker_completion.json"
+path=progress_path/"worker_completion.json"
 with path.open("x") as handle:
     json.dump(payload,handle,sort_keys=True,separators=(",",":"))
     handle.write("\n")

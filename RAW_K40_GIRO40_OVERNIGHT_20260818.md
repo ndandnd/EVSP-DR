@@ -133,7 +133,7 @@ else
     J2_CS_SHA="8290771a7ca3b6f185070f68a9934e6eaa8894c802ae02ac37f013c25a4b7c31"
 
     COMMON=(
-      "$PYTHON" -B -u "$RUN_ROOT/src/launch_mip_statistics_campaign.py"
+      "$PYTHON" -I -B -u "$RUN_ROOT/src/launch_mip_statistics_campaign.py"
       --mode k40_cs_overnight
       --campaign "$CAMPAIGN"
       --python "$PYTHON"
@@ -165,7 +165,7 @@ else
          ! "${COMMON[@]}" --plan-out "$PLAN"; then
       echo "Dry-run generation failed; nothing submitted." >&2
     elif [[ ! -s "$PLAN" ]] || \
-         ! "$PYTHON" -B "$RUN_ROOT/src/validate_k40_cs_overnight_plan.py" \
+         ! "$PYTHON" -I -B "$RUN_ROOT/src/validate_k40_cs_overnight_plan.py" \
            "$PLAN" --expected-commit "$REVIEWED_COMMIT"; then
       echo "Plan is missing or failed validation; nothing submitted." >&2
     else
@@ -186,8 +186,10 @@ fi
 ```
 
 The launcher refuses an existing campaign/output path, an existing execution
-reservation, or a matching Slurm execution digest. Job names encode replicate,
-treatment, and budget and remain at most 15 characters.
+reservation, or a matching Slurm execution digest. It creates one held
+four-task array, assigns all four semantic task names while held, and releases
+the array once only after every name update succeeds. Job names encode
+replicate, treatment, and budget and remain at most 15 characters.
 
 ## Post-campaign summary and immutable archive
 
@@ -195,58 +197,85 @@ Only after all four jobs finish successfully, use fresh output names:
 
 ```bash
 CAMPAIGN_ROOT="$RUN_ROOT/src/results/mip_statistics/$OVERNIGHT_CAMPAIGN"
-SUMMARY_ROOT="$HOME/evsp_k40_cs_summaries/$OVERNIGHT_CAMPAIGN"
 ARCHIVE_ROOT="$HOME/evsp_k40_cs_archives"
-ARCHIVE="$ARCHIVE_ROOT/$OVERNIGHT_CAMPAIGN.tar.gz"
+BUNDLE="$ARCHIVE_ROOT/$OVERNIGHT_CAMPAIGN.bundle"
+ARCHIVE_NAME="$OVERNIGHT_CAMPAIGN.tar.gz"
 
-if [[ -e "$SUMMARY_ROOT" || -e "$ARCHIVE" || -e "$ARCHIVE.sha256" ]]; then
-  echo "Summary/archive target exists; choose a new immutable destination." >&2
-elif ! "$PYTHON" -B "$RUN_ROOT/src/summarize_mip_statistics.py" \
-       --campaign-root "$CAMPAIGN_ROOT" --out-dir "$SUMMARY_ROOT"; then
-  echo "Summary validation failed; no archive created." >&2
+if [[ -e "$BUNDLE" ]]; then
+  echo "Archive bundle exists; choose a new immutable destination." >&2
 else
   mkdir -p "$ARCHIVE_ROOT"
-  TMP_ARCHIVE="$ARCHIVE.tmp.$$"
-  ARCHIVE_STAGE="$ARCHIVE_ROOT/.stage.$$"
-  ARCHIVE_STAGE_CREATED=0
-  if mkdir "$ARCHIVE_STAGE"; then
-    ARCHIVE_STAGE_CREATED=1
-  fi
-  if [[ "$ARCHIVE_STAGE_CREATED" != "1" ]] || \
-     ! cp -a "$CAMPAIGN_ROOT" "$ARCHIVE_STAGE/campaign" || \
-     ! cp -a "$SUMMARY_ROOT" "$ARCHIVE_STAGE/summary"; then
+  TMP_BUNDLE=$(mktemp -d "$ARCHIVE_ROOT/.bundle.XXXXXXXX")
+  if [[ -z "$TMP_BUNDLE" || ! -d "$TMP_BUNDLE" ]]; then
     echo "Archive staging failed." >&2
+  elif ! "$PYTHON" -I -B \
+       "$RUN_ROOT/src/summarize_mip_statistics.py" \
+       --campaign-root "$CAMPAIGN_ROOT" \
+       --out-dir "$TMP_BUNDLE/summary"; then
+    echo "Summary validation failed; no archive created." >&2
+  elif ! cp -a "$CAMPAIGN_ROOT" "$TMP_BUNDLE/campaign"; then
+    echo "Campaign staging failed; no archive created." >&2
+  elif ! "$PYTHON" -I -B - \
+       "$TMP_BUNDLE/summary/artifact_inventory.csv" \
+       "$CAMPAIGN_ROOT" "$TMP_BUNDLE/campaign" <<'PY'
+import csv, hashlib, pathlib, sys
+inventory,source_root,staged_root=map(pathlib.Path,sys.argv[1:])
+source_root=source_root.resolve()
+staged_root=staged_root.resolve()
+rows=list(csv.DictReader(inventory.open(newline="")))
+if not rows:
+    raise SystemExit("artifact inventory is empty")
+for row in rows:
+    source=pathlib.Path(row["path"]).resolve()
+    try:
+        relative=source.relative_to(source_root)
+    except ValueError:
+        raise SystemExit(f"artifact escapes campaign root: {source}") from None
+    staged=staged_root/relative
+    if not staged.is_file():
+        raise SystemExit(f"staged artifact is missing: {relative}")
+    digest=hashlib.sha256(staged.read_bytes()).hexdigest()
+    if digest != row["sha256"]:
+        raise SystemExit(f"staged artifact hash mismatch: {relative}")
+PY
+  then
+    echo "Staged campaign differs from validated inventory." >&2
   elif tar --sort=name --mtime='UTC 1970-01-01' \
        --owner=0 --group=0 --numeric-owner \
-       -czf "$TMP_ARCHIVE" -C "$ARCHIVE_STAGE" campaign summary; then
-    ARCHIVE_DIGEST=$(sha256sum "$TMP_ARCHIVE" | awk '{print $1}')
-    TMP_SIDE="$ARCHIVE.sha256.tmp.$$"
-    printf '%s  %s\n' "$ARCHIVE_DIGEST" "$(basename "$ARCHIVE")" > "$TMP_SIDE"
-    ARCHIVE_LINKED=0
+       -czf "$TMP_BUNDLE/$ARCHIVE_NAME" \
+       -C "$TMP_BUNDLE" campaign summary; then
+    ARCHIVE_DIGEST=$(sha256sum "$TMP_BUNDLE/$ARCHIVE_NAME" | awk '{print $1}')
+    printf '%s  %s\n' "$ARCHIVE_DIGEST" "$ARCHIVE_NAME" \
+      > "$TMP_BUNDLE/$ARCHIVE_NAME.sha256"
     if [[ "$ARCHIVE_DIGEST" =~ ^[0-9a-f]{64}$ ]] && \
-       ln "$TMP_ARCHIVE" "$ARCHIVE"; then
-      ARCHIVE_LINKED=1
-      if ln "$TMP_SIDE" "$ARCHIVE.sha256"; then
-        rm -f "$TMP_ARCHIVE" "$TMP_SIDE"
-        echo "ARCHIVE: $ARCHIVE"
-        echo "CHECKSUM: $ARCHIVE.sha256"
-      else
-        echo "Checksum target appeared concurrently; archive withdrawn." >&2
-        rm -f "$ARCHIVE" "$TMP_ARCHIVE" "$TMP_SIDE"
-      fi
+       "$PYTHON" -I -B - "$TMP_BUNDLE" "$BUNDLE" <<'PY'
+import ctypes, os, sys
+source=os.fsencode(sys.argv[1])
+target=os.fsencode(sys.argv[2])
+libc=ctypes.CDLL(None,use_errno=True)
+renameat2=getattr(libc,"renameat2",None)
+if renameat2 is None:
+    raise SystemExit("renameat2 is unavailable")
+renameat2.argtypes=[
+    ctypes.c_int,ctypes.c_char_p,ctypes.c_int,ctypes.c_char_p,ctypes.c_uint
+]
+renameat2.restype=ctypes.c_int
+if renameat2(-100,source,-100,target,1) != 0:
+    error=ctypes.get_errno()
+    raise OSError(error,os.strerror(error),sys.argv[2])
+PY
+    then
+      TMP_BUNDLE=""
+      echo "ARCHIVE: $BUNDLE/$ARCHIVE_NAME"
+      echo "CHECKSUM: $BUNDLE/$ARCHIVE_NAME.sha256"
     else
-      echo "Archive target appeared concurrently; no overwrite performed." >&2
-      if [[ "$ARCHIVE_LINKED" == "1" ]]; then
-        rm -f "$ARCHIVE"
-      fi
-      rm -f "$TMP_ARCHIVE" "$TMP_SIDE"
+      echo "Atomic archive publication failed; no final bundle written." >&2
     fi
   else
     echo "Archive creation failed." >&2
-    rm -f "$TMP_ARCHIVE"
   fi
-  if [[ "$ARCHIVE_STAGE_CREATED" == "1" ]]; then
-    rm -rf "$ARCHIVE_STAGE"
+  if [[ -n "$TMP_BUNDLE" && -d "$TMP_BUNDLE" ]]; then
+    rm -rf "$TMP_BUNDLE"
   fi
 fi
 ```

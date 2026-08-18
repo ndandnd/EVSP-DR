@@ -302,7 +302,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         if manifest.get("submitted") is not True:
             raise ValueError("overnight campaign was not fully submitted")
         if manifest.get("submission_atomicity") != (
-            "all_cells_held_until_every_sbatch_is_accepted"
+            "single_held_four_task_array_released_once"
         ):
             raise ValueError("overnight campaign was not atomically released")
     campaign = manifest["campaign"]
@@ -470,6 +470,17 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         completion_payload = {}
         if result:
             _validate_result(result, job, manifest)
+            if strict_overnight:
+                from validate_k40_cs_overnight_result import (
+                    validate_result as validate_overnight_result,
+                )
+                validate_overnight_result(
+                    result,
+                    progress_dir=progress_dir,
+                    arm=job["arm"],
+                    time_limit_s=int(job["time_limit_s"]),
+                    source_label=job["source"]["raw_k40_label"],
+                )
             progress_final = progress_dir / "final.json"
             if not progress_final.is_file():
                 raise ValueError(f"{job['cell_id']} lacks progress final.json")
@@ -493,14 +504,34 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 completion_payload = json.loads(
                     completion_path.read_text()
                 )
+                progress_artifacts = sorted([
+                    *progress_dir.glob("checkpoint_*.json"),
+                    progress_dir / "final.json",
+                ])
+                progress_hashes = {
+                    path.name: _sha(path)
+                    for path in progress_artifacts
+                }
+                progress_set_sha256 = hashlib.sha256(json.dumps(
+                    progress_hashes,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode()).hexdigest()
                 if (
                     completion_payload.get("schema")
-                    != "evsp-dr-mip-worker-completion-v1"
+                    != "evsp-dr-mip-worker-completion-v2"
                     or completion_payload.get("source_result_sha256")
                     != job["source"]["status_sha256"]
                     or completion_payload.get("source_journal_sha256")
                     != job["source"]["journal_sha256"]
                     or completion_payload.get("arm") != job["arm"]
+                    or completion_payload.get("result_sha256")
+                    != _sha(output)
+                    or completion_payload.get(
+                        "progress_artifact_sha256"
+                    ) != progress_hashes
+                    or completion_payload.get("progress_set_sha256")
+                    != progress_set_sha256
                     or completion_payload.get(
                         "result_and_progress_validation_passed"
                     ) is not True
@@ -702,10 +733,15 @@ def _write_csv(path: Path, fields, rows) -> None:
 
 def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
     rows = []
+    strict = manifest.get("mode") == "k40_cs_overnight"
 
-    def add(role, path, *, cell_id=None, arm=None, expected=None):
+    def add(
+        role, path, *, cell_id=None, arm=None, expected=None, required=False
+    ):
         artifact = Path(path)
         if not artifact.is_file():
+            if required:
+                raise ValueError(f"required artifact is missing: {artifact}")
             return
         digest = _sha(artifact)
         if expected is not None and digest != expected:
@@ -723,6 +759,22 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
     add("approved_plan", root / "approved-plan.json",
         expected=manifest["approval_sha256"])
     add("campaign_manifest", root / "campaign.json")
+    add(
+        "staged_worker", root / "input/submit_mip_statistics.sub",
+        expected=manifest.get("worker_sha256"), required=strict,
+    )
+    add(
+        "staged_runner", root / "input/run_exact_pool_mip.py",
+        expected=manifest.get("runner_sha256"), required=strict,
+    )
+    for relative, expected in sorted(
+        (manifest.get("code_hashes") or {}).items()
+    ):
+        add(
+            "reviewed_code",
+            root / "input/reviewed_code" / relative,
+            expected=expected, required=strict,
+        )
     for job in sorted(
         manifest.get("jobs") or [], key=lambda item: item["cell_id"]
     ):
@@ -741,12 +793,24 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
             add(
                 "frozen_status", status_path,
                 cell_id=cell, arm=arm, expected=source["status_sha256"],
+                required=strict,
             )
         if journal_path:
             add(
                 "column_journal", journal_path,
                 cell_id=cell, arm=arm, expected=source["journal_sha256"],
+                required=strict,
             )
+        for role, path_key, hash_key in (
+            ("frozen_instance", "instance", "instance_sha256"),
+            ("frozen_tariff", "tariff", "tariff_sha256"),
+        ):
+            artifact_path = (job.get("execution") or {}).get(path_key)
+            if artifact_path:
+                add(
+                    role, artifact_path, cell_id=cell, arm=arm,
+                    expected=source[hash_key], required=strict,
+                )
         if job.get("validated_start"):
             start_path = (
                 (job.get("execution") or {}).get("validated_start")
@@ -757,15 +821,27 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
                     "giro40_partition", start_path,
                     cell_id=cell, arm=arm,
                     expected=job["validated_start"]["sha256"],
+                    required=strict,
                 )
-        add("final_result", job["output"], cell_id=cell, arm=arm)
+        add(
+            "final_result", job["output"], cell_id=cell, arm=arm,
+            required=strict,
+        )
         progress = Path(job["progress_dir"])
         for artifact in sorted(progress.glob("checkpoint_*.json")):
             add("mip_checkpoint", artifact, cell_id=cell, arm=arm)
-        add("mip_progress_final", progress / "final.json",
-            cell_id=cell, arm=arm)
-        add("worker_completion", progress / "worker_completion.json",
-            cell_id=cell, arm=arm)
+        add(
+            "mip_progress_final", progress / "final.json",
+            cell_id=cell, arm=arm, required=strict,
+        )
+        add(
+            "mip_progress_latest", progress / "latest.json",
+            cell_id=cell, arm=arm, required=strict,
+        )
+        add(
+            "worker_completion", progress / "worker_completion.json",
+            cell_id=cell, arm=arm, required=strict,
+        )
     return sorted(
         rows,
         key=lambda row: (

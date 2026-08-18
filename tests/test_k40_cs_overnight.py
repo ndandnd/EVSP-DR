@@ -245,10 +245,10 @@ class K40CSOvernightTests(unittest.TestCase):
             (cache / "run_exact_pool_mip.cpython-312.pyc").write_bytes(
                 b"unreviewed"
             )
-            self.assertIn(
-                "src/__pycache__",
-                launcher._unsafe_runtime_artifacts(root),
-            )
+            (root / "src/ignored_runtime.py").write_text("raise SystemExit")
+            artifacts = launcher._unsafe_runtime_artifacts(root)
+            self.assertIn("src/__pycache__", artifacts)
+            self.assertIn("src/ignored_runtime.py", artifacts)
 
     def _partition_fixture(self, root: Path) -> tuple[Path, dict]:
         status = root / "status.json"
@@ -571,7 +571,7 @@ class K40CSOvernightTests(unittest.TestCase):
             ).hexdigest()
             manifest["submitted"] = True
             manifest["submission_atomicity"] = (
-                "all_cells_held_until_every_sbatch_is_accepted"
+                "single_held_four_task_array_released_once"
             )
             for index, job in enumerate(manifest["jobs"], start=1):
                 job["job_id"] = str(1000 + index)
