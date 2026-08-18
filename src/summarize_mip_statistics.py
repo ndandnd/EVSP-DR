@@ -362,7 +362,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         ):
             raise ValueError(f"{job['cell_id']} differs from approved plan")
         if strict_overnight and (
-            job.get("submission_state") != "released"
+            job.get("submission_state") != "submitted_array"
             or re.fullmatch(
                 r"[0-9]+_[0-3]", str(job.get("job_id") or "")
             ) is None
@@ -370,13 +370,15 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             or job.get("slurm_array_task_id") not in range(4)
             or job.get("slurm_array_task_id")
             != approved_job_index[job["cell_id"]]
+            or str(job.get("job_id")).rsplit("_", 1)[-1]
+            != str(job.get("slurm_array_task_id"))
             or job.get("slurm_display_id")
             != (
                 f"K40R12RG82_{job.get('slurm_array_task_id')}"
             )
         ):
             raise ValueError(
-                f"{job['cell_id']} was not released as an approved job"
+                f"{job['cell_id']} is not an approved array task"
             )
         if strict_overnight:
             overnight_array_parents.add(job["job_id"].split("_", 1)[0])

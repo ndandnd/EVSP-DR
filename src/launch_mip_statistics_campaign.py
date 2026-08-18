@@ -1423,7 +1423,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
             )
         for index, manifest_job in enumerate(manifest["jobs"]):
             manifest_job["job_id"] = f"{array_id}_{index}"
-            manifest_job["submission_state"] = "released"
+            manifest_job["submission_state"] = "submitted_array"
             manifest_job["slurm_array_name"] = array_name
             manifest_job["slurm_array_task_id"] = index
             manifest_job["slurm_display_id"] = f"{array_name}_{index}"

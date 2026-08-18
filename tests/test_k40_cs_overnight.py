@@ -576,10 +576,20 @@ class K40CSOvernightTests(unittest.TestCase):
             for index, job in enumerate(manifest["jobs"], start=1):
                 task = index - 1
                 job["job_id"] = f"1000_{task}"
-                job["submission_state"] = "released"
+                job["submission_state"] = "submitted_array"
                 job["slurm_array_name"] = "K40R12RG82"
                 job["slurm_array_task_id"] = task
                 job["slurm_display_id"] = f"K40R12RG82_{task}"
+            bad_manifest = copy.deepcopy(manifest)
+            for job in bad_manifest["jobs"]:
+                job["job_id"] = "1000_3"
+            (campaign / "campaign.json").write_text(
+                json.dumps(bad_manifest)
+            )
+            with self.assertRaisesRegex(
+                ValueError, "approved array task"
+            ):
+                summarize(campaign, root / "bad-summary")
             (campaign / "campaign.json").write_text(
                 json.dumps(manifest)
             )
