@@ -637,8 +637,15 @@ def _submit_array(
 
 
 def _sbatch(plan, arguments):
+    sbatch_path = Path(plan["sbatch"]["path"])
+    if (
+        plan["sbatch"]["available"] is not True
+        or not sbatch_path.is_file()
+        or sha256_file(sbatch_path) != plan["sbatch"]["sha256"]
+    ):
+        raise ValueError("approved sbatch unavailable/changed")
     completed = subprocess.run(
-        [plan["sbatch"]["path"], "--parsable", *arguments],
+        [str(sbatch_path), "--parsable", *arguments],
         cwd=REPO_ROOT, text=True, capture_output=True, check=False,
     )
     job_id = completed.stdout.strip().split(";", 1)[0]

@@ -34,17 +34,43 @@ def recover(progress_dir):
         path = progress / f"checkpoint_{int(round(float(mark)/60)):04d}m.json"
         if path.exists():
             continue
-        payload = dict(latest)
+        crossed = float(mark) <= elapsed + 1e-9
+        payload = dict(latest) if not crossed else {
+            "schema": latest.get("schema"),
+            "observational_only": True,
+            "gurobi_tree_restart_supported": False,
+            "stage": None,
+            "incumbent_state": "observation_unavailable_due_interruption",
+            "incumbent": None,
+            "first_feasible_incumbent_s": None,
+            "latest_statistics": {
+                "statistics_incumbent_fleet": None,
+                "fleet_bound": None,
+                "objective_bound": None,
+                "fleet_gap": None,
+                "node_count": None,
+                "solution_count": None,
+                "stage_elapsed_s": None,
+            },
+            "latest_statistics_observed_s": None,
+            "incumbent_improvements": [],
+            "metadata": latest.get("metadata") or {},
+            "disabled_reason": latest.get("disabled_reason"),
+        }
         payload.update({
             "kind": "checkpoint",
             "checkpoint_elapsed_s": float(mark),
             "observed_total_elapsed_s": elapsed,
-            "solver_ended_before_checkpoint": True,
+            "solver_ended_before_checkpoint": not crossed,
             "recovery": {
                 "schema":
                     "evsp-dr-scale-ladder-mip-progress-recovery-v1",
                 "source": "result_pending_and_latest",
                 "observational_only": True,
+                "observation_availability": (
+                    "unavailable_interrupted_before_checkpoint_publication"
+                    if crossed else "censored_solver_ended_before_mark"
+                ),
             },
         })
         write_new(path, payload)

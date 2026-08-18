@@ -563,6 +563,8 @@ def _append_k40_rows(
                         raise ValueError("producer completion omits result")
                     for artifact, digest in progress_hashes.items():
                         artifact_path = Path(artifact)
+                        if not artifact_path.is_absolute():
+                            artifact_path = completion_path.parent / artifact_path
                         if (
                             not artifact_path.is_file()
                             or sha256_file(artifact_path) != digest

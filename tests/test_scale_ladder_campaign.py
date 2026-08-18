@@ -438,6 +438,15 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             (progress / "checkpoint_0000m.json").write_text("{}")
             recover(progress)
             self.assertTrue((progress / "final.json").is_file())
+            crossed = json.loads(
+                (progress / "checkpoint_0001m.json").read_text()
+            )
+            self.assertFalse(crossed["solver_ended_before_checkpoint"])
+            self.assertIsNone(crossed["incumbent"])
+            self.assertEqual(
+                crossed["recovery"]["observation_availability"],
+                "unavailable_interrupted_before_checkpoint_publication",
+            )
             recovered = json.loads(
                 (progress / "checkpoint_0005m.json").read_text()
             )

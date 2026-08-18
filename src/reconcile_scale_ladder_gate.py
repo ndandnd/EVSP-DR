@@ -99,6 +99,33 @@ def reconcile(
                     f"--error={root / 'logs'}/gate_%j.err",
                     "--export=NONE", "--wrap=/bin/true",
                 ])
+                manifest["gate_job_id"] = str(gate_for_resume)
+                manifest["gate_state"] = "held"
+                _replace_json(manifest_path, manifest)
+            scontrol = plan.get("scontrol") or {}
+            scontrol_path = Path(str(scontrol.get("path") or ""))
+            if (
+                scontrol.get("available") is not True
+                or not scontrol_path.is_file()
+                or hashlib.sha256(scontrol_path.read_bytes()).hexdigest()
+                != scontrol.get("sha256")
+            ):
+                raise ValueError("approved scontrol unavailable/changed")
+            shown = subprocess.run(
+                [
+                    str(scontrol_path), "show", "job",
+                    str(gate_for_resume), "-o",
+                ],
+                text=True, capture_output=True, check=False,
+            )
+            if (
+                shown.returncode != 0
+                or "JobState=PENDING" not in shown.stdout
+                or "Reason=JobHeldUser" not in shown.stdout
+            ):
+                raise ValueError(
+                    "cannot resume arrays unless the gate is proven held"
+                )
             if not str(gate_for_resume or "").isdigit():
                 raise ValueError("cannot resume arrays without a proven gate")
             logs = root / "logs"
