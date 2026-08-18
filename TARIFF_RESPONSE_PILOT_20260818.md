@@ -15,6 +15,15 @@ The separate k40-preparation gate contains 11 fixed-duty seed jobs and 22
 RAW/GIRO40-AUGMENTED exact-CG preparations. It contains no k40 MIP and cannot
 be selected accidentally by the main submission gate.
 
+Primary response/elasticity uses alpha `0, 0.25, 0.5, 1.0`. Alpha `2.0`
+remains scheduled only as a `negative_price_stress` cell; it is excluded from
+primary savings and elasticity outputs and reported in a separate terminal-
+surplus stress table/figure.
+
+The concrete r2 k5/k8/k40 inputs are tracked in
+`data/tariff_response/frozen_instances/frozen_input_manifest.csv`, SHA-256
+`5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6`.
+
 ## Guarded fetch, dry run, and optional submission
 
 Run from an interactive Unicorn shell. This deliberately does not use
@@ -27,18 +36,17 @@ SUBMIT_SCOPE="${SUBMIT_SCOPE:-none}"
 APPROVED_PLAN_SHA256="${APPROVED_PLAN_SHA256:-}"
 PYTHON="${EVSP_TARIFF_PYTHON:-$HOME/evsp_env/bin/python3.12}"
 RUN_ROOT="$HOME/EVSP-DR-tariff-response"
-INPUT_ROOT="$HOME/evsp_tariff_response_inputs"
 PLAN_ROOT="$HOME/evsp_tariff_response_plans"
 RESERVATIONS="$HOME/evsp_tariff_response_reservations"
-K5_PATH="${K5_PATH:-$INPUT_ROOT/k5.csv}"
-K8_PATH="${K8_PATH:-$INPUT_ROOT/k8.csv}"
-K40_PATH="${K40_PATH:-$INPUT_ROOT/k40.csv}"
-K5_SHA256="${K5_SHA256:-}"
-K8_SHA256="${K8_SHA256:-}"
-K40_SHA256="${K40_SHA256:-}"
-K5_URL="${K5_URL:-}"
-K8_URL="${K8_URL:-}"
-K40_URL="${K40_URL:-}"
+FROZEN_ROOT="$RUN_ROOT/data/tariff_response/frozen_instances"
+FROZEN_MANIFEST="$FROZEN_ROOT/frozen_input_manifest.csv"
+FROZEN_MANIFEST_SHA256="5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6"
+K5_PATH="$FROZEN_ROOT/Practice_Custom_DutyUnion_k05_r2.csv"
+K8_PATH="$FROZEN_ROOT/Practice_Custom_DutyUnion_k08_r2.csv"
+K40_PATH="$FROZEN_ROOT/Practice_Custom_DutyUnion_k40_r2.csv"
+K5_SHA256="6ffea0b8cd3a9d15846946f6828705dd3431b7bafc69bd572ca30ed4530d5cb8"
+K8_SHA256="0d368920af0c5b14e0907b85977a9f72163a0cea6431c206f992e89aa31eb27f"
+K40_SHA256="3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 PLAN="$PLAN_ROOT/$CAMPAIGN.plan.json"
 MATRIX="$PLAN_ROOT/$CAMPAIGN.job-matrix.csv"
 
@@ -60,26 +68,10 @@ elif [[ "$(git -C "$RUN_ROOT" rev-parse HEAD)" != "$REVIEWED_COMMIT" || \
         -n "$(git -C "$RUN_ROOT" status --porcelain)" ]]; then
   echo "Checkout is not the exact clean reviewed commit." >&2
 else
-  mkdir -p "$INPUT_ROOT" "$PLAN_ROOT" "$RESERVATIONS"
-  for SPEC in \
-    "k5|$K5_PATH|$K5_URL" \
-    "k8|$K8_PATH|$K8_URL" \
-    "k40|$K40_PATH|$K40_URL"; do
-    IFS='|' read -r LABEL TARGET URL <<<"$SPEC"
-    if [[ ! -s "$TARGET" && -n "$URL" ]]; then
-      TMP="$TARGET.download.$$"
-      if curl -fL --retry 3 --retry-delay 3 "$URL" -o "$TMP"; then
-        if ! ln "$TMP" "$TARGET"; then
-          echo "$LABEL target appeared concurrently." >&2
-        fi
-      else
-        echo "$LABEL public curl fetch failed." >&2
-      fi
-      rm -f "$TMP"
-    fi
-  done
-
+  mkdir -p "$PLAN_ROOT" "$RESERVATIONS"
   if ! {
+    [[ "$(sha256sum "$FROZEN_MANIFEST" 2>/dev/null | awk '{print $1}')" == \
+       "$FROZEN_MANIFEST_SHA256" ]] &&
     [[ "$K5_SHA256" =~ ^[0-9a-f]{64}$ ]] &&
     [[ "$K8_SHA256" =~ ^[0-9a-f]{64}$ ]] &&
     [[ "$K40_SHA256" =~ ^[0-9a-f]{64}$ ]] &&

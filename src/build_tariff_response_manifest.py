@@ -25,6 +25,8 @@ MANIFEST_FIELDS = (
     "source_flat_sha256", "source_peak_sha256",
     "source_tariff_sha256", "coverage_end_hour", "extension_policy",
     "has_negative_prices", "negative_price_policy", "availability",
+    "analysis_role", "primary_response_eligible",
+    "terminal_energy_treatment",
 )
 
 
@@ -224,6 +226,14 @@ def build(output_dir: Path = OUTPUT_DIR) -> tuple[Path, list[dict]]:
             ),
             "negative_price_policy":
                 "allow_feasible_consumption_no_export",
+            "analysis_role": (
+                "negative_price_stress" if alpha == 2.0 else "primary"
+            ),
+            "primary_response_eligible": alpha != 2.0,
+            "terminal_energy_treatment": (
+                "reserve_inequality_no_salvage_stress_only"
+                if alpha == 2.0 else "reserve_inequality"
+            ),
         })
     solar_path = output_dir / "spatial_solar_parx_midday_free_h26.csv"
     if not solar_path.exists():
@@ -273,6 +283,9 @@ def build(output_dir: Path = OUTPUT_DIR) -> tuple[Path, list[dict]]:
             "negative_price_policy":
                 "allow_feasible_consumption_no_export",
             "availability": "available",
+            "analysis_role": "primary",
+            "primary_response_eligible": True,
+            "terminal_energy_treatment": "reserve_inequality",
         })
     rows.append({
         "tariff_id": "solar_parx_midday_free",
@@ -298,6 +311,9 @@ def build(output_dir: Path = OUTPUT_DIR) -> tuple[Path, list[dict]]:
         "has_negative_prices": False,
         "negative_price_policy": "allow_feasible_consumption_no_export",
         "availability": "available",
+        "analysis_role": "primary",
+        "primary_response_eligible": True,
+        "terminal_energy_treatment": "reserve_inequality",
     })
     for item in generated:
         rows.append({
@@ -324,6 +340,11 @@ def build(output_dir: Path = OUTPUT_DIR) -> tuple[Path, list[dict]]:
             "has_negative_prices": item["has_negative_prices"],
             "negative_price_policy": item["negative_price_policy"],
             "availability": "available",
+            "analysis_role": item["analysis_role"],
+            "primary_response_eligible":
+                item["primary_response_eligible"],
+            "terminal_energy_treatment":
+                item["terminal_energy_treatment"],
         })
     rows.sort(key=lambda row: row["tariff_id"])
     manifest = output_dir / "tariff_manifest.csv"

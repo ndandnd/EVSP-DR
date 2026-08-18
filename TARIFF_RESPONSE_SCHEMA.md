@@ -25,7 +25,10 @@ The required `alpha=2` extrapolation contains explicitly labeled negative
 prices. The manifest policy is `allow_feasible_consumption_no_export`; extra
 energy consumption is therefore a modeled response, not energy resale.
 Terminal SOC minima/maxima and charged kWh are mandatory outputs so this
-behavior cannot be hidden inside a cost comparison.
+behavior cannot be hidden inside a cost comparison. Because no common terminal
+SOC equality or terminal-energy salvage value is available, alpha=2 is labeled
+`negative_price_stress`, excluded from all primary savings and elasticity
+tables/curves, and rendered only in a separate stress figure.
 
 ## Cost decomposition
 

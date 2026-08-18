@@ -12,7 +12,7 @@ from expanded_path_realization import charging_block_schedule_sha256
 from tariff_response_core import PHYSICS, load_tariff_manifest, tariff_prices
 
 
-ROOT = REPO_ROOT / "analysis/tariff_response_synthetic_reviewed_20260818"
+ROOT = REPO_ROOT / "analysis/tariff_response_synthetic_primary_v2_20260818"
 ALPHA_IDS = (
     "peak12_alpha_0p0",
     "peak12_alpha_0p25",
@@ -122,6 +122,7 @@ def cell(tariff, tier, treatment, *, flexible=False):
             "charging_starts_by_hour_json": json.dumps({"12": 1}),
             "terminal_soc_min_kwh": 50.0,
             "terminal_soc_max_kwh": 50.0,
+            "terminal_surplus_total_kwh": 50.0 * buses,
             "waiting_min": 20.0 * factor,
             "deadhead_min": 5.0 * factor,
             "deadhead_kwh": 2.0 * factor,

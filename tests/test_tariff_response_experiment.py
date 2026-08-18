@@ -56,6 +56,10 @@ TARIFF_MANIFEST = REPO_ROOT / "data/tariff_response/tariff_manifest.csv"
 GIRO_DUTY_MANIFEST = (
     REPO_ROOT / "data/tariff_response/giro40_duty_manifest.csv"
 )
+FROZEN_INPUT_MANIFEST = (
+    REPO_ROOT
+    / "data/tariff_response/frozen_instances/frozen_input_manifest.csv"
+)
 
 
 def toy_problem(*, boundary=False):
@@ -132,6 +136,12 @@ class TariffResponseExperimentTests(unittest.TestCase):
             alpha2["negative_price_policy"],
             "allow_feasible_consumption_no_export",
         )
+        self.assertEqual(
+            alpha2["analysis_role"], "negative_price_stress"
+        )
+        self.assertEqual(
+            alpha2["primary_response_eligible"], "False"
+        )
         self.assertTrue(all(
             int(row["coverage_end_hour"]) == 26 for row in self.tariffs
         ))
@@ -143,6 +153,27 @@ class TariffResponseExperimentTests(unittest.TestCase):
             & {"13316m", "13324muw"},
             set(),
         )
+        with FROZEN_INPUT_MANIFEST.open(newline="") as handle:
+            frozen_rows = list(csv.DictReader(handle))
+        self.assertEqual(
+            sha256_file(FROZEN_INPUT_MANIFEST),
+            "5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6",
+        )
+        self.assertEqual(
+            {int(row["scale"]) for row in frozen_rows}, {5, 8, 40}
+        )
+        for row in frozen_rows:
+            path = REPO_ROOT / row["relative_path"]
+            self.assertEqual(sha256_file(path), row["file_sha256"])
+            with path.open(newline="") as handle:
+                trips = [
+                    int(float(item["Ordered_Trip_ID"]))
+                    for item in csv.DictReader(handle)
+                ]
+            digest = hashlib.sha256(json.dumps(
+                sorted(trips), sort_keys=True, separators=(",", ":")
+            ).encode()).hexdigest()
+            self.assertEqual(digest, row["trip_set_sha256"])
 
     def test_giro_original_is_exact_and_ambiguous_costs_stay_null(self):
         original = reconstruct_giro40_original(
@@ -483,6 +514,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
             "charging_starts_by_hour_json": json.dumps({"12": 1}),
             "terminal_soc_min_kwh": 50.0,
             "terminal_soc_max_kwh": 50.0,
+            "terminal_surplus_total_kwh": 50.0 * buses,
             "waiting_min": 20.0 * factor,
             "deadhead_min": 5.0 * factor,
             "deadhead_kwh": 2.0 * factor,
@@ -595,6 +627,12 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "price_amplitude_response.png",
                 "price_amplitude_response.pdf",
                 "tariff_response_plot.csv",
+                "negative_price_stress_plot.csv",
+                "negative_price_stress.png",
+                "negative_price_stress.pdf",
+                "price_response_elasticity.csv",
+                "primary_savings_summary.csv",
+                "negative_price_stress_summary.csv",
                 "SYNTHETIC_ONLY.txt",
             }
             self.assertTrue(required <= {path.name for path in first.iterdir()})
@@ -610,10 +648,74 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     sha256_file(first / name), sha256_file(second / name),
                     name,
                 )
+            with (first / "tariff_response_plot.csv").open(
+                newline=""
+            ) as handle:
+                primary_rows = list(csv.DictReader(handle))
+            with (first / "negative_price_stress_plot.csv").open(
+                newline=""
+            ) as handle:
+                stress_rows = list(csv.DictReader(handle))
+            with (first / "price_response_elasticity.csv").open(
+                newline=""
+            ) as handle:
+                elasticity_rows = list(csv.DictReader(handle))
+            self.assertTrue(primary_rows)
+            self.assertTrue(stress_rows)
+            self.assertTrue(all(
+                float(row["alpha"]) <= 1.0 for row in primary_rows
+            ))
+            self.assertTrue(all(
+                float(row["alpha"]) == 2.0 for row in stress_rows
+            ))
+            self.assertTrue(all(
+                float(row["alpha_right"]) <= 1.0
+                and float(row["alpha_left"]) > 0.0
+                for row in elasticity_rows
+            ))
+            self.assertTrue(all(
+                float(row["terminal_surplus_total_kwh"]) > 0.0
+                for row in stress_rows
+            ))
+            with (first / "tariff_response_summary.csv").open(
+                newline=""
+            ) as handle:
+                summary_rows = list(csv.DictReader(handle))
+            stress_summary = [
+                row for row in summary_rows
+                if row["analysis_role"] == "negative_price_stress"
+            ]
+            self.assertTrue(stress_summary)
+            self.assertTrue(all(
+                row["charging_only_savings_grid"] == ""
+                and row["rerouting_increment_grid"] == ""
+                and row["total_price_aware_savings_grid"] == ""
+                for row in stress_summary
+            ))
+            with (first / "primary_savings_summary.csv").open(
+                newline=""
+            ) as handle:
+                primary_savings = list(csv.DictReader(handle))
+            self.assertTrue(primary_savings)
+            self.assertTrue(all(
+                row["analysis_role"] == "primary"
+                and row["tariff_id"] != "peak12_alpha_2p0"
+                for row in primary_savings
+            ))
+            self.assertIn(
+                "NEGATIVE-PRICE STRESS (α=2)",
+                (
+                    REPO_ROOT / "src/build_tariff_response_evidence.py"
+                ).read_text(),
+            )
             corrupted = copy.deepcopy(cells[-1])
             corrupted["continuous_cost_pricing_certified"] = True
             with self.assertRaisesRegex(ValueError, "certificate"):
                 _validate_cell(corrupted, self.tariff_by_id)
+            terminal_mismatch = copy.deepcopy(cells[-1])
+            terminal_mismatch["terminal_soc_policy"] = "terminal_soc_equal"
+            with self.assertRaisesRegex(ValueError, "terminal SOC"):
+                _validate_cell(terminal_mismatch, self.tariff_by_id)
             corrupted = copy.deepcopy(cells[-1])
             corrupted["terminal_soc_policy"] = "return_full"
             with self.assertRaisesRegex(ValueError, "terminal"):
@@ -639,9 +741,32 @@ class TariffResponseExperimentTests(unittest.TestCase):
             paths, hashes = {}, {}
             for key in ("k5", "k8", "k40"):
                 path = root / f"{key}.csv"
-                path.write_text(f"{key}\n")
+                scale = int(key[1:])
+                path.write_text(
+                    "Ordered_Trip_ID\n"
+                    + "".join(f"{index}\n" for index in range(scale))
+                )
                 paths[key] = str(path)
                 hashes[key] = sha256_file(path)
+            frozen = root / "frozen.csv"
+            with frozen.open("w", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=(
+                    "scale", "relative_path", "file_sha256",
+                    "trip_count", "trip_set_sha256",
+                ))
+                writer.writeheader()
+                for key in ("k5", "k8", "k40"):
+                    scale = int(key[1:])
+                    writer.writerow({
+                        "scale": scale,
+                        "relative_path": Path(paths[key]).name,
+                        "file_sha256": hashes[key],
+                        "trip_count": scale,
+                        "trip_set_sha256": hashlib.sha256(json.dumps(
+                            list(range(scale)),
+                            sort_keys=True, separators=(",", ":"),
+                        ).encode()).hexdigest(),
+                    })
             identity = {
                 "commit": "a" * 40,
                 "detached": True,
@@ -692,6 +817,8 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     reservation_root=root / "reservations",
                     python_path=Path(sys.executable),
                     results_root=root / "results",
+                    frozen_input_manifest=frozen,
+                    frozen_input_manifest_sha256=sha256_file(frozen),
                 )
             self.assertEqual(plan["main_submission_job_count"], 111)
             self.assertEqual(plan["k40_preparation_job_count"], 33)
@@ -699,6 +826,16 @@ class TariffResponseExperimentTests(unittest.TestCase):
             self.assertFalse(any(
                 job["phase"] == "MIP" and job["scale"] == 40
                 for job in plan["jobs"]
+            ))
+            stress_jobs = [
+                job for job in plan["jobs"]
+                if job["tariff_id"] == "peak12_alpha_2p0"
+            ]
+            self.assertEqual(len(stress_jobs), 13)
+            self.assertTrue(all(
+                job["analysis_role"] == "negative_price_stress"
+                and str(job["primary_response_eligible"]).lower() == "false"
+                for job in stress_jobs
             ))
             self.assertTrue(all(
                 len(job["job_name"]) <= 15 for job in plan["jobs"]

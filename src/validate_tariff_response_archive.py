@@ -131,6 +131,9 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     staged_duties = root / "input/source/giro40_duty_manifest.csv"
     if sha(staged_duties) != plan["giro40_duty_manifest"]["sha256"]:
         raise ValueError("staged GIRO40 duty manifest hash mismatch")
+    staged_frozen = root / "input/source/frozen_input_manifest.csv"
+    if sha(staged_frozen) != plan["frozen_input_manifest"]["sha256"]:
+        raise ValueError("staged frozen input manifest hash mismatch")
 
     for job in selected.values():
         instance = relocated(

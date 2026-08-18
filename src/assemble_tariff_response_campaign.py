@@ -160,6 +160,10 @@ def _aggregate(routes, tariff, problem):
         ),
         "terminal_soc_min_kwh": min(terminal),
         "terminal_soc_max_kwh": max(terminal),
+        "terminal_surplus_total_kwh": sum(
+            max(0.0, value - PHYSICS["reserve_kwh"])
+            for value in terminal
+        ),
         "waiting_min": waiting,
         "deadhead_min": deadhead_min,
         "deadhead_kwh": deadhead_kwh,
@@ -407,6 +411,7 @@ def assemble(campaign_root, output_manifest, evidence_output):
                 "charging_starts_by_hour_json": None,
                 "terminal_soc_min_kwh": None,
                 "terminal_soc_max_kwh": None,
+                "terminal_surplus_total_kwh": None,
                 "waiting_min": None,
                 "deadhead_min": None,
                 "deadhead_kwh": None,

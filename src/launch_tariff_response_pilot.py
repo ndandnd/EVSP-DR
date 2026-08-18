@@ -26,6 +26,13 @@ REVIEWED_BASE = "636dc0912f47e6ce85284fad3b36af30b4135887"
 FROZEN_K40_INSTANCE_SHA256 = (
     "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 )
+FROZEN_INPUT_MANIFEST = (
+    REPO_ROOT
+    / "data/tariff_response/frozen_instances/frozen_input_manifest.csv"
+)
+FROZEN_INPUT_MANIFEST_SHA256 = (
+    "5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6"
+)
 WORKER = REPO_ROOT / "src/submit_tariff_response_pilot.sub"
 CODE_PATHS = (
     "src/launch_tariff_response_pilot.py",
@@ -49,10 +56,12 @@ CODE_PATHS = (
     "src/validate_tariff_response_archive.py",
     "src/reconcile_tariff_response_gate.py",
     "src/build_giro40_duty_manifest.py",
+    "src/build_tariff_response_frozen_inputs.py",
 )
 MATRIX_FIELDS = (
     "job_key", "phase", "scale", "tariff_id", "treatment",
     "partition", "threads", "wall_limit_s", "solver_limit_s",
+    "analysis_role", "primary_response_eligible",
     "separate_k40_gate", "dependency_key", "output",
 )
 TARIFF_CODES = {
@@ -185,6 +194,14 @@ def _job(
             None if phase == "FIXED_FULL"
             else tariff["relative_path"].removeprefix("data/")
         ),
+        "analysis_role": (
+            "mixed_primary_and_stress"
+            if phase == "FIXED_FULL" else tariff["analysis_role"]
+        ),
+        "primary_response_eligible": (
+            None if phase == "FIXED_FULL"
+            else tariff["primary_response_eligible"]
+        ),
         "treatment": treatment,
         "partition": partition,
         "threads": threads,
@@ -214,6 +231,8 @@ def build_plan(
     reservation_root,
     python_path,
     results_root=None,
+    frozen_input_manifest=FROZEN_INPUT_MANIFEST,
+    frozen_input_manifest_sha256=FROZEN_INPUT_MANIFEST_SHA256,
 ):
     if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,79}", campaign):
         raise ValueError("unsafe campaign name")
@@ -221,6 +240,17 @@ def build_plan(
         raise ValueError("exact k5/k8/k40 instance paths are required")
     if set(instance_hashes) != set(instance_paths):
         raise ValueError("every instance requires a SHA-256")
+    frozen_input_manifest = Path(frozen_input_manifest).resolve()
+    if sha256_file(frozen_input_manifest) != (
+        frozen_input_manifest_sha256
+    ):
+        raise ValueError("frozen input manifest SHA-256 mismatch")
+    with frozen_input_manifest.open(newline="") as handle:
+        frozen_rows = {
+            f"k{row['scale']}": row for row in csv.DictReader(handle)
+        }
+    if set(frozen_rows) != {"k5", "k8", "k40"}:
+        raise ValueError("frozen input manifest scale set differs")
     instances = {}
     for key in ("k5", "k8", "k40"):
         path = Path(instance_paths[key]).expanduser().resolve()
@@ -231,6 +261,25 @@ def build_plan(
             or sha256_file(path) != expected
         ):
             raise ValueError(f"{key} instance hash mismatch")
+        frozen = frozen_rows[key]
+        if (
+            expected != frozen["file_sha256"]
+            or path.name != Path(frozen["relative_path"]).name
+        ):
+            raise ValueError(f"{key} differs from frozen input manifest")
+        with path.open(newline="") as handle:
+            source_trips = [
+                int(float(row["Ordered_Trip_ID"]))
+                for row in csv.DictReader(handle)
+            ]
+        trip_set_sha256 = hashlib.sha256(canonical(
+            sorted(source_trips)
+        )).hexdigest()
+        if (
+            len(source_trips) != int(frozen["trip_count"])
+            or trip_set_sha256 != frozen["trip_set_sha256"]
+        ):
+            raise ValueError(f"{key} trip set differs from frozen manifest")
         expected_duties = int(key[1:])
         routes = giro_routes_for_instance(
             REPO_ROOT / "data/Par_VehicleDetails_Updated.csv",
@@ -249,6 +298,7 @@ def build_plan(
                 f"tariff_response_inputs/{key}_{expected[:12]}.csv",
             "duty_count": len(routes),
             "trip_count": sum(len(route["trips"]) for route in routes),
+            "trip_set_sha256": trip_set_sha256,
         }
     tariff_manifest = tariff_manifest.expanduser().resolve()
     tariffs = load_tariff_manifest(tariff_manifest)
@@ -396,6 +446,7 @@ def build_plan(
         execution_identity = {
             key: job[key] for key in (
                 "phase", "scale", "tariff_id", "tariff_sha256",
+                "analysis_role", "primary_response_eligible",
                 "treatment", "wall_limit_s", "solver_limit_s",
                 "separate_k40_gate", "instance", "seed_output",
                 "source_cg_output",
@@ -432,6 +483,10 @@ def build_plan(
             ),
         },
         "instances": instances,
+        "frozen_input_manifest": {
+            "path": str(frozen_input_manifest),
+            "sha256": frozen_input_manifest_sha256,
+        },
         "reservation_root": str(reservation_root.expanduser().resolve()),
         "worker": str(WORKER),
         "worker_sha256": sha256_file(WORKER),
@@ -537,6 +592,11 @@ def submit(plan, plan_sha, *, k40_preparation):
         Path(plan["giro40_duty_manifest"]["path"]),
         root / "input/source/giro40_duty_manifest.csv",
         plan["giro40_duty_manifest"]["sha256"],
+    )
+    _copy_new(
+        Path(plan["frozen_input_manifest"]["path"]),
+        root / "input/source/frozen_input_manifest.csv",
+        plan["frozen_input_manifest"]["sha256"],
     )
     tariff_input = root / "input/tariffs"
     _copy_new(

@@ -32,12 +32,14 @@ from config import BUS_COST_KX
 
 
 SUMMARY_FIELDS = (
-    "tariff_id", "tier", "buses", "grid_model_objective",
+    "tariff_id", "tier", "analysis_role", "primary_response_eligible",
+    "terminal_energy_treatment", "buses", "grid_model_objective",
     "continuous_replay_objective", "charging_cost",
     "continuous_charging_cost", "total_charged_kwh",
     "peak_window_kwh", "charging_kwh_by_hour_json",
     "charging_kwh_by_station_json", "charging_starts_by_hour_json",
     "terminal_soc_min_kwh", "terminal_soc_max_kwh",
+    "terminal_surplus_total_kwh",
     "waiting_min", "deadhead_min",
     "deadhead_kwh", "charging_stops", "discretized_certification_status",
     "physical_replay_status", "terminal_soc_policy",
@@ -144,6 +146,11 @@ def run(
             tier0, events = evaluate_giro_original(original, tariff)
             summaries.append({
                 **tier0,
+                "analysis_role": tariff["analysis_role"],
+                "primary_response_eligible":
+                    tariff["primary_response_eligible"],
+                "terminal_energy_treatment":
+                    tariff["terminal_energy_treatment"],
                 "continuous_charging_cost": None,
                 "peak_window_kwh": None,
                 "charging_kwh_by_hour_json": None,
@@ -151,6 +158,7 @@ def run(
                 "charging_starts_by_hour_json": None,
                 "terminal_soc_min_kwh": None,
                 "terminal_soc_max_kwh": None,
+                "terminal_surplus_total_kwh": None,
                 "waiting_min": None,
                 "deadhead_min": None,
                 "deadhead_kwh": None,
@@ -294,6 +302,11 @@ def run(
             summaries.append({
                 "tariff_id": tariff["tariff_id"],
                 "tier": "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING",
+                "analysis_role": tariff["analysis_role"],
+                "primary_response_eligible":
+                    tariff["primary_response_eligible"],
+                "terminal_energy_treatment":
+                    tariff["terminal_energy_treatment"],
                 "buses": 40,
                 "grid_model_objective": grid_objective,
                 "continuous_replay_objective": continuous_objective,
@@ -317,6 +330,14 @@ def run(
                 ),
                 "terminal_soc_max_kwh": max(
                     float(route["continuous_terminal_soc_kwh"])
+                    for route in routes
+                ),
+                "terminal_surplus_total_kwh": sum(
+                    max(
+                        0.0,
+                        float(route["continuous_terminal_soc_kwh"])
+                        - PHYSICS["reserve_kwh"],
+                    )
                     for route in routes
                 ),
                 "waiting_min": sum(

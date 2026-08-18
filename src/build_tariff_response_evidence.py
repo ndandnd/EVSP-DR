@@ -54,6 +54,7 @@ SUMMARY_FIELDS = (
     "peak_window_kwh", "charging_kwh_by_hour_json",
     "charging_kwh_by_station_json", "charging_starts_by_hour_json",
     "terminal_soc_min_kwh", "terminal_soc_max_kwh",
+    "terminal_surplus_total_kwh",
     "waiting_min", "deadhead_min", "deadhead_kwh",
     "charging_stops", "discretized_certification_status",
     "physical_replay_status", "terminal_soc_policy",
@@ -65,6 +66,8 @@ SUMMARY_FIELDS = (
     "rerouting_increment_continuous",
     "total_price_aware_savings_continuous",
     "fleet_change_from_tier1",
+    "analysis_role", "primary_response_eligible",
+    "terminal_energy_treatment",
     "availability", "availability_reason",
 )
 BLOCK_FIELDS = (
@@ -364,6 +367,10 @@ def _validate_metrics(cell, tariff):
         "charging_stops": stops,
         "terminal_soc_min_kwh": min(terminal_soc),
         "terminal_soc_max_kwh": max(terminal_soc),
+        "terminal_surplus_total_kwh": sum(
+            max(0.0, value - PHYSICS["reserve_kwh"])
+            for value in terminal_soc
+        ),
     }
     if peak_kwh is not None:
         expected_values["peak_window_kwh"] = peak_kwh
@@ -474,6 +481,7 @@ def _validate_cell(cell, tariffs):
         numeric_fields.extend([
             "waiting_min", "deadhead_min", "deadhead_kwh",
             "terminal_soc_min_kwh", "terminal_soc_max_kwh",
+            "terminal_surplus_total_kwh",
         ])
     for field in numeric_fields:
         _finite(metrics[field], field)
@@ -614,7 +622,14 @@ def _render_gantt_group(
             where="post", color="#222222", linewidth=0.8, alpha=0.55,
         )
     axes[-1].set_xlabel("minute of service day")
-    fig.suptitle(f"{instance_id}: {tariff_id}")
+    fig.suptitle(
+        (
+            f"NEGATIVE-PRICE STRESS — EXCLUDED FROM PRIMARY: "
+            f"{instance_id}: {tariff_id}"
+        )
+        if tariff["analysis_role"] == "negative_price_stress"
+        else f"{instance_id}: {tariff_id}"
+    )
     if synthetic:
         fig.text(
             0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
@@ -815,7 +830,14 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
         price_ax.set_ylabel("price", fontsize=7)
         price_ax.tick_params(axis="y", labelsize=6)
     axes[-1].set_xlabel("minute of service day")
-    fig.suptitle(f"{instance_id}: {tariff_id}")
+    fig.suptitle(
+        (
+            f"NEGATIVE-PRICE STRESS — EXCLUDED FROM PRIMARY: "
+            f"{instance_id}: {tariff_id}"
+        )
+        if tariff["analysis_role"] == "negative_price_stress"
+        else f"{instance_id}: {tariff_id}"
+    )
     if synthetic:
         fig.text(
             0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
@@ -866,15 +888,25 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
             "tier": cell["tier"],
             "treatment": cell["treatment"],
             "alpha": float(tariff["alpha"]),
+            "analysis_role": tariff["analysis_role"],
             "peak_window_kwh": metrics.get("peak_window_kwh"),
             "charging_cost": metrics.get("charging_cost"),
             "route_similarity": cell.get("route_similarity"),
             "buses": metrics.get("buses"),
             "deadhead_kwh": metrics.get("deadhead_kwh"),
+            "terminal_surplus_total_kwh":
+                metrics.get("terminal_surplus_total_kwh"),
         })
-    required_alpha = {0.0, 0.25, 0.5, 1.0, 2.0}
+    primary_rows = [
+        row for row in alpha_rows if row["analysis_role"] == "primary"
+    ]
+    stress_rows = [
+        row for row in alpha_rows
+        if row["analysis_role"] == "negative_price_stress"
+    ]
+    required_alpha = {0.0, 0.25, 0.5, 1.0}
     alpha_groups = defaultdict(set)
-    for row in alpha_rows:
+    for row in primary_rows:
         alpha_groups[(
             row["instance_id"], row["tier"], row["treatment"]
         )].add(row["alpha"])
@@ -885,14 +917,69 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
     response_fields = (
         "instance_id", "tariff_id", "tier", "treatment", "alpha",
         "peak_window_kwh", "charging_cost", "route_similarity",
-        "buses", "deadhead_kwh",
+        "buses", "deadhead_kwh", "terminal_surplus_total_kwh",
+        "analysis_role",
     )
     _write_csv(
         staging / "tariff_response_plot.csv",
         response_fields,
-        sorted(alpha_rows, key=lambda row: (
+        sorted(primary_rows, key=lambda row: (
             row["tier"], row["treatment"], row["alpha"]
         )),
+    )
+    _write_csv(
+        staging / "negative_price_stress_plot.csv",
+        response_fields,
+        sorted(stress_rows, key=lambda row: (
+            row["instance_id"], row["tier"], row["treatment"]
+        )),
+    )
+    elasticity_rows = []
+    elasticity_groups = defaultdict(list)
+    for row in primary_rows:
+        elasticity_groups[(
+            row["instance_id"], row["tier"], row["treatment"]
+        )].append(row)
+    for key, rows in sorted(elasticity_groups.items()):
+        positive = sorted(
+            (row for row in rows if row["alpha"] > 0.0),
+            key=lambda row: row["alpha"],
+        )
+        for left, right in zip(positive, positive[1:]):
+            for field in ("peak_window_kwh", "charging_cost"):
+                left_value = left[field]
+                right_value = right[field]
+                elasticity = None
+                if (
+                    left_value is not None
+                    and right_value is not None
+                    and float(left_value) != 0.0
+                ):
+                    elasticity = (
+                        (float(right_value) - float(left_value))
+                        / float(left_value)
+                    ) / (
+                        (right["alpha"] - left["alpha"])
+                        / left["alpha"]
+                    )
+                elasticity_rows.append({
+                    "instance_id": key[0],
+                    "tier": key[1],
+                    "treatment": key[2],
+                    "metric": field,
+                    "alpha_left": left["alpha"],
+                    "alpha_right": right["alpha"],
+                    "arc_elasticity": elasticity,
+                    "analysis_role": "primary",
+                })
+    _write_csv(
+        staging / "price_response_elasticity.csv",
+        (
+            "instance_id", "tier", "treatment", "metric",
+            "alpha_left", "alpha_right", "arc_elasticity",
+            "analysis_role",
+        ),
+        elasticity_rows,
     )
     metrics = (
         ("peak_window_kwh", "Peak-window kWh"),
@@ -903,7 +990,7 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
     )
     fig, axes = plt.subplots(2, 3, figsize=(14, 8))
     grouped_rows = defaultdict(list)
-    for row in alpha_rows:
+    for row in primary_rows:
         grouped_rows[(
             row["instance_id"], row["tier"], row["treatment"]
         )].append(row)
@@ -940,14 +1027,61 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
         },
     )
     plt.close(fig)
+    stress_fig, stress_axes = plt.subplots(1, 2, figsize=(12, 4.8))
+    stress_groups = defaultdict(list)
+    for row in stress_rows:
+        stress_groups[row["instance_id"]].append(row)
+    for axis, field, label in (
+        (stress_axes[0], "charging_cost", "Charging cost"),
+        (
+            stress_axes[1], "terminal_surplus_total_kwh",
+            "Terminal surplus kWh",
+        ),
+    ):
+        offset = 0
+        for instance, rows in sorted(stress_groups.items()):
+            labels_ = [
+                f"{row['tier']} / {row['treatment']}" for row in rows
+            ]
+            positions = list(range(offset, offset + len(rows)))
+            axis.bar(
+                positions,
+                [float(row[field]) for row in rows],
+                label=instance,
+            )
+            axis.set_xticks(positions, labels_, rotation=75, fontsize=6)
+            offset += len(rows) + 1
+        axis.set_ylabel(label)
+    stress_fig.suptitle(
+        "NEGATIVE-PRICE STRESS (α=2) — EXCLUDED FROM PRIMARY RESULTS",
+        color="darkred", fontweight="bold",
+    )
+    if synthetic:
+        stress_fig.text(
+            0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
+            ha="center", va="center", fontsize=24,
+            color="red", alpha=0.16, rotation=25,
+        )
+    stress_fig.tight_layout()
+    stress_fig.savefig(
+        staging / "negative_price_stress.png",
+        dpi=180, metadata={"Software": "EVSP-DR"},
+    )
+    stress_fig.savefig(
+        staging / "negative_price_stress.pdf",
+        metadata={
+            "Creator": "EVSP-DR", "CreationDate": None, "ModDate": None,
+        },
+    )
+    plt.close(stress_fig)
     for response_instance in sorted({
-        row["instance_id"] for row in alpha_rows
+        row["instance_id"] for row in primary_rows
     }):
         _render_response_instance(
             staging,
             response_instance,
             [
-                row for row in alpha_rows
+                row for row in primary_rows
                 if row["instance_id"] == response_instance
             ],
             synthetic=synthetic,
@@ -995,6 +1129,7 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
     route_rows = []
     by_key = defaultdict(dict)
     for cell in cells:
+        tariff = tariffs[cell["tariff_id"]]
         by_key[(cell["instance_id"], cell["tariff_id"])][
             cell["tier"]
         ] = cell
@@ -1011,6 +1146,11 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             "certificate_scope": cell["certificate_scope"],
             "continuous_cost_pricing_certified":
                 cell["continuous_cost_pricing_certified"],
+            "analysis_role": tariff["analysis_role"],
+            "primary_response_eligible":
+                tariff["primary_response_eligible"],
+            "terminal_energy_treatment":
+                tariff["terminal_energy_treatment"],
             "availability": cell.get("availability", "available"),
             "availability_reason": cell.get(
                 "availability_reason", ""
@@ -1073,6 +1213,12 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             tier2 = tiers.get(tier_name)
             if tier2 is None:
                 continue
+            if tier1["terminal_soc_policy"] != tier2[
+                "terminal_soc_policy"
+            ]:
+                raise ValueError(
+                    "Tier 1/Tier 2 terminal policies differ"
+                )
             response = route_response(tier1["routes"], tier2["routes"])
             response.update({
                 "instance_id": key[0],
@@ -1102,7 +1248,7 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             ("grid", "grid_model_objective"),
             ("continuous", "continuous_replay_objective"),
         ):
-            same_fleet = (
+            same_fleet_and_terminal = (
                 tier0["metrics"]["buses"]
                 == tier1["metrics"]["buses"]
                 == tier2["metrics"]["buses"]
@@ -1110,12 +1256,21 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                 == tier1["terminal_soc_policy"]
                 == tier2["terminal_soc_policy"]
             )
-            decomposition = savings_decomposition(
-                tier0["metrics"].get(field) if same_fleet else None,
-                tier1["metrics"].get(field) if same_fleet else None,
-                tier2["metrics"].get(field) if same_fleet else None,
+            primary_eligible = str(
+                tariffs[key[1]]["primary_response_eligible"]
+            ).lower() == "true"
+            primary_comparison = (
+                same_fleet_and_terminal and primary_eligible
             )
-            if not same_fleet:
+            decomposition = savings_decomposition(
+                tier0["metrics"].get(field)
+                if primary_comparison else None,
+                tier1["metrics"].get(field)
+                if primary_comparison else None,
+                tier2["metrics"].get(field)
+                if primary_comparison else None,
+            )
+            if not primary_comparison:
                 target_row = summary_by[(
                     tier2["instance_id"], tier2["tariff_id"],
                     tier2["tier"],
@@ -1127,6 +1282,9 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                     ).split(";") if value
                 }
                 reasons.add(
+                    "negative_price_stress_excluded_from_primary"
+                    if not primary_eligible
+                    else
                     "decomposition_unavailable_fleet_or_terminal_policy_changed"
                 )
                 target_row["availability_reason"] = ";".join(
@@ -1165,6 +1323,23 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                    BLOCK_FIELDS, block_rows)
         _write_csv(staging / "tariff_response_summary.csv",
                    SUMMARY_FIELDS, summaries)
+        _write_csv(
+            staging / "primary_savings_summary.csv",
+            SUMMARY_FIELDS,
+            [
+                row for row in summaries
+                if str(row.get("primary_response_eligible")).lower()
+                == "true"
+            ],
+        )
+        _write_csv(
+            staging / "negative_price_stress_summary.csv",
+            SUMMARY_FIELDS,
+            [
+                row for row in summaries
+                if row.get("analysis_role") == "negative_price_stress"
+            ],
+        )
         _write_csv(staging / "route_change_summary.csv",
                    ROUTE_FIELDS, route_rows)
         _write_csv(staging / "fixed_duty_certificate_summary.csv",
@@ -1196,6 +1371,10 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
              "definition": "Selected-route continuous depot-arrival SOC range; exposes negative-price energy accumulation."},
             {"field": "negative_price_policy",
              "definition": "Manifest policy allows feasible consumption but no energy export."},
+            {"field": "analysis_role",
+             "definition": "primary or negative_price_stress; stress rows are excluded from primary savings and elasticity."},
+            {"field": "terminal_surplus_total_kwh",
+             "definition": "Sum over selected routes of max(terminal SOC - reserve, 0)."},
         ]
         _write_csv(
             staging / "data_dictionary.csv",
