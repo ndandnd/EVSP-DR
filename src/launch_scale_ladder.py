@@ -39,6 +39,7 @@ HISTORICAL_FLAT_SHA256 = (
 )
 WORKER = REPO_ROOT / "src/submit_scale_ladder.sub"
 CODE_PATHS = (
+    "src/build_tariff_response_manifest.py",
     "src/launch_scale_ladder.py",
     "src/submit_scale_ladder.sub",
     "src/build_scale_ladder_inputs.py",
