@@ -152,12 +152,12 @@ else
       --data-root "$SOURCE/input/k40_r2_cs_raw_m1440/data"
     )
 
-    if ! (
+    if ! {
       [[ "$(sha256sum "$R1_CS" | awk '{print $1}')" == "$R1_CS_SHA" ]] &&
       [[ "$(sha256sum "$R2_CS" | awk '{print $1}')" == "$R2_CS_SHA" ]] &&
       [[ "$(sha256sum "$J1_CS" | awk '{print $1}')" == "$J1_CS_SHA" ]] &&
       [[ "$(sha256sum "$J2_CS" | awk '{print $1}')" == "$J2_CS_SHA" ]]
-    ); then
+    }; then
       echo "Extracted status/journal hash mismatch; nothing submitted." >&2
     elif [[ "$SUBMIT_OVERNIGHT" != "1" && -e "$PLAN" ]]; then
       echo "Plan exists; choose a new campaign or review the existing plan." >&2
