@@ -254,11 +254,19 @@ def run(args):
                 if first == 2.5
                 else [(5.0, 10), (2.5, 10), (1.0, 10)]
             )
+            if (
+                cell["scale"] == 2
+                and first == 1.0
+                and membership.get("first_feasible_block_min") == 5
+            ):
+                grids.append((1.0, 5))
         for soc_step, block_min in grids:
             label = str(soc_step).replace(".", "p")
             jobs.append({
                 **cell,
-                "job_key": f"cgdiag_g{label}_{cell['cell_id']}",
+                "job_key": (
+                    f"cgdiag_g{label}_b{block_min}_{cell['cell_id']}"
+                ),
                 "phase": (
                     "CG" if soc_step == 15.0
                     else "CG_SENSITIVITY"
@@ -269,11 +277,11 @@ def run(args):
                 "budget_s": args.budget_s,
                 "output": str(
                     root / "outputs"
-                    / f"cgdiag_g{label}_{cell['cell_id']}.json"
+                    / f"cgdiag_g{label}_b{block_min}_{cell['cell_id']}.json"
                 ),
                 "telemetry": str(
                     root / "telemetry"
-                    / f"cgdiag_g{label}_{cell['cell_id']}.jsonl"
+                    / f"cgdiag_g{label}_b{block_min}_{cell['cell_id']}.jsonl"
                 ),
                 "progress_dir": None,
                 "snapshot_minutes": [

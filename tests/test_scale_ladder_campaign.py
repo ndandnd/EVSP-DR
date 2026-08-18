@@ -1,6 +1,9 @@
 import csv
+import ctypes
+import errno
 import hashlib
 import json
+import os
 import sys
 import subprocess
 import tempfile
@@ -27,6 +30,7 @@ from summarize_scale_ladder import (  # noqa: E402
     _validate_completion,
     summarize,
     target_gap_interpretation,
+    _rename_noreplace,
 )
 from audit_scale_ladder_known_membership import audit  # noqa: E402
 from recover_scale_ladder_mip_progress import recover  # noqa: E402
@@ -39,6 +43,66 @@ INSTANCE_MANIFEST = (
 
 
 class ScaleLadderCampaignTests(unittest.TestCase):
+    def test_atomic_summary_publication_and_no_clobber(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "source"
+            target = root / "target"
+            source.mkdir()
+            (source / "value.txt").write_text("new")
+            _rename_noreplace(source, target)
+            self.assertFalse(source.exists())
+            self.assertEqual((target / "value.txt").read_text(), "new")
+
+            second = root / "second"
+            second.mkdir()
+            with self.assertRaises(FileExistsError):
+                _rename_noreplace(second, target)
+            self.assertTrue(second.exists())
+            self.assertEqual((target / "value.txt").read_text(), "new")
+
+    def test_darwin_renamex_dispatch_and_unsupported_platform(self):
+        class FakeFunction:
+            argtypes = None
+            restype = None
+
+            def __call__(self, source, target, flags):
+                self.flags = flags
+                source_path = Path(os.fsdecode(source))
+                target_path = Path(os.fsdecode(target))
+                try:
+                    os.link(source_path, target_path)
+                except FileExistsError:
+                    ctypes.set_errno(errno.EEXIST)
+                    return -1
+                source_path.unlink()
+                return 0
+
+        class FakeLib:
+            renamex_np = FakeFunction()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source"
+            target = Path(tmp) / "target"
+            source.write_text("value")
+            fake = FakeLib()
+            _rename_noreplace(
+                source, target, platform="darwin", libc=fake
+            )
+            self.assertEqual(fake.renamex_np.flags, 0x00000004)
+            self.assertEqual(target.read_text(), "value")
+            another = Path(tmp) / "another"
+            another.write_text("other")
+            with self.assertRaises(FileExistsError):
+                _rename_noreplace(
+                    another, target, platform="darwin", libc=fake
+                )
+            with self.assertRaisesRegex(OSError, "unsupported"):
+                _rename_noreplace(
+                    another, Path(tmp) / "x",
+                    platform="freebsd", libc=fake,
+                )
+
     def test_manifest_has_exact_cells_and_identity_domains(self):
         with INSTANCE_MANIFEST.open(newline="") as handle:
             rows = list(csv.DictReader(handle))
@@ -147,17 +211,17 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             plan = ladder.build_plan(
                 "ladder-test", Path(sys.executable), Path("/tmp/reservations")
             )
-        self.assertEqual(plan["task_count"], 135)
+        self.assertEqual(plan["task_count"], 138)
         self.assertEqual(plan["preflight_task_count"], 22)
         self.assertEqual(plan["cg_task_count"], 23)
-        self.assertEqual(plan["sensitivity_cg_task_count"], 27)
+        self.assertEqual(plan["sensitivity_cg_task_count"], 30)
         self.assertEqual(plan["mip_task_count"], 42)
         self.assertEqual(plan["k40_mip_submission_count"], 0)
         self.assertEqual(
             {key: len(value) for key, value in plan["task_groups"].items()},
             {
                 "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-                "CG_SENSITIVITY": 27,
+                "CG_SENSITIVITY": 30,
                 "MIP_RAW": 21, "MIP_KNOWN": 21,
             },
         )
@@ -178,6 +242,16 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         )
         self.assertNotIn("alpha", json.dumps(plan).lower())
         self.assertEqual(len(plan["k40_reuse_slots"]), 4)
+        fallback = [
+            job for job in plan["jobs"]
+            if job["phase"] == "CG_SENSITIVITY"
+            and job["soc_step"] == 1.0 and job["block_min"] == 5
+        ]
+        self.assertEqual(len(fallback), 3)
+        self.assertTrue(all(
+            job["scale"] == 2 and job["diagnostic_only"] is True
+            for job in fallback
+        ))
         self.assertTrue(all(
             job["telemetry"] is None
             for job in plan["jobs"]
@@ -532,6 +606,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             )
             self.assertEqual(row["censored"], "True")
             self.assertEqual(sensitivity["soc_step"], "5.0")
+            self.assertEqual(
+                sensitivity["grid_interpretation"],
+                "route_space_sensitivity_diagnostic",
+            )
             self.assertEqual(row["trip_identity_schema"],
                              "evsp-dr-trip-identity-v1")
             self.assertNotIn("trip_set_sha256", CG_FIELDS)

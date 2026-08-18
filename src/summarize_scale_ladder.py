@@ -12,6 +12,7 @@ import json
 import math
 import os
 import shutil
+import sys
 import tempfile
 from collections import defaultdict
 from pathlib import Path
@@ -34,6 +35,7 @@ CG_FIELDS = (
     "route_weight", "artificial_mass", "min_reduced_cost",
     "pool_columns", "columns_added", "master_time_s", "pricing_time_s",
     "phase_timing_available", "phase_timing_unavailable_reason",
+    "target_reached", "grid_interpretation",
     "pricing_certified", "stopping_reason", "censored",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
@@ -49,6 +51,7 @@ CG_SUMMARY_FIELDS = (
     "stopping_reason", "time_to_target_route_weight_s",
     "time_to_zero_artificials_s", "censored",
     "phase_timing_available", "phase_timing_unavailable_reason",
+    "target_reached", "grid_interpretation",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
     "trip_identity_schema",
@@ -341,6 +344,20 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                     if job.get("telemetry") is None
                     else "phase_event_missing"
                 ),
+                "target_reached": (
+                    float(raw["artificials"]) <= 1e-9
+                    and float(raw["route_weight"])
+                    <= float(job["target_fleet"]) + 1e-6
+                ),
+                "grid_interpretation": (
+                    "primary_discretized_route_space"
+                    if job["phase"] == "CG"
+                    else
+                    "known_duties_contained_fallback_grid"
+                    if job["soc_step"] == 1.0
+                    and job["block_min"] == 5
+                    else "route_space_sensitivity_diagnostic"
+                ),
                 "pricing_certified": (
                     status.get("certified_rc_optimal") is True
                     and raw is rows[-1]
@@ -410,6 +427,21 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                 else "telemetry_disabled_for_long_run"
                 if job.get("telemetry") is None
                 else "phase_event_missing"
+            ),
+            "target_reached": (
+                final is not None
+                and final["artificial_mass"] <= 1e-9
+                and final["route_weight"]
+                <= float(job["target_fleet"]) + 1e-6
+            ),
+            "grid_interpretation": (
+                "primary_discretized_route_space"
+                if job["phase"] == "CG"
+                else
+                "known_duties_contained_fallback_grid"
+                if job["soc_step"] == 1.0
+                and job["block_min"] == 5
+                else "route_space_sensitivity_diagnostic"
             ),
             **{
                 field: identities[field] for field in identities
@@ -1174,6 +1206,46 @@ def _plots(staging, cg_rows, mip_rows):
         },
     )
     plt.close(fig)
+    sensitivity_groups = defaultdict(list)
+    for row in cg_rows:
+        if row.get("campaign_role") != "small_grid_sensitivity":
+            continue
+        sensitivity_groups[(
+            row["cell_id"], row["soc_step"], row["block_min"]
+        )].append(row)
+    if sensitivity_groups:
+        fig, ax = plt.subplots(figsize=(11, 5.5))
+        for key, rows in sorted(sensitivity_groups.items()):
+            rows.sort(key=lambda row: row["elapsed_s"])
+            ax.plot(
+                [row["elapsed_s"] / 3600 for row in rows],
+                [row["route_weight"] for row in rows],
+                label=f"{key[0]} g{key[1]} b{key[2]}",
+                linewidth=0.8,
+            )
+        ax.set(
+            xlabel="Diagnostic CG elapsed hours",
+            ylabel="LP route weight",
+            title=(
+                "Route-space sensitivity diagnostics "
+                "(excluded from primary-grid comparison)"
+            ),
+        )
+        ax.legend(fontsize=5, ncol=3)
+        fig.tight_layout()
+        fig.savefig(
+            staging / "cg_sensitivity_route_weight.png",
+            dpi=170, metadata={"Software": "EVSP-DR"},
+        )
+        fig.savefig(
+            staging / "cg_sensitivity_route_weight.pdf",
+            metadata={
+                "Creator": "EVSP-DR",
+                "CreationDate": None,
+                "ModDate": None,
+            },
+        )
+        plt.close(fig)
     fig, ax = plt.subplots(figsize=(10, 5))
     groups = defaultdict(list)
     for row in mip_rows:
@@ -1214,19 +1286,37 @@ def _plots(staging, cg_rows, mip_rows):
     plt.close(fig)
 
 
-def _rename_noreplace(source, target):
-    libc = ctypes.CDLL(None, use_errno=True)
-    function = getattr(libc, "renameat2", None)
-    if function is None:
-        raise OSError("renameat2 unavailable")
-    function.argtypes = [
-        ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
-        ctypes.c_uint,
-    ]
-    function.restype = ctypes.c_int
-    if function(
-        -100, os.fsencode(source), -100, os.fsencode(target), 1
-    ) != 0:
+def _rename_noreplace(source, target, *, platform=None, libc=None):
+    """Atomically rename without replacement on Linux or Darwin."""
+
+    platform = platform or sys.platform
+    libc = libc or ctypes.CDLL(None, use_errno=True)
+    if platform.startswith("linux"):
+        function = getattr(libc, "renameat2", None)
+        if function is None:
+            raise OSError("renameat2(RENAME_NOREPLACE) unavailable")
+        function.argtypes = [
+            ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p,
+            ctypes.c_uint,
+        ]
+        function.restype = ctypes.c_int
+        result = function(
+            -100, os.fsencode(source), -100, os.fsencode(target), 1
+        )
+    elif platform == "darwin":
+        function = getattr(libc, "renamex_np", None)
+        if function is None:
+            raise OSError("renamex_np(RENAME_EXCL) unavailable")
+        function.argtypes = [
+            ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint,
+        ]
+        function.restype = ctypes.c_int
+        result = function(
+            os.fsencode(source), os.fsencode(target), 0x00000004
+        )
+    else:
+        raise OSError(f"atomic no-clobber rename unsupported: {platform}")
+    if result != 0:
         error = ctypes.get_errno()
         if error == errno.EEXIST:
             raise FileExistsError(target)

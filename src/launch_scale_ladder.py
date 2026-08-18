@@ -51,6 +51,7 @@ CODE_PATHS = (
     "src/audit_giro_known_columns.py",
     "src/tariff_response_core.py",
     "src/fixed_duty_expanded_optimizer.py",
+    "src/rerealize_routes.py",
     "src/mip_convergence.py",
     "src/exact_cg_telemetry.py",
     "src/master_lp_scipy.py",
@@ -144,9 +145,13 @@ def _name(job, nonce):
     )
     grid = ""
     if job["phase"] == "CG_SENSITIVITY":
-        grid = {
-            5.0: "5", 2.5: "25", 1.0: "1",
-        }[float(job.get("soc_step", 15.0))]
+        grid = (
+            "1B5" if float(job.get("soc_step")) == 1.0
+            and int(job.get("block_min")) == 5
+            else {
+                5.0: "5", 2.5: "25", 1.0: "1",
+            }[float(job.get("soc_step", 15.0))]
+        )
     name = f"L{scale:02d}R{replicate}{code}{grid}{nonce}"
     if len(name) > 15:
         raise ValueError("Slurm job name too long")
@@ -288,20 +293,32 @@ def build_plan(campaign, python, reservation_root):
             cell["scale"], cell["selection_replicate"]
         )]
         if membership["known_partition_in_primary_expanded_space"] is True:
-            sensitivity_steps = ()
+            sensitivity_grids = ()
         else:
             first = membership.get("first_feasible_soc_step")
-            sensitivity_steps = (
-                (5.0,) if first == 5.0
-                else (5.0, 2.5) if first == 2.5
-                else (5.0, 2.5, 1.0)
+            sensitivity_grids = (
+                ((5.0, 10),) if first == 5.0
+                else ((5.0, 10), (2.5, 10)) if first == 2.5
+                else ((5.0, 10), (2.5, 10), (1.0, 10))
             )
-        for soc_step in sensitivity_steps:
+            if (
+                cell["scale"] == 2
+                and first == 1.0
+                and membership.get("first_feasible_block_min") == 5
+            ):
+                sensitivity_grids = (
+                    *sensitivity_grids, (1.0, 5),
+                )
+        for soc_step, diagnostic_block_min in sensitivity_grids:
             label = str(soc_step).replace(".", "p")
-            key = f"cgdiag_g{label}_{cell['cell_id']}"
+            key = (
+                f"cgdiag_g{label}_b{diagnostic_block_min}_"
+                f"{cell['cell_id']}"
+            )
             job = _job(
                 root, cell, key, "CG_SENSITIVITY", None, nonce,
                 diagnostic_soc_step=soc_step,
+                diagnostic_block_min=diagnostic_block_min,
             )
             job["diagnostic_only"] = True
             job["dependency_preflight"] = preflight_key_by_cell[(
@@ -382,7 +399,7 @@ def build_plan(campaign, python, reservation_root):
     }
     if {key: len(value) for key, value in groups.items()} != {
         "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-        "CG_SENSITIVITY": 27, "MIP_RAW": 21, "MIP_KNOWN": 21,
+        "CG_SENSITIVITY": 30, "MIP_RAW": 21, "MIP_KNOWN": 21,
     }:
         raise ValueError("task group counts differ")
     reuse_slots = [
@@ -475,7 +492,7 @@ def build_plan(campaign, python, reservation_root):
         "task_count": sum(map(len, groups.values())),
         "preflight_task_count": 22,
         "cg_task_count": 23,
-        "sensitivity_cg_task_count": 27,
+        "sensitivity_cg_task_count": 30,
         "mip_task_count": 42,
         "seed_task_count": 21,
         "k40_mip_submission_count": 0,
@@ -484,7 +501,8 @@ def build_plan(campaign, python, reservation_root):
 
 
 def _job(
-    root, cell, key, phase, arm, nonce, *, diagnostic_soc_step=None
+    root, cell, key, phase, arm, nonce, *,
+    diagnostic_soc_step=None, diagnostic_block_min=None,
 ):
     scale = cell["scale"]
     budget = (
@@ -511,7 +529,10 @@ def _job(
             float(diagnostic_soc_step)
             if diagnostic_soc_step is not None else 15.0
         ),
-        "block_min": 10,
+        "block_min": (
+            int(diagnostic_block_min)
+            if diagnostic_block_min is not None else 10
+        ),
         "snapshot_minutes": marks,
         "partition": (
             "scaglione" if phase == "MIP" else "default_partition"
@@ -848,7 +869,7 @@ def main(argv=None):
         print(
             f"[dry-run] tasks={plan['task_count']} "
             "PREFLIGHT=22 SEED=21 PRIMARY_CG=23 "
-            "SENSITIVITY_CG=27 MIP=42 k40_MIP=0"
+            "SENSITIVITY_CG=30 MIP=42 k40_MIP=0"
         )
         return 0
     if args.approved_plan_sha256 != plan_sha:
