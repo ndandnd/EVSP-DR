@@ -53,6 +53,9 @@ from tariff_response_core import (  # noqa: E402
 
 
 TARIFF_MANIFEST = REPO_ROOT / "data/tariff_response/tariff_manifest.csv"
+GIRO_DUTY_MANIFEST = (
+    REPO_ROOT / "data/tariff_response/giro40_duty_manifest.csv"
+)
 
 
 def toy_problem(*, boundary=False):
@@ -132,6 +135,14 @@ class TariffResponseExperimentTests(unittest.TestCase):
         self.assertTrue(all(
             int(row["coverage_end_hour"]) == 26 for row in self.tariffs
         ))
+        with GIRO_DUTY_MANIFEST.open(newline="") as handle:
+            duty_rows = list(csv.DictReader(handle))
+        self.assertEqual(len(duty_rows), 40)
+        self.assertEqual(
+            {row["duty_id"] for row in duty_rows}
+            & {"13316m", "13324muw"},
+            set(),
+        )
 
     def test_giro_original_is_exact_and_ambiguous_costs_stay_null(self):
         original = reconstruct_giro40_original(

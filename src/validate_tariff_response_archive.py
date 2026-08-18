@@ -128,6 +128,9 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     staged_master = root / "input/source/Par_VehicleDetails_Updated.csv"
     if sha(staged_master) != plan["giro_master"]["sha256"]:
         raise ValueError("staged GIRO master hash mismatch")
+    staged_duties = root / "input/source/giro40_duty_manifest.csv"
+    if sha(staged_duties) != plan["giro40_duty_manifest"]["sha256"]:
+        raise ValueError("staged GIRO40 duty manifest hash mismatch")
 
     for job in selected.values():
         instance = relocated(

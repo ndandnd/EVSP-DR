@@ -613,21 +613,24 @@ def assemble(campaign_root, output_manifest, evidence_output):
                 "path": str(seed_path),
                 "sha256": sha256_file(seed_path),
             })
+    fixed_duty_manifest = (
+        Path(plan["campaign_root"])
+        / "outputs/fixed_full_giro40_all_tariffs"
+        / "giro40_duty_manifest.csv"
+    )
+    if sha256_file(fixed_duty_manifest) != plan[
+        "giro40_duty_manifest"
+    ]["sha256"]:
+        raise ValueError("runtime GIRO40 duty manifest differs from reviewed")
     experiment = {
         "schema": SCHEMA,
         "synthetic": False,
         "physics": PHYSICS,
         "tariff_manifest": plan["tariff_manifest"],
         "tariff_manifest_sha256": plan["tariff_manifest_sha256"],
-        "giro40_duty_manifest": str(
-            Path(plan["campaign_root"])
-            / "outputs/fixed_full_giro40_all_tariffs"
-            / "giro40_duty_manifest.csv"
-        ),
+        "giro40_duty_manifest": str(fixed_duty_manifest),
         "giro40_duty_manifest_sha256": sha256_file(
-            Path(plan["campaign_root"])
-            / "outputs/fixed_full_giro40_all_tariffs"
-            / "giro40_duty_manifest.csv"
+            fixed_duty_manifest
         ),
         "cells": cells,
         "campaign_provenance": {

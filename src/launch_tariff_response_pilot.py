@@ -48,6 +48,7 @@ CODE_PATHS = (
     "src/assemble_tariff_response_campaign.py",
     "src/validate_tariff_response_archive.py",
     "src/reconcile_tariff_response_gate.py",
+    "src/build_giro40_duty_manifest.py",
 )
 MATRIX_FIELDS = (
     "job_key", "phase", "scale", "tariff_id", "treatment",
@@ -421,6 +422,15 @@ def build_plan(
                 REPO_ROOT / "data/Par_VehicleDetails_Updated.csv"
             ),
         },
+        "giro40_duty_manifest": {
+            "path": str(
+                REPO_ROOT / "data/tariff_response/giro40_duty_manifest.csv"
+            ),
+            "sha256": sha256_file(
+                REPO_ROOT
+                / "data/tariff_response/giro40_duty_manifest.csv"
+            ),
+        },
         "instances": instances,
         "reservation_root": str(reservation_root.expanduser().resolve()),
         "worker": str(WORKER),
@@ -522,6 +532,11 @@ def submit(plan, plan_sha, *, k40_preparation):
         Path(plan["giro_master"]["path"]),
         root / "input/source/Par_VehicleDetails_Updated.csv",
         plan["giro_master"]["sha256"],
+    )
+    _copy_new(
+        Path(plan["giro40_duty_manifest"]["path"]),
+        root / "input/source/giro40_duty_manifest.csv",
+        plan["giro40_duty_manifest"]["sha256"],
     )
     tariff_input = root / "input/tariffs"
     _copy_new(
