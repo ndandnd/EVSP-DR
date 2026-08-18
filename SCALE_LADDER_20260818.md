@@ -113,6 +113,8 @@ If accounting still shows `PENDING` and bound `scontrol` proves
 it once more after `sacct` records the gate as `COMPLETED`. For an
 accepted-but-unrecorded array, the reconciliation command first reconstructs
 all four array IDs from their plan/group-specific `squeue` comments.
+If one or more arrays were never accepted, first rerun the reconciliation
+command with `--resume-missing-arrays` while the gate remains held.
 
 ## Normalize completed outputs
 

@@ -9,10 +9,14 @@ import json
 import subprocess
 from pathlib import Path
 
-from launch_scale_ladder import _replace_json
+from launch_scale_ladder import _replace_json, _sbatch, _submit_array
 
 
-def reconcile(root, expected_plan_sha, *, release_held_gate=False):
+def reconcile(
+    root, expected_plan_sha, *,
+    release_held_gate=False,
+    resume_missing_arrays=False,
+):
     root = Path(root).resolve()
     plan_raw = (root / "approved-plan.json").read_bytes()
     if hashlib.sha256(plan_raw).hexdigest() != expected_plan_sha:
@@ -42,32 +46,97 @@ def reconcile(root, expected_plan_sha, *, release_held_gate=False):
         ):
             raise ValueError("approved squeue unavailable/changed")
         listed = subprocess.run(
-            [str(squeue_path), "-h", "-o", "%A|%k"],
+            [str(squeue_path), "-h", "-o", "%F|%k"],
             text=True, capture_output=True, check=False,
         )
         if listed.returncode != 0:
             raise RuntimeError("cannot query squeue")
         prefix = f"SLAD:{expected_plan_sha[:20]}:"
+        gate_comment = f"SLADG:{expected_plan_sha[:20]}"
         discovered = {}
+        discovered_gate = None
         for line in listed.stdout.splitlines():
             fields = line.split("|", 1)
-            if len(fields) != 2 or not fields[1].startswith(prefix):
+            if len(fields) != 2:
+                continue
+            if fields[1] == gate_comment:
+                if discovered_gate and discovered_gate != fields[0]:
+                    raise ValueError("multiple gates share one plan comment")
+                discovered_gate = fields[0]
+                continue
+            if not fields[1].startswith(prefix):
                 continue
             group = fields[1][len(prefix):]
             if group in discovered and discovered[group] != fields[0]:
                 raise ValueError("multiple arrays share one plan/group comment")
             discovered[group] = fields[0]
-        combined = {
-            **(manifest.get("submitted_arrays") or {}),
-            **discovered,
-        }
-        if set(combined) != {"SEED", "CG", "MIP_RAW", "MIP_KNOWN"}:
-            raise ValueError("could not reconstruct every accepted array")
+        recorded = manifest.get("submitted_arrays") or {}
+        for group, job_id in discovered.items():
+            if group in recorded and str(recorded[group]) != str(job_id):
+                raise ValueError("recorded/discovered array ID conflict")
+        combined = {**discovered, **recorded}
         if any(not str(value).isdigit() for value in combined.values()):
             raise ValueError("reconstructed array ID is invalid")
         manifest["submitted_arrays"] = combined
-        manifest["gate_state"] = "held"
+        if discovered_gate:
+            recorded_gate = manifest.get("gate_job_id")
+            if recorded_gate and str(recorded_gate) != str(discovered_gate):
+                raise ValueError("recorded/discovered gate ID conflict")
+            manifest["gate_job_id"] = discovered_gate
+        gate_for_resume = manifest.get("gate_job_id")
+        required_groups = ("SEED", "CG", "MIP_RAW", "MIP_KNOWN")
+        missing_groups = [
+            group for group in required_groups if group not in combined
+        ]
+        if missing_groups and resume_missing_arrays:
+            if not str(gate_for_resume or "").isdigit():
+                gate_for_resume = _sbatch(plan, [
+                    "--hold", "--partition=default_partition",
+                    "--time=00:05:00",
+                    f"--job-name=LDG{expected_plan_sha[:5]}",
+                    f"--comment=SLADG:{expected_plan_sha[:20]}",
+                    f"--output={root / 'logs'}/gate_%j.out",
+                    f"--error={root / 'logs'}/gate_%j.err",
+                    "--export=NONE", "--wrap=/bin/true",
+                ])
+            if not str(gate_for_resume or "").isdigit():
+                raise ValueError("cannot resume arrays without a proven gate")
+            logs = root / "logs"
+            for group in required_groups:
+                if group in combined:
+                    continue
+                dependency = None
+                if group == "MIP_RAW":
+                    dependency = f"aftercorr:{combined['CG']}"
+                elif group == "MIP_KNOWN":
+                    dependency = (
+                        f"aftercorr:{combined['CG']}:{combined['SEED']}"
+                    )
+                combined[group] = _submit_array(
+                    plan,
+                    root / "approved-plan.json",
+                    expected_plan_sha,
+                    group,
+                    str(gate_for_resume),
+                    logs,
+                    dependency=dependency,
+                )
+                manifest["submitted_arrays"] = dict(combined)
+                manifest["gate_job_id"] = str(gate_for_resume)
+                manifest["gate_state"] = "held"
+                _replace_json(manifest_path, manifest)
+            missing_groups = []
+        manifest["submitted_arrays"] = combined
+        manifest["gate_state"] = (
+            "held" if not missing_groups
+            else "held_after_partial_submission"
+        )
         _replace_json(manifest_path, manifest)
+        if missing_groups:
+            raise ValueError(
+                "accepted arrays reconstructed; rerun with "
+                "--resume-missing-arrays"
+            )
     if (
         manifest.get("approval_sha256") != expected_plan_sha
         or manifest.get("gate_state")
@@ -145,11 +214,13 @@ def main(argv=None):
     parser.add_argument("--campaign-root", type=Path, required=True)
     parser.add_argument("--approved-plan-sha256", required=True)
     parser.add_argument("--release-held-gate", action="store_true")
+    parser.add_argument("--resume-missing-arrays", action="store_true")
     args = parser.parse_args(argv)
     payload = reconcile(
         args.campaign_root,
         args.approved_plan_sha256,
         release_held_gate=args.release_held_gate,
+        resume_missing_arrays=args.resume_missing_arrays,
     )
     print(f"LADDER GATE STATE: {payload['gate_state']}")
     return 0

@@ -52,6 +52,7 @@ CODE_PATHS = (
     "src/config.py",
     "src/tariff_response_environment.py",
     "src/reconcile_scale_ladder_gate.py",
+    "src/recover_scale_ladder_mip_progress.py",
 )
 CG_BUDGET_S = {
     2: 7200, 3: 7200, 5: 7200,
@@ -313,6 +314,14 @@ def build_plan(campaign, python, reservation_root):
             "required_mip_gap": 1e-4,
             "required_threads": 8,
             "required_gurobi_seed": 0,
+            "required_known_partition_sha256": (
+                "8f9944f93f26cf0121e9ecab2fa412d573e90a0189b7a38008d3b2535f54d428"
+                if arm == "KNOWN-PARTITION" else None
+            ),
+            "required_reference_sha256":
+                "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+            "required_deadhead_sha256":
+                "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
         }
         for cell in k40
         for arm in ("RAW", "KNOWN-PARTITION")
@@ -528,6 +537,7 @@ def submit(plan, plan_sha):
     gate = _sbatch(plan, [
         "--hold", "--partition=default_partition", "--time=00:05:00",
         f"--job-name=LDG{plan_sha[:5]}",
+        f"--comment=SLADG:{plan_sha[:20]}",
         f"--output={logs}/gate_%j.out",
         f"--error={logs}/gate_%j.err",
         "--export=NONE",

@@ -138,10 +138,17 @@ PY
 
 RECOVER_ONLY=0
 if [[ "$PHASE" == "MIP" && ! -e "$OUTPUT" && -d "$PROGRESS" && \
-      -s "$PROGRESS/final.json" && -s "$PROGRESS/result_pending.json" ]]; then
-  ln "$PROGRESS/result_pending.json" "$OUTPUT" \
-    || fatal "could not recover published MIP result"
-  RECOVER_ONLY=1
+      -s "$PROGRESS/result_pending.json" ]]; then
+  if [[ ! -s "$PROGRESS/final.json" ]]; then
+    "$PYTHON" -B "$ROOT/src/recover_scale_ladder_mip_progress.py" \
+      --progress-dir "$PROGRESS" \
+      || fatal "could not recover censored MIP progress"
+  fi
+  if [[ -s "$PROGRESS/final.json" ]]; then
+    ln "$PROGRESS/result_pending.json" "$OUTPUT" \
+      || fatal "could not recover published MIP result"
+    RECOVER_ONLY=1
+  fi
 fi
 if [[ "$PHASE" == "CG" ]]; then
   [[ ! -e "$OUTPUT.worker-completion.json" ]] \

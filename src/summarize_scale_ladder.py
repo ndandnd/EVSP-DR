@@ -21,6 +21,10 @@ from scale_ladder_trip_identity import (
     classify_legacy_trip_hash,
     identity,
 )
+from expanded_path_realization import (
+    BLOCK_SCHEDULE_SCHEMA,
+    charging_block_schedule_sha256,
+)
 
 
 CG_FIELDS = (
@@ -536,8 +540,43 @@ def _append_k40_rows(
                 if completion["schema"] == (
                     "evsp-dr-mip-worker-completion-v2"
                 ):
-                    if completion.get("result_sha256") != row["result_sha256"]:
+                    progress_hashes = completion.get(
+                        "progress_artifact_sha256"
+                    ) or {}
+                    expected_completion_arm = (
+                        "RAW" if slot["arm"] == "RAW"
+                        else "GIRO40-AUGMENTED"
+                    )
+                    if (
+                        completion.get("result_sha256")
+                        != row["result_sha256"]
+                        or completion.get("source_result_sha256")
+                        != candidate.get("source_result_sha256")
+                        or completion.get("source_journal_sha256")
+                        != candidate.get("source_journal_sha256")
+                        or completion.get("arm") != expected_completion_arm
+                        or completion.get(
+                            "result_and_progress_validation_passed"
+                        ) is not True
+                        or not progress_hashes
+                    ):
                         raise ValueError("producer completion omits result")
+                    for artifact, digest in progress_hashes.items():
+                        artifact_path = Path(artifact)
+                        if (
+                            not artifact_path.is_file()
+                            or sha256_file(artifact_path) != digest
+                        ):
+                            raise ValueError(
+                                "producer progress artifact changed"
+                            )
+                    progress_set = hashlib.sha256(json.dumps(
+                        progress_hashes,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                    ).encode()).hexdigest()
+                    if completion.get("progress_set_sha256") != progress_set:
+                        raise ValueError("producer progress set mismatch")
                 else:
                     completion_hashes = completion.get(
                         "artifact_sha256"
@@ -568,6 +607,8 @@ def _append_k40_rows(
                         not known_path.is_file()
                         or sha256_file(known_path)
                         != row["known_partition_sha256"]
+                        or row["known_partition_sha256"]
+                        != slot["required_known_partition_sha256"]
                     ):
                         raise ValueError("known partition artifact mismatch")
                     known_partition_sha = row["known_partition_sha256"]
@@ -587,6 +628,25 @@ def _append_k40_rows(
                         )
                     )
                 )
+                valid_selected_physical = all(
+                    isinstance(
+                        route.get("continuous_realized_charging_blocks"),
+                        list,
+                    )
+                    and charging_block_schedule_sha256(
+                        route["continuous_realized_charging_blocks"]
+                    ) == (
+                        route.get("physical_realization") or {}
+                    ).get(
+                        "continuous_realized_charging_blocks_sha256"
+                    )
+                    and (
+                        route.get("physical_realization") or {}
+                    ).get(
+                        "continuous_realized_charging_blocks_schema"
+                    ) == BLOCK_SCHEDULE_SCHEMA
+                    for route in selected_routes
+                )
                 if (
                     candidate.get("partitioning") is not True
                     or candidate.get("experiment_arm")
@@ -605,6 +665,15 @@ def _append_k40_rows(
                     or (physical.get("input_hashes") or {}).get(
                         "prices_sha256"
                     ) != slot["required_tariff_sha256"]
+                    or (physical.get("input_hashes") or {}).get(
+                        "reference_sha256"
+                    ) != slot["required_reference_sha256"]
+                    or (physical.get("input_hashes") or {}).get(
+                        "deadhead_sha256"
+                    ) != slot["required_deadhead_sha256"]
+                    or int(physical.get("rejected_columns", -1)) != 0
+                    or int(physical.get("accepted_columns", -1))
+                    != int(physical.get("total_columns", -2))
                     or (candidate.get("physics") or {}).get("g_kwh")
                     != 300.0
                     or (candidate.get("physics") or {}).get("charge_kw")
@@ -635,6 +704,7 @@ def _append_k40_rows(
                     or int(gurobi_parameters.get("Seed", -1))
                     != slot["required_gurobi_seed"]
                     or not valid_selected_partition
+                    or not valid_selected_physical
                     or (
                         slot["arm"] == "RAW"
                         and (

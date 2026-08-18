@@ -26,6 +26,7 @@ from summarize_scale_ladder import (  # noqa: E402
     _validate_completion,
     summarize,
 )
+from recover_scale_ladder_mip_progress import recover  # noqa: E402
 
 
 INSTANCE_MANIFEST = (
@@ -411,6 +412,37 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 json.dumps(completion)
             )
             _validate_completion(job, "p" * 64)
+
+    def test_pending_mip_result_recovers_only_censored_progress(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            progress = Path(tmp)
+            (progress / "result_pending.json").write_text(json.dumps({
+                "status": 9, "status_name": "TIME_LIMIT",
+                "incumbent_found": True, "buses": 3,
+                "mip_obj": 300000.0, "mip_bound": 200000.0,
+                "mip_gap": 0.5, "fleet_proven": False,
+                "optimal_scope": "none", "runtime_s": 100.0,
+                "progress": {
+                    "checkpoint_schedule_s": [0.0, 60.0, 300.0],
+                    "termination_signal": "SIGUSR1",
+                },
+            }))
+            (progress / "latest.json").write_text(json.dumps({
+                "schema": "evsp-dr-mip-convergence-v1",
+                "kind": "latest",
+                "incumbent": {
+                    "fleet": 3, "route_vector_sha256": "a" * 64,
+                },
+                "latest_statistics": {"fleet_bound": 2.0},
+            }))
+            (progress / "checkpoint_0000m.json").write_text("{}")
+            recover(progress)
+            self.assertTrue((progress / "final.json").is_file())
+            recovered = json.loads(
+                (progress / "checkpoint_0005m.json").read_text()
+            )
+            self.assertTrue(recovered["solver_ended_before_checkpoint"])
+            self.assertTrue(recovered["recovery"]["observational_only"])
 
 
 if __name__ == "__main__":
