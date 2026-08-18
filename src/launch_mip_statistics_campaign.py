@@ -60,6 +60,17 @@ DEFAULT_ROOTS = {
 }
 
 RAW_K40_BUDGET_HOURS = 8
+RAW_K40_SMOKE_BUDGET_HOURS = 0.5
+RAW_K40_PHYSICAL_COMMIT = (
+    "e2b6939b5a5af7033acabec033f6b3d8dde3af4c"
+)
+RAW_K40_PHYSICAL_CODE_HASHES = {
+    "src/run_exact_pool_mip.py":
+        "53da4c800d411b657e7a44d1860c01907843a4c43fa00cc34189e75e1ddce6f0",
+    "src/expanded_path_realization.py":
+        "90764e1b7c17a23580b9c1ffcdffc44a8b9b4f16b6025765cec5ddd0e3a3a91a",
+}
+RAW_K40_MODES = {"raw_k40", "raw_k40_smoke"}
 RAW_K40_INSTANCE_SHA256 = (
     "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 )
@@ -271,6 +282,10 @@ def resolve_raw_k40_candidates(
     assignments: dict[str, Path],
     *,
     data_roots: list[Path],
+    enforce_frozen_path: bool = True,
+    expected_status_sha256: dict[str, str] | None = None,
+    journal_assignments: dict[str, Path] | None = None,
+    expected_journal_sha256: dict[str, str] | None = None,
 ) -> dict[str, dict]:
     """Validate the four explicit, non-GIRO k40 factorial snapshots."""
 
@@ -282,6 +297,31 @@ def resolve_raw_k40_candidates(
             "raw-k40 requires exactly R1_CA,R1_CS,R2_CA,R2_CS; "
             f"missing={missing}, extra={extra}"
         )
+    for label, values in (
+        ("status SHA-256", expected_status_sha256),
+        ("journal paths", journal_assignments),
+        ("journal SHA-256", expected_journal_sha256),
+    ):
+        if values is not None and set(values) != expected_labels:
+            raise ValueError(
+                f"raw-k40 {label} require exactly "
+                "R1_CA,R1_CS,R2_CA,R2_CS"
+            )
+    if journal_assignments is not None:
+        journal_paths = [
+            path.expanduser().resolve()
+            for path in journal_assignments.values()
+        ]
+        if len(journal_paths) != len(set(journal_paths)):
+            raise ValueError("raw-k40 journal paths must be distinct")
+    for values in (
+        expected_status_sha256, expected_journal_sha256
+    ):
+        if values is not None and any(
+            not re.fullmatch(r"[0-9a-f]{64}", digest)
+            for digest in values.values()
+        ):
+            raise ValueError("raw-k40 expected SHA-256 is malformed")
     resolved_paths = [
         path.expanduser().resolve() for path in assignments.values()
     ]
@@ -291,7 +331,7 @@ def resolve_raw_k40_candidates(
     selected = {}
     for label, spec in RAW_K40_SPECS.items():
         path = assignments[label].expanduser().resolve()
-        if (
+        if enforce_frozen_path and (
             path.name != spec["filename"]
             or path.parent.name != spec["campaign"]
         ):
@@ -344,6 +384,24 @@ def resolve_raw_k40_candidates(
         ):
             raise ValueError(f"{label} does not match the frozen raw-k40 cell")
         candidate = dict(candidate)
+        if (
+            expected_status_sha256 is not None
+            and candidate.get("status_sha256")
+            != expected_status_sha256.get(label)
+        ):
+            raise ValueError(f"{label} status SHA-256 mismatch")
+        if journal_assignments is not None:
+            expected_journal_path = (
+                journal_assignments[label].expanduser().resolve()
+            )
+            if Path(candidate["journal_path"]).resolve() != expected_journal_path:
+                raise ValueError(f"{label} journal path mismatch")
+        if (
+            expected_journal_sha256 is not None
+            and candidate.get("journal_sha256")
+            != expected_journal_sha256.get(label)
+        ):
+            raise ValueError(f"{label} journal SHA-256 mismatch")
         candidate["inventory_replicate"] = candidate.get("replicate")
         candidate["replicate"] = spec["replicate"]
         candidate["raw_k40_label"] = label
@@ -498,12 +556,16 @@ def _rep_code(value: str) -> str:
 
 
 def _job_name(job, campaign: str) -> str:
-    if job.get("matrix") == "raw_k40":
+    if job.get("matrix") in RAW_K40_MODES:
         label = str(job["source"]["raw_k40_label"]).replace("_", "")
         nonce = hashlib.sha256(
             f"{campaign}|{job['cell_id']}".encode()
         ).hexdigest()[:2].upper()
-        name = f"RK40{label}8H{nonce}"
+        budget = (
+            "30M" if job.get("matrix") == "raw_k40_smoke"
+            else "8H"
+        )
+        name = f"RK40{label}{budget}{nonce}"
         if len(name) > 15:
             raise ValueError(f"Slurm name exceeds 15 characters: {name}")
         return name
@@ -578,7 +640,7 @@ def _job_from_candidate(
                 start = _validated_start(start_path, candidate)
             except (OSError, ValueError) as exc:
                 blocked.append(f"validated_giro_start_invalid: {exc}")
-    if matrix == "raw_k40":
+    if matrix in RAW_K40_MODES:
         cell = (
             f"k40_{candidate['raw_k40_label'].lower()}_raw_m1440"
         )
@@ -659,7 +721,7 @@ def build_plan(
                     matrix="secondary",
                     age_label=label,
                 ))
-    elif mode == "raw_k40":
+    elif mode in RAW_K40_MODES:
         if set(explicit_raw_candidates or {}) != set(RAW_K40_SPECS):
             raise ValueError("raw_k40 mode requires four explicit candidates")
         preparations = []
@@ -668,9 +730,13 @@ def build_plan(
             jobs.append(_job_from_candidate(
                 candidate,
                 arm="RAW",
-                budget_hours=RAW_K40_BUDGET_HOURS,
+                budget_hours=(
+                    RAW_K40_SMOKE_BUDGET_HOURS
+                    if mode == "raw_k40_smoke"
+                    else RAW_K40_BUDGET_HOURS
+                ),
                 start_map={},
-                matrix="raw_k40",
+                matrix=mode,
             ))
     else:
         raise ValueError(mode)
@@ -747,6 +813,16 @@ def build_plan(
     code_hashes = {
         path: sha256_file(REPO_ROOT / path) for path in CODE_PATHS
     }
+    if mode == "raw_k40_smoke":
+        observed_physical_hashes = {
+            path: code_hashes[path]
+            for path in RAW_K40_PHYSICAL_CODE_HASHES
+        }
+        if observed_physical_hashes != RAW_K40_PHYSICAL_CODE_HASHES:
+            raise ValueError(
+                "physical realization runtime differs from reviewed "
+                f"commit {RAW_K40_PHYSICAL_COMMIT}"
+            )
     for job in jobs:
         job["execution"] = {
             "cell_id": job["cell_id"],
@@ -821,7 +897,7 @@ def build_plan(
         "inventory_sha256": inventory_sha,
         "selection_rule": (
             "four explicit hash-validated raw k40 factorial m1440 cells"
-            if mode == "raw_k40"
+            if mode in RAW_K40_MODES
             else inventory_payload["selection_rule"]
         ),
         "selected_candidates": (
@@ -829,7 +905,7 @@ def build_plan(
                 label: candidate["candidate_id"]
                 for label, candidate in (explicit_raw_candidates or {}).items()
             }
-            if mode == "raw_k40"
+            if mode in RAW_K40_MODES
             else {
                 str(scale): candidate["candidate_id"]
                 for scale, candidate in selected.items()
@@ -847,6 +923,13 @@ def build_plan(
         "runner": str(RUNNER_PATH),
         "runner_sha256": runner_sha,
         "code_hashes": code_hashes,
+        "physical_realization_review": (
+            {
+                "commit": RAW_K40_PHYSICAL_COMMIT,
+                "code_hashes": RAW_K40_PHYSICAL_CODE_HASHES,
+            }
+            if mode == "raw_k40_smoke" else None
+        ),
         "python_identity": python_identity,
         "environment_whitelist": environment,
         "shared_reservation_root": str(
@@ -861,11 +944,11 @@ def build_plan(
             any(job["blocked_reasons"] for job in jobs)
             or (bool(jobs) and not python_identity["available"])
             or (
-                mode != "raw_k40"
+                mode not in RAW_K40_MODES
                 and bool(inventory_payload.get("missing_roots"))
             )
             or (
-                mode != "raw_k40"
+                mode not in RAW_K40_MODES
                 and bool(inventory_payload.get("missing_slots"))
             )
             or (mode == "pilot" and bool(missing_scales))
@@ -877,11 +960,15 @@ def build_plan(
                 "extra_routes_allowed": False,
                 "initial_partition_allowed": False,
                 "strict_partitioning": True,
-                "budget_seconds": RAW_K40_BUDGET_HOURS * 3600,
+                "budget_seconds": int((
+                    RAW_K40_SMOKE_BUDGET_HOURS
+                    if mode == "raw_k40_smoke"
+                    else RAW_K40_BUDGET_HOURS
+                ) * 3600),
                 "expected_trip_count": 947,
                 "expected_snapshot_minutes": 1440,
             }
-            if mode == "raw_k40" else None
+            if mode in RAW_K40_MODES else None
         ),
         "global_route_space_optimality_claimed": False,
     }
@@ -1053,7 +1140,10 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--mode", choices=("inventory", "pilot", "secondary", "raw_k40"),
+        "--mode", choices=(
+            "inventory", "pilot", "secondary",
+            "raw_k40", "raw_k40_smoke",
+        ),
         required=True,
     )
     parser.add_argument("--campaign")
@@ -1068,6 +1158,18 @@ def parse_args(argv=None):
             "Explicit LABEL=SNAPSHOT for R1_CA,R1_CS,R2_CA,R2_CS; "
             "required only in raw_k40 mode."
         ),
+    )
+    parser.add_argument(
+        "--raw-k40-status-sha256", action="append", default=[],
+        help="Repeatable LABEL=SHA256; required in raw_k40_smoke mode.",
+    )
+    parser.add_argument(
+        "--raw-k40-journal", action="append", default=[],
+        help="Repeatable LABEL=JOURNAL; required in raw_k40_smoke mode.",
+    )
+    parser.add_argument(
+        "--raw-k40-journal-sha256", action="append", default=[],
+        help="Repeatable LABEL=SHA256; required in raw_k40_smoke mode.",
     )
     parser.add_argument("--inventory-out", type=Path)
     parser.add_argument("--plan-out", type=Path)
@@ -1084,10 +1186,24 @@ def parse_args(argv=None):
     args = parser.parse_args(argv)
     if args.mode != "inventory" and not args.campaign:
         parser.error("non-inventory modes require --campaign")
-    if args.mode == "raw_k40" and len(args.raw_k40_status) != 4:
+    if args.mode in RAW_K40_MODES and len(args.raw_k40_status) != 4:
         parser.error("raw_k40 mode requires four --raw-k40-status values")
-    if args.mode != "raw_k40" and args.raw_k40_status:
+    if args.mode not in RAW_K40_MODES and args.raw_k40_status:
         parser.error("--raw-k40-status is valid only in raw_k40 mode")
+    smoke_counts = (
+        len(args.raw_k40_status_sha256),
+        len(args.raw_k40_journal),
+        len(args.raw_k40_journal_sha256),
+    )
+    if args.mode == "raw_k40_smoke" and smoke_counts != (4, 4, 4):
+        parser.error(
+            "raw_k40_smoke requires four status hashes, journal paths, "
+            "and journal hashes"
+        )
+    if args.mode != "raw_k40_smoke" and any(smoke_counts):
+        parser.error(
+            "explicit RAW hash/journal flags are only valid in smoke mode"
+        )
     if args.submit and not args.approved_plan_sha256:
         parser.error("--submit requires --approved-plan-sha256")
     return args
@@ -1100,7 +1216,7 @@ def main(argv=None) -> int:
     data_roots = args.data_root or [REPO_ROOT / "data"]
     raw_assignments = (
         _parse_assignments(args.raw_k40_status)
-        if args.mode == "raw_k40" else None
+        if args.mode in RAW_K40_MODES else None
     )
     if raw_assignments is not None:
         # Explicit RAW mode validates only the four named immutable inputs.
@@ -1125,13 +1241,33 @@ def main(argv=None) -> int:
         return 0
     identity = checkout_identity(require_detached=args.submit)
     start_map = _parse_assignments(args.giro_start)
-    if args.mode == "raw_k40" and start_map:
+    if args.mode in RAW_K40_MODES and start_map:
         raise SystemExit("raw_k40 mode forbids --giro-start")
     explicit_raw_candidates = None
-    if args.mode == "raw_k40":
+    if args.mode in RAW_K40_MODES:
+        status_hashes = (
+            _parse_assignments(
+                args.raw_k40_status_sha256, value_type=str
+            )
+            if args.mode == "raw_k40_smoke" else None
+        )
+        journal_assignments = (
+            _parse_assignments(args.raw_k40_journal)
+            if args.mode == "raw_k40_smoke" else None
+        )
+        journal_hashes = (
+            _parse_assignments(
+                args.raw_k40_journal_sha256, value_type=str
+            )
+            if args.mode == "raw_k40_smoke" else None
+        )
         explicit_raw_candidates = resolve_raw_k40_candidates(
             raw_assignments,
             data_roots=data_roots,
+            enforce_frozen_path=args.mode == "raw_k40",
+            expected_status_sha256=status_hashes,
+            journal_assignments=journal_assignments,
+            expected_journal_sha256=journal_hashes,
         )
         payload = dict(payload)
         payload["explicit_raw_k40_candidates"] = {

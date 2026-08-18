@@ -354,6 +354,69 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                     plan, expected_commit="b" * 40
                 )
 
+    def test_raw_k40_physical_smoke_plan_is_four_30_minute_jobs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidates = {
+                label: self._raw_k40_candidate(label, root)
+                for label in launcher.RAW_K40_SPECS
+            }
+            for label, candidate in candidates.items():
+                candidate["replicate"] = launcher.RAW_K40_SPECS[label][
+                    "replicate"
+                ]
+                candidate["raw_k40_label"] = label
+            payload = {
+                "candidates": [],
+                "selection_rule": "irrelevant",
+                "missing_roots": [],
+                "missing_slots": [],
+            }
+            identity = {
+                "expected_commit": "b" * 40,
+                "reviewed_base_commit": launcher.REVIEWED_BASE,
+                "detached": True,
+                "branch": "",
+                "tracked_clean": True,
+            }
+            with patch.object(
+                launcher,
+                "_python_identity",
+                return_value={
+                    "available": True,
+                    "executable": str(Path(sys.executable).resolve()),
+                    "executable_sha256": "e" * 64,
+                    "version": "3.12.test",
+                    "gurobi_version": "test",
+                },
+            ):
+                plan = launcher.build_plan(
+                    payload,
+                    mode="raw_k40_smoke",
+                    campaign="raw-k40-smoke-test",
+                    start_map={},
+                    identity=identity,
+                    explicit_raw_candidates=candidates,
+                )
+            self.assertFalse(plan["blocked"])
+            self.assertEqual(
+                plan["physical_realization_review"]["commit"],
+                launcher.RAW_K40_PHYSICAL_COMMIT,
+            )
+            self.assertEqual(len(plan["jobs"]), 4)
+            for job in plan["jobs"]:
+                self.assertEqual(job["matrix"], "raw_k40_smoke")
+                self.assertEqual(job["time_limit_s"], 1800)
+                self.assertEqual(job["threads"], 8)
+                self.assertIn("30M", job["job_name"])
+                self.assertLessEqual(len(job["job_name"]), 15)
+            summary = raw_validator.validate_plan(
+                plan,
+                expected_commit="b" * 40,
+                expected_mode="raw_k40_smoke",
+            )
+            self.assertEqual(len(summary), 4)
+
     def test_raw_k40_candidate_resolution_preserves_campaign_and_initializer(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -394,6 +457,62 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "distinct"):
                 launcher.resolve_raw_k40_candidates(
                     bad, data_roots=[root / "data"]
+                )
+
+    def test_smoke_candidate_resolution_binds_explicit_paths_and_hashes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            assignments = {}
+            journals = {}
+            candidates = {}
+            status_hashes = {}
+            journal_hashes = {}
+            for label in launcher.RAW_K40_SPECS:
+                status = root / f"{label}.snapshot.json"
+                journal = root / f"{label}.columns.jsonl"
+                status.touch()
+                journal.touch()
+                candidate = self._raw_k40_candidate(label, root)
+                candidate.update({
+                    "status_path": str(status),
+                    "journal_path": str(journal),
+                })
+                assignments[label] = status
+                journals[label] = journal
+                candidates[str(status.resolve())] = candidate
+                status_hashes[label] = candidate["status_sha256"]
+                journal_hashes[label] = candidate["journal_sha256"]
+
+            def validated(path, **_kwargs):
+                return candidates[str(path.resolve())]
+
+            with patch.object(
+                launcher, "validate_candidate", side_effect=validated
+            ):
+                selected = launcher.resolve_raw_k40_candidates(
+                    assignments,
+                    data_roots=[root / "data"],
+                    enforce_frozen_path=False,
+                    expected_status_sha256=status_hashes,
+                    journal_assignments=journals,
+                    expected_journal_sha256=journal_hashes,
+                )
+            self.assertEqual(set(selected), set(launcher.RAW_K40_SPECS))
+            bad_hashes = dict(status_hashes)
+            bad_hashes["R1_CA"] = "0" * 64
+            with (
+                patch.object(
+                    launcher, "validate_candidate", side_effect=validated
+                ),
+                self.assertRaisesRegex(ValueError, "status SHA-256"),
+            ):
+                launcher.resolve_raw_k40_candidates(
+                    assignments,
+                    data_roots=[root / "data"],
+                    enforce_frozen_path=False,
+                    expected_status_sha256=bad_hashes,
+                    journal_assignments=journals,
+                    expected_journal_sha256=journal_hashes,
                 )
 
     def test_missing_or_partial_start_blocks_giro(self):
@@ -474,6 +593,11 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         self.assertNotIn("JOB_SPEC", text)
         self.assertNotIn("--extra-routes", text)
         self.assertIn("raw_k40 source initializer/label mismatch", text)
+        self.assertIn('matrix in {"raw_k40", "raw_k40_smoke"}', text)
+        self.assertIn("raw_k40 physical pool gate rejected columns", text)
+        self.assertIn("selected route block hash mismatch", text)
+        self.assertIn("raw_k40 preprocessing time is missing", text)
+        self.assertIn("raw_k40 Gurobi time is missing", text)
         self.assertIn(
             'unset EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256', text
         )

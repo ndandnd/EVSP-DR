@@ -12,6 +12,9 @@ from launch_mip_statistics_campaign import (
     RAW_K40_INSTANCE_SHA256,
     RAW_K40_SOURCE_COMMIT,
     RAW_K40_SPECS,
+    RAW_K40_SMOKE_BUDGET_HOURS,
+    RAW_K40_PHYSICAL_CODE_HASHES,
+    RAW_K40_PHYSICAL_COMMIT,
     RAW_K40_TARIFF_SHA256,
 )
 
@@ -21,14 +24,28 @@ def _require(condition: bool, message: str) -> None:
         raise ValueError(message)
 
 
-def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
+def validate_plan(
+    plan: dict,
+    *,
+    expected_commit: str,
+    expected_mode: str = "raw_k40",
+) -> list[dict]:
     """Return a concise cell summary only when every launch guard holds."""
 
     _require(
         plan.get("schema") == "evsp-dr-mip-statistics-approved-plan-v1",
         "unexpected plan schema",
     )
-    _require(plan.get("mode") == "raw_k40", "plan is not raw_k40")
+    _require(plan.get("mode") == expected_mode, "plan mode differs")
+    _require(
+        expected_mode in {"raw_k40", "raw_k40_smoke"},
+        "unsupported raw-k40 validation mode",
+    )
+    budget_hours = (
+        RAW_K40_SMOKE_BUDGET_HOURS
+        if expected_mode == "raw_k40_smoke"
+        else RAW_K40_BUDGET_HOURS
+    )
     _require(plan.get("blocked") is False, "plan is blocked")
     _require(
         plan.get("fresh_exact_cg_preparations") == [],
@@ -56,12 +73,21 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
             "extra_routes_allowed": False,
             "initial_partition_allowed": False,
             "strict_partitioning": True,
-            "budget_seconds": RAW_K40_BUDGET_HOURS * 3600,
+            "budget_seconds": int(budget_hours * 3600),
             "expected_trip_count": 947,
             "expected_snapshot_minutes": 1440,
         },
         "raw-k40 guard block changed",
     )
+    if expected_mode == "raw_k40_smoke":
+        _require(
+            plan.get("physical_realization_review")
+            == {
+                "commit": RAW_K40_PHYSICAL_COMMIT,
+                "code_hashes": RAW_K40_PHYSICAL_CODE_HASHES,
+            },
+            "physical realization review binding changed",
+        )
     _require(
         set(plan.get("selected_candidates") or {}) == set(RAW_K40_SPECS),
         "selected raw-k40 cells differ from the four approved cells",
@@ -80,12 +106,16 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
         observed_labels.add(label)
         spec = RAW_K40_SPECS[label]
         status = Path(str(source.get("status_path") or ""))
+        if expected_mode == "raw_k40":
+            _require(
+                status.name == spec["filename"]
+                and status.parent.name == spec["campaign"],
+                f"{label}: source path differs from frozen campaign cell",
+            )
         _require(
-            status.name == spec["filename"]
-            and status.parent.name == spec["campaign"],
-            f"{label}: source path differs from frozen campaign cell",
+            job.get("matrix") == expected_mode,
+            f"{label}: wrong matrix",
         )
-        _require(job.get("matrix") == "raw_k40", f"{label}: wrong matrix")
         _require(job.get("arm") == "RAW", f"{label}: not a RAW arm")
         _require(
             job.get("augmentation_changes_column_set") is False,
@@ -97,7 +127,7 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
         )
         _require(job.get("two_stage") is True, f"{label}: two-stage disabled")
         _require(
-            job.get("time_limit_s") == RAW_K40_BUDGET_HOURS * 3600,
+            job.get("time_limit_s") == int(budget_hours * 3600),
             f"{label}: wrong time limit",
         )
         _require(job.get("threads") == 8, f"{label}: wrong threads")
@@ -139,7 +169,7 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
             f"{label}: execution contains an external start",
         )
         _require(
-            execution.get("time_limit_s") == RAW_K40_BUDGET_HOURS * 3600,
+            execution.get("time_limit_s") == int(budget_hours * 3600),
             f"{label}: execution time limit differs",
         )
         _require(
@@ -165,13 +195,22 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("plan", type=Path)
     parser.add_argument("--expected-commit", required=True)
+    parser.add_argument(
+        "--expected-mode",
+        choices=("raw_k40", "raw_k40_smoke"),
+        default="raw_k40",
+    )
     return parser.parse_args(argv)
 
 
 def main(argv=None) -> int:
     args = parse_args(argv)
     plan = json.loads(args.plan.read_text())
-    summaries = validate_plan(plan, expected_commit=args.expected_commit)
+    summaries = validate_plan(
+        plan,
+        expected_commit=args.expected_commit,
+        expected_mode=args.expected_mode,
+    )
     print(json.dumps({"validated": True, "jobs": summaries}, indent=2))
     return 0
 

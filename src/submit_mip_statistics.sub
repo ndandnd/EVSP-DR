@@ -257,7 +257,7 @@ trap - USR1 TERM INT
 
 if ! "$PYTHON" - "$OUT" "$PROGRESS" "$STATUS_SHA" "$JOURNAL_SHA" \
     "$ARM" "$MATRIX" "$TIME_LIMIT" <<'PY'
-import json, pathlib, sys
+import hashlib, json, math, pathlib, sys
 out, progress, status_sha, journal_sha, arm, matrix, time_limit = sys.argv[1:]
 d=json.load(open(out))
 if d.get("partitioning") is not True:
@@ -270,7 +270,7 @@ if arm == "GIRO":
     start=d.get("mip_start") or {}
     if start.get("kind") != "validated_exact_partition":
         raise SystemExit("GIRO result lacks validated exact start")
-if matrix == "raw_k40":
+if matrix in {"raw_k40", "raw_k40_smoke"}:
     start=d.get("mip_start") or {}
     arguments=(d.get("mip_provenance") or {}).get("arguments") or {}
     if arm != "RAW":
@@ -291,18 +291,61 @@ if matrix == "raw_k40":
         raise SystemExit("raw_k40 solver arguments changed")
     if int(d.get("source_snapshot_mark_minutes", -1)) != 1440:
         raise SystemExit("raw_k40 result does not use the 24-hour pool")
+    physical=d.get("physical_pool_audit") or {}
+    if (
+        int(physical.get("rejected_columns", -1)) != 0
+        or int(physical.get("accepted_columns", -1))
+        != int(physical.get("total_columns", -2))
+    ):
+        raise SystemExit("raw_k40 physical pool gate rejected columns")
+    if not math.isfinite(float(
+        d.get("physical_pool_preparation_wall_s", math.nan)
+    )):
+        raise SystemExit("raw_k40 preprocessing time is missing")
+    if not math.isfinite(float(
+        d.get("gurobi_optimize_wall_s", math.nan)
+    )):
+        raise SystemExit("raw_k40 Gurobi time is missing")
+    if d.get("continuous_cost_pricing_certified") is not False:
+        raise SystemExit("continuous-cost pricing certificate was claimed")
 if not pathlib.Path(progress, "final.json").is_file():
     raise SystemExit("progress final.json is missing")
 if d.get("incumbent_found"):
     counts={}
     source=json.load(open(d["source_result"]))
     for route in d.get("selected_routes") or []:
+        blocks=route.get("continuous_realized_charging_blocks")
+        physical=route.get("physical_realization") or {}
+        if not isinstance(blocks, list):
+            raise SystemExit("selected route lacks continuous blocks")
+        encoded=json.dumps(
+            blocks, sort_keys=True, separators=(",", ":")
+        ).encode()
+        if hashlib.sha256(encoded).hexdigest() != physical.get(
+            "continuous_realized_charging_blocks_sha256"
+        ):
+            raise SystemExit("selected route block hash mismatch")
+        if physical.get(
+            "continuous_realized_charging_blocks_schema"
+        ) != "evsp-dr-continuous-realized-charging-blocks-v1":
+            raise SystemExit("selected route block schema mismatch")
+        for block in blocks:
+            required={
+                "station", "start_min", "end_min", "realized_kwh",
+                "expanded_grid_kwh", "tariff_hour", "tariff_key",
+                "price_per_kwh",
+            }
+            if not required <= set(block):
+                raise SystemExit("selected route block fields missing")
         for trip in route.get("trips") or []:
             counts[trip]=counts.get(trip,0)+1
     if set(counts) != set(source["trip_ids"]):
         raise SystemExit("selected routes have wrong trip set")
     if any(counts[trip] != 1 for trip in source["trip_ids"]):
         raise SystemExit("selected routes are not exact once-only")
+elif d.get("status_name") == "INFEASIBLE":
+    # A proved finite-pool infeasibility is a valid CA smoke outcome.
+    pass
 PY
 then
   fatal "result validation failed"
