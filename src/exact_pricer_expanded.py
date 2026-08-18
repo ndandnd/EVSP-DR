@@ -882,6 +882,10 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         observed = status.get(key)
         if key == "initial_pool" and key not in status:
             observed = "singletons"
+        if key == "strict_tariff_coverage" and key not in status:
+            observed = False
+        if key == "column_pool_treatment" and key not in status:
+            observed = "RAW"
         if isinstance(value, float):
             try:
                 matches = math.isclose(
