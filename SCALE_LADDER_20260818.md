@@ -8,10 +8,12 @@ the ladder commands continue to use the historical bytes.
 
 The dry-run plan contains exactly:
 
+- 23 known-route membership preflights;
 - 21 known-partition preparation tasks;
-- 23 exact-CG tasks;
+- 23 primary exact-CG tasks;
+- 27 k2/k3/k5 small-grid sensitivity CG companions;
 - 21 RAW MIPs and 21 KNOWN-PARTITION diagnostic MIPs;
-- 86 experimental tasks total;
+- 136 experimental/diagnostic tasks total;
 - zero k40 MIP submissions (four reuse-only result slots).
 
 ## 1. Dry run
@@ -61,7 +63,7 @@ else
     echo "PLAN: $PLAN"
     echo "TASK MATRIX: $MATRIX"
     echo "APPROVAL SHA-256: $PLAN_SHA"
-    echo "EXPECTED TASKS: 86 (21 seed + 23 CG + 42 MIP; k40 MIP = 0)"
+    echo "EXPECTED TASKS: 136 (23 preflight + 21 seed + 23 primary CG + 27 sensitivity CG + 42 MIP; k40 MIP = 0)"
   fi
 fi
 ```
@@ -141,3 +143,27 @@ fi
 
 Absent or hash-incompatible k40 reuse artifacts remain explicit missing/censored
 rows. They never trigger replacement k40 submissions.
+
+## Local diagnostic launcher
+
+This uses only SEED/membership and exact-CG phases—never Slurm or Gurobi—and
+limits concurrent subprocesses to three by default:
+
+```bash
+LOCAL_DIAGNOSTIC_ROOT="$HOME/evsp_scale_ladder_local/k2-check"
+
+if [[ -e "$LOCAL_DIAGNOSTIC_ROOT" ]]; then
+  echo "Local diagnostic output exists; refusing overwrite." >&2
+else
+  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+    "$PYTHON" -B "$RUN_ROOT/src/run_scale_ladder_local_diagnostics.py" \
+    --scale 2 --max-parallel 3 --budget-s 7200 \
+    --out-root "$LOCAL_DIAGNOSTIC_ROOT" \
+    --reference-plan "$PLAN"
+fi
+```
+
+If the local Python/package/code identity differs from the reviewed Unicorn
+plan—or no reference plan is supplied—the local manifest records
+`diagnostic_only=true`. Its exact-CG status/journal/iteration/telemetry files
+and membership CSV/JSON use the normal ladder schemas.

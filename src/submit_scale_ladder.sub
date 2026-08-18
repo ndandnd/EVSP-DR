@@ -63,6 +63,7 @@ for value in (
     job["instance"]["path"], job["instance"]["instance_file_sha256"],
     job["instance"]["relative_path"], job["output"],
     job["progress_dir"], job["telemetry"],
+    job["soc_step"], job["block_min"], job.get("dependency_preflight"),
 ):
     print("" if value is None else value)
 PY
@@ -86,6 +87,9 @@ INSTANCE_REL=${FIELDS[14]}
 OUTPUT=${FIELDS[15]}
 PROGRESS=${FIELDS[16]}
 TELEMETRY=${FIELDS[17]}
+SOC_STEP=${FIELDS[18]}
+BLOCK_MIN=${FIELDS[19]}
+PREFLIGHT_DEP=${FIELDS[20]}
 
 [[ "$WORKER_TOKEN" == "$EXPECTED_WORKER_SHA" ]] \
   || fatal "worker token mismatch"
@@ -150,7 +154,7 @@ if [[ "$PHASE" == "MIP" && ! -e "$OUTPUT" && -d "$PROGRESS" && \
     RECOVER_ONLY=1
   fi
 fi
-if [[ "$PHASE" == "CG" ]]; then
+if [[ "$PHASE" == "CG" || "$PHASE" == "CG_SENSITIVITY" ]]; then
   [[ ! -e "$OUTPUT.worker-completion.json" ]] \
     || fatal "completed CG already exists"
 else
@@ -175,6 +179,17 @@ export EVSP_REQUIRE_DETACHED=1
 
 command=()
 case "$PHASE" in
+  PREFLIGHT)
+    command=(
+      "$PYTHON" -B "$ROOT/src/audit_scale_ladder_known_membership.py"
+      --instance "$ROOT/data/$INSTANCE_REL"
+      --instance-sha256 "$INSTANCE_SHA"
+      --scale "$SCALE"
+      --selection-replicate "$SELECTION_REP"
+      --out "$OUTPUT"
+      --csv-out "${OUTPUT%.json}.csv"
+    )
+    ;;
   SEED)
     command=(
       "$PYTHON" -B "$ROOT/src/prepare_scale_ladder_known_partition.py"
@@ -183,7 +198,20 @@ case "$PHASE" in
       --out "$OUTPUT"
     )
     ;;
-  CG)
+  CG|CG_SENSITIVITY)
+    if [[ -n "$PREFLIGHT_DEP" ]]; then
+      PREFLIGHT_OUTPUT=$(
+        "$PYTHON" -I -B - "$PLAN" "$PREFLIGHT_DEP" <<'PY'
+import json,sys
+plan=json.load(open(sys.argv[1]))
+print(next(
+    item["output"] for item in plan["jobs"]
+    if item["job_key"]==sys.argv[2]
+))
+PY
+      )
+      [[ -s "$PREFLIGHT_OUTPUT" ]] || fatal "membership preflight missing"
+    fi
     SNAPSHOTS=$(
       "$PYTHON" -I -B - "$PLAN" "$JOB_KEY" <<'PY'
 import json,sys
@@ -196,7 +224,7 @@ PY
       "$PYTHON" -u "$ROOT/src/exact_pricer_expanded.py"
       --csv "$INSTANCE_REL" --prices_csv hourly_prices_flat.csv
       --g-kwh 300 --charge-kw 300 --min-soc-frac 0
-      --soc-step 15 --block-min 10
+      --soc-step "$SOC_STEP" --block-min "$BLOCK_MIN"
       --master-sense partition --initial-pool singletons
       --wall-limit-s "$((BUDGET + 60))"
       --checkpoint-every 25 --resume
@@ -370,7 +398,7 @@ if output.is_dir():
     paths.extend(path for path in output.rglob("*") if path.is_file())
 else:
     paths.append(output)
-if phase=="CG":
+if phase in {"CG","CG_SENSITIVITY"}:
     paths.extend([
         pathlib.Path(str(output)+".columns.jsonl"),
         pathlib.Path(str(output)+".iters.csv"),
@@ -408,6 +436,8 @@ if phase=="CG":
             )
         else:
             raise SystemExit(f"CG snapshot status/files disagree: {snapshot}")
+if phase=="PREFLIGHT":
+    paths.append(output.with_suffix(".csv"))
 if phase=="MIP":
     final_path=pathlib.Path(progress)/"final.json"
     if not final_path.is_file():

@@ -53,6 +53,8 @@ CODE_PATHS = (
     "src/tariff_response_environment.py",
     "src/reconcile_scale_ladder_gate.py",
     "src/recover_scale_ladder_mip_progress.py",
+    "src/audit_scale_ladder_known_membership.py",
+    "src/run_scale_ladder_local_diagnostics.py",
 )
 CG_BUDGET_S = {
     2: 7200, 3: 7200, 5: 7200,
@@ -126,12 +128,19 @@ def _name(job, nonce):
     scale = int(job["scale"])
     replicate = int(job["campaign_replicate"])
     code = (
-        "S" if job["phase"] == "SEED"
+        "P" if job["phase"] == "PREFLIGHT"
+        else "S" if job["phase"] == "SEED"
         else "X" if job["phase"] == "CG"
+        else "D" if job["phase"] == "CG_SENSITIVITY"
         else "R" if job["arm"] == "RAW"
         else "K"
     )
-    name = f"L{scale:02d}R{replicate}{code}{nonce}"
+    grid = ""
+    if job["phase"] == "CG_SENSITIVITY":
+        grid = {
+            5.0: "5", 2.5: "25", 1.0: "1",
+        }[float(job.get("soc_step", 15.0))]
+    name = f"L{scale:02d}R{replicate}{code}{grid}{nonce}"
     if len(name) > 15:
         raise ValueError("Slurm job name too long")
     return name
@@ -216,8 +225,13 @@ def build_plan(campaign, python, reservation_root):
     cg_cells = non_k40 + k40
     jobs = []
     nonce = hashlib.sha256(campaign.encode()).hexdigest()[:2]
+    preflight_key_by_cell = {}
     seed_key_by_cell = {}
     cg_key_by_cell = {}
+    for cell in cg_cells:
+        key = f"preflight_{cell['cell_id']}"
+        preflight_key_by_cell[cell["cell_id"]] = key
+        jobs.append(_job(root, cell, key, "PREFLIGHT", None, nonce))
     for cell in non_k40:
         key = f"seed_{cell['cell_id']}"
         seed_key_by_cell[cell["cell_id"]] = key
@@ -225,7 +239,24 @@ def build_plan(campaign, python, reservation_root):
     for cell in cg_cells:
         key = f"cg_{cell['cell_id']}"
         cg_key_by_cell[cell["cell_id"]] = key
-        jobs.append(_job(root, cell, key, "CG", None, nonce))
+        job = _job(root, cell, key, "CG", None, nonce)
+        job["dependency_preflight"] = preflight_key_by_cell[cell["cell_id"]]
+        jobs.append(job)
+    for cell in non_k40:
+        if cell["scale"] > 5:
+            continue
+        for soc_step in (5.0, 2.5, 1.0):
+            label = str(soc_step).replace(".", "p")
+            key = f"cgdiag_g{label}_{cell['cell_id']}"
+            job = _job(
+                root, cell, key, "CG_SENSITIVITY", None, nonce,
+                diagnostic_soc_step=soc_step,
+            )
+            job["diagnostic_only"] = True
+            job["dependency_preflight"] = preflight_key_by_cell[
+                cell["cell_id"]
+            ]
+            jobs.append(job)
     for arm in ("RAW", "KNOWN-PARTITION"):
         for cell in non_k40:
             key = f"mip_{arm.lower().replace('-', '_')}_{cell['cell_id']}"
@@ -263,6 +294,8 @@ def build_plan(campaign, python, reservation_root):
             "cg_replicate": job["cg_replicate"],
             "budget_s": job["budget_s"],
             "snapshot_minutes": job["snapshot_minutes"],
+            "soc_step": job["soc_step"],
+            "block_min": job["block_min"],
             "instance_identity": {
                 field: job["instance"][field] for field in (
                     "instance_file_sha256",
@@ -277,8 +310,16 @@ def build_plan(campaign, python, reservation_root):
             "tariff_sha256": HISTORICAL_FLAT_SHA256,
         })).hexdigest()
     groups = {
+        "PREFLIGHT": [
+            job["job_key"] for job in jobs
+            if job["phase"] == "PREFLIGHT"
+        ],
         "SEED": [job["job_key"] for job in jobs if job["phase"] == "SEED"],
         "CG": [job["job_key"] for job in jobs if job["phase"] == "CG"],
+        "CG_SENSITIVITY": [
+            job["job_key"] for job in jobs
+            if job["phase"] == "CG_SENSITIVITY"
+        ],
         "MIP_RAW": [
             job["job_key"] for job in jobs
             if job["phase"] == "MIP" and job["arm"] == "RAW"
@@ -289,7 +330,8 @@ def build_plan(campaign, python, reservation_root):
         ],
     }
     if {key: len(value) for key, value in groups.items()} != {
-        "SEED": 21, "CG": 23, "MIP_RAW": 21, "MIP_KNOWN": 21,
+        "PREFLIGHT": 23, "SEED": 21, "CG": 23,
+        "CG_SENSITIVITY": 27, "MIP_RAW": 21, "MIP_KNOWN": 21,
     }:
         raise ValueError("task group counts differ")
     reuse_slots = [
@@ -374,7 +416,9 @@ def build_plan(campaign, python, reservation_root):
         "jobs": jobs,
         "task_groups": groups,
         "task_count": sum(map(len, groups.values())),
+        "preflight_task_count": 23,
         "cg_task_count": 23,
+        "sensitivity_cg_task_count": 27,
         "mip_task_count": 42,
         "seed_task_count": 21,
         "k40_mip_submission_count": 0,
@@ -382,17 +426,20 @@ def build_plan(campaign, python, reservation_root):
     }
 
 
-def _job(root, cell, key, phase, arm, nonce):
+def _job(
+    root, cell, key, phase, arm, nonce, *, diagnostic_soc_step=None
+):
     scale = cell["scale"]
     budget = (
-        4 * 3600 if phase == "SEED"
-        else CG_BUDGET_S[scale] if phase == "CG"
+        4 * 3600 if phase in {"SEED", "PREFLIGHT"}
+        else CG_BUDGET_S[scale]
+        if phase in {"CG", "CG_SENSITIVITY"}
         else MIP_BUDGET_S[scale]
     )
     marks = [
         value for value in SNAPSHOT_MINUTES
         if value * 60 <= budget
-    ] if phase == "CG" else []
+    ] if phase in {"CG", "CG_SENSITIVITY"} else []
     job = {
         **cell,
         "job_key": key,
@@ -403,6 +450,11 @@ def _job(root, cell, key, phase, arm, nonce):
             if arm == "KNOWN-PARTITION" else None
         ),
         "budget_s": budget,
+        "soc_step": (
+            float(diagnostic_soc_step)
+            if diagnostic_soc_step is not None else 15.0
+        ),
+        "block_min": 10,
         "snapshot_minutes": marks,
         "partition": (
             "scaglione" if phase == "MIP" else "default_partition"
@@ -415,7 +467,8 @@ def _job(root, cell, key, phase, arm, nonce):
         ),
         "telemetry": (
             str(root / "telemetry" / f"{key}.jsonl")
-            if phase == "CG" and scale <= 20 else None
+            if phase in {"CG", "CG_SENSITIVITY"} and scale <= 20
+            else None
         ),
     }
     job["job_name"] = _name(job, nonce)
@@ -548,13 +601,23 @@ def submit(plan, plan_sha):
     _replace_json(manifest_path, manifest)
     arrays = {}
     try:
+        arrays["PREFLIGHT"] = _submit_array(
+            plan, plan_path, plan_sha, "PREFLIGHT", gate, logs
+        )
+        manifest["submitted_arrays"] = dict(arrays)
+        _replace_json(manifest_path, manifest)
         arrays["SEED"] = _submit_array(
             plan, plan_path, plan_sha, "SEED", gate, logs
         )
         manifest["submitted_arrays"] = dict(arrays)
         _replace_json(manifest_path, manifest)
         arrays["CG"] = _submit_array(
-            plan, plan_path, plan_sha, "CG", gate, logs
+            plan, plan_path, plan_sha, "CG", gate, logs,
+            dependency=f"aftercorr:{arrays['PREFLIGHT']}",
+        )
+        arrays["CG_SENSITIVITY"] = _submit_array(
+            plan, plan_path, plan_sha, "CG_SENSITIVITY", gate, logs,
+            dependency=f"afterok:{arrays['PREFLIGHT']}",
         )
         manifest["submitted_arrays"] = dict(arrays)
         _replace_json(manifest_path, manifest)
@@ -656,8 +719,10 @@ def _sbatch(plan, arguments):
 
 def _array_name(group, plan_sha):
     code = {
+        "PREFLIGHT": "LDPF",
         "SEED": "LDSD",
         "CG": "LDCG",
+        "CG_SENSITIVITY": "LDCS",
         "MIP_RAW": "LDMR",
         "MIP_KNOWN": "LDMK",
     }[group]
@@ -720,7 +785,8 @@ def main(argv=None):
     if not args.submit:
         print(
             f"[dry-run] tasks={plan['task_count']} "
-            "CG=23 MIP=42 SEED=21 k40_MIP=0"
+            "PREFLIGHT=23 SEED=21 PRIMARY_CG=23 "
+            "SENSITIVITY_CG=27 MIP=42 k40_MIP=0"
         )
         return 0
     if args.approved_plan_sha256 != plan_sha:

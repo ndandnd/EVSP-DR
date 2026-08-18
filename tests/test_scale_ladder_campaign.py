@@ -2,6 +2,7 @@ import csv
 import hashlib
 import json
 import sys
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -25,7 +26,9 @@ from summarize_scale_ladder import (  # noqa: E402
     PROGRESS_FIELDS,
     _validate_completion,
     summarize,
+    target_gap_interpretation,
 )
+from audit_scale_ladder_known_membership import audit  # noqa: E402
 from recover_scale_ladder_mip_progress import recover  # noqa: E402
 
 
@@ -144,13 +147,19 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             plan = ladder.build_plan(
                 "ladder-test", Path(sys.executable), Path("/tmp/reservations")
             )
-        self.assertEqual(plan["task_count"], 86)
+        self.assertEqual(plan["task_count"], 136)
+        self.assertEqual(plan["preflight_task_count"], 23)
         self.assertEqual(plan["cg_task_count"], 23)
+        self.assertEqual(plan["sensitivity_cg_task_count"], 27)
         self.assertEqual(plan["mip_task_count"], 42)
         self.assertEqual(plan["k40_mip_submission_count"], 0)
         self.assertEqual(
             {key: len(value) for key, value in plan["task_groups"].items()},
-            {"SEED": 21, "CG": 23, "MIP_RAW": 21, "MIP_KNOWN": 21},
+            {
+                "PREFLIGHT": 23, "SEED": 21, "CG": 23,
+                "CG_SENSITIVITY": 27,
+                "MIP_RAW": 21, "MIP_KNOWN": 21,
+            },
         )
         self.assertFalse(any(
             job["phase"] == "MIP" and job["scale"] == 40
@@ -159,6 +168,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertTrue(all(
             len(job["job_name"]) <= 15 for job in plan["jobs"]
         ))
+        self.assertEqual(
+            len({job["job_name"] for job in plan["jobs"]}),
+            len(plan["jobs"]),
+        )
         self.assertEqual(
             plan["tariff"]["primary_tariff_sha256"],
             ladder.HISTORICAL_FLAT_SHA256,
@@ -189,6 +202,78 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn("aftercorr:", launcher)
         self.assertIn("JobName=\"$JOB_NAME\"", worker)
         self.assertIn("EVSP_MIP_EXPECTED_RESULT_SHA256", worker)
+        local = (
+            REPO_ROOT / "src/run_scale_ladder_local_diagnostics.py"
+        ).read_text()
+        self.assertNotIn("sbatch", local)
+        self.assertNotIn("run_exact_pool_mip", local)
+        self.assertIn("default=3", local)
+        self.assertIn("diagnostic_only", local)
+
+    def test_k2_r1_certified_15_vs_5_route_space_distinction(self):
+        with INSTANCE_MANIFEST.open(newline="") as handle:
+            row = next(
+                item for item in csv.DictReader(handle)
+                if item["scale"] == "2"
+                and item["selection_replicate"] == "1"
+            )
+        observed = {}
+        for soc_step in (15.0, 5.0):
+            with tempfile.TemporaryDirectory() as tmp:
+                output = Path(tmp) / "cg.json"
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        str(REPO_ROOT / "src/exact_pricer_expanded.py"),
+                        "--csv", row["relative_path"].removeprefix("data/"),
+                        "--prices_csv", "hourly_prices_flat.csv",
+                        "--soc-step", str(soc_step),
+                        "--block-min", "10",
+                        "--max-iters", "2000",
+                        "--master-sense", "partition",
+                        "--initial-pool", "singletons",
+                        "--wall-limit-s", "300",
+                        "--checkpoint-every", "25",
+                        "--resume", "--out", str(output),
+                    ],
+                    cwd=REPO_ROOT,
+                    text=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.PIPE,
+                    timeout=180,
+                    check=False,
+                )
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                payload = json.loads(output.read_text())
+                self.assertTrue(payload["certified_rc_optimal"])
+                self.assertEqual(payload["final"]["artificials"], 0.0)
+                observed[soc_step] = payload["final_lp"]["route_weight"]
+        self.assertGreater(observed[15.0], 2.0)
+        self.assertAlmostEqual(observed[5.0], 2.0, places=8)
+
+    def test_k2_r2_positive_gap_is_not_labeled_runtime_failure(self):
+        with INSTANCE_MANIFEST.open(newline="") as handle:
+            row = next(
+                item for item in csv.DictReader(handle)
+                if item["scale"] == "2"
+                and item["selection_replicate"] == "2"
+            )
+        membership = audit(
+            REPO_ROOT / row["relative_path"],
+            row["instance_file_sha256"],
+            2,
+            2,
+        )
+        self.assertFalse(
+            membership["known_partition_in_primary_expanded_space"]
+        )
+        self.assertEqual(
+            target_gap_interpretation(
+                2.153846, 2,
+                membership["known_partition_in_primary_expanded_space"],
+            ),
+            "known_partition_outside_primary_space_not_scaling_failure",
+        )
 
     def test_summary_schema_and_censoring(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -283,9 +368,36 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "cell_id": "k02_s1_c1", "scale": 2,
                 "selection_replicate": 1, "cg_replicate": 1,
                 "campaign_replicate": 1, "target_fleet": 2,
+                "soc_step": 15.0, "block_min": 10,
                 "instance": {
                     "path": str(instance), **identities,
                 },
+            }
+            preflight_output = root / "preflight.json"
+            preflight_payload = {
+                "schema": "evsp-dr-scale-ladder-known-membership-v1",
+                "cell_id": "k02_s1", "scale": 2,
+                "selection_replicate": 1,
+                "known_partition_continuously_feasible": True,
+                "known_partition_in_primary_expanded_space": False,
+                "fixed_sequence_pricing_certified": True,
+                "first_feasible_soc_step": 5.0,
+                "first_feasible_block_min": 10,
+                "nonrepresentability_reason": "primary_grid_blocked",
+                "duties": [],
+            }
+            preflight_output.write_text(json.dumps(preflight_payload))
+            preflight_output.with_suffix(".csv").write_text(
+                ",".join([
+                    "cell_id", "scale", "selection_replicate", "duty_id"
+                ]) + "\n"
+            )
+            preflight_job = {
+                **base, "job_key": "preflight", "phase": "PREFLIGHT",
+                "arm": None, "budget_s": 10,
+                "output": str(preflight_output),
+                "telemetry": None, "progress_dir": None,
+                "snapshot_minutes": [],
             }
             cg_job = {
                 **base, "job_key": "cg", "phase": "CG", "arm": None,
@@ -307,8 +419,12 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "physics": {}, "trip_identity_schema":
                     "evsp-dr-trip-identity-v1",
                 "code_hashes": {}, "python_identity": {},
-                "task_groups": {"CG": ["cg"], "MIP_RAW": ["mip"]},
-                "jobs": [cg_job, mip_job], "k40_reuse_slots": [],
+                "task_groups": {
+                    "PREFLIGHT": ["preflight"],
+                    "CG": ["cg"], "MIP_RAW": ["mip"],
+                },
+                "jobs": [preflight_job, cg_job, mip_job],
+                "k40_reuse_slots": [],
             }
             raw = json.dumps(
                 plan, sort_keys=True, separators=(",", ":")
@@ -320,11 +436,16 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "submitted": True,
                 "gate_state": "released",
                 "submitted_arrays": {
-                    "SEED": "1", "CG": "2",
-                    "MIP_RAW": "3", "MIP_KNOWN": "4",
+                    "PREFLIGHT": "1", "SEED": "2", "CG": "3",
+                    "CG_SENSITIVITY": "4",
+                    "MIP_RAW": "5", "MIP_KNOWN": "6",
                 },
             }))
             for job, artifacts in (
+                (
+                    preflight_job,
+                    [preflight_output, preflight_output.with_suffix(".csv")],
+                ),
                 (
                     cg_job,
                     [cg, journal, Path(str(cg) + ".iters.csv"), telemetry],
@@ -360,6 +481,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "cg_iteration_long.csv", "cg_run_summary.csv",
                 "mip_checkpoint_long.csv", "mip_run_summary.csv",
                 "artifact_inventory.csv", "scale_progress_summary.csv",
+                "known_route_membership_long.csv",
                 "cg_route_weight.png", "mip_incumbent_bound.png",
                 "provenance.json",
             }

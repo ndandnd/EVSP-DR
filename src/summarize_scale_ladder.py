@@ -29,6 +29,7 @@ from expanded_path_realization import (
 
 CG_FIELDS = (
     "cell_id", "scale", "selection_replicate", "cg_replicate",
+    "campaign_role", "soc_step", "block_min",
     "target_fleet", "elapsed_s", "iteration", "lp_obj",
     "route_weight", "artificial_mass", "min_reduced_cost",
     "pool_columns", "columns_added", "master_time_s", "pricing_time_s",
@@ -41,6 +42,7 @@ CG_FIELDS = (
 )
 CG_SUMMARY_FIELDS = (
     "cell_id", "scale", "selection_replicate", "cg_replicate",
+    "campaign_role", "soc_step", "block_min",
     "target_fleet", "budget_s", "elapsed_s", "iterations",
     "final_lp_obj", "final_route_weight", "final_artificial_mass",
     "final_min_reduced_cost", "pool_columns", "pricing_certified",
@@ -78,9 +80,25 @@ PROGRESS_FIELDS = (
     "raw_mip_incumbent", "raw_finite_pool_bound", "raw_gap",
     "known_mip_incumbent", "known_finite_pool_bound", "known_gap",
     "known_arm_role", "physical_validation_status", "missing_reason",
+    "known_partition_continuously_feasible",
+    "known_partition_in_primary_expanded_space",
+    "fixed_sequence_pricing_certified", "first_feasible_soc_step",
+    "first_feasible_block_min", "nonrepresentability_reason",
+    "target_gap", "target_gap_scope", "target_gap_interpretation",
 )
 INVENTORY_FIELDS = (
     "cell_id", "role", "path", "sha256", "size_bytes",
+)
+MEMBERSHIP_FIELDS = (
+    "cell_id", "scale", "selection_replicate", "duty_id",
+    "trip_count", "known_partition_continuously_feasible",
+    "known_partition_in_primary_expanded_space",
+    "fixed_sequence_pricing_certified", "first_feasible_soc_step",
+    "first_feasible_block_min", "nonrepresentability_reason",
+    "primary_soc_step", "primary_block_min", "adaptive_sensitivity_run",
+    "instance_file_sha256", "ordered_trip_id_set_sha256",
+    "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
+    "trip_identity_schema",
 )
 
 
@@ -171,12 +189,23 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         plan_raw
     ).hexdigest():
         raise ValueError("campaign approval hash mismatch")
-    if (
+    local_diagnostic = plan.get("execution_mode") == "local_diagnostic"
+    if local_diagnostic:
+        if (
+            manifest.get("execution_mode") != "local_diagnostic"
+            or not isinstance(manifest.get("diagnostic_only"), bool)
+            or manifest.get("submitted") is not False
+        ):
+            raise ValueError("local diagnostic manifest is inconsistent")
+    elif (
         manifest.get("submitted") is not True
         or manifest.get("gate_state")
         not in {"released", "released_reconciled"}
         or set((manifest.get("submitted_arrays") or {}))
-        != {"SEED", "CG", "MIP_RAW", "MIP_KNOWN"}
+        != {
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        }
         or any(
             not str(value).isdigit()
             for value in (manifest.get("submitted_arrays") or {}).values()
@@ -186,12 +215,36 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     jobs = {job["job_key"]: job for job in plan["jobs"]}
     for job in plan["jobs"]:
         _validate_completion(job, manifest["approval_sha256"])
-    cg_jobs = [job for job in plan["jobs"] if job["phase"] == "CG"]
+    membership_rows = []
+    membership_by_cell = {}
+    for job in plan["jobs"]:
+        if job["phase"] != "PREFLIGHT":
+            continue
+        payload = json.loads(Path(job["output"]).read_text())
+        if payload.get("schema") != (
+            "evsp-dr-scale-ladder-known-membership-v1"
+        ):
+            raise ValueError("membership preflight schema mismatch")
+        membership_by_cell[job["cell_id"]] = payload
+        membership_rows.extend(payload["duties"])
+    cg_jobs = [
+        job for job in plan["jobs"]
+        if job["phase"] in {"CG", "CG_SENSITIVITY"}
+    ]
     cg_rows = []
     cg_summary = []
     mip_rows = []
     mip_summary = []
     inventory = []
+    for job in plan["jobs"]:
+        if job["phase"] == "PREFLIGHT":
+            inventory.append(_inventory(
+                job["cell_id"], "known_membership", Path(job["output"])
+            ))
+            inventory.append(_inventory(
+                job["cell_id"], "known_membership_csv",
+                Path(job["output"]).with_suffix(".csv"),
+            ))
     cg_by_cell = {}
     for job in cg_jobs:
         status_path = Path(job["output"])
@@ -242,6 +295,12 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                 "scale": job["scale"],
                 "selection_replicate": job["selection_replicate"],
                 "cg_replicate": job["cg_replicate"],
+                "campaign_role": (
+                    "primary" if job["phase"] == "CG"
+                    else "small_grid_sensitivity"
+                ),
+                "soc_step": job["soc_step"],
+                "block_min": job["block_min"],
                 "target_fleet": job["target_fleet"],
                 "elapsed_s": float(raw["elapsed_s"]),
                 "iteration": iteration,
@@ -296,6 +355,12 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             "scale": job["scale"],
             "selection_replicate": job["selection_replicate"],
             "cg_replicate": job["cg_replicate"],
+            "campaign_role": (
+                "primary" if job["phase"] == "CG"
+                else "small_grid_sensitivity"
+            ),
+            "soc_step": job["soc_step"],
+            "block_min": job["block_min"],
             "target_fleet": job["target_fleet"],
             "budget_s": job["budget_s"],
             "elapsed_s": status.get("wall_s"),
@@ -330,7 +395,8 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             },
         }
         cg_summary.append(summary)
-        cg_by_cell[job["cell_id"]] = summary
+        if job["phase"] == "CG":
+            cg_by_cell[job["cell_id"]] = summary
         for role, path in (
             ("cg_status", status_path),
             ("cg_journal", Path(status["columns_journal"])),
@@ -434,7 +500,9 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         plan, manifest["approval_sha256"], k40_reuse_manifest,
         mip_summary, mip_rows, inventory
     )
-    progress = _progress_rows(plan, cg_by_cell, mip_summary)
+    progress = _progress_rows(
+        plan, cg_by_cell, mip_summary, membership_by_cell
+    )
     staging = Path(tempfile.mkdtemp(
         dir=output_dir.parent, prefix=f".{output_dir.name}.tmp."
     ))
@@ -450,6 +518,14 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                    INVENTORY_FIELDS, inventory)
         _write_csv(staging / "scale_progress_summary.csv",
                    PROGRESS_FIELDS, progress)
+        _write_csv(
+            staging / "known_route_membership_long.csv",
+            MEMBERSHIP_FIELDS,
+            sorted(membership_rows, key=lambda row: (
+                int(row["scale"]), int(row["selection_replicate"]),
+                row["duty_id"],
+            )),
+        )
         _plots(staging, cg_rows, mip_rows)
         provenance = {
             "schema": "evsp-dr-scale-ladder-summary-v1",
@@ -460,6 +536,8 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             "trip_identity_schema": plan["trip_identity_schema"],
             "code_hashes": plan["code_hashes"],
             "python_identity": plan["python_identity"],
+            "execution_mode": plan.get("execution_mode", "slurm_campaign"),
+            "diagnostic_only": manifest.get("diagnostic_only", False),
             "resource_groups": {
                 key: len(value)
                 for key, value in plan["task_groups"].items()
@@ -812,7 +890,7 @@ def _append_k40_rows(
         })
 
 
-def _progress_rows(plan, cg_by_cell, mip_summary):
+def _progress_rows(plan, cg_by_cell, mip_summary, membership_by_cell):
     mip = {
         (row["cell_id"], row["arm"]): row for row in mip_summary
     }
@@ -823,6 +901,7 @@ def _progress_rows(plan, cg_by_cell, mip_summary):
         cg = cg_by_cell[job["cell_id"]]
         raw = mip.get((job["cell_id"], "RAW"), {})
         known = mip.get((job["cell_id"], "KNOWN-PARTITION"), {})
+        membership = membership_by_cell[job["cell_id"]]
         reasons = sorted({
             value for value in (
                 raw.get("missing_reason"), known.get("missing_reason")
@@ -862,8 +941,48 @@ def _progress_rows(plan, cg_by_cell, mip_summary):
                 or known.get("physical_replay_status")
             ),
             "missing_reason": ";".join(reasons),
+            "known_partition_continuously_feasible":
+                membership["known_partition_continuously_feasible"],
+            "known_partition_in_primary_expanded_space":
+                membership["known_partition_in_primary_expanded_space"],
+            "fixed_sequence_pricing_certified":
+                membership["fixed_sequence_pricing_certified"],
+            "first_feasible_soc_step":
+                membership["first_feasible_soc_step"],
+            "first_feasible_block_min":
+                membership["first_feasible_block_min"],
+            "nonrepresentability_reason":
+                membership["nonrepresentability_reason"],
+            "target_gap": (
+                max(0.0, float(cg["final_route_weight"])
+                    - float(job["target_fleet"]))
+                if cg["final_route_weight"] is not None
+                and cg["final_artificial_mass"] is not None
+                and float(cg["final_artificial_mass"]) <= 1e-9
+                else None
+            ),
+            "target_gap_scope": "primary_discretized_route_space",
+            "target_gap_interpretation": target_gap_interpretation(
+                cg["final_route_weight"],
+                job["target_fleet"],
+                membership[
+                    "known_partition_in_primary_expanded_space"
+                ],
+            ),
         })
     return rows
+
+
+def target_gap_interpretation(
+    route_weight, target_fleet, known_partition_in_primary_space
+):
+    if route_weight is None:
+        return "target_not_comparable_missing_lp_value"
+    if float(route_weight) <= float(target_fleet) + 1e-6:
+        return "target_reached"
+    if known_partition_in_primary_space is not True:
+        return "known_partition_outside_primary_space_not_scaling_failure"
+    return "within_primary_space_search_or_relaxation_gap"
 
 
 def _inventory(cell, role, path):
@@ -905,7 +1024,7 @@ def _validate_completion(job, plan_sha):
         raise ValueError(f"worker completion differs: {job['job_key']}")
     output = Path(job["output"])
     expected = {output}
-    if job["phase"] == "CG":
+    if job["phase"] in {"CG", "CG_SENSITIVITY"}:
         expected.update({
             Path(str(output) + ".columns.jsonl"),
             Path(str(output) + ".iters.csv"),
@@ -951,6 +1070,8 @@ def _validate_completion(job, plan_sha):
                 raise ValueError(
                     f"CG snapshot availability missing: {job['job_key']} m{mark}"
                 )
+    elif job["phase"] == "PREFLIGHT":
+        expected.add(output.with_suffix(".csv"))
     elif job["phase"] == "MIP":
         progress = Path(job["progress_dir"])
         final = progress / "final.json"
@@ -990,6 +1111,8 @@ def _plots(staging, cg_rows, mip_rows):
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     groups = defaultdict(list)
     for row in cg_rows:
+        if row.get("campaign_role") != "primary":
+            continue
         groups[row["cell_id"]].append(row)
     for cell, rows in sorted(groups.items()):
         rows.sort(key=lambda row: row["elapsed_s"])

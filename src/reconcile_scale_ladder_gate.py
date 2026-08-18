@@ -84,7 +84,10 @@ def reconcile(
                 raise ValueError("recorded/discovered gate ID conflict")
             manifest["gate_job_id"] = discovered_gate
         gate_for_resume = manifest.get("gate_job_id")
-        required_groups = ("SEED", "CG", "MIP_RAW", "MIP_KNOWN")
+        required_groups = (
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        )
         missing_groups = [
             group for group in required_groups if group not in combined
         ]
@@ -133,7 +136,11 @@ def reconcile(
                 if group in combined:
                     continue
                 dependency = None
-                if group == "MIP_RAW":
+                if group == "CG":
+                    dependency = f"aftercorr:{combined['PREFLIGHT']}"
+                elif group == "CG_SENSITIVITY":
+                    dependency = f"afterok:{combined['PREFLIGHT']}"
+                elif group == "MIP_RAW":
                     dependency = f"aftercorr:{combined['CG']}"
                 elif group == "MIP_KNOWN":
                     dependency = (
