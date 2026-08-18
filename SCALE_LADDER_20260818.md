@@ -108,6 +108,10 @@ env -u PYTHONPATH PYTHONNOUSERSITE=1 \
   --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
 ```
 
+If accounting still shows `PENDING` and bound `scontrol` proves
+`Reason=JobHeldUser`, repeat that command with `--release-held-gate`; then run
+it once more after `sacct` records the gate as `COMPLETED`.
+
 ## Normalize completed outputs
 
 ```bash

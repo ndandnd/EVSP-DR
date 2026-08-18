@@ -214,7 +214,10 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         legacy = classify_legacy_trip_hash(
             status.get("trip_set_sha256"), identities
         )
-        phases = _phase_times(Path(job["telemetry"]))
+        phases = (
+            _phase_times(Path(job["telemetry"]))
+            if job.get("telemetry") else defaultdict(lambda: defaultdict(float))
+        )
         iters_path = Path(str(status_path) + ".iters.csv")
         with iters_path.open(newline="") as handle:
             rows = list(csv.DictReader(handle))
@@ -295,9 +298,12 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             ("cg_status", status_path),
             ("cg_journal", Path(status["columns_journal"])),
             ("cg_iterations", iters_path),
-            ("cg_telemetry", Path(job["telemetry"])),
         ):
             inventory.append(_inventory(job["cell_id"], role, path))
+        if job.get("telemetry"):
+            inventory.append(_inventory(
+                job["cell_id"], "cg_telemetry", Path(job["telemetry"])
+            ))
         for snapshot in sorted(status_path.parent.glob(
             f"{status_path.stem}.m*.snapshot.json"
         )):
@@ -388,7 +394,8 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                 job["cell_id"], "mip_checkpoint", path
             ))
     _append_k40_rows(
-        plan, k40_reuse_manifest, mip_summary, mip_rows, inventory
+        plan, manifest["approval_sha256"], k40_reuse_manifest,
+        mip_summary, mip_rows, inventory
     )
     progress = _progress_rows(plan, cg_by_cell, mip_summary)
     staging = Path(tempfile.mkdtemp(
@@ -439,13 +446,17 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     }
 
 
-def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
+def _append_k40_rows(
+    plan, plan_sha, reuse_manifest, summaries, checkpoints, inventory
+):
     supplied = {}
     if reuse_manifest:
         path = Path(reuse_manifest).resolve()
         payload = json.loads(path.read_text())
         if payload.get("schema") != "evsp-dr-scale-ladder-k40-reuse-v1":
             raise ValueError("k40 reuse manifest schema mismatch")
+        if payload.get("approved_plan_sha256") != plan_sha:
+            raise ValueError("k40 reuse manifest belongs to another plan")
         rows = payload.get("slots") or []
         supplied = {
             (row["cell_id"], row["arm"]): row for row in rows
@@ -472,6 +483,30 @@ def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
                 ):
                     raise ValueError("result path/hash mismatch")
                 candidate = json.loads(result_path.read_text())
+                completion_path = Path(row["producer_completion_path"])
+                if (
+                    not completion_path.is_file()
+                    or sha256_file(completion_path)
+                    != row["producer_completion_sha256"]
+                ):
+                    raise ValueError("producer completion mismatch")
+                completion = json.loads(completion_path.read_text())
+                if (
+                    completion.get("schema")
+                    not in {
+                        "evsp-dr-mip-worker-completion-v2",
+                        "evsp-dr-scale-ladder-worker-completion-v1",
+                    }
+                    or completion.get("phase") not in {None, "MIP"}
+                ):
+                    raise ValueError("producer completion schema mismatch")
+                completion_hashes = completion.get(
+                    "artifact_sha256"
+                ) or {}
+                if completion_hashes.get(str(result_path.resolve())) != (
+                    row["result_sha256"]
+                ):
+                    raise ValueError("producer completion omits result")
                 cg_job = jobs_by_key[slot["required_cg_job_key"]]
                 cg_status_path = Path(cg_job["output"])
                 cg_status = json.loads(cg_status_path.read_text())
@@ -482,6 +517,8 @@ def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
                 start = candidate.get("mip_start") or {}
                 physical = candidate.get("physical_pool_audit") or {}
                 provenance = candidate.get("pricer_provenance") or {}
+                mip_provenance = candidate.get("mip_provenance") or {}
+                arguments = mip_provenance.get("arguments") or {}
                 if (
                     candidate.get("partitioning") is not True
                     or candidate.get("experiment_arm")
@@ -506,6 +543,17 @@ def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
                     != 300.0
                     or (candidate.get("physics") or {}).get("min_soc_frac")
                     != 0.0
+                    or mip_provenance.get("observed_git_commit")
+                    != row["producer_commit"]
+                    or mip_provenance.get("expected_git_commit")
+                    != row["producer_commit"]
+                    or mip_provenance.get("git_dirty") is not False
+                    or mip_provenance.get("tracked_clean_at_end") is not True
+                    or arguments.get("two_stage") is not True
+                    or arguments.get("cover") is not False
+                    or int(arguments.get("threads", -1)) != 8
+                    or int(arguments.get("timelimit", -1))
+                    != int(row["expected_time_limit_s"])
                     or (
                         slot["arm"] == "RAW"
                         and (
@@ -516,8 +564,27 @@ def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
                     )
                     or (
                         slot["arm"] == "KNOWN-PARTITION"
-                        and start.get("kind")
-                        != "validated_exact_partition"
+                        and (
+                            start.get("kind")
+                            != "validated_exact_partition"
+                            or start.get("source_sha256")
+                            != row["known_partition_sha256"]
+                            or start.get("validated_bus_count") != 40
+                            or (start.get("solver_acceptance") or {}).get(
+                                "accepted"
+                            ) is not True
+                        )
+                    )
+                    or (
+                        candidate.get("incumbent_found") is True
+                        and any(
+                            not isinstance(
+                                route.get(
+                                    "continuous_realized_charging_blocks"
+                                ), list
+                            )
+                            for route in candidate.get("selected_routes") or []
+                        )
                     )
                 ):
                     raise ValueError("result provenance/arm mismatch")
@@ -662,16 +729,46 @@ def _validate_completion(job, plan_sha):
         expected.update({
             Path(str(output) + ".columns.jsonl"),
             Path(str(output) + ".iters.csv"),
-            Path(job["telemetry"]),
         })
+        if job.get("telemetry"):
+            expected.add(Path(job["telemetry"]))
         for snapshot in output.parent.glob(
             f"{output.stem}.m*.snapshot.json"
         ):
             expected.add(snapshot)
             expected.add(Path(str(snapshot) + ".columns.jsonl"))
+        for mark in job["snapshot_minutes"]:
+            snapshot = output.parent / (
+                f"{output.stem}.m{int(mark)}.snapshot.json"
+            )
+            if (
+                not snapshot.is_file()
+                or not Path(str(snapshot) + ".columns.jsonl").is_file()
+            ):
+                raise ValueError(
+                    f"planned CG snapshot missing: {job['job_key']} m{mark}"
+                )
     elif job["phase"] == "MIP":
+        progress = Path(job["progress_dir"])
+        final = progress / "final.json"
+        if not final.is_file():
+            raise ValueError(f"MIP final checkpoint missing: {job['job_key']}")
+        result = json.loads(output.read_text())
+        schedule = (result.get("progress") or {}).get(
+            "checkpoint_schedule_s"
+        )
+        if not isinstance(schedule, list):
+            raise ValueError(f"MIP checkpoint schedule missing: {job['job_key']}")
+        for mark in schedule:
+            checkpoint = progress / (
+                f"checkpoint_{int(round(float(mark)/60)):04d}m.json"
+            )
+            if not checkpoint.is_file():
+                raise ValueError(
+                    f"planned MIP checkpoint missing: {job['job_key']}"
+                )
         expected.update(
-            path for path in Path(job["progress_dir"]).rglob("*")
+            path for path in progress.rglob("*")
             if path.is_file()
         )
     if {str(path.resolve()) for path in expected} != set(hashes):

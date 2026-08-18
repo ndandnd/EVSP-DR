@@ -163,6 +163,20 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         )
         self.assertNotIn("alpha", json.dumps(plan).lower())
         self.assertEqual(len(plan["k40_reuse_slots"]), 4)
+        self.assertTrue(all(
+            job["telemetry"] is None
+            for job in plan["jobs"]
+            if job["phase"] == "CG" and job["scale"] >= 30
+        ))
+        self.assertTrue(all(
+            job["telemetry"] is not None
+            for job in plan["jobs"]
+            if job["phase"] == "CG" and job["scale"] <= 20
+        ))
+        self.assertIn(1440, next(
+            job["snapshot_minutes"] for job in plan["jobs"]
+            if job["phase"] == "CG" and job["scale"] == 40
+        ))
 
     def test_worker_maps_dependencies_and_resume(self):
         worker = (REPO_ROOT / "src/submit_scale_ladder.sub").read_text()
@@ -237,6 +251,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "mip_start": {
                     "kind": "none", "source": None,
                 },
+                "progress": {"checkpoint_schedule_s": [60.0]},
             }))
             progress = root / "progress"
             progress.mkdir()
@@ -252,6 +267,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 },
                 "solver_ended_before_checkpoint": False,
             }))
+            (progress / "final.json").write_text(json.dumps({
+                "kind": "final", "final": {"status_name": "TIME_LIMIT"},
+            }))
             base = {
                 "cell_id": "k02_s1_c1", "scale": 2,
                 "selection_replicate": 1, "cg_replicate": 1,
@@ -264,6 +282,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 **base, "job_key": "cg", "phase": "CG", "arm": None,
                 "budget_s": 100, "output": str(cg),
                 "telemetry": str(telemetry), "progress_dir": None,
+                "snapshot_minutes": [],
             }
             mip_job = {
                 **base, "job_key": "mip", "phase": "MIP", "arm": "RAW",
@@ -271,6 +290,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "progress_dir": str(progress), "telemetry": None,
                 "scientific_role": None,
                 "dependency_cg": "cg",
+                "snapshot_minutes": [],
             }
             plan = {
                 "checkout_identity": {"commit": "b" * 40},
@@ -300,7 +320,13 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     cg_job,
                     [cg, journal, Path(str(cg) + ".iters.csv"), telemetry],
                 ),
-                (mip_job, [mip, progress / "checkpoint_0001m.json"]),
+                (
+                    mip_job,
+                    [
+                        mip, progress / "checkpoint_0001m.json",
+                        progress / "final.json",
+                    ],
+                ),
             ):
                 completion = {
                     "schema":

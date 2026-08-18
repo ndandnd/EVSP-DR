@@ -102,8 +102,10 @@ def _environment(python):
     if python.is_symlink() or not python.is_file():
         raise ValueError("Python must be a real absolute executable, not a symlink")
     environment = dict(os.environ)
-    environment.pop("PYTHONPATH", None)
+    for key in ("PYTHONPATH", "PYTHONHOME", "LD_LIBRARY_PATH"):
+        environment.pop(key, None)
     environment["PYTHONNOUSERSITE"] = "1"
+    environment["PATH"] = "/usr/local/bin:/usr/bin:/bin"
     completed = subprocess.run(
         [
             str(python), "-I", "-B",
@@ -318,6 +320,7 @@ def build_plan(campaign, python, reservation_root):
         }
     scontrol_identity = binary_identity("scontrol")
     sbatch_identity = binary_identity("sbatch")
+    sacct_identity = binary_identity("sacct")
     return {
         "schema": SCHEMA,
         "campaign": campaign,
@@ -340,6 +343,7 @@ def build_plan(campaign, python, reservation_root):
         },
         "scontrol": scontrol_identity,
         "sbatch": sbatch_identity,
+        "sacct": sacct_identity,
         "runtime_environment": {
             "HOME": str(Path.home()),
             "USER": os.environ.get("USER", ""),
@@ -390,7 +394,7 @@ def _job(root, cell, key, phase, arm, nonce):
         ),
         "telemetry": (
             str(root / "telemetry" / f"{key}.jsonl")
-            if phase == "CG" else None
+            if phase == "CG" and scale <= 20 else None
         ),
     }
     job["job_name"] = _name(job, nonce)
@@ -585,7 +589,7 @@ def _submit_array(
         "--cpus-per-task=8" if group.startswith("MIP")
         else "--cpus-per-task=2",
         "--mem=64G" if group.startswith("MIP") else "--mem=32G",
-        f"--time={math.ceil(max_budget/60)+10}",
+        f"--time={math.ceil(max_budget/60)+(30 if group == 'CG' else 10)}",
         f"--job-name={_array_name(group, plan_sha)}",
         f"--comment=SLAD:{plan_sha[:20]}:{group}",
         f"--output={logs}/%x_%A_%a.out",
