@@ -110,7 +110,9 @@ env -u PYTHONPATH PYTHONNOUSERSITE=1 \
 
 If accounting still shows `PENDING` and bound `scontrol` proves
 `Reason=JobHeldUser`, repeat that command with `--release-held-gate`; then run
-it once more after `sacct` records the gate as `COMPLETED`.
+it once more after `sacct` records the gate as `COMPLETED`. For an
+accepted-but-unrecorded array, the reconciliation command first reconstructs
+all four array IDs from their plan/group-specific `squeue` comments.
 
 ## Normalize completed outputs
 

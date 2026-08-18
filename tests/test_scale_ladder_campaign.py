@@ -23,6 +23,7 @@ from scale_ladder_trip_identity import (  # noqa: E402
 from summarize_scale_ladder import (  # noqa: E402
     CG_FIELDS,
     PROGRESS_FIELDS,
+    _validate_completion,
     summarize,
 )
 
@@ -233,6 +234,13 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     "record_type": "phase",
                     "phase": "pricing_shortest_path",
                     "duration_s": 2.0, "iteration": 1,
+                }) + "\n" + json.dumps({
+                    "record_type": "phase", "phase": "master_attempt",
+                    "duration_s": 1.0, "iteration": 2,
+                }) + "\n" + json.dumps({
+                    "record_type": "phase",
+                    "phase": "pricing_shortest_path",
+                    "duration_s": 2.0, "iteration": 2,
                 }) + "\n"
             )
             mip = root / "mip.json"
@@ -364,6 +372,42 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                              "evsp-dr-trip-identity-v1")
             self.assertNotIn("trip_set_sha256", CG_FIELDS)
             self.assertNotIn("trip_set_sha256", PROGRESS_FIELDS)
+
+    def test_early_certified_cg_censors_future_snapshots(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            output = root / "cg.json"
+            journal = Path(str(output) + ".columns.jsonl")
+            iterations = Path(str(output) + ".iters.csv")
+            output.write_text(json.dumps({
+                "wall_s": 100.0, "stop_reason": "certified",
+            }))
+            journal.write_text("{}\n")
+            iterations.write_text("header\n")
+            job = {
+                "job_key": "cg", "phase": "CG", "arm": None,
+                "output": str(output), "telemetry": None,
+                "snapshot_minutes": [5],
+                "instance": {"instance_file_sha256": "a" * 64},
+            }
+            completion = {
+                "schema":
+                    "evsp-dr-scale-ladder-worker-completion-v1",
+                "phase": "CG", "plan_sha256": "p" * 64,
+                "instance_file_sha256": "a" * 64,
+                "job_key": "cg", "arm": None,
+                "snapshot_availability": {
+                    "5": "censored_solver_terminated_before_mark"
+                },
+                "artifact_sha256": {
+                    str(path.resolve()): sha256_file(path)
+                    for path in (output, journal, iterations)
+                },
+            }
+            Path(str(output) + ".worker-completion.json").write_text(
+                json.dumps(completion)
+            )
+            _validate_completion(job, "p" * 64)
 
 
 if __name__ == "__main__":

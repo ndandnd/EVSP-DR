@@ -28,6 +28,7 @@ CG_FIELDS = (
     "target_fleet", "elapsed_s", "iteration", "lp_obj",
     "route_weight", "artificial_mass", "min_reduced_cost",
     "pool_columns", "columns_added", "master_time_s", "pricing_time_s",
+    "phase_timing_available", "phase_timing_unavailable_reason",
     "pricing_certified", "stopping_reason", "censored",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
@@ -41,6 +42,7 @@ CG_SUMMARY_FIELDS = (
     "final_min_reduced_cost", "pool_columns", "pricing_certified",
     "stopping_reason", "time_to_target_route_weight_s",
     "time_to_zero_artificials_s", "censored",
+    "phase_timing_available", "phase_timing_unavailable_reason",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
     "trip_identity_schema",
@@ -226,6 +228,11 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         for raw in rows:
             iteration = int(float(raw["iteration"]))
             pool_columns = int(float(raw["pool_columns"]))
+            timing_available = (
+                job.get("telemetry") is not None
+                and phases[iteration]["master"] > 0.0
+                and phases[iteration]["pricing"] > 0.0
+            )
             normalized.append({
                 "cell_id": job["cell_id"],
                 "scale": job["scale"],
@@ -242,6 +249,13 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                 "columns_added": max(0, pool_columns - previous_columns),
                 "master_time_s": phases[iteration]["master"] or None,
                 "pricing_time_s": phases[iteration]["pricing"] or None,
+                "phase_timing_available": timing_available,
+                "phase_timing_unavailable_reason": (
+                    None if timing_available
+                    else "telemetry_disabled_for_long_run"
+                    if job.get("telemetry") is None
+                    else "phase_event_missing"
+                ),
                 "pricing_certified": (
                     status.get("certified_rc_optimal") is True
                     and raw is rows[-1]
@@ -256,6 +270,13 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             })
             previous_columns = pool_columns
         cg_rows.extend(normalized)
+        if job.get("telemetry") and any(
+            row["phase_timing_available"] is not True
+            for row in normalized
+        ):
+            raise ValueError(
+                f"configured phase telemetry is incomplete: {job['cell_id']}"
+            )
         final = normalized[-1] if normalized else None
         time_target = next((
             row["elapsed_s"] for row in normalized
@@ -287,6 +308,18 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             "time_to_target_route_weight_s": time_target,
             "time_to_zero_artificials_s": time_zero,
             "censored": status.get("certified_rc_optimal") is not True,
+            "phase_timing_available": (
+                bool(normalized)
+                and all(row["phase_timing_available"] for row in normalized)
+            ),
+            "phase_timing_unavailable_reason": (
+                None if normalized and all(
+                    row["phase_timing_available"] for row in normalized
+                )
+                else "telemetry_disabled_for_long_run"
+                if job.get("telemetry") is None
+                else "phase_event_missing"
+            ),
             **{
                 field: identities[field] for field in identities
                 if field != "trip_count"
@@ -500,13 +533,19 @@ def _append_k40_rows(
                     or completion.get("phase") not in {None, "MIP"}
                 ):
                     raise ValueError("producer completion schema mismatch")
-                completion_hashes = completion.get(
-                    "artifact_sha256"
-                ) or {}
-                if completion_hashes.get(str(result_path.resolve())) != (
-                    row["result_sha256"]
+                if completion["schema"] == (
+                    "evsp-dr-mip-worker-completion-v2"
                 ):
-                    raise ValueError("producer completion omits result")
+                    if completion.get("result_sha256") != row["result_sha256"]:
+                        raise ValueError("producer completion omits result")
+                else:
+                    completion_hashes = completion.get(
+                        "artifact_sha256"
+                    ) or {}
+                    if completion_hashes.get(
+                        str(result_path.resolve())
+                    ) != row["result_sha256"]:
+                        raise ValueError("producer completion omits result")
                 cg_job = jobs_by_key[slot["required_cg_job_key"]]
                 cg_status_path = Path(cg_job["output"])
                 cg_status = json.loads(cg_status_path.read_text())
@@ -519,6 +558,35 @@ def _append_k40_rows(
                 provenance = candidate.get("pricer_provenance") or {}
                 mip_provenance = candidate.get("mip_provenance") or {}
                 arguments = mip_provenance.get("arguments") or {}
+                gurobi_parameters = mip_provenance.get(
+                    "gurobi_parameters"
+                ) or {}
+                known_partition_sha = None
+                if slot["arm"] == "KNOWN-PARTITION":
+                    known_path = Path(row["known_partition_path"])
+                    if (
+                        not known_path.is_file()
+                        or sha256_file(known_path)
+                        != row["known_partition_sha256"]
+                    ):
+                        raise ValueError("known partition artifact mismatch")
+                    known_partition_sha = row["known_partition_sha256"]
+                selected_routes = candidate.get("selected_routes") or []
+                selected_trip_counts = defaultdict(int)
+                for selected_route in selected_routes:
+                    for trip in selected_route.get("trips") or []:
+                        selected_trip_counts[int(trip)] += 1
+                valid_selected_partition = (
+                    candidate.get("incumbent_found") is not True
+                    or (
+                        len(selected_routes) == candidate.get("buses")
+                        and set(selected_trip_counts) == set(range(947))
+                        and all(
+                            value == 1
+                            for value in selected_trip_counts.values()
+                        )
+                    )
+                )
                 if (
                     candidate.get("partitioning") is not True
                     or candidate.get("experiment_arm")
@@ -549,11 +617,24 @@ def _append_k40_rows(
                     != row["producer_commit"]
                     or mip_provenance.get("git_dirty") is not False
                     or mip_provenance.get("tracked_clean_at_end") is not True
+                    or mip_provenance.get("final_observed_git_commit")
+                    != row["producer_commit"]
+                    or row["producer_commit"]
+                    not in slot["accepted_producer_commits"]
                     or arguments.get("two_stage") is not True
                     or arguments.get("cover") is not False
-                    or int(arguments.get("threads", -1)) != 8
+                    or int(arguments.get("threads", -1))
+                    != slot["required_threads"]
                     or int(arguments.get("timelimit", -1))
-                    != int(row["expected_time_limit_s"])
+                    != slot["required_time_limit_s"]
+                    or not math.isclose(
+                        float(arguments.get("mipgap", math.nan)),
+                        slot["required_mip_gap"],
+                        rel_tol=0.0, abs_tol=1e-12,
+                    )
+                    or int(gurobi_parameters.get("Seed", -1))
+                    != slot["required_gurobi_seed"]
+                    or not valid_selected_partition
                     or (
                         slot["arm"] == "RAW"
                         and (
@@ -568,11 +649,38 @@ def _append_k40_rows(
                             start.get("kind")
                             != "validated_exact_partition"
                             or start.get("source_sha256")
-                            != row["known_partition_sha256"]
+                            != known_partition_sha
                             or start.get("validated_bus_count") != 40
                             or (start.get("solver_acceptance") or {}).get(
                                 "accepted"
                             ) is not True
+                        )
+                    )
+                    or (
+                        slot["arm"] == "RAW"
+                        and (
+                            candidate.get("extra_route_sources") != []
+                            or int(physical.get(
+                                "added_giro_route_count", -1
+                            )) != 0
+                            or physical.get("base_pool_column_count")
+                            != physical.get("augmented_pool_column_count")
+                        )
+                    )
+                    or (
+                        slot["arm"] == "KNOWN-PARTITION"
+                        and (
+                            int(physical.get(
+                                "added_giro_route_count", -1
+                            )) != 40
+                            or int(physical.get(
+                                "assigned_mip_start_route_count", -1
+                            )) != 40
+                            or int(physical.get(
+                                "augmented_pool_column_count", -1
+                            )) != int(physical.get(
+                                "base_pool_column_count", -2
+                            )) + 40
                         )
                     )
                     or (
@@ -741,12 +849,26 @@ def _validate_completion(job, plan_sha):
             snapshot = output.parent / (
                 f"{output.stem}.m{int(mark)}.snapshot.json"
             )
-            if (
-                not snapshot.is_file()
-                or not Path(str(snapshot) + ".columns.jsonl").is_file()
-            ):
+            availability = (
+                completion.get("snapshot_availability") or {}
+            ).get(str(mark))
+            if availability == "available":
+                if (
+                    not snapshot.is_file()
+                    or not Path(str(snapshot) + ".columns.jsonl").is_file()
+                ):
+                    raise ValueError(
+                        f"available CG snapshot missing: {job['job_key']} m{mark}"
+                    )
+            elif availability == "censored_solver_terminated_before_mark":
+                status = json.loads(output.read_text())
+                if float(status.get("wall_s", 0.0)) + 1e-6 >= mark * 60:
+                    raise ValueError(
+                        f"due CG snapshot mislabeled censored: {job['job_key']}"
+                    )
+            else:
                 raise ValueError(
-                    f"planned CG snapshot missing: {job['job_key']} m{mark}"
+                    f"CG snapshot availability missing: {job['job_key']} m{mark}"
                 )
     elif job["phase"] == "MIP":
         progress = Path(job["progress_dir"])
@@ -804,6 +926,7 @@ def _plots(staging, cg_rows, mip_rows):
     axes[1].set(xlabel="CG iteration", ylabel="LP route weight")
     if groups:
         axes[0].legend(fontsize=4, ncol=3)
+        axes[1].legend(fontsize=4, ncol=3)
     fig.tight_layout()
     fig.savefig(
         staging / "cg_route_weight.png", dpi=170,

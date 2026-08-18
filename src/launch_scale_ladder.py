@@ -303,6 +303,16 @@ def build_plan(campaign, python, reservation_root):
             "required_tariff_sha256": HISTORICAL_FLAT_SHA256,
             "required_physics": input_manifest["physics"],
             "required_cg_job_key": cg_key_by_cell[cell["cell_id"]],
+            "accepted_producer_commits": [
+                "636dc0912f47e6ce85284fad3b36af30b4135887",
+                "77baf667a06946c692f959d66fed4e2bca36cd32",
+            ],
+            "required_time_limit_s": (
+                28800 if arm == "RAW" else 7200
+            ),
+            "required_mip_gap": 1e-4,
+            "required_threads": 8,
+            "required_gurobi_seed": 0,
         }
         for cell in k40
         for arm in ("RAW", "KNOWN-PARTITION")
@@ -321,6 +331,7 @@ def build_plan(campaign, python, reservation_root):
     scontrol_identity = binary_identity("scontrol")
     sbatch_identity = binary_identity("sbatch")
     sacct_identity = binary_identity("sacct")
+    squeue_identity = binary_identity("squeue")
     return {
         "schema": SCHEMA,
         "campaign": campaign,
@@ -344,6 +355,7 @@ def build_plan(campaign, python, reservation_root):
         "scontrol": scontrol_identity,
         "sbatch": sbatch_identity,
         "sacct": sacct_identity,
+        "squeue": squeue_identity,
         "runtime_environment": {
             "HOME": str(Path.home()),
             "USER": os.environ.get("USER", ""),
@@ -460,10 +472,16 @@ def submit(plan, plan_sha):
     if (
         plan["scontrol"]["available"] is not True
         or plan["sbatch"]["available"] is not True
+        or plan["sacct"]["available"] is not True
+        or plan["squeue"]["available"] is not True
         or sha256_file(Path(plan["scontrol"]["path"]))
         != plan["scontrol"]["sha256"]
         or sha256_file(Path(plan["sbatch"]["path"]))
         != plan["sbatch"]["sha256"]
+        or sha256_file(Path(plan["sacct"]["path"]))
+        != plan["sacct"]["sha256"]
+        or sha256_file(Path(plan["squeue"]["path"]))
+        != plan["squeue"]["sha256"]
     ):
         raise ValueError("approved Slurm executables unavailable/changed")
     observed = checkout_identity(True)

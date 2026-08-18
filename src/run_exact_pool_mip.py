@@ -2985,7 +2985,6 @@ def main(argv=None) -> int:
             if progress is not None else None
         ),
     }
-    write_new_json(out, summary)
     if progress is not None:
         progress.finalize(
             elapsed_s=summary["runtime_s"],
@@ -3011,6 +3010,7 @@ def main(argv=None) -> int:
                 ),
             },
         )
+    write_new_json(out, summary)
     if termination is not None:
         termination.restore()
     print(f"[MIP] status={status_name}({status_code}) buses={summary['buses']} "

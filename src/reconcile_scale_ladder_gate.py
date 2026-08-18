@@ -29,11 +29,50 @@ def reconcile(root, expected_plan_sha, *, release_held_gate=False):
     ):
         raise ValueError("approved sacct executable unavailable/changed")
     manifest = json.loads(manifest_path.read_text())
+    if manifest.get("gate_state") in {
+        "creating", "held", "held_after_partial_submission",
+    }:
+        squeue = plan.get("squeue") or {}
+        squeue_path = Path(str(squeue.get("path") or ""))
+        if (
+            squeue.get("available") is not True
+            or not squeue_path.is_file()
+            or hashlib.sha256(squeue_path.read_bytes()).hexdigest()
+            != squeue.get("sha256")
+        ):
+            raise ValueError("approved squeue unavailable/changed")
+        listed = subprocess.run(
+            [str(squeue_path), "-h", "-o", "%A|%k"],
+            text=True, capture_output=True, check=False,
+        )
+        if listed.returncode != 0:
+            raise RuntimeError("cannot query squeue")
+        prefix = f"SLAD:{expected_plan_sha[:20]}:"
+        discovered = {}
+        for line in listed.stdout.splitlines():
+            fields = line.split("|", 1)
+            if len(fields) != 2 or not fields[1].startswith(prefix):
+                continue
+            group = fields[1][len(prefix):]
+            if group in discovered and discovered[group] != fields[0]:
+                raise ValueError("multiple arrays share one plan/group comment")
+            discovered[group] = fields[0]
+        combined = {
+            **(manifest.get("submitted_arrays") or {}),
+            **discovered,
+        }
+        if set(combined) != {"SEED", "CG", "MIP_RAW", "MIP_KNOWN"}:
+            raise ValueError("could not reconstruct every accepted array")
+        if any(not str(value).isdigit() for value in combined.values()):
+            raise ValueError("reconstructed array ID is invalid")
+        manifest["submitted_arrays"] = combined
+        manifest["gate_state"] = "held"
+        _replace_json(manifest_path, manifest)
     if (
         manifest.get("approval_sha256") != expected_plan_sha
         or manifest.get("gate_state")
         not in {
-            "release_attempting", "held_release_failed",
+            "held", "release_attempting", "held_release_failed",
             "release_retry_attempting", "release_retry_requested",
         }
         or not str(manifest.get("gate_job_id") or "").isdigit()

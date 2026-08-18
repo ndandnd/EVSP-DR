@@ -351,6 +351,7 @@ import hashlib,json,os,pathlib,sys
 output,phase,progress,telemetry,plan_sha,instance_sha,job_key,arm,plan_path=sys.argv[1:]
 output=pathlib.Path(output)
 paths=[]
+snapshot_availability={}
 if output.is_dir():
     paths.extend(path for path in output.rglob("*") if path.is_file())
 else:
@@ -368,17 +369,29 @@ if phase=="CG":
                     json.loads(line)
     plan=json.load(open(plan_path))
     job=next(item for item in plan["jobs"] if item["job_key"]==job_key)
+    status=json.load(output.open())
+    elapsed=float(status.get("wall_s",0.0))
     snapshots=[
-        output.parent/f"{output.stem}.m{int(mark)}.snapshot.json"
+        (
+            mark,
+            output.parent/f"{output.stem}.m{int(mark)}.snapshot.json",
+        )
         for mark in job["snapshot_minutes"]
     ]
-    for snapshot in snapshots:
-        if not snapshot.is_file() or not pathlib.Path(
-            str(snapshot)+".columns.jsonl"
-        ).is_file():
-            raise SystemExit(f"required CG snapshot missing: {snapshot}")
-        paths.append(snapshot)
-        paths.append(pathlib.Path(str(snapshot)+".columns.jsonl"))
+    for mark,snapshot in snapshots:
+        journal=pathlib.Path(str(snapshot)+".columns.jsonl")
+        due=float(mark)*60.0 <= elapsed+1e-6
+        if due and (not snapshot.is_file() or not journal.is_file()):
+            raise SystemExit(f"due CG snapshot missing: {snapshot}")
+        if snapshot.is_file() and journal.is_file():
+            paths.extend([snapshot,journal])
+            snapshot_availability[str(mark)]="available"
+        elif due:
+            raise SystemExit(f"due CG snapshot incomplete: {snapshot}")
+        else:
+            snapshot_availability[str(mark)]=(
+                "censored_solver_terminated_before_mark"
+            )
 if phase=="MIP":
     final_path=pathlib.Path(progress)/"final.json"
     if not final_path.is_file():
@@ -414,6 +427,7 @@ payload={
     "artifact_sha256":{
         str(path.resolve()):sha(path) for path in sorted(set(paths))
     },
+    "snapshot_availability":snapshot_availability,
 }
 target=pathlib.Path(str(output)+".worker-completion.json")
 temporary=target.with_name(f".{target.name}.tmp.{os.getpid()}")
