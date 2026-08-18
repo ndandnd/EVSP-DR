@@ -128,6 +128,24 @@ def validated_fixed_duty_seed_records(
         )
     ):
         raise ValueError("fixed-duty seed identity/physics/tariff mismatch")
+    validation_prices = deepcopy(station_prices)
+    required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
+    if any(
+        required_hour not in curve
+        for curve in validation_prices.values()
+    ):
+        if tariff.get("coverage_policy") != (
+            "historical_last_hour_extension_verified_constant"
+        ):
+            raise ValueError("fixed-duty seed tariff coverage is incomplete")
+        for curve in validation_prices.values():
+            if not curve or len(set(curve.values())) != 1:
+                raise ValueError(
+                    "fixed-duty seed tariff extension is not constant"
+                )
+            last = curve[max(curve)]
+            for hour in range(required_hour + 1):
+                curve.setdefault(hour, last)
     trip_set = set(problem.trips)
     counts = Counter()
     accepted = []
@@ -165,7 +183,7 @@ def validated_fixed_duty_seed_records(
         validation = validate_continuous_charging_blocks(
             route,
             blocks,
-            station_prices=station_prices,
+            station_prices=validation_prices,
             charge_kw=charge_kw,
             expected_continuous_cost=route.get(
                 "continuous_realized_cost"
@@ -174,7 +192,7 @@ def validated_fixed_duty_seed_records(
         costs = realized_costs(
             route,
             physical,
-            station_prices=station_prices,
+            station_prices=validation_prices,
         )
         certificate = certificate_by_duty.get(route.get("duty_id"))
         certificate_payload = (
@@ -188,7 +206,7 @@ def validated_fixed_duty_seed_records(
         recomputed = optimize_fixed_duty(
             problem,
             trips,
-            station_prices,
+            validation_prices,
             g_kwh=g_kwh,
             charge_kw=charge_kw,
             reserve_kwh=reserve_kwh,

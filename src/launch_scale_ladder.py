@@ -1,0 +1,636 @@
+#!/usr/bin/env python3
+"""Hash-approved launcher for the flat-tariff exact-CG scale ladder."""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import hashlib
+import json
+import math
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+from build_tariff_response_manifest import REPO_ROOT, sha256_file
+from scale_ladder_trip_identity import SCHEMA as TRIP_SCHEMA, identity
+
+
+SCHEMA = "evsp-dr-scale-ladder-plan-v1"
+REVIEWED_BASE = "77baf667a06946c692f959d66fed4e2bca36cd32"
+INPUT_MANIFEST = (
+    REPO_ROOT / "data/scale_ladder/instances/campaign_input_manifest.json"
+)
+INSTANCE_MANIFEST = (
+    REPO_ROOT
+    / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
+)
+HISTORICAL_FLAT_SHA256 = (
+    "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+)
+WORKER = REPO_ROOT / "src/submit_scale_ladder.sub"
+CODE_PATHS = (
+    "src/launch_scale_ladder.py",
+    "src/submit_scale_ladder.sub",
+    "src/build_scale_ladder_inputs.py",
+    "src/scale_ladder_trip_identity.py",
+    "src/prepare_scale_ladder_known_partition.py",
+    "src/exact_pricer_expanded.py",
+    "src/run_exact_pool_mip.py",
+    "src/expanded_path_realization.py",
+    "src/audit_giro_known_columns.py",
+    "src/tariff_response_core.py",
+    "src/fixed_duty_expanded_optimizer.py",
+    "src/mip_convergence.py",
+    "src/exact_cg_telemetry.py",
+    "src/master_lp_scipy.py",
+    "src/durable_io.py",
+    "src/utils_v2.py",
+    "src/config.py",
+    "src/tariff_response_environment.py",
+)
+CG_BUDGET_S = {
+    2: 7200, 3: 7200, 5: 7200,
+    8: 21600, 13: 21600, 20: 43200,
+    30: 86400, 40: 86400,
+}
+MIP_BUDGET_S = {
+    2: 1800, 3: 1800, 5: 1800, 8: 1800,
+    13: 3600, 20: 7200, 30: 14400,
+}
+SNAPSHOT_MINUTES = (5, 15, 30, 60, 120, 240, 480, 720, 1440)
+
+
+def canonical(payload):
+    return json.dumps(
+        payload, sort_keys=True, separators=(",", ":"), allow_nan=False
+    ).encode()
+
+
+def checkout_identity(require_detached=False):
+    def git(*args):
+        return subprocess.run(
+            ["git", *args], cwd=REPO_ROOT, text=True,
+            capture_output=True, check=False,
+        )
+    head = git("rev-parse", "HEAD")
+    status = git("status", "--porcelain", "--untracked-files=all")
+    ancestor = git("merge-base", "--is-ancestor", REVIEWED_BASE, "HEAD")
+    symbolic = git("symbolic-ref", "-q", "HEAD")
+    if (
+        head.returncode != 0
+        or status.returncode != 0
+        or status.stdout.strip()
+        or ancestor.returncode != 0
+        or (require_detached and symbolic.returncode == 0)
+    ):
+        raise ValueError("checkout must be reviewed, exact, clean and detached")
+    return {
+        "commit": head.stdout.strip(),
+        "reviewed_base": REVIEWED_BASE,
+        "detached": symbolic.returncode == 1,
+        "tracked_clean": True,
+    }
+
+
+def _environment(python):
+    python = Path(python).resolve()
+    environment = dict(os.environ)
+    environment.pop("PYTHONPATH", None)
+    environment["PYTHONNOUSERSITE"] = "1"
+    completed = subprocess.run(
+        [
+            str(python), "-I", "-B",
+            str(REPO_ROOT / "src/tariff_response_environment.py"),
+        ],
+        text=True, capture_output=True, check=False, env=environment,
+    )
+    if completed.returncode != 0:
+        raise ValueError("Python/Gurobi environment unavailable")
+    payload = json.loads(completed.stdout)
+    if not payload["python"].startswith("3.12."):
+        raise ValueError("scale ladder requires Python 3.12")
+    return payload
+
+
+def _name(job, nonce):
+    scale = int(job["scale"])
+    replicate = int(job["campaign_replicate"])
+    code = (
+        "S" if job["phase"] == "SEED"
+        else "X" if job["phase"] == "CG"
+        else "R" if job["arm"] == "RAW"
+        else "K"
+    )
+    name = f"L{scale:02d}R{replicate}{code}{nonce}"
+    if len(name) > 15:
+        raise ValueError("Slurm job name too long")
+    return name
+
+
+def build_plan(campaign, python, reservation_root):
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,79}", campaign):
+        raise ValueError("unsafe campaign name")
+    input_raw = INPUT_MANIFEST.read_bytes()
+    input_manifest = json.loads(input_raw)
+    if input_manifest.get("schema") != (
+        "evsp-dr-scale-ladder-input-manifest-v1"
+    ):
+        raise ValueError("input manifest schema mismatch")
+    if input_manifest.get("trip_identity_schema") != TRIP_SCHEMA:
+        raise ValueError("trip identity schema mismatch")
+    tariff = input_manifest["tariff"]
+    if (
+        tariff["primary_tariff_sha256"] != HISTORICAL_FLAT_SHA256
+        or tariff["equivalence_verified"] is not True
+        or Path(tariff["primary_tariff_relative_path"]).name
+        != "hourly_prices_flat.csv"
+    ):
+        raise ValueError("historical flat tariff identity changed")
+    with INSTANCE_MANIFEST.open(newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    if len(rows) != 22:
+        raise ValueError("scale ladder instance row count differs")
+    instances = {}
+    for row in rows:
+        path = REPO_ROOT / row["relative_path"]
+        observed = identity(path)
+        for field in (
+            "instance_file_sha256",
+            "ordered_trip_id_set_sha256",
+            "solver_local_trip_index_sha256",
+            "ordered_trip_sequence_sha256",
+            "trip_identity_schema",
+        ):
+            if str(observed[field]) != str(row[field]):
+                raise ValueError(f"instance identity mismatch: {field}")
+        key = (int(row["scale"]), int(row["selection_replicate"]))
+        if key in instances:
+            raise ValueError("duplicate instance selection")
+        instances[key] = {
+            **row,
+            "path": str(path.resolve()),
+            "trip_count": int(row["trip_count"]),
+            "scale": int(row["scale"]),
+            "selection_replicate": int(row["selection_replicate"]),
+            "cg_replicates": int(row["cg_replicates"]),
+            "target_fleet": int(row["target_fleet"]),
+            "duties": json.loads(row["duties_json"]),
+        }
+    root = (
+        REPO_ROOT / "src/results/scale_ladder" / campaign
+    ).resolve()
+    cg_cells = []
+    for key in sorted(instances):
+        instance = instances[key]
+        for cg_replicate in range(1, instance["cg_replicates"] + 1):
+            cg_cells.append({
+                "cell_id": (
+                    f"k{instance['scale']:02d}_s"
+                    f"{instance['selection_replicate']}_c{cg_replicate}"
+                ),
+                "scale": instance["scale"],
+                "selection_replicate": instance["selection_replicate"],
+                "cg_replicate": cg_replicate,
+                "campaign_replicate": (
+                    cg_replicate
+                    if instance["scale"] == 40
+                    else instance["selection_replicate"]
+                ),
+                "target_fleet": instance["target_fleet"],
+                "instance": instance,
+            })
+    non_k40 = [cell for cell in cg_cells if cell["scale"] < 40]
+    k40 = [cell for cell in cg_cells if cell["scale"] == 40]
+    if len(non_k40) != 21 or len(k40) != 2:
+        raise ValueError("CG ladder cell count differs")
+    cg_cells = non_k40 + k40
+    jobs = []
+    nonce = hashlib.sha256(campaign.encode()).hexdigest()[:2]
+    seed_key_by_cell = {}
+    cg_key_by_cell = {}
+    for cell in non_k40:
+        key = f"seed_{cell['cell_id']}"
+        seed_key_by_cell[cell["cell_id"]] = key
+        jobs.append(_job(root, cell, key, "SEED", None, nonce))
+    for cell in cg_cells:
+        key = f"cg_{cell['cell_id']}"
+        cg_key_by_cell[cell["cell_id"]] = key
+        jobs.append(_job(root, cell, key, "CG", None, nonce))
+    for arm in ("RAW", "KNOWN-PARTITION"):
+        for cell in non_k40:
+            key = f"mip_{arm.lower().replace('-', '_')}_{cell['cell_id']}"
+            job = _job(root, cell, key, "MIP", arm, nonce)
+            job["dependency_cg"] = cg_key_by_cell[cell["cell_id"]]
+            job["dependency_seed"] = (
+                seed_key_by_cell[cell["cell_id"]]
+                if arm == "KNOWN-PARTITION" else None
+            )
+            jobs.append(job)
+    code_hashes = {
+        relative: sha256_file(REPO_ROOT / relative)
+        for relative in CODE_PATHS
+    }
+    for job in jobs:
+        staged_instance = (
+            root / "input/instances"
+            / f"{job['cell_id']}_{Path(job['instance']['path']).name}"
+        )
+        job["instance"] = {
+            **job["instance"],
+            "source_path": job["instance"]["path"],
+            "path": str(staged_instance),
+            "relative_path": (
+                f"scale_ladder_inputs/{job['cell_id']}_"
+                f"{Path(job['instance']['path']).name}"
+            ),
+        }
+        job["execution_digest"] = hashlib.sha256(canonical({
+            key: value for key, value in job.items()
+            if key not in {"job_name", "output", "progress_dir", "telemetry"}
+        } | {
+            "code_hashes": code_hashes,
+            "tariff_sha256": HISTORICAL_FLAT_SHA256,
+        })).hexdigest()
+    groups = {
+        "SEED": [job["job_key"] for job in jobs if job["phase"] == "SEED"],
+        "CG": [job["job_key"] for job in jobs if job["phase"] == "CG"],
+        "MIP_RAW": [
+            job["job_key"] for job in jobs
+            if job["phase"] == "MIP" and job["arm"] == "RAW"
+        ],
+        "MIP_KNOWN": [
+            job["job_key"] for job in jobs
+            if job["phase"] == "MIP" and job["arm"] == "KNOWN-PARTITION"
+        ],
+    }
+    if {key: len(value) for key, value in groups.items()} != {
+        "SEED": 21, "CG": 23, "MIP_RAW": 21, "MIP_KNOWN": 21,
+    }:
+        raise ValueError("task group counts differ")
+    reuse_slots = [
+        {
+            "cell_id": cell["cell_id"],
+            "scale": 40,
+            "cg_replicate": cell["cg_replicate"],
+            "arm": arm,
+            "submission_policy": "reuse_only_never_submit",
+            "required_instance_file_sha256":
+                cell["instance"]["instance_file_sha256"],
+            "required_tariff_sha256": HISTORICAL_FLAT_SHA256,
+            "required_physics": input_manifest["physics"],
+        }
+        for cell in k40
+        for arm in ("RAW", "KNOWN-PARTITION")
+    ]
+    python_identity = _environment(python)
+    scontrol = shutil.which("scontrol")
+    if not scontrol:
+        scontrol_identity = {"path": None, "sha256": None, "available": False}
+    else:
+        scontrol = str(Path(scontrol).resolve())
+        scontrol_identity = {
+            "path": scontrol,
+            "sha256": sha256_file(Path(scontrol)),
+            "available": True,
+        }
+    return {
+        "schema": SCHEMA,
+        "campaign": campaign,
+        "campaign_root": str(root),
+        "checkout_identity": checkout_identity(False),
+        "input_manifest": str(INPUT_MANIFEST),
+        "input_manifest_sha256": hashlib.sha256(input_raw).hexdigest(),
+        "instance_manifest": str(INSTANCE_MANIFEST),
+        "instance_manifest_sha256": sha256_file(INSTANCE_MANIFEST),
+        "trip_identity_schema": TRIP_SCHEMA,
+        "tariff": tariff,
+        "physics": input_manifest["physics"],
+        "code_hashes": code_hashes,
+        "worker": str(WORKER),
+        "worker_sha256": sha256_file(WORKER),
+        "python_identity": python_identity,
+        "python": {
+            "path": python_identity["executable"],
+            "sha256": python_identity["executable_sha256"],
+        },
+        "scontrol": scontrol_identity,
+        "reservation_root": str(Path(reservation_root).resolve()),
+        "jobs": jobs,
+        "task_groups": groups,
+        "task_count": sum(map(len, groups.values())),
+        "cg_task_count": 23,
+        "mip_task_count": 42,
+        "seed_task_count": 21,
+        "k40_mip_submission_count": 0,
+        "k40_reuse_slots": reuse_slots,
+    }
+
+
+def _job(root, cell, key, phase, arm, nonce):
+    scale = cell["scale"]
+    budget = (
+        4 * 3600 if phase == "SEED"
+        else CG_BUDGET_S[scale] if phase == "CG"
+        else MIP_BUDGET_S[scale]
+    )
+    marks = [
+        value for value in SNAPSHOT_MINUTES
+        if value * 60 <= budget
+    ] if phase == "CG" else []
+    job = {
+        **cell,
+        "job_key": key,
+        "phase": phase,
+        "arm": arm,
+        "scientific_role": (
+            "feasibility_integral_assembly_diagnostic_not_algorithmic_recovery"
+            if arm == "KNOWN-PARTITION" else None
+        ),
+        "budget_s": budget,
+        "snapshot_minutes": marks,
+        "partition": (
+            "scaglione" if phase == "MIP" else "default_partition"
+        ),
+        "threads": 8 if phase == "MIP" else 2,
+        "job_name": None,
+        "output": str(root / "outputs" / f"{key}.json"),
+        "progress_dir": (
+            str(root / "progress" / key) if phase == "MIP" else None
+        ),
+        "telemetry": (
+            str(root / "telemetry" / f"{key}.jsonl")
+            if phase == "CG" else None
+        ),
+    }
+    job["job_name"] = _name(job, nonce)
+    return job
+
+
+def write_plan(plan, plan_path, matrix_path):
+    plan_raw = canonical(plan)
+    plan_sha = hashlib.sha256(plan_raw).hexdigest()
+    _write_new(plan_path, plan_raw)
+    with matrix_path.open("x", newline="") as handle:
+        fields = (
+            "job_key", "phase", "scale", "selection_replicate",
+            "cg_replicate", "arm", "budget_s", "partition", "threads",
+            "job_name", "output",
+        )
+        writer = csv.DictWriter(
+            handle, fieldnames=fields, extrasaction="ignore",
+            lineterminator="\n",
+        )
+        writer.writeheader()
+        writer.writerows(plan["jobs"])
+    return plan_sha
+
+
+def _write_new(path, payload):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    with temporary.open("xb") as handle:
+        handle.write(payload)
+        handle.flush()
+        os.fsync(handle.fileno())
+    try:
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _reserve(plan, plan_sha):
+    root = Path(plan["reservation_root"])
+    root.mkdir(parents=True, exist_ok=True)
+    paths = []
+    try:
+        for job in plan["jobs"]:
+            path = root / f"{job['execution_digest']}.json"
+            payload = canonical({
+                "schema": "evsp-dr-scale-ladder-reservation-v1",
+                "plan_sha256": plan_sha,
+                "job_key": job["job_key"],
+                "execution_digest": job["execution_digest"],
+            })
+            _write_new(path, payload)
+            paths.append(path)
+    except Exception:
+        for path in paths:
+            path.unlink(missing_ok=True)
+        raise
+    return paths
+
+
+def submit(plan, plan_sha):
+    if plan["scontrol"]["available"] is not True:
+        raise ValueError("scontrol unavailable in approved plan")
+    observed = checkout_identity(True)
+    if observed != plan["checkout_identity"]:
+        raise ValueError("submission checkout differs")
+    root = Path(plan["campaign_root"])
+    if root.exists():
+        raise FileExistsError(root)
+    reservations = _reserve(plan, plan_sha)
+    root.mkdir(parents=True)
+    logs = root / "logs"
+    logs.mkdir()
+    for job in plan["jobs"]:
+        source = Path(job["instance"]["source_path"])
+        target = Path(job["instance"]["path"])
+        _copy_new(source, target, job["instance"]["instance_file_sha256"])
+    _copy_new(
+        REPO_ROOT / plan["tariff"]["primary_tariff_relative_path"],
+        root / "input/tariff/hourly_prices_flat.csv",
+        HISTORICAL_FLAT_SHA256,
+    )
+    _copy_new(
+        Path(plan["input_manifest"]),
+        root / "input/manifests/campaign_input_manifest.json",
+        plan["input_manifest_sha256"],
+    )
+    _copy_new(
+        Path(plan["instance_manifest"]),
+        root / "input/manifests/scale_ladder_instance_manifest.csv",
+        plan["instance_manifest_sha256"],
+    )
+    plan_path = root / "approved-plan.json"
+    _write_new(plan_path, canonical(plan))
+    manifest = {
+        **plan,
+        "approval_sha256": plan_sha,
+        "submitted": False,
+        "gate_state": "creating",
+        "submitted_arrays": {},
+        "reservations": [str(path) for path in reservations],
+    }
+    manifest_path = root / "campaign.json"
+    _replace_json(manifest_path, manifest)
+    gate = _sbatch([
+        "--hold", "--partition=default_partition", "--time=00:05:00",
+        f"--job-name=LDG{plan_sha[:5]}",
+        f"--output={logs}/gate_%j.out",
+        f"--error={logs}/gate_%j.err",
+        "--wrap=/bin/true",
+    ])
+    manifest["gate_job_id"] = gate
+    manifest["gate_state"] = "held"
+    _replace_json(manifest_path, manifest)
+    arrays = {}
+    try:
+        arrays["SEED"] = _submit_array(
+            plan, plan_path, plan_sha, "SEED", gate, logs
+        )
+        arrays["CG"] = _submit_array(
+            plan, plan_path, plan_sha, "CG", gate, logs
+        )
+        arrays["MIP_RAW"] = _submit_array(
+            plan, plan_path, plan_sha, "MIP_RAW", gate, logs,
+            dependency=f"aftercorr:{arrays['CG']}",
+        )
+        arrays["MIP_KNOWN"] = _submit_array(
+            plan, plan_path, plan_sha, "MIP_KNOWN", gate, logs,
+            dependency=(
+                f"aftercorr:{arrays['CG']}:{arrays['SEED']}"
+            ),
+        )
+    except Exception as exc:
+        manifest["gate_state"] = "held_after_partial_submission"
+        manifest["submission_error"] = repr(exc)
+        manifest["submitted_arrays"] = arrays
+        _replace_json(manifest_path, manifest)
+        raise
+    manifest["submitted_arrays"] = arrays
+    manifest["gate_state"] = "release_attempting"
+    _replace_json(manifest_path, manifest)
+    released = subprocess.run(
+        [plan["scontrol"]["path"], "release", gate],
+        text=True, capture_output=True, check=False,
+    )
+    if released.returncode != 0:
+        manifest["gate_state"] = "held_release_failed"
+        manifest["release_error"] = (
+            released.stderr or released.stdout
+        ).strip()
+        _replace_json(manifest_path, manifest)
+        raise RuntimeError("gate release failed; arrays remain blocked")
+    manifest["gate_state"] = "released"
+    manifest["submitted"] = True
+    _replace_json(manifest_path, manifest)
+    return manifest
+
+
+def _submit_array(
+    plan, plan_path, plan_sha, group, gate, logs, dependency=None
+):
+    tasks = plan["task_groups"][group]
+    partition = (
+        "scaglione" if group.startswith("MIP") else "default_partition"
+    )
+    max_budget = max(
+        job["budget_s"] for job in plan["jobs"]
+        if job["job_key"] in tasks
+    )
+    arguments = [
+        f"--array=0-{len(tasks)-1}",
+        f"--partition={partition}",
+        "--requeue" if group == "CG" else "--no-requeue",
+        "--signal=B:USR1@180",
+        "--cpus-per-task=8" if group.startswith("MIP")
+        else "--cpus-per-task=2",
+        "--mem=64G" if group.startswith("MIP") else "--mem=32G",
+        f"--time={math.ceil(max_budget/60)+10}",
+        f"--job-name=LD{group[:3]}",
+        f"--output={logs}/%x_%A_%a.out",
+        f"--error={logs}/%x_%A_%a.err",
+        f"--dependency=afterok:{gate}"
+        + (f",{dependency}" if dependency else ""),
+        str(WORKER), str(plan_path), plan_sha, group,
+        plan["python"]["path"], plan["python"]["sha256"],
+        plan["scontrol"]["path"], plan["scontrol"]["sha256"],
+        plan["worker_sha256"],
+    ]
+    return _sbatch(arguments)
+
+
+def _sbatch(arguments):
+    completed = subprocess.run(
+        ["sbatch", "--parsable", *arguments],
+        cwd=REPO_ROOT, text=True, capture_output=True, check=False,
+    )
+    job_id = completed.stdout.strip().split(";", 1)[0]
+    if completed.returncode != 0 or not job_id.isdigit():
+        raise RuntimeError("sbatch outcome ambiguous")
+    return job_id
+
+
+def _copy_new(source, target, expected_sha):
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists():
+        if sha256_file(target) != expected_sha:
+            raise ValueError("staged input hash mismatch")
+        return
+    temporary = target.with_name(f".{target.name}.tmp.{os.getpid()}")
+    with source.open("rb") as reader, temporary.open("xb") as writer:
+        for chunk in iter(lambda: reader.read(1024 * 1024), b""):
+            writer.write(chunk)
+        writer.flush()
+        os.fsync(writer.fileno())
+    try:
+        if sha256_file(temporary) != expected_sha:
+            raise ValueError("staged input copy mismatch")
+        os.link(temporary, target)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _replace_json(path, payload):
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    with temporary.open("x") as handle:
+        json.dump(payload, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, path)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--campaign", required=True)
+    parser.add_argument("--python", type=Path, default=Path(sys.executable))
+    parser.add_argument("--reservation-root", type=Path, required=True)
+    parser.add_argument("--plan-out", type=Path)
+    parser.add_argument("--matrix-out", type=Path)
+    parser.add_argument("--approved-plan-sha256")
+    parser.add_argument("--submit", action="store_true")
+    args = parser.parse_args(argv)
+    if args.submit and not args.approved_plan_sha256:
+        parser.error("--submit requires --approved-plan-sha256")
+    plan = build_plan(args.campaign, args.python, args.reservation_root)
+    plan_raw = canonical(plan)
+    plan_sha = hashlib.sha256(plan_raw).hexdigest()
+    print(json.dumps(plan, indent=2))
+    print(f"[approval-sha256] {plan_sha}")
+    if args.plan_out:
+        if args.matrix_out is None:
+            parser.error("--plan-out requires --matrix-out")
+        observed = write_plan(plan, args.plan_out, args.matrix_out)
+        if observed != plan_sha:
+            raise ValueError("plan publication hash mismatch")
+    if not args.submit:
+        print(
+            f"[dry-run] tasks={plan['task_count']} "
+            "CG=23 MIP=42 SEED=21 k40_MIP=0"
+        )
+        return 0
+    if args.approved_plan_sha256 != plan_sha:
+        raise ValueError("current plan differs from approved SHA")
+    submit(plan, plan_sha)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -497,6 +497,7 @@ def prepare_strict_partition_pool(
     *,
     data_dir=None,
     reference_data_dir=None,
+    preserve_expanded_grid_cost=False,
 ):
     """Replay or deterministically map every raw pool column before MIP use.
 
@@ -1244,9 +1245,32 @@ def merge_validated_partition_start(
             charge_kw=charge_kw,
             expected_continuous_cost=cost,
         )
+        master_cost = float(cost)
+        master_cost_semantics = "continuous_realized_cost"
+        if preserve_expanded_grid_cost:
+            expanded_cost = route.get("expanded_grid_cost")
+            if (
+                route.get("master_cost_semantics") != "expanded_grid_cost"
+                or expanded_cost is None
+                or not math.isclose(
+                    float(expanded_cost),
+                    float(block_validation["recomputed_expanded_grid_cost"]),
+                    rel_tol=1e-10,
+                    abs_tol=1e-6,
+                )
+            ):
+                raise SystemExit(
+                    "[MIP] verified expanded-grid initial route cost mismatch"
+                )
+            master_cost = float(expanded_cost)
+            master_cost_semantics = "expanded_grid_cost"
+        validated_record["cost"] = master_cost
         validated_record.update({
-            "master_cost_semantics": "continuous_realized_cost",
+            "master_cost_semantics": master_cost_semantics,
             "continuous_realized_cost": float(cost),
+            "expanded_grid_cost": (
+                master_cost if preserve_expanded_grid_cost else None
+            ),
             "continuous_realized_charging_blocks": blocks,
             "continuous_realized_charging_blocks_json_bytes":
                 len(json.dumps(
@@ -1834,6 +1858,15 @@ def main(argv=None) -> int:
              "partition under the pool physics. Its routes are merged into "
              "the pool and used explicitly as the complete MIP start.",
     )
+    parser.add_argument(
+        "--verified-expanded-initial-partition",
+        action="store_true",
+        help=(
+            "Preserve independently verified expanded-grid route costs for "
+            "the initial partition instead of converting its master costs "
+            "to continuous replay costs."
+        ),
+    )
     parser.add_argument("--validate-only", action="store_true")
     parser.add_argument(
         "--data-dir", type=Path,
@@ -1861,6 +1894,14 @@ def main(argv=None) -> int:
              "checkpoints (not a Gurobi tree restart).",
     )
     args = parser.parse_args(argv)
+    if (
+        args.verified_expanded_initial_partition
+        and args.initial_partition_routes is None
+    ):
+        parser.error(
+            "--verified-expanded-initial-partition requires "
+            "--initial-partition-routes"
+        )
     end_to_end_started = time.perf_counter()
 
     if args.out is not None and args.out.resolve() == args.result.resolve():
@@ -1993,6 +2034,9 @@ def main(argv=None) -> int:
                 status,
                 data_dir=args.data_dir,
                 reference_data_dir=args.reference_data_dir,
+                preserve_expanded_grid_cost=(
+                    args.verified_expanded_initial_partition
+                ),
             )
         )
         if physical_pool_audit is not None:
@@ -2922,6 +2966,8 @@ def main(argv=None) -> int:
                     str(args.initial_partition_routes)
                     if args.initial_partition_routes is not None else None
                 ),
+                "verified_expanded_initial_partition":
+                    args.verified_expanded_initial_partition,
             },
         },
         "selected_routes": selected_routes,

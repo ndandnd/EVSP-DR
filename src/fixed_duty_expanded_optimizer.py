@@ -52,7 +52,7 @@ def _arc_groups(problem):
                 groups[kind][successor] = arc
             elif kind in {"trip_depot", "station_depot"}:
                 groups[kind][source] = arc
-            else:
+            elif kind in {"trip_trip", "trip_station", "station_trip"}:
                 groups[kind].setdefault(source, {})[successor] = arc
     return groups
 
