@@ -330,7 +330,9 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         if manifest.get("submission_atomicity") != (
             "single_atomic_four_task_array_submission"
         ):
-            raise ValueError("overnight campaign was not atomically released")
+            raise ValueError(
+                "overnight campaign was not one atomic array submission"
+            )
     campaign = manifest["campaign"]
     checkpoint_rows = []
     final_rows = []
