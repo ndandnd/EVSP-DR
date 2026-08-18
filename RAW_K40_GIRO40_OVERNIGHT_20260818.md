@@ -133,7 +133,8 @@ else
     J2_CS_SHA="8290771a7ca3b6f185070f68a9934e6eaa8894c802ae02ac37f013c25a4b7c31"
 
     COMMON=(
-      "$PYTHON" -I -B -u "$RUN_ROOT/src/launch_mip_statistics_campaign.py"
+      "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py"
+      launch_mip_statistics_campaign.py
       --mode k40_cs_overnight
       --campaign "$CAMPAIGN"
       --python "$PYTHON"
@@ -165,7 +166,8 @@ else
          ! "${COMMON[@]}" --plan-out "$PLAN"; then
       echo "Dry-run generation failed; nothing submitted." >&2
     elif [[ ! -s "$PLAN" ]] || \
-         ! "$PYTHON" -I -B "$RUN_ROOT/src/validate_k40_cs_overnight_plan.py" \
+         ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+           validate_k40_cs_overnight_plan.py \
            "$PLAN" --expected-commit "$REVIEWED_COMMIT"; then
       echo "Plan is missing or failed validation; nothing submitted." >&2
     else
@@ -208,8 +210,8 @@ else
   TMP_BUNDLE=$(mktemp -d "$ARCHIVE_ROOT/.bundle.XXXXXXXX")
   if [[ -z "$TMP_BUNDLE" || ! -d "$TMP_BUNDLE" ]]; then
     echo "Archive staging failed." >&2
-  elif ! "$PYTHON" -I -B \
-       "$RUN_ROOT/src/summarize_mip_statistics.py" \
+  elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+       summarize_mip_statistics.py \
        --campaign-root "$CAMPAIGN_ROOT" \
        --out-dir "$TMP_BUNDLE/summary"; then
     echo "Summary validation failed; no archive created." >&2

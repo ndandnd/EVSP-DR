@@ -101,6 +101,7 @@ REVIEWED_BASE = "ae736fbc9c5fef71f39d7d758b7062355c485313"
 WORKER_PATH = REPO_ROOT / "src/submit_mip_statistics.sub"
 RUNNER_PATH = REPO_ROOT / "src/run_exact_pool_mip.py"
 CODE_PATHS = (
+    "src/run_reviewed_python.py",
     "src/launch_mip_statistics_campaign.py",
     "src/run_exact_pool_mip.py",
     "src/expanded_path_realization.py",
