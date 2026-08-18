@@ -1,0 +1,9 @@
+field,definition
+grid_model_objective,Expanded-grid objective; certificate scope is tier-specific.
+continuous_replay_objective,Cost of validated continuous blocks; never pricing-certified.
+charging_only_savings,Tier 0 cost minus Tier 1 fixed-route optimized cost.
+rerouting_increment,Tier 1 cost minus Tier 2 augmented route-flexible cost.
+route response,Bus-label-invariant partition change; not called elasticity.
+terminal_soc_policy,depot_arrival_soc_at_least_reserve
+terminal_soc_min_kwh / terminal_soc_max_kwh,Selected-route continuous depot-arrival SOC range; exposes negative-price energy accumulation.
+negative_price_policy,Manifest policy allows feasible consumption but no energy export.

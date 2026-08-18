@@ -12,7 +12,7 @@ from expanded_path_realization import charging_block_schedule_sha256
 from tariff_response_core import PHYSICS, load_tariff_manifest, tariff_prices
 
 
-ROOT = REPO_ROOT / "analysis/tariff_response_synthetic_final_20260818"
+ROOT = REPO_ROOT / "analysis/tariff_response_synthetic_reviewed_20260818"
 ALPHA_IDS = (
     "peak12_alpha_0p0",
     "peak12_alpha_0p25",
