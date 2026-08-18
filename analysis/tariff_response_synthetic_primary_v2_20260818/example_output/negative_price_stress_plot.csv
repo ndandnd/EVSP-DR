@@ -1,0 +1,4 @@
+instance_id,tariff_id,tier,treatment,alpha,peak_window_kwh,charging_cost,route_similarity,buses,deadhead_kwh,terminal_surplus_total_kwh,analysis_role
+SYNTHETIC-k2-NOT-SCIENTIFIC,peak12_alpha_2p0,TIER0_GIRO_ORIGINAL,GIRO_ORIGINAL,2.0,10.0,9.209265033857118,,2,2.0,100.0,negative_price_stress
+SYNTHETIC-k2-NOT-SCIENTIFIC,peak12_alpha_2p0,TIER1_FIXED_GIRO_OPTIMIZED_CHARGING,FIXED_GIRO,2.0,8.0,8.367412027085695,,2,1.6,100.0,negative_price_stress
+SYNTHETIC-k2-NOT-SCIENTIFIC,peak12_alpha_2p0,TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING,GIRO40-AUGMENTED,2.0,6.0,7.525559020314271,0.0,1,1.2,50.0,negative_price_stress

@@ -346,6 +346,8 @@ def realize_expanded_path(
         "trip_sequence_preserved": True,
         "recorded_total_kwh": sum(float(value) for value in fields["kwh"]),
         "realized_total_kwh": sum(realized_kwh),
+        "continuous_terminal_soc_kwh": continuous_soc,
+        "expanded_grid_terminal_soc_kwh": grid_soc,
         "discarded_grid_residual_kwh": total_discarded,
         "changed": changed,
         "charge_kw": charge_kw,

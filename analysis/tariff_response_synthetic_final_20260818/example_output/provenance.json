@@ -1,0 +1,37 @@
+{
+  "builder": "/workspace/src/build_tariff_response_evidence.py",
+  "builder_sha256": "a79087d39a36733ce99f773887c20e2e75b2407c610225bfc57c0d2d9da1c959",
+  "continuous_cost_pricing_certified": false,
+  "experiment_manifest_sha256": "2298acc1bf6bcd362d8ac0460c7d0164f78b29f0db597237afab7f9879ec5d64",
+  "output_sha256": {
+    "SYNTHETIC_ONLY.txt": "887d4c81659903bd386a28990442123956835133ce8341dbb6b03eed4a2cc6df",
+    "artifact_inventory.csv": "9d91862ee2cffe9fc2ba704882d89c5ee89fa422f1b2f8a63376d9ddc2ca3fec",
+    "cg_iteration_long.csv": "5710f120670ddea95f628f6f112fd05982967d2aaa4f2349cd5f0cab4b92a862",
+    "charging_blocks_long.csv": "474241391dec0671544c38ccf786bcf9c904884f2e09b3bac005eb1902806ebe",
+    "data_dictionary.csv": "f5351d309c31130093594de452835c2c5caea1b496c7332e43d2e87ce56f81b1",
+    "fixed_duty_certificate_summary.csv": "2cd24d3e6ae265fb7d16d3b8c385a33df5376bfeec9e949ffae9de09e805e06d",
+    "gantt_plot.csv": "06fd9362097c66565872201e1fa35f3dd1f0790753e8eb5878460dd6f1121d0d",
+    "gantt_three_tiers.pdf": "3ca8a1fafdb1967893201dedfd0ac6fbe073cda9afa981bdb0691017cb31fc08",
+    "gantt_three_tiers.png": "eb842d9ca10801c62172ee68caaa88cfaeae8b3c6c75bdb12b2913c73bae8fd2",
+    "giro40_duty_manifest.csv": "f7bc51068b5abf79659ba5f929d2f3eed2547318052d0ca7dc3c320702ff4a00",
+    "mip_checkpoint_long.csv": "9c208b060b3a8f1fc9227ae32916ddc24c73453fd4fd72a7a8f14f1b5b70d51c",
+    "price_amplitude_response.pdf": "9eab25eba322b361a247f222d85b6e372c2f035ac44fa9a0ced6db531a7cef2e",
+    "price_amplitude_response.png": "d90ba6f689959e5366b934df9b7d469100499f50d58c82216c10041d34cf353b",
+    "route_change_summary.csv": "f31e68fb38775866a55e12e40f35a84da12c498cce4d2e06378c989e8974aa92",
+    "tariff_manifest.csv": "3ed15b7356991f54cd4337ac79a3bafabcf9d96d05ef91f08e3f7a6a723b8f1d",
+    "tariff_response_plot.csv": "e499cf56ebe957c0b9d27a75fdf9ada08a5129c1176d4dab533f8c04eb16365d",
+    "tariff_response_summary.csv": "24af8fa183b60157aaa4f38e8abc199243612cd1324e3c220d14ffd3270bc98e"
+  },
+  "physics": {
+    "block_min": 10,
+    "charge_kw": 300.0,
+    "g_kwh": 300.0,
+    "reserve_kwh": 0.0,
+    "soc_step": 15.0,
+    "terminal_soc_policy": "depot_arrival_soc_at_least_reserve"
+  },
+  "python": "3.12.3",
+  "schema": "evsp-dr-tariff-response-provenance-v1",
+  "synthetic": true,
+  "tariff_manifest_sha256": "3ed15b7356991f54cd4337ac79a3bafabcf9d96d05ef91f08e3f7a6a723b8f1d"
+}

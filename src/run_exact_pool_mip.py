@@ -525,9 +525,13 @@ def prepare_strict_partition_pool(
         reference_data_dir if reference_data_dir is not None else data_dir
     ).resolve()
     instance_path = (data_dir / str(status["csv"])).resolve()
-    tariff_path = (
-        data_dir / Path(str(status["prices_csv"])).name
-    ).resolve()
+    tariff_path = (data_dir / str(status["prices_csv"])).resolve()
+    try:
+        tariff_path.relative_to(data_dir)
+    except ValueError as exc:
+        raise SystemExit(
+            "[MIP] physical pool tariff escapes data/"
+        ) from exc
     reference_path = reference_data_dir / "Ref_dict.csv"
     deadhead_path = reference_data_dir / "par_ref_dhd.csv"
     provenance = status.get("provenance") or {}
@@ -872,7 +876,9 @@ def merge_extra_routes(
         max_station_to_trip_wait_min=HORIZON_MIN,
         reference_data_dir=reference_data_dir,
     )
-    price_name = Path(prices_csv).name if prices_csv else "hourly_prices_flat.csv"
+    price_name = (
+        str(prices_csv) if prices_csv else "hourly_prices_flat.csv"
+    )
     prices = load_station_hourly_prices(data_dir / price_name, CHARGING_STATIONS)
     depot_curve = prices.get("PARX") or next(iter(prices.values()))
 
@@ -1458,8 +1464,12 @@ def validate_final_selected_routes(
     ):
         raise SystemExit("[MIP] final replay instance hash mismatch")
     tariff_path = (
-        data_dir / Path(str(status.get("prices_csv"))).name
+        data_dir / str(status.get("prices_csv"))
     ).resolve()
+    try:
+        tariff_path.relative_to(data_dir)
+    except ValueError as exc:
+        raise SystemExit("[MIP] final replay tariff escapes data/") from exc
     expected_tariff_hash = provenance.get("prices_sha256")
     if (
         not tariff_path.is_file()
@@ -2708,10 +2718,22 @@ def main(argv=None) -> int:
                      + solver_bound)
         mip_bound_scope = "fixed_proven_fleet_variable_cost"
     elif args.two_stage and solver_bound is not None:
-        # Route variable costs are nonnegative, so this is a valid but coarse
-        # lower bound on the full lexicographic objective.
-        mip_bound = BUS_COST_KX * solver_bound
-        mip_bound_scope = "fleet_count_only_coarse_cost_bound"
+        # A negative-price tariff can make route-variable costs negative.
+        # At most one nonempty selected route per trip is needed in a strict
+        # partition, so this remains conservative without assuming
+        # nonnegative charging cost.
+        minimum_variable_cost = min(
+            float(route["cost"]) - BUS_COST_KX for route in routes
+        )
+        negative_variable_floor = (
+            min(0.0, minimum_variable_cost) * len(trips)
+        )
+        mip_bound = (
+            BUS_COST_KX * solver_bound + negative_variable_floor
+        )
+        mip_bound_scope = (
+            "fleet_bound_plus_negative_route_cost_floor"
+        )
     else:
         mip_bound = solver_bound
         mip_bound_scope = "full_pool_objective"
