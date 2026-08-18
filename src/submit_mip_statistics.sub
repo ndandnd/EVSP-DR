@@ -459,6 +459,7 @@ progress_hashes={
     for path in sorted([
         *progress_path.glob("checkpoint_*.json"),
         progress_path/"final.json",
+        progress_path/"latest.json",
     ])
 }
 payload={

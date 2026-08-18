@@ -11,6 +11,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import shutil
 import tempfile
 from collections import defaultdict
@@ -261,7 +262,12 @@ def _rename_noreplace(source: Path, destination: Path) -> None:
 
 
 def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
-    manifest = json.loads((root / "campaign.json").read_text())
+    manifest_path = root / "campaign.json"
+    manifest_raw = manifest_path.read_bytes()
+    manifest = json.loads(manifest_raw)
+    manifest["_validated_manifest_sha256"] = hashlib.sha256(
+        manifest_raw
+    ).hexdigest()
     plan_path = root / "approved-plan.json"
     if not plan_path.is_file():
         raise ValueError("campaign lacks immutable approved-plan.json")
@@ -272,6 +278,10 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     approved = json.loads(plan_raw)
     approved_jobs = {
         job["cell_id"]: job for job in approved.get("jobs") or []
+    }
+    approved_job_index = {
+        job["cell_id"]: index
+        for index, job in enumerate(approved.get("jobs") or [])
     }
     manifest_jobs = {
         job["cell_id"]: job for job in manifest.get("jobs") or []
@@ -302,7 +312,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         if manifest.get("submitted") is not True:
             raise ValueError("overnight campaign was not fully submitted")
         if manifest.get("submission_atomicity") != (
-            "single_held_four_task_array_released_once"
+            "single_atomic_four_task_array_submission"
         ):
             raise ValueError("overnight campaign was not atomically released")
     campaign = manifest["campaign"]
@@ -325,7 +335,8 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         approved_job = approved_jobs.get(job["cell_id"])
         mutable_fields = {
             "job_id", "submission_state", "submission_error",
-            "deduplication_comment",
+            "deduplication_comment", "slurm_array_name",
+            "slurm_array_task_id", "slurm_display_id",
         }
         if approved_job is None or any(
             job.get(key) != value
@@ -335,7 +346,17 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             raise ValueError(f"{job['cell_id']} differs from approved plan")
         if strict_overnight and (
             job.get("submission_state") != "released"
-            or not str(job.get("job_id") or "").isdigit()
+            or re.fullmatch(
+                r"[0-9]+_[0-3]", str(job.get("job_id") or "")
+            ) is None
+            or job.get("slurm_array_name") != "K40R12RG82"
+            or job.get("slurm_array_task_id") not in range(4)
+            or job.get("slurm_array_task_id")
+            != approved_job_index[job["cell_id"]]
+            or job.get("slurm_display_id")
+            != (
+                f"K40R12RG82_{job.get('slurm_array_task_id')}"
+            )
         ):
             raise ValueError(
                 f"{job['cell_id']} was not released as an approved job"
@@ -507,6 +528,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 progress_artifacts = sorted([
                     *progress_dir.glob("checkpoint_*.json"),
                     progress_dir / "final.json",
+                    progress_dir / "latest.json",
                 ])
                 progress_hashes = {
                     path.name: _sha(path)
@@ -758,7 +780,11 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
 
     add("approved_plan", root / "approved-plan.json",
         expected=manifest["approval_sha256"])
-    add("campaign_manifest", root / "campaign.json")
+    add(
+        "campaign_manifest", root / "campaign.json",
+        expected=manifest.get("_validated_manifest_sha256"),
+        required=True,
+    )
     add(
         "staged_worker", root / "input/submit_mip_statistics.sub",
         expected=manifest.get("worker_sha256"), required=strict,

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import re
 import runpy
 import subprocess
 import sys
@@ -62,21 +63,49 @@ def unsafe_runtime_artifacts(root: pathlib.Path) -> list[str]:
 
 
 def main() -> int:
-    if len(sys.argv) < 2 or sys.argv[1] not in ALLOWED_TARGETS:
+    if (
+        len(sys.argv) < 3
+        or re.fullmatch(r"[0-9a-f]{40}", sys.argv[1]) is None
+        or sys.argv[2] not in ALLOWED_TARGETS
+    ):
         raise SystemExit(
-            "usage: run_reviewed_python.py "
+            "usage: run_reviewed_python.py EXPECTED_COMMIT "
             "{launch_mip_statistics_campaign.py|"
             "validate_k40_cs_overnight_plan.py|"
             "summarize_mip_statistics.py} [ARG ...]"
         )
     root = pathlib.Path(__file__).resolve().parents[1]
+    expected_commit = sys.argv[1]
+    head = subprocess.run(
+        ["git", "rev-parse", "--verify", "HEAD"],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    status = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all"],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if (
+        head.returncode != 0
+        or head.stdout.strip() != expected_commit
+        or status.returncode != 0
+        or status.stdout.strip()
+    ):
+        raise SystemExit(
+            "bootstrap checkout is not the exact tracked-clean reviewed commit"
+        )
     unsafe = unsafe_runtime_artifacts(root)
     if unsafe:
         raise SystemExit(
             f"checkout contains unreviewed runtime artifacts: {unsafe[:10]}"
         )
-    target = root / "src" / sys.argv[1]
-    arguments = [str(target), *sys.argv[2:]]
+    target = root / "src" / sys.argv[2]
+    arguments = [str(target), *sys.argv[3:]]
     sys.path.insert(0, str(root / "src"))
     sys.argv = arguments
     runpy.run_path(str(target), run_name="__main__")

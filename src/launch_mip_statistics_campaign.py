@@ -1139,7 +1139,7 @@ def build_plan(
             "requeue": False,
             "signal": "B:USR1@180",
             "submission_release": (
-                "single_held_four_task_array"
+                "single_atomic_four_task_array_submission"
                 if mode == K40_CS_OVERNIGHT_MODE
                 else "held_jobs_released_after_submission"
             ),
@@ -1338,7 +1338,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     manifest["approval_sha256"] = plan_sha
     manifest["submitted"] = False
     manifest["submission_atomicity"] = (
-        "single_held_four_task_array_released_once"
+        "single_atomic_four_task_array_submission"
         if plan.get("mode") == K40_CS_OVERNIGHT_MODE
         else "all_cells_held_until_every_sbatch_is_accepted"
     )
@@ -1382,12 +1382,9 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     _replace_json(root / "campaign.json", manifest)
     if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
         comment = next(iter(planned_comments))
-        array_name = (
-            "K40CSRG"
-            + hashlib.sha256(plan["campaign"].encode()).hexdigest()[:4].upper()
-        )
+        array_name = "K40R12RG82"
         command = [
-            "sbatch", "--parsable", "--hold", "--array=0-3",
+            "sbatch", "--parsable", "--array=0-3",
             "--partition=scaglione", "--no-requeue",
             "--signal=B:USR1@180", "--nodes=1", "--ntasks=1",
             "--cpus-per-task=8", "--mem=64G",
@@ -1413,7 +1410,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
                 manifest_job["submission_state"] = (
                     "array_submit_failed"
                     if completed.returncode != 0
-                    else "orphaned_held_array_unparsed"
+                    else "orphaned_array_unparsed"
                 )
                 manifest_job["submission_error"] = (
                     completed.stderr or completed.stdout
@@ -1423,72 +1420,15 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
                     reservation.unlink(missing_ok=True)
             _replace_json(root / "campaign.json", manifest)
             raise SystemExit(
-                "held four-task array submission failed or returned an "
-                "unparseable ID; no task was released"
+                "atomic four-task array submission failed or returned an "
+                "unparseable ID; reconcile by its execution comment"
             )
-        update_failed = None
         for index, manifest_job in enumerate(manifest["jobs"]):
             manifest_job["job_id"] = f"{array_id}_{index}"
-            manifest_job["submission_state"] = "held_array"
-            updated = subprocess.run(
-                [
-                    "scontrol", "update",
-                    f"JobId={array_id}_{index}",
-                    f"JobName={manifest_job['job_name']}",
-                ],
-                cwd=REPO_ROOT,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            if updated.returncode != 0:
-                update_failed = (
-                    updated.stderr or updated.stdout
-                ).strip()
-                break
-        if update_failed is not None:
-            canceled = subprocess.run(
-                ["scancel", array_id],
-                cwd=REPO_ROOT,
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-            for manifest_job in manifest["jobs"]:
-                manifest_job["submission_state"] = (
-                    "array_canceled_before_release"
-                    if canceled.returncode == 0
-                    else "held_array_cancel_failed"
-                )
-                manifest_job["submission_error"] = update_failed
-            if canceled.returncode == 0:
-                for reservation in reservations:
-                    reservation.unlink(missing_ok=True)
-            _replace_json(root / "campaign.json", manifest)
-            raise SystemExit(
-                "held array task naming failed; no task was released"
-            )
-        released = subprocess.run(
-            ["scontrol", "release", array_id],
-            cwd=REPO_ROOT,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        if released.returncode != 0:
-            for manifest_job in manifest["jobs"]:
-                manifest_job["submission_state"] = (
-                    "held_array_release_failed"
-                )
-                manifest_job["release_error"] = (
-                    released.stderr or released.stdout
-                ).strip()
-            _replace_json(root / "campaign.json", manifest)
-            raise SystemExit(
-                "single array release failed; all four tasks remain held"
-            )
-        for manifest_job in manifest["jobs"]:
             manifest_job["submission_state"] = "released"
+            manifest_job["slurm_array_name"] = array_name
+            manifest_job["slurm_array_task_id"] = index
+            manifest_job["slurm_display_id"] = f"{array_name}_{index}"
         manifest["submitted"] = True
         _replace_json(root / "campaign.json", manifest)
         return manifest

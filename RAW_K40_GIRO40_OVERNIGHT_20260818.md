@@ -134,6 +134,7 @@ else
 
     COMMON=(
       "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py"
+      "$REVIEWED_COMMIT"
       launch_mip_statistics_campaign.py
       --mode k40_cs_overnight
       --campaign "$CAMPAIGN"
@@ -167,6 +168,7 @@ else
       echo "Dry-run generation failed; nothing submitted." >&2
     elif [[ ! -s "$PLAN" ]] || \
          ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+           "$REVIEWED_COMMIT" \
            validate_k40_cs_overnight_plan.py \
            "$PLAN" --expected-commit "$REVIEWED_COMMIT"; then
       echo "Plan is missing or failed validation; nothing submitted." >&2
@@ -188,10 +190,11 @@ fi
 ```
 
 The launcher refuses an existing campaign/output path, an existing execution
-reservation, or a matching Slurm execution digest. It creates one held
-four-task array, assigns all four semantic task names while held, and releases
-the array once only after every name update succeeds. Job names encode
-replicate, treatment, and budget and remain at most 15 characters.
+reservation, or a matching Slurm execution digest. It creates all four tasks
+atomically with one array submission. Slurm displays the semantic array name
+`K40R12RG82` plus task IDs `0..3`, which map in plan order to R1-RAW-8h,
+R1-GIRO40-2h, R2-RAW-8h, and R2-GIRO40-2h. Every displayed name remains at
+most 15 characters including its task suffix.
 
 ## Post-campaign summary and immutable archive
 
@@ -203,7 +206,9 @@ ARCHIVE_ROOT="$HOME/evsp_k40_cs_archives"
 BUNDLE="$ARCHIVE_ROOT/$OVERNIGHT_CAMPAIGN.bundle"
 ARCHIVE_NAME="$OVERNIGHT_CAMPAIGN.tar.gz"
 
-if [[ -e "$BUNDLE" ]]; then
+if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "Set the exact REVIEWED_COMMIT used by the campaign." >&2
+elif [[ -e "$BUNDLE" ]]; then
   echo "Archive bundle exists; choose a new immutable destination." >&2
 else
   mkdir -p "$ARCHIVE_ROOT"
@@ -211,6 +216,7 @@ else
   if [[ -z "$TMP_BUNDLE" || ! -d "$TMP_BUNDLE" ]]; then
     echo "Archive staging failed." >&2
   elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+       "$REVIEWED_COMMIT" \
        summarize_mip_statistics.py \
        --campaign-root "$CAMPAIGN_ROOT" \
        --out-dir "$TMP_BUNDLE/summary"; then
@@ -247,13 +253,34 @@ PY
        -czf "$TMP_BUNDLE/$ARCHIVE_NAME" \
        -C "$TMP_BUNDLE" campaign summary; then
     ARCHIVE_DIGEST=$(sha256sum "$TMP_BUNDLE/$ARCHIVE_NAME" | awk '{print $1}')
-    printf '%s  %s\n' "$ARCHIVE_DIGEST" "$ARCHIVE_NAME" \
-      > "$TMP_BUNDLE/$ARCHIVE_NAME.sha256"
-    if [[ "$ARCHIVE_DIGEST" =~ ^[0-9a-f]{64}$ ]] && \
+    SIDE_READY=0
+    if printf '%s  %s\n' "$ARCHIVE_DIGEST" "$ARCHIVE_NAME" \
+         > "$TMP_BUNDLE/$ARCHIVE_NAME.sha256"; then
+      SIDE_READY=1
+    fi
+    if [[ "$ARCHIVE_DIGEST" =~ ^[0-9a-f]{64}$ && \
+          "$SIDE_READY" == "1" ]] && \
        "$PYTHON" -I -B - "$TMP_BUNDLE" "$BUNDLE" <<'PY'
 import ctypes, os, sys
 source=os.fsencode(sys.argv[1])
 target=os.fsencode(sys.argv[2])
+source_path=os.fsdecode(source)
+directories=[]
+for current,dirs,files in os.walk(source_path):
+    directories.append(current)
+    for child in files:
+        path=os.path.join(current,child)
+        descriptor=os.open(path,os.O_RDONLY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+for current in reversed(directories):
+    directory=os.open(current,os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
 libc=ctypes.CDLL(None,use_errno=True)
 renameat2=getattr(libc,"renameat2",None)
 if renameat2 is None:
@@ -265,6 +292,11 @@ renameat2.restype=ctypes.c_int
 if renameat2(-100,source,-100,target,1) != 0:
     error=ctypes.get_errno()
     raise OSError(error,os.strerror(error),sys.argv[2])
+parent=os.open(os.path.dirname(os.fsdecode(target)),os.O_RDONLY)
+try:
+    os.fsync(parent)
+finally:
+    os.close(parent)
 PY
     then
       TMP_BUNDLE=""

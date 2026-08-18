@@ -571,11 +571,15 @@ class K40CSOvernightTests(unittest.TestCase):
             ).hexdigest()
             manifest["submitted"] = True
             manifest["submission_atomicity"] = (
-                "single_held_four_task_array_released_once"
+                "single_atomic_four_task_array_submission"
             )
             for index, job in enumerate(manifest["jobs"], start=1):
-                job["job_id"] = str(1000 + index)
+                task = index - 1
+                job["job_id"] = f"1000_{task}"
                 job["submission_state"] = "released"
+                job["slurm_array_name"] = "K40R12RG82"
+                job["slurm_array_task_id"] = task
+                job["slurm_display_id"] = f"K40R12RG82_{task}"
             (campaign / "campaign.json").write_text(
                 json.dumps(manifest)
             )

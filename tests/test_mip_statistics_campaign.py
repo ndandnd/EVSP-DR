@@ -611,9 +611,9 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         self.assertIn('"--hold"', launcher_text)
         self.assertIn('"--array=0-3"', launcher_text)
         self.assertIn('"__ARRAY__"', launcher_text)
-        self.assertIn('"scontrol", "update"', launcher_text)
         self.assertIn('["scontrol", "release"', launcher_text)
-        self.assertIn("single_held_four_task_array_released_once",
+        self.assertIn("K40R12RG82", launcher_text)
+        self.assertIn("single_atomic_four_task_array_submission",
                       launcher_text)
 
     def test_campaign_name_escape_and_export_injection_are_rejected(self):
