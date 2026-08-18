@@ -707,7 +707,10 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
     if not isinstance(prior_provenance, dict):
         mismatches.append("saved provenance is not a JSON object")
         prior_provenance = {}
-    for key in ("instance_sha256", "prices_sha256"):
+    for key in (
+        "instance_sha256", "prices_sha256",
+        "reference_sha256", "deadhead_sha256",
+    ):
         saved = prior_provenance.get(key)
         current = provenance.get(key)
         if saved != current:

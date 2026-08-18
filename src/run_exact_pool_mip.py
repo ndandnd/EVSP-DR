@@ -516,22 +516,31 @@ def prepare_strict_partition_pool(
     reference_path = reference_data_dir / "Ref_dict.csv"
     deadhead_path = reference_data_dir / "par_ref_dhd.csv"
     provenance = status.get("provenance") or {}
-    if not reference_path.is_file() or not deadhead_path.is_file():
+    if (
+        not instance_path.is_file()
+        or not tariff_path.is_file()
+        or not reference_path.is_file()
+        or not deadhead_path.is_file()
+    ):
         raise SystemExit(
             "[MIP] physical pool preparation reference data missing"
         )
     observed_reference_sha = file_sha256(reference_path)
     observed_deadhead_sha = file_sha256(deadhead_path)
+    input_hashes_before = {
+        "instance_sha256": file_sha256(instance_path),
+        "prices_sha256": file_sha256(tariff_path),
+        "reference_sha256": observed_reference_sha,
+        "deadhead_sha256": observed_deadhead_sha,
+    }
     source_reference_hashes_bound = (
         isinstance(provenance.get("reference_sha256"), str)
         and isinstance(provenance.get("deadhead_sha256"), str)
     )
     if (
-        not instance_path.is_file()
-        or file_sha256(instance_path)
+        input_hashes_before["instance_sha256"]
         != provenance.get("instance_sha256")
-        or not tariff_path.is_file()
-        or file_sha256(tariff_path)
+        or input_hashes_before["prices_sha256"]
         != provenance.get("prices_sha256")
         or (
             source_reference_hashes_bound
@@ -767,6 +776,16 @@ def prepare_strict_partition_pool(
         }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         for route in deduplicated
     ], separators=(",", ":")).encode()).hexdigest()
+    input_hashes_after = {
+        "instance_sha256": file_sha256(instance_path),
+        "prices_sha256": file_sha256(tariff_path),
+        "reference_sha256": file_sha256(reference_path),
+        "deadhead_sha256": file_sha256(deadhead_path),
+    }
+    if input_hashes_after != input_hashes_before:
+        raise SystemExit(
+            "[MIP] physical pool preparation inputs changed during replay"
+        )
     audit = {
         "schema": "evsp-dr-strict-pool-physical-gate-v1",
         "total_columns": len(routes),
@@ -799,12 +818,7 @@ def prepare_strict_partition_pool(
         "persisted_charging_block_count": persisted_block_count,
         "persisted_charging_block_payload_bytes":
             persisted_block_json_bytes,
-        "input_hashes": {
-            "instance_sha256": file_sha256(instance_path),
-            "prices_sha256": file_sha256(tariff_path),
-            "reference_sha256": file_sha256(reference_path),
-            "deadhead_sha256": observed_deadhead_sha,
-        },
+        "input_hashes": input_hashes_before,
         "source_reference_hashes_bound":
             source_reference_hashes_bound,
     }
