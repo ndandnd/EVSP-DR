@@ -163,126 +163,18 @@ elif [[ "$(git -C "$RUN_ROOT" rev-parse HEAD 2>/dev/null)" != \
         "$REVIEWED_COMMIT" || \
         -n "$(git -C "$RUN_ROOT" status --porcelain 2>/dev/null)" ]]; then
   echo "Archive checkout is not the exact clean reviewed commit." >&2
-elif ! "$PYTHON" -I -B - "$CAMPAIGN_ROOT" \
-       "$REVIEWED_COMMIT" <<'PY'
-import hashlib,json,pathlib,sys
-root=pathlib.Path(sys.argv[1])
-expected=sys.argv[2]
-plan_raw=(root/"approved-plan.json").read_bytes()
-plan=json.loads(plan_raw)
-manifest=json.loads((root/"campaign.json").read_text())
-if manifest.get("submission_scope") not in {
-    "main_k5_k8_pilot","k40_preparation_only"
-}:
-    raise SystemExit("unknown submission scope")
-selected={
-    job["job_key"] for job in plan["jobs"]
-    if bool(job["separate_k40_gate"])
-    == (manifest.get("submission_scope")=="k40_preparation_only")
-}
-submitted={item["job_key"] for item in manifest["submitted_jobs"]}
-if (
-    (plan.get("checkout_identity") or {}).get("commit") != expected
-    or manifest.get("approval_sha256")
-    != hashlib.sha256(plan_raw).hexdigest()
-    or submitted != selected
-    or manifest.get("gate_state") != "released"
-):
-    raise SystemExit("campaign approval/commit is incomplete")
-jobs={job["job_key"]:job for job in plan["jobs"]}
-if hashlib.sha256(
-    pathlib.Path(plan["tariff_manifest"]).read_bytes()
-).hexdigest()!=plan["tariff_manifest_sha256"]:
-    raise SystemExit("tariff manifest changed")
-for submitted in manifest["submitted_jobs"]:
-    job=jobs[submitted["job_key"]]
-    instance=pathlib.Path(job["instance"]["path"])
-    if (
-        not instance.is_file()
-        or hashlib.sha256(instance.read_bytes()).hexdigest()
-        !=job["instance"]["sha256"]
-    ):
-        raise SystemExit(f"staged instance changed: {job['job_key']}")
-    if job.get("tariff_sha256"):
-        staged_tariff=(
-            root/"input/tariffs"
-            /pathlib.Path(job["tariff_relative_path"]).name
-        )
-        if (
-            not staged_tariff.is_file()
-            or hashlib.sha256(staged_tariff.read_bytes()).hexdigest()
-            !=job["tariff_sha256"]
-        ):
-            raise SystemExit(f"staged tariff changed: {job['job_key']}")
-    output=pathlib.Path(job["output"])
-    if not output.exists():
-        raise SystemExit(f"missing output: {job['job_key']}")
-    completion_path=pathlib.Path(str(output)+".worker-completion.json")
-    if not completion_path.is_file():
-        raise SystemExit(f"missing worker completion: {job['job_key']}")
-    completion=json.loads(completion_path.read_text())
-    if (
-        completion.get("schema")
-        !="evsp-dr-tariff-response-worker-completion-v1"
-        or completion.get("plan_sha256")
-        !=manifest.get("approval_sha256")
-    ):
-        raise SystemExit(f"invalid worker completion: {job['job_key']}")
-    for artifact,digest in completion.get("artifact_sha256",{}).items():
-        artifact_path=pathlib.Path(artifact)
-        if (
-            not artifact_path.is_file()
-            or hashlib.sha256(artifact_path.read_bytes()).hexdigest()!=digest
-        ):
-            raise SystemExit(f"worker artifact changed: {job['job_key']}")
-    if job["phase"]=="CG":
-        status=json.loads(output.read_text())
-        journal=pathlib.Path(status.get("columns_journal") or "")
-        if (
-            status.get("stop_reason") in {None,"resume_starting"}
-            or not journal.is_file()
-            or not pathlib.Path(str(output)+".iters.csv").is_file()
-            or not pathlib.Path(job["phase_telemetry"]).is_file()
-        ):
-            raise SystemExit(f"incomplete CG output: {job['job_key']}")
-    if job["phase"]=="MIP" and not (
-        pathlib.Path(job["progress_dir"])/"final.json"
-    ).is_file():
-        raise SystemExit(f"missing MIP progress: {job['job_key']}")
-for reservation in manifest.get("reservations") or []:
-    staged=root/"input/reservations"/pathlib.Path(reservation).name
-    if not staged.is_file():
-        raise SystemExit("staged execution reservation is missing")
-if (
-    manifest.get("submission_scope")=="main_k5_k8_pilot"
-    and not (root/"evidence/normalized/provenance.json").is_file()
-):
-    raise SystemExit("normalized main-scope evidence is missing")
-if manifest.get("submission_scope")=="main_k5_k8_pilot":
-    evidence=root/"evidence/normalized"
-    provenance=json.loads((evidence/"provenance.json").read_text())
-    experiment=root/"evidence/experiment-manifest.json"
-    if (
-        hashlib.sha256(experiment.read_bytes()).hexdigest()
-        !=provenance.get("experiment_manifest_sha256")
-    ):
-        raise SystemExit("evidence manifest hash mismatch")
-    for name,digest in provenance.get("output_sha256",{}).items():
-        artifact=evidence/name
-        if (
-            not artifact.is_file()
-            or hashlib.sha256(artifact.read_bytes()).hexdigest()!=digest
-        ):
-            raise SystemExit(f"normalized evidence changed: {name}")
-PY
-then
-  echo "Campaign outputs or approval are incomplete." >&2
 else
   mkdir -p "$ARCHIVE_ROOT"
   TMP_BUNDLE=$(mktemp -d "$ARCHIVE_ROOT/.bundle.XXXXXXXX")
   if [[ -z "$TMP_BUNDLE" || ! -d "$TMP_BUNDLE" ]] || \
      ! cp -a "$CAMPAIGN_ROOT" "$TMP_BUNDLE/campaign"; then
     echo "Archive staging failed." >&2
+  elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+       "$REVIEWED_COMMIT" validate_tariff_response_archive.py \
+       --campaign-root "$TMP_BUNDLE/campaign" \
+       --expected-commit "$REVIEWED_COMMIT" \
+       --scope "$ARCHIVE_SCOPE"; then
+    echo "Staged campaign archive validation failed." >&2
   elif ! tar --sort=name --mtime='UTC 1970-01-01' \
        --owner=0 --group=0 --numeric-owner \
        -czf "$TMP_BUNDLE/$ARCHIVE_NAME" \
@@ -348,6 +240,16 @@ name. Inspect `campaign.json`, the recorded `gate_job_id`, `squeue`, and
 `sacct`. States `release_attempting` or `held_release_failed` are intentionally
 ambiguous and require operator reconciliation; reservations remain locked so a
 duplicate matrix cannot be submitted.
+
+After `sacct` proves the recorded gate job completed, reconcile without
+resubmitting:
+
+```bash
+"$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$REVIEWED_COMMIT" reconcile_tariff_response_gate.py \
+  --campaign-root "$RUN_ROOT/src/results/tariff_response/$CAMPAIGN" \
+  --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
+```
 
 ## Build normalized evidence after the main scope completes
 

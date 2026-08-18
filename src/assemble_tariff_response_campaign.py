@@ -10,6 +10,7 @@ import json
 import math
 import os
 import platform
+import subprocess
 from collections import defaultdict
 from pathlib import Path
 
@@ -27,6 +28,7 @@ from tariff_response_core import (
     tariff_prices,
 )
 from make_giro_seed_routes import _minutes, _station_node
+from tariff_response_environment import identity as environment_identity
 
 
 def _trip_blocks(problem, trips):
@@ -234,6 +236,18 @@ def _mip_checkpoints(job):
     return rows
 
 
+def _write_new_bytes(path, encoded):
+    temporary = path.with_name(f".{path.name}.tmp.{os.getpid()}")
+    with temporary.open("xb") as handle:
+        handle.write(encoded)
+        handle.flush()
+        os.fsync(handle.fileno())
+    try:
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def assemble(campaign_root, output_manifest, evidence_output):
     campaign_root = campaign_root.resolve()
     plan_raw = (campaign_root / "approved-plan.json").read_bytes()
@@ -252,6 +266,23 @@ def assemble(campaign_root, output_manifest, evidence_output):
     }
     if submitted != main_jobs:
         raise ValueError("main pilot submission is incomplete")
+    if manifest.get("gate_state") not in {
+        "released", "released_reconciled",
+    }:
+        raise ValueError("main pilot gate release is not verified")
+    observed_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=REPO_ROOT, text=True, capture_output=True, check=False,
+    )
+    if (
+        observed_commit.returncode != 0
+        or observed_commit.stdout.strip()
+        != plan["checkout_identity"]["commit"]
+        or sha256_file(Path(__file__).resolve())
+        != plan["code_sha256"]["src/assemble_tariff_response_campaign.py"]
+        or environment_identity() != plan.get("environment_identity")
+    ):
+        raise ValueError("assembler commit/code/environment differs from plan")
     schedule_dir = output_manifest.parent / "normalized_schedules"
     schedule_dir.mkdir(parents=True, exist_ok=True)
     for job in plan["jobs"]:
@@ -517,10 +548,7 @@ def assemble(campaign_root, output_manifest, evidence_output):
                     if normalized_path.read_bytes() != normalized_encoded:
                         raise FileExistsError(normalized_path)
                 else:
-                    with normalized_path.open("xb") as handle:
-                        handle.write(normalized_encoded)
-                        handle.flush()
-                        os.fsync(handle.fileno())
+                    _write_new_bytes(normalized_path, normalized_encoded)
                 cg_job = jobs[mip_job["dependency_key"]]
                 cells.append({
                     **base,

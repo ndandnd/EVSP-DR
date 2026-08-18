@@ -17,6 +17,8 @@ ALLOWED_TARGETS = {
     "summarize_mip_statistics.py",
     "launch_tariff_response_pilot.py",
     "assemble_tariff_response_campaign.py",
+    "validate_tariff_response_archive.py",
+    "reconcile_tariff_response_gate.py",
 }
 
 
@@ -76,7 +78,9 @@ def main() -> int:
             "validate_k40_cs_overnight_plan.py|"
             "summarize_mip_statistics.py|"
             "launch_tariff_response_pilot.py|"
-            "assemble_tariff_response_campaign.py} [ARG ...]"
+            "assemble_tariff_response_campaign.py|"
+            "validate_tariff_response_archive.py|"
+            "reconcile_tariff_response_gate.py} [ARG ...]"
         )
     root = pathlib.Path(__file__).resolve().parents[1]
     expected_commit = sys.argv[1]

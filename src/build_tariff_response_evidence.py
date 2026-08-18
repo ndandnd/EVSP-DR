@@ -417,6 +417,11 @@ def _validate_cell(cell, tariffs):
     ):
         raise ValueError("route-flexible result has a fixed-duty label")
     if (
+        cell["tier"] == "TIER2_RAW_ROUTE_CHARGING"
+        and cell["treatment"] != "RAW"
+    ):
+        raise ValueError("RAW Tier 2 treatment mislabeled")
+    if (
         cell["tier"] == "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING"
         and cell["treatment"] != "GIRO40-AUGMENTED"
     ):
@@ -545,7 +550,10 @@ def _render_gantt_group(
         hour: sum(curve[hour] for curve in curves.values()) / len(curves)
         for hour in common_hours
     }
-    low, high = min(average.values()), max(average.values())
+    all_prices = [
+        price for curve in curves.values() for price in curve.values()
+    ]
+    low, high = min(all_prices), max(all_prices)
     rows = []
     fig, axes = plt.subplots(3, 1, figsize=(15, 12), sharex=True)
     for panel, tier in enumerate(panel_tiers):
@@ -578,7 +586,10 @@ def _render_gantt_group(
                 price = block.get("price_per_kwh")
                 intensity = (
                     0.35 if price is None or high == low
-                    else 0.25 + 0.75 * (float(price) - low) / (high - low)
+                    else min(1.0, max(
+                        0.0,
+                        0.25 + 0.75 * (float(price) - low) / (high - low),
+                    ))
                 )
                 axis.broken_barh(
                     [(start, end - start)], (y - 0.45, 0.9),
@@ -726,7 +737,10 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
             set(curve) for curve in curves.values()
         )))
     }
-    low, high = min(average_curve.values()), max(average_curve.values())
+    all_prices = [
+        price for curve in curves.values() for price in curve.values()
+    ]
+    low, high = min(all_prices), max(all_prices)
     for panel, tier in enumerate(panel_tiers):
         cell = tiers[tier]
         order = _stable_orders(baseline, cell["routes"])
@@ -764,7 +778,10 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
                 price = block.get("price_per_kwh")
                 intensity = (
                     0.35 if price is None or high == low
-                    else 0.25 + 0.75 * (float(price) - low) / (high - low)
+                    else min(1.0, max(
+                        0.0,
+                        0.25 + 0.75 * (float(price) - low) / (high - low),
+                    ))
                 )
                 ax.broken_barh(
                     [(start, end - start)], (y - 0.45, 0.9),

@@ -156,17 +156,6 @@ observed=json.loads(sys.argv[2])
 if observed != plan.get("environment_identity"):
     raise SystemExit("environment identity mismatch")
 PY
-export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
-unset LM_LICENSE_FILE || true
-[[ -r "$GRB_LICENSE_FILE" ]] || fatal "canonical Gurobi license is unavailable"
-"$PYTHON" -I -B - <<'PY' \
-  || fatal "Gurobi license preflight failed"
-import gurobipy as gp
-environment=gp.Env(empty=True)
-environment.setParam("OutputFlag",0)
-environment.start()
-environment.dispose()
-PY
 [[ "$(sha256sum "$INSTANCE" | awk '{print $1}')" == "$INSTANCE_SHA" ]] \
   || fatal "instance hash mismatch"
 [[ "$(sha256sum "$TARIFF_MANIFEST" | awk '{print $1}')" == \
@@ -256,6 +245,18 @@ case "$PHASE" in
     [[ "$SCALE" == "5" || "$SCALE" == "8" ]] \
       || fatal "k40 MIP is prohibited in tariff pilot"
     [[ -s "$CG_SOURCE" ]] || fatal "source CG status is missing"
+    export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+    unset LM_LICENSE_FILE || true
+    [[ -r "$GRB_LICENSE_FILE" ]] \
+      || fatal "canonical Gurobi license is unavailable"
+    "$PYTHON" -I -B - <<'PY' \
+      || fatal "Gurobi license preflight failed"
+import gurobipy as gp
+environment=gp.Env(empty=True)
+environment.setParam("OutputFlag",0)
+environment.start()
+environment.dispose()
+PY
     CG_JOURNAL=$("$PYTHON" -I -B - "$CG_SOURCE" <<'PY'
 import json,pathlib,sys
 status=json.load(open(sys.argv[1]))
@@ -349,10 +350,15 @@ payload={
     "artifact_sha256":hashes,
 }
 target=pathlib.Path(str(output_path)+".worker-completion.json")
-with target.open("x") as handle:
+temporary=target.with_name(f".{target.name}.tmp.{os.getpid()}")
+with temporary.open("x") as handle:
     json.dump(payload,handle,sort_keys=True,separators=(",",":"))
     handle.write("\n")
     handle.flush()
     os.fsync(handle.fileno())
+try:
+    os.link(temporary,target)
+finally:
+    temporary.unlink(missing_ok=True)
 PY
 echo "[TARIFF-RESPONSE] DONE phase=$PHASE scale=$SCALE tariff=$TARIFF_ID treatment=$TREATMENT"

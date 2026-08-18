@@ -46,6 +46,8 @@ CODE_PATHS = (
     "src/config.py",
     "src/tariff_response_environment.py",
     "src/assemble_tariff_response_campaign.py",
+    "src/validate_tariff_response_archive.py",
+    "src/reconcile_tariff_response_gate.py",
 )
 MATRIX_FIELDS = (
     "job_key", "phase", "scale", "tariff_id", "treatment",
@@ -514,7 +516,7 @@ def submit(plan, plan_sha, *, k40_preparation):
             tariff["sha256"],
         )
     plan_path = root / "approved-plan.json"
-    plan_path.write_bytes(canonical(plan))
+    _write_new_file(plan_path, canonical(plan))
     manifest = {
         **plan,
         "approval_sha256": plan_sha,
@@ -657,6 +659,21 @@ def _copy_new(source, target, expected_sha256):
         os.fsync(writer.fileno())
     if sha256_file(target) != expected_sha256:
         raise ValueError(f"staged input copy mismatch: {target}")
+
+
+def _write_new_file(path, payload):
+    descriptor = os.open(
+        path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
+    )
+    with os.fdopen(descriptor, "wb") as handle:
+        handle.write(payload)
+        handle.flush()
+        os.fsync(handle.fileno())
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
 
 
 def math_ceil(value):

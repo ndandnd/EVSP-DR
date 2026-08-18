@@ -37,6 +37,7 @@ import launch_tariff_response_pilot as pilot  # noqa: E402
 from assemble_tariff_response_campaign import assemble  # noqa: E402
 from assemble_tariff_response_campaign import _aggregate  # noqa: E402
 from build_tariff_response_evidence import _schedule_fingerprint  # noqa: E402
+from reconcile_tariff_response_gate import reconcile  # noqa: E402
 from tariff_response_core import (  # noqa: E402
     PHYSICS,
     evaluate_giro_original,
@@ -724,6 +725,30 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     root / "manifest.json",
                     root / "evidence",
                 )
+
+    def test_gate_reconciliation_requires_completed_accounting_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan_raw = b'{"schema":"test"}'
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "release_attempting",
+                "gate_job_id": "12345",
+            }))
+            with patch(
+                "reconcile_tariff_response_gate.subprocess.run",
+                return_value=SimpleNamespace(
+                    returncode=0,
+                    stdout="12345|COMPLETED|\n",
+                    stderr="",
+                ),
+            ):
+                payload = reconcile(root, plan_sha)
+            self.assertEqual(
+                payload["gate_state"], "released_reconciled"
+            )
 
 
 if __name__ == "__main__":
