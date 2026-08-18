@@ -50,6 +50,8 @@ CODE_PATHS = (
     "src/install_exact_cg_profile_input.py",
     "src/mip_statistics_environment.py",
     "src/validate_raw_k40_mip_plan.py",
+    "src/validate_k40_cs_overnight_plan.py",
+    "src/validate_k40_cs_overnight_result.py",
 )
 DEFAULT_ROOTS = {
     "repool_small": REPO_ROOT / "results/repool_small",
@@ -61,6 +63,22 @@ DEFAULT_ROOTS = {
 
 RAW_K40_BUDGET_HOURS = 8
 RAW_K40_SMOKE_BUDGET_HOURS = 0.5
+K40_CS_OVERNIGHT_MODE = "k40_cs_overnight"
+K40_CS_PACKAGING_BASE_COMMIT = (
+    "bf81adb7d2249e049eae1a785ec03b08aba664b5"
+)
+K40_CS_RAW_BUDGET_HOURS = 8
+K40_CS_GIRO40_BUDGET_HOURS = 2
+GIRO40_AUGMENTED = "GIRO40-AUGMENTED"
+GIRO40_PARTITION_FILE_SHA256 = (
+    "2afdc10c142b468e065b6330c7be43b0b91479402c924f3c23e7b45e9e09a06b"
+)
+GIRO40_PARTITION_SHA256 = (
+    "9a71179b79072969264d04326f58214c51cf16096de7cd17b05d3a140d30ebe6"
+)
+GIRO40_ROUTE_SET_SHA256 = (
+    "9b42579ae2d013706cc8d523eb9313fdef4e36eb492a99356483cb526d00085a"
+)
 RAW_K40_PHYSICAL_COMMIT = (
     "e2b6939b5a5af7033acabec033f6b3d8dde3af4c"
 )
@@ -71,6 +89,22 @@ RAW_K40_PHYSICAL_CODE_HASHES = {
         "90764e1b7c17a23580b9c1ffcdffc44a8b9b4f16b6025765cec5ddd0e3a3a91a",
 }
 RAW_K40_MODES = {"raw_k40", "raw_k40_smoke"}
+EXPLICIT_K40_MODES = RAW_K40_MODES | {K40_CS_OVERNIGHT_MODE}
+K40_CS_LABELS = ("R1_CS", "R2_CS")
+K40_CS_FROZEN_HASHES = {
+    "R1_CS": {
+        "status":
+            "04c3d5d9fe701fbb3bc4fd343e58480fabebf27bb18ef2c60e23a34e29b0200b",
+        "journal":
+            "128e3d841842bba08e4eba2d9a073322caa8a1de5c64c0e9efe2e747a08c01d4",
+    },
+    "R2_CS": {
+        "status":
+            "780431fea40763d42576272bd8e9260f3ed2c8541b6d77f751e17f342dfb1202",
+        "journal":
+            "8290771a7ca3b6f185070f68a9934e6eaa8894c802ae02ac37f013c25a4b7c31",
+    },
+}
 RAW_K40_INSTANCE_SHA256 = (
     "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
 )
@@ -286,15 +320,18 @@ def resolve_raw_k40_candidates(
     expected_status_sha256: dict[str, str] | None = None,
     journal_assignments: dict[str, Path] | None = None,
     expected_journal_sha256: dict[str, str] | None = None,
+    expected_labels: tuple[str, ...] | None = None,
 ) -> dict[str, dict]:
     """Validate the four explicit, non-GIRO k40 factorial snapshots."""
 
-    expected_labels = set(RAW_K40_SPECS)
-    if set(assignments) != expected_labels:
-        missing = sorted(expected_labels - set(assignments))
-        extra = sorted(set(assignments) - expected_labels)
+    expected_label_set = set(expected_labels or RAW_K40_SPECS)
+    if not expected_label_set <= set(RAW_K40_SPECS):
+        raise ValueError("raw-k40 expected labels are unsupported")
+    if set(assignments) != expected_label_set:
+        missing = sorted(expected_label_set - set(assignments))
+        extra = sorted(set(assignments) - expected_label_set)
         raise ValueError(
-            "raw-k40 requires exactly R1_CA,R1_CS,R2_CA,R2_CS; "
+            f"raw-k40 requires exactly {sorted(expected_label_set)}; "
             f"missing={missing}, extra={extra}"
         )
     for label, values in (
@@ -302,10 +339,10 @@ def resolve_raw_k40_candidates(
         ("journal paths", journal_assignments),
         ("journal SHA-256", expected_journal_sha256),
     ):
-        if values is not None and set(values) != expected_labels:
+        if values is not None and set(values) != expected_label_set:
             raise ValueError(
                 f"raw-k40 {label} require exactly "
-                "R1_CA,R1_CS,R2_CA,R2_CS"
+                f"{sorted(expected_label_set)}"
             )
     if journal_assignments is not None:
         journal_paths = [
@@ -329,7 +366,8 @@ def resolve_raw_k40_candidates(
         raise ValueError("raw-k40 snapshot paths must be distinct")
 
     selected = {}
-    for label, spec in RAW_K40_SPECS.items():
+    for label in expected_labels or tuple(RAW_K40_SPECS):
+        spec = RAW_K40_SPECS[label]
         path = assignments[label].expanduser().resolve()
         if enforce_frozen_path and (
             path.name != spec["filename"]
@@ -411,8 +449,9 @@ def resolve_raw_k40_candidates(
         "instance_sha256", "tariff_sha256", "trip_set_sha256", "trip_count",
         "csv", "prices_csv",
     )
+    reference_candidate = selected[next(iter(selected))]
     if any(
-        selected[label].get(field) != selected["R1_CA"].get(field)
+        selected[label].get(field) != reference_candidate.get(field)
         for label in selected
         for field in identity_fields
     ):
@@ -471,8 +510,13 @@ def _validated_start(path: Path, candidate: dict) -> dict:
     if (
         not isinstance(routes, list)
         or not routes
-        or payload.get("infeasible") != []
-        or payload.get("source") != "rerealized"
+        or (
+            payload.get("schema") != "evsp-dr-k40-giro40-partition-v1"
+            and (
+                payload.get("infeasible") != []
+                or payload.get("source") != "rerealized"
+            )
+        )
     ):
         raise ValueError(f"GIRO start is missing/partial: {source}")
     status = json.loads(Path(candidate["status_path"]).read_text())
@@ -491,6 +535,42 @@ def _validated_start(path: Path, candidate: dict) -> dict:
             abs_tol=1e-9,
         ):
             raise ValueError(f"GIRO start physics mismatch: {source}")
+    if payload.get("schema") == "evsp-dr-k40-giro40-partition-v1":
+        if (
+            hashlib.sha256(raw).hexdigest()
+            != GIRO40_PARTITION_FILE_SHA256
+            or payload.get("source") != GIRO40_AUGMENTED
+            or payload.get("route_count") != 40
+            or len(routes) != 40
+            or payload.get("partition_sha256")
+            != GIRO40_PARTITION_SHA256
+            or payload.get("route_set_sha256")
+            != GIRO40_ROUTE_SET_SHA256
+            or payload.get("continuous_cost_pricing_certified") is not False
+            or payload.get("pricing_certificate_scope")
+            != "none_for_augmented_routes"
+        ):
+            raise ValueError(f"GIRO40 partition metadata is invalid: {source}")
+        for route in routes:
+            physical = route.get("physical_realization") or {}
+            if (
+                not route.get("continuous_realized_charging_blocks")
+                and sum(float(value) for value in (
+                    (route.get("charging_stops") or {}).get("kwh") or []
+                )) > 1e-9
+            ):
+                raise ValueError(
+                    f"GIRO40 route lacks continuous blocks: {source}"
+                )
+            if (
+                physical.get("status")
+                != "validated_continuous_injection"
+                or physical.get("continuous_cost_pricing_certified")
+                is not False
+            ):
+                raise ValueError(
+                    f"GIRO40 route physical metadata is invalid: {source}"
+                )
     if (
         Path(str(payload.get("prices_csv") or "")).name
         != Path(str(candidate["prices_csv"])).name
@@ -546,6 +626,7 @@ def _physical_start_validation(path: Path, candidate: dict) -> dict:
         candidate["prices_csv"],
         status,
         data_dir=data_root,
+        reference_data_dir=REPO_ROOT / "data",
     )
     return detail
 
@@ -563,6 +644,16 @@ def _slurm_wall_time(budget_hours: float) -> str:
 
 
 def _job_name(job, campaign: str) -> str:
+    if job.get("matrix") == K40_CS_OVERNIGHT_MODE:
+        label = str(job["source"]["raw_k40_label"]).replace("_", "")
+        treatment = "R8" if job["arm"] == "RAW" else "G2"
+        nonce = hashlib.sha256(
+            f"{campaign}|{job['cell_id']}".encode()
+        ).hexdigest()[:2].upper()
+        name = f"K40{label}{treatment}{nonce}"
+        if len(name) > 15:
+            raise ValueError(f"Slurm name exceeds 15 characters: {name}")
+        return name
     if job.get("matrix") in RAW_K40_MODES:
         label = str(job["source"]["raw_k40_label"]).replace("_", "")
         nonce = hashlib.sha256(
@@ -638,8 +729,12 @@ def _job_from_candidate(
 ):
     start = None
     blocked = []
-    if arm == "GIRO":
-        start_path = start_map.get(str(candidate["scale"]))
+    augmented = arm in {"GIRO", GIRO40_AUGMENTED}
+    if augmented:
+        start_path = (
+            start_map.get(str(candidate.get("raw_k40_label")))
+            or start_map.get(str(candidate["scale"]))
+        )
         if start_path is None:
             blocked.append("validated_giro_start_missing")
         else:
@@ -647,9 +742,12 @@ def _job_from_candidate(
                 start = _validated_start(start_path, candidate)
             except (OSError, ValueError) as exc:
                 blocked.append(f"validated_giro_start_invalid: {exc}")
-    if matrix in RAW_K40_MODES:
+    if matrix in EXPLICIT_K40_MODES:
+        treatment = (
+            "raw" if arm == "RAW" else "giro40_augmented"
+        )
         cell = (
-            f"k40_{candidate['raw_k40_label'].lower()}_raw_m1440"
+            f"k40_{candidate['raw_k40_label'].lower()}_{treatment}_m1440"
         )
     else:
         cell = (
@@ -662,7 +760,7 @@ def _job_from_candidate(
         "scale": candidate["scale"],
         "replicate": candidate["replicate"],
         "arm": arm,
-        "augmentation_changes_column_set": arm == "GIRO",
+        "augmentation_changes_column_set": augmented,
         "partitioning": "strict_exact_once",
         "two_stage": True,
         "budget_hours": budget_hours,
@@ -691,6 +789,15 @@ def build_plan(
 ) -> dict:
     if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,79}", campaign):
         raise ValueError("campaign name must be a safe relative identifier")
+    if (
+        mode == K40_CS_OVERNIGHT_MODE
+        and _git(
+            "merge-base", "--is-ancestor",
+            K40_CS_PACKAGING_BASE_COMMIT,
+            identity["expected_commit"],
+        ).returncode != 0
+    ):
+        raise ValueError("overnight checkout does not descend from bf81adb7")
     selected = representative_candidates(inventory_payload)
     preparations = [_fresh_preparation(scale) for scale in (10, 20)]
     jobs = []
@@ -743,6 +850,28 @@ def build_plan(
                     else RAW_K40_BUDGET_HOURS
                 ),
                 start_map={},
+                matrix=mode,
+            ))
+    elif mode == K40_CS_OVERNIGHT_MODE:
+        if set(explicit_raw_candidates or {}) != set(K40_CS_LABELS):
+            raise ValueError(
+                "k40_cs_overnight requires R1_CS and R2_CS candidates"
+            )
+        preparations = []
+        for label in K40_CS_LABELS:
+            candidate = explicit_raw_candidates[label]
+            jobs.append(_job_from_candidate(
+                candidate,
+                arm="RAW",
+                budget_hours=K40_CS_RAW_BUDGET_HOURS,
+                start_map={},
+                matrix=mode,
+            ))
+            jobs.append(_job_from_candidate(
+                candidate,
+                arm=GIRO40_AUGMENTED,
+                budget_hours=K40_CS_GIRO40_BUDGET_HOURS,
+                start_map=start_map,
                 matrix=mode,
             ))
     else:
@@ -904,7 +1033,7 @@ def build_plan(
         "inventory_sha256": inventory_sha,
         "selection_rule": (
             "four explicit hash-validated raw k40 factorial m1440 cells"
-            if mode in RAW_K40_MODES
+            if mode in EXPLICIT_K40_MODES
             else inventory_payload["selection_rule"]
         ),
         "selected_candidates": (
@@ -912,7 +1041,7 @@ def build_plan(
                 label: candidate["candidate_id"]
                 for label, candidate in (explicit_raw_candidates or {}).items()
             }
-            if mode in RAW_K40_MODES
+            if mode in EXPLICIT_K40_MODES
             else {
                 str(scale): candidate["candidate_id"]
                 for scale, candidate in selected.items()
@@ -931,11 +1060,18 @@ def build_plan(
         "runner_sha256": runner_sha,
         "code_hashes": code_hashes,
         "physical_realization_review": (
-            {
+            ({
                 "commit": RAW_K40_PHYSICAL_COMMIT,
                 "code_hashes": RAW_K40_PHYSICAL_CODE_HASHES,
-            }
-            if mode == "raw_k40_smoke" else None
+            } if mode == "raw_k40_smoke" else {
+                "semantics_base_commit": RAW_K40_PHYSICAL_COMMIT,
+                "packaging_base_commit": K40_CS_PACKAGING_BASE_COMMIT,
+                "runtime_code_hashes": {
+                    path: code_hashes[path]
+                    for path in RAW_K40_PHYSICAL_CODE_HASHES
+                },
+            })
+            if mode in {"raw_k40_smoke", K40_CS_OVERNIGHT_MODE} else None
         ),
         "python_identity": python_identity,
         "environment_whitelist": environment,
@@ -951,11 +1087,11 @@ def build_plan(
             any(job["blocked_reasons"] for job in jobs)
             or (bool(jobs) and not python_identity["available"])
             or (
-                mode not in RAW_K40_MODES
+                mode not in EXPLICIT_K40_MODES
                 and bool(inventory_payload.get("missing_roots"))
             )
             or (
-                mode not in RAW_K40_MODES
+                mode not in EXPLICIT_K40_MODES
                 and bool(inventory_payload.get("missing_slots"))
             )
             or (mode == "pilot" and bool(missing_scales))
@@ -976,6 +1112,24 @@ def build_plan(
                 "expected_snapshot_minutes": 1440,
             }
             if mode in RAW_K40_MODES else None
+        ),
+        "k40_cs_overnight_guards": (
+            {
+                "raw_budget_seconds": int(
+                    K40_CS_RAW_BUDGET_HOURS * 3600
+                ),
+                "giro40_augmented_budget_seconds": int(
+                    K40_CS_GIRO40_BUDGET_HOURS * 3600
+                ),
+                "raw_external_routes_allowed": False,
+                "giro40_partition_route_count": 40,
+                "strict_partitioning": True,
+                "expected_trip_count": 947,
+                "expected_snapshot_minutes": 1440,
+                "continuous_cost_pricing_certified": False,
+                "ca_jobs_included": False,
+            }
+            if mode == K40_CS_OVERNIGHT_MODE else None
         ),
         "global_route_space_optimality_claimed": False,
     }
@@ -1154,7 +1308,7 @@ def parse_args(argv=None):
     parser.add_argument(
         "--mode", choices=(
             "inventory", "pilot", "secondary",
-            "raw_k40", "raw_k40_smoke",
+            "raw_k40", "raw_k40_smoke", K40_CS_OVERNIGHT_MODE,
         ),
         required=True,
     )
@@ -1198,23 +1352,56 @@ def parse_args(argv=None):
     args = parser.parse_args(argv)
     if args.mode != "inventory" and not args.campaign:
         parser.error("non-inventory modes require --campaign")
-    if args.mode in RAW_K40_MODES and len(args.raw_k40_status) != 4:
-        parser.error("raw_k40 mode requires four --raw-k40-status values")
-    if args.mode not in RAW_K40_MODES and args.raw_k40_status:
-        parser.error("--raw-k40-status is valid only in raw_k40 mode")
+    expected_explicit_count = (
+        2 if args.mode == K40_CS_OVERNIGHT_MODE
+        else 4 if args.mode in RAW_K40_MODES
+        else 0
+    )
+    if (
+        args.mode in EXPLICIT_K40_MODES
+        and len(args.raw_k40_status) != expected_explicit_count
+    ):
+        parser.error(
+            f"{args.mode} requires {expected_explicit_count} "
+            "--raw-k40-status values"
+        )
+    if args.mode not in EXPLICIT_K40_MODES and args.raw_k40_status:
+        parser.error(
+            "--raw-k40-status is valid only in explicit k40 modes"
+        )
     smoke_counts = (
         len(args.raw_k40_status_sha256),
         len(args.raw_k40_journal),
         len(args.raw_k40_journal_sha256),
     )
-    if args.mode == "raw_k40_smoke" and smoke_counts != (4, 4, 4):
+    expected_hash_count = (
+        4 if args.mode == "raw_k40_smoke"
+        else 2 if args.mode == K40_CS_OVERNIGHT_MODE
+        else 0
+    )
+    if (
+        args.mode in {"raw_k40_smoke", K40_CS_OVERNIGHT_MODE}
+        and smoke_counts
+        != (expected_hash_count, expected_hash_count, expected_hash_count)
+    ):
         parser.error(
-            "raw_k40_smoke requires four status hashes, journal paths, "
-            "and journal hashes"
+            f"{args.mode} requires {expected_hash_count} status hashes, "
+            "journal paths, and journal hashes"
         )
-    if args.mode != "raw_k40_smoke" and any(smoke_counts):
+    if (
+        args.mode not in {"raw_k40_smoke", K40_CS_OVERNIGHT_MODE}
+        and any(smoke_counts)
+    ):
         parser.error(
-            "explicit RAW hash/journal flags are only valid in smoke mode"
+            "explicit RAW hash/journal flags are only valid in hash-bound "
+            "k40 modes"
+        )
+    if (
+        args.mode == K40_CS_OVERNIGHT_MODE
+        and len(args.giro_start) != 2
+    ):
+        parser.error(
+            "k40_cs_overnight requires R1_CS and R2_CS GIRO40 starts"
         )
     if args.submit and not args.approved_plan_sha256:
         parser.error("--submit requires --approved-plan-sha256")
@@ -1228,7 +1415,7 @@ def main(argv=None) -> int:
     data_roots = args.data_root or [REPO_ROOT / "data"]
     raw_assignments = (
         _parse_assignments(args.raw_k40_status)
-        if args.mode in RAW_K40_MODES else None
+        if args.mode in EXPLICIT_K40_MODES else None
     )
     if raw_assignments is not None:
         # Explicit RAW mode validates only the four named immutable inputs.
@@ -1255,23 +1442,36 @@ def main(argv=None) -> int:
     start_map = _parse_assignments(args.giro_start)
     if args.mode in RAW_K40_MODES and start_map:
         raise SystemExit("raw_k40 mode forbids --giro-start")
+    if (
+        args.mode == K40_CS_OVERNIGHT_MODE
+        and set(start_map) != set(K40_CS_LABELS)
+    ):
+        raise SystemExit(
+            "k40_cs_overnight GIRO starts must be R1_CS and R2_CS"
+        )
     explicit_raw_candidates = None
-    if args.mode in RAW_K40_MODES:
+    if args.mode in EXPLICIT_K40_MODES:
         status_hashes = (
             _parse_assignments(
                 args.raw_k40_status_sha256, value_type=str
             )
-            if args.mode == "raw_k40_smoke" else None
+            if args.mode in {
+                "raw_k40_smoke", K40_CS_OVERNIGHT_MODE
+            } else None
         )
         journal_assignments = (
             _parse_assignments(args.raw_k40_journal)
-            if args.mode == "raw_k40_smoke" else None
+            if args.mode in {
+                "raw_k40_smoke", K40_CS_OVERNIGHT_MODE
+            } else None
         )
         journal_hashes = (
             _parse_assignments(
                 args.raw_k40_journal_sha256, value_type=str
             )
-            if args.mode == "raw_k40_smoke" else None
+            if args.mode in {
+                "raw_k40_smoke", K40_CS_OVERNIGHT_MODE
+            } else None
         )
         explicit_raw_candidates = resolve_raw_k40_candidates(
             raw_assignments,
@@ -1280,6 +1480,10 @@ def main(argv=None) -> int:
             expected_status_sha256=status_hashes,
             journal_assignments=journal_assignments,
             expected_journal_sha256=journal_hashes,
+            expected_labels=(
+                K40_CS_LABELS
+                if args.mode == K40_CS_OVERNIGHT_MODE else None
+            ),
         )
         payload = dict(payload)
         payload["explicit_raw_k40_candidates"] = {

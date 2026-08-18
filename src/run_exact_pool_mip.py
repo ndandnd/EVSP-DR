@@ -1281,6 +1281,7 @@ def merge_validated_partition_start(
         "source_sha256": source_sha256,
         "validated": True,
         "validated_bus_count": len(start_indices),
+        "assigned_mip_start_route_count": len(start_indices),
         "expected_full_objective": float(
             sum(merged[index]["cost"] for index in start_indices)
         ),
@@ -1302,6 +1303,13 @@ def merge_validated_partition_start(
             for index in start_indices
         ],
     }
+    detail["added_giro_route_count"] = len(start_indices)
+    detail["added_giro_route_set_sha256"] = hashlib.sha256(
+        json.dumps(
+            detail["actual_start_column_hashes"],
+            separators=(",", ":"),
+        ).encode()
+    ).hexdigest()
     print(
         f"[MIP] validated exact-partition start: {len(start_indices)} buses "
         f"from {path} (added {added}, preserved duplicate incidences "
@@ -1916,6 +1924,15 @@ def main(argv=None) -> int:
         physical_pool_audit["mip_unique_accepted_columns"] = len(
             routes
         )
+        physical_pool_audit.update({
+            "base_pool_column_count": len(routes),
+            "base_pool_ordered_sha256":
+                physical_pool_audit["mip_ordered_pool_sha256"],
+            "added_giro_route_count": 0,
+            "added_giro_route_set_sha256": hashlib.sha256(
+                b"[]"
+            ).hexdigest(),
+        })
     if (file_sha256(args.result) != source_result_sha256
             or file_sha256(source_journal) != source_journal_sha256):
         raise SystemExit(
@@ -1944,6 +1961,23 @@ def main(argv=None) -> int:
                 reference_data_dir=args.reference_data_dir,
             )
         )
+        if physical_pool_audit is not None:
+            physical_pool_audit.update({
+                "base_pool_column_count":
+                    physical_pool_audit["mip_unique_accepted_columns"],
+                "base_pool_ordered_sha256":
+                    physical_pool_audit["mip_ordered_pool_sha256"],
+                "added_giro_route_count":
+                    initial_partition_start["added_giro_route_count"],
+                "added_giro_route_set_sha256":
+                    initial_partition_start[
+                        "added_giro_route_set_sha256"
+                    ],
+                "assigned_mip_start_route_count":
+                    initial_partition_start[
+                        "assigned_mip_start_route_count"
+                    ],
+            })
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
     seed_partition = singleton_partition_indices(routes, trips)
@@ -1965,7 +1999,23 @@ def main(argv=None) -> int:
             ),
         }
     if physical_pool_audit is not None:
+        physical_pool_audit["assigned_mip_start_route_count"] = (
+            len(mip_start) if mip_start else 0
+        )
+    if physical_pool_audit is not None:
         physical_pool_audit["post_augmentation_columns"] = len(routes)
+        physical_pool_audit["augmented_pool_column_count"] = len(routes)
+        physical_pool_audit["augmented_pool_ordered_sha256"] = (
+            hashlib.sha256(json.dumps([
+                hashlib.sha256(json.dumps({
+                    "trips": route.get("trips"),
+                    "route_nodes": route.get("route_nodes"),
+                    "charging_stops": route.get("charging_stops"),
+                    "cost": route.get("cost"),
+                }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+                for route in routes
+            ], separators=(",", ":")).encode()).hexdigest()
+        )
         pool_semantics = {
             route.get("master_cost_semantics") for route in routes
         }
@@ -2283,6 +2333,10 @@ def main(argv=None) -> int:
             "stage1_gap": stage1_gap,
             "fleet_proven": fleet_proven,
             "stage1_runtime_s": stage1_runtime_s,
+            "stage1_node_count": finite_solver_value(
+                getattr(m, "NodeCount", None)
+            ),
+            "stage1_solution_count": int(m.SolCount),
             "stage2_executed": False,
             "stage2_has_solution": False,
             "stage2_skip_reason": None,
@@ -2334,6 +2388,10 @@ def main(argv=None) -> int:
             two_stage_detail["stage2_start_acceptance"] = (
                 stage2_start_acceptance
             )
+            two_stage_detail["stage2_node_count"] = finite_solver_value(
+                getattr(m, "NodeCount", None)
+            )
+            two_stage_detail["stage2_solution_count"] = int(m.SolCount)
         elif termination and termination.requested:
             two_stage_detail["stage2_skip_reason"] = (
                 "termination_signal_requested"
@@ -2568,6 +2626,36 @@ def main(argv=None) -> int:
         )
         else None
     )
+    conservative_grid_selected_costs = [
+        routes[index].get("cost")
+        if routes[index].get("master_cost_semantics")
+        in {"expanded_grid_cost", "expanded_grid_cost_unchanged"}
+        else None
+        for index in chosen
+    ]
+    conservative_grid_mip_obj = (
+        float(sum(conservative_grid_selected_costs))
+        if chosen and all(
+            value is not None
+            for value in conservative_grid_selected_costs
+        )
+        else None
+    )
+    selected_route_hashes = [
+        hashlib.sha256(json.dumps({
+            "trips": routes[index].get("trips"),
+            "route_nodes": routes[index].get("route_nodes"),
+            "charging_stops": routes[index].get("charging_stops"),
+            "cost": routes[index].get("cost"),
+        }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        for index in chosen
+    ]
+    selected_block_hashes = [
+        (routes[index].get("physical_realization") or {}).get(
+            "continuous_realized_charging_blocks_sha256"
+        )
+        for index in chosen
+    ]
     master_cost_semantics = pool_master_cost_semantics
     source_reference_hashes_bound = (
         (physical_pool_audit or {}).get(
@@ -2662,15 +2750,54 @@ def main(argv=None) -> int:
         "charging_cost": (mip_obj - BUS_COST_KX * len(chosen))
                          if chosen and mip_obj is not None else None,
         "charging_cost_semantics": master_cost_semantics,
+        "conservative_grid_mip_obj": conservative_grid_mip_obj,
+        "conservative_grid_charging_cost": (
+            conservative_grid_mip_obj - BUS_COST_KX * len(chosen)
+            if conservative_grid_mip_obj is not None else None
+        ),
+        "conservative_grid_cost_availability": (
+            "available_for_all_selected_routes"
+            if conservative_grid_mip_obj is not None
+            else "unavailable_for_continuous_augmented_route"
+            if chosen else "no_incumbent"
+        ),
         "continuous_realized_mip_obj": continuous_realized_mip_obj,
         "continuous_realized_charging_cost": (
             continuous_realized_mip_obj - BUS_COST_KX * len(chosen)
             if continuous_realized_mip_obj is not None else None
         ),
+        "selected_route_hashes": selected_route_hashes,
+        "selected_route_set_sha256": hashlib.sha256(json.dumps(
+            selected_route_hashes, separators=(",", ":")
+        ).encode()).hexdigest(),
+        "selected_charging_block_hashes": selected_block_hashes,
+        "selected_charging_block_set_sha256": hashlib.sha256(json.dumps(
+            selected_block_hashes, separators=(",", ":")
+        ).encode()).hexdigest(),
         "variable_route_cost": (mip_obj - BUS_COST_KX * len(chosen))
                                if chosen and mip_obj is not None else None,
         "overcovered_trips": len(over),
         "runtime_s": solver_runtime_s,
+        "node_count": (
+            sum(
+                float(value) for value in (
+                    (two_stage_detail or {}).get("stage1_node_count"),
+                    (two_stage_detail or {}).get("stage2_node_count"),
+                ) if value is not None
+            )
+            if args.two_stage else finite_solver_value(
+                getattr(m, "NodeCount", None)
+            )
+        ),
+        "solution_count": (
+            sum(
+                int(value) for value in (
+                    (two_stage_detail or {}).get("stage1_solution_count"),
+                    (two_stage_detail or {}).get("stage2_solution_count"),
+                ) if value is not None
+            )
+            if args.two_stage else int(m.SolCount)
+        ),
         "gurobi_optimize_wall_s": sum(gurobi_optimize_wall_s),
         "gurobi_optimize_stage_wall_s": gurobi_optimize_wall_s,
         "source_hashing_wall_s": source_hashing_wall_s,
@@ -2728,6 +2855,15 @@ def main(argv=None) -> int:
             "tracked_clean_at_end": code_identity["final_tracked_clean"],
             "python": platform.python_version(),
             "gurobi": ".".join(str(value) for value in gp.gurobi.version()),
+            "host": platform.node(),
+            "gurobi_parameters": {
+                "TimeLimit_s": args.timelimit,
+                "MIPGap": args.mipgap,
+                "Threads": args.threads,
+                "Seed": int(getattr(m.Params, "Seed", 0)),
+                "seed_source": "gurobi_default",
+                "seed_explicitly_set": False,
+            },
             "arguments": {
                 "timelimit": args.timelimit,
                 "mipgap": args.mipgap,

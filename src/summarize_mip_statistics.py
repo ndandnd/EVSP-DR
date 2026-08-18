@@ -40,6 +40,38 @@ FINAL_FIELDS = (
     "giro_target_buses", "time_to_le_giro_target_s",
     "time_below_giro_target_s", "time_to_finite_pool_proof_s",
     "source_result_sha256", "source_journal_sha256",
+    "physical_replay_status", "base_pool_column_count",
+    "base_pool_ordered_sha256", "added_giro_route_count",
+    "added_giro_route_set_sha256", "augmented_pool_column_count",
+    "augmented_pool_ordered_sha256", "assigned_mip_start_route_count",
+    "gurobi_start_accepted", "physical_pool_preparation_wall_s",
+    "source_hashing_wall_s", "gurobi_optimize_wall_s",
+    "end_to_end_before_publication_s",
+    "conservative_grid_charging_cost",
+    "conservative_grid_cost_availability",
+    "continuous_realized_charging_cost",
+    "continuous_cost_pricing_certified", "pricing_certificate_scope",
+    "selected_route_set_sha256",
+    "selected_charging_block_set_sha256",
+    "node_count", "solution_count", "python_version", "gurobi_version",
+    "host", "threads", "seed", "seed_source",
+    "true_end_to_end_wall_s",
+)
+ARTIFACT_FIELDS = (
+    "campaign", "cell_id", "arm", "artifact_role", "path",
+    "sha256", "size_bytes",
+)
+COMPARISON_FIELDS = (
+    "replicate", "treatment", "budget_hours", "status_name",
+    "incumbent_fleet", "finite_pool_fleet_bound", "finite_pool_gap",
+    "fleet_proven", "base_pool_column_count", "base_pool_ordered_sha256",
+    "added_giro_route_count", "added_giro_route_set_sha256",
+    "augmented_pool_column_count", "augmented_pool_ordered_sha256",
+    "assigned_mip_start_route_count", "gurobi_start_accepted",
+    "physical_replay_status", "conservative_grid_charging_cost",
+    "continuous_realized_charging_cost", "pricing_certificate_scope",
+    "physical_pool_preparation_wall_s", "source_hashing_wall_s",
+    "gurobi_optimize_wall_s", "true_end_to_end_wall_s",
 )
 
 
@@ -60,7 +92,9 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
     arm = job["arm"]
     if result.get("partitioning") is not True:
         raise ValueError(f"{job['cell_id']} is covering, not an integer schedule")
-    expected_arm = "D" if arm == "GIRO" else "B"
+    expected_arm = (
+        "D" if arm in {"GIRO", "GIRO40-AUGMENTED"} else "B"
+    )
     if result.get("experiment_arm") != expected_arm:
         raise ValueError(f"{job['cell_id']} experiment arm mismatch")
     if (
@@ -84,7 +118,7 @@ def _validate_result(result: dict, job: dict, manifest: dict) -> None:
     ):
         raise ValueError(f"{job['cell_id']} solver provenance mismatch")
     start = result.get("mip_start") or {}
-    if arm == "GIRO":
+    if arm in {"GIRO", "GIRO40-AUGMENTED"}:
         if (
             start.get("kind") != "validated_exact_partition"
             or start.get("source_sha256")
@@ -261,7 +295,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     final_rows = []
     targets = {}
     for job in manifest.get("jobs") or []:
-        if job["arm"] != "GIRO":
+        if job["arm"] not in {"GIRO", "GIRO40-AUGMENTED"}:
             continue
         target = (
             (job.get("validated_start") or {}).get("route_count")
@@ -305,7 +339,11 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     raise ValueError(
                         f"checkpoint source mismatch: {checkpoint_path}"
                     )
-                expected_arm = "D" if job["arm"] == "GIRO" else "B"
+                expected_arm = (
+                    "D"
+                    if job["arm"] in {"GIRO", "GIRO40-AUGMENTED"}
+                    else "B"
+                )
                 parameters = metadata.get("parameters")
                 if (
                     metadata.get("experiment_arm") != expected_arm
@@ -403,6 +441,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 improvements = payload.get("incumbent_improvements") or []
         output = Path(job["output"])
         result = json.loads(output.read_text()) if output.is_file() else {}
+        completion_payload = {}
         if result:
             _validate_result(result, job, manifest)
             progress_final = progress_dir / "final.json"
@@ -419,6 +458,33 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 raise ValueError(
                     f"{job['cell_id']} final result/progress mismatch"
                 )
+            completion_path = progress_dir / "worker_completion.json"
+            if manifest.get("mode") == "k40_cs_overnight":
+                if not completion_path.is_file():
+                    raise ValueError(
+                        f"{job['cell_id']} lacks worker completion timing"
+                    )
+                completion_payload = json.loads(
+                    completion_path.read_text()
+                )
+                if (
+                    completion_payload.get("schema")
+                    != "evsp-dr-mip-worker-completion-v1"
+                    or completion_payload.get("source_result_sha256")
+                    != job["source"]["status_sha256"]
+                    or completion_payload.get("source_journal_sha256")
+                    != job["source"]["journal_sha256"]
+                    or completion_payload.get("arm") != job["arm"]
+                    or completion_payload.get(
+                        "result_and_progress_validation_passed"
+                    ) is not True
+                    or _float(completion_payload.get(
+                        "true_end_to_end_wall_s"
+                    )) is None
+                ):
+                    raise ValueError(
+                        f"{job['cell_id']} worker completion is invalid"
+                    )
         key = (
             job["scale"], job["replicate"],
             job["source"]["status_sha256"],
@@ -490,7 +556,8 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             "runtime_s": result.get("runtime_s"),
             "optimal_scope": result.get("optimal_scope"),
             "route_space_scope": (
-                "finite_augmented_pool" if job["arm"] == "GIRO"
+                "finite_augmented_pool"
+                if job["arm"] in {"GIRO", "GIRO40-AUGMENTED"}
                 else "finite_raw_cg_pool"
             ),
             "giro_target_buses": target,
@@ -504,6 +571,93 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             ),
             "source_result_sha256": result.get("source_result_sha256"),
             "source_journal_sha256": result.get("source_journal_sha256"),
+            "physical_replay_status": (
+                "validated_exact_partition"
+                if result.get("incumbent_found") is True
+                else None
+            ),
+            "base_pool_column_count": (
+                result.get("physical_pool_audit") or {}
+            ).get("base_pool_column_count"),
+            "base_pool_ordered_sha256": (
+                result.get("physical_pool_audit") or {}
+            ).get("base_pool_ordered_sha256"),
+            "added_giro_route_count": (
+                result.get("physical_pool_audit") or {}
+            ).get("added_giro_route_count"),
+            "added_giro_route_set_sha256": (
+                result.get("physical_pool_audit") or {}
+            ).get("added_giro_route_set_sha256"),
+            "augmented_pool_column_count": (
+                result.get("physical_pool_audit") or {}
+            ).get("augmented_pool_column_count"),
+            "augmented_pool_ordered_sha256": (
+                result.get("physical_pool_audit") or {}
+            ).get("augmented_pool_ordered_sha256"),
+            "assigned_mip_start_route_count": (
+                result.get("physical_pool_audit") or {}
+            ).get("assigned_mip_start_route_count"),
+            "gurobi_start_accepted": (
+                (result.get("mip_start") or {}).get(
+                    "solver_acceptance"
+                ) or {}
+            ).get("accepted"),
+            "physical_pool_preparation_wall_s": result.get(
+                "physical_pool_preparation_wall_s"
+            ),
+            "source_hashing_wall_s": result.get("source_hashing_wall_s"),
+            "gurobi_optimize_wall_s": result.get("gurobi_optimize_wall_s"),
+            "end_to_end_before_publication_s": result.get(
+                "end_to_end_before_publication_s"
+            ),
+            "conservative_grid_charging_cost": result.get(
+                "conservative_grid_charging_cost"
+            ),
+            "conservative_grid_cost_availability": result.get(
+                "conservative_grid_cost_availability"
+            ),
+            "continuous_realized_charging_cost": result.get(
+                "continuous_realized_charging_cost"
+            ),
+            "continuous_cost_pricing_certified": result.get(
+                "continuous_cost_pricing_certified"
+            ),
+            "pricing_certificate_scope": result.get(
+                "pricing_certificate_scope"
+            ),
+            "selected_route_set_sha256": result.get(
+                "selected_route_set_sha256"
+            ),
+            "selected_charging_block_set_sha256": result.get(
+                "selected_charging_block_set_sha256"
+            ),
+            "node_count": result.get("node_count"),
+            "solution_count": result.get("solution_count"),
+            "python_version": (
+                result.get("mip_provenance") or {}
+            ).get("python"),
+            "gurobi_version": (
+                result.get("mip_provenance") or {}
+            ).get("gurobi"),
+            "host": (
+                result.get("mip_provenance") or {}
+            ).get("host"),
+            "threads": (
+                (result.get("mip_provenance") or {}).get("arguments") or {}
+            ).get("threads"),
+            "seed": (
+                (result.get("mip_provenance") or {}).get(
+                    "gurobi_parameters"
+                ) or {}
+            ).get("Seed"),
+            "seed_source": (
+                (result.get("mip_provenance") or {}).get(
+                    "gurobi_parameters"
+                ) or {}
+            ).get("seed_source"),
+            "true_end_to_end_wall_s": completion_payload.get(
+                "true_end_to_end_wall_s"
+            ),
         })
     return manifest, checkpoint_rows, final_rows
 
@@ -518,6 +672,65 @@ def _write_csv(path: Path, fields, rows) -> None:
         writer.writerows(rows)
         handle.flush()
         os.fsync(handle.fileno())
+
+
+def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
+    rows = []
+
+    def add(role, path, *, cell_id=None, arm=None, expected=None):
+        artifact = Path(path)
+        if not artifact.is_file():
+            return
+        digest = _sha(artifact)
+        if expected is not None and digest != expected:
+            raise ValueError(f"artifact hash mismatch: {artifact}")
+        rows.append({
+            "campaign": manifest["campaign"],
+            "cell_id": cell_id,
+            "arm": arm,
+            "artifact_role": role,
+            "path": str(artifact.resolve()),
+            "sha256": digest,
+            "size_bytes": artifact.stat().st_size,
+        })
+
+    add("approved_plan", root / "approved-plan.json",
+        expected=manifest["approval_sha256"])
+    add("campaign_manifest", root / "campaign.json")
+    for job in sorted(
+        manifest.get("jobs") or [], key=lambda item: item["cell_id"]
+    ):
+        cell = job["cell_id"]
+        arm = job["arm"]
+        source = job["source"]
+        add(
+            "frozen_status", job["execution"]["status"],
+            cell_id=cell, arm=arm, expected=source["status_sha256"],
+        )
+        add(
+            "column_journal", job["execution"]["journal"],
+            cell_id=cell, arm=arm, expected=source["journal_sha256"],
+        )
+        if job.get("validated_start"):
+            add(
+                "giro40_partition", job["execution"]["validated_start"],
+                cell_id=cell, arm=arm,
+                expected=job["validated_start"]["sha256"],
+            )
+        add("final_result", job["output"], cell_id=cell, arm=arm)
+        progress = Path(job["progress_dir"])
+        for artifact in sorted(progress.glob("checkpoint_*.json")):
+            add("mip_checkpoint", artifact, cell_id=cell, arm=arm)
+        add("mip_progress_final", progress / "final.json",
+            cell_id=cell, arm=arm)
+        add("worker_completion", progress / "worker_completion.json",
+            cell_id=cell, arm=arm)
+    return sorted(
+        rows,
+        key=lambda row: (
+            row["cell_id"] or "", row["artifact_role"], row["path"]
+        ),
+    )
 
 
 def _plot(staging: Path, checkpoint_rows, final_rows) -> None:
@@ -657,11 +870,65 @@ def summarize(
             )),
         )
         _write_csv(
+            staging / "mip_checkpoint_long.csv",
+            CHECKPOINT_FIELDS,
+            sorted(checkpoints, key=lambda row: (
+                row["cell_id"], row["checkpoint_elapsed_s"]
+            )),
+        )
+        _write_csv(
             staging / "job_final.csv",
             FINAL_FIELDS,
             sorted(finals, key=lambda row: row["cell_id"]),
         )
+        _write_csv(
+            staging / "mip_run_summary.csv",
+            FINAL_FIELDS,
+            sorted(finals, key=lambda row: row["cell_id"]),
+        )
+        _write_csv(
+            staging / "artifact_inventory.csv",
+            ARTIFACT_FIELDS,
+            _artifact_inventory(root, manifest),
+        )
+        comparison = []
+        for row in sorted(
+            finals, key=lambda item: (item["replicate"], item["arm"])
+        ):
+            comparison.append({
+                "replicate": row["replicate"],
+                "treatment": row["arm"],
+                "budget_hours": row["budget_hours"],
+                "status_name": row["status_name"],
+                "incumbent_fleet": row["buses"],
+                "finite_pool_fleet_bound": row["fleet_bound"],
+                "finite_pool_gap": row["mip_gap"],
+                "fleet_proven": row["fleet_proven"],
+                **{
+                    field: row.get(field)
+                    for field in COMPARISON_FIELDS
+                    if field not in {
+                        "replicate", "treatment", "budget_hours",
+                        "status_name", "incumbent_fleet",
+                        "finite_pool_fleet_bound", "finite_pool_gap",
+                        "fleet_proven",
+                    }
+                },
+            })
+        _write_csv(
+            staging / "raw_vs_giro40_comparison.csv",
+            COMPARISON_FIELDS,
+            comparison,
+        )
         _plot(staging, checkpoints, finals)
+        shutil.copyfile(
+            staging / "incumbent_fleet_bound_curves.png",
+            staging / "fleet_bound_vs_time.png",
+        )
+        shutil.copyfile(
+            staging / "incumbent_fleet_bound_curves.pdf",
+            staging / "fleet_bound_vs_time.pdf",
+        )
         notes = {
             "schema": "evsp-dr-mip-statistics-summary-v1",
             "campaign": manifest["campaign"],
@@ -669,8 +936,10 @@ def summarize(
             "checkpoint_rows": len(checkpoints),
             "interpretation": [
                 "All proof labels are limited to each finite input pool.",
-                "RAW and GIRO are separate feasible column sets; GIRO is not "
-                "only a warm-start treatment.",
+                "RAW and GIRO40-AUGMENTED are separate finite column sets; "
+                "GIRO40-AUGMENTED is not only a warm-start treatment.",
+                "The earlier 30-minute smoke is prior evidence and is not "
+                "merged into these trajectories.",
                 "No covering LP value is represented as an integer schedule.",
                 "Convergence JSON files are observations, not Gurobi tree "
                 "restart checkpoints.",

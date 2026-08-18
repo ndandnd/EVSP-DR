@@ -14,6 +14,7 @@
 #SBATCH --mail-user=nc437@cornell.edu
 
 set -euo pipefail
+WORKER_START_NS=$(date +%s%N)
 
 fatal() {
   echo "[MIP-STATS] FATAL: $*" >&2
@@ -134,7 +135,8 @@ PYTHON_SHA=${FIELDS[26]}
 [[ "$SPEC_COMMIT" == "$EXPECTED_COMMIT" ]] || fatal "spec commit mismatch"
 [[ "$SPEC_WORKER_SHA" == "$EXPECTED_WORKER_SHA" ]] \
   || fatal "spec worker hash mismatch"
-[[ "$ARM" == "RAW" || "$ARM" == "GIRO" ]] || fatal "invalid arm"
+[[ "$ARM" == "RAW" || "$ARM" == "GIRO" \
+  || "$ARM" == "GIRO40-AUGMENTED" ]] || fatal "invalid arm"
 [[ "$THREADS" == "8" ]] || fatal "statistics campaign requires 8 threads"
 [[ "$CELL" == "$REQUESTED_CELL" ]] || fatal "cell descriptor mismatch"
 [[ "$INSTANCE_REL" != /* && "$INSTANCE_REL" != *".."* ]] \
@@ -170,7 +172,7 @@ for path,digest in sorted((d.get("code_hashes") or {}).items()):
     print(f"{path}\t{digest}")
 PY
 )
-if [[ "$ARM" == "GIRO" ]]; then
+if [[ "$ARM" == "GIRO" || "$ARM" == "GIRO40-AUGMENTED" ]]; then
   [[ -n "$START" && -n "$START_SHA" ]] || fatal "GIRO arm lacks start"
   verify_hash "validated start" "$START" "$START_SHA"
 else
@@ -194,6 +196,22 @@ if [[ "$MATRIX" == "raw_k40" || "$MATRIX" == "raw_k40_smoke" ]]; then
     *) fatal "raw_k40 source initializer/label mismatch" ;;
   esac
 fi
+if [[ "$MATRIX" == "k40_cs_overnight" ]]; then
+  [[ "$SOURCE_LABEL" =~ ^R[12]_CS$ ]] \
+    || fatal "overnight source label is not R1_CS/R2_CS"
+  [[ "$SOURCE_MASTER_SENSE" == "cover" \
+    && "$SOURCE_INITIAL_POOL" == "singletons" ]] \
+    || fatal "overnight source treatment changed"
+  if [[ "$ARM" == "RAW" ]]; then
+    [[ "$TIME_LIMIT" == "28800" ]] \
+      || fatal "overnight RAW budget is not eight hours"
+  elif [[ "$ARM" == "GIRO40-AUGMENTED" ]]; then
+    [[ "$TIME_LIMIT" == "7200" ]] \
+      || fatal "overnight GIRO40 budget is not two hours"
+  else
+    fatal "overnight arm lacks scientific treatment label"
+  fi
+fi
 [[ ! -e "$OUT" ]] || fatal "output already exists"
 [[ ! -e "$PROGRESS" ]] || fatal "progress directory already exists"
 
@@ -216,7 +234,7 @@ export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
 export EVSP_REQUIRE_DETACHED=1
 export EVSP_MIP_EXPECTED_RESULT_SHA256="$STATUS_SHA"
 export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$JOURNAL_SHA"
-if [[ "$ARM" == "GIRO" ]]; then
+if [[ "$ARM" == "GIRO" || "$ARM" == "GIRO40-AUGMENTED" ]]; then
   export EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256="$START_SHA"
 else
   unset EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256 || true
@@ -232,7 +250,7 @@ command=(
   --progress-dir "$PROGRESS"
   --out "$OUT"
 )
-if [[ "$ARM" == "GIRO" ]]; then
+if [[ "$ARM" == "GIRO" || "$ARM" == "GIRO40-AUGMENTED" ]]; then
   command+=(--initial-partition-routes "$START")
 fi
 
@@ -272,7 +290,7 @@ if d.get("source_result_sha256") != status_sha:
     raise SystemExit("result status hash mismatch")
 if d.get("source_journal_sha256") != journal_sha:
     raise SystemExit("result journal hash mismatch")
-if arm == "GIRO":
+if arm in {"GIRO", "GIRO40-AUGMENTED"}:
     start=d.get("mip_start") or {}
     if start.get("kind") != "validated_exact_partition":
         raise SystemExit("GIRO result lacks validated exact start")
@@ -360,4 +378,30 @@ PY
 then
   fatal "result validation failed"
 fi
+if [[ "$MATRIX" == "k40_cs_overnight" ]]; then
+  "$PYTHON" "$ROOT/src/validate_k40_cs_overnight_result.py" \
+    --result "$OUT" --progress-dir "$PROGRESS" --arm "$ARM" \
+    --time-limit-s "$TIME_LIMIT" --source-label "$SOURCE_LABEL" \
+    || fatal "overnight result validation failed"
+fi
+"$PYTHON" - "$PROGRESS" "$WORKER_START_NS" "$STATUS_SHA" \
+  "$JOURNAL_SHA" "$ARM" <<'PY' \
+  || fatal "worker completion publication failed"
+import json,os,pathlib,sys,time
+progress,start_ns,status_sha,journal_sha,arm=sys.argv[1:]
+payload={
+    "schema":"evsp-dr-mip-worker-completion-v1",
+    "true_end_to_end_wall_s":(time.time_ns()-int(start_ns))/1e9,
+    "source_result_sha256":status_sha,
+    "source_journal_sha256":journal_sha,
+    "arm":arm,
+    "result_and_progress_validation_passed":True,
+}
+path=pathlib.Path(progress)/"worker_completion.json"
+with path.open("x") as handle:
+    json.dump(payload,handle,sort_keys=True,separators=(",",":"))
+    handle.write("\n")
+    handle.flush()
+    os.fsync(handle.fileno())
+PY
 echo "[MIP-STATS] DONE cell=$CELL output=$OUT progress=$PROGRESS"

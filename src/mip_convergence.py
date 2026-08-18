@@ -22,7 +22,7 @@ SCHEMA = "evsp-dr-mip-convergence-v1"
 
 def checkpoint_schedule_s(time_limit_s: float) -> list[float]:
     limit = max(0.0, float(time_limit_s))
-    marks = [0.0, 300.0, 900.0, 1800.0]
+    marks = [0.0, 60.0, 300.0, 900.0, 1800.0]
     hour = 3600.0
     while hour <= limit + 1e-9:
         marks.append(hour)
