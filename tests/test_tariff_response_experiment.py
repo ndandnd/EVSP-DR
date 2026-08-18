@@ -35,6 +35,8 @@ from launch_tariff_response_pilot import (  # noqa: E402
 )
 import launch_tariff_response_pilot as pilot  # noqa: E402
 from assemble_tariff_response_campaign import assemble  # noqa: E402
+from assemble_tariff_response_campaign import _aggregate  # noqa: E402
+from build_tariff_response_evidence import _schedule_fingerprint  # noqa: E402
 from tariff_response_core import (  # noqa: E402
     PHYSICS,
     evaluate_giro_original,
@@ -157,6 +159,16 @@ class TariffResponseExperimentTests(unittest.TestCase):
             original, self.tariff_by_id["flat"]
         )
         self.assertEqual(flat["scalar_cost_availability"], "available")
+        subset, _ = evaluate_giro_original(
+            {
+                "events": [],
+                "routes": [{"trips": [index]} for index in range(5)],
+                "recorded_terminal_soc_policy": "unavailable",
+            },
+            self.tariff_by_id["flat"],
+        )
+        self.assertEqual(subset["buses"], 5)
+        self.assertEqual(subset["grid_model_objective"], 500000.0)
 
     def test_fixed_duty_dp_selects_delayed_charging_and_certifies_scope(self):
         result = optimize_fixed_duty(
@@ -253,6 +265,38 @@ class TariffResponseExperimentTests(unittest.TestCase):
         self.assertGreater(
             changed["percent_trips_assigned_to_different_duty"], 0.0
         )
+        with_terminal = [{
+            "trips": [0],
+            "continuous_terminal_soc_kwh": 50.0,
+        }]
+        changed_terminal = copy.deepcopy(with_terminal)
+        changed_terminal[0]["continuous_terminal_soc_kwh"] = 999.0
+        self.assertNotEqual(
+            _schedule_fingerprint(with_terminal),
+            _schedule_fingerprint(changed_terminal),
+        )
+
+    def test_assembler_reads_terminal_soc_from_physical_realization(self):
+        result = optimize_fixed_duty(
+            toy_problem(), [0, 1], price_curves(),
+            tariff_id="toy", tariff_sha256="a" * 64,
+        )
+        route = copy.deepcopy(result["route"])
+        route.pop("continuous_terminal_soc_kwh")
+        tariff = copy.deepcopy(self.tariff_by_id["flat"])
+        routes, metrics = _aggregate(
+            [route], tariff, toy_problem()
+        )
+        self.assertEqual(
+            routes[0]["continuous_terminal_soc_kwh"],
+            route["physical_realization"][
+                "continuous_terminal_soc_kwh"
+            ],
+        )
+        self.assertLessEqual(
+            metrics["terminal_soc_min_kwh"],
+            metrics["terminal_soc_max_kwh"],
+        )
 
     def _seed_payload(self, root):
         tariff_path = root / "tariff.csv"
@@ -272,7 +316,8 @@ class TariffResponseExperimentTests(unittest.TestCase):
         payload = {
             "schema": "evsp-dr-tier1-fixed-duty-partition-v1",
             "routes": [route],
-            "tariff": {"sha256": tariff_sha},
+            "tariff": {"tariff_id": "toy", "sha256": tariff_sha},
+            "instance_sha256": None,
             "physics": PHYSICS,
             "certificates": [{
                 "duty_id": "toy-duty",
@@ -554,6 +599,10 @@ class TariffResponseExperimentTests(unittest.TestCase):
             corrupted["treatment"] = "FIXED_GIRO"
             with self.assertRaisesRegex(ValueError, "fixed-duty label"):
                 _validate_cell(corrupted, self.tariff_by_id)
+            generic = copy.deepcopy(cells[-1])
+            generic["tier"] = "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING"
+            generic["treatment"] = "GIRO-AUGMENTED"
+            _validate_cell(generic, self.tariff_by_id)
             corrupted = copy.deepcopy(cells[-1])
             corrupted["routes"][0][
                 "continuous_realized_charging_blocks"

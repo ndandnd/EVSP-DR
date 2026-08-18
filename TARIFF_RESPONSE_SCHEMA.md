@@ -11,11 +11,13 @@
   10-minute time blocks and modeled stations. Its certificate proves the
   minimum expanded-grid cost for that sequence under 300 kWh, 300 kW,
   zero reserve, and depot-arrival SOC at least reserve.
-- `TIER2_RAW_ROUTE_CHARGING` and
-  `TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING` permit route replacement through
-  exact expanded-network pricing. RAW and augmented journals are distinct
-  finite column pools. Tier-1 seed costs are recomputed and hash-bound to every
-  tariff before injection.
+- `TIER2_RAW_ROUTE_CHARGING`,
+  `TIER2_GIRO_AUGMENTED_ROUTE_CHARGING` (k5/k8), and the separately gated
+  `TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING` (future k40 MIP) permit route
+  replacement through exact expanded-network pricing. RAW and augmented
+  journals are distinct finite column pools. Tier-1 seed costs are recomputed
+  and hash-bound to every tariff before injection. This pilot prepares k40 CG
+  pools but deliberately contains no k40 MIP.
 
 No tier claims that the continuously replayed charging cost is pricing-optimal.
 
@@ -31,8 +33,8 @@ For matching instance and tariff identities:
 
 ```text
 charging_only_savings = Tier0 - Tier1
-rerouting_increment = Tier1 - Tier2_GIRO40_AUGMENTED
-total_price_aware_savings = Tier0 - Tier2_GIRO40_AUGMENTED
+rerouting_increment = Tier1 - matching Tier2 augmented treatment
+total_price_aware_savings = Tier0 - matching Tier2 augmented treatment
 ```
 
 Each formula is calculated separately for expanded-grid and continuous-replay

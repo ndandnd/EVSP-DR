@@ -155,6 +155,9 @@ def _finite(value, field):
 
 
 def _schedule_fingerprint(routes):
+    def physical_value(route, key):
+        return route.get(key, (route.get("physical_realization") or {}).get(key))
+
     return hashlib.sha256(_canonical(sorted([
         {
             "trips": route.get("trips"),
@@ -165,6 +168,13 @@ def _schedule_fingerprint(routes):
                 route.get("continuous_realized_cost"),
             "continuous_realized_charging_blocks":
                 route.get("continuous_realized_charging_blocks"),
+            "continuous_terminal_soc_kwh":
+                physical_value(route, "continuous_terminal_soc_kwh"),
+            "expanded_grid_terminal_soc_kwh":
+                physical_value(route, "expanded_grid_terminal_soc_kwh"),
+            "waiting_min": route.get("waiting_min"),
+            "deadhead_min": route.get("deadhead_min"),
+            "deadhead_kwh": route.get("deadhead_kwh"),
         }
         for route in routes
     ], key=lambda item: (
@@ -401,7 +411,9 @@ def _validate_cell(cell, tariffs):
             raise ValueError("terminal SOC policy differs")
     if (
         cell["tier"].startswith("TIER2_")
-        and cell["treatment"] not in {"RAW", "GIRO40-AUGMENTED"}
+        and cell["treatment"] not in {
+            "RAW", "GIRO-AUGMENTED", "GIRO40-AUGMENTED",
+        }
     ):
         raise ValueError("route-flexible result has a fixed-duty label")
     if (
@@ -498,6 +510,170 @@ def _stable_orders(baseline, routes):
             sorted(order.items(), key=lambda item: item[1])
         )
     }
+
+
+def _slug(value):
+    return "".join(
+        character.lower() if character.isalnum() else "-"
+        for character in str(value)
+    ).strip("-")
+
+
+def _render_gantt_group(
+    staging, key, tiers, tariffs, *, synthetic, stem
+):
+    import matplotlib.pyplot as plt
+
+    instance_id, tariff_id = key
+    augmented_tier = (
+        "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING"
+        if "TIER2_GIRO40_AUGMENTED_ROUTE_CHARGING" in tiers
+        else "TIER2_GIRO_AUGMENTED_ROUTE_CHARGING"
+    )
+    panel_tiers = (
+        "TIER0_GIRO_ORIGINAL",
+        "TIER1_FIXED_GIRO_OPTIMIZED_CHARGING",
+        augmented_tier,
+    )
+    baseline = tiers[panel_tiers[0]]["routes"]
+    tariff = tariffs[tariff_id]
+    curves = tariff_prices(tariff)
+    common_hours = sorted(set.intersection(*(
+        set(curve) for curve in curves.values()
+    )))
+    average = {
+        hour: sum(curve[hour] for curve in curves.values()) / len(curves)
+        for hour in common_hours
+    }
+    low, high = min(average.values()), max(average.values())
+    rows = []
+    fig, axes = plt.subplots(3, 1, figsize=(15, 12), sharex=True)
+    for panel, tier in enumerate(panel_tiers):
+        cell = tiers[tier]
+        order = _stable_orders(baseline, cell["routes"])
+        axis = axes[panel]
+        for route in cell["routes"]:
+            y = order[route["route_id"]]
+            for trip in route["trip_blocks"]:
+                start, end = float(trip["start_min"]), float(trip["end_min"])
+                axis.broken_barh(
+                    [(start, end - start)], (y - 0.35, 0.7),
+                    facecolors="#b7b7b7", edgecolors="#555555",
+                    linewidth=0.25,
+                )
+                rows.append({
+                    "instance_id": instance_id, "tariff_id": tariff_id,
+                    "tier": tier, "route_order": y,
+                    "event_kind": "trip", "trip_id": trip["trip_id"],
+                    "station": "", "start_min": start, "end_min": end,
+                    "kwh": "", "price_per_kwh": "",
+                })
+            for block in (
+                route.get("continuous_realized_charging_blocks")
+                or route.get("recorded_charging_blocks") or []
+            ):
+                station = base_station(block["station"])
+                start = float(block["start_min"])
+                end = float(block["end_min"])
+                price = block.get("price_per_kwh")
+                intensity = (
+                    0.35 if price is None or high == low
+                    else 0.25 + 0.75 * (float(price) - low) / (high - low)
+                )
+                axis.broken_barh(
+                    [(start, end - start)], (y - 0.45, 0.9),
+                    facecolors=STATION_COLORS[station],
+                    alpha=intensity, edgecolors="black", linewidth=0.35,
+                )
+                rows.append({
+                    "instance_id": instance_id, "tariff_id": tariff_id,
+                    "tier": tier, "route_order": y,
+                    "event_kind": "charge", "trip_id": "",
+                    "station": station, "start_min": start, "end_min": end,
+                    "kwh": block.get(
+                        "realized_kwh", block.get("kwh")
+                    ),
+                    "price_per_kwh": price,
+                })
+        axis.set_ylabel(tier.split("_", 1)[0])
+        price_axis = axis.twinx()
+        price_axis.step(
+            [hour * 60 for hour in common_hours],
+            [average[hour] for hour in common_hours],
+            where="post", color="#222222", linewidth=0.8, alpha=0.55,
+        )
+    axes[-1].set_xlabel("minute of service day")
+    fig.suptitle(f"{instance_id}: {tariff_id}")
+    if synthetic:
+        fig.text(
+            0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
+            ha="center", va="center", fontsize=28,
+            color="red", alpha=0.16, rotation=25,
+        )
+    fig.tight_layout()
+    fig.savefig(
+        staging / f"{stem}.png", dpi=180,
+        metadata={"Software": "EVSP-DR"},
+    )
+    fig.savefig(
+        staging / f"{stem}.pdf",
+        metadata={
+            "Creator": "EVSP-DR", "CreationDate": None, "ModDate": None,
+        },
+    )
+    plt.close(fig)
+    return rows
+
+
+def _render_response_instance(staging, instance_id, rows, *, synthetic):
+    import matplotlib.pyplot as plt
+
+    metrics = (
+        ("peak_window_kwh", "Peak-window kWh"),
+        ("charging_cost", "Charging cost"),
+        ("route_similarity", "Trip co-assignment similarity"),
+        ("buses", "Buses"),
+        ("deadhead_kwh", "Deadhead kWh"),
+    )
+    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+    groups = defaultdict(list)
+    for row in rows:
+        groups[(row["tier"], row["treatment"])].append(row)
+    for axis, (field, label) in zip(axes.flat, metrics):
+        for key, values in sorted(groups.items()):
+            values.sort(key=lambda row: row["alpha"])
+            if any(row[field] is None for row in values):
+                continue
+            axis.plot(
+                [row["alpha"] for row in values],
+                [float(row[field]) for row in values],
+                marker="o", label=" / ".join(key),
+            )
+        axis.set(xlabel="peak amplitude α", ylabel=label)
+    axes.flat[-1].axis("off")
+    fig.suptitle(str(instance_id))
+    if synthetic:
+        fig.text(
+            0.5, 0.5, "SYNTHETIC — NOT EVIDENCE",
+            ha="center", va="center", fontsize=28,
+            color="red", alpha=0.16, rotation=25,
+        )
+    handles, labels = axes.flat[0].get_legend_handles_labels()
+    if handles:
+        fig.legend(handles, labels, loc="lower right", fontsize=7)
+    fig.tight_layout()
+    stem = f"price_amplitude_response_{_slug(instance_id)}"
+    fig.savefig(
+        staging / f"{stem}.png", dpi=180,
+        metadata={"Software": "EVSP-DR"},
+    )
+    fig.savefig(
+        staging / f"{stem}.pdf",
+        metadata={
+            "Creator": "EVSP-DR", "CreationDate": None, "ModDate": None,
+        },
+    )
+    plt.close(fig)
 
 
 def _figures(staging, cells, tariffs, *, synthetic=False):
@@ -637,6 +813,20 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
         "Creator": "EVSP-DR", "CreationDate": None, "ModDate": None,
     })
     plt.close(fig)
+    for extra_key, extra_tiers in complete:
+        extra_rows = _render_gantt_group(
+            staging,
+            extra_key,
+            extra_tiers,
+            tariffs,
+            synthetic=synthetic,
+            stem=(
+                f"gantt_three_tiers_{_slug(extra_key[0])}_"
+                f"{_slug(extra_key[1])}"
+            ),
+        )
+        if extra_key != (instance_id, tariff_id):
+            gantt_rows.extend(extra_rows)
     _write_csv(
         staging / "gantt_plot.csv",
         (
@@ -733,6 +923,18 @@ def _figures(staging, cells, tariffs, *, synthetic=False):
         },
     )
     plt.close(fig)
+    for response_instance in sorted({
+        row["instance_id"] for row in alpha_rows
+    }):
+        _render_response_instance(
+            staging,
+            response_instance,
+            [
+                row for row in alpha_rows
+                if row["instance_id"] == response_instance
+            ],
+            synthetic=synthetic,
+        )
 
 
 def base_station(value):
@@ -973,6 +1175,10 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
              "definition": "Bus-label-invariant partition change; not called elasticity."},
             {"field": "terminal_soc_policy",
              "definition": PHYSICS["terminal_soc_policy"]},
+            {"field": "terminal_soc_min_kwh / terminal_soc_max_kwh",
+             "definition": "Selected-route continuous depot-arrival SOC range; exposes negative-price energy accumulation."},
+            {"field": "negative_price_policy",
+             "definition": "Manifest policy allows feasible consumption but no energy export."},
         ]
         _write_csv(
             staging / "data_dictionary.csv",
@@ -1002,13 +1208,11 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
                     "sha256": artifact["sha256"],
                     "size_bytes": path.stat().st_size,
                 })
-                if artifact["role"] in {"tier1_seed", "mip_result"}:
+                if artifact["role"] in {
+                    "tier1_seed", "normalized_schedule",
+                }:
                     source_payload = json.loads(path.read_text())
-                    source_routes = (
-                        source_payload.get("routes")
-                        if artifact["role"] == "tier1_seed"
-                        else source_payload.get("selected_routes")
-                    )
+                    source_routes = source_payload.get("routes")
                     if (
                         not isinstance(source_routes, list)
                         or _schedule_fingerprint(source_routes)
@@ -1046,6 +1250,7 @@ def build(manifest_path: Path, output_dir: Path) -> dict:
             "experiment_manifest_sha256": hashlib.sha256(raw).hexdigest(),
             "tariff_manifest_sha256": sha256_file(tariff_manifest),
             "physics": PHYSICS,
+            "campaign_provenance": manifest.get("campaign_provenance"),
             "continuous_cost_pricing_certified": False,
             "synthetic": synthetic,
             "output_sha256": output_hashes,

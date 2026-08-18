@@ -25,6 +25,8 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 [[ "$PYTHON" == /* && -x "$PYTHON" ]] || fatal "Python path is invalid"
 [[ "$(sha256sum "$PYTHON" | awk '{print $1}')" == "$PYTHON_SHA" ]] \
   || fatal "Python hash mismatch"
+unset PYTHONPATH || true
+export PYTHONNOUSERSITE=1
 observed_plan_sha=$(sha256sum "$PLAN" | awk '{print $1}')
 [[ "$observed_plan_sha" == "$EXPECTED_PLAN_SHA" ]] \
   || fatal "approved plan hash mismatch"
@@ -154,6 +156,17 @@ observed=json.loads(sys.argv[2])
 if observed != plan.get("environment_identity"):
     raise SystemExit("environment identity mismatch")
 PY
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+[[ -r "$GRB_LICENSE_FILE" ]] || fatal "canonical Gurobi license is unavailable"
+"$PYTHON" -I -B - <<'PY' \
+  || fatal "Gurobi license preflight failed"
+import gurobipy as gp
+environment=gp.Env(empty=True)
+environment.setParam("OutputFlag",0)
+environment.start()
+environment.dispose()
+PY
 [[ "$(sha256sum "$INSTANCE" | awk '{print $1}')" == "$INSTANCE_SHA" ]] \
   || fatal "instance hash mismatch"
 [[ "$(sha256sum "$TARIFF_MANIFEST" | awk '{print $1}')" == \
@@ -163,11 +176,16 @@ if [[ -n "$TARIFF_REL" ]]; then
   [[ "$(sha256sum "$TARIFF_PATH" | awk '{print $1}')" == "$TARIFF_SHA" ]] \
     || fatal "tariff hash mismatch"
 fi
-[[ ! -e "$OUTPUT" ]] || fatal "output already exists"
+if [[ "$PHASE" == "CG" ]]; then
+  [[ ! -e "$OUTPUT.worker-completion.json" ]] \
+    || fatal "completed CG output already exists"
+else
+  [[ ! -e "$OUTPUT" ]] || fatal "output already exists"
+fi
 if [[ -n "$PROGRESS" ]]; then
   [[ ! -e "$PROGRESS" ]] || fatal "progress already exists"
 fi
-if [[ -n "$TELEMETRY" ]]; then
+if [[ -n "$TELEMETRY" && "$PHASE" != "CG" ]]; then
   [[ ! -e "$TELEMETRY" ]] || fatal "telemetry already exists"
 fi
 
@@ -282,7 +300,15 @@ cd "$ROOT"
 "${command[@]}" &
 child=$!
 status=0
-wait "$child" || status=$?
+while true; do
+  wait_status=0
+  wait "$child" || wait_status=$?
+  if kill -0 "$child" 2>/dev/null; then
+    continue
+  fi
+  status=$wait_status
+  break
+done
 child=""
 trap - USR1 TERM INT
 [[ "$status" -eq 0 ]] || fatal "cell command failed: $status"

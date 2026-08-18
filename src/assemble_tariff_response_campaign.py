@@ -8,6 +8,8 @@ import csv
 import hashlib
 import json
 import math
+import os
+import platform
 from collections import defaultdict
 from pathlib import Path
 
@@ -101,6 +103,15 @@ def _aggregate(routes, tariff, problem):
             (route.get("physical_realization") or {}).get(
                 "continuous_realized_charging_blocks_sha256"
             ),
+        )
+        physical = route.get("physical_realization") or {}
+        route.setdefault(
+            "continuous_terminal_soc_kwh",
+            physical.get("continuous_terminal_soc_kwh"),
+        )
+        route.setdefault(
+            "expanded_grid_terminal_soc_kwh",
+            physical.get("expanded_grid_terminal_soc_kwh"),
         )
         blocks = route["continuous_realized_charging_blocks"]
         for block in blocks:
@@ -241,6 +252,8 @@ def assemble(campaign_root, output_manifest, evidence_output):
     }
     if submitted != main_jobs:
         raise ValueError("main pilot submission is incomplete")
+    schedule_dir = output_manifest.parent / "normalized_schedules"
+    schedule_dir.mkdir(parents=True, exist_ok=True)
     for job in plan["jobs"]:
         if job["job_key"] not in submitted:
             continue
@@ -488,6 +501,26 @@ def assemble(campaign_root, output_manifest, evidence_output):
                 selected, metrics = _aggregate(
                     result["selected_routes"], tariff, problem
                 )
+                normalized_path = (
+                    schedule_dir
+                    / f"k{scale}-{tariff_id}-{treatment}.json"
+                )
+                normalized_encoded = (json.dumps({
+                    "schema":
+                        "evsp-dr-tariff-response-normalized-schedule-v1",
+                    "source_mip_result_sha256": sha256_file(
+                        Path(mip_job["output"])
+                    ),
+                    "routes": selected,
+                }, indent=2, sort_keys=True) + "\n").encode()
+                if normalized_path.exists():
+                    if normalized_path.read_bytes() != normalized_encoded:
+                        raise FileExistsError(normalized_path)
+                else:
+                    with normalized_path.open("xb") as handle:
+                        handle.write(normalized_encoded)
+                        handle.flush()
+                        os.fsync(handle.fileno())
                 cg_job = jobs[mip_job["dependency_key"]]
                 cells.append({
                     **base,
@@ -536,6 +569,11 @@ def assemble(campaign_root, output_manifest, evidence_output):
                             "path": mip_job["output"],
                             "sha256": sha256_file(Path(mip_job["output"])),
                         },
+                        {
+                            "role": "normalized_schedule",
+                            "path": str(normalized_path),
+                            "sha256": sha256_file(normalized_path),
+                        },
                     ],
                 })
             artifacts.append({
@@ -560,13 +598,39 @@ def assemble(campaign_root, output_manifest, evidence_output):
             / "giro40_duty_manifest.csv"
         ),
         "cells": cells,
+        "campaign_provenance": {
+            "approved_plan_sha256": manifest["approval_sha256"],
+            "git_commit": plan["checkout_identity"]["commit"],
+            "assembler": str(Path(__file__).resolve()),
+            "assembler_sha256": sha256_file(Path(__file__).resolve()),
+            "python": platform.python_version(),
+            "approved_environment": plan.get("environment_identity"),
+            "dependency_by_job": {
+                job["job_key"]: job.get("dependency_key")
+                for job in plan["jobs"]
+                if not job["separate_k40_gate"]
+            },
+        },
     }
-    if output_manifest.exists():
-        raise FileExistsError(output_manifest)
-    output_manifest.parent.mkdir(parents=True, exist_ok=True)
-    output_manifest.write_text(
+    encoded = (
         json.dumps(experiment, indent=2, sort_keys=True) + "\n"
-    )
+    ).encode()
+    output_manifest.parent.mkdir(parents=True, exist_ok=True)
+    if output_manifest.exists():
+        if output_manifest.read_bytes() != encoded:
+            raise FileExistsError(output_manifest)
+    else:
+        temporary = output_manifest.with_name(
+            f".{output_manifest.name}.tmp.{os.getpid()}"
+        )
+        with temporary.open("xb") as handle:
+            handle.write(encoded)
+            handle.flush()
+            os.fsync(handle.fileno())
+        try:
+            os.link(temporary, output_manifest)
+        finally:
+            temporary.unlink(missing_ok=True)
     return build(output_manifest, evidence_output)
 
 

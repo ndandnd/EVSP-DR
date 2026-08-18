@@ -116,6 +116,11 @@ def optimize_fixed_duty(
         != (300.0, 300.0, 0.0, 15.0, 10)
     ):
         raise ValueError("fixed-duty pilot physics differ")
+    g_kwh = float(g_kwh)
+    charge_kw = float(charge_kw)
+    reserve_kwh = float(reserve_kwh)
+    soc_step = float(soc_step)
+    block_min = int(block_min)
     required_hours = set(range(int(math.ceil(HORIZON_MIN / 60.0))))
     if any(
         set(curve) != set(range(max(curve) + 1))

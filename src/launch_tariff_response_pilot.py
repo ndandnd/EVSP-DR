@@ -252,12 +252,15 @@ def build_plan(
     if set(TARIFF_CODES) != {row["tariff_id"] for row in tariffs}:
         raise ValueError("pilot tariff set differs")
     python_path = python_path.expanduser().resolve()
+    environment = dict(os.environ)
+    environment.pop("PYTHONPATH", None)
+    environment["PYTHONNOUSERSITE"] = "1"
     version = subprocess.run(
         [
             str(python_path), "-I", "-B",
             str(REPO_ROOT / "src/tariff_response_environment.py"),
         ],
-        text=True, capture_output=True, check=False,
+        text=True, capture_output=True, check=False, env=environment,
     )
     if (
         version.returncode != 0
@@ -603,6 +606,8 @@ def submit(plan, plan_sha, *, k40_preparation):
         manifest["submission_error"] = repr(exc)
         _write_manifest(manifest_path, manifest)
         raise
+    manifest["gate_state"] = "release_attempting"
+    _write_manifest(manifest_path, manifest)
     release = subprocess.run(
         ["scontrol", "release", gate_id],
         cwd=REPO_ROOT, text=True, capture_output=True, check=False,

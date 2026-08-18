@@ -358,12 +358,15 @@ def evaluate_giro_original(
     scalar_available = not unavailable
     total_kwh = sum(event["kwh"] for event in original["events"])
     starts = len(original["events"])
+    buses = len(original.get("routes") or [])
+    if buses <= 0:
+        raise ValueError("recorded schedule has no duties")
     return {
         "tier": "TIER0_GIRO_ORIGINAL",
         "tariff_id": tariff_row["tariff_id"],
-        "buses": 40,
+        "buses": buses,
         "grid_model_objective": (
-            BUS_COST_KX * 40 + CHARGE_START_COST * starts + cost
+            BUS_COST_KX * buses + CHARGE_START_COST * starts + cost
             if scalar_available else None
         ),
         "continuous_replay_objective": None,

@@ -150,7 +150,10 @@ ARCHIVE_ROOT="$HOME/evsp_tariff_response_archives"
 BUNDLE="$ARCHIVE_ROOT/$CAMPAIGN-$ARCHIVE_SCOPE.bundle"
 ARCHIVE_NAME="$CAMPAIGN-$ARCHIVE_SCOPE.tar.gz"
 
-if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+if [[ "$ARCHIVE_SCOPE" != "main" && \
+      "$ARCHIVE_SCOPE" != "k40-preparation" ]]; then
+  echo "ARCHIVE_SCOPE must be main or k40-preparation." >&2
+elif [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   echo "Set the campaign's exact REVIEWED_COMMIT." >&2
 elif [[ -e "$BUNDLE" ]]; then
   echo "Archive bundle exists; refusing overwrite." >&2
@@ -168,6 +171,10 @@ expected=sys.argv[2]
 plan_raw=(root/"approved-plan.json").read_bytes()
 plan=json.loads(plan_raw)
 manifest=json.loads((root/"campaign.json").read_text())
+if manifest.get("submission_scope") not in {
+    "main_k5_k8_pilot","k40_preparation_only"
+}:
+    raise SystemExit("unknown submission scope")
 selected={
     job["job_key"] for job in plan["jobs"]
     if bool(job["separate_k40_gate"])
@@ -183,8 +190,30 @@ if (
 ):
     raise SystemExit("campaign approval/commit is incomplete")
 jobs={job["job_key"]:job for job in plan["jobs"]}
+if hashlib.sha256(
+    pathlib.Path(plan["tariff_manifest"]).read_bytes()
+).hexdigest()!=plan["tariff_manifest_sha256"]:
+    raise SystemExit("tariff manifest changed")
 for submitted in manifest["submitted_jobs"]:
     job=jobs[submitted["job_key"]]
+    instance=pathlib.Path(job["instance"]["path"])
+    if (
+        not instance.is_file()
+        or hashlib.sha256(instance.read_bytes()).hexdigest()
+        !=job["instance"]["sha256"]
+    ):
+        raise SystemExit(f"staged instance changed: {job['job_key']}")
+    if job.get("tariff_sha256"):
+        staged_tariff=(
+            root/"input/tariffs"
+            /pathlib.Path(job["tariff_relative_path"]).name
+        )
+        if (
+            not staged_tariff.is_file()
+            or hashlib.sha256(staged_tariff.read_bytes()).hexdigest()
+            !=job["tariff_sha256"]
+        ):
+            raise SystemExit(f"staged tariff changed: {job['job_key']}")
     output=pathlib.Path(job["output"])
     if not output.exists():
         raise SystemExit(f"missing output: {job['job_key']}")
@@ -229,6 +258,22 @@ if (
     and not (root/"evidence/normalized/provenance.json").is_file()
 ):
     raise SystemExit("normalized main-scope evidence is missing")
+if manifest.get("submission_scope")=="main_k5_k8_pilot":
+    evidence=root/"evidence/normalized"
+    provenance=json.loads((evidence/"provenance.json").read_text())
+    experiment=root/"evidence/experiment-manifest.json"
+    if (
+        hashlib.sha256(experiment.read_bytes()).hexdigest()
+        !=provenance.get("experiment_manifest_sha256")
+    ):
+        raise SystemExit("evidence manifest hash mismatch")
+    for name,digest in provenance.get("output_sha256",{}).items():
+        artifact=evidence/name
+        if (
+            not artifact.is_file()
+            or hashlib.sha256(artifact.read_bytes()).hexdigest()!=digest
+        ):
+            raise SystemExit(f"normalized evidence changed: {name}")
 PY
 then
   echo "Campaign outputs or approval are incomplete." >&2
@@ -298,6 +343,12 @@ Tier-0 scalar costs are expected to remain unavailable for the real source
 whenever a recorded window crosses changing tariff hours or lacks tariff
 coverage. This is a correctness outcome, not a failed run.
 
+If submission stops after creating a campaign root, do not retry under a new
+name. Inspect `campaign.json`, the recorded `gate_job_id`, `squeue`, and
+`sacct`. States `release_attempting` or `held_release_failed` are intentionally
+ambiguous and require operator reconciliation; reservations remain locked so a
+duplicate matrix cannot be submitted.
+
 ## Build normalized evidence after the main scope completes
 
 This command fails closed if any of the 111 main outputs is missing or if a
@@ -310,7 +361,7 @@ EVIDENCE_OUTPUT="$CAMPAIGN_ROOT/evidence/normalized"
 
 if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
   echo "Set the exact REVIEWED_COMMIT." >&2
-elif [[ -e "$EVIDENCE_MANIFEST" || -e "$EVIDENCE_OUTPUT" ]]; then
+elif [[ -e "$EVIDENCE_OUTPUT" ]]; then
   echo "Evidence output exists; refusing overwrite." >&2
 elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
        "$REVIEWED_COMMIT" assemble_tariff_response_campaign.py \

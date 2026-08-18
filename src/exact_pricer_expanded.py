@@ -33,6 +33,7 @@ import hashlib
 import json
 import math
 import os
+import signal
 import time
 from collections import Counter
 from copy import deepcopy
@@ -183,6 +184,21 @@ def validated_fixed_duty_seed_records(
             }
             if isinstance(certificate, dict) else None
         )
+        from fixed_duty_expanded_optimizer import optimize_fixed_duty
+        recomputed = optimize_fixed_duty(
+            problem,
+            trips,
+            station_prices,
+            g_kwh=g_kwh,
+            charge_kw=charge_kw,
+            reserve_kwh=reserve_kwh,
+            soc_step=soc_step,
+            block_min=block_min,
+            tariff_id=tariff.get("tariff_id"),
+            tariff_sha256=tariff["sha256"],
+            instance_sha256=payload.get("instance_sha256"),
+        )
+        recomputed_certificate = recomputed.get("certificate") or {}
         if (
             physical.get("continuous_cost_pricing_certified") is not False
             or validation["block_schedule_sha256"] != physical.get(
@@ -215,6 +231,18 @@ def validated_fixed_duty_seed_records(
             ).encode()).hexdigest()
             or route.get("fixed_duty_certificate_sha256")
             != certificate.get("certificate_sha256")
+            or recomputed.get("feasible") is not True
+            or recomputed_certificate.get("certificate_sha256")
+            != certificate.get("certificate_sha256")
+            or not math.isclose(
+                float(recomputed["expanded_grid_objective"]),
+                float(route["expanded_grid_cost"]),
+                rel_tol=1e-10, abs_tol=1e-6,
+            )
+            or recomputed["route"].get("route_nodes")
+            != route.get("route_nodes")
+            or recomputed["route"].get("expanded_grid_charging_stops")
+            != route.get("expanded_grid_charging_stops")
         ):
             raise ValueError(
                 "fixed-duty seed cost/block/certificate provenance mismatch"
@@ -1034,6 +1062,19 @@ def resume_pool_mismatches(status, pool: dict) -> list[str]:
 
 def run_cg(args) -> dict:
     t0 = time.time()
+    termination = {"requested": False, "signal": None}
+    prior_signal_handlers = {}
+
+    def request_termination(signum, _frame):
+        termination["requested"] = True
+        try:
+            termination["signal"] = signal.Signals(signum).name
+        except ValueError:
+            termination["signal"] = str(signum)
+
+    for signum in (signal.SIGUSR1, signal.SIGTERM, signal.SIGINT):
+        prior_signal_handlers[signum] = signal.getsignal(signum)
+        signal.signal(signum, request_termination)
     prior_status = None
     out_path = Path(args.out) if args.out else None
     journal_path = Path(str(args.out) + ".columns.jsonl") if args.out else None
@@ -1735,6 +1776,14 @@ def run_cg(args) -> dict:
 
     for iteration in range(1, args.max_iters + 1):
         global_iteration = iteration_offset + iteration
+        if termination["requested"]:
+            print(
+                "[EXACT] external termination requested; publishing the "
+                "last complete durable state",
+                flush=True,
+            )
+            stop_reason = "external_signal"
+            break
         if args.wall_limit_s and _remaining_wall_s(reserve_s=60.0) <= 0.0:
             print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
                   "reached (with a 60s serialization margin) — stopping "
@@ -2377,6 +2426,7 @@ def run_cg(args) -> dict:
         "wall_s": _cumulative_elapsed_s(),
         "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
+        "termination_signal": termination["signal"],
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
         "final_lp_source": final_lp_source,
@@ -2386,6 +2436,8 @@ def run_cg(args) -> dict:
     print(f"[EXACT] DONE: {json.dumps(result['final'], default=float)} "
           f"certified={certified} columns={len(pool)} "
           f"wall={result['wall_s']:.0f}s", flush=True)
+    for signum, previous in prior_signal_handlers.items():
+        signal.signal(signum, previous)
     return result
 
 

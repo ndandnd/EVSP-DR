@@ -35,7 +35,7 @@ def identity():
         "platform": platform.platform(),
         "machine": platform.machine(),
         "pythonpath": os.environ.get("PYTHONPATH"),
-        "numpy_build": getattr(numpy.__config__, "CONFIG", None),
+        "numpy_build": repr(getattr(numpy.__config__, "CONFIG", None)),
     }
 
 

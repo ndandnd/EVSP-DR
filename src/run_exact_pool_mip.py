@@ -2718,10 +2718,22 @@ def main(argv=None) -> int:
                      + solver_bound)
         mip_bound_scope = "fixed_proven_fleet_variable_cost"
     elif args.two_stage and solver_bound is not None:
-        # Route variable costs are nonnegative, so this is a valid but coarse
-        # lower bound on the full lexicographic objective.
-        mip_bound = BUS_COST_KX * solver_bound
-        mip_bound_scope = "fleet_count_only_coarse_cost_bound"
+        # A negative-price tariff can make route-variable costs negative.
+        # At most one nonempty selected route per trip is needed in a strict
+        # partition, so this remains conservative without assuming
+        # nonnegative charging cost.
+        minimum_variable_cost = min(
+            float(route["cost"]) - BUS_COST_KX for route in routes
+        )
+        negative_variable_floor = (
+            min(0.0, minimum_variable_cost) * len(trips)
+        )
+        mip_bound = (
+            BUS_COST_KX * solver_bound + negative_variable_floor
+        )
+        mip_bound_scope = (
+            "fleet_bound_plus_negative_route_cost_floor"
+        )
     else:
         mip_bound = solver_bound
         mip_bound_scope = "full_pool_objective"
