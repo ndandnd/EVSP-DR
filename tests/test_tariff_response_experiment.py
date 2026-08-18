@@ -587,7 +587,14 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "SYNTHETIC_ONLY.txt",
             }
             self.assertTrue(required <= {path.name for path in first.iterdir()})
-            for name in required - {"provenance.json"}:
+            first_files = {
+                path.name for path in first.iterdir() if path.is_file()
+            }
+            second_files = {
+                path.name for path in second.iterdir() if path.is_file()
+            }
+            self.assertEqual(first_files, second_files)
+            for name in first_files - {"provenance.json"}:
                 self.assertEqual(
                     sha256_file(first / name), sha256_file(second / name),
                     name,
