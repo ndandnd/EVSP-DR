@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import ctypes
 import csv
 import errno
@@ -60,7 +61,7 @@ FINAL_FIELDS = (
 )
 ARTIFACT_FIELDS = (
     "campaign", "cell_id", "arm", "artifact_role", "path",
-    "sha256", "size_bytes",
+    "archive_relative_path", "sha256", "size_bytes",
 )
 COMPARISON_FIELDS = (
     "replicate", "treatment", "budget_hours", "status_name",
@@ -86,6 +87,21 @@ def _float(value):
     except (TypeError, ValueError):
         return None
     return number if math.isfinite(number) else None
+
+
+def _campaign_path(root: Path, manifest: dict, value) -> Path:
+    path = Path(value).expanduser().resolve()
+    root = root.expanduser().resolve()
+    if path == root or root in path.parents:
+        return path
+    declared_root = Path(manifest["campaign_root"]).expanduser().resolve()
+    try:
+        relative = path.relative_to(declared_root)
+    except ValueError as exc:
+        raise ValueError(
+            f"campaign artifact escapes approved root: {path}"
+        ) from exc
+    return root / relative
 
 
 def _validate_result(result: dict, job: dict, manifest: dict) -> None:
@@ -318,6 +334,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     campaign = manifest["campaign"]
     checkpoint_rows = []
     final_rows = []
+    overnight_array_parents = set()
     targets = {}
     for job in manifest.get("jobs") or []:
         if job["arm"] not in {"GIRO", "GIRO40-AUGMENTED"}:
@@ -361,7 +378,24 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             raise ValueError(
                 f"{job['cell_id']} was not released as an approved job"
             )
-        progress_dir = Path(job["progress_dir"])
+        if strict_overnight:
+            overnight_array_parents.add(job["job_id"].split("_", 1)[0])
+        runtime_job = copy.deepcopy(job)
+        runtime_job["output"] = str(
+            _campaign_path(root, manifest, job["output"])
+        )
+        runtime_job["progress_dir"] = str(
+            _campaign_path(root, manifest, job["progress_dir"])
+        )
+        for key in (
+            "status", "journal", "instance", "tariff", "validated_start",
+        ):
+            value = (runtime_job.get("execution") or {}).get(key)
+            if value:
+                runtime_job["execution"][key] = str(
+                    _campaign_path(root, manifest, value)
+                )
+        progress_dir = Path(runtime_job["progress_dir"])
         improvements = []
         if progress_dir.is_dir():
             for checkpoint_path in sorted(
@@ -482,7 +516,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     ),
                 })
                 improvements = payload.get("incumbent_improvements") or []
-        output = Path(job["output"])
+        output = Path(runtime_job["output"])
         if strict_overnight and not output.is_file():
             raise ValueError(
                 f"{job['cell_id']} has no completed result artifact"
@@ -490,7 +524,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         result = json.loads(output.read_text()) if output.is_file() else {}
         completion_payload = {}
         if result:
-            _validate_result(result, job, manifest)
+            _validate_result(result, runtime_job, manifest)
             if strict_overnight:
                 from validate_k40_cs_overnight_result import (
                     validate_result as validate_overnight_result,
@@ -738,6 +772,10 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 "true_end_to_end_wall_s"
             ),
         })
+    if strict_overnight and len(overnight_array_parents) != 1:
+        raise ValueError(
+            "overnight jobs do not belong to one atomic Slurm array"
+        )
     return manifest, checkpoint_rows, final_rows
 
 
@@ -760,7 +798,7 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
     def add(
         role, path, *, cell_id=None, arm=None, expected=None, required=False
     ):
-        artifact = Path(path)
+        artifact = _campaign_path(root, manifest, path)
         if not artifact.is_file():
             if required:
                 raise ValueError(f"required artifact is missing: {artifact}")
@@ -768,12 +806,23 @@ def _artifact_inventory(root: Path, manifest: dict) -> list[dict]:
         digest = _sha(artifact)
         if expected is not None and digest != expected:
             raise ValueError(f"artifact hash mismatch: {artifact}")
+        try:
+            archive_relative = str(artifact.relative_to(root))
+        except ValueError as exc:
+            raise ValueError(
+                f"inventory artifact escapes staged campaign: {artifact}"
+            ) from exc
+        declared_path = (
+            Path(manifest.get("campaign_root", root)).expanduser().resolve()
+            / archive_relative
+        )
         rows.append({
             "campaign": manifest["campaign"],
             "cell_id": cell_id,
             "arm": arm,
             "artifact_role": role,
-            "path": str(artifact.resolve()),
+            "path": str(declared_path),
+            "archive_relative_path": archive_relative,
             "sha256": digest,
             "size_bytes": artifact.stat().st_size,
         })

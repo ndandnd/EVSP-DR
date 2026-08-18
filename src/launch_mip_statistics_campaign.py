@@ -1415,13 +1415,11 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
                 manifest_job["submission_error"] = (
                     completed.stderr or completed.stdout
                 ).strip()
-            if completed.returncode != 0:
-                for reservation in reservations:
-                    reservation.unlink(missing_ok=True)
             _replace_json(root / "campaign.json", manifest)
             raise SystemExit(
                 "atomic four-task array submission failed or returned an "
-                "unparseable ID; reconcile by its execution comment"
+                "unparseable ID; reservations remain and the execution "
+                "comment must be reconciled before any retry"
             )
         for index, manifest_job in enumerate(manifest["jobs"]):
             manifest_job["job_id"] = f"{array_id}_{index}"

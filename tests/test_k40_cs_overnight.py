@@ -21,7 +21,7 @@ from prepare_k40_giro40_partition import (  # noqa: E402
 from validate_k40_cs_overnight_result import (  # noqa: E402
     validate_result,
 )
-from summarize_mip_statistics import summarize  # noqa: E402
+from summarize_mip_statistics import _campaign_path, summarize  # noqa: E402
 
 
 class K40CSOvernightTests(unittest.TestCase):
@@ -587,6 +587,23 @@ class K40CSOvernightTests(unittest.TestCase):
                 ValueError, "no completed result"
             ):
                 summarize(campaign, root / "summary")
+
+    def test_staged_archive_relocates_only_campaign_artifacts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            declared = root / "live/campaign"
+            staged = root / "bundle/campaign"
+            manifest = {"campaign_root": str(declared)}
+            self.assertEqual(
+                _campaign_path(
+                    staged, manifest, declared / "progress/cell/final.json"
+                ),
+                staged / "progress/cell/final.json",
+            )
+            with self.assertRaisesRegex(ValueError, "escapes"):
+                _campaign_path(
+                    staged, manifest, root / "unrelated/result.json"
+                )
 
 
 if __name__ == "__main__":

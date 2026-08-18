@@ -215,39 +215,33 @@ else
   TMP_BUNDLE=$(mktemp -d "$ARCHIVE_ROOT/.bundle.XXXXXXXX")
   if [[ -z "$TMP_BUNDLE" || ! -d "$TMP_BUNDLE" ]]; then
     echo "Archive staging failed." >&2
-  elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-       "$REVIEWED_COMMIT" \
-       summarize_mip_statistics.py \
-       --campaign-root "$CAMPAIGN_ROOT" \
-       --out-dir "$TMP_BUNDLE/summary"; then
-    echo "Summary validation failed; no archive created." >&2
   elif ! cp -a "$CAMPAIGN_ROOT" "$TMP_BUNDLE/campaign"; then
     echo "Campaign staging failed; no archive created." >&2
   elif ! "$PYTHON" -I -B - \
-       "$TMP_BUNDLE/summary/artifact_inventory.csv" \
-       "$CAMPAIGN_ROOT" "$TMP_BUNDLE/campaign" <<'PY'
-import csv, hashlib, pathlib, sys
-inventory,source_root,staged_root=map(pathlib.Path,sys.argv[1:])
-source_root=source_root.resolve()
-staged_root=staged_root.resolve()
-rows=list(csv.DictReader(inventory.open(newline="")))
-if not rows:
-    raise SystemExit("artifact inventory is empty")
-for row in rows:
-    source=pathlib.Path(row["path"]).resolve()
-    try:
-        relative=source.relative_to(source_root)
-    except ValueError:
-        raise SystemExit(f"artifact escapes campaign root: {source}") from None
-    staged=staged_root/relative
-    if not staged.is_file():
-        raise SystemExit(f"staged artifact is missing: {relative}")
-    digest=hashlib.sha256(staged.read_bytes()).hexdigest()
-    if digest != row["sha256"]:
-        raise SystemExit(f"staged artifact hash mismatch: {relative}")
+       "$TMP_BUNDLE/campaign" "$REVIEWED_COMMIT" <<'PY'
+import hashlib, json, pathlib, sys
+root=pathlib.Path(sys.argv[1])
+expected=sys.argv[2]
+plan_raw=(root/"approved-plan.json").read_bytes()
+plan=json.loads(plan_raw)
+manifest=json.loads((root/"campaign.json").read_text())
+if (
+    (plan.get("checkout_identity") or {}).get("expected_commit") != expected
+    or (manifest.get("checkout_identity") or {}).get("expected_commit")
+    != expected
+    or manifest.get("approval_sha256")
+    != hashlib.sha256(plan_raw).hexdigest()
+):
+    raise SystemExit("staged campaign commit/approval differs")
 PY
   then
-    echo "Staged campaign differs from validated inventory." >&2
+    echo "Staged campaign is not bound to REVIEWED_COMMIT." >&2
+  elif ! "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+       "$REVIEWED_COMMIT" \
+       summarize_mip_statistics.py \
+       --campaign-root "$TMP_BUNDLE/campaign" \
+       --out-dir "$TMP_BUNDLE/summary"; then
+    echo "Staged summary validation failed; no archive created." >&2
   elif tar --sort=name --mtime='UTC 1970-01-01' \
        --owner=0 --group=0 --numeric-owner \
        -czf "$TMP_BUNDLE/$ARCHIVE_NAME" \
