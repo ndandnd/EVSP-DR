@@ -176,9 +176,15 @@ if [[ "$ARM" == "GIRO" ]]; then
 else
   [[ -z "$START" && -z "$START_SHA" ]] || fatal "RAW arm received a start"
 fi
-if [[ "$MATRIX" == "raw_k40" ]]; then
+if [[ "$MATRIX" == "raw_k40" || "$MATRIX" == "raw_k40_smoke" ]]; then
   [[ "$ARM" == "RAW" ]] || fatal "raw_k40 cell is not RAW"
-  [[ "$TIME_LIMIT" == "28800" ]] || fatal "raw_k40 budget is not eight hours"
+  if [[ "$MATRIX" == "raw_k40_smoke" ]]; then
+    [[ "$TIME_LIMIT" == "1800" ]] \
+      || fatal "raw_k40 smoke budget is not thirty minutes"
+  else
+    [[ "$TIME_LIMIT" == "28800" ]] \
+      || fatal "raw_k40 budget is not eight hours"
+  fi
   [[ "$SOURCE_LABEL" =~ ^R[12]_C[AS]$ ]] \
     || fatal "raw_k40 source label is invalid"
   [[ "$SOURCE_MASTER_SENSE" == "cover" ]] \
@@ -256,9 +262,9 @@ trap - USR1 TERM INT
 [[ "$solver_rc" -eq 0 ]] || fatal "solver exited with status $solver_rc"
 
 if ! "$PYTHON" - "$OUT" "$PROGRESS" "$STATUS_SHA" "$JOURNAL_SHA" \
-    "$ARM" "$MATRIX" "$TIME_LIMIT" <<'PY'
+    "$ARM" "$MATRIX" "$TIME_LIMIT" "$SOURCE_LABEL" <<'PY'
 import hashlib, json, math, pathlib, sys
-out, progress, status_sha, journal_sha, arm, matrix, time_limit = sys.argv[1:]
+out, progress, status_sha, journal_sha, arm, matrix, time_limit, source_label = sys.argv[1:]
 d=json.load(open(out))
 if d.get("partitioning") is not True:
     raise SystemExit("result is not strict partitioning")
@@ -343,9 +349,13 @@ if d.get("incumbent_found"):
         raise SystemExit("selected routes have wrong trip set")
     if any(counts[trip] != 1 for trip in source["trip_ids"]):
         raise SystemExit("selected routes are not exact once-only")
-elif d.get("status_name") == "INFEASIBLE":
+elif source_label.endswith("_CA") and d.get("status_name") == "INFEASIBLE":
     # A proved finite-pool infeasibility is a valid CA smoke outcome.
     pass
+elif matrix == "raw_k40_smoke":
+    raise SystemExit(
+        "smoke result lacks a physical incumbent and is not CA INFEASIBLE"
+    )
 PY
 then
   fatal "result validation failed"

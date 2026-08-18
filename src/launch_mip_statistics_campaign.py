@@ -555,6 +555,13 @@ def _rep_code(value: str) -> str:
     return (cleaned or "X")[-2:].rjust(2, "0")
 
 
+def _slurm_wall_time(budget_hours: float) -> str:
+    total_seconds = int(round(float(budget_hours) * 3600.0)) + 600
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
 def _job_name(job, campaign: str) -> str:
     if job.get("matrix") in RAW_K40_MODES:
         label = str(job["source"]["raw_k40_label"]).replace("_", "")
@@ -1092,19 +1099,24 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
             "an identical execution digest already exists in Slurm; reconcile "
             "that job instead of submitting a duplicate"
         )
+    wall_times = [
+        _slurm_wall_time(job["budget_hours"])
+        for job in plan["jobs"]
+    ]
     reservations = _reserve_execution_digests(plan, plan_sha)
     manifest["execution_reservations"] = [
         str(path) for path in reservations
     ]
     _replace_json(root / "campaign.json", manifest)
-    for job, manifest_job in zip(plan["jobs"], manifest["jobs"]):
-        wall_hours = job["budget_hours"]
+    for job, manifest_job, wall_time in zip(
+        plan["jobs"], manifest["jobs"], wall_times
+    ):
         comment = f"MSTAT:{job['execution_digest'][:32]}"
         command = [
             "sbatch", "--parsable", "--partition=scaglione",
             "--no-requeue", "--signal=B:USR1@180",
             "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=64G",
-            f"--time={wall_hours:02d}:10:00",
+            f"--time={wall_time}",
             f"--job-name={job['job_name']}",
             f"--comment={comment}",
             f"--output={logs}/%x_%j.out",
