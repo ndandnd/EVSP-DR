@@ -96,7 +96,14 @@ def audit(instance_path, expected_sha256, scale, selection_replicate):
                 allow_diagnostic_grid=True,
             )
             outcomes.append((soc_step, block_min, result))
-        if adaptive and not outcomes[-1][2]["feasible"]:
+            if result["feasible"]:
+                break
+        if (
+            adaptive
+            and outcomes
+            and outcomes[-1][0:2] == (1.0, 10)
+            and not outcomes[-1][2]["feasible"]
+        ):
             result = optimize_fixed_duty(
                 problem,
                 route["trips"],

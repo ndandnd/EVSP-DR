@@ -24,27 +24,47 @@ INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
 )
+LOCAL_CODE_PATHS = (
+    "src/exact_pricer_expanded.py",
+    "src/expanded_path_realization.py",
+    "src/audit_giro_known_columns.py",
+    "src/master_lp_scipy.py",
+    "src/exact_cg_telemetry.py",
+    "src/durable_io.py",
+    "src/utils_v2.py",
+    "src/config.py",
+)
 
 
 def _current_environment():
     import pandas
     import scipy
+    import numpy
+    import matplotlib
+    executable = Path(sys.executable).resolve()
     return {
         "python": platform.python_version(),
-        "executable": str(Path(sys.executable).resolve()),
+        "executable": str(executable),
+        "executable_sha256": sha256_file(executable),
+        "numpy": numpy.__version__,
         "pandas": pandas.__version__,
         "scipy": scipy.__version__,
-        "exact_pricer_sha256": sha256_file(
-            REPO_ROOT / "src/exact_pricer_expanded.py"
-        ),
+        "matplotlib": matplotlib.__version__,
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+        "code_hashes": {
+            path: sha256_file(REPO_ROOT / path)
+            for path in LOCAL_CODE_PATHS
+        },
     }
 
 
 def _write_completion(job, plan_sha):
     output = Path(job["output"])
     paths = [output]
-    if job["phase"] == "PREFLIGHT":
-        paths.append(output.with_suffix(".csv"))
+    if job["phase"] == "SEED" and job.get("membership_output"):
+        membership = Path(job["membership_output"])
+        paths.extend([membership, membership.with_suffix(".csv")])
     elif job["phase"] in {"CG", "CG_SENSITIVITY"}:
         paths.extend([
             Path(str(output) + ".columns.jsonl"),
@@ -176,26 +196,22 @@ def run(args):
             reference_environment = {
                 "python": approved.get("python"),
                 "executable": approved.get("executable"),
+                "executable_sha256": approved.get("executable_sha256"),
+                "numpy": approved.get("numpy"),
                 "pandas": approved.get("pandas"),
                 "scipy": approved.get("scipy"),
-                "exact_pricer_sha256": (
-                    reference_plan.get("code_hashes") or {}
-                ).get("src/exact_pricer_expanded.py"),
+                "matplotlib": approved.get("matplotlib"),
+                "platform": approved.get("platform"),
+                "machine": approved.get("machine"),
+                "code_hashes": {
+                    path: (reference_plan.get("code_hashes") or {}).get(path)
+                    for path in LOCAL_CODE_PATHS
+                },
             }
     diagnostic_only = current_environment != reference_environment
     jobs = []
     for cell in instances:
-        jobs.extend([
-            {
-                **cell, "job_key": f"preflight_{cell['cell_id']}",
-                "phase": "PREFLIGHT", "arm": None,
-                "soc_step": 15.0, "block_min": 10,
-                "output": str(
-                    root / "outputs" / f"preflight_{cell['cell_id']}.json"
-                ),
-                "telemetry": None, "progress_dir": None,
-                "snapshot_minutes": [],
-            },
+        jobs.append(
             {
                 **cell, "job_key": f"seed_{cell['cell_id']}",
                 "phase": "SEED", "arm": None,
@@ -205,11 +221,32 @@ def run(args):
                 ),
                 "telemetry": None, "progress_dir": None,
                 "snapshot_minutes": [],
-            },
-        ])
+                "membership_output": str(
+                    root / "outputs" / f"preflight_{cell['cell_id']}.json"
+                ),
+            }
+        )
+        membership = audit(
+            Path(cell["instance"]["path"]),
+            cell["instance"]["instance_file_sha256"],
+            cell["scale"],
+            cell["selection_replicate"],
+        )
         grids = [(15.0, 10)]
-        if cell["scale"] <= 5:
-            grids.extend([(5.0, 10), (2.5, 10), (1.0, 10)])
+        if (
+            cell["scale"] <= 5
+            and membership[
+                "known_partition_in_primary_expanded_space"
+            ] is not True
+        ):
+            first = membership.get("first_feasible_soc_step")
+            grids.extend(
+                [(5.0, 10)]
+                if first == 5.0
+                else [(5.0, 10), (2.5, 10)]
+                if first == 2.5
+                else [(5.0, 10), (2.5, 10), (1.0, 10)]
+            )
         for soc_step, block_min in grids:
             label = str(soc_step).replace(".", "p")
             jobs.append({
@@ -255,9 +292,6 @@ def run(args):
             "reserve_kwh": 0.0, "soc_step_kwh": 15.0, "block_min": 10,
         },
         "task_groups": {
-            "PREFLIGHT": [
-                job["job_key"] for job in jobs if job["phase"] == "PREFLIGHT"
-            ],
             "SEED": [
                 job["job_key"] for job in jobs if job["phase"] == "SEED"
             ],
@@ -315,8 +349,8 @@ def main(argv=None):
     parser.add_argument("--out-root", type=Path, required=True)
     parser.add_argument("--reference-plan", type=Path)
     args = parser.parse_args(argv)
-    if not 1 <= args.max_parallel <= 32:
-        parser.error("--max-parallel must be in [1, 32]")
+    if not 1 <= args.max_parallel <= 3:
+        parser.error("--max-parallel must be in [1, 3]")
     root = run(args)
     print(json.dumps({
         "output": str(root),

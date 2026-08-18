@@ -64,6 +64,7 @@ for value in (
     job["instance"]["relative_path"], job["output"],
     job["progress_dir"], job["telemetry"],
     job["soc_step"], job["block_min"], job.get("dependency_preflight"),
+    job.get("prelaunch_membership_sha256"),
 ):
     print("" if value is None else value)
 PY
@@ -90,6 +91,7 @@ TELEMETRY=${FIELDS[17]}
 SOC_STEP=${FIELDS[18]}
 BLOCK_MIN=${FIELDS[19]}
 PREFLIGHT_DEP=${FIELDS[20]}
+PREFLIGHT_EXPECTED_SHA=${FIELDS[21]}
 
 [[ "$WORKER_TOKEN" == "$EXPECTED_WORKER_SHA" ]] \
   || fatal "worker token mismatch"
@@ -384,6 +386,20 @@ if [[ "$RECOVER_ONLY" != "1" ]]; then
   [[ "$status" -eq 0 ]] || fatal "cell command failed: $status"
 else
   echo "[SCALE-LADDER] recovering completion marker for $JOB_KEY"
+fi
+if [[ "$PHASE" == "PREFLIGHT" ]]; then
+  OBSERVED_PREFLIGHT_SHA=$(
+    "$PYTHON" -I -B - "$OUTPUT" <<'PY'
+import hashlib,json,sys
+payload=json.load(open(sys.argv[1]))
+encoded=json.dumps(
+    payload,sort_keys=True,separators=(",",":"),allow_nan=False
+).encode()
+print(hashlib.sha256(encoded).hexdigest())
+PY
+  )
+  [[ "$OBSERVED_PREFLIGHT_SHA" == "$PREFLIGHT_EXPECTED_SHA" ]] \
+    || fatal "membership preflight differs from approved classification"
 fi
 
 "$PYTHON" -I -B - "$OUTPUT" "$PHASE" "$PROGRESS" "$TELEMETRY" \

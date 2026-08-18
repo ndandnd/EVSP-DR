@@ -8,12 +8,12 @@ the ladder commands continue to use the historical bytes.
 
 The dry-run plan contains exactly:
 
-- 23 known-route membership preflights;
+- 22 instance-level known-route membership preflights;
 - 21 known-partition preparation tasks;
 - 23 primary exact-CG tasks;
 - 27 k2/k3/k5 small-grid sensitivity CG companions;
 - 21 RAW MIPs and 21 KNOWN-PARTITION diagnostic MIPs;
-- 136 experimental/diagnostic tasks total;
+- 135 experimental/diagnostic tasks total;
 - zero k40 MIP submissions (four reuse-only result slots).
 
 ## 1. Dry run
@@ -63,7 +63,7 @@ else
     echo "PLAN: $PLAN"
     echo "TASK MATRIX: $MATRIX"
     echo "APPROVAL SHA-256: $PLAN_SHA"
-    echo "EXPECTED TASKS: 136 (23 preflight + 21 seed + 23 primary CG + 27 sensitivity CG + 42 MIP; k40 MIP = 0)"
+    echo "EXPECTED TASKS: 135 (22 preflight + 21 seed + 23 primary CG + 27 sensitivity CG + 42 MIP; k40 MIP = 0)"
   fi
 fi
 ```

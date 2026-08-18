@@ -147,8 +147,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             plan = ladder.build_plan(
                 "ladder-test", Path(sys.executable), Path("/tmp/reservations")
             )
-        self.assertEqual(plan["task_count"], 136)
-        self.assertEqual(plan["preflight_task_count"], 23)
+        self.assertEqual(plan["task_count"], 135)
+        self.assertEqual(plan["preflight_task_count"], 22)
         self.assertEqual(plan["cg_task_count"], 23)
         self.assertEqual(plan["sensitivity_cg_task_count"], 27)
         self.assertEqual(plan["mip_task_count"], 42)
@@ -156,7 +156,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertEqual(
             {key: len(value) for key, value in plan["task_groups"].items()},
             {
-                "PREFLIGHT": 23, "SEED": 21, "CG": 23,
+                "PREFLIGHT": 22, "SEED": 21, "CG": 23,
                 "CG_SENSITIVITY": 27,
                 "MIP_RAW": 21, "MIP_KNOWN": 21,
             },
@@ -207,6 +207,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         ).read_text()
         self.assertNotIn("sbatch", local)
         self.assertNotIn("run_exact_pool_mip", local)
+        self.assertNotIn('"phase": "PREFLIGHT"', local)
         self.assertIn("default=3", local)
         self.assertIn("diagnostic_only", local)
 
@@ -273,6 +274,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 membership["known_partition_in_primary_expanded_space"],
             ),
             "known_partition_outside_primary_space_not_scaling_failure",
+        )
+        self.assertEqual(
+            target_gap_interpretation(2.0, 2, True, 1.0),
+            "target_not_comparable_positive_or_missing_artificial_mass",
         )
 
     def test_summary_schema_and_censoring(self):
@@ -405,6 +410,26 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "telemetry": str(telemetry), "progress_dir": None,
                 "snapshot_minutes": [],
             }
+            cg5 = root / "cg5.json"
+            cg5_journal = Path(str(cg5) + ".columns.jsonl")
+            cg5_journal.write_text(journal.read_text())
+            cg5_status = json.loads(cg.read_text())
+            cg5_status["columns_journal"] = str(cg5_journal)
+            cg5_status["soc_step"] = 5.0
+            cg5.write_text(json.dumps(cg5_status))
+            Path(str(cg5) + ".iters.csv").write_text(
+                Path(str(cg) + ".iters.csv").read_text()
+            )
+            telemetry5 = root / "telemetry5.jsonl"
+            telemetry5.write_text(telemetry.read_text())
+            cg5_job = {
+                **base, "job_key": "cg5",
+                "phase": "CG_SENSITIVITY", "arm": None,
+                "budget_s": 100, "output": str(cg5),
+                "telemetry": str(telemetry5), "progress_dir": None,
+                "snapshot_minutes": [], "soc_step": 5.0,
+                "block_min": 10,
+            }
             mip_job = {
                 **base, "job_key": "mip", "phase": "MIP", "arm": "RAW",
                 "budget_s": 60, "output": str(mip),
@@ -421,9 +446,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "code_hashes": {}, "python_identity": {},
                 "task_groups": {
                     "PREFLIGHT": ["preflight"],
-                    "CG": ["cg"], "MIP_RAW": ["mip"],
+                    "CG": ["cg"], "CG_SENSITIVITY": ["cg5"],
+                    "MIP_RAW": ["mip"],
                 },
-                "jobs": [preflight_job, cg_job, mip_job],
+                "jobs": [preflight_job, cg_job, cg5_job, mip_job],
                 "k40_reuse_slots": [],
             }
             raw = json.dumps(
@@ -449,6 +475,13 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 (
                     cg_job,
                     [cg, journal, Path(str(cg) + ".iters.csv"), telemetry],
+                ),
+                (
+                    cg5_job,
+                    [
+                        cg5, cg5_journal,
+                        Path(str(cg5) + ".iters.csv"), telemetry5,
+                    ],
                 ),
                 (
                     mip_job,
@@ -489,8 +522,17 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 path.name for path in out.iterdir()
             })
             with (out / "cg_run_summary.csv").open(newline="") as handle:
-                row = next(csv.DictReader(handle))
+                summary_rows = list(csv.DictReader(handle))
+            row = next(
+                item for item in summary_rows
+                if item["campaign_role"] == "primary"
+            )
+            sensitivity = next(
+                item for item in summary_rows
+                if item["campaign_role"] == "small_grid_sensitivity"
+            )
             self.assertEqual(row["censored"], "True")
+            self.assertEqual(sensitivity["soc_step"], "5.0")
             self.assertEqual(row["trip_identity_schema"],
                              "evsp-dr-trip-identity-v1")
             self.assertNotIn("trip_set_sha256", CG_FIELDS)

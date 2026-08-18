@@ -137,7 +137,7 @@ def reconcile(
                     continue
                 dependency = None
                 if group == "CG":
-                    dependency = f"aftercorr:{combined['PREFLIGHT']}"
+                    dependency = f"afterok:{combined['PREFLIGHT']}"
                 elif group == "CG_SENSITIVITY":
                     dependency = f"afterok:{combined['PREFLIGHT']}"
                 elif group == "MIP_RAW":

@@ -24,6 +24,12 @@ REVIEWED_BASE = "77baf667a06946c692f959d66fed4e2bca36cd32"
 INPUT_MANIFEST = (
     REPO_ROOT / "data/scale_ladder/instances/campaign_input_manifest.json"
 )
+MEMBERSHIP_PREFLIGHT = (
+    REPO_ROOT / "data/scale_ladder/known_membership_preflight.json"
+)
+MEMBERSHIP_PREFLIGHT_SHA256 = (
+    "5124534373e8d3aff981c55891b8f7ed321fdf1efe96c8bbfd093d957c1b94c8"
+)
 INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
@@ -151,6 +157,20 @@ def build_plan(campaign, python, reservation_root):
         raise ValueError("unsafe campaign name")
     input_raw = INPUT_MANIFEST.read_bytes()
     input_manifest = json.loads(input_raw)
+    if sha256_file(MEMBERSHIP_PREFLIGHT) != MEMBERSHIP_PREFLIGHT_SHA256:
+        raise ValueError("membership preflight package hash mismatch")
+    preflight_package = json.loads(MEMBERSHIP_PREFLIGHT.read_text())
+    if (
+        preflight_package.get("schema")
+        != "evsp-dr-scale-ladder-membership-preflight-v1"
+        or preflight_package.get("instance_manifest_sha256")
+        != sha256_file(INSTANCE_MANIFEST)
+    ):
+        raise ValueError("membership preflight package identity mismatch")
+    prelaunch_membership = {
+        (int(cell["scale"]), int(cell["selection_replicate"])): cell
+        for cell in preflight_package["cells"]
+    }
     if input_manifest.get("schema") != (
         "evsp-dr-scale-ladder-input-manifest-v1"
     ):
@@ -228,10 +248,26 @@ def build_plan(campaign, python, reservation_root):
     preflight_key_by_cell = {}
     seed_key_by_cell = {}
     cg_key_by_cell = {}
-    for cell in cg_cells:
-        key = f"preflight_{cell['cell_id']}"
-        preflight_key_by_cell[cell["cell_id"]] = key
-        jobs.append(_job(root, cell, key, "PREFLIGHT", None, nonce))
+    for instance_key in sorted(instances):
+        instance = instances[instance_key]
+        cell = next(
+            value for value in cg_cells
+            if value["scale"] == instance["scale"]
+            and value["selection_replicate"]
+            == instance["selection_replicate"]
+        )
+        key = (
+            f"preflight_k{instance['scale']:02d}_"
+            f"s{instance['selection_replicate']}"
+        )
+        preflight_key_by_cell[(
+            instance["scale"], instance["selection_replicate"]
+        )] = key
+        job = _job(root, cell, key, "PREFLIGHT", None, nonce)
+        job["prelaunch_membership_sha256"] = hashlib.sha256(canonical(
+            prelaunch_membership[instance_key]
+        )).hexdigest()
+        jobs.append(job)
     for cell in non_k40:
         key = f"seed_{cell['cell_id']}"
         seed_key_by_cell[cell["cell_id"]] = key
@@ -240,12 +276,26 @@ def build_plan(campaign, python, reservation_root):
         key = f"cg_{cell['cell_id']}"
         cg_key_by_cell[cell["cell_id"]] = key
         job = _job(root, cell, key, "CG", None, nonce)
-        job["dependency_preflight"] = preflight_key_by_cell[cell["cell_id"]]
+        job["dependency_preflight"] = preflight_key_by_cell[(
+            cell["scale"], cell["selection_replicate"]
+        )]
         jobs.append(job)
     for cell in non_k40:
         if cell["scale"] > 5:
             continue
-        for soc_step in (5.0, 2.5, 1.0):
+        membership = prelaunch_membership[(
+            cell["scale"], cell["selection_replicate"]
+        )]
+        if membership["known_partition_in_primary_expanded_space"] is True:
+            sensitivity_steps = ()
+        else:
+            first = membership.get("first_feasible_soc_step")
+            sensitivity_steps = (
+                (5.0,) if first == 5.0
+                else (5.0, 2.5) if first == 2.5
+                else (5.0, 2.5, 1.0)
+            )
+        for soc_step in sensitivity_steps:
             label = str(soc_step).replace(".", "p")
             key = f"cgdiag_g{label}_{cell['cell_id']}"
             job = _job(
@@ -253,9 +303,9 @@ def build_plan(campaign, python, reservation_root):
                 diagnostic_soc_step=soc_step,
             )
             job["diagnostic_only"] = True
-            job["dependency_preflight"] = preflight_key_by_cell[
-                cell["cell_id"]
-            ]
+            job["dependency_preflight"] = preflight_key_by_cell[(
+                cell["scale"], cell["selection_replicate"]
+            )]
             jobs.append(job)
     for arm in ("RAW", "KNOWN-PARTITION"):
         for cell in non_k40:
@@ -330,7 +380,7 @@ def build_plan(campaign, python, reservation_root):
         ],
     }
     if {key: len(value) for key, value in groups.items()} != {
-        "PREFLIGHT": 23, "SEED": 21, "CG": 23,
+        "PREFLIGHT": 22, "SEED": 21, "CG": 23,
         "CG_SENSITIVITY": 27, "MIP_RAW": 21, "MIP_KNOWN": 21,
     }:
         raise ValueError("task group counts differ")
@@ -390,6 +440,12 @@ def build_plan(campaign, python, reservation_root):
         "checkout_identity": checkout_identity(False),
         "input_manifest": str(INPUT_MANIFEST),
         "input_manifest_sha256": hashlib.sha256(input_raw).hexdigest(),
+        "membership_preflight": str(MEMBERSHIP_PREFLIGHT),
+        "membership_preflight_sha256": MEMBERSHIP_PREFLIGHT_SHA256,
+        "prelaunch_membership": {
+            f"k{scale:02d}_s{replicate}": value
+            for (scale, replicate), value in prelaunch_membership.items()
+        },
         "instance_manifest": str(INSTANCE_MANIFEST),
         "instance_manifest_sha256": sha256_file(INSTANCE_MANIFEST),
         "trip_identity_schema": TRIP_SCHEMA,
@@ -416,7 +472,7 @@ def build_plan(campaign, python, reservation_root):
         "jobs": jobs,
         "task_groups": groups,
         "task_count": sum(map(len, groups.values())),
-        "preflight_task_count": 23,
+        "preflight_task_count": 22,
         "cg_task_count": 23,
         "sensitivity_cg_task_count": 27,
         "mip_task_count": 42,
@@ -575,6 +631,11 @@ def submit(plan, plan_sha):
         root / "input/manifests/scale_ladder_instance_manifest.csv",
         plan["instance_manifest_sha256"],
     )
+    _copy_new(
+        Path(plan["membership_preflight"]),
+        root / "input/manifests/known_membership_preflight.json",
+        plan["membership_preflight_sha256"],
+    )
     plan_path = root / "approved-plan.json"
     _write_new(plan_path, canonical(plan))
     manifest = {
@@ -613,7 +674,7 @@ def submit(plan, plan_sha):
         _replace_json(manifest_path, manifest)
         arrays["CG"] = _submit_array(
             plan, plan_path, plan_sha, "CG", gate, logs,
-            dependency=f"aftercorr:{arrays['PREFLIGHT']}",
+            dependency=f"afterok:{arrays['PREFLIGHT']}",
         )
         arrays["CG_SENSITIVITY"] = _submit_array(
             plan, plan_path, plan_sha, "CG_SENSITIVITY", gate, logs,
@@ -785,7 +846,7 @@ def main(argv=None):
     if not args.submit:
         print(
             f"[dry-run] tasks={plan['task_count']} "
-            "PREFLIGHT=23 SEED=21 PRIMARY_CG=23 "
+            "PREFLIGHT=22 SEED=21 PRIMARY_CG=23 "
             "SENSITIVITY_CG=27 MIP=42 k40_MIP=0"
         )
         return 0

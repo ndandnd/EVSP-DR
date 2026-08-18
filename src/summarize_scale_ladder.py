@@ -216,16 +216,27 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     for job in plan["jobs"]:
         _validate_completion(job, manifest["approval_sha256"])
     membership_rows = []
-    membership_by_cell = {}
+    membership_by_instance = {}
     for job in plan["jobs"]:
-        if job["phase"] != "PREFLIGHT":
+        membership_path = (
+            Path(job["output"])
+            if job["phase"] == "PREFLIGHT"
+            else Path(job["membership_output"])
+            if local_diagnostic
+            and job["phase"] == "SEED"
+            and job.get("membership_output")
+            else None
+        )
+        if membership_path is None:
             continue
-        payload = json.loads(Path(job["output"]).read_text())
+        payload = json.loads(membership_path.read_text())
         if payload.get("schema") != (
             "evsp-dr-scale-ladder-known-membership-v1"
         ):
             raise ValueError("membership preflight schema mismatch")
-        membership_by_cell[job["cell_id"]] = payload
+        membership_by_instance[(
+            int(payload["scale"]), int(payload["selection_replicate"])
+        )] = payload
         membership_rows.extend(payload["duties"])
     cg_jobs = [
         job for job in plan["jobs"]
@@ -237,13 +248,22 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     mip_summary = []
     inventory = []
     for job in plan["jobs"]:
-        if job["phase"] == "PREFLIGHT":
+        membership_path = (
+            Path(job["output"])
+            if job["phase"] == "PREFLIGHT"
+            else Path(job["membership_output"])
+            if local_diagnostic
+            and job["phase"] == "SEED"
+            and job.get("membership_output")
+            else None
+        )
+        if membership_path is not None:
             inventory.append(_inventory(
-                job["cell_id"], "known_membership", Path(job["output"])
+                job["cell_id"], "known_membership", membership_path
             ))
             inventory.append(_inventory(
                 job["cell_id"], "known_membership_csv",
-                Path(job["output"]).with_suffix(".csv"),
+                membership_path.with_suffix(".csv"),
             ))
     cg_by_cell = {}
     for job in cg_jobs:
@@ -263,8 +283,10 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             != identities["instance_file_sha256"]
             or provenance.get("prices_sha256")
             != plan["tariff"]["primary_tariff_sha256"]
-            or status.get("soc_step") != 15.0
-            or status.get("block_min") != 10
+            or float(status.get("soc_step", math.nan))
+            != float(job["soc_step"])
+            or int(status.get("block_min", -1))
+            != int(job["block_min"])
             or status.get("g_kwh") != 300.0
             or status.get("charge_kw") != 300.0
             or status.get("min_soc_frac") != 0.0
@@ -501,7 +523,7 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         mip_summary, mip_rows, inventory
     )
     progress = _progress_rows(
-        plan, cg_by_cell, mip_summary, membership_by_cell
+        plan, cg_by_cell, mip_summary, membership_by_instance
     )
     staging = Path(tempfile.mkdtemp(
         dir=output_dir.parent, prefix=f".{output_dir.name}.tmp."
@@ -890,7 +912,7 @@ def _append_k40_rows(
         })
 
 
-def _progress_rows(plan, cg_by_cell, mip_summary, membership_by_cell):
+def _progress_rows(plan, cg_by_cell, mip_summary, membership_by_instance):
     mip = {
         (row["cell_id"], row["arm"]): row for row in mip_summary
     }
@@ -901,7 +923,9 @@ def _progress_rows(plan, cg_by_cell, mip_summary, membership_by_cell):
         cg = cg_by_cell[job["cell_id"]]
         raw = mip.get((job["cell_id"], "RAW"), {})
         known = mip.get((job["cell_id"], "KNOWN-PARTITION"), {})
-        membership = membership_by_cell[job["cell_id"]]
+        membership = membership_by_instance[(
+            int(job["scale"]), int(job["selection_replicate"])
+        )]
         reasons = sorted({
             value for value in (
                 raw.get("missing_reason"), known.get("missing_reason")
@@ -968,16 +992,20 @@ def _progress_rows(plan, cg_by_cell, mip_summary, membership_by_cell):
                 membership[
                     "known_partition_in_primary_expanded_space"
                 ],
+                cg["final_artificial_mass"],
             ),
         })
     return rows
 
 
 def target_gap_interpretation(
-    route_weight, target_fleet, known_partition_in_primary_space
+    route_weight, target_fleet, known_partition_in_primary_space,
+    artificial_mass=0.0,
 ):
     if route_weight is None:
         return "target_not_comparable_missing_lp_value"
+    if artificial_mass is None or float(artificial_mass) > 1e-9:
+        return "target_not_comparable_positive_or_missing_artificial_mass"
     if float(route_weight) <= float(target_fleet) + 1e-6:
         return "target_reached"
     if known_partition_in_primary_space is not True:
@@ -1072,6 +1100,9 @@ def _validate_completion(job, plan_sha):
                 )
     elif job["phase"] == "PREFLIGHT":
         expected.add(output.with_suffix(".csv"))
+    elif job["phase"] == "SEED" and job.get("membership_output"):
+        membership = Path(job["membership_output"])
+        expected.update({membership, membership.with_suffix(".csv")})
     elif job["phase"] == "MIP":
         progress = Path(job["progress_dir"])
         final = progress / "final.json"
