@@ -25,6 +25,9 @@ INSTANCE_MANIFEST = (
     / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
 )
 LOCAL_CODE_PATHS = (
+    "src/run_scale_ladder_local_diagnostics.py",
+    "src/build_tariff_response_manifest.py",
+    "src/scale_ladder_trip_identity.py",
     "src/prepare_scale_ladder_known_partition.py",
     "src/audit_scale_ladder_known_membership.py",
     "src/fixed_duty_expanded_optimizer.py",
@@ -59,6 +62,7 @@ def _current_environment():
         "platform": platform.platform(),
         "machine": platform.machine(),
         "numpy_build": repr(getattr(numpy.__config__, "CONFIG", None)),
+        "pythonpath": os.environ.get("PYTHONPATH"),
         "code_hashes": {
             path: sha256_file(REPO_ROOT / path)
             for path in LOCAL_CODE_PATHS
@@ -203,6 +207,7 @@ def run(args):
                 "platform": approved.get("platform"),
                 "machine": approved.get("machine"),
                 "numpy_build": approved.get("numpy_build"),
+                "pythonpath": approved.get("pythonpath"),
                 "code_hashes": {
                     path: (reference_plan.get("code_hashes") or {}).get(path)
                     for path in LOCAL_CODE_PATHS
