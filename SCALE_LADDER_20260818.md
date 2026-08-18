@@ -21,7 +21,8 @@ This block does not use `set -e` and cannot exit the login shell.
 ```bash
 REVIEWED_COMMIT="${REVIEWED_COMMIT:-}"
 CAMPAIGN="${LADDER_CAMPAIGN:-}"
-PYTHON="${EVSP_LADDER_PYTHON:-$HOME/evsp_env/bin/python3.12}"
+PYTHON_CANDIDATE="${EVSP_LADDER_PYTHON:-$HOME/evsp_env/bin/python3.12}"
+PYTHON=$(readlink -f "$PYTHON_CANDIDATE" 2>/dev/null)
 RUN_ROOT="$HOME/EVSP-DR-scale-ladder"
 PLAN_ROOT="$HOME/evsp_scale_ladder_plans"
 RESERVATIONS="$HOME/evsp_scale_ladder_reservations"
@@ -29,7 +30,7 @@ PLAN="$PLAN_ROOT/$CAMPAIGN.plan.json"
 MATRIX="$PLAN_ROOT/$CAMPAIGN.tasks.csv"
 
 if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ || \
-      ! "$CAMPAIGN" =~ ^[a-z0-9][a-z0-9._-]{2,79}$ ]]; then
+      ! "$CAMPAIGN" =~ ^[a-z0-9][a-z0-9_-]{2,79}$ ]]; then
   echo "Set exact REVIEWED_COMMIT and a safe LADDER_CAMPAIGN." >&2
 elif [[ ! -x "$PYTHON" ]]; then
   echo "Approved Python 3.12 is unavailable." >&2
@@ -94,6 +95,18 @@ fi
 All arrays depend on one held gate. MIP array task `i` uses `aftercorr` on CG
 task `i`; KNOWN-PARTITION also depends on seed task `i`. The gate is released
 only after all four arrays are accepted.
+
+If submission stops with `gate_state=release_attempting` or
+`held_release_failed`, do not resubmit. After `sacct` proves the recorded gate
+completed, reconcile it:
+
+```bash
+env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+  "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$REVIEWED_COMMIT" reconcile_scale_ladder_gate.py \
+  --campaign-root "$RUN_ROOT/src/results/scale_ladder/$CAMPAIGN" \
+  --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
+```
 
 ## Normalize completed outputs
 

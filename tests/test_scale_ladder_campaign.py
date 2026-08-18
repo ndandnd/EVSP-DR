@@ -233,6 +233,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     "g_kwh": 300.0, "charge_kw": 300.0,
                     "min_soc_frac": 0.0,
                 },
+                "experiment_arm": "B",
+                "mip_start": {
+                    "kind": "none", "source": None,
+                },
             }))
             progress = root / "progress"
             progress.mkdir()
@@ -305,6 +309,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     "plan_sha256": plan_sha,
                     "instance_file_sha256":
                         identities["instance_file_sha256"],
+                    "job_key": job["job_key"],
+                    "arm": job["arm"],
                     "artifact_sha256": {
                         str(path.resolve()): sha256_file(path)
                         for path in artifacts

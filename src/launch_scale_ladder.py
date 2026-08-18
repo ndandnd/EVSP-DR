@@ -51,6 +51,7 @@ CODE_PATHS = (
     "src/utils_v2.py",
     "src/config.py",
     "src/tariff_response_environment.py",
+    "src/reconcile_scale_ladder_gate.py",
 )
 CG_BUDGET_S = {
     2: 7200, 3: 7200, 5: 7200,
@@ -97,7 +98,9 @@ def checkout_identity(require_detached=False):
 
 
 def _environment(python):
-    python = Path(python).resolve()
+    python = Path(python).expanduser().absolute()
+    if python.is_symlink() or not python.is_file():
+        raise ValueError("Python must be a real absolute executable, not a symlink")
     environment = dict(os.environ)
     environment.pop("PYTHONPATH", None)
     environment["PYTHONNOUSERSITE"] = "1"
@@ -132,7 +135,7 @@ def _name(job, nonce):
 
 
 def build_plan(campaign, python, reservation_root):
-    if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{2,79}", campaign):
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{2,79}", campaign):
         raise ValueError("unsafe campaign name")
     input_raw = INPUT_MANIFEST.read_bytes()
     input_manifest = json.loads(input_raw)
@@ -249,9 +252,24 @@ def build_plan(campaign, python, reservation_root):
             ),
         }
         job["execution_digest"] = hashlib.sha256(canonical({
-            key: value for key, value in job.items()
-            if key not in {"job_name", "output", "progress_dir", "telemetry"}
-        } | {
+            "cell_id": job["cell_id"],
+            "phase": job["phase"],
+            "arm": job["arm"],
+            "scale": job["scale"],
+            "selection_replicate": job["selection_replicate"],
+            "cg_replicate": job["cg_replicate"],
+            "budget_s": job["budget_s"],
+            "snapshot_minutes": job["snapshot_minutes"],
+            "instance_identity": {
+                field: job["instance"][field] for field in (
+                    "instance_file_sha256",
+                    "ordered_trip_id_set_sha256",
+                    "solver_local_trip_index_sha256",
+                    "ordered_trip_sequence_sha256",
+                    "trip_identity_schema",
+                    "duty_set_sha256",
+                )
+            },
             "code_hashes": code_hashes,
             "tariff_sha256": HISTORICAL_FLAT_SHA256,
         })).hexdigest()
@@ -282,21 +300,24 @@ def build_plan(campaign, python, reservation_root):
                 cell["instance"]["instance_file_sha256"],
             "required_tariff_sha256": HISTORICAL_FLAT_SHA256,
             "required_physics": input_manifest["physics"],
+            "required_cg_job_key": cg_key_by_cell[cell["cell_id"]],
         }
         for cell in k40
         for arm in ("RAW", "KNOWN-PARTITION")
     ]
     python_identity = _environment(python)
-    scontrol = shutil.which("scontrol")
-    if not scontrol:
-        scontrol_identity = {"path": None, "sha256": None, "available": False}
-    else:
-        scontrol = str(Path(scontrol).resolve())
-        scontrol_identity = {
-            "path": scontrol,
-            "sha256": sha256_file(Path(scontrol)),
+    def binary_identity(name):
+        value = shutil.which(name)
+        if not value:
+            return {"path": None, "sha256": None, "available": False}
+        path = Path(value).resolve()
+        return {
+            "path": str(path),
+            "sha256": sha256_file(path),
             "available": True,
         }
+    scontrol_identity = binary_identity("scontrol")
+    sbatch_identity = binary_identity("sbatch")
     return {
         "schema": SCHEMA,
         "campaign": campaign,
@@ -318,6 +339,12 @@ def build_plan(campaign, python, reservation_root):
             "sha256": python_identity["executable_sha256"],
         },
         "scontrol": scontrol_identity,
+        "sbatch": sbatch_identity,
+        "runtime_environment": {
+            "HOME": str(Path.home()),
+            "USER": os.environ.get("USER", ""),
+            "PATH": "/usr/local/bin:/usr/bin:/bin",
+        },
         "reservation_root": str(Path(reservation_root).resolve()),
         "jobs": jobs,
         "task_groups": groups,
@@ -426,8 +453,15 @@ def _reserve(plan, plan_sha):
 
 
 def submit(plan, plan_sha):
-    if plan["scontrol"]["available"] is not True:
-        raise ValueError("scontrol unavailable in approved plan")
+    if (
+        plan["scontrol"]["available"] is not True
+        or plan["sbatch"]["available"] is not True
+        or sha256_file(Path(plan["scontrol"]["path"]))
+        != plan["scontrol"]["sha256"]
+        or sha256_file(Path(plan["sbatch"]["path"]))
+        != plan["sbatch"]["sha256"]
+    ):
+        raise ValueError("approved Slurm executables unavailable/changed")
     observed = checkout_identity(True)
     if observed != plan["checkout_identity"]:
         raise ValueError("submission checkout differs")
@@ -469,11 +503,12 @@ def submit(plan, plan_sha):
     }
     manifest_path = root / "campaign.json"
     _replace_json(manifest_path, manifest)
-    gate = _sbatch([
+    gate = _sbatch(plan, [
         "--hold", "--partition=default_partition", "--time=00:05:00",
         f"--job-name=LDG{plan_sha[:5]}",
         f"--output={logs}/gate_%j.out",
         f"--error={logs}/gate_%j.err",
+        "--export=NONE",
         "--wrap=/bin/true",
     ])
     manifest["gate_job_id"] = gate
@@ -484,19 +519,27 @@ def submit(plan, plan_sha):
         arrays["SEED"] = _submit_array(
             plan, plan_path, plan_sha, "SEED", gate, logs
         )
+        manifest["submitted_arrays"] = dict(arrays)
+        _replace_json(manifest_path, manifest)
         arrays["CG"] = _submit_array(
             plan, plan_path, plan_sha, "CG", gate, logs
         )
+        manifest["submitted_arrays"] = dict(arrays)
+        _replace_json(manifest_path, manifest)
         arrays["MIP_RAW"] = _submit_array(
             plan, plan_path, plan_sha, "MIP_RAW", gate, logs,
             dependency=f"aftercorr:{arrays['CG']}",
         )
+        manifest["submitted_arrays"] = dict(arrays)
+        _replace_json(manifest_path, manifest)
         arrays["MIP_KNOWN"] = _submit_array(
             plan, plan_path, plan_sha, "MIP_KNOWN", gate, logs,
             dependency=(
                 f"aftercorr:{arrays['CG']}:{arrays['SEED']}"
             ),
         )
+        manifest["submitted_arrays"] = dict(arrays)
+        _replace_json(manifest_path, manifest)
     except Exception as exc:
         manifest["gate_state"] = "held_after_partial_submission"
         manifest["submission_error"] = repr(exc)
@@ -543,28 +586,43 @@ def _submit_array(
         else "--cpus-per-task=2",
         "--mem=64G" if group.startswith("MIP") else "--mem=32G",
         f"--time={math.ceil(max_budget/60)+10}",
-        f"--job-name=LD{group[:3]}",
+        f"--job-name={_array_name(group, plan_sha)}",
+        f"--comment=SLAD:{plan_sha[:20]}:{group}",
         f"--output={logs}/%x_%A_%a.out",
         f"--error={logs}/%x_%A_%a.err",
         f"--dependency=afterok:{gate}"
         + (f",{dependency}" if dependency else ""),
+        "--export=NONE",
         str(WORKER), str(plan_path), plan_sha, group,
         plan["python"]["path"], plan["python"]["sha256"],
         plan["scontrol"]["path"], plan["scontrol"]["sha256"],
         plan["worker_sha256"],
+        str(REPO_ROOT),
+        plan["runtime_environment"]["HOME"],
+        plan["runtime_environment"]["USER"],
     ]
-    return _sbatch(arguments)
+    return _sbatch(plan, arguments)
 
 
-def _sbatch(arguments):
+def _sbatch(plan, arguments):
     completed = subprocess.run(
-        ["sbatch", "--parsable", *arguments],
+        [plan["sbatch"]["path"], "--parsable", *arguments],
         cwd=REPO_ROOT, text=True, capture_output=True, check=False,
     )
     job_id = completed.stdout.strip().split(";", 1)[0]
     if completed.returncode != 0 or not job_id.isdigit():
         raise RuntimeError("sbatch outcome ambiguous")
     return job_id
+
+
+def _array_name(group, plan_sha):
+    code = {
+        "SEED": "LDSD",
+        "CG": "LDCG",
+        "MIP_RAW": "LDMR",
+        "MIP_KNOWN": "LDMK",
+    }[group]
+    return f"{code}{plan_sha[:4]}"
 
 
 def _copy_new(source, target, expected_sha):

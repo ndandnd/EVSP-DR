@@ -21,6 +21,7 @@ ALLOWED_TARGETS = {
     "reconcile_tariff_response_gate.py",
     "launch_scale_ladder.py",
     "summarize_scale_ladder.py",
+    "reconcile_scale_ladder_gate.py",
 }
 
 
@@ -83,7 +84,8 @@ def main() -> int:
             "assemble_tariff_response_campaign.py|"
             "validate_tariff_response_archive.py|"
             "reconcile_tariff_response_gate.py|"
-            "launch_scale_ladder.py|summarize_scale_ladder.py} [ARG ...]"
+            "launch_scale_ladder.py|summarize_scale_ladder.py|"
+            "reconcile_scale_ladder_gate.py} [ARG ...]"
         )
     root = pathlib.Path(__file__).resolve().parents[1]
     expected_commit = sys.argv[1]

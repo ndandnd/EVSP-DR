@@ -115,7 +115,7 @@ def _phase_times(path):
             phase = row.get("phase")
             if phase == "master_attempt":
                 values[int(iteration)]["master"] += float(row["duration_s"])
-            elif phase == "pricing_shortest_path":
+            elif str(phase).startswith("pricing_"):
                 values[int(iteration)]["pricing"] += float(row["duration_s"])
     return values
 
@@ -298,6 +298,16 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             ("cg_telemetry", Path(job["telemetry"])),
         ):
             inventory.append(_inventory(job["cell_id"], role, path))
+        for snapshot in sorted(status_path.parent.glob(
+            f"{status_path.stem}.m*.snapshot.json"
+        )):
+            inventory.append(_inventory(
+                job["cell_id"], "cg_snapshot_status", snapshot
+            ))
+            inventory.append(_inventory(
+                job["cell_id"], "cg_snapshot_journal",
+                Path(str(snapshot) + ".columns.jsonl"),
+            ))
     for job in plan["jobs"]:
         if job["phase"] != "MIP":
             continue
@@ -318,6 +328,31 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             or (result.get("physics") or {}).get("min_soc_frac") != 0.0
         ):
             raise ValueError(f"MIP source/model identity differs: {job['job_key']}")
+        start = result.get("mip_start") or {}
+        expected_experiment_arm = (
+            "B" if job["arm"] == "RAW" else "D"
+        )
+        if (
+            result.get("experiment_arm") != expected_experiment_arm
+            or (
+                job["arm"] == "RAW"
+                and (
+                    start.get("source") is not None
+                    or start.get("kind") == "validated_exact_partition"
+                )
+            )
+            or (
+                job["arm"] == "KNOWN-PARTITION"
+                and (
+                    start.get("kind") != "validated_exact_partition"
+                    or start.get("source_sha256")
+                    != sha256_file(Path(
+                        jobs[job["dependency_seed"]]["output"]
+                    ))
+                )
+            )
+        ):
+            raise ValueError(f"MIP arm/start identity differs: {job['job_key']}")
         mip_rows.extend(_checkpoint_rows(job, identities))
         mip_summary.append({
             "cell_id": job["cell_id"],
@@ -411,11 +446,18 @@ def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
         payload = json.loads(path.read_text())
         if payload.get("schema") != "evsp-dr-scale-ladder-k40-reuse-v1":
             raise ValueError("k40 reuse manifest schema mismatch")
+        rows = payload.get("slots") or []
         supplied = {
-            (row["cell_id"], row["arm"]): row
-            for row in payload.get("slots") or []
+            (row["cell_id"], row["arm"]): row for row in rows
         }
+        result_paths = [str(row.get("result_path")) for row in rows]
+        if (
+            len(supplied) != len(rows)
+            or len(set(result_paths)) != len(result_paths)
+        ):
+            raise ValueError("k40 reuse slots/results are duplicated")
         inventory.append(_inventory("", "k40_reuse_manifest", path))
+    jobs_by_key = {job["job_key"]: job for job in plan["jobs"]}
     for slot in plan["k40_reuse_slots"]:
         key = (slot["cell_id"], slot["arm"])
         row = supplied.get(key)
@@ -423,17 +465,66 @@ def _append_k40_rows(plan, reuse_manifest, summaries, checkpoints, inventory):
         result = None
         if row:
             result_path = Path(row["result_path"])
-            if (
-                sha256_file(result_path) != row["result_sha256"]
-                or row.get("instance_file_sha256")
-                != slot["required_instance_file_sha256"]
-                or row.get("tariff_sha256")
-                != slot["required_tariff_sha256"]
-                or row.get("physics") != slot["required_physics"]
-            ):
+            try:
+                if (
+                    not result_path.is_file()
+                    or sha256_file(result_path) != row["result_sha256"]
+                ):
+                    raise ValueError("result path/hash mismatch")
+                candidate = json.loads(result_path.read_text())
+                cg_job = jobs_by_key[slot["required_cg_job_key"]]
+                cg_status_path = Path(cg_job["output"])
+                cg_status = json.loads(cg_status_path.read_text())
+                cg_journal = Path(cg_status["columns_journal"])
+                expected_experiment_arm = (
+                    "B" if slot["arm"] == "RAW" else "D"
+                )
+                start = candidate.get("mip_start") or {}
+                physical = candidate.get("physical_pool_audit") or {}
+                provenance = candidate.get("pricer_provenance") or {}
+                if (
+                    candidate.get("partitioning") is not True
+                    or candidate.get("experiment_arm")
+                    != expected_experiment_arm
+                    or candidate.get("source_result_sha256")
+                    != sha256_file(cg_status_path)
+                    or candidate.get("source_journal_sha256")
+                    != sha256_file(cg_journal)
+                    or provenance.get("instance_sha256")
+                    != slot["required_instance_file_sha256"]
+                    or provenance.get("prices_sha256")
+                    != slot["required_tariff_sha256"]
+                    or (physical.get("input_hashes") or {}).get(
+                        "instance_sha256"
+                    ) != slot["required_instance_file_sha256"]
+                    or (physical.get("input_hashes") or {}).get(
+                        "prices_sha256"
+                    ) != slot["required_tariff_sha256"]
+                    or (candidate.get("physics") or {}).get("g_kwh")
+                    != 300.0
+                    or (candidate.get("physics") or {}).get("charge_kw")
+                    != 300.0
+                    or (candidate.get("physics") or {}).get("min_soc_frac")
+                    != 0.0
+                    or (
+                        slot["arm"] == "RAW"
+                        and (
+                            start.get("source") is not None
+                            or start.get("kind")
+                            == "validated_exact_partition"
+                        )
+                    )
+                    or (
+                        slot["arm"] == "KNOWN-PARTITION"
+                        and start.get("kind")
+                        != "validated_exact_partition"
+                    )
+                ):
+                    raise ValueError("result provenance/arm mismatch")
+            except (OSError, ValueError, KeyError, json.JSONDecodeError):
                 missing = "k40_reuse_identity_mismatch"
             else:
-                result = json.loads(result_path.read_text())
+                result = candidate
                 missing = None
                 inventory.append(_inventory(
                     slot["cell_id"], "k40_reused_mip", result_path
@@ -559,10 +650,32 @@ def _validate_completion(job, plan_sha):
         or completion.get("plan_sha256") != plan_sha
         or completion.get("instance_file_sha256")
         != job["instance"]["instance_file_sha256"]
+        or completion.get("job_key") != job["job_key"]
+        or completion.get("arm") != job.get("arm")
         or not isinstance(hashes, dict)
         or not hashes
     ):
         raise ValueError(f"worker completion differs: {job['job_key']}")
+    output = Path(job["output"])
+    expected = {output}
+    if job["phase"] == "CG":
+        expected.update({
+            Path(str(output) + ".columns.jsonl"),
+            Path(str(output) + ".iters.csv"),
+            Path(job["telemetry"]),
+        })
+        for snapshot in output.parent.glob(
+            f"{output.stem}.m*.snapshot.json"
+        ):
+            expected.add(snapshot)
+            expected.add(Path(str(snapshot) + ".columns.jsonl"))
+    elif job["phase"] == "MIP":
+        expected.update(
+            path for path in Path(job["progress_dir"]).rglob("*")
+            if path.is_file()
+        )
+    if {str(path.resolve()) for path in expected} != set(hashes):
+        raise ValueError(f"worker completion artifact set differs: {job['job_key']}")
     for path, digest in hashes.items():
         artifact = Path(path)
         if not artifact.is_file() or _stream_sha(artifact) != digest:
@@ -592,6 +705,8 @@ def _plots(staging, cg_rows, mip_rows):
         )
     axes[0].set(xlabel="CG elapsed hours", ylabel="LP route weight")
     axes[1].set(xlabel="CG iteration", ylabel="LP route weight")
+    if groups:
+        axes[0].legend(fontsize=4, ncol=3)
     fig.tight_layout()
     fig.savefig(
         staging / "cg_route_weight.png", dpi=170,
@@ -617,11 +732,15 @@ def _plots(staging, cg_rows, mip_rows):
             else row["incumbent_fleet"]
             for row in rows
         ]
-        ax.step(x, y, where="post", label=f"{key[0]} {key[1]}")
+        line = ax.step(
+            x, y, where="post", label=f"{key[0]} {key[1]} incumbent"
+        )[0]
         if any(row["fleet_bound"] is not None for row in rows):
             ax.step(
                 x, [row["fleet_bound"] for row in rows],
                 where="post", linestyle="--",
+                color=line.get_color(),
+                label=f"{key[0]} {key[1]} bound",
             )
     ax.set(xlabel="MIP elapsed hours", ylabel="Fleet / finite-pool bound")
     if groups:
