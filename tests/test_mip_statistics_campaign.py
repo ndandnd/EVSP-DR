@@ -608,6 +608,10 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             launcher_text.index("Phase 1: stage"),
             launcher_text.index("Phase 2: only now"),
         )
+        self.assertIn('"--hold"', launcher_text)
+        self.assertIn('["scontrol", "release"', launcher_text)
+        self.assertIn("all_cells_held_until_every_sbatch_is_accepted",
+                      launcher_text)
 
     def test_campaign_name_escape_and_export_injection_are_rejected(self):
         payload = {

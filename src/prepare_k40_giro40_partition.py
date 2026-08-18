@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import platform
 from collections import Counter
 from pathlib import Path
 
@@ -47,6 +48,25 @@ EXPECTED_TARIFF_SHA256 = (
 )
 EXPECTED_TRIP_SET_SHA256 = (
     "35604b22facf1646963e85eb98a858906f0dd7dbebd86ea0d3ac7b797de62ed0"
+)
+EXPECTED_STATUS_SHA256 = {
+    "04c3d5d9fe701fbb3bc4fd343e58480fabebf27bb18ef2c60e23a34e29b0200b",
+    "780431fea40763d42576272bd8e9260f3ed2c8541b6d77f751e17f342dfb1202",
+}
+STATUS_LABEL_BY_SHA256 = {
+    "04c3d5d9fe701fbb3bc4fd343e58480fabebf27bb18ef2c60e23a34e29b0200b":
+        "R1_CS",
+    "780431fea40763d42576272bd8e9260f3ed2c8541b6d77f751e17f342dfb1202":
+        "R2_CS",
+}
+EXPECTED_REFERENCE_SHA256 = (
+    "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+)
+EXPECTED_DEADHEAD_SHA256 = (
+    "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+)
+EXPECTED_ROUTE_SET_SHA256 = (
+    "9b42579ae2d013706cc8d523eb9313fdef4e36eb492a99356483cb526d00085a"
 )
 INCLUDED_DUTIES = tuple(
     [str(value) for value in range(13301, 13316)]
@@ -99,9 +119,9 @@ def prepare(
     if os.path.lexists(output_path):
         raise FileExistsError(f"partition output exists: {output_path}")
     if (
-        not status_paths
+        len(status_paths) != 2
         or len(status_paths) != len(expected_status_sha256)
-        or len(set(expected_status_sha256)) != len(expected_status_sha256)
+        or set(expected_status_sha256) != EXPECTED_STATUS_SHA256
     ):
         raise ValueError("distinct status paths/hashes are required")
     status_paths = [
@@ -109,6 +129,13 @@ def prepare(
     ]
     master_path = master_path.expanduser().resolve()
     reference_data_dir = reference_data_dir.expanduser().resolve()
+    reference_sha256 = _sha(reference_data_dir / "Ref_dict.csv")
+    deadhead_sha256 = _sha(reference_data_dir / "par_ref_dhd.csv")
+    if (
+        reference_sha256 != EXPECTED_REFERENCE_SHA256
+        or deadhead_sha256 != EXPECTED_DEADHEAD_SHA256
+    ):
+        raise ValueError("frozen reference/deadhead identity mismatch")
     statuses = []
     for path, expected in zip(status_paths, expected_status_sha256):
         if _sha(path) != expected:
@@ -193,7 +220,11 @@ def prepare(
     g_kwh = float(status["g_kwh"])
     charge_kw = float(status["charge_kw"])
     reserve_kwh = float(status["min_soc_frac"]) * g_kwh
-    if (g_kwh, charge_kw, reserve_kwh) != (300.0, 300.0, 0.0):
+    if (
+        (g_kwh, charge_kw, reserve_kwh) != (300.0, 300.0, 0.0)
+        or float(status["soc_step"]) != 15.0
+        or float(status["block_min"]) != 10.0
+    ):
         raise ValueError("partition physics differ from frozen model")
     problem = build_problem(
         data_dir,
@@ -303,6 +334,14 @@ def prepare(
         })).hexdigest()
         for route in routes
     ]
+    route_set_sha256 = hashlib.sha256(
+        _canonical(route_hashes)
+    ).hexdigest()
+    if route_set_sha256 != EXPECTED_ROUTE_SET_SHA256:
+        raise ValueError(
+            "GIRO realization differs from the reviewed deterministic route "
+            "set; do not publish or use it"
+        )
     payload = {
         "schema": SCHEMA,
         "routes": routes,
@@ -326,24 +365,29 @@ def prepare(
         "base_duty_count": 40,
         "route_count": len(routes),
         "route_hashes": route_hashes,
-        "route_set_sha256": hashlib.sha256(
-            _canonical(route_hashes)
-        ).hexdigest(),
+        "route_set_sha256": route_set_sha256,
         "continuous_cost_pricing_certified": False,
         "pricing_certificate_scope": "none_for_augmented_routes",
         "provenance": {
-            "source_status_names": sorted(
-                path.name for path in status_paths
+            "source_statuses": sorted(
+                ({
+                    "label": STATUS_LABEL_BY_SHA256[digest],
+                    "name": path.name,
+                    "sha256": digest,
+                } for path, digest in zip(
+                    status_paths, expected_status_sha256
+                )),
+                key=lambda item: item["sha256"],
             ),
-            "source_status_sha256": sorted(expected_status_sha256),
             "giro_master_name": master_path.name,
             "giro_master_sha256": EXPECTED_MASTER_SHA256,
-            "reference_sha256": _sha(
-                reference_data_dir / "Ref_dict.csv"
-            ),
-            "deadhead_sha256": _sha(
-                reference_data_dir / "par_ref_dhd.csv"
-            ),
+            "reference_sha256": reference_sha256,
+            "deadhead_sha256": deadhead_sha256,
+            "generator_environment": {
+                "python": platform.python_version(),
+                "pandas": pd.__version__,
+                "scipy": __import__("scipy").__version__,
+            },
         },
     }
     payload["partition_sha256"] = hashlib.sha256(

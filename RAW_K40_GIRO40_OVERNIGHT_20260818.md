@@ -13,9 +13,14 @@ CA is not scheduled. Its finite-pool infeasibility remains historical evidence.
 The prior 30-minute smoke is also separate evidence and is not concatenated
 with these trajectories.
 
+The GIRO40 pool mixes conservative expanded-grid costs for base columns with
+continuous realized costs for injected duties. Its solver stage therefore
+compares and may prove fleet count only; it never claims an augmented
+route-cost optimum or a continuous-cost pricing certificate.
+
 The reviewed GIRO input is
 `analysis/k40_giro40_partition_20260818/giro40_partition.json`, SHA-256
-`2afdc10c142b468e065b6330c7be43b0b91479402c924f3c23e7b45e9e09a06b`.
+`8f9944f93f26cf0121e9ecab2fa412d573e90a0189b7a38008d3b2535f54d428`.
 It has 40 routes, covers all 947 trips exactly once, and excludes weekday
 variants `13316m` and `13324muw` in favor of `13316uwt` and `13324t`.
 
@@ -41,7 +46,7 @@ ARCHIVE_NAME="rawk40_80058_bc0c386f_20260817T144707Z.tar.gz"
 ARCHIVE_URL="https://github.com/ndandnd/EVSP-DR/releases/download/$TAG/$ARCHIVE_NAME"
 SIDE_URL="$ARCHIVE_URL.sha256"
 PINNED_ARCHIVE_SHA256="65dd198b26dcd5c5a512108445bb8089b30ae0821d19ab5fe26bebdaf17f7bb2"
-GIRO40_SHA256="2afdc10c142b468e065b6330c7be43b0b91479402c924f3c23e7b45e9e09a06b"
+GIRO40_SHA256="8f9944f93f26cf0121e9ecab2fa412d573e90a0189b7a38008d3b2535f54d428"
 CAMPAIGN="$OVERNIGHT_CAMPAIGN"
 PLAN="$PLAN_ROOT/$CAMPAIGN.plan.json"
 
@@ -128,7 +133,7 @@ else
     J2_CS_SHA="8290771a7ca3b6f185070f68a9934e6eaa8894c802ae02ac37f013c25a4b7c31"
 
     COMMON=(
-      "$PYTHON" -u "$RUN_ROOT/src/launch_mip_statistics_campaign.py"
+      "$PYTHON" -B -u "$RUN_ROOT/src/launch_mip_statistics_campaign.py"
       --mode k40_cs_overnight
       --campaign "$CAMPAIGN"
       --python "$PYTHON"
@@ -160,7 +165,7 @@ else
          ! "${COMMON[@]}" --plan-out "$PLAN"; then
       echo "Dry-run generation failed; nothing submitted." >&2
     elif [[ ! -s "$PLAN" ]] || \
-         ! "$PYTHON" "$RUN_ROOT/src/validate_k40_cs_overnight_plan.py" \
+         ! "$PYTHON" -B "$RUN_ROOT/src/validate_k40_cs_overnight_plan.py" \
            "$PLAN" --expected-commit "$REVIEWED_COMMIT"; then
       echo "Plan is missing or failed validation; nothing submitted." >&2
     else
@@ -196,33 +201,53 @@ ARCHIVE="$ARCHIVE_ROOT/$OVERNIGHT_CAMPAIGN.tar.gz"
 
 if [[ -e "$SUMMARY_ROOT" || -e "$ARCHIVE" || -e "$ARCHIVE.sha256" ]]; then
   echo "Summary/archive target exists; choose a new immutable destination." >&2
-elif ! "$PYTHON" "$RUN_ROOT/src/summarize_mip_statistics.py" \
+elif ! "$PYTHON" -B "$RUN_ROOT/src/summarize_mip_statistics.py" \
        --campaign-root "$CAMPAIGN_ROOT" --out-dir "$SUMMARY_ROOT"; then
   echo "Summary validation failed; no archive created." >&2
 else
   mkdir -p "$ARCHIVE_ROOT"
   TMP_ARCHIVE="$ARCHIVE.tmp.$$"
   ARCHIVE_STAGE="$ARCHIVE_ROOT/.stage.$$"
-  if ! mkdir "$ARCHIVE_STAGE" || \
+  ARCHIVE_STAGE_CREATED=0
+  if mkdir "$ARCHIVE_STAGE"; then
+    ARCHIVE_STAGE_CREATED=1
+  fi
+  if [[ "$ARCHIVE_STAGE_CREATED" != "1" ]] || \
      ! cp -a "$CAMPAIGN_ROOT" "$ARCHIVE_STAGE/campaign" || \
      ! cp -a "$SUMMARY_ROOT" "$ARCHIVE_STAGE/summary"; then
     echo "Archive staging failed." >&2
   elif tar --sort=name --mtime='UTC 1970-01-01' \
        --owner=0 --group=0 --numeric-owner \
        -czf "$TMP_ARCHIVE" -C "$ARCHIVE_STAGE" campaign summary; then
-    if mv -n "$TMP_ARCHIVE" "$ARCHIVE"; then
-      sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
-      echo "ARCHIVE: $ARCHIVE"
-      echo "CHECKSUM: $ARCHIVE.sha256"
+    ARCHIVE_DIGEST=$(sha256sum "$TMP_ARCHIVE" | awk '{print $1}')
+    TMP_SIDE="$ARCHIVE.sha256.tmp.$$"
+    printf '%s  %s\n' "$ARCHIVE_DIGEST" "$(basename "$ARCHIVE")" > "$TMP_SIDE"
+    ARCHIVE_LINKED=0
+    if [[ "$ARCHIVE_DIGEST" =~ ^[0-9a-f]{64}$ ]] && \
+       ln "$TMP_ARCHIVE" "$ARCHIVE"; then
+      ARCHIVE_LINKED=1
+      if ln "$TMP_SIDE" "$ARCHIVE.sha256"; then
+        rm -f "$TMP_ARCHIVE" "$TMP_SIDE"
+        echo "ARCHIVE: $ARCHIVE"
+        echo "CHECKSUM: $ARCHIVE.sha256"
+      else
+        echo "Checksum target appeared concurrently; archive withdrawn." >&2
+        rm -f "$ARCHIVE" "$TMP_ARCHIVE" "$TMP_SIDE"
+      fi
     else
       echo "Archive target appeared concurrently; no overwrite performed." >&2
-      rm -f "$TMP_ARCHIVE"
+      if [[ "$ARCHIVE_LINKED" == "1" ]]; then
+        rm -f "$ARCHIVE"
+      fi
+      rm -f "$TMP_ARCHIVE" "$TMP_SIDE"
     fi
   else
     echo "Archive creation failed." >&2
     rm -f "$TMP_ARCHIVE"
   fi
-  rm -rf "$ARCHIVE_STAGE"
+  if [[ "$ARCHIVE_STAGE_CREATED" == "1" ]]; then
+    rm -rf "$ARCHIVE_STAGE"
+  fi
 fi
 ```
 

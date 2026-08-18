@@ -42,6 +42,12 @@ def validate_result(
         or int(result.get("source_snapshot_mark_minutes", -1)) != 1440
     ):
         raise ValueError("solver/source arguments changed")
+    status_name = result.get("status_name")
+    if status_name not in {"TIME_LIMIT", "OPTIMAL"}:
+        raise ValueError("solver did not reach an accepted terminal status")
+    progress_metadata = result.get("progress") or {}
+    if progress_metadata.get("termination_signal") is not None:
+        raise ValueError("run ended after an external termination signal")
     parameters = mip_provenance.get("gurobi_parameters") or {}
     if (
         not mip_provenance.get("python")
@@ -77,13 +83,27 @@ def validate_result(
         "end_to_end_before_publication_s",
     ):
         try:
-            finite = math.isfinite(float(result.get(field)))
+            value = float(result.get(field))
+            finite = math.isfinite(value) and value >= 0.0
         except (TypeError, ValueError):
             finite = False
         if not finite:
             raise ValueError(f"timing missing: {field}")
+    gurobi_wall = float(result["gurobi_optimize_wall_s"])
+    end_to_end = float(result["end_to_end_before_publication_s"])
+    runtime_s = result.get("runtime_s")
+    if (
+        gurobi_wall <= 0.0
+        or runtime_s is None
+        or not math.isfinite(float(runtime_s))
+        or float(runtime_s) <= 0.0
+        or end_to_end + 1e-6 < gurobi_wall
+    ):
+        raise ValueError("runtime/timing relationship is invalid")
     if result.get("continuous_cost_pricing_certified") is not False:
         raise ValueError("continuous-cost pricing certificate was claimed")
+    if result.get("pricing_certificate_scope") != "not_certified":
+        raise ValueError("pricing certificate scope is invalid")
     if result.get("incumbent_found") is not True:
         raise ValueError("CS result lacks a physical incumbent")
     start = result.get("mip_start") or {}
@@ -106,6 +126,7 @@ def validate_result(
         ):
             raise ValueError("RAW cell received GIRO columns")
     else:
+        two_stage = result.get("two_stage") or {}
         if (
             start.get("kind") != "validated_exact_partition"
             or start.get("validated_bus_count") != 40
@@ -115,6 +136,8 @@ def validate_result(
             or augmented_count != base_count + 40
             or (start.get("solver_acceptance") or {}).get("accepted")
             is not True
+            or two_stage.get("stage2_executed") is not False
+            or result.get("optimal_scope") not in {"none", "fleet_only"}
         ):
             raise ValueError("GIRO40 augmentation/start was not accepted")
         _sha(
@@ -134,6 +157,31 @@ def validate_result(
         raise ValueError(f"checkpoint cadence is incomplete: {missing}")
     if not (progress_dir / "final.json").is_file():
         raise ValueError("progress final.json is missing")
+    final_progress = json.loads(
+        (progress_dir / "final.json").read_text()
+    )
+    if (
+        final_progress.get("kind") != "final"
+        or (final_progress.get("final") or {}).get("status_name")
+        != status_name
+    ):
+        raise ValueError("progress final status differs from result")
+    if status_name == "TIME_LIMIT":
+        terminal = json.loads(
+            (
+                progress_dir
+                / f"checkpoint_{time_limit_s // 60:04d}m.json"
+            ).read_text()
+        )
+        observed = terminal.get("observed_total_elapsed_s")
+        if (
+            observed is None
+            or float(observed) < 0.98 * time_limit_s
+            or gurobi_wall < 0.98 * time_limit_s
+        ):
+            raise ValueError(
+                "TIME_LIMIT trajectory ended before its approved budget"
+            )
 
 
 def main(argv=None) -> int:

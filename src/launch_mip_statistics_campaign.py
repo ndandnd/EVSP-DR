@@ -10,6 +10,7 @@ import json
 import math
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -71,10 +72,10 @@ K40_CS_RAW_BUDGET_HOURS = 8
 K40_CS_GIRO40_BUDGET_HOURS = 2
 GIRO40_AUGMENTED = "GIRO40-AUGMENTED"
 GIRO40_PARTITION_FILE_SHA256 = (
-    "2afdc10c142b468e065b6330c7be43b0b91479402c924f3c23e7b45e9e09a06b"
+    "8f9944f93f26cf0121e9ecab2fa412d573e90a0189b7a38008d3b2535f54d428"
 )
 GIRO40_PARTITION_SHA256 = (
-    "9a71179b79072969264d04326f58214c51cf16096de7cd17b05d3a140d30ebe6"
+    "9e007d51c6bbbdc4f01a00a26ba3bcfa1ec4340df9aab8227a12cf0dc35ecb11"
 )
 GIRO40_ROUTE_SET_SHA256 = (
     "9b42579ae2d013706cc8d523eb9313fdef4e36eb492a99356483cb526d00085a"
@@ -150,6 +151,38 @@ def _git(*args, binary=False):
     )
 
 
+def _unsafe_runtime_artifacts(root: Path) -> list[str]:
+    unsafe = []
+    scan_roots = [root, root / "src"]
+    for scan_root in scan_roots:
+        if not scan_root.exists():
+            continue
+        for current, dirs, files in os.walk(scan_root):
+            current_path = Path(current)
+            if current_path == root:
+                dirs[:] = [
+                    name for name in dirs
+                    if name not in {".git", "src", "results", "logs"}
+                ]
+            else:
+                dirs[:] = [
+                    name for name in dirs
+                    if name not in {".git", "results", "logs"}
+                ]
+            if current_path.name == "__pycache__":
+                unsafe.append(str(current_path.relative_to(root)))
+                dirs[:] = []
+                continue
+            for name in files:
+                if Path(name).suffix.lower() in {
+                    ".pyc", ".pyo", ".so", ".pth",
+                }:
+                    unsafe.append(str(
+                        (current_path / name).relative_to(root)
+                    ))
+    return sorted(set(unsafe))
+
+
 def checkout_identity(*, require_detached: bool) -> dict:
     head = _git("rev-parse", "--verify", "HEAD")
     status = _git("status", "--porcelain", "--untracked-files=no")
@@ -187,12 +220,22 @@ def checkout_identity(*, require_detached: bool) -> dict:
         raise SystemExit("cannot verify checkout branch state")
     if require_detached and not detached:
         raise SystemExit("submission requires a detached reviewed checkout")
+    runtime_artifacts = (
+        _unsafe_runtime_artifacts(REPO_ROOT) if detached else []
+    )
+    if runtime_artifacts:
+        raise SystemExit(
+            "checkout contains ignored/importable runtime artifacts; "
+            "remove them and invoke Python with -B: "
+            f"{runtime_artifacts[:10]}"
+        )
     return {
         "expected_commit": commit,
         "reviewed_base_commit": REVIEWED_BASE,
         "detached": detached,
         "branch": branch,
         "tracked_clean": True,
+        "runtime_artifacts_absent": True,
     }
 
 
@@ -763,6 +806,11 @@ def _job_from_candidate(
         "augmentation_changes_column_set": augmented,
         "partitioning": "strict_exact_once",
         "two_stage": True,
+        "cost_stage_policy": (
+            "disabled_for_mixed_augmented_cost_semantics"
+            if arm == GIRO40_AUGMENTED
+            else "run_only_after_finite_pool_fleet_proof"
+        ),
         "budget_hours": budget_hours,
         "time_limit_s": int(budget_hours * 3600),
         "threads": 8,
@@ -1053,6 +1101,7 @@ def build_plan(
             "threads": 8,
             "requeue": False,
             "signal": "B:USR1@180",
+            "submission_release": "atomic_from_held_jobs",
         },
         "worker": str(WORKER_PATH),
         "worker_sha256": worker_sha,
@@ -1145,6 +1194,16 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     logs = Path(plan["log_root"])
     if root.exists() or logs.exists():
         raise SystemExit("campaign already exists; reruns need a new name")
+    missing_commands = [
+        command for command in (
+            "sbatch", "scontrol", "scancel", "squeue", "sacct",
+        )
+        if shutil.which(command) is None
+    ]
+    if missing_commands:
+        raise SystemExit(
+            f"required Slurm commands are unavailable: {missing_commands}"
+        )
     observed_identity = checkout_identity(require_detached=True)
     if observed_identity != plan["checkout_identity"]:
         raise SystemExit("submission checkout differs from approved plan")
@@ -1230,6 +1289,9 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     manifest = json.loads(json.dumps(plan))
     manifest["approval_sha256"] = plan_sha
     manifest["submitted"] = False
+    manifest["submission_atomicity"] = (
+        "all_cells_held_until_every_sbatch_is_accepted"
+    )
     _replace_json(root / "campaign.json", manifest)
 
     # Phase 2: only now may cells be submitted.
@@ -1262,12 +1324,26 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         str(path) for path in reservations
     ]
     _replace_json(root / "campaign.json", manifest)
+    held_job_ids = []
+
+    def cancel_known_held_jobs():
+        if not held_job_ids:
+            return True
+        canceled = subprocess.run(
+            ["scancel", *held_job_ids],
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        return canceled.returncode == 0
+
     for job, manifest_job, wall_time in zip(
         plan["jobs"], manifest["jobs"], wall_times
     ):
         comment = f"MSTAT:{job['execution_digest'][:32]}"
         command = [
-            "sbatch", "--parsable", "--partition=scaglione",
+            "sbatch", "--parsable", "--hold", "--partition=scaglione",
             "--no-requeue", "--signal=B:USR1@180",
             "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=64G",
             f"--time={wall_time}",
@@ -1290,14 +1366,58 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
             manifest_job["submission_error"] = (
                 completed.stderr or completed.stdout
             ).strip()
+            canceled = cancel_known_held_jobs()
+            for prior in manifest["jobs"]:
+                if prior.get("job_id") in held_job_ids:
+                    prior["submission_state"] = (
+                        "canceled_before_release"
+                        if canceled else "held_cancel_failed"
+                    )
+            if canceled:
+                for reservation in reservations:
+                    reservation.unlink(missing_ok=True)
             _replace_json(root / "campaign.json", manifest)
-            raise SystemExit(f"{job['cell_id']}: sbatch failed")
+            raise SystemExit(
+                f"{job['cell_id']}: held sbatch failed; no job released"
+            )
         job_id = completed.stdout.strip().split(";", 1)[0]
         if not job_id.isdigit():
-            raise SystemExit("sbatch returned an invalid job ID")
+            manifest_job["submission_state"] = "orphaned_held_unparsed"
+            canceled = cancel_known_held_jobs()
+            for prior in manifest["jobs"]:
+                if prior.get("job_id") in held_job_ids:
+                    prior["submission_state"] = (
+                        "canceled_before_release"
+                        if canceled else "held_cancel_failed"
+                    )
+            _replace_json(root / "campaign.json", manifest)
+            raise SystemExit(
+                "sbatch returned an invalid job ID; any unknown job remains "
+                "held and must be reconciled by its execution comment"
+            )
         manifest_job["job_id"] = job_id
-        manifest_job["submission_state"] = "submitted"
+        manifest_job["submission_state"] = "held"
+        held_job_ids.append(job_id)
         _replace_json(root / "campaign.json", manifest)
+    released = subprocess.run(
+        ["scontrol", "release", ",".join(held_job_ids)],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if released.returncode != 0:
+        for manifest_job in manifest["jobs"]:
+            manifest_job["submission_state"] = "held_release_failed"
+            manifest_job["release_error"] = (
+                released.stderr or released.stdout
+            ).strip()
+        _replace_json(root / "campaign.json", manifest)
+        raise SystemExit(
+            "atomic job release failed; every campaign job remains held"
+        )
+    for manifest_job in manifest["jobs"]:
+        manifest_job["submission_state"] = "released"
     manifest["submitted"] = True
     _replace_json(root / "campaign.json", manifest)
     return manifest

@@ -5,9 +5,9 @@ frozen 947-trip k40 instance exactly once under 300 kWh, 300 kW, zero reserve,
 15 kWh SOC steps, 10-minute charging blocks, and the flat tariff.
 
 - Artifact SHA-256:
-  `2afdc10c142b468e065b6330c7be43b0b91479402c924f3c23e7b45e9e09a06b`
+  `8f9944f93f26cf0121e9ecab2fa412d573e90a0189b7a38008d3b2535f54d428`
 - Canonical partition SHA-256:
-  `9a71179b79072969264d04326f58214c51cf16096de7cd17b05d3a140d30ebe6`
+  `9e007d51c6bbbdc4f01a00a26ba3bcfa1ec4340df9aab8227a12cf0dc35ecb11`
 - Route-set SHA-256:
   `9b42579ae2d013706cc8d523eb9313fdef4e36eb492a99356483cb526d00085a`
 - Trip-set SHA-256:
@@ -28,3 +28,14 @@ not a third duplicate variant and not this partition's source.
 All routes contain deterministic continuous charging schedules and tariff-bound
 block hashes. Their costs are valid master costs for the injected routes. They
 have no continuous-cost reduced-cost or pricing certificate.
+
+Two duties (`13323` and `13406`) use a zero-energy station waypoint because a
+direct timing arc is unavailable. The current model charges its $5 station-stop
+cost for those waypoints, so the recorded total is $10 above a hypothetical
+positive-energy-only start-cost convention. This campaign preserves the
+reviewed model convention and does not claim cross-convention cost optimality.
+
+Regeneration is fail-closed on both frozen status hashes, the reference and
+deadhead hashes, 15 kWh/10-minute discretization, and the reviewed route-set
+hash. A solver/version-dependent alternative realization is rejected rather
+than silently replacing this artifact.

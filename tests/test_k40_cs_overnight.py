@@ -21,6 +21,7 @@ from prepare_k40_giro40_partition import (  # noqa: E402
 from validate_k40_cs_overnight_result import (  # noqa: E402
     validate_result,
 )
+from summarize_mip_statistics import summarize  # noqa: E402
 
 
 class K40CSOvernightTests(unittest.TestCase):
@@ -79,6 +80,7 @@ class K40CSOvernightTests(unittest.TestCase):
             "detached": True,
             "branch": "",
             "tracked_clean": True,
+            "runtime_artifacts_absent": True,
         }
         payload = {
             "candidates": [],
@@ -235,6 +237,19 @@ class K40CSOvernightTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "exactly 40"):
                 validate_duty_selection(duties, literals)
 
+    def test_ignored_runtime_bytecode_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cache = root / "src/__pycache__"
+            cache.mkdir(parents=True)
+            (cache / "run_exact_pool_mip.cpython-312.pyc").write_bytes(
+                b"unreviewed"
+            )
+            self.assertIn(
+                "src/__pycache__",
+                launcher._unsafe_runtime_artifacts(root),
+            )
+
     def _partition_fixture(self, root: Path) -> tuple[Path, dict]:
         status = root / "status.json"
         status.write_text(json.dumps({"trip_ids": list(range(40))}))
@@ -387,19 +402,30 @@ class K40CSOvernightTests(unittest.TestCase):
         progress.mkdir()
         for mark in required:
             (progress / f"checkpoint_{mark // 60:04d}m.json").write_text(
-                "{}"
+                json.dumps({
+                    "observed_total_elapsed_s": float(mark),
+                    "solver_ended_before_checkpoint": False,
+                })
             )
-        (progress / "final.json").write_text("{}")
+        (progress / "final.json").write_text(json.dumps({
+            "kind": "final",
+            "final": {"status_name": "TIME_LIMIT"},
+        }))
         augmented = arm == launcher.GIRO40_AUGMENTED
         return {
             "source_snapshot_mark_minutes": 1440,
+            "status_name": "TIME_LIMIT",
             "incumbent_found": True,
             "continuous_cost_pricing_certified": False,
+            "pricing_certificate_scope": "not_certified",
+            "optimal_scope": "none",
+            "two_stage": {"stage2_executed": False},
             "extra_route_sources": [],
             "physical_pool_preparation_wall_s": 1.0,
             "source_hashing_wall_s": 2.0,
-            "gurobi_optimize_wall_s": 3.0,
-            "end_to_end_before_publication_s": 7.0,
+            "gurobi_optimize_wall_s": float(limit),
+            "end_to_end_before_publication_s": float(limit + 4),
+            "runtime_s": float(limit),
             "node_count": 12.0,
             "solution_count": 2,
             "mip_provenance": {
@@ -431,6 +457,7 @@ class K40CSOvernightTests(unittest.TestCase):
                     "accepted": True if augmented else None
                 },
             },
+            "progress": {"termination_signal": None},
             "physical_pool_audit": {
                 "total_columns": 100,
                 "accepted_columns": 100,
@@ -457,6 +484,21 @@ class K40CSOvernightTests(unittest.TestCase):
             changed = copy.deepcopy(result)
             changed.pop("source_hashing_wall_s")
             with self.assertRaisesRegex(ValueError, "timing missing"):
+                validate_result(
+                    changed, progress_dir=progress, arm="RAW",
+                    time_limit_s=28800, source_label="R1_CS",
+                )
+            changed = copy.deepcopy(result)
+            changed["physical_pool_preparation_wall_s"] = -1.0
+            with self.assertRaisesRegex(ValueError, "timing missing"):
+                validate_result(
+                    changed, progress_dir=progress, arm="RAW",
+                    time_limit_s=28800, source_label="R1_CS",
+                )
+            changed = copy.deepcopy(result)
+            changed["status_name"] = "INTERRUPTED"
+            changed["progress"]["termination_signal"] = "SIGTERM"
+            with self.assertRaisesRegex(ValueError, "terminal status"):
                 validate_result(
                     changed, progress_dir=progress, arm="RAW",
                     time_limit_s=28800, source_label="R1_CS",
@@ -514,6 +556,33 @@ class K40CSOvernightTests(unittest.TestCase):
                     arm=launcher.GIRO40_AUGMENTED,
                     time_limit_s=7200, source_label="R2_CS",
                 )
+
+    def test_incomplete_overnight_campaign_cannot_be_summarized(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = self._build_plan(root)
+            campaign = root / "campaign"
+            campaign.mkdir()
+            plan_raw = launcher._canonical(plan)
+            (campaign / "approved-plan.json").write_bytes(plan_raw)
+            manifest = copy.deepcopy(plan)
+            manifest["approval_sha256"] = hashlib.sha256(
+                plan_raw
+            ).hexdigest()
+            manifest["submitted"] = True
+            manifest["submission_atomicity"] = (
+                "all_cells_held_until_every_sbatch_is_accepted"
+            )
+            for index, job in enumerate(manifest["jobs"], start=1):
+                job["job_id"] = str(1000 + index)
+                job["submission_state"] = "released"
+            (campaign / "campaign.json").write_text(
+                json.dumps(manifest)
+            )
+            with self.assertRaisesRegex(
+                ValueError, "no completed result"
+            ):
+                summarize(campaign, root / "summary")
 
 
 if __name__ == "__main__":

@@ -976,9 +976,10 @@ def merge_validated_partition_start(
 
     Unlike ``--extra-routes``, this path is fail-closed: every supplied route
     must be a real route under the pool's physics, and the supplied routes
-    together must cover every pool trip exactly once.  The selected start uses
-    the cheapest pool realization for each supplied trip incidence after
-    merging, so an existing cheaper duplicate never weakens the start.
+    together must cover every pool trip exactly once. Supplied routes are
+    appended as auditable columns and assigned directly as the MIP start;
+    duplicate incidences are retained and counted rather than silently
+    replacing either cost realization.
     """
 
     from audit_giro_known_columns import HORIZON_MIN, build_problem

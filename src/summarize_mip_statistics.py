@@ -290,6 +290,21 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     ):
         if manifest.get(key) != approved.get(key):
             raise ValueError(f"campaign {key} differs from approved plan")
+    strict_overnight = manifest.get("mode") == "k40_cs_overnight"
+    if strict_overnight:
+        from validate_k40_cs_overnight_plan import validate_plan
+        validate_plan(
+            approved,
+            expected_commit=(
+                manifest["checkout_identity"]["expected_commit"]
+            ),
+        )
+        if manifest.get("submitted") is not True:
+            raise ValueError("overnight campaign was not fully submitted")
+        if manifest.get("submission_atomicity") != (
+            "all_cells_held_until_every_sbatch_is_accepted"
+        ):
+            raise ValueError("overnight campaign was not atomically released")
     campaign = manifest["campaign"]
     checkpoint_rows = []
     final_rows = []
@@ -318,6 +333,13 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             if key not in mutable_fields
         ):
             raise ValueError(f"{job['cell_id']} differs from approved plan")
+        if strict_overnight and (
+            job.get("submission_state") != "released"
+            or not str(job.get("job_id") or "").isdigit()
+        ):
+            raise ValueError(
+                f"{job['cell_id']} was not released as an approved job"
+            )
         progress_dir = Path(job["progress_dir"])
         improvements = []
         if progress_dir.is_dir():
@@ -354,7 +376,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     or parameters.get("cover") is not False
                     or int(parameters.get("threads", -1)) != 8
                     or (
-                        job["arm"] == "GIRO"
+                        job["arm"] in {"GIRO", "GIRO40-AUGMENTED"}
                         and metadata.get(
                             "source_initial_partition_sha256"
                         ) != job["validated_start"]["sha256"]
@@ -440,6 +462,10 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 })
                 improvements = payload.get("incumbent_improvements") or []
         output = Path(job["output"])
+        if strict_overnight and not output.is_file():
+            raise ValueError(
+                f"{job['cell_id']} has no completed result artifact"
+            )
         result = json.loads(output.read_text()) if output.is_file() else {}
         completion_payload = {}
         if result:
@@ -459,7 +485,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                     f"{job['cell_id']} final result/progress mismatch"
                 )
             completion_path = progress_dir / "worker_completion.json"
-            if manifest.get("mode") == "k40_cs_overnight":
+            if strict_overnight:
                 if not completion_path.is_file():
                     raise ValueError(
                         f"{job['cell_id']} lacks worker completion timing"

@@ -50,6 +50,10 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
         "checkout is not tracked-clean",
     )
     _require(
+        identity.get("runtime_artifacts_absent") is True,
+        "checkout has unreviewed runtime artifacts",
+    )
+    _require(
         plan.get("fresh_exact_cg_preparations") == [],
         "plan contains a CG preparation",
     )
@@ -57,6 +61,11 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
     _require(resources.get("partition") == "scaglione", "wrong partition")
     _require(resources.get("threads") == 8, "wrong thread count")
     _require(resources.get("requeue") is False, "requeue enabled")
+    _require(
+        resources.get("submission_release")
+        == "atomic_from_held_jobs",
+        "jobs are not held for one atomic release",
+    )
     _require(
         resources.get("signal") == "B:USR1@180",
         "graceful signal guard changed",
@@ -156,6 +165,14 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
             job.get("partitioning") == "strict_exact_once"
             and job.get("two_stage") is True,
             f"{key}: solver formulation changed",
+        )
+        _require(
+            job.get("cost_stage_policy") == (
+                "run_only_after_finite_pool_fleet_proof"
+                if arm == "RAW"
+                else "disabled_for_mixed_augmented_cost_semantics"
+            ),
+            f"{key}: route-cost stage policy changed",
         )
         _require(
             len(str(job.get("job_name") or "")) <= 15,

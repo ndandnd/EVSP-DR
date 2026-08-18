@@ -55,6 +55,31 @@ PYTHON=${EVSP_MIP_PYTHON:-}
 if [[ -z "$PYTHON" ]]; then
   PYTHON=$(command -v python) || fatal "python is unavailable"
 fi
+export PYTHONDONTWRITEBYTECODE=1
+"$PYTHON" -I -B - "$ROOT" <<'PY' \
+  || fatal "checkout contains ignored/importable runtime artifacts"
+import os,pathlib,sys
+root=pathlib.Path(sys.argv[1]).resolve()
+unsafe=[]
+for scan_root in (root,root/"src"):
+    if not scan_root.exists():
+        continue
+    for current,dirs,files in os.walk(scan_root):
+        current_path=pathlib.Path(current)
+        excluded={".git","results","logs"}
+        if current_path == root:
+            excluded.add("src")
+        dirs[:]=[name for name in dirs if name not in excluded]
+        if current_path.name == "__pycache__":
+            unsafe.append(str(current_path.relative_to(root)))
+            dirs[:]=[]
+            continue
+        for name in files:
+            if pathlib.Path(name).suffix.lower() in {".pyc",".pyo",".so",".pth"}:
+                unsafe.append(str((current_path/name).relative_to(root)))
+if unsafe:
+    raise SystemExit(f"unsafe runtime artifacts: {sorted(set(unsafe))[:10]}")
+PY
 "$PYTHON" -c \
   'import sys, gurobipy; assert sys.version_info[:2] == (3, 12)' \
   || fatal "Python 3.12/Gurobi environment unavailable"

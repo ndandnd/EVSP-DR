@@ -50,7 +50,7 @@
   "instance_csv": "duty_unions_big/Practice_Custom_DutyUnion_k40_r1.csv",
   "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
   "literal_giro_duty_count": 42,
-  "partition_sha256": "9a71179b79072969264d04326f58214c51cf16096de7cd17b05d3a140d30ebe6",
+  "partition_sha256": "9e007d51c6bbbdc4f01a00a26ba3bcfa1ec4340df9aab8227a12cf0dc35ecb11",
   "physics": {
     "block_min": 10,
     "charge_kw": 300.0,
@@ -62,16 +62,25 @@
   "pricing_certificate_scope": "none_for_augmented_routes",
   "provenance": {
     "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "generator_environment": {
+      "pandas": "2.3.3",
+      "python": "3.12.3",
+      "scipy": "1.15.3"
+    },
     "giro_master_name": "Par_VehicleDetails_Updated.csv",
     "giro_master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
     "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
-    "source_status_names": [
-      "k40r1_flat_CS.m1440.snapshot.json",
-      "k40r1_flat_CS.m1440.snapshot.json"
-    ],
-    "source_status_sha256": [
-      "04c3d5d9fe701fbb3bc4fd343e58480fabebf27bb18ef2c60e23a34e29b0200b",
-      "780431fea40763d42576272bd8e9260f3ed2c8541b6d77f751e17f342dfb1202"
+    "source_statuses": [
+      {
+        "label": "R1_CS",
+        "name": "k40r1_flat_CS.m1440.snapshot.json",
+        "sha256": "04c3d5d9fe701fbb3bc4fd343e58480fabebf27bb18ef2c60e23a34e29b0200b"
+      },
+      {
+        "label": "R2_CS",
+        "name": "k40r1_flat_CS.m1440.snapshot.json",
+        "sha256": "780431fea40763d42576272bd8e9260f3ed2c8541b6d77f751e17f342dfb1202"
+      }
     ]
   },
   "route_count": 40,
