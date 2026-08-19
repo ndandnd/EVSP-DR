@@ -102,6 +102,9 @@ PROBE_WAITING_RESOLUTIONS = {
 }
 PROBE_SLURM_QUERY_TIMEOUT_S = 10.0
 SBATCH_TIMEOUT_S = 30.0
+BOUND_RELEASE_COMMAND_ATTEMPTS = 3
+BOUND_RELEASE_VERIFY_ATTEMPTS = 5
+BOUND_RELEASE_VERIFY_DELAY_S = 1.0
 
 
 def canonical(payload):
@@ -1325,38 +1328,51 @@ def submit(
         # controller ID are durable.  This gives every accepted-before-record
         # crash window a unique held job that the exact same submission can
         # discover and resume.
+        # Clear every cached claim in one durable write before revalidating
+        # any of them.  If the process stops or one verification fails, the
+        # manifest cannot retain a stale ``released=true`` for work that was
+        # not observed during this invocation.
+        for spec in probe_specs.values():
+            spec["released"] = False
+            spec.pop("release_verification", None)
+        activation["released"] = False
+        activation.pop("release_verification", None)
+        manifest["infrastructure_probes"] = dict(probe_specs)
+        manifest["activation"] = activation
+        _replace_json(manifest_path, manifest)
         for partition in PROBE_PARTITIONS:
             spec = probe_specs[partition]
-            if spec.get("released") is not True:
-                released = _release_held_probe(plan, spec)
-                if released.returncode != 0:
-                    manifest["submission_state"] = "probe_release_failed"
-                    manifest["probe_release_error"] = (
-                        released.stderr or released.stdout or ""
-                    ).strip()
-                    _replace_json(manifest_path, manifest)
-                    raise RuntimeError(
-                        f"probe release failed on {partition}"
-                    )
-                spec["released"] = True
+            # Revalidate scheduler state on every restart.  A Boolean written
+            # by a prior process cannot prove that Slurm cleared the hold.
+            released = _release_held_probe(plan, spec)
+            if released.returncode != 0:
+                manifest["submission_state"] = "probe_release_failed"
+                manifest["probe_release_error"] = (
+                    released.stderr or released.stdout or ""
+                ).strip()
                 manifest["infrastructure_probes"] = dict(probe_specs)
                 _replace_json(manifest_path, manifest)
+                raise RuntimeError(
+                    f"probe release failed on {partition}"
+                )
+            spec["released"] = True
+            manifest["infrastructure_probes"] = dict(probe_specs)
+            _replace_json(manifest_path, manifest)
         manifest["probe_state"] = "submitted"
         manifest["submission_state"] = "activation_held"
         _replace_json(manifest_path, manifest)
-        if activation.get("released") is not True:
-            released = _release_held_activation(plan, activation)
-            if released.returncode != 0:
-                manifest["submission_state"] = "activation_release_failed"
-                manifest["activation_release_error"] = (
-                    released.stderr or released.stdout or ""
-                ).strip()
-                _replace_json(manifest_path, manifest)
-                raise RuntimeError("activation-controller release failed")
-            activation["released"] = True
-            manifest["activation"] = activation
-            manifest["submission_state"] = "activation_released"
+        released = _release_held_activation(plan, activation)
+        if released.returncode != 0:
+            manifest["submission_state"] = "activation_release_failed"
+            manifest["activation_release_error"] = (
+                released.stderr or released.stdout or ""
+            ).strip()
             _replace_json(manifest_path, manifest)
+            raise RuntimeError("activation-controller release failed")
+        activation["released"] = True
+        manifest["activation"] = activation
+        manifest["submission_state"] = "activation_released"
+        _replace_json(manifest_path, manifest)
         if pending_retry is not None:
             pending_retry["state"] = "dispatched"
             pending_retry["activation_job_id"] = str(activation["job_id"])
@@ -1409,24 +1425,21 @@ def _activation_spec(
         raise ValueError("both recorded probe job IDs are required")
     if len(set(probe_job_ids.values())) != 2:
         raise ValueError("probe jobs must be distinct")
+    # Always retain both exact probe jobs in the activation barrier.  Cached
+    # ``released`` flags are not scheduler evidence, and ``afterany`` remains
+    # valid when a probe is already terminal.
     derived_dependencies = [
-        probe_job_ids[partition]
-        for partition in PROBE_PARTITIONS
-        if probe_specs[partition].get("released") is not True
+        probe_job_ids[partition] for partition in PROBE_PARTITIONS
     ]
     if dependency_job_ids is None:
         dependency_job_ids = derived_dependencies
-    if (
-        not isinstance(dependency_job_ids, list)
-        or len(dependency_job_ids) != len(set(dependency_job_ids))
-        or any(
-            not str(value).isdigit()
-            or str(value) not in set(probe_job_ids.values())
-            for value in dependency_job_ids
-        )
-    ):
+    if not isinstance(dependency_job_ids, list):
         raise ValueError("activation dependency job IDs are invalid")
     dependency_job_ids = [str(value) for value in dependency_job_ids]
+    if dependency_job_ids != derived_dependencies:
+        raise ValueError(
+            "activation dependencies must equal both ordered probe job IDs"
+        )
     return {
         "job_id": None,
         "attempt": attempt,
@@ -1612,13 +1625,13 @@ def _resolve_bound_job(plan, spec, *, runner=None):
     return {**rows[0], "source": "sacct", "live": False}
 
 
-def _release_bound_job(plan, spec, label):
-    try:
-        observation = _resolve_bound_job(plan, spec)
-    except (RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
-        return subprocess.CompletedProcess(
-            args=[], returncode=3, stdout="", stderr=str(exc)
-        )
+def _bound_release_observation_result(observation, label):
+    """Classify an exact bound-job observation after/before release.
+
+    ``None`` means the same job is authoritatively still user-held and a
+    bounded release retry is permitted.  Every other outcome is terminal for
+    the release operation and is returned as a ``CompletedProcess``.
+    """
     state = observation["state"]
     if state in PROBE_TERMINAL_STATES:
         if label == "activation" and state != "COMPLETED":
@@ -1635,27 +1648,136 @@ def _release_bound_job(plan, spec, label):
             args=[], returncode=3, stdout="",
             stderr=f"{label} has no authoritative live or terminal state",
         )
-    if state == "RUNNING" or (
-        state == "PENDING" and observation.get("reason") != "JobHeldUser"
-    ):
+    if state in {"RUNNING", "CONFIGURING", "COMPLETING"}:
         return subprocess.CompletedProcess(
             args=[], returncode=0,
             stdout=json.dumps(observation, sort_keys=True), stderr="",
         )
-    if state != "PENDING" or observation.get("reason") != "JobHeldUser":
+    if state == "PENDING":
+        reason = str(observation.get("reason") or "")
+        if not reason:
+            return subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr=f"{label} pending reason is missing",
+            )
+        if reason == "JobHeldUser":
+            return None
+        if reason.startswith("JobHeld"):
+            return subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr=f"{label} remains scheduler-held: {reason}",
+            )
+        if reason == "DependencyNeverSatisfied" or (
+            label == "probe" and reason == "Dependency"
+        ):
+            return subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr=(
+                    f"{label} has an invalid post-release reason: {reason}"
+                ),
+            )
+        return subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=json.dumps(observation, sort_keys=True), stderr="",
+        )
+    return subprocess.CompletedProcess(
+        args=[], returncode=3, stdout="",
+        stderr=f"{label} is not proven held or released",
+    )
+
+
+def _record_release_verification(
+    spec, observation, label, command_attempts, result,
+):
+    if result.returncode == 0:
+        spec["release_verification"] = {
+            "verified": True,
+            "role": label,
+            "job_id": str(spec["job_id"]),
+            "command_attempts": command_attempts,
+            "observation": observation,
+        }
+    return result
+
+
+def _release_bound_job(plan, spec, label, *, sleeper=time.sleep):
+    spec.pop("release_verification", None)
+    try:
+        observation = _resolve_bound_job(plan, spec)
+    except (RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
         return subprocess.CompletedProcess(
             args=[], returncode=3, stdout="",
-            stderr=f"{label} is not proven held or released",
+            stderr=str(exc),
         )
-    try:
-        return _run_probe_slurm_query(
-            subprocess.run,
-            [plan["scontrol"]["path"], "release", str(spec["job_id"])],
+    classified = _bound_release_observation_result(observation, label)
+    if classified is not None:
+        return _record_release_verification(
+            spec, observation, label, 0, classified
         )
-    except (RuntimeError, subprocess.TimeoutExpired) as exc:
-        return subprocess.CompletedProcess(
-            args=[], returncode=3, stdout="", stderr=str(exc)
-        )
+
+    release_diagnostics = []
+    for release_attempt in range(1, BOUND_RELEASE_COMMAND_ATTEMPTS + 1):
+        try:
+            released = _run_probe_slurm_query(
+                subprocess.run,
+                [
+                    plan["scontrol"]["path"], "release",
+                    str(spec["job_id"]),
+                ],
+            )
+            release_diagnostics.append({
+                "attempt": release_attempt,
+                "returncode": released.returncode,
+                "stdout": (released.stdout or "").strip(),
+                "stderr": (released.stderr or "").strip(),
+            })
+        except (RuntimeError, subprocess.TimeoutExpired) as exc:
+            release_diagnostics.append({
+                "attempt": release_attempt,
+                "query_error": str(exc),
+            })
+
+        held_after_command = False
+        verified_observation = False
+        for verify_attempt in range(1, BOUND_RELEASE_VERIFY_ATTEMPTS + 1):
+            sleeper(BOUND_RELEASE_VERIFY_DELAY_S)
+            try:
+                observation = _resolve_bound_job(plan, spec)
+            except ValueError as exc:
+                return subprocess.CompletedProcess(
+                    args=[], returncode=3, stdout="", stderr=str(exc)
+                )
+            except (RuntimeError, subprocess.TimeoutExpired) as exc:
+                release_diagnostics.append({
+                    "attempt": release_attempt,
+                    "verification": verify_attempt,
+                    "query_error": str(exc),
+                })
+                continue
+
+            verified_observation = True
+            classified = _bound_release_observation_result(
+                observation, label
+            )
+            if classified is not None:
+                return _record_release_verification(
+                    spec, observation, label, release_attempt, classified
+                )
+            held_after_command = True
+            continue
+
+        if not verified_observation:
+            break
+        if not held_after_command:
+            break
+
+    return subprocess.CompletedProcess(
+        args=[], returncode=3, stdout="",
+        stderr=(
+            f"{label} release postcondition was not observed: "
+            + json.dumps(release_diagnostics, sort_keys=True)
+        ),
+    )
 
 
 def _release_held_activation(plan, spec):
@@ -2509,19 +2631,6 @@ def _activate_existing_locked(root, expected_plan_sha, wait_s):
     manifest["activation"]["state"] = "complete"
     _replace_json(manifest_path, manifest)
     return manifest
-def _release_gate_after_probes(
-    plan, gate, probe_results, *, runner=subprocess.run
-):
-    if not _probes_compatible(probe_results):
-        return subprocess.CompletedProcess(
-            args=[], returncode=3, stdout="", stderr="probe mismatch"
-        )
-    return runner(
-        [plan["scontrol"]["path"], "release", gate],
-        text=True, capture_output=True, check=False,
-    )
-
-
 def _submit_array(
     plan, plan_path, plan_sha, group, gate, logs, dependency=None
 ):

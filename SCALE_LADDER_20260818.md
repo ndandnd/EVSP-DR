@@ -19,6 +19,12 @@ The reviewed plan contains exactly:
   controller;
 - zero k40 MIP submissions (four reuse-only result slots).
 
+The held-job false-success incident and the resulting scheduler-state contract
+are documented in `SCALE_LADDER_RELEASE_INCIDENT_20260819.md`. Read that note
+before changing probe, activation, gate, dependency, or restart logic. In
+particular, a successful `scontrol` exit status is never a state-change
+postcondition.
+
 The portable-environment gate binds the exact interpreter and package bytes,
 versions, architecture, compiler/build dependencies, NumPy compiled SIMD
 baseline, and compiled dispatch set. NumPy's host-detected SIMD
@@ -74,11 +80,15 @@ BASH
 
 The successful top-level return is `INFRASTRUCTURE_ARMED=true`, not “138 jobs
 running.” It proves that two held probes and one held activation controller had
-durable numeric IDs and were released. At that instant scientific work is still
-absent, unless the controller already won the harmless post-return race and
-advanced the manifest. The controller validates both exact probe artifacts and
-Slurm identities before creating reservations, one held scientific gate, and
-six arrays. It releases the gate only after all six array IDs are durable.
+durable numeric IDs and that their exact identity-bound scheduler states were
+observed after release; raw `scontrol` exit status is not accepted as proof.
+The manifest retains each release observation and command-attempt count. At
+that instant scientific work is still absent, unless the controller already
+won the harmless post-return race and advanced the manifest. The controller
+validates both exact probe artifacts and Slurm identities before creating
+reservations, one held scientific gate, and six arrays. It releases the gate
+only after all six array IDs are durable and applies the same observed-state
+postcondition to that release.
 
 Dependencies are fixed: primary CG and sensitivity CG wait for complete
 PREFLIGHT; MIP task `i` uses `aftercorr` on primary-CG task `i`; the

@@ -12,8 +12,12 @@ import time
 from pathlib import Path
 
 from launch_scale_ladder import (
+    BOUND_RELEASE_COMMAND_ATTEMPTS,
+    BOUND_RELEASE_VERIFY_ATTEMPTS,
+    BOUND_RELEASE_VERIFY_DELAY_S,
     PROBE_PARTITIONS,
     PROBE_RETRYABLE_STATES,
+    PROBE_TERMINAL_STATES,
     AMBIGUOUS_DISCOVERY_ATTEMPTS,
     AMBIGUOUS_DISCOVERY_DELAY_S,
     _campaign_lock,
@@ -224,6 +228,177 @@ def _require_gate_held(plan, gate, expected_plan_sha):
     ):
         raise ValueError("gate is not proven held by the user")
     return _approved_tool_path(plan, "scontrol")
+
+
+def _gate_release_observation_result(observation):
+    """Classify an exact scientific-gate release observation.
+
+    ``None`` means that the exact gate remains authoritatively user-held and
+    an idempotent release request is eligible.  A successful result means the
+    hold-clearing postcondition was observed, not merely that a command exited
+    zero.
+    """
+    state = observation.get("state")
+    if state in PROBE_TERMINAL_STATES:
+        if state == "COMPLETED" and observation.get("exit_code") == "0:0":
+            return subprocess.CompletedProcess(
+                args=[], returncode=0,
+                stdout=json.dumps(observation, sort_keys=True), stderr="",
+            )
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="",
+            stderr=f"scientific gate became terminal in state {state}",
+        )
+    if observation.get("live") is not True:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="",
+            stderr="scientific gate has no authoritative live state",
+        )
+    if state in {"CONFIGURING", "RUNNING", "COMPLETING"}:
+        return subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=json.dumps(observation, sort_keys=True), stderr="",
+        )
+    if state == "PENDING":
+        reason = str(observation.get("reason") or "")
+        if not reason:
+            return subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr="scientific gate pending reason is missing",
+            )
+        if reason == "JobHeldUser":
+            return None
+        if (
+            reason.startswith("JobHeld")
+            or reason in {"Dependency", "DependencyNeverSatisfied"}
+        ):
+            return subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr=(
+                    "scientific gate has an invalid post-release reason: "
+                    f"{reason}"
+                ),
+            )
+        return subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=json.dumps(observation, sort_keys=True), stderr="",
+        )
+    return subprocess.CompletedProcess(
+        args=[], returncode=3, stdout="",
+        stderr=f"scientific gate is not proven held or released: {state}",
+    )
+
+
+def _gate_release_verification(
+    gate, observation, command_attempts, command_diagnostics,
+):
+    return {
+        "verified": True,
+        "job_id": str(gate),
+        "command_attempts": command_attempts,
+        "observation": observation,
+        "command_diagnostics": list(command_diagnostics),
+    }
+
+
+def _release_gate_with_postcondition(
+    plan, gate, expected_plan_sha, *, runner=None, resolver=None,
+    sleeper=None,
+):
+    """Request gate release and verify the exact scheduler postcondition."""
+    runner = subprocess.run if runner is None else runner
+    resolver = _resolve_gate_state if resolver is None else resolver
+    sleeper = time.sleep if sleeper is None else sleeper
+    try:
+        observation = resolver(
+            plan, gate, expected_plan_sha, runner=runner
+        )
+    except (RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="", stderr=str(exc)
+        )
+    classified = _gate_release_observation_result(observation)
+    if classified is not None:
+        if classified.returncode != 0:
+            return classified
+        return subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=json.dumps(_gate_release_verification(
+                gate, observation, 0, [],
+            ), sort_keys=True),
+            stderr="",
+        )
+
+    try:
+        scontrol_path = _approved_tool_path(plan, "scontrol")
+    except ValueError as exc:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="", stderr=str(exc)
+        )
+    command_diagnostics = []
+    for command_attempt in range(1, BOUND_RELEASE_COMMAND_ATTEMPTS + 1):
+        try:
+            requested = _bounded_query(
+                runner, [str(scontrol_path), "release", str(gate)]
+            )
+            command_diagnostics.append({
+                "attempt": command_attempt,
+                "returncode": requested.returncode,
+                "stdout": (requested.stdout or "").strip(),
+                "stderr": (requested.stderr or "").strip(),
+            })
+        except (RuntimeError, subprocess.TimeoutExpired) as exc:
+            command_diagnostics.append({
+                "attempt": command_attempt,
+                "query_error": str(exc),
+            })
+
+        verified_observation = False
+        held_after_command = False
+        for verify_attempt in range(1, BOUND_RELEASE_VERIFY_ATTEMPTS + 1):
+            sleeper(BOUND_RELEASE_VERIFY_DELAY_S)
+            try:
+                observation = resolver(
+                    plan, gate, expected_plan_sha, runner=runner
+                )
+            except ValueError as exc:
+                return subprocess.CompletedProcess(
+                    args=[], returncode=3, stdout="", stderr=str(exc)
+                )
+            except (RuntimeError, subprocess.TimeoutExpired) as exc:
+                command_diagnostics.append({
+                    "attempt": command_attempt,
+                    "verification": verify_attempt,
+                    "query_error": str(exc),
+                })
+                continue
+            verified_observation = True
+            classified = _gate_release_observation_result(observation)
+            if classified is None:
+                held_after_command = True
+                continue
+            if classified.returncode != 0:
+                return classified
+            return subprocess.CompletedProcess(
+                args=[], returncode=0,
+                stdout=json.dumps(_gate_release_verification(
+                    gate, observation, command_attempt,
+                    command_diagnostics,
+                ), sort_keys=True),
+                stderr="",
+            )
+        if not verified_observation:
+            break
+        if not held_after_command:
+            break
+
+    return subprocess.CompletedProcess(
+        args=[], returncode=3, stdout="",
+        stderr=(
+            "scientific gate release postcondition was not observed: "
+            + json.dumps(command_diagnostics, sort_keys=True)
+        ),
+    )
 
 
 def _discover_probe_job(plan, expected_plan_sha, partition, spec):
@@ -905,19 +1080,38 @@ def _reconcile_locked(
     }:
         manifest["gate_state"] = "held"
     _replace_json(manifest_path, manifest)
-    if gate_state == "PENDING" and not release_held_gate:
-        manifest["gate_state"] = "held_probe_passed"
+    if gate_state == "COMPLETED":
+        manifest["gate_state"] = "released_reconciled"
+        manifest["submitted"] = True
+        manifest["gate_reconciliation"] = {
+            "source": gate_observation["source"],
+            "gate_job_id": gate, "state": "COMPLETED",
+        }
         _replace_json(manifest_path, manifest)
         return manifest
-    if gate_state == "PENDING" and release_held_gate:
-        scontrol_path = _require_gate_held(
-            plan, gate, expected_plan_sha
+    if gate_state in PROBE_TERMINAL_STATES:
+        raise ValueError(
+            f"scientific gate is terminal but not completed: {gate_state}"
         )
-        manifest["gate_state"] = "release_retry_attempting"
+
+    classified = _gate_release_observation_result(gate_observation)
+    if classified is None and not release_held_gate:
+        manifest["gate_state"] = "held_probe_passed"
+        manifest.pop("gate_release_verification", None)
         _replace_json(manifest_path, manifest)
-        released = _bounded_query(
-            subprocess.run,
-            [str(scontrol_path), "release", gate],
+        return manifest
+    if classified is not None and classified.returncode != 0:
+        manifest["gate_state"] = "held_release_failed"
+        manifest["release_error"] = classified.stderr
+        _replace_json(manifest_path, manifest)
+        raise ValueError(classified.stderr)
+
+    if classified is None:
+        manifest["gate_state"] = "release_retry_attempting"
+        manifest.pop("gate_release_verification", None)
+        _replace_json(manifest_path, manifest)
+        released = _release_gate_with_postcondition(
+            plan, gate, expected_plan_sha
         )
         if released.returncode != 0:
             manifest["gate_state"] = "held_release_failed"
@@ -925,18 +1119,19 @@ def _reconcile_locked(
                 released.stderr or released.stdout
             ).strip()
             _replace_json(manifest_path, manifest)
-            raise RuntimeError("gate release retry failed")
-        manifest["gate_state"] = "release_retry_requested"
-        _replace_json(manifest_path, manifest)
-        return manifest
-    if gate_state != "COMPLETED":
-        raise ValueError("gate is not proven completed")
-    manifest["gate_state"] = "released_reconciled"
-    manifest["submitted"] = True
-    manifest["gate_reconciliation"] = {
-        "source": gate_observation["source"],
-        "gate_job_id": gate, "state": "COMPLETED",
-    }
+            raise RuntimeError(
+                "scientific gate release postcondition was not verified"
+            )
+        verification = json.loads(released.stdout)
+    else:
+        # A restart may observe a prior release request already in progress.
+        # Preserve that state without issuing another mutation.
+        verification = _gate_release_verification(
+            gate, gate_observation, 0, []
+        )
+    manifest["gate_release_verification"] = verification
+    manifest["gate_state"] = "release_retry_requested"
+    manifest.pop("release_error", None)
     _replace_json(manifest_path, manifest)
     return manifest
 

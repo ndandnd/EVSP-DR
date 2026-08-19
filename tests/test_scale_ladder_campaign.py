@@ -20,6 +20,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import launch_scale_ladder as ladder  # noqa: E402
+import reconcile_scale_ladder_gate as gate_reconcile  # noqa: E402
 from tariff_response_environment import (  # noqa: E402
     NUMPY_BUILD_IDENTITY_SCHEMA,
     PORTABLE_FIELDS,
@@ -656,9 +657,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 call.kwargs == {"held": True}
                 for call in submit_probe.call_args_list
             ))
-            self.assertEqual(release_probe.call_count, 2)
+            self.assertEqual(release_probe.call_count, 4)
             submit_activation.assert_called_once()
-            release_activation.assert_called_once()
+            self.assertEqual(release_activation.call_count, 2)
             stage_inputs.assert_not_called()
             reserve.assert_not_called()
             submit_array.assert_not_called()
@@ -669,6 +670,73 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertTrue(first["activation"]["released"])
             self.assertEqual(second["activation"]["job_id"], "103")
             self.assertFalse((root / "input").exists())
+
+    def test_restart_clears_cached_release_claims_before_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan = {
+                "campaign_root": str(root),
+                "submission_protocol": "probe_first_activation_v1",
+            }
+            plan_sha = hashlib.sha256(ladder.canonical(plan)).hexdigest()
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value=None
+            ), patch.object(
+                ladder, "_submit_probe", side_effect=["101", "102"]
+            ), patch.object(
+                ladder, "_discover_bound_job", return_value=None
+            ), patch.object(
+                ladder, "_submit_activation", return_value="103"
+            ), patch.object(
+                ladder, "_release_held_probe", return_value=released
+            ), patch.object(
+                ladder, "_release_held_activation", return_value=released
+            ):
+                first = ladder.submit(plan, plan_sha)
+            self.assertTrue(all(
+                spec["released"]
+                for spec in first["infrastructure_probes"].values()
+            ))
+            self.assertTrue(first["activation"]["released"])
+
+            failed = subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr="release postcondition was not observed",
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job",
+                return_value={
+                    "state": "PENDING", "reason": "JobHeldUser",
+                    "live": True,
+                },
+            ), patch.object(
+                ladder, "_release_held_probe", return_value=failed,
+            ) as release_probe, patch.object(
+                ladder, "_release_held_activation"
+            ) as release_activation:
+                with self.assertRaisesRegex(
+                    RuntimeError, "probe release failed"
+                ):
+                    ladder.submit(plan, plan_sha)
+
+            release_probe.assert_called_once()
+            release_activation.assert_not_called()
+            recorded = json.loads((root / "campaign.json").read_text())
+            self.assertEqual(
+                recorded["submission_state"], "probe_release_failed"
+            )
+            self.assertTrue(all(
+                spec["released"] is False
+                for spec in recorded["infrastructure_probes"].values()
+            ))
+            self.assertIs(recorded["activation"]["released"], False)
 
     def test_top_level_recovers_probe_accepted_before_id_publication(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -828,7 +896,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 submit_probe.call_args.args[3]["partition"], "scaglione"
             )
             submit_activation.assert_called_once()
-            self.assertEqual(release_probe.call_count, 1)
+            self.assertEqual(release_probe.call_count, 2)
             self.assertEqual(
                 observed["infrastructure_probes"]["default_partition"]
                 ["job_id"],
@@ -841,7 +909,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertEqual(observed["activation"]["attempt"], 2)
             self.assertEqual(observed["activation"]["job_id"], "105")
             self.assertEqual(
-                observed["activation"]["dependency_job_ids"], ["104"]
+                observed["activation"]["dependency_job_ids"],
+                ["101", "104"],
             )
             self.assertEqual(
                 observed["probe_attempt_history"]["scaglione"][0]
@@ -962,7 +1031,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertEqual(observed["activation"]["attempt"], 2)
             self.assertEqual(observed["activation"]["job_id"], "106")
             self.assertEqual(
-                observed["activation"]["dependency_job_ids"], []
+                observed["activation"]["dependency_job_ids"],
+                ["101", "102"],
             )
             self.assertTrue(
                 ladder._probes_compatible(observed["probe_results"])
@@ -1116,7 +1186,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             specs["scaglione"] = retry_spec
             activation = ladder._activation_spec(
                 plan_sha, root, specs, 2,
-                dependency_job_ids=["104"],
+                dependency_job_ids=["101", "104"],
             )
             activation.update({"job_id": "105", "released": True})
             passed = {
@@ -1175,7 +1245,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertEqual(observed["activation"]["attempt"], 3)
             self.assertEqual(observed["activation"]["job_id"], "106")
             self.assertEqual(
-                observed["activation"]["dependency_job_ids"], []
+                observed["activation"]["dependency_job_ids"],
+                ["101", "104"],
             )
             self.assertEqual(
                 len(observed["infrastructure_retry_history"]), 1
@@ -1192,7 +1263,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             specs["scaglione"] = retry_spec
             activation = ladder._activation_spec(
                 plan_sha, live_root, specs, 2,
-                dependency_job_ids=["104"],
+                dependency_job_ids=["101", "104"],
             )
             activation.update({"job_id": "105", "released": True})
             manifest_path = live_root / "campaign.json"
@@ -1290,6 +1361,15 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertIn("--dependency=afterany:201:202", arguments)
             self.assertNotIn("--signal=B:USR1@60", arguments)
             self.assertNotIn("afterok:201:202", arguments)
+            for invalid in ([], ["201"], ["202"], ["202", "201"]):
+                with self.subTest(invalid=invalid):
+                    with self.assertRaisesRegex(
+                        ValueError, "both ordered probe job IDs"
+                    ):
+                        ladder._activation_spec(
+                            "a" * 64, root, probes, attempt=1,
+                            dependency_job_ids=invalid,
+                        )
 
     def test_top_level_probe_submission_is_held_but_retry_is_not(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1381,6 +1461,252 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             ):
                 rejected = ladder._release_held_probe(plan, spec)
             self.assertNotEqual(rejected.returncode, 0)
+
+    def test_release_retries_until_the_exact_hold_clears(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        released = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "None", "live": True,
+        }
+        command_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="", stderr=""
+        )
+        sleeper = Mock()
+        with patch.object(
+            ladder, "_resolve_bound_job",
+            side_effect=[held, held, released],
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=command_result,
+        ) as release_command:
+            spec = {"job_id": "801"}
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                spec, "probe", sleeper=sleeper,
+            )
+        self.assertEqual(observed.returncode, 0)
+        release_command.assert_called_once()
+        self.assertEqual(sleeper.call_count, 2)
+        self.assertEqual(
+            json.loads(observed.stdout)["reason"], "None"
+        )
+        self.assertEqual(spec["release_verification"], {
+            "verified": True,
+            "role": "probe",
+            "job_id": "801",
+            "command_attempts": 1,
+            "observation": released,
+        })
+
+    def test_release_reissues_only_after_a_full_stale_hold_window(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        released = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "Priority", "live": True,
+        }
+        command_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="", stderr=""
+        )
+        sleeper = Mock()
+        observations = [held]
+        observations.extend(
+            held for _ in range(ladder.BOUND_RELEASE_VERIFY_ATTEMPTS)
+        )
+        observations.append(released)
+        with patch.object(
+            ladder, "_resolve_bound_job", side_effect=observations,
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=command_result,
+        ) as release_command:
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                {"job_id": "801"}, "probe", sleeper=sleeper,
+            )
+        self.assertEqual(observed.returncode, 0)
+        self.assertEqual(release_command.call_count, 2)
+        self.assertEqual(
+            sleeper.call_count,
+            ladder.BOUND_RELEASE_VERIFY_ATTEMPTS + 1,
+        )
+
+    def test_release_command_exit_zero_without_postcondition_is_failure(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        command_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="accepted", stderr=""
+        )
+        sleeper = Mock()
+        with patch.object(
+            ladder, "_resolve_bound_job",
+            side_effect=[
+                held for _ in range(
+                    1 + (
+                        ladder.BOUND_RELEASE_COMMAND_ATTEMPTS
+                        * ladder.BOUND_RELEASE_VERIFY_ATTEMPTS
+                    )
+                )
+            ],
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=command_result,
+        ) as release_command:
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                {"job_id": "801"}, "probe", sleeper=sleeper,
+            )
+        self.assertNotEqual(observed.returncode, 0)
+        self.assertIn("postcondition was not observed", observed.stderr)
+        self.assertEqual(
+            release_command.call_count,
+            ladder.BOUND_RELEASE_COMMAND_ATTEMPTS,
+        )
+        self.assertEqual(
+            sleeper.call_count,
+            (
+                ladder.BOUND_RELEASE_COMMAND_ATTEMPTS
+                * ladder.BOUND_RELEASE_VERIFY_ATTEMPTS
+            ),
+        )
+
+    def test_release_verifies_state_even_when_scontrol_returns_nonzero(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        running = {
+            "job_id": "801", "state": "RUNNING",
+            "reason": "None", "live": True,
+        }
+        command_result = subprocess.CompletedProcess(
+            args=[], returncode=1, stdout="", stderr="already released"
+        )
+        with patch.object(
+            ladder, "_resolve_bound_job", side_effect=[held, running]
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=command_result,
+        ):
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                {"job_id": "801"}, "probe", sleeper=Mock(),
+            )
+        self.assertEqual(observed.returncode, 0)
+        self.assertEqual(json.loads(observed.stdout)["state"], "RUNNING")
+
+    def test_release_retries_transient_verification_queries_only(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        released = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "Priority", "live": True,
+        }
+        command_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="", stderr=""
+        )
+        sleeper = Mock()
+        with patch.object(
+            ladder, "_resolve_bound_job",
+            side_effect=[held, RuntimeError("controller busy"), released],
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=command_result,
+        ) as release_command:
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                {"job_id": "801"}, "probe", sleeper=sleeper,
+            )
+        self.assertEqual(observed.returncode, 0)
+        release_command.assert_called_once()
+        self.assertEqual(sleeper.call_count, 2)
+
+    def test_release_postconditions_are_role_and_reason_specific(self):
+        cases = (
+            ("probe", "PENDING", "", 3),
+            ("probe", "PENDING", "JobHeldUser", None),
+            ("probe", "PENDING", "JobHeldAdmin", 3),
+            ("probe", "PENDING", "Dependency", 3),
+            ("activation", "PENDING", "Dependency", 0),
+            ("probe", "PENDING", "DependencyNeverSatisfied", 3),
+            ("activation", "PENDING", "DependencyNeverSatisfied", 3),
+            ("probe", "CONFIGURING", "None", 0),
+            ("activation", "COMPLETING", "None", 0),
+            ("activation", "FAILED", "None", 3),
+            ("probe", "COMPLETED", "None", 0),
+        )
+        for label, state, reason, expected in cases:
+            with self.subTest(label=label, state=state, reason=reason):
+                observed = ladder._bound_release_observation_result(
+                    {
+                        "job_id": "801", "state": state,
+                        "reason": reason,
+                        "live": state not in ladder.PROBE_TERMINAL_STATES,
+                    },
+                    label,
+                )
+                if expected is None:
+                    self.assertIsNone(observed)
+                else:
+                    self.assertEqual(observed.returncode, expected)
+
+    def test_release_identity_mismatch_during_verification_fails_once(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        command_result = subprocess.CompletedProcess(
+            args=[], returncode=0, stdout="", stderr=""
+        )
+        with patch.object(
+            ladder, "_resolve_bound_job",
+            side_effect=[held, ValueError("job identity mismatch")],
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=command_result,
+        ) as release_command:
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                {"job_id": "801"}, "probe", sleeper=Mock(),
+            )
+        self.assertNotEqual(observed.returncode, 0)
+        self.assertIn("identity mismatch", observed.stderr)
+        release_command.assert_called_once()
+
+    def test_release_fails_closed_when_every_post_query_fails(self):
+        held = {
+            "job_id": "801", "state": "PENDING",
+            "reason": "JobHeldUser", "live": True,
+        }
+        observations = [held]
+        observations.extend(
+            RuntimeError("controller query unavailable")
+            for _ in range(ladder.BOUND_RELEASE_VERIFY_ATTEMPTS)
+        )
+        with patch.object(
+            ladder, "_resolve_bound_job", side_effect=observations,
+        ), patch.object(
+            ladder, "_run_probe_slurm_query",
+            return_value=subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="", stderr=""
+            ),
+        ) as release_command:
+            observed = ladder._release_bound_job(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                {"job_id": "801"}, "probe", sleeper=Mock(),
+            )
+        self.assertNotEqual(observed.returncode, 0)
+        self.assertIn("postcondition was not observed", observed.stderr)
+        release_command.assert_called_once()
 
     def test_job_discovery_requires_comment_partition_and_name(self):
         spec = ladder._probe_spec(
@@ -2325,24 +2651,6 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             differences[0]["reason"], "missing_required_field"
         )
 
-    def test_failed_probe_never_releases_gate(self):
-        compatible = {
-            "default_partition": {"compatible": True},
-            "scaglione": {"compatible": True},
-        }
-        for failed in ("default_partition", "scaglione"):
-            results = copy.deepcopy(compatible)
-            results[failed]["compatible"] = False
-            runner = Mock()
-            completed = ladder._release_gate_after_probes(
-                {"scontrol": {"path": "/approved/scontrol"}},
-                "12345",
-                results,
-                runner=runner,
-            )
-            self.assertNotEqual(completed.returncode, 0)
-            runner.assert_not_called()
-
     def test_probe_result_binds_job_partition_and_artifact_hash(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -2381,18 +2689,6 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     timeout_s=1,
                 )
             self.assertTrue(ladder._probes_compatible(results))
-            release = Mock(return_value=subprocess.CompletedProcess(
-                args=[], returncode=0, stdout="", stderr=""
-            ))
-            released = ladder._release_gate_after_probes(
-                {"scontrol": {"path": "/approved/scontrol"}},
-                "500", results, runner=release,
-            )
-            self.assertEqual(released.returncode, 0)
-            release.assert_called_once_with(
-                ["/approved/scontrol", "release", "500"],
-                text=True, capture_output=True, check=False,
-            )
             bad = json.loads(
                 Path(specs["scaglione"]["output"]).read_text()
             )
@@ -3233,15 +3529,21 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             }))
             sacct_calls = []
             release_calls = []
+            release_requested = False
 
             def fake_run(command, **_kwargs):
+                nonlocal release_requested
                 executable = str(command[0])
                 if executable == tools["squeue"]["path"]:
+                    reason = (
+                        "Priority" if release_requested
+                        else "JobHeldUser"
+                    )
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
                             f"100|LDG{plan_sha[:5]}|PENDING|"
-                            "default_partition|JobHeldUser|"
+                            f"default_partition|{reason}|"
                             f"SLADG:{plan_sha[:20]}\n"
                         ),
                         stderr="",
@@ -3262,6 +3564,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     and command[1:] == ["release", "100"]
                 ):
                     release_calls.append((command, _kwargs))
+                    release_requested = True
                     return SimpleNamespace(
                         returncode=0, stdout="", stderr=""
                     )
@@ -3276,6 +3579,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             ), patch(
                 "reconcile_scale_ladder_gate._probes_compatible",
                 return_value=True,
+            ), patch(
+                "reconcile_scale_ladder_gate.time.sleep",
+                return_value=None,
             ):
                 reconciled = reconcile_gate(
                     root, plan_sha, release_held_gate=True
@@ -3288,7 +3594,225 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertEqual(
                 reconciled["gate_state"], "release_retry_requested"
             )
+            self.assertEqual(
+                reconciled["gate_release_verification"]
+                ["observation"]["reason"],
+                "Priority",
+            )
             self.assertIsNot(reconciled.get("submitted"), True)
+
+            # A verified helper failure must remain a durable held-gate
+            # failure and can never publish a submitted campaign.
+            recorded = json.loads((root / "campaign.json").read_text())
+            recorded["gate_state"] = "release_attempting"
+            recorded.pop("gate_release_verification", None)
+            (root / "campaign.json").write_text(json.dumps(recorded))
+            release_requested = False
+            failed_release = subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr="release postcondition was not observed",
+            )
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                side_effect=fake_run,
+            ), patch(
+                "reconcile_scale_ladder_gate._wait_for_probes",
+                return_value={"probe": "passed"},
+            ), patch(
+                "reconcile_scale_ladder_gate._probes_compatible",
+                return_value=True,
+            ), patch(
+                "reconcile_scale_ladder_gate._release_gate_with_postcondition",
+                return_value=failed_release,
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError, "postcondition was not verified"
+                ):
+                    reconcile_gate(
+                        root, plan_sha, release_held_gate=True
+                    )
+            failed_manifest = json.loads(
+                (root / "campaign.json").read_text()
+            )
+            self.assertEqual(
+                failed_manifest["gate_state"], "held_release_failed"
+            )
+            self.assertIsNot(failed_manifest.get("submitted"), True)
+
+    def test_gate_release_zero_exit_without_postcondition_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            scontrol = Path(tmp) / "scontrol"
+            scontrol.write_text("scontrol")
+            plan = {
+                "scontrol": {
+                    "available": True,
+                    "path": str(scontrol),
+                    "sha256": sha256_file(scontrol),
+                },
+            }
+            held = {
+                "job_id": "100", "state": "PENDING",
+                "reason": "JobHeldUser", "live": True,
+            }
+            resolver = Mock(return_value=held)
+            runner = Mock(return_value=SimpleNamespace(
+                returncode=0, stdout="accepted", stderr=""
+            ))
+            sleeper = Mock()
+            observed = gate_reconcile._release_gate_with_postcondition(
+                plan, "100", "a" * 64, runner=runner,
+                resolver=resolver, sleeper=sleeper,
+            )
+            self.assertNotEqual(observed.returncode, 0)
+            self.assertIn("postcondition was not observed", observed.stderr)
+            self.assertEqual(
+                runner.call_count,
+                ladder.BOUND_RELEASE_COMMAND_ATTEMPTS,
+            )
+            self.assertEqual(
+                sleeper.call_count,
+                ladder.BOUND_RELEASE_COMMAND_ATTEMPTS
+                * ladder.BOUND_RELEASE_VERIFY_ATTEMPTS,
+            )
+            missing_reason = gate_reconcile._gate_release_observation_result({
+                "job_id": "100", "state": "PENDING",
+                "reason": "", "live": True,
+            })
+            self.assertNotEqual(missing_reason.returncode, 0)
+
+    def test_gate_release_reissues_after_one_full_stale_window(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            scontrol = Path(tmp) / "scontrol"
+            scontrol.write_text("scontrol")
+            plan = {
+                "scontrol": {
+                    "available": True,
+                    "path": str(scontrol),
+                    "sha256": sha256_file(scontrol),
+                },
+            }
+            held = {
+                "job_id": "100", "state": "PENDING",
+                "reason": "JobHeldUser", "live": True,
+            }
+            released = {
+                "job_id": "100", "state": "PENDING",
+                "reason": "Priority", "live": True,
+                "source": "squeue",
+            }
+            observations = [held]
+            observations.extend(
+                held for _ in range(
+                    ladder.BOUND_RELEASE_VERIFY_ATTEMPTS
+                )
+            )
+            observations.append(released)
+            resolver = Mock(side_effect=observations)
+            runner = Mock(return_value=SimpleNamespace(
+                returncode=0, stdout="", stderr=""
+            ))
+            observed = gate_reconcile._release_gate_with_postcondition(
+                plan, "100", "a" * 64, runner=runner,
+                resolver=resolver, sleeper=Mock(),
+            )
+            self.assertEqual(observed.returncode, 0)
+            self.assertEqual(runner.call_count, 2)
+            verification = json.loads(observed.stdout)
+            self.assertEqual(verification["command_attempts"], 2)
+            self.assertEqual(
+                verification["observation"]["reason"], "Priority"
+            )
+
+    def test_gate_release_uses_observation_not_command_return_code(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            scontrol = Path(tmp) / "scontrol"
+            scontrol.write_text("scontrol")
+            plan = {
+                "scontrol": {
+                    "available": True,
+                    "path": str(scontrol),
+                    "sha256": sha256_file(scontrol),
+                },
+            }
+            held = {
+                "job_id": "100", "state": "PENDING",
+                "reason": "JobHeldUser", "live": True,
+            }
+            running = {
+                "job_id": "100", "state": "RUNNING",
+                "reason": "None", "live": True,
+                "source": "squeue",
+            }
+            resolver = Mock(side_effect=[held, running])
+            runner = Mock(return_value=SimpleNamespace(
+                returncode=1, stdout="", stderr="already released"
+            ))
+            observed = gate_reconcile._release_gate_with_postcondition(
+                plan, "100", "a" * 64, runner=runner,
+                resolver=resolver, sleeper=Mock(),
+            )
+            self.assertEqual(observed.returncode, 0)
+            verification = json.loads(observed.stdout)
+            self.assertEqual(verification["command_attempts"], 1)
+            self.assertEqual(
+                verification["observation"]["state"], "RUNNING"
+            )
+
+            runner.reset_mock()
+            observed = gate_reconcile._release_gate_with_postcondition(
+                plan, "100", "a" * 64, runner=runner,
+                resolver=Mock(return_value=running), sleeper=Mock(),
+            )
+            self.assertEqual(observed.returncode, 0)
+            runner.assert_not_called()
+            self.assertEqual(
+                json.loads(observed.stdout)["command_attempts"], 0
+            )
+
+    def test_gate_release_query_failure_or_identity_mismatch_fails_once(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            scontrol = Path(tmp) / "scontrol"
+            scontrol.write_text("scontrol")
+            plan = {
+                "scontrol": {
+                    "available": True,
+                    "path": str(scontrol),
+                    "sha256": sha256_file(scontrol),
+                },
+            }
+            held = {
+                "job_id": "100", "state": "PENDING",
+                "reason": "JobHeldUser", "live": True,
+            }
+            for failure in (
+                ValueError("gate fingerprint mismatch"),
+                RuntimeError("controller query unavailable"),
+            ):
+                with self.subTest(failure=type(failure).__name__):
+                    post_observations = (
+                        [failure]
+                        if isinstance(failure, ValueError)
+                        else [
+                            RuntimeError("controller query unavailable")
+                            for _ in range(
+                                ladder.BOUND_RELEASE_VERIFY_ATTEMPTS
+                            )
+                        ]
+                    )
+                    resolver = Mock(
+                        side_effect=[held, *post_observations]
+                    )
+                    runner = Mock(return_value=SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    ))
+                    observed = (
+                        gate_reconcile._release_gate_with_postcondition(
+                            plan, "100", "a" * 64, runner=runner,
+                            resolver=resolver, sleeper=Mock(),
+                        )
+                    )
+                    self.assertNotEqual(observed.returncode, 0)
+                    runner.assert_called_once()
 
     def test_reconcile_recovers_partial_gate_and_array_submission(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -3676,6 +4200,12 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertNotIn('ALREADY_ARMED', wrapper)
         self.assertNotIn(
             '.submitted == true and .gate_state == "released"', wrapper
+        )
+        self.assertIn(
+            '.activation.release_verification.verified == true', wrapper
+        )
+        self.assertIn(
+            '.release_verification.observation.job_id', wrapper
         )
         self.assertIn('INFRASTRUCTURE_ARMED=true', wrapper)
         self.assertIn('SCIENCE_ONLY_AFTER_BOTH_PROBES_VALIDATE=true', wrapper)

@@ -196,6 +196,19 @@ main() {
       .infrastructure_probes.default_partition.released == true and
       .infrastructure_probes.scaglione.released == true and
       .activation.released == true and
+      .infrastructure_probes.default_partition.release_verification.verified == true and
+      .infrastructure_probes.default_partition.release_verification.job_id ==
+        .infrastructure_probes.default_partition.job_id and
+      .infrastructure_probes.default_partition.release_verification.observation.job_id ==
+        .infrastructure_probes.default_partition.job_id and
+      .infrastructure_probes.scaglione.release_verification.verified == true and
+      .infrastructure_probes.scaglione.release_verification.job_id ==
+        .infrastructure_probes.scaglione.job_id and
+      .infrastructure_probes.scaglione.release_verification.observation.job_id ==
+        .infrastructure_probes.scaglione.job_id and
+      .activation.release_verification.verified == true and
+      .activation.release_verification.job_id == .activation.job_id and
+      .activation.release_verification.observation.job_id == .activation.job_id and
       .activation.probe_job_ids.default_partition ==
         .infrastructure_probes.default_partition.job_id and
       .activation.probe_job_ids.scaglione ==
