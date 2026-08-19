@@ -238,7 +238,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
             (
                 "interaction",
                 _problem(
-                    deadline=4.0,
+                    deadline=2.0,
                     successor_energy=20.0,
                     adjacency=_adjacency(
                         direct=True,
@@ -246,7 +246,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
                     ),
                 ),
                 5.0,
-                25.0,
+                10.0,
             ),
         ]
         for expected, problem, production_soc, continuous_soc in cases:
@@ -444,7 +444,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
                 changed = json.loads(oracle_path.read_text())
                 changed["grid_results"][0][
                     "cause_classification"
-                ] = "unresolved"
+                ] = "block alignment"
                 oracle_path.write_text(json.dumps(
                     changed, indent=2, sort_keys=True
                 ) + "\n")
