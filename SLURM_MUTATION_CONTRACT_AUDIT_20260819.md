@@ -5,8 +5,8 @@
 Incident precedent was inspected in tracked diff `7937c22..1d80402`.
 Implementation starts from exact reviewed base
 `1d80402d79d1cbb4b786b780f7287c12b02d3621` and is pinned to reviewed code
-checkpoint `950673811ad79335c6f468ad3054037c04b30737`, i.e. diff
-`1d80402d79d1cbb4b786b780f7287c12b02d3621..950673811ad79335c6f468ad3054037c04b30737`.
+checkpoint `95067383acf6c9e4dd68214595e183984efbc289`, i.e. diff
+`1d80402d79d1cbb4b786b780f7287c12b02d3621..95067383acf6c9e4dd68214595e183984efbc289`.
 The subsequent commit containing this binding changes documentation only. No
 live Slurm command was run while preparing or reviewing the implementation.
 
