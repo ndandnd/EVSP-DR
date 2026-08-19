@@ -272,27 +272,52 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
         commit = subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
         ).strip()
-        environment = dict(os.environ)
-        environment.pop("PYTHONPATH", None)
-        environment["PYTHONDONTWRITEBYTECODE"] = "1"
-        completed = subprocess.run(
-            [
-                sys.executable,
-                "-I",
-                "-B",
-                str(REPO_ROOT / "src/run_reviewed_python.py"),
-                commit,
-                "audit_legacy_scale_ladder_campaign.py",
-                "--help",
-            ],
-            cwd=REPO_ROOT,
-            env=environment,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        self.assertEqual(completed.returncode, 0, completed.stderr)
-        self.assertIn("--campaign-root", completed.stdout)
+        with tempfile.TemporaryDirectory() as tmp:
+            worktree = Path(tmp) / "reviewed"
+            added = subprocess.run(
+                [
+                    "git", "worktree", "add", "--detach",
+                    str(worktree), commit,
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(added.returncode, 0, added.stderr)
+            try:
+                environment = dict(os.environ)
+                environment.pop("PYTHONPATH", None)
+                environment["PYTHONDONTWRITEBYTECODE"] = "1"
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        "-I",
+                        "-B",
+                        str(worktree / "src/run_reviewed_python.py"),
+                        commit,
+                        "audit_legacy_scale_ladder_campaign.py",
+                        "--help",
+                    ],
+                    cwd=worktree,
+                    env=environment,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(
+                    completed.returncode, 0, completed.stderr
+                )
+                self.assertIn("--campaign-root", completed.stdout)
+            finally:
+                removed = subprocess.run(
+                    ["git", "worktree", "remove", str(worktree)],
+                    cwd=REPO_ROOT,
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(removed.returncode, 0, removed.stderr)
 
     def test_valid_scheduler_capture_upgrades_only_posthoc_label(self):
         with tempfile.TemporaryDirectory() as tmp:

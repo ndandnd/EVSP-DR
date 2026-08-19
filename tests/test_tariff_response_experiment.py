@@ -1143,9 +1143,19 @@ class TariffResponseExperimentTests(unittest.TestCase):
             self.assertEqual(
                 len([
                     key for key in preflight["affected_job_keys"]
-                    if key.startswith("seed-")
+                    if (
+                        key.startswith("seed-k5-")
+                        or key.startswith("seed-k8-")
+                    )
                 ]),
                 22,
+            )
+            self.assertEqual(
+                len([
+                    key for key in preflight["affected_job_keys"]
+                    if key.startswith("seed-k40-")
+                ]),
+                11,
             )
             plan["fixed_duty_submission_preflight"] = preflight
             plan["submission_blocked"] = True
