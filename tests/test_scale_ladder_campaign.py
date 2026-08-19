@@ -950,6 +950,46 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn("diagnostic_only", local)
         self.assertFalse(set(LOCAL_CODE_PATHS) - set(ladder.CODE_PATHS))
 
+    def test_array_requeue_policy_matches_resumable_cg_phases(self):
+        groups = (
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        )
+        plan = {
+            "task_groups": {
+                group: [f"job_{group.lower()}"] for group in groups
+            },
+            "jobs": [
+                {"job_key": f"job_{group.lower()}", "budget_s": 60}
+                for group in groups
+            ],
+            "python": {"path": "/approved/python", "sha256": "p"},
+            "scontrol": {"path": "/approved/scontrol", "sha256": "s"},
+            "worker_sha256": "w",
+            "runtime_environment": {
+                "HOME": "/home/test", "USER": "test",
+            },
+        }
+        for group in groups:
+            with self.subTest(group=group), patch.object(
+                ladder, "_sbatch", return_value="100"
+            ) as submitted:
+                ladder._submit_array(
+                    plan,
+                    Path("/campaign/approved-plan.json"),
+                    "a" * 64,
+                    group,
+                    "99",
+                    Path("/campaign/logs"),
+                )
+                arguments = submitted.call_args.args[1]
+                if group in {"CG", "CG_SENSITIVITY"}:
+                    self.assertIn("--requeue", arguments)
+                    self.assertNotIn("--no-requeue", arguments)
+                else:
+                    self.assertIn("--no-requeue", arguments)
+                    self.assertNotIn("--requeue", arguments)
+
     def test_k2_r1_certified_15_vs_5_route_space_distinction(self):
         with INSTANCE_MANIFEST.open(newline="") as handle:
             row = next(

@@ -1007,7 +1007,9 @@ def _submit_array(
     arguments = [
         f"--array=0-{len(tasks)-1}",
         f"--partition={partition}",
-        "--requeue" if group == "CG" else "--no-requeue",
+        "--requeue"
+        if group in {"CG", "CG_SENSITIVITY"}
+        else "--no-requeue",
         "--signal=B:USR1@180",
         "--cpus-per-task=8" if group.startswith("MIP")
         else "--cpus-per-task=2",
