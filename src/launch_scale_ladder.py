@@ -2595,7 +2595,10 @@ def _activate_existing_locked(root, expected_plan_sha, wait_s):
         _replace_json(manifest_path, manifest)
 
     from reconcile_scale_ladder_gate import (
-        _reconcile_locked, _resolve_gate_state,
+        GateTerminalObservationError,
+        _persist_gate_terminal_failure,
+        _reconcile_locked,
+        _resolve_gate_state,
     )
 
     if manifest.get("gate_state") in {
@@ -2615,14 +2618,24 @@ def _activate_existing_locked(root, expected_plan_sha, wait_s):
         gate = manifest.get("gate_job_id")
         observation = None
         while time.monotonic() < deadline:
-            observation = _resolve_gate_state(
-                plan, gate, expected_plan_sha
-            )
+            try:
+                observation = _resolve_gate_state(
+                    plan, gate, expected_plan_sha
+                )
+            except GateTerminalObservationError as exc:
+                _persist_gate_terminal_failure(
+                    manifest, manifest_path, gate, exc.observation
+                )
+                raise RuntimeError(str(exc)) from exc
             if observation["state"] in PROBE_TERMINAL_STATES:
                 break
             time.sleep(2)
         state = observation["state"] if observation else None
         if state != "COMPLETED":
+            if state in PROBE_TERMINAL_STATES:
+                _persist_gate_terminal_failure(
+                    manifest, manifest_path, gate, observation
+                )
             raise RuntimeError(
                 f"scientific gate did not complete after release: {state}"
             )

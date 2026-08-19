@@ -63,8 +63,8 @@ def validate_plan(plan: dict, *, expected_commit: str) -> list[dict]:
     _require(resources.get("requeue") is False, "requeue enabled")
     _require(
         resources.get("submission_release")
-        == "single_atomic_four_task_array_submission",
-        "jobs are not one atomic array submission",
+        == "single_four_task_array_with_verified_receipts",
+        "jobs are not one receipt-verified four-task array",
     )
     _require(
         resources.get("array_tasks") == 4

@@ -37,6 +37,30 @@ SCIENCE_GROUPS = (
     "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY", "MIP_RAW",
     "MIP_KNOWN",
 )
+SCALE_GATE_ROLE = "scale_ladder_scientific_gate"
+
+
+class GateTerminalObservationError(ValueError):
+    def __init__(self, message, observation):
+        super().__init__(message)
+        self.observation = observation
+
+
+def _persist_gate_terminal_failure(
+    manifest, manifest_path, gate, observation,
+):
+    manifest["gate_state"] = "terminal_failed"
+    manifest["submitted"] = False
+    manifest["gate_terminal_failure"] = {
+        "verified": True,
+        "role": SCALE_GATE_ROLE,
+        "gate_job_id": str(gate),
+        "observation": observation,
+        "source": observation.get("source"),
+        "state": observation.get("state"),
+        "exit_code": observation.get("exit_code"),
+    }
+    _replace_json(manifest_path, manifest)
 
 
 def _approved_tool_path(plan, name):
@@ -57,12 +81,16 @@ def _normalized_state(value):
     return words[0].split("+", 1)[0].upper() if words else ""
 
 
-def _gate_fingerprint(expected_plan_sha, gate):
+def _gate_fingerprint(plan, expected_plan_sha, gate):
     return {
         "job_id": str(gate),
+        "user": str(
+            (plan.get("runtime_environment") or {}).get("USER") or ""
+        ),
         "job_name": f"LDG{expected_plan_sha[:5]}",
         "partition": "default_partition",
         "comment": f"SLADG:{expected_plan_sha[:20]}",
+        "role": SCALE_GATE_ROLE,
     }
 
 
@@ -73,7 +101,9 @@ def _gate_fingerprint_errors(expected, row):
             "expected": expected[field],
             "observed": str(row.get(field) or ""),
         }
-        for field in ("job_id", "job_name", "partition", "comment")
+        for field in (
+            "job_id", "user", "job_name", "partition", "comment",
+        )
         if str(row.get(field) or "") != expected[field]
     ]
 
@@ -98,7 +128,7 @@ def _resolve_gate_state(
     gate = str(gate)
     if not gate.isdigit():
         raise ValueError("gate job ID is invalid")
-    expected = _gate_fingerprint(expected_plan_sha, gate)
+    expected = _gate_fingerprint(plan, expected_plan_sha, gate)
     user = str((plan.get("runtime_environment") or {}).get("USER") or "")
     if not user:
         raise ValueError("approved runtime user is missing")
@@ -118,7 +148,8 @@ def _resolve_gate_state(
                 "job_id": fields[0], "job_name": fields[1],
                 "state": _normalized_state(fields[2]),
                 "partition": fields[3], "reason": fields[4],
-                "comment": fields[5],
+                "comment": fields[5], "user": user,
+                "role": SCALE_GATE_ROLE,
             })
     if len(live_rows) > 1:
         raise ValueError("multiple live rows match the gate job ID")
@@ -148,12 +179,16 @@ def _resolve_gate_state(
             values[key] = value
         controller_row = {
             "job_id": values.get("JobId", ""),
+            "user": (
+                str(values.get("UserId") or "").split("(", 1)[0]
+            ),
             "job_name": values.get("JobName", ""),
             "state": _normalized_state(values.get("JobState")),
             "partition": values.get("Partition", ""),
             "reason": values.get("Reason", ""),
             "comment": values.get("Comment", ""),
             "exit_code": values.get("ExitCode"),
+            "role": SCALE_GATE_ROLE,
         }
         errors = _gate_fingerprint_errors(expected, controller_row)
         if errors:
@@ -168,12 +203,22 @@ def _resolve_gate_state(
         if terminal:
             exit_code = str(controller_row.get("exit_code") or "")
             if re.fullmatch(r"[0-9]+:[0-9]+", exit_code) is None:
-                raise ValueError("terminal gate lacks an exact exit code")
+                observation = {
+                    **controller_row, "source": "scontrol", "live": False,
+                }
+                raise GateTerminalObservationError(
+                    "terminal gate lacks an exact exit code", observation
+                )
             if (
                 controller_row["state"] == "COMPLETED"
                 and exit_code != "0:0"
             ):
-                raise ValueError("completed gate has nonzero exit code")
+                observation = {
+                    **controller_row, "source": "scontrol", "live": False,
+                }
+                raise GateTerminalObservationError(
+                    "completed gate has nonzero exit code", observation
+                )
             return {
                 **controller_row, "source": "scontrol", "live": False,
             }
@@ -185,20 +230,21 @@ def _resolve_gate_state(
     sacct_path = _approved_tool_path(plan, "sacct")
     completed = _bounded_query(runner, [
         str(sacct_path), "-X", "-n", "-P", "-j", gate,
-        "--format=JobIDRaw,JobName%64,State,Partition%64,"
+        "--format=JobIDRaw,User,JobName%64,State,Partition%64,"
         "Comment%256,ExitCode",
     ])
     if completed.returncode != 0:
         raise RuntimeError("cannot query gate accounting")
     rows = []
     for line in completed.stdout.splitlines():
-        fields = [field.strip() for field in line.split("|", 5)]
-        if len(fields) == 6 and fields[0] == gate:
+        fields = [field.strip() for field in line.split("|", 6)]
+        if len(fields) == 7 and fields[0] == gate:
             rows.append({
-                "job_id": fields[0], "job_name": fields[1],
-                "state": _normalized_state(fields[2]),
-                "partition": fields[3], "comment": fields[4],
-                "exit_code": fields[5],
+                "job_id": fields[0], "user": fields[1],
+                "job_name": fields[2],
+                "state": _normalized_state(fields[3]),
+                "partition": fields[4], "comment": fields[5],
+                "exit_code": fields[6], "role": SCALE_GATE_ROLE,
             })
     if len(rows) != 1:
         raise ValueError("gate accounting has no unique exact job row")
@@ -206,7 +252,10 @@ def _resolve_gate_state(
     if errors:
         raise ValueError(f"accounting gate fingerprint mismatch: {errors}")
     if rows[0]["state"] == "COMPLETED" and rows[0]["exit_code"] != "0:0":
-        raise ValueError("completed gate accounting has nonzero exit code")
+        raise GateTerminalObservationError(
+            "completed gate accounting has nonzero exit code",
+            {**rows[0], "source": "sacct", "live": False},
+        )
     if (
         rows[0]["state"] in {
             "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
@@ -215,7 +264,10 @@ def _resolve_gate_state(
         }
         and re.fullmatch(r"[0-9]+:[0-9]+", rows[0]["exit_code"]) is None
     ):
-        raise ValueError("terminal gate accounting lacks an exact exit code")
+        raise GateTerminalObservationError(
+            "terminal gate accounting lacks an exact exit code",
+            {**rows[0], "source": "sacct", "live": False},
+        )
     return {**rows[0], "source": "sacct", "live": False}
 
 
@@ -246,7 +298,8 @@ def _gate_release_observation_result(observation):
                 stdout=json.dumps(observation, sort_keys=True), stderr="",
             )
         return subprocess.CompletedProcess(
-            args=[], returncode=3, stdout="",
+            args=[], returncode=3,
+            stdout=json.dumps(observation, sort_keys=True),
             stderr=f"scientific gate became terminal in state {state}",
         )
     if observation.get("live") is not True:
@@ -294,6 +347,7 @@ def _gate_release_verification(
 ):
     return {
         "verified": True,
+        "role": SCALE_GATE_ROLE,
         "job_id": str(gate),
         "command_attempts": command_attempts,
         "observation": observation,
@@ -312,6 +366,12 @@ def _release_gate_with_postcondition(
     try:
         observation = resolver(
             plan, gate, expected_plan_sha, runner=runner
+        )
+    except GateTerminalObservationError as exc:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3,
+            stdout=json.dumps(exc.observation, sort_keys=True),
+            stderr=str(exc),
         )
     except (RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
         return subprocess.CompletedProcess(
@@ -360,6 +420,12 @@ def _release_gate_with_postcondition(
             try:
                 observation = resolver(
                     plan, gate, expected_plan_sha, runner=runner
+                )
+            except GateTerminalObservationError as exc:
+                return subprocess.CompletedProcess(
+                    args=[], returncode=3,
+                    stdout=json.dumps(exc.observation, sort_keys=True),
+                    stderr=str(exc),
                 )
             except ValueError as exc:
                 return subprocess.CompletedProcess(
@@ -652,6 +718,24 @@ def _validate_held_array_controller(
             f"expected={sorted(expected_tasks)} "
             f"observed={sorted(observed_tasks)}"
         )
+    return {
+        "verified": True,
+        "group": group,
+        "parent_job_id": str(job_id),
+        "gate_job_id": str(gate_id),
+        "user": expected_user,
+        "job_name": expected_common["JobName"],
+        "partition": expected_partition,
+        "comment": expected_common["Comment"],
+        "state": "PENDING",
+        "reason": "Dependency",
+        "task_ids": sorted(expected_tasks),
+        "dependency_semantics": {
+            kind: sorted(values)
+            for kind, values in sorted(expected_dependencies.items())
+        },
+        "controller_record_count": len(controller_rows),
+    }
 
 
 def _discover_held_science_jobs(plan, expected_plan_sha, manifest):
@@ -750,10 +834,14 @@ def _discover_held_science_jobs(plan, expected_plan_sha, manifest):
     if discovered and gate_id is None:
         raise ValueError("held arrays exist without an exact held gate")
     all_array_ids = {**discovered, **recorded}
+    verifications = dict(
+        manifest.get("array_submission_verifications") or {}
+    )
     for group, job_id in discovered.items():
-        _validate_held_array_controller(
+        verifications[group] = _validate_held_array_controller(
             plan, expected_plan_sha, group, job_id, gate_id, all_array_ids
         )
+    manifest["array_submission_verifications"] = verifications
     return discovered, discovered_gate
 
 
@@ -797,6 +885,36 @@ def _reconcile_locked(
     manifest_path = root / "campaign.json"
     plan = json.loads(plan_raw)
     manifest = json.loads(manifest_path.read_text())
+    recorded_gate = str(manifest.get("gate_job_id") or "")
+    if (
+        recorded_gate.isdigit()
+        and str(
+            (plan.get("runtime_environment") or {}).get("USER") or ""
+        )
+    ):
+        try:
+            early_gate_observation = _resolve_gate_state(
+                plan, recorded_gate, expected_plan_sha
+            )
+        except GateTerminalObservationError as exc:
+            _persist_gate_terminal_failure(
+                manifest, manifest_path, recorded_gate, exc.observation
+            )
+            raise
+        if (
+            early_gate_observation.get("state") in PROBE_TERMINAL_STATES
+            and early_gate_observation.get("state") != "COMPLETED"
+        ):
+            _persist_gate_terminal_failure(
+                manifest,
+                manifest_path,
+                recorded_gate,
+                early_gate_observation,
+            )
+            raise ValueError(
+                "scientific gate is terminal but not completed: "
+                f"{early_gate_observation.get('state')}"
+            )
     if manifest.get("gate_state") in {
         "creating", "held", "held_after_partial_submission",
         "held_probe_failure", "held_probe_waiting",
@@ -907,6 +1025,18 @@ def _reconcile_locked(
                 manifest["gate_state"] = "held"
                 _replace_json(manifest_path, manifest)
             missing_groups = []
+        if not missing_groups:
+            verifications = {}
+            for group in SCIENCE_GROUPS:
+                verifications[group] = _validate_held_array_controller(
+                    plan,
+                    expected_plan_sha,
+                    group,
+                    combined[group],
+                    gate_for_resume,
+                    combined,
+                )
+            manifest["array_submission_verifications"] = verifications
         manifest["submitted_arrays"] = combined
         manifest["gate_state"] = (
             "held" if not missing_groups
@@ -952,10 +1082,23 @@ def _reconcile_locked(
             )
         ):
             raise ValueError("recorded probe specification identity mismatch")
-    gate_observation = _resolve_gate_state(
-        plan, gate, expected_plan_sha
-    )
+    try:
+        gate_observation = _resolve_gate_state(
+            plan, gate, expected_plan_sha
+        )
+    except GateTerminalObservationError as exc:
+        _persist_gate_terminal_failure(
+            manifest, manifest_path, gate, exc.observation
+        )
+        raise
     gate_state = gate_observation["state"]
+    if gate_state in PROBE_TERMINAL_STATES and gate_state != "COMPLETED":
+        _persist_gate_terminal_failure(
+            manifest, manifest_path, gate, gate_observation
+        )
+        raise ValueError(
+            f"scientific gate is terminal but not completed: {gate_state}"
+        )
     needs_probe_submission = (
         set(probe_specs) != set(PROBE_PARTITIONS)
         or any(
@@ -1081,19 +1224,25 @@ def _reconcile_locked(
         manifest["gate_state"] = "held"
     _replace_json(manifest_path, manifest)
     if gate_state == "COMPLETED":
+        manifest["gate_release_verification"] = (
+            manifest.get("gate_release_verification")
+            or _gate_release_verification(
+                gate, gate_observation, 0, []
+            )
+        )
         manifest["gate_state"] = "released_reconciled"
         manifest["submitted"] = True
         manifest["gate_reconciliation"] = {
+            "verified": True,
+            "role": SCALE_GATE_ROLE,
             "source": gate_observation["source"],
-            "gate_job_id": gate, "state": "COMPLETED",
+            "gate_job_id": gate,
+            "state": "COMPLETED",
+            "exit_code": gate_observation.get("exit_code"),
+            "observation": gate_observation,
         }
         _replace_json(manifest_path, manifest)
         return manifest
-    if gate_state in PROBE_TERMINAL_STATES:
-        raise ValueError(
-            f"scientific gate is terminal but not completed: {gate_state}"
-        )
-
     classified = _gate_release_observation_result(gate_observation)
     if classified is None and not release_held_gate:
         manifest["gate_state"] = "held_probe_passed"
@@ -1114,6 +1263,24 @@ def _reconcile_locked(
             plan, gate, expected_plan_sha
         )
         if released.returncode != 0:
+            try:
+                terminal_observation = (
+                    json.loads(released.stdout)
+                    if released.stdout else None
+                )
+            except json.JSONDecodeError:
+                terminal_observation = None
+            if (
+                isinstance(terminal_observation, dict)
+                and terminal_observation.get("state")
+                in PROBE_TERMINAL_STATES
+            ):
+                _persist_gate_terminal_failure(
+                    manifest, manifest_path, gate, terminal_observation
+                )
+                raise RuntimeError(
+                    "scientific gate reached a terminal non-success state"
+                )
             manifest["gate_state"] = "held_release_failed"
             manifest["release_error"] = (
                 released.stderr or released.stdout

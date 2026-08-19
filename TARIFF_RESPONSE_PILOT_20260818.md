@@ -230,13 +230,29 @@ whenever a recorded window crosses changing tariff hours or lacks tariff
 coverage. This is a correctness outcome, not a failed run.
 
 If submission stops after creating a campaign root, do not retry under a new
-name. Inspect `campaign.json`, the recorded `gate_job_id`, `squeue`, and
-`sacct`. States `release_attempting` or `held_release_failed` are intentionally
-ambiguous and require operator reconciliation; reservations remain locked so a
-duplicate matrix cannot be submitted.
+name. The launcher persists an immutable plan-derived gate comment and exact
+user/name/partition/role before mutation. Run the reconciler against the same
+campaign. It re-observes cached states, boundedly discovers an
+accepted-before-record gate by exact comment, and never treats a command return
+code as a state transition. States `ambiguous_held_gate`,
+`ambiguous_gate_receipt`, `held_release_failed`, and
+`reconciliation_unverified` retain reservations and forbid replacement.
+Historical manifests without the exact gate specification are preserved as
+`legacy_unverified`; they cannot be silently upgraded.
 
-After `sacct` proves the recorded gate job completed, reconcile without
-resubmitting:
+Each scientific child also has a durable pre-`sbatch` intent and an exact
+approved-user/ID/name/partition/comment/dependency receipt while the gate is
+held. Accepted-before-record children are recovered by that identity; an
+unresolved intent prevents gate release. Worker completion schema v2 binds the
+job key, execution digest, treatment, role, scale, tariff, inputs, Slurm ID,
+and complete artifact hash set. Assembly and archive validation share that
+same identity validator.
+
+Reconcile once after release and again after the gate becomes terminal.
+Scientific assembly/archive requires both persisted release evidence and exact
+terminal `COMPLETED/0:0` evidence. A terminal non-success is persisted as
+`terminal_failed` with `submitted=false`, scheduler source, state, and exit
+code before the reconciler raises:
 
 ```bash
 RECONCILE_SCOPE="${RECONCILE_SCOPE:-main}"
