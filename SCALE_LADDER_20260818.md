@@ -183,6 +183,50 @@ code, and `submitted=false`.
 
 ## Normalize completed outputs
 
+### Legacy `7937c22` campaign: read-only post-hoc audit first
+
+The already-running `slad_flat_primary_v4_7937c22` predates prospective
+receipt fields. Do not edit its manifest or outputs. After all intended worker
+completions exist, create a separate no-clobber sidecar:
+
+```bash
+LEGACY_ROOT="$HOME/EVSP-DR-scale-ladder-7937c22/src/results/scale_ladder/slad_flat_primary_v4_7937c22"
+LEGACY_AUDIT_ROOT="$HOME/evsp_scale_ladder_legacy_audits"
+LEGACY_SIDECAR="$LEGACY_AUDIT_ROOT/slad_flat_primary_v4_7937c22.audit.json"
+mkdir -p "$LEGACY_AUDIT_ROOT"
+
+env -u PYTHONPATH -u PYTHONHOME -u LD_LIBRARY_PATH \
+  PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 \
+  "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$COMMIT" audit_legacy_scale_ladder_campaign.py \
+  --campaign-root "$LEGACY_ROOT" \
+  --sidecar-out "$LEGACY_SIDECAR" \
+  --expected-commit 7937c22fef7771e2f74dd03569ea852cbd805e1c
+```
+
+Without a separately captured and validated scheduler JSON, the sidecar is
+explicitly `legacy_scheduler_unverified`. Supplying
+`--scheduler-capture CAPTURE.json` can yield `legacy_posthoc_audited` only when
+the exact gate/array IDs, names, comments, partitions, dependencies, task
+counts, terminal states, and `0:0` exit codes all match. The audit writes
+`$LEGACY_SIDECAR` and `$LEGACY_SIDECAR.sha256` atomically without replacing
+anything. It fails on missing completions, changed journals/checkpoints,
+duplicate tasks, incompatible inputs, selected-route/physical evidence
+mismatch, mixed old/new scheduler evidence, or any hash change.
+
+Normalization then requires the sidecar explicitly:
+
+```bash
+"$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$COMMIT" summarize_scale_ladder.py \
+  --campaign-root "$LEGACY_ROOT" \
+  --out-dir "$LEGACY_ROOT/summary-posthoc" \
+  --legacy-audit-sidecar "$LEGACY_SIDECAR"
+```
+
+The normalized provenance retains the legacy evidence label and never claims
+the prospective lifecycle guarantees.
+
 ```bash
 RUN_ROOT="$HOME/EVSP-DR-scale-ladder-${COMMIT:0:12}"
 PLAN="$HOME/evsp_scale_ladder_plans/$CAMPAIGN.plan.json"

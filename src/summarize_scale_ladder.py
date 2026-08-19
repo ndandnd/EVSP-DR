@@ -326,7 +326,12 @@ def _require_scale_ladder_scheduler_evidence(plan, manifest, plan_sha):
             )
 
 
-def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
+def summarize(
+    campaign_root,
+    output_dir,
+    k40_reuse_manifest=None,
+    legacy_audit_sidecar=None,
+):
     campaign_root = Path(campaign_root).resolve()
     output_dir = Path(output_dir).resolve()
     if output_dir.exists():
@@ -339,6 +344,7 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     ).hexdigest():
         raise ValueError("campaign approval hash mismatch")
     local_diagnostic = plan.get("execution_mode") == "local_diagnostic"
+    legacy_audit = None
     if local_diagnostic:
         if (
             manifest.get("execution_mode") != "local_diagnostic"
@@ -347,11 +353,27 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         ):
             raise ValueError("local diagnostic manifest is inconsistent")
     else:
-        _require_scale_ladder_scheduler_evidence(
-            plan,
-            manifest,
-            hashlib.sha256(plan_raw).hexdigest(),
-        )
+        try:
+            _require_scale_ladder_scheduler_evidence(
+                plan,
+                manifest,
+                hashlib.sha256(plan_raw).hexdigest(),
+            )
+        except ValueError:
+            if legacy_audit_sidecar is None:
+                raise
+            from audit_legacy_scale_ladder_campaign import (
+                validate_legacy_sidecar,
+            )
+            legacy_audit = validate_legacy_sidecar(
+                campaign_root, legacy_audit_sidecar
+            )
+        else:
+            if legacy_audit_sidecar is not None:
+                raise ValueError(
+                    "prospective scheduler evidence cannot be mixed with "
+                    "a legacy audit sidecar"
+                )
     if not local_diagnostic:
         probes = manifest.get("probe_results") or {}
         if (
@@ -420,6 +442,17 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     mip_rows = []
     mip_summary = []
     inventory = []
+    if legacy_audit is not None:
+        inventory.extend([
+            _inventory(
+                "campaign", "legacy_audit_sidecar",
+                Path(legacy_audit_sidecar),
+            ),
+            _inventory(
+                "campaign", "legacy_audit_sidecar_checksum",
+                Path(str(legacy_audit_sidecar) + ".sha256"),
+            ),
+        ])
     if not local_diagnostic:
         for probe_id, result in sorted(
             (manifest.get("probe_results") or {}).items()
@@ -774,6 +807,18 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             "python_identity": plan["python_identity"],
             "execution_mode": plan.get("execution_mode", "slurm_campaign"),
             "diagnostic_only": manifest.get("diagnostic_only", False),
+            "legacy_evidence_status": (
+                legacy_audit.get("legacy_evidence_status")
+                if legacy_audit is not None else None
+            ),
+            "legacy_normalization_scope": (
+                legacy_audit.get("normalization_scope")
+                if legacy_audit is not None else None
+            ),
+            "legacy_audit_sidecar_sha256": (
+                sha256_file(Path(legacy_audit_sidecar))
+                if legacy_audit is not None else None
+            ),
             "resource_groups": {
                 key: len(value)
                 for key, value in plan["task_groups"].items()
@@ -1510,9 +1555,13 @@ def main(argv=None):
     parser.add_argument("--campaign-root", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--k40-reuse-manifest", type=Path)
+    parser.add_argument("--legacy-audit-sidecar", type=Path)
     args = parser.parse_args(argv)
     print(json.dumps(summarize(
-        args.campaign_root, args.out_dir, args.k40_reuse_manifest
+        args.campaign_root,
+        args.out_dir,
+        args.k40_reuse_manifest,
+        args.legacy_audit_sidecar,
     ), indent=2))
     return 0
 
