@@ -798,6 +798,196 @@ with _mip_campaign_lock({"campaign_root": str(campaign)}):
             self.assertEqual(releases.count("101"), 1)
             self.assertEqual(releases.count("102"), 2)
 
+    def test_terminal_mip_restart_separates_release_from_outcome(self):
+        terminal_cases = {
+            "CANCELLED": "0:15",
+            "FAILED": "1:0",
+            "PREEMPTED": "0:9",
+            "TIMEOUT": "0:9",
+            "COMPLETED": "0:0",
+        }
+        for state, exit_code in terminal_cases.items():
+            for prior_present in (False, True):
+                with self.subTest(
+                    state=state, prior_present=prior_present
+                ), tempfile.TemporaryDirectory() as tmp:
+                    manifest_path = Path(tmp) / "campaign.json"
+                    plan, jobs = self._scheduler_plan_and_jobs(("171",))
+                    spec = launcher._mip_job_spec(
+                        plan, jobs[0], jobs[0]["job_id"]
+                    )
+                    prior_observation = {
+                        **{
+                            field: spec[field] for field in (
+                                "job_id", "user", "job_name",
+                                "partition", "comment",
+                            )
+                        },
+                        "state": "RUNNING",
+                        "reason": "None",
+                        "exit_code": "0:0",
+                        "source": "squeue",
+                        "live": True,
+                    }
+                    if prior_present:
+                        jobs[0]["release_verification"] = {
+                            "verified": True,
+                            "role": spec["role"],
+                            "job_id": spec["job_id"],
+                            "command_attempts": 1,
+                            "observation": prior_observation,
+                            "command_diagnostics": [],
+                        }
+                        jobs[0]["submission_state"] = "release_verified"
+                    manifest = {
+                        "jobs": jobs,
+                        "submitted": prior_present,
+                    }
+                    manifest_path.write_text(json.dumps(manifest))
+                    scheduler = SyntheticMIPScheduler([spec])
+                    scheduler.states["171"].update({
+                        "state": state,
+                        "reason": "None",
+                        "exit_code": exit_code,
+                    })
+
+                    def resolve(observed_spec):
+                        return scheduler_contract.resolve_exact_job(
+                            observed_spec, runner=scheduler
+                        )
+
+                    with patch.object(
+                        launcher, "resolve_exact_job", resolve
+                    ):
+                        if (
+                            state != "COMPLETED"
+                            and not prior_present
+                        ):
+                            with self.assertRaisesRegex(
+                                scheduler_contract.SlurmContractError,
+                                "verified release",
+                            ):
+                                launcher._release_verified_held_jobs(
+                                    plan,
+                                    manifest,
+                                    manifest_path,
+                                    sleeper=lambda _value: None,
+                                )
+                        else:
+                            launcher._release_verified_held_jobs(
+                                plan,
+                                manifest,
+                                manifest_path,
+                                sleeper=lambda _value: None,
+                            )
+                    persisted = json.loads(manifest_path.read_text())
+                    terminal = persisted["jobs"][0]["terminal_outcome"]
+                    self.assertEqual(terminal["state"], state)
+                    self.assertEqual(
+                        terminal["prior_release_verified"], prior_present
+                    )
+                    if state == "COMPLETED":
+                        self.assertTrue(persisted["submitted"])
+                        self.assertTrue(terminal["successful_completion"])
+                        expected_state = (
+                            "release_verified_terminal_completed"
+                            if prior_present else
+                            "release_verified_by_terminal_completed_0_0"
+                        )
+                        self.assertEqual(
+                            persisted["jobs"][0]["submission_state"],
+                            expected_state,
+                        )
+                    elif prior_present:
+                        self.assertTrue(persisted["submitted"])
+                        self.assertEqual(
+                            persisted["jobs"][0]["submission_state"],
+                            "release_verified_then_terminal_failed",
+                        )
+                        self.assertEqual(
+                            persisted[
+                                "terminal_failures_after_verified_release"
+                            ],
+                            ["cell-0"],
+                        )
+                    else:
+                        self.assertFalse(persisted["submitted"])
+                        self.assertEqual(
+                            persisted["jobs"][0]["submission_state"],
+                            "terminal_failed_without_verified_release",
+                        )
+                        self.assertNotIn(
+                            "release_verification",
+                            persisted["jobs"][0],
+                        )
+                    self.assertFalse(any(
+                        Path(command[0]).name == "scontrol"
+                        and command[1] == "release"
+                        for command in scheduler.commands
+                    ))
+
+    def test_terminal_failure_cannot_reuse_legacy_synthetic_release(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest_path = Path(tmp) / "campaign.json"
+            plan, jobs = self._scheduler_plan_and_jobs(("181",))
+            spec = launcher._mip_job_spec(
+                plan, jobs[0], jobs[0]["job_id"]
+            )
+            failed_observation = {
+                **{
+                    field: spec[field] for field in (
+                        "job_id", "user", "job_name",
+                        "partition", "comment",
+                    )
+                },
+                "state": "FAILED",
+                "reason": "None",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "live": False,
+            }
+            jobs[0]["release_verification"] = {
+                "verified": True,
+                "role": spec["role"],
+                "job_id": spec["job_id"],
+                "command_attempts": 0,
+                "observation": failed_observation,
+            }
+            jobs[0]["submission_state"] = "release_verified"
+            manifest = {"jobs": jobs, "submitted": True}
+            manifest_path.write_text(json.dumps(manifest))
+            scheduler = SyntheticMIPScheduler([spec])
+            scheduler.states["181"].update({
+                "state": "FAILED",
+                "reason": "None",
+                "exit_code": "1:0",
+            })
+
+            def resolve(observed_spec):
+                return scheduler_contract.resolve_exact_job(
+                    observed_spec, runner=scheduler
+                )
+
+            with (
+                patch.object(launcher, "resolve_exact_job", resolve),
+                self.assertRaises(scheduler_contract.SlurmContractError),
+            ):
+                launcher._release_verified_held_jobs(
+                    plan,
+                    manifest,
+                    manifest_path,
+                    sleeper=lambda _value: None,
+                )
+            persisted = json.loads(manifest_path.read_text())
+            self.assertFalse(persisted["submitted"])
+            self.assertEqual(
+                persisted["jobs"][0]["submission_state"],
+                "terminal_failed_without_verified_release",
+            )
+            self.assertNotIn(
+                "release_verification", persisted["jobs"][0]
+            )
+
     def test_release_reobservation_clears_cached_submitted_before_query(self):
         with tempfile.TemporaryDirectory() as tmp:
             manifest_path = Path(tmp) / "campaign.json"

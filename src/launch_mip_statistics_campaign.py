@@ -98,7 +98,9 @@ from run_exact_pool_mip import (
     merge_validated_partition_start,
 )
 from slurm_state_contract import (
+    ACTIVE_STATES,
     SlurmContractError,
+    TERMINAL_STATES,
     cancel_with_postcondition,
     discover_live_job_by_identity,
     release_with_postcondition,
@@ -1658,15 +1660,91 @@ def _cancel_verified_held_jobs(
     return all_verified
 
 
+def _mip_release_observation_valid(spec, observation):
+    if not isinstance(observation, dict):
+        return False
+    if any(
+        str(observation.get(field) or "") != str(spec[field])
+        for field in (
+            "job_id", "user", "job_name", "partition", "comment",
+        )
+    ):
+        return False
+    state = str(observation.get("state") or "")
+    if state in TERMINAL_STATES:
+        return (
+            state == "COMPLETED"
+            and observation.get("exit_code") == "0:0"
+        )
+    if observation.get("live") is not True:
+        return False
+    if state in ACTIVE_STATES:
+        return True
+    if state != "PENDING":
+        return False
+    reason = str(observation.get("reason") or "")
+    return bool(
+        reason
+        and not reason.startswith("JobHeld")
+        and reason not in {"Dependency", "DependencyNeverSatisfied"}
+    )
+
+
+def _validated_prior_mip_release(spec, verification):
+    if (
+        not isinstance(verification, dict)
+        or verification.get("verified") is not True
+        or verification.get("role") != spec["role"]
+        or str(verification.get("job_id") or "") != str(spec["job_id"])
+        or not _mip_release_observation_valid(
+            spec, verification.get("observation")
+        )
+    ):
+        return None
+    return verification
+
+
+def _mip_terminal_record(observation, *, prior_release_verified):
+    return {
+        "observed": True,
+        "state": observation.get("state"),
+        "exit_code": observation.get("exit_code"),
+        "source": observation.get("source"),
+        "observation": observation,
+        "prior_release_verified": bool(prior_release_verified),
+        "successful_completion": (
+            observation.get("state") == "COMPLETED"
+            and observation.get("exit_code") == "0:0"
+        ),
+    }
+
+
 def _release_verified_held_jobs(
     plan, manifest, manifest_path, *, sleeper=None,
 ):
-    """Reobserve and release every exact job independently."""
+    """Reobserve and release every exact job independently.
+
+    A terminal non-success can never establish release.  If an earlier exact
+    release observation exists, retain it and record the later terminal
+    outcome separately.  ``COMPLETED/0:0`` is the sole terminal observation
+    that can establish a previously unrecorded release: successful execution
+    proves that the user hold was cleared, and the evidence basis is persisted
+    explicitly as ``terminal_completed_0_0``.
+    """
     sleeper = time.sleep if sleeper is None else sleeper
+    prior_verifications = {
+        job["cell_id"]: job.get("release_verification")
+        for job in manifest["jobs"]
+    }
     manifest["submitted"] = False
     manifest["release_operation_state"] = "precondition_check"
     for manifest_job in manifest["jobs"]:
+        if manifest_job.get("release_verification") is not None:
+            manifest_job["prior_release_verification"] = (
+                manifest_job["release_verification"]
+            )
         manifest_job.pop("release_verification", None)
+        manifest_job.pop("terminal_outcome", None)
         manifest_job["submission_state"] = "release_reconciling"
     _replace_json(manifest_path, manifest)
     preconditions = []
@@ -1691,26 +1769,100 @@ def _release_verified_held_jobs(
             manifest["release_operation_state"] = "precondition_unverified"
             _replace_json(manifest_path, manifest)
             raise
-        preconditions.append((manifest_job, spec, observation))
+        prior = _validated_prior_mip_release(
+            spec, prior_verifications.get(manifest_job["cell_id"])
+        )
+        preconditions.append((manifest_job, spec, observation, prior))
 
     manifest["release_operation_state"] = "verifying_each_job"
     _replace_json(manifest_path, manifest)
 
     failures = []
-    for manifest_job, spec, _observation in preconditions:
-        try:
-            verification = release_with_postcondition(
-                spec,
-                terminal_success_required=False,
-                sleeper=sleeper,
+    terminal_failures_after_release = []
+    for manifest_job, spec, observation, prior in preconditions:
+        state = observation.get("state")
+        if state in TERMINAL_STATES:
+            terminal = _mip_terminal_record(
+                observation, prior_release_verified=prior is not None
             )
-        except SlurmContractError as exc:
-            manifest_job["submission_state"] = "release_unverified"
-            manifest_job["release_error"] = _scheduler_error(exc)
-            failures.append(manifest_job["cell_id"])
+            manifest_job["terminal_outcome"] = terminal
+            successful_completion = terminal["successful_completion"]
+            if prior is not None:
+                manifest_job["release_verification"] = prior
+                if successful_completion:
+                    manifest_job["submission_state"] = (
+                        "release_verified_terminal_completed"
+                    )
+                else:
+                    manifest_job["submission_state"] = (
+                        "release_verified_then_terminal_failed"
+                    )
+                    terminal_failures_after_release.append(
+                        manifest_job["cell_id"]
+                    )
+            elif successful_completion:
+                manifest_job["release_verification"] = {
+                    "verified": True,
+                    "role": spec["role"],
+                    "job_id": str(spec["job_id"]),
+                    "command_attempts": 0,
+                    "observation": observation,
+                    "command_diagnostics": [],
+                    "evidence_basis": "terminal_completed_0_0",
+                }
+                manifest_job["submission_state"] = (
+                    "release_verified_by_terminal_completed_0_0"
+                )
+            else:
+                manifest_job["submission_state"] = (
+                    "terminal_failed_without_verified_release"
+                )
+                manifest_job["release_error"] = {
+                    "message": (
+                        "terminal non-success cannot establish release"
+                    ),
+                    "observation": observation,
+                }
+                failures.append(manifest_job["cell_id"])
+        elif prior is not None:
+            if _mip_release_observation_valid(spec, observation):
+                manifest_job["release_verification"] = prior
+                manifest_job["release_revalidation_observation"] = observation
+                manifest_job["submission_state"] = "release_verified"
+            else:
+                manifest_job["submission_state"] = "release_unverified"
+                manifest_job["release_error"] = {
+                    "message": "prior release contradicted by current state",
+                    "observation": observation,
+                }
+                failures.append(manifest_job["cell_id"])
         else:
-            manifest_job["release_verification"] = verification
-            manifest_job["submission_state"] = "release_verified"
+            try:
+                verification = release_with_postcondition(
+                    spec,
+                    terminal_success_required=True,
+                    sleeper=sleeper,
+                )
+            except SlurmContractError as exc:
+                manifest_job["submission_state"] = "release_unverified"
+                manifest_job["release_error"] = _scheduler_error(exc)
+                if (
+                    isinstance(exc.observation, dict)
+                    and exc.observation.get("state") in TERMINAL_STATES
+                ):
+                    manifest_job["terminal_outcome"] = (
+                        _mip_terminal_record(
+                            exc.observation,
+                            prior_release_verified=False,
+                        )
+                    )
+                    manifest_job["submission_state"] = (
+                        "terminal_failed_without_verified_release"
+                    )
+                failures.append(manifest_job["cell_id"])
+            else:
+                manifest_job["release_verification"] = verification
+                manifest_job["submission_state"] = "release_verified"
         _replace_json(manifest_path, manifest)
         if failures:
             break
@@ -1722,7 +1874,14 @@ def _release_verified_held_jobs(
         raise SlurmContractError(
             "one or more MIP jobs lack a verified release postcondition"
         )
-    manifest["release_operation_state"] = "verified_all_jobs"
+    manifest["terminal_failures_after_verified_release"] = (
+        terminal_failures_after_release
+    )
+    manifest["release_operation_state"] = (
+        "verified_all_releases_with_terminal_failures"
+        if terminal_failures_after_release
+        else "verified_all_jobs"
+    )
     manifest["submitted"] = True
     _replace_json(manifest_path, manifest)
     return manifest

@@ -154,8 +154,13 @@ def _require_exact_observation(spec, observation):
 def _require_release_evidence(manifest, plan_sha, job):
     spec = _scheduler_spec(manifest, plan_sha, job)
     verification = job.get("release_verification")
+    allowed_states = {
+        "release_verified",
+        "release_verified_terminal_completed",
+        "release_verified_by_terminal_completed_0_0",
+    }
     if (
-        job.get("submission_state") != "release_verified"
+        job.get("submission_state") not in allowed_states
         or not isinstance(verification, dict)
         or verification.get("verified") is not True
         or verification.get("role") != spec["role"]
@@ -166,7 +171,15 @@ def _require_release_evidence(manifest, plan_sha, job):
         )
     observation = verification.get("observation")
     state = _require_exact_observation(spec, observation)
-    if state == "PENDING":
+    if state in MIP_TERMINAL_STATES:
+        if (
+            state != "COMPLETED"
+            or observation.get("exit_code") != "0:0"
+        ):
+            raise ValueError(
+                f"{job['cell_id']} release evidence is terminal non-success"
+            )
+    elif state == "PENDING":
         reason = str(observation.get("reason") or "")
         if (
             not reason
@@ -180,6 +193,19 @@ def _require_release_evidence(manifest, plan_sha, job):
         raise ValueError(
             f"{job['cell_id']} has an invalid released state"
         )
+    terminal = job.get("terminal_outcome")
+    if terminal is not None:
+        current_state = _require_exact_observation(
+            spec, terminal.get("observation")
+        )
+        if (
+            terminal.get("successful_completion") is not True
+            or current_state != "COMPLETED"
+            or terminal.get("exit_code") != "0:0"
+        ):
+            raise ValueError(
+                f"{job['cell_id']} terminated unsuccessfully after release"
+            )
 
 
 def _require_array_receipt(manifest, plan_sha, jobs):
