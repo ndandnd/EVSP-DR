@@ -971,7 +971,7 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
         )
         self.assertIn("release_with_postcondition", launcher_text)
         self.assertIn("K40R12RG82", launcher_text)
-        self.assertIn("single_atomic_four_task_array_submission",
+        self.assertIn("single_four_task_array_with_verified_receipts",
                       launcher_text)
 
     def test_campaign_name_escape_and_export_injection_are_rejected(self):

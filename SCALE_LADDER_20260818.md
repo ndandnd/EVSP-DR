@@ -177,6 +177,9 @@ The reconciler exact-matches the user, parent ID, name, state, partition,
 reason, comment, array range, and dependency semantics. Gate completion is
 accepted only with an exact `0:0` exit code. Accepted-before-record submission
 intents are boundedly rediscovered and fail closed rather than duplicated.
+A terminal non-success gate is durably recorded before the command raises:
+`gate_state=terminal_failed`, the exact scheduler observation/source/state/exit
+code, and `submitted=false`.
 
 ## Normalize completed outputs
 

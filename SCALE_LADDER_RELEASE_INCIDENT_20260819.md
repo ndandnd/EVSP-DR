@@ -115,20 +115,21 @@ campaign that was already launched from commit `7937c22`; that campaign's
 dependency barriers preserve safety, but its gate should be monitored for the
 same liveness symptom.
 
-Do not infer that sibling launchers are fixed automatically. The legacy
-`scripts/arm_scale_ladder_fresh_probes.sh` path and tariff-response release
-paths should be audited against the same observed-postcondition rule before
-future use. Prefer the reviewed probe-first scale-ladder launcher until that
-audit is complete.
+Do not infer that sibling launchers are fixed automatically. Their completed
+inventory and dispositions are recorded in
+`SLURM_MUTATION_CONTRACT_AUDIT_20260819.md`. The campaign-specific
+`scripts/arm_scale_ladder_fresh_probes.sh` path is formally retired.
+
+The follow-up audit now persists a terminal non-success scientific gate as
+`gate_state=terminal_failed`, with `submitted=false` and its exact scheduler
+source/state/exit-code observation, before raising.
 
 Known non-blocking residuals:
 
-- a terminal non-`COMPLETED` scientific gate safely leaves `submitted=false`,
-  but the terminal observation is not yet copied into `campaign.json`; inspect
-  the exact Slurm record when diagnosing that state;
 - the `scontrol` and `sacct` fallback fingerprints do not independently bind
   the username (the live `squeue` query is approved-user scoped);
 - bounded polling deliberately stops fail-closed under unusually long Slurm
   controller lag, so an operator may still need to reconcile after inspection;
   and
-- the legacy and tariff-response release paths remain separate audit items.
+- deferred legacy launchers remain unavailable for reuse until their listed
+  standalone hardening tasks are complete.

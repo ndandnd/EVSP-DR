@@ -39,6 +39,28 @@ SCIENCE_GROUPS = (
 )
 
 
+class GateTerminalObservationError(ValueError):
+    def __init__(self, message, observation):
+        super().__init__(message)
+        self.observation = observation
+
+
+def _persist_gate_terminal_failure(
+    manifest, manifest_path, gate, observation,
+):
+    manifest["gate_state"] = "terminal_failed"
+    manifest["submitted"] = False
+    manifest["gate_terminal_failure"] = {
+        "verified": True,
+        "gate_job_id": str(gate),
+        "observation": observation,
+        "source": observation.get("source"),
+        "state": observation.get("state"),
+        "exit_code": observation.get("exit_code"),
+    }
+    _replace_json(manifest_path, manifest)
+
+
 def _approved_tool_path(plan, name):
     spec = plan.get(name) or {}
     path = Path(str(spec.get("path") or ""))
@@ -168,12 +190,22 @@ def _resolve_gate_state(
         if terminal:
             exit_code = str(controller_row.get("exit_code") or "")
             if re.fullmatch(r"[0-9]+:[0-9]+", exit_code) is None:
-                raise ValueError("terminal gate lacks an exact exit code")
+                observation = {
+                    **controller_row, "source": "scontrol", "live": False,
+                }
+                raise GateTerminalObservationError(
+                    "terminal gate lacks an exact exit code", observation
+                )
             if (
                 controller_row["state"] == "COMPLETED"
                 and exit_code != "0:0"
             ):
-                raise ValueError("completed gate has nonzero exit code")
+                observation = {
+                    **controller_row, "source": "scontrol", "live": False,
+                }
+                raise GateTerminalObservationError(
+                    "completed gate has nonzero exit code", observation
+                )
             return {
                 **controller_row, "source": "scontrol", "live": False,
             }
@@ -206,7 +238,10 @@ def _resolve_gate_state(
     if errors:
         raise ValueError(f"accounting gate fingerprint mismatch: {errors}")
     if rows[0]["state"] == "COMPLETED" and rows[0]["exit_code"] != "0:0":
-        raise ValueError("completed gate accounting has nonzero exit code")
+        raise GateTerminalObservationError(
+            "completed gate accounting has nonzero exit code",
+            {**rows[0], "source": "sacct", "live": False},
+        )
     if (
         rows[0]["state"] in {
             "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
@@ -215,7 +250,10 @@ def _resolve_gate_state(
         }
         and re.fullmatch(r"[0-9]+:[0-9]+", rows[0]["exit_code"]) is None
     ):
-        raise ValueError("terminal gate accounting lacks an exact exit code")
+        raise GateTerminalObservationError(
+            "terminal gate accounting lacks an exact exit code",
+            {**rows[0], "source": "sacct", "live": False},
+        )
     return {**rows[0], "source": "sacct", "live": False}
 
 
@@ -246,7 +284,8 @@ def _gate_release_observation_result(observation):
                 stdout=json.dumps(observation, sort_keys=True), stderr="",
             )
         return subprocess.CompletedProcess(
-            args=[], returncode=3, stdout="",
+            args=[], returncode=3,
+            stdout=json.dumps(observation, sort_keys=True),
             stderr=f"scientific gate became terminal in state {state}",
         )
     if observation.get("live") is not True:
@@ -313,6 +352,12 @@ def _release_gate_with_postcondition(
         observation = resolver(
             plan, gate, expected_plan_sha, runner=runner
         )
+    except GateTerminalObservationError as exc:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3,
+            stdout=json.dumps(exc.observation, sort_keys=True),
+            stderr=str(exc),
+        )
     except (RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
         return subprocess.CompletedProcess(
             args=[], returncode=3, stdout="", stderr=str(exc)
@@ -360,6 +405,12 @@ def _release_gate_with_postcondition(
             try:
                 observation = resolver(
                     plan, gate, expected_plan_sha, runner=runner
+                )
+            except GateTerminalObservationError as exc:
+                return subprocess.CompletedProcess(
+                    args=[], returncode=3,
+                    stdout=json.dumps(exc.observation, sort_keys=True),
+                    stderr=str(exc),
                 )
             except ValueError as exc:
                 return subprocess.CompletedProcess(
@@ -952,9 +1003,15 @@ def _reconcile_locked(
             )
         ):
             raise ValueError("recorded probe specification identity mismatch")
-    gate_observation = _resolve_gate_state(
-        plan, gate, expected_plan_sha
-    )
+    try:
+        gate_observation = _resolve_gate_state(
+            plan, gate, expected_plan_sha
+        )
+    except GateTerminalObservationError as exc:
+        _persist_gate_terminal_failure(
+            manifest, manifest_path, gate, exc.observation
+        )
+        raise
     gate_state = gate_observation["state"]
     needs_probe_submission = (
         set(probe_specs) != set(PROBE_PARTITIONS)
@@ -1090,6 +1147,9 @@ def _reconcile_locked(
         _replace_json(manifest_path, manifest)
         return manifest
     if gate_state in PROBE_TERMINAL_STATES:
+        _persist_gate_terminal_failure(
+            manifest, manifest_path, gate, gate_observation
+        )
         raise ValueError(
             f"scientific gate is terminal but not completed: {gate_state}"
         )
@@ -1114,6 +1174,24 @@ def _reconcile_locked(
             plan, gate, expected_plan_sha
         )
         if released.returncode != 0:
+            try:
+                terminal_observation = (
+                    json.loads(released.stdout)
+                    if released.stdout else None
+                )
+            except json.JSONDecodeError:
+                terminal_observation = None
+            if (
+                isinstance(terminal_observation, dict)
+                and terminal_observation.get("state")
+                in PROBE_TERMINAL_STATES
+            ):
+                _persist_gate_terminal_failure(
+                    manifest, manifest_path, gate, terminal_observation
+                )
+                raise RuntimeError(
+                    "scientific gate reached a terminal non-success state"
+                )
             manifest["gate_state"] = "held_release_failed"
             manifest["release_error"] = (
                 released.stderr or released.stdout

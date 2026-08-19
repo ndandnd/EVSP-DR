@@ -1150,7 +1150,7 @@ def build_plan(
             "requeue": False,
             "signal": "B:USR1@180",
             "submission_release": (
-                "single_atomic_four_task_array_submission"
+                "single_four_task_array_with_verified_receipts"
                 if mode == K40_CS_OVERNIGHT_MODE
                 else "held_jobs_released_after_submission"
             ),
@@ -1318,52 +1318,74 @@ def _discover_array_parent(plan, plan_sha, *, attempts=5, sleeper=None):
     for attempt in range(1, attempts + 1):
         if attempt > 1:
             sleeper(1.0)
-        completed = subprocess.run(
-            [
-                "squeue", "-h", "-u", user,
-                "-o", "%F|%u|%j|%T|%P|%R|%k",
-            ],
-            text=True,
-            capture_output=True,
-            check=False,
-            timeout=10,
-        )
-        if completed.returncode != 0:
+        try:
+            completed = subprocess.run(
+                [
+                    "squeue", "-h", "-u", user,
+                    "-o", "%F|%u|%j|%T|%P|%R|%k",
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=10,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
             diagnostics.append({
                 "attempt": attempt,
-                "returncode": completed.returncode,
-                "stdout": (completed.stdout or "").strip(),
-                "stderr": (completed.stderr or "").strip(),
+                "source": "squeue",
+                "error": str(exc),
             })
-            continue
-        parents = {
-            fields[0]
-            for line in completed.stdout.splitlines()
-            if len(fields := [part.strip() for part in line.split("|", 6)])
-            == 7
-            and fields[0].isdigit()
-            and fields[1] == user
-            and fields[2] == MIP_ARRAY_NAME
-            and fields[4] == "scaglione"
-            and fields[6] == comment
-        }
+            parents = set()
+        else:
+            if completed.returncode != 0:
+                diagnostics.append({
+                    "attempt": attempt,
+                    "source": "squeue",
+                    "returncode": completed.returncode,
+                    "stdout": (completed.stdout or "").strip(),
+                    "stderr": (completed.stderr or "").strip(),
+                })
+            parents = {
+                fields[0]
+                for line in completed.stdout.splitlines()
+                if completed.returncode == 0
+                and len(
+                    fields := [
+                        part.strip() for part in line.split("|", 6)
+                    ]
+                ) == 7
+                and fields[0].isdigit()
+                and fields[1] == user
+                and fields[2] == MIP_ARRAY_NAME
+                and fields[4] == "scaglione"
+                and fields[6] == comment
+            }
         if len(parents) > 1:
             raise SlurmContractError(
                 "multiple array parents share the exact execution comment"
             )
         if parents:
             return next(iter(parents)), diagnostics
-        accounted = subprocess.run(
-            [
-                "sacct", "-X", "-n", "-P", "--starttime", "2026-01-01",
-                "--format=JobIDRaw,ArrayJobID,User,JobName%64,State,"
-                "Partition%64,Comment%256,ExitCode",
-            ],
-            text=True,
-            capture_output=True,
-            check=False,
-            timeout=10,
-        )
+        try:
+            accounted = subprocess.run(
+                [
+                    "sacct", "-X", "-n", "-P",
+                    "--starttime", "2026-01-01",
+                    "--format=JobIDRaw,ArrayJobID,User,JobName%64,State,"
+                    "Partition%64,Comment%256,ExitCode",
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+                timeout=10,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            diagnostics.append({
+                "attempt": attempt,
+                "source": "sacct",
+                "error": str(exc),
+            })
+            continue
         if accounted.returncode != 0:
             diagnostics.append({
                 "attempt": attempt,
@@ -1859,7 +1881,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     manifest["approval_sha256"] = plan_sha
     manifest["submitted"] = False
     manifest["submission_atomicity"] = (
-        "single_atomic_four_task_array_submission"
+        "single_four_task_array_with_verified_receipts"
         if plan.get("mode") == K40_CS_OVERNIGHT_MODE
         else "all_cells_held_until_every_sbatch_is_accepted"
     )

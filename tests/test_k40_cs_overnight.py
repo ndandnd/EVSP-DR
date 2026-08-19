@@ -571,7 +571,7 @@ class K40CSOvernightTests(unittest.TestCase):
             ).hexdigest()
             manifest["submitted"] = True
             manifest["submission_atomicity"] = (
-                "single_atomic_four_task_array_submission"
+                "single_four_task_array_with_verified_receipts"
             )
             user = manifest["environment_whitelist"]["USER"]
             task_observations = {}

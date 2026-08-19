@@ -2351,6 +2351,120 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     plan, "100", plan_sha, runner=runner_nonzero
                 )
 
+    def test_terminal_gate_failure_is_durable_before_raise(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, plan_sha, _manifest, _tools = (
+                self._held_science_fixture(root)
+            )
+            (root / "approved-plan.json").write_bytes(
+                ladder.canonical(plan)
+            )
+            specs = self._probe_specs(root, plan_sha=plan_sha)
+            manifest_path = root / "campaign.json"
+            manifest_path.write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "release_attempting",
+                "gate_job_id": "100",
+                "submitted": True,
+                "submitted_arrays": {"PREFLIGHT": "401"},
+                "infrastructure_probes": specs,
+            }))
+            observation = {
+                "job_id": "100",
+                "job_name": f"LDG{plan_sha[:5]}",
+                "partition": "default_partition",
+                "comment": f"SLADG:{plan_sha[:20]}",
+                "state": "FAILED",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "live": False,
+            }
+            compatible = {
+                partition: {"compatible": True}
+                for partition in ladder.PROBE_PARTITIONS
+            }
+            with (
+                patch(
+                    "reconcile_scale_ladder_gate._resolve_gate_state",
+                    return_value=observation,
+                ),
+                patch(
+                    "reconcile_scale_ladder_gate._wait_for_probes",
+                    return_value=compatible,
+                ),
+                patch(
+                    "reconcile_scale_ladder_gate._probes_compatible",
+                    return_value=True,
+                ),
+                self.assertRaisesRegex(ValueError, "terminal"),
+            ):
+                _reconcile_locked(root, plan_sha)
+            persisted = json.loads(manifest_path.read_text())
+            self.assertEqual(
+                persisted["gate_state"], "terminal_failed"
+            )
+            self.assertFalse(persisted["submitted"])
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["observation"],
+                observation,
+            )
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["source"], "sacct"
+            )
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["exit_code"], "1:0"
+            )
+
+    def test_terminal_gate_missing_exit_is_durable_before_raise(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, plan_sha, _manifest, _tools = (
+                self._held_science_fixture(root)
+            )
+            (root / "approved-plan.json").write_bytes(
+                ladder.canonical(plan)
+            )
+            specs = self._probe_specs(root, plan_sha=plan_sha)
+            manifest_path = root / "campaign.json"
+            manifest_path.write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "release_attempting",
+                "gate_job_id": "100",
+                "submitted": True,
+                "submitted_arrays": {"PREFLIGHT": "401"},
+                "infrastructure_probes": specs,
+            }))
+            observation = {
+                "job_id": "100",
+                "job_name": f"LDG{plan_sha[:5]}",
+                "partition": "default_partition",
+                "comment": f"SLADG:{plan_sha[:20]}",
+                "state": "COMPLETED",
+                "exit_code": None,
+                "source": "scontrol",
+                "live": False,
+            }
+            error = gate_reconcile.GateTerminalObservationError(
+                "terminal gate lacks an exact exit code", observation
+            )
+            with (
+                patch(
+                    "reconcile_scale_ladder_gate._resolve_gate_state",
+                    side_effect=error,
+                ),
+                self.assertRaisesRegex(ValueError, "exit code"),
+            ):
+                _reconcile_locked(root, plan_sha)
+            persisted = json.loads(manifest_path.read_text())
+            self.assertEqual(
+                persisted["gate_state"], "terminal_failed"
+            )
+            self.assertFalse(persisted["submitted"])
+            self.assertIsNone(
+                persisted["gate_terminal_failure"]["exit_code"]
+            )
+
     def test_activation_runtime_rejects_manifest_fingerprint_spoofs(self):
         with tempfile.TemporaryDirectory() as tmp:
             plan, _plan_sha, _specs, _activation, manifest = (

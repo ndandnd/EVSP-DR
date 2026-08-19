@@ -189,12 +189,20 @@ else
 fi
 ```
 
-The launcher refuses an existing campaign/output path, an existing execution
-reservation, or a matching Slurm execution digest. It creates all four tasks
-atomically with one array submission. Slurm displays the semantic array name
-`K40R12RG82` plus task IDs `0..3`, which map in plan order to R1-RAW-8h,
-R1-GIRO40-2h, R2-RAW-8h, and R2-GIRO40-2h. Every displayed name remains at
-most 15 characters including its task suffix.
+For a new campaign, the launcher refuses an existing execution reservation or
+a matching Slurm execution digest. It requests all four tasks in one array,
+but does not infer acceptance from `sbatch` status or a parsed parent ID.
+`submitted=true` is written only after exact controller/accounting evidence
+binds the approved user, parent, all four task IDs (including split controller
+records), name, partition, execution comment, and state. Slurm displays the
+semantic array name `K40R12RG82` plus task IDs `0..3`, which map in plan order
+to R1-RAW-8h, R1-GIRO40-2h, R2-RAW-8h, and R2-GIRO40-2h. Every displayed name
+remains at most 15 characters including its task suffix.
+
+Repeating the exact same campaign/plan invokes reconciliation rather than
+submitting a replacement. It rediscovers an accepted-before-record parent by
+the immutable execution comment and revalidates every task receipt. Ambiguous
+absence retains reservations and fails closed.
 
 ## Post-campaign summary and immutable archive
 

@@ -86,7 +86,12 @@ def _require_spec(spec, *, require_job_id=True):
     missing = sorted(
         field for field in required if not str(spec.get(field) or "")
     )
-    if require_job_id and not str(spec.get("job_id") or "").isdigit():
+    if (
+        require_job_id
+        and re.fullmatch(
+            r"[0-9]+(?:_[0-9]+)?", str(spec.get("job_id") or "")
+        ) is None
+    ):
         missing.append("job_id")
     if missing:
         raise SlurmContractError(

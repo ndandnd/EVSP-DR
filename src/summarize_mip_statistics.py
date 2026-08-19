@@ -433,10 +433,10 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
             ),
         )
         if manifest.get("submission_atomicity") != (
-            "single_atomic_four_task_array_submission"
+            "single_four_task_array_with_verified_receipts"
         ):
             raise ValueError(
-                "overnight campaign was not one atomic array submission"
+                "overnight campaign lacks the verified array contract"
             )
         _require_array_receipt(
             manifest, plan_sha, manifest.get("jobs") or []
@@ -889,7 +889,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         })
     if strict_overnight and len(overnight_array_parents) != 1:
         raise ValueError(
-            "overnight jobs do not belong to one atomic Slurm array"
+            "overnight jobs do not share one verified Slurm array parent"
         )
     return manifest, checkpoint_rows, final_rows
 
