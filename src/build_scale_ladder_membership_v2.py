@@ -131,6 +131,9 @@ def _producer_hashes():
         "src/scale_ladder_trip_identity.py",
         "src/tariff_response_core.py",
         "src/utils_v2.py",
+        "src/pricing_dp_og.py",
+        "src/prepare_k40_giro40_partition.py",
+        "src/summarize_scale_ladder.py",
     )
     return {
         relative: sha256_file(REPO_ROOT / relative)
@@ -217,6 +220,11 @@ def build_payload(
         != "evsp-dr-scale-ladder-known-membership-v1"
     ):
         raise ValueError("v1 membership schema mismatch")
+    if (
+        sha256_file(instance_manifest)
+        != v1.get("instance_manifest_sha256")
+    ):
+        raise ValueError("v1-bound instance manifest hash mismatch")
     v1_cells = {cell["cell_id"]: cell for cell in v1["cells"]}
     if len(v1_cells) != len(v1["cells"]):
         raise ValueError("v1 membership cells are duplicated")

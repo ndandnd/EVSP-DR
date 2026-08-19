@@ -44,6 +44,30 @@ DEFAULT_K40 = (
     / "data/tariff_response/frozen_instances/"
     "Practice_Custom_DutyUnion_k40_r2.csv"
 )
+DEFAULT_K5_SHA256 = (
+    "fc10ac0707becb960364e76b8c1e1c414d5d5639cbc3b7dadaf67a77e03f5322"
+)
+DEFAULT_K40_SHA256 = (
+    "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
+)
+DEFAULT_ORACLE_SPEC = {
+    "cell_id": "k05_s1",
+    "duty_id": "13411",
+    "instance_path":
+        "data/scale_ladder/instances/Practice_Custom_DutyUnion_k05_r1.csv",
+    "instance_sha256": DEFAULT_K5_SHA256,
+    "grids": [
+        {"soc_step": 15.0, "block_min": 10},
+        {"soc_step": 5.0, "block_min": 10},
+        {"soc_step": 2.5, "block_min": 10},
+        {"soc_step": 1.0, "block_min": 10},
+        {"soc_step": 1.0, "block_min": 5},
+    ],
+    "comparison_instance_path":
+        "data/tariff_response/frozen_instances/"
+        "Practice_Custom_DutyUnion_k40_r2.csv",
+    "comparison_instance_sha256": DEFAULT_K40_SHA256,
+}
 PHYSICS = {
     "g_kwh": 300.0,
     "charge_kw": 300.0,
@@ -122,6 +146,9 @@ def _producer_hashes():
         "src/scale_ladder_trip_identity.py",
         "src/tariff_response_core.py",
         "src/utils_v2.py",
+        "src/pricing_dp_og.py",
+        "src/prepare_k40_giro40_partition.py",
+        "src/summarize_scale_ladder.py",
     )
     return {
         relative: sha256_file(REPO_ROOT / relative)
@@ -634,6 +661,36 @@ def _classify_counterfactuals(by_mode, graph_consistent):
     return "unresolved"
 
 
+def oracle_spec(
+    *,
+    instance_path,
+    expected_instance_sha256,
+    duty_id,
+    grids,
+    cell_id,
+    comparison_instance=None,
+    comparison_instance_sha256=None,
+):
+    return {
+        "cell_id": str(cell_id),
+        "duty_id": str(duty_id),
+        "instance_path": _repo_relative(instance_path),
+        "instance_sha256": str(expected_instance_sha256),
+        "grids": [
+            {"soc_step": float(soc), "block_min": int(block)}
+            for soc, block in grids
+        ],
+        "comparison_instance_path": (
+            _repo_relative(comparison_instance)
+            if comparison_instance is not None else None
+        ),
+        "comparison_instance_sha256": (
+            str(comparison_instance_sha256)
+            if comparison_instance_sha256 is not None else None
+        ),
+    }
+
+
 def audit_duty(
     *,
     instance_path,
@@ -644,6 +701,15 @@ def audit_duty(
     comparison_instance=None,
     comparison_instance_sha256=None,
 ):
+    trusted_spec = oracle_spec(
+        instance_path=instance_path,
+        expected_instance_sha256=expected_instance_sha256,
+        duty_id=duty_id,
+        grids=grids,
+        cell_id=cell_id,
+        comparison_instance=comparison_instance,
+        comparison_instance_sha256=comparison_instance_sha256,
+    )
     loaded = _load_duty(
         instance_path, expected_instance_sha256, duty_id
     )
@@ -891,6 +957,8 @@ def audit_duty(
         })
     return {
         "schema": SCHEMA,
+        "oracle_spec": trusted_spec,
+        "oracle_spec_sha256": _sha_payload(trusted_spec),
         "diagnostic_only": True,
         "certificate_scope": COUNTERFACTUAL_SCOPE,
         "cell_id": cell_id,
@@ -1017,7 +1085,7 @@ def publish(
     return output_dir
 
 
-def validate(output_dir):
+def validate(output_dir, trusted_spec=None):
     root = Path(output_dir).resolve()
     oracle = root / "oracle.json"
     tables = {
@@ -1032,27 +1100,35 @@ def validate(output_dir):
     ):
         raise ValueError("oracle artifact set is incomplete")
     payload = json.loads(oracle.read_text())
-    comparison = payload.get("comparison_instance")
+    if trusted_spec is None:
+        if root == DEFAULT_OUTPUT.resolve():
+            trusted_spec = DEFAULT_ORACLE_SPEC
+        else:
+            raise ValueError(
+                "oracle validation requires a trusted external specification"
+            )
+    trusted_spec = json.loads(json.dumps(trusted_spec))
+    if (
+        payload.get("oracle_spec") != trusted_spec
+        or payload.get("oracle_spec_sha256") != _sha_payload(trusted_spec)
+    ):
+        raise ValueError("oracle trusted specification mismatch")
     grids = [
         (float(row["soc_step"]), int(row["block_min"]))
-        for row in payload.get("grid_results") or []
+        for row in trusted_spec["grids"]
     ]
     expected, candidates, frontiers, counterfactuals = audit_duty(
-        instance_path=REPO_ROOT / payload["instance_path"],
-        expected_instance_sha256=payload[
-            "instance_identity"
-        ]["instance_file_sha256"],
-        duty_id=payload["duty_id"],
+        instance_path=REPO_ROOT / trusted_spec["instance_path"],
+        expected_instance_sha256=trusted_spec["instance_sha256"],
+        duty_id=trusted_spec["duty_id"],
         grids=grids,
-        cell_id=payload["cell_id"],
+        cell_id=trusted_spec["cell_id"],
         comparison_instance=(
-            REPO_ROOT / comparison["instance_path"]
-            if comparison is not None else None
+            REPO_ROOT / trusted_spec["comparison_instance_path"]
+            if trusted_spec.get("comparison_instance_path") else None
         ),
-        comparison_instance_sha256=(
-            comparison["instance_file_sha256"]
-            if comparison is not None else None
-        ),
+        comparison_instance_sha256=
+            trusted_spec.get("comparison_instance_sha256"),
     )
     expected_table_bytes = {
         "transition_candidates.csv":
@@ -1114,9 +1190,18 @@ def main(argv=None):
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--validate-only", action="store_true")
     args = parser.parse_args(argv)
+    trusted_spec = oracle_spec(
+        instance_path=args.instance,
+        expected_instance_sha256=args.instance_sha256,
+        duty_id=args.duty_id,
+        grids=args.grid,
+        cell_id=args.cell_id,
+        comparison_instance=args.comparison_instance,
+        comparison_instance_sha256=args.comparison_instance_sha256,
+    )
     if args.validate_only:
         output = args.out.resolve()
-        validate(output)
+        validate(output, trusted_spec)
     else:
         output = publish(
             args.out,
@@ -1128,7 +1213,7 @@ def main(argv=None):
             comparison_instance=args.comparison_instance,
             comparison_instance_sha256=args.comparison_instance_sha256,
         )
-        validate(output)
+        validate(output, trusted_spec)
     print(json.dumps({
         "output": str(output),
         "oracle_sha256": sha256_file(output / "oracle.json"),

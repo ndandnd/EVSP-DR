@@ -407,6 +407,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
                 comparison_instance=K40,
                 comparison_instance_sha256=K40_SHA,
             )
+            trusted_spec = transition_oracle.oracle_spec(**arguments)
             expected = transition_oracle.audit_duty(**arguments)
 
             def expected_copy(**_kwargs):
@@ -421,7 +422,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
                     output,
                     **arguments,
                 )
-                validate_oracle(output)
+                validate_oracle(output, trusted_spec)
                 for name in (
                     "oracle.json", "transition_candidates.csv",
                     "frontier_states.csv", "counterfactuals.csv",
@@ -449,12 +450,28 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
                     changed, indent=2, sort_keys=True
                 ) + "\n")
                 with self.assertRaisesRegex(ValueError, "summary"):
-                    validate_oracle(output)
+                    validate_oracle(output, trusted_spec)
+                oracle_path.write_bytes(original_oracle)
+                changed = json.loads(oracle_path.read_text())
+                changed["oracle_spec"]["cell_id"] = "forged-cell"
+                changed["oracle_spec"]["grids"] = (
+                    changed["oracle_spec"]["grids"][:1]
+                )
+                changed["oracle_spec_sha256"] = (
+                    transition_oracle._sha_payload(
+                        changed["oracle_spec"]
+                    )
+                )
+                oracle_path.write_text(json.dumps(
+                    changed, indent=2, sort_keys=True
+                ) + "\n")
+                with self.assertRaisesRegex(ValueError, "specification"):
+                    validate_oracle(output, trusted_spec)
                 oracle_path.write_bytes(original_oracle)
                 readme = output / "README.md"
                 readme.write_text(readme.read_text() + "tampered\n")
                 with self.assertRaisesRegex(ValueError, "README"):
-                    validate_oracle(output)
+                    validate_oracle(output, trusted_spec)
 
     def test_v2_tracked_artifacts_validate_and_are_deterministic(self):
         expected = membership_v2.build_payload()
@@ -532,6 +549,14 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "fixed v1"):
                 membership_v2.build_payload(v1_path=substituted)
+            changed_manifest = Path(tmp) / "instances.csv"
+            changed_manifest.write_bytes(
+                membership_v2.INSTANCE_MANIFEST.read_bytes() + b"\n"
+            )
+            with self.assertRaisesRegex(ValueError, "manifest hash"):
+                membership_v2.build_payload(
+                    instance_manifest=changed_manifest
+                )
 
 
 if __name__ == "__main__":
