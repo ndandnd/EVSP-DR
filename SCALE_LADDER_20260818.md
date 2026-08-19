@@ -15,6 +15,7 @@ The dry-run plan contains exactly:
   diagnostic k2 runs at 1 kWh / 5 minutes;
 - 21 RAW MIPs and 21 KNOWN-PARTITION diagnostic MIPs;
 - 138 experimental/diagnostic tasks total;
+- 2 additional infrastructure probes (default_partition and Scaglione);
 - zero k40 MIP submissions (four reuse-only result slots).
 
 ## 1. Dry run
@@ -65,6 +66,7 @@ else
     echo "TASK MATRIX: $MATRIX"
     echo "APPROVAL SHA-256: $PLAN_SHA"
     echo "EXPECTED TASKS: 138 (22 preflight + 21 seed + 23 primary CG + 30 sensitivity CG + 42 MIP; k40 MIP = 0)"
+    echo "INFRASTRUCTURE TASKS: 2 portable-environment probes (reported separately)"
   fi
 fi
 ```
@@ -95,7 +97,10 @@ else
 fi
 ```
 
-All six arrays depend on one held gate. Primary CG waits for the complete
+All six arrays depend on one held gate. Two lightweight environment probes run
+first—one on `default_partition`, one on `scaglione`—and publish hashed probe
+artifacts under `probes/`. The gate remains held unless both portable content
+identities pass. Primary CG waits for the complete
 instance-level PREFLIGHT array; small-grid sensitivity also waits for that
 preflight. MIP array task `i` uses `aftercorr` on primary CG task `i`;
 KNOWN-PARTITION also depends on seed task `i`. The gate is released only after

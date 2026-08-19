@@ -324,8 +324,11 @@ def build_plan(
         environment_identity = json.loads(version.stdout)
     except json.JSONDecodeError as exc:
         raise ValueError("pilot environment identity is invalid") from exc
+    portable_environment = environment_identity.get(
+        "portable", environment_identity
+    )
     if (
-        not str(environment_identity.get("python", "")).startswith("3.12.")
+        not str(portable_environment.get("python", "")).startswith("3.12.")
         or not python_path.is_file()
     ):
         raise ValueError("pilot requires an explicit Python 3.12")
@@ -494,7 +497,7 @@ def build_plan(
         "python": {
             "path": str(python_path),
             "sha256": sha256_file(python_path),
-            "version": environment_identity["python"],
+            "version": portable_environment["python"],
         },
         "environment_identity": environment_identity,
         "jobs": jobs,

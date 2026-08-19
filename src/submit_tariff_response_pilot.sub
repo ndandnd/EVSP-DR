@@ -145,17 +145,9 @@ for scan_root in (root,root/"src"):
 if unsafe:
     raise SystemExit(sorted(set(unsafe))[:10])
 PY
-OBSERVED_ENV=$(
-  "$PYTHON" -I -B "$ROOT/src/tariff_response_environment.py"
-) || fatal "approved Python/Gurobi environment is unavailable"
-"$PYTHON" -I -B - "$PLAN" "$OBSERVED_ENV" <<'PY' \
-  || fatal "worker environment differs from approved plan"
-import json,sys
-plan=json.load(open(sys.argv[1]))
-observed=json.loads(sys.argv[2])
-if observed != plan.get("environment_identity"):
-    raise SystemExit("environment identity mismatch")
-PY
+"$PYTHON" -I -B "$ROOT/src/tariff_response_environment.py" \
+  --compare-plan "$PLAN" --plan-field environment_identity \
+  || fatal "portable environment compatibility failed; structured differences printed above"
 [[ "$(sha256sum "$INSTANCE" | awk '{print $1}')" == "$INSTANCE_SHA" ]] \
   || fatal "instance hash mismatch"
 [[ "$(sha256sum "$TARIFF_MANIFEST" | awk '{print $1}')" == \

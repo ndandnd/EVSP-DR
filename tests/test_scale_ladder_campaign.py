@@ -1,4 +1,5 @@
 import csv
+import copy
 import ctypes
 import errno
 import hashlib
@@ -11,12 +12,17 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
+from unittest.mock import Mock
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import launch_scale_ladder as ladder  # noqa: E402
+from tariff_response_environment import (  # noqa: E402
+    PORTABLE_FIELDS,
+    compare_portable,
+)
 from build_scale_ladder_inputs import build as build_inputs  # noqa: E402
 from build_tariff_response_manifest import sha256_file  # noqa: E402
 from scale_ladder_trip_identity import (  # noqa: E402
@@ -43,6 +49,81 @@ INSTANCE_MANIFEST = (
 
 
 class ScaleLadderCampaignTests(unittest.TestCase):
+    def _portable_identity(self):
+        portable = {
+            field: f"value-{field}" for field in PORTABLE_FIELDS
+        }
+        encoded = json.dumps(
+            portable, sort_keys=True, separators=(",", ":")
+        ).encode()
+        return {
+            "schema": "evsp-dr-portable-environment-v1",
+            "portable": portable,
+            "portable_identity_sha256":
+                hashlib.sha256(encoded).hexdigest(),
+            "node_metadata": {
+                "platform": "login",
+                "hostname": "login01",
+                "kernel_release": "login-kernel",
+            },
+        }
+
+    def test_portable_environment_ignores_node_metadata(self):
+        planned = self._portable_identity()
+        observed = copy.deepcopy(planned)
+        observed["node_metadata"] = {
+            "platform": "compute",
+            "hostname": "worker99",
+            "kernel_release": "different-kernel",
+        }
+        self.assertEqual(compare_portable(planned, observed), [])
+
+    def test_portable_environment_reports_exact_required_mismatches(self):
+        planned = self._portable_identity()
+        for field in (
+            "executable_sha256",
+            "numpy",
+            "scipy_distribution_sha256",
+        ):
+            observed = copy.deepcopy(planned)
+            observed["portable"][field] = "changed"
+            differences = compare_portable(planned, observed)
+            self.assertEqual(
+                [item["field"] for item in differences],
+                [f"portable.{field}"],
+            )
+            self.assertEqual(differences[0]["planned"],
+                             planned["portable"][field])
+            self.assertEqual(differences[0]["observed"], "changed")
+        observed = copy.deepcopy(planned)
+        del observed["portable"]["pandas_distribution_sha256"]
+        differences = compare_portable(planned, observed)
+        self.assertEqual(
+            differences[0]["field"],
+            "portable.pandas_distribution_sha256",
+        )
+        self.assertEqual(
+            differences[0]["reason"], "missing_required_field"
+        )
+
+    def test_failed_probe_never_releases_gate(self):
+        compatible = {
+            "default_partition": {"compatible": True},
+            "scaglione": {"compatible": True},
+        }
+        for failed in ("default_partition", "scaglione"):
+            results = copy.deepcopy(compatible)
+            results[failed]["compatible"] = False
+            runner = Mock()
+            completed = ladder._release_gate_after_probes(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                "12345",
+                results,
+                runner=runner,
+            )
+            self.assertNotEqual(completed.returncode, 0)
+            runner.assert_not_called()
+
     def test_atomic_summary_publication_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -193,9 +274,15 @@ class ScaleLadderCampaignTests(unittest.TestCase):
 
     def test_plan_has_exact_task_mapping_and_no_k40_mips(self):
         environment = {
-            "python": "3.12.3",
-            "executable": str(Path(sys.executable).resolve()),
-            "executable_sha256": sha256_file(Path(sys.executable).resolve()),
+            "schema": "evsp-dr-portable-environment-v1",
+            "portable": {
+                "python": "3.12.3",
+                "executable": str(Path(sys.executable).resolve()),
+                "executable_sha256":
+                    sha256_file(Path(sys.executable).resolve()),
+            },
+            "portable_identity_sha256": "e" * 64,
+            "node_metadata": {},
         }
         checkout = {
             "commit": "a" * 40,
@@ -512,6 +599,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "snapshot_minutes": [],
             }
             plan = {
+                "execution_mode": "local_diagnostic",
                 "checkout_identity": {"commit": "b" * 40},
                 "tariff": {"primary_tariff_sha256": "c" * 64},
                 "physics": {}, "trip_identity_schema":
@@ -532,13 +620,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             (root / "approved-plan.json").write_bytes(raw)
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": plan_sha,
-                "submitted": True,
-                "gate_state": "released",
-                "submitted_arrays": {
-                    "PREFLIGHT": "1", "SEED": "2", "CG": "3",
-                    "CG_SENSITIVITY": "4",
-                    "MIP_RAW": "5", "MIP_KNOWN": "6",
-                },
+                "execution_mode": "local_diagnostic",
+                "diagnostic_only": True,
+                "submitted": False,
+                "gate_state": "not_applicable_local",
+                "submitted_arrays": {},
             }))
             for job, artifacts in (
                 (

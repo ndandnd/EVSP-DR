@@ -8,8 +8,6 @@ import concurrent.futures
 import csv
 import hashlib
 import json
-import os
-import platform
 import subprocess
 import sys
 from pathlib import Path
@@ -18,6 +16,7 @@ from build_tariff_response_manifest import REPO_ROOT, sha256_file
 from prepare_scale_ladder_known_partition import prepare
 from audit_scale_ladder_known_membership import audit, write_outputs
 from scale_ladder_trip_identity import identity
+from tariff_response_environment import identity as portable_environment
 
 
 INSTANCE_MANIFEST = (
@@ -46,23 +45,12 @@ LOCAL_CODE_PATHS = (
 
 
 def _current_environment():
-    import pandas
-    import scipy
-    import numpy
-    import matplotlib
-    executable = Path(sys.executable).resolve()
+    environment = portable_environment()
     return {
-        "python": platform.python_version(),
-        "executable": str(executable),
-        "executable_sha256": sha256_file(executable),
-        "numpy": numpy.__version__,
-        "pandas": pandas.__version__,
-        "scipy": scipy.__version__,
-        "matplotlib": matplotlib.__version__,
-        "platform": platform.platform(),
-        "machine": platform.machine(),
-        "numpy_build": repr(getattr(numpy.__config__, "CONFIG", None)),
-        "pythonpath": os.environ.get("PYTHONPATH"),
+        "schema": environment["schema"],
+        "portable": environment["portable"],
+        "portable_identity_sha256":
+            environment["portable_identity_sha256"],
         "code_hashes": {
             path: sha256_file(REPO_ROOT / path)
             for path in LOCAL_CODE_PATHS
@@ -197,17 +185,10 @@ def run(args):
         if reference_environment is None:
             approved = reference_plan.get("python_identity") or {}
             reference_environment = {
-                "python": approved.get("python"),
-                "executable": approved.get("executable"),
-                "executable_sha256": approved.get("executable_sha256"),
-                "numpy": approved.get("numpy"),
-                "pandas": approved.get("pandas"),
-                "scipy": approved.get("scipy"),
-                "matplotlib": approved.get("matplotlib"),
-                "platform": approved.get("platform"),
-                "machine": approved.get("machine"),
-                "numpy_build": approved.get("numpy_build"),
-                "pythonpath": approved.get("pythonpath"),
+                "schema": approved.get("schema"),
+                "portable": approved.get("portable"),
+                "portable_identity_sha256":
+                    approved.get("portable_identity_sha256"),
                 "code_hashes": {
                     path: (reference_plan.get("code_hashes") or {}).get(path)
                     for path in LOCAL_CODE_PATHS

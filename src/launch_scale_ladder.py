@@ -13,6 +13,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
@@ -38,6 +39,7 @@ HISTORICAL_FLAT_SHA256 = (
     "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
 )
 WORKER = REPO_ROOT / "src/submit_scale_ladder.sub"
+PROBE_WORKER = REPO_ROOT / "src/submit_scale_ladder_probe.sub"
 CODE_PATHS = (
     "src/build_tariff_response_manifest.py",
     "src/launch_scale_ladder.py",
@@ -63,6 +65,10 @@ CODE_PATHS = (
     "src/recover_scale_ladder_mip_progress.py",
     "src/audit_scale_ladder_known_membership.py",
     "src/run_scale_ladder_local_diagnostics.py",
+    "src/run_scale_ladder_environment_probe.py",
+    "src/submit_scale_ladder_probe.sub",
+    "src/run_scale_ladder_environment_probe.py",
+    "src/submit_scale_ladder_probe.sub",
 )
 CG_BUDGET_S = {
     2: 7200, 3: 7200, 5: 7200,
@@ -472,10 +478,12 @@ def build_plan(campaign, python, reservation_root):
         "code_hashes": code_hashes,
         "worker": str(WORKER),
         "worker_sha256": sha256_file(WORKER),
+        "probe_worker": str(PROBE_WORKER),
+        "probe_worker_sha256": sha256_file(PROBE_WORKER),
         "python_identity": python_identity,
         "python": {
-            "path": python_identity["executable"],
-            "sha256": python_identity["executable_sha256"],
+            "path": python_identity["portable"]["executable"],
+            "sha256": python_identity["portable"]["executable_sha256"],
         },
         "scontrol": scontrol_identity,
         "sbatch": sbatch_identity,
@@ -496,6 +504,7 @@ def build_plan(campaign, python, reservation_root):
         "mip_task_count": 42,
         "seed_task_count": 21,
         "k40_mip_submission_count": 0,
+        "infrastructure_probe_task_count": 2,
         "k40_reuse_slots": reuse_slots,
     }
 
@@ -724,12 +733,42 @@ def submit(plan, plan_sha):
         manifest["submitted_arrays"] = arrays
         _replace_json(manifest_path, manifest)
         raise
+    probe_specs = {}
+    try:
+        for partition in ("default_partition", "scaglione"):
+            probe_specs[partition] = {
+                "job_id": _submit_probe(
+                    plan, plan_path, plan_sha,
+                    partition, root, logs,
+                ),
+                "output": str(root / "probes" / f"{partition}.json"),
+            }
+            manifest["infrastructure_probes"] = dict(probe_specs)
+            manifest["probe_state"] = "submitting"
+            _replace_json(manifest_path, manifest)
+    except Exception as exc:
+        manifest["probe_state"] = "submission_failed_gate_retained"
+        manifest["probe_error"] = repr(exc)
+        manifest["gate_state"] = "held_probe_failure"
+        _replace_json(manifest_path, manifest)
+        raise
+    manifest["probe_state"] = "running"
+    _replace_json(manifest_path, manifest)
+    probe_results = _wait_for_probes(plan, plan_sha, probe_specs)
+    manifest["probe_results"] = probe_results
+    if not _probes_compatible(probe_results):
+        manifest["probe_state"] = "failed_gate_retained"
+        manifest["gate_state"] = "held_probe_failure"
+        _replace_json(manifest_path, manifest)
+        raise RuntimeError(
+            "infrastructure probe failed; scientific arrays remain held"
+        )
+    manifest["probe_state"] = "passed"
     manifest["submitted_arrays"] = arrays
     manifest["gate_state"] = "release_attempting"
     _replace_json(manifest_path, manifest)
-    released = subprocess.run(
-        [plan["scontrol"]["path"], "release", gate],
-        text=True, capture_output=True, check=False,
+    released = _release_gate_after_probes(
+        plan, gate, probe_results
     )
     if released.returncode != 0:
         manifest["gate_state"] = "held_release_failed"
@@ -742,6 +781,117 @@ def submit(plan, plan_sha):
     manifest["submitted"] = True
     _replace_json(manifest_path, manifest)
     return manifest
+
+
+def _submit_probe(plan, plan_path, plan_sha, partition, root, logs):
+    probe_id = (
+        "default" if partition == "default_partition" else "scaglione"
+    )
+    output = root / "probes" / f"{partition}.json"
+    return _sbatch(plan, [
+        f"--partition={partition}", "--no-requeue",
+        "--time=00:10:00", "--cpus-per-task=1", "--mem=4G",
+        f"--job-name=LDPR{probe_id[:2].upper()}{plan_sha[:3]}",
+        f"--output={logs}/probe_{probe_id}_%j.out",
+        f"--error={logs}/probe_{probe_id}_%j.err",
+        "--export=NONE",
+        str(PROBE_WORKER), str(plan_path), plan_sha, probe_id,
+        plan["python"]["path"], plan["python"]["sha256"],
+        str(REPO_ROOT), plan["runtime_environment"]["HOME"], str(output),
+        plan["probe_worker_sha256"],
+    ])
+
+
+def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
+    deadline = time.monotonic() + timeout_s
+    sacct = plan["sacct"]["path"]
+    terminal = {}
+    while time.monotonic() < deadline:
+        terminal.clear()
+        for probe_id, spec in probe_specs.items():
+            completed = subprocess.run(
+                [
+                    sacct, "-X", "-n", "-P", "-j", spec["job_id"],
+                    "--format=JobIDRaw,State",
+                ],
+                text=True, capture_output=True, check=False,
+            )
+            if completed.returncode != 0:
+                terminal[probe_id] = "ACCOUNTING_ERROR"
+                continue
+            states = [
+                fields[1].split()[0].split("+", 1)[0]
+                for line in completed.stdout.splitlines()
+                if len(fields := line.split("|")) >= 2
+                and fields[0] == str(spec["job_id"])
+            ]
+            terminal[probe_id] = states[0] if states else "PENDING"
+        if all(
+            state in {
+                "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
+                "OUT_OF_MEMORY", "ACCOUNTING_ERROR",
+            }
+            for state in terminal.values()
+        ):
+            break
+        time.sleep(2)
+    results = {}
+    for probe_id, spec in probe_specs.items():
+        path = Path(spec["output"])
+        result = {
+            "job_id": spec["job_id"],
+            "state": terminal.get(probe_id, "TIMEOUT_WAITING"),
+            "output": str(path),
+            "compatible": False,
+            "artifact_sha256": None,
+            "differences": [],
+        }
+        if path.is_file():
+            payload = json.loads(path.read_text())
+            digest = sha256_file(path)
+            sidecar = Path(str(path) + ".sha256")
+            sidecar_digest = (
+                sidecar.read_text().split()[0]
+                if sidecar.is_file() and sidecar.read_text().split()
+                else None
+            )
+            result.update({
+                "compatible": (
+                    payload.get("compatible") is True
+                    and payload.get("plan_sha256") == plan_sha
+                    and digest == sidecar_digest
+                    and result["state"] == "COMPLETED"
+                ),
+                "artifact_sha256": digest,
+                "differences": payload.get("differences") or [],
+                "observed_node_metadata":
+                    payload.get("observed_node_metadata"),
+            })
+        results[probe_id] = result
+    return results
+
+
+def _probes_compatible(results):
+    return (
+        set(results) == {"default_partition", "scaglione"}
+        and all(
+            result.get("compatible") is True
+            for result in results.values()
+        )
+    )
+
+
+def _release_gate_after_probes(
+    plan, gate, probe_results, *, runner=subprocess.run
+):
+    if not _probes_compatible(probe_results):
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="", stderr="probe mismatch"
+        )
+    return runner(
+        [plan["scontrol"]["path"], "release", gate],
+        text=True, capture_output=True, check=False,
+    )
 
 
 def _submit_array(

@@ -119,15 +119,9 @@ for path,digest in sorted(plan["code_hashes"].items()):
     print(f"{path}\t{digest}")
 PY
 )
-OBSERVED_ENV=$(
-  "$PYTHON" -I -B "$ROOT/src/tariff_response_environment.py"
-) || fatal "approved environment unavailable"
-"$PYTHON" -I -B - "$PLAN" "$OBSERVED_ENV" <<'PY' \
-  || fatal "worker environment differs"
-import json,sys
-if json.loads(sys.argv[2]) != json.load(open(sys.argv[1]))["python_identity"]:
-    raise SystemExit("environment mismatch")
-PY
+"$PYTHON" -I -B "$ROOT/src/tariff_response_environment.py" \
+  --compare-plan "$PLAN" --plan-field python_identity \
+  || fatal "portable environment compatibility failed; structured differences printed above"
 [[ "$(sha256sum "$INSTANCE" | awk '{print $1}')" == "$INSTANCE_SHA" ]] \
   || fatal "instance hash mismatch"
 [[ "$(sha256sum "$ROOT/data/hourly_prices_flat.csv" | awk '{print $1}')" == \

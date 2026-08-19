@@ -215,6 +215,39 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
         )
     ):
         raise ValueError("campaign submission is incomplete")
+    if not local_diagnostic:
+        probes = manifest.get("probe_results") or {}
+        if (
+            manifest.get("probe_state") != "passed"
+            or set(probes) != {"default_partition", "scaglione"}
+        ):
+            raise ValueError("infrastructure probes are incomplete")
+        for probe_id, result in probes.items():
+            path = Path(result.get("output") or "")
+            payload = json.loads(path.read_text())
+            sidecar = Path(str(path) + ".sha256")
+            sidecar_hash = (
+                sidecar.read_text().split()[0]
+                if sidecar.is_file() and sidecar.read_text().split()
+                else None
+            )
+            if (
+                result.get("compatible") is not True
+                or payload.get("compatible") is not True
+                or payload.get("plan_sha256")
+                != manifest["approval_sha256"]
+                or payload.get("probe_id") not in {
+                    "default", "scaglione"
+                }
+                or sha256_file(path) != sidecar_hash
+                or payload.get("observed_portable_identity_sha256")
+                != plan["python_identity"][
+                    "portable_identity_sha256"
+                ]
+            ):
+                raise ValueError(
+                    f"infrastructure probe invalid: {probe_id}"
+                )
     jobs = {job["job_key"]: job for job in plan["jobs"]}
     for job in plan["jobs"]:
         _validate_completion(job, manifest["approval_sha256"])
@@ -250,6 +283,18 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     mip_rows = []
     mip_summary = []
     inventory = []
+    if not local_diagnostic:
+        for probe_id, result in sorted(
+            (manifest.get("probe_results") or {}).items()
+        ):
+            path = Path(result["output"])
+            inventory.append(_inventory(
+                "", f"environment_probe_{probe_id}", path
+            ))
+            inventory.append(_inventory(
+                "", f"environment_probe_{probe_id}_sha256",
+                Path(str(path) + ".sha256"),
+            ))
     for job in plan["jobs"]:
         membership_path = (
             Path(job["output"])
