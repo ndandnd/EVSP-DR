@@ -9,9 +9,11 @@ Files named under “planned decision tables/figures” below are specifications
 not claims that those outputs already exist. The currently implemented
 normalizer outputs remain the files documented in `SCALE_LADDER_20260818.md`.
 
-The evidence statements below come from tracked artifacts at reviewed base
-`1d80402d79d1cbb4b786b780f7287c12b02d3621`. No Slurm query, Gurobi run, or
-scientific solve was used to prepare this plan.
+Legacy ladder and v1 membership statements below come from tracked artifacts
+at reviewed base `1d80402d79d1cbb4b786b780f7287c12b02d3621`. The explicitly
+labeled v2 membership and duty-oracle sections are post-hoc current-code
+evidence produced on this branch with bounded local DP and SciPy/HiGHS
+diagnostics. No Slurm/Unicorn query, Gurobi run, or campaign solve was used.
 
 ## Verified route-space facts
 
