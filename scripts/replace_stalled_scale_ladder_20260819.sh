@@ -74,6 +74,89 @@ cancelled_array_entry_from_rows() {
   printf '%s\n' "$entry"
 }
 
+canonical_dependency() {
+  local value=$1 clause dependency_type dependency_ids dependency_token
+  local dependency_id
+  local atom existing insert_at index
+  local -a clauses=() dependency_parts=() atoms=() sorted_atoms=()
+
+  [[ -n "$value" && "$value" != *'?'* && \
+     "$value" != ','* && "$value" != *',' && "$value" != *',,'* ]] || \
+    return 1
+
+  IFS=',' read -r -a clauses <<<"$value"
+  [[ "${#clauses[@]}" -gt 0 ]] || return 1
+  for clause in "${clauses[@]}"; do
+    [[ "$clause" == *:* ]] || return 1
+    dependency_type=${clause%%:*}
+    dependency_ids=${clause#*:}
+    case "$dependency_type" in
+      after|afterany|afterburstbuffer|aftercorr|afternotok|afterok) ;;
+      *) return 1 ;;
+    esac
+    [[ -n "$dependency_ids" && "$dependency_ids" != ':'* && \
+       "$dependency_ids" != *':' && "$dependency_ids" != *'::'* ]] || \
+      return 1
+    IFS=':' read -r -a dependency_parts <<<"$dependency_ids"
+    [[ "${#dependency_parts[@]}" -gt 0 ]] || return 1
+    for dependency_token in "${dependency_parts[@]}"; do
+      # Slurm renders a dependency on an entire array controller as JOBID_*.
+      # Preserve that suffix as part of the semantic identity.  A numeric task
+      # suffix is a different dependency and is deliberately rejected.
+      [[ "$dependency_token" =~ ^([0-9]+(_\*)?)(\((unfulfilled|failed)\))?$ ]] || \
+        return 1
+      dependency_id=${BASH_REMATCH[1]}
+      atoms+=("$dependency_type:$dependency_id")
+    done
+  done
+
+  # Comma-separated dependency clauses are conjunctive, so their display
+  # order is immaterial.  Sort without an unchecked pipeline.
+  for atom in "${atoms[@]}"; do
+    insert_at=${#sorted_atoms[@]}
+    for ((index=0; index<${#sorted_atoms[@]}; index++)); do
+      existing=${sorted_atoms[$index]}
+      if [[ "$atom" < "$existing" ]]; then
+        insert_at=$index
+        break
+      fi
+    done
+    sorted_atoms=(
+      "${sorted_atoms[@]:0:$insert_at}"
+      "$atom"
+      "${sorted_atoms[@]:$insert_at}"
+    )
+  done
+  printf '%s\n' "${sorted_atoms[@]}"
+}
+
+identity_mismatch() {
+  local jid=$1 field=$2 expected=$3 observed=$4
+  printf 'Old job %s identity mismatch: field=%s expected=%q observed=%q\n' \
+    "$jid" "$field" "$expected" "$observed" >&2
+  return 1
+}
+
+wait_for_cancelled_accounting() {
+  local attempt
+  # SlurmDBD can lag the controller after an array is cancelled.  Preserve a
+  # bounded five-minute recovery window before declaring the scientific
+  # closeout incomplete; never relax the full-range/zero-runtime proof.
+  for ((attempt=1; attempt<=60; attempt++)); do
+    if verify_cancelled_accounting >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 5 || {
+      echo "Interrupted while waiting for cancellation accounting." >&2
+      return 1
+    }
+    if ((attempt % 6 == 0)); then
+      echo "Waiting for complete cancellation accounting ($((attempt * 5))s)."
+    fi
+  done
+  verify_cancelled_accounting
+}
+
 main() {
   umask 077
 
@@ -261,10 +344,10 @@ main() {
   EXPECTED_DEPENDENCY[218102]="afterok:218196,afterok:218197"
   EXPECTED_DEPENDENCY[218103]="afterok:218102"
   EXPECTED_DEPENDENCY[218104]="afterok:218102"
-  EXPECTED_DEPENDENCY[218105]="afterok:218102,afterok:218103"
-  EXPECTED_DEPENDENCY[218106]="afterok:218102,afterok:218103"
-  EXPECTED_DEPENDENCY[218107]="afterok:218102,aftercorr:218105"
-  EXPECTED_DEPENDENCY[218108]="afterok:218102,aftercorr:218105:218104"
+  EXPECTED_DEPENDENCY[218105]="afterok:218102,afterok:218103_*"
+  EXPECTED_DEPENDENCY[218106]="afterok:218102,afterok:218103_*"
+  EXPECTED_DEPENDENCY[218107]="afterok:218102,aftercorr:218105_*"
+  EXPECTED_DEPENDENCY[218108]="afterok:218102,aftercorr:218105_*:218104_*"
   OLD_IDS=(218102 218103 218104 218105 218106 218107 218108)
 
   field_value() {
@@ -280,17 +363,10 @@ main() {
     return 1
   }
 
-  normalized_dependency() {
-    local value=$1
-    value=${value//\(unfulfilled\)/}
-    value=${value//\(failed\)/}
-    value=${value//\(DependencyNeverSatisfied\)/}
-    printf '%s\n' "$value"
-  }
-
   validate_old_job() {
     local jid=$1 record rc lines job_field name state partition runtime
-    local comment user_id reason task_range dependency
+    local comment user_id reason task_range dependency expected_job_field
+    local observed_canonical_dependency expected_canonical_dependency
     record=$(scontrol show job -o "$jid" 2>&1)
     rc=$?
     [[ "$rc" -eq 0 && -n "$record" ]] || {
@@ -305,36 +381,112 @@ main() {
       echo "Old job $jid has no unique controller record." >&2
       return 1
     }
-    job_field=$(field_value "$record" JobId) || return 1
-    name=$(field_value "$record" JobName) || return 1
-    state=$(field_value "$record" JobState) || return 1
-    partition=$(field_value "$record" Partition) || return 1
-    runtime=$(field_value "$record" RunTime) || return 1
-    comment=$(field_value "$record" Comment) || return 1
-    user_id=$(field_value "$record" UserId) || return 1
-    reason=$(field_value "$record" Reason) || return 1
-    dependency=$(field_value "$record" Dependency) || return 1
+    job_field=$(field_value "$record" JobId) || {
+      identity_mismatch "$jid" JobId present missing
+      return 1
+    }
+    name=$(field_value "$record" JobName) || {
+      identity_mismatch "$jid" JobName present missing
+      return 1
+    }
+    state=$(field_value "$record" JobState) || {
+      identity_mismatch "$jid" JobState present missing
+      return 1
+    }
+    partition=$(field_value "$record" Partition) || {
+      identity_mismatch "$jid" Partition present missing
+      return 1
+    }
+    runtime=$(field_value "$record" RunTime) || {
+      identity_mismatch "$jid" RunTime present missing
+      return 1
+    }
+    comment=$(field_value "$record" Comment) || {
+      identity_mismatch "$jid" Comment present missing
+      return 1
+    }
+    user_id=$(field_value "$record" UserId) || {
+      identity_mismatch "$jid" UserId present missing
+      return 1
+    }
+    reason=$(field_value "$record" Reason) || {
+      identity_mismatch "$jid" Reason present missing
+      return 1
+    }
+    dependency=$(field_value "$record" Dependency) || {
+      identity_mismatch "$jid" Dependency present missing
+      return 1
+    }
 
+    expected_job_field="$jid"
+    [[ -z "${EXPECTED_RANGE[$jid]}" ]] || \
+      expected_job_field+=" or ${jid}_[${EXPECTED_RANGE[$jid]}]"
     [[ "$job_field" == "$jid" || \
-       "$job_field" == "${jid}_[${EXPECTED_RANGE[$jid]}]" ]] || return 1
-    [[ "$name" == "${EXPECTED_NAME[$jid]}" ]] || return 1
-    [[ "$state" == "PENDING" && "$runtime" == "00:00:00" ]] || return 1
-    [[ "$partition" == "${EXPECTED_PARTITION[$jid]}" ]] || return 1
-    [[ "$comment" == "${EXPECTED_COMMENT[$jid]}" ]] || return 1
-    [[ "$user_id" == "$USER("* ]] || return 1
+       "$job_field" == "${jid}_[${EXPECTED_RANGE[$jid]}]" ]] || {
+      identity_mismatch "$jid" JobId "$expected_job_field" "$job_field"
+      return 1
+    }
+    [[ "$name" == "${EXPECTED_NAME[$jid]}" ]] || {
+      identity_mismatch "$jid" JobName "${EXPECTED_NAME[$jid]}" "$name"
+      return 1
+    }
+    [[ "$state" == "PENDING" ]] || {
+      identity_mismatch "$jid" JobState PENDING "$state"
+      return 1
+    }
+    [[ "$runtime" == "00:00:00" ]] || {
+      identity_mismatch "$jid" RunTime 00:00:00 "$runtime"
+      return 1
+    }
+    [[ "$partition" == "${EXPECTED_PARTITION[$jid]}" ]] || {
+      identity_mismatch "$jid" Partition \
+        "${EXPECTED_PARTITION[$jid]}" "$partition"
+      return 1
+    }
+    [[ "$comment" == "${EXPECTED_COMMENT[$jid]}" ]] || {
+      identity_mismatch "$jid" Comment "${EXPECTED_COMMENT[$jid]}" "$comment"
+      return 1
+    }
+    [[ "$user_id" == "$USER("* ]] || {
+      identity_mismatch "$jid" UserId "$USER(<numeric uid>)" "$user_id"
+      return 1
+    }
     if [[ "$jid" == "218102" ]]; then
-      [[ "$reason" == "DependencyNeverSatisfied" ]] || return 1
+      [[ "$reason" == "DependencyNeverSatisfied" ]] || {
+        identity_mismatch "$jid" Reason DependencyNeverSatisfied "$reason"
+        return 1
+      }
     else
       [[ "$reason" == "Dependency" || \
-         "$reason" == "DependencyNeverSatisfied" ]] || return 1
+         "$reason" == "DependencyNeverSatisfied" ]] || {
+        identity_mismatch "$jid" Reason \
+          'Dependency or DependencyNeverSatisfied' "$reason"
+        return 1
+      }
     fi
-    dependency=$(normalized_dependency "$dependency") || return 1
-    [[ "$dependency" == "${EXPECTED_DEPENDENCY[$jid]}" ]] || return 1
+    observed_canonical_dependency=$(canonical_dependency "$dependency") || {
+      identity_mismatch "$jid" DependencyFormat \
+        "${EXPECTED_DEPENDENCY[$jid]}" "$dependency"
+      return 1
+    }
+    expected_canonical_dependency=$(
+      canonical_dependency "${EXPECTED_DEPENDENCY[$jid]}"
+    ) || return 1
+    [[ "$observed_canonical_dependency" == \
+       "$expected_canonical_dependency" ]] || {
+      identity_mismatch "$jid" Dependency \
+        "$expected_canonical_dependency" "$observed_canonical_dependency"
+      return 1
+    }
 
     if [[ -n "${EXPECTED_RANGE[$jid]}" ]]; then
       task_range=$(field_value "$record" ArrayTaskId 2>/dev/null)
       [[ "$task_range" == "${EXPECTED_RANGE[$jid]}" || \
-         "$job_field" == "${jid}_[${EXPECTED_RANGE[$jid]}]" ]] || return 1
+         "$job_field" == "${jid}_[${EXPECTED_RANGE[$jid]}]" ]] || {
+        identity_mismatch "$jid" ArrayTaskId \
+          "${EXPECTED_RANGE[$jid]}" "${task_range:-missing}"
+        return 1
+      }
     fi
     return 0
   }
@@ -419,17 +571,6 @@ main() {
         '. + [$entry]' <<<"$CANCELLED_JOBS_JSON") || return 1
     done
     return 0
-  }
-
-  wait_for_cancelled_accounting() {
-    local attempt
-    for attempt in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-      if verify_cancelled_accounting >/dev/null 2>&1; then
-        return 0
-      fi
-      sleep 2
-    done
-    verify_cancelled_accounting
   }
 
   RECEIPT_DIR="$OLD_ROOT/cancellation_receipt_v1.bundle"

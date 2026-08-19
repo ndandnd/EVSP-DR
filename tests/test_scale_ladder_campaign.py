@@ -56,6 +56,7 @@ from reconcile_scale_ladder_gate import (  # noqa: E402
     _hard_probe_mismatch,
     _resolve_gate_state,
     _reconcile_locked,
+    _validate_held_array_controller,
     reconcile as reconcile_gate,
 )
 
@@ -1521,6 +1522,129 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 _dependency_semantics("afterok:401:100"),
             )
 
+    def test_cg_controller_requires_whole_array_dependency_scope(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, _manifest, tools = self._held_science_fixture(tmp)
+            plan["task_groups"]["CG"] = ["cg_0"]
+            prefix = (
+                f"JobId=402 JobName={ladder._array_name('CG', plan_sha)} "
+                "JobState=PENDING Partition=default_partition "
+                "Reason=Dependency "
+                f"Comment=SLAD:{plan_sha[:20]}:CG "
+                "ArrayTaskId=0-0 Dependency="
+            )
+
+            accepted_displays = (
+                "afterok:100(unfulfilled),afterok:401_*(unfulfilled)",
+                "afterok:401_*:100(failed)",
+            )
+            for dependency in accepted_displays:
+                with self.subTest(dependency=dependency), patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    return_value=SimpleNamespace(
+                        returncode=0,
+                        stdout=f"{prefix}{dependency}\n",
+                        stderr="",
+                    ),
+                ):
+                    _validate_held_array_controller(
+                        plan, plan_sha, "CG", "402", "100",
+                        {"PREFLIGHT": "401", "CG": "402"},
+                    )
+
+            rejected_displays = (
+                # Base-array scope must remain explicit in scontrol output.
+                "afterok:100,afterok:401",
+                # The scalar gate must not be treated as an array controller.
+                "afterok:100_*,afterok:401_*",
+                # A dependency on one array task is not a whole-array barrier.
+                "afterok:100,afterok:401_2",
+                "afterok:100,afterany:401_*",
+                "afterok:100,afterok:401_*,afterok:999",
+                "afterok:100,afterok:401_*,afterok:401_*",
+                "afterok:100?afterok:401_*",
+                "afterok:100,afterok:401_*(unexpected)",
+                "afterok:100(unfulfilled)0,afterok:401_*",
+                "after(unfulfilled)ok:100,afterok:401_*",
+                "afterok:100(unfulfilled)(failed),afterok:401_*",
+                "afterok:100,afterok:401_*,",
+                "afterok:100,afterok:401_*:",
+            )
+            for dependency in rejected_displays:
+                with self.subTest(dependency=dependency), patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    return_value=SimpleNamespace(
+                        returncode=0,
+                        stdout=f"{prefix}{dependency}\n",
+                        stderr="",
+                    ),
+                ):
+                    with self.assertRaises(ValueError):
+                        _validate_held_array_controller(
+                            plan, plan_sha, "CG", "402", "100",
+                            {"PREFLIGHT": "401", "CG": "402"},
+                        )
+
+    def test_mip_controllers_require_whole_array_dependency_scope(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, _manifest, tools = self._held_science_fixture(tmp)
+            cases = (
+                (
+                    "MIP_RAW", "404",
+                    {"CG": "402", "MIP_RAW": "404"},
+                    (
+                        "afterok:100(unfulfilled),"
+                        "aftercorr:402_*(unfulfilled)"
+                    ),
+                    "afterok:100,aftercorr:402",
+                ),
+                (
+                    "MIP_KNOWN", "405",
+                    {
+                        "CG": "402", "SEED": "301",
+                        "MIP_KNOWN": "405",
+                    },
+                    (
+                        "aftercorr:402_*:301_*(unfulfilled),"
+                        "afterok:100(unfulfilled)"
+                    ),
+                    "afterok:100,aftercorr:402:301",
+                ),
+            )
+            for group, job_id, array_ids, accepted, rejected in cases:
+                plan["task_groups"][group] = [f"{group.lower()}_0"]
+                prefix = (
+                    f"JobId={job_id} "
+                    f"JobName={ladder._array_name(group, plan_sha)} "
+                    "JobState=PENDING Partition=scaglione "
+                    "Reason=Dependency "
+                    f"Comment=SLAD:{plan_sha[:20]}:{group} "
+                    "ArrayTaskId=0-0 Dependency="
+                )
+                with self.subTest(group=group, outcome="accepted"), patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    return_value=SimpleNamespace(
+                        returncode=0,
+                        stdout=f"{prefix}{accepted}\n",
+                        stderr="",
+                    ),
+                ):
+                    _validate_held_array_controller(
+                        plan, plan_sha, group, job_id, "100", array_ids,
+                    )
+                with self.subTest(group=group, outcome="rejected"), patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    return_value=SimpleNamespace(
+                        returncode=0,
+                        stdout=f"{prefix}{rejected}\n",
+                        stderr="",
+                    ),
+                ):
+                    with self.assertRaises(ValueError):
+                        _validate_held_array_controller(
+                            plan, plan_sha, group, job_id, "100", array_ids,
+                        )
+
     def test_held_array_recovery_rejects_spoofed_rows(self):
         with tempfile.TemporaryDirectory() as tmp:
             plan, plan_sha, _manifest, tools = self._held_science_fixture(tmp)
@@ -2893,13 +3017,15 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             def dependency_for(group):
                 values = ["afterok:100"]
                 if group in {"CG", "CG_SENSITIVITY"}:
-                    values.append(f"afterok:{array_ids['PREFLIGHT']}")
+                    values.append(
+                        f"afterok:{array_ids['PREFLIGHT']}_*"
+                    )
                 elif group == "MIP_RAW":
-                    values.append(f"aftercorr:{array_ids['CG']}")
+                    values.append(f"aftercorr:{array_ids['CG']}_*")
                 elif group == "MIP_KNOWN":
                     values.append(
-                        f"aftercorr:{array_ids['CG']}:"
-                        f"{array_ids['SEED']}"
+                        f"aftercorr:{array_ids['CG']}_*:"
+                        f"{array_ids['SEED']}_*"
                     )
                 return ",".join(values)
 
@@ -3496,6 +3622,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn("verify_terminal_probe 218197", text)
         self.assertIn("verify_cancelled_accounting", text)
         self.assertIn("wait_for_cancelled_accounting", text)
+        self.assertIn("attempt<=60", text)
+        self.assertIn("sleep 5", text)
         self.assertIn("cancellation_receipt_v1.bundle", text)
         self.assertIn("sacct -X --array", text)
         self.assertIn("--format=JobID,JobName,State,Elapsed,ExitCode", text)
@@ -3503,7 +3631,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn("expected_task_count", text)
         self.assertIn("cancelled_array_entry_from_rows", text)
         self.assertIn('EXPECTED_DEPENDENCY[218108]', text)
-        self.assertIn('normalized_dependency "$dependency"', text)
+        self.assertIn('canonical_dependency "$dependency"', text)
+        self.assertIn("identity mismatch: field=%s", text)
         self.assertLess(
             text.index('tar -C "$OLD_RUN_ROOT"'),
             text.index('scancel "$jid"'),
@@ -3574,6 +3703,135 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         for rows in invalid_rows:
             rejected = verify_rows(rows)
             self.assertNotEqual(rejected.returncode, 0, rows)
+
+        def canonical(value):
+            return subprocess.run(
+                [
+                    "bash", "-c",
+                    'source "$1" && canonical_dependency "$2"',
+                    "bash", str(script), value,
+                ],
+                text=True, capture_output=True, check=False,
+            )
+
+        expected = canonical(
+            "afterok:218102,afterok:218103_*"
+        )
+        self.assertEqual(expected.returncode, 0, expected.stderr)
+        equivalent_displays = (
+            "afterok:218102(unfulfilled),afterok:218103_*(unfulfilled)",
+            "afterok:218103_*(unfulfilled),afterok:218102(unfulfilled)",
+            "afterok:218102:218103_*(failed)",
+        )
+        for displayed in equivalent_displays:
+            observed = canonical(displayed)
+            self.assertEqual(observed.returncode, 0, displayed)
+            self.assertEqual(observed.stdout, expected.stdout, displayed)
+
+        all_group_displays = (
+            (
+                "afterok:218102",
+                "afterok:218102(unfulfilled)",
+            ),
+            (
+                "afterok:218102,afterok:218103_*",
+                "afterok:218103_*(unfulfilled),"
+                "afterok:218102(unfulfilled)",
+            ),
+            (
+                "afterok:218102,aftercorr:218105_*",
+                "aftercorr:218105_*(unfulfilled),"
+                "afterok:218102(unfulfilled)",
+            ),
+            (
+                "afterok:218102,aftercorr:218105_*:218104_*",
+                "aftercorr:218105_*(unfulfilled),"
+                "aftercorr:218104_*(unfulfilled),"
+                "afterok:218102(unfulfilled)",
+            ),
+        )
+        for expected_value, displayed in all_group_displays:
+            expected_group = canonical(expected_value)
+            observed_group = canonical(displayed)
+            self.assertEqual(expected_group.returncode, 0, expected_value)
+            self.assertEqual(observed_group.returncode, 0, displayed)
+            self.assertEqual(
+                observed_group.stdout, expected_group.stdout, displayed
+            )
+
+        changed_dependencies = (
+            "afterok:218102,afterok:218103",
+            "afterok:218102_*,afterok:218103_*",
+            "afterok:218102,afterok:218103_5",
+            "afterok:218102,afterany:218103_*",
+            "afterok:218102,afterok:218103_*,afterok:999999",
+            "afterok:218102?afterok:218103_*",
+            "afterok:218102,afterok:",
+            "afterok:218102,afterok:218103_*,",
+            "afterok:218102,afterok:218103_*:",
+            "afterok:218(unfulfilled)102,afterok:218103_*",
+            "after(unfulfilled)ok:218102,afterok:218103_*",
+            "afterok:218102(unfulfilled)(failed),afterok:218103_*",
+        )
+        for displayed in changed_dependencies:
+            observed = canonical(displayed)
+            if (
+                "_5" not in displayed
+                and "?" not in displayed
+                and not displayed.endswith(("afterok:", ",", ":"))
+                and "(unfulfilled)102" not in displayed
+                and "after(unfulfilled)ok" not in displayed
+                and "(unfulfilled)(failed)" not in displayed
+            ):
+                self.assertEqual(observed.returncode, 0, displayed)
+                self.assertNotEqual(observed.stdout, expected.stdout, displayed)
+            else:
+                self.assertNotEqual(observed.returncode, 0, displayed)
+
+        wait_script = r'''
+source "$1" || exit 90
+checks=0
+sleeps=0
+verify_cancelled_accounting() {
+  checks=$((checks + 1))
+  [[ "$checks" -ge 61 ]]
+}
+sleep() {
+  [[ "$1" == "5" ]] || return 91
+  sleeps=$((sleeps + 1))
+}
+wait_for_cancelled_accounting || exit 92
+printf '%s %s\n' "$checks" "$sleeps"
+'''
+        waited = subprocess.run(
+            ["bash", "-c", wait_script, "bash", str(script)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(waited.returncode, 0, waited.stderr)
+        self.assertEqual(waited.stdout.splitlines()[-1], "61 60")
+
+        interrupted_wait_script = r'''
+source "$1" || exit 90
+checks=0
+verify_cancelled_accounting() {
+  checks=$((checks + 1))
+  return 1
+}
+sleep() { return 1; }
+wait_for_cancelled_accounting
+status=$?
+printf '%s %s\n' "$status" "$checks"
+[[ "$status" -ne 0 && "$checks" -eq 1 ]]
+'''
+        interrupted = subprocess.run(
+            [
+                "bash", "-c", interrupted_wait_script,
+                "bash", str(script),
+            ],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(interrupted.returncode, 0, interrupted.stderr)
+        self.assertEqual(interrupted.stdout, "1 1\n")
 
 
     def test_worker_maps_dependencies_and_resume(self):

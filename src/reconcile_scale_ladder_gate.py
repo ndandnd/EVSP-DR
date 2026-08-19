@@ -288,14 +288,44 @@ def _hard_probe_mismatch(result):
 
 
 def _dependency_semantics(value):
-    cleaned = re.sub(r"\([^)]*\)", "", str(value or ""))
+    raw = str(value or "")
+    clauses = raw.split(",")
+    if (
+        not raw
+        or "?" in raw
+        or any(not clause for clause in clauses)
+    ):
+        raise ValueError("held array dependency syntax is invalid")
     semantics = {}
-    for clause in (item for item in cleaned.split(",") if item):
+    seen = set()
+    for clause in clauses:
         fields = clause.split(":")
-        if len(fields) < 2 or any(not value.isdigit() for value in fields[1:]):
+        if (
+            len(fields) < 2
+            or fields[0] not in {
+                "after", "afterany", "afterburstbuffer", "aftercorr",
+                "afternotok", "afterok",
+            }
+            or any(not dependency_token for dependency_token in fields[1:])
+        ):
             raise ValueError("held array dependency syntax is invalid")
         kind = fields[0]
-        semantics.setdefault(kind, set()).update(fields[1:])
+        dependency_ids = []
+        for dependency_token in fields[1:]:
+            matched = re.fullmatch(
+                r"(?P<job>[0-9]+(?:_\*)?)"
+                r"(?:\((?:unfulfilled|failed)\))?",
+                dependency_token,
+            )
+            if matched is None:
+                raise ValueError("held array dependency syntax is invalid")
+            dependency_id = matched.group("job")
+            dependency = (kind, dependency_id)
+            if dependency in seen:
+                raise ValueError("held array dependency is duplicated")
+            seen.add(dependency)
+            dependency_ids.append(dependency_id)
+        semantics.setdefault(kind, set()).update(dependency_ids)
     return semantics
 
 
@@ -352,19 +382,21 @@ def _validate_held_array_controller(
         if "PREFLIGHT" not in array_ids:
             raise ValueError("CG array exists without its PREFLIGHT dependency")
         expected_dependencies["afterok"].add(
-            str(array_ids["PREFLIGHT"])
+            f"{array_ids['PREFLIGHT']}_*"
         )
     elif group == "MIP_RAW":
         if "CG" not in array_ids:
             raise ValueError("RAW MIP array exists without its CG dependency")
-        expected_dependencies["aftercorr"] = {str(array_ids["CG"])}
+        expected_dependencies["aftercorr"] = {
+            f"{array_ids['CG']}_*"
+        }
     elif group == "MIP_KNOWN":
         if "CG" not in array_ids or "SEED" not in array_ids:
             raise ValueError(
                 "KNOWN MIP array exists without CG/SEED dependencies"
             )
         expected_dependencies["aftercorr"] = {
-            str(array_ids["CG"]), str(array_ids["SEED"]),
+            f"{array_ids['CG']}_*", f"{array_ids['SEED']}_*",
         }
     observed_dependencies = _dependency_semantics(values.get("Dependency"))
     if observed_dependencies != expected_dependencies:
