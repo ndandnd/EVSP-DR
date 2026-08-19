@@ -88,6 +88,360 @@ def _accept(states, level, cost, actions):
     return False
 
 
+def evaluate_fixed_duty_transition(
+    problem,
+    arcs,
+    *,
+    trip,
+    successor,
+    final_gap,
+    level,
+    base_cost,
+    actions,
+    grid,
+    soc_step,
+    block_min,
+    g_kwh,
+    charge_kw,
+    reserve_kwh,
+    station_prices,
+    n_blocks,
+    include_trace=False,
+):
+    """Pure production transition evaluator for one predecessor label.
+
+    The returned candidates are the only transitions the production DP may
+    accept. Diagnostic rows retain every predicate and raw quantity but cannot
+    affect candidate generation or ordering.
+    """
+    candidates = []
+    rows = []
+    soc_entry = float(grid[level])
+    trip_energy = float(problem.trip_energy[trip])
+    soc_exit = soc_entry - trip_energy
+    depart = float(problem.end_min[trip])
+    deadline = (
+        float(HORIZON_MIN)
+        if final_gap else float(problem.start_min[successor])
+    )
+    successor_energy = (
+        None if final_gap else float(problem.trip_energy[successor])
+    )
+
+    def emit(row):
+        if include_trace:
+            row["failed_predicates"] = sorted(
+                key for key, value in row["predicates"].items()
+                if value is False
+            )
+            rows.append(row)
+
+    direct = (
+        arcs["trip_depot"].get(trip)
+        if final_gap
+        else arcs["trip_trip"].get(trip, {}).get(successor)
+    )
+    if direct is None:
+        emit({
+            "option_kind": "direct",
+            "station": None,
+            "predecessor_level": int(level),
+            "predecessor_soc_kwh": soc_entry,
+            "trip_energy_kwh": trip_energy,
+            "soc_after_trip_kwh": soc_exit,
+            "deadline_min": deadline,
+            "successor_energy_kwh": successor_energy,
+            "predicates": {
+                "direct_arc_exists": False,
+            },
+            "accepted": False,
+        })
+    else:
+        arrival = depart + direct.travel_min
+        remaining = soc_exit - direct.deadhead_kwh
+        next_level = _floor(grid, soc_step, remaining)
+        predicates = {
+            "direct_arc_exists": True,
+            "deadline_satisfied": arrival <= deadline + 1e-9,
+            "resulting_soc_meets_reserve":
+                remaining >= reserve_kwh - 1e-9,
+            "resulting_level_valid": final_gap or next_level >= 0,
+            "successor_energy_and_reserve_satisfied": (
+                True if final_gap else (
+                    next_level >= 0
+                    and grid[next_level] + 1e-9
+                    >= successor_energy + reserve_kwh
+                )
+            ),
+        }
+        accepted = all(predicates.values())
+        action = {
+            "kind": "direct",
+            "from_trip": trip,
+            "next_trip": successor,
+            "travel_min": direct.travel_min,
+            "deadhead_kwh": direct.deadhead_kwh,
+            "waiting_min": (
+                0.0 if final_gap else max(0.0, deadline - arrival)
+            ),
+        }
+        if accepted:
+            candidates.append({
+                "cost": float(base_cost),
+                "actions": actions + (action,),
+                "action": action,
+                "next_level": int(next_level),
+                "terminal": bool(final_gap),
+            })
+        emit({
+            "option_kind": "direct",
+            "station": None,
+            "predecessor_level": int(level),
+            "predecessor_soc_kwh": soc_entry,
+            "trip_energy_kwh": trip_energy,
+            "soc_after_trip_kwh": soc_exit,
+            "direct_arc_exists": True,
+            "direct_arc_type": direct.kind,
+            "arrival_min": arrival,
+            "deadline_min": deadline,
+            "outgoing_deadhead_min": direct.travel_min,
+            "outgoing_deadhead_kwh": direct.deadhead_kwh,
+            "resulting_soc_before_floor_kwh": remaining,
+            "resulting_soc_level": int(next_level),
+            "resulting_soc_kwh": (
+                grid[next_level] if next_level >= 0 else None
+            ),
+            "successor_energy_kwh": successor_energy,
+            "reserve_kwh": reserve_kwh,
+            "predicates": predicates,
+            "accepted": accepted,
+        })
+
+    block_kwh = charge_kw * block_min / 60.0
+    available_to_station = arcs["trip_station"].get(trip, {})
+    station_nodes = set(STATIONS) | set(available_to_station)
+    for station in sorted(station_nodes):
+        to_station = available_to_station.get(station)
+        from_station = (
+            arcs["station_depot"].get(station)
+            if final_gap
+            else arcs["station_trip"].get(station, {}).get(successor)
+        )
+        graph_predicates = {
+            "trip_to_station_arc_exists": to_station is not None,
+            "station_to_successor_arc_exists": from_station is not None,
+        }
+        if to_station is None or from_station is None:
+            emit({
+                "option_kind": "station",
+                "station": station,
+                "predecessor_level": int(level),
+                "predecessor_soc_kwh": soc_entry,
+                "trip_energy_kwh": trip_energy,
+                "soc_after_trip_kwh": soc_exit,
+                "deadline_min": deadline,
+                "successor_energy_kwh": successor_energy,
+                "trip_to_station_arc_type": (
+                    to_station.kind if to_station is not None else None
+                ),
+                "station_to_successor_arc_type": (
+                    from_station.kind if from_station is not None else None
+                ),
+                "predicates": graph_predicates,
+                "accepted": False,
+            })
+            continue
+        station_arrival = depart + to_station.travel_min
+        soc_arrival = soc_exit - to_station.deadhead_kwh
+        entry_level = _floor(grid, soc_step, soc_arrival)
+        entry_soc = grid[entry_level] if entry_level >= 0 else None
+        first_block = max(
+            0,
+            int(math.ceil(station_arrival / block_min - 1e-9)),
+        )
+        last_possible = min(
+            n_blocks - 1,
+            int(math.floor(
+                (deadline - from_station.travel_min)
+                / block_min + 1e-9
+            )) - 1,
+        )
+        common_predicates = {
+            **graph_predicates,
+            "station_arrival_soc_meets_reserve":
+                soc_arrival >= reserve_kwh - 1e-9,
+            "station_entry_level_valid": entry_level >= 0,
+            "charging_window_has_usable_block":
+                last_possible >= first_block,
+        }
+        if not all(common_predicates.values()):
+            emit({
+                "option_kind": "station",
+                "station": station,
+                "predecessor_level": int(level),
+                "predecessor_soc_kwh": soc_entry,
+                "trip_energy_kwh": trip_energy,
+                "soc_after_trip_kwh": soc_exit,
+                "station_arrival_min": station_arrival,
+                "station_arrival_soc_before_floor_kwh": soc_arrival,
+                "station_entry_level": int(entry_level),
+                "station_entry_soc_kwh": entry_soc,
+                "first_charging_block": int(first_block),
+                "last_possible_charging_block": int(last_possible),
+                "usable_blocks": max(
+                    0, int(last_possible - first_block + 1)
+                ),
+                "usable_minutes": max(
+                    0, int(last_possible - first_block + 1)
+                ) * block_min,
+                "deadline_min": deadline,
+                "outgoing_deadhead_min": from_station.travel_min,
+                "outgoing_deadhead_kwh": from_station.deadhead_kwh,
+                "trip_to_station_arc_type": to_station.kind,
+                "station_to_successor_arc_type": from_station.kind,
+                "successor_energy_kwh": successor_energy,
+                "reserve_kwh": reserve_kwh,
+                "predicates": common_predicates,
+                "accepted": False,
+            })
+            continue
+        curve = station_prices[base_station_name(station)]
+        for start_block in range(first_block, last_possible + 1):
+            charge_level = entry_level
+            charging_cost = 0.0
+            for end_block in range(start_block, last_possible + 1):
+                before_soc = grid[charge_level]
+                after_soc_before_floor = min(
+                    g_kwh, before_soc + block_kwh
+                )
+                after_level = _floor(
+                    grid, soc_step, after_soc_before_floor
+                )
+                gain = grid[after_level] - before_soc
+                hour = int(end_block * block_min // 60)
+                if hour not in curve:
+                    raise ValueError("tariff hour missing in DP")
+                charging_cost += gain * curve[hour]
+                departure = (end_block + 1) * block_min
+                remaining = (
+                    grid[after_level] - from_station.deadhead_kwh
+                )
+                next_level = _floor(grid, soc_step, remaining)
+                predicates = {
+                    **common_predicates,
+                    "battery_cap_satisfied":
+                        after_soc_before_floor <= g_kwh + 1e-9,
+                    "departure_deadline_satisfied": (
+                        departure + from_station.travel_min
+                        <= deadline + 1e-9
+                    ),
+                    "resulting_soc_meets_reserve":
+                        remaining >= reserve_kwh - 1e-9,
+                    "resulting_level_valid":
+                        final_gap or next_level >= 0,
+                    "successor_energy_and_reserve_satisfied": (
+                        True if final_gap else (
+                            next_level >= 0
+                            and grid[next_level] + 1e-9
+                            >= successor_energy + reserve_kwh
+                        )
+                    ),
+                }
+                accepted = all(predicates.values())
+                action = {
+                    "kind": "charge",
+                    "from_trip": trip,
+                    "next_trip": successor,
+                    "station": station,
+                    "first_block": start_block,
+                    "last_block": end_block,
+                    "entry_level": entry_level,
+                    "exit_level": after_level,
+                    "expanded_grid_kwh": (
+                        grid[after_level] - grid[entry_level]
+                    ),
+                    "travel_min": (
+                        to_station.travel_min
+                        + from_station.travel_min
+                    ),
+                    "deadhead_kwh": (
+                        to_station.deadhead_kwh
+                        + from_station.deadhead_kwh
+                    ),
+                    "waiting_min": max(
+                        0.0,
+                        start_block * block_min - station_arrival,
+                    ) + (
+                        0.0 if final_gap else max(
+                            0.0,
+                            deadline - (
+                                departure + from_station.travel_min
+                            ),
+                        )
+                    ),
+                }
+                candidate_cost = (
+                    base_cost + CHARGE_START_COST + charging_cost
+                )
+                if accepted:
+                    candidates.append({
+                        "cost": float(candidate_cost),
+                        "actions": actions + (action,),
+                        "action": action,
+                        "next_level": int(next_level),
+                        "terminal": bool(final_gap),
+                    })
+                emit({
+                    "option_kind": "station",
+                    "station": station,
+                    "predecessor_level": int(level),
+                    "predecessor_soc_kwh": soc_entry,
+                    "trip_energy_kwh": trip_energy,
+                    "soc_after_trip_kwh": soc_exit,
+                    "trip_to_station_arc_type": to_station.kind,
+                    "station_to_successor_arc_type": from_station.kind,
+                    "station_arrival_min": station_arrival,
+                    "station_arrival_soc_before_floor_kwh": soc_arrival,
+                    "station_entry_level": int(entry_level),
+                    "station_entry_soc_kwh": entry_soc,
+                    "first_charging_block": int(start_block),
+                    "last_charging_block": int(end_block),
+                    "last_possible_charging_block": int(last_possible),
+                    "usable_blocks": int(end_block - start_block + 1),
+                    "usable_minutes":
+                        int(end_block - start_block + 1) * block_min,
+                    "delayed_charging":
+                        bool(start_block > first_block),
+                    "charge_gain_before_floor_kwh": (
+                        after_soc_before_floor - before_soc
+                    ),
+                    "charge_gain_after_floor_kwh": gain,
+                    "cumulative_grid_charge_gain_kwh": (
+                        grid[after_level] - grid[entry_level]
+                    ),
+                    "battery_cap_kwh": g_kwh,
+                    "departure_min": departure,
+                    "deadline_min": deadline,
+                    "outgoing_deadhead_min": from_station.travel_min,
+                    "outgoing_deadhead_kwh":
+                        from_station.deadhead_kwh,
+                    "resulting_soc_before_floor_kwh": remaining,
+                    "resulting_soc_level": int(next_level),
+                    "resulting_soc_kwh": (
+                        grid[next_level] if next_level >= 0 else None
+                    ),
+                    "successor_energy_kwh": successor_energy,
+                    "reserve_kwh": reserve_kwh,
+                    "candidate_cost": float(candidate_cost),
+                    "predicates": predicates,
+                    "accepted": accepted,
+                })
+                if gain <= 1e-9:
+                    break
+                charge_level = after_level
+    return candidates, rows
+
+
 def optimize_fixed_duty(
     problem,
     trip_sequence,
@@ -102,6 +456,7 @@ def optimize_fixed_duty(
     tariff_sha256=None,
     instance_sha256=None,
     allow_diagnostic_grid=False,
+    trace=False,
 ):
     started = time.perf_counter()
     trips = tuple(int(trip) for trip in trip_sequence)
@@ -207,6 +562,8 @@ def optimize_fixed_duty(
     labels = 1
     transitions = 0
     frontier_hashes = []
+    diagnostic_frontiers = []
+    diagnostic_candidates = []
     for position, trip in enumerate(trips):
         frontier_hashes.append(canonical_sha({
             "position": position,
@@ -216,182 +573,80 @@ def optimize_fixed_duty(
                 for level, value in sorted(states.items())
             ],
         }))
+        if trace:
+            diagnostic_frontiers.extend({
+                "position": position,
+                "trip": trip,
+                "successor": (
+                    None if position == len(trips) - 1
+                    else trips[position + 1]
+                ),
+                "level": int(level),
+                "soc_kwh": float(grid[level]),
+                "cost": float(value[0]),
+                "actions": list(value[1]),
+            } for level, value in sorted(states.items()))
         final_gap = position == len(trips) - 1
         successor = None if final_gap else trips[position + 1]
         next_states = {}
         terminal = []
         for level, (base_cost, actions) in sorted(states.items()):
-            soc_exit = grid[level] - problem.trip_energy[trip]
-            depart = problem.end_min[trip]
-            direct = (
-                arcs["trip_depot"].get(trip)
-                if final_gap
-                else arcs["trip_trip"].get(trip, {}).get(successor)
+            evaluated, trace_rows = evaluate_fixed_duty_transition(
+                problem,
+                arcs,
+                trip=trip,
+                successor=successor,
+                final_gap=final_gap,
+                level=level,
+                base_cost=base_cost,
+                actions=actions,
+                grid=grid,
+                soc_step=soc_step,
+                block_min=block_min,
+                g_kwh=g_kwh,
+                charge_kw=charge_kw,
+                reserve_kwh=reserve_kwh,
+                station_prices=station_prices,
+                n_blocks=n_blocks,
+                include_trace=trace,
             )
-            if direct is not None:
-                arrival = depart + direct.travel_min
-                deadline = (
-                    HORIZON_MIN
-                    if final_gap else problem.start_min[successor]
-                )
-                remaining = soc_exit - direct.deadhead_kwh
-                next_level = _floor(grid, soc_step, remaining)
-                if (
-                    arrival <= deadline + 1e-9
-                    and remaining >= reserve_kwh - 1e-9
-                    and (
-                        final_gap
-                        or (
-                            next_level >= 0
-                            and grid[next_level] + 1e-9
-                            >= problem.trip_energy[successor] + reserve_kwh
-                        )
-                    )
-                ):
-                    action = {
-                        "kind": "direct",
-                        "from_trip": trip,
-                        "next_trip": successor,
-                        "travel_min": direct.travel_min,
-                        "deadhead_kwh": direct.deadhead_kwh,
-                        "waiting_min": (
-                            0.0 if final_gap
-                            else max(0.0, deadline - arrival)
-                        ),
-                    }
-                    transitions += 1
-                    if final_gap:
-                        terminal.append((base_cost, actions + (action,)))
-                    elif _accept(
-                        next_states, next_level, base_cost,
-                        actions + (action,),
-                    ):
-                        labels += 1
-
-            for station, to_station in sorted(
-                arcs["trip_station"].get(trip, {}).items()
-            ):
-                from_station = (
-                    arcs["station_depot"].get(station)
-                    if final_gap
-                    else arcs["station_trip"].get(station, {}).get(successor)
-                )
-                if from_station is None:
-                    continue
-                station_arrival = depart + to_station.travel_min
-                soc_arrival = soc_exit - to_station.deadhead_kwh
-                if soc_arrival < reserve_kwh - 1e-9:
-                    continue
-                entry_level = _floor(grid, soc_step, soc_arrival)
-                if entry_level < 0:
-                    continue
-                deadline = (
-                    HORIZON_MIN
-                    if final_gap else problem.start_min[successor]
-                )
-                first_block = max(
-                    0, int(math.ceil(
-                        station_arrival / block_min - 1e-9
+            if trace:
+                for row in trace_rows:
+                    row.update({
+                        "position": position,
+                        "trip": trip,
+                        "successor": successor,
+                    })
+                diagnostic_candidates.extend(trace_rows)
+            for candidate in evaluated:
+                transitions += 1
+                if candidate["terminal"]:
+                    terminal.append((
+                        candidate["cost"], candidate["actions"],
                     ))
-                )
-                last_possible = min(
-                    n_blocks - 1,
-                    int(math.floor(
-                        (deadline - from_station.travel_min)
-                        / block_min + 1e-9
-                    )) - 1,
-                )
-                curve = station_prices[base_station_name(station)]
-                for start_block in range(
-                    first_block, last_possible + 1
+                elif _accept(
+                    next_states,
+                    candidate["next_level"],
+                    candidate["cost"],
+                    candidate["actions"],
                 ):
-                    charge_level = entry_level
-                    charging_cost = 0.0
-                    for end_block in range(
-                        start_block, last_possible + 1
-                    ):
-                        after_soc = min(
-                            g_kwh, grid[charge_level] + block_kwh
-                        )
-                        after_level = _floor(grid, soc_step, after_soc)
-                        gain = grid[after_level] - grid[charge_level]
-                        hour = int(end_block * block_min // 60)
-                        if hour not in curve:
-                            raise ValueError("tariff hour missing in DP")
-                        charging_cost += gain * curve[hour]
-                        departure = (end_block + 1) * block_min
-                        remaining = (
-                            grid[after_level] - from_station.deadhead_kwh
-                        )
-                        next_level = _floor(grid, soc_step, remaining)
-                        if (
-                            departure + from_station.travel_min
-                            <= deadline + 1e-9
-                            and remaining >= reserve_kwh - 1e-9
-                            and (
-                                final_gap
-                                or (
-                                    next_level >= 0
-                                    and grid[next_level] + 1e-9
-                                    >= problem.trip_energy[successor]
-                                    + reserve_kwh
-                                )
-                            )
-                        ):
-                            action = {
-                                "kind": "charge",
-                                "from_trip": trip,
-                                "next_trip": successor,
-                                "station": station,
-                                "first_block": start_block,
-                                "last_block": end_block,
-                                "entry_level": entry_level,
-                                "exit_level": after_level,
-                                "expanded_grid_kwh": (
-                                    grid[after_level] - grid[entry_level]
-                                ),
-                                "travel_min": (
-                                    to_station.travel_min
-                                    + from_station.travel_min
-                                ),
-                                "deadhead_kwh": (
-                                    to_station.deadhead_kwh
-                                    + from_station.deadhead_kwh
-                                ),
-                                "waiting_min": max(
-                                    0.0,
-                                    start_block * block_min - station_arrival,
-                                ) + (0.0 if final_gap else max(
-                                    0.0,
-                                    deadline - (
-                                        departure
-                                        + from_station.travel_min
-                                    ),
-                                )),
-                            }
-                            candidate_cost = (
-                                base_cost + CHARGE_START_COST
-                                + charging_cost
-                            )
-                            transitions += 1
-                            if final_gap:
-                                terminal.append((
-                                    candidate_cost,
-                                    actions + (action,),
-                                ))
-                            elif _accept(
-                                next_states, next_level, candidate_cost,
-                                actions + (action,),
-                            ):
-                                labels += 1
-                        if gain <= 1e-9:
-                            break
-                        charge_level = after_level
+                    labels += 1
         if final_gap:
             if not terminal:
                 return _infeasible(
                     trips, tariff_id, tariff_sha256,
                     f"no feasible terminal path after trip {trip}", started,
+                    diagnostic_trace=(
+                        {
+                            "frontier_states": diagnostic_frontiers,
+                            "transition_candidates": diagnostic_candidates,
+                            "failed_transition": {
+                                "position": position,
+                                "trip": trip,
+                                "successor": None,
+                            },
+                        } if trace else None
+                    ),
                 )
             best_cost, best_actions = min(
                 terminal,
@@ -406,6 +661,17 @@ def optimize_fixed_duty(
                     trips, tariff_id, tariff_sha256,
                     f"no fixed-duty transition {trip}->{successor}",
                     started,
+                    diagnostic_trace=(
+                        {
+                            "frontier_states": diagnostic_frontiers,
+                            "transition_candidates": diagnostic_candidates,
+                            "failed_transition": {
+                                "position": position,
+                                "trip": trip,
+                                "successor": successor,
+                            },
+                        } if trace else None
+                    ),
                 )
             states = next_states
 
@@ -540,7 +806,7 @@ def optimize_fixed_duty(
     }
     certificate_sha256 = canonical_sha(certificate_payload)
     realized["fixed_duty_certificate_sha256"] = certificate_sha256
-    return {
+    result = {
         "schema": RESULT_SCHEMA,
         "feasible": True,
         "route": realized,
@@ -557,10 +823,25 @@ def optimize_fixed_duty(
         "physical_replay_status": "validated",
         "runtime_s": time.perf_counter() - started,
     }
+    if trace:
+        result["diagnostic_trace"] = {
+            "frontier_states": diagnostic_frontiers,
+            "transition_candidates": diagnostic_candidates,
+            "failed_transition": None,
+        }
+    return result
 
 
-def _infeasible(trips, tariff_id, tariff_sha256, reason, started):
-    return {
+def _infeasible(
+    trips,
+    tariff_id,
+    tariff_sha256,
+    reason,
+    started,
+    *,
+    diagnostic_trace=None,
+):
+    result = {
         "schema": RESULT_SCHEMA,
         "feasible": False,
         "trip_sequence": list(trips),
@@ -576,3 +857,6 @@ def _infeasible(trips, tariff_id, tariff_sha256, reason, started):
         "physical_replay_status": "not_available",
         "runtime_s": time.perf_counter() - started,
     }
+    if diagnostic_trace is not None:
+        result["diagnostic_trace"] = diagnostic_trace
+    return result
