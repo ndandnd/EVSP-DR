@@ -366,6 +366,7 @@ def evaluate_counterfactual_transition(
         else:
             charge_start_soc = arrival_soc
         if continuous_timing:
+            time_window_valid = latest_departure >= arrival_min - 1e-9
             available_minutes = max(0.0, latest_departure - arrival_min)
             usable_blocks = None
         else:
@@ -378,6 +379,42 @@ def evaluate_counterfactual_transition(
             )) - 1
             usable_blocks = max(0, last_block - first_block + 1)
             available_minutes = usable_blocks * block_min
+            time_window_valid = usable_blocks > 0
+        if (
+            charge_start_soc is None
+            or arrival_soc < PHYSICS["reserve_kwh"] - 1e-9
+            or not time_window_valid
+        ):
+            resulting = (
+                arrival_soc - outbound.deadhead_kwh
+                if charge_start_soc is None else
+                charge_start_soc - outbound.deadhead_kwh
+            )
+            margin = resulting - required
+            options.append({
+                "option_kind": "station",
+                "station": station,
+                "feasible": False,
+                "start_soc_after_trip_kwh": start_soc,
+                "station_arrival_soc_kwh": arrival_soc,
+                "available_minutes": available_minutes,
+                "usable_blocks": usable_blocks,
+                "charge_gain_kwh": 0.0,
+                "outgoing_deadhead_kwh": outbound.deadhead_kwh,
+                "resulting_soc_kwh": resulting,
+                "successor_energy_plus_reserve_kwh": required,
+                "binding_margin_kwh": margin,
+                "binding_inequality":
+                    f"{resulting:.9f} >= {required:.9f}",
+                "arrival_min": arrival_min,
+                "latest_departure_min": latest_departure,
+                "rejection": (
+                    "arrival_soc_below_reserve"
+                    if arrival_soc < PHYSICS["reserve_kwh"] - 1e-9
+                    else "no_timing_window"
+                ),
+            })
+            continue
         charge_cap = (
             available_minutes * PHYSICS["charge_kw"] / 60.0
         )
@@ -418,7 +455,7 @@ def evaluate_counterfactual_transition(
             "station": station,
             "feasible": (
                 arrival_soc >= PHYSICS["reserve_kwh"] - 1e-9
-                and available_minutes >= -1e-9
+                and time_window_valid
                 and resulting >= required - 1e-9
             ),
             "start_soc_after_trip_kwh": start_soc,
