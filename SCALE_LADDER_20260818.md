@@ -177,8 +177,59 @@ The reconciler exact-matches the user, parent ID, name, state, partition,
 reason, comment, array range, and dependency semantics. Gate completion is
 accepted only with an exact `0:0` exit code. Accepted-before-record submission
 intents are boundedly rediscovered and fail closed rather than duplicated.
+A terminal non-success gate is durably recorded before the command raises:
+`gate_state=terminal_failed`, the exact scheduler observation/source/state/exit
+code, and `submitted=false`.
 
 ## Normalize completed outputs
+
+### Legacy `7937c22` campaign: read-only post-hoc audit first
+
+The already-running `slad_flat_primary_v4_7937c22` predates prospective
+receipt fields. Do not edit its manifest or outputs. After all intended worker
+completions exist, create a separate no-clobber sidecar:
+
+```bash
+LEGACY_ROOT="$HOME/EVSP-DR-scale-ladder-7937c22/src/results/scale_ladder/slad_flat_primary_v4_7937c22"
+LEGACY_AUDIT_ROOT="$HOME/evsp_scale_ladder_legacy_audits"
+LEGACY_SIDECAR="$LEGACY_AUDIT_ROOT/slad_flat_primary_v4_7937c22.audit.json"
+mkdir -p "$LEGACY_AUDIT_ROOT"
+
+env -u PYTHONPATH -u PYTHONHOME -u LD_LIBRARY_PATH \
+  PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 \
+  "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$COMMIT" audit_legacy_scale_ladder_campaign.py \
+  --campaign-root "$LEGACY_ROOT" \
+  --sidecar-out "$LEGACY_SIDECAR" \
+  --expected-commit 7937c22fef7771e2f74dd03569ea852cbd805e1c
+```
+
+Without a separately captured and validated scheduler JSON, the sidecar is
+explicitly `legacy_scheduler_unverified`. Supplying
+`--scheduler-capture CAPTURE.json` can yield `legacy_posthoc_audited` only when
+the capture uses schema
+`evsp-dr-legacy-scale-ladder-raw-scheduler-capture-v2`, includes raw per-task
+`scontrol -o` and `sacct -P` records plus approved tool hashes, and the
+production parsers prove exact gate/array IDs, names, comments, partitions,
+dependencies, task coverage, terminal states, and `0:0` exit codes. Hand-
+normalized assertions cannot upgrade the label. The audit writes
+`$LEGACY_SIDECAR` and `$LEGACY_SIDECAR.sha256` atomically without replacing
+anything. It fails on missing completions, changed journals/checkpoints,
+duplicate tasks, incompatible inputs, selected-route/physical evidence
+mismatch, mixed old/new scheduler evidence, or any hash change.
+
+Normalization then requires the sidecar explicitly:
+
+```bash
+"$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$COMMIT" summarize_scale_ladder.py \
+  --campaign-root "$LEGACY_ROOT" \
+  --out-dir "$LEGACY_ROOT/summary-posthoc" \
+  --legacy-audit-sidecar "$LEGACY_SIDECAR"
+```
+
+The normalized provenance retains the legacy evidence label and never claims
+the prospective lifecycle guarantees.
 
 ```bash
 RUN_ROOT="$HOME/EVSP-DR-scale-ladder-${COMMIT:0:12}"
@@ -208,6 +259,10 @@ fi
 
 Absent or hash-incompatible k40 reuse artifacts remain explicit
 missing/censored rows. They never trigger replacement k40 submissions.
+Normalized target diagnostics use `target_route_weight_observed`; this is a
+combined-cost-master observation, not a certified minimum-fleet bound. When
+the known comparator is outside the grid, the interpretation is
+`known_comparator_invalid_scaling_unresolved`.
 
 ## Local diagnostic launcher
 

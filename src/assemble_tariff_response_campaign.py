@@ -28,6 +28,15 @@ from tariff_response_core import (
     tariff_prices,
 )
 from make_giro_seed_routes import _minutes, _station_node
+from launch_tariff_response_pilot import (
+    MAIN_SUBMISSION_SCOPE,
+    tariff_gate_spec,
+)
+from reconcile_tariff_response_gate import (
+    _submitted_jobs_are_complete,
+)
+from slurm_state_contract import verified_gate_evidence
+from tariff_response_completion import validate_completion_identity
 from tariff_response_environment import (
     compare_portable,
     identity as environment_identity,
@@ -255,28 +264,66 @@ def _write_new_bytes(path, encoded):
         temporary.unlink(missing_ok=True)
 
 
+def _expected_worker_artifacts(job):
+    output = Path(job["output"])
+    expected = set()
+    if output.is_dir():
+        expected.update(
+            path for path in output.rglob("*") if path.is_file()
+        )
+    elif output.is_file():
+        expected.add(output)
+    if job["phase"] == "CG":
+        expected.update({
+            Path(str(output) + ".columns.jsonl"),
+            Path(str(output) + ".iters.csv"),
+            Path(job["phase_telemetry"]),
+        })
+    elif job["phase"] == "MIP":
+        progress = Path(job["progress_dir"])
+        expected.update(
+            path for path in progress.rglob("*") if path.is_file()
+        )
+    if not expected or any(not path.is_file() for path in expected):
+        raise ValueError(
+            f"worker artifact set is incomplete: {job['job_key']}"
+        )
+    return expected
+
+
 def assemble(campaign_root, output_manifest, evidence_output):
     campaign_root = campaign_root.resolve()
     plan_raw = (campaign_root / "approved-plan.json").read_bytes()
     plan = json.loads(plan_raw)
     manifest = json.loads((campaign_root / "campaign.json").read_text())
-    if manifest.get("approval_sha256") != hashlib.sha256(
-        plan_raw
-    ).hexdigest():
+    plan_sha = hashlib.sha256(plan_raw).hexdigest()
+    if manifest.get("approval_sha256") != plan_sha:
         raise ValueError("campaign approval hash mismatch")
-    submitted = {
-        item["job_key"] for item in manifest.get("submitted_jobs") or []
+    if manifest.get("submission_scope") != MAIN_SUBMISSION_SCOPE:
+        raise ValueError("assembler accepts only main tariff scope")
+    submitted_by_key = {
+        item["job_key"]: item
+        for item in manifest.get("submitted_jobs") or []
     }
+    submitted = set(submitted_by_key)
     main_jobs = {
         job["job_key"] for job in plan["jobs"]
-        if not job["separate_k40_gate"]
+        if job.get("submission_scope") == MAIN_SUBMISSION_SCOPE
     }
-    if submitted != main_jobs:
+    if (
+        submitted != main_jobs
+        or not _submitted_jobs_are_complete(plan, manifest)
+    ):
         raise ValueError("main pilot submission is incomplete")
-    if manifest.get("gate_state") not in {
-        "released", "released_reconciled",
-    }:
-        raise ValueError("main pilot gate release is not verified")
+    if manifest.get("submitted") is not True:
+        raise ValueError("main pilot submission is not scheduler-verified")
+    verified_gate_evidence(
+        manifest,
+        tariff_gate_spec(
+            plan, plan_sha, MAIN_SUBMISSION_SCOPE,
+            str(manifest.get("gate_job_id") or ""),
+        ),
+    )
     observed_commit = subprocess.run(
         ["git", "rev-parse", "HEAD"],
         cwd=REPO_ROOT, text=True, capture_output=True, check=False,
@@ -302,16 +349,16 @@ def assemble(campaign_root, output_manifest, evidence_output):
             str(job["output"]) + ".worker-completion.json"
         )
         completion = json.loads(completion_path.read_text())
-        if (
-            completion.get("schema")
-            != "evsp-dr-tariff-response-worker-completion-v1"
-            or completion.get("plan_sha256")
-            != manifest["approval_sha256"]
-        ):
-            raise ValueError("worker completion provenance mismatch")
-        for artifact, digest in (
-            completion.get("artifact_sha256") or {}
-        ).items():
+        hashes = validate_completion_identity(
+            completion,
+            job,
+            manifest["approval_sha256"],
+            expected_slurm_job_id=(
+                submitted_by_key[job["job_key"]]["job_id"]
+            ),
+            expected_artifact_paths=_expected_worker_artifacts(job),
+        )
+        for artifact, digest in hashes.items():
             path = Path(artifact)
             if not path.is_file() or sha256_file(path) != digest:
                 raise ValueError("worker artifact changed after validation")

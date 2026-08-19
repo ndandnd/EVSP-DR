@@ -137,6 +137,10 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             }))
             job = {
                 "cell_id": cell,
+                "job_name": f"M{arm[0]}40R1",
+                "execution_digest": (
+                    "1" * 64 if arm == "RAW" else "2" * 64
+                ),
                 "scale": 40,
                 "replicate": "r1",
                 "arm": arm,
@@ -159,19 +163,43 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             jobs.append(job)
         approved = {
             "campaign": "summary-test",
+            "mode": "pilot",
             "checkout_identity": {"expected_commit": "e" * 40},
+            "environment_whitelist": {"USER": "nathan"},
             "jobs": jobs,
         }
         plan_raw = json.dumps(
             approved, sort_keys=True, separators=(",", ":")
         ).encode()
         (campaign / "approved-plan.json").write_bytes(plan_raw)
-        (campaign / "campaign.json").write_text(json.dumps({
-            "campaign": "summary-test",
-            "approval_sha256": hashlib.sha256(plan_raw).hexdigest(),
-            "checkout_identity": {"expected_commit": "e" * 40},
-            "jobs": jobs,
-        }))
+        manifest = json.loads(json.dumps(approved))
+        manifest["approval_sha256"] = hashlib.sha256(plan_raw).hexdigest()
+        manifest["submitted"] = True
+        for index, job in enumerate(manifest["jobs"], start=1):
+            job["job_id"] = str(1000 + index)
+            job["submission_state"] = "release_verified"
+            observation = {
+                "job_id": job["job_id"],
+                "user": "nathan",
+                "job_name": job["job_name"],
+                "state": "COMPLETED",
+                "partition": "scaglione",
+                "reason": "None",
+                "comment":
+                    f"MSTAT:{job['execution_digest'][:32]}",
+                "exit_code": "0:0",
+                "source": "sacct",
+                "live": False,
+            }
+            job["release_verification"] = {
+                "verified": True,
+                "role": "mip_statistics_scientific_job",
+                "job_id": job["job_id"],
+                "command_attempts": 1,
+                "observation": observation,
+                "command_diagnostics": [],
+            }
+        (campaign / "campaign.json").write_text(json.dumps(manifest))
         return campaign
 
     def test_summary_emits_curves_and_separate_raw_giro_rows(self):
@@ -245,6 +273,53 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             checkpoint_path.write_text(json.dumps(checkpoint))
             with self.assertRaisesRegex(
                 ValueError, "statistics fleet gap mismatch"
+            ):
+                summarize(campaign, root / "summary")
+
+    def test_cached_released_string_without_evidence_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            manifest_path = campaign / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["jobs"][0]["submission_state"] = "released"
+            manifest["jobs"][0].pop("release_verification")
+            manifest_path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(
+                ValueError, "legacy/unverified"
+            ):
+                summarize(campaign, root / "summary")
+
+    def test_terminal_failure_after_release_is_not_summarizable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            manifest_path = campaign / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            job = manifest["jobs"][0]
+            prior = job["release_verification"]
+            observation = {
+                **prior["observation"],
+                "state": "FAILED",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "live": False,
+            }
+            job["submission_state"] = (
+                "release_verified_then_terminal_failed"
+            )
+            job["terminal_outcome"] = {
+                "observed": True,
+                "state": "FAILED",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "observation": observation,
+                "prior_release_verified": True,
+                "successful_completion": False,
+            }
+            manifest_path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(
+                ValueError, "unverified|unsuccessfully"
             ):
                 summarize(campaign, root / "summary")
 
