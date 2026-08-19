@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -27,6 +28,7 @@ from slurm_state_contract import (
     SlurmContractError,
     discover_live_job_by_identity,
     release_with_postcondition,
+    verify_dependency_receipt,
     verify_held_receipt,
 )
 
@@ -66,6 +68,7 @@ CODE_PATHS = (
     "src/validate_tariff_response_archive.py",
     "src/reconcile_tariff_response_gate.py",
     "src/slurm_state_contract.py",
+    "src/tariff_response_completion.py",
     "src/build_giro40_duty_manifest.py",
     "src/build_tariff_response_frozen_inputs.py",
 )
@@ -89,6 +92,7 @@ TARIFF_CODES = {
     "peak12_alpha_2p0": "a2",
 }
 TARIFF_GATE_ROLE = "tariff_response_release_gate"
+TARIFF_CHILD_ROLE = "tariff_response_scientific_job"
 
 
 def tariff_gate_spec(plan, plan_sha, job_id=None):
@@ -107,6 +111,20 @@ def tariff_gate_spec(plan, plan_sha, job_id=None):
     if job_id is not None and not spec["job_id"].isdigit():
         raise ValueError("tariff gate job ID is invalid")
     return spec
+
+
+def tariff_child_spec(plan, job, dependency, job_id=None):
+    return {
+        "job_id": None if job_id is None else str(job_id),
+        "user": str(
+            (plan.get("scheduler_identity") or {}).get("user") or ""
+        ),
+        "job_name": job["job_name"],
+        "partition": job["partition"],
+        "comment": f"TRSP:{job['execution_digest'][:28]}",
+        "role": TARIFF_CHILD_ROLE,
+        "dependency": dependency,
+    }
 
 
 def canonical(payload):
@@ -480,12 +498,24 @@ def build_plan(
             key: job[key] for key in (
                 "phase", "scale", "tariff_id", "tariff_sha256",
                 "analysis_role", "primary_response_eligible",
-                "treatment", "wall_limit_s", "solver_limit_s",
-                "separate_k40_gate", "instance", "seed_output",
-                "source_cg_output",
+                "treatment", "partition", "threads",
+                "wall_limit_s", "solver_limit_s",
+                "separate_k40_gate",
             )
         }
+        execution_identity["instance"] = {
+            key: value for key, value in instance.items()
+            if key not in {"path", "source_path"}
+        }
+        execution_identity["dependency_execution_digest"] = (
+            job_by_key[dependency].get("execution_digest")
+            if dependency else None
+        )
         execution_identity["code_sha256"] = code_hashes
+        execution_identity["environment_identity_sha256"] = (
+            environment_identity.get("portable_identity_sha256")
+            or hashlib.sha256(canonical(portable_environment)).hexdigest()
+        )
         job["execution_digest"] = hashlib.sha256(
             canonical(execution_identity)
         ).hexdigest()
@@ -560,39 +590,78 @@ def write_matrix(plan, path):
         ))
 
 
+def _publish_reservation_file(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() or path.is_symlink():
+        if (
+            path.is_symlink()
+            or not path.is_file()
+            or path.read_bytes() != payload
+        ):
+            raise ValueError(f"reservation identity conflict: {path}")
+        return path
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=path.parent, prefix=f".{path.name}.", delete=False
+        ) as handle:
+            temporary = Path(handle.name)
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary.chmod(0o400)
+        try:
+            os.link(temporary, path)
+        except FileExistsError:
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or path.read_bytes() != payload
+            ):
+                raise ValueError(
+                    f"reservation publication raced: {path}"
+                )
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
+    return path
+
+
 def _reserve(plan, plan_sha, selected):
     root = Path(plan["reservation_root"])
     root.mkdir(parents=True, exist_ok=True)
+    selected = sorted(selected, key=lambda job: job["job_key"])
+    transaction_payload = canonical({
+        "schema": "evsp-dr-tariff-response-reservation-transaction-v1",
+        "plan_sha256": plan_sha,
+        "campaign": plan["campaign"],
+        "jobs": [{
+            "job_key": job["job_key"],
+            "execution_digest": job["execution_digest"],
+        } for job in selected],
+    }) + b"\n"
+    transaction = _publish_reservation_file(
+        root / "transactions"
+        / f"{plan['campaign']}.{plan_sha}.json",
+        transaction_payload,
+    )
     paths = []
-    try:
-        for job in selected:
-            path = root / f"{job['execution_digest']}.json"
-            temporary = root / (
-                f".{job['execution_digest']}.tmp.{os.getpid()}"
-            )
-            descriptor = os.open(
-                temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o400
-            )
-            with os.fdopen(descriptor, "w") as handle:
-                json.dump({
-                    "schema": "evsp-dr-tariff-response-reservation-v1",
-                    "plan_sha256": plan_sha,
-                    "job_key": job["job_key"],
-                    "execution_digest": job["execution_digest"],
-                }, handle, sort_keys=True)
-                handle.write("\n")
-                handle.flush()
-                os.fsync(handle.fileno())
-            try:
-                os.link(temporary, path)
-            finally:
-                temporary.unlink(missing_ok=True)
-            paths.append(path)
-    except Exception:
-        for path in paths:
-            path.unlink(missing_ok=True)
-        raise
-    return paths
+    for job in selected:
+        payload = canonical({
+            "schema": "evsp-dr-tariff-response-reservation-v1",
+            "plan_sha256": plan_sha,
+            "job_key": job["job_key"],
+            "execution_digest": job["execution_digest"],
+        }) + b"\n"
+        paths.append(_publish_reservation_file(
+            root / f"{job['execution_digest']}.json", payload
+        ))
+    return paths, transaction
 
 
 @contextmanager
@@ -628,7 +697,9 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
     ]
     if not selected:
         raise ValueError("submission selection is empty")
-    reservations = _reserve(plan, plan_sha, selected)
+    reservations, reservation_transaction = _reserve(
+        plan, plan_sha, selected
+    )
     root.mkdir(parents=True)
     logs = root / "logs"
     logs.mkdir()
@@ -675,7 +746,12 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
         ),
         "submitted": False,
         "submitted_jobs": [],
+        "job_submission_intents": {},
         "reservations": [str(path) for path in reservations],
+        "reservation_transaction": str(reservation_transaction),
+        "staged_reservation_transaction": str(
+            root / "input/reservations/transaction.json"
+        ),
         "gate_state": "submission_intent",
         "gate_submission_intent": tariff_gate_spec(plan, plan_sha),
     }
@@ -685,6 +761,11 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
             root / "input/reservations" / reservation.name,
             sha256_file(reservation),
         )
+    _copy_new(
+        reservation_transaction,
+        Path(manifest["staged_reservation_transaction"]),
+        sha256_file(reservation_transaction),
+    )
     manifest_path = root / "campaign.json"
     _write_manifest(
         manifest_path, manifest
@@ -779,22 +860,45 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
                 if dependency not in job_ids:
                     raise ValueError("dependency was not submitted first")
                 dependency_ids.append(job_ids[dependency])
-            command.append(
-                "--dependency=afterok:" + ":".join(dependency_ids)
+            dependency_expression = (
+                "afterok:" + ":".join(dependency_ids)
             )
+            command.append("--dependency=" + dependency_expression)
             command.extend([
                 str(WORKER), str(plan_path), plan_sha, job["job_key"],
                 plan["python"]["path"], plan["python"]["sha256"],
             ])
+            child_intent = tariff_child_spec(
+                plan, job, dependency_expression
+            )
+            manifest["job_submission_intents"][job["job_key"]] = (
+                child_intent
+            )
+            _write_manifest(manifest_path, manifest)
             completed = subprocess.run(
                 command, cwd=REPO_ROOT, text=True,
                 capture_output=True, check=False,
             )
             job_id = completed.stdout.strip().split(";", 1)[0]
-            if completed.returncode != 0 or not job_id.isdigit():
-                raise RuntimeError(
-                    "sbatch outcome ambiguous; reservations remain"
-                )
+            if not job_id.isdigit():
+                discovered = None
+                for attempt in range(1, 6):
+                    if attempt > 1:
+                        time.sleep(1.0)
+                    discovered = discover_live_job_by_identity(
+                        child_intent
+                    )
+                    if discovered is not None:
+                        job_id = str(discovered["job_id"])
+                        break
+                if not job_id.isdigit():
+                    raise RuntimeError(
+                        "sbatch outcome ambiguous; reservations remain"
+                    )
+            child_spec = tariff_child_spec(
+                plan, job, dependency_expression, job_id
+            )
+            child_receipt = verify_dependency_receipt(child_spec)
             job_ids[job["job_key"]] = job_id
             manifest["submitted_jobs"].append({
                 "job_key": job["job_key"], "job_id": job_id,
@@ -802,7 +906,13 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
                 "job_name": job["job_name"],
                 "partition": job["partition"],
                 "comment": f"TRSP:{job['execution_digest'][:28]}",
+                "dependency": dependency_expression,
+                "role": TARIFF_CHILD_ROLE,
+                "submission_receipt": child_receipt,
             })
+            manifest["job_submission_intents"].pop(
+                job["job_key"], None
+            )
             _write_manifest(manifest_path, manifest)
     except Exception as exc:
         manifest["gate_state"] = "held_after_partial_submission"

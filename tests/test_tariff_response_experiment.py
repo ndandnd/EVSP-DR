@@ -32,6 +32,7 @@ from fixed_duty_expanded_optimizer import (  # noqa: E402
 from launch_tariff_response_pilot import (  # noqa: E402
     build_plan,
     submit,
+    tariff_child_spec,
     tariff_gate_spec,
 )
 import launch_tariff_response_pilot as pilot  # noqa: E402
@@ -50,6 +51,10 @@ from tariff_response_core import (  # noqa: E402
     reconstruct_giro40_original,
     route_response,
     tariff_prices,
+)
+from tariff_response_completion import (  # noqa: E402
+    SCHEMA as COMPLETION_SCHEMA,
+    validate_completion_identity,
 )
 from slurm_state_contract import (  # noqa: E402
     SlurmContractError,
@@ -139,6 +144,53 @@ def accounting_gate_row(
         f"{spec['job_id']}|{spec['user']}|{spec['job_name']}|{state}|"
         f"{spec['partition']}|{spec['comment']}|{exit_code}\n"
     ))
+
+
+def submitted_child_row(plan, job, gate_id, job_id):
+    dependency = f"afterok:{gate_id}"
+    spec = tariff_child_spec(
+        plan, job, dependency, job_id
+    )
+    observation = {
+        **{
+            field: spec[field] for field in (
+                "job_id", "user", "job_name", "partition",
+                "comment", "dependency",
+            )
+        },
+        "state": "PENDING",
+        "reason": "Dependency",
+        "exit_code": "0:0",
+        "source": "scontrol",
+        "live": True,
+    }
+
+
+def live_child_row(spec, *, include_dependency):
+    fields = [
+        spec["job_id"], spec["user"], spec["job_name"], "PENDING",
+        spec["partition"], "Dependency", spec["comment"],
+    ]
+    if include_dependency:
+        fields.append(spec["dependency"])
+    return scheduler_result(stdout="|".join(fields) + "\n")
+    return {
+        "job_key": job["job_key"],
+        **{
+            field: spec[field] for field in (
+                "job_id", "user", "job_name", "partition",
+                "comment", "dependency", "role",
+            )
+        },
+        "submission_receipt": {
+            "verified": True,
+            "role": spec["role"],
+            "job_id": str(job_id),
+            "attempts": 1,
+            "observation": observation,
+            "diagnostics": [],
+        },
+    }
 
 
 def toy_problem(*, boundary=False):
@@ -909,6 +961,18 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     frozen_input_manifest=frozen,
                     frozen_input_manifest_sha256=sha256_file(frozen),
                 )
+                renamed_plan = build_plan(
+                    campaign="tariff-pilot-renamed",
+                    instance_paths=paths,
+                    instance_hashes=hashes,
+                    tariff_manifest=TARIFF_MANIFEST,
+                    identity=identity,
+                    reservation_root=root / "reservations",
+                    python_path=Path(sys.executable),
+                    results_root=root / "other-results",
+                    frozen_input_manifest=frozen,
+                    frozen_input_manifest_sha256=sha256_file(frozen),
+                )
             self.assertEqual(plan["main_submission_job_count"], 111)
             self.assertEqual(plan["k40_preparation_job_count"], 33)
             self.assertFalse(plan["k40_mip_submission_allowed"])
@@ -929,6 +993,16 @@ class TariffResponseExperimentTests(unittest.TestCase):
             self.assertTrue(all(
                 len(job["job_name"]) <= 15 for job in plan["jobs"]
             ))
+            self.assertEqual(
+                {
+                    job["job_key"]: job["execution_digest"]
+                    for job in plan["jobs"]
+                },
+                {
+                    job["job_key"]: job["execution_digest"]
+                    for job in renamed_plan["jobs"]
+                },
+            )
             campaign_root = Path(plan["campaign_root"])
             campaign_root.mkdir(parents=True)
             with self.assertRaisesRegex(ValueError, "already exists"):
@@ -977,13 +1051,18 @@ class TariffResponseExperimentTests(unittest.TestCase):
     def test_gate_reconciliation_requires_completed_accounting_state(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            job = {
+                "job_key": "fixed",
+                "job_name": "TF40Ffl",
+                "partition": "default_partition",
+                "execution_digest": "1" * 64,
+                "dependency_key": None,
+                "separate_k40_gate": False,
+            }
             plan = {
                 "schema": "test",
                 "scheduler_identity": {"user": "nathan"},
-                "jobs": [{
-                    "job_key": "fixed",
-                    "separate_k40_gate": False,
-                }],
+                "jobs": [job],
             }
             plan_raw = json.dumps(
                 plan, sort_keys=True, separators=(",", ":")
@@ -994,9 +1073,9 @@ class TariffResponseExperimentTests(unittest.TestCase):
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": plan_sha,
                 "submission_scope": "main_k5_k8_pilot",
-                "submitted_jobs": [{
-                    "job_key": "fixed", "job_id": "22345",
-                }],
+                "submitted_jobs": [
+                    submitted_child_row(plan, job, "12345", "22345")
+                ],
                 "gate_state": "released",
                 "gate_job_id": "12345",
                 "gate_spec": spec,
@@ -1020,13 +1099,18 @@ class TariffResponseExperimentTests(unittest.TestCase):
     def test_gate_intent_is_discovered_after_accepted_before_record_crash(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            job = {
+                "job_key": "fixed",
+                "job_name": "TF40Ffl",
+                "partition": "default_partition",
+                "execution_digest": "1" * 64,
+                "dependency_key": None,
+                "separate_k40_gate": False,
+            }
             plan = {
                 "schema": "test",
                 "scheduler_identity": {"user": "nathan"},
-                "jobs": [{
-                    "job_key": "fixed",
-                    "separate_k40_gate": False,
-                }],
+                "jobs": [job],
             }
             plan_raw = json.dumps(
                 plan, sort_keys=True, separators=(",", ":")
@@ -1039,9 +1123,9 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "approval_sha256": plan_sha,
                 "submission_scope": "main_k5_k8_pilot",
                 "submitted": False,
-                "submitted_jobs": [{
-                    "job_key": "fixed", "job_id": "22345",
-                }],
+                "submitted_jobs": [
+                    submitted_child_row(plan, job, "12345", "22345")
+                ],
                 "gate_state": "submission_intent",
                 "gate_submission_intent": intent,
             }))
@@ -1073,6 +1157,78 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 and command[1] == "release"
                 for command in scheduler.commands
             ), 1)
+
+    def test_child_intent_is_discovered_and_dependency_receipt_bound(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            job = {
+                "job_key": "fixed",
+                "job_name": "TF40Ffl",
+                "partition": "default_partition",
+                "execution_digest": "1" * 64,
+                "dependency_key": None,
+                "separate_k40_gate": False,
+            }
+            plan = {
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [job],
+            }
+            raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            gate_spec = tariff_gate_spec(plan, plan_sha, "12345")
+            child_intent = tariff_child_spec(
+                plan, job, "afterok:12345"
+            )
+            child_spec = tariff_child_spec(
+                plan, job, "afterok:12345", "22345"
+            )
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "submission_scope": "main_k5_k8_pilot",
+                "submitted": False,
+                "submitted_jobs": [],
+                "job_submission_intents": {"fixed": child_intent},
+                "gate_state": "held_after_partial_submission",
+                "gate_job_id": "12345",
+                "gate_spec": gate_spec,
+            }))
+            scheduler = SyntheticScheduler(
+                live=[
+                    live_child_row(
+                        child_spec, include_dependency=False
+                    ),
+                    live_child_row(
+                        child_spec, include_dependency=True
+                    ),
+                    live_gate_row(gate_spec),
+                    live_gate_row(gate_spec),
+                    live_gate_row(
+                        gate_spec, state="RUNNING", reason="None"
+                    ),
+                ],
+                release=[scheduler_result()],
+            )
+            payload = reconcile(
+                root,
+                plan_sha,
+                runner=scheduler,
+                sleeper=lambda _value: None,
+            )
+            self.assertEqual(
+                payload["job_submission_intents"], {}
+            )
+            self.assertEqual(
+                payload["submitted_jobs"][0]["job_id"], "22345"
+            )
+            self.assertTrue(
+                payload["submitted_jobs"][0][
+                    "submission_receipt"
+                ]["verified"]
+            )
+            self.assertTrue(payload["submitted"])
 
     def test_release_rc_zero_without_transition_fails_closed(self):
         spec = gate_fixture_spec()
@@ -1411,6 +1567,63 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     selected,
                     "p" * 64,
                 )
+
+    def test_tariff_reservations_are_crash_adoptable_and_cross_campaign(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            job = {
+                "job_key": "fixed",
+                "execution_digest": "a" * 64,
+            }
+            plan = {
+                "campaign": "campaign-a",
+                "reservation_root": str(root / "reservations"),
+            }
+            paths, transaction = pilot._reserve(
+                plan, "1" * 64, [job]
+            )
+            adopted, adopted_transaction = pilot._reserve(
+                plan, "1" * 64, [job]
+            )
+            self.assertEqual(paths, adopted)
+            self.assertEqual(transaction, adopted_transaction)
+            conflicting = {
+                **plan, "campaign": "campaign-b",
+            }
+            with self.assertRaisesRegex(ValueError, "conflict"):
+                pilot._reserve(conflicting, "2" * 64, [job])
+
+    def test_worker_completion_cannot_be_swapped_between_same_plan_jobs(self):
+        job = {
+            "job_key": "job-a",
+            "execution_digest": "a" * 64,
+            "phase": "CG",
+            "treatment": "RAW",
+            "analysis_role": "primary",
+            "scale": 5,
+            "tariff_id": "flat",
+            "instance": {"sha256": "b" * 64},
+            "tariff_sha256": "c" * 64,
+        }
+        completion = {
+            "schema": COMPLETION_SCHEMA,
+            "job_key": "job-b",
+            "execution_digest": "d" * 64,
+            "phase": "CG",
+            "treatment": "RAW",
+            "analysis_role": "primary",
+            "scale": 5,
+            "tariff_id": "flat",
+            "plan_sha256": "e" * 64,
+            "instance_sha256": "b" * 64,
+            "tariff_sha256": "c" * 64,
+            "slurm_job_id": "123",
+            "artifact_sha256": {"/tmp/result": "f" * 64},
+        }
+        with self.assertRaisesRegex(ValueError, "job-a"):
+            validate_completion_identity(
+                completion, job, "e" * 64
+            )
 
 
 if __name__ == "__main__":

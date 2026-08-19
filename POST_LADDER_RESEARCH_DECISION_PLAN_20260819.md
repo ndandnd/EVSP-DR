@@ -78,6 +78,15 @@ Tracked k5-r1 and frozen k40-r2 inputs map duty `13411` to the same ordered
 
 Its canonical sequence SHA-256 is
 `2fbf856bd5955eb8ce2bbad32f135400ec9dbc46d755cc471555eccd46aab39b`.
+This is a derived cross-file check, not a field bound by the membership JSON
+(whose `ordered_trip_sequence_sha256` is instance-wide). The derivation binds
+GIRO master `data/Par_VehicleDetails_Updated.csv` SHA-256
+`6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f`,
+k5-r1 instance SHA-256
+`fc10ac0707becb960364e76b8c1e1c414d5d5639cbc3b7dadaf67a77e03f5322`,
+and k40-r2 instance SHA-256
+`3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd`.
+No tracked evidence artifact is modified to add a new hash field.
 Solver-local row indices differ by instance, so they must not be compared:
 the failed transition is local `46->53` in k5-r1 and `447->504` in k40-r2;
 both are the ordered-trip transition `106->119`.
@@ -191,14 +200,18 @@ Classification is precedence ordered and must retain a separate
    - The row must say `combined_cost_master_certified`; it must not call route
      weight a minimum-fleet lower bound.
 2. **certified route-space infeasible**
+   (normalized label
+   `certified_target_fleet_infeasible_in_named_route_space`)
    - an exact fleet-only CG or target-constrained global expanded-space oracle
      proves that no target-fleet solution exists under the named grid/physics;
-     or a fixed-sequence membership oracle proves the specifically named known
-     duty/partition is outside that space.
    - Current combined-cost CG alone cannot assign target-fleet
      `certified route-space infeasible`. For the present artifacts, the valid
      statement is narrower: all 22 **known partitions** are certified outside
      the primary route space.
+   - A failed fixed-sequence membership test never assigns this class. It sets
+     only the orthogonal `known_partition_outside_primary_space=true` flag;
+     alternative target-fleet partitions and scaling/runtime remain
+     unresolved.
 3. **feasible but pricing-censored**
    - provenance passes and artificial mass is zero;
    - a feasible restricted master exists;
@@ -211,6 +224,10 @@ Classification is precedence ordered and must retain a separate
 
 Target route weight, target incumbent, and known-partition membership are
 orthogonal columns, not classification shortcuts.
+The normalized diagnostic is named `target_route_weight_observed`, never
+`target_reached`. When the known comparator is outside the grid and target
+route weight is not observed, the interpretation is
+`known_comparator_invalid_scaling_unresolved`, not “not a scaling failure.”
 
 ## RAW and KNOWN-PARTITION MIP interpretations
 
@@ -344,9 +361,13 @@ sweep or silently change campaign physics.
 
 1. Do not rerun any cell whose immutable completion and classification gates
    pass.
-2. For `incomplete/censored`, resume the existing durable journal only when its
-   plan/code/environment/instance/tariff/grid hashes match. Never restart from
-   an unbound pool.
+2. For an `incomplete/censored` **CG only**, resume the existing durable
+   journal only when the exact source status SHA, journal byte length and
+   prefix SHA, snapshot SHA, worker-completion identity, plan/code/environment/
+   instance/tariff/grid hashes, and absence of an unapproved journal suffix all
+   match. Never restart from an unbound pool. MIP branch-and-bound trees are
+   not resumable here; their durable checkpoints are evidence, not restart
+   state.
 3. For `feasible but pricing-censored`, resume only cells whose unresolved
    certificate changes a scale-threshold conclusion (the first transition and
    one bracketing cell), not all larger scales.

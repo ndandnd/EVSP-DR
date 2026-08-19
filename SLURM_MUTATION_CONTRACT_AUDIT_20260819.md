@@ -67,6 +67,26 @@ the same `squeue`, `scontrol -o`, and `sacct -P` parsers used in production.
 No other `scontrol release`, `scontrol update`, `scancel`, or held `sbatch`
 site exists under tracked `src/` or `scripts/` at this commit.
 
+### Direct, non-held `sbatch` appendix
+
+These sites are outside the requested held/release/update/cancel inventory, but
+are listed so the audit cannot be misread as covering every direct submission:
+
+| Direct submission site | Disposition |
+|---|---|
+| `src/launch_scale_ladder.py`, `src/launch_tariff_response_pilot.py`, `src/launch_mip_statistics_campaign.py` | Active paths covered by the identity/receipt/restart contracts above. |
+| `src/launch_exact_cg_profile_campaign.py` | Deferred; parses an ID without an exact scheduler receipt. Must be hardened before another profile campaign. |
+| `src/launch_k40_factorial.sh` | Historical RAW-k40 generator; formally not approved for reuse without receipt/restart hardening. |
+| `src/cluster_campaign.py` | Deferred next standalone MIP hardening task, as required above. |
+| `src/prepare_overnight_correctness.sh`, `src/launch_overnight_correctness.sh` | Historical one-off correctness campaign wrappers; not approved for new submissions. |
+| `src/submit_goal1_matrix.sh` | Historical Goal-1 matrix launcher; not approved for reuse. |
+| `src/launch_legacy_bigtariff_recovery.sh` | Historical legacy-recovery launcher; fixed-purpose and not reusable. |
+| `src/submit_12h_price_scenarios.sh`, `src/submit_fullsoc_pipeline.sh` | Historical full-SOC wrappers; not approved for reuse. |
+
+Files containing only `#SBATCH` directives, usage examples, or the word
+“sbatch” in diagnostics are workers/documentation, not submission mutation
+sites.
+
 ## State semantics exercised by synthetic fixtures
 
 The tests distinguish:

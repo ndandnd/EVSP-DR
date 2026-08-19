@@ -40,6 +40,7 @@ from summarize_scale_ladder import (  # noqa: E402
     CG_FIELDS,
     PROGRESS_FIELDS,
     _validate_completion,
+    _require_scale_ladder_scheduler_evidence,
     summarize,
     target_gap_interpretation,
     _rename_noreplace,
@@ -4738,11 +4739,100 @@ printf '%s %s\n' "$status" "$checks"
                 2.153846, 2,
                 membership["known_partition_in_primary_expanded_space"],
             ),
-            "known_partition_outside_primary_space_not_scaling_failure",
+            "known_comparator_invalid_scaling_unresolved",
         )
         self.assertEqual(
             target_gap_interpretation(2.0, 2, True, 1.0),
             "target_not_comparable_positive_or_missing_artificial_mass",
+        )
+
+    def test_summary_requires_exact_gate_and_array_scheduler_evidence(self):
+        groups = (
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        )
+        plan = {
+            "runtime_environment": {"USER": "nathan"},
+            "task_groups": {group: [group.lower()] for group in groups},
+        }
+        plan_sha = "a" * 64
+        arrays = {
+            group: str(200 + index)
+            for index, group in enumerate(groups)
+        }
+        gate = "100"
+        gate_observation = {
+            "job_id": gate,
+            "job_name": f"LDG{plan_sha[:5]}",
+            "partition": "default_partition",
+            "comment": f"SLADG:{plan_sha[:20]}",
+            "state": "COMPLETED",
+            "exit_code": "0:0",
+            "source": "sacct",
+            "live": False,
+        }
+        manifest = {
+            "submitted": True,
+            "gate_state": "released",
+            "gate_job_id": gate,
+            "submitted_arrays": arrays,
+        }
+        with self.assertRaisesRegex(ValueError, "verified"):
+            _require_scale_ladder_scheduler_evidence(
+                plan, manifest, plan_sha
+            )
+        manifest["gate_state"] = "released_reconciled"
+        manifest["gate_release_verification"] = {
+            "verified": True,
+            "job_id": gate,
+            "observation": gate_observation,
+        }
+        manifest["gate_reconciliation"] = {
+            "verified": True,
+            "gate_job_id": gate,
+            "observation": gate_observation,
+        }
+        prefixes = {
+            "PREFLIGHT": "LDPF", "SEED": "LDSD",
+            "CG": "LDCG", "CG_SENSITIVITY": "LDCS",
+            "MIP_RAW": "LDMR", "MIP_KNOWN": "LDMK",
+        }
+        verifications = {}
+        for group in groups:
+            dependencies = {"afterok": [gate]}
+            if group in {"CG", "CG_SENSITIVITY"}:
+                dependencies["afterok"].append(
+                    f"{arrays['PREFLIGHT']}_*"
+                )
+            elif group == "MIP_RAW":
+                dependencies["aftercorr"] = [f"{arrays['CG']}_*"]
+            elif group == "MIP_KNOWN":
+                dependencies["aftercorr"] = sorted([
+                    f"{arrays['CG']}_*", f"{arrays['SEED']}_*",
+                ])
+            verifications[group] = {
+                "verified": True,
+                "group": group,
+                "parent_job_id": arrays[group],
+                "gate_job_id": gate,
+                "user": "nathan",
+                "job_name": prefixes[group] + plan_sha[:4],
+                "partition": (
+                    "scaglione" if group.startswith("MIP")
+                    else "default_partition"
+                ),
+                "comment": f"SLAD:{plan_sha[:20]}:{group}",
+                "state": "PENDING",
+                "reason": "Dependency",
+                "task_ids": [0],
+                "dependency_semantics": {
+                    kind: sorted(values)
+                    for kind, values in dependencies.items()
+                },
+            }
+        manifest["array_submission_verifications"] = verifications
+        _require_scale_ladder_scheduler_evidence(
+            plan, manifest, plan_sha
         )
 
     def test_summary_schema_and_censoring(self):

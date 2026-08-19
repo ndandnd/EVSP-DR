@@ -73,3 +73,9 @@ and physical replay unavailable. The pipeline must not repair or infer them.
 `cg_iteration_long.csv`, `mip_checkpoint_long.csv`,
 `artifact_inventory.csv`, `data_dictionary.csv`, and `provenance.json` are
 immutable and hash-indexed. Figures are accompanied by their plotting CSVs.
+
+Cluster evidence is accepted only with the v2 worker-completion identity:
+plan SHA, job key, campaign-independent execution digest, phase/treatment/
+analysis role, scale, tariff and instance identities, numeric Slurm job ID,
+and the exact artifact hash map. Scheduler receipts and worker completions are
+separate required provenance layers.

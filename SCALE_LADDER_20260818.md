@@ -211,6 +211,10 @@ fi
 
 Absent or hash-incompatible k40 reuse artifacts remain explicit
 missing/censored rows. They never trigger replacement k40 submissions.
+Normalized target diagnostics use `target_route_weight_observed`; this is a
+combined-cost-master observation, not a certified minimum-fleet bound. When
+the known comparator is outside the grid, the interpretation is
+`known_comparator_invalid_scaling_unresolved`.
 
 ## Local diagnostic launcher
 

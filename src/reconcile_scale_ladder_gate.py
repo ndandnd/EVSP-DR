@@ -703,6 +703,24 @@ def _validate_held_array_controller(
             f"expected={sorted(expected_tasks)} "
             f"observed={sorted(observed_tasks)}"
         )
+    return {
+        "verified": True,
+        "group": group,
+        "parent_job_id": str(job_id),
+        "gate_job_id": str(gate_id),
+        "user": expected_user,
+        "job_name": expected_common["JobName"],
+        "partition": expected_partition,
+        "comment": expected_common["Comment"],
+        "state": "PENDING",
+        "reason": "Dependency",
+        "task_ids": sorted(expected_tasks),
+        "dependency_semantics": {
+            kind: sorted(values)
+            for kind, values in sorted(expected_dependencies.items())
+        },
+        "controller_record_count": len(controller_rows),
+    }
 
 
 def _discover_held_science_jobs(plan, expected_plan_sha, manifest):
@@ -801,10 +819,14 @@ def _discover_held_science_jobs(plan, expected_plan_sha, manifest):
     if discovered and gate_id is None:
         raise ValueError("held arrays exist without an exact held gate")
     all_array_ids = {**discovered, **recorded}
+    verifications = dict(
+        manifest.get("array_submission_verifications") or {}
+    )
     for group, job_id in discovered.items():
-        _validate_held_array_controller(
+        verifications[group] = _validate_held_array_controller(
             plan, expected_plan_sha, group, job_id, gate_id, all_array_ids
         )
+    manifest["array_submission_verifications"] = verifications
     return discovered, discovered_gate
 
 
@@ -988,6 +1010,18 @@ def _reconcile_locked(
                 manifest["gate_state"] = "held"
                 _replace_json(manifest_path, manifest)
             missing_groups = []
+        if not missing_groups:
+            verifications = {}
+            for group in SCIENCE_GROUPS:
+                verifications[group] = _validate_held_array_controller(
+                    plan,
+                    expected_plan_sha,
+                    group,
+                    combined[group],
+                    gate_for_resume,
+                    combined,
+                )
+            manifest["array_submission_verifications"] = verifications
         manifest["submitted_arrays"] = combined
         manifest["gate_state"] = (
             "held" if not missing_groups
@@ -1175,11 +1209,21 @@ def _reconcile_locked(
         manifest["gate_state"] = "held"
     _replace_json(manifest_path, manifest)
     if gate_state == "COMPLETED":
+        manifest["gate_release_verification"] = (
+            manifest.get("gate_release_verification")
+            or _gate_release_verification(
+                gate, gate_observation, 0, []
+            )
+        )
         manifest["gate_state"] = "released_reconciled"
         manifest["submitted"] = True
         manifest["gate_reconciliation"] = {
+            "verified": True,
             "source": gate_observation["source"],
-            "gate_job_id": gate, "state": "COMPLETED",
+            "gate_job_id": gate,
+            "state": "COMPLETED",
+            "exit_code": gate_observation.get("exit_code"),
+            "observation": gate_observation,
         }
         _replace_json(manifest_path, manifest)
         return manifest

@@ -68,7 +68,7 @@ def _user_from_user_id(value):
 
 
 def _identity_errors(spec, row):
-    return [
+    errors = [
         {
             "field": field,
             "expected": str(spec.get(field) or ""),
@@ -79,6 +79,28 @@ def _identity_errors(spec, row):
         )
         if str(row.get(field) or "") != str(spec.get(field) or "")
     ]
+    if "dependency" in spec and _normalized_dependency(
+        row.get("dependency")
+    ) != _normalized_dependency(spec.get("dependency")):
+        errors.append({
+            "field": "dependency",
+            "expected": _normalized_dependency(spec.get("dependency")),
+            "observed": _normalized_dependency(row.get("dependency")),
+        })
+    return errors
+
+
+def _normalized_dependency(value):
+    raw = re.sub(
+        r"\((?:unfulfilled|failed)\)", "", str(value or "")
+    )
+    clauses = []
+    for clause in raw.split(","):
+        if not clause:
+            continue
+        fields = clause.split(":")
+        clauses.append(":".join([fields[0], *sorted(fields[1:])]))
+    return ",".join(sorted(clauses))
 
 
 def _require_spec(spec, *, require_job_id=True):
@@ -148,13 +170,18 @@ def resolve_exact_job(
     runner = subprocess.run if runner is None else runner
     job_id = str(spec["job_id"])
     diagnostics = []
+    include_dependency = "dependency" in spec
 
     try:
         listed = _bounded_query(
             runner,
             [
                 str(squeue), "-h", "-u", str(spec["user"]),
-                "-o", "%i|%u|%j|%T|%P|%R|%k",
+                "-o", (
+                    "%i|%u|%j|%T|%P|%R|%k|%E"
+                    if include_dependency
+                    else "%i|%u|%j|%T|%P|%R|%k"
+                ),
             ],
             timeout_s,
         )
@@ -171,8 +198,13 @@ def resolve_exact_job(
         else:
             rows = []
             for line in listed.stdout.splitlines():
-                fields = [field.strip() for field in line.split("|", 6)]
-                if len(fields) == 7 and fields[0] == job_id:
+                fields = [
+                    field.strip() for field in line.split(
+                        "|", 7 if include_dependency else 6
+                    )
+                ]
+                expected_fields = 8 if include_dependency else 7
+                if len(fields) == expected_fields and fields[0] == job_id:
                     rows.append({
                         "job_id": fields[0],
                         "user": fields[1],
@@ -181,6 +213,9 @@ def resolve_exact_job(
                         "partition": fields[4],
                         "reason": fields[5],
                         "comment": fields[6],
+                        "dependency": (
+                            fields[7] if include_dependency else None
+                        ),
                         "exit_code": None,
                     })
             if len(rows) > 1:
@@ -223,6 +258,7 @@ def resolve_exact_job(
                 "partition": values.get("Partition", ""),
                 "reason": values.get("Reason", ""),
                 "comment": values.get("Comment", ""),
+                "dependency": values.get("Dependency"),
                 "exit_code": values.get("ExitCode"),
             }
             errors = _identity_errors(spec, row)
@@ -248,7 +284,8 @@ def resolve_exact_job(
             [
                 str(sacct), "-X", "-n", "-P", "-j", job_id,
                 "--format=JobIDRaw,User,JobName%64,State,Partition%64,"
-                "Comment%256,ExitCode",
+                "Comment%256,ExitCode"
+                + (",Dependency%256" if include_dependency else ""),
             ],
             timeout_s,
         )
@@ -265,8 +302,13 @@ def resolve_exact_job(
         else:
             rows = []
             for line in accounted.stdout.splitlines():
-                fields = [field.strip() for field in line.split("|", 6)]
-                if len(fields) == 7 and fields[0] == job_id:
+                fields = [
+                    field.strip() for field in line.split(
+                        "|", 7 if include_dependency else 6
+                    )
+                ]
+                expected_fields = 8 if include_dependency else 7
+                if len(fields) == expected_fields and fields[0] == job_id:
                     rows.append({
                         "job_id": fields[0],
                         "user": fields[1],
@@ -275,6 +317,9 @@ def resolve_exact_job(
                         "partition": fields[4],
                         "comment": fields[5],
                         "exit_code": fields[6],
+                        "dependency": (
+                            fields[7] if include_dependency else None
+                        ),
                     })
             if len(rows) != 1:
                 diagnostics.append({
@@ -357,6 +402,82 @@ def verify_held_receipt(
         "held submission receipt could not be verified",
         diagnostics=diagnostics,
     )
+
+
+def verify_dependency_receipt(
+    spec,
+    *,
+    runner=None,
+    resolver=None,
+    sleeper=None,
+    attempts=DEFAULT_VERIFY_ATTEMPTS,
+    delay_s=DEFAULT_VERIFY_DELAY_S,
+):
+    """Prove that a parsed job is the exact dependency-blocked child."""
+    if not str(spec.get("dependency") or ""):
+        raise SlurmContractError("dependency receipt lacks an expected edge")
+    runner = subprocess.run if runner is None else runner
+    resolver = resolve_exact_job if resolver is None else resolver
+    sleeper = time.sleep if sleeper is None else sleeper
+    diagnostics = []
+    for attempt in range(1, attempts + 1):
+        if attempt > 1:
+            sleeper(delay_s)
+        try:
+            observation = resolver(spec, runner=runner)
+        except SlurmContractError as exc:
+            if exc.observation is not None and not exc.retriable:
+                raise
+            diagnostics.append({
+                "attempt": attempt,
+                "query_error": str(exc),
+                "query_diagnostics": exc.diagnostics,
+            })
+            continue
+        if (
+            observation.get("live") is True
+            and observation.get("state") == "PENDING"
+            and observation.get("reason") == "Dependency"
+        ):
+            return {
+                "verified": True,
+                "role": spec["role"],
+                "job_id": str(spec["job_id"]),
+                "attempts": attempt,
+                "observation": observation,
+                "diagnostics": diagnostics,
+            }
+        raise SlurmContractError(
+            "submission receipt did not resolve to the exact "
+            "dependency-blocked job",
+            observation=observation,
+            diagnostics=diagnostics,
+        )
+    raise SlurmContractError(
+        "dependency-blocked submission receipt could not be verified",
+        diagnostics=diagnostics,
+    )
+
+
+def verified_dependency_evidence(receipt, spec):
+    _require_spec(spec)
+    if (
+        not isinstance(receipt, dict)
+        or receipt.get("verified") is not True
+        or receipt.get("role") != spec["role"]
+        or str(receipt.get("job_id") or "") != str(spec["job_id"])
+    ):
+        raise ValueError("dependency receipt evidence is unverified")
+    observation = receipt.get("observation")
+    errors = _identity_errors(spec, observation or {})
+    if (
+        errors
+        or observation.get("live") is not True
+        or observation.get("state") != "PENDING"
+        or observation.get("reason") != "Dependency"
+    ):
+        raise ValueError("dependency receipt observation is invalid")
+    return receipt
 
 
 def _release_classification(

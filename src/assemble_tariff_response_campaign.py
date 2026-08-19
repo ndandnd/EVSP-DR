@@ -29,7 +29,11 @@ from tariff_response_core import (
 )
 from make_giro_seed_routes import _minutes, _station_node
 from launch_tariff_response_pilot import tariff_gate_spec
+from reconcile_tariff_response_gate import (
+    _submitted_jobs_are_complete,
+)
 from slurm_state_contract import verified_gate_evidence
+from tariff_response_completion import validate_completion_identity
 from tariff_response_environment import (
     compare_portable,
     identity as environment_identity,
@@ -272,7 +276,10 @@ def assemble(campaign_root, output_manifest, evidence_output):
         job["job_key"] for job in plan["jobs"]
         if not job["separate_k40_gate"]
     }
-    if submitted != main_jobs:
+    if (
+        submitted != main_jobs
+        or not _submitted_jobs_are_complete(plan, manifest)
+    ):
         raise ValueError("main pilot submission is incomplete")
     if manifest.get("submitted") is not True:
         raise ValueError("main pilot submission is not scheduler-verified")
@@ -307,16 +314,10 @@ def assemble(campaign_root, output_manifest, evidence_output):
             str(job["output"]) + ".worker-completion.json"
         )
         completion = json.loads(completion_path.read_text())
-        if (
-            completion.get("schema")
-            != "evsp-dr-tariff-response-worker-completion-v1"
-            or completion.get("plan_sha256")
-            != manifest["approval_sha256"]
-        ):
-            raise ValueError("worker completion provenance mismatch")
-        for artifact, digest in (
-            completion.get("artifact_sha256") or {}
-        ).items():
+        hashes = validate_completion_identity(
+            completion, job, manifest["approval_sha256"]
+        )
+        for artifact, digest in hashes.items():
             path = Path(artifact)
             if not path.is_file() or sha256_file(path) != digest:
                 raise ValueError("worker artifact changed after validation")

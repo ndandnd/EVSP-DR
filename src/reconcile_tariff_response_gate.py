@@ -11,9 +11,11 @@ import time
 from pathlib import Path
 
 from launch_tariff_response_pilot import (
+    TARIFF_CHILD_ROLE,
     TARIFF_GATE_ROLE,
     _tariff_campaign_lock,
     _write_manifest,
+    tariff_child_spec,
     tariff_gate_spec,
 )
 from slurm_state_contract import (
@@ -22,6 +24,8 @@ from slurm_state_contract import (
     discover_live_job_by_identity,
     release_with_postcondition,
     resolve_exact_job,
+    verified_dependency_evidence,
+    verify_dependency_receipt,
 )
 
 
@@ -39,18 +43,53 @@ def _selected_job_keys(plan, manifest):
     }
 
 
+def _selected_jobs(plan, manifest):
+    keys = _selected_job_keys(plan, manifest)
+    return [job for job in plan["jobs"] if job["job_key"] in keys]
+
+
 def _submitted_jobs_are_complete(plan, manifest):
     rows = manifest.get("submitted_jobs") or []
-    expected = _selected_job_keys(plan, manifest)
+    expected_jobs = _selected_jobs(plan, manifest)
+    expected = {job["job_key"] for job in expected_jobs}
     keys = [str(row.get("job_key") or "") for row in rows]
     ids = [str(row.get("job_id") or "") for row in rows]
-    return (
+    if not (
         len(rows) == len(expected)
         and set(keys) == expected
         and len(set(keys)) == len(keys)
         and all(job_id.isdigit() for job_id in ids)
         and len(set(ids)) == len(ids)
-    )
+    ):
+        return False
+    by_key = {row["job_key"]: row for row in rows}
+    gate = str(manifest.get("gate_job_id") or "")
+    try:
+        for job in expected_jobs:
+            row = by_key[job["job_key"]]
+            dependencies = [gate]
+            if job.get("dependency_key"):
+                dependencies.append(
+                    str(by_key[job["dependency_key"]]["job_id"])
+                )
+            dependency = "afterok:" + ":".join(dependencies)
+            spec = tariff_child_spec(
+                plan, job, dependency, row["job_id"]
+            )
+            if any(
+                str(row.get(field) or "") != str(spec[field])
+                for field in (
+                    "job_id", "user", "job_name", "partition",
+                    "comment", "dependency", "role",
+                )
+            ):
+                return False
+            verified_dependency_evidence(
+                row.get("submission_receipt"), spec
+            )
+    except (KeyError, TypeError, ValueError):
+        return False
+    return True
 
 
 def _record_terminal_failure(manifest, gate, observation, message):
@@ -114,6 +153,84 @@ def _resolve_bounded(spec, runner, sleeper, attempts=5):
         ),
         diagnostics=diagnostics,
     )
+
+
+def _recover_child_intents(
+    plan, manifest, manifest_path, runner, sleeper,
+):
+    intents = dict(manifest.get("job_submission_intents") or {})
+    if not intents:
+        return
+    rows = manifest.setdefault("submitted_jobs", [])
+    by_key = {row["job_key"]: row for row in rows}
+    selected = _selected_jobs(plan, manifest)
+    selected_by_key = {job["job_key"]: job for job in selected}
+    unknown = set(intents) - set(selected_by_key)
+    if unknown:
+        raise ValueError("campaign contains unknown child submission intents")
+    gate = str(manifest.get("gate_job_id") or "")
+    for job in selected:
+        key = job["job_key"]
+        if key not in intents:
+            continue
+        dependencies = [gate]
+        if job.get("dependency_key"):
+            dependency_row = by_key.get(job["dependency_key"])
+            if dependency_row is None:
+                raise ValueError(
+                    "child intent dependency has no exact submitted receipt"
+                )
+            dependencies.append(str(dependency_row["job_id"]))
+        dependency = "afterok:" + ":".join(dependencies)
+        expected_intent = tariff_child_spec(
+            plan, job, dependency
+        )
+        intent = intents[key]
+        if any(
+            str(intent.get(field) or "")
+            != str(expected_intent.get(field) or "")
+            for field in (
+                "user", "job_name", "partition", "comment",
+                "role", "dependency",
+            )
+        ):
+            raise ValueError("child submission intent identity mismatch")
+        discovered = None
+        for attempt in range(1, 6):
+            if attempt > 1:
+                sleeper(1.0)
+            discovered = discover_live_job_by_identity(
+                expected_intent, runner=runner
+            )
+            if discovered is not None:
+                break
+        if discovered is None:
+            raise RuntimeError(
+                "child submission intent remains ambiguous; replacement "
+                "is forbidden"
+            )
+        job_id = str(discovered["job_id"])
+        spec = tariff_child_spec(
+            plan, job, dependency, job_id
+        )
+        receipt = verify_dependency_receipt(
+            spec, runner=runner, sleeper=sleeper
+        )
+        row = {
+            "job_key": key,
+            **{
+                field: spec[field] for field in (
+                    "job_id", "user", "job_name", "partition",
+                    "comment", "dependency", "role",
+                )
+            },
+            "submission_receipt": receipt,
+        }
+        rows.append(row)
+        by_key[key] = row
+        intents.pop(key)
+        manifest["job_submission_intents"] = dict(intents)
+        _write_manifest(manifest_path, manifest)
 
 
 def _reconcile_locked(
@@ -230,6 +347,21 @@ def _reconcile_locked(
         _record_unverified(manifest, "gate_identity_mismatch", error)
         _write_manifest(manifest_path, manifest)
         raise ValueError(str(error))
+
+    try:
+        _recover_child_intents(
+            plan, manifest, manifest_path, runner, sleeper
+        )
+    except (RuntimeError, ValueError, SlurmContractError) as exc:
+        manifest["submitted"] = False
+        manifest["gate_state"] = "child_submission_reconciliation_failed"
+        manifest["child_reconciliation_error"] = {
+            "message": str(exc),
+            "observation": getattr(exc, "observation", None),
+            "diagnostics": getattr(exc, "diagnostics", []),
+        }
+        _write_manifest(manifest_path, manifest)
+        raise RuntimeError(str(exc)) from exc
 
     try:
         current = _resolve_bounded(

@@ -12,7 +12,9 @@ import stat
 from pathlib import Path
 
 from launch_tariff_response_pilot import tariff_gate_spec
+from reconcile_tariff_response_gate import _submitted_jobs_are_complete
 from slurm_state_contract import verified_gate_evidence
+from tariff_response_completion import validate_completion_identity
 
 
 def sha(path):
@@ -119,6 +121,8 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         raise ValueError("submitted job rows are duplicated or malformed")
     if set(submitted) != set(selected):
         raise ValueError("submitted job set is incomplete")
+    if not _submitted_jobs_are_complete(plan, manifest):
+        raise ValueError("submitted job scheduler receipts are unverified")
     declared_root = Path(
         plan["k40_campaign_root"]
         if expected_scope == "k40-preparation"
@@ -127,7 +131,25 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
 
     reservations = manifest.get("reservations") or []
     staged_reservations = root / "input/reservations"
-    files = sorted(staged_reservations.glob("*.json"))
+    transaction_path = staged_reservations / "transaction.json"
+    transaction = json.loads(transaction_path.read_text())
+    if (
+        transaction.get("schema")
+        != "evsp-dr-tariff-response-reservation-transaction-v1"
+        or transaction.get("plan_sha256") != plan_sha
+        or transaction.get("campaign") != plan["campaign"]
+        or transaction.get("jobs") != [{
+            "job_key": job["job_key"],
+            "execution_digest": job["execution_digest"],
+        } for job in sorted(
+            selected.values(), key=lambda item: item["job_key"]
+        )]
+    ):
+        raise ValueError("staged reservation transaction is invalid")
+    files = sorted(
+        path for path in staged_reservations.glob("*.json")
+        if path.name != "transaction.json"
+    )
     validate_reservations(files, reservations, selected, plan_sha)
 
     staged_tariff_manifest = root / "input/tariffs/tariff_manifest.csv"
@@ -164,20 +186,9 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         )
         completion_path = Path(str(output) + ".worker-completion.json")
         completion = json.loads(completion_path.read_text())
-        hashes = completion.get("artifact_sha256")
-        if (
-            completion.get("schema")
-            != "evsp-dr-tariff-response-worker-completion-v1"
-            or completion.get("phase") != job["phase"]
-            or completion.get("plan_sha256") != plan_sha
-            or completion.get("instance_sha256")
-            != job["instance"]["sha256"]
-            or completion.get("tariff_sha256")
-            != job.get("tariff_sha256")
-            or not isinstance(hashes, dict)
-            or not hashes
-        ):
-            raise ValueError(f"completion mismatch: {job['job_key']}")
+        hashes = validate_completion_identity(
+            completion, job, plan_sha
+        )
         mapped = {}
         for declared, digest in hashes.items():
             staged = relocated(

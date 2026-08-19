@@ -240,6 +240,14 @@ code as a state transition. States `ambiguous_held_gate`,
 Historical manifests without the exact gate specification are preserved as
 `legacy_unverified`; they cannot be silently upgraded.
 
+Each scientific child also has a durable pre-`sbatch` intent and an exact
+approved-user/ID/name/partition/comment/dependency receipt while the gate is
+held. Accepted-before-record children are recovered by that identity; an
+unresolved intent prevents gate release. Worker completion schema v2 binds the
+job key, execution digest, treatment, role, scale, tariff, inputs, Slurm ID,
+and complete artifact hash set. Assembly and archive validation share that
+same identity validator.
+
 Reconcile once after release and again after the gate becomes terminal.
 Scientific assembly/archive requires both persisted release evidence and exact
 terminal `COMPLETED/0:0` evidence. A terminal non-success is persisted as
