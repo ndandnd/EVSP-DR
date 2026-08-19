@@ -123,27 +123,36 @@ The duty-13411 oracle under
 |---|---|---|---|
 | 15 kWh / 10 min | 46→53 | 106→119 | interaction of block alignment and accumulated SOC flooring |
 | 5 kWh / 10 min | 46→53 | 106→119 | interaction of block alignment and accumulated SOC flooring |
-| 2.5 kWh / 10 min | 53→59 | 119→132 | accumulated SOC flooring |
-| 1 kWh / 10 min | 53→59 | 119→132 | accumulated SOC flooring |
-| 1 kWh / 5 min | 73→77 | 158→167 | accumulated SOC flooring |
+| 2.5 kWh / 10 min | 53→59 | 119→132 | unresolved by isolated local counterfactuals |
+| 1 kWh / 10 min | 53→59 | 119→132 | unresolved by isolated local counterfactuals |
+| 1 kWh / 5 min | 73→77 | 158→167 | unresolved by isolated local counterfactuals |
 
 At 1-kWh/5-minute, production flooring leaves 7.0 kWh before a successor
-requiring 42.5 kWh; continuous timing with the same flooring reaches only
-27.0 kWh, while the validated continuous whole-duty state has 42.502 kWh and
-satisfies `42.502 >= 42.5` even without charging. At 2.5/10 and 1/10,
-continuous timing with production flooring similarly remains short
-(`32.5 < 41.7299995` and `34.0 < 41.7299995`), while removing accumulated
-flooring restores a direct witness. At 15/10 and 5/10, both the unavailable
-sub-block charging window and accumulated flooring bind, and either named
-counterfactual relaxation restores a witness.
+requiring 42.5 kWh. Continuous timing with the same flooring reaches only
+27.0 kWh. Replaying the exact production prefix without flooring reaches only
+11.820003 kWh, and removing both local timing/flooring constraints reaches
+31.820003 kWh; all remain short. The separately optimized, physically
+validated continuous whole-duty witness reaches that predecessor with
+42.502 kWh and satisfies `42.502 >= 42.5`. Therefore it is not valid to label
+the 1/5 failure as SOC-flooring-only: upstream charging/path/state choices also
+differ and the isolated cause remains unresolved.
+
+The 2.5/10 and 1/10 failures are likewise unresolved: continuous timing with
+production flooring reaches `32.5 < 41.7299995` and
+`34.0 < 41.7299995`; the same production prefixes without flooring reach only
+12.780002 kWh, and even continuous timing plus no-floor prefix replay reaches
+37.780002 kWh. At 15/10 and 5/10, by contrast, both the unavailable sub-block
+charging window and accumulated flooring bind locally, and either isolated
+relaxation restores a witness.
 
 The production graph is consistent with the independently validated
 continuous whole-duty witness (SciPy/HiGHS, production physical validator,
-terminal SOC about 0.002 kWh). The resulting decision is a deliberate
+terminal SOC about 0.002 kWh). The observable result is a deliberate
 named-grid limitation, not a demonstrated production-code or reference-graph
-bug. If exact GIRO-sequence representation is required, an event/continuous-
-SOC model (or separately reviewed state representation) is needed. No such
-production change is authorized here.
+bug. The local root cause remains unresolved for the three finer-grid
+failures. If exact GIRO-sequence representation is required, an event/
+continuous-SOC model (or separately reviewed state representation) is needed.
+No such production change is authorized here.
 
 The current full Tier-1 GIRO40 runner would abort. It calls
 `optimize_fixed_duty` at exactly 15 kWh/10 minutes for every route and tariff;

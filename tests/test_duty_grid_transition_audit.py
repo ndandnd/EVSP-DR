@@ -137,9 +137,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
             [row["cause_classification"] for row in payload["grid_results"]],
             [
                 "interaction", "interaction",
-                "accumulated SOC flooring",
-                "accumulated SOC flooring",
-                "accumulated SOC flooring",
+                "unresolved", "unresolved", "unresolved",
             ],
         )
 

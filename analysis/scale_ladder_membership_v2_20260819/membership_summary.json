@@ -343,6 +343,12 @@
     },
     "stop_after_first_feasible": true
   },
+  "input_hashes": {
+    "data/Par_VehicleDetails_Updated.csv": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+    "data/Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "data/hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "data/par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
   "instance_manifest_path": "data/scale_ladder/instances/scale_ladder_instance_manifest.csv",
   "instance_manifest_sha256": "a7ef8b77351440a8d7873b949891663ca7b28f135d366d4c6b003d09ca84839a",
   "physics": {
@@ -352,11 +358,18 @@
   },
   "physics_sha256": "164705f03b763b2bcda61b17ddd44df9fb856ab797880264b064fd17de74962e",
   "producer_code_hashes": {
+    "src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
     "src/audit_scale_ladder_known_membership.py": "42f1206e6cf2ca73427b2e367d6e408a65c6400ceb930044433ad4128166acd9",
-    "src/build_scale_ladder_membership_v2.py": "8a28281ad9405bc0befcbda4591ba7e3d92c362790c3789aee9e6658b8bce953",
+    "src/build_scale_ladder_membership_v2.py": "5e525de968cff9ab156291e2453803324a9c4acdc9ed9e60536a56e3e53bb621",
+    "src/build_tariff_response_manifest.py": "9292ae30ba59d0a26547dd90e833e7437b658d970947bc598116b0bfce0608d7",
+    "src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06",
     "src/expanded_path_realization.py": "c952a312bf93f1ea38e21968fc4d1bbf5d30831be66faa521a4ccf6358ef3008",
     "src/fixed_duty_expanded_optimizer.py": "c461955bf7c7137d0cd7333fddb397ab8d0da67491d38e93a0751f61b6397cbb",
-    "src/rerealize_routes.py": "aeee15ea0ed6587dcbc5d20eca7567f13dccafd2840340fc726ed75c74a73472"
+    "src/rerealize_routes.py": "aeee15ea0ed6587dcbc5d20eca7567f13dccafd2840340fc726ed75c74a73472",
+    "src/run_exact_pool_mip.py": "3bba461daf8c3aee60f702964e0e7f77f6c3dafa458ccb88827001d3aceb4232",
+    "src/scale_ladder_trip_identity.py": "9b4503721541272f6f894a8f606c056c9215b1f66a6adb20eb1bf1fc828d1af9",
+    "src/tariff_response_core.py": "26aaa0a0cd4174dab553615d78231ee19bd02479a9d933cdeb2a6f0abe364e62",
+    "src/utils_v2.py": "9bb5f7d29144c6c7436380c6cbb3cfe98f3b1ae4b7adf6d570008ff1685bfd90"
   },
   "schema": "evsp-dr-scale-ladder-membership-v2",
   "source_v1": {
@@ -367,8 +380,8 @@
     "schema": "evsp-dr-scale-ladder-membership-preflight-v1"
   },
   "table_sha256": {
-    "duty_grid_outcome_long.csv": "b4756377ad003c673608cf3df200052790bf8d9a0f19bf2241ea4b763d91efe6",
-    "duty_summary.csv": "19a80f7c051644e02b3fa79eaaa92a8dd571cee20b0d4dc02b7455b4cfdadc28"
+    "duty_grid_outcome_long.csv": "5a5cf1ddbd9c9050eeba4aeb09df180e2bde72afc28c74e9dcd39ab44cd4358f",
+    "duty_summary.csv": "4437723b6452f2596e6170e0de802fbe20244d7a7756f05fdf07e22bf5a4a023"
   },
   "tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
   "v1_parity_verified": true
