@@ -2,9 +2,25 @@
 
 ## Scope and governing contract
 
-This audit is based on reviewed commit
-`1d80402d79d1cbb4b786b780f7287c12b02d3621` and the tracked diff
-`7937c22..1d80402`. No live Slurm command was run while preparing it.
+Incident precedent was inspected in tracked diff `7937c22..1d80402`.
+Implementation starts from exact reviewed base
+`1d80402d79d1cbb4b786b780f7287c12b02d3621` and is pinned to reviewed code
+checkpoint `950673811ad79335c6f468ad3054037c04b30737`, i.e. diff
+`1d80402d79d1cbb4b786b780f7287c12b02d3621..950673811ad79335c6f468ad3054037c04b30737`.
+The subsequent commit containing this binding changes documentation only. No
+live Slurm command was run while preparing or reviewing the implementation.
+
+Verification at the pinned code checkpoint:
+
+- full repository: 477 passed, 113 subtests passed;
+- focused campaign modules: 153 passed, 64 subtests passed;
+- source compilation: 138 tracked Python files;
+- Bash parsing: 57 tracked shell/`.sub` files;
+- ShellCheck: both changed shell files pass; the full tracked audit remains
+  nonzero on 58 pre-existing diagnostics in historical scripts;
+- `git diff --check`: passed;
+- independent scheduler and science/provenance reviews: no remaining blocker
+  after fixes; the final scheduler review also reported no remaining high.
 
 The contract is:
 
