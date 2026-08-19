@@ -3,24 +3,37 @@
 ## Scope and governing contract
 
 Incident precedent was inspected in tracked diff `7937c22..1d80402`.
-Implementation starts from exact reviewed base
+Corrected implementation starts from exact reviewed base
 `1d80402d79d1cbb4b786b780f7287c12b02d3621` and is pinned to reviewed code
-checkpoint `95067383acf6c9e4dd68214595e183984efbc289`, i.e. diff
-`1d80402d79d1cbb4b786b780f7287c12b02d3621..95067383acf6c9e4dd68214595e183984efbc289`.
+checkpoint `187fcaeea2ea3473df36c0ea2b4f4511a146e6b2`, i.e. diff
+`1d80402d79d1cbb4b786b780f7287c12b02d3621..187fcaeea2ea3473df36c0ea2b4f4511a146e6b2`.
 The subsequent commit containing this binding changes documentation only. No
 live Slurm command was run while preparing or reviewing the implementation.
 
+History/tree proof:
+
+- forensic branch commit `fa4d5516a8d0e8e0365113ade4ca68cd4d66e843`
+  remains preserved;
+- forensic tree:
+  `6ac0c2402c288f5dea3b0bc128c5c92c6aec2cbc`;
+- corrected baseline commit:
+  `d1d6049c652f938381ca855ddc48ce6072f12f10`;
+- corrected baseline tree:
+  `6ac0c2402c288f5dea3b0bc128c5c92c6aec2cbc` (byte-identical);
+- corrected implementation tree:
+  `21e6ebbb62a6e2bb2015b66a5e669d8fd0c1c1c5`;
+- every corrected-branch commit message is trailer-free.
+
 Verification at the pinned code checkpoint:
 
-- full repository: 477 passed, 113 subtests passed;
-- focused campaign modules: 153 passed, 64 subtests passed;
-- source compilation: 138 tracked Python files;
+- full repository: 492 passed, 123 subtests passed;
+- source compilation: 141 tracked Python files;
 - Bash parsing: 57 tracked shell/`.sub` files;
 - ShellCheck: both changed shell files pass; the full tracked audit remains
   nonzero on 58 pre-existing diagnostics in historical scripts;
 - `git diff --check`: passed;
 - independent scheduler and science/provenance reviews: no remaining blocker
-  after fixes; the final scheduler review also reported no remaining high.
+  or high after fixes.
 
 The contract is:
 
@@ -66,6 +79,10 @@ the same `squeue`, `scontrol -o`, and `sacct -P` parsers used in production.
 | `src/reconcile_scale_ladder_gate.py`: terminal scientific gate | Raised on terminal non-success without copying the observation to `campaign.json`. | Medium | Before raising, persist `gate_state=terminal_failed`, exact observation/source/state/exit code, and `submitted=false`. Missing/nonzero exit codes are retained as failure evidence. | Repeated reconciliation reads the durable terminal failure instead of a stale optimistic state. | Fixed here. |
 | Tariff/MIP same-campaign mutation serialization | Concurrent submission/reconciliation processes could both advance one campaign manifest. | Blocker | An OS-backed lock outside the not-yet-created campaign root covers initialization, recovery, every manifest transition, scheduler mutation, cancellation, and release. | A waiting process re-enters through exact recovery after the first process publishes its state; it cannot race a second `sbatch`. | Fixed after adversarial review. |
 | MIP execution reservations and deduplication | Sequential `O_EXCL` files could be stranded before their set was published, and recovery could submit planned jobs without repeating a failed execution-comment query. | Blocker | Persist the expected one-to-one cell/digest/path/hash transaction first; publish each fully fsynced reservation by atomic no-replace link; adopt only byte-identical same-plan files; and persist/re-run successful `squeue` plus `sacct` comment deduplication before every planned recovery submission. | A crash-created exact subset is idempotently adopted and completed. Unknown scheduler state, conflicting bytes, symlinks, duplicate digests, or wrong paths fail closed before `sbatch`. | Fixed after adversarial review. |
+| Tariff main/k40 scope collision | Main and k40 preparation shared a plan SHA, gate identity, and transaction path. | Blocker | Scope is part of every gate/child role, name/comment, spec, receipt, transaction path/payload, reservation directory/payload, worker completion, recovery check, and consumer. | Main and k40 can reserve/recover concurrently but cannot discover, adopt, release, or consume one another. | Fixed in corrected branch. |
+| MIP terminal/release conflation | Terminal failures could be synthesized as release success. | Blocker | Terminal non-success never establishes release. A durable prior release is revalidated independently from a later terminal outcome. `COMPLETED/0:0` is accepted only with explicit `terminal_completed_0_0` evidence semantics. | Prior evidence survives process interruption in `prior_release_verification`; failure without it leaves `submitted=false`. | Fixed in corrected branch. |
+| Legacy `7937c22` ladder normalization | Prospective receipt requirements would otherwise reject authentic old-schema evidence. | High | A read-only no-clobber sidecar re-derives plan/task/input/completion/journal/checkpoint/selected-route hashes. Scheduler upgrade requires raw per-task `scontrol` and `sacct` rows parsed by production parsers and bound to approved tool hashes and the exact auditor Git tree. | Original manifest/results are never rewritten. Missing/raw-unproved scheduler evidence remains `legacy_scheduler_unverified`; compatible raw evidence is `legacy_posthoc_audited`. | Fixed in corrected branch. |
+| Tariff fixed-duty structural failure | Planned seeds would abort because most frozen duties are absent from the primary grid. | Blocker | Deterministic hash-bound preflight records 42 exact duty/reason blockers (k5 4, k8 7, k40 31) and 89 affected jobs. | Both scopes fail before checkout, reservation, subprocess, or Slurm; no grid refinement or duty skipping is allowed. | Fixed in corrected branch. |
 
 ## Sibling-path inventory and disposition
 
@@ -129,6 +146,8 @@ ambiguous acceptance with no duplicate submission.
    The chosen response is an operator-visible, durable fail-closed state.
 2. Legacy tariff and MIP manifests do not contain enough immutable scheduler
    identity to be upgraded automatically. They remain readable but unverified.
+   Legacy scale-ladder artifacts may be normalized only through the separate
+   post-hoc sidecar at the exact evidence level proved.
 3. `src/slurm_campaign.py` and `src/cluster_campaign.py` remain unsafe for new
    submission until their standalone audits are complete.
 4. The one-off closeout scripts are evidence-preserving historical tools, not

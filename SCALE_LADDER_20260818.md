@@ -207,8 +207,12 @@ env -u PYTHONPATH -u PYTHONHOME -u LD_LIBRARY_PATH \
 Without a separately captured and validated scheduler JSON, the sidecar is
 explicitly `legacy_scheduler_unverified`. Supplying
 `--scheduler-capture CAPTURE.json` can yield `legacy_posthoc_audited` only when
-the exact gate/array IDs, names, comments, partitions, dependencies, task
-counts, terminal states, and `0:0` exit codes all match. The audit writes
+the capture uses schema
+`evsp-dr-legacy-scale-ladder-raw-scheduler-capture-v2`, includes raw per-task
+`scontrol -o` and `sacct -P` records plus approved tool hashes, and the
+production parsers prove exact gate/array IDs, names, comments, partitions,
+dependencies, task coverage, terminal states, and `0:0` exit codes. Hand-
+normalized assertions cannot upgrade the label. The audit writes
 `$LEGACY_SIDECAR` and `$LEGACY_SIDECAR.sha256` atomically without replacing
 anything. It fails on missing completions, changed journals/checkpoints,
 duplicate tasks, incompatible inputs, selected-route/physical evidence
