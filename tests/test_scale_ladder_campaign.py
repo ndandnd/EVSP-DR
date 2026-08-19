@@ -2363,7 +2363,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             manifest_path = root / "campaign.json"
             manifest_path.write_text(json.dumps({
                 "approval_sha256": plan_sha,
-                "gate_state": "release_attempting",
+                "gate_state": "held",
                 "gate_job_id": "100",
                 "submitted": True,
                 "submitted_arrays": {"PREFLIGHT": "401"},

@@ -848,6 +848,31 @@ def _reconcile_locked(
     manifest_path = root / "campaign.json"
     plan = json.loads(plan_raw)
     manifest = json.loads(manifest_path.read_text())
+    recorded_gate = str(manifest.get("gate_job_id") or "")
+    if recorded_gate.isdigit():
+        try:
+            early_gate_observation = _resolve_gate_state(
+                plan, recorded_gate, expected_plan_sha
+            )
+        except GateTerminalObservationError as exc:
+            _persist_gate_terminal_failure(
+                manifest, manifest_path, recorded_gate, exc.observation
+            )
+            raise
+        if (
+            early_gate_observation.get("state") in PROBE_TERMINAL_STATES
+            and early_gate_observation.get("state") != "COMPLETED"
+        ):
+            _persist_gate_terminal_failure(
+                manifest,
+                manifest_path,
+                recorded_gate,
+                early_gate_observation,
+            )
+            raise ValueError(
+                "scientific gate is terminal but not completed: "
+                f"{early_gate_observation.get('state')}"
+            )
     if manifest.get("gate_state") in {
         "creating", "held", "held_after_partial_submission",
         "held_probe_failure", "held_probe_waiting",

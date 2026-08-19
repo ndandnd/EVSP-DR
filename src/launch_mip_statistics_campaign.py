@@ -324,6 +324,11 @@ def _replace_json(path: Path, payload: dict) -> None:
         handle.write("\n")
         flush_and_fsync(handle)
     os.replace(temporary, path)
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
 
 
 def _existing_execution_comments() -> set[str]:
@@ -339,7 +344,7 @@ def _existing_execution_comments() -> set[str]:
             command, text=True, capture_output=True, check=False
         )
         if result.returncode != 0:
-            raise SystemExit(
+            raise RuntimeError(
                 "cannot query Slurm execution-deduplication comments"
             )
         comments.update(
@@ -347,6 +352,34 @@ def _existing_execution_comments() -> set[str]:
             for line in result.stdout.splitlines() if line.strip()
         )
     return comments
+
+
+def _planned_execution_comments(plan, plan_sha, jobs=None):
+    jobs = plan["jobs"] if jobs is None else jobs
+    if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
+        return {f"MSTATARR:{plan_sha[:30]}"}
+    comments = {
+        f"MSTAT:{job['execution_digest'][:32]}" for job in jobs
+    }
+    if len(comments) != len(jobs):
+        raise ValueError("approved plan contains duplicate execution digests")
+    return comments
+
+
+def _deduplication_verification(planned_comments):
+    existing_comments = _existing_execution_comments()
+    collisions = sorted(existing_comments & set(planned_comments))
+    if collisions:
+        raise RuntimeError(
+            "an identical execution digest already exists in Slurm: "
+            f"{collisions}"
+        )
+    return {
+        "verified": True,
+        "planned_comments": sorted(planned_comments),
+        "observed_collision_comments": [],
+        "query_sources": ["squeue", "sacct"],
+    }
 
 
 def _execution_reservation_specs(plan: dict, plan_sha: str):
@@ -399,30 +432,41 @@ def _reserve_execution_digests(plan: dict, plan_sha: str) -> list[Path]:
                 )
             reservations.append(path)
             continue
-        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-        if hasattr(os, "O_NOFOLLOW"):
-            flags |= os.O_NOFOLLOW
+        temporary = None
         try:
-            descriptor = os.open(path, flags, 0o600)
-        except FileExistsError:
-            if (
-                path.is_symlink()
-                or not path.is_file()
-                or path.read_bytes() != payload
-            ):
-                raise RuntimeError(
-                    "execution reservation raced with a different identity: "
-                    f"{spec['execution_digest']}"
-                )
-            reservations.append(path)
-            continue
-        with os.fdopen(descriptor, "wb") as handle:
-            handle.write(payload)
-            handle.flush()
-            os.fsync(handle.fileno())
+            with tempfile.NamedTemporaryFile(
+                dir=root,
+                prefix=f".{spec['execution_digest']}.reservation.",
+                delete=False,
+            ) as handle:
+                temporary = Path(handle.name)
+                handle.write(payload)
+                handle.flush()
+                os.fsync(handle.fileno())
+            temporary.chmod(0o600)
+            try:
+                os.link(temporary, path)
+            except FileExistsError:
+                if (
+                    path.is_symlink()
+                    or not path.is_file()
+                    or path.read_bytes() != payload
+                ):
+                    raise RuntimeError(
+                        "execution reservation raced with a different "
+                        f"identity: {spec['execution_digest']}"
+                    )
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
         if path.read_bytes() != payload:
             raise RuntimeError("execution reservation publication changed")
         reservations.append(path)
+    directory = os.open(root, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
     return reservations
 
 
@@ -1523,6 +1567,7 @@ def _verify_direct_array(plan, plan_sha, parent_id):
 
 def _cancel_verified_held_jobs(
     plan, manifest, manifest_path, jobs, *, sleeper=None,
+    unresolved_attempts=None,
 ):
     """Cancel exact known held jobs; reservations always remain durable."""
     sleeper = time.sleep if sleeper is None else sleeper
@@ -1535,6 +1580,18 @@ def _cancel_verified_held_jobs(
         }
         for manifest_job in jobs
     ]
+    if unresolved_attempts is not None:
+        manifest["cancellation_unresolved_attempts"] = [
+            {
+                "cell_id": manifest_job["cell_id"],
+                "job_id": str(manifest_job.get("job_id") or ""),
+                "submission_state": manifest_job.get("submission_state"),
+                "submission_intent": manifest_job.get(
+                    "submission_intent"
+                ),
+            }
+            for manifest_job in unresolved_attempts
+        ]
     _replace_json(manifest_path, manifest)
     specs = []
     already_cancelled = []
@@ -1801,11 +1858,14 @@ def _resume_existing_submission(plan, plan_sha):
                 plan, manifest, manifest_path, target_jobs
             )
         manifest["submitted"] = False
-        if cancellation_verified:
+        unresolved_attempts = (
+            manifest.get("cancellation_unresolved_attempts") or []
+        )
+        if cancellation_verified and not unresolved_attempts:
             manifest["cancellation_operation_state"] = (
                 "restart_reconciled_no_replacement"
             )
-        elif not target_jobs:
+        elif unresolved_attempts or not target_jobs:
             manifest["cancellation_operation_state"] = (
                 "restart_requires_operator_audit"
             )
@@ -1874,6 +1934,28 @@ def _resume_existing_submission(plan, plan_sha):
         accepted_manifest_jobs.append(manifest_job)
         _replace_json(manifest_path, manifest)
 
+    if planned_manifest_jobs:
+        planned_comments = _planned_execution_comments(
+            plan, plan_sha, planned_manifest_jobs
+        )
+        manifest["deduplication_state"] = "recovery_querying"
+        manifest["deduplication_verification"] = None
+        _replace_json(manifest_path, manifest)
+        try:
+            deduplication = _deduplication_verification(
+                planned_comments
+            )
+        except (OSError, RuntimeError, ValueError) as exc:
+            manifest["deduplication_state"] = "recovery_unverified"
+            manifest["deduplication_error"] = repr(exc)
+            manifest["submitted"] = False
+            _replace_json(manifest_path, manifest)
+            raise SystemExit(str(exc)) from exc
+        manifest["deduplication_verification"] = deduplication
+        manifest["deduplication_state"] = "recovery_verified"
+        manifest.pop("deduplication_error", None)
+        _replace_json(manifest_path, manifest)
+
     export_values = dict(plan["environment_whitelist"])
     export_values["EVSP_MIP_EXPECTED_WORKER_SHA256"] = plan[
         "worker_sha256"
@@ -1933,6 +2015,7 @@ def _resume_existing_submission(plan, plan_sha):
                     manifest,
                     manifest_path,
                     accepted_manifest_jobs,
+                    unresolved_attempts=[manifest_job],
                 )
                 raise SystemExit(str(exc)) from exc
             manifest_job["submission_discovery"] = discovery
@@ -1952,6 +2035,7 @@ def _resume_existing_submission(plan, plan_sha):
                 manifest,
                 manifest_path,
                 accepted_manifest_jobs,
+                unresolved_attempts=[manifest_job],
             )
             raise SystemExit(str(exc)) from exc
         manifest_job["submission_receipt"] = receipt
@@ -2101,24 +2185,22 @@ def _stage_and_submit_locked(plan: dict, plan_sha: str) -> dict:
         f"{key}={_safe_export_value(key, str(value))}"
         for key, value in export_values.items()
     )
-    existing_comments = _existing_execution_comments()
-    if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
-        planned_comments = {f"MSTATARR:{plan_sha[:30]}"}
-    else:
-        planned_comments = {
-            f"MSTAT:{job['execution_digest'][:32]}"
-            for job in plan["jobs"]
-        }
-    if (
-        plan.get("mode") != K40_CS_OVERNIGHT_MODE
-        and len(planned_comments) != len(plan["jobs"])
-    ):
-        raise SystemExit("approved plan contains duplicate execution digests")
-    if existing_comments & planned_comments:
-        raise SystemExit(
-            "an identical execution digest already exists in Slurm; reconcile "
-            "that job instead of submitting a duplicate"
-        )
+    planned_comments = _planned_execution_comments(plan, plan_sha)
+    manifest["deduplication_state"] = "querying"
+    manifest["deduplication_verification"] = None
+    _replace_json(root / "campaign.json", manifest)
+    try:
+        deduplication = _deduplication_verification(planned_comments)
+    except (OSError, RuntimeError, ValueError) as exc:
+        manifest["deduplication_state"] = "unverified"
+        manifest["deduplication_error"] = repr(exc)
+        manifest["submitted"] = False
+        _replace_json(root / "campaign.json", manifest)
+        raise SystemExit(str(exc)) from exc
+    manifest["deduplication_verification"] = deduplication
+    manifest["deduplication_state"] = "verified"
+    manifest.pop("deduplication_error", None)
+    _replace_json(root / "campaign.json", manifest)
     wall_times = [
         _slurm_wall_time(job["budget_hours"])
         for job in plan["jobs"]
@@ -2280,6 +2362,7 @@ def _stage_and_submit_locked(plan: dict, plan_sha: str) -> dict:
                     manifest,
                     root / "campaign.json",
                     accepted_manifest_jobs,
+                    unresolved_attempts=[manifest_job],
                 )
                 raise SystemExit(
                     f"{job['cell_id']}: held submission is ambiguous; "
@@ -2302,6 +2385,7 @@ def _stage_and_submit_locked(plan: dict, plan_sha: str) -> dict:
                 manifest,
                 root / "campaign.json",
                 accepted_manifest_jobs,
+                unresolved_attempts=[manifest_job],
             )
             raise SystemExit(
                 f"{job['cell_id']}: exact held receipt is unverified"

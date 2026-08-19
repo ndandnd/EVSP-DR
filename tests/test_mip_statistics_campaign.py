@@ -1041,6 +1041,68 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 for command in scheduler.commands
             ))
 
+    def test_recovery_dedup_query_failure_cannot_submit_planned_job(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            outer = Path(tmp)
+            root = outer / "campaign"
+            logs = outer / "logs"
+            (root / "input").mkdir(parents=True)
+            logs.mkdir()
+            worker = root / "input/submit_mip_statistics.sub"
+            worker.write_text("worker")
+            worker_sha = hashlib.sha256(worker.read_bytes()).hexdigest()
+            identity = {"expected_commit": "a" * 40}
+            plan = {
+                "campaign": "dedup-recovery-test",
+                "campaign_root": str(root),
+                "log_root": str(logs),
+                "mode": "pilot",
+                "checkout_identity": identity,
+                "worker_sha256": worker_sha,
+                "environment_whitelist": {"USER": "nathan"},
+                "shared_reservation_root": str(
+                    outer / "reservations"
+                ),
+                "jobs": [{
+                    "cell_id": "cell-0",
+                    "job_name": "MS0",
+                    "execution_digest": "1" * 64,
+                    "job_id": None,
+                    "submission_state": "planned",
+                    "budget_hours": 1,
+                }],
+            }
+            plan_raw = launcher._canonical(plan)
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            manifest = json.loads(json.dumps(plan))
+            manifest["approval_sha256"] = plan_sha
+            manifest["submitted"] = True
+            (root / "campaign.json").write_text(json.dumps(manifest))
+            with (
+                patch.object(
+                    launcher, "checkout_identity", return_value=identity
+                ),
+                patch.object(
+                    launcher,
+                    "_deduplication_verification",
+                    side_effect=RuntimeError("scheduler query failed"),
+                ),
+                self.assertRaisesRegex(SystemExit, "scheduler query failed"),
+            ):
+                launcher._resume_existing_submission(plan, plan_sha)
+            persisted = json.loads(
+                (root / "campaign.json").read_text()
+            )
+            self.assertFalse(persisted["submitted"])
+            self.assertEqual(
+                persisted["deduplication_state"],
+                "recovery_unverified",
+            )
+            self.assertIsNone(
+                persisted["deduplication_verification"]
+            )
+
     def test_worker_is_strict_partition_and_whitelisted(self):
         text = (
             REPO_ROOT / "src/submit_mip_statistics.sub"
