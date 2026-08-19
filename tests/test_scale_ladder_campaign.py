@@ -40,6 +40,7 @@ from summarize_scale_ladder import (  # noqa: E402
     CG_FIELDS,
     PROGRESS_FIELDS,
     _validate_completion,
+    _require_scale_ladder_scheduler_evidence,
     summarize,
     target_gap_interpretation,
     _rename_noreplace,
@@ -2318,6 +2319,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     returncode=0,
                     stdout=(
                         f"JobId=100 JobName=LDG{plan_sha[:5]} "
+                        "UserId=nc437(1646707) "
                         "JobState=COMPLETED Partition=default_partition "
                         f"Comment=SLADG:{plan_sha[:20]}\n"
                     ),
@@ -2339,6 +2341,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                         returncode=0,
                         stdout=(
                             f"JobId=100 JobName=LDG{plan_sha[:5]} "
+                            "UserId=nc437(1646707) "
                             "JobState=COMPLETED Partition=default_partition "
                             f"Comment=SLADG:{plan_sha[:20]} ExitCode=1:0\n"
                         ),
@@ -2350,6 +2353,107 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 _resolve_gate_state(
                     plan, "100", plan_sha, runner=runner_nonzero
                 )
+
+    def test_terminal_gate_failure_is_durable_before_raise(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, plan_sha, _manifest, _tools = (
+                self._held_science_fixture(root)
+            )
+            (root / "approved-plan.json").write_bytes(
+                ladder.canonical(plan)
+            )
+            manifest_path = root / "campaign.json"
+            manifest_path.write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "held",
+                "gate_job_id": "100",
+                "submitted": True,
+                "submitted_arrays": {"PREFLIGHT": "401"},
+                "infrastructure_probes": {},
+            }))
+            observation = {
+                "job_id": "100",
+                "job_name": f"LDG{plan_sha[:5]}",
+                "partition": "default_partition",
+                "comment": f"SLADG:{plan_sha[:20]}",
+                "state": "FAILED",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "live": False,
+            }
+            with (
+                patch(
+                    "reconcile_scale_ladder_gate._resolve_gate_state",
+                    return_value=observation,
+                ),
+                self.assertRaisesRegex(ValueError, "terminal"),
+            ):
+                _reconcile_locked(root, plan_sha)
+            persisted = json.loads(manifest_path.read_text())
+            self.assertEqual(
+                persisted["gate_state"], "terminal_failed"
+            )
+            self.assertFalse(persisted["submitted"])
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["observation"],
+                observation,
+            )
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["source"], "sacct"
+            )
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["exit_code"], "1:0"
+            )
+
+    def test_terminal_gate_missing_exit_is_durable_before_raise(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, plan_sha, _manifest, _tools = (
+                self._held_science_fixture(root)
+            )
+            (root / "approved-plan.json").write_bytes(
+                ladder.canonical(plan)
+            )
+            specs = self._probe_specs(root, plan_sha=plan_sha)
+            manifest_path = root / "campaign.json"
+            manifest_path.write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "release_attempting",
+                "gate_job_id": "100",
+                "submitted": True,
+                "submitted_arrays": {"PREFLIGHT": "401"},
+                "infrastructure_probes": specs,
+            }))
+            observation = {
+                "job_id": "100",
+                "job_name": f"LDG{plan_sha[:5]}",
+                "partition": "default_partition",
+                "comment": f"SLADG:{plan_sha[:20]}",
+                "state": "COMPLETED",
+                "exit_code": None,
+                "source": "scontrol",
+                "live": False,
+            }
+            error = gate_reconcile.GateTerminalObservationError(
+                "terminal gate lacks an exact exit code", observation
+            )
+            with (
+                patch(
+                    "reconcile_scale_ladder_gate._resolve_gate_state",
+                    side_effect=error,
+                ),
+                self.assertRaisesRegex(ValueError, "exit code"),
+            ):
+                _reconcile_locked(root, plan_sha)
+            persisted = json.loads(manifest_path.read_text())
+            self.assertEqual(
+                persisted["gate_state"], "terminal_failed"
+            )
+            self.assertFalse(persisted["submitted"])
+            self.assertIsNone(
+                persisted["gate_terminal_failure"]["exit_code"]
+            )
 
     def test_activation_runtime_rejects_manifest_fingerprint_spoofs(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -3893,19 +3997,51 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     )
                 if (
                     executable == tools["scontrol"]["path"]
-                    and command[1:] == ["show", "job", "401", "-o"]
+                    and command[1:3] == ["show", "job"]
+                    and command[3] in {
+                        "401", "402", "403", "404", "405", "406",
+                    }
                 ):
+                    job_id = command[3]
+                    group = {
+                        "401": "PREFLIGHT", "402": "SEED",
+                        "403": "CG", "404": "CG_SENSITIVITY",
+                        "405": "MIP_RAW", "406": "MIP_KNOWN",
+                    }[job_id]
+                    prefix = {
+                        "PREFLIGHT": "LDPF", "SEED": "LDSD",
+                        "CG": "LDCG", "CG_SENSITIVITY": "LDCS",
+                        "MIP_RAW": "LDMR", "MIP_KNOWN": "LDMK",
+                    }[group]
+                    partition = (
+                        "scaglione" if group.startswith("MIP")
+                        else "default_partition"
+                    )
+                    dependencies = ["afterok:900(unfulfilled)"]
+                    if group in {"CG", "CG_SENSITIVITY"}:
+                        dependencies.append(
+                            "afterok:401_*(unfulfilled)"
+                        )
+                    elif group == "MIP_RAW":
+                        dependencies.append(
+                            "aftercorr:403_*(unfulfilled)"
+                        )
+                    elif group == "MIP_KNOWN":
+                        dependencies.extend([
+                            "aftercorr:403_*(unfulfilled)",
+                            "aftercorr:402_*(unfulfilled)",
+                        ])
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
-                            f"JobId=401 ArrayJobId=401 "
-                            f"JobName=LDPF{plan_sha[:4]} "
+                            f"JobId={job_id} ArrayJobId={job_id} "
+                            f"JobName={prefix}{plan_sha[:4]} "
                             "UserId=nc437(1646707) "
-                            "JobState=PENDING Partition=default_partition "
+                            f"JobState=PENDING Partition={partition} "
                             "Reason=Dependency RunTime=00:00:00 "
-                            f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
+                            f"Comment=SLAD:{plan_sha[:20]}:{group} "
                             "ArrayTaskId=0-0 "
-                            "Dependency=afterok:900(unfulfilled)\n"
+                            f"Dependency={','.join(dependencies)}\n"
                         ),
                         stderr="",
                     )
@@ -4637,11 +4773,104 @@ printf '%s %s\n' "$status" "$checks"
                 2.153846, 2,
                 membership["known_partition_in_primary_expanded_space"],
             ),
-            "known_partition_outside_primary_space_not_scaling_failure",
+            "known_comparator_invalid_scaling_unresolved",
         )
         self.assertEqual(
             target_gap_interpretation(2.0, 2, True, 1.0),
             "target_not_comparable_positive_or_missing_artificial_mass",
+        )
+
+    def test_summary_requires_exact_gate_and_array_scheduler_evidence(self):
+        groups = (
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        )
+        plan = {
+            "runtime_environment": {"USER": "nathan"},
+            "task_groups": {group: [group.lower()] for group in groups},
+        }
+        plan_sha = "a" * 64
+        arrays = {
+            group: str(200 + index)
+            for index, group in enumerate(groups)
+        }
+        gate = "100"
+        gate_observation = {
+            "job_id": gate,
+            "user": "nathan",
+            "job_name": f"LDG{plan_sha[:5]}",
+            "partition": "default_partition",
+            "comment": f"SLADG:{plan_sha[:20]}",
+            "state": "COMPLETED",
+            "exit_code": "0:0",
+            "source": "sacct",
+            "live": False,
+            "role": "scale_ladder_scientific_gate",
+        }
+        manifest = {
+            "submitted": True,
+            "gate_state": "released",
+            "gate_job_id": gate,
+            "submitted_arrays": arrays,
+        }
+        with self.assertRaisesRegex(ValueError, "verified"):
+            _require_scale_ladder_scheduler_evidence(
+                plan, manifest, plan_sha
+            )
+        manifest["gate_state"] = "released_reconciled"
+        manifest["gate_release_verification"] = {
+            "verified": True,
+            "role": "scale_ladder_scientific_gate",
+            "job_id": gate,
+            "observation": gate_observation,
+        }
+        manifest["gate_reconciliation"] = {
+            "verified": True,
+            "role": "scale_ladder_scientific_gate",
+            "gate_job_id": gate,
+            "observation": gate_observation,
+        }
+        prefixes = {
+            "PREFLIGHT": "LDPF", "SEED": "LDSD",
+            "CG": "LDCG", "CG_SENSITIVITY": "LDCS",
+            "MIP_RAW": "LDMR", "MIP_KNOWN": "LDMK",
+        }
+        verifications = {}
+        for group in groups:
+            dependencies = {"afterok": [gate]}
+            if group in {"CG", "CG_SENSITIVITY"}:
+                dependencies["afterok"].append(
+                    f"{arrays['PREFLIGHT']}_*"
+                )
+            elif group == "MIP_RAW":
+                dependencies["aftercorr"] = [f"{arrays['CG']}_*"]
+            elif group == "MIP_KNOWN":
+                dependencies["aftercorr"] = sorted([
+                    f"{arrays['CG']}_*", f"{arrays['SEED']}_*",
+                ])
+            verifications[group] = {
+                "verified": True,
+                "group": group,
+                "parent_job_id": arrays[group],
+                "gate_job_id": gate,
+                "user": "nathan",
+                "job_name": prefixes[group] + plan_sha[:4],
+                "partition": (
+                    "scaglione" if group.startswith("MIP")
+                    else "default_partition"
+                ),
+                "comment": f"SLAD:{plan_sha[:20]}:{group}",
+                "state": "PENDING",
+                "reason": "Dependency",
+                "task_ids": [0],
+                "dependency_semantics": {
+                    kind: sorted(values)
+                    for kind, values in dependencies.items()
+                },
+            }
+        manifest["array_submission_verifications"] = verifications
+        _require_scale_ladder_scheduler_evidence(
+            plan, manifest, plan_sha
         )
 
     def test_summary_schema_and_censoring(self):

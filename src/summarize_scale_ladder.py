@@ -35,7 +35,7 @@ CG_FIELDS = (
     "route_weight", "artificial_mass", "min_reduced_cost",
     "pool_columns", "columns_added", "master_time_s", "pricing_time_s",
     "phase_timing_available", "phase_timing_unavailable_reason",
-    "target_reached", "grid_interpretation",
+    "target_route_weight_observed", "grid_interpretation",
     "pricing_certified", "stopping_reason", "censored",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
@@ -51,7 +51,7 @@ CG_SUMMARY_FIELDS = (
     "stopping_reason", "time_to_target_route_weight_s",
     "time_to_zero_artificials_s", "censored",
     "phase_timing_available", "phase_timing_unavailable_reason",
-    "target_reached", "grid_interpretation",
+    "target_route_weight_observed", "grid_interpretation",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
     "trip_identity_schema",
@@ -180,6 +180,152 @@ def _checkpoint_rows(job, identity_fields):
     return rows
 
 
+SCIENCE_GROUPS = (
+    "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+    "MIP_RAW", "MIP_KNOWN",
+)
+TERMINAL_STATES = {
+    "BOOT_FAIL", "CANCELLED", "COMPLETED", "DEADLINE", "FAILED",
+    "NODE_FAIL", "OUT_OF_MEMORY", "PREEMPTED", "REVOKED",
+    "SPECIAL_EXIT", "TIMEOUT",
+}
+
+
+def _require_scale_ladder_scheduler_evidence(plan, manifest, plan_sha):
+    gate = str(manifest.get("gate_job_id") or "")
+    arrays = manifest.get("submitted_arrays") or {}
+    if (
+        manifest.get("submitted") is not True
+        or manifest.get("gate_state") != "released_reconciled"
+        or not gate.isdigit()
+        or set(arrays) != set(SCIENCE_GROUPS)
+        or any(not str(value).isdigit() for value in arrays.values())
+    ):
+        raise ValueError(
+            "campaign lacks a completed verified scheduler contract"
+        )
+    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
+    if not user:
+        raise ValueError("approved scheduler user is missing")
+    expected_gate = {
+        "job_id": gate,
+        "user": user,
+        "job_name": f"LDG{plan_sha[:5]}",
+        "partition": "default_partition",
+        "comment": f"SLADG:{plan_sha[:20]}",
+        "role": "scale_ladder_scientific_gate",
+    }
+
+    def require_gate_observation(observation, *, terminal):
+        if not isinstance(observation, dict) or any(
+            str(observation.get(field) or "") != expected
+            for field, expected in expected_gate.items()
+        ):
+            raise ValueError("scientific gate observation identity mismatch")
+        state = str(observation.get("state") or "")
+        if terminal:
+            if (
+                state != "COMPLETED"
+                or observation.get("exit_code") != "0:0"
+                or observation.get("source") not in {"scontrol", "sacct"}
+            ):
+                raise ValueError(
+                    "scientific gate lacks exact COMPLETED/0:0 evidence"
+                )
+        elif (
+            state == "PENDING"
+            and observation.get("reason") == "JobHeldUser"
+        ):
+            raise ValueError(
+                "scientific gate release observation remains user-held"
+            )
+        elif state not in (
+            {"PENDING", "CONFIGURING", "RUNNING", "COMPLETING"}
+            | TERMINAL_STATES
+        ):
+            raise ValueError("scientific gate release state is invalid")
+
+    release = manifest.get("gate_release_verification")
+    if (
+        not isinstance(release, dict)
+        or release.get("verified") is not True
+        or release.get("role") != "scale_ladder_scientific_gate"
+        or str(release.get("job_id") or "") != gate
+    ):
+        raise ValueError("scientific gate release evidence is missing")
+    require_gate_observation(release.get("observation"), terminal=False)
+    reconciliation = manifest.get("gate_reconciliation")
+    if (
+        not isinstance(reconciliation, dict)
+        or reconciliation.get("verified") is not True
+        or reconciliation.get("role")
+        != "scale_ladder_scientific_gate"
+        or str(reconciliation.get("gate_job_id") or "") != gate
+    ):
+        raise ValueError("scientific gate completion evidence is missing")
+    require_gate_observation(
+        reconciliation.get("observation"), terminal=True
+    )
+
+    verifications = manifest.get("array_submission_verifications") or {}
+    if set(verifications) != set(SCIENCE_GROUPS):
+        raise ValueError("scientific array receipt set is incomplete")
+    name_prefixes = {
+        "PREFLIGHT": "LDPF",
+        "SEED": "LDSD",
+        "CG": "LDCG",
+        "CG_SENSITIVITY": "LDCS",
+        "MIP_RAW": "LDMR",
+        "MIP_KNOWN": "LDMK",
+    }
+    for group in SCIENCE_GROUPS:
+        verification = verifications[group]
+        expected_partition = (
+            "scaglione" if group.startswith("MIP")
+            else "default_partition"
+        )
+        expected_dependencies = {"afterok": [gate]}
+        if group in {"CG", "CG_SENSITIVITY"}:
+            expected_dependencies["afterok"].append(
+                f"{arrays['PREFLIGHT']}_*"
+            )
+        elif group == "MIP_RAW":
+            expected_dependencies["aftercorr"] = [
+                f"{arrays['CG']}_*"
+            ]
+        elif group == "MIP_KNOWN":
+            expected_dependencies["aftercorr"] = [
+                f"{arrays['CG']}_*", f"{arrays['SEED']}_*",
+            ]
+        expected_dependencies = {
+            kind: sorted(values)
+            for kind, values in expected_dependencies.items()
+        }
+        if (
+            not isinstance(verification, dict)
+            or verification.get("verified") is not True
+            or verification.get("group") != group
+            or str(verification.get("parent_job_id") or "")
+            != str(arrays[group])
+            or str(verification.get("gate_job_id") or "") != gate
+            or verification.get("user") != user
+            or verification.get("job_name")
+            != name_prefixes[group] + plan_sha[:4]
+            or verification.get("partition") != expected_partition
+            or verification.get("comment")
+            != f"SLAD:{plan_sha[:20]}:{group}"
+            or verification.get("state") != "PENDING"
+            or verification.get("reason") != "Dependency"
+            or verification.get("task_ids")
+            != list(range(len(plan["task_groups"][group])))
+            or verification.get("dependency_semantics")
+            != expected_dependencies
+        ):
+            raise ValueError(
+                f"scientific array receipt is invalid: {group}"
+            )
+
+
 def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
     campaign_root = Path(campaign_root).resolve()
     output_dir = Path(output_dir).resolve()
@@ -200,21 +346,12 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
             or manifest.get("submitted") is not False
         ):
             raise ValueError("local diagnostic manifest is inconsistent")
-    elif (
-        manifest.get("submitted") is not True
-        or manifest.get("gate_state")
-        not in {"released", "released_reconciled"}
-        or set((manifest.get("submitted_arrays") or {}))
-        != {
-            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
-            "MIP_RAW", "MIP_KNOWN",
-        }
-        or any(
-            not str(value).isdigit()
-            for value in (manifest.get("submitted_arrays") or {}).values()
+    else:
+        _require_scale_ladder_scheduler_evidence(
+            plan,
+            manifest,
+            hashlib.sha256(plan_raw).hexdigest(),
         )
-    ):
-        raise ValueError("campaign submission is incomplete")
     if not local_diagnostic:
         probes = manifest.get("probe_results") or {}
         if (
@@ -389,7 +526,7 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                     if job.get("telemetry") is None
                     else "phase_event_missing"
                 ),
-                "target_reached": (
+                "target_route_weight_observed": (
                     float(raw["artificials"]) <= 1e-9
                     and float(raw["route_weight"])
                     <= float(job["target_fleet"]) + 1e-6
@@ -473,7 +610,7 @@ def summarize(campaign_root, output_dir, k40_reuse_manifest=None):
                 if job.get("telemetry") is None
                 else "phase_event_missing"
             ),
-            "target_reached": (
+            "target_route_weight_observed": (
                 final is not None
                 and final["artificial_mass"] <= 1e-9
                 and final["route_weight"]
@@ -1084,10 +1221,10 @@ def target_gap_interpretation(
     if artificial_mass is None or float(artificial_mass) > 1e-9:
         return "target_not_comparable_positive_or_missing_artificial_mass"
     if float(route_weight) <= float(target_fleet) + 1e-6:
-        return "target_reached"
+        return "target_route_weight_observed_combined_cost_master"
     if known_partition_in_primary_space is not True:
-        return "known_partition_outside_primary_space_not_scaling_failure"
-    return "within_primary_space_search_or_relaxation_gap"
+        return "known_comparator_invalid_scaling_unresolved"
+    return "within_primary_space_target_route_weight_not_observed"
 
 
 def _inventory(cell, role, path):
