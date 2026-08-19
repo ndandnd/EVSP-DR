@@ -102,6 +102,10 @@ def _sha_payload(payload):
     return hashlib.sha256(_canonical(payload)).hexdigest()
 
 
+def _repo_relative(path):
+    return str(Path(path).resolve().relative_to(REPO_ROOT))
+
+
 def _producer_hashes():
     paths = (
         "src/audit_fixed_duty_grid_transitions.py",
@@ -569,7 +573,7 @@ def audit_duty(
                 "comparison instance encodes a different ordered duty"
             )
         comparison = {
-            "instance_path": str(compared["instance_path"]),
+            "instance_path": _repo_relative(compared["instance_path"]),
             "instance_file_sha256": compared["identities"][
                 "instance_file_sha256"
             ],
@@ -786,7 +790,7 @@ def audit_duty(
         "certificate_scope": COUNTERFACTUAL_SCOPE,
         "cell_id": cell_id,
         "duty_id": str(duty_id),
-        "instance_path": str(loaded["instance_path"]),
+        "instance_path": _repo_relative(loaded["instance_path"]),
         "instance_identity": loaded["identities"],
         "local_trip_sequence": route["trips"],
         "ordered_trip_sequence": ordered_sequence,
@@ -924,7 +928,7 @@ def validate(output_dir):
         or payload.get("producer_code_hashes") != _producer_hashes()
         or payload.get("table_sha256") != observed_hashes
         or payload.get("table_row_count") != observed_counts
-        or sha256_file(Path(payload["instance_path"]))
+        or sha256_file(REPO_ROOT / payload["instance_path"])
         != payload["instance_identity"]["instance_file_sha256"]
     ):
         raise ValueError("oracle hash/provenance mismatch")

@@ -83,6 +83,10 @@ def _sha_payload(payload):
     return hashlib.sha256(_canonical(payload)).hexdigest()
 
 
+def _repo_relative(path):
+    return str(Path(path).resolve().relative_to(REPO_ROOT))
+
+
 def _write_csv(path, fields, rows):
     with Path(path).open("x", newline="") as handle:
         writer = csv.DictWriter(
@@ -536,13 +540,13 @@ def build_payload(
         "evidence_scope":
             "posthoc_current_code_not_running_ladder_input",
         "source_v1": {
-            "json_path": str(v1_path),
+            "json_path": _repo_relative(v1_path),
             "json_sha256": sha256_file(v1_path),
-            "csv_path": str(v1_csv_path),
+            "csv_path": _repo_relative(v1_csv_path),
             "csv_sha256": sha256_file(v1_csv_path),
             "schema": v1["schema"],
         },
-        "instance_manifest_path": str(instance_manifest),
+        "instance_manifest_path": _repo_relative(instance_manifest),
         "instance_manifest_sha256": sha256_file(instance_manifest),
         "tariff_sha256": FLAT_SHA256,
         "physics": PHYSICS,
