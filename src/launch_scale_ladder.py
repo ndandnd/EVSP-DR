@@ -67,8 +67,6 @@ CODE_PATHS = (
     "src/run_scale_ladder_local_diagnostics.py",
     "src/run_scale_ladder_environment_probe.py",
     "src/submit_scale_ladder_probe.sub",
-    "src/run_scale_ladder_environment_probe.py",
-    "src/submit_scale_ladder_probe.sub",
     "src/matching_init.py",
     "src/pricing_dp_og.py",
     "src/make_giro_seed_routes.py",
@@ -84,6 +82,13 @@ MIP_BUDGET_S = {
     13: 3600, 20: 7200, 30: 14400,
 }
 SNAPSHOT_MINUTES = (5, 15, 30, 60, 120, 240, 480, 720, 1440)
+PROBE_PARTITIONS = ("default_partition", "scaglione")
+PROBE_TERMINAL_STATES = {
+    "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY",
+    "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED",
+    "SPECIAL_EXIT", "ACCOUNTING_ERROR",
+}
+PROBE_RETRYABLE_STATES = PROBE_TERMINAL_STATES - {"ACCOUNTING_ERROR"}
 
 
 def canonical(payload):
@@ -739,22 +744,16 @@ def submit(plan, plan_sha):
         raise
     probe_specs = {}
     try:
-        for partition in ("default_partition", "scaglione"):
-            probe_specs[partition] = {
-                "job_id": _submit_probe(
-                    plan, plan_path, plan_sha,
-                    partition, root, logs,
-                ),
-                "output": str(root / "probes" / f"{partition}.json"),
-                "probe_id": (
-                    "default"
-                    if partition == "default_partition"
-                    else "scaglione"
-                ),
-                "partition": partition,
-            }
+        for partition in PROBE_PARTITIONS:
+            spec = _probe_spec(plan_sha, partition, root, attempt=1)
+            probe_specs[partition] = spec
             manifest["infrastructure_probes"] = dict(probe_specs)
             manifest["probe_state"] = "submitting"
+            _replace_json(manifest_path, manifest)
+            spec["job_id"] = _submit_probe(
+                plan, plan_path, plan_sha, spec, logs,
+            )
+            manifest["infrastructure_probes"] = dict(probe_specs)
             _replace_json(manifest_path, manifest)
     except Exception as exc:
         manifest["probe_state"] = "submission_failed_gate_retained"
@@ -793,21 +792,58 @@ def submit(plan, plan_sha):
     return manifest
 
 
-def _submit_probe(plan, plan_path, plan_sha, partition, root, logs):
-    probe_id = (
-        "default" if partition == "default_partition" else "scaglione"
+def _probe_id(partition):
+    if partition == "default_partition":
+        return "default"
+    if partition == "scaglione":
+        return "scaglione"
+    raise ValueError(f"unsupported probe partition: {partition}")
+
+
+def _probe_spec(plan_sha, partition, root, attempt):
+    if not isinstance(attempt, int) or attempt < 1:
+        raise ValueError("probe attempt must be a positive integer")
+    probe_id = _probe_id(partition)
+    return {
+        "job_id": None,
+        "output": str(
+            Path(root).resolve() / "probes"
+            / f"{partition}.attempt{attempt}.json"
+        ),
+        "probe_id": probe_id,
+        "partition": partition,
+        "attempt": attempt,
+        "comment": (
+            f"SLADP:{plan_sha[:20]}:{probe_id}:{attempt}"
+        ),
+    }
+
+
+def _submit_probe(plan, plan_path, plan_sha, spec, logs):
+    partition = spec["partition"]
+    probe_id = _probe_id(partition)
+    expected = _probe_spec(
+        plan_sha, partition, Path(plan["campaign_root"]),
+        spec.get("attempt"),
     )
-    output = root / "probes" / f"{partition}.json"
+    if (
+        any(spec.get(key) != expected[key] for key in (
+            "output", "probe_id", "partition", "attempt", "comment",
+        ))
+    ):
+        raise ValueError("probe specification identity mismatch")
     return _sbatch(plan, [
         f"--partition={partition}", "--no-requeue",
         "--time=00:10:00", "--cpus-per-task=1", "--mem=4G",
-        f"--job-name=LDPR{probe_id[:2].upper()}{plan_sha[:3]}",
-        f"--output={logs}/probe_{probe_id}_%j.out",
-        f"--error={logs}/probe_{probe_id}_%j.err",
+        f"--job-name=LDP{probe_id[:2].upper()}{spec['attempt']}{plan_sha[:3]}",
+        f"--comment={spec['comment']}",
+        f"--output={logs}/probe_{probe_id}_a{spec['attempt']}_%j.out",
+        f"--error={logs}/probe_{probe_id}_a{spec['attempt']}_%j.err",
         "--export=NONE",
         str(PROBE_WORKER), str(plan_path), plan_sha, probe_id,
+        str(spec["attempt"]),
         plan["python"]["path"], plan["python"]["sha256"],
-        str(REPO_ROOT), plan["runtime_environment"]["HOME"], str(output),
+        str(REPO_ROOT), plan["runtime_environment"]["HOME"], spec["output"],
         plan["probe_worker_sha256"],
     ])
 
@@ -819,6 +855,9 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
     while time.monotonic() < deadline:
         terminal.clear()
         for probe_id, spec in probe_specs.items():
+            if not str(spec.get("job_id") or "").isdigit():
+                terminal[probe_id] = "UNRECORDED"
+                continue
             completed = subprocess.run(
                 [
                     sacct, "-X", "-n", "-P", "-j", spec["job_id"],
@@ -836,27 +875,20 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
                 and fields[0] == str(spec["job_id"])
             ]
             terminal[probe_id] = states[0] if states else "PENDING"
-        if all(
-            state in {
-                "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
-                "OUT_OF_MEMORY", "ACCOUNTING_ERROR",
-            }
-            for state in terminal.values()
-        ):
+        if all(state in PROBE_TERMINAL_STATES
+               or state == "UNRECORDED" for state in terminal.values()):
             break
         time.sleep(2)
     results = {}
     for probe_id, spec in probe_specs.items():
         path = Path(spec["output"])
         expected_path = (
-            Path(plan["campaign_root"]) / "probes" / f"{probe_id}.json"
+            Path(plan["campaign_root"]) / "probes"
+            / f"{probe_id}.attempt{spec.get('attempt')}.json"
         ).resolve()
-        expected_probe_id = (
-            "default" if probe_id == "default_partition"
-            else "scaglione"
-        )
+        expected_probe_id = _probe_id(probe_id)
         result = {
-            "job_id": spec["job_id"],
+            "job_id": spec.get("job_id"),
             "state": terminal.get(probe_id, "TIMEOUT_WAITING"),
             "output": str(path),
             "compatible": False,
@@ -864,17 +896,30 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
             "differences": [],
             "probe_id": spec.get("probe_id"),
             "partition": spec.get("partition"),
+            "attempt": spec.get("attempt"),
+            "comment": spec.get("comment"),
             "path_bound": path.resolve() == expected_path,
         }
         if path.is_file():
-            payload = json.loads(path.read_text())
-            digest = sha256_file(path)
-            sidecar = Path(str(path) + ".sha256")
-            sidecar_digest = (
-                sidecar.read_text().split()[0]
-                if sidecar.is_file() and sidecar.read_text().split()
-                else None
-            )
+            try:
+                payload = json.loads(path.read_text())
+                if not isinstance(payload, dict):
+                    raise ValueError("probe artifact must be a JSON object")
+                digest = sha256_file(path)
+                sidecar = Path(str(path) + ".sha256")
+                sidecar_parts = (
+                    sidecar.read_text().split()
+                    if sidecar.is_file() else []
+                )
+                sidecar_digest = (
+                    sidecar_parts[0] if sidecar_parts else None
+                )
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                result["artifact_error"] = (
+                    f"{type(exc).__name__}: {exc}"
+                )
+                results[probe_id] = result
+                continue
             result.update({
                 "compatible": (
                     payload.get("compatible") is True
@@ -882,11 +927,14 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
                     and spec.get("probe_id") == expected_probe_id
                     and spec.get("partition") == probe_id
                     and payload.get("probe_id") == expected_probe_id
+                    and payload.get("probe_attempt")
+                    == spec.get("attempt")
                     and str(payload.get("slurm_job_id"))
                     == str(spec["job_id"])
                     and payload.get("slurm_partition")
                     == probe_id
-                    and path.name == f"{probe_id}.json"
+                    and path.name
+                    == f"{probe_id}.attempt{spec.get('attempt')}.json"
                     and path.resolve() == expected_path
                     and digest == sidecar_digest
                     and result["state"] == "COMPLETED"
@@ -902,7 +950,7 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
 
 def _probes_compatible(results):
     return (
-        set(results) == {"default_partition", "scaglione"}
+        set(results) == set(PROBE_PARTITIONS)
         and len({
             str(result.get("job_id")) for result in results.values()
         }) == 2
@@ -915,9 +963,14 @@ def _probes_compatible(results):
             for result in results.values()
         }) == 1
         and all(
-            Path(result.get("output") or "").name == f"{key}.json"
+            Path(result.get("output") or "").name
+            == f"{key}.attempt{result.get('attempt')}.json"
             and Path(result.get("output") or "").parent.name == "probes"
             and result.get("path_bound") is True
+            and result.get("partition") == key
+            and result.get("probe_id") == _probe_id(key)
+            and isinstance(result.get("attempt"), int)
+            and result.get("attempt") >= 1
             for key, result in results.items()
         )
         and all(

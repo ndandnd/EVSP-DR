@@ -44,6 +44,11 @@ from recover_scale_ladder_mip_progress import recover  # noqa: E402
 from run_scale_ladder_local_diagnostics import (  # noqa: E402
     LOCAL_CODE_PATHS,
 )
+from reconcile_scale_ladder_gate import (  # noqa: E402
+    _discover_probe_job,
+    _hard_probe_mismatch,
+    reconcile as reconcile_gate,
+)
 
 
 INSTANCE_MANIFEST = (
@@ -159,11 +164,12 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 ("default_partition", "default", "101"),
                 ("scaglione", "scaglione", "102"),
             ):
-                output = probe_root / f"{partition}.json"
+                output = probe_root / f"{partition}.attempt1.json"
                 payload = {
                     "compatible": True,
                     "plan_sha256": "p" * 64,
                     "probe_id": probe_id,
+                    "probe_attempt": 1,
                     "slurm_job_id": job_id,
                     "slurm_partition": partition,
                     "differences": [],
@@ -178,6 +184,8 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     "output": str(output),
                     "probe_id": probe_id,
                     "partition": partition,
+                    "attempt": 1,
+                    "comment": f"SLADP:{'p' * 20}:{probe_id}:1",
                 }
             with patch.object(
                 ladder.subprocess,
@@ -198,13 +206,25 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     timeout_s=1,
                 )
             self.assertTrue(ladder._probes_compatible(results))
+            release = Mock(return_value=subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="", stderr=""
+            ))
+            released = ladder._release_gate_after_probes(
+                {"scontrol": {"path": "/approved/scontrol"}},
+                "500", results, runner=release,
+            )
+            self.assertEqual(released.returncode, 0)
+            release.assert_called_once_with(
+                ["/approved/scontrol", "release", "500"],
+                text=True, capture_output=True, check=False,
+            )
             bad = json.loads(
                 Path(specs["scaglione"]["output"]).read_text()
             )
             bad["slurm_partition"] = "default_partition"
             Path(specs["scaglione"]["output"]).write_text(json.dumps(bad))
             Path(specs["scaglione"]["output"] + ".sha256").write_text(
-                f"{sha256_file(Path(specs['scaglione']['output']))}  scaglione.json\n"
+                f"{sha256_file(Path(specs['scaglione']['output']))}  scaglione.attempt1.json\n"
             )
             with patch.object(
                 ladder.subprocess,
@@ -236,6 +256,291 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 },
             }
             self.assertFalse(ladder._probes_compatible(spoofed))
+
+    def test_probe_attempts_have_distinct_bound_outputs_and_comments(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first = ladder._probe_spec(
+                "a" * 64, "default_partition", Path(tmp), 1
+            )
+            second = ladder._probe_spec(
+                "a" * 64, "default_partition", Path(tmp), 2
+            )
+            self.assertNotEqual(first["output"], second["output"])
+            self.assertNotEqual(first["comment"], second["comment"])
+            self.assertEqual(first["attempt"], 1)
+            self.assertEqual(second["attempt"], 2)
+
+    def test_probe_submission_binds_attempt_comment_and_output(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = ladder._probe_spec(
+                "d" * 64, "scaglione", root, 2
+            )
+            plan = {
+                "campaign_root": str(root),
+                "python": {"path": "/approved/python", "sha256": "p"},
+                "runtime_environment": {"HOME": "/approved/home"},
+                "probe_worker_sha256": "w",
+            }
+            with patch.object(
+                ladder, "_sbatch", return_value="9876"
+            ) as submitted:
+                job_id = ladder._submit_probe(
+                    plan, root / "approved-plan.json", "d" * 64,
+                    spec, root / "logs",
+                )
+            self.assertEqual(job_id, "9876")
+            arguments = submitted.call_args.args[1]
+            self.assertIn(f"--comment={spec['comment']}", arguments)
+            self.assertIn(spec["output"], arguments)
+            self.assertIn("2", arguments)
+
+    def test_unrecorded_probe_is_recovered_from_bound_artifact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = ladder._probe_spec(
+                "b" * 64, "scaglione", Path(tmp), 1
+            )
+            output = Path(spec["output"])
+            output.parent.mkdir()
+            output.write_text(json.dumps({
+                "plan_sha256": "b" * 64,
+                "probe_id": "scaglione",
+                "probe_attempt": 1,
+                "slurm_job_id": "4321",
+                "slurm_partition": "scaglione",
+            }))
+            recovered = _discover_probe_job(
+                {}, "b" * 64, "scaglione", spec
+            )
+            self.assertEqual(recovered, "4321")
+
+    def test_unrecorded_probe_is_recovered_from_unique_slurm_comment(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            squeue = root / "squeue"
+            squeue.write_text("approved bytes")
+            spec = ladder._probe_spec(
+                "c" * 64, "default_partition", root, 1
+            )
+            plan = {
+                "squeue": {
+                    "available": True,
+                    "path": str(squeue),
+                    "sha256": sha256_file(squeue),
+                },
+            }
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                return_value=SimpleNamespace(
+                    returncode=0,
+                    stdout=f"7654|{spec['comment']}\n",
+                    stderr="",
+                ),
+            ):
+                recovered = _discover_probe_job(
+                    plan, "c" * 64, "default_partition", spec
+                )
+            self.assertEqual(recovered, "7654")
+
+    def test_real_environment_mismatch_is_not_retryable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "probe.json"
+            output.write_text(json.dumps({
+                "compatible": False,
+                "differences": [{"field": "portable.numpy"}],
+            }))
+            self.assertTrue(_hard_probe_mismatch({"output": str(output)}))
+            output.write_text(json.dumps({
+                "compatible": False,
+                "differences": [],
+            }))
+            self.assertFalse(_hard_probe_mismatch({"output": str(output)}))
+
+    def test_legacy_probe_spec_is_rejected_with_clear_diagnostic(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tools = {}
+            for name in ("sacct", "squeue", "scontrol"):
+                path = root / name
+                path.write_text(name)
+                tools[name] = {
+                    "available": True,
+                    "path": str(path),
+                    "sha256": sha256_file(path),
+                }
+            plan_raw = json.dumps({
+                "campaign_root": str(root), **tools,
+            }, sort_keys=True, separators=(",", ":")).encode()
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            groups = (
+                "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                "MIP_RAW", "MIP_KNOWN",
+            )
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "release_attempting",
+                "gate_job_id": "100",
+                "submitted_arrays": {
+                    group: str(400 + index)
+                    for index, group in enumerate(groups)
+                },
+                "infrastructure_probes": {
+                    "default_partition": {
+                        "job_id": "201",
+                        "output": str(root / "probes/default_partition.json"),
+                        "probe_id": "default",
+                        "partition": "default_partition",
+                    },
+                    "scaglione": {
+                        "job_id": "202",
+                        "output": str(root / "probes/scaglione.json"),
+                        "probe_id": "scaglione",
+                        "partition": "scaglione",
+                    },
+                },
+            }))
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                return_value=SimpleNamespace(
+                    returncode=0, stdout="100|PENDING\n", stderr=""
+                ),
+            ):
+                with self.assertRaisesRegex(
+                    ValueError, "predates attempt-safe recovery"
+                ):
+                    reconcile_gate(root, plan_sha)
+
+    def test_reconcile_retries_preempted_probe_and_keeps_gate_held(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "logs").mkdir()
+            probes = root / "probes"
+            probes.mkdir()
+            tools = {}
+            for name in ("sacct", "squeue", "scontrol"):
+                path = root / name
+                path.write_text(name)
+                tools[name] = {
+                    "available": True,
+                    "path": str(path),
+                    "sha256": sha256_file(path),
+                }
+            plan = {
+                "campaign_root": str(root),
+                **tools,
+            }
+            plan_raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            specs = {
+                partition: ladder._probe_spec(
+                    plan_sha, partition, root, 1
+                )
+                for partition in ladder.PROBE_PARTITIONS
+            }
+            specs["default_partition"]["job_id"] = "201"
+            specs["scaglione"]["job_id"] = "202"
+            groups = (
+                "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                "MIP_RAW", "MIP_KNOWN",
+            )
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "held_probe_failure",
+                "gate_job_id": "100",
+                "submitted_arrays": {
+                    group: str(300 + index)
+                    for index, group in enumerate(groups)
+                },
+                "infrastructure_probes": specs,
+            }))
+
+            def result(spec, compatible, state):
+                return {
+                    "job_id": spec["job_id"],
+                    "state": state,
+                    "output": spec["output"],
+                    "compatible": compatible,
+                    "probe_id": spec["probe_id"],
+                    "partition": spec["partition"],
+                    "attempt": spec["attempt"],
+                    "path_bound": True,
+                }
+
+            failed = {
+                "default_partition": result(
+                    specs["default_partition"], True, "COMPLETED"
+                ),
+                "scaglione": result(
+                    specs["scaglione"], False, "PREEMPTED"
+                ),
+            }
+            retried_spec = ladder._probe_spec(
+                plan_sha, "scaglione", root, 2
+            )
+            retried_spec["job_id"] = "303"
+            passed = {
+                "default_partition": failed["default_partition"],
+                "scaglione": result(
+                    retried_spec, True, "COMPLETED"
+                ),
+            }
+
+            def fake_run(command, **_kwargs):
+                if str(command[0]) == tools["squeue"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                if str(command[0]) == tools["sacct"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0, stdout="100|PENDING\n", stderr=""
+                    )
+                if (
+                    str(command[0]) == tools["scontrol"]["path"]
+                    and command[1:3] == ["show", "job"]
+                ):
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout="JobState=PENDING Reason=JobHeldUser",
+                        stderr="",
+                    )
+                raise AssertionError(f"unexpected command: {command}")
+
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                side_effect=fake_run,
+            ), patch(
+                "reconcile_scale_ladder_gate._wait_for_probes",
+                side_effect=[failed, passed],
+            ), patch(
+                "reconcile_scale_ladder_gate._submit_probe",
+                return_value="303",
+            ) as submitted:
+                reconciled = reconcile_gate(
+                    root, plan_sha, retry_failed_probes=True
+                )
+            self.assertEqual(
+                reconciled["gate_state"], "held_probe_passed"
+            )
+            self.assertEqual(
+                reconciled["infrastructure_probes"]["scaglione"]
+                ["attempt"],
+                2,
+            )
+            self.assertEqual(
+                reconciled["infrastructure_probes"]["scaglione"]
+                ["job_id"],
+                "303",
+            )
+            self.assertEqual(
+                reconciled["probe_attempt_history"]["scaglione"]
+                [0]["result"]["state"],
+                "PREEMPTED",
+            )
+            submitted.assert_called_once()
 
     def test_atomic_summary_publication_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:

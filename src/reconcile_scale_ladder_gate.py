@@ -10,7 +10,10 @@ import subprocess
 from pathlib import Path
 
 from launch_scale_ladder import (
+    PROBE_PARTITIONS,
+    PROBE_RETRYABLE_STATES,
     _probes_compatible,
+    _probe_spec,
     _replace_json,
     _sbatch,
     _submit_probe,
@@ -42,10 +45,72 @@ def _require_gate_held(plan, gate):
     return path
 
 
+def _discover_probe_job(plan, expected_plan_sha, partition, spec):
+    """Recover a probe accepted by Slurm before its job ID was recorded."""
+    recorded = str(spec.get("job_id") or "")
+    if recorded.isdigit():
+        return recorded
+    output = Path(str(spec.get("output") or ""))
+    if output.is_file():
+        payload = json.loads(output.read_text())
+        recovered = str(payload.get("slurm_job_id") or "")
+        if (
+            not recovered.isdigit()
+            or payload.get("plan_sha256") != expected_plan_sha
+            or payload.get("probe_id") != spec.get("probe_id")
+            or payload.get("probe_attempt") != spec.get("attempt")
+            or payload.get("slurm_partition") != partition
+        ):
+            raise ValueError("unrecorded probe artifact identity mismatch")
+        return recovered
+    squeue = plan.get("squeue") or {}
+    squeue_path = Path(str(squeue.get("path") or ""))
+    if (
+        squeue.get("available") is not True
+        or not squeue_path.is_file()
+        or hashlib.sha256(squeue_path.read_bytes()).hexdigest()
+        != squeue.get("sha256")
+    ):
+        raise ValueError("approved squeue unavailable/changed")
+    listed = subprocess.run(
+        [str(squeue_path), "-h", "-o", "%i|%k"],
+        text=True, capture_output=True, check=False,
+    )
+    if listed.returncode != 0:
+        raise RuntimeError("cannot query squeue for unrecorded probe")
+    matches = {
+        fields[0]
+        for line in listed.stdout.splitlines()
+        if len(fields := line.split("|", 1)) == 2
+        and fields[1] == spec.get("comment")
+        and fields[0].isdigit()
+    }
+    if len(matches) > 1:
+        raise ValueError("multiple probes share one attempt comment")
+    return next(iter(matches), None)
+
+
+def _hard_probe_mismatch(result):
+    path = Path(str(result.get("output") or ""))
+    if not path.is_file():
+        return False
+    try:
+        payload = json.loads(path.read_text())
+    except (OSError, ValueError, json.JSONDecodeError):
+        return False
+    if not isinstance(payload, dict):
+        return False
+    return (
+        payload.get("compatible") is False
+        and bool(payload.get("differences"))
+    )
+
+
 def reconcile(
     root, expected_plan_sha, *,
     release_held_gate=False,
     resume_missing_arrays=False,
+    retry_failed_probes=False,
 ):
     root = Path(root).resolve()
     plan_raw = (root / "approved-plan.json").read_bytes()
@@ -208,6 +273,7 @@ def reconcile(
         not in {
             "held", "release_attempting", "held_release_failed",
             "release_retry_attempting", "release_retry_requested",
+            "held_probe_passed",
         }
         or not str(manifest.get("gate_job_id") or "").isdigit()
     ):
@@ -227,44 +293,125 @@ def reconcile(
         for line in completed.stdout.splitlines()
         if len(fields := line.split("|")) >= 2
     }
-    probe_specs = manifest.get("infrastructure_probes") or {}
-    missing_probes = [
-        partition for partition in ("default_partition", "scaglione")
-        if partition not in probe_specs
-    ]
-    if missing_probes:
+    probe_specs = dict(manifest.get("infrastructure_probes") or {})
+    unknown_probe_keys = set(probe_specs) - set(PROBE_PARTITIONS)
+    if unknown_probe_keys:
+        raise ValueError("campaign contains unknown infrastructure probes")
+    for partition, spec in probe_specs.items():
+        attempt = spec.get("attempt")
+        if not isinstance(attempt, int) or attempt < 1:
+            raise ValueError(
+                "probe manifest predates attempt-safe recovery; "
+                "reconcile it only with its original reviewed commit"
+            )
+        expected_spec = _probe_spec(
+            expected_plan_sha, partition, root, attempt
+        )
+        if any(
+            spec.get(field) != expected_spec[field]
+            for field in (
+                "output", "probe_id", "partition", "attempt", "comment",
+            )
+        ):
+            raise ValueError("recorded probe specification identity mismatch")
+    needs_probe_submission = (
+        set(probe_specs) != set(PROBE_PARTITIONS)
+        or any(
+            not str(spec.get("job_id") or "").isdigit()
+            for spec in probe_specs.values()
+        )
+    )
+    if needs_probe_submission:
         if states.get(gate) != "PENDING":
             raise ValueError(
-                "missing probes cannot be submitted after gate release"
+                "missing/unrecorded probes cannot be recovered after gate release"
             )
         _require_gate_held(plan, gate)
-        for partition in missing_probes:
-            probe_specs[partition] = {
-                "job_id": _submit_probe(
+    for partition in PROBE_PARTITIONS:
+        spec = probe_specs.get(partition)
+        if spec is None:
+            spec = _probe_spec(
+                expected_plan_sha, partition, root, attempt=1
+            )
+            probe_specs[partition] = spec
+            manifest["infrastructure_probes"] = dict(probe_specs)
+            manifest["probe_state"] = "submitting"
+            _replace_json(manifest_path, manifest)
+        if not str(spec.get("job_id") or "").isdigit():
+            recovered = _discover_probe_job(
+                plan, expected_plan_sha, partition, spec
+            )
+            if recovered is None:
+                recovered = _submit_probe(
                     plan,
                     root / "approved-plan.json",
                     expected_plan_sha,
-                    partition,
-                    root,
+                    spec,
                     root / "logs",
-                ),
-                "output": str(
-                    root / "probes" / f"{partition}.json"
-                ),
-                "probe_id": (
-                    "default"
-                    if partition == "default_partition"
-                    else "scaglione"
-                ),
-                "partition": partition,
-            }
+                )
+            spec["job_id"] = recovered
             manifest["infrastructure_probes"] = dict(probe_specs)
-            manifest["probe_state"] = "submitting"
+            manifest["probe_state"] = "running"
             _replace_json(manifest_path, manifest)
     probe_results = _wait_for_probes(
         plan, expected_plan_sha, probe_specs, timeout_s=120
     )
     manifest["probe_results"] = probe_results
+    manifest["probe_state"] = "evaluated"
+    _replace_json(manifest_path, manifest)
+    if not _probes_compatible(probe_results) and retry_failed_probes:
+        if states.get(gate) != "PENDING":
+            raise ValueError("failed probes cannot retry after gate release")
+        _require_gate_held(plan, gate)
+        retry_partitions = []
+        for partition, result in probe_results.items():
+            if result.get("compatible") is True:
+                continue
+            if _hard_probe_mismatch(result):
+                manifest["probe_state"] = "failed_gate_retained"
+                manifest["gate_state"] = "held_probe_failure"
+                _replace_json(manifest_path, manifest)
+                raise ValueError(
+                    f"portable environment mismatch on {partition}; retry refused"
+                )
+            if result.get("state") not in PROBE_RETRYABLE_STATES:
+                manifest["probe_state"] = "waiting_gate_retained"
+                manifest["gate_state"] = "held_probe_failure"
+                _replace_json(manifest_path, manifest)
+                raise ValueError(
+                    f"probe {partition} is not terminal; retry refused"
+                )
+            retry_partitions.append(partition)
+        history = manifest.setdefault("probe_attempt_history", {})
+        for partition in retry_partitions:
+            previous = dict(probe_specs[partition])
+            history.setdefault(partition, []).append({
+                "spec": previous,
+                "result": probe_results[partition],
+            })
+            spec = _probe_spec(
+                expected_plan_sha, partition, root,
+                attempt=int(previous["attempt"]) + 1,
+            )
+            probe_specs[partition] = spec
+            manifest["infrastructure_probes"] = dict(probe_specs)
+            manifest["probe_state"] = "retry_submitting"
+            _replace_json(manifest_path, manifest)
+            spec["job_id"] = _submit_probe(
+                plan,
+                root / "approved-plan.json",
+                expected_plan_sha,
+                spec,
+                root / "logs",
+            )
+            manifest["infrastructure_probes"] = dict(probe_specs)
+            _replace_json(manifest_path, manifest)
+        manifest["probe_state"] = "retry_running"
+        _replace_json(manifest_path, manifest)
+        probe_results = _wait_for_probes(
+            plan, expected_plan_sha, probe_specs, timeout_s=120
+        )
+        manifest["probe_results"] = probe_results
     if not _probes_compatible(probe_results):
         manifest["probe_state"] = "failed_gate_retained"
         manifest["gate_state"] = "held_probe_failure"
@@ -276,6 +423,10 @@ def reconcile(
     if manifest.get("gate_state") == "held_probe_failure":
         manifest["gate_state"] = "held"
     _replace_json(manifest_path, manifest)
+    if states.get(gate) == "PENDING" and not release_held_gate:
+        manifest["gate_state"] = "held_probe_passed"
+        _replace_json(manifest_path, manifest)
+        return manifest
     if states.get(gate) == "PENDING" and release_held_gate:
         scontrol_path = _require_gate_held(plan, gate)
         manifest["gate_state"] = "release_retry_attempting"
@@ -311,12 +462,14 @@ def main(argv=None):
     parser.add_argument("--approved-plan-sha256", required=True)
     parser.add_argument("--release-held-gate", action="store_true")
     parser.add_argument("--resume-missing-arrays", action="store_true")
+    parser.add_argument("--retry-failed-probes", action="store_true")
     args = parser.parse_args(argv)
     payload = reconcile(
         args.campaign_root,
         args.approved_plan_sha256,
         release_held_gate=args.release_held_gate,
         resume_missing_arrays=args.resume_missing_arrays,
+        retry_failed_probes=args.retry_failed_probes,
     )
     print(f"LADDER GATE STATE: {payload['gate_state']}")
     return 0

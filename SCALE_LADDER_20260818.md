@@ -118,6 +118,18 @@ env -u PYTHONPATH PYTHONNOUSERSITE=1 \
   --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
 ```
 
+If a probe was preempted, node-failed, cancelled, or otherwise terminated
+without publishing a portable-environment mismatch, keep the same campaign and
+run the reconciliation command once with `--retry-failed-probes`. The retry is
+accepted only while the gate is proven `PENDING` with `Reason=JobHeldUser`; it
+uses a new attempt-specific output and preserves the failed attempt in the
+campaign manifest. A completed probe that reports real field-level environment
+differences is never retried and can never release the gate. An accepted probe
+whose job ID was not recorded is recovered from its plan-specific Slurm comment
+or its bound output artifact before any replacement is submitted. A successful
+retry returns `gate_state=held_probe_passed`; then use the separately reviewed
+`--release-held-gate` step below.
+
 If accounting still shows `PENDING` and bound `scontrol` proves
 `Reason=JobHeldUser`, repeat that command with `--release-held-gate`; then run
 it once more after `sacct` records the gate as `COMPLETED`. For an

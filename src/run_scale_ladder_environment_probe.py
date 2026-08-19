@@ -41,7 +41,9 @@ def _write_new(path, payload):
     return digest
 
 
-def probe(plan_path, plan_sha, probe_id, output):
+def probe(plan_path, plan_sha, probe_id, attempt, output):
+    if not isinstance(attempt, int) or attempt < 1:
+        raise ValueError("probe attempt must be a positive integer")
     raw = plan_path.read_bytes()
     if hashlib.sha256(raw).hexdigest() != plan_sha:
         raise ValueError("approved plan hash mismatch")
@@ -51,6 +53,7 @@ def probe(plan_path, plan_sha, probe_id, output):
     payload = {
         "schema": "evsp-dr-scale-ladder-environment-probe-v1",
         "probe_id": probe_id,
+        "probe_attempt": attempt,
         "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
         "slurm_partition": os.environ.get("SLURM_JOB_PARTITION"),
         "plan_sha256": plan_sha,
@@ -73,10 +76,12 @@ def main(argv=None):
     parser.add_argument("--plan", type=Path, required=True)
     parser.add_argument("--plan-sha256", required=True)
     parser.add_argument("--probe-id", required=True)
+    parser.add_argument("--attempt", type=int, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     result = probe(
-        args.plan, args.plan_sha256, args.probe_id, args.out
+        args.plan, args.plan_sha256, args.probe_id, args.attempt,
+        args.out,
     )
     print(json.dumps(result, sort_keys=True))
     return 0 if result["compatible"] else 3

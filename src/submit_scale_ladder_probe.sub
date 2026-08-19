@@ -3,19 +3,20 @@
 
 set -euo pipefail
 
-[[ "$#" -eq 9 ]] || {
-  echo "usage: probe PLAN PLAN_SHA PROBE_ID PYTHON PY_SHA ROOT HOME OUT WORKER_SHA" >&2
+[[ "$#" -eq 10 ]] || {
+  echo "usage: probe PLAN PLAN_SHA PROBE_ID ATTEMPT PYTHON PY_SHA ROOT HOME OUT WORKER_SHA" >&2
   exit 2
 }
 PLAN=$1
 PLAN_SHA=$2
 PROBE_ID=$3
-PYTHON=$4
-PYTHON_SHA=$5
-ROOT=$6
-export HOME=$7
-OUT=$8
-WORKER_SHA=$9
+PROBE_ATTEMPT=$4
+PYTHON=$5
+PYTHON_SHA=$6
+ROOT=$7
+export HOME=$8
+OUT=$9
+WORKER_SHA=${10}
 export PATH=/usr/local/bin:/usr/bin:/bin
 unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH || true
 export PYTHONNOUSERSITE=1
@@ -45,4 +46,4 @@ PY
 
 "$PYTHON" -I -B "$ROOT/src/run_scale_ladder_environment_probe.py" \
   --plan "$PLAN" --plan-sha256 "$PLAN_SHA" \
-  --probe-id "$PROBE_ID" --out "$OUT"
+  --probe-id "$PROBE_ID" --attempt "$PROBE_ATTEMPT" --out "$OUT"
