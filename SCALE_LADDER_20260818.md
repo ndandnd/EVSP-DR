@@ -97,10 +97,15 @@ else
 fi
 ```
 
-All six arrays depend on one held gate. Two lightweight environment probes run
-first—one on `default_partition`, one on `scaglione`—and publish hashed probe
-artifacts under `probes/`. The gate remains held unless both portable content
-identities pass. Primary CG waits for the complete
+All six arrays depend on one held gate. The current launcher submits those
+held arrays before it submits two lightweight environment probes—one on
+`default_partition`, one on `scaglione`—which publish hashed artifacts under
+`probes/`. No experimental or diagnostic array task can run while the gate is
+held, and the gate remains held unless both portable content identities pass.
+This ordering prevents scientific execution on a failed probe, but it can
+leave held Slurm records and reservations to close out; a future two-phase
+launcher should complete both probes before creating either. Primary CG waits
+for the complete
 instance-level PREFLIGHT array; small-grid sensitivity also waits for that
 preflight. MIP array task `i` uses `aftercorr` on primary CG task `i`;
 KNOWN-PARTITION also depends on seed task `i`. The gate is released only after
