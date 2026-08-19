@@ -849,7 +849,12 @@ def _reconcile_locked(
     plan = json.loads(plan_raw)
     manifest = json.loads(manifest_path.read_text())
     recorded_gate = str(manifest.get("gate_job_id") or "")
-    if recorded_gate.isdigit():
+    if (
+        recorded_gate.isdigit()
+        and str(
+            (plan.get("runtime_environment") or {}).get("USER") or ""
+        )
+    ):
         try:
             early_gate_observation = _resolve_gate_state(
                 plan, recorded_gate, expected_plan_sha
