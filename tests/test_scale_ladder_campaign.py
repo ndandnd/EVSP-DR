@@ -2360,7 +2360,6 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             (root / "approved-plan.json").write_bytes(
                 ladder.canonical(plan)
             )
-            specs = self._probe_specs(root, plan_sha=plan_sha)
             manifest_path = root / "campaign.json"
             manifest_path.write_text(json.dumps({
                 "approval_sha256": plan_sha,
@@ -2368,7 +2367,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "gate_job_id": "100",
                 "submitted": True,
                 "submitted_arrays": {"PREFLIGHT": "401"},
-                "infrastructure_probes": specs,
+                "infrastructure_probes": {},
             }))
             observation = {
                 "job_id": "100",
@@ -2380,22 +2379,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "source": "sacct",
                 "live": False,
             }
-            compatible = {
-                partition: {"compatible": True}
-                for partition in ladder.PROBE_PARTITIONS
-            }
             with (
                 patch(
                     "reconcile_scale_ladder_gate._resolve_gate_state",
                     return_value=observation,
-                ),
-                patch(
-                    "reconcile_scale_ladder_gate._wait_for_probes",
-                    return_value=compatible,
-                ),
-                patch(
-                    "reconcile_scale_ladder_gate._probes_compatible",
-                    return_value=True,
                 ),
                 self.assertRaisesRegex(ValueError, "terminal"),
             ):

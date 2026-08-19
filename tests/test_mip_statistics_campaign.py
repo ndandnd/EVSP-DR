@@ -1,7 +1,9 @@
 import hashlib
 import json
+import multiprocessing
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -659,6 +661,43 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "existing campaign"):
                 launcher._stage_and_submit(plan, "a" * 64)
 
+    def test_campaign_lock_serializes_concurrent_same_identity_submitters(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = root / "campaign"
+            marker = root / "simulated-sbatch-receipt"
+            plan = {"campaign_root": str(campaign)}
+            context = multiprocessing.get_context("fork")
+            submitted = context.Value("i", 0)
+
+            def simulated_locked_submit(_plan, _plan_sha):
+                if not marker.exists():
+                    time.sleep(0.1)
+                    with submitted.get_lock():
+                        submitted.value += 1
+                    marker.write_text("accepted\n")
+                return {"submitted": marker.exists()}
+
+            def invoke():
+                launcher._stage_and_submit(plan, "a" * 64)
+
+            with patch.object(
+                launcher,
+                "_stage_and_submit_locked",
+                side_effect=simulated_locked_submit,
+            ):
+                processes = [
+                    context.Process(target=invoke) for _index in range(2)
+                ]
+                for process in processes:
+                    process.start()
+                for process in processes:
+                    process.join(5)
+            self.assertTrue(all(
+                process.exitcode == 0 for process in processes
+            ))
+            self.assertEqual(submitted.value, 1)
+
     @staticmethod
     def _scheduler_plan_and_jobs(job_ids=("101", "102")):
         jobs = []
@@ -750,6 +789,67 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             ]
             self.assertEqual(releases.count("101"), 1)
             self.assertEqual(releases.count("102"), 2)
+
+    def test_release_reobservation_clears_cached_submitted_before_query(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest_path = Path(tmp) / "campaign.json"
+            plan, jobs = self._scheduler_plan_and_jobs(("151",))
+            jobs[0]["submission_state"] = "release_verified"
+            jobs[0]["release_verification"] = {"verified": True}
+            manifest = {"jobs": jobs, "submitted": True}
+            manifest_path.write_text(json.dumps(manifest))
+            error = scheduler_contract.SlurmContractError(
+                "scheduler unavailable"
+            )
+            with (
+                patch.object(
+                    launcher, "_resolve_mip_exact", side_effect=error
+                ),
+                self.assertRaisesRegex(
+                    scheduler_contract.SlurmContractError,
+                    "scheduler unavailable",
+                ),
+            ):
+                launcher._release_verified_held_jobs(
+                    plan,
+                    manifest,
+                    manifest_path,
+                    sleeper=lambda _value: None,
+                )
+            persisted = json.loads(manifest_path.read_text())
+            self.assertFalse(persisted["submitted"])
+            self.assertEqual(
+                persisted["release_operation_state"],
+                "precondition_unverified",
+            )
+            self.assertNotIn(
+                "release_verification", persisted["jobs"][0]
+            )
+
+    def test_reservation_recovery_adopts_only_exact_same_plan_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan, _jobs = self._scheduler_plan_and_jobs(("1", "2"))
+            plan.update({
+                "shared_reservation_root": str(root / "reservations"),
+                "campaign": "reservation-recovery",
+            })
+            plan_sha = "a" * 64
+            specs = launcher._execution_reservation_specs(plan, plan_sha)
+            first = Path(specs[0]["path"])
+            first.parent.mkdir(parents=True)
+            first.write_bytes(specs[0]["payload"])
+            paths = launcher._reserve_execution_digests(plan, plan_sha)
+            self.assertEqual(
+                {str(path) for path in paths},
+                {spec["path"] for spec in specs},
+            )
+            self.assertTrue(all(path.is_file() for path in paths))
+            first.write_text("{}\n")
+            with self.assertRaisesRegex(
+                RuntimeError, "different identity"
+            ):
+                launcher._reserve_execution_digests(plan, plan_sha)
 
     def test_partial_cancellation_retains_all_reservations(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -895,6 +995,9 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 "checkout_identity": identity,
                 "worker_sha256": worker_sha,
                 "environment_whitelist": {"USER": "nathan"},
+                "shared_reservation_root": str(
+                    outer / "reservations"
+                ),
                 "jobs": [{
                     "cell_id": "cell-0",
                     "job_name": "MS0",
@@ -907,14 +1010,8 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             plan_raw = launcher._canonical(plan)
             plan_sha = hashlib.sha256(plan_raw).hexdigest()
             (root / "approved-plan.json").write_bytes(plan_raw)
-            reservation = outer / "reservation.json"
-            reservation.write_text(json.dumps({
-                "approved_plan_sha256": plan_sha,
-                "campaign": "restart-test",
-            }))
             manifest = json.loads(json.dumps(plan))
             manifest["approval_sha256"] = plan_sha
-            manifest["execution_reservations"] = [str(reservation)]
             manifest_job = manifest["jobs"][0]
             manifest_job["submission_state"] = "attempting"
             manifest_job["submission_intent"] = (

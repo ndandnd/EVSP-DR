@@ -1013,6 +1013,13 @@ def _reconcile_locked(
         )
         raise
     gate_state = gate_observation["state"]
+    if gate_state in PROBE_TERMINAL_STATES and gate_state != "COMPLETED":
+        _persist_gate_terminal_failure(
+            manifest, manifest_path, gate, gate_observation
+        )
+        raise ValueError(
+            f"scientific gate is terminal but not completed: {gate_state}"
+        )
     needs_probe_submission = (
         set(probe_specs) != set(PROBE_PARTITIONS)
         or any(
@@ -1146,14 +1153,6 @@ def _reconcile_locked(
         }
         _replace_json(manifest_path, manifest)
         return manifest
-    if gate_state in PROBE_TERMINAL_STATES:
-        _persist_gate_terminal_failure(
-            manifest, manifest_path, gate, gate_observation
-        )
-        raise ValueError(
-            f"scientific gate is terminal but not completed: {gate_state}"
-        )
-
     classified = _gate_release_observation_result(gate_observation)
     if classified is None and not release_held_gate:
         manifest["gate_state"] = "held_probe_passed"

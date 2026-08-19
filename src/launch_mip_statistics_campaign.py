@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import fcntl
 import hashlib
 import json
 import math
@@ -15,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 
@@ -347,41 +349,80 @@ def _existing_execution_comments() -> set[str]:
     return comments
 
 
-def _reserve_execution_digests(plan: dict, plan_sha: str) -> list[Path]:
+def _execution_reservation_specs(plan: dict, plan_sha: str):
     root = Path(plan["shared_reservation_root"]).expanduser().resolve()
     if REPO_ROOT.resolve() == root or REPO_ROOT.resolve() in root.parents:
         raise SystemExit("execution reservation root must be cluster-shared")
-    root.mkdir(parents=True, exist_ok=True)
-    reservations = []
-    try:
-        for job in sorted(plan["jobs"], key=lambda item: item["cell_id"]):
-            path = root / f"{job['execution_digest']}.json"
-            payload = (json.dumps({
+    jobs = sorted(plan["jobs"], key=lambda item: item["cell_id"])
+    if (
+        len({job["cell_id"] for job in jobs}) != len(jobs)
+        or len({job["execution_digest"] for job in jobs}) != len(jobs)
+    ):
+        raise ValueError("execution reservations are not one-to-one")
+    specs = []
+    for job in jobs:
+        path = root / f"{job['execution_digest']}.json"
+        payload = (json.dumps({
                 "schema": "evsp-dr-mip-statistics-reservation-v1",
                 "execution_digest": job["execution_digest"],
                 "approved_plan_sha256": plan_sha,
                 "cell_id": job["cell_id"],
                 "campaign": plan["campaign"],
-            }, sort_keys=True) + "\n").encode()
-            flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-            if hasattr(os, "O_NOFOLLOW"):
-                flags |= os.O_NOFOLLOW
-            try:
-                descriptor = os.open(path, flags, 0o600)
-            except FileExistsError as exc:
-                raise SystemExit(
-                    f"execution digest already reserved: "
-                    f"{job['execution_digest']}"
-                ) from exc
-            with os.fdopen(descriptor, "wb") as handle:
-                handle.write(payload)
-                handle.flush()
-                os.fsync(handle.fileno())
+        }, sort_keys=True) + "\n").encode()
+        specs.append({
+            "path": str(path),
+            "cell_id": job["cell_id"],
+            "execution_digest": job["execution_digest"],
+            "payload_sha256": hashlib.sha256(payload).hexdigest(),
+            "payload": payload,
+        })
+    return specs
+
+
+def _reserve_execution_digests(plan: dict, plan_sha: str) -> list[Path]:
+    specs = _execution_reservation_specs(plan, plan_sha)
+    root = Path(plan["shared_reservation_root"]).expanduser().resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    reservations = []
+    for spec in specs:
+        path = Path(spec["path"])
+        payload = spec["payload"]
+        if path.exists() or path.is_symlink():
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or path.read_bytes() != payload
+            ):
+                raise RuntimeError(
+                    "execution digest is reserved by a different identity: "
+                    f"{spec['execution_digest']}"
+                )
             reservations.append(path)
-    except Exception:
-        for path in reservations:
-            path.unlink(missing_ok=True)
-        raise
+            continue
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        try:
+            descriptor = os.open(path, flags, 0o600)
+        except FileExistsError:
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or path.read_bytes() != payload
+            ):
+                raise RuntimeError(
+                    "execution reservation raced with a different identity: "
+                    f"{spec['execution_digest']}"
+                )
+            reservations.append(path)
+            continue
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(payload)
+            handle.flush()
+            os.fsync(handle.fileno())
+        if path.read_bytes() != payload:
+            raise RuntimeError("execution reservation publication changed")
+        reservations.append(path)
     return reservations
 
 
@@ -1287,6 +1328,32 @@ def _scheduler_error(exc):
     }
 
 
+def _resolve_mip_exact(spec, *, attempts=5, sleeper=None):
+    sleeper = time.sleep if sleeper is None else sleeper
+    diagnostics = []
+    last_error = None
+    for attempt in range(1, attempts + 1):
+        if attempt > 1:
+            sleeper(1.0)
+        try:
+            return resolve_exact_job(spec)
+        except SlurmContractError as exc:
+            if exc.observation is not None and not exc.retriable:
+                raise
+            last_error = exc
+            diagnostics.append({
+                "attempt": attempt,
+                **_scheduler_error(exc),
+            })
+    raise SlurmContractError(
+        "exact MIP job state remained unobservable",
+        observation=(
+            last_error.observation if last_error is not None else None
+        ),
+        diagnostics=diagnostics,
+    )
+
+
 def _discover_intended_job(spec, *, attempts=5, sleeper=None):
     sleeper = time.sleep if sleeper is None else sleeper
     diagnostics = []
@@ -1442,7 +1509,7 @@ def _verify_direct_array(plan, plan_sha, parent_id):
             raise
         observations = {}
         for task, spec in specs.items():
-            observations[str(task)] = resolve_exact_job(spec)
+            observations[str(task)] = _resolve_mip_exact(spec)
         return {
             "verified": True,
             "parent_job_id": str(parent_id),
@@ -1476,7 +1543,7 @@ def _cancel_verified_held_jobs(
             spec = _mip_job_spec(
                 plan, manifest_job, manifest_job.get("job_id")
             )
-            observation = resolve_exact_job(spec)
+            observation = _resolve_mip_exact(spec, sleeper=sleeper)
             if observation.get("state") == "CANCELLED":
                 already_cancelled.append((
                     manifest_job,
@@ -1539,23 +1606,37 @@ def _release_verified_held_jobs(
 ):
     """Reobserve and release every exact job independently."""
     sleeper = time.sleep if sleeper is None else sleeper
+    manifest["submitted"] = False
+    manifest["release_operation_state"] = "precondition_check"
+    for manifest_job in manifest["jobs"]:
+        manifest_job.pop("release_verification", None)
+        manifest_job["submission_state"] = "release_reconciling"
+    _replace_json(manifest_path, manifest)
     preconditions = []
     for manifest_job in manifest["jobs"]:
         job_id = str(manifest_job.get("job_id") or "")
         if not job_id.isdigit():
+            manifest_job["submission_state"] = "release_unverified"
+            manifest_job["release_error"] = {
+                "message": "exact scheduler job ID is missing",
+            }
+            manifest["release_operation_state"] = "precondition_unverified"
+            _replace_json(manifest_path, manifest)
             raise SlurmContractError(
                 f"{manifest_job['cell_id']} lacks an exact scheduler job ID"
             )
         spec = _mip_job_spec(plan, manifest_job, job_id)
-        preconditions.append((
-            manifest_job, spec, resolve_exact_job(spec)
-        ))
+        try:
+            observation = _resolve_mip_exact(spec, sleeper=sleeper)
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "release_unverified"
+            manifest_job["release_error"] = _scheduler_error(exc)
+            manifest["release_operation_state"] = "precondition_unverified"
+            _replace_json(manifest_path, manifest)
+            raise
+        preconditions.append((manifest_job, spec, observation))
 
-    manifest["submitted"] = False
     manifest["release_operation_state"] = "verifying_each_job"
-    for manifest_job, _spec, _observation in preconditions:
-        manifest_job.pop("release_verification", None)
-        manifest_job["submission_state"] = "release_reconciling"
     _replace_json(manifest_path, manifest)
 
     failures = []
@@ -1619,19 +1700,36 @@ def _resume_existing_submission(plan, plan_sha):
         or sha256_file(worker) != plan["worker_sha256"]
     ):
         raise SystemExit("recovery worker differs from approved plan")
-    reservations = manifest.get("execution_reservations") or []
-    if len(reservations) != len(plan["jobs"]):
-        raise SystemExit("recovery reservation set is incomplete")
-    for reservation in reservations:
-        path = Path(reservation)
-        if not path.is_file():
-            raise SystemExit("recovery reservation is missing")
-        payload = json.loads(path.read_text())
-        if (
-            payload.get("approved_plan_sha256") != plan_sha
-            or payload.get("campaign") != plan["campaign"]
-        ):
-            raise SystemExit("recovery reservation identity mismatch")
+    reservation_specs = _execution_reservation_specs(plan, plan_sha)
+    expected_intent = [
+        {
+            key: spec[key] for key in (
+                "path", "cell_id", "execution_digest", "payload_sha256",
+            )
+        }
+        for spec in reservation_specs
+    ]
+    recorded_intent = manifest.get("execution_reservation_intent")
+    if recorded_intent not in (None, expected_intent):
+        raise SystemExit("recovery reservation intent identity mismatch")
+    manifest["execution_reservation_intent"] = expected_intent
+    manifest["execution_reservation_state"] = "recovering"
+    manifest["submitted"] = False
+    manifest["scheduler_reconciliation_state"] = "reservation_recovery"
+    _replace_json(manifest_path, manifest)
+    try:
+        reservations = _reserve_execution_digests(plan, plan_sha)
+    except (OSError, RuntimeError, ValueError) as exc:
+        manifest["execution_reservation_state"] = "recovery_failed"
+        manifest["reservation_recovery_error"] = repr(exc)
+        _replace_json(manifest_path, manifest)
+        raise SystemExit("recovery reservation identity mismatch") from exc
+    manifest["execution_reservations"] = [
+        str(path) for path in reservations
+    ]
+    manifest["execution_reservation_state"] = "complete"
+    manifest["scheduler_reconciliation_state"] = "observing_jobs"
+    _replace_json(manifest_path, manifest)
 
     if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
         parent_id = str(manifest.get("array_parent_job_id") or "")
@@ -1697,15 +1795,20 @@ def _resume_existing_submission(plan, plan_sha):
                     "reservations remain"
                 )
             target_jobs.append(job)
+        cancellation_verified = False
         if target_jobs:
-            _cancel_verified_held_jobs(
+            cancellation_verified = _cancel_verified_held_jobs(
                 plan, manifest, manifest_path, target_jobs
             )
         manifest["submitted"] = False
-        manifest["cancellation_operation_state"] = (
-            "restart_reconciled_no_replacement"
-            if target_jobs else "restart_requires_operator_audit"
-        )
+        if cancellation_verified:
+            manifest["cancellation_operation_state"] = (
+                "restart_reconciled_no_replacement"
+            )
+        elif not target_jobs:
+            manifest["cancellation_operation_state"] = (
+                "restart_requires_operator_audit"
+            )
         _replace_json(manifest_path, manifest)
         raise SystemExit(
             "aborted campaign retains its reservations and cannot be "
@@ -1718,8 +1821,22 @@ def _resume_existing_submission(plan, plan_sha):
         job_id = str(manifest_job.get("job_id") or "")
         if job_id.isdigit():
             spec = _mip_job_spec(plan, manifest_job, job_id)
-            resolve_exact_job(spec)
+            try:
+                observation = _resolve_mip_exact(spec)
+            except SlurmContractError as exc:
+                manifest_job["submission_state"] = (
+                    "reconciliation_unverified"
+                )
+                manifest_job["reconciliation_error"] = _scheduler_error(exc)
+                manifest["scheduler_reconciliation_state"] = (
+                    "job_resolution_failed"
+                )
+                manifest["submitted"] = False
+                _replace_json(manifest_path, manifest)
+                raise SystemExit(str(exc)) from exc
+            manifest_job["reconciliation_observation"] = observation
             accepted_manifest_jobs.append(manifest_job)
+            _replace_json(manifest_path, manifest)
             continue
         if manifest_job.get("submission_state") == "planned":
             planned_manifest_jobs.append(manifest_job)
@@ -1847,7 +1964,24 @@ def _resume_existing_submission(plan, plan_sha):
         raise SystemExit(str(exc)) from exc
 
 
-def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
+@contextmanager
+def _mip_campaign_lock(plan):
+    root = Path(plan["campaign_root"]).expanduser().resolve()
+    root.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = root.parent / f".{root.name}.submission.lock"
+    flags = os.O_RDWR | os.O_CREAT
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(lock_path, flags, 0o600)
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX)
+        yield lock_path
+    finally:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        os.close(descriptor)
+
+
+def _stage_and_submit_locked(plan: dict, plan_sha: str) -> dict:
     if not plan["jobs"]:
         raise SystemExit("approved plan contains no runnable jobs")
     if plan["blocked"]:
@@ -1989,10 +2123,22 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         _slurm_wall_time(job["budget_hours"])
         for job in plan["jobs"]
     ]
+    reservation_specs = _execution_reservation_specs(plan, plan_sha)
+    manifest["execution_reservation_state"] = "creating"
+    manifest["execution_reservation_intent"] = [
+        {
+            key: spec[key] for key in (
+                "path", "cell_id", "execution_digest", "payload_sha256",
+            )
+        }
+        for spec in reservation_specs
+    ]
+    _replace_json(root / "campaign.json", manifest)
     reservations = _reserve_execution_digests(plan, plan_sha)
     manifest["execution_reservations"] = [
         str(path) for path in reservations
     ]
+    manifest["execution_reservation_state"] = "complete"
     _replace_json(root / "campaign.json", manifest)
     if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
         comment = next(iter(planned_comments))
@@ -2173,6 +2319,11 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
             "MIP release is partial or unverified; reconcile the same "
             "campaign by exact execution comments"
         ) from exc
+
+
+def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
+    with _mip_campaign_lock(plan):
+        return _stage_and_submit_locked(plan, plan_sha)
 
 
 def parse_args(argv=None):

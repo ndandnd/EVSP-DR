@@ -1017,6 +1017,63 @@ class TariffResponseExperimentTests(unittest.TestCase):
             self.assertTrue(payload["submitted"])
             verified_gate_evidence(payload, spec)
 
+    def test_gate_intent_is_discovered_after_accepted_before_record_crash(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = {
+                "schema": "test",
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [{
+                    "job_key": "fixed",
+                    "separate_k40_gate": False,
+                }],
+            }
+            plan_raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            intent = tariff_gate_spec(plan, plan_sha)
+            spec = tariff_gate_spec(plan, plan_sha, "12345")
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "submission_scope": "main_k5_k8_pilot",
+                "submitted": False,
+                "submitted_jobs": [{
+                    "job_key": "fixed", "job_id": "22345",
+                }],
+                "gate_state": "submission_intent",
+                "gate_submission_intent": intent,
+            }))
+            scheduler = SyntheticScheduler(
+                live=[
+                    live_gate_row(spec),
+                    live_gate_row(spec),
+                    live_gate_row(spec),
+                    live_gate_row(
+                        spec, state="RUNNING", reason="None"
+                    ),
+                ],
+                release=[scheduler_result()],
+            )
+            payload = reconcile(
+                root,
+                plan_sha,
+                runner=scheduler,
+                sleeper=lambda _value: None,
+            )
+            self.assertEqual(payload["gate_job_id"], "12345")
+            self.assertEqual(payload["gate_spec"], spec)
+            self.assertEqual(
+                payload["gate_state"], "released_verified"
+            )
+            self.assertTrue(payload["submitted"])
+            self.assertEqual(sum(
+                Path(command[0]).name == "scontrol"
+                and command[1] == "release"
+                for command in scheduler.commands
+            ), 1)
+
     def test_release_rc_zero_without_transition_fails_closed(self):
         spec = gate_fixture_spec()
         scheduler = SyntheticScheduler(
@@ -1110,6 +1167,36 @@ class TariffResponseExperimentTests(unittest.TestCase):
         observation = resolve_exact_job(spec, runner=transient)
         self.assertEqual(observation["source"], "scontrol")
         self.assertEqual(observation["reason"], "JobHeldUser")
+
+    def test_nonterminal_accounting_lag_is_retried_boundedly(self):
+        spec = gate_fixture_spec()
+        scheduler = SyntheticScheduler(
+            live=[
+                scheduler_result(),
+                live_gate_row(spec),
+                live_gate_row(spec, state="RUNNING", reason="None"),
+            ],
+            controller=[
+                scheduler_result(1, stderr="Invalid job id specified")
+            ],
+            accounting=[
+                accounting_gate_row(
+                    spec, state="PENDING", exit_code="0:0"
+                )
+            ],
+            release=[scheduler_result()],
+        )
+        verification = release_with_postcondition(
+            spec,
+            runner=scheduler,
+            sleeper=lambda _value: None,
+            command_attempts=1,
+            verify_attempts=2,
+        )
+        self.assertEqual(
+            verification["observation"]["state"], "RUNNING"
+        )
+        self.assertEqual(verification["command_attempts"], 1)
 
     def test_identity_mismatch_before_and_after_release_is_rejected(self):
         spec = gate_fixture_spec()
@@ -1235,9 +1322,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "approval_sha256": plan_sha,
                 "submission_scope": "main_k5_k8_pilot",
                 "submitted": True,
-                "submitted_jobs": [{
-                    "job_key": "fixed", "job_id": "22345",
-                }],
+                "submitted_jobs": [],
                 "gate_state": "released",
                 "gate_job_id": "12345",
                 "gate_spec": spec,

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import fcntl
 import getpass
 import hashlib
 import json
@@ -13,6 +14,7 @@ import re
 import subprocess
 import sys
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
@@ -593,7 +595,24 @@ def _reserve(plan, plan_sha, selected):
     return paths
 
 
-def submit(plan, plan_sha, *, k40_preparation):
+@contextmanager
+def _tariff_campaign_lock(root):
+    root = Path(root).expanduser().resolve()
+    root.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = root.parent / f".{root.name}.submission.lock"
+    flags = os.O_RDWR | os.O_CREAT
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(lock_path, flags, 0o600)
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX)
+        yield lock_path
+    finally:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        os.close(descriptor)
+
+
+def _submit_locked(plan, plan_sha, *, k40_preparation):
     root = Path(
         plan["k40_campaign_root"]
         if k40_preparation else plan["campaign_root"]
@@ -845,6 +864,17 @@ def submit(plan, plan_sha, *, k40_preparation):
         manifest["gate_state"] = "completed_verified"
     _write_manifest(manifest_path, manifest)
     return manifest
+
+
+def submit(plan, plan_sha, *, k40_preparation):
+    root = Path(
+        plan["k40_campaign_root"]
+        if k40_preparation else plan["campaign_root"]
+    )
+    with _tariff_campaign_lock(root):
+        return _submit_locked(
+            plan, plan_sha, k40_preparation=k40_preparation
+        )
 
 
 def _write_manifest(path, payload):

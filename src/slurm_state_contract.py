@@ -34,10 +34,12 @@ class SlurmContractError(RuntimeError):
 
     def __init__(
         self, message, *, observation=None, diagnostics=None,
+        retriable=False,
     ):
         super().__init__(message)
         self.observation = observation
         self.diagnostics = list(diagnostics or [])
+        self.retriable = bool(retriable)
 
 
 def normalized_state(value):
@@ -295,6 +297,7 @@ def resolve_exact_job(
                             **rows[0], "source": "sacct", "live": False,
                         },
                         diagnostics=diagnostics,
+                        retriable=True,
                     )
                 return _terminal_row(rows[0], "sacct")
 
@@ -324,7 +327,7 @@ def verify_held_receipt(
         try:
             observation = resolver(spec, runner=runner)
         except SlurmContractError as exc:
-            if exc.observation is not None:
+            if exc.observation is not None and not exc.retriable:
                 raise
             diagnostics.append({
                 "attempt": attempt,
@@ -406,10 +409,33 @@ def release_with_postcondition(
     resolver = resolve_exact_job if resolver is None else resolver
     sleeper = time.sleep if sleeper is None else sleeper
     diagnostics = []
-    try:
-        observation = resolver(spec, runner=runner)
-    except SlurmContractError:
-        raise
+    observation = None
+    last_error = None
+    for precondition_attempt in range(1, verify_attempts + 1):
+        if precondition_attempt > 1:
+            sleeper(delay_s)
+        try:
+            observation = resolver(spec, runner=runner)
+        except SlurmContractError as exc:
+            if exc.observation is not None and not exc.retriable:
+                raise
+            last_error = exc
+            diagnostics.append({
+                "stage": "precondition",
+                "attempt": precondition_attempt,
+                "query_error": str(exc),
+                "query_diagnostics": exc.diagnostics,
+            })
+            continue
+        break
+    if observation is None:
+        raise SlurmContractError(
+            "release precondition could not be observed",
+            observation=(
+                last_error.observation if last_error is not None else None
+            ),
+            diagnostics=diagnostics,
+        )
     classification = _release_classification(
         observation,
         dependency_is_valid=dependency_is_valid,
@@ -461,7 +487,7 @@ def release_with_postcondition(
             try:
                 observation = resolver(spec, runner=runner)
             except SlurmContractError as exc:
-                if exc.observation is not None:
+                if exc.observation is not None and not exc.retriable:
                     raise
                 diagnostics.append({
                     "attempt": command_attempt,
@@ -681,7 +707,34 @@ def cancel_with_postcondition(
     runner = subprocess.run if runner is None else runner
     resolver = resolve_exact_job if resolver is None else resolver
     sleeper = time.sleep if sleeper is None else sleeper
-    observation = resolver(spec, runner=runner)
+    observation = None
+    precondition_diagnostics = []
+    last_error = None
+    for precondition_attempt in range(1, verify_attempts + 1):
+        if precondition_attempt > 1:
+            sleeper(delay_s)
+        try:
+            observation = resolver(spec, runner=runner)
+        except SlurmContractError as exc:
+            if exc.observation is not None and not exc.retriable:
+                raise
+            last_error = exc
+            precondition_diagnostics.append({
+                "stage": "precondition",
+                "attempt": precondition_attempt,
+                "query_error": str(exc),
+                "query_diagnostics": exc.diagnostics,
+            })
+            continue
+        break
+    if observation is None:
+        raise SlurmContractError(
+            "cancellation precondition could not be observed",
+            observation=(
+                last_error.observation if last_error is not None else None
+            ),
+            diagnostics=precondition_diagnostics,
+        )
     if observation.get("state") == "CANCELLED":
         return {
             "verified": True,
@@ -706,7 +759,7 @@ def cancel_with_postcondition(
             observation=observation,
         )
 
-    diagnostics = []
+    diagnostics = list(precondition_diagnostics)
     for command_attempt in range(1, command_attempts + 1):
         try:
             requested = _bounded_query(
@@ -732,7 +785,7 @@ def cancel_with_postcondition(
             try:
                 observation = resolver(spec, runner=runner)
             except SlurmContractError as exc:
-                if exc.observation is not None:
+                if exc.observation is not None and not exc.retriable:
                     raise
                 diagnostics.append({
                     "attempt": command_attempt,

@@ -12,6 +12,7 @@ from pathlib import Path
 
 from launch_tariff_response_pilot import (
     TARIFF_GATE_ROLE,
+    _tariff_campaign_lock,
     _write_manifest,
     tariff_gate_spec,
 )
@@ -89,7 +90,33 @@ def _legacy_unverified(manifest, message):
     }
 
 
-def reconcile(
+def _resolve_bounded(spec, runner, sleeper, attempts=5):
+    diagnostics = []
+    last_error = None
+    for attempt in range(1, attempts + 1):
+        if attempt > 1:
+            sleeper(1.0)
+        try:
+            return resolve_exact_job(spec, runner=runner)
+        except SlurmContractError as exc:
+            if exc.observation is not None and not exc.retriable:
+                raise
+            last_error = exc
+            diagnostics.append({
+                "attempt": attempt,
+                "message": str(exc),
+                "diagnostics": exc.diagnostics,
+            })
+    raise SlurmContractError(
+        "tariff gate state remained unobservable",
+        observation=(
+            last_error.observation if last_error is not None else None
+        ),
+        diagnostics=diagnostics,
+    )
+
+
+def _reconcile_locked(
     root: Path,
     expected_plan_sha256: str,
     *,
@@ -111,20 +138,31 @@ def reconcile(
 
     scheduler = plan.get("scheduler_identity") or {}
     recorded_spec = manifest.get("gate_spec")
-    if not scheduler.get("user") or not isinstance(recorded_spec, dict):
+    if not scheduler.get("user"):
         _legacy_unverified(
             manifest,
-            "legacy campaign lacks the immutable scheduler user/gate "
-            "specification required for exact reconciliation",
+            "legacy campaign lacks the immutable scheduler user required "
+            "for exact reconciliation",
         )
         _write_manifest(manifest_path, manifest)
         raise ValueError("legacy tariff gate evidence is labeled unverified")
 
     gate = str(
         manifest.get("gate_job_id")
-        or recorded_spec.get("job_id")
+        or (
+            recorded_spec.get("job_id")
+            if isinstance(recorded_spec, dict) else ""
+        )
         or ""
     )
+    if gate.isdigit() and not isinstance(recorded_spec, dict):
+        _legacy_unverified(
+            manifest,
+            "legacy campaign has a gate ID but no immutable gate "
+            "specification",
+        )
+        _write_manifest(manifest_path, manifest)
+        raise ValueError("legacy tariff gate evidence is labeled unverified")
     if not gate.isdigit():
         intent = manifest.get("gate_submission_intent")
         expected_intent = tariff_gate_spec(plan, observed)
@@ -194,7 +232,9 @@ def reconcile(
         raise ValueError(str(error))
 
     try:
-        current = resolve_exact_job(expected_spec, runner=runner)
+        current = _resolve_bounded(
+            expected_spec, runner, sleeper
+        )
     except SlurmContractError as exc:
         if (
             isinstance(exc.observation, dict)
@@ -207,15 +247,6 @@ def reconcile(
             _record_unverified(manifest, "reconciliation_unverified", exc)
         _write_manifest(manifest_path, manifest)
         raise RuntimeError(str(exc)) from exc
-
-    if not _submitted_jobs_are_complete(plan, manifest):
-        manifest["submitted"] = False
-        manifest["gate_state"] = "incomplete_submission"
-        manifest["gate_reconciliation_observation"] = current
-        _write_manifest(manifest_path, manifest)
-        raise ValueError(
-            "campaign job set is incomplete; gate mutation is refused"
-        )
 
     if current["state"] in TERMINAL_STATES:
         if (
@@ -232,6 +263,17 @@ def reconcile(
             raise ValueError(
                 "tariff gate is terminal without COMPLETED/0:0"
             )
+
+    if not _submitted_jobs_are_complete(plan, manifest):
+        manifest["submitted"] = False
+        manifest["gate_state"] = "incomplete_submission"
+        manifest["gate_reconciliation_observation"] = current
+        _write_manifest(manifest_path, manifest)
+        raise ValueError(
+            "campaign job set is incomplete; gate mutation is refused"
+        )
+
+    if current["state"] in TERMINAL_STATES:
         release_verification = {
             "verified": True,
             "role": TARIFF_GATE_ROLE,
@@ -290,6 +332,23 @@ def reconcile(
     }
     _write_manifest(manifest_path, manifest)
     return manifest
+
+
+def reconcile(
+    root: Path,
+    expected_plan_sha256: str,
+    *,
+    runner=None,
+    sleeper=None,
+):
+    root = root.resolve()
+    with _tariff_campaign_lock(root):
+        return _reconcile_locked(
+            root,
+            expected_plan_sha256,
+            runner=runner,
+            sleeper=sleeper,
+        )
 
 
 def main(argv=None):
