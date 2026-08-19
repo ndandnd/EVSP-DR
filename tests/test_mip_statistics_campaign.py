@@ -812,6 +812,30 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
                 "cancellation_unverified",
             )
             self.assertTrue(all(path.is_file() for path in reservations))
+            scheduler.cancel_transitions.add("202")
+            with (
+                patch.object(launcher, "resolve_exact_job", resolve),
+                patch.object(launcher, "cancel_with_postcondition", cancel),
+            ):
+                verified = launcher._cancel_verified_held_jobs(
+                    plan,
+                    persisted,
+                    manifest_path,
+                    persisted["jobs"],
+                    sleeper=lambda _value: None,
+                )
+            self.assertTrue(verified)
+            final = json.loads(manifest_path.read_text())
+            self.assertEqual(
+                final["cancellation_operation_state"],
+                "verified_all_targets",
+            )
+            cancellations = [
+                command[1] for command in scheduler.commands
+                if Path(command[0]).name == "scancel"
+            ]
+            self.assertEqual(cancellations.count("201"), 1)
+            self.assertEqual(cancellations.count("202"), 2)
 
     def test_split_array_controller_receipt_covers_every_task(self):
         plan, jobs = self._scheduler_plan_and_jobs(

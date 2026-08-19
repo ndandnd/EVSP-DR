@@ -1460,13 +1460,36 @@ def _cancel_verified_held_jobs(
     """Cancel exact known held jobs; reservations always remain durable."""
     sleeper = time.sleep if sleeper is None else sleeper
     manifest["reservations_retained"] = True
+    manifest["cancellation_operation_state"] = "precondition_check"
+    manifest["cancellation_targets"] = [
+        {
+            "cell_id": manifest_job["cell_id"],
+            "job_id": str(manifest_job.get("job_id") or ""),
+        }
+        for manifest_job in jobs
+    ]
+    _replace_json(manifest_path, manifest)
     specs = []
+    already_cancelled = []
     try:
         for manifest_job in jobs:
             spec = _mip_job_spec(
                 plan, manifest_job, manifest_job.get("job_id")
             )
             observation = resolve_exact_job(spec)
+            if observation.get("state") == "CANCELLED":
+                already_cancelled.append((
+                    manifest_job,
+                    {
+                        "verified": True,
+                        "role": spec["role"],
+                        "job_id": str(spec["job_id"]),
+                        "command_attempts": 0,
+                        "observation": observation,
+                        "command_diagnostics": [],
+                    },
+                ))
+                continue
             if (
                 observation.get("live") is not True
                 or observation.get("state") != "PENDING"
@@ -1478,10 +1501,16 @@ def _cancel_verified_held_jobs(
                 )
             specs.append((manifest_job, spec))
     except (ValueError, SlurmContractError) as exc:
+        manifest["cancellation_operation_state"] = "precondition_unverified"
         manifest["cancellation_precondition_error"] = _scheduler_error(exc)
         _replace_json(manifest_path, manifest)
         return False
 
+    for manifest_job, verification in already_cancelled:
+        manifest_job["submission_state"] = "cancellation_verified"
+        manifest_job["cancellation_verification"] = verification
+    manifest["cancellation_operation_state"] = "mutating_each_job"
+    _replace_json(manifest_path, manifest)
     all_verified = True
     for manifest_job, spec in specs:
         try:
@@ -1497,6 +1526,10 @@ def _cancel_verified_held_jobs(
             manifest_job["cancellation_verification"] = verification
         _replace_json(manifest_path, manifest)
     manifest["cancellation_complete"] = all_verified
+    manifest["cancellation_operation_state"] = (
+        "verified_all_targets" if all_verified
+        else "partial_or_unverified"
+    )
     _replace_json(manifest_path, manifest)
     return all_verified
 
@@ -1640,6 +1673,44 @@ def _resume_existing_submission(plan, plan_sha):
         manifest["submitted"] = True
         _replace_json(manifest_path, manifest)
         return manifest
+
+    if manifest.get("reservations_retained") is True:
+        targets = manifest.get("cancellation_targets") or []
+        target_jobs = []
+        by_cell = {
+            job["cell_id"]: job for job in manifest["jobs"]
+        }
+        for target in targets:
+            job = by_cell.get(str(target.get("cell_id") or ""))
+            if (
+                job is None
+                or str(job.get("job_id") or "")
+                != str(target.get("job_id") or "")
+            ):
+                manifest["submitted"] = False
+                manifest["cancellation_operation_state"] = (
+                    "restart_identity_unverified"
+                )
+                _replace_json(manifest_path, manifest)
+                raise SystemExit(
+                    "aborted campaign cancellation identity is ambiguous; "
+                    "reservations remain"
+                )
+            target_jobs.append(job)
+        if target_jobs:
+            _cancel_verified_held_jobs(
+                plan, manifest, manifest_path, target_jobs
+            )
+        manifest["submitted"] = False
+        manifest["cancellation_operation_state"] = (
+            "restart_reconciled_no_replacement"
+            if target_jobs else "restart_requires_operator_audit"
+        )
+        _replace_json(manifest_path, manifest)
+        raise SystemExit(
+            "aborted campaign retains its reservations and cannot be "
+            "converted into a released replacement"
+        )
 
     accepted_manifest_jobs = []
     planned_manifest_jobs = []
