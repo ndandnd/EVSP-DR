@@ -2148,6 +2148,37 @@
     77,
     84
   ],
+  "oracle_spec": {
+    "cell_id": "k05_s1",
+    "comparison_instance_path": "data/tariff_response/frozen_instances/Practice_Custom_DutyUnion_k40_r2.csv",
+    "comparison_instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+    "duty_id": "13411",
+    "grids": [
+      {
+        "block_min": 10,
+        "soc_step": 15.0
+      },
+      {
+        "block_min": 10,
+        "soc_step": 5.0
+      },
+      {
+        "block_min": 10,
+        "soc_step": 2.5
+      },
+      {
+        "block_min": 10,
+        "soc_step": 1.0
+      },
+      {
+        "block_min": 5,
+        "soc_step": 1.0
+      }
+    ],
+    "instance_path": "data/scale_ladder/instances/Practice_Custom_DutyUnion_k05_r1.csv",
+    "instance_sha256": "fc10ac0707becb960364e76b8c1e1c414d5d5639cbc3b7dadaf67a77e03f5322"
+  },
+  "oracle_spec_sha256": "867e07cf2979a24d032ac2db90ad80e43a861d5d9f062b99ba4d0b6884fdefea",
   "ordered_trip_sequence": [
     15,
     28,
@@ -2171,16 +2202,19 @@
     "reserve_kwh": 0.0
   },
   "producer_code_hashes": {
-    "src/audit_fixed_duty_grid_transitions.py": "572ee8d24b96ff01b16ed5ff5c4f29ba6d19c769325fc00c31203b56498b76b7",
+    "src/audit_fixed_duty_grid_transitions.py": "5672420421f0b82746904800d282aca394d44d72c515b050e5972c8f4a3110ee",
     "src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
     "src/audit_scale_ladder_known_membership.py": "42f1206e6cf2ca73427b2e367d6e408a65c6400ceb930044433ad4128166acd9",
     "src/build_tariff_response_manifest.py": "9292ae30ba59d0a26547dd90e833e7437b658d970947bc598116b0bfce0608d7",
     "src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06",
     "src/expanded_path_realization.py": "c952a312bf93f1ea38e21968fc4d1bbf5d30831be66faa521a4ccf6358ef3008",
     "src/fixed_duty_expanded_optimizer.py": "21ec0e5a234cce031a0565eef214d4672c290084583b627ee8bf217c89bf3026",
+    "src/prepare_k40_giro40_partition.py": "000ceefb75035f52244f207c5bce7d94f058e69b045612f0acca01c78a912ffd",
+    "src/pricing_dp_og.py": "a7b4a5a5053543166aa5db9d948de28f1708f28e31c0b047f3f1e0ff8bda4871",
     "src/rerealize_routes.py": "aeee15ea0ed6587dcbc5d20eca7567f13dccafd2840340fc726ed75c74a73472",
     "src/run_exact_pool_mip.py": "3bba461daf8c3aee60f702964e0e7f77f6c3dafa458ccb88827001d3aceb4232",
     "src/scale_ladder_trip_identity.py": "9b4503721541272f6f894a8f606c056c9215b1f66a6adb20eb1bf1fc828d1af9",
+    "src/summarize_scale_ladder.py": "b8cc2d29c3ad61e91140180a920bcc6282195ab1e92a070ce89e292db0f14c7e",
     "src/tariff_response_core.py": "26aaa0a0cd4174dab553615d78231ee19bd02479a9d933cdeb2a6f0abe364e62",
     "src/utils_v2.py": "9bb5f7d29144c6c7436380c6cbb3cfe98f3b1ae4b7adf6d570008ff1685bfd90"
   },
