@@ -358,7 +358,7 @@
   "grid_results": [
     {
       "block_min": 10,
-      "cause_classification": "interaction",
+      "cause_classification": "unresolved",
       "certificate_certified": false,
       "certificate_scope": "fixed_trip_sequence_infeasible_or_unreachable",
       "counterfactuals": {
@@ -553,37 +553,52 @@
           "feasible": false,
           "mode": "production_block_timing_production_soc_flooring",
           "witness": {
-            "accepted": false,
-            "arrival_min": 889.0,
-            "deadline_min": 896.0,
-            "direct_arc_exists": true,
-            "direct_arc_type": "trip_trip",
-            "failed_predicates": [
-              "successor_energy_and_reserve_satisfied"
-            ],
+            "available_minutes": null,
+            "binding_inequality": "15.000000000 >= 42.500000000",
+            "binding_margin_kwh": -27.5,
+            "charge_gain_kwh": 0.0,
+            "feasible": false,
             "option_kind": "direct",
             "outgoing_deadhead_kwh": 0.0,
-            "outgoing_deadhead_min": 0.0,
-            "position": 7,
-            "predecessor_level": 4,
-            "predecessor_soc_kwh": 60.0,
-            "predicates": {
-              "deadline_satisfied": true,
+            "production_trace_row": {
+              "accepted": false,
+              "arrival_min": 889.0,
+              "deadline_min": 896.0,
               "direct_arc_exists": true,
-              "resulting_level_valid": true,
-              "resulting_soc_meets_reserve": true,
-              "successor_energy_and_reserve_satisfied": false
+              "direct_arc_type": "trip_trip",
+              "failed_predicates": [
+                "successor_energy_and_reserve_satisfied"
+              ],
+              "option_kind": "direct",
+              "outgoing_deadhead_kwh": 0.0,
+              "outgoing_deadhead_min": 0.0,
+              "position": 7,
+              "predecessor_level": 4,
+              "predecessor_soc_kwh": 60.0,
+              "predicates": {
+                "deadline_satisfied": true,
+                "direct_arc_exists": true,
+                "resulting_level_valid": true,
+                "resulting_soc_meets_reserve": true,
+                "successor_energy_and_reserve_satisfied": false
+              },
+              "reserve_kwh": 0.0,
+              "resulting_soc_before_floor_kwh": 18.270000500000002,
+              "resulting_soc_kwh": 15.0,
+              "resulting_soc_level": 1,
+              "soc_after_trip_kwh": 18.270000500000002,
+              "station": null,
+              "successor": 53,
+              "successor_energy_kwh": 42.5,
+              "trip": 46,
+              "trip_energy_kwh": 41.7299995
             },
-            "reserve_kwh": 0.0,
-            "resulting_soc_before_floor_kwh": 18.270000500000002,
             "resulting_soc_kwh": 15.0,
-            "resulting_soc_level": 1,
-            "soc_after_trip_kwh": 18.270000500000002,
+            "start_soc_after_trip_kwh": 18.270000500000002,
             "station": null,
-            "successor": 53,
-            "successor_energy_kwh": 42.5,
-            "trip": 46,
-            "trip_energy_kwh": 41.7299995
+            "station_arrival_soc_kwh": null,
+            "successor_energy_plus_reserve_kwh": 42.5,
+            "usable_blocks": null
           }
         },
         "production_block_timing_without_soc_flooring": {
@@ -695,7 +710,7 @@
     },
     {
       "block_min": 10,
-      "cause_classification": "interaction",
+      "cause_classification": "unresolved",
       "certificate_certified": false,
       "certificate_scope": "fixed_trip_sequence_infeasible_or_unreachable",
       "counterfactuals": {
@@ -890,37 +905,52 @@
           "feasible": false,
           "mode": "production_block_timing_production_soc_flooring",
           "witness": {
-            "accepted": false,
-            "arrival_min": 889.0,
-            "deadline_min": 896.0,
-            "direct_arc_exists": true,
-            "direct_arc_type": "trip_trip",
-            "failed_predicates": [
-              "successor_energy_and_reserve_satisfied"
-            ],
+            "available_minutes": null,
+            "binding_inequality": "30.000000000 >= 42.500000000",
+            "binding_margin_kwh": -12.5,
+            "charge_gain_kwh": 0.0,
+            "feasible": false,
             "option_kind": "direct",
             "outgoing_deadhead_kwh": 0.0,
-            "outgoing_deadhead_min": 0.0,
-            "position": 7,
-            "predecessor_level": 15,
-            "predecessor_soc_kwh": 75.0,
-            "predicates": {
-              "deadline_satisfied": true,
+            "production_trace_row": {
+              "accepted": false,
+              "arrival_min": 889.0,
+              "deadline_min": 896.0,
               "direct_arc_exists": true,
-              "resulting_level_valid": true,
-              "resulting_soc_meets_reserve": true,
-              "successor_energy_and_reserve_satisfied": false
+              "direct_arc_type": "trip_trip",
+              "failed_predicates": [
+                "successor_energy_and_reserve_satisfied"
+              ],
+              "option_kind": "direct",
+              "outgoing_deadhead_kwh": 0.0,
+              "outgoing_deadhead_min": 0.0,
+              "position": 7,
+              "predecessor_level": 15,
+              "predecessor_soc_kwh": 75.0,
+              "predicates": {
+                "deadline_satisfied": true,
+                "direct_arc_exists": true,
+                "resulting_level_valid": true,
+                "resulting_soc_meets_reserve": true,
+                "successor_energy_and_reserve_satisfied": false
+              },
+              "reserve_kwh": 0.0,
+              "resulting_soc_before_floor_kwh": 33.2700005,
+              "resulting_soc_kwh": 30.0,
+              "resulting_soc_level": 6,
+              "soc_after_trip_kwh": 33.2700005,
+              "station": null,
+              "successor": 53,
+              "successor_energy_kwh": 42.5,
+              "trip": 46,
+              "trip_energy_kwh": 41.7299995
             },
-            "reserve_kwh": 0.0,
-            "resulting_soc_before_floor_kwh": 33.2700005,
             "resulting_soc_kwh": 30.0,
-            "resulting_soc_level": 6,
-            "soc_after_trip_kwh": 33.2700005,
+            "start_soc_after_trip_kwh": 33.2700005,
             "station": null,
-            "successor": 53,
-            "successor_energy_kwh": 42.5,
-            "trip": 46,
-            "trip_energy_kwh": 41.7299995
+            "station_arrival_soc_kwh": null,
+            "successor_energy_plus_reserve_kwh": 42.5,
+            "usable_blocks": null
           }
         },
         "production_block_timing_without_soc_flooring": {
@@ -1227,37 +1257,52 @@
           "feasible": false,
           "mode": "production_block_timing_production_soc_flooring",
           "witness": {
-            "accepted": false,
-            "arrival_min": 953.0,
-            "deadline_min": 958.0,
-            "direct_arc_exists": true,
-            "direct_arc_type": "trip_trip",
-            "failed_predicates": [
-              "successor_energy_and_reserve_satisfied"
-            ],
+            "available_minutes": null,
+            "binding_inequality": "7.500000000 >= 41.729999500",
+            "binding_margin_kwh": -34.2299995,
+            "charge_gain_kwh": 0.0,
+            "feasible": false,
             "option_kind": "direct",
             "outgoing_deadhead_kwh": 0.0,
-            "outgoing_deadhead_min": 0.0,
-            "position": 8,
-            "predecessor_level": 20,
-            "predecessor_soc_kwh": 50.0,
-            "predicates": {
-              "deadline_satisfied": true,
+            "production_trace_row": {
+              "accepted": false,
+              "arrival_min": 953.0,
+              "deadline_min": 958.0,
               "direct_arc_exists": true,
-              "resulting_level_valid": true,
-              "resulting_soc_meets_reserve": true,
-              "successor_energy_and_reserve_satisfied": false
+              "direct_arc_type": "trip_trip",
+              "failed_predicates": [
+                "successor_energy_and_reserve_satisfied"
+              ],
+              "option_kind": "direct",
+              "outgoing_deadhead_kwh": 0.0,
+              "outgoing_deadhead_min": 0.0,
+              "position": 8,
+              "predecessor_level": 20,
+              "predecessor_soc_kwh": 50.0,
+              "predicates": {
+                "deadline_satisfied": true,
+                "direct_arc_exists": true,
+                "resulting_level_valid": true,
+                "resulting_soc_meets_reserve": true,
+                "successor_energy_and_reserve_satisfied": false
+              },
+              "reserve_kwh": 0.0,
+              "resulting_soc_before_floor_kwh": 7.5,
+              "resulting_soc_kwh": 7.5,
+              "resulting_soc_level": 3,
+              "soc_after_trip_kwh": 7.5,
+              "station": null,
+              "successor": 59,
+              "successor_energy_kwh": 41.7299995,
+              "trip": 53,
+              "trip_energy_kwh": 42.5
             },
-            "reserve_kwh": 0.0,
-            "resulting_soc_before_floor_kwh": 7.5,
             "resulting_soc_kwh": 7.5,
-            "resulting_soc_level": 3,
-            "soc_after_trip_kwh": 7.5,
+            "start_soc_after_trip_kwh": 7.5,
             "station": null,
-            "successor": 59,
-            "successor_energy_kwh": 41.7299995,
-            "trip": 53,
-            "trip_energy_kwh": 42.5
+            "station_arrival_soc_kwh": null,
+            "successor_energy_plus_reserve_kwh": 41.7299995,
+            "usable_blocks": null
           }
         },
         "production_block_timing_without_soc_flooring": {
@@ -1564,37 +1609,52 @@
           "feasible": false,
           "mode": "production_block_timing_production_soc_flooring",
           "witness": {
-            "accepted": false,
-            "arrival_min": 953.0,
-            "deadline_min": 958.0,
-            "direct_arc_exists": true,
-            "direct_arc_type": "trip_trip",
-            "failed_predicates": [
-              "successor_energy_and_reserve_satisfied"
-            ],
+            "available_minutes": null,
+            "binding_inequality": "9.000000000 >= 41.729999500",
+            "binding_margin_kwh": -32.7299995,
+            "charge_gain_kwh": 0.0,
+            "feasible": false,
             "option_kind": "direct",
             "outgoing_deadhead_kwh": 0.0,
-            "outgoing_deadhead_min": 0.0,
-            "position": 8,
-            "predecessor_level": 52,
-            "predecessor_soc_kwh": 52.0,
-            "predicates": {
-              "deadline_satisfied": true,
+            "production_trace_row": {
+              "accepted": false,
+              "arrival_min": 953.0,
+              "deadline_min": 958.0,
               "direct_arc_exists": true,
-              "resulting_level_valid": true,
-              "resulting_soc_meets_reserve": true,
-              "successor_energy_and_reserve_satisfied": false
+              "direct_arc_type": "trip_trip",
+              "failed_predicates": [
+                "successor_energy_and_reserve_satisfied"
+              ],
+              "option_kind": "direct",
+              "outgoing_deadhead_kwh": 0.0,
+              "outgoing_deadhead_min": 0.0,
+              "position": 8,
+              "predecessor_level": 52,
+              "predecessor_soc_kwh": 52.0,
+              "predicates": {
+                "deadline_satisfied": true,
+                "direct_arc_exists": true,
+                "resulting_level_valid": true,
+                "resulting_soc_meets_reserve": true,
+                "successor_energy_and_reserve_satisfied": false
+              },
+              "reserve_kwh": 0.0,
+              "resulting_soc_before_floor_kwh": 9.5,
+              "resulting_soc_kwh": 9.0,
+              "resulting_soc_level": 9,
+              "soc_after_trip_kwh": 9.5,
+              "station": null,
+              "successor": 59,
+              "successor_energy_kwh": 41.7299995,
+              "trip": 53,
+              "trip_energy_kwh": 42.5
             },
-            "reserve_kwh": 0.0,
-            "resulting_soc_before_floor_kwh": 9.5,
             "resulting_soc_kwh": 9.0,
-            "resulting_soc_level": 9,
-            "soc_after_trip_kwh": 9.5,
+            "start_soc_after_trip_kwh": 9.5,
             "station": null,
-            "successor": 59,
-            "successor_energy_kwh": 41.7299995,
-            "trip": 53,
-            "trip_energy_kwh": 42.5
+            "station_arrival_soc_kwh": null,
+            "successor_energy_plus_reserve_kwh": 41.7299995,
+            "usable_blocks": null
           }
         },
         "production_block_timing_without_soc_flooring": {
@@ -1901,37 +1961,52 @@
           "feasible": false,
           "mode": "production_block_timing_production_soc_flooring",
           "witness": {
-            "accepted": false,
-            "arrival_min": 1149.0,
-            "deadline_min": 1153.0,
-            "direct_arc_exists": true,
-            "direct_arc_type": "trip_trip",
-            "failed_predicates": [
-              "successor_energy_and_reserve_satisfied"
-            ],
+            "available_minutes": null,
+            "binding_inequality": "7.000000000 >= 42.500000000",
+            "binding_margin_kwh": -35.5,
+            "charge_gain_kwh": 0.0,
+            "feasible": false,
             "option_kind": "direct",
             "outgoing_deadhead_kwh": 0.0,
-            "outgoing_deadhead_min": 0.0,
-            "position": 11,
-            "predecessor_level": 49,
-            "predecessor_soc_kwh": 49.0,
-            "predicates": {
-              "deadline_satisfied": true,
+            "production_trace_row": {
+              "accepted": false,
+              "arrival_min": 1149.0,
+              "deadline_min": 1153.0,
               "direct_arc_exists": true,
-              "resulting_level_valid": true,
-              "resulting_soc_meets_reserve": true,
-              "successor_energy_and_reserve_satisfied": false
+              "direct_arc_type": "trip_trip",
+              "failed_predicates": [
+                "successor_energy_and_reserve_satisfied"
+              ],
+              "option_kind": "direct",
+              "outgoing_deadhead_kwh": 0.0,
+              "outgoing_deadhead_min": 0.0,
+              "position": 11,
+              "predecessor_level": 49,
+              "predecessor_soc_kwh": 49.0,
+              "predicates": {
+                "deadline_satisfied": true,
+                "direct_arc_exists": true,
+                "resulting_level_valid": true,
+                "resulting_soc_meets_reserve": true,
+                "successor_energy_and_reserve_satisfied": false
+              },
+              "reserve_kwh": 0.0,
+              "resulting_soc_before_floor_kwh": 7.270000500000002,
+              "resulting_soc_kwh": 7.0,
+              "resulting_soc_level": 7,
+              "soc_after_trip_kwh": 7.270000500000002,
+              "station": null,
+              "successor": 77,
+              "successor_energy_kwh": 42.5,
+              "trip": 73,
+              "trip_energy_kwh": 41.7299995
             },
-            "reserve_kwh": 0.0,
-            "resulting_soc_before_floor_kwh": 7.270000500000002,
             "resulting_soc_kwh": 7.0,
-            "resulting_soc_level": 7,
-            "soc_after_trip_kwh": 7.270000500000002,
+            "start_soc_after_trip_kwh": 7.270000500000002,
             "station": null,
-            "successor": 77,
-            "successor_energy_kwh": 42.5,
-            "trip": 73,
-            "trip_energy_kwh": 41.7299995
+            "station_arrival_soc_kwh": null,
+            "successor_energy_plus_reserve_kwh": 42.5,
+            "usable_blocks": null
           }
         },
         "production_block_timing_without_soc_flooring": {
@@ -2096,13 +2171,13 @@
     "reserve_kwh": 0.0
   },
   "producer_code_hashes": {
-    "src/audit_fixed_duty_grid_transitions.py": "b8cd057a901654ebadf5ecb3da5edfe717307a6912ba2241a296a09810ffe84a",
+    "src/audit_fixed_duty_grid_transitions.py": "572ee8d24b96ff01b16ed5ff5c4f29ba6d19c769325fc00c31203b56498b76b7",
     "src/audit_giro_known_columns.py": "f4f18439c303962f2e6276306e06481aef326d4da331eb9a289828dfdb0ba4fb",
     "src/audit_scale_ladder_known_membership.py": "42f1206e6cf2ca73427b2e367d6e408a65c6400ceb930044433ad4128166acd9",
     "src/build_tariff_response_manifest.py": "9292ae30ba59d0a26547dd90e833e7437b658d970947bc598116b0bfce0608d7",
     "src/config.py": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06",
     "src/expanded_path_realization.py": "c952a312bf93f1ea38e21968fc4d1bbf5d30831be66faa521a4ccf6358ef3008",
-    "src/fixed_duty_expanded_optimizer.py": "c461955bf7c7137d0cd7333fddb397ab8d0da67491d38e93a0751f61b6397cbb",
+    "src/fixed_duty_expanded_optimizer.py": "21ec0e5a234cce031a0565eef214d4672c290084583b627ee8bf217c89bf3026",
     "src/rerealize_routes.py": "aeee15ea0ed6587dcbc5d20eca7567f13dccafd2840340fc726ed75c74a73472",
     "src/run_exact_pool_mip.py": "3bba461daf8c3aee60f702964e0e7f77f6c3dafa458ccb88827001d3aceb4232",
     "src/scale_ladder_trip_identity.py": "9b4503721541272f6f894a8f606c056c9215b1f66a6adb20eb1bf1fc828d1af9",
@@ -2116,9 +2191,9 @@
     "transition_candidates.csv": 35
   },
   "table_sha256": {
-    "counterfactuals.csv": "d0651693371deb482ff82fcbddea0b620937bd67da524164d2080f13c09ccb7e",
+    "counterfactuals.csv": "a1c0849d03f2bc7fc5eb5074d6764f0c59901f1fe9144683fa5d203034c924c2",
     "frontier_states.csv": "876fb4d17479cc3c3e40b03a0e1d823c8458e1a38c1994e11e129aeb6a310c1c",
-    "transition_candidates.csv": "a0a2c2b346ab874c80d176a3af3d8be6eeb3eca27fa032634b1e6a19e5e2c705"
+    "transition_candidates.csv": "67b52e4e537896a9b03ea9b3949eb1a7e1268926bb47bb405dfd455009beb712"
   },
   "tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
 }
