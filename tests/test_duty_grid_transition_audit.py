@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,7 @@ from audit_fixed_duty_grid_transitions import (  # noqa: E402
     publish as publish_oracle,
     validate as validate_oracle,
 )
+import audit_fixed_duty_grid_transitions as transition_oracle  # noqa: E402
 from audit_giro_known_columns import HORIZON_MIN, STATIONS, build_problem  # noqa: E402
 from audit_scale_ladder_known_membership import _prices  # noqa: E402
 from build_scale_ladder_membership_v2 import (  # noqa: E402
@@ -26,6 +28,7 @@ from build_scale_ladder_membership_v2 import (  # noqa: E402
     publish as publish_v2,
     validate as validate_v2,
 )
+import build_scale_ladder_membership_v2 as membership_v2  # noqa: E402
 from fixed_duty_expanded_optimizer import (  # noqa: E402
     _arc_groups,
     evaluate_fixed_duty_transition,
@@ -246,9 +249,30 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
         ]
         for expected, problem, production_soc, continuous_soc in cases:
             arcs = _arc_groups(problem)
+            production_candidates, _trace = (
+                evaluate_fixed_duty_transition(
+                    problem,
+                    arcs,
+                    trip=0,
+                    successor=1,
+                    final_gap=False,
+                    level=int(production_soc),
+                    base_cost=100000.0,
+                    actions=(),
+                    grid=[float(index) for index in range(301)],
+                    soc_step=1.0,
+                    block_min=5,
+                    g_kwh=300.0,
+                    charge_kw=300.0,
+                    reserve_kwh=0.0,
+                    station_prices=prices,
+                    n_blocks=24 * 60 // 5,
+                    include_trace=True,
+                )
+            )
             by_mode = {
                 mode: (
-                    {"feasible": False}
+                    {"feasible": bool(production_candidates)}
                     if mode == MODES[0]
                     else evaluate_counterfactual_transition(
                         problem,
@@ -258,7 +282,7 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
                         soc_step=1.0,
                         block_min=5,
                         production_soc_after_trip=production_soc,
-                        continuous_soc_after_trip=continuous_soc,
+                        no_floor_prefix_soc_after_trip=continuous_soc,
                         mode=mode,
                     )
                 )
@@ -333,54 +357,140 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
     def test_oracle_no_clobber_and_tamper_rejection(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "oracle"
-            publish_oracle(
-                output,
+            arguments = dict(
                 instance_path=K5,
                 expected_instance_sha256=K5_SHA,
                 duty_id="13411",
-                grids=[(15.0, 10)],
+                grids=[item[0] for item in EXPECTED_TRANSITIONS],
                 cell_id="k05_s1",
                 comparison_instance=K40,
                 comparison_instance_sha256=K40_SHA,
             )
-            validate_oracle(output)
-            with self.assertRaises(FileExistsError):
+            expected = transition_oracle.audit_duty(**arguments)
+
+            def expected_copy(**_kwargs):
+                return copy.deepcopy(expected)
+
+            with patch.object(
+                transition_oracle,
+                "audit_duty",
+                side_effect=expected_copy,
+            ):
                 publish_oracle(
                     output,
-                    instance_path=K5,
-                    expected_instance_sha256=K5_SHA,
-                    duty_id="13411",
-                    grids=[(15.0, 10)],
-                    cell_id="k05_s1",
+                    **arguments,
                 )
-            with (output / "counterfactuals.csv").open("a") as handle:
-                handle.write("tampered\n")
-            with self.assertRaisesRegex(ValueError, "hash"):
                 validate_oracle(output)
+                for name in (
+                    "oracle.json", "transition_candidates.csv",
+                    "frontier_states.csv", "counterfactuals.csv",
+                    "README.md",
+                ):
+                    self.assertEqual(
+                        (output / name).read_bytes(),
+                        (
+                            REPO_ROOT
+                            / "analysis/"
+                            "duty_13411_grid_transition_oracle_20260819"
+                            / name
+                        ).read_bytes(),
+                        name,
+                    )
+                with self.assertRaises(FileExistsError):
+                    publish_oracle(output, **arguments)
+                oracle_path = output / "oracle.json"
+                original_oracle = oracle_path.read_bytes()
+                changed = json.loads(oracle_path.read_text())
+                changed["grid_results"][0][
+                    "cause_classification"
+                ] = "unresolved"
+                oracle_path.write_text(json.dumps(
+                    changed, indent=2, sort_keys=True
+                ) + "\n")
+                with self.assertRaisesRegex(ValueError, "summary"):
+                    validate_oracle(output)
+                oracle_path.write_bytes(original_oracle)
+                readme = output / "README.md"
+                readme.write_text(readme.read_text() + "tampered\n")
+                with self.assertRaisesRegex(ValueError, "README"):
+                    validate_oracle(output)
 
     def test_v2_tracked_artifacts_validate_and_are_deterministic(self):
-        payload = validate_v2(V2_OUTPUT)
-        self.assertTrue(payload["v1_parity_verified"])
+        expected = membership_v2.build_payload()
+
+        def expected_copy():
+            return copy.deepcopy(expected)
+
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "membership-v2"
-            publish_v2(output)
-            for name in (
-                "membership_summary.json",
-                "duty_summary.csv",
-                "duty_grid_outcome_long.csv",
-                "README.md",
+            with patch.object(
+                membership_v2,
+                "build_payload",
+                side_effect=expected_copy,
             ):
-                self.assertEqual(
-                    (output / name).read_bytes(),
-                    (V2_OUTPUT / name).read_bytes(),
-                    name,
-                )
-            with self.assertRaises(FileExistsError):
+                payload = validate_v2(V2_OUTPUT)
+                self.assertTrue(payload["v1_parity_verified"])
                 publish_v2(output)
-            with (output / "duty_summary.csv").open("a") as handle:
-                handle.write("tampered\n")
-            with self.assertRaisesRegex(ValueError, "hash"):
-                validate_v2(output)
+                for name in (
+                    "membership_summary.json",
+                    "duty_summary.csv",
+                    "duty_grid_outcome_long.csv",
+                    "README.md",
+                ):
+                    self.assertEqual(
+                        (output / name).read_bytes(),
+                        (V2_OUTPUT / name).read_bytes(),
+                        name,
+                    )
+                with self.assertRaises(FileExistsError):
+                    publish_v2(output)
+                grid_path = output / "duty_grid_outcome_long.csv"
+                with grid_path.open(newline="") as handle:
+                    first = next(csv.DictReader(handle))
+                mapping = json.loads(
+                    first["local_to_ordered_trip_mapping_json"]
+                )
+                self.assertEqual(
+                    int(first["trip_count"]), len(mapping)
+                )
+                self.assertGreaterEqual(
+                    int(first["instance_trip_count"]),
+                    int(first["trip_count"]),
+                )
+                self.assertEqual(
+                    first["schema"],
+                    "evsp-dr-scale-ladder-duty-grid-outcome-v2",
+                )
+                self.assertEqual(
+                    first["trip_identity_schema"],
+                    "evsp-dr-trip-identity-v1",
+                )
+                original_grid = grid_path.read_bytes()
+                with grid_path.open("a") as handle:
+                    handle.write("tampered\n")
+                with self.assertRaisesRegex(ValueError, "table"):
+                    validate_v2(output)
+                grid_path.write_bytes(original_grid)
+                summary = output / "membership_summary.json"
+                original_summary = summary.read_bytes()
+                changed = json.loads(summary.read_text())
+                changed["tariff_sha256"] = "0" * 64
+                summary.write_text(json.dumps(
+                    changed, indent=2, sort_keys=True
+                ) + "\n")
+                with self.assertRaisesRegex(ValueError, "summary"):
+                    validate_v2(output)
+                summary.write_bytes(original_summary)
+                readme = output / "README.md"
+                readme.write_text(readme.read_text() + "tampered\n")
+                with self.assertRaisesRegex(ValueError, "README"):
+                    validate_v2(output)
+            substituted = Path(tmp) / "substituted-v1.json"
+            substituted.write_bytes(
+                membership_v2.V1_PATH.read_bytes() + b" "
+            )
+            with self.assertRaisesRegex(ValueError, "fixed v1"):
+                membership_v2.build_payload(v1_path=substituted)
 
 
 if __name__ == "__main__":

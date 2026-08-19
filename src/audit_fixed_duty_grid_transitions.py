@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import json
 import math
 import os
@@ -113,11 +114,42 @@ def _producer_hashes():
         "src/rerealize_routes.py",
         "src/run_exact_pool_mip.py",
         "src/expanded_path_realization.py",
+        "src/audit_giro_known_columns.py",
+        "src/audit_scale_ladder_known_membership.py",
+        "src/build_tariff_response_manifest.py",
+        "src/config.py",
+        "src/scale_ladder_trip_identity.py",
+        "src/tariff_response_core.py",
+        "src/utils_v2.py",
     )
     return {
         relative: sha256_file(REPO_ROOT / relative)
         for relative in paths
     }
+
+
+def _input_hashes():
+    paths = (
+        "data/Par_VehicleDetails_Updated.csv",
+        "data/Ref_dict.csv",
+        "data/par_ref_dhd.csv",
+        "data/hourly_prices_flat.csv",
+    )
+    return {
+        relative: sha256_file(REPO_ROOT / relative)
+        for relative in paths
+    }
+
+
+def _csv_bytes(fields, rows):
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(
+        stream, fieldnames=fields, extrasaction="ignore",
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    return stream.getvalue().encode()
 
 
 def _write_csv(path, fields, rows):
@@ -305,7 +337,7 @@ def evaluate_counterfactual_transition(
     soc_step,
     block_min,
     production_soc_after_trip,
-    continuous_soc_after_trip,
+    no_floor_prefix_soc_after_trip,
     mode,
 ):
     """Evaluate one bounded transition counterfactual.
@@ -319,7 +351,7 @@ def evaluate_counterfactual_transition(
     start_soc = (
         float(production_soc_after_trip)
         if production_flooring
-        else float(continuous_soc_after_trip)
+        else float(no_floor_prefix_soc_after_trip)
     )
     deadline = float(problem.start_min[successor])
     required = (
@@ -489,20 +521,46 @@ def evaluate_counterfactual_transition(
     return {
         "mode": mode,
         "certificate_scope": COUNTERFACTUAL_SCOPE,
+        "counterfactual_prefix_policy": (
+            "same_production_actions_timing_stations_and_grid_charge_gains;"
+            "retain_soc_residuals_and_clip_at_unchanged_battery_cap"
+        ),
         "feasible": bool(feasible),
         "witness": witness,
         "options": options,
     }
 
 
-def _continuous_soc_after_trip(witness, trip):
-    rows = [
-        row for row in witness["trace"]
-        if row.get("event") == "trip" and row.get("node") == trip
-    ]
-    if len(rows) != 1:
-        raise ValueError(f"continuous trace lacks unique trip {trip}")
-    return float(rows[0]["soc_after_trip_kwh"])
+def no_floor_prefix_soc_after_trip(
+    problem,
+    trip_sequence,
+    frontier_state,
+):
+    """Replay one production prefix without SOC flooring.
+
+    Timing, station choices, block counts, and production grid charge gains
+    remain fixed. Only discarded SOC residuals are retained; charging is
+    clipped at the unchanged battery cap.
+    """
+    position = int(frontier_state["position"])
+    actions = list(frontier_state["actions"])
+    if len(actions) != position + 1:
+        raise ValueError("frontier action prefix length mismatch")
+    source = actions[0]
+    if source.get("kind") != "source":
+        raise ValueError("frontier prefix lacks source action")
+    soc = PHYSICS["g_kwh"] - float(source["deadhead_kwh"])
+    for index in range(position):
+        soc -= float(problem.trip_energy[trip_sequence[index]])
+        action = actions[index + 1]
+        soc -= float(action.get("deadhead_kwh", 0.0))
+        if action.get("kind") == "charge":
+            soc = min(
+                PHYSICS["g_kwh"],
+                soc + float(action["expanded_grid_kwh"]),
+            )
+    soc -= float(problem.trip_energy[trip_sequence[position]])
+    return soc
 
 
 def _classify_counterfactuals(by_mode, graph_consistent):
@@ -678,8 +736,13 @@ def audit_duty(
             if not production_soc_values:
                 raise ValueError("failed transition has no predecessor SOC")
             production_soc = max(production_soc_values)
-            continuous_soc = _continuous_soc_after_trip(
-                witness, local_transition[0]
+            no_floor_prefix_soc = max(
+                no_floor_prefix_soc_after_trip(
+                    loaded["problem"],
+                    route["trips"],
+                    row,
+                )
+                for row in failed_frontiers
             )
             for mode in MODES:
                 if mode == MODES[0]:
@@ -715,7 +778,8 @@ def audit_duty(
                         soc_step=soc_step,
                         block_min=block_min,
                         production_soc_after_trip=production_soc,
-                        continuous_soc_after_trip=continuous_soc,
+                        no_floor_prefix_soc_after_trip=
+                            no_floor_prefix_soc,
                         mode=mode,
                     )
                 by_mode[mode] = counterfactual
@@ -799,9 +863,48 @@ def audit_duty(
         "physics": PHYSICS,
         "tariff_sha256": FLAT_SHA256,
         "producer_code_hashes": _producer_hashes(),
+        "input_hashes": _input_hashes(),
         "continuous_witness": witness,
         "grid_results": grid_results,
     }, candidate_rows, frontier_rows, counterfactual_rows
+
+
+def _readme_text(payload, oracle_sha, candidates_sha, frontier_sha, counter_sha):
+    result_lines = "\n".join(
+        (
+            "- "
+            f"{row['soc_step']:g} kWh/{row['block_min']} min: "
+            f"local {row['failed_local_transition'][0]}→"
+            f"{row['failed_local_transition'][1]}, ordered "
+            f"{row['failed_ordered_transition'][0]}→"
+            f"{row['failed_ordered_transition'][1]}, cause "
+            f"`{row['cause_classification']}`"
+        )
+        if row["failed_local_transition"] is not None
+        else (
+            "- "
+            f"{row['soc_step']:g} kWh/{row['block_min']} min: "
+            "representable; no failed transition"
+        )
+        for row in payload["grid_results"]
+    )
+    return (
+        "# Duty 13411 grid-transition oracle\n\n"
+        "Read-only post-hoc current-code diagnostic. Counterfactuals are "
+        "not feasibility or pricing certificates and do not change "
+        "production physics or the running ladder.\n\n"
+        "No-floor counterfactuals replay the same production prefix timing, "
+        "stations, actions, and grid charge gains while retaining SOC "
+        "residuals; they do not substitute the separately optimized "
+        "continuous witness state.\n\n"
+        "## Grid outcomes\n\n"
+        f"{result_lines}\n\n"
+        "## Artifact hashes\n\n"
+        f"- `oracle.json`: `{oracle_sha}`\n"
+        f"- `transition_candidates.csv`: `{candidates_sha}`\n"
+        f"- `frontier_states.csv`: `{frontier_sha}`\n"
+        f"- `counterfactuals.csv`: `{counter_sha}`\n"
+    )
 
 
 def publish(
@@ -855,39 +958,13 @@ def publish(
         }
         _write_json(oracle_path, payload)
         readme = staging / "README.md"
-        result_lines = "\n".join(
-            (
-                "- "
-                f"{row['soc_step']:g} kWh/{row['block_min']} min: "
-                f"local {row['failed_local_transition'][0]}→"
-                f"{row['failed_local_transition'][1]}, ordered "
-                f"{row['failed_ordered_transition'][0]}→"
-                f"{row['failed_ordered_transition'][1]}, cause "
-                f"`{row['cause_classification']}`"
-            )
-            if row["failed_local_transition"] is not None
-            else (
-                "- "
-                f"{row['soc_step']:g} kWh/{row['block_min']} min: "
-                "representable; no failed transition"
-            )
-            for row in payload["grid_results"]
-        )
-        readme.write_text(
-            "# Duty 13411 grid-transition oracle\n\n"
-            "Read-only post-hoc current-code diagnostic. Counterfactuals are "
-            "not feasibility or pricing certificates and do not change "
-            "production physics or the running ladder.\n\n"
-            "## Grid outcomes\n\n"
-            f"{result_lines}\n\n"
-            "## Artifact hashes\n\n"
-            f"- `oracle.json`: `{sha256_file(oracle_path)}`\n"
-            f"- `transition_candidates.csv`: "
-            f"`{sha256_file(candidates_path)}`\n"
-            f"- `frontier_states.csv`: `{sha256_file(frontier_path)}`\n"
-            f"- `counterfactuals.csv`: "
-            f"`{sha256_file(counterfactual_path)}`\n"
-        )
+        readme.write_text(_readme_text(
+            payload,
+            sha256_file(oracle_path),
+            sha256_file(candidates_path),
+            sha256_file(frontier_path),
+            sha256_file(counterfactual_path),
+        ))
         with readme.open("a") as handle:
             handle.flush()
             os.fsync(handle.fileno())
@@ -914,25 +991,64 @@ def validate(output_dir):
     ):
         raise ValueError("oracle artifact set is incomplete")
     payload = json.loads(oracle.read_text())
-    observed_hashes = {
-        name: sha256_file(path) for name, path in tables.items()
+    comparison = payload.get("comparison_instance")
+    grids = [
+        (float(row["soc_step"]), int(row["block_min"]))
+        for row in payload.get("grid_results") or []
+    ]
+    expected, candidates, frontiers, counterfactuals = audit_duty(
+        instance_path=REPO_ROOT / payload["instance_path"],
+        expected_instance_sha256=payload[
+            "instance_identity"
+        ]["instance_file_sha256"],
+        duty_id=payload["duty_id"],
+        grids=grids,
+        cell_id=payload["cell_id"],
+        comparison_instance=(
+            REPO_ROOT / comparison["instance_path"]
+            if comparison is not None else None
+        ),
+        comparison_instance_sha256=(
+            comparison["instance_file_sha256"]
+            if comparison is not None else None
+        ),
+    )
+    expected_table_bytes = {
+        "transition_candidates.csv":
+            _csv_bytes(TRANSITION_FIELDS, candidates),
+        "frontier_states.csv": _csv_bytes(FRONTIER_FIELDS, frontiers),
+        "counterfactuals.csv":
+            _csv_bytes(COUNTERFACTUAL_FIELDS, counterfactuals),
     }
-    observed_counts = {}
-    for name, path in tables.items():
-        with path.open(newline="") as handle:
-            observed_counts[name] = len(list(csv.DictReader(handle)))
-    if (
-        payload.get("schema") != SCHEMA
-        or payload.get("diagnostic_only") is not True
-        or payload.get("certificate_scope") != COUNTERFACTUAL_SCOPE
-        or payload.get("producer_code_hashes") != _producer_hashes()
-        or payload.get("table_sha256") != observed_hashes
-        or payload.get("table_row_count") != observed_counts
-        or sha256_file(REPO_ROOT / payload["instance_path"])
-        != payload["instance_identity"]["instance_file_sha256"]
-    ):
-        raise ValueError("oracle hash/provenance mismatch")
-    return payload
+    for name, expected_bytes in expected_table_bytes.items():
+        if tables[name].read_bytes() != expected_bytes:
+            raise ValueError(f"oracle deterministic table mismatch: {name}")
+    expected["table_sha256"] = {
+        name: hashlib.sha256(value).hexdigest()
+        for name, value in expected_table_bytes.items()
+    }
+    expected["table_row_count"] = {
+        "transition_candidates.csv": len(candidates),
+        "frontier_states.csv": len(frontiers),
+        "counterfactuals.csv": len(counterfactuals),
+    }
+    expected_oracle = (
+        json.dumps(
+            expected, indent=2, sort_keys=True, allow_nan=False
+        ).encode() + b"\n"
+    )
+    if oracle.read_bytes() != expected_oracle:
+        raise ValueError("oracle summary semantics mismatch")
+    expected_readme = _readme_text(
+        expected,
+        hashlib.sha256(expected_oracle).hexdigest(),
+        expected["table_sha256"]["transition_candidates.csv"],
+        expected["table_sha256"]["frontier_states.csv"],
+        expected["table_sha256"]["counterfactuals.csv"],
+    ).encode()
+    if readme.read_bytes() != expected_readme:
+        raise ValueError("oracle README semantics mismatch")
+    return expected
 
 
 def _grid(value):

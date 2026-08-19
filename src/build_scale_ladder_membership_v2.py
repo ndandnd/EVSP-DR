@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import json
 import math
 import os
@@ -32,6 +33,12 @@ GRID_SCHEMA = "evsp-dr-scale-ladder-duty-grid-outcome-v2"
 DUTY_SCHEMA = "evsp-dr-scale-ladder-duty-membership-summary-v2"
 V1_PATH = REPO_ROOT / "data/scale_ladder/known_membership_preflight.json"
 V1_CSV_PATH = REPO_ROOT / "data/scale_ladder/known_membership_preflight.csv"
+V1_SHA256 = (
+    "5124534373e8d3aff981c55891b8f7ed321fdf1efe96c8bbfd093d957c1b94c8"
+)
+V1_CSV_SHA256 = (
+    "1ffcf54f8e433066d1d61abdec305bc3bc4aeb7b167533b684bbfe1eb7c2b4d4"
+)
 INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
@@ -48,7 +55,7 @@ PHYSICS = {
     "reserve_kwh": 0.0,
 }
 DUTY_FIELDS = (
-    "cell_id", "scale", "selection_replicate", "duty_id",
+    "schema", "cell_id", "scale", "selection_replicate", "duty_id",
     "trip_count", "instance_file_sha256",
     "duty_ordered_trip_sequence_sha256",
     "known_partition_continuously_feasible",
@@ -56,10 +63,12 @@ DUTY_FIELDS = (
     "fixed_sequence_pricing_certified", "first_feasible_soc_step",
     "first_feasible_block_min", "nonrepresentability_reason",
     "grid_outcome_count", "v1_parity_verified",
+    "trip_identity_schema",
 )
 GRID_FIELDS = (
-    "cell_id", "scale", "selection_replicate", "duty_id",
+    "schema", "cell_id", "scale", "selection_replicate", "duty_id",
     "grid_index", "soc_step", "block_min", "trip_count",
+    "instance_trip_count",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
     "duty_ordered_trip_sequence_sha256",
@@ -70,6 +79,7 @@ GRID_FIELDS = (
     "failed_local_from_trip", "failed_local_to_trip",
     "failed_ordered_from_trip", "failed_ordered_to_trip",
     "physical_replay_status", "producer_code_hashes_json",
+    "trip_identity_schema", "input_hashes_json",
 )
 
 
@@ -114,11 +124,42 @@ def _producer_hashes():
         "src/audit_scale_ladder_known_membership.py",
         "src/rerealize_routes.py",
         "src/expanded_path_realization.py",
+        "src/audit_giro_known_columns.py",
+        "src/build_tariff_response_manifest.py",
+        "src/config.py",
+        "src/run_exact_pool_mip.py",
+        "src/scale_ladder_trip_identity.py",
+        "src/tariff_response_core.py",
+        "src/utils_v2.py",
     )
     return {
         relative: sha256_file(REPO_ROOT / relative)
         for relative in paths
     }
+
+
+def _input_hashes():
+    paths = (
+        "data/Par_VehicleDetails_Updated.csv",
+        "data/Ref_dict.csv",
+        "data/par_ref_dhd.csv",
+        "data/hourly_prices_flat.csv",
+    )
+    return {
+        relative: sha256_file(REPO_ROOT / relative)
+        for relative in paths
+    }
+
+
+def _csv_bytes(fields, rows):
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(
+        stream, fieldnames=fields, extrasaction="ignore",
+        lineterminator="\n",
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    return stream.getvalue().encode()
 
 
 def _grids_for_scale(scale):
@@ -163,6 +204,11 @@ def build_payload(
     v1_path = Path(v1_path).resolve()
     v1_csv_path = Path(v1_csv_path).resolve()
     instance_manifest = Path(instance_manifest).resolve()
+    if (
+        sha256_file(v1_path) != V1_SHA256
+        or sha256_file(v1_csv_path) != V1_CSV_SHA256
+    ):
+        raise ValueError("fixed v1 membership bytes changed")
     v1 = json.loads(v1_path.read_text())
     if (
         v1.get("schema")
@@ -178,6 +224,7 @@ def build_payload(
         manifest_rows = list(csv.DictReader(handle))
     prices = _prices()
     producer_hashes = _producer_hashes()
+    input_hashes = _input_hashes()
     producer_json = json.dumps(
         producer_hashes, sort_keys=True, separators=(",", ":")
     )
@@ -185,6 +232,9 @@ def build_payload(
         PHYSICS, sort_keys=True, separators=(",", ":")
     )
     physics_sha = _sha_payload(PHYSICS)
+    input_hashes_json = json.dumps(
+        input_hashes, sort_keys=True, separators=(",", ":")
+    )
     duty_rows = []
     grid_rows = []
     cell_summaries = []
@@ -278,8 +328,9 @@ def build_payload(
                     "grid_index": grid_rank[(soc_step, block_min)],
                     "soc_step": soc_step,
                     "block_min": block_min,
-                    "trip_count": len(route["trips"]),
                     **identities,
+                    "instance_trip_count": identities["trip_count"],
+                    "trip_count": len(route["trips"]),
                     "duty_ordered_trip_sequence_sha256": duty_ordered_sha,
                     "local_to_ordered_trip_mapping": mapping,
                     "local_to_ordered_trip_mapping_json": json.dumps(
@@ -332,6 +383,8 @@ def build_payload(
                         result.get("physical_replay_status"),
                     "producer_code_hashes": producer_hashes,
                     "producer_code_hashes_json": producer_json,
+                    "input_hashes": input_hashes,
+                    "input_hashes_json": input_hashes_json,
                 })
                 if result["feasible"]:
                     break
@@ -368,8 +421,9 @@ def build_payload(
                     "grid_index": grid_rank[(soc_step, block_min)],
                     "soc_step": soc_step,
                     "block_min": block_min,
-                    "trip_count": len(route["trips"]),
                     **identities,
+                    "instance_trip_count": identities["trip_count"],
+                    "trip_count": len(route["trips"]),
                     "duty_ordered_trip_sequence_sha256": duty_ordered_sha,
                     "local_to_ordered_trip_mapping": mapping,
                     "local_to_ordered_trip_mapping_json": json.dumps(
@@ -422,6 +476,8 @@ def build_payload(
                         result.get("physical_replay_status"),
                     "producer_code_hashes": producer_hashes,
                     "producer_code_hashes_json": producer_json,
+                    "input_hashes": input_hashes,
+                    "input_hashes_json": input_hashes_json,
                 })
             primary = outcomes[0][2]
             first = next((
@@ -456,6 +512,9 @@ def build_payload(
                     reason or continuous_reason,
                 "grid_outcome_count": len(outcomes),
                 "v1_parity_verified": True,
+                "trip_identity_schema": identities[
+                    "trip_identity_schema"
+                ],
             }
             parity_fields = (
                 "trip_count",
@@ -561,12 +620,33 @@ def build_payload(
             "stop_after_first_feasible": True,
         },
         "producer_code_hashes": producer_hashes,
+        "input_hashes": input_hashes,
         "cells": cell_summaries,
         "duty_count": len(duty_rows),
         "grid_outcome_count": len(grid_rows),
         "v1_parity_verified": True,
     }
     return package, duty_rows, grid_rows
+
+
+def _readme_text(package, summary_sha, duty_sha, grid_sha):
+    return (
+        "# Scale-ladder membership v2 diagnostic evidence\n\n"
+        "Post-hoc current-code evidence only. The running `7937c22` "
+        "ladder and tariff blocker remain bound to v1. Infeasible rows "
+        "are deterministic named-grid nonrepresentability "
+        "classifications, not pricing or infeasibility certificates.\n\n"
+        "## Artifact hashes\n\n"
+        f"- `membership_summary.json`: `{summary_sha}`\n"
+        f"- `duty_summary.csv`: `{duty_sha}`\n"
+        f"- `duty_grid_outcome_long.csv`: `{grid_sha}`\n"
+        f"- source v1 JSON: `{package['source_v1']['json_sha256']}`\n"
+        f"- source v1 CSV: `{package['source_v1']['csv_sha256']}`\n"
+        f"- tariff: `{FLAT_SHA256}`\n"
+        f"- physics: `{package['physics_sha256']}`\n\n"
+        "All v1 primary booleans, duty counts, first-feasible grids, "
+        "and aggregate conclusions were re-derived and matched.\n"
+    )
 
 
 def publish(output_dir=DEFAULT_OUTPUT):
@@ -590,23 +670,12 @@ def publish(output_dir=DEFAULT_OUTPUT):
         summary_path = staging / "membership_summary.json"
         _write_json(summary_path, package)
         readme = staging / "README.md"
-        readme.write_text(
-            "# Scale-ladder membership v2 diagnostic evidence\n\n"
-            "Post-hoc current-code evidence only. The running `7937c22` "
-            "ladder and tariff blocker remain bound to v1. Infeasible rows "
-            "are deterministic named-grid nonrepresentability "
-            "classifications, not pricing or infeasibility certificates.\n\n"
-            "## Artifact hashes\n\n"
-            f"- `membership_summary.json`: `{sha256_file(summary_path)}`\n"
-            f"- `duty_summary.csv`: `{sha256_file(duty_path)}`\n"
-            f"- `duty_grid_outcome_long.csv`: `{sha256_file(grid_path)}`\n"
-            f"- source v1 JSON: `{package['source_v1']['json_sha256']}`\n"
-            f"- source v1 CSV: `{package['source_v1']['csv_sha256']}`\n"
-            f"- tariff: `{FLAT_SHA256}`\n"
-            f"- physics: `{package['physics_sha256']}`\n\n"
-            "All v1 primary booleans, duty counts, first-feasible grids, "
-            "and aggregate conclusions were re-derived and matched.\n"
-        )
+        readme.write_text(_readme_text(
+            package,
+            sha256_file(summary_path),
+            sha256_file(duty_path),
+            sha256_file(grid_path),
+        ))
         with readme.open("a") as handle:
             handle.flush()
             os.fsync(handle.fileno())
@@ -629,32 +698,31 @@ def validate(output_dir=DEFAULT_OUTPUT):
         for path in (summary, duty, grid, readme)
     ):
         raise ValueError("membership v2 artifact set is incomplete")
-    payload = json.loads(summary.read_text())
-    if (
-        payload.get("schema") != SCHEMA
-        or payload.get("diagnostic_only") is not True
-        or payload.get("v1_parity_verified") is not True
-        or payload.get("source_v1", {}).get("json_sha256")
-        != sha256_file(V1_PATH)
-        or payload.get("source_v1", {}).get("csv_sha256")
-        != sha256_file(V1_CSV_PATH)
-        or payload.get("table_sha256") != {
-            duty.name: sha256_file(duty),
-            grid.name: sha256_file(grid),
-        }
-        or payload.get("producer_code_hashes") != _producer_hashes()
-    ):
-        raise ValueError("membership v2 hash/provenance mismatch")
-    with duty.open(newline="") as handle:
-        duty_rows = list(csv.DictReader(handle))
-    with grid.open(newline="") as handle:
-        grid_rows = list(csv.DictReader(handle))
-    if (
-        len(duty_rows) != int(payload["duty_count"])
-        or len(grid_rows) != int(payload["grid_outcome_count"])
-    ):
-        raise ValueError("membership v2 row count mismatch")
-    return payload
+    expected, duty_rows, grid_rows = build_payload()
+    duty_bytes = _csv_bytes(DUTY_FIELDS, duty_rows)
+    grid_bytes = _csv_bytes(GRID_FIELDS, grid_rows)
+    if duty.read_bytes() != duty_bytes or grid.read_bytes() != grid_bytes:
+        raise ValueError("membership v2 deterministic table mismatch")
+    expected["table_sha256"] = {
+        duty.name: hashlib.sha256(duty_bytes).hexdigest(),
+        grid.name: hashlib.sha256(grid_bytes).hexdigest(),
+    }
+    expected_summary = (
+        json.dumps(
+            expected, indent=2, sort_keys=True, allow_nan=False
+        ).encode() + b"\n"
+    )
+    if summary.read_bytes() != expected_summary:
+        raise ValueError("membership v2 summary semantics mismatch")
+    expected_readme = _readme_text(
+        expected,
+        hashlib.sha256(expected_summary).hexdigest(),
+        hashlib.sha256(duty_bytes).hexdigest(),
+        hashlib.sha256(grid_bytes).hexdigest(),
+    ).encode()
+    if readme.read_bytes() != expected_readme:
+        raise ValueError("membership v2 README semantics mismatch")
+    return expected
 
 
 def main(argv=None):
