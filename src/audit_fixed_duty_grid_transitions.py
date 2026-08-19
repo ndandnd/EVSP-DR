@@ -63,6 +63,7 @@ TRANSITION_FIELDS = (
     "predecessor_soc_kwh", "trip_energy_kwh", "soc_after_trip_kwh",
     "trip_to_station_arc_type", "station_to_successor_arc_type",
     "direct_arc_type", "station_arrival_min",
+    "arrival_min",
     "station_arrival_soc_before_floor_kwh", "station_entry_level",
     "station_entry_soc_kwh", "first_charging_block",
     "last_charging_block", "last_possible_charging_block",
@@ -563,6 +564,44 @@ def no_floor_prefix_soc_after_trip(
     return soc
 
 
+def _normalize_production_witness(row):
+    if row is None:
+        return None
+    resulting = row.get("resulting_soc_kwh")
+    successor_energy = row.get("successor_energy_kwh")
+    reserve = row.get("reserve_kwh")
+    required = (
+        float(successor_energy) + float(reserve)
+        if successor_energy is not None and reserve is not None
+        else None
+    )
+    margin = (
+        float(resulting) - required
+        if resulting is not None and required is not None else None
+    )
+    return {
+        "option_kind": row.get("option_kind"),
+        "station": row.get("station"),
+        "feasible": row.get("accepted") is True,
+        "start_soc_after_trip_kwh": row.get("soc_after_trip_kwh"),
+        "station_arrival_soc_kwh":
+            row.get("station_arrival_soc_before_floor_kwh"),
+        "available_minutes": row.get("usable_minutes"),
+        "usable_blocks": row.get("usable_blocks"),
+        "charge_gain_kwh":
+            row.get("cumulative_grid_charge_gain_kwh", 0.0),
+        "outgoing_deadhead_kwh": row.get("outgoing_deadhead_kwh"),
+        "resulting_soc_kwh": resulting,
+        "successor_energy_plus_reserve_kwh": required,
+        "binding_margin_kwh": margin,
+        "binding_inequality": (
+            f"{float(resulting):.9f} >= {required:.9f}"
+            if resulting is not None and required is not None else None
+        ),
+        "production_trace_row": row,
+    }
+
+
 def _classify_counterfactuals(by_mode, graph_consistent):
     production = by_mode[
         "production_block_timing_production_soc_flooring"
@@ -587,7 +626,7 @@ def _classify_counterfactuals(by_mode, graph_consistent):
     if continuous and (not timing and not flooring):
         return "interaction"
     if continuous and timing and flooring:
-        return "interaction"
+        return "unresolved"
     if continuous and timing:
         return "block alignment"
     if continuous and flooring:
@@ -746,6 +785,21 @@ def audit_duty(
             )
             for mode in MODES:
                 if mode == MODES[0]:
+                    production_row = max(
+                        failed_candidates,
+                        key=lambda row: (
+                            float(
+                                row.get(
+                                    "resulting_soc_kwh",
+                                    -math.inf,
+                                )
+                                if row.get("resulting_soc_kwh")
+                                is not None else -math.inf
+                            ),
+                            str(row.get("station") or ""),
+                        ),
+                        default=None,
+                    )
                     counterfactual = {
                         "mode": mode,
                         "certificate_scope": COUNTERFACTUAL_SCOPE,
@@ -753,21 +807,8 @@ def audit_duty(
                             row.get("accepted") is True
                             for row in failed_candidates
                         ),
-                        "witness": max(
-                            failed_candidates,
-                            key=lambda row: (
-                                float(
-                                    row.get(
-                                        "resulting_soc_kwh",
-                                        -math.inf,
-                                    )
-                                    if row.get("resulting_soc_kwh")
-                                    is not None else -math.inf
-                                ),
-                                str(row.get("station") or ""),
-                            ),
-                            default=None,
-                        ),
+                        "witness":
+                            _normalize_production_witness(production_row),
                     }
                 else:
                     counterfactual = evaluate_counterfactual_transition(

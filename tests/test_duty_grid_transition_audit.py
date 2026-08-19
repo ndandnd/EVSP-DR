@@ -133,12 +133,16 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
         self.assertTrue(candidates)
         self.assertTrue(frontiers)
         self.assertEqual(len(counterfactuals), 20)
+        self.assertTrue(all(
+            row["resulting_soc_kwh"] is not None
+            and row["successor_energy_plus_reserve_kwh"] is not None
+            and row["binding_margin_kwh"] is not None
+            and row["binding_inequality"]
+            for row in counterfactuals
+        ))
         self.assertEqual(
             [row["cause_classification"] for row in payload["grid_results"]],
-            [
-                "interaction", "interaction",
-                "unresolved", "unresolved", "unresolved",
-            ],
+            ["unresolved"] * 5,
         )
 
     def test_trace_disabled_preserves_optimizer_semantics(self):
@@ -350,6 +354,45 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
             and row.get("delayed_charging") is True
             and row.get("accepted") is True
             for row in trace
+        ))
+        extra_station = "EXTRA_0"
+        extra_problem = _problem(
+            deadline=30.0,
+            successor_energy=20.0,
+            adjacency=_adjacency(
+                station_options=(
+                    (extra_station, 0.0, 0.0, 0.0, 0.0),
+                )
+            ),
+        )
+        extra_prices = {
+            **prices,
+            base_station_name(extra_station): {
+                hour: 1.0 for hour in range(27)
+            },
+        }
+        extra_candidates, _extra_trace = evaluate_fixed_duty_transition(
+            extra_problem,
+            _arc_groups(extra_problem),
+            trip=0,
+            successor=1,
+            final_gap=False,
+            level=1,
+            base_cost=100000.0,
+            actions=(),
+            grid=[float(index) for index in range(301)],
+            soc_step=1.0,
+            block_min=5,
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve_kwh=0.0,
+            station_prices=extra_prices,
+            n_blocks=24 * 60 // 5,
+            include_trace=True,
+        )
+        self.assertTrue(any(
+            candidate["action"].get("station") == extra_station
+            for candidate in extra_candidates
         ))
 
     def test_oracle_no_clobber_and_tamper_rejection(self):

@@ -219,7 +219,8 @@ def evaluate_fixed_duty_transition(
 
     block_kwh = charge_kw * block_min / 60.0
     available_to_station = arcs["trip_station"].get(trip, {})
-    for station in sorted(STATIONS):
+    station_nodes = set(STATIONS) | set(available_to_station)
+    for station in sorted(station_nodes):
         to_station = available_to_station.get(station)
         from_station = (
             arcs["station_depot"].get(station)
@@ -296,6 +297,8 @@ def evaluate_fixed_duty_transition(
                 "deadline_min": deadline,
                 "outgoing_deadhead_min": from_station.travel_min,
                 "outgoing_deadhead_kwh": from_station.deadhead_kwh,
+                "trip_to_station_arc_type": to_station.kind,
+                "station_to_successor_arc_type": from_station.kind,
                 "successor_energy_kwh": successor_energy,
                 "reserve_kwh": reserve_kwh,
                 "predicates": common_predicates,

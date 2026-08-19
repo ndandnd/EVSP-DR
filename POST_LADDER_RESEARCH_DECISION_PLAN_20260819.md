@@ -123,8 +123,8 @@ The duty-13411 oracle under
 
 | Grid | Failed local transition | Failed ordered transition | Diagnostic cause |
 |---|---|---|---|
-| 15 kWh / 10 min | 46→53 | 106→119 | interaction of block alignment and accumulated SOC flooring |
-| 5 kWh / 10 min | 46→53 | 106→119 | interaction of block alignment and accumulated SOC flooring |
+| 15 kWh / 10 min | 46→53 | 106→119 | unresolved: either isolated relaxation supplies a witness |
+| 5 kWh / 10 min | 46→53 | 106→119 | unresolved: either isolated relaxation supplies a witness |
 | 2.5 kWh / 10 min | 53→59 | 119→132 | unresolved by isolated local counterfactuals |
 | 1 kWh / 10 min | 53→59 | 119→132 | unresolved by isolated local counterfactuals |
 | 1 kWh / 5 min | 73→77 | 158→167 | unresolved by isolated local counterfactuals |
@@ -143,16 +143,19 @@ The 2.5/10 and 1/10 failures are likewise unresolved: continuous timing with
 production flooring reaches `32.5 < 41.7299995` and
 `34.0 < 41.7299995`; the same production prefixes without flooring reach only
 12.780002 kWh, and even continuous timing plus no-floor prefix replay reaches
-37.780002 kWh. At 15/10 and 5/10, by contrast, both the unavailable sub-block
-charging window and accumulated flooring bind locally, and either isolated
-relaxation restores a witness.
+37.780002 kWh. At 15/10 and 5/10, by contrast, both an isolated continuous-
+timing counterfactual and a same-prefix no-floor counterfactual restore a
+witness. Because each relaxation is independently sufficient, the evidence
+does not establish joint necessity or identify one unique cause; those grids
+are labeled unresolved rather than “interaction.”
 
 The production graph is consistent with the independently validated
 continuous whole-duty witness (SciPy/HiGHS, production physical validator,
 terminal SOC about 0.002 kWh). The observable result is a deliberate
 named-grid limitation, not a demonstrated production-code or reference-graph
-bug. The local root cause remains unresolved for the three finer-grid
-failures. If exact GIRO-sequence representation is required, an event/
+bug. The local root cause remains unresolved at all five grids, with two
+independent sufficient relaxations identified for 15/10 and 5/10. If exact
+GIRO-sequence representation is required, an event/
 continuous-SOC model (or separately reviewed state representation) is needed.
 No such production change is authorized here.
 
