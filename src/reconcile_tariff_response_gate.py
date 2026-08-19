@@ -7,50 +7,286 @@ import argparse
 import hashlib
 import json
 import subprocess
+import time
 from pathlib import Path
 
-from launch_tariff_response_pilot import _write_manifest
+from launch_tariff_response_pilot import (
+    TARIFF_GATE_ROLE,
+    _write_manifest,
+    tariff_gate_spec,
+)
+from slurm_state_contract import (
+    SlurmContractError,
+    TERMINAL_STATES,
+    discover_live_job_by_identity,
+    release_with_postcondition,
+    resolve_exact_job,
+)
 
 
-def reconcile(root: Path, expected_plan_sha256: str):
+def _selected_job_keys(plan, manifest):
+    scope = manifest.get("submission_scope")
+    if scope == "main_k5_k8_pilot":
+        k40 = False
+    elif scope == "k40_preparation_only":
+        k40 = True
+    else:
+        raise ValueError("campaign submission scope is invalid")
+    return {
+        job["job_key"] for job in plan["jobs"]
+        if bool(job["separate_k40_gate"]) == k40
+    }
+
+
+def _submitted_jobs_are_complete(plan, manifest):
+    rows = manifest.get("submitted_jobs") or []
+    expected = _selected_job_keys(plan, manifest)
+    keys = [str(row.get("job_key") or "") for row in rows]
+    ids = [str(row.get("job_id") or "") for row in rows]
+    return (
+        len(rows) == len(expected)
+        and set(keys) == expected
+        and len(set(keys)) == len(keys)
+        and all(job_id.isdigit() for job_id in ids)
+        and len(set(ids)) == len(ids)
+    )
+
+
+def _record_terminal_failure(manifest, gate, observation, message):
+    manifest["submitted"] = False
+    manifest["gate_state"] = "terminal_failed"
+    manifest["gate_terminal_failure"] = {
+        "verified": True,
+        "role": TARIFF_GATE_ROLE,
+        "job_id": str(gate),
+        "observation": observation,
+        "state": observation.get("state"),
+        "exit_code": observation.get("exit_code"),
+        "source": observation.get("source"),
+        "message": message,
+    }
+
+
+def _record_unverified(manifest, state, exc):
+    manifest["submitted"] = False
+    manifest["gate_state"] = state
+    manifest["gate_reconciliation_error"] = {
+        "message": str(exc),
+        "observation": getattr(exc, "observation", None),
+        "diagnostics": getattr(exc, "diagnostics", []),
+    }
+
+
+def _legacy_unverified(manifest, message):
+    prior = manifest.get("gate_state")
+    manifest["legacy_gate_state"] = prior
+    manifest["gate_state"] = "legacy_unverified"
+    manifest["submitted"] = False
+    manifest["gate_release_verification"] = {
+        "verified": False,
+        "reason": message,
+        "legacy_state": prior,
+    }
+
+
+def reconcile(
+    root: Path,
+    expected_plan_sha256: str,
+    *,
+    runner=None,
+    sleeper=None,
+):
     root = root.resolve()
     plan_raw = (root / "approved-plan.json").read_bytes()
     observed = hashlib.sha256(plan_raw).hexdigest()
     if observed != expected_plan_sha256:
         raise ValueError("approved plan SHA-256 mismatch")
     manifest_path = root / "campaign.json"
+    plan = json.loads(plan_raw)
     manifest = json.loads(manifest_path.read_text())
-    if (
-        manifest.get("approval_sha256") != observed
-        or manifest.get("gate_state")
-        not in {"release_attempting", "held_release_failed"}
-        or not str(manifest.get("gate_job_id") or "").isdigit()
-    ):
-        raise ValueError("campaign is not in a reconcilable gate state")
-    gate = str(manifest["gate_job_id"])
-    completed = subprocess.run(
-        [
-            "sacct", "-X", "-n", "-P", "-j", gate,
-            "--format=JobIDRaw,State",
-        ],
-        text=True, capture_output=True, check=False,
-    )
-    if completed.returncode != 0:
-        raise RuntimeError("cannot query Slurm accounting")
-    states = {
-        fields[0]: fields[1].split()[0].split("+", 1)[0]
-        for line in completed.stdout.splitlines()
-        if len(fields := line.split("|")) >= 2
-    }
-    if states.get(gate) != "COMPLETED":
-        raise ValueError(
-            f"gate is not proven completed: {states.get(gate)!r}"
+    runner = subprocess.run if runner is None else runner
+    sleeper = time.sleep if sleeper is None else sleeper
+    if manifest.get("approval_sha256") != observed:
+        raise ValueError("campaign approval hash differs from approved plan")
+
+    scheduler = plan.get("scheduler_identity") or {}
+    recorded_spec = manifest.get("gate_spec")
+    if not scheduler.get("user") or not isinstance(recorded_spec, dict):
+        _legacy_unverified(
+            manifest,
+            "legacy campaign lacks the immutable scheduler user/gate "
+            "specification required for exact reconciliation",
         )
-    manifest["gate_state"] = "released_reconciled"
+        _write_manifest(manifest_path, manifest)
+        raise ValueError("legacy tariff gate evidence is labeled unverified")
+
+    gate = str(
+        manifest.get("gate_job_id")
+        or recorded_spec.get("job_id")
+        or ""
+    )
+    if not gate.isdigit():
+        intent = manifest.get("gate_submission_intent")
+        expected_intent = tariff_gate_spec(plan, observed)
+        if not isinstance(intent, dict) or any(
+            str(intent.get(field) or "")
+            != str(expected_intent.get(field) or "")
+            for field in (
+                "user", "job_name", "partition", "comment", "role",
+            )
+        ):
+            _record_unverified(
+                manifest,
+                "ambiguous_gate_receipt",
+                SlurmContractError(
+                    "unrecorded gate lacks an exact submission intent"
+                ),
+            )
+            _write_manifest(manifest_path, manifest)
+            raise ValueError("unrecorded tariff gate identity is ambiguous")
+        discovered = None
+        discovery_errors = []
+        for attempt in range(1, 6):
+            if attempt > 1:
+                sleeper(1.0)
+            try:
+                discovered = discover_live_job_by_identity(
+                    expected_intent, runner=runner
+                )
+            except SlurmContractError as exc:
+                discovery_errors.append({
+                    "attempt": attempt,
+                    "message": str(exc),
+                    "diagnostics": exc.diagnostics,
+                })
+                continue
+            if discovered is not None:
+                break
+        if discovered is None:
+            error = SlurmContractError(
+                "prior gate submission remains ambiguous; replacement "
+                "submission is forbidden",
+                diagnostics=discovery_errors,
+            )
+            _record_unverified(manifest, "ambiguous_gate_receipt", error)
+            _write_manifest(manifest_path, manifest)
+            raise RuntimeError(str(error))
+        gate = str(discovered["job_id"])
+        manifest["gate_job_id"] = gate
+        recorded_spec = tariff_gate_spec(plan, observed, gate)
+        manifest["gate_spec"] = recorded_spec
+        manifest.pop("gate_submission_intent", None)
+        _write_manifest(manifest_path, manifest)
+
+    expected_spec = tariff_gate_spec(plan, observed, gate)
+    if any(
+        str(recorded_spec.get(field) or "")
+        != str(expected_spec.get(field) or "")
+        for field in (
+            "job_id", "user", "job_name", "partition", "comment", "role",
+        )
+    ):
+        error = SlurmContractError(
+            "recorded tariff gate specification differs from the plan"
+        )
+        _record_unverified(manifest, "gate_identity_mismatch", error)
+        _write_manifest(manifest_path, manifest)
+        raise ValueError(str(error))
+
+    try:
+        current = resolve_exact_job(expected_spec, runner=runner)
+    except SlurmContractError as exc:
+        if (
+            isinstance(exc.observation, dict)
+            and exc.observation.get("state") in TERMINAL_STATES
+        ):
+            _record_terminal_failure(
+                manifest, gate, exc.observation, str(exc)
+            )
+        else:
+            _record_unverified(manifest, "reconciliation_unverified", exc)
+        _write_manifest(manifest_path, manifest)
+        raise RuntimeError(str(exc)) from exc
+
+    if not _submitted_jobs_are_complete(plan, manifest):
+        manifest["submitted"] = False
+        manifest["gate_state"] = "incomplete_submission"
+        manifest["gate_reconciliation_observation"] = current
+        _write_manifest(manifest_path, manifest)
+        raise ValueError(
+            "campaign job set is incomplete; gate mutation is refused"
+        )
+
+    if current["state"] in TERMINAL_STATES:
+        if (
+            current["state"] != "COMPLETED"
+            or current.get("exit_code") != "0:0"
+        ):
+            _record_terminal_failure(
+                manifest,
+                gate,
+                current,
+                "tariff gate reached a terminal non-success state",
+            )
+            _write_manifest(manifest_path, manifest)
+            raise ValueError(
+                "tariff gate is terminal without COMPLETED/0:0"
+            )
+        release_verification = {
+            "verified": True,
+            "role": TARIFF_GATE_ROLE,
+            "job_id": gate,
+            "command_attempts": 0,
+            "observation": current,
+            "command_diagnostics": [],
+        }
+    else:
+        manifest["gate_state"] = "release_reconciling"
+        manifest["submitted"] = False
+        _write_manifest(manifest_path, manifest)
+        try:
+            release_verification = release_with_postcondition(
+                expected_spec,
+                runner=runner,
+                sleeper=sleeper,
+            )
+        except SlurmContractError as exc:
+            if (
+                isinstance(exc.observation, dict)
+                and exc.observation.get("state") in TERMINAL_STATES
+            ):
+                _record_terminal_failure(
+                    manifest, gate, exc.observation, str(exc)
+                )
+            else:
+                _record_unverified(
+                    manifest, "held_release_failed", exc
+                )
+            _write_manifest(manifest_path, manifest)
+            raise RuntimeError(str(exc)) from exc
+
+    manifest["gate_release_verification"] = release_verification
+    _write_manifest(manifest_path, manifest)
+    final_observation = release_verification["observation"]
+    if (
+        final_observation.get("state") == "COMPLETED"
+        and final_observation.get("exit_code") == "0:0"
+    ):
+        manifest["gate_terminal_verification"] = {
+            "verified": True,
+            "role": TARIFF_GATE_ROLE,
+            "job_id": gate,
+            "observation": final_observation,
+        }
+        manifest["gate_state"] = "completed_verified"
+    else:
+        manifest["gate_state"] = "released_verified"
+    manifest["submitted"] = True
     manifest["gate_reconciliation"] = {
-        "source": "sacct",
-        "gate_job_id": gate,
-        "observed_state": states[gate],
+        "verified": True,
+        "role": TARIFF_GATE_ROLE,
+        "job_id": gate,
+        "observation": final_observation,
     }
     _write_manifest(manifest_path, manifest)
     return manifest
@@ -62,7 +298,7 @@ def main(argv=None):
     parser.add_argument("--approved-plan-sha256", required=True)
     args = parser.parse_args(argv)
     reconcile(args.campaign_root, args.approved_plan_sha256)
-    print("GATE RECONCILED: released_reconciled")
+    print("GATE RECONCILED WITH EXACT SCHEDULER EVIDENCE")
     return 0
 
 

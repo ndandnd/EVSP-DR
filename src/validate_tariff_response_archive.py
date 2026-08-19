@@ -11,6 +11,9 @@ import re
 import stat
 from pathlib import Path
 
+from launch_tariff_response_pilot import tariff_gate_spec
+from slurm_state_contract import verified_gate_evidence
+
 
 def sha(path):
     if path.is_symlink() or not stat.S_ISREG(path.stat(follow_symlinks=False).st_mode):
@@ -84,10 +87,15 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         plan["checkout_identity"]["commit"] != expected_commit
         or manifest.get("approval_sha256") != plan_sha
         or manifest.get("submission_scope") != scope
-        or manifest.get("gate_state")
-        not in {"released", "released_reconciled"}
+        or manifest.get("submitted") is not True
     ):
         raise ValueError("campaign approval/commit/scope is invalid")
+    verified_gate_evidence(
+        manifest,
+        tariff_gate_spec(
+            plan, plan_sha, str(manifest.get("gate_job_id") or "")
+        ),
+    )
     selected = {
         job["job_key"]: job for job in plan["jobs"]
         if bool(job["separate_k40_gate"])

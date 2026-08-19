@@ -32,6 +32,7 @@ from fixed_duty_expanded_optimizer import (  # noqa: E402
 from launch_tariff_response_pilot import (  # noqa: E402
     build_plan,
     submit,
+    tariff_gate_spec,
 )
 import launch_tariff_response_pilot as pilot  # noqa: E402
 from assemble_tariff_response_campaign import assemble  # noqa: E402
@@ -50,6 +51,13 @@ from tariff_response_core import (  # noqa: E402
     route_response,
     tariff_prices,
 )
+from slurm_state_contract import (  # noqa: E402
+    SlurmContractError,
+    release_with_postcondition,
+    resolve_exact_job,
+    verified_gate_evidence,
+    verify_held_receipt,
+)
 
 
 TARIFF_MANIFEST = REPO_ROOT / "data/tariff_response/tariff_manifest.csv"
@@ -60,6 +68,77 @@ FROZEN_INPUT_MANIFEST = (
     REPO_ROOT
     / "data/tariff_response/frozen_instances/frozen_input_manifest.csv"
 )
+
+
+def scheduler_result(returncode=0, stdout="", stderr=""):
+    return SimpleNamespace(
+        returncode=returncode, stdout=stdout, stderr=stderr
+    )
+
+
+class SyntheticScheduler:
+    """Explicit scheduler transcript consumed by production parsers."""
+
+    def __init__(
+        self, *, live=None, controller=None, accounting=None, release=None,
+    ):
+        self.live = list(live or [])
+        self.controller = list(controller or [])
+        self.accounting = list(accounting or [])
+        self.release = list(release or [])
+        self.commands = []
+
+    @staticmethod
+    def _next(queue, source):
+        if not queue:
+            return scheduler_result(1, stderr=f"no scripted {source} read")
+        value = queue.pop(0)
+        if isinstance(value, BaseException):
+            raise value
+        return value
+
+    def __call__(self, command, **_kwargs):
+        self.commands.append(list(command))
+        executable = Path(str(command[0])).name
+        if executable == "squeue":
+            return self._next(self.live, "squeue")
+        if executable == "sacct":
+            return self._next(self.accounting, "sacct")
+        if executable == "scontrol" and command[1] == "release":
+            return self._next(self.release, "release")
+        if executable == "scontrol":
+            return self._next(self.controller, "scontrol")
+        raise AssertionError(f"unexpected scheduler command: {command}")
+
+
+def gate_fixture_spec(job_id="12345"):
+    return {
+        "job_id": job_id,
+        "user": "nathan",
+        "job_name": "TRGabcdef",
+        "partition": "default_partition",
+        "comment": "TRSPG:abcdef0123456789abcd",
+        "role": "tariff_response_release_gate",
+    }
+
+
+def live_gate_row(
+    spec, *, state="PENDING", reason="JobHeldUser", comment=None,
+):
+    return scheduler_result(stdout=(
+        f"{spec['job_id']}|{spec['user']}|{spec['job_name']}|{state}|"
+        f"{spec['partition']}|{reason}|"
+        f"{spec['comment'] if comment is None else comment}\n"
+    ))
+
+
+def accounting_gate_row(
+    spec, *, state="COMPLETED", exit_code="0:0",
+):
+    return scheduler_result(stdout=(
+        f"{spec['job_id']}|{spec['user']}|{spec['job_name']}|{state}|"
+        f"{spec['partition']}|{spec['comment']}|{exit_code}\n"
+    ))
 
 
 def toy_problem(*, boundary=False):
@@ -898,25 +977,320 @@ class TariffResponseExperimentTests(unittest.TestCase):
     def test_gate_reconciliation_requires_completed_accounting_state(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            plan_raw = b'{"schema":"test"}'
+            plan = {
+                "schema": "test",
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [{
+                    "job_key": "fixed",
+                    "separate_k40_gate": False,
+                }],
+            }
+            plan_raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
             plan_sha = hashlib.sha256(plan_raw).hexdigest()
             (root / "approved-plan.json").write_bytes(plan_raw)
+            spec = tariff_gate_spec(plan, plan_sha, "12345")
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": plan_sha,
-                "gate_state": "release_attempting",
+                "submission_scope": "main_k5_k8_pilot",
+                "submitted_jobs": [{
+                    "job_key": "fixed", "job_id": "22345",
+                }],
+                "gate_state": "released",
+                "gate_job_id": "12345",
+                "gate_spec": spec,
+            }))
+            scheduler = SyntheticScheduler(
+                live=[scheduler_result()],
+                controller=[
+                    scheduler_result(1, stderr="Invalid job id specified")
+                ],
+                accounting=[accounting_gate_row(spec)],
+            )
+            payload = reconcile(
+                root, plan_sha, runner=scheduler, sleeper=lambda _value: None
+            )
+            self.assertEqual(
+                payload["gate_state"], "completed_verified"
+            )
+            self.assertTrue(payload["submitted"])
+            verified_gate_evidence(payload, spec)
+
+    def test_release_rc_zero_without_transition_fails_closed(self):
+        spec = gate_fixture_spec()
+        scheduler = SyntheticScheduler(
+            live=[live_gate_row(spec)] * 3,
+            release=[scheduler_result()],
+        )
+        with self.assertRaisesRegex(
+            SlurmContractError, "postcondition was not observed"
+        ):
+            release_with_postcondition(
+                spec,
+                runner=scheduler,
+                sleeper=lambda _value: None,
+                command_attempts=1,
+                verify_attempts=2,
+            )
+
+    def test_release_tolerates_stale_reads_and_nonzero_request(self):
+        spec = gate_fixture_spec()
+        for request_result in (
+            scheduler_result(),
+            scheduler_result(1, stderr="controller reported stale hold"),
+        ):
+            with self.subTest(returncode=request_result.returncode):
+                scheduler = SyntheticScheduler(
+                    live=[
+                        live_gate_row(spec),
+                        live_gate_row(spec),
+                        live_gate_row(
+                            spec, state="RUNNING", reason="None"
+                        ),
+                    ],
+                    release=[request_result],
+                )
+                verification = release_with_postcondition(
+                    spec,
+                    runner=scheduler,
+                    sleeper=lambda _value: None,
+                )
+                self.assertTrue(verification["verified"])
+                self.assertEqual(
+                    verification["observation"]["state"], "RUNNING"
+                )
+
+    def test_release_retries_only_after_bounded_held_window(self):
+        spec = gate_fixture_spec()
+        scheduler = SyntheticScheduler(
+            live=[
+                live_gate_row(spec),
+                live_gate_row(spec),
+                live_gate_row(spec),
+                live_gate_row(spec, state="CONFIGURING", reason="None"),
+            ],
+            release=[scheduler_result(), scheduler_result()],
+        )
+        verification = release_with_postcondition(
+            spec,
+            runner=scheduler,
+            sleeper=lambda _value: None,
+            verify_attempts=2,
+        )
+        releases = [
+            command for command in scheduler.commands
+            if Path(command[0]).name == "scontrol"
+            and command[1] == "release"
+        ]
+        self.assertEqual(len(releases), 2)
+        self.assertEqual(verification["command_attempts"], 2)
+
+    def test_scheduler_queries_fail_closed_then_transiently_recover(self):
+        spec = gate_fixture_spec()
+        failed = SyntheticScheduler(
+            live=[scheduler_result(1, stderr="down")],
+            controller=[scheduler_result(1, stderr="down")],
+            accounting=[scheduler_result(1, stderr="down")],
+        )
+        with self.assertRaisesRegex(
+            SlurmContractError, "could not be resolved"
+        ):
+            resolve_exact_job(spec, runner=failed)
+
+        transient = SyntheticScheduler(
+            live=[scheduler_result(1, stderr="transient")],
+            controller=[scheduler_result(stdout=(
+                f"JobId={spec['job_id']} UserId={spec['user']}(1000) "
+                f"JobName={spec['job_name']} JobState=PENDING "
+                f"Partition={spec['partition']} Reason=JobHeldUser "
+                f"Comment={spec['comment']} ExitCode=0:0\n"
+            ))],
+        )
+        observation = resolve_exact_job(spec, runner=transient)
+        self.assertEqual(observation["source"], "scontrol")
+        self.assertEqual(observation["reason"], "JobHeldUser")
+
+    def test_identity_mismatch_before_and_after_release_is_rejected(self):
+        spec = gate_fixture_spec()
+        before = SyntheticScheduler(
+            live=[live_gate_row(spec, comment="wrong")]
+        )
+        with self.assertRaisesRegex(
+            SlurmContractError, "identity mismatch"
+        ):
+            release_with_postcondition(spec, runner=before)
+
+        after = SyntheticScheduler(
+            live=[
+                live_gate_row(spec),
+                live_gate_row(spec, comment="wrong"),
+            ],
+            release=[scheduler_result()],
+        )
+        with self.assertRaisesRegex(
+            SlurmContractError, "identity mismatch"
+        ):
+            release_with_postcondition(
+                spec, runner=after, sleeper=lambda _value: None
+            )
+
+    def test_release_state_and_dependency_classification(self):
+        spec = gate_fixture_spec()
+        for state, reason in (
+            ("CONFIGURING", "None"),
+            ("RUNNING", "None"),
+            ("COMPLETING", "None"),
+        ):
+            scheduler = SyntheticScheduler(
+                live=[live_gate_row(spec, state=state, reason=reason)]
+            )
+            result = release_with_postcondition(spec, runner=scheduler)
+            self.assertEqual(result["observation"]["state"], state)
+
+        dependency = SyntheticScheduler(
+            live=[live_gate_row(spec, reason="Dependency")]
+        )
+        with self.assertRaisesRegex(
+            SlurmContractError, "valid release precondition"
+        ):
+            release_with_postcondition(spec, runner=dependency)
+        valid_dependency = SyntheticScheduler(
+            live=[live_gate_row(spec, reason="Dependency")]
+        )
+        result = release_with_postcondition(
+            spec, runner=valid_dependency, dependency_is_valid=True
+        )
+        self.assertTrue(result["verified"])
+        never = SyntheticScheduler(
+            live=[
+                live_gate_row(spec, reason="DependencyNeverSatisfied")
+            ]
+        )
+        with self.assertRaises(SlurmContractError):
+            release_with_postcondition(
+                spec, runner=never, dependency_is_valid=True
+            )
+
+    def test_terminal_exit_code_and_held_receipt_contracts(self):
+        spec = gate_fixture_spec()
+        success = SyntheticScheduler(
+            live=[scheduler_result()],
+            controller=[scheduler_result(1, stderr="Invalid job id")],
+            accounting=[accounting_gate_row(spec)],
+        )
+        result = release_with_postcondition(spec, runner=success)
+        self.assertEqual(result["observation"]["exit_code"], "0:0")
+
+        for state, exit_code in (("FAILED", "1:0"), ("COMPLETED", "1:0")):
+            with self.subTest(state=state):
+                failed = SyntheticScheduler(
+                    live=[scheduler_result()],
+                    controller=[
+                        scheduler_result(1, stderr="Invalid job id")
+                    ],
+                    accounting=[
+                        accounting_gate_row(
+                            spec, state=state, exit_code=exit_code
+                        )
+                    ],
+                )
+                with self.assertRaises(SlurmContractError):
+                    release_with_postcondition(spec, runner=failed)
+
+        missing = SyntheticScheduler(
+            live=[scheduler_result()],
+            controller=[scheduler_result(1, stderr="Invalid job id")],
+            accounting=[
+                accounting_gate_row(spec, state="FAILED", exit_code="")
+            ],
+        )
+        with self.assertRaisesRegex(SlurmContractError, "exit code"):
+            resolve_exact_job(spec, runner=missing)
+
+        held = SyntheticScheduler(live=[live_gate_row(spec)])
+        receipt = verify_held_receipt(
+            spec, runner=held, sleeper=lambda _value: None
+        )
+        self.assertTrue(receipt["verified"])
+
+    def test_cached_released_state_is_reobserved_and_failure_persisted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = {
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [{
+                    "job_key": "fixed",
+                    "separate_k40_gate": False,
+                }],
+            }
+            raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            spec = tariff_gate_spec(plan, plan_sha, "12345")
+            manifest_path = root / "campaign.json"
+            manifest_path.write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "submission_scope": "main_k5_k8_pilot",
+                "submitted": True,
+                "submitted_jobs": [{
+                    "job_key": "fixed", "job_id": "22345",
+                }],
+                "gate_state": "released",
+                "gate_job_id": "12345",
+                "gate_spec": spec,
+            }))
+            scheduler = SyntheticScheduler(
+                live=[
+                    scheduler_result(),
+                    scheduler_result(),
+                ],
+                controller=[
+                    scheduler_result(1, stderr="Invalid job id"),
+                    scheduler_result(1, stderr="Invalid job id"),
+                ],
+                accounting=[
+                    accounting_gate_row(
+                        spec, state="FAILED", exit_code="1:0"
+                    ),
+                    accounting_gate_row(
+                        spec, state="FAILED", exit_code="1:0"
+                    ),
+                ],
+            )
+            with self.assertRaisesRegex(ValueError, "terminal"):
+                reconcile(
+                    root, plan_sha, runner=scheduler,
+                    sleeper=lambda _value: None,
+                )
+            persisted = json.loads(manifest_path.read_text())
+            self.assertEqual(persisted["gate_state"], "terminal_failed")
+            self.assertFalse(persisted["submitted"])
+            self.assertEqual(
+                persisted["gate_terminal_failure"]["exit_code"], "1:0"
+            )
+
+    def test_legacy_released_evidence_is_readable_but_unverified(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan_raw = b'{"jobs":[]}'
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            manifest_path = root / "campaign.json"
+            manifest_path.write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "released",
                 "gate_job_id": "12345",
             }))
-            with patch(
-                "reconcile_tariff_response_gate.subprocess.run",
-                return_value=SimpleNamespace(
-                    returncode=0,
-                    stdout="12345|COMPLETED|\n",
-                    stderr="",
-                ),
-            ):
-                payload = reconcile(root, plan_sha)
-            self.assertEqual(
-                payload["gate_state"], "released_reconciled"
+            with self.assertRaisesRegex(ValueError, "legacy"):
+                reconcile(root, plan_sha)
+            persisted = json.loads(manifest_path.read_text())
+            self.assertEqual(persisted["legacy_gate_state"], "released")
+            self.assertEqual(persisted["gate_state"], "legacy_unverified")
+            self.assertFalse(
+                persisted["gate_release_verification"]["verified"]
             )
 
     def test_archive_rejects_symlinks_and_swapped_reservations(self):

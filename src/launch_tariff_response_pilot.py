@@ -5,12 +5,14 @@ from __future__ import annotations
 
 import argparse
 import csv
+import getpass
 import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
@@ -18,6 +20,12 @@ from tariff_response_core import (
     PHYSICS,
     giro_routes_for_instance,
     load_tariff_manifest,
+)
+from slurm_state_contract import (
+    SlurmContractError,
+    discover_live_job_by_identity,
+    release_with_postcondition,
+    verify_held_receipt,
 )
 
 
@@ -55,6 +63,7 @@ CODE_PATHS = (
     "src/assemble_tariff_response_campaign.py",
     "src/validate_tariff_response_archive.py",
     "src/reconcile_tariff_response_gate.py",
+    "src/slurm_state_contract.py",
     "src/build_giro40_duty_manifest.py",
     "src/build_tariff_response_frozen_inputs.py",
 )
@@ -77,6 +86,25 @@ TARIFF_CODES = {
     "peak12_alpha_1p0": "a1",
     "peak12_alpha_2p0": "a2",
 }
+TARIFF_GATE_ROLE = "tariff_response_release_gate"
+
+
+def tariff_gate_spec(plan, plan_sha, job_id=None):
+    scheduler = plan.get("scheduler_identity") or {}
+    user = str(scheduler.get("user") or "")
+    if not user:
+        raise ValueError("approved scheduler user is missing")
+    spec = {
+        "job_id": None if job_id is None else str(job_id),
+        "user": user,
+        "job_name": f"TRG{plan_sha[:6]}",
+        "partition": "default_partition",
+        "comment": f"TRSPG:{plan_sha[:20]}",
+        "role": TARIFF_GATE_ROLE,
+    }
+    if job_id is not None and not spec["job_id"].isdigit():
+        raise ValueError("tariff gate job ID is invalid")
+    return spec
 
 
 def canonical(payload):
@@ -500,6 +528,9 @@ def build_plan(
             "version": portable_environment["python"],
         },
         "environment_identity": environment_identity,
+        "scheduler_identity": {
+            "user": os.environ.get("USER") or getpass.getuser(),
+        },
         "jobs": jobs,
         "main_submission_job_count": sum(
             not job["separate_k40_gate"] for job in jobs
@@ -623,8 +654,11 @@ def submit(plan, plan_sha, *, k40_preparation):
             "k40_preparation_only" if k40_preparation
             else "main_k5_k8_pilot"
         ),
+        "submitted": False,
         "submitted_jobs": [],
         "reservations": [str(path) for path in reservations],
+        "gate_state": "submission_intent",
+        "gate_submission_intent": tariff_gate_spec(plan, plan_sha),
     }
     for reservation in reservations:
         _copy_new(
@@ -637,11 +671,13 @@ def submit(plan, plan_sha, *, k40_preparation):
         manifest_path, manifest
     )
     job_ids = {}
+    gate_intent = dict(manifest["gate_submission_intent"])
     gate = subprocess.run(
         [
             "sbatch", "--parsable", "--hold",
             "--partition=default_partition", "--time=00:05:00",
-            f"--job-name=TRG{plan_sha[:6]}",
+            f"--job-name={gate_intent['job_name']}",
+            f"--comment={gate_intent['comment']}",
             f"--output={logs}/gate_%j.out",
             f"--error={logs}/gate_%j.err",
             "--wrap=/bin/true",
@@ -649,15 +685,58 @@ def submit(plan, plan_sha, *, k40_preparation):
         cwd=REPO_ROOT, text=True, capture_output=True, check=False,
     )
     gate_id = gate.stdout.strip().split(";", 1)[0]
-    if gate.returncode != 0 or not gate_id.isdigit():
-        manifest["gate_state"] = "ambiguous_held_gate"
-        manifest["gate_error"] = (gate.stderr or gate.stdout).strip()
+    manifest["gate_submission_command"] = {
+        "returncode": gate.returncode,
+        "stdout": (gate.stdout or "").strip(),
+        "stderr": (gate.stderr or "").strip(),
+    }
+    if not gate_id.isdigit():
+        discovery_errors = []
+        for attempt in range(1, 6):
+            if attempt > 1:
+                time.sleep(1.0)
+            try:
+                discovered = discover_live_job_by_identity(gate_intent)
+            except SlurmContractError as exc:
+                discovery_errors.append({
+                    "attempt": attempt,
+                    "error": str(exc),
+                    "diagnostics": exc.diagnostics,
+                })
+                continue
+            if discovered is not None:
+                gate_id = str(discovered["job_id"])
+                break
+        if not gate_id.isdigit():
+            manifest["gate_state"] = "ambiguous_held_gate"
+            manifest["gate_submission_discovery"] = discovery_errors
+            _write_manifest(manifest_path, manifest)
+            raise RuntimeError(
+                "held submission gate outcome is ambiguous; reconcile "
+                "the exact execution comment before any replacement"
+            )
+    gate_spec = tariff_gate_spec(plan, plan_sha, gate_id)
+    manifest["gate_job_id"] = gate_id
+    manifest["gate_spec"] = gate_spec
+    manifest["gate_state"] = "receipt_verifying"
+    _write_manifest(manifest_path, manifest)
+    try:
+        receipt = verify_held_receipt(gate_spec)
+    except SlurmContractError as exc:
+        manifest["gate_state"] = "ambiguous_gate_receipt"
+        manifest["gate_receipt_error"] = {
+            "message": str(exc),
+            "observation": exc.observation,
+            "diagnostics": exc.diagnostics,
+        }
         _write_manifest(manifest_path, manifest)
         raise RuntimeError(
-            "held submission gate outcome is ambiguous; reconcile before retry"
-        )
-    manifest["gate_job_id"] = gate_id
-    manifest["gate_state"] = "held"
+            "held submission gate receipt is unverified; reconcile before "
+            "any replacement"
+        ) from exc
+    manifest["gate_receipt_verification"] = receipt
+    manifest.pop("gate_submission_intent", None)
+    manifest["gate_state"] = "held_verified"
     _write_manifest(manifest_path, manifest)
     try:
         for job in selected:
@@ -700,6 +779,10 @@ def submit(plan, plan_sha, *, k40_preparation):
             job_ids[job["job_key"]] = job_id
             manifest["submitted_jobs"].append({
                 "job_key": job["job_key"], "job_id": job_id,
+                "user": plan["scheduler_identity"]["user"],
+                "job_name": job["job_name"],
+                "partition": job["partition"],
+                "comment": f"TRSP:{job['execution_digest'][:28]}",
             })
             _write_manifest(manifest_path, manifest)
     except Exception as exc:
@@ -709,20 +792,57 @@ def submit(plan, plan_sha, *, k40_preparation):
         raise
     manifest["gate_state"] = "release_attempting"
     _write_manifest(manifest_path, manifest)
-    release = subprocess.run(
-        ["scontrol", "release", gate_id],
-        cwd=REPO_ROOT, text=True, capture_output=True, check=False,
-    )
-    if release.returncode != 0:
-        manifest["gate_state"] = "held_release_failed"
-        manifest["gate_error"] = (
-            release.stderr or release.stdout
-        ).strip()
+    try:
+        verification = release_with_postcondition(gate_spec)
+    except SlurmContractError as exc:
+        observation = exc.observation
+        manifest["submitted"] = False
+        manifest["gate_error"] = {
+            "message": str(exc),
+            "observation": observation,
+            "diagnostics": exc.diagnostics,
+        }
+        if (
+            isinstance(observation, dict)
+            and observation.get("state") in {
+                "BOOT_FAIL", "CANCELLED", "COMPLETED", "DEADLINE",
+                "FAILED", "NODE_FAIL", "OUT_OF_MEMORY", "PREEMPTED",
+                "REVOKED", "SPECIAL_EXIT", "TIMEOUT",
+            }
+        ):
+            manifest["gate_state"] = "terminal_failed"
+            manifest["gate_terminal_failure"] = {
+                "verified": True,
+                "role": TARIFF_GATE_ROLE,
+                "job_id": gate_id,
+                "observation": observation,
+                "state": observation.get("state"),
+                "exit_code": observation.get("exit_code"),
+                "source": observation.get("source"),
+            }
+        else:
+            manifest["gate_state"] = "held_release_failed"
         _write_manifest(manifest_path, manifest)
         raise RuntimeError(
-            "submission gate release failed; experiment jobs remain blocked"
-        )
-    manifest["gate_state"] = "released"
+            "submission gate release postcondition is unverified; "
+            "experiment jobs remain dependency-blocked or ambiguous"
+        ) from exc
+    manifest["gate_release_verification"] = verification
+    _write_manifest(manifest_path, manifest)
+    manifest["gate_state"] = "released_verified"
+    manifest["submitted"] = True
+    observation = verification["observation"]
+    if (
+        observation.get("state") == "COMPLETED"
+        and observation.get("exit_code") == "0:0"
+    ):
+        manifest["gate_terminal_verification"] = {
+            "verified": True,
+            "role": TARIFF_GATE_ROLE,
+            "job_id": gate_id,
+            "observation": observation,
+        }
+        manifest["gate_state"] = "completed_verified"
     _write_manifest(manifest_path, manifest)
     return manifest
 
