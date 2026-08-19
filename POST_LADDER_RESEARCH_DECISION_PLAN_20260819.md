@@ -90,11 +90,11 @@ k5-r1 instance SHA-256
 and k40-r2 instance SHA-256
 `3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd`.
 No tracked evidence artifact is modified to add a new hash field.
-Solver-local row indices differ by instance, so they must not be compared:
-the failed transition is local `46->53` in k5-r1 and `447->504` in k40-r2;
-both are the ordered-trip transition `106->119`.
+Solver-local row indices differ by instance, so they must not be compared.
+The complete ordered sequence is identical across k5-r1 and k40-r2 even
+though their local sequences differ.
 
-The membership artifact establishes:
+The v1 membership artifact establishes:
 
 - `known_partition_continuously_feasible=true`;
 - no primary expanded-grid path;
@@ -106,13 +106,44 @@ The membership artifact establishes:
 - recorded reason
   `no fixed-duty transition 46->53;blocked_through_1kwh_5min`.
 
-The immediate technical reason is exact but limited: after trip 106, the DP
-has no surviving direct or station/charge state that can reach trip 119 while
-meeting its time, floored SOC, reserve, and block-alignment tests. Continuous
-re-realization does have a feasible path. The artifact does **not** identify
-which of SOC flooring, block timing, station reachability, or their interaction
-is the root cause. That is why a transition oracle is required below; this
-plan does not invent a more specific explanation.
+The suffix is a v1 reason-field limitation: v1 retains the primary failure
+reason and only appends `blocked_through_1kwh_5min`; it does not retain the
+failed transition at each adaptive grid.
+
+Post-hoc current-code schema-v2 evidence under
+`analysis/scale_ladder_membership_v2_20260819/` re-derives all 283 duties and
+371 authorized duty/grid outcomes with exact v1 parity. It is diagnostic only,
+was not used by the running `7937c22` ladder, and does not change the tariff
+preflight's immutable v1 hash binding.
+
+The duty-13411 oracle under
+`analysis/duty_13411_grid_transition_oracle_20260819/` records:
+
+| Grid | Failed local transition | Failed ordered transition | Diagnostic cause |
+|---|---|---|---|
+| 15 kWh / 10 min | 46→53 | 106→119 | interaction of block alignment and accumulated SOC flooring |
+| 5 kWh / 10 min | 46→53 | 106→119 | interaction of block alignment and accumulated SOC flooring |
+| 2.5 kWh / 10 min | 53→59 | 119→132 | accumulated SOC flooring |
+| 1 kWh / 10 min | 53→59 | 119→132 | accumulated SOC flooring |
+| 1 kWh / 5 min | 73→77 | 158→167 | accumulated SOC flooring |
+
+At 1-kWh/5-minute, production flooring leaves 7.0 kWh before a successor
+requiring 42.5 kWh; continuous timing with the same flooring reaches only
+27.0 kWh, while the validated continuous whole-duty state has 42.502 kWh and
+satisfies `42.502 >= 42.5` even without charging. At 2.5/10 and 1/10,
+continuous timing with production flooring similarly remains short
+(`32.5 < 41.7299995` and `34.0 < 41.7299995`), while removing accumulated
+flooring restores a direct witness. At 15/10 and 5/10, both the unavailable
+sub-block charging window and accumulated flooring bind, and either named
+counterfactual relaxation restores a witness.
+
+The production graph is consistent with the independently validated
+continuous whole-duty witness (SciPy/HiGHS, production physical validator,
+terminal SOC about 0.002 kWh). The resulting decision is a deliberate
+named-grid limitation, not a demonstrated production-code or reference-graph
+bug. If exact GIRO-sequence representation is required, an event/continuous-
+SOC model (or separately reviewed state representation) is needed. No such
+production change is authorized here.
 
 The current full Tier-1 GIRO40 runner would abort. It calls
 `optimize_fixed_duty` at exactly 15 kWh/10 minutes for every route and tariff;
@@ -120,6 +151,13 @@ The current full Tier-1 GIRO40 runner would abort. It calls
 returns `feasible=false` (the failure path at lines 195–215). Duty 13411 is
 one such frozen k40 route. The runner does not currently downgrade that cell
 to unavailable or invoke an adaptive grid.
+
+The tariff pilot remains submission-blocked by its v1-bound deterministic
+preflight. Scheduler design caveat, recorded but not fixed here: that preflight
+is currently plan-global, so a future k40 blocker can block main k5/k8
+submission and vice versa. This is safe while both scopes are blocked, but the
+preflight must become scope-specific before either scope is independently
+enabled.
 
 ## What the current LP does and does not certify
 
@@ -363,9 +401,9 @@ Its certificate scope is `target_feasibility_in_named_finite_pool`; it is not a
 global route-space certificate. Run it first on RAW. Run the matching
 KNOWN-PARTITION pool only as a positive-control sanity check.
 
-### 3. Duty 13411 transition/root-cause oracle
+### 3. Duty 13411 transition/root-cause oracle (implemented diagnostic)
 
-Build one immutable diagnostic for ordered-trip transition `106->119`:
+The immutable post-hoc diagnostic now:
 
 1. bind the duty sequence and both k5/k40 local-index maps;
 2. replay the continuous feasible witness and expose arrival time/SOC;
@@ -373,11 +411,11 @@ Build one immutable diagnostic for ordered-trip transition `106->119`:
 4. report every rejection predicate separately: reachability arc, station
    arrival, first/last charge block, power/energy gain, SOC flooring,
    successor energy, and deadline;
-5. compare against an exact continuous-time/continuous-SOC transition model;
-6. emit either a discrete witness or a minimal rejection set with hashes.
+5. compares four explicitly non-certificate timing/flooring counterfactuals;
+6. emits every grid's binding inequality/witness with artifact hashes.
 
-This oracle must diagnose one transition. It must not launch another scale
-sweep or silently change campaign physics.
+It diagnoses each grid-specific first failure independently. It does not
+launch another scale sweep or change campaign physics.
 
 ## Matched algorithm benchmark and frontier replication
 
@@ -430,8 +468,8 @@ change its route space.
    this is mandatory before any Goal-1 minimum-fleet LP claim.
 5. Run target-constrained finite-pool feasibility only where RAW cannot
    distinguish pool composition from branch-and-bound search.
-6. Run the duty-13411 transition oracle once. Any broader grid change requires
-   a separate reviewed scientific design.
+6. Use the completed duty-13411 transition oracle as post-hoc evidence only.
+   Any broader grid change requires a separate reviewed scientific design.
 7. Never duplicate the reviewed k40 MIPs; ingest them only after exact
    instance/tariff/physics/pool/hash validation.
 8. Run the matched old-heuristic-versus-exact comparison and the 240-kWh/
