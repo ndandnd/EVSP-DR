@@ -52,7 +52,7 @@ def _arc_groups(problem):
                 groups[kind][successor] = arc
             elif kind in {"trip_depot", "station_depot"}:
                 groups[kind][source] = arc
-            else:
+            elif kind in {"trip_trip", "trip_station", "station_trip"}:
                 groups[kind].setdefault(source, {})[successor] = arc
     return groups
 
@@ -101,6 +101,7 @@ def optimize_fixed_duty(
     tariff_id=None,
     tariff_sha256=None,
     instance_sha256=None,
+    allow_diagnostic_grid=False,
 ):
     started = time.perf_counter()
     trips = tuple(int(trip) for trip in trip_sequence)
@@ -110,12 +111,21 @@ def optimize_fixed_duty(
         or any(trip not in set(problem.trips) for trip in trips)
     ):
         raise ValueError("fixed duty has invalid or foreign trips")
-    if (
-        (float(g_kwh), float(charge_kw), float(reserve_kwh),
-         float(soc_step), int(block_min))
-        != (300.0, 300.0, 0.0, 15.0, 10)
+    physics_tuple = (
+        float(g_kwh), float(charge_kw), float(reserve_kwh),
+        float(soc_step), int(block_min),
+    )
+    if not allow_diagnostic_grid and physics_tuple != (
+        300.0, 300.0, 0.0, 15.0, 10
     ):
         raise ValueError("fixed-duty pilot physics differ")
+    if allow_diagnostic_grid and (
+        physics_tuple[:3] != (300.0, 300.0, 0.0)
+        or float(soc_step) not in {15.0, 5.0, 2.5, 1.0}
+        or int(block_min) not in {10, 5}
+        or (int(block_min) == 5 and float(soc_step) != 1.0)
+    ):
+        raise ValueError("unsupported fixed-duty diagnostic grid")
     g_kwh = float(g_kwh)
     charge_kw = float(charge_kw)
     reserve_kwh = float(reserve_kwh)

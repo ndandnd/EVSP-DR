@@ -128,6 +128,24 @@ def validated_fixed_duty_seed_records(
         )
     ):
         raise ValueError("fixed-duty seed identity/physics/tariff mismatch")
+    validation_prices = deepcopy(station_prices)
+    required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
+    if any(
+        required_hour not in curve
+        for curve in validation_prices.values()
+    ):
+        if tariff.get("coverage_policy") != (
+            "historical_last_hour_extension_verified_constant"
+        ):
+            raise ValueError("fixed-duty seed tariff coverage is incomplete")
+        for curve in validation_prices.values():
+            if not curve or len(set(curve.values())) != 1:
+                raise ValueError(
+                    "fixed-duty seed tariff extension is not constant"
+                )
+            last = curve[max(curve)]
+            for hour in range(required_hour + 1):
+                curve.setdefault(hour, last)
     trip_set = set(problem.trips)
     counts = Counter()
     accepted = []
@@ -165,7 +183,7 @@ def validated_fixed_duty_seed_records(
         validation = validate_continuous_charging_blocks(
             route,
             blocks,
-            station_prices=station_prices,
+            station_prices=validation_prices,
             charge_kw=charge_kw,
             expected_continuous_cost=route.get(
                 "continuous_realized_cost"
@@ -174,7 +192,7 @@ def validated_fixed_duty_seed_records(
         costs = realized_costs(
             route,
             physical,
-            station_prices=station_prices,
+            station_prices=validation_prices,
         )
         certificate = certificate_by_duty.get(route.get("duty_id"))
         certificate_payload = (
@@ -188,7 +206,7 @@ def validated_fixed_duty_seed_records(
         recomputed = optimize_fixed_duty(
             problem,
             trips,
-            station_prices,
+            validation_prices,
             g_kwh=g_kwh,
             charge_kw=charge_kw,
             reserve_kwh=reserve_kwh,
@@ -2390,6 +2408,24 @@ def run_cg(args) -> dict:
         final_lp_source = final_lp_detail.get("source", "last_good_iterate")
         final_lp_detail["source"] = final_lp_source
 
+    _freeze_crossed_snapshots()
+    snapshot_availability = {}
+    if args.out:
+        final_snapshot_stem = Path(str(args.out).replace(".json", ""))
+        for mark in requested_snapshot_marks:
+            snapshot = Path(
+                f"{final_snapshot_stem}.m{int(mark)}.snapshot.json"
+            )
+            journal_path_for_snapshot = Path(
+                str(snapshot) + ".columns.jsonl"
+            )
+            snapshot_availability[str(int(mark))] = (
+                "available"
+                if snapshot.is_file() and journal_path_for_snapshot.is_file()
+                else "censored_solver_terminated_before_mark"
+                if mark in snapshot_marks
+                else "missed_in_prior_allocation"
+            )
     if iters_csv:
         iters_csv.close()
     if journal:
@@ -2427,6 +2463,7 @@ def run_cg(args) -> dict:
         "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "termination_signal": termination["signal"],
+        "snapshot_availability": snapshot_availability,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
         "final_lp_source": final_lp_source,

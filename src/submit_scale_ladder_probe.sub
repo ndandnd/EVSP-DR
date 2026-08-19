@@ -1,0 +1,48 @@
+#!/bin/bash
+# Lightweight portable-environment infrastructure probe.
+
+set -euo pipefail
+
+[[ "$#" -eq 9 ]] || {
+  echo "usage: probe PLAN PLAN_SHA PROBE_ID PYTHON PY_SHA ROOT HOME OUT WORKER_SHA" >&2
+  exit 2
+}
+PLAN=$1
+PLAN_SHA=$2
+PROBE_ID=$3
+PYTHON=$4
+PYTHON_SHA=$5
+ROOT=$6
+export HOME=$7
+OUT=$8
+WORKER_SHA=$9
+export PATH=/usr/local/bin:/usr/bin:/bin
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH || true
+export PYTHONNOUSERSITE=1
+export PYTHONDONTWRITEBYTECODE=1
+
+[[ "$PYTHON" == /* && -x "$PYTHON" ]] || exit 2
+[[ "$(sha256sum "$0" | awk '{print $1}')" == "$WORKER_SHA" ]] || exit 2
+[[ "$(sha256sum "$PYTHON" | awk '{print $1}')" == "$PYTHON_SHA" ]] || exit 2
+[[ "$(sha256sum "$PLAN" | awk '{print $1}')" == "$PLAN_SHA" ]] || exit 2
+[[ "$ROOT" == /* && -d "$ROOT/.git" ]] || exit 2
+EXPECTED_COMMIT=$(
+  "$PYTHON" -I -B - "$PLAN" <<'PY'
+import json,sys
+print(json.load(open(sys.argv[1]))["checkout_identity"]["commit"])
+PY
+)
+[[ "$(git -C "$ROOT" rev-parse HEAD)" == "$EXPECTED_COMMIT" ]] || exit 2
+while IFS=$'\t' read -r RELATIVE EXPECTED; do
+  [[ "$(sha256sum "$ROOT/$RELATIVE" | awk '{print $1}')" == "$EXPECTED" ]] \
+    || exit 2
+done < <("$PYTHON" -I -B - "$PLAN" <<'PY'
+import json,sys
+for path,digest in sorted(json.load(open(sys.argv[1]))["code_hashes"].items()):
+    print(f"{path}\t{digest}")
+PY
+)
+
+"$PYTHON" -I -B "$ROOT/src/run_scale_ladder_environment_probe.py" \
+  --plan "$PLAN" --plan-sha256 "$PLAN_SHA" \
+  --probe-id "$PROBE_ID" --out "$OUT"

@@ -28,7 +28,10 @@ from tariff_response_core import (
     tariff_prices,
 )
 from make_giro_seed_routes import _minutes, _station_node
-from tariff_response_environment import identity as environment_identity
+from tariff_response_environment import (
+    compare_portable,
+    identity as environment_identity,
+)
 
 
 def _trip_blocks(problem, trips):
@@ -284,7 +287,10 @@ def assemble(campaign_root, output_manifest, evidence_output):
         != plan["checkout_identity"]["commit"]
         or sha256_file(Path(__file__).resolve())
         != plan["code_sha256"]["src/assemble_tariff_response_campaign.py"]
-        or environment_identity() != plan.get("environment_identity")
+        or bool(compare_portable(
+            plan.get("environment_identity") or {},
+            environment_identity(),
+        ))
     ):
         raise ValueError("assembler commit/code/environment differs from plan")
     schedule_dir = output_manifest.parent / "normalized_schedules"
