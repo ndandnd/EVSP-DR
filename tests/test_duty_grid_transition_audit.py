@@ -17,6 +17,7 @@ from audit_fixed_duty_grid_transitions import (  # noqa: E402
     _classify_counterfactuals,
     audit_duty,
     evaluate_counterfactual_transition,
+    no_floor_prefix_soc_after_trip,
     publish as publish_oracle,
     validate as validate_oracle,
 )
@@ -394,6 +395,41 @@ class DutyGridTransitionAuditTests(unittest.TestCase):
             candidate["action"].get("station") == extra_station
             for candidate in extra_candidates
         ))
+
+    def test_no_floor_prefix_replay_orders_charge_between_deadheads(self):
+        station = STATIONS[0]
+        problem = SimpleNamespace(
+            trip_energy={0: 5.0, 1: 0.0},
+            adjacency={
+                0: [(station, 0.0, 0.0, "trip_station")],
+                station: [(1, 0.0, 10.0, "station_trip")],
+            },
+        )
+        frontier = {
+            "position": 1,
+            "actions": [
+                {
+                    "kind": "source",
+                    "deadhead_kwh": 0.0,
+                },
+                {
+                    "kind": "charge",
+                    "from_trip": 0,
+                    "next_trip": 1,
+                    "station": station,
+                    "expanded_grid_kwh": 20.0,
+                    "deadhead_kwh": 10.0,
+                },
+            ],
+        }
+        # 300 - trip 0 (5) - inbound (0) + charge clipped at 300
+        # - outbound (10) - trip 1 (0) = 290.
+        self.assertAlmostEqual(
+            no_floor_prefix_soc_after_trip(
+                problem, [0, 1], frontier
+            ),
+            290.0,
+        )
 
     def test_oracle_no_clobber_and_tamper_rejection(self):
         with tempfile.TemporaryDirectory() as tmp:

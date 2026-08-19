@@ -578,15 +578,31 @@ def no_floor_prefix_soc_after_trip(
     if source.get("kind") != "source":
         raise ValueError("frontier prefix lacks source action")
     soc = PHYSICS["g_kwh"] - float(source["deadhead_kwh"])
+    arcs = _arc_groups(problem)
     for index in range(position):
         soc -= float(problem.trip_energy[trip_sequence[index]])
         action = actions[index + 1]
-        soc -= float(action.get("deadhead_kwh", 0.0))
         if action.get("kind") == "charge":
+            station = action["station"]
+            next_trip = trip_sequence[index + 1]
+            inbound = arcs["trip_station"].get(
+                trip_sequence[index], {}
+            ).get(station)
+            outbound = arcs["station_trip"].get(
+                station, {}
+            ).get(next_trip)
+            if inbound is None or outbound is None:
+                raise ValueError(
+                    "frontier charge action lacks production station arcs"
+                )
+            soc -= float(inbound.deadhead_kwh)
             soc = min(
                 PHYSICS["g_kwh"],
                 soc + float(action["expanded_grid_kwh"]),
             )
+            soc -= float(outbound.deadhead_kwh)
+        else:
+            soc -= float(action.get("deadhead_kwh", 0.0))
     soc -= float(problem.trip_energy[trip_sequence[position]])
     return soc
 
