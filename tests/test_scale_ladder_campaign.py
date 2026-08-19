@@ -146,6 +146,75 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertNotEqual(completed.returncode, 0)
             runner.assert_not_called()
 
+    def test_probe_result_binds_job_partition_and_artifact_hash(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = {}
+            for partition, probe_id, job_id in (
+                ("default_partition", "default", "101"),
+                ("scaglione", "scaglione", "102"),
+            ):
+                output = root / f"{partition}.json"
+                payload = {
+                    "compatible": True,
+                    "plan_sha256": "p" * 64,
+                    "probe_id": probe_id,
+                    "slurm_job_id": job_id,
+                    "slurm_partition": partition,
+                    "differences": [],
+                    "observed_node_metadata": {},
+                }
+                output.write_text(json.dumps(payload))
+                Path(str(output) + ".sha256").write_text(
+                    f"{sha256_file(output)}  {output.name}\n"
+                )
+                specs[partition] = {
+                    "job_id": job_id,
+                    "output": str(output),
+                    "probe_id": probe_id,
+                    "partition": partition,
+                }
+            with patch.object(
+                ladder.subprocess,
+                "run",
+                side_effect=lambda command, **_kwargs: SimpleNamespace(
+                    returncode=0,
+                    stdout=f"{command[command.index('-j')+1]}|COMPLETED|\n",
+                    stderr="",
+                ),
+            ):
+                results = ladder._wait_for_probes(
+                    {"sacct": {"path": "/approved/sacct"}},
+                    "p" * 64,
+                    specs,
+                    timeout_s=1,
+                )
+            self.assertTrue(ladder._probes_compatible(results))
+            bad = json.loads(
+                Path(specs["scaglione"]["output"]).read_text()
+            )
+            bad["slurm_partition"] = "default_partition"
+            Path(specs["scaglione"]["output"]).write_text(json.dumps(bad))
+            Path(specs["scaglione"]["output"] + ".sha256").write_text(
+                f"{sha256_file(Path(specs['scaglione']['output']))}  scaglione.json\n"
+            )
+            with patch.object(
+                ladder.subprocess,
+                "run",
+                side_effect=lambda command, **_kwargs: SimpleNamespace(
+                    returncode=0,
+                    stdout=f"{command[command.index('-j')+1]}|COMPLETED|\n",
+                    stderr="",
+                ),
+            ):
+                results = ladder._wait_for_probes(
+                    {"sacct": {"path": "/approved/sacct"}},
+                    "p" * 64,
+                    specs,
+                    timeout_s=1,
+                )
+            self.assertFalse(ladder._probes_compatible(results))
+
     def test_atomic_summary_publication_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

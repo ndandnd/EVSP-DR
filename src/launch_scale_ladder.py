@@ -742,6 +742,12 @@ def submit(plan, plan_sha):
                     partition, root, logs,
                 ),
                 "output": str(root / "probes" / f"{partition}.json"),
+                "probe_id": (
+                    "default"
+                    if partition == "default_partition"
+                    else "scaglione"
+                ),
+                "partition": partition,
             }
             manifest["infrastructure_probes"] = dict(probe_specs)
             manifest["probe_state"] = "submitting"
@@ -845,6 +851,8 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
             "compatible": False,
             "artifact_sha256": None,
             "differences": [],
+            "probe_id": spec.get("probe_id"),
+            "partition": spec.get("partition"),
         }
         if path.is_file():
             payload = json.loads(path.read_text())
@@ -859,6 +867,12 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
                 "compatible": (
                     payload.get("compatible") is True
                     and payload.get("plan_sha256") == plan_sha
+                    and payload.get("probe_id") == spec.get("probe_id")
+                    and str(payload.get("slurm_job_id"))
+                    == str(spec["job_id"])
+                    and payload.get("slurm_partition")
+                    == spec.get("partition")
+                    and path.name == f"{probe_id}.json"
                     and digest == sidecar_digest
                     and result["state"] == "COMPLETED"
                 ),

@@ -19,6 +19,29 @@ from launch_scale_ladder import (
 )
 
 
+def _require_gate_held(plan, gate):
+    scontrol = plan.get("scontrol") or {}
+    path = Path(str(scontrol.get("path") or ""))
+    if (
+        scontrol.get("available") is not True
+        or not path.is_file()
+        or hashlib.sha256(path.read_bytes()).hexdigest()
+        != scontrol.get("sha256")
+    ):
+        raise ValueError("approved scontrol unavailable/changed")
+    shown = subprocess.run(
+        [str(path), "show", "job", str(gate), "-o"],
+        text=True, capture_output=True, check=False,
+    )
+    if (
+        shown.returncode != 0
+        or "JobState=PENDING" not in shown.stdout
+        or "Reason=JobHeldUser" not in shown.stdout
+    ):
+        raise ValueError("gate is not proven held by the user")
+    return path
+
+
 def reconcile(
     root, expected_plan_sha, *,
     release_held_gate=False,
@@ -32,37 +55,6 @@ def reconcile(
     plan = json.loads(plan_raw)
     sacct = plan.get("sacct") or {}
     sacct_path = Path(str(sacct.get("path") or ""))
-    probe_specs = manifest.get("infrastructure_probes") or {}
-    for partition in ("default_partition", "scaglione"):
-        if partition in probe_specs:
-            continue
-        probe_specs[partition] = {
-            "job_id": _submit_probe(
-                plan,
-                root / "approved-plan.json",
-                expected_plan_sha,
-                partition,
-                root,
-                root / "logs",
-            ),
-            "output": str(root / "probes" / f"{partition}.json"),
-        }
-        manifest["infrastructure_probes"] = dict(probe_specs)
-        manifest["probe_state"] = "submitting"
-        _replace_json(manifest_path, manifest)
-    probe_results = _wait_for_probes(
-        plan, expected_plan_sha, probe_specs, timeout_s=120
-    )
-    manifest["probe_results"] = probe_results
-    if not _probes_compatible(probe_results):
-        manifest["probe_state"] = "failed_gate_retained"
-        manifest["gate_state"] = "held_probe_failure"
-        _replace_json(manifest_path, manifest)
-        raise ValueError(
-            "infrastructure probes are not both compatible; gate retained"
-        )
-    manifest["probe_state"] = "passed"
-    _replace_json(manifest_path, manifest)
     if (
         sacct.get("available") is not True
         or not sacct_path.is_file()
@@ -234,26 +226,55 @@ def reconcile(
         for line in completed.stdout.splitlines()
         if len(fields := line.split("|")) >= 2
     }
-    if states.get(gate) == "PENDING" and release_held_gate:
-        scontrol = plan.get("scontrol") or {}
-        scontrol_path = Path(str(scontrol.get("path") or ""))
-        if (
-            scontrol.get("available") is not True
-            or not scontrol_path.is_file()
-            or hashlib.sha256(scontrol_path.read_bytes()).hexdigest()
-            != scontrol.get("sha256")
-        ):
-            raise ValueError("approved scontrol unavailable/changed")
-        shown = subprocess.run(
-            [str(scontrol_path), "show", "job", gate, "-o"],
-            text=True, capture_output=True, check=False,
+    probe_specs = manifest.get("infrastructure_probes") or {}
+    missing_probes = [
+        partition for partition in ("default_partition", "scaglione")
+        if partition not in probe_specs
+    ]
+    if missing_probes:
+        if states.get(gate) != "PENDING":
+            raise ValueError(
+                "missing probes cannot be submitted after gate release"
+            )
+        _require_gate_held(plan, gate)
+        for partition in missing_probes:
+            probe_specs[partition] = {
+                "job_id": _submit_probe(
+                    plan,
+                    root / "approved-plan.json",
+                    expected_plan_sha,
+                    partition,
+                    root,
+                    root / "logs",
+                ),
+                "output": str(
+                    root / "probes" / f"{partition}.json"
+                ),
+                "probe_id": (
+                    "default"
+                    if partition == "default_partition"
+                    else "scaglione"
+                ),
+                "partition": partition,
+            }
+            manifest["infrastructure_probes"] = dict(probe_specs)
+            manifest["probe_state"] = "submitting"
+            _replace_json(manifest_path, manifest)
+    probe_results = _wait_for_probes(
+        plan, expected_plan_sha, probe_specs, timeout_s=120
+    )
+    manifest["probe_results"] = probe_results
+    if not _probes_compatible(probe_results):
+        manifest["probe_state"] = "failed_gate_retained"
+        manifest["gate_state"] = "held_probe_failure"
+        _replace_json(manifest_path, manifest)
+        raise ValueError(
+            "infrastructure probes are not both compatible; gate retained"
         )
-        if (
-            shown.returncode != 0
-            or "JobState=PENDING" not in shown.stdout
-            or "Reason=JobHeldUser" not in shown.stdout
-        ):
-            raise ValueError("gate is not proven held by the user")
+    manifest["probe_state"] = "passed"
+    _replace_json(manifest_path, manifest)
+    if states.get(gate) == "PENDING" and release_held_gate:
+        scontrol_path = _require_gate_held(plan, gate)
         manifest["gate_state"] = "release_retry_attempting"
         _replace_json(manifest_path, manifest)
         released = subprocess.run(
