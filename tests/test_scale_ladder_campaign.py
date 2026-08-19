@@ -46,8 +46,13 @@ from run_scale_ladder_local_diagnostics import (  # noqa: E402
     LOCAL_CODE_PATHS,
 )
 from reconcile_scale_ladder_gate import (  # noqa: E402
+    _dependency_semantics,
+    _discover_intended_science_jobs,
+    _discover_held_science_jobs,
     _discover_probe_job,
     _hard_probe_mismatch,
+    _resolve_gate_state,
+    _reconcile_locked,
     reconcile as reconcile_gate,
 )
 
@@ -109,6 +114,157 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "kernel_release": "login-kernel",
             },
         }
+
+    def _write_activation_campaign(self, root, *, activation_job="303"):
+        root = Path(root)
+        root.mkdir(parents=True, exist_ok=True)
+        plan = {
+            "campaign_root": str(root),
+            "submission_protocol": "probe_first_activation_v1",
+        }
+        raw = ladder.canonical(plan)
+        plan_sha = hashlib.sha256(raw).hexdigest()
+        (root / "approved-plan.json").write_bytes(raw)
+        specs = {
+            partition: ladder._probe_spec(
+                plan_sha, partition, root, attempt=1
+            )
+            for partition in ladder.PROBE_PARTITIONS
+        }
+        specs["default_partition"]["job_id"] = "301"
+        specs["scaglione"]["job_id"] = "302"
+        activation = ladder._activation_spec(
+            plan_sha, root, specs, attempt=1
+        )
+        activation["job_id"] = activation_job
+        manifest = {
+            **plan,
+            "approval_sha256": plan_sha,
+            "submitted": False,
+            "submission_state": "activation_released",
+            "probe_state": "submitted",
+            "reservation_state": "not_created",
+            "reservations": [],
+            "gate_state": "not_created",
+            "gate_job_id": None,
+            "submitted_arrays": {},
+            "infrastructure_probes": specs,
+            "activation": activation,
+        }
+        (root / "campaign.json").write_text(json.dumps(manifest))
+        return plan, plan_sha, specs, activation, manifest
+
+    def _probe_result(
+        self, spec, *, compatible, state, resolution,
+        differences=None,
+    ):
+        return {
+            "job_id": spec["job_id"],
+            "state": state,
+            "state_resolution": resolution,
+            "output": spec["output"],
+            "compatible": compatible,
+            "probe_id": spec["probe_id"],
+            "partition": spec["partition"],
+            "attempt": spec["attempt"],
+            "comment": spec["comment"],
+            "job_name": spec["job_name"],
+            "path_bound": True,
+            "differences": list(differences or []),
+        }
+
+    def _write_pre_gate_retry_campaign(self, root):
+        root = Path(root)
+        root.mkdir(parents=True, exist_ok=True)
+        plan = {
+            "campaign_root": str(root),
+            "submission_protocol": "probe_first_activation_v1",
+        }
+        raw = ladder.canonical(plan)
+        plan_sha = hashlib.sha256(raw).hexdigest()
+        (root / "approved-plan.json").write_bytes(raw)
+        specs = {
+            partition: ladder._probe_spec(
+                plan_sha, partition, root, attempt=1
+            )
+            for partition in ladder.PROBE_PARTITIONS
+        }
+        specs["default_partition"].update({
+            "job_id": "101", "released": True,
+        })
+        specs["scaglione"].update({
+            "job_id": "102", "released": True,
+        })
+        activation = ladder._activation_spec(
+            plan_sha, root, specs, attempt=1,
+            dependency_job_ids=["101", "102"],
+        )
+        activation.update({"job_id": "103", "released": True})
+        results = {
+            "default_partition": self._probe_result(
+                specs["default_partition"], compatible=True,
+                state="COMPLETED", resolution="accounting_terminal",
+            ),
+            "scaglione": self._probe_result(
+                specs["scaglione"], compatible=False,
+                state="PREEMPTED", resolution="scheduler_failure",
+            ),
+        }
+        manifest = {
+            **plan,
+            "approval_sha256": plan_sha,
+            "submitted": False,
+            "submission_state": "probe_failed",
+            "probe_state": "failed",
+            "probe_results": results,
+            "reservation_state": "not_created",
+            "reservations": [],
+            "gate_state": "not_created",
+            "gate_job_id": None,
+            "submitted_arrays": {},
+            "infrastructure_probes": specs,
+            "activation": activation,
+        }
+        (root / "campaign.json").write_text(json.dumps(manifest))
+        return plan, plan_sha, specs, activation, results
+
+    def _held_science_fixture(self, root, *, preflight_tasks=3):
+        root = Path(root)
+        root.mkdir(parents=True, exist_ok=True)
+        tools = {}
+        for name in ("squeue", "scontrol", "sacct"):
+            path = root / name
+            path.write_text(name)
+            tools[name] = {
+                "available": True,
+                "path": str(path),
+                "sha256": sha256_file(path),
+            }
+        groups = (
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        )
+        plan = {
+            "campaign_root": str(root),
+            "runtime_environment": {"USER": "nc437"},
+            "task_groups": {
+                group: [
+                    f"{group.lower()}_{index}"
+                    for index in range(
+                        preflight_tasks if group == "PREFLIGHT" else 1
+                    )
+                ]
+                for group in groups
+            },
+            **tools,
+        }
+        raw = ladder.canonical(plan)
+        plan_sha = hashlib.sha256(raw).hexdigest()
+        manifest = {
+            "gate_job_id": "100",
+            "submitted_arrays": {"PREFLIGHT": "401"},
+        }
+        return plan, plan_sha, manifest, tools
 
     def test_portable_environment_ignores_node_metadata(self):
         planned = self._portable_identity()
@@ -291,6 +447,1494 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         ):
             observed = ladder._environment(Path(sys.executable).resolve())
         self.assertEqual(observed["portable"]["python"], "3.12.3")
+
+    def test_top_level_submit_is_probe_first_and_restart_safe(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan = {
+                "campaign_root": str(root),
+                "submission_protocol": "probe_first_activation_v1",
+            }
+            plan_sha = hashlib.sha256(ladder.canonical(plan)).hexdigest()
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+
+            def release_probe(_plan, spec):
+                current = json.loads((root / "campaign.json").read_text())
+                recorded = current["infrastructure_probes"][
+                    spec["partition"]
+                ]
+                self.assertEqual(recorded["job_id"], spec["job_id"])
+                self.assertEqual(current["activation"]["job_id"], "103")
+                return released
+
+            def release_activation(_plan, spec):
+                current = json.loads((root / "campaign.json").read_text())
+                self.assertEqual(
+                    current["activation"]["job_id"], spec["job_id"]
+                )
+                return released
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value=None
+            ), patch.object(
+                ladder, "_submit_probe", side_effect=["101", "102"]
+            ) as submit_probe, patch.object(
+                ladder, "_release_held_probe", side_effect=release_probe
+            ) as release_probe, patch.object(
+                ladder, "_discover_bound_job", return_value=None
+            ), patch.object(
+                ladder, "_submit_activation", return_value="103"
+            ) as submit_activation, patch.object(
+                ladder, "_release_held_activation",
+                side_effect=release_activation,
+            ) as release_activation, patch.object(
+                ladder, "_stage_scientific_inputs"
+            ) as stage_inputs, patch.object(
+                ladder, "_ensure_reservations"
+            ) as reserve, patch.object(
+                ladder, "_submit_array"
+            ) as submit_array:
+                first = ladder.submit(plan, plan_sha)
+                with patch.object(
+                    ladder, "_resolve_bound_job",
+                    return_value={"state": "PENDING", "live": True},
+                ):
+                    second = ladder.submit(plan, plan_sha)
+            self.assertEqual(submit_probe.call_count, 2)
+            self.assertTrue(all(
+                call.kwargs == {"held": True}
+                for call in submit_probe.call_args_list
+            ))
+            self.assertEqual(release_probe.call_count, 2)
+            submit_activation.assert_called_once()
+            release_activation.assert_called_once()
+            stage_inputs.assert_not_called()
+            reserve.assert_not_called()
+            submit_array.assert_not_called()
+            self.assertEqual(first["reservations"], [])
+            self.assertEqual(first["submitted_arrays"], {})
+            self.assertIsNone(first["gate_job_id"])
+            self.assertEqual(first["gate_state"], "not_created")
+            self.assertTrue(first["activation"]["released"])
+            self.assertEqual(second["activation"]["job_id"], "103")
+            self.assertFalse((root / "input").exists())
+
+    def test_top_level_recovers_probe_accepted_before_id_publication(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan = {
+                "campaign_root": str(root),
+                "submission_protocol": "probe_first_activation_v1",
+            }
+            plan_sha = hashlib.sha256(ladder.canonical(plan)).hexdigest()
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value=None
+            ), patch.object(
+                ladder, "_submit_probe",
+                side_effect=RuntimeError("sbatch outcome ambiguous"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                    ladder.submit(plan, plan_sha)
+            recorded = json.loads((root / "campaign.json").read_text())
+            self.assertIsNone(
+                recorded["infrastructure_probes"]
+                ["default_partition"]["job_id"]
+            )
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_recover_probe_job_id",
+                side_effect=["501", "502"],
+            ) as recover, patch.object(
+                ladder, "_submit_probe"
+            ) as submit_probe, patch.object(
+                ladder, "_release_held_probe", return_value=released
+            ), patch.object(
+                ladder, "_discover_bound_job", return_value=None
+            ), patch.object(
+                ladder, "_submit_activation", return_value="503"
+            ), patch.object(
+                ladder, "_release_held_activation", return_value=released
+            ):
+                resumed = ladder.submit(plan, plan_sha)
+            self.assertEqual(recover.call_count, 2)
+            submit_probe.assert_not_called()
+            self.assertEqual(
+                resumed["infrastructure_probes"]["default_partition"]
+                ["job_id"],
+                "501",
+            )
+            self.assertEqual(
+                resumed["infrastructure_probes"]["scaglione"]["job_id"],
+                "502",
+            )
+
+    def test_top_level_recovers_activation_accepted_before_id_publication(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan = {
+                "campaign_root": str(root),
+                "submission_protocol": "probe_first_activation_v1",
+            }
+            plan_sha = hashlib.sha256(ladder.canonical(plan)).hexdigest()
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value=None
+            ), patch.object(
+                ladder, "_submit_probe", side_effect=["601", "602"]
+            ), patch.object(
+                ladder, "_release_held_probe", return_value=released
+            ) as premature_release, patch.object(
+                ladder, "_discover_bound_job", return_value=None
+            ), patch.object(
+                ladder, "_submit_activation",
+                side_effect=RuntimeError("sbatch outcome ambiguous"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                    ladder.submit(plan, plan_sha)
+            premature_release.assert_not_called()
+            recorded = json.loads((root / "campaign.json").read_text())
+            self.assertIsNone(recorded["activation"]["job_id"])
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_discover_bound_job", return_value="603"
+            ) as discover, patch.object(
+                ladder, "_submit_activation"
+            ) as submit_activation, patch.object(
+                ladder, "_release_held_probe", return_value=released
+            ) as release_probe, patch.object(
+                ladder, "_release_held_activation", return_value=released
+            ):
+                resumed = ladder.submit(plan, plan_sha)
+            discover.assert_called_once()
+            submit_activation.assert_not_called()
+            self.assertEqual(release_probe.call_count, 2)
+            self.assertEqual(resumed["activation"]["job_id"], "603")
+            self.assertTrue(resumed["activation"]["released"])
+
+    def test_pre_gate_retry_replaces_only_scheduler_failed_probe(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan, plan_sha, _specs, _activation, results = (
+                self._write_pre_gate_retry_campaign(root)
+            )
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+
+            def resolved(_plan, spec):
+                job_id = str(spec["job_id"])
+                if job_id == "103":
+                    return {"state": "FAILED", "live": False,
+                            "exit_code": "1:0"}
+                if job_id == "101":
+                    return {"state": "COMPLETED", "live": False,
+                            "exit_code": "0:0"}
+                if job_id == "102":
+                    return {"state": "PREEMPTED", "live": False,
+                            "exit_code": "0:15"}
+                raise AssertionError(spec)
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=results
+            ), patch.object(
+                ladder, "_resolve_bound_job", side_effect=resolved
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value=None
+            ), patch.object(
+                ladder, "_submit_probe", return_value="104"
+            ) as submit_probe, patch.object(
+                ladder, "_discover_bound_job", return_value=None
+            ), patch.object(
+                ladder, "_submit_activation", return_value="105"
+            ) as submit_activation, patch.object(
+                ladder, "_release_held_probe", return_value=released
+            ) as release_probe, patch.object(
+                ladder, "_release_held_activation", return_value=released
+            ):
+                observed = ladder.submit(
+                    plan, plan_sha, retry_failed_probes=True
+                )
+
+            submit_probe.assert_called_once()
+            self.assertEqual(
+                submit_probe.call_args.args[3]["partition"], "scaglione"
+            )
+            submit_activation.assert_called_once()
+            self.assertEqual(release_probe.call_count, 1)
+            self.assertEqual(
+                observed["infrastructure_probes"]["default_partition"]
+                ["job_id"],
+                "101",
+            )
+            replacement = observed["infrastructure_probes"]["scaglione"]
+            self.assertEqual(replacement["attempt"], 2)
+            self.assertEqual(replacement["job_id"], "104")
+            self.assertTrue(replacement["released"])
+            self.assertEqual(observed["activation"]["attempt"], 2)
+            self.assertEqual(observed["activation"]["job_id"], "105")
+            self.assertEqual(
+                observed["activation"]["dependency_job_ids"], ["104"]
+            )
+            self.assertEqual(
+                observed["probe_attempt_history"]["scaglione"][0]
+                ["spec"]["job_id"],
+                "102",
+            )
+            self.assertEqual(
+                observed["infrastructure_retry"]["state"], "dispatched"
+            )
+            self.assertEqual(observed["gate_state"], "not_created")
+            self.assertEqual(observed["reservations"], [])
+            self.assertFalse((root / "input").exists())
+
+    def test_pre_gate_probe_retry_refuses_live_or_environment_mismatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "live"
+            plan, plan_sha, _specs, _activation, results = (
+                self._write_pre_gate_retry_campaign(root)
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job",
+                return_value={"state": "PENDING", "live": True},
+            ), patch.object(ladder, "_submit_probe") as submitted:
+                with self.assertRaisesRegex(RuntimeError, "controller is live"):
+                    ladder.submit(
+                        plan, plan_sha, retry_failed_probes=True
+                    )
+            submitted.assert_not_called()
+            unchanged = json.loads((root / "campaign.json").read_text())
+            self.assertEqual(unchanged["activation"]["attempt"], 1)
+            self.assertNotIn("infrastructure_retry", unchanged)
+
+            mismatch_root = Path(tmp) / "mismatch"
+            plan, plan_sha, _specs, _activation, results = (
+                self._write_pre_gate_retry_campaign(mismatch_root)
+            )
+            mismatch = copy.deepcopy(results)
+            mismatch["scaglione"].update({
+                "state_resolution": "environment_mismatch",
+                "differences": [{"field": "portable.numpy"}],
+            })
+
+            def resolved(_plan, spec):
+                if spec["job_id"] == "103":
+                    return {"state": "FAILED", "live": False,
+                            "exit_code": "1:0"}
+                return {"state": "COMPLETED", "live": False,
+                        "exit_code": "0:0"}
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job", side_effect=resolved
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=mismatch
+            ), patch.object(ladder, "_submit_probe") as submitted:
+                with self.assertRaisesRegex(ValueError, "non-retryable"):
+                    ladder.submit(
+                        plan, plan_sha, retry_failed_probes=True
+                    )
+            submitted.assert_not_called()
+            refused = json.loads(
+                (mismatch_root / "campaign.json").read_text()
+            )
+            self.assertNotIn("infrastructure_retry", refused)
+            self.assertEqual(refused["gate_state"], "not_created")
+
+    def test_activation_only_retry_reobserves_when_summary_is_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan, plan_sha, specs, _activation, _results = (
+                self._write_pre_gate_retry_campaign(root)
+            )
+            manifest_path = root / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest.pop("probe_results")
+            manifest_path.write_text(json.dumps(manifest))
+            passed = {
+                partition: self._probe_result(
+                    spec, compatible=True, state="COMPLETED",
+                    resolution="accounting_terminal",
+                )
+                for partition, spec in specs.items()
+            }
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+
+            def resolved(_plan, spec):
+                if spec["job_id"] == "103":
+                    return {"state": "NODE_FAIL", "live": False,
+                            "exit_code": "0:1"}
+                return {"state": "COMPLETED", "live": False,
+                        "exit_code": "0:0"}
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job", side_effect=resolved
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=passed
+            ), patch.object(ladder, "_submit_probe") as submit_probe, \
+                    patch.object(
+                        ladder, "_discover_bound_job", return_value=None
+                    ), \
+                    patch.object(
+                        ladder, "_submit_activation", return_value="106"
+                    ), patch.object(
+                        ladder, "_release_held_activation",
+                        return_value=released,
+                    ):
+                observed = ladder.submit(
+                    plan, plan_sha, retry_failed_activation=True
+                )
+            submit_probe.assert_not_called()
+            self.assertEqual(observed["activation"]["attempt"], 2)
+            self.assertEqual(observed["activation"]["job_id"], "106")
+            self.assertEqual(
+                observed["activation"]["dependency_job_ids"], []
+            )
+            self.assertTrue(
+                ladder._probes_compatible(observed["probe_results"])
+            )
+
+    def test_retry_crash_windows_resume_same_attempt_without_science(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            plan, plan_sha, _specs, _activation, results = (
+                self._write_pre_gate_retry_campaign(root)
+            )
+            # Simulate a probe killed between the no-clobber JSON publication
+            # and its checksum sidecar publication.  Attempt 1 remains
+            # immutable; recovery must use attempt 2.
+            publication_results = copy.deepcopy(results)
+            publication_results["scaglione"].update({
+                "state": "COMPLETED",
+                "state_resolution": "awaiting_artifact",
+                "artifact_status": "awaiting_sidecar",
+                "observer_deadline_reached": True,
+            })
+            original_output = Path(
+                publication_results["scaglione"]["output"]
+            )
+            original_output.parent.mkdir(parents=True, exist_ok=True)
+            original_output.write_text('{"partial_publication": true}\n')
+            manifest_path = root / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["probe_results"] = publication_results
+            manifest_path.write_text(json.dumps(manifest))
+
+            def resolved(_plan, spec):
+                if spec["job_id"] == "103":
+                    return {"state": "FAILED", "live": False,
+                            "exit_code": "1:0"}
+                if spec["job_id"] == "101":
+                    return {"state": "COMPLETED", "live": False,
+                            "exit_code": "0:0"}
+                return {"state": "COMPLETED", "live": False,
+                        "exit_code": "0:0"}
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job", side_effect=resolved
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=publication_results
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value=None
+            ), patch.object(
+                ladder, "_submit_probe",
+                side_effect=RuntimeError("probe sbatch ambiguous"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                    ladder.submit(
+                        plan, plan_sha, retry_failed_probes=True
+                    )
+            first_crash = json.loads((root / "campaign.json").read_text())
+            self.assertEqual(
+                first_crash["infrastructure_retry"]["state"], "authorized"
+            )
+            self.assertEqual(
+                first_crash["infrastructure_probes"]["scaglione"]
+                ["attempt"],
+                2,
+            )
+            self.assertIsNone(
+                first_crash["infrastructure_probes"]["scaglione"]
+                ["job_id"]
+            )
+            self.assertEqual(
+                first_crash["infrastructure_probes"]["scaglione"]
+                ["submission_intent"],
+                "accepted_or_ambiguous",
+            )
+            self.assertTrue(original_output.is_file())
+            self.assertNotEqual(
+                first_crash["infrastructure_probes"]["scaglione"]
+                ["output"],
+                str(original_output),
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ):
+                with self.assertRaisesRegex(RuntimeError, "explicitly authorized"):
+                    ladder.submit(plan, plan_sha)
+
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_recover_probe_job_id", return_value="104"
+            ), patch.object(ladder, "_submit_probe") as submit_probe, \
+                    patch.object(
+                        ladder, "_discover_bound_job", return_value=None
+                    ), \
+                    patch.object(
+                        ladder, "_submit_activation",
+                        side_effect=RuntimeError("activation sbatch ambiguous"),
+                    ):
+                with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                    ladder.submit(
+                        plan, plan_sha, retry_failed_probes=True
+                    )
+            submit_probe.assert_not_called()
+            second_crash = json.loads((root / "campaign.json").read_text())
+            self.assertEqual(second_crash["activation"]["attempt"], 2)
+            self.assertIsNone(second_crash["activation"]["job_id"])
+            self.assertEqual(
+                second_crash["activation"]["submission_intent"],
+                "accepted_or_ambiguous",
+            )
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_discover_bound_job", return_value="105"
+            ), patch.object(ladder, "_submit_activation") as submit_activation, \
+                    patch.object(
+                        ladder, "_release_held_probe", return_value=released
+                    ), patch.object(
+                        ladder, "_release_held_activation",
+                        return_value=released,
+                    ):
+                observed = ladder.submit(
+                    plan, plan_sha, retry_failed_probes=True
+                )
+            submit_activation.assert_not_called()
+            self.assertEqual(observed["activation"]["attempt"], 2)
+            self.assertEqual(observed["activation"]["job_id"], "105")
+            self.assertEqual(
+                len(observed["activation_attempt_history"]), 1
+            )
+            self.assertEqual(
+                observed["infrastructure_retry"]["state"], "dispatched"
+            )
+            self.assertEqual(observed["gate_state"], "not_created")
+
+    def test_dispatched_terminal_controller_advances_once_but_live_refuses(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "terminal"
+            plan, plan_sha, specs, _activation, _results = (
+                self._write_pre_gate_retry_campaign(root)
+            )
+            retry_spec = ladder._probe_spec(
+                plan_sha, "scaglione", root, 2
+            )
+            retry_spec.update({"job_id": "104", "released": True})
+            specs["scaglione"] = retry_spec
+            activation = ladder._activation_spec(
+                plan_sha, root, specs, 2,
+                dependency_job_ids=["104"],
+            )
+            activation.update({"job_id": "105", "released": True})
+            passed = {
+                partition: self._probe_result(
+                    spec, compatible=True, state="COMPLETED",
+                    resolution="accounting_terminal",
+                )
+                for partition, spec in specs.items()
+            }
+            manifest_path = root / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest.update({
+                "infrastructure_probes": specs,
+                "activation": activation,
+                "probe_results": passed,
+                "infrastructure_retry": {
+                    "schema":
+                        "evsp-dr-scale-ladder-infrastructure-retry-v1",
+                    "kind": "failed_probes",
+                    "state": "dispatched",
+                    "target_activation_attempt": 2,
+                    "source_activation_job_id": "103",
+                    "replaced_probe_partitions": ["scaglione"],
+                    "activation_job_id": "105",
+                },
+            })
+            manifest_path.write_text(json.dumps(manifest))
+            released = subprocess.CompletedProcess(
+                args=[], returncode=0, stdout="released", stderr=""
+            )
+
+            def terminal(_plan, spec):
+                if spec["job_id"] == "105":
+                    return {"state": "FAILED", "live": False,
+                            "exit_code": "1:0"}
+                return {"state": "COMPLETED", "live": False,
+                        "exit_code": "0:0"}
+
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job", side_effect=terminal
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=passed
+            ), patch.object(
+                ladder, "_discover_bound_job", return_value=None
+            ), patch.object(
+                ladder, "_submit_activation", return_value="106"
+            ) as submitted, patch.object(
+                ladder, "_release_held_activation", return_value=released
+            ):
+                observed = ladder.submit(
+                    plan, plan_sha, retry_failed_activation=True
+                )
+            submitted.assert_called_once()
+            self.assertEqual(observed["activation"]["attempt"], 3)
+            self.assertEqual(observed["activation"]["job_id"], "106")
+            self.assertEqual(
+                observed["activation"]["dependency_job_ids"], []
+            )
+            self.assertEqual(
+                len(observed["infrastructure_retry_history"]), 1
+            )
+
+            live_root = Path(tmp) / "live"
+            plan, plan_sha, specs, _activation, _results = (
+                self._write_pre_gate_retry_campaign(live_root)
+            )
+            retry_spec = ladder._probe_spec(
+                plan_sha, "scaglione", live_root, 2
+            )
+            retry_spec.update({"job_id": "104", "released": True})
+            specs["scaglione"] = retry_spec
+            activation = ladder._activation_spec(
+                plan_sha, live_root, specs, 2,
+                dependency_job_ids=["104"],
+            )
+            activation.update({"job_id": "105", "released": True})
+            manifest_path = live_root / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest.update({
+                "infrastructure_probes": specs,
+                "activation": activation,
+                "infrastructure_retry": {
+                    "schema":
+                        "evsp-dr-scale-ladder-infrastructure-retry-v1",
+                    "kind": "failed_probes", "state": "dispatched",
+                    "target_activation_attempt": 2,
+                    "source_activation_job_id": "103",
+                    "replaced_probe_partitions": ["scaglione"],
+                    "activation_job_id": "105",
+                },
+            })
+            manifest_path.write_text(json.dumps(manifest))
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.object(
+                ladder, "_resolve_bound_job",
+                return_value={"state": "RUNNING", "live": True},
+            ), patch.object(ladder, "_submit_activation") as submitted:
+                with self.assertRaisesRegex(RuntimeError, "controller is live"):
+                    ladder.submit(
+                        plan, plan_sha, retry_failed_activation=True
+                    )
+            submitted.assert_not_called()
+            unchanged = json.loads(manifest_path.read_text())
+            self.assertEqual(unchanged["activation"]["attempt"], 2)
+            self.assertEqual(
+                unchanged["infrastructure_retry"]["state"], "dispatched"
+            )
+
+    def test_campaign_lock_serializes_instead_of_failing_fast(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(
+            ladder.fcntl, "flock"
+        ) as flock:
+            with ladder._campaign_lock(Path(tmp) / "campaign"):
+                pass
+        self.assertEqual(
+            [call.args[1] for call in flock.call_args_list],
+            [ladder.fcntl.LOCK_EX, ladder.fcntl.LOCK_UN],
+        )
+
+    def test_public_gate_reconciler_uses_the_campaign_lock(self):
+        with tempfile.TemporaryDirectory() as tmp, patch(
+            "reconcile_scale_ladder_gate._campaign_lock"
+        ) as campaign_lock, patch(
+            "reconcile_scale_ladder_gate._reconcile_locked",
+            return_value={"gate_state": "held"},
+        ) as locked_reconcile:
+            observed = reconcile_gate(
+                Path(tmp) / "campaign", "a" * 64,
+                release_held_gate=True,
+            )
+        self.assertEqual(observed["gate_state"], "held")
+        campaign_lock.assert_called_once_with(
+            (Path(tmp) / "campaign").resolve()
+        )
+        locked_reconcile.assert_called_once_with(
+            (Path(tmp) / "campaign").resolve(), "a" * 64,
+            release_held_gate=True,
+            resume_missing_arrays=False,
+            retry_failed_probes=False,
+        )
+
+    def test_activation_controller_is_held_and_uses_afterany(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            probes = {
+                "default_partition": {"job_id": "201"},
+                "scaglione": {"job_id": "202"},
+            }
+            spec = ladder._activation_spec(
+                "a" * 64, root, probes, attempt=1
+            )
+            plan = {
+                "campaign_root": str(root),
+                "python": {"path": "/approved/python", "sha256": "p"},
+                "runtime_environment": {"HOME": "/approved/home"},
+                "activation_worker_sha256": "w",
+            }
+            with patch.object(
+                ladder, "_sbatch", return_value="203"
+            ) as submitted:
+                observed = ladder._submit_activation(
+                    plan, root / "approved-plan.json", "a" * 64,
+                    spec, root / "logs",
+                )
+            self.assertEqual(observed, "203")
+            arguments = submitted.call_args.args[1]
+            self.assertIn("--hold", arguments)
+            self.assertIn("--dependency=afterany:201:202", arguments)
+            self.assertNotIn("--signal=B:USR1@60", arguments)
+            self.assertNotIn("afterok:201:202", arguments)
+
+    def test_top_level_probe_submission_is_held_but_retry_is_not(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            spec = ladder._probe_spec(
+                "d" * 64, "default_partition", root, 1
+            )
+            plan = {
+                "campaign_root": str(root),
+                "python": {"path": "/approved/python", "sha256": "p"},
+                "runtime_environment": {"HOME": "/approved/home"},
+                "probe_worker_sha256": "w",
+            }
+            with patch.object(
+                ladder, "_sbatch", side_effect=["701", "702"]
+            ) as submitted:
+                ladder._submit_probe(
+                    plan, root / "approved-plan.json", "d" * 64,
+                    spec, root / "logs", held=True,
+                )
+                ladder._submit_probe(
+                    plan, root / "approved-plan.json", "d" * 64,
+                    spec, root / "logs",
+                )
+            held_arguments = submitted.call_args_list[0].args[1]
+            retry_arguments = submitted.call_args_list[1].args[1]
+            self.assertEqual(held_arguments[0], "--hold")
+            self.assertNotIn("--hold", retry_arguments)
+
+    def test_release_recovers_exact_terminal_job_from_accounting(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = ladder._probe_spec(
+                "e" * 64, "default_partition", Path(tmp), 1
+            )
+            spec["job_id"] = "801"
+            plan = {
+                "squeue": {"path": "/approved/squeue"},
+                "scontrol": {"path": "/approved/scontrol"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+            }
+
+            def fake_run(command, **_kwargs):
+                if command[0] == "/approved/squeue":
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                if command[0] == "/approved/scontrol":
+                    return SimpleNamespace(
+                        returncode=1, stdout="", stderr="Invalid job id"
+                    )
+                if command[0] == "/approved/sacct":
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout="|".join([
+                            "801", spec["job_name"], "COMPLETED",
+                            spec["partition"], spec["comment"], "0:0",
+                        ]) + "\n",
+                        stderr="",
+                    )
+                raise AssertionError(command)
+
+            with patch.object(
+                ladder.subprocess, "run", side_effect=fake_run
+            ):
+                observed = ladder._release_held_probe(plan, spec)
+            self.assertEqual(observed.returncode, 0)
+
+            def mismatched_run(command, **_kwargs):
+                if command[0] == "/approved/squeue":
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                if command[0] == "/approved/scontrol":
+                    return SimpleNamespace(
+                        returncode=1, stdout="", stderr="Invalid job id"
+                    )
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout="|".join([
+                        "801", spec["job_name"], "COMPLETED",
+                        "wrong_partition", spec["comment"], "0:0",
+                    ]) + "\n",
+                    stderr="",
+                )
+
+            with patch.object(
+                ladder.subprocess, "run", side_effect=mismatched_run
+            ):
+                rejected = ladder._release_held_probe(plan, spec)
+            self.assertNotEqual(rejected.returncode, 0)
+
+    def test_job_discovery_requires_comment_partition_and_name(self):
+        spec = ladder._probe_spec(
+            "f" * 64, "scaglione", Path("/campaign"), 1
+        )
+        plan = {
+            "squeue": {"path": "/approved/squeue"},
+            "runtime_environment": {"USER": "nc437"},
+        }
+        with patch.object(
+            ladder.subprocess,
+            "run",
+            return_value=SimpleNamespace(
+                returncode=0,
+                stdout=(
+                    f"901|{spec['job_name']}|PENDING|{spec['partition']}|"
+                    f"JobHeldUser|{spec['comment']}\n"
+                ),
+                stderr="",
+            ),
+        ):
+            self.assertEqual(ladder._discover_bound_job(plan, spec), "901")
+        with patch.object(
+            ladder.subprocess,
+            "run",
+            return_value=SimpleNamespace(
+                returncode=0,
+                stdout=(
+                    f"901|{spec['job_name']}|PENDING|default_partition|"
+                    f"JobHeldUser|{spec['comment']}\n"
+                ),
+                stderr="",
+            ),
+        ):
+            with self.assertRaisesRegex(ValueError, "fingerprint"):
+                ladder._discover_bound_job(plan, spec)
+
+    def test_ambiguous_probe_submission_waits_for_exact_visibility(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            spec = ladder._probe_spec(
+                "f" * 64, "default_partition", Path(tmp), 1
+            )
+            spec["submission_intent"] = "accepted_or_ambiguous"
+            plan = {
+                "squeue": {"path": "/approved/squeue"},
+                "runtime_environment": {"USER": "nc437"},
+            }
+            visible = (
+                f"901|{spec['job_name']}|PENDING|{spec['partition']}|"
+                f"JobHeldUser|{spec['comment']}\n"
+            )
+            observations = ["", visible]
+
+            def runner(_command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0, stdout=observations.pop(0), stderr=""
+                )
+
+            with patch.object(
+                ladder.subprocess, "run", side_effect=runner
+            ), patch.object(ladder.time, "sleep") as slept:
+                recovered = ladder._recover_probe_job_id(
+                    plan, "f" * 64, "default_partition", spec
+                )
+            self.assertEqual(recovered, "901")
+            slept.assert_called_once_with(
+                ladder.AMBIGUOUS_DISCOVERY_DELAY_S
+            )
+
+    def test_sbatch_timeout_is_bounded_and_reported_ambiguous(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            sbatch = Path(tmp) / "sbatch"
+            sbatch.write_text("approved")
+            plan = {
+                "sbatch": {
+                    "available": True,
+                    "path": str(sbatch),
+                    "sha256": sha256_file(sbatch),
+                },
+            }
+            with patch.object(
+                ladder.subprocess, "run",
+                side_effect=subprocess.TimeoutExpired([str(sbatch)], 30),
+            ) as invoked:
+                with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                    ladder._sbatch(plan, ["--hold", "worker"])
+            self.assertEqual(
+                invoked.call_args.kwargs["timeout"], ladder.SBATCH_TIMEOUT_S
+            )
+
+    def test_held_array_recovery_collapses_tasks_and_binds_range_dependency(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, manifest, tools = self._held_science_fixture(tmp)
+            gate_row = (
+                f"100|LDG{plan_sha[:5]}|PENDING|default_partition|"
+                f"JobHeldUser|SLADG:{plan_sha[:20]}\n"
+            )
+            array_row = (
+                f"401|LDPF{plan_sha[:4]}|PENDING|default_partition|"
+                f"Dependency|SLAD:{plan_sha[:20]}:PREFLIGHT\n"
+            )
+
+            def runner(command, **_kwargs):
+                if command[0] == tools["squeue"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=gate_row + array_row + array_row,
+                        stderr="",
+                    )
+                if command[0] == tools["scontrol"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"JobId=401 JobName=LDPF{plan_sha[:4]} "
+                            "JobState=PENDING Partition=default_partition "
+                            "Reason=Dependency "
+                            f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
+                            "ArrayTaskId=0-2 "
+                            "Dependency=afterok:100(unfulfilled)\n"
+                        ),
+                        stderr="",
+                    )
+                raise AssertionError(command)
+
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                side_effect=runner,
+            ):
+                arrays, gate = _discover_held_science_jobs(
+                    plan, plan_sha, manifest
+                )
+            self.assertEqual(arrays, {"PREFLIGHT": "401"})
+            self.assertEqual(gate, "100")
+
+            self.assertEqual(
+                _dependency_semantics("afterok:100,afterok:401"),
+                _dependency_semantics("afterok:401:100"),
+            )
+
+    def test_held_array_recovery_rejects_spoofed_rows(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, _manifest, tools = self._held_science_fixture(tmp)
+            gate = (
+                f"100|LDG{plan_sha[:5]}|PENDING|default_partition|"
+                f"JobHeldUser|SLADG:{plan_sha[:20]}\n"
+            )
+            valid = (
+                f"401|LDPF{plan_sha[:4]}|PENDING|default_partition|"
+                f"Dependency|SLAD:{plan_sha[:20]}:PREFLIGHT\n"
+            )
+            cases = {
+                "wrong name": valid.replace(
+                    f"LDPF{plan_sha[:4]}", "WRONG"
+                ),
+                "wrong partition": valid.replace(
+                    "default_partition", "scaglione"
+                ),
+                "wrong reason": valid.replace(
+                    "Dependency", "Priority"
+                ),
+                "unknown group": valid.replace(
+                    "PREFLIGHT", "UNKNOWN"
+                ),
+                "released state": valid.replace("PENDING", "RUNNING"),
+                "two parents": valid + valid.replace("401|", "402|", 1),
+            }
+            for label, row in cases.items():
+                with self.subTest(label=label), patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    return_value=SimpleNamespace(
+                        returncode=0, stdout=gate + row, stderr=""
+                    ),
+                ), patch(
+                    "reconcile_scale_ladder_gate._validate_held_array_controller"
+                ):
+                    with self.assertRaises(ValueError):
+                        _discover_held_science_jobs(
+                            plan, plan_sha,
+                            {"gate_job_id": "100", "submitted_arrays": {}},
+                        )
+
+    def test_held_array_recovery_rejects_wrong_range_or_gate_dependency(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, manifest, tools = self._held_science_fixture(tmp)
+            listing = (
+                f"100|LDG{plan_sha[:5]}|PENDING|default_partition|"
+                f"JobHeldUser|SLADG:{plan_sha[:20]}\n"
+                f"401|LDPF{plan_sha[:4]}|PENDING|default_partition|"
+                f"Dependency|SLAD:{plan_sha[:20]}:PREFLIGHT\n"
+            )
+
+            def runner_with(*, task_range, dependency):
+                def runner(command, **_kwargs):
+                    if command[0] == tools["squeue"]["path"]:
+                        return SimpleNamespace(
+                            returncode=0, stdout=listing, stderr=""
+                        )
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"JobId=401 JobName=LDPF{plan_sha[:4]} "
+                            "JobState=PENDING Partition=default_partition "
+                            "Reason=Dependency "
+                            f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
+                            f"ArrayTaskId={task_range} "
+                            f"Dependency={dependency}\n"
+                        ),
+                        stderr="",
+                    )
+                return runner
+
+            for label, task_range, dependency in (
+                ("range", "0-1", "afterok:100"),
+                ("gate", "0-2", "afterok:999"),
+                ("multiple controller rows", "0-2", "afterok:100"),
+            ):
+                runner = runner_with(
+                    task_range=task_range, dependency=dependency
+                )
+                if label == "multiple controller rows":
+                    original = runner
+
+                    def runner(command, **kwargs):
+                        observed = original(command, **kwargs)
+                        if command[0] == tools["scontrol"]["path"]:
+                            observed.stdout += observed.stdout
+                        return observed
+                with self.subTest(label=label), patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    side_effect=runner,
+                ):
+                    with self.assertRaises(ValueError):
+                        _discover_held_science_jobs(
+                            plan, plan_sha, manifest
+                        )
+
+    def test_intended_gate_and_array_are_boundedly_rediscovered(self):
+        manifest = {
+            "gate_submission_intent": {"comment": "gate"},
+            "array_submission_intents": {
+                "PREFLIGHT": {"comment": "array"},
+            },
+        }
+        sleeper = Mock()
+        with patch(
+            "reconcile_scale_ladder_gate._discover_held_science_jobs",
+            side_effect=[({}, None), ({"PREFLIGHT": "401"}, "100")],
+        ) as discovered:
+            arrays, gate = _discover_intended_science_jobs(
+                {}, "a" * 64, manifest, sleeper=sleeper
+            )
+        self.assertEqual(arrays, {"PREFLIGHT": "401"})
+        self.assertEqual(gate, "100")
+        self.assertEqual(discovered.call_count, 2)
+        sleeper.assert_called_once_with(
+            ladder.AMBIGUOUS_DISCOVERY_DELAY_S
+        )
+
+    def test_unresolved_science_intent_never_resubmits_or_releases(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = {"campaign_root": str(root), "task_groups": {}}
+            raw = ladder.canonical(plan)
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "creating",
+                "gate_job_id": None,
+                "submitted_arrays": {},
+                "gate_submission_intent": {"comment": "gate"},
+                "array_submission_intents": {
+                    "PREFLIGHT": {"comment": "array"},
+                },
+            }))
+            with patch(
+                "reconcile_scale_ladder_gate._discover_intended_science_jobs",
+                side_effect=RuntimeError("remains ambiguous"),
+            ), patch(
+                "reconcile_scale_ladder_gate._sbatch"
+            ) as submit_gate, patch(
+                "reconcile_scale_ladder_gate._submit_array"
+            ) as submit_array, patch(
+                "reconcile_scale_ladder_gate._bounded_query"
+            ) as release_gate:
+                with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                    _reconcile_locked(
+                        root, plan_sha,
+                        resume_missing_arrays=True,
+                        release_held_gate=True,
+                    )
+            submit_gate.assert_not_called()
+            submit_array.assert_not_called()
+            release_gate.assert_not_called()
+
+    def test_gate_submission_intent_is_durable_before_sbatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = {
+                "campaign_root": str(root),
+                "task_groups": {group: [group.lower()] for group in (
+                    "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                    "MIP_RAW", "MIP_KNOWN",
+                )},
+            }
+            raw = ladder.canonical(plan)
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "creating",
+                "gate_job_id": None,
+                "submitted_arrays": {},
+            }))
+
+            def interrupted(_plan, _arguments):
+                durable = json.loads((root / "campaign.json").read_text())
+                self.assertEqual(
+                    durable["gate_submission_intent"]["comment"],
+                    f"SLADG:{plan_sha[:20]}",
+                )
+                raise RuntimeError("sbatch interrupted")
+
+            with patch(
+                "reconcile_scale_ladder_gate._discover_held_science_jobs",
+                return_value=({}, None),
+            ), patch(
+                "reconcile_scale_ladder_gate._sbatch",
+                side_effect=interrupted,
+            ):
+                with self.assertRaisesRegex(RuntimeError, "interrupted"):
+                    _reconcile_locked(
+                        root, plan_sha, resume_missing_arrays=True
+                    )
+            durable = json.loads((root / "campaign.json").read_text())
+            self.assertIn("gate_submission_intent", durable)
+
+    def test_array_submission_intent_is_durable_before_sbatch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            groups = (
+                "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                "MIP_RAW", "MIP_KNOWN",
+            )
+            plan = {
+                "campaign_root": str(root),
+                "task_groups": {group: [group.lower()] for group in groups},
+            }
+            raw = ladder.canonical(plan)
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "creating",
+                "gate_job_id": "100",
+                "submitted_arrays": {},
+            }))
+
+            def interrupted(
+                _plan, _plan_path, _plan_sha, group, *_args, **_kwargs
+            ):
+                durable = json.loads((root / "campaign.json").read_text())
+                self.assertEqual(group, "PREFLIGHT")
+                self.assertIn(
+                    "PREFLIGHT", durable["array_submission_intents"]
+                )
+                raise RuntimeError("array sbatch interrupted")
+
+            with patch(
+                "reconcile_scale_ladder_gate._discover_held_science_jobs",
+                return_value=({}, None),
+            ), patch(
+                "reconcile_scale_ladder_gate._require_gate_held"
+            ), patch(
+                "reconcile_scale_ladder_gate._submit_array",
+                side_effect=interrupted,
+            ):
+                with self.assertRaisesRegex(RuntimeError, "interrupted"):
+                    _reconcile_locked(
+                        root, plan_sha, resume_missing_arrays=True
+                    )
+            durable = json.loads((root / "campaign.json").read_text())
+            self.assertIn(
+                "PREFLIGHT", durable["array_submission_intents"]
+            )
+
+    def test_gate_completion_requires_exact_zero_exit_code(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, _manifest, tools = self._held_science_fixture(tmp)
+            gate_row = (
+                f"100|LDG{plan_sha[:5]}|COMPLETED|default_partition|"
+                f"None|SLADG:{plan_sha[:20]}\n"
+            )
+
+            def runner_missing_exit(command, **_kwargs):
+                if command[0] == tools["squeue"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0, stdout=gate_row, stderr=""
+                    )
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout=(
+                        f"JobId=100 JobName=LDG{plan_sha[:5]} "
+                        "JobState=COMPLETED Partition=default_partition "
+                        f"Comment=SLADG:{plan_sha[:20]}\n"
+                    ),
+                    stderr="",
+                )
+
+            with self.assertRaisesRegex(ValueError, "exit code"):
+                _resolve_gate_state(
+                    plan, "100", plan_sha, runner=runner_missing_exit
+                )
+
+            def runner_nonzero(command, **_kwargs):
+                if command[0] == tools["squeue"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                if command[0] == tools["scontrol"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"JobId=100 JobName=LDG{plan_sha[:5]} "
+                            "JobState=COMPLETED Partition=default_partition "
+                            f"Comment=SLADG:{plan_sha[:20]} ExitCode=1:0\n"
+                        ),
+                        stderr="",
+                    )
+                raise AssertionError(command)
+
+            with self.assertRaisesRegex(ValueError, "nonzero"):
+                _resolve_gate_state(
+                    plan, "100", plan_sha, runner=runner_nonzero
+                )
+
+    def test_activation_runtime_rejects_manifest_fingerprint_spoofs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, _plan_sha, _specs, _activation, manifest = (
+                self._write_activation_campaign(Path(tmp) / "campaign")
+            )
+            plan["code_hashes"] = {}
+            with patch.object(
+                ladder, "_validate_submission_contract"
+            ), patch.dict(os.environ, {"SLURM_JOB_ID": "303"}, clear=False), \
+                    patch.object(
+                        ladder, "_resolve_bound_job",
+                        return_value={"state": "RUNNING", "live": True},
+                    ):
+                self.assertEqual(
+                    ladder._require_activation_runtime(plan, manifest), "303"
+                )
+                for field, value in (
+                    ("job_name", "WRONG"),
+                    ("partition", "scaglione"),
+                    ("comment", "WRONG"),
+                ):
+                    spoofed = copy.deepcopy(manifest)
+                    spoofed["activation"][field] = value
+                    with self.subTest(field=field), self.assertRaisesRegex(
+                        ValueError, "fingerprint"
+                    ):
+                        ladder._require_activation_runtime(plan, spoofed)
+                spoofed = copy.deepcopy(manifest)
+                spoofed["activation"]["job_id"] = "999"
+                with self.assertRaisesRegex(ValueError, "runtime identity"):
+                    ladder._require_activation_runtime(plan, spoofed)
+
+    def test_failed_probe_activation_has_no_scientific_side_effects(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            root.mkdir()
+            plan = {
+                "campaign_root": str(root),
+                "submission_protocol": "probe_first_activation_v1",
+            }
+            raw = ladder.canonical(plan)
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            specs = {
+                partition: ladder._probe_spec(
+                    plan_sha, partition, root, attempt=1
+                )
+                for partition in ladder.PROBE_PARTITIONS
+            }
+            specs["default_partition"]["job_id"] = "301"
+            specs["scaglione"]["job_id"] = "302"
+            activation = ladder._activation_spec(
+                plan_sha, root, specs, attempt=1
+            )
+            activation["job_id"] = "303"
+            manifest = {
+                **plan,
+                "approval_sha256": plan_sha,
+                "submitted": False,
+                "submission_state": "activation_released",
+                "probe_state": "submitted",
+                "reservation_state": "not_created",
+                "reservations": [],
+                "gate_state": "not_created",
+                "gate_job_id": None,
+                "submitted_arrays": {},
+                "infrastructure_probes": specs,
+                "activation": activation,
+            }
+            (root / "campaign.json").write_text(json.dumps(manifest))
+            failed = {
+                "default_partition": {"compatible": False, "state": "FAILED"},
+                "scaglione": {"compatible": False, "state": "FAILED"},
+            }
+            with patch.object(
+                ladder, "_require_activation_runtime", return_value="303"
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=failed
+            ), patch.object(
+                ladder, "_stage_scientific_inputs"
+            ) as stage_inputs, patch.object(
+                ladder, "_ensure_reservations"
+            ) as reserve, patch.object(
+                ladder, "_submit_array"
+            ) as submit_array:
+                with self.assertRaisesRegex(
+                    RuntimeError, "no scientific work"
+                ):
+                    ladder.activate_existing(root, plan_sha, wait_s=0)
+            stage_inputs.assert_not_called()
+            reserve.assert_not_called()
+            submit_array.assert_not_called()
+            observed = json.loads((root / "campaign.json").read_text())
+            self.assertEqual(observed["probe_state"], "failed")
+            self.assertEqual(observed["reservations"], [])
+            self.assertEqual(observed["gate_state"], "not_created")
+
+    def test_probe_observation_deadline_is_not_labeled_probe_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            _plan, plan_sha, _specs, _activation, _manifest = (
+                self._write_activation_campaign(root)
+            )
+            incomplete = {
+                "default_partition": {
+                    "compatible": False, "state": "ACCOUNTING_ERROR",
+                    "state_resolution": "accounting_query_error",
+                },
+                "scaglione": {
+                    "compatible": False, "state": "TIMEOUT_WAITING",
+                    "state_resolution": "observer_deadline",
+                    "observer_deadline_reached": True,
+                },
+            }
+            with patch.object(
+                ladder, "_require_activation_runtime", return_value="303"
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=incomplete
+            ), patch.object(
+                ladder, "_stage_scientific_inputs"
+            ) as stage_inputs, patch.object(
+                ladder, "_ensure_reservations"
+            ) as reserve:
+                with self.assertRaisesRegex(
+                    RuntimeError, "accounting is incomplete"
+                ):
+                    ladder.activate_existing(root, plan_sha, wait_s=0)
+            stage_inputs.assert_not_called()
+            reserve.assert_not_called()
+            observed = json.loads((root / "campaign.json").read_text())
+            self.assertEqual(
+                observed["submission_state"],
+                "probe_observation_incomplete",
+            )
+            self.assertEqual(observed["probe_state"], "observation_incomplete")
+            self.assertEqual(observed["gate_state"], "not_created")
+
+    def test_successful_activation_stages_then_resumes_and_releases_gate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "campaign"
+            _plan, plan_sha, specs, _activation, _manifest = (
+                self._write_activation_campaign(root)
+            )
+
+            def passed_result(partition):
+                spec = specs[partition]
+                return {
+                    "job_id": spec["job_id"],
+                    "state": "COMPLETED",
+                    "output": spec["output"],
+                    "compatible": True,
+                    "probe_id": spec["probe_id"],
+                    "partition": partition,
+                    "attempt": spec["attempt"],
+                    "path_bound": True,
+                }
+
+            passed = {
+                partition: passed_result(partition)
+                for partition in ladder.PROBE_PARTITIONS
+            }
+            events = []
+
+            def stage(_plan):
+                events.append("stage")
+
+            def reserve(_plan, observed_sha, activation_lineage):
+                self.assertEqual(observed_sha, plan_sha)
+                self.assertEqual(
+                    activation_lineage,
+                    ladder._activation_lineage_id(_plan, plan_sha),
+                )
+                events.append("reserve")
+                return [root / "reservation.json"]
+
+            def reconcile(
+                observed_root, observed_sha, *, release_held_gate=False,
+                resume_missing_arrays=False, **_kwargs,
+            ):
+                self.assertEqual(Path(observed_root).resolve(), root.resolve())
+                self.assertEqual(observed_sha, plan_sha)
+                current = json.loads((root / "campaign.json").read_text())
+                if release_held_gate:
+                    self.assertTrue(resume_missing_arrays)
+                    self.assertEqual(current["gate_state"], "creating")
+                    events.append("reconcile_and_release")
+                    current.update({
+                        "gate_job_id": "900",
+                        "gate_state": "release_retry_requested",
+                        "submitted_arrays": {
+                            group: str(910 + index)
+                            for index, group in enumerate((
+                                "PREFLIGHT", "SEED", "CG",
+                                "CG_SENSITIVITY", "MIP_RAW", "MIP_KNOWN",
+                            ))
+                        },
+                    })
+                    return current
+                events.append("reconcile_completed")
+                current["gate_state"] = "released_reconciled"
+                current["submitted"] = True
+                return current
+
+            with patch.object(
+                ladder, "_require_activation_runtime", return_value="303"
+            ), patch.object(
+                ladder, "_wait_for_probes", return_value=passed
+            ), patch.object(
+                ladder, "_stage_scientific_inputs", side_effect=stage
+            ), patch.object(
+                ladder, "_ensure_reservations", side_effect=reserve
+            ), patch(
+                "reconcile_scale_ladder_gate._reconcile_locked",
+                side_effect=reconcile,
+            ), patch(
+                "reconcile_scale_ladder_gate._resolve_gate_state",
+                return_value={"state": "COMPLETED"},
+            ):
+                observed = ladder.activate_existing(
+                    root, plan_sha, wait_s=1
+                )
+            self.assertEqual(events, [
+                "stage", "reserve", "reconcile_and_release",
+                "reconcile_completed",
+            ])
+            self.assertTrue(observed["submitted"])
+            self.assertEqual(observed["gate_state"], "released_reconciled")
+            self.assertEqual(observed["activation"]["state"], "complete")
+            self.assertEqual(observed["reservations"], [
+                str(root / "reservation.json")
+            ])
+
+    def test_reservations_resume_across_controllers_with_same_lineage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan = {
+                "reservation_root": tmp,
+                "jobs": [{
+                    "execution_digest": "d" * 64,
+                    "job_key": "cg_k02",
+                }],
+            }
+            lineage = "4" * 64
+            first = ladder._ensure_reservations(
+                plan, "a" * 64, lineage
+            )
+            second = ladder._ensure_reservations(
+                plan, "a" * 64, lineage
+            )
+            self.assertEqual(first, second)
+            with self.assertRaises(FileExistsError):
+                ladder._ensure_reservations(
+                    plan, "a" * 64, "5" * 64
+                )
+            payload = json.loads(first[0].read_text())
+            self.assertEqual(payload["activation_lineage_id"], lineage)
+            self.assertEqual(
+                payload["schema"],
+                "evsp-dr-scale-ladder-reservation-v3",
+            )
+            self.assertEqual(
+                payload["submission_protocol"],
+                "probe_first_activation_v1",
+            )
 
     def test_cg_portable_identity_does_not_require_gurobi(self):
         observed = environment_identity("cg")
@@ -570,6 +2214,34 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 value["resolution"] == "identity_mismatch"
                 for value in observed.values()
             ))
+
+    def test_failed_accounting_requires_an_exact_exit_code(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            specs = self._probe_specs(Path(tmp))
+            rows = "".join(
+                f"{spec['job_id']}|{spec['job_name']}|FAILED|"
+                f"{partition}|{spec['comment']}|"
+                f"{'missing' if partition == 'default_partition' else ''}\n"
+                for partition, spec in specs.items()
+            )
+
+            def runner(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout="" if command[0] == "/approved/squeue" else rows,
+                    stderr="",
+                )
+
+            observed = ladder._probe_job_states({
+                "squeue": {"path": "/approved/squeue"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+            }, specs, runner=runner)
+            for value in observed.values():
+                self.assertEqual(
+                    value["state"], "ACCOUNTING_OUTCOME_MISMATCH"
+                )
+                self.assertEqual(value["resolution"], "identity_mismatch")
 
     def test_squeue_query_error_never_falls_through_to_sacct(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1001,9 +2673,16 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     "path": str(path),
                     "sha256": sha256_file(path),
                 }
+            groups = (
+                "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                "MIP_RAW", "MIP_KNOWN",
+            )
             plan = {
                 "campaign_root": str(root),
                 "runtime_environment": {"USER": "nc437"},
+                "task_groups": {
+                    group: [f"job_{group.lower()}"] for group in groups
+                },
                 **tools,
             }
             plan_raw = json.dumps(
@@ -1019,10 +2698,6 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             }
             specs["default_partition"]["job_id"] = "201"
             specs["scaglione"]["job_id"] = "202"
-            groups = (
-                "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
-                "MIP_RAW", "MIP_KNOWN",
-            )
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": plan_sha,
                 "gate_state": "held_probe_failure",
@@ -1064,15 +2739,66 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     retried_spec, True, "COMPLETED"
                 ),
             }
+            array_ids = {
+                group: str(300 + index)
+                for index, group in enumerate(groups)
+            }
+
+            def dependency_for(group):
+                values = ["afterok:100"]
+                if group in {"CG", "CG_SENSITIVITY"}:
+                    values.append(f"afterok:{array_ids['PREFLIGHT']}")
+                elif group == "MIP_RAW":
+                    values.append(f"aftercorr:{array_ids['CG']}")
+                elif group == "MIP_KNOWN":
+                    values.append(
+                        f"aftercorr:{array_ids['CG']}:"
+                        f"{array_ids['SEED']}"
+                    )
+                return ",".join(values)
 
             def fake_run(command, **_kwargs):
                 if str(command[0]) == tools["squeue"]["path"]:
+                    array_rows = "".join(
+                        f"{array_ids[group]}|"
+                        f"{ladder._array_name(group, plan_sha)}|PENDING|"
+                        f"{'scaglione' if group.startswith('MIP') else 'default_partition'}|"
+                        f"Dependency|SLAD:{plan_sha[:20]}:{group}\n"
+                        for group in groups
+                    )
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
                             f"100|LDG{plan_sha[:5]}|PENDING|"
                             "default_partition|JobHeldUser|"
                             f"SLADG:{plan_sha[:20]}\n"
+                            f"{array_rows}"
+                        ),
+                        stderr="",
+                    )
+                if (
+                    str(command[0]) == tools["scontrol"]["path"]
+                    and command[1:3] == ["show", "job"]
+                ):
+                    job_id = command[3]
+                    group = next(
+                        key for key, value in array_ids.items()
+                        if value == job_id
+                    )
+                    partition = (
+                        "scaglione" if group.startswith("MIP")
+                        else "default_partition"
+                    )
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"JobId={job_id} "
+                            f"JobName={ladder._array_name(group, plan_sha)} "
+                            f"JobState=PENDING Partition={partition} "
+                            "Reason=Dependency "
+                            f"Comment=SLAD:{plan_sha[:20]}:{group} "
+                            "ArrayTaskId=0-0 "
+                            f"Dependency={dependency_for(group)}\n"
                         ),
                         stderr="",
                     )
@@ -1207,6 +2933,141 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 reconciled["gate_state"], "release_retry_requested"
             )
             self.assertIsNot(reconciled.get("submitted"), True)
+
+    def test_reconcile_recovers_partial_gate_and_array_submission(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "logs").mkdir()
+            tools = {}
+            for name in ("sacct", "squeue", "scontrol"):
+                path = root / name
+                path.write_text(name)
+                tools[name] = {
+                    "available": True,
+                    "path": str(path),
+                    "sha256": sha256_file(path),
+                }
+            plan = {
+                "campaign_root": str(root),
+                "submission_protocol": "probe_first_activation_v1",
+                "runtime_environment": {"USER": "nc437"},
+                "task_groups": {
+                    group: [f"job_{group.lower()}"] for group in (
+                        "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                        "MIP_RAW", "MIP_KNOWN",
+                    )
+                },
+                **tools,
+            }
+            plan_raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            specs = self._probe_specs(root, plan_sha=plan_sha)
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "submitted": False,
+                "gate_state": "creating",
+                "gate_job_id": None,
+                "submitted_arrays": {},
+                "infrastructure_probes": specs,
+            }))
+
+            def passed_result(partition):
+                spec = specs[partition]
+                return {
+                    "job_id": spec["job_id"],
+                    "state": "COMPLETED",
+                    "output": spec["output"],
+                    "compatible": True,
+                    "probe_id": spec["probe_id"],
+                    "partition": partition,
+                    "attempt": spec["attempt"],
+                    "path_bound": True,
+                }
+
+            passed = {
+                partition: passed_result(partition)
+                for partition in ladder.PROBE_PARTITIONS
+            }
+
+            def fake_run(command, **_kwargs):
+                executable = str(command[0])
+                if executable == tools["squeue"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"900|LDG{plan_sha[:5]}|PENDING|"
+                            "default_partition|JobHeldUser|"
+                            f"SLADG:{plan_sha[:20]}\n"
+                            f"401|LDPF{plan_sha[:4]}|PENDING|"
+                            "default_partition|Dependency|"
+                            f"SLAD:{plan_sha[:20]}:PREFLIGHT\n"
+                        ),
+                        stderr="",
+                    )
+                if executable == tools["sacct"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                if (
+                    executable == tools["scontrol"]["path"]
+                    and command[1:] == ["show", "job", "401", "-o"]
+                ):
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"JobId=401 JobName=LDPF{plan_sha[:4]} "
+                            "JobState=PENDING Partition=default_partition "
+                            "Reason=Dependency "
+                            f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
+                            "ArrayTaskId=0-0 "
+                            "Dependency=afterok:900(unfulfilled)\n"
+                        ),
+                        stderr="",
+                    )
+                raise AssertionError(f"unexpected command: {command}")
+
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                side_effect=fake_run,
+            ), patch(
+                "reconcile_scale_ladder_gate._wait_for_probes",
+                return_value=passed,
+            ), patch(
+                "reconcile_scale_ladder_gate._submit_array",
+                side_effect=["402", "403", "404", "405", "406"],
+            ) as submit_array:
+                observed = reconcile_gate(
+                    root, plan_sha, resume_missing_arrays=True
+                )
+            self.assertEqual(observed["gate_job_id"], "900")
+            self.assertEqual(observed["gate_state"], "held_probe_passed")
+            self.assertEqual(observed["submitted_arrays"], {
+                "PREFLIGHT": "401",
+                "SEED": "402",
+                "CG": "403",
+                "CG_SENSITIVITY": "404",
+                "MIP_RAW": "405",
+                "MIP_KNOWN": "406",
+            })
+            self.assertEqual(
+                [call.args[3] for call in submit_array.call_args_list],
+                ["SEED", "CG", "CG_SENSITIVITY", "MIP_RAW", "MIP_KNOWN"],
+            )
+            self.assertEqual(
+                submit_array.call_args_list[1].kwargs["dependency"],
+                "afterok:401",
+            )
+            self.assertEqual(
+                submit_array.call_args_list[3].kwargs["dependency"],
+                "aftercorr:403",
+            )
+            self.assertEqual(
+                submit_array.call_args_list[4].kwargs["dependency"],
+                "aftercorr:403:402",
+            )
 
     def test_atomic_summary_publication_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1388,6 +3249,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertEqual(plan["sensitivity_cg_task_count"], 30)
         self.assertEqual(plan["mip_task_count"], 42)
         self.assertEqual(plan["k40_mip_submission_count"], 0)
+        self.assertEqual(plan["infrastructure_probe_task_count"], 2)
+        self.assertEqual(plan["infrastructure_activation_task_count"], 1)
+        self.assertEqual(plan["infrastructure_task_count"], 3)
         self.assertEqual(
             {key: len(value) for key, value in plan["task_groups"].items()},
             {
@@ -1438,13 +3302,37 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             if job["phase"] == "CG" and job["scale"] == 40
         ))
 
+    def test_operator_wrapper_matches_probe_first_contract(self):
+        wrapper = (
+            REPO_ROOT / "scripts/launch_scale_ladder_probe_first.sh"
+        ).read_text()
+        retired = (
+            REPO_ROOT / "scripts/launch_scale_ladder_ba09d46.sh"
+        ).read_text()
+        self.assertIn('CAMPAIGN=${LADDER_CAMPAIGN:-}', wrapper)
+        self.assertNotIn('CAMPAIGN="slad_${STAMP}', wrapper)
+        self.assertIn('.infrastructure_task_count == 3', wrapper)
+        self.assertIn('--retry-failed-probes', wrapper)
+        self.assertIn('--retry-failed-activation', wrapper)
+        self.assertIn('--approved-plan-sha256 "$FILE_SHA" --submit', wrapper)
+        self.assertNotIn('ALREADY_ARMED', wrapper)
+        self.assertNotIn(
+            '.submitted == true and .gate_state == "released"', wrapper
+        )
+        self.assertIn('INFRASTRUCTURE_ARMED=true', wrapper)
+        self.assertIn('SCIENCE_ONLY_AFTER_BOTH_PROBES_VALIDATE=true', wrapper)
+        self.assertIn('This launcher is retired', retired)
+
     def test_worker_maps_dependencies_and_resume(self):
         worker = (REPO_ROOT / "src/submit_scale_ladder.sub").read_text()
         launcher = (REPO_ROOT / "src/launch_scale_ladder.py").read_text()
         self.assertIn("--resume", worker)
         self.assertIn("--snapshot-at-minutes", worker)
         self.assertIn("KNOWN-PARTITION", worker)
-        self.assertIn("aftercorr:", launcher)
+        reconciler = (
+            REPO_ROOT / "src/reconcile_scale_ladder_gate.py"
+        ).read_text()
+        self.assertIn("aftercorr:", reconciler)
         self.assertIn("JobName=\"$JOB_NAME\"", worker)
         self.assertIn("EVSP_MIP_EXPECTED_RESULT_SHA256", worker)
         local = (

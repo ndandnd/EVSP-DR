@@ -6,16 +6,22 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
+import time
 from pathlib import Path
 
 from launch_scale_ladder import (
     PROBE_PARTITIONS,
     PROBE_RETRYABLE_STATES,
+    AMBIGUOUS_DISCOVERY_ATTEMPTS,
+    AMBIGUOUS_DISCOVERY_DELAY_S,
+    _campaign_lock,
     _probes_compatible,
     _probes_waiting,
     _probe_spec,
     _replace_json,
+    _array_name,
     _sbatch,
     _submit_probe,
     _submit_array,
@@ -23,6 +29,10 @@ from launch_scale_ladder import (
 )
 
 SLURM_QUERY_TIMEOUT_S = 10.0
+SCIENCE_GROUPS = (
+    "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY", "MIP_RAW",
+    "MIP_KNOWN",
+)
 
 
 def _approved_tool_path(plan, name):
@@ -112,7 +122,14 @@ def _resolve_gate_state(
         errors = _gate_fingerprint_errors(expected, live_rows[0])
         if errors:
             raise ValueError(f"live gate fingerprint mismatch: {errors}")
-        return {**live_rows[0], "source": "squeue", "live": True}
+        if live_rows[0]["state"] not in {
+            "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
+            "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL",
+            "DEADLINE", "REVOKED", "SPECIAL_EXIT",
+        }:
+            return {**live_rows[0], "source": "squeue", "live": True}
+        # squeue carries no ExitCode.  A terminal-looking live row is not a
+        # completion certificate; resolve it through scontrol/accounting.
 
     scontrol_path = _approved_tool_path(plan, "scontrol")
     shown = _bounded_query(
@@ -139,6 +156,23 @@ def _resolve_gate_state(
             raise ValueError(
                 f"controller gate fingerprint mismatch: {errors}"
             )
+        terminal = controller_row["state"] in {
+            "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
+            "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL",
+            "DEADLINE", "REVOKED", "SPECIAL_EXIT",
+        }
+        if terminal:
+            exit_code = str(controller_row.get("exit_code") or "")
+            if re.fullmatch(r"[0-9]+:[0-9]+", exit_code) is None:
+                raise ValueError("terminal gate lacks an exact exit code")
+            if (
+                controller_row["state"] == "COMPLETED"
+                and exit_code != "0:0"
+            ):
+                raise ValueError("completed gate has nonzero exit code")
+            return {
+                **controller_row, "source": "scontrol", "live": False,
+            }
         return {**controller_row, "source": "scontrol", "live": True}
     absent_message = (shown.stderr or shown.stdout).lower()
     if shown.returncode != 0 and "invalid job id" not in absent_message:
@@ -169,6 +203,15 @@ def _resolve_gate_state(
         raise ValueError(f"accounting gate fingerprint mismatch: {errors}")
     if rows[0]["state"] == "COMPLETED" and rows[0]["exit_code"] != "0:0":
         raise ValueError("completed gate accounting has nonzero exit code")
+    if (
+        rows[0]["state"] in {
+            "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
+            "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED", "BOOT_FAIL",
+            "DEADLINE", "REVOKED", "SPECIAL_EXIT",
+        }
+        and re.fullmatch(r"[0-9]+:[0-9]+", rows[0]["exit_code"]) is None
+    ):
+        raise ValueError("terminal gate accounting lacks an exact exit code")
     return {**rows[0], "source": "sacct", "live": False}
 
 
@@ -244,7 +287,225 @@ def _hard_probe_mismatch(result):
     )
 
 
-def reconcile(
+def _dependency_semantics(value):
+    cleaned = re.sub(r"\([^)]*\)", "", str(value or ""))
+    semantics = {}
+    for clause in (item for item in cleaned.split(",") if item):
+        fields = clause.split(":")
+        if len(fields) < 2 or any(not value.isdigit() for value in fields[1:]):
+            raise ValueError("held array dependency syntax is invalid")
+        kind = fields[0]
+        semantics.setdefault(kind, set()).update(fields[1:])
+    return semantics
+
+
+def _validate_held_array_controller(
+    plan, expected_plan_sha, group, job_id, gate_id, array_ids,
+):
+    scontrol_path = _approved_tool_path(plan, "scontrol")
+    shown = _bounded_query(
+        subprocess.run,
+        [str(scontrol_path), "show", "job", str(job_id), "-o"],
+    )
+    if shown.returncode != 0 or not shown.stdout.strip():
+        raise ValueError("held array is absent from scontrol")
+    controller_rows = [
+        line.strip() for line in shown.stdout.splitlines() if line.strip()
+    ]
+    if len(controller_rows) != 1:
+        raise ValueError("held array has no unique controller record")
+    values = {}
+    for token in controller_rows[0].split():
+        if "=" in token:
+            key, value = token.split("=", 1)
+            values[key] = value
+    expected_partition = (
+        "scaglione" if group.startswith("MIP") else "default_partition"
+    )
+    expected = {
+        "JobId": str(job_id),
+        "JobName": _array_name(group, expected_plan_sha),
+        "JobState": "PENDING",
+        "Partition": expected_partition,
+        "Reason": "Dependency",
+        "Comment": f"SLAD:{expected_plan_sha[:20]}:{group}",
+        "ArrayTaskId": f"0-{len(plan['task_groups'][group]) - 1}",
+    }
+    errors = [
+        {
+            "field": field, "expected": expected_value,
+            "observed": (
+                _normalized_state(values.get(field))
+                if field == "JobState" else values.get(field, "")
+            ),
+        }
+        for field, expected_value in expected.items()
+        if (
+            _normalized_state(values.get(field))
+            if field == "JobState" else values.get(field, "")
+        ) != expected_value
+    ]
+    if errors:
+        raise ValueError(f"held array controller mismatch: {errors}")
+    expected_dependencies = {"afterok": {str(gate_id)}}
+    if group in {"CG", "CG_SENSITIVITY"}:
+        if "PREFLIGHT" not in array_ids:
+            raise ValueError("CG array exists without its PREFLIGHT dependency")
+        expected_dependencies["afterok"].add(
+            str(array_ids["PREFLIGHT"])
+        )
+    elif group == "MIP_RAW":
+        if "CG" not in array_ids:
+            raise ValueError("RAW MIP array exists without its CG dependency")
+        expected_dependencies["aftercorr"] = {str(array_ids["CG"])}
+    elif group == "MIP_KNOWN":
+        if "CG" not in array_ids or "SEED" not in array_ids:
+            raise ValueError(
+                "KNOWN MIP array exists without CG/SEED dependencies"
+            )
+        expected_dependencies["aftercorr"] = {
+            str(array_ids["CG"]), str(array_ids["SEED"]),
+        }
+    observed_dependencies = _dependency_semantics(values.get("Dependency"))
+    if observed_dependencies != expected_dependencies:
+        raise ValueError(
+            "held array dependency fingerprint mismatch: "
+            f"expected={expected_dependencies} "
+            f"observed={observed_dependencies}"
+        )
+
+
+def _discover_held_science_jobs(plan, expected_plan_sha, manifest):
+    """Recover exact held gate/array parents without trusting comments alone."""
+    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
+    if not user:
+        raise ValueError("approved runtime user is missing")
+    squeue_path = _approved_tool_path(plan, "squeue")
+    listed = _bounded_query(subprocess.run, [
+        str(squeue_path), "-h", "-u", user,
+        "-o", "%F|%j|%T|%P|%R|%k",
+    ])
+    if listed.returncode != 0:
+        raise RuntimeError("cannot query squeue")
+
+    prefix = f"SLAD:{expected_plan_sha[:20]}:"
+    gate_comment = f"SLADG:{expected_plan_sha[:20]}"
+    discovered = {}
+    discovered_gate = None
+    seen_rows = set()
+    for line in listed.stdout.splitlines():
+        fields = tuple(value.strip() for value in line.split("|", 5))
+        if len(fields) != 6:
+            continue
+        job_id, job_name, state, partition, reason, comment = fields
+        if comment != gate_comment and not comment.startswith(prefix):
+            continue
+        if fields in seen_rows:
+            # ``%F`` is the parent array ID, so squeue may emit one identical
+            # row per task.  Collapse exact duplicates, but reject any mixed
+            # fingerprint or parent below.
+            continue
+        seen_rows.add(fields)
+        if not job_id.isdigit():
+            raise ValueError("held-science parent job ID is invalid")
+        state = _normalized_state(state)
+        if state != "PENDING":
+            raise ValueError("held-science recovery found a released job")
+        if comment == gate_comment:
+            if (
+                job_name != f"LDG{expected_plan_sha[:5]}"
+                or partition != "default_partition"
+                or reason != "JobHeldUser"
+            ):
+                raise ValueError("held gate fingerprint mismatch")
+            if discovered_gate is not None and discovered_gate != job_id:
+                raise ValueError("multiple gates share one plan comment")
+            discovered_gate = job_id
+            continue
+
+        group = comment[len(prefix):]
+        if group not in SCIENCE_GROUPS:
+            raise ValueError(f"unknown scale-ladder array group: {group}")
+        expected_partition = (
+            "scaglione" if group.startswith("MIP")
+            else "default_partition"
+        )
+        if (
+            job_name != _array_name(group, expected_plan_sha)
+            or partition != expected_partition
+            or reason != "Dependency"
+            or comment != f"{prefix}{group}"
+        ):
+            raise ValueError(
+                f"held array fingerprint mismatch for group {group}"
+            )
+        if group in discovered and discovered[group] != job_id:
+            raise ValueError("multiple arrays share one plan/group comment")
+        if group in discovered:
+            continue
+        if job_id in discovered.values():
+            raise ValueError("one parent job ID is bound to multiple groups")
+        discovered[group] = job_id
+
+    recorded = manifest.get("submitted_arrays") or {}
+    if set(recorded) - set(SCIENCE_GROUPS):
+        raise ValueError("campaign records an unknown array group")
+    if any(not str(value).isdigit() for value in recorded.values()):
+        raise ValueError("recorded array parent ID is invalid")
+    for group, recorded_id in recorded.items():
+        if group not in discovered:
+            raise ValueError("recorded held array is absent from live squeue")
+        if str(discovered[group]) != str(recorded_id):
+            raise ValueError("recorded/discovered array ID conflict")
+    recorded_gate = manifest.get("gate_job_id")
+    if recorded_gate is not None:
+        if not str(recorded_gate).isdigit():
+            raise ValueError("recorded gate ID is invalid")
+        if discovered_gate is None:
+            raise ValueError("recorded held gate is absent from live squeue")
+        if str(recorded_gate) != str(discovered_gate):
+            raise ValueError("recorded/discovered gate ID conflict")
+    gate_id = discovered_gate or (
+        str(recorded_gate) if recorded_gate is not None else None
+    )
+    if discovered and gate_id is None:
+        raise ValueError("held arrays exist without an exact held gate")
+    all_array_ids = {**discovered, **recorded}
+    for group, job_id in discovered.items():
+        _validate_held_array_controller(
+            plan, expected_plan_sha, group, job_id, gate_id, all_array_ids
+        )
+    return discovered, discovered_gate
+
+
+def _discover_intended_science_jobs(
+    plan, expected_plan_sha, manifest, *, sleeper=time.sleep,
+):
+    """Boundedly recover every accepted-before-ID science submission.
+
+    A durable intent means a prior process may have died immediately after
+    Slurm accepted the held gate or array.  Absence is therefore ambiguous and
+    can never authorize a replacement submission.
+    """
+    gate_intent = manifest.get("gate_submission_intent")
+    array_intents = dict(manifest.get("array_submission_intents") or {})
+    for attempt_index in range(AMBIGUOUS_DISCOVERY_ATTEMPTS):
+        discovered, discovered_gate = _discover_held_science_jobs(
+            plan, expected_plan_sha, manifest
+        )
+        missing_gate = gate_intent is not None and discovered_gate is None
+        missing_arrays = set(array_intents) - set(discovered)
+        if not missing_gate and not missing_arrays:
+            return discovered, discovered_gate
+        if attempt_index + 1 < AMBIGUOUS_DISCOVERY_ATTEMPTS:
+            sleeper(AMBIGUOUS_DISCOVERY_DELAY_S)
+    raise RuntimeError(
+        "prior held gate/array submission remains ambiguous; one or more "
+        "exact jobs are not yet visible, so replacement submission is refused"
+    )
+
+
+def _reconcile_locked(
     root, expected_plan_sha, *,
     release_held_gate=False,
     resume_missing_arrays=False,
@@ -261,63 +522,45 @@ def reconcile(
         "creating", "held", "held_after_partial_submission",
         "held_probe_failure", "held_probe_waiting",
     }:
-        squeue = plan.get("squeue") or {}
-        squeue_path = Path(str(squeue.get("path") or ""))
-        if (
-            squeue.get("available") is not True
-            or not squeue_path.is_file()
-            or hashlib.sha256(squeue_path.read_bytes()).hexdigest()
-            != squeue.get("sha256")
-        ):
-            raise ValueError("approved squeue unavailable/changed")
-        listed = _bounded_query(
-            subprocess.run,
-            [str(squeue_path), "-h", "-o", "%F|%k"],
+        has_submission_intent = bool(
+            manifest.get("gate_submission_intent")
+            or manifest.get("array_submission_intents")
         )
-        if listed.returncode != 0:
-            raise RuntimeError("cannot query squeue")
-        prefix = f"SLAD:{expected_plan_sha[:20]}:"
-        gate_comment = f"SLADG:{expected_plan_sha[:20]}"
-        discovered = {}
-        discovered_gate = None
-        for line in listed.stdout.splitlines():
-            fields = line.split("|", 1)
-            if len(fields) != 2:
-                continue
-            if fields[1] == gate_comment:
-                if discovered_gate and discovered_gate != fields[0]:
-                    raise ValueError("multiple gates share one plan comment")
-                discovered_gate = fields[0]
-                continue
-            if not fields[1].startswith(prefix):
-                continue
-            group = fields[1][len(prefix):]
-            if group in discovered and discovered[group] != fields[0]:
-                raise ValueError("multiple arrays share one plan/group comment")
-            discovered[group] = fields[0]
+        if has_submission_intent:
+            discovered, discovered_gate = _discover_intended_science_jobs(
+                plan, expected_plan_sha, manifest
+            )
+        else:
+            discovered, discovered_gate = _discover_held_science_jobs(
+                plan, expected_plan_sha, manifest
+            )
         recorded = manifest.get("submitted_arrays") or {}
-        for group, job_id in discovered.items():
-            if group in recorded and str(recorded[group]) != str(job_id):
-                raise ValueError("recorded/discovered array ID conflict")
         combined = {**discovered, **recorded}
-        if any(not str(value).isdigit() for value in combined.values()):
-            raise ValueError("reconstructed array ID is invalid")
         manifest["submitted_arrays"] = combined
         if discovered_gate:
-            recorded_gate = manifest.get("gate_job_id")
-            if recorded_gate and str(recorded_gate) != str(discovered_gate):
-                raise ValueError("recorded/discovered gate ID conflict")
             manifest["gate_job_id"] = discovered_gate
-        gate_for_resume = manifest.get("gate_job_id")
-        required_groups = (
-            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
-            "MIP_RAW", "MIP_KNOWN",
+            manifest.pop("gate_submission_intent", None)
+        array_intents = dict(
+            manifest.get("array_submission_intents") or {}
         )
+        for group in discovered:
+            array_intents.pop(group, None)
+        if array_intents:
+            manifest["array_submission_intents"] = array_intents
+        else:
+            manifest.pop("array_submission_intents", None)
+        gate_for_resume = manifest.get("gate_job_id")
         missing_groups = [
-            group for group in required_groups if group not in combined
+            group for group in SCIENCE_GROUPS if group not in combined
         ]
         if missing_groups and resume_missing_arrays:
             if not str(gate_for_resume or "").isdigit():
+                manifest["gate_submission_intent"] = {
+                    "job_name": f"LDG{expected_plan_sha[:5]}",
+                    "partition": "default_partition",
+                    "comment": f"SLADG:{expected_plan_sha[:20]}",
+                }
+                _replace_json(manifest_path, manifest)
                 gate_for_resume = _sbatch(plan, [
                     "--hold", "--partition=default_partition",
                     "--time=00:05:00",
@@ -328,6 +571,7 @@ def reconcile(
                     "--export=NONE", "--wrap=/bin/true",
                 ])
                 manifest["gate_job_id"] = str(gate_for_resume)
+                manifest.pop("gate_submission_intent", None)
                 manifest["gate_state"] = "held"
                 _replace_json(manifest_path, manifest)
             if not str(gate_for_resume or "").isdigit():
@@ -336,7 +580,7 @@ def reconcile(
                 plan, str(gate_for_resume), expected_plan_sha
             )
             logs = root / "logs"
-            for group in required_groups:
+            for group in SCIENCE_GROUPS:
                 if group in combined:
                     continue
                 dependency = None
@@ -350,6 +594,21 @@ def reconcile(
                     dependency = (
                         f"aftercorr:{combined['CG']}:{combined['SEED']}"
                     )
+                array_intents = dict(
+                    manifest.get("array_submission_intents") or {}
+                )
+                array_intents[group] = {
+                    "job_name": _array_name(group, expected_plan_sha),
+                    "partition": (
+                        "scaglione" if group.startswith("MIP")
+                        else "default_partition"
+                    ),
+                    "comment": (
+                        f"SLAD:{expected_plan_sha[:20]}:{group}"
+                    ),
+                }
+                manifest["array_submission_intents"] = array_intents
+                _replace_json(manifest_path, manifest)
                 combined[group] = _submit_array(
                     plan,
                     root / "approved-plan.json",
@@ -360,6 +619,11 @@ def reconcile(
                     dependency=dependency,
                 )
                 manifest["submitted_arrays"] = dict(combined)
+                array_intents.pop(group, None)
+                if array_intents:
+                    manifest["array_submission_intents"] = array_intents
+                else:
+                    manifest.pop("array_submission_intents", None)
                 manifest["gate_job_id"] = str(gate_for_resume)
                 manifest["gate_state"] = "held"
                 _replace_json(manifest_path, manifest)
@@ -571,6 +835,30 @@ def reconcile(
     }
     _replace_json(manifest_path, manifest)
     return manifest
+
+
+def reconcile(
+    root, expected_plan_sha, *,
+    release_held_gate=False,
+    resume_missing_arrays=False,
+    retry_failed_probes=False,
+):
+    """Serialize every public mutation of one campaign.
+
+    The activation controller already owns this same lock and therefore calls
+    ``_reconcile_locked`` directly.  Operators and the CLI always enter here,
+    preventing two reconcilers (or a reconciler and activation) from accepting
+    duplicate held Slurm jobs before their IDs are durable.
+    """
+    root = Path(root).resolve()
+    with _campaign_lock(root):
+        return _reconcile_locked(
+            root,
+            expected_plan_sha,
+            release_held_gate=release_held_gate,
+            resume_missing_arrays=resume_missing_arrays,
+            retry_failed_probes=retry_failed_probes,
+        )
 
 
 def main(argv=None):

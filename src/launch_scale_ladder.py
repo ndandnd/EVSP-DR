@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import csv
+import fcntl
 import hashlib
 import json
 import math
@@ -40,6 +42,7 @@ HISTORICAL_FLAT_SHA256 = (
 )
 WORKER = REPO_ROOT / "src/submit_scale_ladder.sub"
 PROBE_WORKER = REPO_ROOT / "src/submit_scale_ladder_probe.sub"
+ACTIVATION_WORKER = REPO_ROOT / "src/submit_scale_ladder_activation.sub"
 CODE_PATHS = (
     "src/build_tariff_response_manifest.py",
     "src/launch_scale_ladder.py",
@@ -67,6 +70,8 @@ CODE_PATHS = (
     "src/run_scale_ladder_local_diagnostics.py",
     "src/run_scale_ladder_environment_probe.py",
     "src/submit_scale_ladder_probe.sub",
+    "src/submit_scale_ladder_activation.sub",
+    "src/run_reviewed_python.py",
     "src/matching_init.py",
     "src/pricing_dp_og.py",
     "src/make_giro_seed_routes.py",
@@ -83,6 +88,8 @@ MIP_BUDGET_S = {
 }
 SNAPSHOT_MINUTES = (5, 15, 30, 60, 120, 240, 480, 720, 1440)
 PROBE_PARTITIONS = ("default_partition", "scaglione")
+AMBIGUOUS_DISCOVERY_ATTEMPTS = 6
+AMBIGUOUS_DISCOVERY_DELAY_S = 1.0
 PROBE_TERMINAL_STATES = {
     "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY",
     "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED",
@@ -94,6 +101,7 @@ PROBE_WAITING_RESOLUTIONS = {
     "accounting_query_error", "awaiting_artifact", "observer_deadline",
 }
 PROBE_SLURM_QUERY_TIMEOUT_S = 10.0
+SBATCH_TIMEOUT_S = 30.0
 
 
 def canonical(payload):
@@ -494,6 +502,9 @@ def build_plan(campaign, python, reservation_root):
         "worker_sha256": sha256_file(WORKER),
         "probe_worker": str(PROBE_WORKER),
         "probe_worker_sha256": sha256_file(PROBE_WORKER),
+        "activation_worker": str(ACTIVATION_WORKER),
+        "activation_worker_sha256": sha256_file(ACTIVATION_WORKER),
+        "submission_protocol": "probe_first_activation_v1",
         "python_identity": python_identity,
         "python": {
             "path": python_identity["portable"]["executable"],
@@ -519,6 +530,8 @@ def build_plan(campaign, python, reservation_root):
         "seed_task_count": 21,
         "k40_mip_submission_count": 0,
         "infrastructure_probe_task_count": 2,
+        "infrastructure_activation_task_count": 1,
+        "infrastructure_task_count": 3,
         "k40_reuse_slots": reuse_slots,
     }
 
@@ -609,29 +622,139 @@ def _write_new(path, payload):
         temporary.unlink(missing_ok=True)
 
 
-def _reserve(plan, plan_sha):
+@contextlib.contextmanager
+def _campaign_lock(root):
+    root = Path(root)
+    root.mkdir(parents=True, exist_ok=True)
+    lock_path = root / ".submission.lock"
+    with lock_path.open("a+b") as handle:
+        # The top-level submitter and its activation controller can overlap
+        # briefly.  Serialize them instead of making the valid controller fail
+        # merely because the submitter is still publishing its final state.
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def _discover_bound_job(plan, spec, *, attempts=1, delay_s=0.0):
+    if not isinstance(attempts, int) or attempts < 1 or delay_s < 0:
+        raise ValueError("bound-job discovery policy is invalid")
+    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
+    if not user:
+        raise ValueError("approved runtime user is missing")
+    for attempt_index in range(attempts):
+        listed = _run_probe_slurm_query(
+            subprocess.run,
+            [
+                plan["squeue"]["path"], "-h", "-u", user,
+                "-o", "%i|%j|%T|%P|%R|%k",
+            ],
+        )
+        if listed.returncode != 0:
+            raise RuntimeError("cannot query squeue for accepted job")
+        same_comment = [
+            {
+                "job_id": fields[0], "job_name": fields[1],
+                "state": _normalized_slurm_state(fields[2]),
+                "partition": fields[3], "reason": fields[4],
+                "comment": fields[5],
+            }
+            for line in listed.stdout.splitlines()
+            if len(fields := [value.strip() for value in line.split("|", 5)])
+            == 6
+            and fields[5] == spec["comment"]
+        ]
+        if any(
+            not row["job_id"].isdigit()
+            or row["partition"] != spec["partition"]
+            or row["job_name"] != spec["job_name"]
+            or row["state"] != "PENDING"
+            or row["reason"] != "JobHeldUser"
+            for row in same_comment
+        ):
+            raise ValueError(
+                "bound Slurm comment has a mismatched fingerprint"
+            )
+        matches = {row["job_id"] for row in same_comment}
+        if len(matches) > 1:
+            raise ValueError("multiple Slurm jobs share one bound comment")
+        if matches:
+            return next(iter(matches))
+        if attempt_index + 1 < attempts:
+            time.sleep(delay_s)
+    return None
+
+
+def _recover_probe_job_id(plan, plan_sha, partition, spec):
+    output = Path(spec["output"])
+    if output.is_file():
+        payload = json.loads(output.read_text())
+        recovered = str(payload.get("slurm_job_id") or "")
+        if (
+            recovered.isdigit()
+            and payload.get("plan_sha256") == plan_sha
+            and payload.get("probe_id") == spec["probe_id"]
+            and payload.get("probe_attempt") == spec["attempt"]
+            and payload.get("slurm_partition") == partition
+        ):
+            return recovered
+        raise ValueError("unrecorded probe artifact identity mismatch")
+    ambiguous = (
+        spec.get("submission_intent") == "accepted_or_ambiguous"
+        or spec.get("submission_outcome_ambiguous") is True
+    )
+    recovered = _discover_bound_job(
+        plan, spec,
+        attempts=(AMBIGUOUS_DISCOVERY_ATTEMPTS if ambiguous else 1),
+        delay_s=(AMBIGUOUS_DISCOVERY_DELAY_S if ambiguous else 0.0),
+    )
+    if recovered is None and ambiguous:
+        raise RuntimeError(
+            "prior probe submission remains ambiguous; exact job not yet "
+            "visible, so replacement submission is refused"
+        )
+    return recovered
+
+
+def _activation_lineage_id(plan, plan_sha):
+    return hashlib.sha256(canonical({
+        "schema": "evsp-dr-scale-ladder-activation-lineage-v1",
+        "plan_sha256": plan_sha,
+        "campaign_root": str(Path(plan["campaign_root"]).resolve()),
+        "submission_protocol": "probe_first_activation_v1",
+    })).hexdigest()
+
+
+def _ensure_reservations(plan, plan_sha, activation_lineage_id):
+    if not re.fullmatch(r"[0-9a-f]{64}", str(activation_lineage_id or "")):
+        raise ValueError("stable activation lineage is required")
     root = Path(plan["reservation_root"])
     root.mkdir(parents=True, exist_ok=True)
     paths = []
-    try:
-        for job in plan["jobs"]:
-            path = root / f"{job['execution_digest']}.json"
-            payload = canonical({
-                "schema": "evsp-dr-scale-ladder-reservation-v1",
-                "plan_sha256": plan_sha,
-                "job_key": job["job_key"],
-                "execution_digest": job["execution_digest"],
-            })
+    for job in plan["jobs"]:
+        path = root / f"{job['execution_digest']}.json"
+        payload = canonical({
+            "schema": "evsp-dr-scale-ladder-reservation-v3",
+            "submission_protocol": "probe_first_activation_v1",
+            "plan_sha256": plan_sha,
+            "activation_lineage_id": activation_lineage_id,
+            "job_key": job["job_key"],
+            "execution_digest": job["execution_digest"],
+        })
+        if path.exists():
+            if path.read_bytes() != payload:
+                raise FileExistsError(
+                    f"reservation belongs to another execution: {path}"
+                )
+        else:
             _write_new(path, payload)
-            paths.append(path)
-    except Exception:
-        for path in paths:
-            path.unlink(missing_ok=True)
-        raise
+        paths.append(path)
     return paths
 
 
-def submit(plan, plan_sha):
+def _validate_submission_contract(plan):
     if (
         plan["scontrol"]["available"] is not True
         or plan["sbatch"]["available"] is not True
@@ -650,13 +773,288 @@ def submit(plan, plan_sha):
     observed = checkout_identity(True)
     if observed != plan["checkout_identity"]:
         raise ValueError("submission checkout differs")
+
+
+def _validate_recorded_probe_spec(plan_sha, root, partition, spec):
+    attempt = spec.get("attempt")
+    if not isinstance(attempt, int) or attempt < 1:
+        raise ValueError("recorded probe attempt is invalid")
+    expected = _probe_spec(plan_sha, partition, root, attempt)
+    if any(
+        spec.get(field) != expected[field]
+        for field in (
+            "output", "probe_id", "partition", "attempt", "comment",
+            "job_name",
+        )
+    ):
+        raise ValueError("recorded probe specification mismatch")
+    return expected
+
+
+def _probe_result_identity_errors(partition, spec, result):
+    expected = {
+        "job_id": str(spec.get("job_id") or ""),
+        "output": str(spec.get("output") or ""),
+        "probe_id": spec.get("probe_id"),
+        "partition": partition,
+        "attempt": spec.get("attempt"),
+        "comment": spec.get("comment"),
+        "job_name": spec.get("job_name"),
+    }
+    errors = []
+    for field, expected_value in expected.items():
+        observed = result.get(field)
+        if field == "job_id":
+            observed = str(observed or "")
+        if observed != expected_value:
+            errors.append({
+                "field": field,
+                "expected": expected_value,
+                "observed": observed,
+            })
+    return errors
+
+
+def _hard_probe_retry_reason(result):
+    resolution = str(result.get("state_resolution") or "")
+    if resolution in {
+        "environment_mismatch", "artifact_identity_mismatch",
+        "identity_mismatch",
+    }:
+        return resolution
+    if result.get("identity_errors") or result.get("artifact_identity_errors"):
+        return "identity_mismatch"
+    if result.get("differences"):
+        return "environment_mismatch"
+    return None
+
+
+def _validate_terminal_activation(plan, activation):
+    if not isinstance(activation, dict):
+        raise RuntimeError(
+            "infrastructure retry refused: no prior controller is recorded"
+        )
+    if not str(activation.get("job_id") or "").isdigit():
+        raise RuntimeError(
+            "infrastructure retry refused: prior controller has no exact job ID"
+        )
+    observation = _resolve_bound_job(plan, activation)
+    if (
+        observation.get("live") is True
+        or observation.get("state") not in PROBE_TERMINAL_STATES
+    ):
+        raise RuntimeError(
+            "infrastructure retry refused: recorded controller is live or "
+            "not proven terminal"
+        )
+    return observation
+
+
+def _authorize_infrastructure_retry(
+    plan, plan_sha, root, manifest, manifest_path, *, kind,
+):
+    """Atomically authorize one new pre-science infrastructure attempt.
+
+    The authorization is durable before any replacement ``sbatch`` call.  A
+    subsequent exact submission can therefore finish an interrupted retry
+    without incrementing attempts again.
+    """
+    pending = manifest.get("infrastructure_retry")
+    if pending is not None:
+        if (
+            isinstance(pending, dict)
+            and pending.get("state") in {
+                "dispatched", "terminal_retry_required",
+            }
+        ):
+            if pending.get("state") == "dispatched":
+                # One explicit retry invocation is enough after a dispatched
+                # replacement controller fails.  Exact live/unknown state
+                # raises here and never increments the attempt.
+                terminal_observation = _validate_terminal_activation(
+                    plan, manifest.get("activation")
+                )
+                pending = {
+                    **pending,
+                    "state": "terminal_retry_required",
+                    "terminal_observation": terminal_observation,
+                }
+            manifest.setdefault("infrastructure_retry_history", []).append(
+                dict(pending)
+            )
+            manifest.pop("infrastructure_retry", None)
+            pending = None
+            _replace_json(manifest_path, manifest)
+        elif (
+            isinstance(pending, dict)
+            and pending.get("kind") == kind
+            and pending.get("state") in {
+                "authorized", "probe_ids_recorded", "activation_held",
+                "dispatched",
+            }
+        ):
+            return manifest
+        else:
+            raise RuntimeError(
+                "another infrastructure retry is already recorded"
+            )
+    activation = manifest.get("activation")
+    activation_observation = _validate_terminal_activation(plan, activation)
+    probe_specs = dict(manifest.get("infrastructure_probes") or {})
+    if set(probe_specs) != set(PROBE_PARTITIONS):
+        raise ValueError("both recorded probe specifications are required")
+    for partition, spec in probe_specs.items():
+        _validate_recorded_probe_spec(plan_sha, root, partition, spec)
+        if not str(spec.get("job_id") or "").isdigit():
+            raise ValueError("recorded probe job ID is invalid")
+
+    recorded_results = manifest.get("probe_results")
+    recorded_results_valid = bool(
+        isinstance(recorded_results, dict)
+        and set(recorded_results) == set(PROBE_PARTITIONS)
+        and not any(
+            _probe_result_identity_errors(
+                partition, probe_specs[partition],
+                recorded_results[partition],
+            )
+            for partition in PROBE_PARTITIONS
+        )
+    )
+    # Do not trust an old controller summary alone.  Retry authorization makes
+    # one bounded, live-first observation of the exact jobs and artifacts.
+    results = _wait_for_probes(
+        plan, plan_sha, probe_specs, timeout_s=2
+    )
+    if set(results) != set(PROBE_PARTITIONS):
+        raise RuntimeError("probe re-observation is incomplete")
+    if recorded_results is not None and not recorded_results_valid:
+        manifest.setdefault("probe_result_history", []).append({
+            "reason": "superseded_by_exact_retry_observation",
+            "value": recorded_results,
+        })
+    manifest["probe_results"] = results
+    _replace_json(manifest_path, manifest)
+    replacements = []
+    scheduler_observations = {}
+    for partition in PROBE_PARTITIONS:
+        spec = probe_specs[partition]
+        result = results[partition]
+        identity_errors = _probe_result_identity_errors(
+            partition, spec, result
+        )
+        if identity_errors:
+            raise ValueError(
+                f"recorded probe result identity mismatch on {partition}: "
+                f"{identity_errors}"
+            )
+        hard_reason = _hard_probe_retry_reason(result)
+        if hard_reason:
+            raise ValueError(
+                f"non-retryable probe mismatch on {partition}: {hard_reason}"
+            )
+        observation = _resolve_bound_job(plan, spec)
+        scheduler_observations[partition] = observation
+        if observation.get("live") is True:
+            raise RuntimeError(
+                f"probe retry refused: {partition} is still live"
+            )
+        if result.get("compatible") is True:
+            if (
+                observation.get("state") != "COMPLETED"
+                or result.get("state") != "COMPLETED"
+            ):
+                raise ValueError(
+                    f"compatible probe {partition} lacks a completed outcome"
+                )
+            continue
+        publication_incomplete = bool(
+            result.get("state") == "COMPLETED"
+            and observation.get("state") == "COMPLETED"
+            and result.get("state_resolution") == "awaiting_artifact"
+            and result.get("artifact_status")
+            in {"missing", "awaiting_sidecar"}
+            and result.get("observer_deadline_reached") is True
+        )
+        if publication_incomplete:
+            replacements.append(partition)
+            continue
+        if _probe_result_waiting(result):
+            raise RuntimeError(
+                f"probe retry refused: {partition} is live or unresolved"
+            )
+        if (
+            result.get("state_resolution") != "scheduler_failure"
+            or result.get("state") not in PROBE_RETRYABLE_STATES
+            or observation.get("state") not in PROBE_RETRYABLE_STATES
+        ):
+            raise ValueError(
+                f"probe retry refused: {partition} is not a proven "
+                "scheduler-terminal failure"
+            )
+        replacements.append(partition)
+
+    if kind == "failed_probes" and not replacements:
+        raise RuntimeError("probe retry refused: no retryable probe failed")
+    if kind == "failed_activation" and replacements:
+        raise RuntimeError(
+            "activation-only retry refused: failed probes require "
+            "--retry-failed-probes"
+        )
+    if kind == "failed_activation" and not _probes_compatible(results):
+        raise RuntimeError(
+            "activation-only retry refused: probes are not both compatible"
+        )
+
+    probe_history = manifest.setdefault("probe_attempt_history", {})
+    for partition in replacements:
+        previous = dict(probe_specs[partition])
+        probe_history.setdefault(partition, []).append({
+            "spec": previous,
+            "result": (
+                recorded_results[partition]
+                if recorded_results_valid else results[partition]
+            ),
+            "retry_observation": results[partition],
+            "scheduler_observation": scheduler_observations[partition],
+        })
+        probe_specs[partition] = _probe_spec(
+            plan_sha, partition, root,
+            attempt=int(previous["attempt"]) + 1,
+        )
+
+    activation_history = manifest.setdefault(
+        "activation_attempt_history", []
+    )
+    activation_history.append({
+        "spec": dict(activation),
+        "observation": activation_observation,
+        "probe_results": (
+            recorded_results if recorded_results_valid else results
+        ),
+        "retry_probe_observation": results,
+    })
+    target_attempt = int(activation["attempt"]) + 1
+    manifest["infrastructure_probes"] = probe_specs
+    # The replacement controller cannot be fully bound until every replacement
+    # probe ID is durable.  The retry record is the atomic authorization to
+    # construct exactly this attempt after those held submissions complete.
+    manifest["activation"] = None
+    manifest["infrastructure_retry"] = {
+        "schema": "evsp-dr-scale-ladder-infrastructure-retry-v1",
+        "kind": kind,
+        "state": "authorized",
+        "target_activation_attempt": target_attempt,
+        "source_activation_job_id": str(activation["job_id"]),
+        "replaced_probe_partitions": replacements,
+    }
+    manifest["probe_state"] = "retry_authorized"
+    manifest["submission_state"] = "infrastructure_retry_authorized"
+    _replace_json(manifest_path, manifest)
+    return manifest
+
+
+def _stage_scientific_inputs(plan):
     root = Path(plan["campaign_root"])
-    if root.exists():
-        raise FileExistsError(root)
-    reservations = _reserve(plan, plan_sha)
-    root.mkdir(parents=True)
-    logs = root / "logs"
-    logs.mkdir()
     for job in plan["jobs"]:
         source = Path(job["instance"]["source_path"])
         target = Path(job["instance"]["path"])
@@ -681,130 +1079,293 @@ def submit(plan, plan_sha):
         root / "input/manifests/known_membership_preflight.json",
         plan["membership_preflight_sha256"],
     )
-    plan_path = root / "approved-plan.json"
-    _write_new(plan_path, canonical(plan))
-    manifest = {
-        **plan,
-        "approval_sha256": plan_sha,
-        "submitted": False,
-        "gate_state": "creating",
-        "submitted_arrays": {},
-        "reservations": [str(path) for path in reservations],
-    }
-    manifest_path = root / "campaign.json"
-    _replace_json(manifest_path, manifest)
-    gate = _sbatch(plan, [
-        "--hold", "--partition=default_partition", "--time=00:05:00",
-        f"--job-name=LDG{plan_sha[:5]}",
-        f"--comment=SLADG:{plan_sha[:20]}",
-        f"--output={logs}/gate_%j.out",
-        f"--error={logs}/gate_%j.err",
-        "--export=NONE",
-        "--wrap=/bin/true",
-    ])
-    manifest["gate_job_id"] = gate
-    manifest["gate_state"] = "held"
-    _replace_json(manifest_path, manifest)
-    arrays = {}
-    try:
-        arrays["PREFLIGHT"] = _submit_array(
-            plan, plan_path, plan_sha, "PREFLIGHT", gate, logs
-        )
-        manifest["submitted_arrays"] = dict(arrays)
-        _replace_json(manifest_path, manifest)
-        arrays["SEED"] = _submit_array(
-            plan, plan_path, plan_sha, "SEED", gate, logs
-        )
-        manifest["submitted_arrays"] = dict(arrays)
-        _replace_json(manifest_path, manifest)
-        arrays["CG"] = _submit_array(
-            plan, plan_path, plan_sha, "CG", gate, logs,
-            dependency=f"afterok:{arrays['PREFLIGHT']}",
-        )
-        arrays["CG_SENSITIVITY"] = _submit_array(
-            plan, plan_path, plan_sha, "CG_SENSITIVITY", gate, logs,
-            dependency=f"afterok:{arrays['PREFLIGHT']}",
-        )
-        manifest["submitted_arrays"] = dict(arrays)
-        _replace_json(manifest_path, manifest)
-        arrays["MIP_RAW"] = _submit_array(
-            plan, plan_path, plan_sha, "MIP_RAW", gate, logs,
-            dependency=f"aftercorr:{arrays['CG']}",
-        )
-        manifest["submitted_arrays"] = dict(arrays)
-        _replace_json(manifest_path, manifest)
-        arrays["MIP_KNOWN"] = _submit_array(
-            plan, plan_path, plan_sha, "MIP_KNOWN", gate, logs,
-            dependency=(
-                f"aftercorr:{arrays['CG']}:{arrays['SEED']}"
-            ),
-        )
-        manifest["submitted_arrays"] = dict(arrays)
-        _replace_json(manifest_path, manifest)
-    except Exception as exc:
-        manifest["gate_state"] = "held_after_partial_submission"
-        manifest["submission_error"] = repr(exc)
-        manifest["submitted_arrays"] = arrays
-        _replace_json(manifest_path, manifest)
-        raise
-    probe_specs = {}
-    try:
-        for partition in PROBE_PARTITIONS:
-            spec = _probe_spec(plan_sha, partition, root, attempt=1)
-            probe_specs[partition] = spec
-            manifest["infrastructure_probes"] = dict(probe_specs)
-            manifest["probe_state"] = "submitting"
-            _replace_json(manifest_path, manifest)
-            spec["job_id"] = _submit_probe(
-                plan, plan_path, plan_sha, spec, logs,
-            )
-            manifest["infrastructure_probes"] = dict(probe_specs)
-            _replace_json(manifest_path, manifest)
-    except Exception as exc:
-        manifest["probe_state"] = "submission_failed_gate_retained"
-        manifest["probe_error"] = repr(exc)
-        manifest["gate_state"] = "held_probe_failure"
-        _replace_json(manifest_path, manifest)
-        raise
-    manifest["probe_state"] = "running"
-    _replace_json(manifest_path, manifest)
-    probe_results = _wait_for_probes(plan, plan_sha, probe_specs)
-    manifest["probe_results"] = probe_results
-    if not _probes_compatible(probe_results):
-        if _probes_waiting(probe_results):
-            manifest["probe_state"] = "waiting_gate_retained"
-            manifest["gate_state"] = "held_probe_waiting"
-            message = (
-                "probe observer deadline reached; scientific arrays "
-                "remain held"
-            )
+    return root / "input"
+
+
+def submit(
+    plan, plan_sha, *, retry_failed_activation=False,
+    retry_failed_probes=False,
+):
+    """Submit only infrastructure probes and their held controller.
+
+    Scientific reservations, the gate, and all six scientific arrays are
+    created later by the activation controller, and only after it validates
+    both probe artifacts independently.
+    """
+    if retry_failed_activation and retry_failed_probes:
+        raise ValueError("choose exactly one infrastructure retry mode")
+    _validate_submission_contract(plan)
+    if plan.get("submission_protocol") != "probe_first_activation_v1":
+        raise ValueError("unsupported scale-ladder submission protocol")
+    root = Path(plan["campaign_root"])
+    with _campaign_lock(root):
+        logs = root / "logs"
+        logs.mkdir(exist_ok=True)
+        plan_path = root / "approved-plan.json"
+        manifest_path = root / "campaign.json"
+        plan_raw = canonical(plan)
+        if plan_path.exists():
+            if (
+                plan_path.read_bytes() != plan_raw
+                or hashlib.sha256(plan_raw).hexdigest() != plan_sha
+                or not manifest_path.is_file()
+            ):
+                raise ValueError("existing campaign differs from approved plan")
+            manifest = json.loads(manifest_path.read_text())
+            if manifest.get("approval_sha256") != plan_sha:
+                raise ValueError("existing campaign approval mismatch")
         else:
-            manifest["probe_state"] = "failed_gate_retained"
-            manifest["gate_state"] = "held_probe_failure"
-            message = (
-                "infrastructure probe failed; scientific arrays "
-                "remain held"
+            if manifest_path.exists():
+                raise ValueError("campaign manifest exists without approved plan")
+            _write_new(plan_path, plan_raw)
+            manifest = {
+                **plan,
+                "approval_sha256": plan_sha,
+                "submitted": False,
+                "submission_state": "probe_submitting",
+                "probe_state": "submitting",
+                "reservation_state": "not_created",
+                "gate_state": "not_created",
+                "gate_job_id": None,
+                "submitted_arrays": {},
+                "reservations": [],
+            }
+            _replace_json(manifest_path, manifest)
+        if manifest.get("submitted") is True:
+            return manifest
+        if (
+            manifest.get("gate_state") != "not_created"
+            or manifest.get("reservations")
+            or manifest.get("submitted_arrays")
+            or manifest.get("gate_job_id") is not None
+        ):
+            raise ValueError(
+                "scientific submission already began; use gate reconciliation"
             )
+
+        requested_retry_kind = (
+            "failed_probes" if retry_failed_probes
+            else "failed_activation" if retry_failed_activation
+            else None
+        )
+        pending_retry = manifest.get("infrastructure_retry")
+        if requested_retry_kind is not None:
+            manifest = _authorize_infrastructure_retry(
+                plan, plan_sha, root, manifest, manifest_path,
+                kind=requested_retry_kind,
+            )
+            pending_retry = manifest.get("infrastructure_retry")
+        elif pending_retry is not None:
+            raise RuntimeError(
+                "an explicitly authorized infrastructure retry is pending; "
+                "resume it with the same reviewed retry flag"
+            )
+
+        probe_specs = dict(manifest.get("infrastructure_probes") or {})
+        try:
+            for partition in PROBE_PARTITIONS:
+                spec = probe_specs.get(partition)
+                if spec is None:
+                    if pending_retry is not None:
+                        raise ValueError(
+                            "retry authorization lacks a probe specification"
+                        )
+                    spec = _probe_spec(
+                        plan_sha, partition, root, attempt=1
+                    )
+                    probe_specs[partition] = spec
+                _validate_recorded_probe_spec(
+                    plan_sha, root, partition, spec
+                )
+                manifest["infrastructure_probes"] = dict(probe_specs)
+                manifest["probe_state"] = (
+                    "retry_submitting" if pending_retry is not None
+                    else "submitting"
+                )
+                _replace_json(manifest_path, manifest)
+                if not str(spec.get("job_id") or "").isdigit():
+                    recovered = _recover_probe_job_id(
+                        plan, plan_sha, partition, spec
+                    )
+                    if recovered is None:
+                        # Publish intent before sbatch.  If this process dies
+                        # after scheduler acceptance but before the returned ID
+                        # is durable, a later invocation may only boundedly
+                        # rediscover this exact fingerprint; it may not submit
+                        # a duplicate.
+                        spec["submission_intent"] = "accepted_or_ambiguous"
+                        manifest["infrastructure_probes"] = dict(probe_specs)
+                        _replace_json(manifest_path, manifest)
+                        try:
+                            recovered = _submit_probe(
+                                plan, plan_path, plan_sha, spec, logs,
+                                held=True,
+                            )
+                        except RuntimeError:
+                            spec["submission_outcome_ambiguous"] = True
+                            manifest["infrastructure_probes"] = dict(
+                                probe_specs
+                            )
+                            _replace_json(manifest_path, manifest)
+                            raise
+                    spec["job_id"] = recovered
+                    spec.pop("submission_intent", None)
+                    spec.pop("submission_outcome_ambiguous", None)
+                    manifest["infrastructure_probes"] = dict(probe_specs)
+                    _replace_json(manifest_path, manifest)
+        except Exception as exc:
+            manifest["probe_state"] = "submission_failed"
+            manifest["probe_error"] = repr(exc)
+            manifest["submission_state"] = "probe_submission_failed"
+            _replace_json(manifest_path, manifest)
+            raise
+        manifest["probe_state"] = (
+            "retry_held" if pending_retry is not None else "held"
+        )
+        manifest["submission_state"] = "activation_submitting"
+        if pending_retry is not None:
+            pending_retry["state"] = "probe_ids_recorded"
+            manifest["infrastructure_retry"] = pending_retry
         _replace_json(manifest_path, manifest)
-        raise RuntimeError(message)
-    manifest["probe_state"] = "passed"
-    manifest["submitted_arrays"] = arrays
-    manifest["gate_state"] = "release_attempting"
-    _replace_json(manifest_path, manifest)
-    released = _release_gate_after_probes(
-        plan, gate, probe_results
-    )
-    if released.returncode != 0:
-        manifest["gate_state"] = "held_release_failed"
-        manifest["release_error"] = (
-            released.stderr or released.stdout
-        ).strip()
+        activation = manifest.get("activation")
+        if activation is None:
+            attempt = (
+                pending_retry["target_activation_attempt"]
+                if pending_retry is not None else 1
+            )
+            activation = _activation_spec(
+                plan_sha, root, probe_specs, attempt=attempt
+            )
+        elif not isinstance(activation.get("attempt"), int):
+            raise ValueError("recorded activation attempt is invalid")
+        expected_activation = _activation_spec(
+            plan_sha, root, probe_specs, attempt=activation["attempt"],
+            dependency_job_ids=activation.get("dependency_job_ids"),
+        )
+        if activation is not None and any(
+            activation.get(field) != expected_activation[field]
+            for field in (
+                "attempt", "partition", "comment", "job_name",
+                "probe_job_ids", "dependency_job_ids", "campaign_root",
+            )
+        ):
+            raise ValueError("recorded activation specification mismatch")
+        manifest["activation"] = activation
+        if pending_retry is not None:
+            pending_retry["state"] = "probe_ids_recorded"
+            manifest["infrastructure_retry"] = pending_retry
         _replace_json(manifest_path, manifest)
-        raise RuntimeError("gate release failed; arrays remain blocked")
-    manifest["gate_state"] = "released"
-    manifest["submitted"] = True
-    _replace_json(manifest_path, manifest)
-    return manifest
+        if str(activation.get("job_id") or "").isdigit():
+            observation = _resolve_bound_job(plan, activation)
+            terminal = observation.get("state") in PROBE_TERMINAL_STATES
+            if terminal:
+                activation["state"] = "terminal_retry_required"
+                activation["terminal_observation"] = observation
+                manifest["activation"] = activation
+                if pending_retry is not None:
+                    pending_retry["state"] = "terminal_retry_required"
+                    pending_retry["terminal_observation"] = observation
+                    manifest["infrastructure_retry"] = pending_retry
+                manifest["submission_state"] = (
+                    "activation_terminal_retry_required"
+                )
+                _replace_json(manifest_path, manifest)
+                raise RuntimeError(
+                    "activation controller is terminal before campaign "
+                    "completion; inspect its logs, then rerun the exact "
+                    "approved command with --retry-failed-activation"
+                )
+        if not str(activation.get("job_id") or "").isdigit():
+            activation_ambiguous = (
+                activation.get("submission_intent")
+                == "accepted_or_ambiguous"
+                or activation.get("submission_outcome_ambiguous") is True
+            )
+            recovered = _discover_bound_job(
+                plan, activation,
+                attempts=(
+                    AMBIGUOUS_DISCOVERY_ATTEMPTS
+                    if activation_ambiguous else 1
+                ),
+                delay_s=(
+                    AMBIGUOUS_DISCOVERY_DELAY_S
+                    if activation_ambiguous else 0.0
+                ),
+            )
+            if recovered is None and activation_ambiguous:
+                raise RuntimeError(
+                    "prior activation submission remains ambiguous; exact "
+                    "job not yet visible, so replacement submission is refused"
+                )
+            if recovered is None:
+                activation["submission_intent"] = (
+                    "accepted_or_ambiguous"
+                )
+                manifest["activation"] = activation
+                _replace_json(manifest_path, manifest)
+                try:
+                    recovered = _submit_activation(
+                        plan, plan_path, plan_sha, activation, logs
+                    )
+                except RuntimeError:
+                    activation["submission_outcome_ambiguous"] = True
+                    manifest["activation"] = activation
+                    _replace_json(manifest_path, manifest)
+                    raise
+            activation["job_id"] = recovered
+            activation.pop("submission_intent", None)
+            activation.pop("submission_outcome_ambiguous", None)
+            manifest["activation"] = activation
+            manifest["submission_state"] = "activation_held"
+            if pending_retry is not None:
+                pending_retry["state"] = "activation_held"
+                manifest["infrastructure_retry"] = pending_retry
+            _replace_json(manifest_path, manifest)
+        # Only release infrastructure work after both probe IDs and the
+        # controller ID are durable.  This gives every accepted-before-record
+        # crash window a unique held job that the exact same submission can
+        # discover and resume.
+        for partition in PROBE_PARTITIONS:
+            spec = probe_specs[partition]
+            if spec.get("released") is not True:
+                released = _release_held_probe(plan, spec)
+                if released.returncode != 0:
+                    manifest["submission_state"] = "probe_release_failed"
+                    manifest["probe_release_error"] = (
+                        released.stderr or released.stdout or ""
+                    ).strip()
+                    _replace_json(manifest_path, manifest)
+                    raise RuntimeError(
+                        f"probe release failed on {partition}"
+                    )
+                spec["released"] = True
+                manifest["infrastructure_probes"] = dict(probe_specs)
+                _replace_json(manifest_path, manifest)
+        manifest["probe_state"] = "submitted"
+        manifest["submission_state"] = "activation_held"
+        _replace_json(manifest_path, manifest)
+        if activation.get("released") is not True:
+            released = _release_held_activation(plan, activation)
+            if released.returncode != 0:
+                manifest["submission_state"] = "activation_release_failed"
+                manifest["activation_release_error"] = (
+                    released.stderr or released.stdout or ""
+                ).strip()
+                _replace_json(manifest_path, manifest)
+                raise RuntimeError("activation-controller release failed")
+            activation["released"] = True
+            manifest["activation"] = activation
+            manifest["submission_state"] = "activation_released"
+            _replace_json(manifest_path, manifest)
+        if pending_retry is not None:
+            pending_retry["state"] = "dispatched"
+            pending_retry["activation_job_id"] = str(activation["job_id"])
+            pending_retry["probe_job_ids"] = dict(
+                activation["probe_job_ids"]
+            )
+            manifest["infrastructure_retry"] = pending_retry
+            _replace_json(manifest_path, manifest)
+        return manifest
 
 
 def _probe_id(partition):
@@ -835,7 +1396,279 @@ def _probe_spec(plan_sha, partition, root, attempt):
     }
 
 
-def _submit_probe(plan, plan_path, plan_sha, spec, logs):
+def _activation_spec(
+    plan_sha, root, probe_specs, attempt, *, dependency_job_ids=None,
+):
+    if not isinstance(attempt, int) or attempt < 1:
+        raise ValueError("activation attempt must be a positive integer")
+    probe_job_ids = {
+        partition: str(probe_specs[partition].get("job_id") or "")
+        for partition in PROBE_PARTITIONS
+    }
+    if any(not value.isdigit() for value in probe_job_ids.values()):
+        raise ValueError("both recorded probe job IDs are required")
+    if len(set(probe_job_ids.values())) != 2:
+        raise ValueError("probe jobs must be distinct")
+    derived_dependencies = [
+        probe_job_ids[partition]
+        for partition in PROBE_PARTITIONS
+        if probe_specs[partition].get("released") is not True
+    ]
+    if dependency_job_ids is None:
+        dependency_job_ids = derived_dependencies
+    if (
+        not isinstance(dependency_job_ids, list)
+        or len(dependency_job_ids) != len(set(dependency_job_ids))
+        or any(
+            not str(value).isdigit()
+            or str(value) not in set(probe_job_ids.values())
+            for value in dependency_job_ids
+        )
+    ):
+        raise ValueError("activation dependency job IDs are invalid")
+    dependency_job_ids = [str(value) for value in dependency_job_ids]
+    return {
+        "job_id": None,
+        "attempt": attempt,
+        "partition": "default_partition",
+        "comment": f"SLADA:{plan_sha[:20]}:{attempt}",
+        "job_name": f"LDA{attempt}{plan_sha[:5]}",
+        "probe_job_ids": probe_job_ids,
+        "dependency_job_ids": dependency_job_ids,
+        "campaign_root": str(Path(root).resolve()),
+    }
+
+
+def _submit_activation(plan, plan_path, plan_sha, spec, logs):
+    expected = _activation_spec(
+        plan_sha,
+        Path(plan["campaign_root"]),
+        {
+            partition: {
+                "job_id": job_id,
+                "released": (
+                    job_id not in spec.get("dependency_job_ids", [])
+                ),
+            }
+            for partition, job_id in spec["probe_job_ids"].items()
+        },
+        spec.get("attempt"),
+        dependency_job_ids=spec.get("dependency_job_ids"),
+    )
+    for field in (
+        "attempt", "partition", "comment", "job_name", "probe_job_ids",
+        "dependency_job_ids", "campaign_root",
+    ):
+        if spec.get(field) != expected[field]:
+            raise ValueError("activation specification identity mismatch")
+    arguments = [
+        "--hold", "--partition=default_partition", "--requeue",
+        "--time=00:45:00",
+        "--cpus-per-task=1", "--mem=4G",
+        f"--job-name={spec['job_name']}",
+        f"--comment={spec['comment']}",
+        f"--output={logs}/activation_a{spec['attempt']}_%j.out",
+        f"--error={logs}/activation_a{spec['attempt']}_%j.err",
+        "--export=NONE",
+        str(ACTIVATION_WORKER), str(plan_path), plan_sha,
+        plan["python"]["path"], plan["python"]["sha256"],
+        str(REPO_ROOT), plan["runtime_environment"]["HOME"],
+        plan["activation_worker_sha256"],
+    ]
+    if spec["dependency_job_ids"]:
+        dependency = ":".join(spec["dependency_job_ids"])
+        arguments.insert(5, f"--dependency=afterany:{dependency}")
+    return _sbatch(plan, arguments)
+
+
+def _bound_job_fingerprint_errors(spec, row):
+    return [
+        {
+            "field": field,
+            "expected": str(spec.get(field) or ""),
+            "observed": str(row.get(field) or ""),
+        }
+        for field in ("job_id", "job_name", "partition", "comment")
+        if str(row.get(field) or "") != str(spec.get(field) or "")
+    ]
+
+
+def _resolve_bound_job(plan, spec, *, runner=None):
+    """Resolve one exact infrastructure job, preferring live state."""
+    runner = subprocess.run if runner is None else runner
+    job_id = str(spec.get("job_id") or "")
+    if not job_id.isdigit():
+        raise ValueError("bound job ID is invalid")
+    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
+    if not user:
+        raise ValueError("approved runtime user is missing")
+
+    listed = _run_probe_slurm_query(
+        runner,
+        [
+            plan["squeue"]["path"], "-h", "-u", user,
+            "-o", "%i|%j|%T|%P|%R|%k",
+        ],
+    )
+    if listed.returncode != 0:
+        raise RuntimeError("cannot query live infrastructure job state")
+    live_rows = []
+    for line in listed.stdout.splitlines():
+        fields = [value.strip() for value in line.split("|", 5)]
+        if len(fields) == 6 and fields[0] == job_id:
+            live_rows.append({
+                "job_id": fields[0], "job_name": fields[1],
+                "state": _normalized_slurm_state(fields[2]),
+                "partition": fields[3], "reason": fields[4],
+                "comment": fields[5],
+            })
+    if len(live_rows) > 1:
+        raise ValueError("multiple live rows match bound job ID")
+    if live_rows:
+        errors = _bound_job_fingerprint_errors(spec, live_rows[0])
+        if errors:
+            raise ValueError(f"live bound-job fingerprint mismatch: {errors}")
+        if live_rows[0]["state"] not in PROBE_TERMINAL_STATES:
+            return {**live_rows[0], "source": "squeue", "live": True}
+        # A terminal-looking squeue row has no exit code.  Keep resolving via
+        # scontrol/sacct rather than treating it as a successful certificate.
+
+    shown = _run_probe_slurm_query(
+        runner,
+        [plan["scontrol"]["path"], "show", "job", job_id, "-o"],
+    )
+    if shown.returncode == 0 and shown.stdout.strip():
+        values = {}
+        for token in shown.stdout.split():
+            if "=" in token:
+                key, value = token.split("=", 1)
+                values[key] = value
+        controller_row = {
+            "job_id": values.get("JobId", ""),
+            "job_name": values.get("JobName", ""),
+            "state": _normalized_slurm_state(values.get("JobState")),
+            "partition": values.get("Partition", ""),
+            "reason": values.get("Reason", ""),
+            "comment": values.get("Comment", ""),
+            "exit_code": values.get("ExitCode"),
+        }
+        errors = _bound_job_fingerprint_errors(spec, controller_row)
+        if errors:
+            raise ValueError(
+                f"controller bound-job fingerprint mismatch: {errors}"
+            )
+        if controller_row["state"] in PROBE_TERMINAL_STATES:
+            if not re.fullmatch(
+                r"[0-9]+:[0-9]+", str(controller_row.get("exit_code") or "")
+            ):
+                raise ValueError(
+                    "terminal bound job lacks an exact exit code"
+                )
+            if (
+                controller_row["state"] == "COMPLETED"
+                and controller_row["exit_code"] != "0:0"
+            ):
+                raise ValueError("completed bound job has nonzero exit code")
+            return {
+                **controller_row, "source": "scontrol", "live": False,
+            }
+        return {**controller_row, "source": "scontrol", "live": True}
+    absent_message = (shown.stderr or shown.stdout).lower()
+    if shown.returncode != 0 and "invalid job id" not in absent_message:
+        raise RuntimeError("cannot prove infrastructure job absent")
+
+    accounted = _run_probe_slurm_query(
+        runner,
+        [
+            plan["sacct"]["path"], "-X", "-n", "-P", "-j", job_id,
+            "--format=JobIDRaw,JobName%64,State,Partition%64,"
+            "Comment%256,ExitCode",
+        ],
+    )
+    if accounted.returncode != 0:
+        raise RuntimeError("cannot query infrastructure job accounting")
+    rows = []
+    for line in accounted.stdout.splitlines():
+        fields = [value.strip() for value in line.split("|", 5)]
+        if len(fields) == 6 and fields[0] == job_id:
+            rows.append({
+                "job_id": fields[0], "job_name": fields[1],
+                "state": _normalized_slurm_state(fields[2]),
+                "partition": fields[3], "comment": fields[4],
+                "exit_code": fields[5],
+            })
+    if len(rows) != 1:
+        raise ValueError("bound-job accounting has no unique exact row")
+    errors = _bound_job_fingerprint_errors(spec, rows[0])
+    if errors:
+        raise ValueError(f"accounting bound-job mismatch: {errors}")
+    if rows[0]["state"] == "COMPLETED" and rows[0]["exit_code"] != "0:0":
+        raise ValueError("completed bound job has nonzero exit code")
+    if (
+        rows[0]["state"] in PROBE_TERMINAL_STATES
+        and not re.fullmatch(r"[0-9]+:[0-9]+", rows[0]["exit_code"])
+    ):
+        raise ValueError("terminal bound job lacks an exact exit code")
+    return {**rows[0], "source": "sacct", "live": False}
+
+
+def _release_bound_job(plan, spec, label):
+    try:
+        observation = _resolve_bound_job(plan, spec)
+    except (RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="", stderr=str(exc)
+        )
+    state = observation["state"]
+    if state in PROBE_TERMINAL_STATES:
+        if label == "activation" and state != "COMPLETED":
+            return subprocess.CompletedProcess(
+                args=[], returncode=3, stdout="",
+                stderr=f"activation controller ended in {state}",
+            )
+        return subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=json.dumps(observation, sort_keys=True), stderr="",
+        )
+    if observation.get("live") is not True:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="",
+            stderr=f"{label} has no authoritative live or terminal state",
+        )
+    if state == "RUNNING" or (
+        state == "PENDING" and observation.get("reason") != "JobHeldUser"
+    ):
+        return subprocess.CompletedProcess(
+            args=[], returncode=0,
+            stdout=json.dumps(observation, sort_keys=True), stderr="",
+        )
+    if state != "PENDING" or observation.get("reason") != "JobHeldUser":
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="",
+            stderr=f"{label} is not proven held or released",
+        )
+    try:
+        return _run_probe_slurm_query(
+            subprocess.run,
+            [plan["scontrol"]["path"], "release", str(spec["job_id"])],
+        )
+    except (RuntimeError, subprocess.TimeoutExpired) as exc:
+        return subprocess.CompletedProcess(
+            args=[], returncode=3, stdout="", stderr=str(exc)
+        )
+
+
+def _release_held_activation(plan, spec):
+    return _release_bound_job(plan, spec, "activation")
+
+
+def _release_held_probe(plan, spec):
+    return _release_bound_job(plan, spec, "probe")
+
+
+def _submit_probe(
+    plan, plan_path, plan_sha, spec, logs, *, held=False,
+):
     partition = spec["partition"]
     probe_id = _probe_id(partition)
     expected = _probe_spec(
@@ -849,7 +1682,7 @@ def _submit_probe(plan, plan_path, plan_sha, spec, logs):
         ))
     ):
         raise ValueError("probe specification identity mismatch")
-    return _sbatch(plan, [
+    arguments = [
         f"--partition={partition}", "--no-requeue",
         "--time=00:10:00", "--cpus-per-task=1", "--mem=4G",
         f"--job-name={spec['job_name']}",
@@ -862,7 +1695,10 @@ def _submit_probe(plan, plan_path, plan_sha, spec, logs):
         plan["python"]["path"], plan["python"]["sha256"],
         str(REPO_ROOT), plan["runtime_environment"]["HOME"], spec["output"],
         plan["probe_worker_sha256"],
-    ])
+    ]
+    if held:
+        arguments.insert(0, "--hold")
+    return _sbatch(plan, arguments)
 
 
 def _normalized_slurm_state(value):
@@ -1160,6 +1996,18 @@ def _probe_job_states(
                 "source": "sacct", "resolution":
                     "awaiting_accounting",
                 "live": False, "terminal": False,
+                "accounting_row": row,
+            }
+            continue
+        if not re.fullmatch(r"[0-9]+:[0-9]+", row["exit_code"]):
+            observations[partition] = {
+                "state": "ACCOUNTING_OUTCOME_MISMATCH",
+                "source": "sacct", "resolution": "identity_mismatch",
+                "live": False, "terminal": True,
+                "identity_errors": [{
+                    "field": "exit_code", "expected": "N:N",
+                    "observed": row["exit_code"],
+                }],
                 "accounting_row": row,
             }
             continue
@@ -1481,6 +2329,186 @@ def _probes_waiting(results):
     )
 
 
+def _load_bound_campaign(root, expected_plan_sha):
+    root = Path(root).resolve()
+    plan_path = root / "approved-plan.json"
+    plan_raw = plan_path.read_bytes()
+    if hashlib.sha256(plan_raw).hexdigest() != expected_plan_sha:
+        raise ValueError("approved plan hash mismatch")
+    plan = json.loads(plan_raw)
+    if (
+        Path(plan.get("campaign_root") or "").resolve() != root
+        or plan.get("submission_protocol")
+        != "probe_first_activation_v1"
+    ):
+        raise ValueError("campaign root/protocol identity mismatch")
+    manifest_path = root / "campaign.json"
+    manifest = json.loads(manifest_path.read_text())
+    if manifest.get("approval_sha256") != expected_plan_sha:
+        raise ValueError("campaign manifest approval mismatch")
+    return root, plan_path, plan, manifest_path, manifest
+
+
+def _require_activation_runtime(plan, manifest):
+    _validate_submission_contract(plan)
+    for relative, expected in plan["code_hashes"].items():
+        if sha256_file(REPO_ROOT / relative) != expected:
+            raise ValueError(f"reviewed code hash mismatch: {relative}")
+    activation = manifest.get("activation") or {}
+    probe_specs = manifest.get("infrastructure_probes") or {}
+    expected = _activation_spec(
+        manifest["approval_sha256"],
+        Path(plan["campaign_root"]),
+        probe_specs,
+        activation.get("attempt"),
+        dependency_job_ids=activation.get("dependency_job_ids"),
+    )
+    if any(
+        activation.get(field) != expected[field]
+        for field in (
+            "attempt", "partition", "comment", "job_name",
+            "probe_job_ids", "dependency_job_ids", "campaign_root",
+        )
+    ):
+        raise ValueError("activation manifest fingerprint mismatch")
+    job_id = str(os.environ.get("SLURM_JOB_ID") or "")
+    if (
+        not job_id.isdigit()
+        or str(activation.get("job_id") or "") != job_id
+    ):
+        raise ValueError("activation runtime identity mismatch")
+    observation = _resolve_bound_job(plan, activation)
+    if (
+        observation.get("live") is not True
+        or observation.get("state") != "RUNNING"
+    ):
+        raise ValueError(
+            "activation job is not exact-bound and RUNNING in Slurm"
+        )
+    return job_id
+
+
+def activate_existing(root, expected_plan_sha, *, wait_s=600):
+    """Validate probes, then idempotently create/release scientific work."""
+    root = Path(root).resolve()
+    with _campaign_lock(root):
+        return _activate_existing_locked(root, expected_plan_sha, wait_s)
+
+
+def _activate_existing_locked(root, expected_plan_sha, wait_s):
+    (
+        root, _plan_path, plan, manifest_path, manifest,
+    ) = _load_bound_campaign(root, expected_plan_sha)
+    activation_job_id = _require_activation_runtime(plan, manifest)
+    if manifest.get("submitted") is True:
+        return manifest
+
+    probe_specs = dict(manifest.get("infrastructure_probes") or {})
+    if set(probe_specs) != set(PROBE_PARTITIONS):
+        raise ValueError("campaign does not record both infrastructure probes")
+    for partition, spec in probe_specs.items():
+        expected = _probe_spec(
+            expected_plan_sha, partition, root, spec.get("attempt")
+        )
+        if any(
+            spec.get(field) != expected[field]
+            for field in (
+                "output", "probe_id", "partition", "attempt", "comment",
+                "job_name",
+            )
+        ) or not str(spec.get("job_id") or "").isdigit():
+            raise ValueError("recorded probe specification mismatch")
+
+    manifest["submission_state"] = "probe_evaluating"
+    manifest["activation"]["state"] = "probe_evaluating"
+    _replace_json(manifest_path, manifest)
+    probe_results = _wait_for_probes(
+        plan, expected_plan_sha, probe_specs, timeout_s=min(wait_s, 600)
+    )
+    manifest["probe_results"] = probe_results
+    if not _probes_compatible(probe_results):
+        if _probes_waiting(probe_results):
+            manifest["probe_state"] = "observation_incomplete"
+            manifest["submission_state"] = "probe_observation_incomplete"
+            manifest["activation"]["state"] = "observation_incomplete"
+            _replace_json(manifest_path, manifest)
+            raise RuntimeError(
+                "probe accounting is incomplete; scientific work remains absent"
+            )
+        manifest["probe_state"] = "failed"
+        manifest["submission_state"] = "probe_failed"
+        manifest["activation"]["state"] = "blocked_probe_failure"
+        _replace_json(manifest_path, manifest)
+        raise RuntimeError(
+            "infrastructure probes failed; no scientific work was created"
+        )
+    manifest["probe_state"] = "passed"
+    manifest["activation"]["state"] = "probe_passed"
+
+    if manifest.get("gate_state") == "not_created":
+        if (
+            manifest.get("reservations")
+            or manifest.get("submitted_arrays")
+            or manifest.get("gate_job_id") is not None
+        ):
+            raise ValueError("pre-science campaign invariant violated")
+        manifest["submission_state"] = "input_staging"
+        _replace_json(manifest_path, manifest)
+        _stage_scientific_inputs(plan)
+        manifest["submission_state"] = "reserving"
+        manifest["reservation_state"] = "creating"
+        expected_lineage = _activation_lineage_id(plan, expected_plan_sha)
+        recorded_lineage = manifest.get("activation_lineage_id")
+        if recorded_lineage not in (None, expected_lineage):
+            raise ValueError("activation lineage mismatch")
+        manifest["activation_lineage_id"] = expected_lineage
+        _replace_json(manifest_path, manifest)
+        reservations = _ensure_reservations(
+            plan, expected_plan_sha, expected_lineage
+        )
+        manifest["reservations"] = [str(path) for path in reservations]
+        manifest["reservation_state"] = "complete"
+        manifest["submission_state"] = "gate_creating"
+        manifest["gate_state"] = "creating"
+        _replace_json(manifest_path, manifest)
+
+    from reconcile_scale_ladder_gate import (
+        _reconcile_locked, _resolve_gate_state,
+    )
+
+    if manifest.get("gate_state") in {
+        "creating", "held", "held_after_partial_submission",
+        "held_probe_failure", "held_probe_waiting",
+        "held_probe_passed", "release_attempting",
+        "held_release_failed", "release_retry_attempting",
+    }:
+        manifest = _reconcile_locked(
+            root,
+            expected_plan_sha,
+            release_held_gate=True,
+            resume_missing_arrays=True,
+        )
+    if manifest.get("gate_state") == "release_retry_requested":
+        deadline = time.monotonic() + wait_s
+        gate = manifest.get("gate_job_id")
+        observation = None
+        while time.monotonic() < deadline:
+            observation = _resolve_gate_state(
+                plan, gate, expected_plan_sha
+            )
+            if observation["state"] in PROBE_TERMINAL_STATES:
+                break
+            time.sleep(2)
+        state = observation["state"] if observation else None
+        if state != "COMPLETED":
+            raise RuntimeError(
+                f"scientific gate did not complete after release: {state}"
+            )
+        manifest = _reconcile_locked(root, expected_plan_sha)
+    manifest["submission_state"] = "submitted"
+    manifest["activation"]["state"] = "complete"
+    _replace_json(manifest_path, manifest)
+    return manifest
 def _release_gate_after_probes(
     plan, gate, probe_results, *, runner=subprocess.run
 ):
@@ -1542,10 +2570,16 @@ def _sbatch(plan, arguments):
         or sha256_file(sbatch_path) != plan["sbatch"]["sha256"]
     ):
         raise ValueError("approved sbatch unavailable/changed")
-    completed = subprocess.run(
-        [str(sbatch_path), "--parsable", *arguments],
-        cwd=REPO_ROOT, text=True, capture_output=True, check=False,
-    )
+    try:
+        completed = subprocess.run(
+            [str(sbatch_path), "--parsable", *arguments],
+            cwd=REPO_ROOT, text=True, capture_output=True, check=False,
+            timeout=SBATCH_TIMEOUT_S,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            "sbatch outcome ambiguous after bounded timeout"
+        ) from exc
     job_id = completed.stdout.strip().split(";", 1)[0]
     if completed.returncode != 0 or not job_id.isdigit():
         raise RuntimeError("sbatch outcome ambiguous")
@@ -1596,16 +2630,44 @@ def _replace_json(path, payload):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--campaign", required=True)
+    parser.add_argument("--campaign")
     parser.add_argument("--python", type=Path, default=Path(sys.executable))
-    parser.add_argument("--reservation-root", type=Path, required=True)
+    parser.add_argument("--reservation-root", type=Path)
     parser.add_argument("--plan-out", type=Path)
     parser.add_argument("--matrix-out", type=Path)
     parser.add_argument("--approved-plan-sha256")
     parser.add_argument("--submit", action="store_true")
+    parser.add_argument("--retry-failed-activation", action="store_true")
+    parser.add_argument("--retry-failed-probes", action="store_true")
+    parser.add_argument("--activate-existing", type=Path)
     args = parser.parse_args(argv)
+    if args.activate_existing is not None:
+        if (
+            args.submit
+            or args.retry_failed_activation
+            or args.retry_failed_probes
+            or args.campaign is not None
+            or args.reservation_root is not None
+            or not args.approved_plan_sha256
+        ):
+            parser.error(
+                "--activate-existing requires only "
+                "--approved-plan-sha256"
+            )
+        activate_existing(
+            args.activate_existing, args.approved_plan_sha256
+        )
+        return 0
+    if args.campaign is None or args.reservation_root is None:
+        parser.error("--campaign and --reservation-root are required")
     if args.submit and not args.approved_plan_sha256:
         parser.error("--submit requires --approved-plan-sha256")
+    if args.retry_failed_activation and not args.submit:
+        parser.error("--retry-failed-activation requires --submit")
+    if args.retry_failed_probes and not args.submit:
+        parser.error("--retry-failed-probes requires --submit")
+    if args.retry_failed_activation and args.retry_failed_probes:
+        parser.error("choose only one infrastructure retry flag")
     plan = build_plan(args.campaign, args.python, args.reservation_root)
     plan_raw = canonical(plan)
     plan_sha = hashlib.sha256(plan_raw).hexdigest()
@@ -1626,7 +2688,11 @@ def main(argv=None):
         return 0
     if args.approved_plan_sha256 != plan_sha:
         raise ValueError("current plan differs from approved SHA")
-    submit(plan, plan_sha)
+    submit(
+        plan, plan_sha,
+        retry_failed_activation=args.retry_failed_activation,
+        retry_failed_probes=args.retry_failed_probes,
+    )
     return 0
 
 

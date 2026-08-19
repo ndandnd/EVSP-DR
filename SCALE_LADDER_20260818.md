@@ -3,171 +3,175 @@
 Primary cells use only the historical flat tariff
 `data/hourly_prices_flat.csv`, SHA-256
 `1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200`.
-The tracked input manifest explicitly proves equivalence to `flat_h26.csv` but
-the ladder commands continue to use the historical bytes.
+The tracked input manifest proves equivalence to `flat_h26.csv`, but the
+campaign continues to bind the historical bytes.
 
-The dry-run plan contains exactly:
+The reviewed plan contains exactly:
 
 - 22 instance-level known-route membership preflights;
 - 21 known-partition preparation tasks;
 - 23 primary exact-CG tasks;
-- 30 k2/k3/k5 small-grid sensitivity CG companions, including three
-  diagnostic k2 runs at 1 kWh / 5 minutes;
+- 30 k2/k3/k5 sensitivity CG tasks, including three 1-kWh/5-minute k2
+  route-space diagnostics;
 - 21 RAW MIPs and 21 KNOWN-PARTITION diagnostic MIPs;
-- 138 experimental/diagnostic tasks total;
-- 2 additional infrastructure probes (default_partition and Scaglione);
+- 138 scientific/diagnostic tasks total;
+- 3 infrastructure tasks: two environment probes and one activation
+  controller;
 - zero k40 MIP submissions (four reuse-only result slots).
 
-## 1. Dry run
+## One-block preparation and launch
 
-This block does not use `set -e` and cannot exit the login shell.
+Set `COMMIT` to the exact reviewed 40-character commit. Keep the campaign name
+fixed on every rerun; changing it creates a different campaign. Running this
+block with `EVSP_LADDER_SUBMIT=YES` is the explicit launch approval. The wrapper
+first performs and records the dry run, checks the printed approval hash against
+the saved plan, verifies all task counts/hashes/physics, and only then submits.
+It does not enable `set -e` and cannot terminate the surrounding login shell.
 
 ```bash
-REVIEWED_COMMIT="${REVIEWED_COMMIT:-}"
-CAMPAIGN="${LADDER_CAMPAIGN:-}"
-PYTHON_CANDIDATE="${EVSP_LADDER_PYTHON:-$HOME/evsp_env/bin/python3.12}"
-PYTHON=$(readlink -f "$PYTHON_CANDIDATE" 2>/dev/null)
-RUN_ROOT="$HOME/EVSP-DR-scale-ladder"
-PLAN_ROOT="$HOME/evsp_scale_ladder_plans"
-RESERVATIONS="$HOME/evsp_scale_ladder_reservations"
-PLAN="$PLAN_ROOT/$CAMPAIGN.plan.json"
-MATRIX="$PLAN_ROOT/$CAMPAIGN.tasks.csv"
+bash <<'BASH'
+main() {
+  COMMIT="PASTE_THE_REVIEWED_40_CHARACTER_COMMIT_HERE"
+  CAMPAIGN="slad_flat_primary_v1"
+  SOURCE_ROOT="$HOME/EVSP-DR"
+  SCRIPT="$HOME/launch_scale_ladder_probe_first.sh"
 
-if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ || \
-      ! "$CAMPAIGN" =~ ^[a-z0-9][a-z0-9_-]{2,79}$ ]]; then
-  echo "Set exact REVIEWED_COMMIT and a safe LADDER_CAMPAIGN." >&2
-elif [[ ! -x "$PYTHON" ]]; then
-  echo "Approved Python 3.12 is unavailable." >&2
-elif [[ ! -d "$RUN_ROOT/.git" ]] && \
-     ! git clone https://github.com/ndandnd/EVSP-DR.git "$RUN_ROOT"; then
-  echo "Public clone failed; no plan created." >&2
-elif ! git -C "$RUN_ROOT" fetch origin "$REVIEWED_COMMIT" || \
-     ! git -C "$RUN_ROOT" checkout --detach "$REVIEWED_COMMIT"; then
-  echo "Detached reviewed checkout failed." >&2
-elif [[ "$(git -C "$RUN_ROOT" rev-parse HEAD)" != "$REVIEWED_COMMIT" || \
-        -n "$(git -C "$RUN_ROOT" status --porcelain)" ]]; then
-  echo "Checkout is not exact and clean." >&2
-elif [[ -e "$PLAN" || -e "$MATRIX" ]]; then
-  echo "Plan/matrix exists; choose a new campaign." >&2
-else
-  mkdir -p "$PLAN_ROOT" "$RESERVATIONS"
-  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
-    "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-    "$REVIEWED_COMMIT" launch_scale_ladder.py \
-    --campaign "$CAMPAIGN" --python "$PYTHON" \
-    --reservation-root "$RESERVATIONS" \
-    --plan-out "$PLAN" --matrix-out "$MATRIX"
-  STATUS=$?
-  if [[ "$STATUS" -ne 0 || ! -s "$PLAN" || ! -s "$MATRIX" ]]; then
-    echo "Dry-run generation failed; no jobs submitted." >&2
-  else
-    PLAN_SHA=$(sha256sum "$PLAN" | awk '{print $1}')
-    echo "PLAN: $PLAN"
-    echo "TASK MATRIX: $MATRIX"
-    echo "APPROVAL SHA-256: $PLAN_SHA"
-    echo "EXPECTED TASKS: 138 (22 preflight + 21 seed + 23 primary CG + 30 sensitivity CG + 42 MIP; k40 MIP = 0)"
-    echo "INFRASTRUCTURE TASKS: 2 portable-environment probes (reported separately)"
+  if [[ ! "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+    echo "Replace COMMIT with the exact reviewed 40-character SHA." >&2
+    return 1
   fi
-fi
-```
+  if [[ ! -d "$SOURCE_ROOT/.git" ]]; then
+    git clone https://github.com/ndandnd/EVSP-DR.git "$SOURCE_ROOT" || return 1
+  fi
+  git -C "$SOURCE_ROOT" fetch origin "$COMMIT" || return 1
+  git -C "$SOURCE_ROOT" show \
+    "$COMMIT:scripts/launch_scale_ladder_probe_first.sh" >"$SCRIPT" || return 1
+  chmod 700 "$SCRIPT" || return 1
 
-## 2. Approval and submission
-
-Run only after reviewing the complete JSON plan and task matrix from block 1.
-
-```bash
-APPROVED_PLAN_SHA256="${APPROVED_PLAN_SHA256:-}"
-
-if [[ ! "$APPROVED_PLAN_SHA256" =~ ^[0-9a-f]{64}$ ]]; then
-  echo "Set the exact APPROVED_PLAN_SHA256 printed by the dry run." >&2
-elif [[ "$(sha256sum "$PLAN" 2>/dev/null | awk '{print $1}')" != \
-        "$APPROVED_PLAN_SHA256" ]]; then
-  echo "Saved plan differs from the approved SHA; nothing submitted." >&2
-else
-  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
-    "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-    "$REVIEWED_COMMIT" launch_scale_ladder.py \
-    --campaign "$CAMPAIGN" --python "$PYTHON" \
-    --reservation-root "$RESERVATIONS" \
-    --approved-plan-sha256 "$APPROVED_PLAN_SHA256" --submit
+  REVIEWED_COMMIT="$COMMIT" \
+  LADDER_CAMPAIGN="$CAMPAIGN" \
+  EVSP_LADDER_SUBMIT=YES \
+  EVSP_LADDER_RETRY= \
+    bash "$SCRIPT"
   STATUS=$?
   if [[ "$STATUS" -ne 0 ]]; then
-    echo "Submission did not complete. Do not retry under another name; reconcile the recorded held gate and reservations." >&2
+    echo "Launch stopped fail-closed; inspect its printed manifest/log paths." >&2
   fi
-fi
+  return "$STATUS"
+}
+main
+BASH
 ```
 
-All six arrays depend on one held gate. The current launcher submits those
-held arrays before it submits two lightweight environment probes—one on
-`default_partition`, one on `scaglione`—which publish hashed artifacts under
-`probes/`. No experimental or diagnostic array task can run while the gate is
-held, and the gate remains held unless both portable content identities pass.
-This ordering prevents scientific execution on a failed probe, but it can
-leave held Slurm records and reservations to close out; a future two-phase
-launcher should complete both probes before creating either. Primary CG waits
-for the complete
-instance-level PREFLIGHT array; small-grid sensitivity also waits for that
-preflight. MIP array task `i` uses `aftercorr` on primary CG task `i`;
-KNOWN-PARTITION also depends on seed task `i`. The gate is released only after
-all six arrays are accepted.
+The successful top-level return is `INFRASTRUCTURE_ARMED=true`, not “138 jobs
+running.” It proves that two held probes and one held activation controller had
+durable numeric IDs and were released. At that instant scientific work is still
+absent, unless the controller already won the harmless post-return race and
+advanced the manifest. The controller validates both exact probe artifacts and
+Slurm identities before creating reservations, one held scientific gate, and
+six arrays. It releases the gate only after all six array IDs are durable.
 
-If submission stops with `gate_state=release_attempting` or
-`held_release_failed`, do not resubmit. After `sacct` proves the recorded gate
-completed, reconcile it:
+Dependencies are fixed: primary CG and sensitivity CG wait for complete
+PREFLIGHT; MIP task `i` uses `aftercorr` on primary-CG task `i`; the
+KNOWN-PARTITION MIP also depends on seed task `i`. Scientific task count is 138
+and infrastructure count is reported separately as 3.
+
+## Recovery hierarchy
+
+Do not infer a retry from a failed command. First inspect `campaign.json`, the
+bound `.out/.err` files, `squeue`, `scontrol`, and `sacct`.
+
+Before any scientific gate/reservation/array exists (`gate_state=not_created`):
+
+- a scheduler-terminal or publication-incomplete probe may be retried only by
+  rerunning the same wrapper and campaign with
+  `EVSP_LADDER_RETRY=failed_probes`;
+- a scheduler-terminal activation controller may be retried only with
+  `EVSP_LADDER_RETRY=failed_activation`.
+
+Both retries still require `EVSP_LADDER_SUBMIT=YES`. A valid environment or
+identity mismatch is never retryable. An explicitly authorized retry is durable:
+rerun the same flag after a client/process interruption. Each invocation either
+recovers its exact attempt, advances one terminal attempt, or refuses while the
+attempt is live/ambiguous; it never silently creates a new campaign.
+
+There is one deliberately fail-closed crash window: a process can die after a
+submission intent is fsynced but before `sbatch` is invoked. That state is
+indistinguishable from scheduler acceptance whose job is not yet visible. The
+launcher/reconciler performs bounded exact discovery and then refuses; do not
+retry automatically. Preserve the manifest and logs, perform an exact operator
+Slurm audit, and do not replace anything until every exact held job from the
+old intent is cancelled or proven absent. Manually close out the campaign; if a
+replacement is approved, use both a new campaign name and an intentionally new
+`EVSP_LADDER_RESERVATIONS` directory. Reusing the default reservation path with
+a different plan hash correctly fails closed. This sacrifices automatic
+liveness rather than risking duplicate jobs.
+
+Example (reuse the same exact values and reviewed wrapper):
 
 ```bash
-env -u PYTHONPATH PYTHONNOUSERSITE=1 \
-  "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-  "$REVIEWED_COMMIT" reconcile_scale_ladder_gate.py \
-  --campaign-root "$RUN_ROOT/src/results/scale_ladder/$CAMPAIGN" \
-  --approved-plan-sha256 "$APPROVED_PLAN_SHA256"
+REVIEWED_COMMIT="$COMMIT" LADDER_CAMPAIGN="$CAMPAIGN" \
+EVSP_LADDER_SUBMIT=YES EVSP_LADDER_RETRY=failed_probes bash "$SCRIPT"
+
+REVIEWED_COMMIT="$COMMIT" LADDER_CAMPAIGN="$CAMPAIGN" \
+EVSP_LADDER_SUBMIT=YES EVSP_LADDER_RETRY=failed_activation bash "$SCRIPT"
 ```
 
-If a probe was preempted, node-failed, cancelled, or otherwise terminated
-without publishing a portable-environment mismatch, keep the same campaign and
-run the reconciliation command once with `--retry-failed-probes`. The retry is
-accepted only while the gate is proven `PENDING` with `Reason=JobHeldUser`; it
-uses a new attempt-specific output and preserves the failed attempt in the
-campaign manifest. A completed probe that reports real field-level environment
-differences is never retried and can never release the gate. An accepted probe
-whose job ID was not recorded is recovered from its plan-specific Slurm comment
-or its bound output artifact before any replacement is submitted. A successful
-retry returns `gate_state=held_probe_passed`; then use the separately reviewed
-`--release-held-gate` step below.
+After scientific submission has begun (a gate ID, reservation, or array is
+present), do not use either infrastructure retry. Public gate reconciliation is
+serialized by the campaign lock and is the only operator recovery path:
 
-If accounting still shows `PENDING` and bound `scontrol` proves
-`Reason=JobHeldUser`, repeat that command with `--release-held-gate`; then run
-it once more after `sacct` records the gate as `COMPLETED`. For an
-accepted-but-unrecorded array, the reconciliation command first reconstructs
-all six array IDs from their plan/group-specific `squeue` comments.
-If one or more arrays were never accepted, first rerun the reconciliation
-command with `--resume-missing-arrays` while the gate remains held.
+```bash
+RUN_ROOT="$HOME/EVSP-DR-scale-ladder-${COMMIT:0:12}"
+PLAN="$HOME/evsp_scale_ladder_plans/$CAMPAIGN.plan.json"
+PLAN_SHA=$(sha256sum "$PLAN" | awk '{print $1}')
+CAMPAIGN_ROOT=$(jq -r '.campaign_root' "$PLAN")
+PYTHON=$(readlink -f "$HOME/evsp_env/bin/python3.12")
+
+env -u PYTHONPATH -u PYTHONHOME -u LD_LIBRARY_PATH \
+  PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 \
+  "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
+  "$COMMIT" reconcile_scale_ladder_gate.py \
+  --campaign-root "$CAMPAIGN_ROOT" \
+  --approved-plan-sha256 "$PLAN_SHA" \
+  --resume-missing-arrays --release-held-gate
+```
+
+The reconciler exact-matches the user, parent ID, name, state, partition,
+reason, comment, array range, and dependency semantics. Gate completion is
+accepted only with an exact `0:0` exit code. Accepted-before-record submission
+intents are boundedly rediscovered and fail closed rather than duplicated.
 
 ## Normalize completed outputs
 
 ```bash
-CAMPAIGN_ROOT="$RUN_ROOT/src/results/scale_ladder/$CAMPAIGN"
+RUN_ROOT="$HOME/EVSP-DR-scale-ladder-${COMMIT:0:12}"
+PLAN="$HOME/evsp_scale_ladder_plans/$CAMPAIGN.plan.json"
+CAMPAIGN_ROOT=$(jq -r '.campaign_root' "$PLAN")
 SUMMARY_ROOT="$CAMPAIGN_ROOT/summary"
+PYTHON=$(readlink -f "$HOME/evsp_env/bin/python3.12")
 K40_REUSE_MANIFEST="${K40_REUSE_MANIFEST:-}"
 
 if [[ -e "$SUMMARY_ROOT" ]]; then
   echo "Summary exists; refusing overwrite." >&2
 elif [[ -n "$K40_REUSE_MANIFEST" ]]; then
-  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+  env -u PYTHONPATH -u PYTHONHOME -u LD_LIBRARY_PATH \
+    PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 \
     "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-    "$REVIEWED_COMMIT" summarize_scale_ladder.py \
+    "$COMMIT" summarize_scale_ladder.py \
     --campaign-root "$CAMPAIGN_ROOT" --out-dir "$SUMMARY_ROOT" \
     --k40-reuse-manifest "$K40_REUSE_MANIFEST"
 else
-  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
+  env -u PYTHONPATH -u PYTHONHOME -u LD_LIBRARY_PATH \
+    PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 \
     "$PYTHON" -I -B "$RUN_ROOT/src/run_reviewed_python.py" \
-    "$REVIEWED_COMMIT" summarize_scale_ladder.py \
+    "$COMMIT" summarize_scale_ladder.py \
     --campaign-root "$CAMPAIGN_ROOT" --out-dir "$SUMMARY_ROOT"
 fi
 ```
 
-Absent or hash-incompatible k40 reuse artifacts remain explicit missing/censored
-rows. They never trigger replacement k40 submissions.
+Absent or hash-incompatible k40 reuse artifacts remain explicit
+missing/censored rows. They never trigger replacement k40 submissions.
 
 ## Local diagnostic launcher
 
@@ -180,8 +184,7 @@ LOCAL_DIAGNOSTIC_ROOT="$HOME/evsp_scale_ladder_local/k2-check"
 if [[ -e "$LOCAL_DIAGNOSTIC_ROOT" ]]; then
   echo "Local diagnostic output exists; refusing overwrite." >&2
 else
-  env -u PYTHONPATH PYTHONNOUSERSITE=1 \
-    "$PYTHON" -B "$RUN_ROOT/src/run_scale_ladder_local_diagnostics.py" \
+  "$PYTHON" -B "$RUN_ROOT/src/run_scale_ladder_local_diagnostics.py" \
     --scale 2 --max-parallel 3 --budget-s 7200 \
     --out-root "$LOCAL_DIAGNOSTIC_ROOT" \
     --reference-plan "$PLAN"
