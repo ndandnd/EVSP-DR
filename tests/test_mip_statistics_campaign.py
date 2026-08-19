@@ -1,9 +1,8 @@
 import hashlib
 import json
-import multiprocessing
+import subprocess
 import sys
 import tempfile
-import time
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -666,37 +665,46 @@ class MIPStatisticsCampaignTests(unittest.TestCase):
             root = Path(tmp)
             campaign = root / "campaign"
             marker = root / "simulated-sbatch-receipt"
-            plan = {"campaign_root": str(campaign)}
-            context = multiprocessing.get_context("fork")
-            submitted = context.Value("i", 0)
-
-            def simulated_locked_submit(_plan, _plan_sha):
-                if not marker.exists():
-                    time.sleep(0.1)
-                    with submitted.get_lock():
-                        submitted.value += 1
-                    marker.write_text("accepted\n")
-                return {"submitted": marker.exists()}
-
-            def invoke():
-                launcher._stage_and_submit(plan, "a" * 64)
-
-            with patch.object(
-                launcher,
-                "_stage_and_submit_locked",
-                side_effect=simulated_locked_submit,
-            ):
-                processes = [
-                    context.Process(target=invoke) for _index in range(2)
+            receipt_log = root / "simulated-sbatch.log"
+            script = """
+import pathlib,sys,time
+sys.path.insert(0, sys.argv[4])
+from launch_mip_statistics_campaign import _mip_campaign_lock
+campaign=pathlib.Path(sys.argv[1])
+marker=pathlib.Path(sys.argv[2])
+receipt_log=pathlib.Path(sys.argv[3])
+with _mip_campaign_lock({"campaign_root": str(campaign)}):
+    if not marker.exists():
+        time.sleep(0.2)
+        marker.write_text("accepted\\n")
+        with receipt_log.open("a") as handle:
+            handle.write("sbatch\\n")
+"""
+            commands = [
+                [
+                    sys.executable, "-c", script,
+                    str(campaign), str(marker), str(receipt_log),
+                    str(REPO_ROOT / "src"),
                 ]
-                for process in processes:
-                    process.start()
-                for process in processes:
-                    process.join(5)
-            self.assertTrue(all(
-                process.exitcode == 0 for process in processes
-            ))
-            self.assertEqual(submitted.value, 1)
+                for _index in range(2)
+            ]
+            processes = [
+                subprocess.Popen(
+                    command, stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, text=True,
+                )
+                for command in commands
+            ]
+            outcomes = [
+                process.communicate(timeout=10) for process in processes
+            ]
+            self.assertEqual(
+                [process.returncode for process in processes], [0, 0],
+                outcomes,
+            )
+            self.assertEqual(
+                receipt_log.read_text().splitlines(), ["sbatch"]
+            )
 
     @staticmethod
     def _scheduler_plan_and_jobs(job_ids=("101", "102")):
