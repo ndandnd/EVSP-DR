@@ -43,6 +43,10 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
         membership.write_text("{}\n")
         instance_manifest = root / "instances.csv"
         instance_manifest.write_text("scale\n2\n")
+        scontrol = root / "scontrol"
+        sacct = root / "sacct"
+        scontrol.write_text("scontrol\n")
+        sacct.write_text("sacct\n")
         jobs = []
         groups = {}
         for index, group in enumerate(self.GROUPS):
@@ -151,6 +155,16 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
                 "block_min": 10,
             },
             "runtime_environment": {"USER": "nathan"},
+            "scontrol": {
+                "path": str(scontrol),
+                "sha256": sha256_file(scontrol),
+                "available": True,
+            },
+            "sacct": {
+                "path": str(sacct),
+                "sha256": sha256_file(sacct),
+                "available": True,
+            },
             "code_hashes": {},
             "jobs": [
                 {
@@ -213,34 +227,51 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
                     f"{manifest['submitted_arrays']['CG']}_*",
                     f"{manifest['submitted_arrays']['SEED']}_*",
                 ])
+            parent = manifest["submitted_arrays"][group]
+            name = prefixes[group] + plan_sha[:4]
+            partition = (
+                "scaglione" if group.startswith("MIP")
+                else "default_partition"
+            )
+            comment = f"SLAD:{plan_sha[:20]}:{group}"
+            dependency_text = ",".join(
+                f"{kind}:{value}(unfulfilled)"
+                for kind, values in dependencies.items()
+                for value in values
+            )
             arrays[group] = {
-                "job_id": manifest["submitted_arrays"][group],
-                "job_name": prefixes[group] + plan_sha[:4],
-                "partition": (
-                    "scaglione" if group.startswith("MIP")
-                    else "default_partition"
-                ),
-                "comment": f"SLAD:{plan_sha[:20]}:{group}",
-                "state": "COMPLETED",
-                "exit_code": "0:0",
-                "task_count": 1,
-                "dependency_semantics": {
-                    key: sorted(value)
-                    for key, value in dependencies.items()
-                },
+                "scontrol_raw": [(
+                    f"JobId={parent}_0 ArrayJobId={parent} "
+                    f"ArrayTaskId=0 UserId=nathan(1000) "
+                    f"JobName={name} JobState=COMPLETED "
+                    f"Partition={partition} Comment={comment} "
+                    f"ExitCode=0:0 Dependency={dependency_text}"
+                )],
+                "sacct_raw": [(
+                    f"{parent}_0|nathan|{name}|COMPLETED|"
+                    f"{partition}|{comment}|0:0"
+                )],
             }
         path.write_text(json.dumps({
             "schema": CAPTURE_SCHEMA,
             "plan_sha256": plan_sha,
             "source_commit": commit,
             "user": "nathan",
+            "source": "operator_read_only_scontrol_sacct_export",
+            "scontrol_sha256": plan["scontrol"]["sha256"],
+            "sacct_sha256": plan["sacct"]["sha256"],
             "gate": {
-                "job_id": "100",
-                "job_name": f"LDG{plan_sha[:5]}",
-                "partition": "default_partition",
-                "comment": f"SLADG:{plan_sha[:20]}",
-                "state": "COMPLETED",
-                "exit_code": "0:0",
+                "scontrol_raw": (
+                    f"JobId=100 UserId=nathan(1000) "
+                    f"JobName=LDG{plan_sha[:5]} JobState=COMPLETED "
+                    "Partition=default_partition "
+                    f"Comment=SLADG:{plan_sha[:20]} ExitCode=0:0"
+                ),
+                "sacct_raw": (
+                    f"100|nathan|LDG{plan_sha[:5]}|COMPLETED|"
+                    "default_partition|"
+                    f"SLADG:{plan_sha[:20]}|0:0"
+                ),
             },
             "arrays": arrays,
         }))
@@ -251,6 +282,12 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
             sidecar = Path(tmp) / "legacy-audit.json"
             with self.assertRaisesRegex(ValueError, "missing"):
                 validate_legacy_sidecar(campaign, sidecar)
+            with self.assertRaisesRegex(ValueError, "outside"):
+                audit_legacy_campaign(
+                    campaign,
+                    campaign / "forbidden-sidecar.json",
+                    expected_commit=commit,
+                )
             payload = audit_legacy_campaign(
                 campaign, sidecar, expected_commit=commit
             )

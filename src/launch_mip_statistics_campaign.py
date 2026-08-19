@@ -1334,6 +1334,17 @@ def build_plan(
 MIP_JOB_ROLE = "mip_statistics_scientific_job"
 MIP_ARRAY_TASK_ROLE = "mip_statistics_direct_array_task"
 MIP_ARRAY_NAME = "K40R12RG82"
+MIP_MUTABLE_JOB_FIELDS = {
+    "job_id", "submission_state", "submission_error",
+    "submission_command", "submission_intent", "submission_discovery",
+    "submission_receipt", "deduplication_comment", "discovery",
+    "slurm_array_name", "slurm_array_task_id", "slurm_display_id",
+    "release_verification", "prior_release_verification",
+    "release_revalidation_observation", "release_error",
+    "terminal_outcome", "cancellation_verification",
+    "cancellation_error", "reconciliation_observation",
+    "reconciliation_error",
+}
 
 
 def _mip_scheduler_user(plan):
@@ -1343,6 +1354,47 @@ def _mip_scheduler_user(plan):
     if not user:
         raise ValueError("approved scheduler user is missing")
     return user
+
+
+def _validate_manifest_jobs(plan, manifest):
+    approved = plan.get("jobs") or []
+    recorded = manifest.get("jobs") or []
+    if len(approved) != len(recorded):
+        raise ValueError("existing campaign job set is incomplete")
+    pairs = []
+    for index, (approved_job, recorded_job) in enumerate(
+        zip(approved, recorded)
+    ):
+        if not isinstance(recorded_job, dict):
+            raise ValueError("existing campaign job row is invalid")
+        immutable_errors = {
+            key: {
+                "expected": value,
+                "observed": recorded_job.get(key),
+            }
+            for key, value in approved_job.items()
+            if key not in {"job_id", "submission_state"}
+            and recorded_job.get(key) != value
+        }
+        unknown = (
+            set(recorded_job)
+            - set(approved_job)
+            - MIP_MUTABLE_JOB_FIELDS
+        )
+        if (
+            immutable_errors
+            or unknown
+            or recorded_job.get("cell_id") != approved_job.get("cell_id")
+        ):
+            raise ValueError(
+                f"existing campaign job {index} differs from approved plan: "
+                f"errors={immutable_errors}, unknown={sorted(unknown)}"
+            )
+        pairs.append((approved_job, recorded_job))
+    cell_ids = [pair[0]["cell_id"] for pair in pairs]
+    if len(set(cell_ids)) != len(cell_ids):
+        raise ValueError("approved campaign cell IDs are duplicated")
+    return pairs
 
 
 def _mip_job_spec(plan, job, job_id, *, plan_sha=None, array=False):
@@ -1733,13 +1785,19 @@ def _release_verified_held_jobs(
     """
     sleeper = time.sleep if sleeper is None else sleeper
     prior_verifications = {
-        job["cell_id"]: job.get("release_verification")
+        job["cell_id"]: (
+            job.get("release_verification")
+            or job.get("prior_release_verification")
+        )
         for job in manifest["jobs"]
     }
     manifest["submitted"] = False
     manifest["release_operation_state"] = "precondition_check"
     for manifest_job in manifest["jobs"]:
-        if manifest_job.get("release_verification") is not None:
+        if (
+            manifest_job.get("release_verification") is not None
+            and manifest_job.get("prior_release_verification") is None
+        ):
             manifest_job["prior_release_verification"] = (
                 manifest_job["release_verification"]
             )
@@ -1861,8 +1919,27 @@ def _release_verified_held_jobs(
                     )
                 failures.append(manifest_job["cell_id"])
             else:
+                returned_observation = verification.get("observation") or {}
+                if returned_observation.get("state") in TERMINAL_STATES:
+                    terminal = _mip_terminal_record(
+                        returned_observation,
+                        prior_release_verified=False,
+                    )
+                    if terminal["successful_completion"] is not True:
+                        raise SlurmContractError(
+                            "release verifier returned terminal non-success",
+                            observation=returned_observation,
+                        )
+                    verification["evidence_basis"] = (
+                        "terminal_completed_0_0_after_release_request"
+                    )
+                    manifest_job["terminal_outcome"] = terminal
+                    manifest_job["submission_state"] = (
+                        "release_verified_by_terminal_completed_0_0"
+                    )
+                else:
+                    manifest_job["submission_state"] = "release_verified"
                 manifest_job["release_verification"] = verification
-                manifest_job["submission_state"] = "release_verified"
         _replace_json(manifest_path, manifest)
         if failures:
             break
@@ -1906,8 +1983,14 @@ def _resume_existing_submission(plan, plan_sha):
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("approval_sha256") != plan_sha:
         raise SystemExit("existing campaign approval SHA mismatch")
-    if len(manifest.get("jobs") or []) != len(plan["jobs"]):
-        raise SystemExit("existing campaign job set is incomplete")
+    try:
+        manifest_job_pairs = _validate_manifest_jobs(plan, manifest)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    approved_by_cell = {
+        approved["cell_id"]: approved
+        for approved, _recorded in manifest_job_pairs
+    }
     if checkout_identity(require_detached=True) != plan["checkout_identity"]:
         raise SystemExit("recovery checkout differs from approved plan")
     worker = root / "input/submit_mip_statistics.sub"
@@ -2037,9 +2120,10 @@ def _resume_existing_submission(plan, plan_sha):
     accepted_manifest_jobs = []
     planned_manifest_jobs = []
     for manifest_job in manifest["jobs"]:
+        approved_job = approved_by_cell[manifest_job["cell_id"]]
         job_id = str(manifest_job.get("job_id") or "")
         if job_id.isdigit():
-            spec = _mip_job_spec(plan, manifest_job, job_id)
+            spec = _mip_job_spec(plan, approved_job, job_id)
             try:
                 observation = _resolve_mip_exact(spec)
             except SlurmContractError as exc:
@@ -2061,7 +2145,7 @@ def _resume_existing_submission(plan, plan_sha):
             planned_manifest_jobs.append(manifest_job)
             continue
         intent = manifest_job.get("submission_intent")
-        expected = _mip_job_spec(plan, manifest_job, None)
+        expected = _mip_job_spec(plan, approved_job, None)
         if not isinstance(intent, dict) or any(
             str(intent.get(field) or "") != str(expected.get(field) or "")
             for field in ("user", "job_name", "partition", "comment", "role")
@@ -2077,7 +2161,7 @@ def _resume_existing_submission(plan, plan_sha):
             manifest["submitted"] = False
             _replace_json(manifest_path, manifest)
             raise SystemExit(str(exc)) from exc
-        spec = _mip_job_spec(plan, manifest_job, job_id)
+        spec = _mip_job_spec(plan, approved_job, job_id)
         try:
             receipt = verify_held_receipt(spec)
         except SlurmContractError as exc:
@@ -2094,8 +2178,12 @@ def _resume_existing_submission(plan, plan_sha):
         _replace_json(manifest_path, manifest)
 
     if planned_manifest_jobs:
+        planned_approved_jobs = [
+            approved_by_cell[job["cell_id"]]
+            for job in planned_manifest_jobs
+        ]
         planned_comments = _planned_execution_comments(
-            plan, plan_sha, planned_manifest_jobs
+            plan, plan_sha, planned_approved_jobs
         )
         manifest["deduplication_state"] = "recovery_querying"
         manifest["deduplication_verification"] = None
@@ -2124,25 +2212,26 @@ def _resume_existing_submission(plan, plan_sha):
         for key, value in export_values.items()
     )
     for manifest_job in planned_manifest_jobs:
-        wall_time = _slurm_wall_time(manifest_job["budget_hours"])
-        comment = f"MSTAT:{manifest_job['execution_digest'][:32]}"
+        approved_job = approved_by_cell[manifest_job["cell_id"]]
+        wall_time = _slurm_wall_time(approved_job["budget_hours"])
+        comment = f"MSTAT:{approved_job['execution_digest'][:32]}"
         command = [
             "sbatch", "--parsable", "--hold", "--partition=scaglione",
             "--no-requeue", "--signal=B:USR1@180",
             "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=64G",
             f"--time={wall_time}",
-            f"--job-name={manifest_job['job_name']}",
+            f"--job-name={approved_job['job_name']}",
             f"--comment={comment}",
             f"--output={logs}/%x_%j.out",
             f"--error={logs}/%x_%j.err",
             "--export=" + export,
             str(worker), str(plan_path), plan_sha,
-            manifest_job["cell_id"],
+            approved_job["cell_id"],
         ]
         manifest_job["submission_state"] = "attempting"
         manifest_job["deduplication_comment"] = comment
         manifest_job["submission_intent"] = _mip_job_spec(
-            plan, manifest_job, None
+            plan, approved_job, None
         )
         _replace_json(manifest_path, manifest)
         completed = subprocess.run(
@@ -2178,7 +2267,7 @@ def _resume_existing_submission(plan, plan_sha):
                 )
                 raise SystemExit(str(exc)) from exc
             manifest_job["submission_discovery"] = discovery
-        spec = _mip_job_spec(plan, manifest_job, job_id)
+        spec = _mip_job_spec(plan, approved_job, job_id)
         manifest_job["job_id"] = job_id
         _replace_json(manifest_path, manifest)
         try:

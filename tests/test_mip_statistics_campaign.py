@@ -1301,6 +1301,175 @@ with _mip_campaign_lock({"campaign_root": str(campaign)}):
                 persisted["deduplication_verification"]
             )
 
+    def test_recovery_rejects_duplicated_mutable_manifest_cell(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            outer = Path(tmp)
+            root = outer / "campaign"
+            logs = outer / "logs"
+            (root / "input").mkdir(parents=True)
+            logs.mkdir()
+            worker = root / "input/submit_mip_statistics.sub"
+            worker.write_text("worker")
+            worker_sha = hashlib.sha256(worker.read_bytes()).hexdigest()
+            identity = {"expected_commit": "a" * 40}
+            base_plan, jobs = self._scheduler_plan_and_jobs(("301", "302"))
+            plan = {
+                **base_plan,
+                "campaign": "duplicate-cell-recovery",
+                "campaign_root": str(root),
+                "log_root": str(logs),
+                "mode": "pilot",
+                "checkout_identity": identity,
+                "worker_sha256": worker_sha,
+                "shared_reservation_root": str(
+                    outer / "reservations"
+                ),
+            }
+            for job in plan["jobs"]:
+                job["job_id"] = None
+                job["submission_state"] = "planned"
+            plan_raw = launcher._canonical(plan)
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            manifest = json.loads(json.dumps(plan))
+            manifest["approval_sha256"] = plan_sha
+            manifest["jobs"][1]["cell_id"] = manifest["jobs"][0]["cell_id"]
+            (root / "campaign.json").write_text(json.dumps(manifest))
+            with (
+                patch.object(
+                    launcher,
+                    "checkout_identity",
+                    side_effect=AssertionError(
+                        "checkout/query must not precede job validation"
+                    ),
+                ),
+                self.assertRaisesRegex(SystemExit, "differs"),
+            ):
+                launcher._resume_existing_submission(plan, plan_sha)
+
+    def test_completed_zero_race_records_explicit_terminal_basis(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest_path = Path(tmp) / "campaign.json"
+            plan, jobs = self._scheduler_plan_and_jobs(("191",))
+            manifest = {"jobs": jobs, "submitted": False}
+            manifest_path.write_text(json.dumps(manifest))
+            spec = launcher._mip_job_spec(plan, jobs[0], "191")
+            scheduler = SyntheticMIPScheduler([spec])
+
+            def runner(command, **kwargs):
+                if (
+                    Path(str(command[0])).name == "scontrol"
+                    and command[1] == "release"
+                ):
+                    scheduler.commands.append(list(command))
+                    scheduler.states["191"].update({
+                        "state": "COMPLETED",
+                        "reason": "None",
+                        "exit_code": "0:0",
+                    })
+                    return scheduler._result()
+                return scheduler(command, **kwargs)
+
+            def resolve(observed_spec):
+                return scheduler_contract.resolve_exact_job(
+                    observed_spec, runner=runner
+                )
+
+            def release(observed_spec, **_kwargs):
+                return scheduler_contract.release_with_postcondition(
+                    observed_spec,
+                    runner=runner,
+                    sleeper=lambda _value: None,
+                    command_attempts=1,
+                    verify_attempts=1,
+                    terminal_success_required=True,
+                )
+
+            with (
+                patch.object(launcher, "resolve_exact_job", resolve),
+                patch.object(
+                    launcher, "release_with_postcondition", release
+                ),
+            ):
+                launcher._release_verified_held_jobs(
+                    plan,
+                    manifest,
+                    manifest_path,
+                    sleeper=lambda _value: None,
+                )
+            persisted = json.loads(manifest_path.read_text())
+            job = persisted["jobs"][0]
+            self.assertEqual(
+                job["submission_state"],
+                "release_verified_by_terminal_completed_0_0",
+            )
+            self.assertEqual(
+                job["release_verification"]["evidence_basis"],
+                "terminal_completed_0_0_after_release_request",
+            )
+            self.assertTrue(
+                job["terminal_outcome"]["successful_completion"]
+            )
+
+    def test_prior_release_field_survives_crash_before_terminal_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            manifest_path = Path(tmp) / "campaign.json"
+            plan, jobs = self._scheduler_plan_and_jobs(("192",))
+            spec = launcher._mip_job_spec(plan, jobs[0], "192")
+            prior_observation = {
+                **{
+                    field: spec[field] for field in (
+                        "job_id", "user", "job_name",
+                        "partition", "comment",
+                    )
+                },
+                "state": "RUNNING",
+                "reason": "None",
+                "exit_code": "0:0",
+                "source": "squeue",
+                "live": True,
+            }
+            jobs[0]["prior_release_verification"] = {
+                "verified": True,
+                "role": spec["role"],
+                "job_id": "192",
+                "command_attempts": 1,
+                "observation": prior_observation,
+            }
+            jobs[0].pop("release_verification", None)
+            manifest = {"jobs": jobs, "submitted": False}
+            manifest_path.write_text(json.dumps(manifest))
+            scheduler = SyntheticMIPScheduler([spec])
+            scheduler.states["192"].update({
+                "state": "PREEMPTED",
+                "reason": "None",
+                "exit_code": "0:9",
+            })
+
+            def resolve(observed_spec):
+                return scheduler_contract.resolve_exact_job(
+                    observed_spec, runner=scheduler
+                )
+
+            with patch.object(launcher, "resolve_exact_job", resolve):
+                launcher._release_verified_held_jobs(
+                    plan,
+                    manifest,
+                    manifest_path,
+                    sleeper=lambda _value: None,
+                )
+            persisted = json.loads(manifest_path.read_text())
+            self.assertTrue(persisted["submitted"])
+            self.assertEqual(
+                persisted["jobs"][0]["submission_state"],
+                "release_verified_then_terminal_failed",
+            )
+            self.assertTrue(
+                persisted["jobs"][0]["terminal_outcome"][
+                    "prior_release_verified"
+                ]
+            )
+
     def test_worker_is_strict_partition_and_whitelisted(self):
         text = (
             REPO_ROOT / "src/submit_mip_statistics.sub"

@@ -290,6 +290,39 @@ class MIPStatisticsSummaryTests(unittest.TestCase):
             ):
                 summarize(campaign, root / "summary")
 
+    def test_terminal_failure_after_release_is_not_summarizable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            campaign = self._campaign(root)
+            manifest_path = campaign / "campaign.json"
+            manifest = json.loads(manifest_path.read_text())
+            job = manifest["jobs"][0]
+            prior = job["release_verification"]
+            observation = {
+                **prior["observation"],
+                "state": "FAILED",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "live": False,
+            }
+            job["submission_state"] = (
+                "release_verified_then_terminal_failed"
+            )
+            job["terminal_outcome"] = {
+                "observed": True,
+                "state": "FAILED",
+                "exit_code": "1:0",
+                "source": "sacct",
+                "observation": observation,
+                "prior_release_verified": True,
+                "successful_completion": False,
+            }
+            manifest_path.write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(
+                ValueError, "unverified|unsuccessfully"
+            ):
+                summarize(campaign, root / "summary")
+
     def test_covering_result_is_rejected_as_integer_schedule(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -16,7 +16,7 @@ from build_tariff_response_manifest import REPO_ROOT, sha256_file
 
 
 SCHEMA = "evsp-dr-scale-ladder-legacy-posthoc-audit-v1"
-CAPTURE_SCHEMA = "evsp-dr-legacy-scale-ladder-scheduler-capture-v1"
+CAPTURE_SCHEMA = "evsp-dr-legacy-scale-ladder-raw-scheduler-capture-v2"
 STATUSES = {
     "legacy_posthoc_audited",
     "legacy_scheduler_unverified",
@@ -258,6 +258,12 @@ def _expected_dependencies(group, arrays, gate):
 
 
 def _validate_scheduler_capture(path, plan, manifest, plan_sha, commit):
+    from reconcile_scale_ladder_gate import (
+        _dependency_semantics,
+        _scontrol_record_values,
+        _simple_array_task_ids,
+    )
+
     capture_path = Path(path).expanduser().resolve()
     capture = json.loads(capture_path.read_text())
     arrays = manifest["submitted_arrays"]
@@ -268,16 +274,40 @@ def _validate_scheduler_capture(path, plan, manifest, plan_sha, commit):
         or capture.get("plan_sha256") != plan_sha
         or capture.get("source_commit") != commit
         or capture.get("user") != user
+        or capture.get("source")
+        != "operator_read_only_scontrol_sacct_export"
+        or capture.get("scontrol_sha256")
+        != (plan.get("scontrol") or {}).get("sha256")
+        or capture.get("sacct_sha256")
+        != (plan.get("sacct") or {}).get("sha256")
     ):
         raise ValueError("legacy scheduler capture identity mismatch")
     gate = capture.get("gate") or {}
+    gate_control = _scontrol_record_values(
+        gate.get("scontrol_raw") or ""
+    )
+    gate_accounting_fields = [
+        field.strip()
+        for field in str(gate.get("sacct_raw") or "").split("|")
+    ]
     if (
-        str(gate.get("job_id") or "") != gate_id
-        or gate.get("job_name") != f"LDG{plan_sha[:5]}"
-        or gate.get("partition") != "default_partition"
-        or gate.get("comment") != f"SLADG:{plan_sha[:20]}"
-        or gate.get("state") != "COMPLETED"
-        or gate.get("exit_code") != "0:0"
+        gate_control.get("JobId") != gate_id
+        or str(gate_control.get("UserId") or "").split("(", 1)[0] != user
+        or gate_control.get("JobName") != f"LDG{plan_sha[:5]}"
+        or gate_control.get("Partition") != "default_partition"
+        or gate_control.get("Comment") != f"SLADG:{plan_sha[:20]}"
+        or gate_control.get("JobState") != "COMPLETED"
+        or gate_control.get("ExitCode") != "0:0"
+        or len(gate_accounting_fields) != 7
+        or gate_accounting_fields != [
+            gate_id,
+            user,
+            f"LDG{plan_sha[:5]}",
+            "COMPLETED",
+            "default_partition",
+            f"SLADG:{plan_sha[:20]}",
+            "0:0",
+        ]
     ):
         raise ValueError("legacy scheduler gate capture mismatch")
     captured_arrays = capture.get("arrays") or {}
@@ -293,19 +323,76 @@ def _validate_scheduler_capture(path, plan, manifest, plan_sha, commit):
     }
     for group in SCIENCE_GROUPS:
         row = captured_arrays[group]
+        parent = str(arrays[group])
+        name = prefixes[group] + plan_sha[:4]
+        partition = (
+            "scaglione" if group.startswith("MIP")
+            else "default_partition"
+        )
+        comment = f"SLAD:{plan_sha[:20]}:{group}"
+        expected_tasks = set(range(len(plan["task_groups"][group])))
+        expected_dependencies = {
+            kind: set(values) for kind, values in
+            _expected_dependencies(group, arrays, gate_id).items()
+        }
+        control_tasks = set()
+        for raw in row.get("scontrol_raw") or []:
+            values = _scontrol_record_values(raw)
+            tasks = _simple_array_task_ids(values.get("ArrayTaskId"))
+            if (
+                values.get("ArrayJobId") != parent
+                or str(values.get("UserId") or "").split("(", 1)[0] != user
+                or values.get("JobName") != name
+                or values.get("Partition") != partition
+                or values.get("Comment") != comment
+                or values.get("JobState") != "COMPLETED"
+                or values.get("ExitCode") != "0:0"
+                or _dependency_semantics(values.get("Dependency"))
+                != expected_dependencies
+                or control_tasks & tasks
+            ):
+                raise ValueError(
+                    f"legacy scheduler scontrol capture mismatch: {group}"
+                )
+            control_tasks.update(tasks)
+        accounting_tasks = set()
+        for raw in row.get("sacct_raw") or []:
+            fields = [field.strip() for field in str(raw).split("|")]
+            if len(fields) != 7:
+                raise ValueError(
+                    f"legacy scheduler sacct capture malformed: {group}"
+                )
+            (
+                job_id, row_user, row_name, state, row_partition,
+                row_comment, exit_code,
+            ) = fields
+            prefix = f"{parent}_"
+            if not job_id.startswith(prefix):
+                raise ValueError(
+                    f"legacy scheduler sacct task mismatch: {group}"
+                )
+            task_text = job_id[len(prefix):]
+            if not task_text.isdigit():
+                raise ValueError(
+                    f"legacy scheduler sacct task invalid: {group}"
+                )
+            task = int(task_text)
+            if (
+                row_user != user
+                or row_name != name
+                or state != "COMPLETED"
+                or row_partition != partition
+                or row_comment != comment
+                or exit_code != "0:0"
+                or task in accounting_tasks
+            ):
+                raise ValueError(
+                    f"legacy scheduler sacct capture mismatch: {group}"
+                )
+            accounting_tasks.add(task)
         if (
-            str(row.get("job_id") or "") != str(arrays[group])
-            or row.get("job_name") != prefixes[group] + plan_sha[:4]
-            or row.get("partition") != (
-                "scaglione" if group.startswith("MIP")
-                else "default_partition"
-            )
-            or row.get("comment") != f"SLAD:{plan_sha[:20]}:{group}"
-            or row.get("state") != "COMPLETED"
-            or row.get("exit_code") != "0:0"
-            or row.get("task_count") != len(plan["task_groups"][group])
-            or row.get("dependency_semantics")
-            != _expected_dependencies(group, arrays, gate_id)
+            control_tasks != expected_tasks
+            or accounting_tasks != expected_tasks
         ):
             raise ValueError(
                 f"legacy scheduler array capture mismatch: {group}"
@@ -329,6 +416,15 @@ def _derive_legacy_payload(
     )
     if auditor_head.returncode != 0:
         raise ValueError("cannot bind legacy auditor Git commit")
+    auditor_tree = subprocess.run(
+        ["git", "rev-parse", "HEAD^{tree}"],
+        cwd=REPO_ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if auditor_tree.returncode != 0:
+        raise ValueError("cannot bind legacy auditor Git tree")
     plan_path = root / "approved-plan.json"
     manifest_path = root / "campaign.json"
     plan_raw = plan_path.read_bytes()
@@ -406,6 +502,7 @@ def _derive_legacy_payload(
     payload = {
         "schema": SCHEMA,
         "auditor_git_commit": auditor_head.stdout.strip(),
+        "auditor_git_tree": auditor_tree.stdout.strip(),
         "auditor_code_sha256": sha256_file(Path(__file__).resolve()),
         "legacy_evidence_status": status,
         "normalization_authorized": True,
@@ -452,8 +549,18 @@ def audit_legacy_campaign(
     expected_commit,
     scheduler_capture=None,
 ):
+    root = Path(campaign_root).expanduser().resolve()
     sidecar = Path(sidecar_out).expanduser().resolve()
     checksum = Path(str(sidecar) + ".sha256")
+    if (
+        sidecar == root
+        or root in sidecar.parents
+        or checksum == root
+        or root in checksum.parents
+    ):
+        raise ValueError(
+            "legacy audit sidecar/checksum must be outside campaign root"
+        )
     if sidecar.exists() or checksum.exists():
         raise FileExistsError("legacy audit sidecar/checksum already exists")
     payload = _derive_legacy_payload(
