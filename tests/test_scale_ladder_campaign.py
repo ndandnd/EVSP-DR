@@ -21,7 +21,10 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import launch_scale_ladder as ladder  # noqa: E402
 from tariff_response_environment import (  # noqa: E402
+    NUMPY_BUILD_IDENTITY_SCHEMA,
     PORTABLE_FIELDS,
+    _runtime_simd_metadata,
+    _stable_build_config,
     compare_portable,
     identity as environment_identity,
 )
@@ -275,6 +278,149 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             "kernel_release": "different-kernel",
         }
         self.assertEqual(compare_portable(planned, observed), [])
+
+    def test_runtime_simd_capabilities_are_not_portable_build_identity(self):
+        base = {
+            "Compilers": {
+                "c": {"name": "gcc", "version": "10.2.1"},
+            },
+            "Build Dependencies": {
+                "blas": {
+                    "name": "openblas64",
+                    "found": True,
+                    "version": "0.3.23.dev",
+                },
+            },
+            "SIMD Extensions": {
+                "baseline": ["SSE", "SSE2", "SSE3"],
+                "found": ["SSSE3", "SSE41", "POPCNT", "AVX2"],
+                "not found": ["AVX512F", "AVX512_SKX"],
+            },
+        }
+        snavely = copy.deepcopy(base)
+        snavely["SIMD Extensions"].update({
+            "found": ["SSSE3", "SSE41"],
+            "not found": ["POPCNT", "AVX2", "AVX512F", "AVX512_SKX"],
+        })
+        scaglione = copy.deepcopy(base)
+        scaglione["SIMD Extensions"].update({
+            "found": [
+                "SSSE3", "SSE41", "POPCNT", "AVX2",
+                "AVX512F", "AVX512_SKX",
+            ],
+            "not found": [],
+        })
+
+        planned = self._portable_identity()
+        planned["portable"]["numpy_build_identity_schema"] = (
+            NUMPY_BUILD_IDENTITY_SCHEMA
+        )
+        planned["portable"]["numpy_build"] = _stable_build_config(base)
+        observed_snavely = copy.deepcopy(planned)
+        observed_snavely["portable"]["numpy_build"] = (
+            _stable_build_config(snavely)
+        )
+        observed_scaglione = copy.deepcopy(planned)
+        observed_scaglione["portable"]["numpy_build"] = (
+            _stable_build_config(scaglione)
+        )
+
+        self.assertEqual(compare_portable(planned, observed_snavely), [])
+        self.assertEqual(compare_portable(planned, observed_scaglione), [])
+        self.assertNotEqual(
+            _runtime_simd_metadata(snavely),
+            _runtime_simd_metadata(scaglione),
+        )
+        self.assertEqual(
+            _runtime_simd_metadata(scaglione)["not found"], []
+        )
+
+        cleaned_all_found = copy.deepcopy(scaglione)
+        del cleaned_all_found["SIMD Extensions"]["not found"]
+        self.assertEqual(
+            _stable_build_config(scaglione),
+            _stable_build_config(cleaned_all_found),
+        )
+        self.assertEqual(
+            _runtime_simd_metadata(cleaned_all_found)["not found"], []
+        )
+
+        cleaned_none_found = copy.deepcopy(base)
+        cleaned_none_found["SIMD Extensions"]["not found"] = (
+            cleaned_none_found["SIMD Extensions"].pop("found")
+        ) + cleaned_none_found["SIMD Extensions"]["not found"]
+        explicit_none_found = copy.deepcopy(cleaned_none_found)
+        explicit_none_found["SIMD Extensions"]["found"] = []
+        self.assertEqual(
+            _stable_build_config(cleaned_none_found),
+            _stable_build_config(explicit_none_found),
+        )
+        self.assertEqual(
+            _runtime_simd_metadata(cleaned_none_found)["found"], []
+        )
+
+        incompatible = copy.deepcopy(base)
+        incompatible["SIMD Extensions"]["baseline"] = ["AVX2"]
+        observed_incompatible = copy.deepcopy(planned)
+        observed_incompatible["portable"]["numpy_build"] = (
+            _stable_build_config(incompatible)
+        )
+        differences = compare_portable(planned, observed_incompatible)
+        self.assertEqual(
+            [item["field"] for item in differences],
+            ["portable.numpy_build"],
+        )
+
+        different_dispatch = copy.deepcopy(base)
+        different_dispatch["SIMD Extensions"].update({
+            "found": ["SSSE3", "SSE41", "POPCNT", "AVX2"],
+            "not found": ["AVX512F"],
+        })
+        observed_dispatch = copy.deepcopy(planned)
+        observed_dispatch["portable"]["numpy_build"] = (
+            _stable_build_config(different_dispatch)
+        )
+        self.assertEqual(
+            [
+                item["field"]
+                for item in compare_portable(planned, observed_dispatch)
+            ],
+            ["portable.numpy_build"],
+        )
+
+        different_build = copy.deepcopy(base)
+        different_build["Compilers"]["c"]["version"] = "11.4.0"
+        self.assertNotEqual(
+            _stable_build_config(base),
+            _stable_build_config(different_build),
+        )
+
+        different_dependency = copy.deepcopy(base)
+        different_dependency["Build Dependencies"]["blas"]["found"] = False
+        self.assertNotEqual(
+            _stable_build_config(base),
+            _stable_build_config(different_dependency),
+        )
+
+        reordered = copy.deepcopy(base)
+        for field in ("baseline", "found", "not found"):
+            reordered["SIMD Extensions"][field].reverse()
+        self.assertEqual(
+            _stable_build_config(base),
+            _stable_build_config(reordered),
+        )
+
+        malformed = copy.deepcopy(base)
+        malformed["SIMD Extensions"]["found"] = "AVX2"
+        with self.assertRaisesRegex(ValueError, "must be a string list"):
+            _stable_build_config(malformed)
+
+        old_policy = copy.deepcopy(planned)
+        del old_policy["portable"]["numpy_build_identity_schema"]
+        self.assertEqual(
+            compare_portable(old_policy, planned)[0]["field"],
+            "portable.numpy_build_identity_schema",
+        )
 
     def test_probe_entrypoint_imports_reviewed_sibling_in_isolated_mode(self):
         with tempfile.TemporaryDirectory() as tmp:

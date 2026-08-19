@@ -19,6 +19,15 @@ The reviewed plan contains exactly:
   controller;
 - zero k40 MIP submissions (four reuse-only result slots).
 
+The portable-environment gate binds the exact interpreter and package bytes,
+versions, architecture, compiler/build dependencies, NumPy compiled SIMD
+baseline, and compiled dispatch set. NumPy's host-detected SIMD
+`found`/`not found` partition is recorded in each probe's node metadata but is
+not a compatibility condition: identical NumPy wheels legitimately dispatch
+different kernels on heterogeneous Unicorn CPUs. The compared policy marker is
+`numpy-config-v2-runtime-simd-separated`, so an older or missing policy fails
+closed and cannot reuse this campaign's approval hash.
+
 ## One-block preparation and launch
 
 Set `COMMIT` to the exact reviewed 40-character commit. Keep the campaign name
@@ -32,7 +41,7 @@ It does not enable `set -e` and cannot terminate the surrounding login shell.
 bash <<'BASH'
 main() {
   COMMIT="PASTE_THE_REVIEWED_40_CHARACTER_COMMIT_HERE"
-  CAMPAIGN="slad_flat_primary_v1"
+  CAMPAIGN="slad_flat_primary_v2"
   SOURCE_ROOT="$HOME/EVSP-DR"
   SCRIPT="$HOME/launch_scale_ladder_probe_first.sh"
 

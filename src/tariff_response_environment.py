@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib.metadata
 import json
@@ -18,12 +19,19 @@ PORTABLE_FIELDS = (
     "numpy", "pandas", "scipy", "matplotlib", "gurobi",
     "numpy_distribution_sha256", "pandas_distribution_sha256",
     "scipy_distribution_sha256", "matplotlib_distribution_sha256",
-    "gurobipy_distribution_sha256", "numpy_build", "scipy_build",
+    "gurobipy_distribution_sha256", "numpy_build_identity_schema",
+    "numpy_build", "scipy_build",
     "highs_version", "machine",
 )
 CG_PORTABLE_FIELDS = tuple(
     field for field in PORTABLE_FIELDS
     if field not in {"gurobi", "gurobipy_distribution_sha256"}
+)
+
+
+_RUNTIME_SIMD_FIELDS = frozenset({"found", "not found"})
+NUMPY_BUILD_IDENTITY_SCHEMA = (
+    "numpy-config-v2-runtime-simd-separated"
 )
 
 
@@ -58,6 +66,66 @@ def _distribution_sha(name: str) -> str:
     return digest.hexdigest()
 
 
+def _simd_features(value, field):
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) for item in value
+    ):
+        raise ValueError(f"SIMD Extensions.{field} must be a string list")
+    return sorted(set(value))
+
+
+def _stable_build_config(config):
+    """Return canonical build identity with runtime SIMD partition removed.
+
+    NumPy's ``CONFIG`` report combines immutable wheel build information with
+    the CPU features detected on the importing host.  The latter legitimately
+    differs across Unicorn nodes, so it is provenance rather than portable
+    package identity.  The compiled SIMD baseline and dispatch set remain part
+    of the build identity; only the host-dependent partition of the dispatch
+    set into ``found`` and ``not found`` is removed.
+    """
+    if not isinstance(config, dict):
+        return json.dumps(config, sort_keys=True, separators=(",", ":"))
+    stable = copy.deepcopy(config)
+    simd = stable.get("SIMD Extensions")
+    if isinstance(simd, dict):
+        baseline = _simd_features(simd.get("baseline"), "baseline")
+        # NumPy's generated config removes falsey values, so either runtime
+        # partition key may be absent when its canonical value is an empty
+        # list. A present malformed value still fails closed.
+        found = _simd_features(simd.get("found", []), "found")
+        not_found = _simd_features(
+            simd.get("not found", []), "not found"
+        )
+        if set(found) & set(not_found):
+            raise ValueError(
+                "SIMD Extensions found/not found sets overlap"
+            )
+        stable["SIMD Extensions"] = {
+            key: value
+            for key, value in simd.items()
+            if key not in _RUNTIME_SIMD_FIELDS
+        }
+        stable["SIMD Extensions"]["baseline"] = baseline
+        stable["SIMD Extensions"]["dispatch"] = sorted(
+            set(found) | set(not_found)
+        )
+    return json.dumps(stable, sort_keys=True, separators=(",", ":"))
+
+
+def _runtime_simd_metadata(config):
+    """Return host SIMD observations excluded from portable identity."""
+    if not isinstance(config, dict):
+        return None
+    simd = config.get("SIMD Extensions")
+    if not isinstance(simd, dict):
+        return None
+    observed = {}
+    for key in ("found", "not found"):
+        observed[key] = _simd_features(simd.get(key, []), key)
+    return observed
+
+
 def identity(profile="full"):
     import matplotlib
     import numpy
@@ -65,6 +133,8 @@ def identity(profile="full"):
     import scipy
 
     executable = Path(sys.executable).resolve()
+    numpy_config = getattr(numpy.__config__, "CONFIG", None)
+    scipy_config = getattr(scipy.__config__, "CONFIG", None)
     try:
         import highspy
         highs_version = str(highspy.Highs().version())
@@ -79,8 +149,9 @@ def identity(profile="full"):
         "scipy": scipy.__version__,
         "matplotlib": matplotlib.__version__,
         "machine": platform.machine().strip().lower(),
-        "numpy_build": repr(getattr(numpy.__config__, "CONFIG", None)),
-        "scipy_build": repr(getattr(scipy.__config__, "CONFIG", None)),
+        "numpy_build_identity_schema": NUMPY_BUILD_IDENTITY_SCHEMA,
+        "numpy_build": _stable_build_config(numpy_config),
+        "scipy_build": _stable_build_config(scipy_config),
         "highs_version": highs_version,
         "numpy_distribution_sha256": _distribution_sha("numpy"),
         "pandas_distribution_sha256": _distribution_sha("pandas"),
@@ -113,6 +184,8 @@ def identity(profile="full"):
             "kernel_release": platform.release(),
             "os_version": platform.version(),
             "pythonpath_observed": os.environ.get("PYTHONPATH"),
+            "numpy_runtime_simd": _runtime_simd_metadata(numpy_config),
+            "scipy_runtime_simd": _runtime_simd_metadata(scipy_config),
         },
     }
 
