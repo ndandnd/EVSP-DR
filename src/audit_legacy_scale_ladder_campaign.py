@@ -13,14 +13,6 @@ from collections import Counter
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
-from expanded_path_realization import (
-    BLOCK_SCHEDULE_SCHEMA,
-    charging_block_schedule_sha256,
-)
-from summarize_scale_ladder import (
-    SCIENCE_GROUPS,
-    _validate_completion,
-)
 
 
 SCHEMA = "evsp-dr-scale-ladder-legacy-posthoc-audit-v1"
@@ -34,6 +26,10 @@ STRICT_FIELDS = {
     "gate_reconciliation",
     "array_submission_verifications",
 }
+SCIENCE_GROUPS = (
+    "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+    "MIP_RAW", "MIP_KNOWN",
+)
 
 
 def _canonical(payload):
@@ -171,6 +167,10 @@ def _validate_plan_inputs(plan, artifacts):
 
 
 def _validate_selected_routes(plan, jobs_by_key):
+    from expanded_path_realization import (
+        BLOCK_SCHEDULE_SCHEMA,
+        charging_block_schedule_sha256,
+    )
     validated = []
     for job in plan["jobs"]:
         if job.get("phase") != "MIP":
@@ -369,6 +369,7 @@ def _derive_legacy_payload(
     _verify_git_code_hashes(plan, expected_commit)
     jobs_by_key = {job["job_key"]: job for job in plan["jobs"]}
     completion_hashes = {}
+    from summarize_scale_ladder import _validate_completion
     for job in plan["jobs"]:
         _validate_completion(job, plan_sha)
         completion_path = Path(
