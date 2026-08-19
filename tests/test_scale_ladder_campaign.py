@@ -3995,19 +3995,51 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     )
                 if (
                     executable == tools["scontrol"]["path"]
-                    and command[1:] == ["show", "job", "401", "-o"]
+                    and command[1:3] == ["show", "job"]
+                    and command[3] in {
+                        "401", "402", "403", "404", "405", "406",
+                    }
                 ):
+                    job_id = command[3]
+                    group = {
+                        "401": "PREFLIGHT", "402": "SEED",
+                        "403": "CG", "404": "CG_SENSITIVITY",
+                        "405": "MIP_RAW", "406": "MIP_KNOWN",
+                    }[job_id]
+                    prefix = {
+                        "PREFLIGHT": "LDPF", "SEED": "LDSD",
+                        "CG": "LDCG", "CG_SENSITIVITY": "LDCS",
+                        "MIP_RAW": "LDMR", "MIP_KNOWN": "LDMK",
+                    }[group]
+                    partition = (
+                        "scaglione" if group.startswith("MIP")
+                        else "default_partition"
+                    )
+                    dependencies = ["afterok:900(unfulfilled)"]
+                    if group in {"CG", "CG_SENSITIVITY"}:
+                        dependencies.append(
+                            "afterok:401_*(unfulfilled)"
+                        )
+                    elif group == "MIP_RAW":
+                        dependencies.append(
+                            "aftercorr:403_*(unfulfilled)"
+                        )
+                    elif group == "MIP_KNOWN":
+                        dependencies.extend([
+                            "aftercorr:403_*(unfulfilled)",
+                            "aftercorr:402_*(unfulfilled)",
+                        ])
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
-                            f"JobId=401 ArrayJobId=401 "
-                            f"JobName=LDPF{plan_sha[:4]} "
+                            f"JobId={job_id} ArrayJobId={job_id} "
+                            f"JobName={prefix}{plan_sha[:4]} "
                             "UserId=nc437(1646707) "
-                            "JobState=PENDING Partition=default_partition "
+                            f"JobState=PENDING Partition={partition} "
                             "Reason=Dependency RunTime=00:00:00 "
-                            f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
+                            f"Comment=SLAD:{plan_sha[:20]}:{group} "
                             "ArrayTaskId=0-0 "
-                            "Dependency=afterok:900(unfulfilled)\n"
+                            f"Dependency={','.join(dependencies)}\n"
                         ),
                         stderr="",
                     )

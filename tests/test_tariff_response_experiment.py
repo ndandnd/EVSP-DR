@@ -164,16 +164,6 @@ def submitted_child_row(plan, job, gate_id, job_id):
         "source": "scontrol",
         "live": True,
     }
-
-
-def live_child_row(spec, *, include_dependency):
-    fields = [
-        spec["job_id"], spec["user"], spec["job_name"], "PENDING",
-        spec["partition"], "Dependency", spec["comment"],
-    ]
-    if include_dependency:
-        fields.append(spec["dependency"])
-    return scheduler_result(stdout="|".join(fields) + "\n")
     return {
         "job_key": job["job_key"],
         **{
@@ -191,6 +181,16 @@ def live_child_row(spec, *, include_dependency):
             "diagnostics": [],
         },
     }
+
+
+def live_child_row(spec, *, include_dependency):
+    fields = [
+        spec["job_id"], spec["user"], spec["job_name"], "PENDING",
+        spec["partition"], "Dependency", spec["comment"],
+    ]
+    if include_dependency:
+        fields.append(spec["dependency"])
+    return scheduler_result(stdout="|".join(fields) + "\n")
 
 
 def toy_problem(*, boundary=False):
