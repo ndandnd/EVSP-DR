@@ -14,7 +14,7 @@ No-floor counterfactuals replay the same production prefix timing, stations, act
 
 ## Artifact hashes
 
-- `oracle.json`: `47e871fec0117ab68bb5baa44b76a6981f93c8005ac759f355f2dd832a6599c0`
+- `oracle.json`: `6e9155cc15a2a686ef00ccf53077edb67a56dc498521f8c7ee895ab4eee51640`
 - `transition_candidates.csv`: `67b52e4e537896a9b03ea9b3949eb1a7e1268926bb47bb405dfd455009beb712`
 - `frontier_states.csv`: `876fb4d17479cc3c3e40b03a0e1d823c8458e1a38c1994e11e129aeb6a310c1c`
 - `counterfactuals.csv`: `a1c0849d03f2bc7fc5eb5074d6764f0c59901f1fe9144683fa5d203034c924c2`
