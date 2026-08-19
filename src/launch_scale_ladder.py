@@ -69,6 +69,10 @@ CODE_PATHS = (
     "src/submit_scale_ladder_probe.sub",
     "src/run_scale_ladder_environment_probe.py",
     "src/submit_scale_ladder_probe.sub",
+    "src/matching_init.py",
+    "src/pricing_dp_og.py",
+    "src/make_giro_seed_routes.py",
+    "src/prepare_k40_giro40_partition.py",
 )
 CG_BUDGET_S = {
     2: 7200, 3: 7200, 5: 7200,
@@ -844,6 +848,10 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
     results = {}
     for probe_id, spec in probe_specs.items():
         path = Path(spec["output"])
+        expected_probe_id = (
+            "default" if probe_id == "default_partition"
+            else "scaglione"
+        )
         result = {
             "job_id": spec["job_id"],
             "state": terminal.get(probe_id, "TIMEOUT_WAITING"),
@@ -867,11 +875,13 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
                 "compatible": (
                     payload.get("compatible") is True
                     and payload.get("plan_sha256") == plan_sha
-                    and payload.get("probe_id") == spec.get("probe_id")
+                    and spec.get("probe_id") == expected_probe_id
+                    and spec.get("partition") == probe_id
+                    and payload.get("probe_id") == expected_probe_id
                     and str(payload.get("slurm_job_id"))
                     == str(spec["job_id"])
                     and payload.get("slurm_partition")
-                    == spec.get("partition")
+                    == probe_id
                     and path.name == f"{probe_id}.json"
                     and digest == sidecar_digest
                     and result["state"] == "COMPLETED"
@@ -888,6 +898,22 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
 def _probes_compatible(results):
     return (
         set(results) == {"default_partition", "scaglione"}
+        and len({
+            str(result.get("job_id")) for result in results.values()
+        }) == 2
+        and len({
+            str(Path(result.get("output") or "").resolve())
+            for result in results.values()
+        }) == 2
+        and len({
+            str(Path(result.get("output") or "").resolve().parent)
+            for result in results.values()
+        }) == 1
+        and all(
+            Path(result.get("output") or "").name == f"{key}.json"
+            and Path(result.get("output") or "").parent.name == "probes"
+            for key, result in results.items()
+        )
         and all(
             result.get("compatible") is True
             for result in results.values()

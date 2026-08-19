@@ -41,6 +41,9 @@ from summarize_scale_ladder import (  # noqa: E402
 )
 from audit_scale_ladder_known_membership import audit  # noqa: E402
 from recover_scale_ladder_mip_progress import recover  # noqa: E402
+from run_scale_ladder_local_diagnostics import (  # noqa: E402
+    LOCAL_CODE_PATHS,
+)
 
 
 INSTANCE_MANIFEST = (
@@ -149,12 +152,14 @@ class ScaleLadderCampaignTests(unittest.TestCase):
     def test_probe_result_binds_job_partition_and_artifact_hash(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            probe_root = root / "probes"
+            probe_root.mkdir()
             specs = {}
             for partition, probe_id, job_id in (
                 ("default_partition", "default", "101"),
                 ("scaglione", "scaglione", "102"),
             ):
-                output = root / f"{partition}.json"
+                output = probe_root / f"{partition}.json"
                 payload = {
                     "compatible": True,
                     "plan_sha256": "p" * 64,
@@ -214,6 +219,17 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     timeout_s=1,
                 )
             self.assertFalse(ladder._probes_compatible(results))
+            spoofed = {
+                "default_partition": {
+                    "compatible": True, "job_id": "101",
+                    "output": specs["default_partition"]["output"],
+                },
+                "scaglione": {
+                    "compatible": True, "job_id": "101",
+                    "output": specs["default_partition"]["output"],
+                },
+            }
+            self.assertFalse(ladder._probes_compatible(spoofed))
 
     def test_atomic_summary_publication_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -461,6 +477,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertNotIn('"phase": "PREFLIGHT"', local)
         self.assertIn("default=3", local)
         self.assertIn("diagnostic_only", local)
+        self.assertFalse(set(LOCAL_CODE_PATHS) - set(ladder.CODE_PATHS))
 
     def test_k2_r1_certified_15_vs_5_route_space_distinction(self):
         with INSTANCE_MANIFEST.open(newline="") as handle:

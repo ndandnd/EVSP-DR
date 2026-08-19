@@ -44,6 +44,11 @@ LOCAL_CODE_PATHS = (
     "src/durable_io.py",
     "src/utils_v2.py",
     "src/config.py",
+    "src/tariff_response_environment.py",
+    "src/matching_init.py",
+    "src/pricing_dp_og.py",
+    "src/make_giro_seed_routes.py",
+    "src/prepare_k40_giro40_partition.py",
 )
 
 

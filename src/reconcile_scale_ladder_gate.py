@@ -65,6 +65,7 @@ def reconcile(
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("gate_state") in {
         "creating", "held", "held_after_partial_submission",
+        "held_probe_failure",
     }:
         squeue = plan.get("squeue") or {}
         squeue_path = Path(str(squeue.get("path") or ""))
@@ -272,6 +273,8 @@ def reconcile(
             "infrastructure probes are not both compatible; gate retained"
         )
     manifest["probe_state"] = "passed"
+    if manifest.get("gate_state") == "held_probe_failure":
+        manifest["gate_state"] = "held"
     _replace_json(manifest_path, manifest)
     if states.get(gate) == "PENDING" and release_held_gate:
         scontrol_path = _require_gate_held(plan, gate)
