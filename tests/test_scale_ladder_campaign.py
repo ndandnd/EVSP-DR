@@ -5,6 +5,7 @@ import errno
 import hashlib
 import json
 import os
+import shutil
 import sys
 import subprocess
 import tempfile
@@ -86,6 +87,165 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             "kernel_release": "different-kernel",
         }
         self.assertEqual(compare_portable(planned, observed), [])
+
+    def test_probe_entrypoint_imports_reviewed_sibling_in_isolated_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "reviewed-src"
+            source.mkdir()
+            for name in (
+                "run_scale_ladder_environment_probe.py",
+                "tariff_response_environment.py",
+            ):
+                (source / name).write_bytes(
+                    (REPO_ROOT / "src" / name).read_bytes()
+                )
+            # A broad insertion of the sibling directory would let this file
+            # shadow the standard library.  The exact-path loader must not.
+            (source / "platform.py").write_text(
+                "raise RuntimeError('sibling shadow module was imported')\n"
+            )
+            ambient = Path(tmp) / "ambient"
+            ambient.mkdir()
+            (ambient / "tariff_response_environment.py").write_text(
+                "raise RuntimeError('ambient module was imported')\n"
+            )
+            environment = dict(os.environ)
+            environment.pop("PYTHONPATH", None)
+            environment.pop("PYTHONHOME", None)
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-I",
+                    "-B",
+                    str(source / "run_scale_ladder_environment_probe.py"),
+                    "--help",
+                ],
+                cwd=ambient,
+                env=environment,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertIn("--plan", completed.stdout)
+
+    def test_probe_worker_executes_isolated_entrypoint_and_publishes_artifact(
+        self,
+    ):
+        worker_path = shutil.which(
+            "sha256sum", path="/usr/local/bin:/usr/bin:/bin"
+        )
+        if worker_path is None:
+            self.skipTest("probe worker requires Linux-style sha256sum")
+        with tempfile.TemporaryDirectory() as tmp:
+            temporary = Path(tmp)
+            root = temporary / "repo"
+            source = root / "src"
+            source.mkdir(parents=True)
+            for name in (
+                "run_scale_ladder_environment_probe.py",
+                "submit_scale_ladder_probe.sub",
+            ):
+                (source / name).write_bytes(
+                    (REPO_ROOT / "src" / name).read_bytes()
+                )
+            (source / "tariff_response_environment.py").write_text(
+                "def identity():\n"
+                "    return {'portable_identity_sha256': 'test', "
+                "'node_metadata': {}}\n"
+                "def compare_portable(planned, observed):\n"
+                "    return []\n"
+            )
+            subprocess.run(
+                ["git", "init", "-q"], cwd=root, check=True
+            )
+            subprocess.run(
+                ["git", "add", "src"], cwd=root, check=True
+            )
+            subprocess.run(
+                [
+                    "git", "-c", "user.name=EVSP Test", "-c",
+                    "user.email=evsp-test@example.invalid", "commit", "-qm",
+                    "fixture",
+                ],
+                cwd=root,
+                check=True,
+            )
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=root,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout.strip()
+            code_hashes = {
+                f"src/{name}": sha256_file(source / name)
+                for name in (
+                    "run_scale_ladder_environment_probe.py",
+                    "submit_scale_ladder_probe.sub",
+                    "tariff_response_environment.py",
+                )
+            }
+            plan = {
+                "checkout_identity": {"commit": commit},
+                "code_hashes": code_hashes,
+                "python_identity": {
+                    "portable_identity_sha256": "test",
+                },
+            }
+            plan_path = temporary / "approved-plan.json"
+            plan_path.write_text(
+                json.dumps(plan, sort_keys=True, separators=(",", ":"))
+            )
+            plan_sha = sha256_file(plan_path)
+            output = temporary / "artifacts/default.attempt1.json"
+            home = temporary / "home"
+            home.mkdir()
+            ambient = temporary / "ambient"
+            ambient.mkdir()
+            (ambient / "tariff_response_environment.py").write_text(
+                "raise RuntimeError('ambient module was imported')\n"
+            )
+            python = Path(sys.executable).resolve()
+            environment = dict(os.environ)
+            environment.update({
+                "SLURM_JOB_ID": "1234",
+                "SLURM_JOB_PARTITION": "default_partition",
+            })
+            completed = subprocess.run(
+                [
+                    "/bin/bash",
+                    str(source / "submit_scale_ladder_probe.sub"),
+                    str(plan_path),
+                    plan_sha,
+                    "default",
+                    "1",
+                    str(python),
+                    sha256_file(python),
+                    str(root),
+                    str(home),
+                    str(output),
+                    sha256_file(source / "submit_scale_ladder_probe.sub"),
+                ],
+                cwd=ambient,
+                env=environment,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            payload = json.loads(output.read_text())
+            self.assertTrue(payload["compatible"])
+            self.assertEqual(payload["plan_sha256"], plan_sha)
+            self.assertEqual(payload["probe_id"], "default")
+            self.assertEqual(payload["probe_attempt"], 1)
+            self.assertEqual(payload["slurm_job_id"], "1234")
+            self.assertEqual(
+                payload["slurm_partition"], "default_partition"
+            )
+            sidecar = Path(str(output) + ".sha256")
+            self.assertTrue(sidecar.is_file())
+            self.assertEqual(sidecar.read_text().split()[0], sha256_file(output))
 
     def test_launcher_reads_portable_environment_schema(self):
         payload = self._portable_identity()

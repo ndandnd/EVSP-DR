@@ -5,11 +5,28 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
 
-from tariff_response_environment import compare_portable, identity
+# Python isolated mode intentionally omits the script directory from
+# ``sys.path``.  Load only this reviewed sibling by its exact path instead of
+# making the whole source directory importable (and therefore shadowable).
+ENVIRONMENT_PATH = Path(__file__).resolve().with_name(
+    "tariff_response_environment.py"
+)
+ENVIRONMENT_SPEC = importlib.util.spec_from_file_location(
+    "_evsp_tariff_response_environment", ENVIRONMENT_PATH
+)
+if ENVIRONMENT_SPEC is None or ENVIRONMENT_SPEC.loader is None:
+    raise ImportError(
+        f"cannot load reviewed environment module: {ENVIRONMENT_PATH}"
+    )
+ENVIRONMENT_MODULE = importlib.util.module_from_spec(ENVIRONMENT_SPEC)
+ENVIRONMENT_SPEC.loader.exec_module(ENVIRONMENT_MODULE)
+compare_portable = ENVIRONMENT_MODULE.compare_portable
+identity = ENVIRONMENT_MODULE.identity
 
 
 def _write_new(path, payload):
