@@ -5,6 +5,9 @@
 This is a decision plan, not a new algorithm implementation. It accepts or
 rejects the 138-task flat-tariff scale ladder, separates model-space effects
 from runtime effects, and authorizes only conditional follow-up work.
+Files named under “planned decision tables/figures” below are specifications,
+not claims that those outputs already exist. The currently implemented
+normalizer outputs remain the files documented in `SCALE_LADDER_20260818.md`.
 
 The evidence statements below come from tracked artifacts at reviewed base
 `1d80402d79d1cbb4b786b780f7287c12b02d3621`. No Slurm query, Gurobi run, or
@@ -28,7 +31,7 @@ It binds:
 Direct enumeration gives:
 
 1. All 22 known partitions are continuously feasible.
-2. All 22 have
+2. All 22 are deterministically preflight-classified with
    `known_partition_in_primary_expanded_space=false`. This means at least one
    duty in every known partition is absent from the 15-kWh/10-minute expanded
    route space. It does **not** mean every duty is absent and does not prove
@@ -206,8 +209,11 @@ Classification is precedence ordered and must retain a separate
      proves that no target-fleet solution exists under the named grid/physics;
    - Current combined-cost CG alone cannot assign target-fleet
      `certified route-space infeasible`. For the present artifacts, the valid
-     statement is narrower: all 22 **known partitions** are certified outside
-     the primary route space.
+     statement is narrower: all 22 **known partitions** are deterministically
+     preflight-classified as nonrepresentable in the primary route space.
+     This is not a pricing certificate; individual
+     `certificate.certified=false` results must never be described as
+     certified infeasibility.
    - A failed fixed-sequence membership test never assigns this class. It sets
      only the orthogonal `known_partition_outside_primary_space=true` flag;
      alternative target-fleet partitions and scaling/runtime remain
@@ -262,7 +268,14 @@ integral-assembly/feasibility diagnostic, not algorithmic recovery.
 - RAW and KNOWN bounds/trajectories must never be merged because their column
   sets differ.
 
-## Required normalized decision tables
+## Planned post-ladder decision tables (not yet implemented)
+
+Already implemented by the current ladder normalizer:
+`cg_iteration_long.csv`, `cg_run_summary.csv`, `mip_checkpoint_long.csv`,
+`mip_run_summary.csv`, `artifact_inventory.csv`,
+`scale_progress_summary.csv`, and `known_route_membership_long.csv`.
+
+The following are future decision artifacts and do not exist yet:
 
 1. `ladder_cell_decision.csv`: one row per primary cell with classification,
    target, objective scope, route weight, artificial mass, certificate,
@@ -286,7 +299,7 @@ integral-assembly/feasibility diagnostic, not algorithmic recovery.
 9. `conditional_rerun_plan.csv`: only approved cells, exact triggering
    evidence, reuse/resume source, budget, and the question the rerun resolves.
 
-## Required figures
+## Planned post-ladder figures (not yet implemented)
 
 - primary-grid LP route weight and artificial mass versus time/iteration,
   faceted by scale and replicate;
@@ -306,7 +319,7 @@ Every route-weight figure carries the combined-cost-master disclaimer.
 | Observed evidence | Grid/model nonrepresentability | Pricing runtime | Missing pool composition | MIP search difficulty | Decision |
 |---|---|---|---|---|---|
 | Known duty fails membership but continuous replay passes | Yes for that named sequence/grid | Not implicated | Possible downstream consequence | Not implicated | Do not call CG slow; use sensitivity or transition oracle only if decision-relevant. |
-| Zero artificials, exact pricing certified, target route weight not reached | Known partition flag may be yes; target fleet remains unproved | No | Possible | Not yet tested | Run fleet-only CG only if a minimum-fleet claim is needed. |
+| Zero artificials, exact pricing certified, target route weight not reached | Known partition flag may be yes; target fleet remains unproved | No | Possible | Not yet tested | Fleet-only lexicographic CG is mandatory before making the Goal-1 LP fleet-bound claim. |
 | Zero artificials, pricing wall-limited | Unknown | Yes | Unknown | Not yet tested | Resume exact journal only for decision-frontier cells. |
 | RAW target-constrained finite-pool MIP proves infeasible | No global conclusion | CG may be certified or censored | Yes for this pool | No | Inspect/generate missing composition; do not merely extend MIP. |
 | RAW has target-capable bound but no target incumbent at limit | No conclusion | Separate CG field | Unknown | Yes/likely | Run target-constrained finite-pool feasibility MIP for that pool. |
@@ -318,17 +331,20 @@ Every route-weight figure carries the combined-cost-master disclaimer.
 ### 1. Fleet-only exact CG
 
 - Use the same expanded feasibility network and trip constraints.
-- Set each real route's primary objective coefficient to exactly one bus.
-- Keep artificials at a separately dominant, proven penalty.
-- Price reduced cost `1 - sum(trip duals)` with exact pricing.
-- Optimize charging cost only in a second lexicographic phase after the
-  fleet-weight optimum is fixed, or use it solely as deterministic tie-break
-  metadata with a proved noninterfering scale.
+- Use three explicit lexicographic phases, never one weighted surrogate:
+  1. eliminate artificials and certify zero artificial mass;
+  2. at zero artificials, minimize route weight with coefficient exactly one
+     per real route and exact reduced cost
+     `1 - sum(trip duals)`;
+  3. fix the certified fleet-weight optimum and only then minimize charging
+     cost with exact tariff-bound pricing.
+- Persist each fixed optimum and phase-specific dual/reduced-cost certificate.
 - Certificate output must bind route space, grid, artificial mass, fleet-only
   objective, reduced-cost tolerance, and exact stop.
 
-Only this result may be called the minimum-fleet LP lower bound for the named
-expanded space.
+This fleet-only exact-CG result is mandatory for the Goal-1 LP fleet-bound
+claim. Only its phase-2 optimum may be called the minimum-fleet LP bound for
+the named expanded space; phase 3 cannot alter it.
 
 ### 2. Target-constrained finite-pool feasibility MIP
 
@@ -357,6 +373,39 @@ Build one immutable diagnostic for ordered-trip transition `106->119`:
 This oracle must diagnose one transition. It must not launch another scale
 sweep or silently change campaign physics.
 
+## Matched algorithm benchmark and frontier replication
+
+Before attributing a scale effect to exact pricing, run a matched benchmark of
+the recovered old heuristic pricer versus the exact expanded-network pricer.
+Every pair must use the identical instance bytes, initialization, physics,
+tariff, Python/solver environment, physical node, CPU allocation, thread
+count, memory request, wall budget, random seed, checkpoint cadence, telemetry
+schema, and stop rules. Compare certified status separately from incumbent
+quality; absence of an exact certificate in the heuristic arm remains explicit.
+
+Replication is limited to the observed transition neighborhood: the first
+scale where exact pricing becomes censored, the immediately smaller certified
+scale, and at most one immediately larger scale, using the existing
+deterministic subset family plus only the minimum extra seeds needed to
+distinguish a seed effect. Do not repeat the full ladder.
+
+Every run must report problem/resource size: trips, duties, expanded nodes and
+arcs, reachable states, initial/final columns, incidence nonzeros, master rows/
+columns, pricing labels/transitions, iterations, peak RSS, requested and
+observed CPUs/threads, CPU time, wall time, host/partition, solver versions,
+node count, and checkpoint I/O volume.
+
+## Physics freeze and external-GIRO gate
+
+The primary ladder interpretation remains frozen at 300 kWh, 300 kW, zero
+reserve, 15-kWh SOC, 10-minute blocks, and the historical flat tariff. Before
+making external claims about GIRO operations, run a separately labeled,
+matched sensitivity at 240 kWh, 220 kW, and the reviewed nonzero reserve
+policy. Bind all changed physics fields and rerun physical replay,
+representability preflight, fleet-only CG, and finite-pool diagnostics. This
+sensitivity cannot be merged into the primary ladder or used to retroactively
+change its route space.
+
 ## Minimal conditional reruns
 
 1. Do not rerun any cell whose immutable completion and classification gates
@@ -371,14 +420,17 @@ sweep or silently change campaign physics.
 3. For `feasible but pricing-censored`, resume only cells whose unresolved
    certificate changes a scale-threshold conclusion (the first transition and
    one bracketing cell), not all larger scales.
-4. Run fleet-only CG only on those decision-frontier cells where the paper
-   needs a minimum-fleet LP claim.
+4. Run fleet-only three-phase lexicographic CG on the limited frontier cells;
+   this is mandatory before any Goal-1 minimum-fleet LP claim.
 5. Run target-constrained finite-pool feasibility only where RAW cannot
    distinguish pool composition from branch-and-bound search.
 6. Run the duty-13411 transition oracle once. Any broader grid change requires
    a separate reviewed scientific design.
 7. Never duplicate the reviewed k40 MIPs; ingest them only after exact
    instance/tariff/physics/pool/hash validation.
+8. Run the matched old-heuristic-versus-exact comparison and the 240-kWh/
+   220-kW/reserve sensitivity only under the gates above; neither authorizes a
+   broad sweep.
 
 The next decision is made from the normalized cause matrix, not from scale
 alone.
