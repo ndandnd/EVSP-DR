@@ -269,9 +269,11 @@ def assemble(campaign_root, output_manifest, evidence_output):
     plan_sha = hashlib.sha256(plan_raw).hexdigest()
     if manifest.get("approval_sha256") != plan_sha:
         raise ValueError("campaign approval hash mismatch")
-    submitted = {
-        item["job_key"] for item in manifest.get("submitted_jobs") or []
+    submitted_by_key = {
+        item["job_key"]: item
+        for item in manifest.get("submitted_jobs") or []
     }
+    submitted = set(submitted_by_key)
     main_jobs = {
         job["job_key"] for job in plan["jobs"]
         if not job["separate_k40_gate"]
@@ -315,7 +317,12 @@ def assemble(campaign_root, output_manifest, evidence_output):
         )
         completion = json.loads(completion_path.read_text())
         hashes = validate_completion_identity(
-            completion, job, manifest["approval_sha256"]
+            completion,
+            job,
+            manifest["approval_sha256"],
+            expected_slurm_job_id=(
+                submitted_by_key[job["job_key"]]["job_id"]
+            ),
         )
         for artifact, digest in hashes.items():
             path = Path(artifact)

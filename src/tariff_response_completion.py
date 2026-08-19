@@ -6,7 +6,9 @@ from __future__ import annotations
 SCHEMA = "evsp-dr-tariff-response-worker-completion-v2"
 
 
-def validate_completion_identity(completion, job, plan_sha):
+def validate_completion_identity(
+    completion, job, plan_sha, *, expected_slurm_job_id,
+):
     expected = {
         "schema": SCHEMA,
         "job_key": job["job_key"],
@@ -29,9 +31,12 @@ def validate_completion_identity(completion, job, plan_sha):
         if completion.get(field) != value
     }
     slurm_job_id = str(completion.get("slurm_job_id") or "")
-    if not slurm_job_id.isdigit():
+    if (
+        not str(expected_slurm_job_id or "").isdigit()
+        or slurm_job_id != str(expected_slurm_job_id)
+    ):
         errors["slurm_job_id"] = {
-            "expected": "numeric Slurm job ID",
+            "expected": str(expected_slurm_job_id),
             "observed": completion.get("slurm_job_id"),
         }
     hashes = completion.get("artifact_sha256")

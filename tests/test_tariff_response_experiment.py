@@ -1622,7 +1622,10 @@ class TariffResponseExperimentTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ValueError, "job-a"):
             validate_completion_identity(
-                completion, job, "e" * 64
+                completion,
+                job,
+                "e" * 64,
+                expected_slurm_job_id="123",
             )
 
 

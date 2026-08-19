@@ -187,7 +187,10 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         completion_path = Path(str(output) + ".worker-completion.json")
         completion = json.loads(completion_path.read_text())
         hashes = validate_completion_identity(
-            completion, job, plan_sha
+            completion,
+            job,
+            plan_sha,
+            expected_slurm_job_id=submitted[job["job_key"]]["job_id"],
         )
         mapped = {}
         for declared, digest in hashes.items():
