@@ -1496,9 +1496,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
-                            f"JobId=401 JobName=LDPF{plan_sha[:4]} "
+                            f"JobId=401 ArrayJobId=401 "
+                            f"JobName=LDPF{plan_sha[:4]} "
+                            "UserId=nc437(1646707) "
                             "JobState=PENDING Partition=default_partition "
-                            "Reason=Dependency "
+                            "Reason=Dependency RunTime=00:00:00 "
                             f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
                             "ArrayTaskId=0-2 "
                             "Dependency=afterok:100(unfulfilled)\n"
@@ -1527,9 +1529,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             plan, plan_sha, _manifest, tools = self._held_science_fixture(tmp)
             plan["task_groups"]["CG"] = ["cg_0"]
             prefix = (
-                f"JobId=402 JobName={ladder._array_name('CG', plan_sha)} "
+                "JobId=402 ArrayJobId=402 UserId=nc437(1646707) "
+                f"JobName={ladder._array_name('CG', plan_sha)} "
                 "JobState=PENDING Partition=default_partition "
-                "Reason=Dependency "
+                "Reason=Dependency RunTime=00:00:00 "
                 f"Comment=SLAD:{plan_sha[:20]}:CG "
                 "ArrayTaskId=0-0 Dependency="
             )
@@ -1614,10 +1617,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             for group, job_id, array_ids, accepted, rejected in cases:
                 plan["task_groups"][group] = [f"{group.lower()}_0"]
                 prefix = (
-                    f"JobId={job_id} "
+                    f"JobId={job_id} ArrayJobId={job_id} "
+                    "UserId=nc437(1646707) "
                     f"JobName={ladder._array_name(group, plan_sha)} "
                     "JobState=PENDING Partition=scaglione "
-                    "Reason=Dependency "
+                    "Reason=Dependency RunTime=00:00:00 "
                     f"Comment=SLAD:{plan_sha[:20]}:{group} "
                     "ArrayTaskId=0-0 Dependency="
                 )
@@ -1644,6 +1648,83 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                         _validate_held_array_controller(
                             plan, plan_sha, group, job_id, "100", array_ids,
                         )
+
+    def test_mip_controller_accepts_captured_aftercorr_split_records(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan, plan_sha, _manifest, _tools = self._held_science_fixture(
+                tmp
+            )
+            plan["task_groups"]["MIP_RAW"] = [
+                f"mip_raw_{index}" for index in range(21)
+            ]
+            dependency = (
+                "afterok:100(unfulfilled),"
+                "aftercorr:402_*(unfulfilled)"
+            )
+
+            def record(raw_job_id, tasks, **replacements):
+                fields = {
+                    "JobId": str(raw_job_id),
+                    "ArrayJobId": "404",
+                    "ArrayTaskId": str(tasks),
+                    "JobName": ladder._array_name("MIP_RAW", plan_sha),
+                    "UserId": "nc437(1646707)",
+                    "JobState": "PENDING",
+                    "Reason": "Dependency",
+                    "RunTime": "00:00:00",
+                    "Partition": "scaglione",
+                    "Comment": f"SLAD:{plan_sha[:20]}:MIP_RAW",
+                    "Dependency": dependency,
+                }
+                fields.update(replacements)
+                return " ".join(
+                    f"{key}={value}" for key, value in fields.items()
+                )
+
+            rows = [record(404, "10-20")] + [
+                record(420 - task, task) for task in range(9, -1, -1)
+            ]
+
+            def validate(candidate_rows):
+                with patch(
+                    "reconcile_scale_ladder_gate.subprocess.run",
+                    return_value=SimpleNamespace(
+                        returncode=0,
+                        stdout="\n".join(candidate_rows) + "\n",
+                        stderr="",
+                    ),
+                ):
+                    _validate_held_array_controller(
+                        plan, plan_sha, "MIP_RAW", "404", "100",
+                        {"CG": "402", "MIP_RAW": "404"},
+                    )
+
+            validate(rows)
+
+            invalid = {
+                "missing task": rows[:-1],
+                "overlap": [record(404, "9-20"), *rows[1:]],
+                "wrong parent": [
+                    rows[0],
+                    record(411, 9, ArrayJobId="999"),
+                    *rows[2:],
+                ],
+                "duplicate physical job": [
+                    rows[0], record(404, 9), *rows[2:]
+                ],
+                "inconsistent dependency": [
+                    rows[0],
+                    record(411, 9, Dependency="afterok:100"),
+                    *rows[2:],
+                ],
+                "nonzero runtime": [
+                    rows[0], record(411, 9, RunTime="00:00:01"), *rows[2:]
+                ],
+            }
+            for label, candidate_rows in invalid.items():
+                with self.subTest(label=label):
+                    with self.assertRaises(ValueError):
+                        validate(candidate_rows)
 
     def test_held_array_recovery_rejects_spoofed_rows(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1706,9 +1787,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
-                            f"JobId=401 JobName=LDPF{plan_sha[:4]} "
+                            f"JobId=401 ArrayJobId=401 "
+                            f"JobName=LDPF{plan_sha[:4]} "
+                            "UserId=nc437(1646707) "
                             "JobState=PENDING Partition=default_partition "
-                            "Reason=Dependency "
+                            "Reason=Dependency RunTime=00:00:00 "
                             f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
                             f"ArrayTaskId={task_range} "
                             f"Dependency={dependency}\n"
@@ -3064,10 +3147,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
-                            f"JobId={job_id} "
+                            f"JobId={job_id} ArrayJobId={job_id} "
+                            "UserId=nc437(1646707) "
                             f"JobName={ladder._array_name(group, plan_sha)} "
                             f"JobState=PENDING Partition={partition} "
-                            "Reason=Dependency "
+                            "Reason=Dependency RunTime=00:00:00 "
                             f"Comment=SLAD:{plan_sha[:20]}:{group} "
                             "ArrayTaskId=0-0 "
                             f"Dependency={dependency_for(group)}\n"
@@ -3290,9 +3374,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     return SimpleNamespace(
                         returncode=0,
                         stdout=(
-                            f"JobId=401 JobName=LDPF{plan_sha[:4]} "
+                            f"JobId=401 ArrayJobId=401 "
+                            f"JobName=LDPF{plan_sha[:4]} "
+                            "UserId=nc437(1646707) "
                             "JobState=PENDING Partition=default_partition "
-                            "Reason=Dependency "
+                            "Reason=Dependency RunTime=00:00:00 "
                             f"Comment=SLAD:{plan_sha[:20]}:PREFLIGHT "
                             "ArrayTaskId=0-0 "
                             "Dependency=afterok:900(unfulfilled)\n"
@@ -3703,6 +3789,70 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         for rows in invalid_rows:
             rejected = verify_rows(rows)
             self.assertNotEqual(rejected.returncode, 0, rows)
+
+        def verify_live_array(rows):
+            return subprocess.run(
+                [
+                    "bash", "-c",
+                    'source "$1" && validate_pending_array_records '
+                    '218107 LDMRbcea scaglione 0-20 '
+                    'SLAD:bcea6b9391cf49515de2:MIP_RAW '
+                    '"afterok:218102,aftercorr:218105_*" nc437 "$2"',
+                    "bash", str(script), rows,
+                ],
+                text=True, capture_output=True, check=False,
+            )
+
+        live_dependency = (
+            "afterok:218102(unfulfilled),"
+            "aftercorr:218105_*(unfulfilled)"
+        )
+
+        def live_record(raw_job, tasks, **changes):
+            fields = {
+                "JobId": str(raw_job),
+                "ArrayJobId": "218107",
+                "ArrayTaskId": str(tasks),
+                "JobName": "LDMRbcea",
+                "UserId": "nc437(1646707)",
+                "JobState": "PENDING",
+                "Reason": "Dependency",
+                "RunTime": "00:00:00",
+                "Partition": "scaglione",
+                "Comment": "SLAD:bcea6b9391cf49515de2:MIP_RAW",
+                "Dependency": live_dependency,
+            }
+            fields.update(changes)
+            return " ".join(
+                f"{key}={value}" for key, value in fields.items()
+            )
+
+        live_rows = [live_record(218107, "10-20")] + [
+            live_record(218120 - task, task) for task in range(9, -1, -1)
+        ]
+        accepted_live = verify_live_array("\n".join(live_rows))
+        self.assertEqual(
+            accepted_live.returncode, 0,
+            accepted_live.stdout + accepted_live.stderr,
+        )
+        invalid_live_arrays = (
+            live_rows[:-1],
+            [live_record(218107, "9-20"), *live_rows[1:]],
+            [
+                live_rows[0],
+                live_record(218111, 9, ArrayJobId="999"),
+                *live_rows[2:],
+            ],
+            [live_rows[0], live_record(218107, 9), *live_rows[2:]],
+            [
+                live_rows[0],
+                live_record(218111, 9, Dependency="afterok:218102"),
+                *live_rows[2:],
+            ],
+        )
+        for rows in invalid_live_arrays:
+            rejected_live = verify_live_array("\n".join(rows))
+            self.assertNotEqual(rejected_live.returncode, 0, rows)
 
         def canonical(value):
             return subprocess.run(

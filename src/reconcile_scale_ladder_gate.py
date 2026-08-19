@@ -329,6 +329,33 @@ def _dependency_semantics(value):
     return semantics
 
 
+def _scontrol_record_values(record):
+    """Parse one ``scontrol -o`` record without accepting duplicate keys."""
+    values = {}
+    for token in str(record).split():
+        if "=" not in token:
+            continue
+        key, value = token.split("=", 1)
+        if key in values:
+            raise ValueError(f"duplicate scontrol field: {key}")
+        values[key] = value
+    return values
+
+
+def _simple_array_task_ids(value):
+    """Expand the simple scalar/range forms emitted for held array records."""
+    matched = re.fullmatch(
+        r"(?P<start>[0-9]+)(?:-(?P<end>[0-9]+))?", str(value or "")
+    )
+    if matched is None:
+        raise ValueError("held array task expression is invalid")
+    start = int(matched.group("start"))
+    end = int(matched.group("end") or start)
+    if end < start:
+        raise ValueError("held array task range is descending")
+    return set(range(start, end + 1))
+
+
 def _validate_held_array_controller(
     plan, expected_plan_sha, group, job_id, gate_id, array_ids,
 ):
@@ -342,41 +369,20 @@ def _validate_held_array_controller(
     controller_rows = [
         line.strip() for line in shown.stdout.splitlines() if line.strip()
     ]
-    if len(controller_rows) != 1:
-        raise ValueError("held array has no unique controller record")
-    values = {}
-    for token in controller_rows[0].split():
-        if "=" in token:
-            key, value = token.split("=", 1)
-            values[key] = value
+    if not controller_rows:
+        raise ValueError("held array has no controller/task records")
     expected_partition = (
         "scaglione" if group.startswith("MIP") else "default_partition"
     )
-    expected = {
-        "JobId": str(job_id),
+    expected_common = {
         "JobName": _array_name(group, expected_plan_sha),
         "JobState": "PENDING",
         "Partition": expected_partition,
         "Reason": "Dependency",
         "Comment": f"SLAD:{expected_plan_sha[:20]}:{group}",
-        "ArrayTaskId": f"0-{len(plan['task_groups'][group]) - 1}",
+        "RunTime": "00:00:00",
+        "ArrayJobId": str(job_id),
     }
-    errors = [
-        {
-            "field": field, "expected": expected_value,
-            "observed": (
-                _normalized_state(values.get(field))
-                if field == "JobState" else values.get(field, "")
-            ),
-        }
-        for field, expected_value in expected.items()
-        if (
-            _normalized_state(values.get(field))
-            if field == "JobState" else values.get(field, "")
-        ) != expected_value
-    ]
-    if errors:
-        raise ValueError(f"held array controller mismatch: {errors}")
     expected_dependencies = {"afterok": {str(gate_id)}}
     if group in {"CG", "CG_SENSITIVITY"}:
         if "PREFLIGHT" not in array_ids:
@@ -398,12 +404,78 @@ def _validate_held_array_controller(
         expected_dependencies["aftercorr"] = {
             f"{array_ids['CG']}_*", f"{array_ids['SEED']}_*",
         }
-    observed_dependencies = _dependency_semantics(values.get("Dependency"))
-    if observed_dependencies != expected_dependencies:
+
+    expected_user = str(
+        (plan.get("runtime_environment") or {}).get("USER") or ""
+    )
+    if not expected_user:
+        raise ValueError("approved runtime user is missing")
+    expected_tasks = set(range(len(plan["task_groups"][group])))
+    if not expected_tasks:
+        raise ValueError("held array task group is empty")
+    observed_tasks = set()
+    observed_job_records = set()
+
+    for row_index, controller_row in enumerate(controller_rows):
+        values = _scontrol_record_values(controller_row)
+        errors = [
+            {
+                "field": field,
+                "expected": expected_value,
+                "observed": (
+                    _normalized_state(values.get(field))
+                    if field == "JobState" else values.get(field, "")
+                ),
+            }
+            for field, expected_value in expected_common.items()
+            if (
+                _normalized_state(values.get(field))
+                if field == "JobState" else values.get(field, "")
+            ) != expected_value
+        ]
+        if errors:
+            raise ValueError(
+                f"held array record {row_index} mismatch: {errors}"
+            )
+
+        raw_job_id = str(values.get("JobId") or "")
+        if not raw_job_id.isdigit():
+            raise ValueError("held array record JobId is invalid")
+        if raw_job_id in observed_job_records:
+            raise ValueError("held array contains a duplicate JobId record")
+        observed_job_records.add(raw_job_id)
+
+        user_id = str(values.get("UserId") or "")
+        if re.fullmatch(
+            rf"{re.escape(expected_user)}\([0-9]+\)", user_id
+        ) is None:
+            raise ValueError("held array record UserId mismatch")
+
+        row_tasks = _simple_array_task_ids(values.get("ArrayTaskId"))
+        if not row_tasks <= expected_tasks:
+            raise ValueError("held array record contains an out-of-range task")
+        overlap = observed_tasks & row_tasks
+        if overlap:
+            raise ValueError(
+                f"held array task coverage overlaps: {sorted(overlap)}"
+            )
+        observed_tasks.update(row_tasks)
+
+        observed_dependencies = _dependency_semantics(
+            values.get("Dependency")
+        )
+        if observed_dependencies != expected_dependencies:
+            raise ValueError(
+                "held array dependency fingerprint mismatch: "
+                f"expected={expected_dependencies} "
+                f"observed={observed_dependencies}"
+            )
+
+    if observed_tasks != expected_tasks:
         raise ValueError(
-            "held array dependency fingerprint mismatch: "
-            f"expected={expected_dependencies} "
-            f"observed={observed_dependencies}"
+            "held array task coverage mismatch: "
+            f"expected={sorted(expected_tasks)} "
+            f"observed={sorted(observed_tasks)}"
         )
 
 

@@ -137,6 +137,164 @@ identity_mismatch() {
   return 1
 }
 
+record_field_value() {
+  local record=$1 key=$2 token value=''
+  local found=0
+  local -a tokens=()
+  read -r -a tokens <<<"$record"
+  for token in "${tokens[@]}"; do
+    if [[ "$token" == "$key="* ]]; then
+      found=$((found + 1))
+      value=${token#*=}
+    fi
+  done
+  [[ "$found" -eq 1 ]] || return 1
+  printf '%s\n' "$value"
+}
+
+validate_pending_array_records() {
+  local jid=$1 expected_name=$2 expected_partition=$3 expected_range=$4
+  local expected_comment=$5 expected_dependency=$6 expected_user=$7 raw=$8
+  local range_start range_end expected_task_count record_count=0
+  local record job_field array_job_id task_expression task_start task_end task
+  local name state partition runtime comment user_id user_number reason dependency
+  local observed_canonical_dependency expected_canonical_dependency
+  local seen_job_records='|'
+  declare -a SEEN_TASK=()
+
+  [[ "$expected_range" =~ ^([0-9]+)-([0-9]+)$ ]] || return 1
+  range_start=${BASH_REMATCH[1]}
+  range_end=${BASH_REMATCH[2]}
+  [[ "$range_end" -ge "$range_start" ]] || return 1
+  expected_task_count=$((range_end - range_start + 1))
+  expected_canonical_dependency=$(canonical_dependency "$expected_dependency") ||
+    return 1
+
+  while IFS= read -r record; do
+    [[ -n "$record" ]] || continue
+    record_count=$((record_count + 1))
+
+    job_field=$(record_field_value "$record" JobId) || {
+      identity_mismatch "$jid" JobId 'one numeric value per record' missing
+      return 1
+    }
+    [[ "$job_field" =~ ^[0-9]+$ ]] || {
+      identity_mismatch "$jid" JobId numeric "$job_field"
+      return 1
+    }
+    [[ "$seen_job_records" != *"|$job_field|"* ]] || {
+      identity_mismatch "$jid" JobId unique "$job_field"
+      return 1
+    }
+    seen_job_records+="$job_field|"
+
+    array_job_id=$(record_field_value "$record" ArrayJobId) || {
+      identity_mismatch "$jid" ArrayJobId "$jid" missing
+      return 1
+    }
+    [[ "$array_job_id" == "$jid" ]] || {
+      identity_mismatch "$jid" ArrayJobId "$jid" "$array_job_id"
+      return 1
+    }
+    task_expression=$(record_field_value "$record" ArrayTaskId) || {
+      identity_mismatch "$jid" ArrayTaskId "$expected_range" missing
+      return 1
+    }
+    if [[ "$task_expression" =~ ^([0-9]+)-([0-9]+)$ ]]; then
+      task_start=${BASH_REMATCH[1]}
+      task_end=${BASH_REMATCH[2]}
+    elif [[ "$task_expression" =~ ^[0-9]+$ ]]; then
+      task_start=$task_expression
+      task_end=$task_expression
+    else
+      identity_mismatch "$jid" ArrayTaskId 'scalar or ascending range' \
+        "$task_expression"
+      return 1
+    fi
+    [[ "$task_end" -ge "$task_start" && \
+       "$task_start" -ge "$range_start" && \
+       "$task_end" -le "$range_end" ]] || {
+      identity_mismatch "$jid" ArrayTaskId "$expected_range" "$task_expression"
+      return 1
+    }
+
+    name=$(record_field_value "$record" JobName) || return 1
+    state=$(record_field_value "$record" JobState) || return 1
+    partition=$(record_field_value "$record" Partition) || return 1
+    runtime=$(record_field_value "$record" RunTime) || return 1
+    comment=$(record_field_value "$record" Comment) || return 1
+    user_id=$(record_field_value "$record" UserId) || return 1
+    reason=$(record_field_value "$record" Reason) || return 1
+    dependency=$(record_field_value "$record" Dependency) || return 1
+
+    [[ "$name" == "$expected_name" ]] || {
+      identity_mismatch "$jid" JobName "$expected_name" "$name"
+      return 1
+    }
+    [[ "$state" == "PENDING" ]] || {
+      identity_mismatch "$jid" JobState PENDING "$state"
+      return 1
+    }
+    [[ "$partition" == "$expected_partition" ]] || {
+      identity_mismatch "$jid" Partition "$expected_partition" "$partition"
+      return 1
+    }
+    [[ "$runtime" == "00:00:00" ]] || {
+      identity_mismatch "$jid" RunTime 00:00:00 "$runtime"
+      return 1
+    }
+    [[ "$comment" == "$expected_comment" ]] || {
+      identity_mismatch "$jid" Comment "$expected_comment" "$comment"
+      return 1
+    }
+    if [[ "$user_id" == "$expected_user("*")" ]]; then
+      user_number=${user_id#"$expected_user("}
+      user_number=${user_number%")"}
+    else
+      user_number=''
+    fi
+    [[ "$user_number" =~ ^[0-9]+$ ]] || {
+      identity_mismatch "$jid" UserId "$expected_user(<numeric uid>)" "$user_id"
+      return 1
+    }
+    [[ "$reason" == "Dependency" ]] || {
+      identity_mismatch "$jid" Reason Dependency "$reason"
+      return 1
+    }
+    observed_canonical_dependency=$(canonical_dependency "$dependency") || {
+      identity_mismatch "$jid" DependencyFormat "$expected_dependency" \
+        "$dependency"
+      return 1
+    }
+    [[ "$observed_canonical_dependency" == \
+       "$expected_canonical_dependency" ]] || {
+      identity_mismatch "$jid" Dependency "$expected_canonical_dependency" \
+        "$observed_canonical_dependency"
+      return 1
+    }
+
+    for ((task=task_start; task<=task_end; task++)); do
+      [[ -z "${SEEN_TASK[$task]+present}" ]] || {
+        identity_mismatch "$jid" ArrayTaskId 'nonoverlapping coverage' \
+          "$task_expression"
+        return 1
+      }
+      SEEN_TASK[$task]=1
+    done
+  done <<<"$raw"
+
+  [[ "$record_count" -gt 0 ]] || return 1
+  for ((task=range_start; task<=range_end; task++)); do
+    [[ -n "${SEEN_TASK[$task]+present}" ]] || {
+      identity_mismatch "$jid" ArrayTaskCoverage "$expected_range" \
+        "missing task $task"
+      return 1
+    }
+  done
+  [[ "${#SEEN_TASK[@]}" -eq "$expected_task_count" ]] || return 1
+  return 0
+}
+
 wait_for_cancelled_accounting() {
   local attempt
   # SlurmDBD can lag the controller after an array is cancelled.  Preserve a
@@ -350,22 +508,9 @@ main() {
   EXPECTED_DEPENDENCY[218108]="afterok:218102,aftercorr:218105_*:218104_*"
   OLD_IDS=(218102 218103 218104 218105 218106 218107 218108)
 
-  field_value() {
-    local record=$1 key=$2 token
-    local -a tokens
-    read -r -a tokens <<<"$record"
-    for token in "${tokens[@]}"; do
-      if [[ "$token" == "$key="* ]]; then
-        printf '%s\n' "${token#*=}"
-        return 0
-      fi
-    done
-    return 1
-  }
-
   validate_old_job() {
     local jid=$1 record rc lines job_field name state partition runtime
-    local comment user_id reason task_range dependency expected_job_field
+    local comment user_id user_number reason dependency
     local observed_canonical_dependency expected_canonical_dependency
     record=$(scontrol show job -o "$jid" 2>&1)
     rc=$?
@@ -373,6 +518,15 @@ main() {
       echo "Cannot inspect old job $jid: $record" >&2
       return 1
     }
+
+    if [[ -n "${EXPECTED_RANGE[$jid]}" ]]; then
+      validate_pending_array_records \
+        "$jid" "${EXPECTED_NAME[$jid]}" "${EXPECTED_PARTITION[$jid]}" \
+        "${EXPECTED_RANGE[$jid]}" "${EXPECTED_COMMENT[$jid]}" \
+        "${EXPECTED_DEPENDENCY[$jid]}" "$USER" "$record"
+      return $?
+    fi
+
     lines=0
     while IFS= read -r line; do
       [[ -n "$line" ]] && lines=$((lines + 1))
@@ -381,49 +535,45 @@ main() {
       echo "Old job $jid has no unique controller record." >&2
       return 1
     }
-    job_field=$(field_value "$record" JobId) || {
+    job_field=$(record_field_value "$record" JobId) || {
       identity_mismatch "$jid" JobId present missing
       return 1
     }
-    name=$(field_value "$record" JobName) || {
+    name=$(record_field_value "$record" JobName) || {
       identity_mismatch "$jid" JobName present missing
       return 1
     }
-    state=$(field_value "$record" JobState) || {
+    state=$(record_field_value "$record" JobState) || {
       identity_mismatch "$jid" JobState present missing
       return 1
     }
-    partition=$(field_value "$record" Partition) || {
+    partition=$(record_field_value "$record" Partition) || {
       identity_mismatch "$jid" Partition present missing
       return 1
     }
-    runtime=$(field_value "$record" RunTime) || {
+    runtime=$(record_field_value "$record" RunTime) || {
       identity_mismatch "$jid" RunTime present missing
       return 1
     }
-    comment=$(field_value "$record" Comment) || {
+    comment=$(record_field_value "$record" Comment) || {
       identity_mismatch "$jid" Comment present missing
       return 1
     }
-    user_id=$(field_value "$record" UserId) || {
+    user_id=$(record_field_value "$record" UserId) || {
       identity_mismatch "$jid" UserId present missing
       return 1
     }
-    reason=$(field_value "$record" Reason) || {
+    reason=$(record_field_value "$record" Reason) || {
       identity_mismatch "$jid" Reason present missing
       return 1
     }
-    dependency=$(field_value "$record" Dependency) || {
+    dependency=$(record_field_value "$record" Dependency) || {
       identity_mismatch "$jid" Dependency present missing
       return 1
     }
 
-    expected_job_field="$jid"
-    [[ -z "${EXPECTED_RANGE[$jid]}" ]] || \
-      expected_job_field+=" or ${jid}_[${EXPECTED_RANGE[$jid]}]"
-    [[ "$job_field" == "$jid" || \
-       "$job_field" == "${jid}_[${EXPECTED_RANGE[$jid]}]" ]] || {
-      identity_mismatch "$jid" JobId "$expected_job_field" "$job_field"
+    [[ "$job_field" == "$jid" ]] || {
+      identity_mismatch "$jid" JobId "$jid" "$job_field"
       return 1
     }
     [[ "$name" == "${EXPECTED_NAME[$jid]}" ]] || {
@@ -447,7 +597,13 @@ main() {
       identity_mismatch "$jid" Comment "${EXPECTED_COMMENT[$jid]}" "$comment"
       return 1
     }
-    [[ "$user_id" == "$USER("* ]] || {
+    if [[ "$user_id" == "$USER("*")" ]]; then
+      user_number=${user_id#"$USER("}
+      user_number=${user_number%")"}
+    else
+      user_number=''
+    fi
+    [[ "$user_number" =~ ^[0-9]+$ ]] || {
       identity_mismatch "$jid" UserId "$USER(<numeric uid>)" "$user_id"
       return 1
     }
@@ -479,15 +635,6 @@ main() {
       return 1
     }
 
-    if [[ -n "${EXPECTED_RANGE[$jid]}" ]]; then
-      task_range=$(field_value "$record" ArrayTaskId 2>/dev/null)
-      [[ "$task_range" == "${EXPECTED_RANGE[$jid]}" || \
-         "$job_field" == "${jid}_[${EXPECTED_RANGE[$jid]}]" ]] || {
-        identity_mismatch "$jid" ArrayTaskId \
-          "${EXPECTED_RANGE[$jid]}" "${task_range:-missing}"
-        return 1
-      }
-    fi
     return 0
   }
 
