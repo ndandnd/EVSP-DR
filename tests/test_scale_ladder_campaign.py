@@ -22,6 +22,7 @@ import launch_scale_ladder as ladder  # noqa: E402
 from tariff_response_environment import (  # noqa: E402
     PORTABLE_FIELDS,
     compare_portable,
+    identity as environment_identity,
 )
 from build_scale_ladder_inputs import build as build_inputs  # noqa: E402
 from build_tariff_response_manifest import sha256_file  # noqa: E402
@@ -77,6 +78,27 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             "kernel_release": "different-kernel",
         }
         self.assertEqual(compare_portable(planned, observed), [])
+
+    def test_launcher_reads_portable_environment_schema(self):
+        payload = self._portable_identity()
+        payload["portable"]["python"] = "3.12.3"
+        with patch.object(
+            ladder.subprocess,
+            "run",
+            return_value=SimpleNamespace(
+                returncode=0, stdout=json.dumps(payload), stderr=""
+            ),
+        ):
+            observed = ladder._environment(Path(sys.executable).resolve())
+        self.assertEqual(observed["portable"]["python"], "3.12.3")
+
+    def test_cg_portable_identity_does_not_require_gurobi(self):
+        observed = environment_identity("cg")
+        self.assertEqual(observed["portable_profile"], "cg")
+        self.assertNotIn("gurobi", observed["portable"])
+        self.assertNotIn(
+            "gurobipy_distribution_sha256", observed["portable"]
+        )
 
     def test_portable_environment_reports_exact_required_mismatches(self):
         planned = self._portable_identity()

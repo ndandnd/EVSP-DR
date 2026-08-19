@@ -133,7 +133,7 @@ def _environment(python):
     if completed.returncode != 0:
         raise ValueError("Python/Gurobi environment unavailable")
     payload = json.loads(completed.stdout)
-    if not payload["python"].startswith("3.12."):
+    if not payload["portable"]["python"].startswith("3.12."):
         raise ValueError("scale ladder requires Python 3.12")
     return payload
 

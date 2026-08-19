@@ -16,7 +16,10 @@ from build_tariff_response_manifest import REPO_ROOT, sha256_file
 from prepare_scale_ladder_known_partition import prepare
 from audit_scale_ladder_known_membership import audit, write_outputs
 from scale_ladder_trip_identity import identity
-from tariff_response_environment import identity as portable_environment
+from tariff_response_environment import (
+    CG_PORTABLE_FIELDS,
+    identity as portable_environment,
+)
 
 
 INSTANCE_MANIFEST = (
@@ -45,9 +48,10 @@ LOCAL_CODE_PATHS = (
 
 
 def _current_environment():
-    environment = portable_environment()
+    environment = portable_environment("cg")
     return {
         "schema": environment["schema"],
+        "portable_profile": "cg",
         "portable": environment["portable"],
         "portable_identity_sha256":
             environment["portable_identity_sha256"],
@@ -55,6 +59,22 @@ def _current_environment():
             path: sha256_file(REPO_ROOT / path)
             for path in LOCAL_CODE_PATHS
         },
+    }
+
+
+def _project_cg_environment(environment):
+    portable = environment.get("portable") or {}
+    projected = {
+        field: portable.get(field) for field in CG_PORTABLE_FIELDS
+    }
+    encoded = json.dumps(
+        projected, sort_keys=True, separators=(",", ":")
+    ).encode()
+    return {
+        "schema": "evsp-dr-portable-environment-v1",
+        "portable_profile": "cg",
+        "portable": projected,
+        "portable_identity_sha256": hashlib.sha256(encoded).hexdigest(),
     }
 
 
@@ -185,10 +205,7 @@ def run(args):
         if reference_environment is None:
             approved = reference_plan.get("python_identity") or {}
             reference_environment = {
-                "schema": approved.get("schema"),
-                "portable": approved.get("portable"),
-                "portable_identity_sha256":
-                    approved.get("portable_identity_sha256"),
+                **_project_cg_environment(approved),
                 "code_hashes": {
                     path: (reference_plan.get("code_hashes") or {}).get(path)
                     for path in LOCAL_CODE_PATHS

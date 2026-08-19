@@ -9,7 +9,14 @@ import json
 import subprocess
 from pathlib import Path
 
-from launch_scale_ladder import _replace_json, _sbatch, _submit_array
+from launch_scale_ladder import (
+    _probes_compatible,
+    _replace_json,
+    _sbatch,
+    _submit_probe,
+    _submit_array,
+    _wait_for_probes,
+)
 
 
 def reconcile(
@@ -25,6 +32,37 @@ def reconcile(
     plan = json.loads(plan_raw)
     sacct = plan.get("sacct") or {}
     sacct_path = Path(str(sacct.get("path") or ""))
+    probe_specs = manifest.get("infrastructure_probes") or {}
+    for partition in ("default_partition", "scaglione"):
+        if partition in probe_specs:
+            continue
+        probe_specs[partition] = {
+            "job_id": _submit_probe(
+                plan,
+                root / "approved-plan.json",
+                expected_plan_sha,
+                partition,
+                root,
+                root / "logs",
+            ),
+            "output": str(root / "probes" / f"{partition}.json"),
+        }
+        manifest["infrastructure_probes"] = dict(probe_specs)
+        manifest["probe_state"] = "submitting"
+        _replace_json(manifest_path, manifest)
+    probe_results = _wait_for_probes(
+        plan, expected_plan_sha, probe_specs, timeout_s=120
+    )
+    manifest["probe_results"] = probe_results
+    if not _probes_compatible(probe_results):
+        manifest["probe_state"] = "failed_gate_retained"
+        manifest["gate_state"] = "held_probe_failure"
+        _replace_json(manifest_path, manifest)
+        raise ValueError(
+            "infrastructure probes are not both compatible; gate retained"
+        )
+    manifest["probe_state"] = "passed"
+    _replace_json(manifest_path, manifest)
     if (
         sacct.get("available") is not True
         or not sacct_path.is_file()
