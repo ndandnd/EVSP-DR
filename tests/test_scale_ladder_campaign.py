@@ -3469,6 +3469,113 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn('SCIENCE_ONLY_AFTER_BOTH_PROBES_VALIDATE=true', wrapper)
         self.assertIn('This launcher is retired', retired)
 
+    def test_stalled_campaign_replacement_is_exact_and_fail_closed(self):
+        script = (
+            REPO_ROOT / "scripts/replace_stalled_scale_ladder_20260819.sh"
+        )
+        text = script.read_text()
+        parsed = subprocess.run(
+            ["bash", "-n", str(script)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(parsed.returncode, 0, parsed.stderr)
+        self.assertIn(
+            "bcea6b9391cf49515de2dc8ae06ee6bdc70186fde2c80243a2eeaec62b2c083b",
+            text,
+        )
+        self.assertIn(
+            "ba09d4602ded98f9c9157f52af169ef511b5abf7", text
+        )
+        for job_id in range(218102, 218109):
+            self.assertIn(str(job_id), text)
+        self.assertIn(
+            "for jid in 218103 218104 218105 218106 218107 218108 218102",
+            text,
+        )
+        self.assertIn("verify_terminal_probe 218196", text)
+        self.assertIn("verify_terminal_probe 218197", text)
+        self.assertIn("verify_cancelled_accounting", text)
+        self.assertIn("wait_for_cancelled_accounting", text)
+        self.assertIn("cancellation_receipt_v1.bundle", text)
+        self.assertIn("sacct -X --array", text)
+        self.assertIn("--format=JobID,JobName,State,Elapsed,ExitCode", text)
+        self.assertNotIn("JobIDRaw", text)
+        self.assertIn("expected_task_count", text)
+        self.assertIn("cancelled_array_entry_from_rows", text)
+        self.assertIn('EXPECTED_DEPENDENCY[218108]', text)
+        self.assertIn('normalized_dependency "$dependency"', text)
+        self.assertLess(
+            text.index('tar -C "$OLD_RUN_ROOT"'),
+            text.index('scancel "$jid"'),
+        )
+        self.assertLess(
+            text.index('scancel "$jid"'),
+            text.rindex("verify_receipt || return 1"),
+        )
+        self.assertIn("cancelled_accounting_entry", text)
+        self.assertIn('for jid in "${ABSENT_OLD[@]}"', text)
+        self.assertIn('for jid in "${ACTIVE_OLD[@]}"', text)
+        self.assertIn("pre_cancel_closeout_v1.bundle", text)
+        self.assertIn("pre_cancel_v1.bundle", text)
+        self.assertIn('mv "$temporary_dir" "$RECEIPT_DIR"', text)
+        self.assertIn('mv "$archive_tmp" "$archive_bundle"', text)
+        self.assertIn(
+            'EVSP_LADDER_RESERVATIONS="$NEW_RESERVATIONS"', text
+        )
+        self.assertIn('EVSP_LADDER_RUN_ROOT="$NEW_RUN_ROOT"', text)
+        self.assertIn('EVSP_LADDER_PLAN_ROOT="$NEW_PLAN_ROOT"', text)
+        self.assertIn('EVSP_LADDER_PYTHON="$NEW_PYTHON"', text)
+        self.assertIn('EVSP_LADDER_RETRY=', text)
+        self.assertNotIn("scancel --user", text)
+        self.assertNotIn("scancel -u", text)
+        self.assertNotIn("set -e", text)
+        self.assertNotIn("set -u", text)
+        self.assertNotIn("set -o pipefail", text)
+
+        def verify_rows(rows):
+            return subprocess.run(
+                [
+                    "bash", "-c",
+                    'source "$1" && cancelled_array_entry_from_rows '
+                    '218103 LDPFbcea 0-2 "$2"',
+                    "bash", str(script), rows,
+                ],
+                text=True, capture_output=True, check=False,
+            )
+
+        valid = "\n".join((
+            "218103_2|LDPFbcea|CANCELLED by 1646707|00:00:00|0:0",
+            "218103_0|LDPFbcea|CANCELLED|00:00:00|0:0",
+            "218103_1|LDPFbcea|CANCELLED+|00:00:00|0:0",
+        ))
+        accepted = verify_rows(valid)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        self.assertEqual(accepted.stderr, "")
+        payload = json.loads(accepted.stdout)
+        self.assertEqual(payload["task_count"], 3)
+        self.assertEqual(
+            [item["task_id"] for item in payload["tasks"]], [0, 1, 2]
+        )
+        invalid_rows = (
+            # Missing one expected task.
+            "\n".join(valid.splitlines()[:2]),
+            # Duplicate task 1.
+            valid + "\n218103_1|LDPFbcea|CANCELLED|00:00:00|0:0",
+            # One task actually ran.
+            valid.replace(
+                "218103_1|LDPFbcea|CANCELLED+|00:00:00|0:0",
+                "218103_1|LDPFbcea|COMPLETED|00:00:01|0:0",
+            ),
+            # Out-of-range task.
+            valid + "\n218103_3|LDPFbcea|CANCELLED|00:00:00|0:0",
+            # A raw allocation ID cannot stand in for ArrayJobID_TaskID.
+            valid.replace("218103_0", "218999"),
+        )
+        for rows in invalid_rows:
+            rejected = verify_rows(rows)
+            self.assertNotEqual(rejected.returncode, 0, rows)
+
+
     def test_worker_maps_dependencies_and_resume(self):
         worker = (REPO_ROOT / "src/submit_scale_ladder.sub").read_text()
         launcher = (REPO_ROOT / "src/launch_scale_ladder.py").read_text()

@@ -85,6 +85,23 @@ PREFLIGHT; MIP task `i` uses `aftercorr` on primary-CG task `i`; the
 KNOWN-PARTITION MIP also depends on seed task `i`. Scientific task count is 138
 and infrastructure count is reported separately as 3.
 
+### One-time closeout of the stalled `ba09d46` campaign
+
+`scripts/replace_stalled_scale_ladder_20260819.sh` is deliberately bound to
+the seven zero-runtime jobs `218102`--`218108`, failed probes `218196` and
+`218197`, plan SHA `bcea6b9...`, and source commit `ba09d46...`. It is not a
+general cancellation utility. Before cancelling anything it verifies the old
+plan, manifest, controller identities, job names, partitions, comments, array
+ranges, dependencies, states, and failed probe artifacts. It cancels the six
+dependent arrays before the gate only after publishing a checksummed
+pre-cancel archive containing scheduler captures, external plan/matrix status,
+and the manifest-bound reservation files. It then proves every array task and
+the gate have zero-runtime `CANCELLED` accounting, atomically publishes a
+checksummed receipt bundle, and enters the reviewed launcher with fresh
+campaign and reservation paths. Partial prior cancellation is recovered one
+exact job at a time; an identity mismatch, an unproved absent task, or an
+invalid receipt stops the replacement before a new campaign is submitted.
+
 ## Recovery hierarchy
 
 Do not infer a retry from a failed command. First inspect `campaign.json`, the
