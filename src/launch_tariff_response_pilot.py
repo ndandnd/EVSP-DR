@@ -31,9 +31,10 @@ from slurm_state_contract import (
     verify_dependency_receipt,
     verify_held_receipt,
 )
+from preflight_tariff_response_fixed_duties import build_preflight
 
 
-SCHEMA = "evsp-dr-tariff-response-pilot-plan-v1"
+SCHEMA = "evsp-dr-tariff-response-pilot-plan-v2"
 REVIEWED_BASE = "636dc0912f47e6ce85284fad3b36af30b4135887"
 FROZEN_K40_INSTANCE_SHA256 = (
     "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd"
@@ -69,6 +70,7 @@ CODE_PATHS = (
     "src/reconcile_tariff_response_gate.py",
     "src/slurm_state_contract.py",
     "src/tariff_response_completion.py",
+    "src/preflight_tariff_response_fixed_duties.py",
     "src/build_giro40_duty_manifest.py",
     "src/build_tariff_response_frozen_inputs.py",
 )
@@ -91,11 +93,30 @@ TARIFF_CODES = {
     "peak12_alpha_1p0": "a1",
     "peak12_alpha_2p0": "a2",
 }
-TARIFF_GATE_ROLE = "tariff_response_release_gate"
-TARIFF_CHILD_ROLE = "tariff_response_scientific_job"
+MAIN_SUBMISSION_SCOPE = "main_k5_k8_pilot"
+K40_SUBMISSION_SCOPE = "k40_preparation_only"
+SUBMISSION_SCOPES = {
+    MAIN_SUBMISSION_SCOPE: "m",
+    K40_SUBMISSION_SCOPE: "k",
+}
 
 
-def tariff_gate_spec(plan, plan_sha, job_id=None):
+def _require_submission_scope(scope):
+    if scope not in SUBMISSION_SCOPES:
+        raise ValueError(f"invalid tariff submission scope: {scope!r}")
+    return scope
+
+
+def submission_scope_for(k40_preparation):
+    return (
+        K40_SUBMISSION_SCOPE if k40_preparation
+        else MAIN_SUBMISSION_SCOPE
+    )
+
+
+def tariff_gate_spec(plan, plan_sha, submission_scope, job_id=None):
+    submission_scope = _require_submission_scope(submission_scope)
+    scope_code = SUBMISSION_SCOPES[submission_scope]
     scheduler = plan.get("scheduler_identity") or {}
     user = str(scheduler.get("user") or "")
     if not user:
@@ -103,10 +124,11 @@ def tariff_gate_spec(plan, plan_sha, job_id=None):
     spec = {
         "job_id": None if job_id is None else str(job_id),
         "user": user,
-        "job_name": f"TRG{plan_sha[:6]}",
+        "job_name": f"TRG{scope_code.upper()}{plan_sha[:6]}",
         "partition": "default_partition",
-        "comment": f"TRSPG:{plan_sha[:20]}",
-        "role": TARIFF_GATE_ROLE,
+        "comment": f"TRSPG:{plan_sha[:20]}:{scope_code}",
+        "role": f"tariff_response_release_gate:{submission_scope}",
+        "submission_scope": submission_scope,
     }
     if job_id is not None and not spec["job_id"].isdigit():
         raise ValueError("tariff gate job ID is invalid")
@@ -114,15 +136,22 @@ def tariff_gate_spec(plan, plan_sha, job_id=None):
 
 
 def tariff_child_spec(plan, job, dependency, job_id=None):
-    return {
+    submission_scope = _require_submission_scope(
+        job["submission_scope"]
+    )
+    scope_code = SUBMISSION_SCOPES[submission_scope]
+    plan = {
         "job_id": None if job_id is None else str(job_id),
         "user": str(
             (plan.get("scheduler_identity") or {}).get("user") or ""
         ),
         "job_name": job["job_name"],
         "partition": job["partition"],
-        "comment": f"TRSP:{job['execution_digest'][:28]}",
-        "role": TARIFF_CHILD_ROLE,
+        "comment": (
+            f"TRSP:{job['execution_digest'][:28]}:{scope_code}"
+        ),
+        "role": f"tariff_response_scientific_job:{submission_scope}",
+        "submission_scope": submission_scope,
         "dependency": dependency,
     }
 
@@ -256,6 +285,10 @@ def _job(
         "wall_limit_s": wall_limit_s,
         "solver_limit_s": solver_limit_s,
         "separate_k40_gate": separate_k40_gate,
+        "submission_scope": (
+            K40_SUBMISSION_SCOPE if separate_k40_gate
+            else MAIN_SUBMISSION_SCOPE
+        ),
         "dependency_key": dependency_key,
         "output": str(output),
         "progress_dir": (
@@ -500,7 +533,7 @@ def build_plan(
                 "analysis_role", "primary_response_eligible",
                 "treatment", "partition", "threads",
                 "wall_limit_s", "solver_limit_s",
-                "separate_k40_gate",
+                "separate_k40_gate", "submission_scope",
             )
         }
         execution_identity["instance"] = {
@@ -573,6 +606,11 @@ def build_plan(
         "k40_mip_submission_allowed": False,
         "continuous_cost_pricing_certified": False,
     }
+    plan["fixed_duty_submission_preflight"] = build_preflight(plan)
+    plan["submission_blocked"] = bool(
+        plan["fixed_duty_submission_preflight"]["submission_blocked"]
+    )
+    return plan
 
 
 def write_matrix(plan, path):
@@ -632,14 +670,21 @@ def _publish_reservation_file(path, payload):
     return path
 
 
-def _reserve(plan, plan_sha, selected):
+def _reserve(plan, plan_sha, selected, submission_scope):
+    submission_scope = _require_submission_scope(submission_scope)
     root = Path(plan["reservation_root"])
     root.mkdir(parents=True, exist_ok=True)
     selected = sorted(selected, key=lambda job: job["job_key"])
+    if any(
+        job.get("submission_scope") != submission_scope
+        for job in selected
+    ):
+        raise ValueError("reservation jobs cross submission scopes")
     transaction_payload = canonical({
         "schema": "evsp-dr-tariff-response-reservation-transaction-v1",
         "plan_sha256": plan_sha,
         "campaign": plan["campaign"],
+        "submission_scope": submission_scope,
         "jobs": [{
             "job_key": job["job_key"],
             "execution_digest": job["execution_digest"],
@@ -647,7 +692,7 @@ def _reserve(plan, plan_sha, selected):
     }) + b"\n"
     transaction = _publish_reservation_file(
         root / "transactions"
-        / f"{plan['campaign']}.{plan_sha}.json",
+        / f"{plan['campaign']}.{submission_scope}.{plan_sha}.json",
         transaction_payload,
     )
     paths = []
@@ -657,9 +702,12 @@ def _reserve(plan, plan_sha, selected):
             "plan_sha256": plan_sha,
             "job_key": job["job_key"],
             "execution_digest": job["execution_digest"],
+            "submission_scope": submission_scope,
         }) + b"\n"
         paths.append(_publish_reservation_file(
-            root / f"{job['execution_digest']}.json", payload
+            root / submission_scope
+            / f"{job['execution_digest']}.json",
+            payload,
         ))
     return paths, transaction
 
@@ -682,12 +730,24 @@ def _tariff_campaign_lock(root):
 
 
 def _submit_locked(plan, plan_sha, *, k40_preparation):
+    submission_scope = submission_scope_for(k40_preparation)
     root = Path(
         plan["k40_campaign_root"]
         if k40_preparation else plan["campaign_root"]
     )
     if root.exists():
         raise ValueError("campaign output already exists")
+    observed_preflight = build_preflight(plan)
+    if (
+        observed_preflight
+        != plan.get("fixed_duty_submission_preflight")
+        or observed_preflight.get("submission_blocked") is not False
+        or plan.get("submission_blocked") is not False
+    ):
+        raise ValueError(
+            "tariff submission blocked by deterministic primary-grid "
+            "fixed-duty preflight"
+        )
     observed = checkout_identity(require_detached=True)
     if observed != plan["checkout_identity"]:
         raise ValueError("submission checkout differs from plan")
@@ -698,7 +758,7 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
     if not selected:
         raise ValueError("submission selection is empty")
     reservations, reservation_transaction = _reserve(
-        plan, plan_sha, selected
+        plan, plan_sha, selected, submission_scope
     )
     root.mkdir(parents=True)
     logs = root / "logs"
@@ -740,10 +800,7 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
     manifest = {
         **plan,
         "approval_sha256": plan_sha,
-        "submission_scope": (
-            "k40_preparation_only" if k40_preparation
-            else "main_k5_k8_pilot"
-        ),
+        "submission_scope": submission_scope,
         "submitted": False,
         "submitted_jobs": [],
         "job_submission_intents": {},
@@ -753,7 +810,9 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
             root / "input/reservations/transaction.json"
         ),
         "gate_state": "submission_intent",
-        "gate_submission_intent": tariff_gate_spec(plan, plan_sha),
+        "gate_submission_intent": tariff_gate_spec(
+            plan, plan_sha, submission_scope
+        ),
     }
     for reservation in reservations:
         _copy_new(
@@ -815,7 +874,9 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
                 "held submission gate outcome is ambiguous; reconcile "
                 "the exact execution comment before any replacement"
             )
-    gate_spec = tariff_gate_spec(plan, plan_sha, gate_id)
+    gate_spec = tariff_gate_spec(
+        plan, plan_sha, submission_scope, gate_id
+    )
     manifest["gate_job_id"] = gate_id
     manifest["gate_spec"] = gate_spec
     manifest["gate_state"] = "receipt_verifying"
@@ -849,7 +910,9 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
                 "--mem=48G",
                 f"--time={max(1, math_ceil(job['wall_limit_s']/60)+10)}",
                 f"--job-name={job['job_name']}",
-                f"--comment=TRSP:{job['execution_digest'][:28]}",
+                "--comment=TRSP:"
+                f"{job['execution_digest'][:28]}:"
+                f"{SUBMISSION_SCOPES[job['submission_scope']]}",
                 f"--output={logs}/%x_%j.out",
                 f"--error={logs}/%x_%j.err",
             ]
@@ -905,9 +968,10 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
                 "user": plan["scheduler_identity"]["user"],
                 "job_name": job["job_name"],
                 "partition": job["partition"],
-                "comment": f"TRSP:{job['execution_digest'][:28]}",
+                "comment": child_spec["comment"],
                 "dependency": dependency_expression,
-                "role": TARIFF_CHILD_ROLE,
+                "role": child_spec["role"],
+                "submission_scope": child_spec["submission_scope"],
                 "submission_receipt": child_receipt,
             })
             manifest["job_submission_intents"].pop(
@@ -942,7 +1006,8 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
             manifest["gate_state"] = "terminal_failed"
             manifest["gate_terminal_failure"] = {
                 "verified": True,
-                "role": TARIFF_GATE_ROLE,
+                "role": gate_spec["role"],
+                "submission_scope": gate_spec["submission_scope"],
                 "job_id": gate_id,
                 "observation": observation,
                 "state": observation.get("state"),
@@ -967,7 +1032,8 @@ def _submit_locked(plan, plan_sha, *, k40_preparation):
     ):
         manifest["gate_terminal_verification"] = {
             "verified": True,
-            "role": TARIFF_GATE_ROLE,
+            "role": gate_spec["role"],
+            "submission_scope": gate_spec["submission_scope"],
             "job_id": gate_id,
             "observation": observation,
         }
@@ -1096,7 +1162,10 @@ def main(argv=None):
     print(json.dumps(plan, indent=2))
     print(f"[approval-sha256] {plan_sha}")
     if not args.submit:
-        print("[dry-run] no Slurm jobs submitted")
+        print(
+            "[dry-run] SUBMISSION BLOCKED: primary-grid fixed-duty "
+            "preflight found nonrepresentable duties; no Slurm jobs submitted"
+        )
         return 0
     if args.approved_plan_sha256 != plan_sha:
         raise ValueError("current plan differs from approved SHA-256")

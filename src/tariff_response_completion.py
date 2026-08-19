@@ -21,6 +21,7 @@ def validate_completion_identity(
         "analysis_role": job["analysis_role"],
         "scale": job["scale"],
         "tariff_id": job["tariff_id"],
+        "submission_scope": job["submission_scope"],
         "plan_sha256": plan_sha,
         "instance_sha256": job["instance"]["sha256"],
         "tariff_sha256": job.get("tariff_sha256"),

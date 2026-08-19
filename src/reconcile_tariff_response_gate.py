@@ -11,8 +11,8 @@ import time
 from pathlib import Path
 
 from launch_tariff_response_pilot import (
-    TARIFF_CHILD_ROLE,
-    TARIFF_GATE_ROLE,
+    K40_SUBMISSION_SCOPE,
+    MAIN_SUBMISSION_SCOPE,
     _tariff_campaign_lock,
     _write_manifest,
     tariff_child_spec,
@@ -31,15 +31,13 @@ from slurm_state_contract import (
 
 def _selected_job_keys(plan, manifest):
     scope = manifest.get("submission_scope")
-    if scope == "main_k5_k8_pilot":
-        k40 = False
-    elif scope == "k40_preparation_only":
-        k40 = True
-    else:
+    if scope not in {
+        MAIN_SUBMISSION_SCOPE, K40_SUBMISSION_SCOPE,
+    }:
         raise ValueError("campaign submission scope is invalid")
     return {
         job["job_key"] for job in plan["jobs"]
-        if bool(job["separate_k40_gate"]) == k40
+        if job.get("submission_scope") == scope
     }
 
 
@@ -80,7 +78,7 @@ def _submitted_jobs_are_complete(plan, manifest):
                 str(row.get(field) or "") != str(spec[field])
                 for field in (
                     "job_id", "user", "job_name", "partition",
-                    "comment", "dependency", "role",
+                    "comment", "dependency", "role", "submission_scope",
                 )
             ):
                 return False
@@ -93,11 +91,13 @@ def _submitted_jobs_are_complete(plan, manifest):
 
 
 def _record_terminal_failure(manifest, gate, observation, message):
+    gate_spec = manifest.get("gate_spec") or {}
     manifest["submitted"] = False
     manifest["gate_state"] = "terminal_failed"
     manifest["gate_terminal_failure"] = {
         "verified": True,
-        "role": TARIFF_GATE_ROLE,
+        "role": gate_spec.get("role"),
+        "submission_scope": manifest.get("submission_scope"),
         "job_id": str(gate),
         "observation": observation,
         "state": observation.get("state"),
@@ -191,7 +191,7 @@ def _recover_child_intents(
             != str(expected_intent.get(field) or "")
             for field in (
                 "user", "job_name", "partition", "comment",
-                "role", "dependency",
+                "role", "dependency", "submission_scope",
             )
         ):
             raise ValueError("child submission intent identity mismatch")
@@ -221,7 +221,7 @@ def _recover_child_intents(
             **{
                 field: spec[field] for field in (
                     "job_id", "user", "job_name", "partition",
-                    "comment", "dependency", "role",
+                    "comment", "dependency", "role", "submission_scope",
                 )
             },
             "submission_receipt": receipt,
@@ -252,6 +252,11 @@ def _reconcile_locked(
     sleeper = time.sleep if sleeper is None else sleeper
     if manifest.get("approval_sha256") != observed:
         raise ValueError("campaign approval hash differs from approved plan")
+    submission_scope = manifest.get("submission_scope")
+    if submission_scope not in {
+        MAIN_SUBMISSION_SCOPE, K40_SUBMISSION_SCOPE,
+    }:
+        raise ValueError("campaign submission scope is invalid")
 
     scheduler = plan.get("scheduler_identity") or {}
     recorded_spec = manifest.get("gate_spec")
@@ -282,12 +287,15 @@ def _reconcile_locked(
         raise ValueError("legacy tariff gate evidence is labeled unverified")
     if not gate.isdigit():
         intent = manifest.get("gate_submission_intent")
-        expected_intent = tariff_gate_spec(plan, observed)
+        expected_intent = tariff_gate_spec(
+            plan, observed, submission_scope
+        )
         if not isinstance(intent, dict) or any(
             str(intent.get(field) or "")
             != str(expected_intent.get(field) or "")
             for field in (
                 "user", "job_name", "partition", "comment", "role",
+                "submission_scope",
             )
         ):
             _record_unverified(
@@ -328,17 +336,22 @@ def _reconcile_locked(
             raise RuntimeError(str(error))
         gate = str(discovered["job_id"])
         manifest["gate_job_id"] = gate
-        recorded_spec = tariff_gate_spec(plan, observed, gate)
+        recorded_spec = tariff_gate_spec(
+            plan, observed, submission_scope, gate
+        )
         manifest["gate_spec"] = recorded_spec
         manifest.pop("gate_submission_intent", None)
         _write_manifest(manifest_path, manifest)
 
-    expected_spec = tariff_gate_spec(plan, observed, gate)
+    expected_spec = tariff_gate_spec(
+        plan, observed, submission_scope, gate
+    )
     if any(
         str(recorded_spec.get(field) or "")
         != str(expected_spec.get(field) or "")
         for field in (
             "job_id", "user", "job_name", "partition", "comment", "role",
+            "submission_scope",
         )
     ):
         error = SlurmContractError(
@@ -408,7 +421,8 @@ def _reconcile_locked(
     if current["state"] in TERMINAL_STATES:
         release_verification = {
             "verified": True,
-            "role": TARIFF_GATE_ROLE,
+            "role": expected_spec["role"],
+            "submission_scope": submission_scope,
             "job_id": gate,
             "command_attempts": 0,
             "observation": current,
@@ -439,6 +453,7 @@ def _reconcile_locked(
             _write_manifest(manifest_path, manifest)
             raise RuntimeError(str(exc)) from exc
 
+    release_verification["submission_scope"] = submission_scope
     manifest["gate_release_verification"] = release_verification
     _write_manifest(manifest_path, manifest)
     final_observation = release_verification["observation"]
@@ -448,7 +463,8 @@ def _reconcile_locked(
     ):
         manifest["gate_terminal_verification"] = {
             "verified": True,
-            "role": TARIFF_GATE_ROLE,
+            "role": expected_spec["role"],
+            "submission_scope": submission_scope,
             "job_id": gate,
             "observation": final_observation,
         }
@@ -458,7 +474,8 @@ def _reconcile_locked(
     manifest["submitted"] = True
     manifest["gate_reconciliation"] = {
         "verified": True,
-        "role": TARIFF_GATE_ROLE,
+        "role": expected_spec["role"],
+        "submission_scope": submission_scope,
         "job_id": gate,
         "observation": final_observation,
     }

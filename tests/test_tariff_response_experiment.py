@@ -5,6 +5,7 @@ import json
 import sys
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -30,6 +31,8 @@ from fixed_duty_expanded_optimizer import (  # noqa: E402
     optimize_fixed_duty,
 )
 from launch_tariff_response_pilot import (  # noqa: E402
+    K40_SUBMISSION_SCOPE,
+    MAIN_SUBMISSION_SCOPE,
     build_plan,
     submit,
     tariff_child_spec,
@@ -55,6 +58,9 @@ from tariff_response_core import (  # noqa: E402
 from tariff_response_completion import (  # noqa: E402
     SCHEMA as COMPLETION_SCHEMA,
     validate_completion_identity,
+)
+from preflight_tariff_response_fixed_duties import (  # noqa: E402
+    build_preflight as build_fixed_duty_preflight,
 )
 from slurm_state_contract import (  # noqa: E402
     SlurmContractError,
@@ -120,10 +126,14 @@ def gate_fixture_spec(job_id="12345"):
     return {
         "job_id": job_id,
         "user": "nathan",
-        "job_name": "TRGabcdef",
+        "job_name": "TRGMabcdef",
         "partition": "default_partition",
-        "comment": "TRSPG:abcdef0123456789abcd",
-        "role": "tariff_response_release_gate",
+        "comment": "TRSPG:abcdef0123456789abcd:m",
+        "role": (
+            "tariff_response_release_gate:"
+            f"{MAIN_SUBMISSION_SCOPE}"
+        ),
+        "submission_scope": MAIN_SUBMISSION_SCOPE,
     }
 
 
@@ -169,12 +179,13 @@ def submitted_child_row(plan, job, gate_id, job_id):
         **{
             field: spec[field] for field in (
                 "job_id", "user", "job_name", "partition",
-                "comment", "dependency", "role",
+                "comment", "dependency", "role", "submission_scope",
             )
         },
         "submission_receipt": {
             "verified": True,
             "role": spec["role"],
+            "submission_scope": spec["submission_scope"],
             "job_id": str(job_id),
             "attempts": 1,
             "observation": observation,
@@ -948,6 +959,14 @@ class TariffResponseExperimentTests(unittest.TestCase):
                         stderr="",
                     ),
                 ),
+                patch.object(
+                    pilot,
+                    "build_preflight",
+                    return_value={
+                        "schema": "synthetic-unblocked-preflight",
+                        "submission_blocked": False,
+                    },
+                ),
             ):
                 plan = build_plan(
                     campaign="tariff-pilot-test",
@@ -1024,6 +1043,102 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 runner,
             )
 
+    def test_fixed_duty_preflight_blocks_frozen_tariff_matrix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            jobs = []
+            for scale in (5, 8):
+                for tariff_index in range(11):
+                    seed_key = f"seed-k{scale}-{tariff_index}"
+                    jobs.extend([
+                        {
+                            "job_key": seed_key,
+                            "phase": "SEED",
+                            "treatment": "GIRO-AUGMENTED",
+                        },
+                        {
+                            "job_key": f"cg-{seed_key}",
+                            "phase": "CG",
+                            "treatment": "GIRO-AUGMENTED",
+                        },
+                        {
+                            "job_key": f"mip-{seed_key}",
+                            "phase": "MIP",
+                            "treatment": "GIRO-AUGMENTED",
+                        },
+                    ])
+            jobs.append({
+                "job_key": "fixed-full",
+                "phase": "FIXED_FULL",
+                "treatment": "FIXED",
+            })
+            plan = {
+                "physics": PHYSICS,
+                "instances": {
+                    "k5": {
+                        "sha256":
+                            "6ffea0b8cd3a9d15846946f6828705dd3431b7bafc69bd572ca30ed4530d5cb8",
+                        "duty_count": 5,
+                    },
+                    "k8": {
+                        "sha256":
+                            "0d368920af0c5b14e0907b85977a9f72163a0cea6431c206f992e89aa31eb27f",
+                        "duty_count": 8,
+                    },
+                    "k40": {
+                        "sha256":
+                            "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+                        "duty_count": 40,
+                    },
+                },
+                "jobs": jobs,
+                "campaign_root": str(root / "main"),
+                "k40_campaign_root": str(root / "k40"),
+            }
+            preflight = build_fixed_duty_preflight(plan)
+            by_key = {
+                row["instance_key"]: row
+                for row in preflight["instances"]
+            }
+            self.assertTrue(preflight["submission_blocked"])
+            self.assertEqual(
+                by_key["k5"]["primary_grid_representable_duty_count"], 1
+            )
+            self.assertEqual(
+                by_key["k8"]["primary_grid_representable_duty_count"], 1
+            )
+            self.assertEqual(
+                by_key["k40"]["primary_grid_representable_duty_count"], 9
+            )
+            self.assertEqual(
+                by_key["k5"]["primary_grid_nonrepresentable_duty_count"], 4
+            )
+            self.assertEqual(
+                by_key["k8"]["primary_grid_nonrepresentable_duty_count"], 7
+            )
+            self.assertEqual(
+                len([
+                    key for key in preflight["affected_job_keys"]
+                    if key.startswith("seed-")
+                ]),
+                22,
+            )
+            plan["fixed_duty_submission_preflight"] = preflight
+            plan["submission_blocked"] = True
+            with (
+                patch.object(
+                    pilot,
+                    "checkout_identity",
+                    side_effect=AssertionError(
+                        "checkout must not run for blocked preflight"
+                    ),
+                ),
+                self.assertRaisesRegex(ValueError, "preflight"),
+            ):
+                pilot._submit_locked(
+                    plan, "a" * 64, k40_preparation=False
+                )
+
     def test_real_campaign_assembler_rejects_incomplete_submission(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -1056,6 +1171,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "job_name": "TF40Ffl",
                 "partition": "default_partition",
                 "execution_digest": "1" * 64,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
                 "dependency_key": None,
                 "separate_k40_gate": False,
             }
@@ -1069,7 +1185,9 @@ class TariffResponseExperimentTests(unittest.TestCase):
             ).encode()
             plan_sha = hashlib.sha256(plan_raw).hexdigest()
             (root / "approved-plan.json").write_bytes(plan_raw)
-            spec = tariff_gate_spec(plan, plan_sha, "12345")
+            spec = tariff_gate_spec(
+                plan, plan_sha, MAIN_SUBMISSION_SCOPE, "12345"
+            )
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": plan_sha,
                 "submission_scope": "main_k5_k8_pilot",
@@ -1104,6 +1222,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "job_name": "TF40Ffl",
                 "partition": "default_partition",
                 "execution_digest": "1" * 64,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
                 "dependency_key": None,
                 "separate_k40_gate": False,
             }
@@ -1117,8 +1236,12 @@ class TariffResponseExperimentTests(unittest.TestCase):
             ).encode()
             plan_sha = hashlib.sha256(plan_raw).hexdigest()
             (root / "approved-plan.json").write_bytes(plan_raw)
-            intent = tariff_gate_spec(plan, plan_sha)
-            spec = tariff_gate_spec(plan, plan_sha, "12345")
+            intent = tariff_gate_spec(
+                plan, plan_sha, MAIN_SUBMISSION_SCOPE
+            )
+            spec = tariff_gate_spec(
+                plan, plan_sha, MAIN_SUBMISSION_SCOPE, "12345"
+            )
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": plan_sha,
                 "submission_scope": "main_k5_k8_pilot",
@@ -1166,6 +1289,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "job_name": "TF40Ffl",
                 "partition": "default_partition",
                 "execution_digest": "1" * 64,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
                 "dependency_key": None,
                 "separate_k40_gate": False,
             }
@@ -1178,7 +1302,9 @@ class TariffResponseExperimentTests(unittest.TestCase):
             ).encode()
             plan_sha = hashlib.sha256(raw).hexdigest()
             (root / "approved-plan.json").write_bytes(raw)
-            gate_spec = tariff_gate_spec(plan, plan_sha, "12345")
+            gate_spec = tariff_gate_spec(
+                plan, plan_sha, MAIN_SUBMISSION_SCOPE, "12345"
+            )
             child_intent = tariff_child_spec(
                 plan, job, "afterok:12345"
             )
@@ -1229,6 +1355,184 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 ]["verified"]
             )
             self.assertTrue(payload["submitted"])
+
+    def test_tariff_gate_scope_identity_is_disjoint_and_fail_closed(self):
+        plan = {"scheduler_identity": {"user": "nathan"}}
+        plan_sha = "a" * 64
+        main = tariff_gate_spec(
+            plan, plan_sha, MAIN_SUBMISSION_SCOPE, "12345"
+        )
+        k40 = tariff_gate_spec(
+            plan, plan_sha, K40_SUBMISSION_SCOPE, "22345"
+        )
+        for field in ("job_name", "comment", "role", "submission_scope"):
+            self.assertNotEqual(main[field], k40[field])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            full_plan = {
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [],
+            }
+            raw = json.dumps(
+                full_plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            observed_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            wrong = tariff_gate_spec(
+                full_plan,
+                observed_sha,
+                K40_SUBMISSION_SCOPE,
+                "22345",
+            )
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": observed_sha,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
+                "submitted": False,
+                "submitted_jobs": [],
+                "gate_state": "held_verified",
+                "gate_job_id": "22345",
+                "gate_spec": wrong,
+            }))
+            scheduler = SyntheticScheduler()
+            with self.assertRaisesRegex(ValueError, "specification"):
+                reconcile(
+                    root,
+                    observed_sha,
+                    runner=scheduler,
+                    sleeper=lambda _value: None,
+                )
+            self.assertFalse(any(
+                Path(command[0]).name == "scontrol"
+                and len(command) > 1 and command[1] == "release"
+                for command in scheduler.commands
+            ))
+
+    def test_ambiguous_main_receipt_never_adopts_k40_gate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            plan = {
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [],
+            }
+            raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(raw)
+            main_intent = tariff_gate_spec(
+                plan, plan_sha, MAIN_SUBMISSION_SCOPE
+            )
+            k40_spec = tariff_gate_spec(
+                plan, plan_sha, K40_SUBMISSION_SCOPE, "22345"
+            )
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
+                "submitted": False,
+                "submitted_jobs": [],
+                "gate_state": "submission_intent",
+                "gate_submission_intent": main_intent,
+            }))
+            scheduler = SyntheticScheduler(
+                live=[live_gate_row(k40_spec)] * 5
+            )
+            with self.assertRaisesRegex(RuntimeError, "ambiguous"):
+                reconcile(
+                    root,
+                    plan_sha,
+                    runner=scheduler,
+                    sleeper=lambda _value: None,
+                )
+            persisted = json.loads(
+                (root / "campaign.json").read_text()
+            )
+            self.assertEqual(
+                persisted["gate_state"], "ambiguous_gate_receipt"
+            )
+            self.assertNotIn("gate_job_id", persisted)
+
+    def test_main_and_k40_recovery_can_complete_simultaneously(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            parent = Path(tmp)
+            main_job = {
+                "job_key": "main-job",
+                "job_name": "TM5Rfl",
+                "partition": "default_partition",
+                "execution_digest": "1" * 64,
+                "dependency_key": None,
+                "separate_k40_gate": False,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
+            }
+            k40_job = {
+                "job_key": "k40-job",
+                "job_name": "TK40Rfl",
+                "partition": "default_partition",
+                "execution_digest": "2" * 64,
+                "dependency_key": None,
+                "separate_k40_gate": True,
+                "submission_scope": K40_SUBMISSION_SCOPE,
+            }
+            plan = {
+                "scheduler_identity": {"user": "nathan"},
+                "jobs": [main_job, k40_job],
+            }
+            raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(raw).hexdigest()
+            cases = []
+            for scope, job, gate_id, child_id in (
+                (MAIN_SUBMISSION_SCOPE, main_job, "12345", "12346"),
+                (K40_SUBMISSION_SCOPE, k40_job, "22345", "22346"),
+            ):
+                root = parent / scope
+                root.mkdir()
+                (root / "approved-plan.json").write_bytes(raw)
+                gate_spec = tariff_gate_spec(
+                    plan, plan_sha, scope, gate_id
+                )
+                (root / "campaign.json").write_text(json.dumps({
+                    "approval_sha256": plan_sha,
+                    "submission_scope": scope,
+                    "submitted": False,
+                    "submitted_jobs": [
+                        submitted_child_row(
+                            plan, job, gate_id, child_id
+                        )
+                    ],
+                    "gate_state": "held_verified",
+                    "gate_job_id": gate_id,
+                    "gate_spec": gate_spec,
+                }))
+                scheduler = SyntheticScheduler(
+                    live=[
+                        live_gate_row(gate_spec),
+                        live_gate_row(gate_spec),
+                        live_gate_row(
+                            gate_spec, state="RUNNING", reason="None"
+                        ),
+                    ],
+                    release=[scheduler_result()],
+                )
+                cases.append((root, scheduler, gate_spec))
+
+            def recover(case):
+                root, scheduler, _spec = case
+                return reconcile(
+                    root,
+                    plan_sha,
+                    runner=scheduler,
+                    sleeper=lambda _value: None,
+                )
+
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                results = list(pool.map(recover, cases))
+            self.assertTrue(all(result["submitted"] for result in results))
+            self.assertNotEqual(
+                results[0]["gate_spec"]["comment"],
+                results[1]["gate_spec"]["comment"],
+            )
 
     def test_release_rc_zero_without_transition_fails_closed(self):
         spec = gate_fixture_spec()
@@ -1472,7 +1776,9 @@ class TariffResponseExperimentTests(unittest.TestCase):
             ).encode()
             plan_sha = hashlib.sha256(raw).hexdigest()
             (root / "approved-plan.json").write_bytes(raw)
-            spec = tariff_gate_spec(plan, plan_sha, "12345")
+            spec = tariff_gate_spec(
+                plan, plan_sha, MAIN_SUBMISSION_SCOPE, "12345"
+            )
             manifest_path = root / "campaign.json"
             manifest_path.write_text(json.dumps({
                 "approval_sha256": plan_sha,
@@ -1559,6 +1865,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     "job_key": wrong,
                     "execution_digest":
                         selected[wrong]["execution_digest"],
+                    "submission_scope": MAIN_SUBMISSION_SCOPE,
                 }))
             with self.assertRaisesRegex(ValueError, "content"):
                 validate_reservations(
@@ -1566,6 +1873,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                     [str(path) for path in files],
                     selected,
                     "p" * 64,
+                    MAIN_SUBMISSION_SCOPE,
                 )
 
     def test_tariff_reservations_are_crash_adoptable_and_cross_campaign(self):
@@ -1574,24 +1882,36 @@ class TariffResponseExperimentTests(unittest.TestCase):
             job = {
                 "job_key": "fixed",
                 "execution_digest": "a" * 64,
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
             }
             plan = {
                 "campaign": "campaign-a",
                 "reservation_root": str(root / "reservations"),
             }
             paths, transaction = pilot._reserve(
-                plan, "1" * 64, [job]
+                plan, "1" * 64, [job], MAIN_SUBMISSION_SCOPE
             )
             adopted, adopted_transaction = pilot._reserve(
-                plan, "1" * 64, [job]
+                plan, "1" * 64, [job], MAIN_SUBMISSION_SCOPE
             )
             self.assertEqual(paths, adopted)
             self.assertEqual(transaction, adopted_transaction)
+            k40_job = {
+                **job, "submission_scope": K40_SUBMISSION_SCOPE,
+            }
+            k40_paths, k40_transaction = pilot._reserve(
+                plan, "1" * 64, [k40_job], K40_SUBMISSION_SCOPE
+            )
+            self.assertNotEqual(paths, k40_paths)
+            self.assertNotEqual(transaction, k40_transaction)
             conflicting = {
                 **plan, "campaign": "campaign-b",
             }
             with self.assertRaisesRegex(ValueError, "conflict"):
-                pilot._reserve(conflicting, "2" * 64, [job])
+                pilot._reserve(
+                    conflicting, "2" * 64, [job],
+                    MAIN_SUBMISSION_SCOPE,
+                )
 
     def test_worker_completion_cannot_be_swapped_between_same_plan_jobs(self):
         job = {
@@ -1604,6 +1924,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
             "tariff_id": "flat",
             "instance": {"sha256": "b" * 64},
             "tariff_sha256": "c" * 64,
+            "submission_scope": MAIN_SUBMISSION_SCOPE,
         }
         completion = {
             "schema": COMPLETION_SCHEMA,
@@ -1617,6 +1938,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
             "plan_sha256": "e" * 64,
             "instance_sha256": "b" * 64,
             "tariff_sha256": "c" * 64,
+            "submission_scope": MAIN_SUBMISSION_SCOPE,
             "slurm_job_id": "123",
             "artifact_sha256": {"/tmp/result": "f" * 64},
         }

@@ -51,7 +51,7 @@ for value in (
     plan["python"]["path"], plan["python"]["sha256"],
     plan["worker_sha256"],
     job["execution_digest"], job["analysis_role"],
-    plan["reservation_root"],
+    plan["reservation_root"], job["submission_scope"],
 ):
     print("" if value is None else value)
 PY
@@ -83,23 +83,26 @@ PLAN_WORKER_SHA=${FIELDS[22]}
 EXECUTION_DIGEST=${FIELDS[23]}
 ANALYSIS_ROLE=${FIELDS[24]}
 RESERVATION_ROOT=${FIELDS[25]}
+SUBMISSION_SCOPE=${FIELDS[26]}
 [[ "$PLAN_PYTHON" == "$PYTHON" && "$PLAN_PYTHON_SHA" == "$PYTHON_SHA" ]] \
   || fatal "Python differs from approved plan"
 [[ "$(sha256sum "$0" | awk '{print $1}')" == "$PLAN_WORKER_SHA" ]] \
   || fatal "worker hash differs from approved plan"
 "$PYTHON" -I -B - \
-  "$RESERVATION_ROOT/$EXECUTION_DIGEST.json" \
-  "$EXPECTED_PLAN_SHA" "$JOB_KEY" "$EXECUTION_DIGEST" <<'PY' \
+  "$RESERVATION_ROOT/$SUBMISSION_SCOPE/$EXECUTION_DIGEST.json" \
+  "$EXPECTED_PLAN_SHA" "$JOB_KEY" "$EXECUTION_DIGEST" \
+  "$SUBMISSION_SCOPE" <<'PY' \
   || fatal "execution reservation identity mismatch"
 import json,pathlib,sys
 path=pathlib.Path(sys.argv[1])
-expected_plan,job_key,digest=sys.argv[2:]
+expected_plan,job_key,digest,scope=sys.argv[2:]
 payload=json.loads(path.read_text())
 if (
     payload.get("schema")!="evsp-dr-tariff-response-reservation-v1"
     or payload.get("plan_sha256")!=expected_plan
     or payload.get("job_key")!=job_key
     or payload.get("execution_digest")!=digest
+    or payload.get("submission_scope")!=scope
 ):
     raise SystemExit("reservation content differs")
 PY
@@ -329,12 +332,13 @@ trap - USR1 TERM INT
 "$PYTHON" -I -B - "$OUTPUT" "$PHASE" "$PROGRESS" "$TELEMETRY" \
   "$EXPECTED_PLAN_SHA" "$INSTANCE_SHA" "$TARIFF_SHA" \
   "$JOB_KEY" "$EXECUTION_DIGEST" "$TREATMENT" "$ANALYSIS_ROLE" \
-  "$SCALE" "$TARIFF_ID" "${SLURM_JOB_ID:-}" <<'PY' \
+  "$SCALE" "$TARIFF_ID" "$SUBMISSION_SCOPE" \
+  "${SLURM_JOB_ID:-}" <<'PY' \
   || fatal "worker completion publication failed"
 import hashlib,json,os,pathlib,sys
 (output,phase,progress,telemetry,plan_sha,instance_sha,tariff_sha,
  job_key,execution_digest,treatment,analysis_role,scale,tariff_id,
- slurm_job_id)=sys.argv[1:]
+ submission_scope,slurm_job_id)=sys.argv[1:]
 paths=[]
 output_path=pathlib.Path(output)
 if output_path.is_dir():
@@ -373,6 +377,7 @@ payload={
     "analysis_role":analysis_role,
     "scale":int(scale),
     "tariff_id":tariff_id,
+    "submission_scope":submission_scope,
     "plan_sha256":plan_sha,
     "instance_sha256":instance_sha,
     "tariff_sha256":tariff_sha or None,

@@ -1,19 +1,27 @@
 # Tariff-response pilot runbook
 
-This package decomposes charging response from route response without treating
-either as continuous-price optimality. It is dry-run-only unless the exact
-plan SHA is supplied on a second invocation.
+This package is **submission-blocked**. It remains useful for deterministic
+planning and diagnosis, but the reviewed 15-kWh/10-minute fixed-duty
+preflight proves that the planned augmented dependency chains cannot complete.
+Supplying a plan SHA does not override this scientific gate.
 
-The main gate contains:
+The planned (not launchable) main matrix contains:
 
 - one full-GIRO40 Tier-0/Tier-1 job covering all reviewed tariffs;
 - 22 k5/k8 tariff-specific fixed-duty seed jobs;
 - 44 k5/k8 exact-CG jobs: RAW and GIRO-AUGMENTED;
 - 44 corresponding Scaglione finite-pool MIPs.
 
-The separate k40-preparation gate contains 11 fixed-duty seed jobs and 22
+The planned (not launchable) k40-preparation matrix contains 11 fixed-duty seed jobs and 22
 RAW/GIRO40-AUGMENTED exact-CG preparations. It contains no k40 MIP and cannot
 be selected accidentally by the main submission gate.
+
+The frozen k5-r2 instance has only 1/5 primary-grid-representable duties; k8-r2
+has only 1/8; k40-r2 has 9/40. Thus all 22 k5/k8 fixed-duty seed jobs are
+deterministically preflight-classified to fail at least one fixed sequence, and
+their augmented CG/MIP dependents cannot complete. The launcher persists exact
+duty/reason evidence and rejects both submission scopes before reservations or
+Slurm calls. It does not refine the grid or skip duties.
 
 Primary response/elasticity uses alpha `0, 0.25, 0.5, 1.0`. Alpha `2.0`
 remains scheduled only as a `negative_price_stress` cell; it is excluded from
@@ -24,7 +32,7 @@ The concrete r2 k5/k8/k40 inputs are tracked in
 `data/tariff_response/frozen_instances/frozen_input_manifest.csv`, SHA-256
 `5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6`.
 
-## Guarded fetch, dry run, and optional submission
+## Guarded fetch and blocked dry run
 
 Run from an interactive Unicorn shell. This deliberately does not use
 `set -e` and never exits the login shell.
@@ -53,9 +61,8 @@ MATRIX="$PLAN_ROOT/$CAMPAIGN.job-matrix.csv"
 if [[ ! "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ || \
       ! "$CAMPAIGN" =~ ^[a-z0-9][a-z0-9._-]{2,79}$ ]]; then
   echo "Set exact REVIEWED_COMMIT and a safe TARIFF_CAMPAIGN." >&2
-elif [[ "$SUBMIT_SCOPE" != "none" && "$SUBMIT_SCOPE" != "main" && \
-        "$SUBMIT_SCOPE" != "k40-preparation" ]]; then
-  echo "SUBMIT_SCOPE must be none, main, or k40-preparation." >&2
+elif [[ "$SUBMIT_SCOPE" != "none" ]]; then
+  echo "Tariff submission is scientifically blocked; SUBMIT_SCOPE must remain none." >&2
 elif [[ ! -x "$PYTHON" ]]; then
   echo "Approved Python 3.12 is unavailable." >&2
 elif [[ ! -d "$RUN_ROOT/.git" ]] && \
@@ -111,18 +118,14 @@ else
       echo "PLAN: $PLAN"
       echo "MATRIX: $MATRIX"
       echo "PLAN SHA-256: $OBSERVED_PLAN_SHA"
-      if [[ "$SUBMIT_SCOPE" != "none" && \
-            "$APPROVED_PLAN_SHA256" == "$OBSERVED_PLAN_SHA" ]]; then
-        if [[ "$SUBMIT_SCOPE" == "k40-preparation" ]]; then
-          "${COMMON[@]}" --approved-plan-sha256 \
-            "$APPROVED_PLAN_SHA256" --submit --submit-k40-preparation
-        else
-          "${COMMON[@]}" --approved-plan-sha256 \
-            "$APPROVED_PLAN_SHA256" --submit
-        fi
-      else
-        echo "NOT SUBMITTED. Review the plan/matrix, then provide its exact SHA and one explicit submission scope."
-      fi
+      echo "NOT SUBMITTED: deterministic fixed-duty preflight blocks this matrix."
+      jq '.fixed_duty_submission_preflight | {
+        submission_blocked,
+        primary_grid_nonrepresentable_duty_count,
+        affected_job_count,
+        instances,
+        blockers
+      }' "$PLAN"
     fi
   fi
 fi
@@ -130,7 +133,9 @@ fi
 
 ## Separate immutable archive/checksum command
 
-Use only after the selected campaign scope is complete:
+This command is retained only for a future redesigned or already-existing
+compatible campaign. The currently planned matrix cannot reach this step and
+must not be submitted.
 
 ```bash
 ARCHIVE_SCOPE="${ARCHIVE_SCOPE:-main}"
@@ -273,9 +278,11 @@ else
 fi
 ```
 
-## Build normalized evidence after the main scope completes
+## Normalization command retained for future compatible evidence
 
-This command fails closed if any of the 111 main outputs is missing or if a
+The blocked 111-output matrix does not produce this evidence. For a future
+reviewed compatible campaign, this command fails closed if any required main
+output is missing or if a
 schedule differs from its hash-bound Tier-1 seed/MIP result:
 
 ```bash

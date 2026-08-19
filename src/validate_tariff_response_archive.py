@@ -11,7 +11,11 @@ import re
 import stat
 from pathlib import Path
 
-from launch_tariff_response_pilot import tariff_gate_spec
+from launch_tariff_response_pilot import (
+    K40_SUBMISSION_SCOPE,
+    MAIN_SUBMISSION_SCOPE,
+    tariff_gate_spec,
+)
 from reconcile_tariff_response_gate import _submitted_jobs_are_complete
 from slurm_state_contract import verified_gate_evidence
 from tariff_response_completion import validate_completion_identity
@@ -36,7 +40,9 @@ def relocated(path, *, declared_root, staged_root):
     return staged_root / relative
 
 
-def validate_reservations(files, reservations, selected, plan_sha):
+def validate_reservations(
+    files, reservations, selected, plan_sha, submission_scope,
+):
     if (
         len(reservations) != len(selected)
         or len(files) != len(selected)
@@ -60,6 +66,7 @@ def validate_reservations(files, reservations, selected, plan_sha):
             or payload.get("job_key") != expected_job["job_key"]
             or payload.get("execution_digest")
             != expected_job["execution_digest"]
+            or payload.get("submission_scope") != submission_scope
         ):
             raise ValueError("staged reservation content is invalid")
         reservation_jobs.add(payload["job_key"])
@@ -81,9 +88,9 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     manifest = json.loads((root / "campaign.json").read_text())
     plan_sha = hashlib.sha256(plan_raw).hexdigest()
     scope = (
-        "k40_preparation_only"
+        K40_SUBMISSION_SCOPE
         if expected_scope == "k40-preparation"
-        else "main_k5_k8_pilot"
+        else MAIN_SUBMISSION_SCOPE
     )
     if (
         plan["checkout_identity"]["commit"] != expected_commit
@@ -95,13 +102,13 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
     verified_gate_evidence(
         manifest,
         tariff_gate_spec(
-            plan, plan_sha, str(manifest.get("gate_job_id") or "")
+            plan, plan_sha, scope,
+            str(manifest.get("gate_job_id") or ""),
         ),
     )
     selected = {
         job["job_key"]: job for job in plan["jobs"]
-        if bool(job["separate_k40_gate"])
-        == (expected_scope == "k40-preparation")
+        if job.get("submission_scope") == scope
     }
     submitted_rows = manifest.get("submitted_jobs") or []
     submitted = {
@@ -138,6 +145,7 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         != "evsp-dr-tariff-response-reservation-transaction-v1"
         or transaction.get("plan_sha256") != plan_sha
         or transaction.get("campaign") != plan["campaign"]
+        or transaction.get("submission_scope") != scope
         or transaction.get("jobs") != [{
             "job_key": job["job_key"],
             "execution_digest": job["execution_digest"],
@@ -150,7 +158,9 @@ def validate(root: Path, expected_commit: str, expected_scope: str):
         path for path in staged_reservations.glob("*.json")
         if path.name != "transaction.json"
     )
-    validate_reservations(files, reservations, selected, plan_sha)
+    validate_reservations(
+        files, reservations, selected, plan_sha, scope
+    )
 
     staged_tariff_manifest = root / "input/tariffs/tariff_manifest.csv"
     if sha(staged_tariff_manifest) != plan["tariff_manifest_sha256"]:

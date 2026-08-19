@@ -28,7 +28,10 @@ from tariff_response_core import (
     tariff_prices,
 )
 from make_giro_seed_routes import _minutes, _station_node
-from launch_tariff_response_pilot import tariff_gate_spec
+from launch_tariff_response_pilot import (
+    MAIN_SUBMISSION_SCOPE,
+    tariff_gate_spec,
+)
 from reconcile_tariff_response_gate import (
     _submitted_jobs_are_complete,
 )
@@ -296,6 +299,8 @@ def assemble(campaign_root, output_manifest, evidence_output):
     plan_sha = hashlib.sha256(plan_raw).hexdigest()
     if manifest.get("approval_sha256") != plan_sha:
         raise ValueError("campaign approval hash mismatch")
+    if manifest.get("submission_scope") != MAIN_SUBMISSION_SCOPE:
+        raise ValueError("assembler accepts only main tariff scope")
     submitted_by_key = {
         item["job_key"]: item
         for item in manifest.get("submitted_jobs") or []
@@ -303,7 +308,7 @@ def assemble(campaign_root, output_manifest, evidence_output):
     submitted = set(submitted_by_key)
     main_jobs = {
         job["job_key"] for job in plan["jobs"]
-        if not job["separate_k40_gate"]
+        if job.get("submission_scope") == MAIN_SUBMISSION_SCOPE
     }
     if (
         submitted != main_jobs
@@ -315,7 +320,8 @@ def assemble(campaign_root, output_manifest, evidence_output):
     verified_gate_evidence(
         manifest,
         tariff_gate_spec(
-            plan, plan_sha, str(manifest.get("gate_job_id") or "")
+            plan, plan_sha, MAIN_SUBMISSION_SCOPE,
+            str(manifest.get("gate_job_id") or ""),
         ),
     )
     observed_commit = subprocess.run(

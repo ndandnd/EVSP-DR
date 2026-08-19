@@ -388,6 +388,7 @@ def verify_held_receipt(
             return {
                 "verified": True,
                 "role": spec["role"],
+                "submission_scope": spec.get("submission_scope"),
                 "job_id": str(spec["job_id"]),
                 "attempts": attempt,
                 "observation": observation,
@@ -442,6 +443,7 @@ def verify_dependency_receipt(
             return {
                 "verified": True,
                 "role": spec["role"],
+                "submission_scope": spec.get("submission_scope"),
                 "job_id": str(spec["job_id"]),
                 "attempts": attempt,
                 "observation": observation,
@@ -466,6 +468,11 @@ def verified_dependency_evidence(receipt, spec):
         or receipt.get("verified") is not True
         or receipt.get("role") != spec["role"]
         or str(receipt.get("job_id") or "") != str(spec["job_id"])
+        or (
+            "submission_scope" in spec
+            and receipt.get("submission_scope")
+            != spec["submission_scope"]
+        )
     ):
         raise ValueError("dependency receipt evidence is unverified")
     observation = receipt.get("observation")
@@ -566,6 +573,7 @@ def release_with_postcondition(
         return {
             "verified": True,
             "role": spec["role"],
+            "submission_scope": spec.get("submission_scope"),
             "job_id": str(spec["job_id"]),
             "command_attempts": 0,
             "observation": observation,
@@ -627,6 +635,7 @@ def release_with_postcondition(
                 return {
                     "verified": True,
                     "role": spec["role"],
+                    "submission_scope": spec.get("submission_scope"),
                     "job_id": str(spec["job_id"]),
                     "command_attempts": command_attempt,
                     "observation": observation,
@@ -860,6 +869,7 @@ def cancel_with_postcondition(
         return {
             "verified": True,
             "role": spec["role"],
+            "submission_scope": spec.get("submission_scope"),
             "job_id": str(spec["job_id"]),
             "command_attempts": 0,
             "observation": observation,
@@ -920,6 +930,7 @@ def cancel_with_postcondition(
                 return {
                     "verified": True,
                     "role": spec["role"],
+                    "submission_scope": spec.get("submission_scope"),
                     "job_id": str(spec["job_id"]),
                     "command_attempts": command_attempt,
                     "observation": observation,
@@ -1001,9 +1012,12 @@ def verified_gate_evidence(manifest, expected_spec):
     recorded_spec = manifest.get("gate_spec")
     if not isinstance(recorded_spec, dict):
         raise ValueError("legacy tariff gate evidence is unverified")
-    for field in (
+    fields = [
         "job_id", "user", "job_name", "partition", "comment", "role",
-    ):
+    ]
+    if "submission_scope" in expected_spec:
+        fields.append("submission_scope")
+    for field in fields:
         if str(recorded_spec.get(field) or "") != str(
             expected_spec.get(field) or ""
         ):
@@ -1015,6 +1029,11 @@ def verified_gate_evidence(manifest, expected_spec):
         or release.get("verified") is not True
         or release.get("role") != expected_spec["role"]
         or str(release.get("job_id") or "") != expected_spec["job_id"]
+        or (
+            "submission_scope" in expected_spec
+            and release.get("submission_scope")
+            != expected_spec["submission_scope"]
+        )
     ):
         raise ValueError("tariff gate release evidence is unverified")
     release_observation = release.get("observation") or {}
@@ -1030,6 +1049,11 @@ def verified_gate_evidence(manifest, expected_spec):
         or terminal.get("verified") is not True
         or terminal.get("role") != expected_spec["role"]
         or str(terminal.get("job_id") or "") != expected_spec["job_id"]
+        or (
+            "submission_scope" in expected_spec
+            and terminal.get("submission_scope")
+            != expected_spec["submission_scope"]
+        )
     ):
         raise ValueError("tariff gate successful completion is unverified")
     terminal_observation = terminal.get("observation") or {}

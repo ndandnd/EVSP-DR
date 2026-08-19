@@ -79,3 +79,13 @@ plan SHA, job key, campaign-independent execution digest, phase/treatment/
 analysis role, scale, tariff and instance identities, numeric Slurm job ID,
 and the exact artifact hash map. Scheduler receipts and worker completions are
 separate required provenance layers.
+
+`main_k5_k8_pilot` and `k40_preparation_only` are separate scheduler and
+reservation identity domains even though they share one plan SHA. Gate names,
+comments, roles, receipts, reservation paths/transactions, worker
+completions, reconciliation, and consumers all bind the exact scope.
+
+The current matrix is planning-only: deterministic primary-grid membership
+preflight records exact nonrepresentable duties/reasons and sets
+`submission_blocked=true`. No consumer may interpret the planned 111 main
+outputs as available evidence.
