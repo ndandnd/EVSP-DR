@@ -189,7 +189,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 ),
             ):
                 results = ladder._wait_for_probes(
-                    {"sacct": {"path": "/approved/sacct"}},
+                    {
+                        "sacct": {"path": "/approved/sacct"},
+                        "campaign_root": str(root),
+                    },
                     "p" * 64,
                     specs,
                     timeout_s=1,
@@ -213,7 +216,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 ),
             ):
                 results = ladder._wait_for_probes(
-                    {"sacct": {"path": "/approved/sacct"}},
+                    {
+                        "sacct": {"path": "/approved/sacct"},
+                        "campaign_root": str(root),
+                    },
                     "p" * 64,
                     specs,
                     timeout_s=1,

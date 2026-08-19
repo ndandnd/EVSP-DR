@@ -848,6 +848,9 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
     results = {}
     for probe_id, spec in probe_specs.items():
         path = Path(spec["output"])
+        expected_path = (
+            Path(plan["campaign_root"]) / "probes" / f"{probe_id}.json"
+        ).resolve()
         expected_probe_id = (
             "default" if probe_id == "default_partition"
             else "scaglione"
@@ -861,6 +864,7 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
             "differences": [],
             "probe_id": spec.get("probe_id"),
             "partition": spec.get("partition"),
+            "path_bound": path.resolve() == expected_path,
         }
         if path.is_file():
             payload = json.loads(path.read_text())
@@ -883,6 +887,7 @@ def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
                     and payload.get("slurm_partition")
                     == probe_id
                     and path.name == f"{probe_id}.json"
+                    and path.resolve() == expected_path
                     and digest == sidecar_digest
                     and result["state"] == "COMPLETED"
                 ),
@@ -912,6 +917,7 @@ def _probes_compatible(results):
         and all(
             Path(result.get("output") or "").name == f"{key}.json"
             and Path(result.get("output") or "").parent.name == "probes"
+            and result.get("path_bound") is True
             for key, result in results.items()
         )
         and all(
