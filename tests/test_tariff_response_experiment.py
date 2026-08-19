@@ -1146,6 +1146,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 "jobs": [{
                     "job_key": "fixed",
                     "separate_k40_gate": False,
+                    "submission_scope": MAIN_SUBMISSION_SCOPE,
                 }]
             }
             raw = json.dumps(
@@ -1154,6 +1155,7 @@ class TariffResponseExperimentTests(unittest.TestCase):
             (root / "approved-plan.json").write_bytes(raw)
             (root / "campaign.json").write_text(json.dumps({
                 "approval_sha256": hashlib.sha256(raw).hexdigest(),
+                "submission_scope": MAIN_SUBMISSION_SCOPE,
                 "submitted_jobs": [],
             }))
             with self.assertRaisesRegex(ValueError, "incomplete"):

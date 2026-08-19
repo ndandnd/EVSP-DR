@@ -252,12 +252,6 @@ def _reconcile_locked(
     sleeper = time.sleep if sleeper is None else sleeper
     if manifest.get("approval_sha256") != observed:
         raise ValueError("campaign approval hash differs from approved plan")
-    submission_scope = manifest.get("submission_scope")
-    if submission_scope not in {
-        MAIN_SUBMISSION_SCOPE, K40_SUBMISSION_SCOPE,
-    }:
-        raise ValueError("campaign submission scope is invalid")
-
     scheduler = plan.get("scheduler_identity") or {}
     recorded_spec = manifest.get("gate_spec")
     if not scheduler.get("user"):
@@ -265,6 +259,16 @@ def _reconcile_locked(
             manifest,
             "legacy campaign lacks the immutable scheduler user required "
             "for exact reconciliation",
+        )
+        _write_manifest(manifest_path, manifest)
+        raise ValueError("legacy tariff gate evidence is labeled unverified")
+    submission_scope = manifest.get("submission_scope")
+    if submission_scope not in {
+        MAIN_SUBMISSION_SCOPE, K40_SUBMISSION_SCOPE,
+    }:
+        _legacy_unverified(
+            manifest,
+            "legacy campaign lacks an immutable tariff submission scope",
         )
         _write_manifest(manifest_path, manifest)
         raise ValueError("legacy tariff gate evidence is labeled unverified")

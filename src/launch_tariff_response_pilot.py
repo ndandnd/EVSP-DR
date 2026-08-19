@@ -140,7 +140,7 @@ def tariff_child_spec(plan, job, dependency, job_id=None):
         job["submission_scope"]
     )
     scope_code = SUBMISSION_SCOPES[submission_scope]
-    plan = {
+    spec = {
         "job_id": None if job_id is None else str(job_id),
         "user": str(
             (plan.get("scheduler_identity") or {}).get("user") or ""
@@ -154,6 +154,7 @@ def tariff_child_spec(plan, job, dependency, job_id=None):
         "submission_scope": submission_scope,
         "dependency": dependency,
     }
+    return spec
 
 
 def canonical(payload):
