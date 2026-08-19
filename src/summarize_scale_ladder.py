@@ -204,11 +204,16 @@ def _require_scale_ladder_scheduler_evidence(plan, manifest, plan_sha):
         raise ValueError(
             "campaign lacks a completed verified scheduler contract"
         )
+    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
+    if not user:
+        raise ValueError("approved scheduler user is missing")
     expected_gate = {
         "job_id": gate,
+        "user": user,
         "job_name": f"LDG{plan_sha[:5]}",
         "partition": "default_partition",
         "comment": f"SLADG:{plan_sha[:20]}",
+        "role": "scale_ladder_scientific_gate",
     }
 
     def require_gate_observation(observation, *, terminal):
@@ -244,6 +249,7 @@ def _require_scale_ladder_scheduler_evidence(plan, manifest, plan_sha):
     if (
         not isinstance(release, dict)
         or release.get("verified") is not True
+        or release.get("role") != "scale_ladder_scientific_gate"
         or str(release.get("job_id") or "") != gate
     ):
         raise ValueError("scientific gate release evidence is missing")
@@ -252,6 +258,8 @@ def _require_scale_ladder_scheduler_evidence(plan, manifest, plan_sha):
     if (
         not isinstance(reconciliation, dict)
         or reconciliation.get("verified") is not True
+        or reconciliation.get("role")
+        != "scale_ladder_scientific_gate"
         or str(reconciliation.get("gate_job_id") or "") != gate
     ):
         raise ValueError("scientific gate completion evidence is missing")
@@ -262,9 +270,6 @@ def _require_scale_ladder_scheduler_evidence(plan, manifest, plan_sha):
     verifications = manifest.get("array_submission_verifications") or {}
     if set(verifications) != set(SCIENCE_GROUPS):
         raise ValueError("scientific array receipt set is incomplete")
-    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
-    if not user:
-        raise ValueError("approved scheduler user is missing")
     name_prefixes = {
         "PREFLIGHT": "LDPF",
         "SEED": "LDSD",

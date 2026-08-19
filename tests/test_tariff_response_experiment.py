@@ -1626,6 +1626,22 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 job,
                 "e" * 64,
                 expected_slurm_job_id="123",
+                expected_artifact_paths={"/tmp/result"},
+            )
+        incomplete = {
+            **completion,
+            "job_key": "job-a",
+            "execution_digest": "a" * 64,
+        }
+        with self.assertRaisesRegex(ValueError, "artifact_set"):
+            validate_completion_identity(
+                incomplete,
+                job,
+                "e" * 64,
+                expected_slurm_job_id="123",
+                expected_artifact_paths={
+                    "/tmp/result", "/tmp/result.iters.csv",
+                },
             )
 
 

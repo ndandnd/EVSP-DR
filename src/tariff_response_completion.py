@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 
 SCHEMA = "evsp-dr-tariff-response-worker-completion-v2"
 
 
 def validate_completion_identity(
     completion, job, plan_sha, *, expected_slurm_job_id,
+    expected_artifact_paths,
 ):
     expected = {
         "schema": SCHEMA,
@@ -45,6 +48,19 @@ def validate_completion_identity(
             "expected": "nonempty artifact hash map",
             "observed": type(hashes).__name__,
         }
+    else:
+        observed_paths = {
+            str(Path(path).expanduser().resolve()) for path in hashes
+        }
+        expected_paths = {
+            str(Path(path).expanduser().resolve())
+            for path in expected_artifact_paths
+        }
+        if observed_paths != expected_paths:
+            errors["artifact_set"] = {
+                "expected": sorted(expected_paths),
+                "observed": sorted(observed_paths),
+            }
     if errors:
         raise ValueError(
             f"worker completion identity mismatch for "

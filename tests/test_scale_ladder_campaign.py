@@ -2319,6 +2319,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     returncode=0,
                     stdout=(
                         f"JobId=100 JobName=LDG{plan_sha[:5]} "
+                        "UserId=nc437(1646707) "
                         "JobState=COMPLETED Partition=default_partition "
                         f"Comment=SLADG:{plan_sha[:20]}\n"
                     ),
@@ -2340,6 +2341,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                         returncode=0,
                         stdout=(
                             f"JobId=100 JobName=LDG{plan_sha[:5]} "
+                            "UserId=nc437(1646707) "
                             "JobState=COMPLETED Partition=default_partition "
                             f"Comment=SLADG:{plan_sha[:20]} ExitCode=1:0\n"
                         ),
@@ -4795,6 +4797,7 @@ printf '%s %s\n' "$status" "$checks"
         gate = "100"
         gate_observation = {
             "job_id": gate,
+            "user": "nathan",
             "job_name": f"LDG{plan_sha[:5]}",
             "partition": "default_partition",
             "comment": f"SLADG:{plan_sha[:20]}",
@@ -4802,6 +4805,7 @@ printf '%s %s\n' "$status" "$checks"
             "exit_code": "0:0",
             "source": "sacct",
             "live": False,
+            "role": "scale_ladder_scientific_gate",
         }
         manifest = {
             "submitted": True,
@@ -4816,11 +4820,13 @@ printf '%s %s\n' "$status" "$checks"
         manifest["gate_state"] = "released_reconciled"
         manifest["gate_release_verification"] = {
             "verified": True,
+            "role": "scale_ladder_scientific_gate",
             "job_id": gate,
             "observation": gate_observation,
         }
         manifest["gate_reconciliation"] = {
             "verified": True,
+            "role": "scale_ladder_scientific_gate",
             "gate_job_id": gate,
             "observation": gate_observation,
         }

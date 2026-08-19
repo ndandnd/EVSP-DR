@@ -261,6 +261,33 @@ def _write_new_bytes(path, encoded):
         temporary.unlink(missing_ok=True)
 
 
+def _expected_worker_artifacts(job):
+    output = Path(job["output"])
+    expected = set()
+    if output.is_dir():
+        expected.update(
+            path for path in output.rglob("*") if path.is_file()
+        )
+    elif output.is_file():
+        expected.add(output)
+    if job["phase"] == "CG":
+        expected.update({
+            Path(str(output) + ".columns.jsonl"),
+            Path(str(output) + ".iters.csv"),
+            Path(job["phase_telemetry"]),
+        })
+    elif job["phase"] == "MIP":
+        progress = Path(job["progress_dir"])
+        expected.update(
+            path for path in progress.rglob("*") if path.is_file()
+        )
+    if not expected or any(not path.is_file() for path in expected):
+        raise ValueError(
+            f"worker artifact set is incomplete: {job['job_key']}"
+        )
+    return expected
+
+
 def assemble(campaign_root, output_manifest, evidence_output):
     campaign_root = campaign_root.resolve()
     plan_raw = (campaign_root / "approved-plan.json").read_bytes()
@@ -323,6 +350,7 @@ def assemble(campaign_root, output_manifest, evidence_output):
             expected_slurm_job_id=(
                 submitted_by_key[job["job_key"]]["job_id"]
             ),
+            expected_artifact_paths=_expected_worker_artifacts(job),
         )
         for artifact, digest in hashes.items():
             path = Path(artifact)

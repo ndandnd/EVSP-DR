@@ -37,6 +37,7 @@ SCIENCE_GROUPS = (
     "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY", "MIP_RAW",
     "MIP_KNOWN",
 )
+SCALE_GATE_ROLE = "scale_ladder_scientific_gate"
 
 
 class GateTerminalObservationError(ValueError):
@@ -52,6 +53,7 @@ def _persist_gate_terminal_failure(
     manifest["submitted"] = False
     manifest["gate_terminal_failure"] = {
         "verified": True,
+        "role": SCALE_GATE_ROLE,
         "gate_job_id": str(gate),
         "observation": observation,
         "source": observation.get("source"),
@@ -79,12 +81,16 @@ def _normalized_state(value):
     return words[0].split("+", 1)[0].upper() if words else ""
 
 
-def _gate_fingerprint(expected_plan_sha, gate):
+def _gate_fingerprint(plan, expected_plan_sha, gate):
     return {
         "job_id": str(gate),
+        "user": str(
+            (plan.get("runtime_environment") or {}).get("USER") or ""
+        ),
         "job_name": f"LDG{expected_plan_sha[:5]}",
         "partition": "default_partition",
         "comment": f"SLADG:{expected_plan_sha[:20]}",
+        "role": SCALE_GATE_ROLE,
     }
 
 
@@ -95,7 +101,9 @@ def _gate_fingerprint_errors(expected, row):
             "expected": expected[field],
             "observed": str(row.get(field) or ""),
         }
-        for field in ("job_id", "job_name", "partition", "comment")
+        for field in (
+            "job_id", "user", "job_name", "partition", "comment",
+        )
         if str(row.get(field) or "") != expected[field]
     ]
 
@@ -120,7 +128,7 @@ def _resolve_gate_state(
     gate = str(gate)
     if not gate.isdigit():
         raise ValueError("gate job ID is invalid")
-    expected = _gate_fingerprint(expected_plan_sha, gate)
+    expected = _gate_fingerprint(plan, expected_plan_sha, gate)
     user = str((plan.get("runtime_environment") or {}).get("USER") or "")
     if not user:
         raise ValueError("approved runtime user is missing")
@@ -140,7 +148,8 @@ def _resolve_gate_state(
                 "job_id": fields[0], "job_name": fields[1],
                 "state": _normalized_state(fields[2]),
                 "partition": fields[3], "reason": fields[4],
-                "comment": fields[5],
+                "comment": fields[5], "user": user,
+                "role": SCALE_GATE_ROLE,
             })
     if len(live_rows) > 1:
         raise ValueError("multiple live rows match the gate job ID")
@@ -170,12 +179,16 @@ def _resolve_gate_state(
             values[key] = value
         controller_row = {
             "job_id": values.get("JobId", ""),
+            "user": (
+                str(values.get("UserId") or "").split("(", 1)[0]
+            ),
             "job_name": values.get("JobName", ""),
             "state": _normalized_state(values.get("JobState")),
             "partition": values.get("Partition", ""),
             "reason": values.get("Reason", ""),
             "comment": values.get("Comment", ""),
             "exit_code": values.get("ExitCode"),
+            "role": SCALE_GATE_ROLE,
         }
         errors = _gate_fingerprint_errors(expected, controller_row)
         if errors:
@@ -217,20 +230,21 @@ def _resolve_gate_state(
     sacct_path = _approved_tool_path(plan, "sacct")
     completed = _bounded_query(runner, [
         str(sacct_path), "-X", "-n", "-P", "-j", gate,
-        "--format=JobIDRaw,JobName%64,State,Partition%64,"
+        "--format=JobIDRaw,User,JobName%64,State,Partition%64,"
         "Comment%256,ExitCode",
     ])
     if completed.returncode != 0:
         raise RuntimeError("cannot query gate accounting")
     rows = []
     for line in completed.stdout.splitlines():
-        fields = [field.strip() for field in line.split("|", 5)]
-        if len(fields) == 6 and fields[0] == gate:
+        fields = [field.strip() for field in line.split("|", 6)]
+        if len(fields) == 7 and fields[0] == gate:
             rows.append({
-                "job_id": fields[0], "job_name": fields[1],
-                "state": _normalized_state(fields[2]),
-                "partition": fields[3], "comment": fields[4],
-                "exit_code": fields[5],
+                "job_id": fields[0], "user": fields[1],
+                "job_name": fields[2],
+                "state": _normalized_state(fields[3]),
+                "partition": fields[4], "comment": fields[5],
+                "exit_code": fields[6], "role": SCALE_GATE_ROLE,
             })
     if len(rows) != 1:
         raise ValueError("gate accounting has no unique exact job row")
@@ -333,6 +347,7 @@ def _gate_release_verification(
 ):
     return {
         "verified": True,
+        "role": SCALE_GATE_ROLE,
         "job_id": str(gate),
         "command_attempts": command_attempts,
         "observation": observation,
@@ -1219,6 +1234,7 @@ def _reconcile_locked(
         manifest["submitted"] = True
         manifest["gate_reconciliation"] = {
             "verified": True,
+            "role": SCALE_GATE_ROLE,
             "source": gate_observation["source"],
             "gate_job_id": gate,
             "state": "COMPLETED",
