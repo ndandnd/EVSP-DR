@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -94,6 +95,15 @@ from run_exact_pool_mip import (
     load_pool,
     merge_validated_partition_start,
 )
+from slurm_state_contract import (
+    SlurmContractError,
+    cancel_with_postcondition,
+    discover_live_job_by_identity,
+    release_with_postcondition,
+    resolve_exact_job,
+    verify_array_receipt,
+    verify_held_receipt,
+)
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -118,6 +128,7 @@ CODE_PATHS = (
     "src/validate_raw_k40_mip_plan.py",
     "src/validate_k40_cs_overnight_plan.py",
     "src/validate_k40_cs_overnight_result.py",
+    "src/slurm_state_contract.py",
 )
 DEFAULT_ROOTS = {
     "repool_small": REPO_ROOT / "results/repool_small",
@@ -1233,6 +1244,516 @@ def build_plan(
     return plan
 
 
+MIP_JOB_ROLE = "mip_statistics_scientific_job"
+MIP_ARRAY_TASK_ROLE = "mip_statistics_direct_array_task"
+MIP_ARRAY_NAME = "K40R12RG82"
+
+
+def _mip_scheduler_user(plan):
+    user = str(
+        (plan.get("environment_whitelist") or {}).get("USER") or ""
+    )
+    if not user:
+        raise ValueError("approved scheduler user is missing")
+    return user
+
+
+def _mip_job_spec(plan, job, job_id, *, plan_sha=None, array=False):
+    if array:
+        if plan_sha is None:
+            raise ValueError("array task specification requires plan SHA")
+        comment = f"MSTATARR:{plan_sha[:30]}"
+        job_name = MIP_ARRAY_NAME
+        role = MIP_ARRAY_TASK_ROLE
+    else:
+        comment = f"MSTAT:{job['execution_digest'][:32]}"
+        job_name = job["job_name"]
+        role = MIP_JOB_ROLE
+    return {
+        "job_id": None if job_id is None else str(job_id),
+        "user": _mip_scheduler_user(plan),
+        "job_name": job_name,
+        "partition": "scaglione",
+        "comment": comment,
+        "role": role,
+    }
+
+
+def _scheduler_error(exc):
+    return {
+        "message": str(exc),
+        "observation": getattr(exc, "observation", None),
+        "diagnostics": getattr(exc, "diagnostics", []),
+    }
+
+
+def _discover_intended_job(spec, *, attempts=5, sleeper=None):
+    sleeper = time.sleep if sleeper is None else sleeper
+    diagnostics = []
+    for attempt in range(1, attempts + 1):
+        if attempt > 1:
+            sleeper(1.0)
+        try:
+            row = discover_live_job_by_identity(spec)
+        except SlurmContractError as exc:
+            diagnostics.append({
+                "attempt": attempt,
+                **_scheduler_error(exc),
+            })
+            continue
+        if row is not None:
+            return str(row["job_id"]), diagnostics
+    raise SlurmContractError(
+        "prior job submission remains ambiguous; an exact replacement is "
+        "forbidden",
+        diagnostics=diagnostics,
+    )
+
+
+def _discover_array_parent(plan, plan_sha, *, attempts=5, sleeper=None):
+    sleeper = time.sleep if sleeper is None else sleeper
+    user = _mip_scheduler_user(plan)
+    comment = f"MSTATARR:{plan_sha[:30]}"
+    diagnostics = []
+    for attempt in range(1, attempts + 1):
+        if attempt > 1:
+            sleeper(1.0)
+        completed = subprocess.run(
+            [
+                "squeue", "-h", "-u", user,
+                "-o", "%F|%u|%j|%T|%P|%R|%k",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        if completed.returncode != 0:
+            diagnostics.append({
+                "attempt": attempt,
+                "returncode": completed.returncode,
+                "stdout": (completed.stdout or "").strip(),
+                "stderr": (completed.stderr or "").strip(),
+            })
+            continue
+        parents = {
+            fields[0]
+            for line in completed.stdout.splitlines()
+            if len(fields := [part.strip() for part in line.split("|", 6)])
+            == 7
+            and fields[0].isdigit()
+            and fields[1] == user
+            and fields[2] == MIP_ARRAY_NAME
+            and fields[4] == "scaglione"
+            and fields[6] == comment
+        }
+        if len(parents) > 1:
+            raise SlurmContractError(
+                "multiple array parents share the exact execution comment"
+            )
+        if parents:
+            return next(iter(parents)), diagnostics
+        accounted = subprocess.run(
+            [
+                "sacct", "-X", "-n", "-P", "--starttime", "2026-01-01",
+                "--format=JobIDRaw,ArrayJobID,User,JobName%64,State,"
+                "Partition%64,Comment%256,ExitCode",
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        if accounted.returncode != 0:
+            diagnostics.append({
+                "attempt": attempt,
+                "source": "sacct",
+                "returncode": accounted.returncode,
+                "stdout": (accounted.stdout or "").strip(),
+                "stderr": (accounted.stderr or "").strip(),
+            })
+            continue
+        accounted_parents = set()
+        for line in accounted.stdout.splitlines():
+            fields = [part.strip() for part in line.split("|", 7)]
+            if (
+                len(fields) == 8
+                and fields[1].isdigit()
+                and fields[2] == user
+                and fields[3] == MIP_ARRAY_NAME
+                and fields[5] == "scaglione"
+                and fields[6] == comment
+            ):
+                accounted_parents.add(fields[1])
+        if len(accounted_parents) > 1:
+            raise SlurmContractError(
+                "multiple accounted arrays share the execution comment"
+            )
+        if accounted_parents:
+            return next(iter(accounted_parents)), diagnostics
+    raise SlurmContractError(
+        "prior array submission remains ambiguous; a replacement array is "
+        "forbidden",
+        diagnostics=diagnostics,
+    )
+
+
+def _array_task_specs(plan, plan_sha, parent_id):
+    return {
+        index: _mip_job_spec(
+            plan,
+            job,
+            f"{parent_id}_{index}",
+            plan_sha=plan_sha,
+            array=True,
+        )
+        for index, job in enumerate(plan["jobs"])
+    }
+
+
+def _verify_direct_array(plan, plan_sha, parent_id):
+    specs = _array_task_specs(plan, plan_sha, parent_id)
+    try:
+        return verify_array_receipt(parent_id, specs)
+    except SlurmContractError as exc:
+        if "could not be verified" not in str(exc):
+            raise
+        observations = {}
+        for task, spec in specs.items():
+            observations[str(task)] = resolve_exact_job(spec)
+        return {
+            "verified": True,
+            "parent_job_id": str(parent_id),
+            "attempts": None,
+            "task_count": len(specs),
+            "task_observations": observations,
+            "source": "exact_task_resolution_fallback",
+            "array_query_diagnostics": exc.diagnostics,
+        }
+
+
+def _cancel_verified_held_jobs(
+    plan, manifest, manifest_path, jobs, *, sleeper=None,
+):
+    """Cancel exact known held jobs; reservations always remain durable."""
+    sleeper = time.sleep if sleeper is None else sleeper
+    manifest["reservations_retained"] = True
+    specs = []
+    try:
+        for manifest_job in jobs:
+            spec = _mip_job_spec(
+                plan, manifest_job, manifest_job.get("job_id")
+            )
+            observation = resolve_exact_job(spec)
+            if (
+                observation.get("live") is not True
+                or observation.get("state") != "PENDING"
+                or observation.get("reason") != "JobHeldUser"
+            ):
+                raise SlurmContractError(
+                    "known job is not exact PENDING/JobHeldUser",
+                    observation=observation,
+                )
+            specs.append((manifest_job, spec))
+    except (ValueError, SlurmContractError) as exc:
+        manifest["cancellation_precondition_error"] = _scheduler_error(exc)
+        _replace_json(manifest_path, manifest)
+        return False
+
+    all_verified = True
+    for manifest_job, spec in specs:
+        try:
+            verification = cancel_with_postcondition(
+                spec, sleeper=sleeper
+            )
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "cancellation_unverified"
+            manifest_job["cancellation_error"] = _scheduler_error(exc)
+            all_verified = False
+        else:
+            manifest_job["submission_state"] = "cancellation_verified"
+            manifest_job["cancellation_verification"] = verification
+        _replace_json(manifest_path, manifest)
+    manifest["cancellation_complete"] = all_verified
+    _replace_json(manifest_path, manifest)
+    return all_verified
+
+
+def _release_verified_held_jobs(
+    plan, manifest, manifest_path, *, sleeper=None,
+):
+    """Reobserve and release every exact job independently."""
+    sleeper = time.sleep if sleeper is None else sleeper
+    preconditions = []
+    for manifest_job in manifest["jobs"]:
+        job_id = str(manifest_job.get("job_id") or "")
+        if not job_id.isdigit():
+            raise SlurmContractError(
+                f"{manifest_job['cell_id']} lacks an exact scheduler job ID"
+            )
+        spec = _mip_job_spec(plan, manifest_job, job_id)
+        preconditions.append((
+            manifest_job, spec, resolve_exact_job(spec)
+        ))
+
+    manifest["submitted"] = False
+    manifest["release_operation_state"] = "verifying_each_job"
+    for manifest_job, _spec, _observation in preconditions:
+        manifest_job.pop("release_verification", None)
+        manifest_job["submission_state"] = "release_reconciling"
+    _replace_json(manifest_path, manifest)
+
+    failures = []
+    for manifest_job, spec, _observation in preconditions:
+        try:
+            verification = release_with_postcondition(
+                spec,
+                terminal_success_required=False,
+                sleeper=sleeper,
+            )
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "release_unverified"
+            manifest_job["release_error"] = _scheduler_error(exc)
+            failures.append(manifest_job["cell_id"])
+        else:
+            manifest_job["release_verification"] = verification
+            manifest_job["submission_state"] = "release_verified"
+        _replace_json(manifest_path, manifest)
+        if failures:
+            break
+    if failures:
+        manifest["release_operation_state"] = "partial_or_unverified"
+        manifest["release_failures"] = failures
+        manifest["submitted"] = False
+        _replace_json(manifest_path, manifest)
+        raise SlurmContractError(
+            "one or more MIP jobs lack a verified release postcondition"
+        )
+    manifest["release_operation_state"] = "verified_all_jobs"
+    manifest["submitted"] = True
+    _replace_json(manifest_path, manifest)
+    return manifest
+
+
+def _resume_existing_submission(plan, plan_sha):
+    root = Path(plan["campaign_root"])
+    logs = Path(plan["log_root"])
+    plan_path = root / "approved-plan.json"
+    manifest_path = root / "campaign.json"
+    if (
+        not root.is_dir()
+        or not logs.is_dir()
+        or not plan_path.is_file()
+        or not manifest_path.is_file()
+        or hashlib.sha256(plan_path.read_bytes()).hexdigest() != plan_sha
+        or json.loads(plan_path.read_bytes()) != plan
+    ):
+        raise SystemExit(
+            "existing campaign cannot be bound to the exact approved plan"
+        )
+    manifest = json.loads(manifest_path.read_text())
+    if manifest.get("approval_sha256") != plan_sha:
+        raise SystemExit("existing campaign approval SHA mismatch")
+    if len(manifest.get("jobs") or []) != len(plan["jobs"]):
+        raise SystemExit("existing campaign job set is incomplete")
+    if checkout_identity(require_detached=True) != plan["checkout_identity"]:
+        raise SystemExit("recovery checkout differs from approved plan")
+    worker = root / "input/submit_mip_statistics.sub"
+    if (
+        not worker.is_file()
+        or sha256_file(worker) != plan["worker_sha256"]
+    ):
+        raise SystemExit("recovery worker differs from approved plan")
+    reservations = manifest.get("execution_reservations") or []
+    if len(reservations) != len(plan["jobs"]):
+        raise SystemExit("recovery reservation set is incomplete")
+    for reservation in reservations:
+        path = Path(reservation)
+        if not path.is_file():
+            raise SystemExit("recovery reservation is missing")
+        payload = json.loads(path.read_text())
+        if (
+            payload.get("approved_plan_sha256") != plan_sha
+            or payload.get("campaign") != plan["campaign"]
+        ):
+            raise SystemExit("recovery reservation identity mismatch")
+
+    if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
+        parent_id = str(manifest.get("array_parent_job_id") or "")
+        if not parent_id.isdigit():
+            try:
+                parent_id, discovery = _discover_array_parent(
+                    plan, plan_sha
+                )
+            except SlurmContractError as exc:
+                manifest["submitted"] = False
+                manifest["array_submission_state"] = "ambiguous"
+                manifest["array_submission_error"] = _scheduler_error(exc)
+                _replace_json(manifest_path, manifest)
+                raise SystemExit(str(exc)) from exc
+            manifest["array_parent_job_id"] = parent_id
+            manifest["array_discovery"] = discovery
+        try:
+            receipt = _verify_direct_array(plan, plan_sha, parent_id)
+        except SlurmContractError as exc:
+            manifest["submitted"] = False
+            manifest["array_submission_state"] = "receipt_unverified"
+            manifest["array_submission_error"] = _scheduler_error(exc)
+            _replace_json(manifest_path, manifest)
+            raise SystemExit(str(exc)) from exc
+        manifest["array_receipt_verification"] = receipt
+        for index, manifest_job in enumerate(manifest["jobs"]):
+            manifest_job["job_id"] = f"{parent_id}_{index}"
+            manifest_job["submission_state"] = "receipt_verified_array"
+            manifest_job["submission_receipt"] = {
+                "verified": True,
+                "observation": receipt["task_observations"][str(index)],
+            }
+            manifest_job["slurm_array_name"] = MIP_ARRAY_NAME
+            manifest_job["slurm_array_task_id"] = index
+            manifest_job["slurm_display_id"] = (
+                f"{MIP_ARRAY_NAME}_{index}"
+            )
+        manifest["array_submission_state"] = "receipt_verified"
+        manifest["submitted"] = True
+        _replace_json(manifest_path, manifest)
+        return manifest
+
+    accepted_manifest_jobs = []
+    planned_manifest_jobs = []
+    for manifest_job in manifest["jobs"]:
+        job_id = str(manifest_job.get("job_id") or "")
+        if job_id.isdigit():
+            spec = _mip_job_spec(plan, manifest_job, job_id)
+            resolve_exact_job(spec)
+            accepted_manifest_jobs.append(manifest_job)
+            continue
+        if manifest_job.get("submission_state") == "planned":
+            planned_manifest_jobs.append(manifest_job)
+            continue
+        intent = manifest_job.get("submission_intent")
+        expected = _mip_job_spec(plan, manifest_job, None)
+        if not isinstance(intent, dict) or any(
+            str(intent.get(field) or "") != str(expected.get(field) or "")
+            for field in ("user", "job_name", "partition", "comment", "role")
+        ):
+            raise SystemExit(
+                f"{manifest_job['cell_id']}: ambiguous submission intent"
+            )
+        try:
+            job_id, discovery = _discover_intended_job(expected)
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "submission_ambiguous"
+            manifest_job["submission_error"] = _scheduler_error(exc)
+            manifest["submitted"] = False
+            _replace_json(manifest_path, manifest)
+            raise SystemExit(str(exc)) from exc
+        spec = _mip_job_spec(plan, manifest_job, job_id)
+        try:
+            receipt = verify_held_receipt(spec)
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "receipt_unverified"
+            manifest_job["submission_error"] = _scheduler_error(exc)
+            manifest["submitted"] = False
+            _replace_json(manifest_path, manifest)
+            raise SystemExit(str(exc)) from exc
+        manifest_job["job_id"] = job_id
+        manifest_job["submission_receipt"] = receipt
+        manifest_job["submission_state"] = "held_verified"
+        manifest_job["discovery"] = discovery
+        accepted_manifest_jobs.append(manifest_job)
+        _replace_json(manifest_path, manifest)
+
+    export_values = dict(plan["environment_whitelist"])
+    export_values["EVSP_MIP_EXPECTED_WORKER_SHA256"] = plan[
+        "worker_sha256"
+    ]
+    export = ",".join(
+        f"{key}={_safe_export_value(key, str(value))}"
+        for key, value in export_values.items()
+    )
+    for manifest_job in planned_manifest_jobs:
+        wall_time = _slurm_wall_time(manifest_job["budget_hours"])
+        comment = f"MSTAT:{manifest_job['execution_digest'][:32]}"
+        command = [
+            "sbatch", "--parsable", "--hold", "--partition=scaglione",
+            "--no-requeue", "--signal=B:USR1@180",
+            "--nodes=1", "--ntasks=1", "--cpus-per-task=8", "--mem=64G",
+            f"--time={wall_time}",
+            f"--job-name={manifest_job['job_name']}",
+            f"--comment={comment}",
+            f"--output={logs}/%x_%j.out",
+            f"--error={logs}/%x_%j.err",
+            "--export=" + export,
+            str(worker), str(plan_path), plan_sha,
+            manifest_job["cell_id"],
+        ]
+        manifest_job["submission_state"] = "attempting"
+        manifest_job["deduplication_comment"] = comment
+        manifest_job["submission_intent"] = _mip_job_spec(
+            plan, manifest_job, None
+        )
+        _replace_json(manifest_path, manifest)
+        completed = subprocess.run(
+            command,
+            cwd=REPO_ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        manifest_job["submission_command"] = {
+            "returncode": completed.returncode,
+            "stdout": (completed.stdout or "").strip(),
+            "stderr": (completed.stderr or "").strip(),
+        }
+        job_id = completed.stdout.strip().split(";", 1)[0]
+        if not job_id.isdigit():
+            try:
+                job_id, discovery = _discover_intended_job(
+                    manifest_job["submission_intent"]
+                )
+            except SlurmContractError as exc:
+                manifest_job["submission_state"] = "submission_ambiguous"
+                manifest_job["submission_error"] = _scheduler_error(exc)
+                manifest["reservations_retained"] = True
+                manifest["submitted"] = False
+                _replace_json(manifest_path, manifest)
+                _cancel_verified_held_jobs(
+                    plan,
+                    manifest,
+                    manifest_path,
+                    accepted_manifest_jobs,
+                )
+                raise SystemExit(str(exc)) from exc
+            manifest_job["submission_discovery"] = discovery
+        spec = _mip_job_spec(plan, manifest_job, job_id)
+        manifest_job["job_id"] = job_id
+        _replace_json(manifest_path, manifest)
+        try:
+            receipt = verify_held_receipt(spec)
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "receipt_unverified"
+            manifest_job["submission_error"] = _scheduler_error(exc)
+            manifest["reservations_retained"] = True
+            manifest["submitted"] = False
+            _replace_json(manifest_path, manifest)
+            _cancel_verified_held_jobs(
+                plan,
+                manifest,
+                manifest_path,
+                accepted_manifest_jobs,
+            )
+            raise SystemExit(str(exc)) from exc
+        manifest_job["submission_receipt"] = receipt
+        manifest_job["submission_state"] = "held_verified"
+        accepted_manifest_jobs.append(manifest_job)
+        _replace_json(manifest_path, manifest)
+    try:
+        return _release_verified_held_jobs(plan, manifest, manifest_path)
+    except SlurmContractError as exc:
+        raise SystemExit(str(exc)) from exc
+
+
 def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     if not plan["jobs"]:
         raise SystemExit("approved plan contains no runnable jobs")
@@ -1241,7 +1762,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     root = Path(plan["campaign_root"])
     logs = Path(plan["log_root"])
     if root.exists() or logs.exists():
-        raise SystemExit("campaign already exists; reruns need a new name")
+        return _resume_existing_submission(plan, plan_sha)
     missing_commands = [
         command for command in (
             "sbatch", "scontrol", "scancel", "squeue", "sacct",
@@ -1382,7 +1903,7 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
     _replace_json(root / "campaign.json", manifest)
     if plan.get("mode") == K40_CS_OVERNIGHT_MODE:
         comment = next(iter(planned_comments))
-        array_name = "K40R12RG82"
+        array_name = MIP_ARRAY_NAME
         command = [
             "sbatch", "--parsable", "--array=0-3",
             "--partition=scaglione", "--no-requeue",
@@ -1399,50 +1920,78 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         for manifest_job in manifest["jobs"]:
             manifest_job["submission_state"] = "attempting_array"
             manifest_job["deduplication_comment"] = comment
+        manifest["array_submission_state"] = "intent_persisted"
+        manifest["array_submission_intent"] = {
+            "user": _mip_scheduler_user(plan),
+            "job_name": array_name,
+            "partition": "scaglione",
+            "comment": comment,
+            "role": MIP_ARRAY_TASK_ROLE,
+            "task_ids": list(range(len(manifest["jobs"]))),
+        }
         _replace_json(root / "campaign.json", manifest)
         completed = subprocess.run(
             command, cwd=REPO_ROOT, text=True,
             capture_output=True, check=False,
         )
         array_id = completed.stdout.strip().split(";", 1)[0]
-        if completed.returncode != 0 or not array_id.isdigit():
-            for manifest_job in manifest["jobs"]:
-                manifest_job["submission_state"] = (
-                    "array_submit_failed"
-                    if completed.returncode != 0
-                    else "orphaned_array_unparsed"
+        manifest["array_submission_command"] = {
+            "returncode": completed.returncode,
+            "stdout": (completed.stdout or "").strip(),
+            "stderr": (completed.stderr or "").strip(),
+        }
+        if not array_id.isdigit():
+            try:
+                array_id, discovery = _discover_array_parent(
+                    plan, plan_sha
                 )
-                manifest_job["submission_error"] = (
-                    completed.stderr or completed.stdout
-                ).strip()
+            except SlurmContractError as exc:
+                manifest["array_submission_state"] = "ambiguous"
+                manifest["array_submission_error"] = _scheduler_error(exc)
+                manifest["reservations_retained"] = True
+                manifest["submitted"] = False
+                for manifest_job in manifest["jobs"]:
+                    manifest_job["submission_state"] = (
+                        "array_submission_ambiguous"
+                    )
+                _replace_json(root / "campaign.json", manifest)
+                raise SystemExit(
+                    "direct four-task array acceptance is ambiguous; "
+                    "reservations remain and replacement is forbidden"
+                ) from exc
+            manifest["array_discovery"] = discovery
+        manifest["array_parent_job_id"] = array_id
+        _replace_json(root / "campaign.json", manifest)
+        try:
+            receipt = _verify_direct_array(plan, plan_sha, array_id)
+        except SlurmContractError as exc:
+            manifest["array_submission_state"] = "receipt_unverified"
+            manifest["array_submission_error"] = _scheduler_error(exc)
+            manifest["reservations_retained"] = True
+            manifest["submitted"] = False
+            for manifest_job in manifest["jobs"]:
+                manifest_job["submission_state"] = "array_receipt_unverified"
             _replace_json(root / "campaign.json", manifest)
             raise SystemExit(
-                "atomic four-task array submission failed or returned an "
-                "unparseable ID; reservations remain and the execution "
-                "comment must be reconciled before any retry"
-            )
+                "direct four-task array receipt is unverified; reservations "
+                "remain and replacement is forbidden"
+            ) from exc
+        manifest["array_receipt_verification"] = receipt
         for index, manifest_job in enumerate(manifest["jobs"]):
             manifest_job["job_id"] = f"{array_id}_{index}"
-            manifest_job["submission_state"] = "submitted_array"
+            manifest_job["submission_state"] = "receipt_verified_array"
+            manifest_job["submission_receipt"] = {
+                "verified": True,
+                "observation": receipt["task_observations"][str(index)],
+            }
             manifest_job["slurm_array_name"] = array_name
             manifest_job["slurm_array_task_id"] = index
             manifest_job["slurm_display_id"] = f"{array_name}_{index}"
+        manifest["array_submission_state"] = "receipt_verified"
         manifest["submitted"] = True
         _replace_json(root / "campaign.json", manifest)
         return manifest
-    held_job_ids = []
-
-    def cancel_known_held_jobs():
-        if not held_job_ids:
-            return True
-        canceled = subprocess.run(
-            ["scancel", *held_job_ids],
-            cwd=REPO_ROOT,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        return canceled.returncode == 0
+    accepted_manifest_jobs = []
 
     for job, manifest_job, wall_time in zip(
         plan["jobs"], manifest["jobs"], wall_times
@@ -1462,71 +2011,75 @@ def _stage_and_submit(plan: dict, plan_sha: str) -> dict:
         ]
         manifest_job["submission_state"] = "attempting"
         manifest_job["deduplication_comment"] = comment
+        manifest_job["submission_intent"] = _mip_job_spec(
+            plan, job, None
+        )
         _replace_json(root / "campaign.json", manifest)
         completed = subprocess.run(
             command, cwd=REPO_ROOT, text=True,
             capture_output=True, check=False,
         )
-        if completed.returncode != 0:
-            manifest_job["submission_state"] = "failed"
-            manifest_job["submission_error"] = (
-                completed.stderr or completed.stdout
-            ).strip()
-            canceled = cancel_known_held_jobs()
-            for prior in manifest["jobs"]:
-                if prior.get("job_id") in held_job_ids:
-                    prior["submission_state"] = (
-                        "canceled_before_release"
-                        if canceled else "held_cancel_failed"
-                    )
-            if canceled:
-                for reservation in reservations:
-                    reservation.unlink(missing_ok=True)
-            _replace_json(root / "campaign.json", manifest)
-            raise SystemExit(
-                f"{job['cell_id']}: held sbatch failed; no job released"
-            )
         job_id = completed.stdout.strip().split(";", 1)[0]
+        manifest_job["submission_command"] = {
+            "returncode": completed.returncode,
+            "stdout": (completed.stdout or "").strip(),
+            "stderr": (completed.stderr or "").strip(),
+        }
         if not job_id.isdigit():
-            manifest_job["submission_state"] = "orphaned_held_unparsed"
-            canceled = cancel_known_held_jobs()
-            for prior in manifest["jobs"]:
-                if prior.get("job_id") in held_job_ids:
-                    prior["submission_state"] = (
-                        "canceled_before_release"
-                        if canceled else "held_cancel_failed"
-                    )
-            _replace_json(root / "campaign.json", manifest)
-            raise SystemExit(
-                "sbatch returned an invalid job ID; any unknown job remains "
-                "held and must be reconciled by its execution comment"
-            )
+            try:
+                job_id, discovery = _discover_intended_job(
+                    manifest_job["submission_intent"]
+                )
+            except SlurmContractError as exc:
+                manifest_job["submission_state"] = "submission_ambiguous"
+                manifest_job["submission_error"] = _scheduler_error(exc)
+                manifest["reservations_retained"] = True
+                manifest["submitted"] = False
+                _replace_json(root / "campaign.json", manifest)
+                _cancel_verified_held_jobs(
+                    plan,
+                    manifest,
+                    root / "campaign.json",
+                    accepted_manifest_jobs,
+                )
+                raise SystemExit(
+                    f"{job['cell_id']}: held submission is ambiguous; "
+                    "reservations remain and replacement is forbidden"
+                ) from exc
+            manifest_job["submission_discovery"] = discovery
+        spec = _mip_job_spec(plan, job, job_id)
         manifest_job["job_id"] = job_id
-        manifest_job["submission_state"] = "held"
-        held_job_ids.append(job_id)
         _replace_json(root / "campaign.json", manifest)
-    released = subprocess.run(
-        ["scontrol", "release", ",".join(held_job_ids)],
-        cwd=REPO_ROOT,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    if released.returncode != 0:
-        for manifest_job in manifest["jobs"]:
-            manifest_job["submission_state"] = "held_release_failed"
-            manifest_job["release_error"] = (
-                released.stderr or released.stdout
-            ).strip()
+        try:
+            receipt = verify_held_receipt(spec)
+        except SlurmContractError as exc:
+            manifest_job["submission_state"] = "receipt_unverified"
+            manifest_job["submission_error"] = _scheduler_error(exc)
+            manifest["reservations_retained"] = True
+            manifest["submitted"] = False
+            _replace_json(root / "campaign.json", manifest)
+            _cancel_verified_held_jobs(
+                plan,
+                manifest,
+                root / "campaign.json",
+                accepted_manifest_jobs,
+            )
+            raise SystemExit(
+                f"{job['cell_id']}: exact held receipt is unverified"
+            ) from exc
+        manifest_job["submission_receipt"] = receipt
+        manifest_job["submission_state"] = "held_verified"
+        accepted_manifest_jobs.append(manifest_job)
         _replace_json(root / "campaign.json", manifest)
-        raise SystemExit(
-            "atomic job release failed; every campaign job remains held"
+    try:
+        return _release_verified_held_jobs(
+            plan, manifest, root / "campaign.json"
         )
-    for manifest_job in manifest["jobs"]:
-        manifest_job["submission_state"] = "released"
-    manifest["submitted"] = True
-    _replace_json(root / "campaign.json", manifest)
-    return manifest
+    except SlurmContractError as exc:
+        raise SystemExit(
+            "MIP release is partial or unverified; reconcile the same "
+            "campaign by exact execution comments"
+        ) from exc
 
 
 def parse_args(argv=None):

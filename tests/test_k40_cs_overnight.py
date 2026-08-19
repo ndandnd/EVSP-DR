@@ -573,13 +573,35 @@ class K40CSOvernightTests(unittest.TestCase):
             manifest["submission_atomicity"] = (
                 "single_atomic_four_task_array_submission"
             )
-            for index, job in enumerate(manifest["jobs"], start=1):
-                task = index - 1
+            user = manifest["environment_whitelist"]["USER"]
+            task_observations = {}
+            for task, job in enumerate(manifest["jobs"]):
                 job["job_id"] = f"1000_{task}"
-                job["submission_state"] = "submitted_array"
+                job["submission_state"] = "receipt_verified_array"
                 job["slurm_array_name"] = "K40R12RG82"
                 job["slurm_array_task_id"] = task
                 job["slurm_display_id"] = f"K40R12RG82_{task}"
+                task_observations[str(task)] = {
+                    "job_id": f"1000_{task}",
+                    "user": user,
+                    "job_name": "K40R12RG82",
+                    "state": "COMPLETED",
+                    "partition": "scaglione",
+                    "reason": "None",
+                    "comment":
+                        f"MSTATARR:{manifest['approval_sha256'][:30]}",
+                    "exit_code": "0:0",
+                    "source": "sacct",
+                    "live": False,
+                }
+            manifest["array_parent_job_id"] = "1000"
+            manifest["array_receipt_verification"] = {
+                "verified": True,
+                "parent_job_id": "1000",
+                "attempts": 1,
+                "task_count": 4,
+                "task_observations": task_observations,
+            }
             bad_manifest = copy.deepcopy(manifest)
             for job in bad_manifest["jobs"]:
                 job["job_id"] = "1000_3"
@@ -587,7 +609,7 @@ class K40CSOvernightTests(unittest.TestCase):
                 json.dumps(bad_manifest)
             )
             with self.assertRaisesRegex(
-                ValueError, "approved array task"
+                ValueError, "array receipt|approved array task"
             ):
                 summarize(campaign, root / "bad-summary")
             (campaign / "campaign.json").write_text(

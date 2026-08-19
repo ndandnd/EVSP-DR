@@ -75,6 +75,13 @@ COMPARISON_FIELDS = (
     "physical_pool_preparation_wall_s", "source_hashing_wall_s",
     "gurobi_optimize_wall_s", "true_end_to_end_wall_s",
 )
+MIP_TERMINAL_STATES = {
+    "BOOT_FAIL", "CANCELLED", "COMPLETED", "DEADLINE", "FAILED",
+    "NODE_FAIL", "OUT_OF_MEMORY", "PREEMPTED", "REVOKED",
+    "SPECIAL_EXIT", "TIMEOUT",
+}
+MIP_ACTIVE_STATES = {"CONFIGURING", "RUNNING", "COMPLETING"}
+MIP_ARRAY_NAME = "K40R12RG82"
 
 
 def _sha(path: Path) -> str:
@@ -102,6 +109,104 @@ def _campaign_path(root: Path, manifest: dict, value) -> Path:
             f"campaign artifact escapes approved root: {path}"
         ) from exc
     return root / relative
+
+
+def _scheduler_spec(manifest, plan_sha, job, *, array=False):
+    user = str(
+        (manifest.get("environment_whitelist") or {}).get("USER") or ""
+    )
+    if array:
+        name = MIP_ARRAY_NAME
+        comment = f"MSTATARR:{plan_sha[:30]}"
+        role = "mip_statistics_direct_array_task"
+    else:
+        name = job["job_name"]
+        comment = f"MSTAT:{job['execution_digest'][:32]}"
+        role = "mip_statistics_scientific_job"
+    return {
+        "job_id": str(job.get("job_id") or ""),
+        "user": user,
+        "job_name": name,
+        "partition": "scaglione",
+        "comment": comment,
+        "role": role,
+    }
+
+
+def _require_exact_observation(spec, observation):
+    if not isinstance(observation, dict):
+        raise ValueError("scheduler observation is missing")
+    for field in ("job_id", "user", "job_name", "partition", "comment"):
+        if str(observation.get(field) or "") != str(spec[field]):
+            raise ValueError(
+                f"scheduler observation identity mismatch: {field}"
+            )
+    state = str(observation.get("state") or "")
+    if not state:
+        raise ValueError("scheduler observation state is missing")
+    if state in MIP_TERMINAL_STATES and re.fullmatch(
+        r"[0-9]+:[0-9]+", str(observation.get("exit_code") or "")
+    ) is None:
+        raise ValueError("terminal scheduler observation lacks exit code")
+    return state
+
+
+def _require_release_evidence(manifest, plan_sha, job):
+    spec = _scheduler_spec(manifest, plan_sha, job)
+    verification = job.get("release_verification")
+    if (
+        job.get("submission_state") != "release_verified"
+        or not isinstance(verification, dict)
+        or verification.get("verified") is not True
+        or verification.get("role") != spec["role"]
+        or str(verification.get("job_id") or "") != spec["job_id"]
+    ):
+        raise ValueError(
+            f"{job['cell_id']} has legacy/unverified scheduler release evidence"
+        )
+    observation = verification.get("observation")
+    state = _require_exact_observation(spec, observation)
+    if state == "PENDING":
+        reason = str(observation.get("reason") or "")
+        if (
+            not reason
+            or reason.startswith("JobHeld")
+            or reason in {"Dependency", "DependencyNeverSatisfied"}
+        ):
+            raise ValueError(
+                f"{job['cell_id']} lacks an observed release postcondition"
+            )
+    elif state not in MIP_ACTIVE_STATES | MIP_TERMINAL_STATES:
+        raise ValueError(
+            f"{job['cell_id']} has an invalid released state"
+        )
+
+
+def _require_array_receipt(manifest, plan_sha, jobs):
+    receipt = manifest.get("array_receipt_verification")
+    if (
+        not isinstance(receipt, dict)
+        or receipt.get("verified") is not True
+        or str(receipt.get("parent_job_id") or "") == ""
+        or int(receipt.get("task_count") or -1) != len(jobs)
+        or not isinstance(receipt.get("task_observations"), dict)
+    ):
+        raise ValueError(
+            "overnight array has legacy/unverified scheduler receipt evidence"
+        )
+    parent = str(receipt["parent_job_id"])
+    observations = receipt["task_observations"]
+    for index, job in enumerate(jobs):
+        if (
+            job.get("submission_state") != "receipt_verified_array"
+            or str(job.get("job_id") or "") != f"{parent}_{index}"
+            or job.get("slurm_array_task_id") != index
+        ):
+            raise ValueError(
+                f"{job['cell_id']} lacks an exact array receipt"
+            )
+        spec = _scheduler_spec(manifest, plan_sha, job, array=True)
+        _require_exact_observation(spec, observations.get(str(index)))
 
 
 def _validate_result(result: dict, job: dict, manifest: dict) -> None:
@@ -316,6 +421,8 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
     ):
         if manifest.get(key) != approved.get(key):
             raise ValueError(f"campaign {key} differs from approved plan")
+    if manifest.get("submitted") is not True:
+        raise ValueError("campaign was not fully scheduler-verified")
     strict_overnight = manifest.get("mode") == "k40_cs_overnight"
     if strict_overnight:
         from validate_k40_cs_overnight_plan import validate_plan
@@ -325,14 +432,18 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
                 manifest["checkout_identity"]["expected_commit"]
             ),
         )
-        if manifest.get("submitted") is not True:
-            raise ValueError("overnight campaign was not fully submitted")
         if manifest.get("submission_atomicity") != (
             "single_atomic_four_task_array_submission"
         ):
             raise ValueError(
                 "overnight campaign was not one atomic array submission"
             )
+        _require_array_receipt(
+            manifest, plan_sha, manifest.get("jobs") or []
+        )
+    else:
+        for scheduler_job in manifest.get("jobs") or []:
+            _require_release_evidence(manifest, plan_sha, scheduler_job)
     campaign = manifest["campaign"]
     checkpoint_rows = []
     final_rows = []
@@ -364,7 +475,7 @@ def _load_campaign(root: Path) -> tuple[dict, list[dict], list[dict]]:
         ):
             raise ValueError(f"{job['cell_id']} differs from approved plan")
         if strict_overnight and (
-            job.get("submission_state") != "submitted_array"
+            job.get("submission_state") != "receipt_verified_array"
             or re.fullmatch(
                 r"[0-9]+_[0-3]", str(job.get("job_id") or "")
             ) is None

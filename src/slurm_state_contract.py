@@ -351,10 +351,18 @@ def verify_held_receipt(
     )
 
 
-def _release_classification(observation, *, dependency_is_valid):
+def _release_classification(
+    observation, *, dependency_is_valid, terminal_success_required=True,
+):
     state = observation.get("state")
     if state in TERMINAL_STATES:
-        if state == "COMPLETED" and observation.get("exit_code") == "0:0":
+        if (
+            not terminal_success_required
+            or (
+                state == "COMPLETED"
+                and observation.get("exit_code") == "0:0"
+            )
+        ):
             return "released"
         return "terminal_failed"
     if observation.get("live") is not True:
@@ -379,6 +387,7 @@ def release_with_postcondition(
     spec,
     *,
     dependency_is_valid=False,
+    terminal_success_required=True,
     runner=None,
     resolver=None,
     sleeper=None,
@@ -397,7 +406,9 @@ def release_with_postcondition(
     except SlurmContractError:
         raise
     classification = _release_classification(
-        observation, dependency_is_valid=dependency_is_valid
+        observation,
+        dependency_is_valid=dependency_is_valid,
+        terminal_success_required=terminal_success_required,
     )
     if classification == "released":
         return {
@@ -456,7 +467,9 @@ def release_with_postcondition(
                 continue
             saw_exact_observation = True
             classification = _release_classification(
-                observation, dependency_is_valid=dependency_is_valid
+                observation,
+                dependency_is_valid=dependency_is_valid,
+                terminal_success_required=terminal_success_required,
             )
             if classification == "released":
                 return {
@@ -487,6 +500,271 @@ def release_with_postcondition(
 
     raise SlurmContractError(
         "release postcondition was not observed",
+        observation=observation,
+        diagnostics=diagnostics,
+    )
+
+
+def _array_task_ids(value):
+    raw = str(value or "").strip()
+    if raw.startswith("[") and raw.endswith("]"):
+        raw = raw[1:-1]
+    raw = raw.split("%", 1)[0]
+    if not raw:
+        raise SlurmContractError("array task expression is missing")
+    tasks = set()
+    for item in raw.split(","):
+        matched = re.fullmatch(r"([0-9]+)(?:-([0-9]+))?", item)
+        if matched is None:
+            raise SlurmContractError(
+                f"unsupported array task expression: {value!r}"
+            )
+        start = int(matched.group(1))
+        end = int(matched.group(2) or start)
+        if end < start:
+            raise SlurmContractError("descending array task expression")
+        tasks.update(range(start, end + 1))
+    return tasks
+
+
+def verify_array_receipt(
+    parent_id,
+    task_specs,
+    *,
+    runner=None,
+    sleeper=None,
+    scontrol="scontrol",
+    attempts=DEFAULT_VERIFY_ATTEMPTS,
+    delay_s=DEFAULT_VERIFY_DELAY_S,
+):
+    """Verify exact coverage and identity of a direct Slurm array receipt."""
+    parent_id = str(parent_id)
+    if not parent_id.isdigit() or not task_specs:
+        raise SlurmContractError("array receipt specification is invalid")
+    expected_tasks = set(task_specs)
+    if expected_tasks != set(range(len(task_specs))):
+        raise SlurmContractError("array task specification is not contiguous")
+    for task, spec in task_specs.items():
+        _require_spec(spec)
+        if str(spec["job_id"]) != f"{parent_id}_{task}":
+            raise SlurmContractError("array task job ID specification differs")
+    runner = subprocess.run if runner is None else runner
+    sleeper = time.sleep if sleeper is None else sleeper
+    diagnostics = []
+    for attempt in range(1, attempts + 1):
+        if attempt > 1:
+            sleeper(delay_s)
+        try:
+            shown = _bounded_query(
+                runner,
+                [str(scontrol), "show", "job", parent_id, "-o"],
+                DEFAULT_QUERY_TIMEOUT_S,
+            )
+        except SlurmContractError as exc:
+            diagnostics.append({
+                "attempt": attempt,
+                "error": str(exc),
+            })
+            continue
+        if shown.returncode != 0 or not shown.stdout.strip():
+            diagnostics.append({
+                "attempt": attempt,
+                "returncode": shown.returncode,
+                "stdout": (shown.stdout or "").strip(),
+                "stderr": (shown.stderr or "").strip(),
+            })
+            continue
+        observations = {}
+        for line_index, line in enumerate(shown.stdout.splitlines()):
+            if not line.strip():
+                continue
+            values = _parse_scontrol_record(line)
+            if str(values.get("ArrayJobId") or "") != parent_id:
+                raise SlurmContractError(
+                    "array controller parent ID mismatch"
+                )
+            tasks = _array_task_ids(values.get("ArrayTaskId"))
+            if not tasks <= expected_tasks:
+                raise SlurmContractError(
+                    "array controller contains an unexpected task"
+                )
+            sample = task_specs[min(tasks)]
+            common = {
+                "user": _user_from_user_id(values.get("UserId")),
+                "job_name": values.get("JobName", ""),
+                "partition": values.get("Partition", ""),
+                "comment": values.get("Comment", ""),
+            }
+            errors = [
+                {
+                    "field": field,
+                    "expected": str(sample[field]),
+                    "observed": str(common[field]),
+                }
+                for field in ("user", "job_name", "partition", "comment")
+                if str(common[field]) != str(sample[field])
+            ]
+            if errors:
+                raise SlurmContractError(
+                    "array receipt identity mismatch: "
+                    + json.dumps(errors, sort_keys=True)
+                )
+            state = normalized_state(values.get("JobState"))
+            if not state:
+                raise SlurmContractError("array receipt state is missing")
+            exit_code = values.get("ExitCode")
+            if (
+                state in TERMINAL_STATES
+                and re.fullmatch(
+                    r"[0-9]+:[0-9]+", str(exit_code or "")
+                ) is None
+            ):
+                raise SlurmContractError(
+                    "terminal array receipt lacks an exact exit code"
+                )
+            for task in tasks:
+                if task in observations:
+                    raise SlurmContractError(
+                        "array controller task coverage overlaps"
+                    )
+                observations[task] = {
+                    "job_id": f"{parent_id}_{task}",
+                    **common,
+                    "state": state,
+                    "reason": values.get("Reason", ""),
+                    "exit_code": exit_code,
+                    "source": "scontrol_array",
+                    "live": state not in TERMINAL_STATES,
+                    "record_index": line_index,
+                }
+        if set(observations) == expected_tasks:
+            return {
+                "verified": True,
+                "parent_job_id": parent_id,
+                "attempts": attempt,
+                "task_count": len(expected_tasks),
+                "task_observations": {
+                    str(task): observations[task]
+                    for task in sorted(observations)
+                },
+                "diagnostics": diagnostics,
+            }
+        diagnostics.append({
+            "attempt": attempt,
+            "error": "array task coverage incomplete",
+            "observed_tasks": sorted(observations),
+            "expected_tasks": sorted(expected_tasks),
+        })
+    raise SlurmContractError(
+        "direct array submission receipt could not be verified",
+        diagnostics=diagnostics,
+    )
+
+
+def cancel_with_postcondition(
+    spec,
+    *,
+    runner=None,
+    resolver=None,
+    sleeper=None,
+    command_attempts=DEFAULT_COMMAND_ATTEMPTS,
+    verify_attempts=DEFAULT_VERIFY_ATTEMPTS,
+    delay_s=DEFAULT_VERIFY_DELAY_S,
+    scancel="scancel",
+):
+    """Cancel one exact held job and prove its exact terminal cancellation."""
+    runner = subprocess.run if runner is None else runner
+    resolver = resolve_exact_job if resolver is None else resolver
+    sleeper = time.sleep if sleeper is None else sleeper
+    observation = resolver(spec, runner=runner)
+    if observation.get("state") == "CANCELLED":
+        return {
+            "verified": True,
+            "role": spec["role"],
+            "job_id": str(spec["job_id"]),
+            "command_attempts": 0,
+            "observation": observation,
+            "command_diagnostics": [],
+        }
+    if observation.get("state") in TERMINAL_STATES:
+        raise SlurmContractError(
+            "exact job terminated without verified cancellation",
+            observation=observation,
+        )
+    if (
+        observation.get("live") is not True
+        or observation.get("state") != "PENDING"
+        or observation.get("reason") != "JobHeldUser"
+    ):
+        raise SlurmContractError(
+            "cancellation precondition is not exact PENDING/JobHeldUser",
+            observation=observation,
+        )
+
+    diagnostics = []
+    for command_attempt in range(1, command_attempts + 1):
+        try:
+            requested = _bounded_query(
+                runner,
+                [str(scancel), str(spec["job_id"])],
+                DEFAULT_QUERY_TIMEOUT_S,
+            )
+            diagnostics.append({
+                "attempt": command_attempt,
+                "returncode": requested.returncode,
+                "stdout": (requested.stdout or "").strip(),
+                "stderr": (requested.stderr or "").strip(),
+            })
+        except SlurmContractError as exc:
+            diagnostics.append({
+                "attempt": command_attempt,
+                "command_error": str(exc),
+            })
+        saw_live = False
+        saw_observation = False
+        for verify_attempt in range(1, verify_attempts + 1):
+            sleeper(delay_s)
+            try:
+                observation = resolver(spec, runner=runner)
+            except SlurmContractError as exc:
+                if exc.observation is not None:
+                    raise
+                diagnostics.append({
+                    "attempt": command_attempt,
+                    "verification": verify_attempt,
+                    "query_error": str(exc),
+                    "query_diagnostics": exc.diagnostics,
+                })
+                continue
+            saw_observation = True
+            if observation.get("state") == "CANCELLED":
+                return {
+                    "verified": True,
+                    "role": spec["role"],
+                    "job_id": str(spec["job_id"]),
+                    "command_attempts": command_attempt,
+                    "observation": observation,
+                    "command_diagnostics": diagnostics,
+                }
+            if observation.get("state") in TERMINAL_STATES:
+                raise SlurmContractError(
+                    "exact job terminated without verified cancellation",
+                    observation=observation,
+                    diagnostics=diagnostics,
+                )
+            if observation.get("live") is not True:
+                raise SlurmContractError(
+                    "cancellation has no authoritative live postcondition",
+                    observation=observation,
+                    diagnostics=diagnostics,
+                )
+            saw_live = True
+        if not saw_observation:
+            break
+        if not saw_live:
+            break
+    raise SlurmContractError(
+        "cancellation postcondition was not observed",
         observation=observation,
         diagnostics=diagnostics,
     )
@@ -563,7 +841,9 @@ def verified_gate_evidence(manifest, expected_spec):
     release_observation = release.get("observation") or {}
     errors = _identity_errors(expected_spec, release_observation)
     if errors or _release_classification(
-        release_observation, dependency_is_valid=False
+        release_observation,
+        dependency_is_valid=False,
+        terminal_success_required=True,
     ) != "released":
         raise ValueError("tariff gate release observation is invalid")
     if (
