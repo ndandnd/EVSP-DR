@@ -1067,6 +1067,19 @@ class TariffResponseExperimentTests(unittest.TestCase):
                             "treatment": "GIRO-AUGMENTED",
                         },
                     ])
+            for tariff_index in range(11):
+                jobs.extend([
+                    {
+                        "job_key": f"seed-k40-{tariff_index}",
+                        "phase": "SEED",
+                        "treatment": "GIRO40-AUGMENTED",
+                    },
+                    {
+                        "job_key": f"cg-seed-k40-{tariff_index}",
+                        "phase": "CG",
+                        "treatment": "GIRO40-AUGMENTED",
+                    },
+                ])
             jobs.append({
                 "job_key": "fixed-full",
                 "phase": "FIXED_FULL",
@@ -1117,6 +1130,17 @@ class TariffResponseExperimentTests(unittest.TestCase):
                 by_key["k8"]["primary_grid_nonrepresentable_duty_count"], 7
             )
             self.assertEqual(
+                by_key["k40"]["primary_grid_nonrepresentable_duty_count"], 31
+            )
+            self.assertEqual(
+                preflight["primary_grid_nonrepresentable_duty_count"], 42
+            )
+            self.assertTrue(all(
+                blocker["nonrepresentability_reason"]
+                for blocker in preflight["blockers"]
+            ))
+            self.assertEqual(preflight["affected_job_count"], 89)
+            self.assertEqual(
                 len([
                     key for key in preflight["affected_job_keys"]
                     if key.startswith("seed-")
@@ -1125,19 +1149,37 @@ class TariffResponseExperimentTests(unittest.TestCase):
             )
             plan["fixed_duty_submission_preflight"] = preflight
             plan["submission_blocked"] = True
-            with (
-                patch.object(
-                    pilot,
-                    "checkout_identity",
-                    side_effect=AssertionError(
-                        "checkout must not run for blocked preflight"
+            for k40_preparation in (False, True):
+                with (
+                    patch.object(
+                        pilot,
+                        "checkout_identity",
+                        side_effect=AssertionError(
+                            "checkout must not run for blocked preflight"
+                        ),
                     ),
-                ),
-                self.assertRaisesRegex(ValueError, "preflight"),
-            ):
-                pilot._submit_locked(
-                    plan, "a" * 64, k40_preparation=False
-                )
+                    patch.object(
+                        pilot,
+                        "_reserve",
+                        side_effect=AssertionError(
+                            "reservation must not run for blocked preflight"
+                        ),
+                    ),
+                    patch.object(
+                        pilot.subprocess,
+                        "run",
+                        side_effect=AssertionError(
+                            "subprocess must not run for blocked preflight"
+                        ),
+                    ),
+                    self.assertRaisesRegex(ValueError, "preflight"),
+                ):
+                    pilot._submit_locked(
+                        plan,
+                        "a" * 64,
+                        k40_preparation=k40_preparation,
+                    )
+            self.assertFalse((root / "reservations").exists())
 
     def test_real_campaign_assembler_rejects_incomplete_submission(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -313,18 +313,13 @@ def _validate_scheduler_capture(path, plan, manifest, plan_sha, commit):
     return capture_path
 
 
-def audit_legacy_campaign(
+def _derive_legacy_payload(
     campaign_root,
-    sidecar_out,
     *,
     expected_commit,
     scheduler_capture=None,
 ):
     root = Path(campaign_root).expanduser().resolve()
-    sidecar = Path(sidecar_out).expanduser().resolve()
-    checksum = Path(str(sidecar) + ".sha256")
-    if sidecar.exists() or checksum.exists():
-        raise FileExistsError("legacy audit sidecar/checksum already exists")
     auditor_head = subprocess.run(
         ["git", "rev-parse", "HEAD"],
         cwd=REPO_ROOT,
@@ -446,6 +441,25 @@ def audit_legacy_campaign(
             sha256_file(capture_path) if capture_path is not None else None
         ),
     }
+    return payload
+
+
+def audit_legacy_campaign(
+    campaign_root,
+    sidecar_out,
+    *,
+    expected_commit,
+    scheduler_capture=None,
+):
+    sidecar = Path(sidecar_out).expanduser().resolve()
+    checksum = Path(str(sidecar) + ".sha256")
+    if sidecar.exists() or checksum.exists():
+        raise FileExistsError("legacy audit sidecar/checksum already exists")
+    payload = _derive_legacy_payload(
+        campaign_root,
+        expected_commit=expected_commit,
+        scheduler_capture=scheduler_capture,
+    )
     encoded = json.dumps(
         payload, indent=2, sort_keys=True, allow_nan=False
     ).encode() + b"\n"
@@ -491,7 +505,18 @@ def validate_legacy_sidecar(campaign_root, sidecar_path):
         != sha256_file(manifest_path)
     ):
         raise ValueError("legacy audit sidecar campaign binding mismatch")
-    for artifact in payload.get("artifact_inventory") or []:
+    inventory = payload.get("artifact_inventory")
+    selected_validation = payload.get("selected_route_validation")
+    completion_hashes = payload.get("worker_completion_sha256")
+    if (
+        not isinstance(inventory, list)
+        or not inventory
+        or not isinstance(selected_validation, list)
+        or not isinstance(completion_hashes, dict)
+        or len(completion_hashes) != payload.get("task_count")
+    ):
+        raise ValueError("legacy audit sidecar evidence set is incomplete")
+    for artifact in inventory:
         path = Path(str(artifact.get("path") or ""))
         if (
             path.is_symlink()
@@ -502,6 +527,27 @@ def validate_legacy_sidecar(campaign_root, sidecar_path):
             raise ValueError(
                 f"legacy sidecar artifact changed: {path}"
             )
+    scheduler_artifacts = [
+        Path(item["path"]) for item in inventory
+        if item.get("role") == "scheduler_capture"
+    ]
+    status = payload["legacy_evidence_status"]
+    if (
+        (status == "legacy_posthoc_audited"
+         and len(scheduler_artifacts) != 1)
+        or (status == "legacy_scheduler_unverified"
+            and scheduler_artifacts)
+    ):
+        raise ValueError("legacy scheduler evidence label is inconsistent")
+    rederived = _derive_legacy_payload(
+        root,
+        expected_commit=payload["source_commit"],
+        scheduler_capture=(
+            scheduler_artifacts[0] if scheduler_artifacts else None
+        ),
+    )
+    if _canonical(rederived) != _canonical(payload):
+        raise ValueError("legacy audit sidecar evidence derivation mismatch")
     return payload
 
 

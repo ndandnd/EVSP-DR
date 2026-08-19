@@ -1,5 +1,7 @@
 import hashlib
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -266,6 +268,32 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
                     campaign, sidecar, expected_commit=commit
                 )
 
+    def test_reviewed_bootstrap_allows_legacy_auditor_help(self):
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True
+        ).strip()
+        environment = dict(os.environ)
+        environment.pop("PYTHONPATH", None)
+        environment["PYTHONDONTWRITEBYTECODE"] = "1"
+        completed = subprocess.run(
+            [
+                sys.executable,
+                "-I",
+                "-B",
+                str(REPO_ROOT / "src/run_reviewed_python.py"),
+                commit,
+                "audit_legacy_scale_ladder_campaign.py",
+                "--help",
+            ],
+            cwd=REPO_ROOT,
+            env=environment,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertIn("--campaign-root", completed.stdout)
+
     def test_valid_scheduler_capture_upgrades_only_posthoc_label(self):
         with tempfile.TemporaryDirectory() as tmp:
             campaign, plan, manifest, plan_sha, commit = self._fixture(tmp)
@@ -299,6 +327,33 @@ class LegacyScaleLadderAuditTests(unittest.TestCase):
             sidecar.write_text(sidecar.read_text() + " ")
             with self.assertRaisesRegex(ValueError, "checksum"):
                 validate_legacy_sidecar(campaign, sidecar)
+
+            forged_root = Path(tmp) / "forged"
+            forged_root.mkdir()
+            forged_campaign, _fp, _fm, _fs, forged_commit = (
+                self._fixture(forged_root)
+            )
+            forged_sidecar = forged_root / "audit.json"
+            audit_legacy_campaign(
+                forged_campaign,
+                forged_sidecar,
+                expected_commit=forged_commit,
+            )
+            forged = json.loads(forged_sidecar.read_text())
+            forged["artifact_inventory"] = []
+            forged["selected_route_validation"] = []
+            encoded = (
+                json.dumps(forged, indent=2, sort_keys=True) + "\n"
+            )
+            forged_sidecar.write_text(encoded)
+            Path(str(forged_sidecar) + ".sha256").write_text(
+                f"{hashlib.sha256(encoded.encode()).hexdigest()}  "
+                f"{forged_sidecar.name}\n"
+            )
+            with self.assertRaisesRegex(ValueError, "incomplete"):
+                validate_legacy_sidecar(
+                    forged_campaign, forged_sidecar
+                )
 
             second = Path(tmp) / "mixed"
             second.mkdir()

@@ -275,7 +275,7 @@ Already implemented by the current ladder normalizer:
 `mip_run_summary.csv`, `artifact_inventory.csv`,
 `scale_progress_summary.csv`, and `known_route_membership_long.csv`.
 
-The following are future decision artifacts and do not exist yet:
+Genuinely new future files (not implemented):
 
 1. `ladder_cell_decision.csv`: one row per primary cell with classification,
    target, objective scope, route weight, artificial mass, certificate,
@@ -285,19 +285,25 @@ The following are future decision artifacts and do not exist yet:
 3. `known_membership_duty.csv`: duty ID, ordered-trip identity, continuous
    feasibility, every tested grid outcome, first feasible grid, and exact
    failed transition/reason.
-4. `cg_iteration_long.csv` and `cg_run_summary.csv`: existing normalized
-   schemas with primary/sensitivity role explicit.
-5. `mip_checkpoint_long.csv` and `mip_run_summary.csv`: RAW and KNOWN kept
-   separate, including pool/start identities and censoring.
-6. `pool_composition_summary.csv`: generated columns, unique trip sets,
+4. `pool_composition_summary.csv`: generated columns, unique trip sets,
    singleton/known/new counts, coverage, duplicate identities, and target
    finite-pool oracle result when run.
-7. `decision_cause_matrix.csv`: one row per cell and four Boolean/three-state
+5. `decision_cause_matrix.csv`: one row per cell and four Boolean/three-state
    cause columns described below.
-8. `artifact_inventory.csv`: hashes, sizes, roles, producer completion, and
-   missing/censored status.
-9. `conditional_rerun_plan.csv`: only approved cells, exact triggering
+6. `conditional_rerun_plan.csv`: only approved cells, exact triggering
    evidence, reuse/resume source, budget, and the question the rerun resolves.
+
+Planned schema extensions to files that already exist (not new files):
+
+- `cg_iteration_long.csv` and `cg_run_summary.csv`: add fleet-only
+  lexicographic phase/objective scope and phase-specific certificates while
+  retaining the existing primary/sensitivity role.
+- `mip_checkpoint_long.csv` and `mip_run_summary.csv`: retain separate RAW and
+  KNOWN rows and add target-feasibility/pool-composition oracle fields.
+- `artifact_inventory.csv`: add producer-completion, legacy-evidence-level,
+  and explicit missing/censored fields.
+- `known_route_membership_long.csv`: retain existing duty rows and add the
+  derived transition-oracle evidence; it is not renamed implicitly.
 
 ## Planned post-ladder figures (not yet implemented)
 
