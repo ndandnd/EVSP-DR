@@ -86,9 +86,14 @@ PROBE_PARTITIONS = ("default_partition", "scaglione")
 PROBE_TERMINAL_STATES = {
     "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT", "OUT_OF_MEMORY",
     "NODE_FAIL", "PREEMPTED", "BOOT_FAIL", "DEADLINE", "REVOKED",
-    "SPECIAL_EXIT", "ACCOUNTING_ERROR",
+    "SPECIAL_EXIT",
 }
-PROBE_RETRYABLE_STATES = PROBE_TERMINAL_STATES - {"ACCOUNTING_ERROR"}
+PROBE_RETRYABLE_STATES = PROBE_TERMINAL_STATES - {"COMPLETED"}
+PROBE_WAITING_RESOLUTIONS = {
+    "live", "awaiting_accounting", "controller_query_error",
+    "accounting_query_error", "awaiting_artifact", "observer_deadline",
+}
+PROBE_SLURM_QUERY_TIMEOUT_S = 10.0
 
 
 def canonical(payload):
@@ -766,12 +771,22 @@ def submit(plan, plan_sha):
     probe_results = _wait_for_probes(plan, plan_sha, probe_specs)
     manifest["probe_results"] = probe_results
     if not _probes_compatible(probe_results):
-        manifest["probe_state"] = "failed_gate_retained"
-        manifest["gate_state"] = "held_probe_failure"
+        if _probes_waiting(probe_results):
+            manifest["probe_state"] = "waiting_gate_retained"
+            manifest["gate_state"] = "held_probe_waiting"
+            message = (
+                "probe observer deadline reached; scientific arrays "
+                "remain held"
+            )
+        else:
+            manifest["probe_state"] = "failed_gate_retained"
+            manifest["gate_state"] = "held_probe_failure"
+            message = (
+                "infrastructure probe failed; scientific arrays "
+                "remain held"
+            )
         _replace_json(manifest_path, manifest)
-        raise RuntimeError(
-            "infrastructure probe failed; scientific arrays remain held"
-        )
+        raise RuntimeError(message)
     manifest["probe_state"] = "passed"
     manifest["submitted_arrays"] = arrays
     manifest["gate_state"] = "release_attempting"
@@ -816,6 +831,7 @@ def _probe_spec(plan_sha, partition, root, attempt):
         "comment": (
             f"SLADP:{plan_sha[:20]}:{probe_id}:{attempt}"
         ),
+        "job_name": f"LDP{probe_id[:2].upper()}{attempt}{plan_sha[:3]}",
     }
 
 
@@ -829,13 +845,14 @@ def _submit_probe(plan, plan_path, plan_sha, spec, logs):
     if (
         any(spec.get(key) != expected[key] for key in (
             "output", "probe_id", "partition", "attempt", "comment",
+            "job_name",
         ))
     ):
         raise ValueError("probe specification identity mismatch")
     return _sbatch(plan, [
         f"--partition={partition}", "--no-requeue",
         "--time=00:10:00", "--cpus-per-task=1", "--mem=4G",
-        f"--job-name=LDP{probe_id[:2].upper()}{spec['attempt']}{plan_sha[:3]}",
+        f"--job-name={spec['job_name']}",
         f"--comment={spec['comment']}",
         f"--output={logs}/probe_{probe_id}_a{spec['attempt']}_%j.out",
         f"--error={logs}/probe_{probe_id}_a{spec['attempt']}_%j.err",
@@ -848,103 +865,570 @@ def _submit_probe(plan, plan_path, plan_sha, spec, logs):
     ])
 
 
+def _normalized_slurm_state(value):
+    words = str(value or "").strip().split()
+    return words[0].split("+", 1)[0].upper() if words else ""
+
+
+def _probe_fingerprint_errors(spec, row):
+    errors = []
+    for field in ("job_name", "comment", "partition"):
+        expected = str(spec.get(field) or "")
+        observed = str(row.get(field) or "")
+        if not expected or observed != expected:
+            errors.append({
+                "field": field,
+                "expected": expected,
+                "observed": observed,
+            })
+    return errors
+
+
+def _parse_live_probe_rows(payload, wanted_ids):
+    rows = {}
+    for line in payload.splitlines():
+        fields = [field.strip() for field in line.split("|", 4)]
+        if len(fields) != 5 or fields[0] not in wanted_ids:
+            continue
+        rows.setdefault(fields[0], []).append({
+            "job_id": fields[0],
+            "job_name": fields[1],
+            "state": _normalized_slurm_state(fields[2]),
+            "partition": fields[3],
+            "comment": fields[4],
+        })
+    return rows
+
+
+def _parse_accounting_probe_rows(payload, wanted_ids):
+    rows = {}
+    for line in payload.splitlines():
+        fields = [field.strip() for field in line.split("|", 6)]
+        if len(fields) < 6 or fields[0] not in wanted_ids:
+            continue
+        rows.setdefault(fields[0], []).append({
+            "job_id": fields[0],
+            "job_name": fields[1],
+            "state": _normalized_slurm_state(fields[2]),
+            "partition": fields[3],
+            "comment": fields[4],
+            "exit_code": fields[5],
+        })
+    return rows
+
+
+def _run_probe_slurm_query(
+    runner, command, *, observer_deadline=None,
+):
+    timeout = PROBE_SLURM_QUERY_TIMEOUT_S
+    if observer_deadline is not None:
+        remaining = observer_deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(command, 0)
+        timeout = min(timeout, remaining)
+    return runner(
+        command,
+        text=True, capture_output=True, check=False, timeout=timeout,
+    )
+
+
+def _probe_job_states(
+    plan, probe_specs, *, runner=None, observer_deadline=None,
+):
+    """Resolve probe state with the live controller taking precedence.
+
+    ``sacct`` can lag, and on the Unicorn deployment it has returned a stale
+    terminal row while ``squeue`` still held the same job ID as PENDING.  A
+    live controller record is therefore authoritative.  Accounting is used
+    only after the exact job ID is absent from the live queue.
+    """
+    runner = subprocess.run if runner is None else runner
+    observations = {}
+    recorded = {
+        partition: str(spec.get("job_id") or "")
+        for partition, spec in probe_specs.items()
+    }
+    wanted_ids = {value for value in recorded.values() if value.isdigit()}
+    for partition, job_id in recorded.items():
+        if not job_id.isdigit():
+            observations[partition] = {
+                "state": "UNRECORDED", "source": "manifest",
+                "resolution": "identity_mismatch", "live": False,
+                "terminal": True,
+                "identity_errors": [{
+                    "field": "job_id", "expected": "positive integer",
+                    "observed": job_id,
+                }],
+            }
+
+    squeue_path = str((plan.get("squeue") or {}).get("path") or "")
+    if not squeue_path:
+        for partition in probe_specs:
+            observations.setdefault(partition, {
+                "state": "CONTROLLER_QUERY_ERROR",
+                "source": "squeue_missing", "resolution":
+                    "controller_query_error",
+                "live": False, "terminal": False,
+            })
+        return observations
+    user = str(
+        (plan.get("runtime_environment") or {}).get("USER") or ""
+    )
+    if not user:
+        for partition in probe_specs:
+            observations.setdefault(partition, {
+                "state": "CONTROLLER_QUERY_ERROR",
+                "source": "squeue_user_missing", "resolution":
+                    "controller_query_error",
+                "live": False, "terminal": False,
+            })
+        return observations
+    squeue_command = [
+            squeue_path, "-h", "-u", user,
+            "-o", "%i|%j|%T|%P|%k",
+    ]
+    try:
+        listed = _run_probe_slurm_query(
+            runner, squeue_command, observer_deadline=observer_deadline,
+        )
+    except subprocess.TimeoutExpired as exc:
+        for partition in probe_specs:
+            observations.setdefault(partition, {
+                "state": "CONTROLLER_QUERY_TIMEOUT",
+                "source": "squeue_timeout", "resolution":
+                    "controller_query_error",
+                "live": False, "terminal": False,
+                "query_error": (
+                    f"squeue timed out after {exc.timeout} seconds"
+                ),
+            })
+        return observations
+    if listed.returncode != 0:
+        for partition in probe_specs:
+            observations.setdefault(partition, {
+                "state": "CONTROLLER_QUERY_ERROR",
+                "source": "squeue_error", "resolution":
+                    "controller_query_error",
+                "live": False, "terminal": False,
+                "query_error": (listed.stderr or listed.stdout).strip(),
+            })
+        return observations
+    live_rows = _parse_live_probe_rows(listed.stdout, wanted_ids)
+
+    sacct_path = str((plan.get("sacct") or {}).get("path") or "")
+    accounting_rows = {}
+    accounting_error = None
+    if sacct_path and wanted_ids:
+        sacct_command = [
+                sacct_path, "-X", "-n", "-P", "-j",
+                ",".join(sorted(wanted_ids)),
+                "--format=JobIDRaw,JobName%64,State,Partition%64,"
+                "Comment%256,ExitCode",
+        ]
+        try:
+            completed = _run_probe_slurm_query(
+                runner, sacct_command,
+                observer_deadline=observer_deadline,
+            )
+        except subprocess.TimeoutExpired as exc:
+            accounting_error = (
+                f"sacct timed out after {exc.timeout} seconds"
+            )
+        else:
+            if completed.returncode == 0:
+                accounting_rows = _parse_accounting_probe_rows(
+                    completed.stdout, wanted_ids
+                )
+            else:
+                accounting_error = (
+                    completed.stderr or completed.stdout
+                ).strip()
+
+    for partition, spec in probe_specs.items():
+        if partition in observations:
+            continue
+        job_id = recorded[partition]
+        live = live_rows.get(job_id, [])
+        accounted = accounting_rows.get(job_id, [])
+        matching_accounted = [
+            row for row in accounted
+            if not _probe_fingerprint_errors(spec, row)
+        ]
+        stale_accounted = [
+            row for row in accounted
+            if _probe_fingerprint_errors(spec, row)
+        ]
+        accounting_evidence = {
+            "accounting_rows": accounted,
+            "stale_accounting_rows": stale_accounted,
+        }
+        if live:
+            if len(live) != 1:
+                observations[partition] = {
+                    "state": "CONTROLLER_IDENTITY_MISMATCH",
+                    "source": "squeue", "resolution":
+                        "identity_mismatch",
+                    "live": True, "terminal": True,
+                    "identity_errors": [{
+                        "field": "job_id", "expected": "one live row",
+                        "observed": len(live),
+                    }],
+                    **accounting_evidence,
+                }
+                continue
+            errors = _probe_fingerprint_errors(spec, live[0])
+            if errors:
+                observations[partition] = {
+                    "state": "CONTROLLER_IDENTITY_MISMATCH",
+                    "source": "squeue", "resolution":
+                        "identity_mismatch",
+                    "live": True, "terminal": True,
+                    "identity_errors": errors,
+                    "live_row": live[0],
+                    **accounting_evidence,
+                }
+                continue
+            accounting_state = (
+                matching_accounted[0]["state"]
+                if len(matching_accounted) == 1 else None
+            )
+            live_state = live[0]["state"]
+            observations[partition] = {
+                "state": live_state,
+                "source": "squeue", "resolution": "live",
+                "live": True, "terminal": False,
+                "live_row": live[0],
+                "accounting_state": accounting_state,
+                "state_disagreement": bool(
+                    accounting_state and accounting_state != live_state
+                ),
+                "stale_accounting_conflict": bool(
+                    stale_accounted
+                    or accounting_state in PROBE_TERMINAL_STATES
+                ),
+                **accounting_evidence,
+            }
+            continue
+        if accounting_error is not None or not sacct_path:
+            observations[partition] = {
+                "state": "ACCOUNTING_QUERY_ERROR",
+                "source": "sacct_error" if sacct_path else "sacct_missing",
+                "resolution": "accounting_query_error",
+                "live": False, "terminal": False,
+                "query_error": accounting_error,
+            }
+            continue
+        if len(matching_accounted) > 1:
+            observations[partition] = {
+                "state": "ACCOUNTING_IDENTITY_MISMATCH",
+                "source": "sacct", "resolution": "identity_mismatch",
+                "live": False, "terminal": True,
+                "identity_errors": [{
+                    "field": "job_id", "expected":
+                        "one matching accounting row",
+                    "observed": len(matching_accounted),
+                }],
+                **accounting_evidence,
+            }
+            continue
+        if not matching_accounted:
+            if accounted:
+                observations[partition] = {
+                    "state": "ACCOUNTING_IDENTITY_MISMATCH",
+                    "source": "sacct", "resolution":
+                        "identity_mismatch",
+                    "live": False, "terminal": True,
+                    "identity_errors": [
+                        error for row in accounted
+                        for error in _probe_fingerprint_errors(spec, row)
+                    ],
+                    **accounting_evidence,
+                }
+            else:
+                observations[partition] = {
+                    "state": "ACCOUNTING_PENDING",
+                    "source": "sacct", "resolution":
+                        "awaiting_accounting",
+                    "live": False, "terminal": False,
+                }
+            continue
+        row = matching_accounted[0]
+        state = row["state"]
+        if state not in PROBE_TERMINAL_STATES:
+            observations[partition] = {
+                "state": state or "ACCOUNTING_PENDING",
+                "source": "sacct", "resolution":
+                    "awaiting_accounting",
+                "live": False, "terminal": False,
+                "accounting_row": row,
+            }
+            continue
+        if state == "COMPLETED" and row["exit_code"] != "0:0":
+            observations[partition] = {
+                "state": "ACCOUNTING_OUTCOME_MISMATCH",
+                "source": "sacct", "resolution": "identity_mismatch",
+                "live": False, "terminal": True,
+                "identity_errors": [{
+                    "field": "exit_code", "expected": "0:0",
+                    "observed": row["exit_code"],
+                }],
+                "accounting_row": row,
+            }
+            continue
+        observations[partition] = {
+            "state": state,
+            "source": "sacct", "resolution": "accounting_terminal",
+            "live": False, "terminal": True,
+            "exit_code": row["exit_code"],
+            "accounting_row": row,
+        }
+    return observations
+
+
+def _probe_artifact_observation(plan, plan_sha, partition, spec):
+    path = Path(str(spec.get("output") or ""))
+    sidecar = Path(str(path) + ".sha256")
+    expected_path = (
+        Path(plan["campaign_root"]) / "probes"
+        / f"{partition}.attempt{spec.get('attempt')}.json"
+    ).resolve()
+    base = {
+        "output": str(path),
+        "artifact_sha256": None,
+        "differences": [],
+        "observed_node_metadata": None,
+        "path_bound": path.resolve() == expected_path,
+    }
+    if not path.is_file():
+        return {
+            **base,
+            "status": "invalid" if sidecar.exists() else "missing",
+            "artifact_error": (
+                "sidecar exists without artifact" if sidecar.exists()
+                else None
+            ),
+        }
+    if not sidecar.is_file():
+        return {**base, "status": "awaiting_sidecar"}
+    try:
+        payload = json.loads(path.read_text())
+        if not isinstance(payload, dict):
+            raise ValueError("probe artifact must be a JSON object")
+        digest = sha256_file(path)
+        sidecar_parts = sidecar.read_text().split()
+        if len(sidecar_parts) != 2:
+            raise ValueError("probe sidecar must contain digest and basename")
+        sidecar_digest, sidecar_name = sidecar_parts
+        identity_errors = []
+        planned_identity = str(
+            (plan.get("python_identity") or {}).get(
+                "portable_identity_sha256"
+            ) or ""
+        )
+        if re.fullmatch(r"[0-9a-f]{64}", planned_identity) is None:
+            identity_errors.append({
+                "field": "plan.python_identity.portable_identity_sha256",
+                "expected": "64 lowercase hexadecimal characters",
+                "observed": planned_identity,
+            })
+        expected = {
+            "schema": "evsp-dr-scale-ladder-environment-probe-v1",
+            "plan_sha256": plan_sha,
+            "probe_id": _probe_id(partition),
+            "probe_attempt": spec.get("attempt"),
+            "slurm_job_id": str(spec.get("job_id")),
+            "slurm_partition": partition,
+            "planned_portable_identity_sha256": planned_identity,
+            "observed_portable_identity_sha256": planned_identity,
+        }
+        for field, expected_value in expected.items():
+            observed = payload.get(field)
+            if field == "slurm_job_id":
+                observed = str(observed)
+            if observed != expected_value:
+                identity_errors.append({
+                    "field": field,
+                    "expected": expected_value,
+                    "observed": observed,
+                })
+        if path.resolve() != expected_path:
+            identity_errors.append({
+                "field": "output", "expected": str(expected_path),
+                "observed": str(path.resolve()),
+            })
+        if digest != sidecar_digest:
+            identity_errors.append({
+                "field": "artifact_sha256", "expected": digest,
+                "observed": sidecar_digest,
+            })
+        if sidecar_name != path.name:
+            identity_errors.append({
+                "field": "sidecar_basename", "expected": path.name,
+                "observed": sidecar_name,
+            })
+        differences = payload.get("differences")
+        if not isinstance(differences, list):
+            identity_errors.append({
+                "field": "differences", "expected": "list",
+                "observed": type(differences).__name__,
+            })
+            differences = []
+        if not isinstance(payload.get("compatible"), bool):
+            identity_errors.append({
+                "field": "compatible", "expected": "boolean",
+                "observed": payload.get("compatible"),
+            })
+        elif payload.get("compatible") is True and differences:
+            identity_errors.append({
+                "field": "compatible", "expected":
+                    "false when differences are present",
+                "observed": True,
+            })
+        elif payload.get("compatible") is False and not differences:
+            identity_errors.append({
+                "field": "differences", "expected":
+                    "nonempty when compatible is false",
+                "observed": differences,
+            })
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return {
+            **base, "status": "invalid",
+            "artifact_error": f"{type(exc).__name__}: {exc}",
+        }
+    return {
+        **base,
+        "status": "valid" if not identity_errors else "invalid",
+        "artifact_sha256": digest,
+        "artifact_compatible": (
+            not identity_errors and payload.get("compatible") is True
+        ),
+        "artifact_identity_errors": identity_errors,
+        "differences": differences,
+        "observed_node_metadata": payload.get("observed_node_metadata"),
+    }
+
+
 def _wait_for_probes(plan, plan_sha, probe_specs, timeout_s=900):
     deadline = time.monotonic() + timeout_s
-    sacct = plan["sacct"]["path"]
-    terminal = {}
-    while time.monotonic() < deadline:
-        terminal.clear()
-        for probe_id, spec in probe_specs.items():
-            if not str(spec.get("job_id") or "").isdigit():
-                terminal[probe_id] = "UNRECORDED"
-                continue
-            completed = subprocess.run(
-                [
-                    sacct, "-X", "-n", "-P", "-j", spec["job_id"],
-                    "--format=JobIDRaw,State",
-                ],
-                text=True, capture_output=True, check=False,
-            )
-            if completed.returncode != 0:
-                terminal[probe_id] = "ACCOUNTING_ERROR"
-                continue
-            states = [
-                fields[1].split()[0].split("+", 1)[0]
-                for line in completed.stdout.splitlines()
-                if len(fields := line.split("|")) >= 2
-                and fields[0] == str(spec["job_id"])
-            ]
-            terminal[probe_id] = states[0] if states else "PENDING"
-        if all(state in PROBE_TERMINAL_STATES
-               or state == "UNRECORDED" for state in terminal.values()):
+    observations = {}
+    artifacts = {}
+    observer_deadline_reached = False
+    first_poll = True
+    while first_poll or time.monotonic() < deadline:
+        first_poll = False
+        if time.monotonic() >= deadline:
+            observer_deadline_reached = True
             break
-        time.sleep(2)
+        observations = _probe_job_states(
+            plan, probe_specs, observer_deadline=deadline,
+        )
+        artifacts = {
+            partition: _probe_artifact_observation(
+                plan, plan_sha, partition, spec
+            )
+            for partition, spec in probe_specs.items()
+        }
+        if any(
+            artifact.get("status") == "invalid"
+            for artifact in artifacts.values()
+        ):
+            break
+        ready = True
+        for partition, observed in observations.items():
+            if observed.get("terminal") is not True:
+                ready = False
+                break
+            if (
+                observed.get("state") == "COMPLETED"
+                and artifacts[partition]["status"]
+                in {"missing", "awaiting_sidecar"}
+            ):
+                ready = False
+                break
+        if ready:
+            break
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            observer_deadline_reached = True
+            break
+        time.sleep(min(2, remaining))
+    else:
+        observer_deadline_reached = True
     results = {}
-    for probe_id, spec in probe_specs.items():
-        path = Path(spec["output"])
-        expected_path = (
-            Path(plan["campaign_root"]) / "probes"
-            / f"{probe_id}.attempt{spec.get('attempt')}.json"
-        ).resolve()
-        expected_probe_id = _probe_id(probe_id)
+    for partition, spec in probe_specs.items():
+        observation = observations.get(partition, {
+            "state": "OBSERVER_DEADLINE", "source": "wait_deadline",
+            "resolution": "observer_deadline", "live": False,
+            "terminal": False,
+        })
+        artifact = artifacts.get(partition) or _probe_artifact_observation(
+            plan, plan_sha, partition, spec
+        )
+        awaiting_artifact = bool(
+            observation.get("state") == "COMPLETED"
+            and artifact["status"] in {"missing", "awaiting_sidecar"}
+        )
+        waiting = bool(
+            observation.get("terminal") is not True or awaiting_artifact
+        )
+        if artifact.get("status") == "invalid":
+            resolution = "artifact_identity_mismatch"
+            waiting = False
+        elif (
+            observation.get("state") in PROBE_RETRYABLE_STATES
+            and artifact.get("status") == "valid"
+            and artifact.get("artifact_compatible") is False
+            and artifact.get("differences")
+        ):
+            resolution = "environment_mismatch"
+            waiting = False
+        elif awaiting_artifact:
+            resolution = "awaiting_artifact"
+        elif observation.get("state") in PROBE_RETRYABLE_STATES:
+            resolution = "scheduler_failure"
+        else:
+            resolution = observation.get("resolution")
         result = {
             "job_id": spec.get("job_id"),
-            "state": terminal.get(probe_id, "TIMEOUT_WAITING"),
-            "output": str(path),
-            "compatible": False,
-            "artifact_sha256": None,
-            "differences": [],
+            "state": observation["state"],
+            "state_source": observation.get("source"),
+            "state_resolution": resolution,
+            "live_at_observation": observation.get("live", False),
+            "observer_deadline_reached": bool(
+                observer_deadline_reached and waiting
+            ),
+            "wait_timed_out": bool(
+                observer_deadline_reached and waiting
+            ),
+            "compatible": bool(
+                observation.get("resolution") == "accounting_terminal"
+                and observation.get("state") == "COMPLETED"
+                and observation.get("exit_code") == "0:0"
+                and artifact.get("status") == "valid"
+                and artifact.get("artifact_compatible") is True
+            ),
+            "artifact_status": artifact.get("status"),
             "probe_id": spec.get("probe_id"),
             "partition": spec.get("partition"),
             "attempt": spec.get("attempt"),
             "comment": spec.get("comment"),
-            "path_bound": path.resolve() == expected_path,
+            "job_name": spec.get("job_name"),
+            **{
+                key: value for key, value in artifact.items()
+                if key != "artifact_compatible"
+                and value is not None
+            },
         }
-        if path.is_file():
-            try:
-                payload = json.loads(path.read_text())
-                if not isinstance(payload, dict):
-                    raise ValueError("probe artifact must be a JSON object")
-                digest = sha256_file(path)
-                sidecar = Path(str(path) + ".sha256")
-                sidecar_parts = (
-                    sidecar.read_text().split()
-                    if sidecar.is_file() else []
-                )
-                sidecar_digest = (
-                    sidecar_parts[0] if sidecar_parts else None
-                )
-            except (OSError, ValueError, json.JSONDecodeError) as exc:
-                result["artifact_error"] = (
-                    f"{type(exc).__name__}: {exc}"
-                )
-                results[probe_id] = result
-                continue
-            result.update({
-                "compatible": (
-                    payload.get("compatible") is True
-                    and payload.get("plan_sha256") == plan_sha
-                    and spec.get("probe_id") == expected_probe_id
-                    and spec.get("partition") == probe_id
-                    and payload.get("probe_id") == expected_probe_id
-                    and payload.get("probe_attempt")
-                    == spec.get("attempt")
-                    and str(payload.get("slurm_job_id"))
-                    == str(spec["job_id"])
-                    and payload.get("slurm_partition")
-                    == probe_id
-                    and path.name
-                    == f"{probe_id}.attempt{spec.get('attempt')}.json"
-                    and path.resolve() == expected_path
-                    and digest == sidecar_digest
-                    and result["state"] == "COMPLETED"
-                ),
-                "artifact_sha256": digest,
-                "differences": payload.get("differences") or [],
-                "observed_node_metadata":
-                    payload.get("observed_node_metadata"),
-            })
-        results[probe_id] = result
+        for field in (
+            "identity_errors", "query_error", "live_row",
+            "accounting_row", "accounting_rows",
+            "stale_accounting_rows", "accounting_state",
+            "state_disagreement", "stale_accounting_conflict",
+            "exit_code",
+        ):
+            if field in observation:
+                result[field] = observation[field]
+        results[partition] = result
     return results
 
 
@@ -977,6 +1461,23 @@ def _probes_compatible(results):
             result.get("compatible") is True
             for result in results.values()
         )
+    )
+
+
+def _probe_result_waiting(result):
+    return bool(
+        result.get("observer_deadline_reached") is True
+        or result.get("state_resolution") in PROBE_WAITING_RESOLUTIONS
+    )
+
+
+def _probes_waiting(results):
+    return bool(results) and any(
+        _probe_result_waiting(result) for result in results.values()
+    ) and all(
+        result.get("compatible") is True
+        or _probe_result_waiting(result)
+        for result in results.values()
     )
 
 

@@ -59,6 +59,38 @@ INSTANCE_MANIFEST = (
 
 
 class ScaleLadderCampaignTests(unittest.TestCase):
+    def _probe_specs(self, root, *, artifacts=False, plan_sha=None):
+        plan_sha = plan_sha or "p" * 64
+        specs = {}
+        for partition, job_id in (
+            ("default_partition", "101"),
+            ("scaglione", "102"),
+        ):
+            spec = ladder._probe_spec(plan_sha, partition, root, 1)
+            spec["job_id"] = job_id
+            specs[partition] = spec
+            if not artifacts:
+                continue
+            output = Path(spec["output"])
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(json.dumps({
+                "schema": "evsp-dr-scale-ladder-environment-probe-v1",
+                "compatible": True,
+                "plan_sha256": plan_sha,
+                "probe_id": spec["probe_id"],
+                "probe_attempt": 1,
+                "slurm_job_id": job_id,
+                "slurm_partition": partition,
+                "differences": [],
+                "observed_node_metadata": {},
+                "planned_portable_identity_sha256": "a" * 64,
+                "observed_portable_identity_sha256": "a" * 64,
+            }))
+            Path(str(output) + ".sha256").write_text(
+                f"{sha256_file(output)}  {output.name}\n"
+            )
+        return specs
+
     def _portable_identity(self):
         portable = {
             field: f"value-{field}" for field in PORTABLE_FIELDS
@@ -317,48 +349,34 @@ class ScaleLadderCampaignTests(unittest.TestCase):
     def test_probe_result_binds_job_partition_and_artifact_hash(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            probe_root = root / "probes"
-            probe_root.mkdir()
-            specs = {}
-            for partition, probe_id, job_id in (
-                ("default_partition", "default", "101"),
-                ("scaglione", "scaglione", "102"),
-            ):
-                output = probe_root / f"{partition}.attempt1.json"
-                payload = {
-                    "compatible": True,
-                    "plan_sha256": "p" * 64,
-                    "probe_id": probe_id,
-                    "probe_attempt": 1,
-                    "slurm_job_id": job_id,
-                    "slurm_partition": partition,
-                    "differences": [],
-                    "observed_node_metadata": {},
-                }
-                output.write_text(json.dumps(payload))
-                Path(str(output) + ".sha256").write_text(
-                    f"{sha256_file(output)}  {output.name}\n"
+            specs = self._probe_specs(root, artifacts=True)
+
+            def completed_jobs(command, **_kwargs):
+                if command[0] == "/approved/squeue":
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                rows = "".join(
+                    f"{spec['job_id']}|{spec['job_name']}|COMPLETED|"
+                    f"{partition}|{spec['comment']}|0:0\n"
+                    for partition, spec in specs.items()
                 )
-                specs[partition] = {
-                    "job_id": job_id,
-                    "output": str(output),
-                    "probe_id": probe_id,
-                    "partition": partition,
-                    "attempt": 1,
-                    "comment": f"SLADP:{'p' * 20}:{probe_id}:1",
-                }
+                return SimpleNamespace(
+                    returncode=0, stdout=rows, stderr=""
+                )
             with patch.object(
                 ladder.subprocess,
                 "run",
-                side_effect=lambda command, **_kwargs: SimpleNamespace(
-                    returncode=0,
-                    stdout=f"{command[command.index('-j')+1]}|COMPLETED|\n",
-                    stderr="",
-                ),
+                side_effect=completed_jobs,
             ):
                 results = ladder._wait_for_probes(
                     {
+                        "squeue": {"path": "/approved/squeue"},
                         "sacct": {"path": "/approved/sacct"},
+                        "runtime_environment": {"USER": "nc437"},
+                        "python_identity": {
+                            "portable_identity_sha256": "a" * 64,
+                        },
                         "campaign_root": str(root),
                     },
                     "p" * 64,
@@ -389,15 +407,16 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             with patch.object(
                 ladder.subprocess,
                 "run",
-                side_effect=lambda command, **_kwargs: SimpleNamespace(
-                    returncode=0,
-                    stdout=f"{command[command.index('-j')+1]}|COMPLETED|\n",
-                    stderr="",
-                ),
+                side_effect=completed_jobs,
             ):
                 results = ladder._wait_for_probes(
                     {
+                        "squeue": {"path": "/approved/squeue"},
                         "sacct": {"path": "/approved/sacct"},
+                        "runtime_environment": {"USER": "nc437"},
+                        "python_identity": {
+                            "portable_identity_sha256": "a" * 64,
+                        },
                         "campaign_root": str(root),
                     },
                     "p" * 64,
@@ -416,6 +435,398 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 },
             }
             self.assertFalse(ladder._probes_compatible(spoofed))
+
+    def test_live_squeue_precedes_stale_terminal_accounting_and_artifact(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root, artifacts=True)
+            live_rows = "".join(
+                f"{spec['job_id']}|{spec['job_name']}|"
+                f"{'PENDING' if partition == 'default_partition' else 'RUNNING'}|"
+                f"{partition}|{spec['comment']}\n"
+                for partition, spec in specs.items()
+            )
+            accounting_rows = "".join(
+                f"{spec['job_id']}|{spec['job_name']}|"
+                f"{'COMPLETED' if partition == 'default_partition' else 'TIMEOUT'}|"
+                f"{partition}|{spec['comment']}|"
+                f"{'0:0' if partition == 'default_partition' else '1:0'}\n"
+                for partition, spec in specs.items()
+            )
+
+            def contradictory(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout=(
+                        live_rows if command[0] == "/approved/squeue"
+                        else accounting_rows
+                    ),
+                    stderr="",
+                )
+
+            plan = {
+                "squeue": {"path": "/approved/squeue"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+                "python_identity": {
+                    "portable_identity_sha256": "a" * 64,
+                },
+                "campaign_root": str(root),
+            }
+            observations = ladder._probe_job_states(
+                plan, specs, runner=contradictory
+            )
+            self.assertEqual(
+                observations["default_partition"]["state"], "PENDING"
+            )
+            self.assertEqual(
+                observations["scaglione"]["state"], "RUNNING"
+            )
+            for observed in observations.values():
+                self.assertEqual(observed["source"], "squeue")
+                self.assertEqual(observed["resolution"], "live")
+                self.assertTrue(observed["stale_accounting_conflict"])
+                self.assertFalse(observed["terminal"])
+            with patch.object(
+                ladder.subprocess, "run", side_effect=contradictory
+            ):
+                results = ladder._wait_for_probes(
+                    plan, "p" * 64, specs, timeout_s=0.01
+                )
+            self.assertFalse(ladder._probes_compatible(results))
+            self.assertTrue(ladder._probes_waiting(results))
+            for result in results.values():
+                self.assertFalse(result["compatible"])
+                self.assertTrue(result["observer_deadline_reached"])
+                self.assertEqual(result["state_source"], "squeue")
+                self.assertIsNotNone(result["artifact_sha256"])
+                self.assertNotEqual(result["state"], "TIMEOUT")
+
+    def test_live_probe_fingerprint_mismatch_is_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root)
+            default = specs["default_partition"]
+            rows = (
+                f"{default['job_id']}|wrong-name|PENDING|"
+                f"default_partition|{default['comment']}\n"
+            )
+
+            def runner(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout=rows if command[0] == "/approved/squeue" else "",
+                    stderr="",
+                )
+
+            observed = ladder._probe_job_states({
+                "squeue": {"path": "/approved/squeue"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+            }, specs, runner=runner)
+            failure = observed["default_partition"]
+            self.assertEqual(failure["resolution"], "identity_mismatch")
+            self.assertTrue(failure["terminal"])
+            self.assertIn(
+                "job_name",
+                {error["field"] for error in failure["identity_errors"]},
+            )
+
+    def test_accounting_requires_fingerprint_and_zero_completed_exit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root)
+            default = specs["default_partition"]
+            scaglione = specs["scaglione"]
+            accounting = (
+                f"{default['job_id']}|{default['job_name']}|COMPLETED|"
+                f"default_partition|wrong-comment|0:0\n"
+                f"{scaglione['job_id']}|{scaglione['job_name']}|COMPLETED|"
+                f"scaglione|{scaglione['comment']}|1:0\n"
+            )
+
+            def runner(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout="" if command[0] == "/approved/squeue"
+                    else accounting,
+                    stderr="",
+                )
+
+            observed = ladder._probe_job_states({
+                "squeue": {"path": "/approved/squeue"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+            }, specs, runner=runner)
+            self.assertEqual(
+                observed["default_partition"]["state"],
+                "ACCOUNTING_IDENTITY_MISMATCH",
+            )
+            self.assertEqual(
+                observed["scaglione"]["state"],
+                "ACCOUNTING_OUTCOME_MISMATCH",
+            )
+            self.assertTrue(all(
+                value["resolution"] == "identity_mismatch"
+                for value in observed.values()
+            ))
+
+    def test_squeue_query_error_never_falls_through_to_sacct(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            specs = self._probe_specs(Path(tmp))
+            calls = []
+
+            def runner(command, **_kwargs):
+                calls.append(command)
+                if command[0] == "/approved/squeue":
+                    return SimpleNamespace(
+                        returncode=1, stdout="", stderr="controller down"
+                    )
+                raise AssertionError("sacct must not be trusted without squeue")
+
+            observed = ladder._probe_job_states({
+                "squeue": {"path": "/approved/squeue"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+            }, specs, runner=runner)
+            self.assertEqual(len(calls), 1)
+            self.assertNotIn("-j", calls[0])
+            self.assertEqual(
+                calls[0][calls[0].index("-u") + 1], "nc437"
+            )
+            for value in observed.values():
+                self.assertEqual(
+                    value["resolution"], "controller_query_error"
+                )
+                self.assertFalse(value["terminal"])
+
+    def test_probe_scheduler_queries_are_bounded_and_timeout_is_waiting(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            specs = self._probe_specs(Path(tmp))
+            timeouts = []
+
+            def controller_timeout(command, **kwargs):
+                timeouts.append(kwargs.get("timeout"))
+                raise subprocess.TimeoutExpired(
+                    command, kwargs.get("timeout")
+                )
+
+            plan = {
+                "squeue": {"path": "/approved/squeue"},
+                "sacct": {"path": "/approved/sacct"},
+                "runtime_environment": {"USER": "nc437"},
+            }
+            observed = ladder._probe_job_states(
+                plan, specs, runner=controller_timeout
+            )
+            self.assertEqual(len(timeouts), 1)
+            self.assertGreater(timeouts[0], 0)
+            self.assertLessEqual(
+                timeouts[0], ladder.PROBE_SLURM_QUERY_TIMEOUT_S
+            )
+            for value in observed.values():
+                self.assertEqual(
+                    value["resolution"], "controller_query_error"
+                )
+                self.assertEqual(value["state"], "CONTROLLER_QUERY_TIMEOUT")
+                self.assertFalse(value["terminal"])
+
+            def accounting_timeout(command, **kwargs):
+                timeouts.append(kwargs.get("timeout"))
+                if command[0] == "/approved/squeue":
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                raise subprocess.TimeoutExpired(
+                    command, kwargs.get("timeout")
+                )
+
+            observed = ladder._probe_job_states(
+                plan, specs, runner=accounting_timeout
+            )
+            self.assertTrue(all(timeout is not None for timeout in timeouts))
+            for value in observed.values():
+                self.assertEqual(
+                    value["resolution"], "accounting_query_error"
+                )
+                self.assertFalse(value["terminal"])
+                self.assertIn("timed out", value["query_error"])
+
+    def test_observer_deadline_is_waiting_not_scheduler_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root)
+            live_rows = "".join(
+                f"{spec['job_id']}|{spec['job_name']}|PENDING|"
+                f"{partition}|{spec['comment']}\n"
+                for partition, spec in specs.items()
+            )
+
+            def pending(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout=live_rows
+                    if command[0] == "/approved/squeue" else "",
+                    stderr="",
+                )
+
+            with patch.object(
+                ladder.subprocess, "run", side_effect=pending
+            ):
+                results = ladder._wait_for_probes({
+                    "squeue": {"path": "/approved/squeue"},
+                    "sacct": {"path": "/approved/sacct"},
+                    "runtime_environment": {"USER": "nc437"},
+                    "campaign_root": str(root),
+                }, "p" * 64, specs, timeout_s=0.01)
+            self.assertTrue(ladder._probes_waiting(results))
+            for result in results.values():
+                self.assertEqual(result["state"], "PENDING")
+                self.assertEqual(result["state_resolution"], "live")
+                self.assertTrue(result["observer_deadline_reached"])
+                self.assertNotIn(result["state"], ladder.PROBE_TERMINAL_STATES)
+
+    def test_expired_observer_deadline_runs_no_scheduler_query(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root)
+            with patch.object(ladder.subprocess, "run") as runner:
+                results = ladder._wait_for_probes({
+                    "squeue": {"path": "/approved/squeue"},
+                    "sacct": {"path": "/approved/sacct"},
+                    "runtime_environment": {"USER": "nc437"},
+                    "campaign_root": str(root),
+                }, "p" * 64, specs, timeout_s=0)
+            runner.assert_not_called()
+            self.assertTrue(ladder._probes_waiting(results))
+            for result in results.values():
+                self.assertEqual(result["state"], "OBSERVER_DEADLINE")
+                self.assertEqual(
+                    result["state_resolution"], "observer_deadline"
+                )
+                self.assertTrue(result["observer_deadline_reached"])
+
+    def test_completed_probe_awaits_atomic_artifact_sidecar(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root, artifacts=True)
+            Path(
+                specs["scaglione"]["output"] + ".sha256"
+            ).unlink()
+            accounting = "".join(
+                f"{spec['job_id']}|{spec['job_name']}|COMPLETED|"
+                f"{partition}|{spec['comment']}|0:0\n"
+                for partition, spec in specs.items()
+            )
+
+            def completed(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout="" if command[0] == "/approved/squeue"
+                    else accounting,
+                    stderr="",
+                )
+
+            with patch.object(
+                ladder.subprocess, "run", side_effect=completed
+            ):
+                results = ladder._wait_for_probes({
+                    "squeue": {"path": "/approved/squeue"},
+                    "sacct": {"path": "/approved/sacct"},
+                    "runtime_environment": {"USER": "nc437"},
+                    "python_identity": {
+                        "portable_identity_sha256": "a" * 64,
+                    },
+                    "campaign_root": str(root),
+                }, "p" * 64, specs, timeout_s=0.01)
+            self.assertTrue(results["default_partition"]["compatible"])
+            waiting = results["scaglione"]
+            self.assertEqual(waiting["artifact_status"], "awaiting_sidecar")
+            self.assertEqual(
+                waiting["state_resolution"], "awaiting_artifact"
+            )
+            self.assertTrue(waiting["observer_deadline_reached"])
+            self.assertTrue(ladder._probes_waiting(results))
+
+    def test_artifact_portable_identity_mismatch_is_hard_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root, artifacts=True)
+            output = Path(specs["default_partition"]["output"])
+            payload = json.loads(output.read_text())
+            payload["observed_portable_identity_sha256"] = "x" * 64
+            output.write_text(json.dumps(payload))
+            Path(str(output) + ".sha256").write_text(
+                f"{sha256_file(output)}  {output.name}\n"
+            )
+            artifact = ladder._probe_artifact_observation(
+                {
+                    "campaign_root": str(root),
+                    "python_identity": {
+                        "portable_identity_sha256": "a" * 64,
+                    },
+                },
+                "p" * 64,
+                "default_partition",
+                specs["default_partition"],
+            )
+            self.assertEqual(artifact["status"], "invalid")
+            self.assertIn(
+                "observed_portable_identity_sha256",
+                {
+                    error["field"]
+                    for error in artifact["artifact_identity_errors"]
+                },
+            )
+
+    def test_terminal_environment_mismatch_is_not_retryable_infrastructure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            specs = self._probe_specs(root, artifacts=True)
+            output = Path(specs["scaglione"]["output"])
+            payload = json.loads(output.read_text())
+            payload["compatible"] = False
+            payload["differences"] = [{
+                "field": "portable.numpy", "reason": "value_mismatch",
+            }]
+            output.write_text(json.dumps(payload))
+            Path(str(output) + ".sha256").write_text(
+                f"{sha256_file(output)}  {output.name}\n"
+            )
+            accounting = "".join(
+                f"{spec['job_id']}|{spec['job_name']}|"
+                f"{'FAILED' if partition == 'scaglione' else 'COMPLETED'}|"
+                f"{partition}|{spec['comment']}|"
+                f"{'3:0' if partition == 'scaglione' else '0:0'}\n"
+                for partition, spec in specs.items()
+            )
+
+            def completed(command, **_kwargs):
+                return SimpleNamespace(
+                    returncode=0,
+                    stdout="" if command[0] == "/approved/squeue"
+                    else accounting,
+                    stderr="",
+                )
+
+            with patch.object(
+                ladder.subprocess, "run", side_effect=completed
+            ):
+                results = ladder._wait_for_probes({
+                    "squeue": {"path": "/approved/squeue"},
+                    "sacct": {"path": "/approved/sacct"},
+                    "runtime_environment": {"USER": "nc437"},
+                    "python_identity": {
+                        "portable_identity_sha256": "a" * 64,
+                    },
+                    "campaign_root": str(root),
+                }, "p" * 64, specs, timeout_s=0.01)
+            mismatch = results["scaglione"]
+            self.assertEqual(
+                mismatch["state_resolution"], "environment_mismatch"
+            )
+            self.assertFalse(mismatch["compatible"])
+            self.assertFalse(ladder._probe_result_waiting(mismatch))
 
     def test_probe_attempts_have_distinct_bound_outputs_and_comments(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -496,11 +907,15 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                     stdout=f"7654|{spec['comment']}\n",
                     stderr="",
                 ),
-            ):
+            ) as queried:
                 recovered = _discover_probe_job(
                     plan, "c" * 64, "default_partition", spec
                 )
             self.assertEqual(recovered, "7654")
+            self.assertEqual(
+                queried.call_args.kwargs["timeout"],
+                10.0,
+            )
 
     def test_real_environment_mismatch_is_not_retryable(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -588,6 +1003,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 }
             plan = {
                 "campaign_root": str(root),
+                "runtime_environment": {"USER": "nc437"},
                 **tools,
             }
             plan_raw = json.dumps(
@@ -652,19 +1068,12 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             def fake_run(command, **_kwargs):
                 if str(command[0]) == tools["squeue"]["path"]:
                     return SimpleNamespace(
-                        returncode=0, stdout="", stderr=""
-                    )
-                if str(command[0]) == tools["sacct"]["path"]:
-                    return SimpleNamespace(
-                        returncode=0, stdout="100|PENDING\n", stderr=""
-                    )
-                if (
-                    str(command[0]) == tools["scontrol"]["path"]
-                    and command[1:3] == ["show", "job"]
-                ):
-                    return SimpleNamespace(
                         returncode=0,
-                        stdout="JobState=PENDING Reason=JobHeldUser",
+                        stdout=(
+                            f"100|LDG{plan_sha[:5]}|PENDING|"
+                            "default_partition|JobHeldUser|"
+                            f"SLADG:{plan_sha[:20]}\n"
+                        ),
                         stderr="",
                     )
                 raise AssertionError(f"unexpected command: {command}")
@@ -701,6 +1110,103 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 "PREEMPTED",
             )
             submitted.assert_called_once()
+
+    def test_reconcile_live_held_gate_precedes_stale_completed_accounting(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "logs").mkdir()
+            tools = {}
+            for name in ("sacct", "squeue", "scontrol"):
+                path = root / name
+                path.write_text(name)
+                tools[name] = {
+                    "available": True,
+                    "path": str(path),
+                    "sha256": sha256_file(path),
+                }
+            plan = {
+                "campaign_root": str(root),
+                "runtime_environment": {"USER": "nc437"},
+                **tools,
+            }
+            plan_raw = json.dumps(
+                plan, sort_keys=True, separators=(",", ":")
+            ).encode()
+            plan_sha = hashlib.sha256(plan_raw).hexdigest()
+            (root / "approved-plan.json").write_bytes(plan_raw)
+            specs = self._probe_specs(root, plan_sha=plan_sha)
+            groups = (
+                "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+                "MIP_RAW", "MIP_KNOWN",
+            )
+            (root / "campaign.json").write_text(json.dumps({
+                "approval_sha256": plan_sha,
+                "gate_state": "release_attempting",
+                "gate_job_id": "100",
+                "submitted_arrays": {
+                    group: str(500 + index)
+                    for index, group in enumerate(groups)
+                },
+                "infrastructure_probes": specs,
+            }))
+            sacct_calls = []
+            release_calls = []
+
+            def fake_run(command, **_kwargs):
+                executable = str(command[0])
+                if executable == tools["squeue"]["path"]:
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"100|LDG{plan_sha[:5]}|PENDING|"
+                            "default_partition|JobHeldUser|"
+                            f"SLADG:{plan_sha[:20]}\n"
+                        ),
+                        stderr="",
+                    )
+                if executable == tools["sacct"]["path"]:
+                    sacct_calls.append(command)
+                    return SimpleNamespace(
+                        returncode=0,
+                        stdout=(
+                            f"100|LDG{plan_sha[:5]}|COMPLETED|"
+                            "default_partition|"
+                            f"SLADG:{plan_sha[:20]}|0:0\n"
+                        ),
+                        stderr="",
+                    )
+                if (
+                    executable == tools["scontrol"]["path"]
+                    and command[1:] == ["release", "100"]
+                ):
+                    release_calls.append((command, _kwargs))
+                    return SimpleNamespace(
+                        returncode=0, stdout="", stderr=""
+                    )
+                raise AssertionError(f"unexpected command: {command}")
+
+            with patch(
+                "reconcile_scale_ladder_gate.subprocess.run",
+                side_effect=fake_run,
+            ), patch(
+                "reconcile_scale_ladder_gate._wait_for_probes",
+                return_value={"probe": "passed"},
+            ), patch(
+                "reconcile_scale_ladder_gate._probes_compatible",
+                return_value=True,
+            ):
+                reconciled = reconcile_gate(
+                    root, plan_sha, release_held_gate=True
+                )
+            self.assertEqual(sacct_calls, [])
+            self.assertEqual(len(release_calls), 1)
+            self.assertEqual(
+                release_calls[0][1]["timeout"], 10.0
+            )
+            self.assertEqual(
+                reconciled["gate_state"], "release_retry_requested"
+            )
+            self.assertIsNot(reconciled.get("submitted"), True)
 
     def test_atomic_summary_publication_and_no_clobber(self):
         with tempfile.TemporaryDirectory() as tmp:

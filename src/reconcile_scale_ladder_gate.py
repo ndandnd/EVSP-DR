@@ -13,6 +13,7 @@ from launch_scale_ladder import (
     PROBE_PARTITIONS,
     PROBE_RETRYABLE_STATES,
     _probes_compatible,
+    _probes_waiting,
     _probe_spec,
     _replace_json,
     _sbatch,
@@ -21,28 +22,165 @@ from launch_scale_ladder import (
     _wait_for_probes,
 )
 
+SLURM_QUERY_TIMEOUT_S = 10.0
 
-def _require_gate_held(plan, gate):
-    scontrol = plan.get("scontrol") or {}
-    path = Path(str(scontrol.get("path") or ""))
+
+def _approved_tool_path(plan, name):
+    spec = plan.get(name) or {}
+    path = Path(str(spec.get("path") or ""))
     if (
-        scontrol.get("available") is not True
+        spec.get("available") is not True
         or not path.is_file()
         or hashlib.sha256(path.read_bytes()).hexdigest()
-        != scontrol.get("sha256")
+        != spec.get("sha256")
     ):
-        raise ValueError("approved scontrol unavailable/changed")
-    shown = subprocess.run(
-        [str(path), "show", "job", str(gate), "-o"],
-        text=True, capture_output=True, check=False,
+        raise ValueError(f"approved {name} unavailable/changed")
+    return path
+
+
+def _normalized_state(value):
+    words = str(value or "").strip().split()
+    return words[0].split("+", 1)[0].upper() if words else ""
+
+
+def _gate_fingerprint(expected_plan_sha, gate):
+    return {
+        "job_id": str(gate),
+        "job_name": f"LDG{expected_plan_sha[:5]}",
+        "partition": "default_partition",
+        "comment": f"SLADG:{expected_plan_sha[:20]}",
+    }
+
+
+def _gate_fingerprint_errors(expected, row):
+    return [
+        {
+            "field": field,
+            "expected": expected[field],
+            "observed": str(row.get(field) or ""),
+        }
+        for field in ("job_id", "job_name", "partition", "comment")
+        if str(row.get(field) or "") != expected[field]
+    ]
+
+
+def _bounded_query(runner, command):
+    try:
+        return runner(
+            command, text=True, capture_output=True, check=False,
+            timeout=SLURM_QUERY_TIMEOUT_S,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError(
+            f"Slurm query timed out after {exc.timeout} seconds"
+        ) from exc
+
+
+def _resolve_gate_state(
+    plan, gate, expected_plan_sha, *, runner=None,
+):
+    """Resolve the exact gate, preferring live controller state to sacct."""
+    runner = subprocess.run if runner is None else runner
+    gate = str(gate)
+    if not gate.isdigit():
+        raise ValueError("gate job ID is invalid")
+    expected = _gate_fingerprint(expected_plan_sha, gate)
+    user = str((plan.get("runtime_environment") or {}).get("USER") or "")
+    if not user:
+        raise ValueError("approved runtime user is missing")
+
+    squeue_path = _approved_tool_path(plan, "squeue")
+    listed = _bounded_query(runner, [
+        str(squeue_path), "-h", "-u", user,
+        "-o", "%i|%j|%T|%P|%R|%k",
+    ])
+    if listed.returncode != 0:
+        raise RuntimeError("cannot query live gate state with squeue")
+    live_rows = []
+    for line in listed.stdout.splitlines():
+        fields = [field.strip() for field in line.split("|", 5)]
+        if len(fields) == 6 and fields[0] == gate:
+            live_rows.append({
+                "job_id": fields[0], "job_name": fields[1],
+                "state": _normalized_state(fields[2]),
+                "partition": fields[3], "reason": fields[4],
+                "comment": fields[5],
+            })
+    if len(live_rows) > 1:
+        raise ValueError("multiple live rows match the gate job ID")
+    if live_rows:
+        errors = _gate_fingerprint_errors(expected, live_rows[0])
+        if errors:
+            raise ValueError(f"live gate fingerprint mismatch: {errors}")
+        return {**live_rows[0], "source": "squeue", "live": True}
+
+    scontrol_path = _approved_tool_path(plan, "scontrol")
+    shown = _bounded_query(
+        runner, [str(scontrol_path), "show", "job", gate, "-o"]
     )
+    if shown.returncode == 0 and shown.stdout.strip():
+        values = {}
+        for token in shown.stdout.split():
+            if "=" not in token:
+                continue
+            key, value = token.split("=", 1)
+            values[key] = value
+        controller_row = {
+            "job_id": values.get("JobId", ""),
+            "job_name": values.get("JobName", ""),
+            "state": _normalized_state(values.get("JobState")),
+            "partition": values.get("Partition", ""),
+            "reason": values.get("Reason", ""),
+            "comment": values.get("Comment", ""),
+            "exit_code": values.get("ExitCode"),
+        }
+        errors = _gate_fingerprint_errors(expected, controller_row)
+        if errors:
+            raise ValueError(
+                f"controller gate fingerprint mismatch: {errors}"
+            )
+        return {**controller_row, "source": "scontrol", "live": True}
+    absent_message = (shown.stderr or shown.stdout).lower()
+    if shown.returncode != 0 and "invalid job id" not in absent_message:
+        raise RuntimeError("cannot prove the gate absent from scontrol")
+
+    sacct_path = _approved_tool_path(plan, "sacct")
+    completed = _bounded_query(runner, [
+        str(sacct_path), "-X", "-n", "-P", "-j", gate,
+        "--format=JobIDRaw,JobName%64,State,Partition%64,"
+        "Comment%256,ExitCode",
+    ])
+    if completed.returncode != 0:
+        raise RuntimeError("cannot query gate accounting")
+    rows = []
+    for line in completed.stdout.splitlines():
+        fields = [field.strip() for field in line.split("|", 5)]
+        if len(fields) == 6 and fields[0] == gate:
+            rows.append({
+                "job_id": fields[0], "job_name": fields[1],
+                "state": _normalized_state(fields[2]),
+                "partition": fields[3], "comment": fields[4],
+                "exit_code": fields[5],
+            })
+    if len(rows) != 1:
+        raise ValueError("gate accounting has no unique exact job row")
+    errors = _gate_fingerprint_errors(expected, rows[0])
+    if errors:
+        raise ValueError(f"accounting gate fingerprint mismatch: {errors}")
+    if rows[0]["state"] == "COMPLETED" and rows[0]["exit_code"] != "0:0":
+        raise ValueError("completed gate accounting has nonzero exit code")
+    return {**rows[0], "source": "sacct", "live": False}
+
+
+def _require_gate_held(plan, gate, expected_plan_sha):
+    observation = _resolve_gate_state(plan, gate, expected_plan_sha)
     if (
-        shown.returncode != 0
-        or "JobState=PENDING" not in shown.stdout
-        or "Reason=JobHeldUser" not in shown.stdout
+        observation.get("live") is not True
+        or observation.get("state") != "PENDING"
+        or observation.get("reason") != "JobHeldUser"
     ):
         raise ValueError("gate is not proven held by the user")
-    return path
+    return _approved_tool_path(plan, "scontrol")
 
 
 def _discover_probe_job(plan, expected_plan_sha, partition, spec):
@@ -72,9 +210,9 @@ def _discover_probe_job(plan, expected_plan_sha, partition, spec):
         != squeue.get("sha256")
     ):
         raise ValueError("approved squeue unavailable/changed")
-    listed = subprocess.run(
+    listed = _bounded_query(
+        subprocess.run,
         [str(squeue_path), "-h", "-o", "%i|%k"],
-        text=True, capture_output=True, check=False,
     )
     if listed.returncode != 0:
         raise RuntimeError("cannot query squeue for unrecorded probe")
@@ -118,19 +256,10 @@ def reconcile(
         raise ValueError("approved plan hash mismatch")
     manifest_path = root / "campaign.json"
     plan = json.loads(plan_raw)
-    sacct = plan.get("sacct") or {}
-    sacct_path = Path(str(sacct.get("path") or ""))
-    if (
-        sacct.get("available") is not True
-        or not sacct_path.is_file()
-        or hashlib.sha256(sacct_path.read_bytes()).hexdigest()
-        != sacct.get("sha256")
-    ):
-        raise ValueError("approved sacct executable unavailable/changed")
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("gate_state") in {
         "creating", "held", "held_after_partial_submission",
-        "held_probe_failure",
+        "held_probe_failure", "held_probe_waiting",
     }:
         squeue = plan.get("squeue") or {}
         squeue_path = Path(str(squeue.get("path") or ""))
@@ -141,9 +270,9 @@ def reconcile(
             != squeue.get("sha256")
         ):
             raise ValueError("approved squeue unavailable/changed")
-        listed = subprocess.run(
+        listed = _bounded_query(
+            subprocess.run,
             [str(squeue_path), "-h", "-o", "%F|%k"],
-            text=True, capture_output=True, check=False,
         )
         if listed.returncode != 0:
             raise RuntimeError("cannot query squeue")
@@ -201,32 +330,11 @@ def reconcile(
                 manifest["gate_job_id"] = str(gate_for_resume)
                 manifest["gate_state"] = "held"
                 _replace_json(manifest_path, manifest)
-            scontrol = plan.get("scontrol") or {}
-            scontrol_path = Path(str(scontrol.get("path") or ""))
-            if (
-                scontrol.get("available") is not True
-                or not scontrol_path.is_file()
-                or hashlib.sha256(scontrol_path.read_bytes()).hexdigest()
-                != scontrol.get("sha256")
-            ):
-                raise ValueError("approved scontrol unavailable/changed")
-            shown = subprocess.run(
-                [
-                    str(scontrol_path), "show", "job",
-                    str(gate_for_resume), "-o",
-                ],
-                text=True, capture_output=True, check=False,
-            )
-            if (
-                shown.returncode != 0
-                or "JobState=PENDING" not in shown.stdout
-                or "Reason=JobHeldUser" not in shown.stdout
-            ):
-                raise ValueError(
-                    "cannot resume arrays unless the gate is proven held"
-                )
             if not str(gate_for_resume or "").isdigit():
                 raise ValueError("cannot resume arrays without a proven gate")
+            _require_gate_held(
+                plan, str(gate_for_resume), expected_plan_sha
+            )
             logs = root / "logs"
             for group in required_groups:
                 if group in combined:
@@ -273,26 +381,12 @@ def reconcile(
         not in {
             "held", "release_attempting", "held_release_failed",
             "release_retry_attempting", "release_retry_requested",
-            "held_probe_passed",
+            "held_probe_passed", "held_probe_waiting",
         }
         or not str(manifest.get("gate_job_id") or "").isdigit()
     ):
         raise ValueError("campaign is not in a reconcilable state")
     gate = str(manifest["gate_job_id"])
-    completed = subprocess.run(
-        [
-            str(sacct_path), "-X", "-n", "-P", "-j", gate,
-            "--format=JobIDRaw,State",
-        ],
-        text=True, capture_output=True, check=False,
-    )
-    if completed.returncode != 0:
-        raise RuntimeError("cannot query sacct")
-    states = {
-        fields[0]: fields[1].split()[0].split("+", 1)[0]
-        for line in completed.stdout.splitlines()
-        if len(fields := line.split("|")) >= 2
-    }
     probe_specs = dict(manifest.get("infrastructure_probes") or {})
     unknown_probe_keys = set(probe_specs) - set(PROBE_PARTITIONS)
     if unknown_probe_keys:
@@ -311,9 +405,14 @@ def reconcile(
             spec.get(field) != expected_spec[field]
             for field in (
                 "output", "probe_id", "partition", "attempt", "comment",
+                "job_name",
             )
         ):
             raise ValueError("recorded probe specification identity mismatch")
+    gate_observation = _resolve_gate_state(
+        plan, gate, expected_plan_sha
+    )
+    gate_state = gate_observation["state"]
     needs_probe_submission = (
         set(probe_specs) != set(PROBE_PARTITIONS)
         or any(
@@ -322,11 +421,11 @@ def reconcile(
         )
     )
     if needs_probe_submission:
-        if states.get(gate) != "PENDING":
+        if gate_state != "PENDING":
             raise ValueError(
                 "missing/unrecorded probes cannot be recovered after gate release"
             )
-        _require_gate_held(plan, gate)
+        _require_gate_held(plan, gate, expected_plan_sha)
     for partition in PROBE_PARTITIONS:
         spec = probe_specs.get(partition)
         if spec is None:
@@ -360,23 +459,29 @@ def reconcile(
     manifest["probe_state"] = "evaluated"
     _replace_json(manifest_path, manifest)
     if not _probes_compatible(probe_results) and retry_failed_probes:
-        if states.get(gate) != "PENDING":
+        if gate_state != "PENDING":
             raise ValueError("failed probes cannot retry after gate release")
-        _require_gate_held(plan, gate)
+        _require_gate_held(plan, gate, expected_plan_sha)
         retry_partitions = []
         for partition, result in probe_results.items():
             if result.get("compatible") is True:
                 continue
-            if _hard_probe_mismatch(result):
+            if (
+                _hard_probe_mismatch(result)
+                or result.get("state_resolution") in {
+                    "environment_mismatch", "artifact_identity_mismatch",
+                    "identity_mismatch",
+                }
+            ):
                 manifest["probe_state"] = "failed_gate_retained"
                 manifest["gate_state"] = "held_probe_failure"
                 _replace_json(manifest_path, manifest)
                 raise ValueError(
-                    f"portable environment mismatch on {partition}; retry refused"
+                    f"non-retryable probe mismatch on {partition}; retry refused"
                 )
             if result.get("state") not in PROBE_RETRYABLE_STATES:
                 manifest["probe_state"] = "waiting_gate_retained"
-                manifest["gate_state"] = "held_probe_failure"
+                manifest["gate_state"] = "held_probe_waiting"
                 _replace_json(manifest_path, manifest)
                 raise ValueError(
                     f"probe {partition} is not terminal; retry refused"
@@ -413,27 +518,38 @@ def reconcile(
         )
         manifest["probe_results"] = probe_results
     if not _probes_compatible(probe_results):
-        manifest["probe_state"] = "failed_gate_retained"
-        manifest["gate_state"] = "held_probe_failure"
+        waiting = _probes_waiting(probe_results)
+        manifest["probe_state"] = (
+            "waiting_gate_retained" if waiting
+            else "failed_gate_retained"
+        )
+        manifest["gate_state"] = (
+            "held_probe_waiting" if waiting
+            else "held_probe_failure"
+        )
         _replace_json(manifest_path, manifest)
         raise ValueError(
             "infrastructure probes are not both compatible; gate retained"
         )
     manifest["probe_state"] = "passed"
-    if manifest.get("gate_state") == "held_probe_failure":
+    if manifest.get("gate_state") in {
+        "held_probe_failure", "held_probe_waiting",
+    }:
         manifest["gate_state"] = "held"
     _replace_json(manifest_path, manifest)
-    if states.get(gate) == "PENDING" and not release_held_gate:
+    if gate_state == "PENDING" and not release_held_gate:
         manifest["gate_state"] = "held_probe_passed"
         _replace_json(manifest_path, manifest)
         return manifest
-    if states.get(gate) == "PENDING" and release_held_gate:
-        scontrol_path = _require_gate_held(plan, gate)
+    if gate_state == "PENDING" and release_held_gate:
+        scontrol_path = _require_gate_held(
+            plan, gate, expected_plan_sha
+        )
         manifest["gate_state"] = "release_retry_attempting"
         _replace_json(manifest_path, manifest)
-        released = subprocess.run(
+        released = _bounded_query(
+            subprocess.run,
             [str(scontrol_path), "release", gate],
-            text=True, capture_output=True, check=False,
         )
         if released.returncode != 0:
             manifest["gate_state"] = "held_release_failed"
@@ -445,12 +561,13 @@ def reconcile(
         manifest["gate_state"] = "release_retry_requested"
         _replace_json(manifest_path, manifest)
         return manifest
-    if states.get(gate) != "COMPLETED":
+    if gate_state != "COMPLETED":
         raise ValueError("gate is not proven completed")
     manifest["gate_state"] = "released_reconciled"
     manifest["submitted"] = True
     manifest["gate_reconciliation"] = {
-        "source": "sacct", "gate_job_id": gate, "state": "COMPLETED",
+        "source": gate_observation["source"],
+        "gate_job_id": gate, "state": "COMPLETED",
     }
     _replace_json(manifest_path, manifest)
     return manifest
