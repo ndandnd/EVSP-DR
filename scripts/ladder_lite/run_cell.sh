@@ -73,10 +73,19 @@ PY
         --soc-step "$SOC" --block-min "$BLOCK" --master-sense "$MASTER_SENSE"
         --initial-pool "$INITIAL_POOL" --objective "$OBJECTIVE"
         --columns_per_iter "$COLUMNS_PER_ITER" --max-iters "$MAX_ITERS"
-        --diversify-rounds "$DIVERSIFY" --wall-limit-s "$CG_LIMIT"
-        --checkpoint-every "$CHECKPOINT_EVERY" --resume
-        --snapshot-at-minutes "$SNAPSHOTS" --out "$OUT")
-      [ -z "$TELEMETRY" ] || command+=(--phase-telemetry "$TELEMETRY") ;;
+        --diversify-rounds "$DIVERSIFY" --wall-limit-s "$CG_LIMIT")
+      if [ "$OBJECTIVE" = "combined-cost" ]; then
+        command+=(--checkpoint-every "$CHECKPOINT_EVERY" --resume
+          --snapshot-at-minutes "$SNAPSHOTS" --out "$OUT")
+        [ -z "$TELEMETRY" ] || command+=(--phase-telemetry "$TELEMETRY")
+      elif [ "$OBJECTIVE" = "lexicographic-fleet" ]; then
+        # The three-phase runner is deliberately immutable: it does not resume
+        # and writes a phase-specific iteration journal.  Snapshot and phase
+        # telemetry options belong only to the resumable combined-cost path.
+        command+=(--out "$OUT")
+      else
+        echo "unsupported plan objective: $OBJECTIVE" >&2; return 2
+      fi ;;
     MIP)
       command=("$PYTHON" -u "$REPO/src/run_exact_pool_mip.py" --result "$CG_OUT"
         --two-stage --threads "$THREADS" --timelimit "$EFFECTIVE" --mipgap 0.0001

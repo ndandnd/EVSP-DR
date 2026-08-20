@@ -92,19 +92,20 @@ def _validate(job,_plan_sha):
                 or not Path(str(out)+".columns.jsonl").is_file()
                 or not Path(str(out)+(".lexicographic.iters.csv" if lexicographic else ".iters.csv")).is_file()):
             raise ValueError(f"CG identity/artifacts invalid: {job['job_key']}")
-        if job.get("telemetry"):
+        if not lexicographic and job.get("telemetry"):
             with Path(job["telemetry"]).open() as h:
                 for line in h:
                     if line.strip():json.loads(line)
-        for mark in job["snapshot_minutes"]:
-            snap=out.parent/f"{out.stem}.m{int(mark)}.snapshot.json"; journal=Path(str(snap)+".columns.jsonl")
-            reported=(status.get("snapshot_availability") or {}).get(str(int(mark)))
-            if (reported=="available")!=(snap.is_file() and journal.is_file()):
-                raise ValueError(f"CG snapshot mismatch: {job['job_key']} m{mark}")
-            if reported not in {"available","censored_solver_terminated_before_mark","missed_in_prior_allocation"}:
-                raise ValueError("CG snapshot classification missing")
-            if reported!="available" and (snap.exists() or journal.exists()):
-                raise ValueError(f"CG censored snapshot orphan: {job['job_key']} m{mark}")
+        if not lexicographic:
+            for mark in job["snapshot_minutes"]:
+                snap=out.parent/f"{out.stem}.m{int(mark)}.snapshot.json"; journal=Path(str(snap)+".columns.jsonl")
+                reported=(status.get("snapshot_availability") or {}).get(str(int(mark)))
+                if (reported=="available")!=(snap.is_file() and journal.is_file()):
+                    raise ValueError(f"CG snapshot mismatch: {job['job_key']} m{mark}")
+                if reported not in {"available","censored_solver_terminated_before_mark","missed_in_prior_allocation"}:
+                    raise ValueError("CG snapshot classification missing")
+                if reported!="available" and (snap.exists() or journal.exists()):
+                    raise ValueError(f"CG censored snapshot orphan: {job['job_key']} m{mark}")
     if phase=="MIP":
         result=json.loads(out.read_text()); provenance=result.get("mip_provenance") or {}
         arguments=provenance.get("arguments") or {}; progress=Path(job["progress_dir"])

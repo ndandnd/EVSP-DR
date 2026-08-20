@@ -48,7 +48,9 @@ class LadderLiteTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.tmp.cleanup()
 
-    def _printed_command(self, group, index, extra_environment=None):
+    def _printed_command(
+        self, group, index, extra_environment=None, plan_path=None,
+    ):
         environment = dict(os.environ)
         environment.update({
             "SLURM_ARRAY_TASK_ID": str(index),
@@ -59,7 +61,7 @@ class LadderLiteTests(unittest.TestCase):
         completed = subprocess.run(
             [
                 "bash", str(REPO / "scripts/ladder_lite/run_cell.sh"),
-                str(self.plan_path), group,
+                str(plan_path or self.plan_path), group,
             ],
             cwd=REPO,
             env=environment,
@@ -231,6 +233,30 @@ class LadderLiteTests(unittest.TestCase):
         self.assertEqual(
             overridden[overridden.index("--wall-limit-s") + 1], "180"
         )
+
+    def test_lexicographic_plan_omits_unsupported_operational_flags(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            plan = copy.deepcopy(self.plan)
+            job_key = plan["task_groups"]["CG"][0]
+            job = next(
+                row for row in plan["jobs"] if row["job_key"] == job_key
+            )
+            job["objective"] = "lexicographic-fleet"
+            plan_path = Path(tmp) / "approved-plan.json"
+            plan_path.write_text(json.dumps(plan))
+            command = self._printed_command(
+                "CG", 0, plan_path=plan_path,
+            )
+        self.assertEqual(
+            command[command.index("--objective") + 1],
+            "lexicographic-fleet",
+        )
+        for unsupported in (
+            "--resume", "--snapshot-at-minutes", "--phase-telemetry",
+            "--checkpoint-every",
+        ):
+            self.assertNotIn(unsupported, command)
+        self.assertEqual(command[-2:], ["--out", job["output"]])
 
     def test_submit_dry_run_groups_budget_memory_and_scales(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -521,10 +547,13 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             Path(str(lex)+".columns.jsonl").touch()
             Path(str(lex)+".lexicographic.iters.csv").write_text(
                 "phase,iteration,objective,route_weight,artificial_mass,minimum_reduced_cost,pool_columns\n"
+                "1,1,1000000,10,1,-100,5\n"
+                "2,1,2.0,2.0,0,-0.0,7\n"
             )
             lite_summary._validate({
                 "job_key":"lex","phase":"CG","output":str(lex),
-                "telemetry":None,"snapshot_minutes":[],
+                "telemetry":str(root/"unsupported-lex-telemetry.jsonl"),
+                "snapshot_minutes":[5],
             },"")
             compatible,mapping,payload,is_lex=lite_summary._compat_cg({
                 "job_key":"lex","output":str(lex),
@@ -532,10 +561,20 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             self.assertTrue(is_lex);self.assertTrue(payload["certified_rc_optimal"])
             self.assertEqual(mapping[compatible["output"]],lex)
             with Path(str(compatible["output"])+".iters.csv").open(newline="") as h:
-                self.assertEqual(csv.DictReader(h).fieldnames,[
+                reader=csv.DictReader(h);rows=list(reader)
+                self.assertEqual(reader.fieldnames,[
                     "elapsed_s","iteration","lp_obj","route_weight",
                     "artificials","min_rc","pool_columns",
                 ])
+            self.assertEqual(len(rows),1)
+            self.assertEqual(
+                {key:rows[0][key] for key in (
+                    "lp_obj","route_weight","artificials","min_rc",
+                    "pool_columns",
+                )},
+                {"lp_obj":"2.0","route_weight":"2.0","artificials":"0",
+                 "min_rc":"-0.0","pool_columns":"7"},
+            )
             mip=root/"mip.json";mip.write_text(json.dumps({
                 "mip_provenance":{
                     "expected_git_commit":commit,"observed_git_commit":commit,
@@ -552,6 +591,48 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
                     "job_key":"mip","phase":"MIP","output":str(mip),
                     "progress_dir":str(progress),"threads":8,"budget_s":60,
                 },"")
+
+    def test_lite_validator_enforces_every_declared_cg_parameter(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); commit="b"*40; output=root/"cg.json"
+            lite_summary.PLAN={"checkout_identity":{"commit":commit}}
+            output.write_text(json.dumps({
+                "g_kwh":240.0,"charge_kw":240.0,"min_soc_frac":0.2,
+                "initial_pool":"matching","master_sense":"partition",
+                "stop_reason":"certified","provenance":{
+                    "git_commit":commit,"args":{
+                        "columns_per_iter":100,"max_iters":100000,
+                        "diversify_rounds":3,"objective":"combined-cost",
+                        "checkpoint_every":25,
+                    },
+                },
+            }))
+            Path(str(output)+".done").touch()
+            Path(str(output)+".columns.jsonl").touch()
+            Path(str(output)+".iters.csv").write_text("iteration\n")
+            job={
+                "job_key":"cg","phase":"CG","output":str(output),
+                "telemetry":None,"snapshot_minutes":[],"g_kwh":240.0,
+                "charge_kw":240.0,"min_soc_frac":0.2,
+                "columns_per_iter":100,"max_iters":100000,
+                "diversify_rounds":3,"initial_pool":"matching",
+                "objective":"combined-cost","master_sense":"partition",
+                "checkpoint_every":25,
+            }
+            lite_summary._validate(job,"")
+            mismatches={
+                "g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,
+                "columns_per_iter":101,"max_iters":99999,
+                "diversify_rounds":4,"initial_pool":"greedy",
+                "objective":"lexicographic-fleet",
+            }
+            for field,value in mismatches.items():
+                with self.subTest(field=field):
+                    changed={**job,field:value}
+                    with self.assertRaisesRegex(
+                        ValueError,"CG identity/artifacts invalid",
+                    ):
+                        lite_summary._validate(changed,"")
 
     def test_partial_cg_values_are_preserved_and_marked_censored(self):
         with tempfile.TemporaryDirectory() as tmp:

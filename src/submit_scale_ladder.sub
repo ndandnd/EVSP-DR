@@ -242,12 +242,21 @@ PY
       --objective "$OBJECTIVE" --columns_per_iter "$COLUMNS_PER_ITER"
       --max-iters "$MAX_ITERS" --diversify-rounds "$DIVERSIFY"
       --wall-limit-s "$((BUDGET + 60))"
-      --checkpoint-every "$CHECKPOINT_EVERY" --resume
-      --snapshot-at-minutes "$SNAPSHOTS"
-      --out "$OUTPUT"
     )
-    if [[ -n "$TELEMETRY" ]]; then
-      command+=(--phase-telemetry "$TELEMETRY")
+    if [[ "$OBJECTIVE" == "combined-cost" ]]; then
+      command+=(
+        --checkpoint-every "$CHECKPOINT_EVERY" --resume
+        --snapshot-at-minutes "$SNAPSHOTS" --out "$OUTPUT"
+      )
+      if [[ -n "$TELEMETRY" ]]; then
+        command+=(--phase-telemetry "$TELEMETRY")
+      fi
+    elif [[ "$OBJECTIVE" == "lexicographic-fleet" ]]; then
+      # The three-phase runner intentionally has no resume/snapshot/telemetry
+      # surface and writes its own phase-specific iteration journal.
+      command+=(--out "$OUTPUT")
+    else
+      fatal "unsupported plan objective: $OBJECTIVE"
     fi
     ;;
   MIP)
