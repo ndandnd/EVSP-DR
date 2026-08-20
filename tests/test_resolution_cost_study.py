@@ -5,6 +5,8 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -19,26 +21,38 @@ from resolution_cost_study import (  # noqa: E402
 from summarize_resolution_cost import summarize  # noqa: E402
 from utils_v2 import load_station_hourly_prices  # noqa: E402
 from config import CHARGING_STATIONS  # noqa: E402
+import resolution_cost_arcflow as arc_cost  # noqa: E402
+import resolution_cost_pool_mip as pool_cost  # noqa: E402
+from tests.test_arcflow_oracle import fake_data  # noqa: E402
 
 
 class ResolutionCostStudyTests(unittest.TestCase):
     def test_plan_has_168_hash_bound_cells_and_anchor_exception(self):
         with tempfile.TemporaryDirectory() as temporary:
             plan = build_plan(Path(temporary) / "artifacts")
-        self.assertEqual(len(plan["jobs"]), 168)
+        self.assertEqual(len(plan["jobs"]), 336)
+        self.assertEqual(plan["scientific_cells"], 168)
         self.assertEqual(
-            sum(job["physics_profile"] == "p240" for job in plan["jobs"]),
+            {job["method_arm"] for job in plan["jobs"]},
+            {"exact_cg", "arc_flow"},
+        )
+        self.assertEqual(
+            sum(job["physics_profile"] == "p240"
+                and job["method_arm"] == "exact_cg"
+                for job in plan["jobs"]),
             126,
         )
         self.assertEqual(
             sum(job["physics_profile"] == "p300_bridge"
+                and job["method_arm"] == "exact_cg"
                 for job in plan["jobs"]),
             42,
         )
         self.assertTrue(all(job["max_iters"] == 1_000_000_000
                             for job in plan["jobs"]))
         p240 = [job for job in plan["jobs"]
-                if job["physics_profile"] == "p240"]
+                if job["physics_profile"] == "p240"
+                and job["method_arm"] == "exact_cg"]
         anchors = [job for job in p240 if job["grid_role"] == "historical_anchor"]
         self.assertEqual(len(anchors), 18)
         self.assertTrue(all(not job["commensurate"] for job in anchors))
@@ -49,6 +63,15 @@ class ResolutionCostStudyTests(unittest.TestCase):
         self.assertEqual(
             {job["selection_replicate"] for job in p240}, {1, 2, 3},
         )
+        pairs = {}
+        for job in plan["jobs"]:
+            pairs.setdefault(job["paired_cell_key"], set()).add(
+                job["method_arm"]
+            )
+        self.assertEqual(len(pairs), 168)
+        self.assertTrue(all(
+            arms == {"exact_cg", "arc_flow"} for arms in pairs.values()
+        ))
 
     def test_expanded_network_accepts_two_point_five_minute_blocks(self):
         problem = build_problem(
@@ -133,6 +156,64 @@ class ResolutionCostStudyTests(unittest.TestCase):
             self.assertEqual(status["stop_reason"], "memory")
             self.assertEqual(status["estimated_dag_nodes_upper"], 123456)
 
+    def test_arcflow_arm_records_lp_mip_and_sparse_size(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "fake.csv").write_text("fixture")
+            output = root / "arc.json"
+            args = SimpleNamespace(
+                out=output, resume=False, csv="fake.csv",
+                prices_csv="prices.csv", data_dir=root,
+                g_kwh=300.0, charge_kw=300.0, reserve_kwh=0.0,
+                soc_step=15.0, block_min=10,
+                memory_limit_mb=None, time_limit_s=10.0,
+                lp_time_limit_s=5.0, lp_time_fraction=0.4,
+                mip_rel_gap=0.0,
+            )
+            with (
+                patch.object(arc_cost, "build_network", return_value=fake_data()),
+                patch.object(
+                    arc_cost, "gate_g4",
+                    return_value=({"passed": True, "routes": 1}, [{}]),
+                ),
+            ):
+                result = arc_cost.run(args)
+            self.assertEqual(result["lp_bound"], 1.0)
+            self.assertEqual(result["integer_result"], 1.0)
+            self.assertTrue(result["integer_proven"])
+            self.assertEqual(result["variables"], 2)
+            self.assertEqual(result["constraints"], 3)
+            self.assertEqual(result["nonzeros"], 4)
+
+    def test_cg_arm_records_integer_pool_result(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            status_path = root / "cg.json"
+            journal = root / "cg.json.columns.jsonl"
+            journal.write_text("\n".join(json.dumps(route) for route in (
+                {"trips": [0], "cost": 1.0},
+                {"trips": [1], "cost": 1.0},
+                {"trips": [0, 1], "cost": 1.0},
+            )) + "\n")
+            status_path.write_text(json.dumps({
+                "trip_ids": [0, 1], "columns_journal": str(journal),
+                "certified": True,
+            }))
+            args = SimpleNamespace(
+                cg_status=status_path, time_limit_s=10.0,
+                mip_rel_gap=0.0, out=root / "mip.json",
+            )
+            with patch.object(
+                pool_cost, "validate_final_selected_routes",
+                return_value=None,
+            ):
+                result = pool_cost.run(args)
+            self.assertEqual(result["integer_result"], 1)
+            self.assertTrue(result["integer_proven"])
+            self.assertEqual(result["variables"], 3)
+            self.assertEqual(result["constraints"], 2)
+            self.assertEqual(result["nonzeros"], 4)
+
     def test_summarizer_fits_known_exponents_and_joins_mip(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -141,7 +222,12 @@ class ResolutionCostStudyTests(unittest.TestCase):
                 job for job in plan["jobs"]
                 if job["physics_profile"] == "p240"
                 and job["scale"] in {2, 3}
+                and job["method_arm"] == "exact_cg"
             ]
+            by_pair = {
+                job["paired_cell_key"]: job for job in plan["jobs"]
+                if job["method_arm"] == "arc_flow"
+            }
             for job in model_jobs:
                 output = Path(job["output"])
                 output.parent.mkdir(parents=True, exist_ok=True)
@@ -174,6 +260,35 @@ class ResolutionCostStudyTests(unittest.TestCase):
                         "route_weight": job["target_fleet"] + 0.5,
                     },
                 }))
+                arc_job = by_pair[job["paired_cell_key"]]
+                arc_output = Path(arc_job["output"])
+                arc_output.parent.mkdir(parents=True, exist_ok=True)
+                variables = (
+                    2e6 * trips ** 1.4 * inv_soc ** 1.0
+                    * inv_block ** 1.2
+                )
+                arc_output.write_text(json.dumps({
+                    "integer_proven": job is not model_jobs[0],
+                    "certified": job is not model_jobs[0],
+                    "stop_reason": (
+                        "wall_limit" if job is model_jobs[0] else "certified"
+                    ),
+                    "dag_nodes": nodes, "dag_arcs": nodes * 4,
+                    "dag_build_wall_s": wall * 0.05,
+                    "active_arcs": variables,
+                    "variables": variables,
+                    "constraints": variables * 0.7,
+                    "nonzeros": variables * 2.4,
+                    "model_build_wall_s": wall * 0.1,
+                    "lp_bound": job["target_fleet"] + 0.5,
+                    "integer_result": job["target_fleet"] + 1,
+                    "lp_wall_s": wall * 0.3,
+                    "mip_wall_s": wall * 0.6,
+                    "wall_s": wall,
+                    "peak_rss_mb": variables / 1e5,
+                    "lp": {"status": "optimal", "solve_s": wall * 0.3},
+                    "mip": {"status": "limit_reached", "mip_gap": 0.1},
+                }))
             first = model_jobs[0]
             mip_root = root / "mips"
             mip_root.mkdir()
@@ -193,12 +308,26 @@ class ResolutionCostStudyTests(unittest.TestCase):
             long_path, _prediction, result = summarize(
                 plan, root / "summary", [mip_root],
             )
-            self.assertEqual(result["rows"], 168)
+            self.assertEqual(result["rows"], 336)
             self.assertEqual(result["structural_dag_nodes_upper"], 679381)
             self.assertEqual(result["node_model"]["status"], "fit")
             self.assertEqual(
                 result["bridge_models"]["node_model"]["status"],
                 "insufficient_data",
+            )
+            self.assertAlmostEqual(
+                result["arcflow_models"]["variables"]["trips_exponent"],
+                1.4, places=6,
+            )
+            self.assertTrue(
+                result["paired_diagnostics"][
+                    "lp_equality_holds_everywhere_checked"
+                ]
+            )
+            self.assertEqual(
+                len(result["paired_diagnostics"][
+                    "arcflow_intractable_while_cg_certified"
+                ]), 1,
             )
             self.assertAlmostEqual(
                 result["node_model"]["trips_exponent"], 1.2, places=6,
@@ -221,7 +350,7 @@ class ResolutionCostStudyTests(unittest.TestCase):
                 float(joined["integer_fleet"]), first["target_fleet"] + 1,
             )
             self.assertEqual(joined["grid_id"], first["grid_id"])
-            self.assertEqual(len(rows), 168)
+            self.assertEqual(len(rows), 336)
 
 
 if __name__ == "__main__":

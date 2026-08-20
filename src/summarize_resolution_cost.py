@@ -17,20 +17,25 @@ from resolution_cost_study import (
 
 
 LONG_FIELDS = (
-    "job_key", "cell_id", "scale", "selection_replicate",
+    "job_key", "paired_cell_key", "method_arm",
+    "cell_id", "scale", "selection_replicate",
     "physics_profile", "g_kwh", "charge_kw", "soc_step", "block_min",
     "grid_id", "grid_role", "commensurate", "charge_kwh_per_block",
     "credited_charge_kwh_per_block", "charge_grid_loss_kwh",
     "trip_count", "target_fleet", "instance_sha256",
     "status_path", "status_present", "stop_reason", "certified",
     "dag_nodes", "dag_arcs", "dag_build_wall_s", "estimated_dag_nodes_upper",
+    "active_arcs", "arcflow_variables", "arcflow_constraints",
+    "arcflow_nonzeros", "model_build_wall_s", "lp_wall_s", "mip_wall_s",
     "peak_rss_mb", "iterations_to_certificate", "wall_to_certificate",
+    "wall_s_total",
     "iterations_observed", "master_wall_s_total", "pricing_wall_s_total",
     "columns_added_total", "pool_columns_final", "fleet_lp_bound",
     "lp_gap_buses", "integer_fleet", "integer_fleet_proven",
     "integer_gap_buses", "mip_gap", "lp_gap_closed_vs_anchor",
     "integer_gap_closed_vs_anchor", "cpu_hours_to_certificate",
     "buses_gap_closed_per_cpu_hour",
+    "lp_equality_checked", "lp_equal", "lp_difference",
 )
 
 
@@ -108,17 +113,84 @@ def _status_row(job, mip_index):
             status = json.loads(path.read_text())
         except (OSError, ValueError):
             status = {"stop_reason": "invalid_status_json"}
+    method_arm = job.get("method_arm", "exact_cg")
+    if method_arm == "arc_flow":
+        lp = status.get("lp") or {}
+        mip = status.get("mip") or {}
+        bound = _number(status.get("lp_bound"))
+        integer = _number(status.get("integer_result"))
+        wall = (
+            _number(status.get("wall_s"))
+            if status.get("integer_proven") else None
+        )
+        return {
+            **{key: job.get(key) for key in LONG_FIELDS if key in job},
+            "method_arm": method_arm,
+            "status_path": str(path), "status_present": path.is_file(),
+            "stop_reason": status.get(
+                "stop_reason", "missing" if not path.is_file() else None,
+            ),
+            "certified": bool(status.get("integer_proven")),
+            "dag_nodes": status.get("dag_nodes"),
+            "dag_arcs": status.get("dag_arcs"),
+            "dag_build_wall_s": status.get("dag_build_wall_s"),
+            "active_arcs": status.get("active_arcs"),
+            "arcflow_variables": status.get("variables"),
+            "arcflow_constraints": status.get("constraints"),
+            "arcflow_nonzeros": status.get("nonzeros"),
+            "model_build_wall_s": status.get("model_build_wall_s"),
+            "lp_wall_s": status.get("lp_wall_s", lp.get("solve_s")),
+            "mip_wall_s": status.get("mip_wall_s", mip.get("solve_s")),
+            "peak_rss_mb": status.get("peak_rss_mb"),
+            "wall_to_certificate": wall,
+            "wall_s_total": status.get("wall_s"),
+            "iterations_observed": 0,
+            "master_wall_s_total": None,
+            "pricing_wall_s_total": None,
+            "columns_added_total": None,
+            "pool_columns_final": None,
+            "fleet_lp_bound": bound,
+            "lp_gap_buses": (
+                max(0.0, bound - job["target_fleet"])
+                if bound is not None else None
+            ),
+            "integer_fleet": integer,
+            "integer_fleet_proven": bool(status.get("integer_proven")),
+            "integer_gap_buses": (
+                integer - job["target_fleet"] if integer is not None else None
+            ),
+            "mip_gap": mip.get("mip_gap"),
+            "cpu_hours_to_certificate": wall / 3600.0 if wall else None,
+        }
     metrics = status.get("iteration_metrics")
     metrics = metrics if isinstance(metrics, list) else []
     certified = bool(status.get(
         "certified", status.get("certified_rc_optimal", False),
     ))
     bound = _fleet_bound(status)
-    mip = mip_index.get(_key(job["instance_sha256"], job))
+    mip = None
+    integer_path = job.get("integer_output")
+    if integer_path and Path(integer_path).is_file():
+        try:
+            integer_status = json.loads(Path(integer_path).read_text())
+            mip = {
+                "integer_fleet": integer_status.get("integer_result"),
+                "integer_fleet_proven": bool(
+                    integer_status.get("integer_proven")
+                ),
+                "mip_gap": integer_status.get("mip_gap"),
+                "wall_s": integer_status.get("wall_s"),
+                "path": integer_path,
+            }
+        except (OSError, ValueError):
+            mip = None
+    if mip is None:
+        mip = mip_index.get(_key(job["instance_sha256"], job))
     integer = _number(mip.get("integer_fleet")) if mip else None
     wall = _number(status.get("wall_to_certificate"))
     row = {
         **{key: job.get(key) for key in LONG_FIELDS if key in job},
+        "method_arm": method_arm,
         "status_path": str(path),
         "status_present": path.is_file(),
         "stop_reason": status.get(
@@ -131,6 +203,11 @@ def _status_row(job, mip_index):
         "peak_rss_mb": status.get("peak_rss_mb"),
         "iterations_to_certificate": status.get("iterations_to_certificate"),
         "wall_to_certificate": wall,
+        "wall_s_total": (
+            (_number(status.get("wall_s")) or 0.0)
+            + (_number(mip.get("wall_s")) or 0.0 if mip else 0.0)
+        ),
+        "mip_wall_s": mip.get("wall_s") if mip else None,
         "iterations_observed": len(metrics),
         "master_wall_s_total": sum(
             _number(item.get("master_wall_s")) or 0.0 for item in metrics
@@ -171,9 +248,13 @@ def build_rows(plan, mip_roots=None):
     anchors = {}
     for row in rows:
         if row["soc_step"] == 15.0 and row["block_min"] == 10.0:
-            anchors[(row["cell_id"], row["physics_profile"])] = row
+            anchors[(
+                row["cell_id"], row["physics_profile"], row["method_arm"],
+            )] = row
     for row in rows:
-        anchor = anchors.get((row["cell_id"], row["physics_profile"]))
+        anchor = anchors.get((
+            row["cell_id"], row["physics_profile"], row["method_arm"],
+        ))
         anchor_bound = anchor.get("fleet_lp_bound") if anchor else None
         anchor_integer = anchor.get("integer_fleet") if anchor else None
         row["lp_gap_closed_vs_anchor"] = (
@@ -192,13 +273,38 @@ def build_rows(plan, mip_roots=None):
             closed / hours
             if closed is not None and hours is not None and hours > 0 else None
         )
+        row["lp_equality_checked"] = False
+        row["lp_equal"] = None
+        row["lp_difference"] = None
+    paired = {}
+    for row in rows:
+        paired.setdefault(row.get("paired_cell_key"), {})[
+            row["method_arm"]
+        ] = row
+    for methods in paired.values():
+        cg, arc = methods.get("exact_cg"), methods.get("arc_flow")
+        if (
+            cg is None or arc is None
+            or cg["fleet_lp_bound"] is None
+            or arc["fleet_lp_bound"] is None
+        ):
+            continue
+        difference = arc["fleet_lp_bound"] - cg["fleet_lp_bound"]
+        equal = abs(difference) <= 1e-6
+        for row in (cg, arc):
+            row["lp_equality_checked"] = True
+            row["lp_equal"] = equal
+            row["lp_difference"] = difference
     return rows
 
 
-def fit_log_model(rows, response, physics_profile="p240"):
+def fit_log_model(
+    rows, response, physics_profile="p240", method_arm="exact_cg",
+):
     usable = [
         row for row in rows
         if row["physics_profile"] == physics_profile
+        and row["method_arm"] == method_arm
         and _number(row.get(response)) not in {None, 0.0}
         and row["trip_count"] > 0
         and row["soc_step"] > 0
@@ -256,6 +362,55 @@ def predict(model, trips, soc_step, block_min):
     return math.exp(log_value)
 
 
+def paired_diagnostics(rows):
+    pairs = {}
+    for row in rows:
+        pairs.setdefault(row.get("paired_cell_key"), {})[
+            row["method_arm"]
+        ] = row
+    equality_breaks = []
+    checked = 0
+    arc_intractable = []
+    cg_intractable = []
+    for key, methods in pairs.items():
+        cg, arc = methods.get("exact_cg"), methods.get("arc_flow")
+        if cg is None or arc is None:
+            continue
+        if cg["lp_equality_checked"]:
+            checked += 1
+            if not cg["lp_equal"]:
+                equality_breaks.append({
+                    "paired_cell_key": key,
+                    "difference": cg["lp_difference"],
+                })
+        if cg["certified"] and not arc["certified"]:
+            arc_intractable.append({
+                "paired_cell_key": key, "scale": cg["scale"],
+                "grid_id": cg["grid_id"],
+                "arc_stop_reason": arc["stop_reason"],
+            })
+        if arc["certified"] and not cg["certified"]:
+            cg_intractable.append({
+                "paired_cell_key": key, "scale": cg["scale"],
+                "grid_id": cg["grid_id"],
+                "cg_stop_reason": cg["stop_reason"],
+            })
+    order = lambda row: (row["scale"], row["grid_id"], row["paired_cell_key"])
+    return {
+        "lp_equality_checked": checked,
+        "lp_equality_breaks": equality_breaks,
+        "lp_equality_holds_everywhere_checked": (
+            checked > 0 and not equality_breaks
+        ),
+        "arcflow_intractable_while_cg_certified": sorted(
+            arc_intractable, key=order,
+        ),
+        "cg_intractable_while_arcflow_certified": sorted(
+            cg_intractable, key=order,
+        ),
+    }
+
+
 def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
     rows = build_rows(plan, mip_roots)
     output_dir = Path(output_dir)
@@ -276,6 +431,24 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
         [row for row in rows if row["certified"]],
         "wall_to_certificate", physics_profile="p300_bridge",
     )
+    arc_variable_model = fit_log_model(
+        rows, "arcflow_variables", method_arm="arc_flow",
+    )
+    arc_constraint_model = fit_log_model(
+        rows, "arcflow_constraints", method_arm="arc_flow",
+    )
+    arc_nonzero_model = fit_log_model(
+        rows, "arcflow_nonzeros", method_arm="arc_flow",
+    )
+    arc_lp_wall_model = fit_log_model(
+        [row for row in rows if row["fleet_lp_bound"] is not None],
+        "lp_wall_s", method_arm="arc_flow",
+    )
+    arc_integer_wall_model = fit_log_model(
+        [row for row in rows if row["integer_fleet_proven"]],
+        "wall_s_total", method_arm="arc_flow",
+    )
+    diagnostics = paired_diagnostics(rows)
     target = plan["prediction_target"]
     predicted_nodes = predict(
         node_model, target["trip_count"], target["soc_step"], target["block_min"],
@@ -287,22 +460,53 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
         target["trip_count"], target["g_kwh"],
         target["soc_step"], target["block_min"],
     )
+    arc_predictions = {
+        "variables": predict(
+            arc_variable_model, target["trip_count"],
+            target["soc_step"], target["block_min"],
+        ),
+        "constraints": predict(
+            arc_constraint_model, target["trip_count"],
+            target["soc_step"], target["block_min"],
+        ),
+        "nonzeros": predict(
+            arc_nonzero_model, target["trip_count"],
+            target["soc_step"], target["block_min"],
+        ),
+        "lp_wall_s": predict(
+            arc_lp_wall_model, target["trip_count"],
+            target["soc_step"], target["block_min"],
+        ),
+        "integer_wall_s": predict(
+            arc_integer_wall_model, target["trip_count"],
+            target["soc_step"], target["block_min"],
+        ),
+    }
     threshold = float(
         affordable_hours
         if affordable_hours is not None
         else target["affordable_wall_hours"]
     )
     extrapolation = {
-        "schema": "evsp-dr-resolution-cost-extrapolation-v1",
+        "schema": "evsp-dr-resolution-cost-extrapolation-v2",
         "node_model": node_model,
         "wall_model": wall_model,
         "bridge_models": {
             "node_model": bridge_node_model,
             "wall_model": bridge_wall_model,
         },
+        "arcflow_models": {
+            "variables": arc_variable_model,
+            "constraints": arc_constraint_model,
+            "nonzeros": arc_nonzero_model,
+            "lp_wall": arc_lp_wall_model,
+            "integer_wall": arc_integer_wall_model,
+        },
+        "paired_diagnostics": diagnostics,
         "prediction_target": target,
         "predicted_dag_nodes": predicted_nodes,
         "structural_dag_nodes_upper": structural_upper,
+        "arcflow_prediction": arc_predictions,
         "predicted_wall_to_certificate_s": predicted_wall,
         "predicted_wall_to_certificate_h": (
             predicted_wall / 3600.0 if predicted_wall is not None else None
@@ -312,6 +516,16 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             predicted_wall / 3600.0 <= threshold
             if predicted_wall is not None else None
         ),
+        "affordable_by_method": {
+            "exact_cg": (
+                predicted_wall / 3600.0 <= threshold
+                if predicted_wall is not None else None
+            ),
+            "arc_flow": (
+                arc_predictions["integer_wall_s"] / 3600.0 <= threshold
+                if arc_predictions["integer_wall_s"] is not None else None
+            ),
+        },
         "extrapolation_warning":
             "Target 947 trips and 1 kWh are outside the local fitted ranges "
             "(k2/k3: 29-71 trips; 2.5-15 kWh); wall fit uses certified, "
@@ -320,6 +534,13 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             "the structural upper count is reported separately.",
         "rows": len(rows),
         "certified_rows": sum(bool(row["certified"]) for row in rows),
+        "certified_rows_by_arm": {
+            arm: sum(
+                bool(row["certified"]) and row["method_arm"] == arm
+                for row in rows
+            )
+            for arm in ("exact_cg", "arc_flow")
+        },
     }
     prediction_path = output_dir / "resolution_cost_extrapolation.json"
     prediction_path.write_text(
@@ -336,7 +557,9 @@ def main(argv=None):
     parser.add_argument("--affordable-hours", type=float)
     args = parser.parse_args(argv)
     plan = json.loads(args.plan.read_text())
-    if plan.get("schema") != SCHEMA:
+    if plan.get("schema") not in {
+        SCHEMA, "evsp-dr-resolution-cost-study-v1",
+    }:
         raise ValueError("unexpected study plan schema")
     if _sha256_json({
         key: value for key, value in plan.items() if key != "plan_sha256"
