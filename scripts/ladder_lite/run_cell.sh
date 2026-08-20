@@ -38,7 +38,7 @@ PY
   record_failure() { rc=$?; trap - EXIT; if [ "$rc" -ne 0 ] && [ ! -s "$OUT.failed" ]; then mkdir -p "$(dirname "$OUT")" 2>/dev/null || true; printf 'exit_code=%s\njob_key=%s\nslurm_job_id=%s\nnode=%s\n' "$rc" "$JOB_KEY" "${SLURM_JOB_ID:-local}" "${SLURMD_NODENAME:-$(hostname)}" >"$OUT.failed" 2>/dev/null || true; fi; exit "$rc"; }; trap record_failure EXIT
   mkdir -p "$(dirname "$OUT")" || return 1
   rm -f "$OUT.failed" "$OUT.blocked"
-  REPO=${LL_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}
+  REPO=${LL_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}; echo "[ll] host=$(hostname) task=$TASK repo=$REPO"
   [ -f "$REPO/src/exact_pricer_expanded.py" ] || { echo "unresolved repository root: missing $REPO/src/exact_pricer_expanded.py" >&2; return 2; }
   if [ -n "${LL_BUDGET_OVERRIDE_S:-}" ] && [[ "$PHASE" == CG* || "$PHASE" == MIP ]]; then
     MARKER="$OUT.smoke.done"
@@ -73,7 +73,7 @@ PY
     *) echo "unknown phase: $PHASE" >&2; return 2 ;;
   esac
   if [ "${LL_PRINT_COMMAND:-0}" = 1 ]; then printf '%q ' "${command[@]}"; echo; return 0; fi
-  OBSERVED=$(git -C "$REPO" rev-parse HEAD 2>/dev/null) || return 2
+  OBSERVED=$(git -C "$REPO" rev-parse HEAD) || return 2
   [ "$OBSERVED" = "$COMMIT" ] || { echo "commit mismatch" >&2; return 2; }
   [ -z "$(git -C "$REPO" status --porcelain --untracked-files=no)" ] || {
     echo "tracked checkout modifications" >&2; return 2;

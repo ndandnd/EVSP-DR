@@ -5,8 +5,8 @@ main() {
   LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}
   LL_PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}
   LL_CAMPAIGN=${LL_CAMPAIGN:-"ll_$(date -u +%Y%m%d)"}
-  PLAN="$LL_ROOT/campaign/approved-plan.json"
-  MATRIX="$LL_ROOT/campaign/task_matrix.csv"
+  CAMPAIGN_DIR="$LL_ROOT/campaign/$LL_CAMPAIGN"; PLAN="$CAMPAIGN_DIR/approved-plan.json"
+  MATRIX="$CAMPAIGN_DIR/task_matrix.csv"; PLAN_LOG="$CAMPAIGN_DIR/plan.log"
   COMMIT=$(git -C "$REPO" rev-parse HEAD 2>/dev/null) || return 1
   if git -C "$REPO" symbolic-ref -q HEAD >/dev/null 2>&1; then
     echo "plan.sh requires a detached checkout" >&2; return 1
@@ -18,23 +18,23 @@ main() {
     echo "LL_PYTHON is not executable: $LL_PYTHON" >&2; return 1;
   }
   if [ -e "$PLAN" ] || [ -e "$MATRIX" ]; then
-    echo "plan or matrix already exists: $LL_ROOT/campaign" >&2; return 1
+    echo "plan or matrix already exists: $CAMPAIGN_DIR" >&2; return 1
   fi
-  mkdir -p "$LL_ROOT/campaign" || return 1
+  mkdir -p "$CAMPAIGN_DIR" || return 1
   (
     cd "$REPO" || exit 1
     "$LL_PYTHON" -B src/launch_scale_ladder.py \
       --campaign "$LL_CAMPAIGN" --python "$LL_PYTHON" \
       --reservation-root "$LL_ROOT" --plan-out "$PLAN" \
       --matrix-out "$MATRIX"
-  ) || return 1
-  (
+  ) >"$PLAN_LOG" || return 1
+  echo "[ll] staging scientific inputs for $LL_CAMPAIGN"; (
     cd "$REPO" || exit 1
     "$LL_PYTHON" -B -c \
       'import json,sys;sys.path.insert(0,"src");import launch_scale_ladder as L;L._stage_scientific_inputs(json.load(open(sys.argv[1])))' \
       "$PLAN"
   ) || return 1
-  "$LL_PYTHON" -B - "$PLAN" "$LL_ROOT/campaign/campaign.json" "$COMMIT" <<'PY' || return 1
+  "$LL_PYTHON" -B - "$PLAN" "$CAMPAIGN_DIR/campaign.json" "$COMMIT" <<'PY' || return 1
 import datetime,hashlib,json,sys
 praw=open(sys.argv[1],"rb").read(); p=json.loads(praw)
 counts={k:len(v) for k,v in sorted(p["task_groups"].items())}

@@ -3,16 +3,16 @@ main() {
   [ "$#" -eq 1 ] || { echo "usage: record_results.sh RUN_ID" >&2; return 2; }
   RUN_ID=$1; [[ "$RUN_ID" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "unsafe RUN_ID" >&2; return 2; }
   LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd) || return 1
-  PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}; NORM="$LL_ROOT/normalized"
+  PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}; NORM="$LL_ROOT/normalized"; CAMPAIGN=${LL_CAMPAIGN:-"ll_$(date -u +%Y%m%d)"}
   if [ ! -s "$NORM/cg_run_summary.csv" ] || [ ! -s "$NORM/mip_run_summary.csv" ]; then echo "normalized summaries missing: $NORM" >&2; return 1; fi
   RECORDS=${LL_RECORDS_ROOT:-"$REPO/records"}
   DEST="$RECORDS/runs/$RUN_ID"; mkdir -p "$DEST" || return 1
   cp -n "$NORM"/*.csv "$DEST/" || return 1
-  "$PYTHON" -B - "$REPO" "$LL_ROOT" "$RUN_ID" "$RECORDS" <<'PY'
+  "$PYTHON" -B - "$REPO" "$LL_ROOT" "$RUN_ID" "$RECORDS" "$CAMPAIGN" <<'PY'
 import csv,datetime,hashlib,json,pathlib,sys
-root=pathlib.Path(sys.argv[2]); run=sys.argv[3]
-norm=root/"normalized"; plan=json.load(open(root/"campaign/approved-plan.json"))
-manifest=json.load(open(root/"campaign/campaign.json")); target=pathlib.Path(sys.argv[4])/"RESULTS_LOG.csv"
+root=pathlib.Path(sys.argv[2]); run=sys.argv[3]; campaign=root/"campaign"/sys.argv[5]
+norm=root/"normalized"; plan=json.load(open(campaign/"approved-plan.json"))
+manifest=json.load(open(campaign/"campaign.json")); target=pathlib.Path(sys.argv[4])/"RESULTS_LOG.csv"
 def rows(name):return list(csv.DictReader(open(norm/name,newline="")))
 cg=rows("cg_run_summary.csv"); mi=rows("mip_run_summary.csv"); ci=rows("cg_iteration_long.csv"); mc=rows("mip_checkpoint_long.csv")
 role=lambda j:"primary" if j["phase"]=="CG" else "small_grid_sensitivity"

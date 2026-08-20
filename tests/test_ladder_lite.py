@@ -111,6 +111,11 @@ class LadderLiteTests(unittest.TestCase):
             )
             self.assertEqual(completed.returncode, 2)
             self.assertIn("unresolved repository root", completed.stderr)
+            self.assertIn("[ll] host=", completed.stdout)
+            self.assertIn(" task=0 repo=", completed.stdout)
+            self.assertNotIn(
+                "rev-parse HEAD 2>/dev/null", staged.read_text()
+            )
             failed = Path(f"{output}.failed")
             self.assertTrue(failed.is_file())
             self.assertIn("exit_code=2", failed.read_text())
@@ -182,7 +187,8 @@ class LadderLiteTests(unittest.TestCase):
 
     def test_submit_dry_run_groups_budget_memory_and_scales(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp); (root / "campaign").mkdir()
+            root = Path(tmp); campaign = "test-campaign"
+            (root / "campaign" / campaign).mkdir(parents=True)
             plan = {
                 "task_groups": {
                     "CG": ["a", "b", "c", "d"],
@@ -199,9 +205,12 @@ class LadderLiteTests(unittest.TestCase):
                      "partition": "default_partition", "threads": 2},
                 ],
             }
-            (root / "campaign/approved-plan.json").write_text(json.dumps(plan))
+            (root / "campaign" / campaign / "approved-plan.json").write_text(
+                json.dumps(plan)
+            )
             environment = {
-                **os.environ, "LL_ROOT": str(root), "LL_PYTHON": self.python
+                **os.environ, "LL_ROOT": str(root), "LL_PYTHON": self.python,
+                "LL_CAMPAIGN": campaign,
             }
             completed = subprocess.run(
                 [
@@ -242,10 +251,54 @@ class LadderLiteTests(unittest.TestCase):
                     ),
                 )
 
+    def test_plan_is_campaign_scoped_and_logs_verbose_json(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); checkout = root / "repo"; state = root / "state"
+            subprocess.run(
+                ["git", "worktree", "add", "--detach", str(checkout), "HEAD"],
+                cwd=REPO, check=True, text=True, capture_output=True,
+            )
+            try:
+                observed = []
+                for campaign in ("campaign-one", "campaign-two"):
+                    environment = {
+                        **os.environ,
+                        "LL_ROOT": str(state),
+                        "LL_PYTHON": self.python,
+                        "LL_CAMPAIGN": campaign,
+                    }
+                    completed = subprocess.run(
+                        ["bash", str(
+                            checkout / "scripts/ladder_lite/plan.sh"
+                        )],
+                        cwd=checkout, env=environment, text=True,
+                        capture_output=True, check=False,
+                    )
+                    self.assertEqual(
+                        completed.returncode, 0, completed.stderr
+                    )
+                    campaign_dir = state / "campaign" / campaign
+                    plan = campaign_dir / "approved-plan.json"
+                    self.assertTrue(plan.is_file())
+                    self.assertTrue((campaign_dir / "task_matrix.csv").is_file())
+                    log = (campaign_dir / "plan.log").read_text()
+                    self.assertIn('"task_groups"', log)
+                    self.assertNotIn('"task_groups"', completed.stdout)
+                    self.assertIn("[ll] staging scientific inputs", completed.stdout)
+                    self.assertIn("total tasks  : 138", completed.stdout)
+                    observed.append(json.loads(plan.read_text())["campaign"])
+                self.assertEqual(observed, ["campaign-one", "campaign-two"])
+            finally:
+                subprocess.run(
+                    ["git", "worktree", "remove", "--force", str(checkout)],
+                    cwd=REPO, check=True, text=True, capture_output=True,
+                )
+
     def test_record_results_is_idempotent(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp); records = root / "records"
-            (root / "campaign").mkdir(parents=True); (root / "normalized").mkdir()
+            root = Path(tmp); records = root / "records"; campaign = "test-campaign"
+            (root / "campaign" / campaign).mkdir(parents=True)
+            (root / "normalized").mkdir()
             records.mkdir()
             (records / "RESULTS_LOG.csv").write_bytes(
                 (REPO / "records/RESULTS_LOG.csv").read_bytes()
@@ -271,10 +324,10 @@ class LadderLiteTests(unittest.TestCase):
                 "dependency_cg":"cg_a","output":str(mip_output),
                 "progress_dir":str(root/"progress"),"threads":8,
             }
-            (root / "campaign/approved-plan.json").write_text(
+            (root / "campaign" / campaign / "approved-plan.json").write_text(
                 json.dumps({"jobs": [job, missing_job, mip_job]})
             )
-            (root / "campaign/campaign.json").write_text(json.dumps({
+            (root / "campaign" / campaign / "campaign.json").write_text(json.dumps({
                 "execution_mode": "ladder_lite_direct_array",
                 "commit": "a" * 40,
             }))
@@ -287,7 +340,7 @@ class LadderLiteTests(unittest.TestCase):
             (root/"normalized/cg_iteration_long.csv").write_text("cell_id\n")
             (root/"normalized/mip_checkpoint_long.csv").write_text("cell_id,arm,cg_replicate,node_count\nk02_s1_c1,RAW,1,7\n")
             env={**os.environ,"LL_ROOT":str(root),"LL_PYTHON":self.python,
-                 "LL_RECORDS_ROOT":str(records)}
+                 "LL_RECORDS_ROOT":str(records),"LL_CAMPAIGN":campaign}
             command=["bash",str(REPO/"scripts/ladder_lite/record_results.sh"),"run1"]
             first=subprocess.run(command,cwd=REPO,env=env,text=True,capture_output=True)
             second=subprocess.run(command,cwd=REPO,env=env,text=True,capture_output=True)

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 main() {
-  LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}
-  PLAN="$LL_ROOT/campaign/approved-plan.json"; FILTER=${1:-}
+  LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}; CAMPAIGN=${LL_CAMPAIGN:-"ll_$(date -u +%Y%m%d)"}
+  PLAN="$LL_ROOT/campaign/$CAMPAIGN/approved-plan.json"; FILTER=${1:-}
   [ -s "$PLAN" ] || { echo "missing plan: $PLAN" >&2; return 1; }
   QUEUE=$(squeue -r -h -u "${USER:-$(id -un)}" -o '%i|%j|%P|%t|%M|%L|%R' 2>/dev/null)
   export LL_QUEUE="$QUEUE"
