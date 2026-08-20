@@ -227,8 +227,14 @@ class LadderLiteTests(unittest.TestCase):
                 "selection_replicate": 2,
                 "output": str(root / "missing.json"),
             }
+            mip_output=root/"mip.json";mip_output.write_text("{}")
+            mip_job={
+                **job,"job_key":"mip_a","phase":"MIP","arm":"RAW",
+                "dependency_cg":"cg_a","output":str(mip_output),
+                "progress_dir":str(root/"progress"),"threads":8,
+            }
             (root / "campaign/approved-plan.json").write_text(
-                json.dumps({"jobs": [job, missing_job]})
+                json.dumps({"jobs": [job, missing_job, mip_job]})
             )
             (root / "campaign/campaign.json").write_text(json.dumps({
                 "execution_mode": "ladder_lite_direct_array",
@@ -236,8 +242,12 @@ class LadderLiteTests(unittest.TestCase):
             }))
             with (root / "normalized/cg_run_summary.csv").open("w", newline="") as h:
                 w=csv.DictWriter(h,fieldnames=("cell_id","campaign_role","soc_step","block_min","cg_replicate","final_route_weight","final_min_reduced_cost","pricing_certified","final_artificial_mass","pool_columns","iterations","elapsed_s","stopping_reason","censored"));w.writeheader();w.writerow({"cell_id":"k02_s1_c1","campaign_role":"primary","soc_step":"15.0","block_min":"10","cg_replicate":"1","final_route_weight":"2","censored":"False"})
-            for name in ("mip_run_summary.csv","cg_iteration_long.csv","mip_checkpoint_long.csv"):
-                (root / "normalized" / name).write_text("cell_id\n")
+            with (root/"normalized/mip_run_summary.csv").open("w",newline="") as h:
+                w=csv.DictWriter(h,fieldnames=("cell_id","arm","cg_replicate","scale","budget_s","output_available","censored","buses","fleet_bound","mip_gap","runtime_s","status_name","missing_reason"));w.writeheader();w.writerows([
+                    {"cell_id":"k02_s1_c1","arm":"RAW","cg_replicate":"1","scale":"2","budget_s":"60","output_available":"True","censored":"False","buses":"2","fleet_bound":"2","mip_gap":"0"},
+                    {"cell_id":"k40_s2_c1","arm":"RAW","cg_replicate":"1","scale":"40","output_available":"False","censored":"True","missing_reason":"reuse missing"}])
+            (root/"normalized/cg_iteration_long.csv").write_text("cell_id\n")
+            (root/"normalized/mip_checkpoint_long.csv").write_text("cell_id,arm,cg_replicate,node_count\nk02_s1_c1,RAW,1,7\n")
             env={**os.environ,"LL_ROOT":str(root),"LL_PYTHON":self.python,
                  "LL_RECORDS_ROOT":str(records)}
             command=["bash",str(REPO/"scripts/ladder_lite/record_results.sh"),"run1"]
@@ -245,15 +255,21 @@ class LadderLiteTests(unittest.TestCase):
             second=subprocess.run(command,cwd=REPO,env=env,text=True,capture_output=True)
             self.assertEqual(first.returncode,0,first.stderr)
             self.assertEqual(second.returncode,0,second.stderr)
-            self.assertIn("appended=2 skipped=0",first.stdout)
-            self.assertIn("appended=0 skipped=2",second.stdout)
+            self.assertIn("appended=4 skipped=0",first.stdout)
+            self.assertIn("appended=0 skipped=4",second.stdout)
             rows=list(csv.DictReader((records/"RESULTS_LOG.csv").open()))
-            self.assertEqual(len(rows),2)
+            self.assertEqual(len(rows),4)
             self.assertEqual(rows[0]["route_weight_meaning"],
                              "combined-cost-master route weight")
             missing=next(row for row in rows if row["cell_id"]=="cg_b")
             self.assertEqual(missing["status"],"missing")
             self.assertEqual(missing["censor_reason"],"normalized row missing")
+            mip=next(row for row in rows if row["cell_id"]=="mip_a")
+            self.assertEqual(mip["arm"],"RAW")
+            self.assertEqual(mip["route_weight"],"2")
+            self.assertEqual(mip["mip_nodes"],"7")
+            reuse=next(row for row in rows if row["group"]=="MIP_REUSE")
+            self.assertEqual(reuse["censor_reason"],"reuse missing")
 
     def test_partial_normalization_emits_missing_rows_and_rejects_smoke(self):
         with tempfile.TemporaryDirectory() as tmp:
