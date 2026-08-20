@@ -338,11 +338,27 @@ class LadderLiteTests(unittest.TestCase):
             self.assertTrue(all(row["censored"]=="True" for row in cg))
             provenance=json.loads((output/"provenance.json").read_text())
             self.assertEqual(provenance["execution_mode"],"ladder_lite_direct_array")
-            shutil_target=Path(plan["jobs"][0]["output"]+".override.json")
+            self.assertFalse(any(
+                b"local_diagnostic" in path.read_bytes()
+                for path in output.iterdir() if path.is_file()
+            ))
+            overridden=next(job for job in plan["jobs"] if job["phase"]=="CG")
+            shutil_target=Path(overridden["output"]+".override.json")
             shutil_target.parent.mkdir(parents=True,exist_ok=True);shutil_target.write_text("{}")
             second=root/"second"
-            with self.assertRaisesRegex(ValueError,"smoke override"):
-                lite_summary.summarize(campaign,second)
+            result=lite_summary.summarize(campaign,second)
+            self.assertEqual(result["omitted"],138)
+            with (second/"cg_run_summary.csv").open(newline="") as h:
+                excluded=next(
+                    row for row in csv.DictReader(h)
+                    if row["cell_id"]==overridden["cell_id"]
+                    and row["campaign_role"]=="primary"
+                    and row["cg_replicate"]==str(overridden["cg_replicate"])
+                )
+            self.assertEqual(excluded["stopping_reason"],"excluded")
+            self.assertEqual(
+                excluded["grid_interpretation"],"excluded: budget_overridden"
+            )
 
     def test_lite_validator_rejects_orphan_snapshots_and_bad_mip_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:

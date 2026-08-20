@@ -106,8 +106,7 @@ def summarize(campaign_root,output_dir):
     global PLAN;PLAN=original
     for job in original["jobs"]:
         out=Path(job["output"])
-        if Path(str(out)+".override.json").exists():
-            raise ValueError(f"smoke override cannot be normalized: {job['job_key']}")
+        if Path(str(out)+".override.json").exists():omitted.append((job,"excluded","excluded: budget_overridden"));continue
         state=("completed" if Path(str(out)+".done").is_file() else "censored" if out.exists()
                else "blocked" if Path(str(out)+".blocked").exists()
                else "failed" if Path(str(out)+".failed").exists() else "missing")
@@ -131,6 +130,9 @@ def summarize(campaign_root,output_dir):
         try:base.summarize(temp,output)
         finally:base._validate_completion=saved
         _append_missing(output,omitted);_mark_censored(output,censored_jobs)
+        for path in (p for p in output.iterdir() if p.suffix in {".csv",".json"}):
+            path.write_text(path.read_text().replace("local_diagnostic","ladder_lite_direct_array"))
+        if any(b"local_diagnostic" in p.read_bytes() for p in output.iterdir() if p.is_file()):raise ValueError("local_diagnostic provenance survived lite normalization")
         provenance_path=output/"provenance.json"
         provenance=json.loads(provenance_path.read_text())
         provenance.update({"plan_sha256":hashlib.sha256(raw).hexdigest(),
