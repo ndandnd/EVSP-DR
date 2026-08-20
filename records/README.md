@@ -17,9 +17,12 @@ record auditable when a result or a diagnosis later turns out to be wrong.
 - `id` is `D####` / `B####`, monotonic, never reused.
 - `status` for bugs: `open`, `open-mitigated`, `fixed-in-<commit>`,
   `wont-fix-abandoned`, `superseded-by-<thing>`.
-- `route_weight_meaning` in `RESULTS_LOG.csv` must read
-  `combined-cost-master route weight` until the three-phase lexicographic master
-  exists. It is **not** a fleet LP lower bound. See decision `D0005`.
+- Per `D0019` (which supersedes `D0005`), a pricing-certified cell's
+  `route_weight_meaning` must read
+  `fleet LP lower bound (certified discretized model; grid stated; D0019)`.
+  An uncertified cell must instead read
+  `upper bound on LP optimum only; no fleet LP lower bound`. Never use one
+  label for both states.
 - `label` carries provenance honestly: `ladder_lite_direct_array`,
   `legacy_scheduler_unverified`, `diagnostic_only`, `budget_overridden`.
 - RAW and KNOWN cells never share a row. `arm` distinguishes them; a
