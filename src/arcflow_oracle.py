@@ -25,13 +25,12 @@ from scipy.sparse import csc_matrix
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, build_problem
 from config import BUS_COST_KX, CHARGING_STATIONS
 from durable_io import read_jsonl_records
-from exact_pricer_expanded import DATA_DIR, ExpandedNetwork
+from exact_pricer_expanded import DATA_DIR, ExpandedNetwork, _block_minutes
 from expanded_path_realization import realize_expanded_path
 from run_exact_pool_mip import validate_injected_route
 from utils_v2 import load_station_hourly_prices
 
 
-SUPPORTED_GRIDS = {(15.0, 10), (1.0, 5)}
 STATUS = {0: "optimal", 1: "limit_reached", 2: "infeasible",
           3: "unbounded", 4: "solver_error"}
 
@@ -43,7 +42,7 @@ class NetworkData:
     problem: object
     network: ExpandedNetwork
     soc_step: float
-    block_min: int
+    block_min: float
     g_kwh: float = 300.0
     charge_kw: float = 300.0
     reserve_kwh: float = 0.0
@@ -95,8 +94,10 @@ class SolveResult:
     max_row_violation: float | None
 
 
-def build_network(csv_name: str, *, soc_step: float, block_min: int,
+def build_network(csv_name: str, *, soc_step: float, block_min: float,
                   prices_csv: str = "hourly_prices_flat.csv",
+                  g_kwh: float = 300.0, charge_kw: float = 300.0,
+                  reserve_kwh: float = 0.0,
                   data_dir: Path = DATA_DIR) -> NetworkData:
     problem = build_problem(data_dir, csv_name,
                             max_station_to_trip_wait_min=HORIZON_MIN)
@@ -104,10 +105,12 @@ def build_network(csv_name: str, *, soc_step: float, block_min: int,
                                         CHARGING_STATIONS)
     network = ExpandedNetwork(
         problem, prices, soc_step=soc_step, block_min=block_min,
-        g_kwh=300.0, charge_kw=300.0, reserve_kwh=0.0,
+        g_kwh=g_kwh, charge_kw=charge_kw, reserve_kwh=reserve_kwh,
     )
+    parsed_block = _block_minutes(block_min)
     return NetworkData(csv_name, prices_csv, problem, network,
-                       float(soc_step), int(block_min))
+                       float(soc_step), parsed_block, float(g_kwh),
+                       float(charge_kw), float(reserve_kwh))
 
 
 def _source_sink_reachability(network: ExpandedNetwork) -> tuple[np.ndarray, np.ndarray]:
@@ -554,11 +557,13 @@ def gate_g4(model: ArcFlowModel, primal: np.ndarray) -> tuple[dict, list[dict]]:
              "covered_trips": len(counts)}, routes)
 
 
-def _scope(csv_name: str, soc_step: float, block_min: int) -> None:
-    if not any(f"_k{k:02d}_" in Path(csv_name).name for k in (2, 3, 5)):
-        raise ValueError("CLI scope is k2/k3/k5 only")
-    if (float(soc_step), int(block_min)) not in SUPPORTED_GRIDS:
-        raise ValueError("CLI grids are 15 kWh/10 min and 1 kWh/5 min only")
+def _scope(csv_name: str, soc_step: float, block_min: float) -> None:
+    if not any(
+        f"_k{k:02d}_" in Path(csv_name).name for k in (2, 3, 5, 8, 13, 20)
+    ):
+        raise ValueError("CLI scope is k2/k3/k5/k8/k13/k20")
+    if float(soc_step) <= 0 or float(block_min) <= 0:
+        raise ValueError("grid values must be positive")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -566,7 +571,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--csv", required=True)
     parser.add_argument("--prices-csv", default="hourly_prices_flat.csv")
     parser.add_argument("--soc-step", type=float, required=True)
-    parser.add_argument("--block-min", type=int, required=True)
+    parser.add_argument("--block-min", type=_block_minutes, required=True)
+    parser.add_argument("--g-kwh", type=float, default=300.0)
+    parser.add_argument("--charge-kw", type=float, default=300.0)
+    parser.add_argument("--reserve-kwh", type=float, default=0.0)
     parser.add_argument("--journal", type=Path)
     parser.add_argument("--journal-route-index", type=int)
     parser.add_argument("--objective",
@@ -591,6 +599,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     data = build_network(
         args.csv, prices_csv=args.prices_csv,
         soc_step=args.soc_step, block_min=args.block_min,
+        g_kwh=args.g_kwh, charge_kw=args.charge_kw,
+        reserve_kwh=args.reserve_kwh,
     )
     arcs = index_active_arcs(data.network)
     gates = [gate_g1(data, arcs)]
