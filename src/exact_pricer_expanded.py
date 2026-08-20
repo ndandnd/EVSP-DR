@@ -1176,6 +1176,55 @@ def run_cg(args) -> dict:
                             max_station_to_trip_wait_min=HORIZON_MIN)
     provenance = _provenance(args)
     trips = list(problem.trips)
+    prices = load_station_hourly_prices(
+        DATA_DIR / args.prices_csv, CHARGING_STATIONS
+    )
+    from exact_initial_pools import (
+        build_heuristic_initial_pool,
+        pool_provenance,
+    )
+    missing_singletons = []
+    if args.initial_pool == "singletons":
+        initial_pool_records, missing_singletons = (
+            direct_singleton_seed_records(
+                problem,
+                g_kwh=args.g_kwh,
+                soc_step=args.soc_step,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+            )
+        )
+        for record in initial_pool_records:
+            record["cost_tariff_sha256"] = provenance["prices_sha256"]
+        initial_pool_provenance = pool_provenance(
+            "singletons",
+            initial_pool_records,
+            generator="exact_pricer_expanded.direct_singleton_seed_records",
+        )
+    elif args.initial_pool in {"matching", "greedy"}:
+        initial_pool_records, initial_pool_provenance = (
+            build_heuristic_initial_pool(
+                problem,
+                prices,
+                mode=args.initial_pool,
+                depot=DEPOT,
+                stations=STATIONS,
+                g_kwh=args.g_kwh,
+                charge_kw=args.charge_kw,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+                soc_step=args.soc_step,
+                block_min=args.block_min,
+                tariff_sha256=provenance["prices_sha256"],
+                instance_sha256=provenance["instance_sha256"],
+            )
+        )
+    else:
+        initial_pool_records = []
+        initial_pool_provenance = pool_provenance(
+            "artificial", [], generator="none_artificial_variables_only",
+        )
+    initial_pool_sha256 = initial_pool_provenance[
+        "generated_pool_sha256"
+    ]
     pool: dict[frozenset, dict] = {}
     history = []
     stall_hist = []  # (elapsed_s, lp_obj, min_rc) for --stall-window-min
@@ -1204,6 +1253,7 @@ def run_cg(args) -> dict:
             f"refusing --resume for {journal_path} before modifying persisted "
             "artifacts: " + "; ".join(identity_mismatches)
         )
+    interrupted_initialization = False
     if args.resume and persisted_paths and not identity_mismatches:
         saved_pool_hash = prior_status.get("initial_pool_sha256")
         legacy_singletons = (
@@ -1232,6 +1282,10 @@ def run_cg(args) -> dict:
             if observed_pool_hash != saved_pool_hash:
                 raise DurableFileError(
                     "persisted initial-pool journal hash differs"
+                )
+            if initial_pool_sha256 != saved_pool_hash:
+                raise DurableFileError(
+                    "regenerated initial pool differs from persisted identity"
                 )
 
     if args.resume and journal_path and journal_path.exists():
@@ -1354,9 +1408,6 @@ def run_cg(args) -> dict:
         return elapsed_offset + _attempt_elapsed_s()
 
     network_t0 = time.time()
-    prices = load_station_hourly_prices(
-        DATA_DIR / args.prices_csv, CHARGING_STATIONS
-    )
     net = ExpandedNetwork(
         problem, prices,
         soc_step=args.soc_step,
@@ -1536,7 +1587,10 @@ def run_cg(args) -> dict:
               f"{mark:g} min: {snap_json.name}", flush=True)
 
     resume_parent = (prior_status or {}).get("resume_parent")
-    if args.resume and compatible_prior and args.out:
+    if (
+        args.resume and compatible_prior and args.out
+        and not interrupted_initialization
+    ):
         # A terminal status from the previous allocation must not remain
         # visible while this allocation is actively extending its journal.
         # Campaign discovery can therefore distinguish a live canonical pool
@@ -1544,10 +1598,8 @@ def run_cg(args) -> dict:
         resume_status = dict(prior_status)
         resume_status.update({
             "initial_pool": args.initial_pool,
-            "initial_pool_sha256": prior_status.get("initial_pool_sha256"),
-            "initial_pool_provenance": prior_status.get(
-                "initial_pool_provenance"
-            ),
+            "initial_pool_sha256": initial_pool_sha256,
+            "initial_pool_provenance": initial_pool_provenance,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1762,55 +1814,30 @@ def run_cg(args) -> dict:
             flush=True,
         )
 
-    from exact_initial_pools import (
-        build_heuristic_initial_pool,
-        pool_provenance,
-    )
-
-    def bind_initial_pool(provenance_record):
-        observed = provenance_record["generated_pool_sha256"]
-        saved = (
-            prior_status.get("initial_pool_sha256")
-            if compatible_prior else None
+    seeds_added = 0
+    for record in initial_pool_records:
+        key = frozenset(record["trips"])
+        if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
+            pool[key] = record
+            if journal:
+                journal.write(json.dumps(record) + "\n")
+            seeds_added += 1
+    if journal and seeds_added:
+        started = time.perf_counter()
+        flush_and_fsync(journal)
+        _record_phase(
+            "journal_fsync",
+            time.perf_counter() - started,
+            iteration=iteration_offset,
+            details=lambda: {
+                "records": seeds_added,
+                "origin": f"{args.initial_pool}_initial_seed",
+            },
         )
-        if saved is not None and saved != observed:
-            raise DurableFileError(
-                "regenerated initial pool differs from persisted identity"
-            )
-        return observed, provenance_record
-
-    initial_pool_sha256 = None
-    initial_pool_provenance = None
     if args.initial_pool == "singletons":
-        singleton_seeds, missing_singletons = direct_singleton_seed_records(
-            problem,
-            g_kwh=args.g_kwh,
-            soc_step=args.soc_step,
-            reserve_kwh=args.min_soc_frac * args.g_kwh,
-        )
-        seeds_added = 0
-        for record in singleton_seeds:
-            record["cost_tariff_sha256"] = provenance["prices_sha256"]
-            key = frozenset(record["trips"])
-            if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
-                pool[key] = record
-                if journal:
-                    journal.write(json.dumps(record) + "\n")
-                seeds_added += 1
-        if journal and seeds_added:
-            started = time.perf_counter()
-            flush_and_fsync(journal)
-            _record_phase(
-                "journal_fsync",
-                time.perf_counter() - started,
-                iteration=iteration_offset,
-                details=lambda: {
-                    "records": seeds_added, "origin": "singleton_seed",
-                },
-            )
         print(
             f"[EXACT] direct-singleton seed: "
-            f"{len(singleton_seeds)}/{len(trips)} trips feasible "
+            f"{len(initial_pool_records)}/{len(trips)} trips feasible "
             f"({seeds_added} added to pool)",
             flush=True,
         )
@@ -1821,57 +1848,14 @@ def run_cg(args) -> dict:
                 f"({missing_singletons[:15]}).",
                 flush=True,
             )
-        initial_pool_sha256, initial_pool_provenance = bind_initial_pool(
-            pool_provenance(
-                "singletons",
-                singleton_seeds,
-                generator="exact_pricer_expanded.direct_singleton_seed_records",
-            )
-        )
     elif args.initial_pool in {"matching", "greedy"}:
-        heuristic_seeds, heuristic_provenance = (
-            build_heuristic_initial_pool(
-                problem,
-                prices,
-                mode=args.initial_pool,
-                depot=DEPOT,
-                stations=STATIONS,
-                g_kwh=args.g_kwh,
-                charge_kw=args.charge_kw,
-                reserve_kwh=args.min_soc_frac * args.g_kwh,
-                soc_step=args.soc_step,
-                block_min=args.block_min,
-                tariff_sha256=provenance["prices_sha256"],
-                instance_sha256=provenance["instance_sha256"],
-            )
-        )
-        initial_pool_sha256, initial_pool_provenance = bind_initial_pool(
-            heuristic_provenance
-        )
-        seeds_added = 0
-        for record in heuristic_seeds:
-            key = frozenset(record["trips"])
-            if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
-                pool[key] = record
-                if journal:
-                    journal.write(json.dumps(record) + "\n")
-                seeds_added += 1
-        if journal and seeds_added:
-            flush_and_fsync(journal)
         print(
             f"[EXACT] {args.initial_pool} initial pool: "
-            f"{len(heuristic_seeds)} routes ({seeds_added} added), "
+            f"{len(initial_pool_records)} routes ({seeds_added} added), "
             f"sha256={initial_pool_sha256}",
             flush=True,
         )
     else:
-        initial_pool_sha256, initial_pool_provenance = bind_initial_pool(
-            pool_provenance(
-                "artificial",
-                [],
-                generator="none_artificial_variables_only",
-            )
-        )
         if pool:
             print(
                 "[EXACT] initial-pool policy: artificial; direct singleton "
