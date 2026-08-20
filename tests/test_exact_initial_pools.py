@@ -163,6 +163,29 @@ class ExactInitialPoolTests(unittest.TestCase):
                     pool_sha256(records),
                 )
 
+    def test_diversification_round_count_scales_and_is_instrumented(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            observed = {}
+            for rounds in (3, 10):
+                output = Path(tmp) / f"diversify_{rounds}.json"
+                exact.main([
+                    "--csv", "Practice_Selected_1buses.csv",
+                    "--prices_csv", "hourly_prices_flat.csv",
+                    "--max-iters", "1",
+                    "--columns_per_iter", "5",
+                    "--diversify-rounds", str(rounds),
+                    "--out", str(output),
+                ])
+                detail = json.loads(output.read_text())["diversification"]
+                self.assertEqual(detail["requested_rounds"], rounds)
+                self.assertEqual(detail["executed_rounds"], rounds)
+                self.assertEqual(len(detail["rounds"]), rounds)
+                observed[rounds] = detail
+            self.assertEqual(
+                observed[10]["rounds"][:3],
+                observed[3]["rounds"],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

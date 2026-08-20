@@ -2279,6 +2279,12 @@ def run_cg(args) -> dict:
             break
         stall_count = 0
 
+    diversification = {
+        "requested_rounds": int(args.diversify_rounds),
+        "executed_rounds": 0,
+        "added_columns": 0,
+        "rounds": [],
+    }
     if args.diversify_rounds and pool:
         import random as _random
         rng = _random.Random(20260807)
@@ -2364,6 +2370,7 @@ def run_cg(args) -> dict:
         if base_lp is not None:
             added_div = 0
             for rnd in range(1, args.diversify_rounds + 1):
+                round_added = 0
                 alpha = {t_: v * (1.0 + rng.uniform(-args.diversify_delta,
                                                     args.diversify_delta))
                          for t_, v in base_lp.trip_duals.items()}
@@ -2448,6 +2455,16 @@ def run_cg(args) -> dict:
                         if journal:
                             journal.write(json.dumps(record) + "\n")
                         added_div += 1
+                        round_added += 1
+                diversification["rounds"].append({
+                    "round": rnd,
+                    "candidate_routes": len(diversify_routes),
+                    "inserted_or_replaced": round_added,
+                })
+            diversification.update({
+                "executed_rounds": args.diversify_rounds,
+                "added_columns": added_div,
+            })
             if journal:
                 started = time.perf_counter()
                 flush_and_fsync(journal)
@@ -2624,6 +2641,7 @@ def run_cg(args) -> dict:
         "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "termination_signal": termination["signal"],
+        "diversification": diversification,
         "snapshot_availability": snapshot_availability,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
