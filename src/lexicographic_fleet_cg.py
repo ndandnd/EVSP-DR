@@ -353,18 +353,54 @@ def run_lexicographic_fleet_cg(args):
     provenance = exact._provenance(args)
     identity={"git_commit":provenance.get("git_commit"),"git_dirty":provenance.get("git_dirty"),"instance_sha256":provenance["instance_sha256"],"prices_sha256":provenance["prices_sha256"],"reference_sha256":provenance["reference_sha256"],"deadhead_sha256":provenance["deadhead_sha256"],"csv":args.csv,"prices_csv":args.prices_csv,"soc_step":args.soc_step,"block_min":args.block_min,"g_kwh":args.g_kwh,"charge_kw":args.charge_kw,"min_soc_frac":args.min_soc_frac,"strict_tariff_coverage":args.strict_tariff_coverage}
     pool = {}
-    seeds, missing = exact.direct_singleton_seed_records(
-        problem,
-        g_kwh=args.g_kwh,
-        soc_step=args.soc_step,
-        reserve_kwh=args.min_soc_frac * args.g_kwh,
-    ) if args.initial_pool == "singletons" else ([], list(problem.trips))
-    if missing and args.initial_pool == "singletons":
-        raise ValueError(
-            f"singleton initialization missing {len(missing)} trips"
+    from exact_initial_pools import (
+        build_heuristic_initial_pool,
+        pool_provenance,
+    )
+    if args.initial_pool == "singletons":
+        seeds, missing = exact.direct_singleton_seed_records(
+            problem,
+            g_kwh=args.g_kwh,
+            soc_step=args.soc_step,
+            reserve_kwh=args.min_soc_frac * args.g_kwh,
         )
+        if missing:
+            raise ValueError(
+                f"singleton initialization missing {len(missing)} trips"
+            )
+        for seed in seeds:
+            seed["cost_tariff_sha256"] = provenance["prices_sha256"]
+        initial_pool_provenance = pool_provenance(
+            "singletons",
+            seeds,
+            generator="exact_pricer_expanded.direct_singleton_seed_records",
+        )
+    elif args.initial_pool in {"matching", "greedy"}:
+        seeds, initial_pool_provenance = build_heuristic_initial_pool(
+            problem,
+            prices,
+            mode=args.initial_pool,
+            depot=exact.DEPOT,
+            stations=exact.STATIONS,
+            g_kwh=args.g_kwh,
+            charge_kw=args.charge_kw,
+            reserve_kwh=args.min_soc_frac * args.g_kwh,
+            soc_step=args.soc_step,
+            block_min=args.block_min,
+            tariff_sha256=provenance["prices_sha256"],
+            instance_sha256=provenance["instance_sha256"],
+        )
+    else:
+        seeds = []
+        initial_pool_provenance = pool_provenance(
+            "artificial", [], generator="none_artificial_variables_only",
+        )
+    initial_pool_sha256 = initial_pool_provenance["generated_pool_sha256"]
+    identity.update({
+        "initial_pool": args.initial_pool,
+        "initial_pool_sha256": initial_pool_sha256,
+    })
     for seed in seeds:
-        seed["cost_tariff_sha256"] = provenance["prices_sha256"]
         seed["found_lexicographic_phase"] = 0
         pool[frozenset(seed["trips"])] = seed
     if output:
@@ -411,6 +447,9 @@ def run_lexicographic_fleet_cg(args):
         "soc_step": args.soc_step,
         "block_min": args.block_min,
         "master_sense": args.master_sense,
+        "initial_pool": args.initial_pool,
+        "initial_pool_sha256": initial_pool_sha256,
+        "initial_pool_provenance": initial_pool_provenance,
         "trip_ids": list(problem.trips),
         "phases": certificates,
         "all_phases_certified": (

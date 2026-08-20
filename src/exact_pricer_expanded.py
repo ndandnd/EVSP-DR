@@ -1482,6 +1482,10 @@ def run_cg(args) -> dict:
         resume_status = dict(prior_status)
         resume_status.update({
             "initial_pool": args.initial_pool,
+            "initial_pool_sha256": prior_status.get("initial_pool_sha256"),
+            "initial_pool_provenance": prior_status.get(
+                "initial_pool_provenance"
+            ),
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1518,6 +1522,8 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "initial_pool_sha256": None,
+            "initial_pool_provenance": None,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1694,6 +1700,25 @@ def run_cg(args) -> dict:
             flush=True,
         )
 
+    from exact_initial_pools import (
+        build_heuristic_initial_pool,
+        pool_provenance,
+    )
+
+    def bind_initial_pool(provenance_record):
+        observed = provenance_record["generated_pool_sha256"]
+        saved = (
+            prior_status.get("initial_pool_sha256")
+            if compatible_prior else None
+        )
+        if saved is not None and saved != observed:
+            raise DurableFileError(
+                "regenerated initial pool differs from persisted identity"
+            )
+        return observed, provenance_record
+
+    initial_pool_sha256 = None
+    initial_pool_provenance = None
     if args.initial_pool == "singletons":
         singleton_seeds, missing_singletons = direct_singleton_seed_records(
             problem,
@@ -1734,7 +1759,57 @@ def run_cg(args) -> dict:
                 f"({missing_singletons[:15]}).",
                 flush=True,
             )
+        initial_pool_sha256, initial_pool_provenance = bind_initial_pool(
+            pool_provenance(
+                "singletons",
+                singleton_seeds,
+                generator="exact_pricer_expanded.direct_singleton_seed_records",
+            )
+        )
+    elif args.initial_pool in {"matching", "greedy"}:
+        heuristic_seeds, heuristic_provenance = (
+            build_heuristic_initial_pool(
+                problem,
+                prices,
+                mode=args.initial_pool,
+                depot=DEPOT,
+                stations=STATIONS,
+                g_kwh=args.g_kwh,
+                charge_kw=args.charge_kw,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+                soc_step=args.soc_step,
+                block_min=args.block_min,
+                tariff_sha256=provenance["prices_sha256"],
+                instance_sha256=provenance["instance_sha256"],
+            )
+        )
+        initial_pool_sha256, initial_pool_provenance = bind_initial_pool(
+            heuristic_provenance
+        )
+        seeds_added = 0
+        for record in heuristic_seeds:
+            key = frozenset(record["trips"])
+            if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
+                pool[key] = record
+                if journal:
+                    journal.write(json.dumps(record) + "\n")
+                seeds_added += 1
+        if journal and seeds_added:
+            flush_and_fsync(journal)
+        print(
+            f"[EXACT] {args.initial_pool} initial pool: "
+            f"{len(heuristic_seeds)} routes ({seeds_added} added), "
+            f"sha256={initial_pool_sha256}",
+            flush=True,
+        )
     else:
+        initial_pool_sha256, initial_pool_provenance = bind_initial_pool(
+            pool_provenance(
+                "artificial",
+                [],
+                generator="none_artificial_variables_only",
+            )
+        )
         if pool:
             print(
                 "[EXACT] initial-pool policy: artificial; direct singleton "
@@ -1764,6 +1839,8 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "initial_pool_sha256": initial_pool_sha256,
+            "initial_pool_provenance": initial_pool_provenance,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -2480,6 +2557,8 @@ def run_cg(args) -> dict:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "initial_pool": args.initial_pool,
+        "initial_pool_sha256": initial_pool_sha256,
+        "initial_pool_provenance": initial_pool_provenance,
         "validated_seed_routes_sha256": provenance.get(
             "validated_seed_routes_sha256"
         ),
@@ -2532,10 +2611,11 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--initial-pool",
-        choices=("singletons", "artificial"),
+        choices=("singletons", "artificial", "matching", "greedy"),
         default="singletons",
         help="Initial real-column pool. Singletons preserves the operational "
-             "default; artificial starts pricing from Big-M artificials only.",
+             "default; matching/greedy use only model-derived heuristics; "
+             "artificial starts from Big-M variables only.",
     )
     parser.add_argument(
         "--objective",
@@ -2621,6 +2701,8 @@ def main(argv=None) -> int:
             "--validated-seed-routes and --augmentation-label are required "
             "together"
         )
+    if args.initial_pool in {"matching", "greedy"} and args.validated_seed_routes:
+        parser.error("model-derived warm pools cannot be mixed with validated seeds")
     runner = run_cg
     if getattr(args, "objective", "combined-cost") == "lexicographic-fleet":
         from lexicographic_fleet_cg import run_lexicographic_fleet_cg

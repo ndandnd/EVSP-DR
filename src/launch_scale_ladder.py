@@ -51,6 +51,8 @@ CODE_PATHS = (
     "src/scale_ladder_trip_identity.py",
     "src/prepare_scale_ladder_known_partition.py",
     "src/exact_pricer_expanded.py",
+    "src/exact_initial_pools.py",
+    "src/greedy_init.py",
     "src/run_exact_pool_mip.py",
     "src/expanded_path_realization.py",
     "src/audit_giro_known_columns.py",
