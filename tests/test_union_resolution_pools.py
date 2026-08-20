@@ -276,11 +276,13 @@ class ResolutionPoolUnionTests(unittest.TestCase):
                 sources.append(result)
             args=SimpleNamespace(
                 result=sources,target=len(problem.trips),timelimit=30,
-                threads=1,seed=0,data_dir=data,reference_data_dir=data,
+                threads=1,seed=0,solver="highs",
+                data_dir=data,reference_data_dir=data,
                 out=root/"union.json",mip_out=root/"mip.json",
             )
             union,mip=evaluate(args)
             self.assertEqual(mip["outcome"],"FEASIBLE")
+            self.assertEqual(mip["solver"]["backend"],"highs")
             self.assertTrue(mip["witness_audit"]["validated"])
             self.assertEqual(union["source_count"],2)
             self.assertEqual(

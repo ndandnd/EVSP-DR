@@ -393,6 +393,7 @@ def evaluate(args):
         timelimit=args.timelimit,
         threads=args.threads,
         seed=args.seed,
+        solver=getattr(args, "solver", "gurobi"),
     )
     selected = solved.pop("selected_indices")
     selected_routes = [routes[index] for index in selected]
@@ -459,6 +460,9 @@ def main(argv=None):
     parser.add_argument("--timelimit", type=float, required=True)
     parser.add_argument("--threads", type=int, default=8)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--solver", choices=("gurobi", "highs"), default="gurobi",
+    )
     parser.add_argument("--data-dir", type=Path, default=None)
     parser.add_argument("--reference-data-dir", type=Path, default=None)
     parser.add_argument("--out", type=Path, required=True)
