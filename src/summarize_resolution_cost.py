@@ -383,13 +383,19 @@ def paired_diagnostics(rows):
                     "paired_cell_key": key,
                     "difference": cg["lp_difference"],
                 })
-        if cg["certified"] and not arc["certified"]:
+        if (
+            cg["status_present"] and arc["status_present"]
+            and cg["certified"] and not arc["certified"]
+        ):
             arc_intractable.append({
                 "paired_cell_key": key, "scale": cg["scale"],
                 "grid_id": cg["grid_id"],
                 "arc_stop_reason": arc["stop_reason"],
             })
-        if arc["certified"] and not cg["certified"]:
+        if (
+            cg["status_present"] and arc["status_present"]
+            and arc["certified"] and not cg["certified"]
+        ):
             cg_intractable.append({
                 "paired_cell_key": key, "scale": cg["scale"],
                 "grid_id": cg["grid_id"],
