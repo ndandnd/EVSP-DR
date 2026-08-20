@@ -114,6 +114,9 @@ SE3 day-ahead prices but contains no observed series values. It is a
 **synthetic instrument pending a frozen real series**, not a research result.
 Full construction and source provenance are in `TWO_PEAK_INSTRUMENT.md`.
 
+Post-change full repository test result:
+`513 passed, 123 subtests passed in 159.20s`.
+
 Real charging tapers above about 80% SOC, so constant power to full is mildly
 optimistic. Charger capacity remains unlimited; these results make no
 peak-shaving claim.
