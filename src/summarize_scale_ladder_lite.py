@@ -5,7 +5,7 @@ import argparse,csv,hashlib,json,shutil,tempfile
 from pathlib import Path
 import summarize_scale_ladder as base
 ALLOW_CENSORED=set()
-
+def _labels(text):return text.replace('"local_diagnostic"','"ladder_lite_direct_array"').replace("known_duties_contained_fallback_grid","declared_resolution_scale_grid")
 def _sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def _write(path,fields,rows):
     with Path(path).open("w",newline="") as h:
@@ -131,7 +131,7 @@ def summarize(campaign_root,output_dir):
         finally:base._validate_completion=saved
         _append_missing(output,omitted);_mark_censored(output,censored_jobs)
         for path in (p for p in output.iterdir() if p.suffix in {".csv",".json"}):
-            path.write_text(path.read_text().replace('"local_diagnostic"','"ladder_lite_direct_array"').replace("known_duties_contained_fallback_grid","declared_resolution_scale_grid"))
+            path.write_text(_labels(path.read_text()))
         if any(b'"local_diagnostic"' in p.read_bytes() for p in output.iterdir() if p.is_file()):raise ValueError("local_diagnostic provenance survived lite normalization")
         provenance_path=output/"provenance.json"
         provenance=json.loads(provenance_path.read_text())

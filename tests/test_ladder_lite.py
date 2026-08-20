@@ -555,6 +555,14 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             ))
             self.assertEqual(progress["cg_censored"],"True")
 
+    def test_resolution_postpass_removes_legacy_fallback_claim(self):
+        self.assertEqual(
+            lite_summary._labels(
+                "known_duties_contained_fallback_grid,local_diagnostic"
+            ),
+            "declared_resolution_scale_grid,local_diagnostic",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
