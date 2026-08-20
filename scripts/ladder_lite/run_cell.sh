@@ -34,6 +34,8 @@ PY
   PREFLIGHT=${F[18]}; CG_OUT=${F[19]}; SEED_OUT=${F[20]}
   [ ! -e "$OUT.done" ] || { echo "SKIP $JOB_KEY"; return 0; }
   EFFECTIVE=${LL_BUDGET_OVERRIDE_S:-$BUDGET}
+  CG_LIMIT=$((BUDGET + 60))
+  [ -z "${LL_BUDGET_OVERRIDE_S:-}" ] || CG_LIMIT=$EFFECTIVE
   [[ "$EFFECTIVE" =~ ^[0-9]+$ ]] || { echo "invalid budget override" >&2; return 2; }
   command=()
   case "$PHASE" in
@@ -49,7 +51,7 @@ PY
         --csv "$INSTANCE_REL" --prices_csv hourly_prices_flat.csv
         --g-kwh 300 --charge-kw 300 --min-soc-frac 0 --soc-step "$SOC"
         --block-min "$BLOCK" --master-sense partition --initial-pool singletons
-        --wall-limit-s "$((EFFECTIVE + 60))" --checkpoint-every 25 --resume
+        --wall-limit-s "$CG_LIMIT" --checkpoint-every 25 --resume
         --snapshot-at-minutes "$SNAPSHOTS" --out "$OUT")
       [ -z "$TELEMETRY" ] || command+=(--phase-telemetry "$TELEMETRY") ;;
     MIP)
