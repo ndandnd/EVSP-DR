@@ -14,6 +14,7 @@ sys.path.insert(0, str(REPO / "src"))
 from target_pool_feasibility import (  # noqa: E402
     classify_outcome,
     evaluate,
+    load_bound_pool,
     solve_target_feasibility,
 )
 
@@ -91,7 +92,7 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
 
             def swapped(*_args, **_kwargs):
                 journal.write_text('{"trips":[0],"cost":2}\n')
-                return status, [{"trips":[0],"cost":2}], [0]
+                return [{"trips":[0],"cost":2}], [0]
 
             with (
                 patch(
@@ -99,7 +100,7 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
                     return_value=journal,
                 ),
                 patch(
-                    "target_pool_feasibility.load_pool",
+                    "target_pool_feasibility.load_bound_pool",
                     side_effect=swapped,
                 ),
                 patch(
@@ -118,6 +119,15 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
             args=SimpleNamespace(result=root/"unused",out=output)
             with self.assertRaises(FileExistsError):
                 evaluate(args)
+
+    def test_bound_loader_never_reresolves_to_later_candidate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);bound=root/"bound.jsonl";later=root/"later.jsonl"
+            bound.write_text('{"trips":[0],"cost":1}\n')
+            later.write_text('{"trips":[0],"cost":2}\n')
+            routes,trips=load_bound_pool({"trip_ids":[0]},bound)
+            self.assertEqual(trips,[0])
+            self.assertEqual(routes[0]["cost"],1)
 
 
 if __name__ == "__main__":

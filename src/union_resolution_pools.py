@@ -11,14 +11,13 @@ from pathlib import Path
 
 from run_exact_pool_mip import (
     file_sha256,
-    load_pool,
     prepare_strict_partition_pool,
     validate_injected_route,
     resolve_pool_journal,
     verified_mip_code_identity,
     write_new_json,
 )
-from target_pool_feasibility import solve_target_feasibility
+from target_pool_feasibility import load_bound_pool, solve_target_feasibility
 
 
 SCHEMA = "evsp-dr-resolution-pool-union-v1"
@@ -200,12 +199,9 @@ def build_union(result_paths, *, output_path, data_dir=None,
         journal = resolve_pool_journal(result, status)
         result_sha = hashlib.sha256(status_raw).hexdigest()
         journal_sha = file_sha256(journal)
-        loaded_status, routes, trips = load_pool(
-            result, deduplicate=False,
-        )
+        routes, trips = load_bound_pool(status, journal)
         if (
-            loaded_status != status
-            or file_sha256(result) != result_sha
+            file_sha256(result) != result_sha
             or file_sha256(journal) != journal_sha
         ):
             raise RuntimeError("pool union source changed while loading")

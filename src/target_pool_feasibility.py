@@ -13,7 +13,6 @@ from pathlib import Path
 from run_exact_pool_mip import (
     deduplicate_pool,
     file_sha256,
-    load_pool,
     ordered_pool_sha256,
     prepare_strict_partition_pool,
     resolve_pool_journal,
@@ -21,6 +20,7 @@ from run_exact_pool_mip import (
     verified_mip_code_identity,
     write_new_json,
 )
+from durable_io import read_jsonl_records
 
 
 SCHEMA = "evsp-dr-target-pool-feasibility-v1"
@@ -52,6 +52,43 @@ def _trip_rows(routes, trips):
     if missing:
         raise ValueError(f"finite pool omits trips: {missing[:15]}")
     return rows
+
+
+def load_bound_pool(status, journal_path):
+    """Load records only from the already resolved and hash-bound journal."""
+
+    trips = status.get("trip_ids")
+    if (
+        not isinstance(trips, list)
+        or any(not isinstance(trip, int) or isinstance(trip, bool)
+               for trip in trips)
+        or len(trips) != len(set(trips))
+    ):
+        raise ValueError("source status has invalid trip_ids")
+    allowed = set(trips)
+    routes = read_jsonl_records(
+        Path(journal_path), repair_trailing=False,
+    )
+    for ordinal, route in enumerate(routes, start=1):
+        route_trips = route.get("trips") if isinstance(route, dict) else None
+        if (
+            not isinstance(route_trips, list)
+            or not route_trips
+            or any(not isinstance(trip, int) or isinstance(trip, bool)
+                   for trip in route_trips)
+            or len(route_trips) != len(set(route_trips))
+            or not set(route_trips) <= allowed
+        ):
+            raise ValueError(f"journal route {ordinal} has invalid trips")
+        try:
+            cost = float(route["cost"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError(
+                f"journal route {ordinal} has invalid cost"
+            ) from exc
+        if not math.isfinite(cost):
+            raise ValueError(f"journal route {ordinal} has non-finite cost")
+    return routes, list(trips)
 
 
 def solve_target_feasibility(
@@ -150,15 +187,14 @@ def evaluate(args):
     source_journal = resolve_pool_journal(result_path, source_status)
     source_result_sha256 = file_sha256(result_path)
     source_journal_sha256 = file_sha256(source_journal)
-    status, routes, trips = load_pool(result_path, deduplicate=False)
+    routes, trips = load_bound_pool(source_status, source_journal)
     if (
         file_sha256(result_path) != source_result_sha256
         or file_sha256(source_journal) != source_journal_sha256
-        or status != source_status
     ):
         raise RuntimeError("target-feasibility source changed while loading")
     routes, physical_audit = prepare_strict_partition_pool(
-        status,
+        source_status,
         routes,
         data_dir=args.data_dir,
         reference_data_dir=args.reference_data_dir,
@@ -178,7 +214,7 @@ def evaluate(args):
     ]
     if solved["outcome"] == "FEASIBLE":
         validate_final_selected_routes(
-            status,
+            source_status,
             trips,
             selected_routes,
             data_dir=args.data_dir,
@@ -218,14 +254,14 @@ def evaluate(args):
             "result_sha256": source_result_sha256,
             "journal": str(source_journal.resolve()),
             "journal_sha256": source_journal_sha256,
-            "instance_sha256": (status.get("provenance") or {}).get(
+            "instance_sha256": (source_status.get("provenance") or {}).get(
                 "instance_sha256"
             ),
             "pool_columns": len(routes),
             "pool_ordered_sha256": pool_sha256,
         },
         "physics": {
-            key: status.get(key)
+            key: source_status.get(key)
             for key in (
                 "g_kwh", "charge_kw", "min_soc_frac",
                 "soc_step", "block_min",

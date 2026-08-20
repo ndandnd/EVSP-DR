@@ -145,11 +145,10 @@ class ResolutionPoolUnionTests(unittest.TestCase):
             }}
 
             def loaded(path,**_kwargs):
-                payload=json.loads(Path(path).read_text())
-                return payload,[route([0]),route([1])],[0,1]
+                return [route([0]),route([1])],[0,1]
 
             with (
-                patch("union_resolution_pools.load_pool",side_effect=loaded),
+                patch("union_resolution_pools.load_bound_pool",side_effect=loaded),
                 patch("union_resolution_pools.prepare_strict_partition_pool",
                       return_value=([route([0]),route([1])],audit)),
                 patch("audit_giro_known_columns.build_problem",
@@ -169,10 +168,12 @@ class ResolutionPoolUnionTests(unittest.TestCase):
             root=Path(tmp);result=root/"source.json";journal=root/"source.jsonl"
             status={"columns_journal":str(journal),"trip_ids":[0]}
             result.write_text(json.dumps(status));journal.write_text("{}\n")
-            swapped={**status,"trip_ids":[1]}
+            def swapped_loaded(*_args):
+                result.write_text(json.dumps({**status,"trip_ids":[1]}))
+                return [route([1])],[1]
             with (
-                patch("union_resolution_pools.load_pool",
-                      return_value=(swapped,[route([1])],[1])),
+                patch("union_resolution_pools.load_bound_pool",
+                      side_effect=swapped_loaded),
                 patch("union_resolution_pools.verified_mip_code_identity",
                       return_value={}),
                 self.assertRaisesRegex(RuntimeError,"changed while loading"),
