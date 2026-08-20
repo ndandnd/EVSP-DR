@@ -37,15 +37,17 @@ def route(trips, cost=100000.0):
     }
 
 
-def identity(instance="i", g_kwh=300.0):
+def identity(
+    instance="i", g_kwh=300.0, charge_kw=300.0, min_soc_frac=0.0,
+):
     return {
         "instance_sha256": instance,
         "prices_sha256": "p",
         "reference_sha256": "r",
         "deadhead_sha256": "d",
         "g_kwh": g_kwh,
-        "charge_kw": 300.0,
-        "min_soc_frac": 0.0,
+        "charge_kw": charge_kw,
+        "min_soc_frac": min_soc_frac,
         "csv": "instance.csv",
         "prices_csv": "prices.csv",
         "trip_ids": [0, 1],
@@ -86,6 +88,8 @@ class ResolutionPoolUnionTests(unittest.TestCase):
         for changed in (
             identity(instance="foreign"),
             identity(g_kwh=240.0),
+            identity(charge_kw=240.0),
+            identity(min_soc_frac=0.2),
         ):
             with self.subTest(changed=changed):
                 with self.assertRaisesRegex(ValueError, "identity mismatch"):
@@ -167,6 +171,13 @@ class ResolutionPoolUnionTests(unittest.TestCase):
             self.assertEqual(len(payload["sources"]),2)
             self.assertEqual(len(routes),2)
             self.assertTrue(payload["route_hash_deduplication"]["verified"])
+            expected_journal_sha=hashlib.sha256(
+                Path(payload["sources"][0]["journal"]).read_bytes()
+            ).hexdigest()
+            self.assertEqual(
+                [source["journal_sha256"] for source in payload["sources"]],
+                [expected_journal_sha,expected_journal_sha],
+            )
 
     def test_build_union_rejects_loaded_status_swap(self):
         with tempfile.TemporaryDirectory() as tmp:
