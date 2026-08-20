@@ -1,0 +1,122 @@
+{
+  "schema": "evsp-dr-local-cross-resolution-union-summary-v1",
+  "date_utc": "2026-08-20",
+  "cell": "k02_s2",
+  "execution": {
+    "source_generation_commit": "0d036af585d9769900f9a0635af2dfe40cb0adb8",
+    "evaluation_commit": "32cfa55c914aae59c96c4ecdc6fe6ee96edd2dfe",
+    "location": "local",
+    "cluster_used": false,
+    "solver": "scipy.optimize.milp/HiGHS",
+    "timelimit_s": 300
+  },
+  "identity": {
+    "instance": "scale_ladder/instances/Practice_Custom_DutyUnion_k02_r2.csv",
+    "instance_sha256": "6ca7e2db690120699d59fc81428b0f1af00c5cc3889770e8f2860af040244932",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "physics": {
+      "g_kwh": 300.0,
+      "charge_kw": 300.0,
+      "min_soc_frac": 0.0
+    }
+  },
+  "sources": [
+    {
+      "grid": {
+        "soc_step": 15.0,
+        "block_min": 10
+      },
+      "pricing_certified": true,
+      "route_weight": 2.1875,
+      "iterations": 93,
+      "final_pool_columns": 548,
+      "physically_admitted_journal_records": 566,
+      "result_sha256": "7a97fb9985b6c60bad08a6b5e1d0e52c68fd2709b2af617d39e41a2c63b72370",
+      "journal_sha256": "33ae967934595f2a6eb103af3dfa2d5bd928b505aa59e3d00bf13a7d597ef393",
+      "ordered_final_pool_sha256": "053311d84f6ecfdf6f8bbedfe3b166b354d59039cd8b4b37666348dcf9cd5cb8"
+    },
+    {
+      "grid": {
+        "soc_step": 1.0,
+        "block_min": 5
+      },
+      "pricing_certified": true,
+      "route_weight": 2.0,
+      "iterations": 88,
+      "final_pool_columns": 930,
+      "physically_admitted_journal_records": 937,
+      "result_sha256": "dea1926d3e2e875f064edfecda1d3c9c0b829d71e737eca84096abb077ad5d0d",
+      "journal_sha256": "30cb8a10565e79bb5c40491e5ad7232545f5667fd2ff8548b263429b384b415d",
+      "ordered_final_pool_sha256": "33d59fbf2525db77d58ce963ed1b37fbfcacd575d5edf53e6c65781992d82b98"
+    }
+  ],
+  "union": {
+    "columns": 1503,
+    "journal_sha256": "6616d34ab3801eb354e10dccb2191878782761da72e9820aa7c63fef1df413b8",
+    "route_hashes_sha256": "2c7fbbd3ff599385184ec5c717ed9035f0eecbcada89a1ae05383228bb210a55",
+    "source_superset_verified": true,
+    "cross_resolution_cost_comparability": false
+  },
+  "outcomes": {
+    "primary_pool_target_4": {
+      "outcome": "FEASIBLE",
+      "witness_route_count": 4
+    },
+    "primary_pool_target_3": {
+      "outcome": "INFEASIBLE",
+      "witness_route_count": null
+    },
+    "primary_pool_target_2": {
+      "outcome": "INFEASIBLE",
+      "witness_route_count": null
+    },
+    "fine_pool_target_2": {
+      "outcome": "FEASIBLE",
+      "witness_route_count": 2
+    },
+    "union_target_3": {
+      "outcome": "FEASIBLE",
+      "witness_route_count": 3,
+      "retained_source_counts": [
+        {
+          "grid": {
+            "soc_step": 1.0,
+            "block_min": 5
+          },
+          "route_count": 3,
+          "journal_sha256": "30cb8a10565e79bb5c40491e5ad7232545f5667fd2ff8548b263429b384b415d"
+        }
+      ]
+    },
+    "union_target_2": {
+      "outcome": "FEASIBLE",
+      "witness_route_count": 2,
+      "retained_source_counts": [
+        {
+          "grid": {
+            "soc_step": 15.0,
+            "block_min": 10
+          },
+          "route_count": 1,
+          "journal_sha256": "33ae967934595f2a6eb103af3dfa2d5bd928b505aa59e3d00bf13a7d597ef393"
+        },
+        {
+          "grid": {
+            "soc_step": 1.0,
+            "block_min": 5
+          },
+          "route_count": 1,
+          "journal_sha256": "30cb8a10565e79bb5c40491e5ad7232545f5667fd2ff8548b263429b384b415d"
+        }
+      ]
+    }
+  },
+  "conclusion": {
+    "requested_target_reached": true,
+    "best_demonstrated_union_target": 2,
+    "primary_pool_composition_repaired": false,
+    "reason": "The target-3 witness uses only fine-grid routes, the fine pool alone reaches target 2, and the primary finite pool remains infeasible at target 3. Cross-resolution feasibility changes the route space and does not recover the missing primary-grid columns."
+  }
+}
