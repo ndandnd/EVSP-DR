@@ -87,11 +87,11 @@ def _mark_censored(output,jobs):
         path=output/name
         with path.open(newline="") as h:r=csv.DictReader(h);rows=list(r);fields=r.fieldnames
         for row in rows:
-            matches=[j for j in jobs if j["cell_id"]==row.get("cell_id")
-                     and (j["phase"]!="MIP" or j["arm"]==row.get("arm"))]
+            matches=[j for j in jobs if (name.startswith("cg_") and j["phase"] in {"CG","CG_SENSITIVITY"} and j["cell_id"]==row.get("cell_id") and ("primary" if j["phase"]=="CG" else "small_grid_sensitivity")==row.get("campaign_role") and str(j["soc_step"])==row.get("soc_step") and str(j["block_min"])==row.get("block_min") and str(j["cg_replicate"])==row.get("cg_replicate")) or (name.startswith("mip_") and j["phase"]=="MIP" and j["cell_id"]==row.get("cell_id") and j["arm"]==row.get("arm") and str(j["cg_replicate"])==row.get("cg_replicate")) or (name.startswith("scale_") and j["phase"]=="CG" and str(j["scale"])==row.get("scale") and str(j["selection_replicate"])==row.get("selection_replicate") and str(j["cg_replicate"])==row.get("cg_replicate"))]
             if matches:
-                row["censored"]="True"
+                row["cg_censored" if name.startswith("scale_") else "censored"]="True"
                 if "stopping_reason" in row:row["stopping_reason"]="censored: output present without .done"
+                if "cg_stopping_reason" in row:row["cg_stopping_reason"]="censored"
                 if "missing_reason" in row:row["missing_reason"]="censored: output present without .done"
         _write(path,fields,rows)
 def summarize(campaign_root,output_dir):

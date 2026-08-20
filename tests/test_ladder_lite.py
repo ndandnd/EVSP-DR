@@ -343,18 +343,21 @@ class LadderLiteTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
             (root/"cg_run_summary.csv").write_text(
-                "cell_id,cg_replicate,final_route_weight,censored,stopping_reason\n"
-                "k02_s1_c1,1,2.181818,False,certified\n"
+                "cell_id,campaign_role,soc_step,block_min,cg_replicate,final_route_weight,censored,stopping_reason\n"
+                "k02_s1_c1,primary,15.0,10,1,2.181818,False,certified\n"
+                "k02_s1_c1,small_grid_sensitivity,5.0,10,1,2.0,False,certified\n"
             )
             (root/"mip_run_summary.csv").write_text(
                 "cell_id,arm,cg_replicate,censored,missing_reason\n"
             )
             (root/"scale_progress_summary.csv").write_text(
-                "cell_id,cg_replicate,cg_censored,missing_reason\n"
+                "scale,selection_replicate,cg_replicate,cg_censored,cg_stopping_reason,missing_reason\n"
+                "2,1,1,False,certified,\n"
             )
             lite_summary._mark_censored(root,[{
                 "cell_id":"k02_s1_c1","cg_replicate":1,
-                "phase":"CG","arm":None,
+                "phase":"CG","arm":None,"soc_step":15.0,"block_min":10,
+                "scale":2,"selection_replicate":1,
             }])
             row=next(csv.DictReader(
                 (root/"cg_run_summary.csv").open()
@@ -362,6 +365,12 @@ class LadderLiteTests(unittest.TestCase):
             self.assertEqual(row["final_route_weight"],"2.181818")
             self.assertEqual(row["censored"],"True")
             self.assertIn("without .done",row["stopping_reason"])
+            rows=list(csv.DictReader((root/"cg_run_summary.csv").open()))
+            self.assertEqual(rows[1]["censored"],"False")
+            progress=next(csv.DictReader(
+                (root/"scale_progress_summary.csv").open()
+            ))
+            self.assertEqual(progress["cg_censored"],"True")
 
 
 if __name__ == "__main__":
