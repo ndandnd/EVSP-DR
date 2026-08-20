@@ -1,4 +1,5 @@
 import csv
+import copy
 import hashlib
 import json
 import os
@@ -15,6 +16,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 import launch_scale_ladder as ladder  # noqa: E402
+import summarize_scale_ladder_lite as lite_summary  # noqa: E402
 
 
 class LadderLiteTests(unittest.TestCase):
@@ -252,6 +254,41 @@ class LadderLiteTests(unittest.TestCase):
             missing=next(row for row in rows if row["cell_id"]=="cg_b")
             self.assertEqual(missing["status"],"missing")
             self.assertEqual(missing["censor_reason"],"normalized row missing")
+
+    def test_partial_normalization_emits_missing_rows_and_rejects_smoke(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); campaign=root/"campaign"; campaign.mkdir()
+            plan=copy.deepcopy(self.plan)
+            for job in plan["jobs"]:
+                job["output"]=str(root/"outputs"/f"{job['job_key']}.json")
+                if job.get("progress_dir"):
+                    job["progress_dir"]=str(root/"progress"/job["job_key"])
+                if job.get("telemetry"):
+                    job["telemetry"]=str(root/"telemetry"/f"{job['job_key']}.jsonl")
+            raw=ladder.canonical(plan); (campaign/"approved-plan.json").write_bytes(raw)
+            (campaign/"campaign.json").write_text(json.dumps({
+                "approval_sha256":hashlib.sha256(raw).hexdigest(),
+                "execution_mode":"ladder_lite_direct_array",
+                "commit":plan["checkout_identity"]["commit"],
+            }))
+            output=root/"normalized"
+            result=lite_summary.summarize(campaign,output)
+            self.assertEqual(result["completed"],0)
+            self.assertEqual(result["omitted"],138)
+            with (output/"cg_run_summary.csv").open(newline="") as h:
+                cg=list(csv.DictReader(h))
+            with (output/"mip_run_summary.csv").open(newline="") as h:
+                mip=list(csv.DictReader(h))
+            self.assertEqual(len(cg),53)
+            self.assertGreaterEqual(len(mip),42)
+            self.assertTrue(all(row["censored"]=="True" for row in cg))
+            provenance=json.loads((output/"provenance.json").read_text())
+            self.assertEqual(provenance["execution_mode"],"ladder_lite_direct_array")
+            shutil_target=Path(plan["jobs"][0]["output"]+".override.json")
+            shutil_target.parent.mkdir(parents=True,exist_ok=True);shutil_target.write_text("{}")
+            second=root/"second"
+            with self.assertRaisesRegex(ValueError,"smoke override"):
+                lite_summary.summarize(campaign,second)
 
 
 if __name__ == "__main__":

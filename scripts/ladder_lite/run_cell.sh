@@ -5,7 +5,10 @@ main() {
   [ "$#" -eq 2 ] || { echo "usage: run_cell.sh PLAN_JSON GROUP" >&2; return 2; }
   PLAN=$1; GROUP=$2
   REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd) || return 1
+  LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}
   PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}
+  unset PYTHONPATH PYTHONHOME PYTHONSTARTUP LD_LIBRARY_PATH
+  export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
   TASK=${SLURM_ARRAY_TASK_ID:-}
   [[ "$TASK" =~ ^[0-9]+$ ]] || { echo "SLURM_ARRAY_TASK_ID missing" >&2; return 2; }
   readarray -t F < <("$PYTHON" -B - "$PLAN" "$GROUP" "$TASK" <<'PY'
@@ -32,7 +35,11 @@ PY
   OUT=${F[12]}; PROGRESS=${F[13]}; TELEMETRY=${F[14]}
   SOC=${F[15]}; BLOCK=${F[16]}; SNAPSHOTS=${F[17]}
   PREFLIGHT=${F[18]}; CG_OUT=${F[19]}; SEED_OUT=${F[20]}
-  [ ! -e "$OUT.done" ] || { echo "SKIP $JOB_KEY"; return 0; }
+  MARKER="$OUT.done"
+  if [ -n "${LL_BUDGET_OVERRIDE_S:-}" ] && [[ "$PHASE" == CG* || "$PHASE" == MIP ]]; then
+    MARKER="$OUT.smoke.done"
+  fi
+  [ ! -e "$OUT.done" ] && [ ! -e "$MARKER" ] || { echo "SKIP $JOB_KEY"; return 0; }
   EFFECTIVE=${LL_BUDGET_OVERRIDE_S:-$BUDGET}
   CG_LIMIT=$((BUDGET + 60))
   [ -z "${LL_BUDGET_OVERRIDE_S:-}" ] || CG_LIMIT=$EFFECTIVE
@@ -62,11 +69,17 @@ PY
     *) echo "unknown phase: $PHASE" >&2; return 2 ;;
   esac
   if [ "${LL_PRINT_COMMAND:-0}" = 1 ]; then printf '%q ' "${command[@]}"; echo; return 0; fi
+  OBSERVED=$(git -C "$REPO" rev-parse HEAD 2>/dev/null) || return 2
+  [ "$OBSERVED" = "$COMMIT" ] || { echo "commit mismatch" >&2; return 2; }
+  [ -z "$(git -C "$REPO" status --porcelain --untracked-files=no)" ] || {
+    echo "tracked checkout modifications" >&2; return 2;
+  }
   mkdir -p "$(dirname "$OUT")" || return 1
+  rm -f "$OUT.failed" "$OUT.blocked"
   "$PYTHON" -B "$REPO/src/install_exact_cg_profile_input.py" \
     --source "$INSTANCE" --data-root "$REPO/data" --relative "$INSTANCE_REL" \
     --sha256 "$INSTANCE_SHA" || return 2
-  export EVSP_EXPECTED_COMMIT="$COMMIT"
+  export EVSP_EXPECTED_COMMIT="$OBSERVED"
   export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
   if [ "$PHASE" = MIP ]; then
     if [ ! -s "$CG_OUT" ] || [ ! -e "$CG_OUT.done" ]; then
@@ -74,6 +87,23 @@ PY
     fi
     if [ "$ARM" = "KNOWN-PARTITION" ] && [ ! -s "$SEED_OUT" ]; then
       printf 'known partition not ready: %s\n' "$SEED_OUT" >"$OUT.blocked"; return 0
+    fi
+    if [ -d "$PROGRESS" ]; then
+      if [ -s "$PROGRESS/result_pending.json" ]; then
+        "$PYTHON" -B "$REPO/src/recover_scale_ladder_mip_progress.py" \
+          --progress-dir "$PROGRESS" >/dev/null 2>&1
+        if [ -s "$PROGRESS/final.json" ]; then
+          [ -e "$OUT" ] || ln "$PROGRESS/result_pending.json" "$OUT" 2>/dev/null
+          if cmp -s "$PROGRESS/result_pending.json" "$OUT"; then
+            touch "$MARKER"; echo "RECOVERED $JOB_KEY"; return 0
+          fi
+        fi
+      fi
+      UTC=$(date -u +%Y%m%dT%H%M%SZ)
+      QUARANTINE="$PROGRESS.quarantine-${SLURM_JOB_ID:-local}-$UTC"
+      mv "$PROGRESS" "$QUARANTINE" || return 2
+      printf '%s\t%s\t%s\t%s\n' "$UTC" "$JOB_KEY" "$PROGRESS" "$QUARANTINE" \
+        >>"$LL_ROOT/quarantine.tsv"
     fi
     JOURNAL=$("$PYTHON" -B -c \
       'import json,pathlib,sys;p=pathlib.Path(sys.argv[1]);q=pathlib.Path(json.load(p.open())["columns_journal"]);print((q if q.is_absolute() else p.resolve().parent/q).resolve())' \
@@ -103,16 +133,22 @@ PY
   forward() { [ -z "$child" ] || kill -USR1 "$child" 2>/dev/null || true; }
   trap forward USR1 TERM INT
   (cd "$REPO" && "${command[@]}") 2>"$ERR" & child=$!
-  wait_status=0; wait "$child" || wait_status=$?; child=""; trap - USR1 TERM INT
-  if [ "$wait_status" -eq 0 ]; then
-    rm -f "$OUT.failed" "$OUT.blocked"; touch "$OUT.done"
+  status=0
+  while true; do
+    wait_status=0; wait "$child" || wait_status=$?
+    if kill -0 "$child" 2>/dev/null; then continue; fi
+    status=$wait_status; break
+  done
+  child=""; trap - USR1 TERM INT
+  if [ "$status" -eq 0 ]; then
+    touch "$MARKER"
     echo "DONE $JOB_KEY scale=$SCALE selection=$SEL cg=$CGREP"; return 0
   fi
   {
-    echo "exit_code=$wait_status"; echo "job_key=$JOB_KEY"
+    echo "exit_code=$status"; echo "job_key=$JOB_KEY"
     echo "slurm_job_id=${SLURM_JOB_ID:-local}"; echo "node=${SLURMD_NODENAME:-$(hostname)}"
     tail -n 40 "$ERR" 2>/dev/null
   } >"$OUT.failed"
-  return "$wait_status"
+  return "$status"
 }
 main "$@"

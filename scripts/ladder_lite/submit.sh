@@ -21,17 +21,18 @@ main() {
     [ -n "$INDICES" ] || continue
     USE_PART=${PART:-$PLAN_PART}; USE_MEM=$MEM
     if [ -z "$USE_MEM" ]; then
-      if [[ "$GROUP" == MIP_* ]] || { [[ "$GROUP" == CG* ]] && [ "$MAX_SCALE" -ge 20 ]; }; then USE_MEM=24G; else USE_MEM=16G; fi
+      if [[ "$GROUP" == MIP_* ]] && [ "$MAX_SCALE" -ge 20 ]; then USE_MEM=48G
+      elif [[ "$GROUP" == MIP_* ]] || { [[ "$GROUP" == CG* ]] && [ "$MAX_SCALE" -ge 20 ]; }; then USE_MEM=24G
+      else USE_MEM=16G; fi
     fi
     WALL=$((BUDGET + 1800)); LIMIT=${LL_MAX_TIME_S:-0}
     if [[ "$LIMIT" =~ ^[1-9][0-9]*$ ]] && [ "$WALL" -gt "$LIMIT" ]; then
       echo "WARNING: clamping $GROUP scales=$SCALE_TAG from ${WALL}s to ${LIMIT}s" >&2; WALL=$LIMIT
     fi
     TIME=$(printf '%d:%02d:%02d' $((WALL/3600)) $(((WALL%3600)/60)) $((WALL%60)))
-    case "$GROUP" in PREFLIGHT) CODE=pf;; SEED) CODE=sd;; CG) CODE=cg;; CG_SENSITIVITY) CODE=cs;; MIP_RAW) CODE=mr;; *) CODE=mk;; esac
     cmd=(sbatch --requeue --parsable "--array=$INDICES%$CONC" "--partition=$USE_PART"
-      -c "$THREADS" "--mem=$USE_MEM" "--time=$TIME" --signal=B:USR1@180
-      -J "ll_${CODE}_k${SCALE_TAG//,/x}" -o "$LL_ROOT/logs/ll_${GROUP}_%A_%a.out"
+      -c "$THREADS" "--mem=$USE_MEM" "--time=$TIME" --signal=B:USR1@180 --open-mode=append
+      -J "ll_${GROUP}_k${SCALE_TAG//,/x}" -o "$LL_ROOT/logs/ll_${GROUP}_%A_%a.out"
       -e "$LL_ROOT/logs/ll_${GROUP}_%A_%a.err"
       --export="ALL,LL_PYTHON=$PYTHON" "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/run_cell.sh" "$PLAN" "$GROUP")
     if [ "$DRY" -eq 1 ]; then printf '%q ' "${cmd[@]}"; echo; else

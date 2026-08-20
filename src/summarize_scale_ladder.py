@@ -331,7 +331,6 @@ def summarize(
     output_dir,
     k40_reuse_manifest=None,
     legacy_audit_sidecar=None,
-    execution_mode=None,
 ):
     campaign_root = Path(campaign_root).resolve()
     output_dir = Path(output_dir).resolve()
@@ -345,18 +344,8 @@ def summarize(
     ).hexdigest():
         raise ValueError("campaign approval hash mismatch")
     local_diagnostic = plan.get("execution_mode") == "local_diagnostic"
-    if execution_mode not in {None, "ladder-lite-direct"}:
-        raise ValueError("unsupported execution-mode override")
-    lite_direct = execution_mode == "ladder-lite-direct"
     legacy_audit = None
-    if lite_direct:
-        if (
-            manifest.get("execution_mode") != "ladder_lite_direct_array"
-            or manifest.get("commit")
-            != plan["checkout_identity"]["commit"]
-        ):
-            raise ValueError("ladder-lite manifest identity mismatch")
-    elif local_diagnostic:
+    if local_diagnostic:
         if (
             manifest.get("execution_mode") != "local_diagnostic"
             or not isinstance(manifest.get("diagnostic_only"), bool)
@@ -385,7 +374,7 @@ def summarize(
                     "prospective scheduler evidence cannot be mixed with "
                     "a legacy audit sidecar"
                 )
-    if not local_diagnostic and not lite_direct:
+    if not local_diagnostic:
         probes = manifest.get("probe_results") or {}
         if (
             manifest.get("probe_state") != "passed"
@@ -420,12 +409,7 @@ def summarize(
                 )
     jobs = {job["job_key"]: job for job in plan["jobs"]}
     for job in plan["jobs"]:
-        if lite_direct:
-            output = Path(job["output"])
-            if not output.exists() or not Path(str(output) + ".done").is_file():
-                raise ValueError(f"ladder-lite output incomplete: {job['job_key']}")
-        else:
-            _validate_completion(job, manifest["approval_sha256"])
+        _validate_completion(job, manifest["approval_sha256"])
     membership_rows = []
     membership_by_instance = {}
     for job in plan["jobs"]:
@@ -469,7 +453,7 @@ def summarize(
                 Path(str(legacy_audit_sidecar) + ".sha256"),
             ),
         ])
-    if not local_diagnostic and not lite_direct:
+    if not local_diagnostic:
         for probe_id, result in sorted(
             (manifest.get("probe_results") or {}).items()
         ):
@@ -821,13 +805,7 @@ def summarize(
             "trip_identity_schema": plan["trip_identity_schema"],
             "code_hashes": plan["code_hashes"],
             "python_identity": plan["python_identity"],
-            "execution_mode": (
-                "ladder_lite_direct_array" if lite_direct
-                else plan.get("execution_mode", "slurm_campaign")
-            ),
-            "provenance": (
-                "ladder_lite_direct_array" if lite_direct else None
-            ),
+            "execution_mode": plan.get("execution_mode", "slurm_campaign"),
             "diagnostic_only": manifest.get("diagnostic_only", False),
             "legacy_evidence_status": (
                 legacy_audit.get("legacy_evidence_status")
@@ -1578,16 +1556,12 @@ def main(argv=None):
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--k40-reuse-manifest", type=Path)
     parser.add_argument("--legacy-audit-sidecar", type=Path)
-    parser.add_argument(
-        "--execution-mode", choices=("ladder-lite-direct",)
-    )
     args = parser.parse_args(argv)
     print(json.dumps(summarize(
         args.campaign_root,
         args.out_dir,
         args.k40_reuse_manifest,
         args.legacy_audit_sidecar,
-        args.execution_mode,
     ), indent=2))
     return 0
 
