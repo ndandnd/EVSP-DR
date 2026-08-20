@@ -21,7 +21,7 @@ main() {
     [ -n "$INDICES" ] || continue
     USE_PART=${PART:-$PLAN_PART}; USE_MEM=$MEM
     if [ -z "$USE_MEM" ]; then
-      if [[ "$GROUP" == MIP_* ]] || [ "$MAX_SCALE" -ge 20 ]; then USE_MEM=24G; else USE_MEM=16G; fi
+      if [[ "$GROUP" == MIP_* ]] || { [[ "$GROUP" == CG* ]] && [ "$MAX_SCALE" -ge 20 ]; }; then USE_MEM=24G; else USE_MEM=16G; fi
     fi
     WALL=$((BUDGET + 1800)); LIMIT=${LL_MAX_TIME_S:-0}
     if [[ "$LIMIT" =~ ^[1-9][0-9]*$ ]] && [ "$WALL" -gt "$LIMIT" ]; then

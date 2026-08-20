@@ -149,7 +149,10 @@ class LadderLiteTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); (root / "campaign").mkdir()
             plan = {
-                "task_groups": {"CG": ["a", "b", "c", "d"]},
+                "task_groups": {
+                    "CG": ["a", "b", "c", "d"],
+                    "PREFLIGHT": ["d"],
+                },
                 "jobs": [
                     {"job_key": "a", "scale": 2, "budget_s": 60,
                      "partition": "default_partition", "threads": 2},
@@ -157,7 +160,7 @@ class LadderLiteTests(unittest.TestCase):
                      "partition": "default_partition", "threads": 2},
                     {"job_key": "c", "scale": 2, "budget_s": 60,
                      "partition": "default_partition", "threads": 2},
-                    {"job_key": "d", "scale": 8, "budget_s": 180,
+                    {"job_key": "d", "scale": 20, "budget_s": 180,
                      "partition": "default_partition", "threads": 2},
                 ],
             }
@@ -183,6 +186,21 @@ class LadderLiteTests(unittest.TestCase):
             self.assertTrue(all("--mem=16G" in row and "-c" in row
                                 and row[row.index("-c")+1]=="2" for row in tokens))
             self.assertIn("total_tasks=3", lines)
+            for group, expected_mem in (("CG", "24G"), ("PREFLIGHT", "16G")):
+                long_run = subprocess.run(
+                    [
+                        "bash", str(REPO / "scripts/ladder_lite/submit.sh"),
+                        group, "--scales", "20", "--dry-run",
+                    ],
+                    cwd=REPO, env=environment, text=True,
+                    capture_output=True, check=False,
+                )
+                self.assertEqual(long_run.returncode, 0, long_run.stderr)
+                self.assertIn(
+                    f"--mem={expected_mem}", shlex.split(
+                        long_run.stdout.splitlines()[0]
+                    ),
+                )
 
     def test_record_results_is_idempotent(self):
         with tempfile.TemporaryDirectory() as tmp:
