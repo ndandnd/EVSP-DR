@@ -339,6 +339,30 @@ class LadderLiteTests(unittest.TestCase):
                     "progress_dir":str(progress),"threads":8,"budget_s":60,
                 },"")
 
+    def test_partial_cg_values_are_preserved_and_marked_censored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            (root/"cg_run_summary.csv").write_text(
+                "cell_id,cg_replicate,final_route_weight,censored,stopping_reason\n"
+                "k02_s1_c1,1,2.181818,False,certified\n"
+            )
+            (root/"mip_run_summary.csv").write_text(
+                "cell_id,arm,cg_replicate,censored,missing_reason\n"
+            )
+            (root/"scale_progress_summary.csv").write_text(
+                "cell_id,cg_replicate,cg_censored,missing_reason\n"
+            )
+            lite_summary._mark_censored(root,[{
+                "cell_id":"k02_s1_c1","cg_replicate":1,
+                "phase":"CG","arm":None,
+            }])
+            row=next(csv.DictReader(
+                (root/"cg_run_summary.csv").open()
+            ))
+            self.assertEqual(row["final_route_weight"],"2.181818")
+            self.assertEqual(row["censored"],"True")
+            self.assertIn("without .done",row["stopping_reason"])
+
 
 if __name__ == "__main__":
     unittest.main()
