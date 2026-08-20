@@ -5037,9 +5037,13 @@ printf '%s %s\n' "$status" "$checks"
             cg5_status = json.loads(cg.read_text())
             cg5_status["columns_journal"] = str(cg5_journal)
             cg5_status["soc_step"] = 5.0
+            cg5_status["certified_rc_optimal"] = True
+            cg5_status["stop_reason"] = "certified"
             cg5.write_text(json.dumps(cg5_status))
             Path(str(cg5) + ".iters.csv").write_text(
-                Path(str(cg) + ".iters.csv").read_text()
+                "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,pool_columns\n"
+                "10,1,3,2.5,1,-1,1\n"
+                "100,2,2,2,0,0,2\n"
             )
             telemetry5 = root / "telemetry5.jsonl"
             telemetry5.write_text(telemetry.read_text())
@@ -5152,6 +5156,14 @@ printf '%s %s\n' "$status" "$checks"
                 if item["campaign_role"] == "small_grid_sensitivity"
             )
             self.assertEqual(row["censored"], "True")
+            self.assertEqual(
+                row["route_weight_meaning"],
+                "upper bound on LP optimum only; no fleet LP lower bound",
+            )
+            self.assertEqual(
+                sensitivity["route_weight_meaning"],
+                "fleet LP lower bound (certified discretized model; grid stated; D0019)",
+            )
             self.assertEqual(sensitivity["soc_step"], "5.0")
             self.assertEqual(
                 sensitivity["grid_interpretation"],

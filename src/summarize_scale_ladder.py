@@ -27,6 +27,12 @@ from expanded_path_realization import (
     charging_block_schedule_sha256,
 )
 
+CERTIFIED_ROUTE_WEIGHT_MEANING = (
+    "fleet LP lower bound (certified discretized model; grid stated; D0019)"
+)
+UNCERTIFIED_ROUTE_WEIGHT_MEANING = (
+    "upper bound on LP optimum only; no fleet LP lower bound"
+)
 
 CG_FIELDS = (
     "cell_id", "scale", "selection_replicate", "cg_replicate",
@@ -36,6 +42,7 @@ CG_FIELDS = (
     "pool_columns", "columns_added", "master_time_s", "pricing_time_s",
     "phase_timing_available", "phase_timing_unavailable_reason",
     "target_route_weight_observed", "grid_interpretation",
+    "route_weight_meaning",
     "pricing_certified", "stopping_reason", "censored",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
@@ -52,6 +59,7 @@ CG_SUMMARY_FIELDS = (
     "time_to_zero_artificials_s", "censored",
     "phase_timing_available", "phase_timing_unavailable_reason",
     "target_route_weight_observed", "grid_interpretation",
+    "route_weight_meaning",
     "instance_file_sha256", "ordered_trip_id_set_sha256",
     "solver_local_trip_index_sha256", "ordered_trip_sequence_sha256",
     "trip_identity_schema",
@@ -497,6 +505,25 @@ def summarize(
                 raise ValueError(f"CG instance identity differs: {field}")
         provenance = status.get("provenance") or {}
         source_args = provenance.get("args") or {}
+        lexicographic = status.get("objective") == "lexicographic-fleet"
+        phase_2 = (
+            next((
+                phase for phase in status.get("phases", [])
+                if phase.get("phase") == 2
+            ), None)
+            if lexicographic else None
+        )
+        if lexicographic and phase_2 is None:
+            raise ValueError("lexicographic CG status lacks phase 2")
+        source_certified = (
+            phase_2.get("certified") is True
+            if phase_2 is not None
+            else status.get("certified_rc_optimal") is True
+        )
+        source_stop_reason = (
+            phase_2.get("stop_reason")
+            if phase_2 is not None else status.get("stop_reason")
+        )
         if (
             provenance.get("instance_sha256")
             != identities["instance_file_sha256"]
@@ -534,9 +561,27 @@ def summarize(
             _phase_times(Path(job["telemetry"]))
             if job.get("telemetry") else defaultdict(lambda: defaultdict(float))
         )
-        iters_path = Path(str(status_path) + ".iters.csv")
+        iters_path = Path(
+            str(status_path) + (
+                ".lexicographic.iters.csv"
+                if lexicographic else ".iters.csv"
+            )
+        )
         with iters_path.open(newline="") as handle:
             rows = list(csv.DictReader(handle))
+        if lexicographic:
+            rows = [
+                {
+                    "elapsed_s": None,
+                    "iteration": row["iteration"],
+                    "lp_obj": row["objective"],
+                    "route_weight": row["route_weight"],
+                    "artificials": row["artificial_mass"],
+                    "min_rc": row["minimum_reduced_cost"],
+                    "pool_columns": row["pool_columns"],
+                }
+                for row in rows if int(row["phase"]) == 2
+            ]
         previous_columns = 0
         normalized = []
         for raw in rows:
@@ -559,7 +604,7 @@ def summarize(
                 "soc_step": job["soc_step"],
                 "block_min": job["block_min"],
                 "target_fleet": job["target_fleet"],
-                "elapsed_s": float(raw["elapsed_s"]),
+                "elapsed_s": _float(raw["elapsed_s"]),
                 "iteration": iteration,
                 "lp_obj": float(raw["lp_obj"]),
                 "route_weight": float(raw["route_weight"]),
@@ -585,17 +630,22 @@ def summarize(
                     "primary_discretized_route_space"
                     if job["phase"] == "CG"
                     else
-                    "known_duties_contained_fallback_grid"
+                    "declared_resolution_scale_grid"
                     if job["soc_step"] == 1.0
                     and job["block_min"] == 5
                     else "route_space_sensitivity_diagnostic"
                 ),
                 "pricing_certified": (
-                    status.get("certified_rc_optimal") is True
+                    source_certified
                     and raw is rows[-1]
                 ),
-                "stopping_reason": status.get("stop_reason"),
-                "censored": status.get("certified_rc_optimal") is not True,
+                "route_weight_meaning": (
+                    CERTIFIED_ROUTE_WEIGHT_MEANING
+                    if source_certified and raw is rows[-1]
+                    else UNCERTIFIED_ROUTE_WEIGHT_MEANING
+                ),
+                "stopping_reason": source_stop_reason,
+                "censored": not source_certified,
                 **{
                     field: identities[field] for field in identities
                     if field != "trip_count"
@@ -635,19 +685,29 @@ def summarize(
             "target_fleet": job["target_fleet"],
             "budget_s": job["budget_s"],
             "elapsed_s": status.get("wall_s"),
-            "iterations": status.get("iterations"),
+            "iterations": (
+                phase_2.get("iterations")
+                if phase_2 is not None else status.get("iterations")
+            ),
             "final_lp_obj": final["lp_obj"] if final else None,
             "final_route_weight": final["route_weight"] if final else None,
             "final_artificial_mass":
                 final["artificial_mass"] if final else None,
             "final_min_reduced_cost":
                 final["min_reduced_cost"] if final else None,
-            "pool_columns": status.get("columns"),
-            "pricing_certified": status.get("certified_rc_optimal"),
-            "stopping_reason": status.get("stop_reason"),
+            "pool_columns": (
+                phase_2.get("pool_columns")
+                if phase_2 is not None else status.get("columns")
+            ),
+            "pricing_certified": source_certified,
+            "route_weight_meaning": (
+                CERTIFIED_ROUTE_WEIGHT_MEANING
+                if source_certified else UNCERTIFIED_ROUTE_WEIGHT_MEANING
+            ),
+            "stopping_reason": source_stop_reason,
             "time_to_target_route_weight_s": time_target,
             "time_to_zero_artificials_s": time_zero,
-            "censored": status.get("certified_rc_optimal") is not True,
+            "censored": not source_certified,
             "phase_timing_available": (
                 bool(normalized)
                 and all(row["phase_timing_available"] for row in normalized)
@@ -670,7 +730,7 @@ def summarize(
                 "primary_discretized_route_space"
                 if job["phase"] == "CG"
                 else
-                "known_duties_contained_fallback_grid"
+                "declared_resolution_scale_grid"
                 if job["soc_step"] == 1.0
                 and job["block_min"] == 5
                 else "route_space_sensitivity_diagnostic"

@@ -23,10 +23,12 @@ def _validate(job,_plan_sha):
             raise ValueError("PREFLIGHT output/hash invalid")
     if phase in {"CG","CG_SENSITIVITY"}:
         status=json.loads(out.read_text()); provenance=status.get("provenance") or {}
+        lexicographic=status.get("objective")=="lexicographic-fleet"
+        phase2=next((row for row in status.get("phases",[]) if row.get("phase")==2),{})
         if (provenance.get("git_commit")!=PLAN["checkout_identity"]["commit"]
-                or status.get("stop_reason") in {None,"resume_starting"}
+                or (phase2.get("stop_reason") if lexicographic else status.get("stop_reason")) in {None,"resume_starting"}
                 or not Path(str(out)+".columns.jsonl").is_file()
-                or not Path(str(out)+".iters.csv").is_file()):
+                or not Path(str(out)+(".lexicographic.iters.csv" if lexicographic else ".iters.csv")).is_file()):
             raise ValueError(f"CG identity/artifacts invalid: {job['job_key']}")
         if job.get("telemetry"):
             with Path(job["telemetry"]).open() as h:
@@ -93,6 +95,7 @@ def _mark_censored(output,jobs):
                 if "stopping_reason" in row:row["stopping_reason"]="censored: output present without .done"
                 if "cg_stopping_reason" in row:row["cg_stopping_reason"]="censored"
                 if "missing_reason" in row:row["missing_reason"]="censored: output present without .done"
+                if "route_weight_meaning" in row:row["route_weight_meaning"]=base.UNCERTIFIED_ROUTE_WEIGHT_MEANING
         _write(path,fields,rows)
 def summarize(campaign_root,output_dir):
     root=Path(campaign_root).resolve();output=Path(output_dir).resolve()

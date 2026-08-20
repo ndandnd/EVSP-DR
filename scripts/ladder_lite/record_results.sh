@@ -39,7 +39,7 @@ for j in plan["jobs"]:
   "sel_rep":j["selection_replicate"],"cg_rep":j["cg_replicate"],"soc_step":j["soc_step"],
   "block_min":j["block_min"],"budget_s":j["budget_s"],"status":"missing" if explicit_missing else "censored" if censored else "completed",
   "label":"budget_overridden" if pathlib.Path(str(out)+".override.json").exists() else "ladder_lite_direct_array",
-  "route_weight":(science or {}).get("final_route_weight",""),"route_weight_meaning":"combined-cost-master route weight",
+  "route_weight":(science or {}).get("final_route_weight",""),"route_weight_meaning":("fleet LP lower bound (certified discretized model; grid stated; D0019)" if (science or {}).get("pricing_certified") in {True,"True"} else "upper bound on LP optimum only; no fleet LP lower bound") if (science or {}).get("final_route_weight","")!="" else "",
   "min_reduced_cost":(science or {}).get("final_min_reduced_cost",""),"certified":(summary or {}).get("pricing_certified",(summary or {}).get("fleet_proven","")),
   "artificial_mass":(science or {}).get("final_artificial_mass",""),"n_columns":(science or {}).get("pool_columns",""),
   "iters":(science or {}).get("iterations",""),"master_s":detail.get("master_time_s",""),"pricing_s":detail.get("pricing_time_s",""),
@@ -52,7 +52,7 @@ for key,s in mipmap.items():
  if key in seen_mip:continue
  rid=f"reuse_{key[0]}_{key[1].lower().replace('-','_')}"
  if (run,rid) in existing:skipped+=1;continue
- row={f:"" for f in fields};row.update({"date_utc":datetime.datetime.now(datetime.timezone.utc).date().isoformat(),"run_id":run,"execution_mode":manifest["execution_mode"],"commit":manifest["commit"],"group":"MIP_REUSE","cell_id":rid,"phase":"MIP","arm":key[1],"scale":s.get("scale",40),"cg_rep":key[2],"budget_s":s.get("budget_s",""),"status":"missing" if s.get("output_available")=="False" else "censored" if s.get("censored")=="True" else "completed","label":"ladder_lite_direct_array","route_weight_meaning":"combined-cost-master route weight","censor_reason":s.get("missing_reason",""),"mip_incumbent_fleet":s.get("buses",""),"mip_bound":s.get("fleet_bound",""),"mip_gap":s.get("mip_gap",""),"notes":"validated k40 reuse slot"});new.append(row);existing.add((run,rid))
+ row={f:"" for f in fields};row.update({"date_utc":datetime.datetime.now(datetime.timezone.utc).date().isoformat(),"run_id":run,"execution_mode":manifest["execution_mode"],"commit":manifest["commit"],"group":"MIP_REUSE","cell_id":rid,"phase":"MIP","arm":key[1],"scale":s.get("scale",40),"cg_rep":key[2],"budget_s":s.get("budget_s",""),"status":"missing" if s.get("output_available")=="False" else "censored" if s.get("censored")=="True" else "completed","label":"ladder_lite_direct_array","censor_reason":s.get("missing_reason",""),"mip_incumbent_fleet":s.get("buses",""),"mip_bound":s.get("fleet_bound",""),"mip_gap":s.get("mip_gap",""),"notes":"validated k40 reuse slot"});new.append(row);existing.add((run,rid))
 with open(target,"a",newline="") as h: csv.DictWriter(h,fieldnames=fields,lineterminator="\n").writerows(new)
 print(f"appended={len(new)} skipped={skipped}")
 PY

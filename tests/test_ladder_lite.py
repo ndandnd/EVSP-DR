@@ -410,7 +410,7 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
                 "commit": "a" * 40,
             }))
             with (root / "normalized/cg_run_summary.csv").open("w", newline="") as h:
-                w=csv.DictWriter(h,fieldnames=("cell_id","campaign_role","soc_step","block_min","cg_replicate","final_route_weight","final_min_reduced_cost","pricing_certified","final_artificial_mass","pool_columns","iterations","elapsed_s","stopping_reason","censored"));w.writeheader();w.writerow({"cell_id":"k02_s1_c1","campaign_role":"primary","soc_step":"15.0","block_min":"10","cg_replicate":"1","final_route_weight":"2","censored":"False"})
+                w=csv.DictWriter(h,fieldnames=("cell_id","campaign_role","soc_step","block_min","cg_replicate","final_route_weight","final_min_reduced_cost","pricing_certified","final_artificial_mass","pool_columns","iterations","elapsed_s","stopping_reason","censored"));w.writeheader();w.writerow({"cell_id":"k02_s1_c1","campaign_role":"primary","soc_step":"15.0","block_min":"10","cg_replicate":"1","final_route_weight":"2","pricing_certified":"True","censored":"False"})
             with (root/"normalized/mip_run_summary.csv").open("w",newline="") as h:
                 w=csv.DictWriter(h,fieldnames=("cell_id","arm","cg_replicate","scale","budget_s","output_available","censored","buses","fleet_bound","mip_gap","runtime_s","status_name","missing_reason"));w.writeheader();w.writerows([
                     {"cell_id":"k02_s1_c1","arm":"RAW","cg_replicate":"1","scale":"2","budget_s":"60","output_available":"True","censored":"False","buses":"2","fleet_bound":"2","mip_gap":"0"},
@@ -429,7 +429,7 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             rows=list(csv.DictReader((records/"RESULTS_LOG.csv").open()))
             self.assertEqual(len(rows),4)
             self.assertEqual(rows[0]["route_weight_meaning"],
-                             "combined-cost-master route weight")
+                             "fleet LP lower bound (certified discretized model; grid stated; D0019)")
             missing=next(row for row in rows if row["cell_id"]=="cg_b")
             self.assertEqual(missing["status"],"missing")
             self.assertEqual(missing["censor_reason"],"normalized row missing")
@@ -511,6 +511,20 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
                     "job_key":"cg","phase":"CG","output":str(cg),
                     "telemetry":None,"snapshot_minutes":[5],
                 },"")
+            lex=root/"lex.json";lex.write_text(json.dumps({
+                "objective":"lexicographic-fleet",
+                "provenance":{"git_commit":commit},
+                "phases":[{"phase":2,"stop_reason":"certified"}],
+            }))
+            Path(str(lex)+".done").touch()
+            Path(str(lex)+".columns.jsonl").touch()
+            Path(str(lex)+".lexicographic.iters.csv").write_text(
+                "phase,iteration,objective,route_weight,artificial_mass,minimum_reduced_cost,pool_columns\n"
+            )
+            lite_summary._validate({
+                "job_key":"lex","phase":"CG","output":str(lex),
+                "telemetry":None,"snapshot_minutes":[],
+            },"")
             mip=root/"mip.json";mip.write_text(json.dumps({
                 "mip_provenance":{
                     "expected_git_commit":commit,"observed_git_commit":commit,
