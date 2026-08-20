@@ -576,6 +576,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                         choices=("none", "all", "service"), default="none")
     parser.add_argument("--fixed-fleet", type=int)
     parser.add_argument("--setpart-lp", type=float)
+    parser.add_argument(
+        "--fleet-lower-bound", type=float,
+        help="Certified lower bound used only to prove an integral witness optimal.",
+    )
     parser.add_argument("--pool-mip", type=int)
     parser.add_argument("--time-limit-s", type=float)
     parser.add_argument("--mip-rel-gap", type=float, default=0.0)
@@ -618,12 +622,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     if primal is not None and result.all_arcs_integral:
         g4, routes = gate_g4(model, primal)
         gates.append(g4)
-    if (args.pool_mip is not None and result.status == "optimal"
+    fleet_proven = bool(
+        result.all_arcs_integral
+        and result.vehicles is not None
+        and args.fleet_lower_bound is not None
+        and round(result.vehicles) == math.ceil(
+            args.fleet_lower_bound - 1e-7
+        )
+    )
+    if (args.pool_mip is not None and result.all_arcs_integral
             and result.vehicles is not None):
         if result.vehicles > args.pool_mip + 1e-6:
             raise AssertionError("G5 FAILED: arcflow optimum exceeds pool MIP")
         gates.append({"gate": "G5", "passed": True,
-                      "arcflow_integer": result.vehicles,
+                      "arcflow_integer_witness": result.vehicles,
+                      "fleet_proven": fleet_proven,
                       "pool_mip": args.pool_mip})
     payload = {
         "schema": "evsp-dr-arcflow-oracle-v1",
@@ -635,6 +648,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                     "rows": model.matrix.shape[0],
                     "nonzeros": int(model.matrix.nnz)},
         "gates": gates, "solve": asdict(result), "routes": routes,
+        "fleet_proof": {
+            "lower_bound": args.fleet_lower_bound,
+            "integral_witness": result.vehicles
+            if result.all_arcs_integral else None,
+            "proven": fleet_proven,
+        },
         "solver": {"interface": "scipy.optimize.milp", "backend": "HiGHS",
                    "scipy_version": scipy.__version__},
     }
