@@ -289,7 +289,9 @@ def solve(model: ArcFlowModel, *, objective_kind: str,
             c=objective,
             A_eq=model.matrix[equality_rows],
             b_eq=lower[equality_rows],
-            bounds=Bounds(0.0, model.variable_upper),
+            bounds=np.column_stack((
+                np.zeros(model.arcs.size), model.variable_upper
+            )),
             method="highs-ipm",
             options=options,
         )
