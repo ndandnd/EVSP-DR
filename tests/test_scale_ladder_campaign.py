@@ -4689,7 +4689,11 @@ printf '%s %s\n' "$status" "$checks"
                 group: [f"job_{group.lower()}"] for group in groups
             },
             "jobs": [
-                {"job_key": f"job_{group.lower()}", "budget_s": 60}
+                {
+                    "job_key": f"job_{group.lower()}", "budget_s": 60,
+                    "memory_gb": 128 if group == "CG_SENSITIVITY" else 16,
+                    "max_concurrency": 1 if group == "CG_SENSITIVITY" else 16,
+                }
                 for group in groups
             ],
             "python": {"path": "/approved/python", "sha256": "p"},
@@ -4715,6 +4719,9 @@ printf '%s %s\n' "$status" "$checks"
                 if group in {"CG", "CG_SENSITIVITY"}:
                     self.assertIn("--requeue", arguments)
                     self.assertNotIn("--no-requeue", arguments)
+                    if group == "CG_SENSITIVITY":
+                        self.assertIn("--array=0-0%1", arguments)
+                        self.assertIn("--mem=128G", arguments)
                 else:
                     self.assertIn("--no-requeue", arguments)
                     self.assertNotIn("--requeue", arguments)

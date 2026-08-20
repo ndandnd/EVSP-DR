@@ -5,7 +5,7 @@ main() {
   GROUP=$1; shift
   case "$GROUP" in PREFLIGHT|SEED|CG|CG_SENSITIVITY|MIP_RAW|MIP_KNOWN) ;; *) echo "invalid group" >&2; return 2;; esac
   SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd) || return 1; REPO=$(cd "$SCRIPT_DIR/../.." && pwd) || return 1; LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}; CAMPAIGN=${LL_CAMPAIGN:-"ll_$(date -u +%Y%m%d)"}
-  PLAN="$LL_ROOT/campaign/$CAMPAIGN/approved-plan.json"; CONC=16; SCALES=""; PART=""; MEM=""; DRY=0
+  PLAN="$LL_ROOT/campaign/$CAMPAIGN/approved-plan.json"; CONC=""; SCALES=""; PART=""; MEM=""; DRY=0
   while [ "$#" -gt 0 ]; do
     case "$1" in
       --scales) SCALES=$2; shift 2;; --concurrency) CONC=$2; shift 2;;
@@ -14,23 +14,18 @@ main() {
     esac
   done
   [ -s "$PLAN" ] || { echo "missing plan: $PLAN" >&2; return 1; }
-  [[ "$CONC" =~ ^[1-9][0-9]*$ ]] || { echo "invalid concurrency" >&2; return 2; }
+  [ -z "$CONC" ] || [[ "$CONC" =~ ^[1-9][0-9]*$ ]] || { echo "invalid concurrency" >&2; return 2; }
   mkdir -p "$LL_ROOT/logs" || return 1
   total=0; ids=()
-  while IFS=$'\t' read -r BUDGET PLAN_PART THREADS MAX_SCALE INDICES COUNT SCALE_TAG; do
+  while IFS=$'\t' read -r BUDGET PLAN_PART THREADS PLAN_MEM PLAN_CONC INDICES COUNT SCALE_TAG; do
     [ -n "$INDICES" ] || continue
-    USE_PART=${PART:-$PLAN_PART}; USE_MEM=$MEM
-    if [ -z "$USE_MEM" ]; then
-      if [[ "$GROUP" == MIP_* ]] && [ "$MAX_SCALE" -ge 20 ]; then USE_MEM=48G
-      elif [[ "$GROUP" == MIP_* ]] || { [[ "$GROUP" == CG* ]] && [ "$MAX_SCALE" -ge 20 ]; }; then USE_MEM=24G
-      else USE_MEM=16G; fi
-    fi
+    USE_PART=${PART:-$PLAN_PART}; USE_MEM=${MEM:-${PLAN_MEM}G}; USE_CONC=${CONC:-$PLAN_CONC}
     WALL=$((BUDGET + 1800)); LIMIT=${LL_MAX_TIME_S:-0}
     if [[ "$LIMIT" =~ ^[1-9][0-9]*$ ]] && [ "$WALL" -gt "$LIMIT" ]; then
       echo "WARNING: clamping $GROUP scales=$SCALE_TAG from ${WALL}s to ${LIMIT}s" >&2; WALL=$LIMIT
     fi
     TIME=$(printf '%d:%02d:%02d' $((WALL/3600)) $(((WALL%3600)/60)) $((WALL%60)))
-    cmd=(sbatch --requeue --parsable "--array=$INDICES%$CONC" "--partition=$USE_PART"
+    cmd=(sbatch --requeue --parsable "--array=$INDICES%$USE_CONC" "--partition=$USE_PART"
       -c "$THREADS" "--mem=$USE_MEM" "--time=$TIME" --signal=B:USR1@180 --open-mode=append
       -J "ll_${GROUP}_k${SCALE_TAG//,/x}" -o "$LL_ROOT/logs/ll_${GROUP}_%A_%a.out"
       -e "$LL_ROOT/logs/ll_${GROUP}_%A_%a.err"
@@ -47,10 +42,10 @@ p=json.load(open(sys.argv[1])); group=sys.argv[2]; wanted={int(x) for x in sys.a
 jobs={j["job_key"]:j for j in p["jobs"]}; buckets=collections.defaultdict(list)
 for i,key in enumerate(p["task_groups"][group]):
  j=jobs[key]
- if not wanted or int(j["scale"]) in wanted: buckets[(int(j["budget_s"]),j["partition"],int(j["threads"]))].append((i,j))
-for (budget,part,threads),rows in sorted(buckets.items()):
+ if not wanted or int(j["scale"]) in wanted: buckets[(int(j["budget_s"]),j["partition"],int(j["threads"]),int(j["memory_gb"]),int(j["max_concurrency"]))].append((i,j))
+for (budget,part,threads,memory,concurrency),rows in sorted(buckets.items()):
  scales=sorted({int(j["scale"]) for _,j in rows})
- print(budget,part,threads,max(scales),",".join(str(i) for i,_ in rows),len(rows),",".join(map(str,scales)),sep="\t")
+ print(budget,part,threads,memory,concurrency,",".join(str(i) for i,_ in rows),len(rows),",".join(map(str,scales)),sep="\t")
 PY
   ) || return 2
   [ "$total" -gt 0 ] || { echo "no tasks selected" >&2; return 1; }

@@ -203,6 +203,22 @@ def _name(job, nonce):
     return name
 
 
+def _resources(phase, scale, soc_step, block_min):
+    if phase == "MIP":
+        return 48, 16, "scaglione_mip"
+    if phase not in {"CG", "CG_SENSITIVITY"}:
+        return 16, 16, "small_non_cg"
+    if scale >= 30 and soc_step <= 1.0 and block_min <= 5:
+        return 128, 1, "unbenchmarked_fine_large_conservative"
+    if (scale >= 30 and soc_step <= 2.5) or (
+        scale >= 20 and soc_step <= 1.0
+    ):
+        return 64, 2, "unbenchmarked_fine_conservative"
+    if scale >= 20:
+        return 24, 8, "measured_large_scale_policy"
+    return 16, 16, "measured_small_scale_policy"
+
+
 def build_plan(campaign, python, reservation_root):
     if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{2,79}", campaign):
         raise ValueError("unsafe campaign name")
@@ -518,6 +534,13 @@ def build_plan(campaign, python, reservation_root):
         "jobs": jobs,
         "task_groups": groups,
         "cg_grids": [dict(grid) for grid in CG_GRIDS],
+        "resource_policy": {
+            "schema": "evsp-dr-scale-ladder-resource-policy-v1",
+            "fine_grid_large_scale_status":
+                "unbenchmarked_conservative_allocation",
+            "memory_gb_field": "memory_gb",
+            "concurrency_field": "max_concurrency",
+        },
         "task_count": sum(map(len, groups.values())),
         "preflight_task_count": 22,
         "cg_task_count": 115,
@@ -548,6 +571,17 @@ def _job(
         value for value in SNAPSHOT_MINUTES
         if value * 60 <= budget
     ] if phase in {"CG", "CG_SENSITIVITY"} else []
+    soc_step = (
+        float(diagnostic_soc_step)
+        if diagnostic_soc_step is not None else 15.0
+    )
+    block_min = (
+        int(diagnostic_block_min)
+        if diagnostic_block_min is not None else 10
+    )
+    memory_gb, max_concurrency, resource_basis = _resources(
+        phase, scale, soc_step, block_min
+    )
     job = {
         **cell,
         "job_key": key,
@@ -558,14 +592,11 @@ def _job(
             if arm == "KNOWN-PARTITION" else None
         ),
         "budget_s": budget,
-        "soc_step": (
-            float(diagnostic_soc_step)
-            if diagnostic_soc_step is not None else 15.0
-        ),
-        "block_min": (
-            int(diagnostic_block_min)
-            if diagnostic_block_min is not None else 10
-        ),
+        "soc_step": soc_step,
+        "block_min": block_min,
+        "memory_gb": memory_gb,
+        "max_concurrency": max_concurrency,
+        "resource_basis": resource_basis,
         "snapshot_minutes": marks,
         "partition": (
             "scaglione" if phase == "MIP" else "default_partition"
@@ -594,8 +625,9 @@ def write_plan(plan, plan_path, matrix_path):
         fields = (
             "job_key", "phase", "scale", "selection_replicate",
             "cg_replicate", "arm", "grid_id", "grid_role", "grid_index",
-            "soc_step", "block_min", "budget_s", "partition", "threads",
-            "job_name", "output",
+            "soc_step", "block_min", "memory_gb", "max_concurrency",
+            "resource_basis", "budget_s", "partition", "threads", "job_name",
+            "output",
         )
         writer = csv.DictWriter(
             handle, fieldnames=fields, extrasaction="ignore",
@@ -2650,8 +2682,21 @@ def _submit_array(
         job["budget_s"] for job in plan["jobs"]
         if job["job_key"] in tasks
     )
+    task_jobs = [
+        job for job in plan["jobs"] if job["job_key"] in tasks
+    ]
+    cg_group = group in {"CG", "CG_SENSITIVITY"}
+    memory_gb = (
+        max(32, max(job.get("memory_gb", 32) for job in task_jobs))
+        if cg_group else 64 if group.startswith("MIP") else 32
+    )
+    concurrency = (
+        min(job.get("max_concurrency", 16) for job in task_jobs)
+        if cg_group else None
+    )
     arguments = [
-        f"--array=0-{len(tasks)-1}",
+        f"--array=0-{len(tasks)-1}"
+        + (f"%{concurrency}" if concurrency is not None else ""),
         f"--partition={partition}",
         "--requeue"
         if group in {"CG", "CG_SENSITIVITY"}
@@ -2659,7 +2704,7 @@ def _submit_array(
         "--signal=B:USR1@180",
         "--cpus-per-task=8" if group.startswith("MIP")
         else "--cpus-per-task=2",
-        "--mem=64G" if group.startswith("MIP") else "--mem=32G",
+        f"--mem={memory_gb}G",
         f"--time={math.ceil(max_budget/60)+(30 if group == 'CG' else 10)}",
         f"--job-name={_array_name(group, plan_sha)}",
         f"--comment=SLAD:{plan_sha[:20]}:{group}",

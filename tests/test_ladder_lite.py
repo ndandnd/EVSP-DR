@@ -108,6 +108,14 @@ class LadderLiteTests(unittest.TestCase):
             self.assertFalse(job["diagnostic_only"])
         self.assertEqual(len(by_cell), 23)
         self.assertTrue(all(grids == expected for grids in by_cell.values()))
+        fine_large = next(
+            job for job in cg
+            if job["scale"] == 40 and job["grid_id"] == "soc1_b5"
+        )
+        self.assertEqual(
+            (fine_large["memory_gb"], fine_large["max_concurrency"]),
+            (128, 1),
+        )
         primary = {
             job["job_key"]: job for job in cg if job["grid_role"] == "primary"
         }
@@ -225,17 +233,24 @@ class LadderLiteTests(unittest.TestCase):
             plan = {
                 "task_groups": {
                     "CG": ["a", "b", "c", "d"],
-                    "PREFLIGHT": ["d"],
+                    "PREFLIGHT": ["e"],
                 },
                 "jobs": [
                     {"job_key": "a", "scale": 2, "budget_s": 60,
-                     "partition": "default_partition", "threads": 2},
+                     "partition": "default_partition", "threads": 2,
+                     "memory_gb": 16, "max_concurrency": 16},
                     {"job_key": "b", "scale": 3, "budget_s": 120,
-                     "partition": "default_partition", "threads": 2},
+                     "partition": "default_partition", "threads": 2,
+                     "memory_gb": 16, "max_concurrency": 16},
                     {"job_key": "c", "scale": 2, "budget_s": 60,
-                     "partition": "default_partition", "threads": 2},
+                     "partition": "default_partition", "threads": 2,
+                     "memory_gb": 16, "max_concurrency": 16},
                     {"job_key": "d", "scale": 20, "budget_s": 180,
-                     "partition": "default_partition", "threads": 2},
+                     "partition": "default_partition", "threads": 2,
+                     "memory_gb": 24, "max_concurrency": 8},
+                    {"job_key": "e", "scale": 20, "budget_s": 180,
+                     "partition": "default_partition", "threads": 2,
+                     "memory_gb": 16, "max_concurrency": 16},
                 ],
             }
             (root / "campaign" / campaign / "approved-plan.json").write_text(
@@ -283,6 +298,15 @@ class LadderLiteTests(unittest.TestCase):
                         long_run.stdout.splitlines()[0]
                     ),
                 )
+            cg_long = subprocess.run(
+                ["bash", str(REPO / "scripts/ladder_lite/submit.sh"),
+                 "CG", "--scales", "20", "--dry-run"],
+                cwd=REPO, env=environment, text=True,
+                capture_output=True, check=False,
+            )
+            self.assertIn("--array=3%8", shlex.split(
+                cg_long.stdout.splitlines()[0]
+            ))
 
     def test_plan_is_campaign_scoped_and_logs_verbose_json(self):
         with tempfile.TemporaryDirectory() as tmp:
