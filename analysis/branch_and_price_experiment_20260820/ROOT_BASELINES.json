@@ -1,0 +1,32 @@
+{
+  "schema": "evsp-dr-branch-and-price-root-baselines-v1",
+  "fixed_input_hashes": {
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "sources": {
+    "primary": {
+      "path": "analysis/scale_ladder/ll_20260820c/ladder_summary.csv",
+      "sha256": "4bfd2bb61eb7ff1eedec398ddfa3496c66ff19988bb42fc6f11a5fcfbafc1e2f"
+    },
+    "resolution": {
+      "path": "analysis/scale_ladder/ll_20260820c/resolution_matrix.csv",
+      "sha256": "392cdba0002c907bf8b2ce2c0beb0e3f8de9a5bc0faee4ebfa397dc4daf984a7"
+    }
+  },
+  "baselines": [
+    {"cell":"k02_s1","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k02_r1.csv","instance_sha256":"57f672139f86849429c2f580bb68126246aca7b804f9303239fbe1a35fba887e","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":2.181818,"source":"primary"},
+    {"cell":"k02_s2","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k02_r2.csv","instance_sha256":"6ca7e2db690120699d59fc81428b0f1af00c5cc3889770e8f2860af040244932","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":2.187500,"source":"primary"},
+    {"cell":"k02_s3","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k02_r3.csv","instance_sha256":"ec5d73b5b841b36be694c3ef8e4003b8cdfa1997f6f8afb8e6b7aad7581461b5","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":2.274725,"source":"primary"},
+    {"cell":"k03_s1","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k03_r1.csv","instance_sha256":"e6ed7045cb2778b4de5954163a91d7ad439b9c6e3f42dd823c122c2ae35cbec5","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":3.181818,"source":"primary"},
+    {"cell":"k03_s2","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k03_r2.csv","instance_sha256":"0205f86e964212942b6af5690adcbcd006df8263cc2fe103ea7923d28e378397","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":3.404698,"source":"primary"},
+    {"cell":"k03_s3","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k03_r3.csv","instance_sha256":"2532b4fb13b6c22968578a3abd6d909986116318a08a3506ed7e41b41aa43f95","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":3.000000,"source":"primary"},
+    {"cell":"k05_s1","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k05_r1.csv","instance_sha256":"fc10ac0707becb960364e76b8c1e1c414d5d5639cbc3b7dadaf67a77e03f5322","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":5.323651,"source":"primary"},
+    {"cell":"k05_s2","csv":"tariff_response/frozen_instances/Practice_Custom_DutyUnion_k05_r2.csv","instance_sha256":"6ffea0b8cd3a9d15846946f6828705dd3431b7bafc69bd572ca30ed4530d5cb8","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":5.000000,"source":"primary"},
+    {"cell":"k05_s3","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k05_r3.csv","instance_sha256":"4a783b4f96ec47e28a693b921d51a4453ecfb1107d8c181a7739f42c41fd8500","soc_step":15.0,"block_min":10,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":5.000000,"source":"primary"},
+    {"cell":"k02_s1","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k02_r1.csv","instance_sha256":"57f672139f86849429c2f580bb68126246aca7b804f9303239fbe1a35fba887e","soc_step":1.0,"block_min":5,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":2.000000,"source":"resolution"},
+    {"cell":"k02_s2","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k02_r2.csv","instance_sha256":"6ca7e2db690120699d59fc81428b0f1af00c5cc3889770e8f2860af040244932","soc_step":1.0,"block_min":5,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":2.000000,"source":"resolution"},
+    {"cell":"k02_s3","csv":"scale_ladder/instances/Practice_Custom_DutyUnion_k02_r3.csv","instance_sha256":"ec5d73b5b841b36be694c3ef8e4003b8cdfa1997f6f8afb8e6b7aad7581461b5","soc_step":1.0,"block_min":5,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0,"route_weight":2.000000,"source":"resolution"}
+  ]
+}

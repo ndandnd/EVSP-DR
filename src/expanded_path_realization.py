@@ -66,7 +66,7 @@ def realize_expanded_path(
     charge_kw: float,
     reserve_kwh: float,
     soc_step: float,
-    block_min: int,
+    block_min: float,
     arc_map=None,
 ) -> tuple[dict | None, dict]:
     """Return a replay-valid schedule mapping or a classified rejection.
@@ -80,7 +80,11 @@ def realize_expanded_path(
         charge_kw = float(charge_kw)
         reserve_kwh = float(reserve_kwh)
         soc_step = float(soc_step)
-        block_min = int(block_min)
+        parsed_block_min = float(block_min)
+        block_min = (
+            int(parsed_block_min)
+            if parsed_block_min.is_integer() else parsed_block_min
+        )
     except (TypeError, ValueError) as exc:
         return None, {
             "classification": "infeasible_after_realization",
