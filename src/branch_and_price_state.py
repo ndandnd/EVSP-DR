@@ -52,6 +52,10 @@ def baseline_identity(args, provenance, error_type=RuntimeError):
     }
 
 
+def fleet_bound_closes(lower_bound, incumbent_fleet, tolerance=1e-7):
+    return math.ceil(lower_bound - tolerance) >= incumbent_fleet
+
+
 class DurableStateMixin:
     """Append-only columns/events plus an atomic resumable tree checkpoint."""
 
@@ -100,6 +104,27 @@ class DurableStateMixin:
     def _append_column(self, record):
         self.journal.write(json.dumps(record, sort_keys=True) + "\n")
         flush_and_fsync(self.journal)
+
+    def _prune_open_by_incumbent(self):
+        if self.incumbent is None:
+            return
+        fleet = self.incumbent["fleet"]
+        before = len(self.stack) + len(self.frontier_bounds)
+        self.stack = [node for node in self.stack if not fleet_bound_closes(
+            node.lower_bound, fleet, self.args.bound_tolerance
+        )]
+        self.frontier_bounds = [
+            bound for bound in self.frontier_bounds
+            if not fleet_bound_closes(
+                bound, fleet, self.args.bound_tolerance
+            )
+        ]
+        after = len(self.stack) + len(self.frontier_bounds)
+        if before > after:
+            self._event(
+                "open_nodes_pruned_by_integer_fleet_bound",
+                pruned=before - after, incumbent_fleet=fleet,
+            )
 
     def _elapsed_s(self):
         return self.elapsed_offset + time.monotonic() - self.started
@@ -154,6 +179,7 @@ class DurableStateMixin:
                 self.incumbent["routes"] if self.incumbent else [],
             "global_lower_bound": bound, "lower_bound_valid": self.root_solved,
             "gap": gap, "proven_optimal": proven,
+            "proven_optimal_scope": "fleet_only" if proven else None,
             "nodes_explored": self.nodes_explored,
             "nodes_depth_capped": self.nodes_depth_capped,
             "nodes_infeasible_certified": self.infeasible_certificates,

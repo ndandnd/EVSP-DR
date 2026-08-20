@@ -24,6 +24,7 @@ from branch_and_price import (  # noqa: E402
     choose_ryan_foster_pair,
     conservative_dual_lower_bound,
     expand_constraint_assignments,
+    fleet_bound_closes,
     route_satisfies,
     solve_phase_master,
 )
@@ -247,6 +248,8 @@ class BranchAndPriceGateTests(unittest.TestCase):
         assert_child_bound(100.0, 100.00001)
         with self.assertRaisesRegex(ValidationGateError, "G2"):
             assert_child_bound(100.0, 99.0)
+        self.assertTrue(fleet_bound_closes(2.187499971, 3))
+        self.assertFalse(fleet_bound_closes(2.187499971, 4))
 
     def test_phase_one_ignores_finite_real_route_cost(self):
         expensive = [{"trips": [10], "cost": 10**12}]

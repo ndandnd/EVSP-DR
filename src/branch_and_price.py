@@ -34,11 +34,10 @@ from utils_v2 import load_station_hourly_prices
 from branch_and_price_state import (
     DurableStateMixin,
     baseline_identity as _state_baseline_identity,
+    fleet_bound_closes,
 )
-class BranchAndPriceError(RuntimeError):
-    pass
-class ValidationGateError(BranchAndPriceError):
-    pass
+class BranchAndPriceError(RuntimeError): pass
+class ValidationGateError(BranchAndPriceError): pass
 def _baseline_identity(args, provenance):
     return _state_baseline_identity(args, provenance, ValidationGateError)
 @dataclass(frozen=True, order=True)
@@ -227,8 +226,7 @@ def assert_child_bound(
             f"parent={parent_bound:.12f}, child={child_bound:.12f}, "
             f"tolerance={allowed:.3g}"
         )
-def conservative_dual_lower_bound(lp, trip_count, pricing_tolerance):
-    return sum(lp.trip_duals.values()) - trip_count * pricing_tolerance
+def conservative_dual_lower_bound(lp, trip_count, pricing_tolerance): return sum(lp.trip_duals.values()) - trip_count * pricing_tolerance
 class ConstrainedDAGPricer:
     def __init__(self, network):
         self.network = network
@@ -907,6 +905,7 @@ class BranchAndPriceSolver(DurableStateMixin):
                 "incumbent", fleet=fleet, cost=cost, source=source,
                 routes=list(selected),
             )
+            self._prune_open_by_incumbent()
             print(
                 f"[B&P] incumbent={fleet} buses "
                 f"cost={cost:.6f} source={source}",
@@ -986,8 +985,10 @@ class BranchAndPriceSolver(DurableStateMixin):
                 if self.slow_nodes >= self.args.pricing_slow_nodes:
                     self.interrupted_reason = "pricing_slowdown_kill_criterion"
         if self.incumbent is not None and (
-            result.lower_bound
-            >= self.incumbent["fleet"] - self.args.bound_tolerance
+            fleet_bound_closes(
+                result.lower_bound, self.incumbent["fleet"],
+                self.args.bound_tolerance,
+            )
         ):
             self._event(
                 "node_pruned_by_bound", node_id=node.node_id,
@@ -1196,5 +1197,4 @@ def main(argv=None) -> int:
     print(f"[B&P] wrote {args.out}: fleet={result['best_integer_fleet']} "
           f"LB={result['global_lower_bound']} proven={result['proven_optimal']}")
     return 0
-if __name__ == "__main__":
-    raise SystemExit(main())
+if __name__ == "__main__": raise SystemExit(main())
