@@ -29,18 +29,26 @@ chargers.
 
 ## Factorial results
 
-Costs below are charging energy costs; start cost is zero.
+Costs below are charging energy costs; start cost is zero. Within each
+tariff/terminal cell, **both treatments use the uncapped charge-on-arrival
+cost as their fixed denominator**. `Treatment arrival` is retained only to
+show why treatment-specific denominators are not comparable.
 
-| tariff | terminal | start treatment | duties | arrival | optimized | saving | saving % |
+| tariff | terminal | start treatment | duties | fixed denominator | treatment arrival | optimized | fixed-denominator saving % |
 |---|---|---|---:|---:|---:|---:|---:|
-| peak12 | >= reserve | uncapped | 15 | 516.586 | 508.791 | 7.795 | **1.509%** |
-| peak12 | >= reserve | observed cap | 15 | 530.367 | 523.940 | 6.428 | **1.212%** |
-| peak12 | >= initial | uncapped | 12 | 537.536 | 497.125 | 40.412 | **7.518%** |
-| peak12 | >= initial | observed cap | 12 | 546.458 | 506.046 | 40.412 | **7.395%** |
-| two-peak | >= reserve | uncapped | 15 | 522.715 | 494.866 | 27.849 | **5.328%** |
-| two-peak | >= reserve | observed cap | 15 | 529.363 | 500.529 | 28.834 | **5.447%** |
-| two-peak | >= initial | uncapped | 12 | 686.999 | 505.308 | 181.691 | **26.447%** |
-| two-peak | >= initial | observed cap | 12 | 705.481 | 511.992 | 193.489 | **27.427%** |
+| peak12 | >= reserve | uncapped | 15 | 516.586 | 516.586 | 508.791 | **1.509%** |
+| peak12 | >= reserve | observed cap | 15 | 516.586 | 530.367 | 523.940 | **-1.424%** |
+| peak12 | >= initial | uncapped | 12 | 537.536 | 537.536 | 497.125 | **7.518%** |
+| peak12 | >= initial | observed cap | 12 | 537.536 | 546.458 | 506.046 | **5.858%** |
+| two-peak | >= reserve | uncapped | 15 | 522.715 | 522.715 | 494.866 | **5.328%** |
+| two-peak | >= reserve | observed cap | 15 | 522.715 | 529.363 | 500.529 | **4.244%** |
+| two-peak | >= initial | uncapped | 12 | 686.999 | 686.999 | 505.308 | **26.447%** |
+| two-peak | >= initial | observed cap | 12 | 686.999 | 705.481 | 511.992 | **25.474%** |
+
+The capped optimum costs at least the uncapped optimum in all four
+tariff/terminal cells and for every individually comparable duty (zero
+violations at absolute tolerance `1e-6`). Consequently capped savings are no
+greater than uncapped savings everywhere, as required by nesting.
 
 Every feasible optimized and charge-on-arrival schedule replayed exactly.
 
@@ -70,13 +78,13 @@ valid for both start treatments because it relaxes the event cap.
 | tariff | terminal | start treatment | duties | actual saving | prefix upper bound |
 |---|---|---|---:|---:|---:|
 | peak12 | >= reserve | uncapped | 15 | 1.509% | **6.299%** |
-| peak12 | >= reserve | observed cap | 15 | 1.212% | **8.734%** |
+| peak12 | >= reserve | observed cap | 15 | -1.424% | **6.299%** |
 | peak12 | >= initial | uncapped | 12 | 7.518% | **14.406%** |
-| peak12 | >= initial | observed cap | 12 | 7.395% | **15.803%** |
+| peak12 | >= initial | observed cap | 12 | 5.858% | **14.406%** |
 | two-peak | >= reserve | uncapped | 15 | 5.328% | **7.695%** |
-| two-peak | >= reserve | observed cap | 15 | 5.447% | **8.855%** |
+| two-peak | >= reserve | observed cap | 15 | 4.244% | **7.695%** |
 | two-peak | >= initial | uncapped | 12 | 26.447% | **30.807%** |
-| two-peak | >= initial | observed cap | 12 | 27.427% | **32.620%** |
+| two-peak | >= initial | observed cap | 12 | 25.474% | **30.807%** |
 
 The prefix relaxation itself cannot restore duty 13302 to initial SOC, even
 while allowing all alternative station windows simultaneously. Duties 13410
@@ -85,20 +93,24 @@ constraints the bound intentionally drops.
 
 ## Interpretation
 
-The tariff shape is the largest lever. With the unresolved but minimally
+The tariff shape remains the largest lever. With the unresolved but minimally
 committing `>= reserve` policy, replacing `peak12` by the realistic-shaped
-two-peak instrument raises timing-only savings from 1.2–1.5% to
-**5.3–5.4%**. The observed event cap barely changes that conclusion, so
-zero-cost event fragmentation is not driving the two-peak result.
+two-peak instrument raises uncapped timing-only savings from 1.509% to
+**5.328%**. Under the observed event cap, the fixed-denominator result rises
+from -1.424% to **4.244%**. The previously reported capped 5.447% used the
+capped arrival cost as its own denominator and is not comparable or quotable.
+The corrected result shows that fragmentation control costs about 1.08
+percentage points under the two-peak instrument.
 
-Restoring initial SOC raises the measured response dramatically, to 26–27%
+Restoring initial SOC raises the measured response dramatically, to 25–26%
 under the two-peak instrument, because it adds a large, deferrable terminal
 energy purchase. It also makes 3 of 15 duties infeasible. This treatment is a
 terminal-accounting sensitivity, not a defensible headline until the terminal
 policy is frozen.
 
-Under two-peak/`>= reserve`, the exact model captures most of the
-prefix-causal opportunity (5.3–5.4% achieved versus a 7.7–8.9% upper bound).
+Under two-peak/`>= reserve`, the exact model captures much of the
+prefix-causal opportunity (4.244–5.328% achieved versus a common 7.695% upper
+bound).
 Under `peak12`, considerably more of the causal opportunity remains blocked by
 exact SOC, station-choice, and event constraints.
 
