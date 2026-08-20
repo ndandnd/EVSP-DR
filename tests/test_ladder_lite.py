@@ -70,7 +70,7 @@ class LadderLiteTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         return shlex.split(completed.stdout.splitlines()[-1])
 
-    def test_all_138_array_indices_resolve_to_plan_jobs(self):
+    def test_all_200_array_indices_resolve_to_plan_jobs(self):
         jobs = {job["job_key"]: job for job in self.plan["jobs"]}
         observed = []
         for group, keys in self.plan["task_groups"].items():
@@ -79,8 +79,41 @@ class LadderLiteTests(unittest.TestCase):
                 self.assertTrue(command)
                 self.assertIn(key, jobs)
                 observed.append(key)
-        self.assertEqual(len(observed), 138)
+        self.assertEqual(len(observed), 200)
         self.assertEqual(set(observed), set(jobs))
+
+    def test_declared_grids_cross_every_scale_cell(self):
+        expected = {
+            ("soc15_b10", 15.0, 10, "primary"),
+            ("soc5_b10", 5.0, 10, "resolution"),
+            ("soc2p5_b10", 2.5, 10, "resolution"),
+            ("soc1_b10", 1.0, 10, "resolution"),
+            ("soc1_b5", 1.0, 5, "resolution"),
+        }
+        self.assertEqual({
+            (grid["grid_id"], grid["soc_step"], grid["block_min"],
+             grid["grid_role"])
+            for grid in self.plan["cg_grids"]
+        }, expected)
+        cg = [
+            job for job in self.plan["jobs"]
+            if job["phase"] in {"CG", "CG_SENSITIVITY"}
+        ]
+        by_cell = {}
+        for job in cg:
+            by_cell.setdefault(job["cell_id"], set()).add((
+                job["grid_id"], job["soc_step"], job["block_min"],
+                job["grid_role"],
+            ))
+            self.assertFalse(job["diagnostic_only"])
+        self.assertEqual(len(by_cell), 23)
+        self.assertTrue(all(grids == expected for grids in by_cell.values()))
+        primary = {
+            job["job_key"]: job for job in cg if job["grid_role"] == "primary"
+        }
+        for job in self.plan["jobs"]:
+            if job["phase"] == "MIP":
+                self.assertIn(job["dependency_cg"], primary)
 
     def test_staged_worker_without_repo_fails_with_marker(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -261,7 +294,7 @@ args=sys.argv[1:]
 if args and args[0]=="-B":args=args[1:]
 if args and args[0].endswith("launch_scale_ladder.py"):
  def value(flag):return args[args.index(flag)+1]
- plan={{"campaign":value("--campaign"),"task_groups":{{"TEST":list(range(138))}}}}
+ plan={{"campaign":value("--campaign"),"task_groups":{{"TEST":list(range(200))}}}}
  open(value("--plan-out"),"x").write(json.dumps(plan))
  open(value("--matrix-out"),"x").write("task\\n")
  print(json.dumps(plan,indent=2));raise SystemExit(0)
@@ -300,7 +333,7 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
                     self.assertIn('"task_groups"', log)
                     self.assertNotIn('"task_groups"', completed.stdout)
                     self.assertIn("[ll] staging scientific inputs", completed.stdout)
-                    self.assertIn("total tasks  : 138", completed.stdout)
+                    self.assertIn("total tasks  : 200", completed.stdout)
                     observed.append(json.loads(plan.read_text())["campaign"])
                 self.assertEqual(observed, ["campaign-one", "campaign-two"])
             finally:
@@ -396,12 +429,12 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             output=root/"normalized"
             result=lite_summary.summarize(campaign,output)
             self.assertEqual(result["completed"],0)
-            self.assertEqual(result["omitted"],138)
+            self.assertEqual(result["omitted"],200)
             with (output/"cg_run_summary.csv").open(newline="") as h:
                 cg=list(csv.DictReader(h))
             with (output/"mip_run_summary.csv").open(newline="") as h:
                 mip=list(csv.DictReader(h))
-            self.assertEqual(len(cg),53)
+            self.assertEqual(len(cg),115)
             self.assertGreaterEqual(len(mip),42)
             self.assertTrue(all(row["censored"]=="True" for row in cg))
             provenance=json.loads((output/"provenance.json").read_text())
@@ -419,7 +452,7 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             shutil_target.parent.mkdir(parents=True,exist_ok=True);shutil_target.write_text("{}")
             second=root/"second"
             result=lite_summary.summarize(campaign,second)
-            self.assertEqual(result["omitted"],138)
+            self.assertEqual(result["omitted"],200)
             with (second/"cg_run_summary.csv").open(newline="") as h:
                 excluded=next(
                     row for row in csv.DictReader(h)

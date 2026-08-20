@@ -4261,10 +4261,11 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             plan = ladder.build_plan(
                 "ladder-test", Path(sys.executable), Path("/tmp/reservations")
             )
-        self.assertEqual(plan["task_count"], 138)
+        self.assertEqual(plan["task_count"], 200)
         self.assertEqual(plan["preflight_task_count"], 22)
-        self.assertEqual(plan["cg_task_count"], 23)
-        self.assertEqual(plan["sensitivity_cg_task_count"], 30)
+        self.assertEqual(plan["cg_task_count"], 115)
+        self.assertEqual(plan["primary_cg_task_count"], 23)
+        self.assertEqual(plan["sensitivity_cg_task_count"], 92)
         self.assertEqual(plan["mip_task_count"], 42)
         self.assertEqual(plan["k40_mip_submission_count"], 0)
         self.assertEqual(plan["infrastructure_probe_task_count"], 2)
@@ -4274,7 +4275,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             {key: len(value) for key, value in plan["task_groups"].items()},
             {
                 "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-                "CG_SENSITIVITY": 30,
+                "CG_SENSITIVITY": 92,
                 "MIP_RAW": 21, "MIP_KNOWN": 21,
             },
         )
@@ -4300,9 +4301,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             if job["phase"] == "CG_SENSITIVITY"
             and job["soc_step"] == 1.0 and job["block_min"] == 5
         ]
-        self.assertEqual(len(fallback), 3)
+        self.assertEqual(len(fallback), 23)
         self.assertTrue(all(
-            job["scale"] == 2 and job["diagnostic_only"] is True
+            job["grid_role"] == "resolution"
+            and job["diagnostic_only"] is False
             for job in fallback
         ))
         self.assertTrue(all(

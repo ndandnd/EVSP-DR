@@ -17,11 +17,12 @@ Then start the production campaign:
 10. `bash scripts/ladder_lite/submit.sh CG --scales 2,3,5`
 11. `bash scripts/ladder_lite/submit.sh CG_SENSITIVITY --scales 2,3,5`
 12. `bash scripts/ladder_lite/submit.sh CG --scales 8,13,20,30,40`
-13. After dependencies finish: `bash scripts/ladder_lite/submit.sh MIP_RAW`
-14. `bash scripts/ladder_lite/submit.sh MIP_KNOWN`
-15. `bash scripts/ladder_lite/status.sh`
-16. `bash scripts/ladder_lite/normalize.sh`
-17. `RUN_ID=ll_$(date -u +%Y%m%d) bash scripts/ladder_lite/record_results.sh "$RUN_ID"`
+13. `bash scripts/ladder_lite/submit.sh CG_SENSITIVITY --scales 8,13,20,30,40`
+14. After primary-grid dependencies finish: `bash scripts/ladder_lite/submit.sh MIP_RAW`
+15. `bash scripts/ladder_lite/submit.sh MIP_KNOWN`
+16. `bash scripts/ladder_lite/status.sh`
+17. `bash scripts/ladder_lite/normalize.sh`
+18. `RUN_ID=ll_$(date -u +%Y%m%d) bash scripts/ladder_lite/record_results.sh "$RUN_ID"`
 
 For a confirmed exit 137 or `Exceeded job memory limit`, resubmit that group
 with `--mem 64G`. Do not automate memory escalation.

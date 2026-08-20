@@ -84,6 +84,18 @@ CG_BUDGET_S = {
     8: 21600, 13: 21600, 20: 43200,
     30: 86400, 40: 86400,
 }
+CG_GRIDS = (
+    {"grid_id": "soc15_b10", "soc_step": 15.0, "block_min": 10,
+     "grid_role": "primary"},
+    {"grid_id": "soc5_b10", "soc_step": 5.0, "block_min": 10,
+     "grid_role": "resolution"},
+    {"grid_id": "soc2p5_b10", "soc_step": 2.5, "block_min": 10,
+     "grid_role": "resolution"},
+    {"grid_id": "soc1_b10", "soc_step": 1.0, "block_min": 10,
+     "grid_role": "resolution"},
+    {"grid_id": "soc1_b5", "soc_step": 1.0, "block_min": 5,
+     "grid_role": "resolution"},
+)
 MIP_BUDGET_S = {
     2: 1800, 3: 1800, 5: 1800, 8: 1800,
     13: 3600, 20: 7200, 30: 14400,
@@ -312,52 +324,30 @@ def build_plan(campaign, python, reservation_root):
         seed_key_by_cell[cell["cell_id"]] = key
         jobs.append(_job(root, cell, key, "SEED", None, nonce))
     for cell in cg_cells:
-        key = f"cg_{cell['cell_id']}"
-        cg_key_by_cell[cell["cell_id"]] = key
-        job = _job(root, cell, key, "CG", None, nonce)
-        job["dependency_preflight"] = preflight_key_by_cell[(
-            cell["scale"], cell["selection_replicate"]
-        )]
-        jobs.append(job)
-    for cell in non_k40:
-        if cell["scale"] > 5:
-            continue
-        membership = prelaunch_membership[(
-            cell["scale"], cell["selection_replicate"]
-        )]
-        if membership["known_partition_in_primary_expanded_space"] is True:
-            sensitivity_grids = ()
-        else:
-            first = membership.get("first_feasible_soc_step")
-            sensitivity_grids = (
-                ((5.0, 10),) if first == 5.0
-                else ((5.0, 10), (2.5, 10)) if first == 2.5
-                else ((5.0, 10), (2.5, 10), (1.0, 10))
-            )
-            if (
-                cell["scale"] == 2
-                and first == 1.0
-                and membership.get("first_feasible_block_min") == 5
-            ):
-                sensitivity_grids = (
-                    *sensitivity_grids, (1.0, 5),
-                )
-        for soc_step, diagnostic_block_min in sensitivity_grids:
-            label = str(soc_step).replace(".", "p")
+        for grid_index, grid in enumerate(CG_GRIDS):
+            primary = grid["grid_role"] == "primary"
             key = (
-                f"cgdiag_g{label}_b{diagnostic_block_min}_"
-                f"{cell['cell_id']}"
+                f"cg_{cell['cell_id']}" if primary
+                else f"cg_{grid['grid_id']}_{cell['cell_id']}"
             )
             job = _job(
-                root, cell, key, "CG_SENSITIVITY", None, nonce,
-                diagnostic_soc_step=soc_step,
-                diagnostic_block_min=diagnostic_block_min,
+                root, cell, key,
+                "CG" if primary else "CG_SENSITIVITY",
+                None, nonce,
+                diagnostic_soc_step=grid["soc_step"],
+                diagnostic_block_min=grid["block_min"],
             )
-            job["diagnostic_only"] = True
+            job.update({
+                **grid,
+                "grid_index": grid_index,
+                "diagnostic_only": False,
+            })
             job["dependency_preflight"] = preflight_key_by_cell[(
                 cell["scale"], cell["selection_replicate"]
             )]
             jobs.append(job)
+            if primary:
+                cg_key_by_cell[cell["cell_id"]] = key
     for arm in ("RAW", "KNOWN-PARTITION"):
         for cell in non_k40:
             key = f"mip_{arm.lower().replace('-', '_')}_{cell['cell_id']}"
@@ -432,7 +422,7 @@ def build_plan(campaign, python, reservation_root):
     }
     if {key: len(value) for key, value in groups.items()} != {
         "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-        "CG_SENSITIVITY": 30, "MIP_RAW": 21, "MIP_KNOWN": 21,
+        "CG_SENSITIVITY": 92, "MIP_RAW": 21, "MIP_KNOWN": 21,
     }:
         raise ValueError("task group counts differ")
     reuse_slots = [
@@ -527,10 +517,12 @@ def build_plan(campaign, python, reservation_root):
         "reservation_root": str(Path(reservation_root).resolve()),
         "jobs": jobs,
         "task_groups": groups,
+        "cg_grids": [dict(grid) for grid in CG_GRIDS],
         "task_count": sum(map(len, groups.values())),
         "preflight_task_count": 22,
-        "cg_task_count": 23,
-        "sensitivity_cg_task_count": 30,
+        "cg_task_count": 115,
+        "primary_cg_task_count": 23,
+        "sensitivity_cg_task_count": 92,
         "mip_task_count": 42,
         "seed_task_count": 21,
         "k40_mip_submission_count": 0,
@@ -601,7 +593,8 @@ def write_plan(plan, plan_path, matrix_path):
     with matrix_path.open("x", newline="") as handle:
         fields = (
             "job_key", "phase", "scale", "selection_replicate",
-            "cg_replicate", "arm", "budget_s", "partition", "threads",
+            "cg_replicate", "arm", "grid_id", "grid_role", "grid_index",
+            "soc_step", "block_min", "budget_s", "partition", "threads",
             "job_name", "output",
         )
         writer = csv.DictWriter(
@@ -2807,7 +2800,7 @@ def main(argv=None):
         print(
             f"[dry-run] tasks={plan['task_count']} "
             "PREFLIGHT=22 SEED=21 PRIMARY_CG=23 "
-            "SENSITIVITY_CG=30 MIP=42 k40_MIP=0"
+            "RESOLUTION_CG=92 MIP=42 k40_MIP=0"
         )
         return 0
     if args.approved_plan_sha256 != plan_sha:
