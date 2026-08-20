@@ -39,7 +39,7 @@ PY
   if [ -n "${LL_BUDGET_OVERRIDE_S:-}" ] && [[ "$PHASE" == CG* || "$PHASE" == MIP ]]; then
     MARKER="$OUT.smoke.done"
   fi
-  [ ! -e "$OUT.done" ] && [ ! -e "$MARKER" ] || { echo "SKIP $JOB_KEY"; return 0; }
+  if [ -e "$OUT.done" ] || [ -e "$MARKER" ]; then echo "SKIP $JOB_KEY"; return 0; fi
   EFFECTIVE=${LL_BUDGET_OVERRIDE_S:-$BUDGET}
   CG_LIMIT=$((BUDGET + 60))
   [ -z "${LL_BUDGET_OVERRIDE_S:-}" ] || CG_LIMIT=$EFFECTIVE
