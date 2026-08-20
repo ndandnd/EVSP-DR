@@ -338,8 +338,12 @@ class LadderLiteTests(unittest.TestCase):
             self.assertTrue(all(row["censored"]=="True" for row in cg))
             provenance=json.loads((output/"provenance.json").read_text())
             self.assertEqual(provenance["execution_mode"],"ladder_lite_direct_array")
+            self.assertIn(
+                "src/run_scale_ladder_local_diagnostics.py",
+                provenance["code_hashes"],
+            )
             self.assertFalse(any(
-                b"local_diagnostic" in path.read_bytes()
+                b'"local_diagnostic"' in path.read_bytes()
                 for path in output.iterdir() if path.is_file()
             ))
             overridden=next(job for job in plan["jobs"] if job["phase"]=="CG")
