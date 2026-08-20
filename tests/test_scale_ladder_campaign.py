@@ -5156,14 +5156,6 @@ printf '%s %s\n' "$status" "$checks"
                 if item["campaign_role"] == "small_grid_sensitivity"
             )
             self.assertEqual(row["censored"], "True")
-            self.assertEqual(
-                row["route_weight_meaning"],
-                "upper bound on LP optimum only; no fleet LP lower bound",
-            )
-            self.assertEqual(
-                sensitivity["route_weight_meaning"],
-                "fleet LP lower bound (certified discretized model; grid stated; D0019)",
-            )
             self.assertEqual(sensitivity["soc_step"], "5.0")
             self.assertEqual(
                 sensitivity["grid_interpretation"],

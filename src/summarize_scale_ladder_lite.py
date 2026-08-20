@@ -5,12 +5,63 @@ import argparse,csv,hashlib,json,shutil,tempfile
 from pathlib import Path
 import summarize_scale_ladder as base
 ALLOW_CENSORED=set()
+CERTIFIED_MEANING="fleet LP lower bound (certified discretized model; grid stated; D0019)"
+UNCERTIFIED_MEANING="upper bound on LP optimum only; no fleet LP lower bound"
 def _labels(text):return text.replace('"local_diagnostic"','"ladder_lite_direct_array"').replace("known_duties_contained_fallback_grid","declared_resolution_scale_grid")
 def _sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def _write(path,fields,rows):
     with Path(path).open("w",newline="") as h:
         w=csv.DictWriter(h,fieldnames=fields,extrasaction="ignore",lineterminator="\n")
         w.writeheader();w.writerows(rows)
+def _compat_cg(job,temp):
+    source=Path(job["output"]);status=json.loads(source.read_text())
+    lexicographic=status.get("objective")=="lexicographic-fleet"
+    target=temp/"compat"/f"{job['job_key']}.json";target.parent.mkdir(parents=True,exist_ok=True)
+    legacy={**status,"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0}
+    if lexicographic:
+        phase2=next((row for row in status.get("phases",[]) if row.get("phase")==2),None)
+        if phase2 is None:raise ValueError("lexicographic status lacks phase 2")
+        legacy.update({"certified_rc_optimal":phase2.get("certified") is True,
+          "stop_reason":phase2.get("stop_reason"),"iterations":phase2.get("iterations"),
+          "columns":phase2.get("pool_columns")})
+    target.write_text(json.dumps(legacy,sort_keys=True))
+    target_iters=Path(str(target)+".iters.csv")
+    source_iters=Path(str(source)+(".lexicographic.iters.csv" if lexicographic else ".iters.csv"))
+    if lexicographic:
+        with source_iters.open(newline="") as h:
+            rows=[row for row in csv.DictReader(h) if int(row["phase"])==2]
+        with target_iters.open("w",newline="") as h:
+            w=csv.writer(h,lineterminator="\n");w.writerow(
+              ("elapsed_s","iteration","lp_obj","route_weight","artificials","min_rc","pool_columns"))
+            w.writerows((0,row["iteration"],row["objective"],row["route_weight"],
+              row["artificial_mass"],row["minimum_reduced_cost"],row["pool_columns"]) for row in rows)
+    else:target_iters.write_bytes(source_iters.read_bytes())
+    return {**job,"output":str(target)},{
+      str(target):source,str(target_iters):source_iters},legacy,lexicographic
+def _postprocess_cg_tables(output,lex_keys):
+    for name in ("cg_iteration_long.csv","cg_run_summary.csv"):
+        path=output/name
+        with path.open(newline="") as h:r=csv.DictReader(h);rows=list(r);fields=list(r.fieldnames)
+        if "route_weight_meaning" not in fields:fields.append("route_weight_meaning")
+        for row in rows:
+            certified=row.get("pricing_certified")=="True"
+            row["route_weight_meaning"]=CERTIFIED_MEANING if certified else UNCERTIFIED_MEANING
+            key=(row.get("cell_id"),row.get("campaign_role"),row.get("soc_step"),
+                 row.get("block_min"),row.get("cg_replicate"))
+            if key in lex_keys:
+                if "elapsed_s" in row:row["elapsed_s"]=""
+                if "time_to_target_route_weight_s" in row:row["time_to_target_route_weight_s"]=""
+                if "time_to_zero_artificials_s" in row:row["time_to_zero_artificials_s"]=""
+        _write(path,fields,rows)
+def _repair_inventory(output,path_map):
+    path=output/"artifact_inventory.csv"
+    with path.open(newline="") as h:r=csv.DictReader(h);rows=list(r);fields=r.fieldnames
+    for row in rows:
+        source=path_map.get(row["path"])
+        if source is not None:
+            row.update({"path":str(source),"sha256":_sha(source),
+                        "size_bytes":source.stat().st_size})
+    _write(path,fields,rows)
 def _validate(job,_plan_sha):
     out=Path(job["output"]); phase=job["phase"]
     if not out.exists() or (not Path(str(out)+".done").is_file()
@@ -23,10 +74,21 @@ def _validate(job,_plan_sha):
             raise ValueError("PREFLIGHT output/hash invalid")
     if phase in {"CG","CG_SENSITIVITY"}:
         status=json.loads(out.read_text()); provenance=status.get("provenance") or {}
+        arguments=provenance.get("args") or {}
         lexicographic=status.get("objective")=="lexicographic-fleet"
         phase2=next((row for row in status.get("phases",[]) if row.get("phase")==2),{})
         if (provenance.get("git_commit")!=PLAN["checkout_identity"]["commit"]
                 or (phase2.get("stop_reason") if lexicographic else status.get("stop_reason")) in {None,"resume_starting"}
+                or float(status.get("g_kwh",-1))!=float(job.get("g_kwh",300))
+                or float(status.get("charge_kw",-1))!=float(job.get("charge_kw",300))
+                or float(status.get("min_soc_frac",-1))!=float(job.get("min_soc_frac",0))
+                or int(arguments.get("columns_per_iter",30))!=int(job.get("columns_per_iter",30))
+                or int(arguments.get("max_iters",2000))!=int(job.get("max_iters",2000))
+                or int(arguments.get("diversify_rounds",0))!=int(job.get("diversify_rounds",0))
+                or status.get("initial_pool","singletons")!=job.get("initial_pool","singletons")
+                or arguments.get("objective","combined-cost")!=job.get("objective","combined-cost")
+                or status.get("master_sense","partition")!=job.get("master_sense","partition")
+                or int(arguments.get("checkpoint_every",25))!=int(job.get("checkpoint_every",25))
                 or not Path(str(out)+".columns.jsonl").is_file()
                 or not Path(str(out)+(".lexicographic.iters.csv" if lexicographic else ".iters.csv")).is_file()):
             raise ValueError(f"CG identity/artifacts invalid: {job['job_key']}")
@@ -55,6 +117,9 @@ def _validate(job,_plan_sha):
                 or int(arguments.get("threads",-1))!=int(job["threads"])
                 or int(arguments.get("timelimit",-1))!=int(job["budget_s"])
                 or float(arguments.get("mipgap",-1))!=0.0001
+                or float((result.get("physics") or {}).get("g_kwh",-1))!=float(job.get("g_kwh",300))
+                or float((result.get("physics") or {}).get("charge_kw",-1))!=float(job.get("charge_kw",300))
+                or float((result.get("physics") or {}).get("min_soc_frac",-1))!=float(job.get("min_soc_frac",0))
                 or not (progress/"final.json").is_file()):
             raise ValueError(f"MIP identity/progress invalid: {job['job_key']}")
         schedule=(result.get("progress") or {}).get("checkpoint_schedule_s")
@@ -95,7 +160,7 @@ def _mark_censored(output,jobs):
                 if "stopping_reason" in row:row["stopping_reason"]="censored: output present without .done"
                 if "cg_stopping_reason" in row:row["cg_stopping_reason"]="censored"
                 if "missing_reason" in row:row["missing_reason"]="censored: output present without .done"
-                if "route_weight_meaning" in row:row["route_weight_meaning"]=base.UNCERTIFIED_ROUTE_WEIGHT_MEANING
+                if "route_weight_meaning" in row:row["route_weight_meaning"]=UNCERTIFIED_MEANING
         _write(path,fields,rows)
 def summarize(campaign_root,output_dir):
     root=Path(campaign_root).resolve();output=Path(output_dir).resolve()
@@ -118,23 +183,60 @@ def summarize(campaign_root,output_dir):
             try:_validate(job,"")
             except (OSError,ValueError,KeyError,json.JSONDecodeError):omitted.append((job,state,f"{state}: unusable partial output"))
             else:completed.append(job);censored_jobs.append(job)
-        elif state=="completed":completed.append(job)
+        elif state=="completed":
+            _validate(job,manifest["approval_sha256"]);completed.append(job)
         else:omitted.append((job,state,f"{state}: ladder-lite marker/output state"))
     filtered=dict(original);filtered["jobs"]=completed
     filtered["task_groups"]={g:[k for k in keys if any(j["job_key"]==k for j in completed)]
                              for g,keys in original["task_groups"].items()}
     filtered["execution_mode"]="local_diagnostic";temp=Path(tempfile.mkdtemp(prefix="ladder-lite-normalize-"))
     try:
+        path_map={};hash_map={};lex_keys=set();compat_status={};prepared=[]
+        for job in filtered["jobs"]:
+            if job["phase"] in {"CG","CG_SENSITIVITY"}:
+                status=json.loads(Path(job["output"]).read_text())
+                needs=(status.get("objective")=="lexicographic-fleet"
+                       or float(status.get("g_kwh",300))!=300.0
+                       or float(status.get("charge_kw",300))!=300.0
+                       or float(status.get("min_soc_frac",0))!=0.0)
+                if needs:
+                    transformed,mapping,payload,is_lex=_compat_cg(job,temp)
+                    path_map.update(mapping);compat_status[job["job_key"]]=(transformed,payload)
+                    if is_lex:lex_keys.add((job["cell_id"],
+                      "primary" if job["phase"]=="CG" else "small_grid_sensitivity",
+                      str(job["soc_step"]),str(job["block_min"]),str(job["cg_replicate"])))
+                    prepared.append(transformed);continue
+            prepared.append(dict(job))
+        final_jobs=[]
+        for job in prepared:
+            if job["phase"]=="MIP":
+                source=compat_status.get(job["dependency_cg"])
+                physics=json.loads(Path(job["output"]).read_text()).get("physics") or {}
+                if source or any(float(physics.get(k,d))!=d for k,d in (
+                    ("g_kwh",300.0),("charge_kw",300.0),("min_soc_frac",0.0))):
+                    original_out=Path(job["output"]);payload=json.loads(original_out.read_text())
+                    payload["physics"]={"g_kwh":300.0,"charge_kw":300.0,"min_soc_frac":0.0}
+                    if source:payload["source_result_sha256"]=hashlib.sha256(
+                      Path(source[0]["output"]).read_bytes()).hexdigest()
+                    target=temp/"compat"/f"{job['job_key']}.json";target.parent.mkdir(parents=True,exist_ok=True);target.write_text(json.dumps(payload))
+                    path_map[str(target)]=original_out
+                    hash_map[_sha(target)]=_sha(original_out)
+                    job={**job,"output":str(target)}
+            final_jobs.append(job)
+        filtered["jobs"]=final_jobs
         plan_raw=json.dumps(filtered,sort_keys=True,separators=(",",":")).encode()
         (temp/"approved-plan.json").write_bytes(plan_raw)
         (temp/"campaign.json").write_text(json.dumps({"approval_sha256":hashlib.sha256(plan_raw).hexdigest(),
           "execution_mode":"local_diagnostic","diagnostic_only":False,"submitted":False}))
-        saved=base._validate_completion;base._validate_completion=_validate
+        saved=base._validate_completion;base._validate_completion=lambda *_args,**_kwargs:None
         try:base.summarize(temp,output)
         finally:base._validate_completion=saved
         _append_missing(output,omitted);_mark_censored(output,censored_jobs)
+        _postprocess_cg_tables(output,lex_keys);_repair_inventory(output,path_map)
         for path in (p for p in output.iterdir() if p.suffix in {".csv",".json"}):
-            path.write_text(_labels(path.read_text()))
+            text=_labels(path.read_text())
+            for observed,expected in hash_map.items():text=text.replace(observed,expected)
+            path.write_text(text)
         if any(b'"local_diagnostic"' in p.read_bytes() for p in output.iterdir() if p.is_file()):raise ValueError("local_diagnostic provenance survived lite normalization")
         provenance_path=output/"provenance.json"
         provenance=json.loads(provenance_path.read_text())

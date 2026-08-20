@@ -514,7 +514,8 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             lex=root/"lex.json";lex.write_text(json.dumps({
                 "objective":"lexicographic-fleet",
                 "provenance":{"git_commit":commit},
-                "phases":[{"phase":2,"stop_reason":"certified"}],
+                "phases":[{"phase":2,"stop_reason":"certified",
+                           "certified":True,"iterations":1,"pool_columns":1}],
             }))
             Path(str(lex)+".done").touch()
             Path(str(lex)+".columns.jsonl").touch()
@@ -525,6 +526,16 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
                 "job_key":"lex","phase":"CG","output":str(lex),
                 "telemetry":None,"snapshot_minutes":[],
             },"")
+            compatible,mapping,payload,is_lex=lite_summary._compat_cg({
+                "job_key":"lex","output":str(lex),
+            },root/"temp")
+            self.assertTrue(is_lex);self.assertTrue(payload["certified_rc_optimal"])
+            self.assertEqual(mapping[compatible["output"]],lex)
+            with Path(str(compatible["output"])+".iters.csv").open(newline="") as h:
+                self.assertEqual(csv.DictReader(h).fieldnames,[
+                    "elapsed_s","iteration","lp_obj","route_weight",
+                    "artificials","min_rc","pool_columns",
+                ])
             mip=root/"mip.json";mip.write_text(json.dumps({
                 "mip_provenance":{
                     "expected_git_commit":commit,"observed_git_commit":commit,
@@ -582,6 +593,27 @@ os.execv({self.python!r},[{self.python!r},"-B",*args])
             ),
             "declared_resolution_scale_grid,local_diagnostic",
         )
+
+    def test_route_weight_labels_split_certified_from_uncertified(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            fields=("cell_id","campaign_role","soc_step","block_min",
+                    "cg_replicate","pricing_certified")
+            for name in ("cg_iteration_long.csv","cg_run_summary.csv"):
+                with (root/name).open("w",newline="") as h:
+                    writer=csv.DictWriter(h,fieldnames=fields,lineterminator="\n")
+                    writer.writeheader();writer.writerows([
+                        {"cell_id":"cert","pricing_certified":"True"},
+                        {"cell_id":"open","pricing_certified":"False"},
+                    ])
+            lite_summary._postprocess_cg_tables(root,set())
+            with (root/"cg_run_summary.csv").open(newline="") as h:
+                rows={row["cell_id"]:row for row in csv.DictReader(h)}
+            self.assertIn("D0019",rows["cert"]["route_weight_meaning"])
+            self.assertEqual(
+                rows["open"]["route_weight_meaning"],
+                "upper bound on LP optimum only; no fleet LP lower bound",
+            )
 
 
 if __name__ == "__main__":
