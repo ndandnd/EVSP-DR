@@ -130,8 +130,8 @@ class LexicographicFleetCGTests(unittest.TestCase):
                 phases[2]["fixed_optima"]["phase_2_fleet_optimum"],
                 phases[1]["route_weight"],
             )
-            self.assertEqual(phases[1]["identity"]["instance_sha256"],
-                             status["provenance"]["instance_sha256"])
+            for key in ("instance_sha256","prices_sha256","reference_sha256","deadhead_sha256"):self.assertEqual(phases[1]["identity"][key],status["provenance"][key])
+            self.assertFalse(phases[1]["identity"]["git_dirty"]);self.assertFalse(phases[1]["identity"]["strict_tariff_coverage"])
             self.assertIn("phase_iteration_log_sha256", status)
             for certificate in phases:
                 payload=dict(certificate);observed=payload.pop("certificate_sha256")
@@ -154,7 +154,7 @@ class LexicographicFleetCGTests(unittest.TestCase):
             output = Path(tmp) / "wall.json"
             exact.main(self._lex_args(output, "--wall-limit-s", "0"))
             phase=json.loads(output.read_text())["phases"][0]
-            self.assertEqual(phase["stop_reason"],"wall_limit");self.assertFalse(phase["certified"])
+            self.assertEqual(phase["stop_reason"],"wall_limit");self.assertFalse(phase["certified"]);self.assertEqual(phase["iterations"],0)
         args=SimpleNamespace(max_iters=1,wall_limit_s=None,columns_per_iter=1,rc_eps=1e-4)
         with tempfile.TemporaryFile(mode="w+") as handle:
             certificate=lex._run_phase(args,1,[0],{frozenset({0}):{"trips":[0],"cost":BUS_COST_KX}},

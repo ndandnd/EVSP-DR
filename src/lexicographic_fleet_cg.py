@@ -204,7 +204,7 @@ def _run_phase(args, phase, trips, pool, net, prices, tariff_sha,
             args.wall_limit_s is not None
             and time.perf_counter() - started >= args.wall_limit_s
         ):
-            stop_reason = "wall_limit"
+            stop_reason = "wall_limit"; iteration -= 1
             break
         routes = list(pool.values())
         final_lp = _solve_master(
@@ -351,7 +351,7 @@ def run_lexicographic_fleet_cg(args):
         strict_tariff_coverage=args.strict_tariff_coverage,
     )
     provenance = exact._provenance(args)
-    identity={"git_commit":provenance.get("git_commit"),"instance_sha256":provenance["instance_sha256"],"prices_sha256":provenance["prices_sha256"],"csv":args.csv,"prices_csv":args.prices_csv,"soc_step":args.soc_step,"block_min":args.block_min,"g_kwh":args.g_kwh,"charge_kw":args.charge_kw,"min_soc_frac":args.min_soc_frac}
+    identity={"git_commit":provenance.get("git_commit"),"git_dirty":provenance.get("git_dirty"),"instance_sha256":provenance["instance_sha256"],"prices_sha256":provenance["prices_sha256"],"reference_sha256":provenance["reference_sha256"],"deadhead_sha256":provenance["deadhead_sha256"],"csv":args.csv,"prices_csv":args.prices_csv,"soc_step":args.soc_step,"block_min":args.block_min,"g_kwh":args.g_kwh,"charge_kw":args.charge_kw,"min_soc_frac":args.min_soc_frac,"strict_tariff_coverage":args.strict_tariff_coverage}
     pool = {}
     seeds, missing = exact.direct_singleton_seed_records(
         problem,
