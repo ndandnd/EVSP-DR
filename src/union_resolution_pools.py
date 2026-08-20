@@ -101,10 +101,21 @@ def merge_route_sets(sources):
 
     if len(sources) < 2:
         raise ValueError("resolution union requires at least two sources")
-    source_ids = [
-        source.get("source_id", f"source_{index}")
-        for index, source in enumerate(sources)
-    ]
+    def immutable_source_id(source):
+        return source.get("source_id") or hashlib.sha256(_canonical({
+            "journal_sha256": source["journal_sha256"],
+            "identity": source["identity"],
+            "route_hashes": sorted(
+                route_sha256(route) for route in source["routes"]
+            ),
+        })).hexdigest()
+    sources = sorted(
+        sources,
+        key=lambda source: (
+            source["journal_sha256"], immutable_source_id(source)
+        ),
+    )
+    source_ids = [immutable_source_id(source) for source in sources]
     if len(source_ids) != len(set(source_ids)):
         raise ValueError("resolution union repeats an exact source")
     expected = sources[0]["identity"]
@@ -129,9 +140,7 @@ def merge_route_sets(sources):
             if digest not in union:
                 union[digest] = route
                 retained_sources[digest] = source_ids[source_index]
-        source_hash_sets[
-            source.get("source_id", f"source_{source_index}")
-        ] = hashes
+        source_hash_sets[source_ids[source_index]] = hashes
     ordered_hashes = sorted(union)
     union_hashes = set(ordered_hashes)
     if any(not hashes <= union_hashes for hashes in source_hash_sets.values()):
@@ -287,7 +296,7 @@ def build_union(result_paths, *, output_path, data_dir=None,
             )
         loaded.append({
             "source_id": hashlib.sha256(_canonical(
-                [str(result), result_sha, journal_sha]
+                [result_sha, journal_sha]
             )).hexdigest(),
             "result": str(result),
             "status": status,
@@ -303,7 +312,9 @@ def build_union(result_paths, *, output_path, data_dir=None,
             "physical_pool_audit": audit,
             "trip_ids": trips,
         })
-    loaded.sort(key=lambda row: row["journal_sha256"])
+    loaded.sort(key=lambda row: (
+        row["journal_sha256"], row["result_sha256"], row["source_id"]
+    ))
     routes, superset = merge_route_sets(loaded)
     identity = loaded[0]["identity"]
     if not identity["instance_sha256"] or not identity["trip_ids"]:

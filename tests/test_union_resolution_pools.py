@@ -214,6 +214,18 @@ class ResolutionPoolUnionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"repeats an exact source"):
             merge_route_sets([source,dict(source)])
 
+    def test_equal_journal_sources_are_cli_order_independent(self):
+        sources=[
+            {"source_id":"b","identity":identity(),
+             "journal_sha256":"same","routes":[route([0]),route([1])]},
+            {"source_id":"a","identity":identity(),
+             "journal_sha256":"same","routes":[route([0]),route([0,1])]},
+        ]
+        forward_routes,forward_proof=merge_route_sets(sources)
+        reverse_routes,reverse_proof=merge_route_sets(list(reversed(sources)))
+        self.assertEqual(forward_routes,reverse_routes)
+        self.assertEqual(forward_proof,reverse_proof)
+
     def test_end_to_end_union_feasible_witness_is_strictly_replayed(self):
         data=REPO/"data";csv_name="Practice_Selected_1buses.csv"
         problem=exact.build_problem(
