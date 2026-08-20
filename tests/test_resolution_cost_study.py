@@ -194,6 +194,7 @@ class ResolutionCostStudyTests(unittest.TestCase):
                 plan, root / "summary", [mip_root],
             )
             self.assertEqual(result["rows"], 168)
+            self.assertEqual(result["structural_dag_nodes_upper"], 679381)
             self.assertEqual(result["node_model"]["status"], "fit")
             self.assertEqual(
                 result["bridge_models"]["node_model"]["status"],

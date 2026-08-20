@@ -11,7 +11,9 @@ from pathlib import Path
 
 import numpy as np
 
-from resolution_cost_study import SCHEMA, _sha256_json
+from resolution_cost_study import (
+    SCHEMA, _estimated_dag_nodes, _sha256_json,
+)
 
 
 LONG_FIELDS = (
@@ -281,6 +283,10 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
     predicted_wall = predict(
         wall_model, target["trip_count"], target["soc_step"], target["block_min"],
     )
+    structural_upper = _estimated_dag_nodes(
+        target["trip_count"], target["g_kwh"],
+        target["soc_step"], target["block_min"],
+    )
     threshold = float(
         affordable_hours
         if affordable_hours is not None
@@ -296,6 +302,7 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
         },
         "prediction_target": target,
         "predicted_dag_nodes": predicted_nodes,
+        "structural_dag_nodes_upper": structural_upper,
         "predicted_wall_to_certificate_s": predicted_wall,
         "predicted_wall_to_certificate_h": (
             predicted_wall / 3600.0 if predicted_wall is not None else None
@@ -308,7 +315,9 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
         "extrapolation_warning":
             "Target 947 trips and 1 kWh are outside the local fitted ranges "
             "(k2/k3: 29-71 trips; 2.5-15 kWh); wall fit uses certified, "
-            "hence selected, cells only.",
+            "hence selected, cells only. The requested multiplicative node "
+            "model approximates an actually additive trip-plus-charge DAG; "
+            "the structural upper count is reported separately.",
         "rows": len(rows),
         "certified_rows": sum(bool(row["certified"]) for row in rows),
     }
