@@ -34,16 +34,25 @@ def _validate(job,_plan_sha):
                 raise ValueError(f"CG snapshot mismatch: {job['job_key']} m{mark}")
             if reported not in {"available","censored_solver_terminated_before_mark","missed_in_prior_allocation"}:
                 raise ValueError("CG snapshot classification missing")
+            if reported!="available" and (snap.exists() or journal.exists()):
+                raise ValueError(f"CG censored snapshot orphan: {job['job_key']} m{mark}")
     if phase=="MIP":
         result=json.loads(out.read_text()); provenance=result.get("mip_provenance") or {}
         arguments=provenance.get("arguments") or {}; progress=Path(job["progress_dir"])
         if (provenance.get("expected_git_commit")!=PLAN["checkout_identity"]["commit"]
                 or provenance.get("observed_git_commit")!=PLAN["checkout_identity"]["commit"]
+                or provenance.get("final_observed_git_commit")!=PLAN["checkout_identity"]["commit"]
+                or provenance.get("git_dirty") is not False
+                or provenance.get("tracked_clean_at_end") is not True
                 or arguments.get("two_stage") is not True or arguments.get("cover") is not False
                 or int(arguments.get("threads",-1))!=int(job["threads"])
+                or int(arguments.get("timelimit",-1))!=int(job["budget_s"])
+                or float(arguments.get("mipgap",-1))!=0.0001
                 or not (progress/"final.json").is_file()):
             raise ValueError(f"MIP identity/progress invalid: {job['job_key']}")
-        for mark in (result.get("progress") or {}).get("checkpoint_schedule_s") or []:
+        schedule=(result.get("progress") or {}).get("checkpoint_schedule_s")
+        if not isinstance(schedule,list):raise ValueError("MIP checkpoint schedule missing")
+        for mark in schedule:
             path=progress/f"checkpoint_{int(round(float(mark)/60)):04d}m.json"
             if not path.is_file():raise ValueError(f"MIP checkpoint missing: {path}")
 def _append_missing(output,omitted):

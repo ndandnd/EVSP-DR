@@ -290,6 +290,39 @@ class LadderLiteTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"smoke override"):
                 lite_summary.summarize(campaign,second)
 
+    def test_lite_validator_rejects_orphan_snapshots_and_bad_mip_provenance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); commit="a"*40
+            lite_summary.PLAN={"checkout_identity":{"commit":commit}}
+            cg=root/"cg.json"; cg.write_text(json.dumps({
+                "provenance":{"git_commit":commit},"stop_reason":"certified",
+                "snapshot_availability":{"5":"censored_solver_terminated_before_mark"},
+            }))
+            Path(str(cg)+".done").touch();Path(str(cg)+".columns.jsonl").touch()
+            Path(str(cg)+".iters.csv").write_text("iteration\n")
+            (root/"cg.m5.snapshot.json").touch()
+            with self.assertRaisesRegex(ValueError,"orphan"):
+                lite_summary._validate({
+                    "job_key":"cg","phase":"CG","output":str(cg),
+                    "telemetry":None,"snapshot_minutes":[5],
+                },"")
+            mip=root/"mip.json";mip.write_text(json.dumps({
+                "mip_provenance":{
+                    "expected_git_commit":commit,"observed_git_commit":commit,
+                    "final_observed_git_commit":commit,"git_dirty":False,
+                    "tracked_clean_at_end":True,
+                    "arguments":{"two_stage":True,"cover":False,"threads":8,
+                                 "timelimit":60,"mipgap":0.0001}},
+                "progress":{},
+            }))
+            Path(str(mip)+".done").touch();progress=root/"progress";progress.mkdir()
+            (progress/"final.json").touch()
+            with self.assertRaisesRegex(ValueError,"schedule"):
+                lite_summary._validate({
+                    "job_key":"mip","phase":"MIP","output":str(mip),
+                    "progress_dir":str(progress),"threads":8,"budget_s":60,
+                },"")
+
 
 if __name__ == "__main__":
     unittest.main()
