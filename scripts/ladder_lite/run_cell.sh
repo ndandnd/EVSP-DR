@@ -24,6 +24,11 @@ for v in (p["checkout_identity"]["commit"],j["job_key"],j["phase"],j["arm"],
  j["instance"]["path"],j["instance"]["instance_file_sha256"],
  j["instance"]["relative_path"],j["output"],j["progress_dir"],j["telemetry"],
  j["soc_step"],j["block_min"],",".join(map(str,j["snapshot_minutes"])),
+ j.get("g_kwh",300),j.get("charge_kw",300),j.get("min_soc_frac",0),
+ j.get("columns_per_iter",30),j.get("max_iters",2000),
+ j.get("diversify_rounds",0),j.get("initial_pool","singletons"),
+ j.get("objective","combined-cost"),j.get("master_sense","partition"),
+ j.get("checkpoint_every",25),
  out("dependency_preflight"),out("dependency_cg"),out("dependency_seed")):
  print("" if v is None else v)
 PY
@@ -33,7 +38,11 @@ PY
   INSTANCE=${F[9]}; INSTANCE_SHA=${F[10]}; INSTANCE_REL=${F[11]}
   OUT=${F[12]}; PROGRESS=${F[13]}; TELEMETRY=${F[14]}
   SOC=${F[15]}; BLOCK=${F[16]}; SNAPSHOTS=${F[17]}
-  PREFLIGHT=${F[18]}; CG_OUT=${F[19]}; SEED_OUT=${F[20]}
+  G_KWH=${F[18]}; CHARGE_KW=${F[19]}; MIN_SOC=${F[20]}
+  COLUMNS_PER_ITER=${F[21]}; MAX_ITERS=${F[22]}; DIVERSIFY=${F[23]}
+  INITIAL_POOL=${F[24]}; OBJECTIVE=${F[25]}; MASTER_SENSE=${F[26]}
+  CHECKPOINT_EVERY=${F[27]}
+  PREFLIGHT=${F[28]}; CG_OUT=${F[29]}; SEED_OUT=${F[30]}
   MARKER="$OUT.done"
   record_failure() { rc=$?; trap - EXIT; if [ "$rc" -ne 0 ] && [ ! -s "$OUT.failed" ]; then mkdir -p "$(dirname "$OUT")" 2>/dev/null || true; printf 'exit_code=%s\njob_key=%s\nslurm_job_id=%s\nnode=%s\n' "$rc" "$JOB_KEY" "${SLURM_JOB_ID:-local}" "${SLURMD_NODENAME:-$(hostname)}" >"$OUT.failed" 2>/dev/null || true; fi; exit "$rc"; }; trap record_failure EXIT
   mkdir -p "$(dirname "$OUT")" || return 1
@@ -60,9 +69,12 @@ PY
     CG|CG_SENSITIVITY)
       command=("$PYTHON" -u "$REPO/src/exact_pricer_expanded.py"
         --csv "$INSTANCE_REL" --prices_csv hourly_prices_flat.csv
-        --g-kwh 300 --charge-kw 300 --min-soc-frac 0 --soc-step "$SOC"
-        --block-min "$BLOCK" --master-sense partition --initial-pool singletons
-        --wall-limit-s "$CG_LIMIT" --checkpoint-every 25 --resume
+        --g-kwh "$G_KWH" --charge-kw "$CHARGE_KW" --min-soc-frac "$MIN_SOC"
+        --soc-step "$SOC" --block-min "$BLOCK" --master-sense "$MASTER_SENSE"
+        --initial-pool "$INITIAL_POOL" --objective "$OBJECTIVE"
+        --columns_per_iter "$COLUMNS_PER_ITER" --max-iters "$MAX_ITERS"
+        --diversify-rounds "$DIVERSIFY" --wall-limit-s "$CG_LIMIT"
+        --checkpoint-every "$CHECKPOINT_EVERY" --resume
         --snapshot-at-minutes "$SNAPSHOTS" --out "$OUT")
       [ -z "$TELEMETRY" ] || command+=(--phase-telemetry "$TELEMETRY") ;;
     MIP)

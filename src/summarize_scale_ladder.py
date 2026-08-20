@@ -496,6 +496,7 @@ def summarize(
             ) != str(identities[field]):
                 raise ValueError(f"CG instance identity differs: {field}")
         provenance = status.get("provenance") or {}
+        source_args = provenance.get("args") or {}
         if (
             provenance.get("instance_sha256")
             != identities["instance_file_sha256"]
@@ -505,9 +506,25 @@ def summarize(
             != float(job["soc_step"])
             or int(status.get("block_min", -1))
             != int(job["block_min"])
-            or status.get("g_kwh") != 300.0
-            or status.get("charge_kw") != 300.0
-            or status.get("min_soc_frac") != 0.0
+            or status.get("g_kwh") != float(job.get("g_kwh", 300.0))
+            or status.get("charge_kw") != float(job.get("charge_kw", 300.0))
+            or status.get("min_soc_frac") != float(
+                job.get("min_soc_frac", 0.0)
+            )
+            or int(source_args.get("columns_per_iter", 30))
+            != int(job.get("columns_per_iter", 30))
+            or int(source_args.get("max_iters", 2000))
+            != int(job.get("max_iters", 2000))
+            or int(source_args.get("diversify_rounds", 0))
+            != int(job.get("diversify_rounds", 0))
+            or status.get("initial_pool", "singletons")
+            != job.get("initial_pool", "singletons")
+            or source_args.get("objective", "combined-cost")
+            != job.get("objective", "combined-cost")
+            or status.get("master_sense", "partition")
+            != job.get("master_sense", "partition")
+            or int(source_args.get("checkpoint_every", 25))
+            != int(job.get("checkpoint_every", 25))
         ):
             raise ValueError(f"CG source/model identity differs: {job['cell_id']}")
         legacy = classify_legacy_trip_hash(
@@ -701,9 +718,12 @@ def summarize(
             != sha256_file(cg_status_path)
             or result.get("source_journal_sha256")
             != sha256_file(cg_journal)
-            or (result.get("physics") or {}).get("g_kwh") != 300.0
-            or (result.get("physics") or {}).get("charge_kw") != 300.0
-            or (result.get("physics") or {}).get("min_soc_frac") != 0.0
+            or (result.get("physics") or {}).get("g_kwh")
+            != float(job.get("g_kwh", 300.0))
+            or (result.get("physics") or {}).get("charge_kw")
+            != float(job.get("charge_kw", 300.0))
+            or (result.get("physics") or {}).get("min_soc_frac")
+            != float(job.get("min_soc_frac", 0.0))
         ):
             raise ValueError(f"MIP source/model identity differs: {job['job_key']}")
         start = result.get("mip_start") or {}

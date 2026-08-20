@@ -4321,6 +4321,19 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             job["snapshot_minutes"] for job in plan["jobs"]
             if job["phase"] == "CG" and job["scale"] == 40
         ))
+        expected_parameters = {
+            "g_kwh": 300.0, "charge_kw": 300.0, "min_soc_frac": 0.0,
+            "columns_per_iter": 30, "max_iters": 100000,
+            "diversify_rounds": 0, "initial_pool": "singletons",
+            "objective": "combined-cost", "master_sense": "partition",
+            "checkpoint_every": 25,
+        }
+        self.assertEqual(plan["cg_parameter_policy"], expected_parameters)
+        self.assertTrue(all(
+            all(job[key] == value for key, value in expected_parameters.items())
+            for job in plan["jobs"]
+            if job["phase"] in {"CG", "CG_SENSITIVITY"}
+        ))
 
     def test_operator_wrapper_matches_probe_first_contract(self):
         wrapper = (

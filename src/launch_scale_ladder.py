@@ -252,6 +252,21 @@ def build_plan(campaign, python, reservation_root):
         != "hourly_prices_flat.csv"
     ):
         raise ValueError("historical flat tariff identity changed")
+    physics = input_manifest["physics"]
+    cg_parameters = {
+        "g_kwh": float(physics["g_kwh"]),
+        "charge_kw": float(physics["charge_kw"]),
+        "min_soc_frac": (
+            float(physics["reserve_kwh"]) / float(physics["g_kwh"])
+        ),
+        "columns_per_iter": 30,
+        "max_iters": 100000,
+        "diversify_rounds": 0,
+        "initial_pool": "singletons",
+        "objective": "combined-cost",
+        "master_sense": "partition",
+        "checkpoint_every": 25,
+    }
     with INSTANCE_MANIFEST.open(newline="") as handle:
         rows = list(csv.DictReader(handle))
     if len(rows) != 22:
@@ -355,6 +370,7 @@ def build_plan(campaign, python, reservation_root):
             )
             job.update({
                 **grid,
+                **cg_parameters,
                 "grid_index": grid_index,
                 "diagnostic_only": False,
             })
@@ -368,6 +384,7 @@ def build_plan(campaign, python, reservation_root):
         for cell in non_k40:
             key = f"mip_{arm.lower().replace('-', '_')}_{cell['cell_id']}"
             job = _job(root, cell, key, "MIP", arm, nonce)
+            job.update(cg_parameters)
             job["dependency_cg"] = cg_key_by_cell[cell["cell_id"]]
             job["dependency_seed"] = (
                 seed_key_by_cell[cell["cell_id"]]
@@ -403,6 +420,16 @@ def build_plan(campaign, python, reservation_root):
             "snapshot_minutes": job["snapshot_minutes"],
             "soc_step": job["soc_step"],
             "block_min": job["block_min"],
+            "g_kwh": job.get("g_kwh"),
+            "charge_kw": job.get("charge_kw"),
+            "min_soc_frac": job.get("min_soc_frac"),
+            "columns_per_iter": job.get("columns_per_iter"),
+            "max_iters": job.get("max_iters"),
+            "diversify_rounds": job.get("diversify_rounds"),
+            "initial_pool": job.get("initial_pool"),
+            "objective": job.get("objective"),
+            "master_sense": job.get("master_sense"),
+            "checkpoint_every": job.get("checkpoint_every"),
             "instance_identity": {
                 field: job["instance"][field] for field in (
                     "instance_file_sha256",
@@ -534,6 +561,7 @@ def build_plan(campaign, python, reservation_root):
         "jobs": jobs,
         "task_groups": groups,
         "cg_grids": [dict(grid) for grid in CG_GRIDS],
+        "cg_parameter_policy": dict(cg_parameters),
         "resource_policy": {
             "schema": "evsp-dr-scale-ladder-resource-policy-v1",
             "fine_grid_large_scale_status":
@@ -625,9 +653,11 @@ def write_plan(plan, plan_path, matrix_path):
         fields = (
             "job_key", "phase", "scale", "selection_replicate",
             "cg_replicate", "arm", "grid_id", "grid_role", "grid_index",
-            "soc_step", "block_min", "memory_gb", "max_concurrency",
-            "resource_basis", "budget_s", "partition", "threads", "job_name",
-            "output",
+            "soc_step", "block_min", "g_kwh", "charge_kw", "min_soc_frac",
+            "columns_per_iter", "max_iters", "diversify_rounds",
+            "initial_pool", "objective", "master_sense", "checkpoint_every",
+            "memory_gb", "max_concurrency", "resource_basis", "budget_s",
+            "partition", "threads", "job_name", "output",
         )
         writer = csv.DictWriter(
             handle, fieldnames=fields, extrasaction="ignore",
