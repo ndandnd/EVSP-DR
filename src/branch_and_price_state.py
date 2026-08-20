@@ -110,6 +110,7 @@ class DurableStateMixin:
             return
         fleet = self.incumbent["fleet"]
         before = len(self.stack) + len(self.frontier_bounds)
+        frontier_before = len(self.frontier_bounds)
         self.stack = [node for node in self.stack if not fleet_bound_closes(
             node.lower_bound, fleet, self.args.bound_tolerance
         )]
@@ -119,6 +120,7 @@ class DurableStateMixin:
                 bound, fleet, self.args.bound_tolerance
             )
         ]
+        self.nodes_depth_capped -= frontier_before - len(self.frontier_bounds)
         after = len(self.stack) + len(self.frontier_bounds)
         if before > after:
             self._event(

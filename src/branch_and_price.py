@@ -38,8 +38,7 @@ from branch_and_price_state import (
 )
 class BranchAndPriceError(RuntimeError): pass
 class ValidationGateError(BranchAndPriceError): pass
-def _baseline_identity(args, provenance):
-    return _state_baseline_identity(args, provenance, ValidationGateError)
+def _baseline_identity(args, provenance): return _state_baseline_identity(args, provenance, ValidationGateError)
 @dataclass(frozen=True, order=True)
 class BranchConstraint:
     kind: str
@@ -1017,6 +1016,8 @@ class BranchAndPriceSolver(DurableStateMixin):
         if node.depth >= self.args.max_depth:
             self.nodes_depth_capped += 1
             frontier_bounds.append(result.lower_bound)
+            self._event("node_depth_capped", node_id=node.node_id,
+                        lower_bound=result.lower_bound)
             return
         (left, right), alpha = branch
         together = self._new_child(
@@ -1126,8 +1127,7 @@ class BranchAndPriceSolver(DurableStateMixin):
         return self._checkpoint(search_complete=complete)
     def interrupt(self, reason="external_interrupt"):
         self.interrupted_reason = reason
-        self._event("interrupted", reason=reason)
-        return self._checkpoint()
+        self._event("interrupted", reason=reason); return self._checkpoint()
 def _validate_scope(csv_path: str, target_fleet: int) -> None:
     match = re.search(r"_k(\d{2})_", Path(csv_path).name)
     if match is None:

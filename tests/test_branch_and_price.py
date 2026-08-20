@@ -15,6 +15,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from branch_and_price import (  # noqa: E402
     BranchConstraint,
     BranchAndPriceSolver,
+    SearchNode,
     _baseline_identity,
     ConstrainedDAGPricer,
     ValidationGateError,
@@ -250,6 +251,20 @@ class BranchAndPriceGateTests(unittest.TestCase):
             assert_child_bound(100.0, 99.0)
         self.assertTrue(fleet_bound_closes(2.187499971, 3))
         self.assertFalse(fleet_bound_closes(2.187499971, 4))
+        solver = BranchAndPriceSolver.__new__(BranchAndPriceSolver)
+        solver.incumbent = {"fleet": 3}
+        solver.stack = [
+            SearchNode(1, tuple(), 2.2, None),
+            SearchNode(2, tuple(), 1.8, None),
+        ]
+        solver.frontier_bounds = [2.3, 1.7]
+        solver.nodes_depth_capped = 2
+        solver.args = SimpleNamespace(bound_tolerance=1e-7)
+        solver._event = lambda *_args, **_kwargs: None
+        solver._prune_open_by_incumbent()
+        self.assertEqual([node.node_id for node in solver.stack], [2])
+        self.assertEqual(solver.frontier_bounds, [1.7])
+        self.assertEqual(solver.nodes_depth_capped, 1)
 
     def test_phase_one_ignores_finite_real_route_cost(self):
         expensive = [{"trips": [10], "cost": 10**12}]
