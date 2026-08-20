@@ -28,11 +28,7 @@ from config import (
 )
 from fixed_duty_expanded_optimizer import (
     _arc_groups,
-    _floor,
-    evaluate_fixed_duty_transition,
-    optimize_fixed_duty,
 )
-from run_exact_pool_mip import validate_injected_route
 from tariff_response_core import canonical_sha
 from utils_v2 import base_station_name
 
@@ -471,40 +467,44 @@ def _replay(
 ):
     soc = g_kwh
     trace = []
+    def bound_soc(where):
+        nonlocal soc
+        if soc < reserve_kwh - TOL or soc > g_kwh + TOL:
+            raise ValueError(f"replay SOC bound violation {where}")
+        soc = min(g_kwh, max(reserve_kwh, soc))
+
     first = _arc_groups(problem)["depot_trip"][trips[0]]
     soc -= first.deadhead_kwh
-    if soc < reserve_kwh - TOL:
-        raise ValueError("replay violates reserve before first trip")
+    bound_soc("before first trip")
     soc -= float(problem.trip_energy[trips[0]])
-    if soc < reserve_kwh - TOL:
-        raise ValueError("replay violates reserve after first trip")
+    bound_soc("after first trip")
     trace.append({"event": "trip", "trip": trips[0], "soc_after_kwh": soc})
     route_nodes = [DEPOT, trips[0]]
     stops = {"stations": [], "cst": [], "cet": [], "kwh": []}
-    all_events, blocks = [], []
+    all_events, blocks, station_visits = [], [], []
     for gap, option_index in enumerate(selected):
         option = options[gap][option_index]
         final = gap == len(trips) - 1
         if option.kind == "direct":
             soc -= option.deadhead_kwh
+            bound_soc("after direct deadhead")
             trace.append({
                 "event": "deadhead", "gap": gap, "kind": "direct",
                 "soc_after_kwh": soc,
             })
         else:
             soc -= option.inbound_kwh
-            if soc < reserve_kwh - TOL:
-                raise ValueError("replay violates reserve on station arrival")
+            bound_soc("on station arrival")
             events = events_by_gap[gap]
             if not events:
                 route_nodes.append(option.station)
-                stops["stations"].append(option.station)
-                stops["cst"].append(option.arrival_min)
-                stops["cet"].append(option.arrival_min)
-                stops["kwh"].append(0.0)
+            first_event_index = len(all_events)
             previous_end = option.arrival_min
             for event_index, event in enumerate(events):
-                if event["start_min"] < previous_end - TOL:
+                if (
+                    event["start_min"] < previous_end - TOL
+                    or event["end_min"] > option.latest_departure_min + TOL
+                ):
                     raise ValueError("replay charging events overlap")
                 event_blocks = []
                 for block in event["blocks"]:
@@ -512,6 +512,7 @@ def _replay(
                     if not math.isclose(
                         block["delivered_kwh"],
                         duration * charge_kw / 60.0,
+                        rel_tol=0.0,
                         abs_tol=1e-6,
                     ):
                         raise ValueError("replay charging block violates power")
@@ -522,12 +523,12 @@ def _replay(
                     )
                     if not math.isclose(
                         expected_price, block["price_per_kwh"],
+                        rel_tol=0.0,
                         abs_tol=1e-12,
                     ):
                         raise ValueError("replay charging tariff mismatch")
                     soc += block["delivered_kwh"]
-                    if soc > g_kwh + TOL:
-                        raise ValueError("replay charging exceeds battery capacity")
+                    bound_soc("after charging")
                     enriched = {
                         **block, "gap": gap, "event_index": event_index,
                         "soc_after_kwh": soc,
@@ -552,19 +553,26 @@ def _replay(
                 stops["cet"].append(event["end_min"])
                 stops["kwh"].append(event["delivered_kwh"])
                 previous_end = event["end_min"]
+            station_visits.append({
+                "gap": gap,
+                "station": option.station,
+                "arrival_min": option.arrival_min,
+                "latest_departure_min": option.latest_departure_min,
+                "charge_event_indices": list(range(
+                    first_event_index, len(all_events)
+                )),
+            })
             soc -= option.outbound_kwh
+            bound_soc("after station departure")
             trace.append({
                 "event": "station_gap", "gap": gap,
                 "station": option.station, "soc_after_kwh": soc,
             })
-        if soc < reserve_kwh - TOL:
-            raise ValueError("replay violates reserve after deadhead")
         if not final:
             next_trip = trips[gap + 1]
             route_nodes.append(next_trip)
             soc -= float(problem.trip_energy[next_trip])
-            if soc < reserve_kwh - TOL:
-                raise ValueError("replay violates reserve after trip")
+            bound_soc("after trip")
             trace.append({
                 "event": "trip", "trip": next_trip, "soc_after_kwh": soc,
             })
@@ -578,7 +586,9 @@ def _replay(
         if terminal_policy == "priced terminal energy" else 0.0
     )
     objective = BUS_COST_KX + electricity_cost + starts_cost - credit
-    if not math.isclose(objective, reported_objective, abs_tol=1e-6):
+    if not math.isclose(
+        objective, reported_objective, rel_tol=0.0, abs_tol=1e-6
+    ):
         raise ValueError(
             f"replay cost {objective} differs from objective "
             f"{reported_objective}"
@@ -588,17 +598,13 @@ def _replay(
         "route_nodes": route_nodes,
         "charging_stops": stops,
     }
-    reason = validate_injected_route(
-        problem, route, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
-    )
-    if reason is not None:
-        raise ValueError(f"continuous replay rejected: {reason}")
     return {
         "schema": REPLAY_SCHEMA,
         "ok": True,
         "route": route,
         "events": all_events,
         "blocks": blocks,
+        "station_visits": station_visits,
         "trace": trace,
         "terminal_soc_kwh": soc,
         "electricity_cost": electricity_cost,
@@ -626,6 +632,7 @@ def optimize_fixed_duty_continuous(
     tariff_sha256=None,
     instance_sha256=None,
     time_limit_s=None,
+    allow_diagnostic_physics=False,
 ):
     """Optimize one fixed ordered trip sequence and replay the exact schedule."""
     started = time.perf_counter()
@@ -649,6 +656,15 @@ def optimize_fixed_duty_continuous(
         or charge_start_cost < 0
     ):
         raise ValueError("invalid fixed-duty physics or start cost")
+    frozen_physics = (240.0, 240.0, 0.0, 5.0)
+    if (
+        not allow_diagnostic_physics
+        and (g_kwh, charge_kw, reserve_kwh, charge_start_cost)
+        != frozen_physics
+    ):
+        raise ValueError(
+            "non-frozen physics require allow_diagnostic_physics=True"
+        )
     if timing_mode not in {"optimized", "arrival"}:
         raise ValueError("timing_mode must be optimized or arrival")
     terminal_policy = _normal_terminal_policy(terminal_soc_policy)
@@ -688,6 +704,11 @@ def optimize_fixed_duty_continuous(
         )
     solved = built["model"].solve(time_limit_s=time_limit_s)
     if not solved.success or solved.x is None:
+        classification = (
+            "physical_infeasible" if int(solved.status) == 2
+            else "solver_limit" if int(solved.status) == 1
+            else "solver_failure"
+        )
         return _infeasible(
             trips,
             f"HiGHS status {solved.status}: {solved.message}",
@@ -696,6 +717,7 @@ def optimize_fixed_duty_continuous(
             tariff_sha256,
             started,
             solver_status=int(solved.status),
+            classification=classification,
         )
     x = solved.x
     selected = []
@@ -733,6 +755,32 @@ def optimize_fixed_duty_continuous(
         reported_objective=objective,
     )
     event_count = len(replay["events"])
+    problem_identity = canonical_sha({
+        "trips": list(problem.trips),
+        "trip_energy": {
+            str(trip): float(problem.trip_energy[trip])
+            for trip in problem.trips
+        },
+        "start_min": {
+            str(trip): float(problem.start_min[trip])
+            for trip in problem.trips
+        },
+        "end_min": {
+            str(trip): float(problem.end_min[trip])
+            for trip in problem.trips
+        },
+        "adjacency": sorted([
+            [str(source), str(target), float(travel), float(energy), str(kind)]
+            for source, arcs in problem.adjacency.items()
+            for target, travel, energy, kind in arcs
+        ]),
+    })
+    tariff_identity = canonical_sha({
+        str(station): {
+            str(hour): float(price) for hour, price in sorted(curve.items())
+        }
+        for station, curve in sorted(station_prices.items())
+    })
     certificate = {
         "schema": CERTIFICATE_SCHEMA,
         "certified": True,
@@ -746,9 +794,11 @@ def optimize_fixed_duty_continuous(
             Path(__file__).read_bytes()
         ).hexdigest(),
         "trip_sequence": list(trips),
-        "instance_sha256": instance_sha256,
+        "declared_instance_sha256": instance_sha256,
+        "problem_identity_sha256": problem_identity,
         "tariff_id": tariff_id,
-        "tariff_sha256": tariff_sha256,
+        "declared_tariff_sha256": tariff_sha256,
+        "tariff_curve_identity_sha256": tariff_identity,
         "physics": {
             "g_kwh": g_kwh,
             "charge_kw": charge_kw,
@@ -757,6 +807,10 @@ def optimize_fixed_duty_continuous(
             "chargers": "unlimited",
             "deadhead": "zone_centroid",
             "all_buses_start": "full",
+            "scope": (
+                "diagnostic_override" if allow_diagnostic_physics
+                else "operator_frozen"
+            ),
         },
         "timing_mode": timing_mode,
         "terminal_soc_policy": terminal_policy,
@@ -796,8 +850,6 @@ def optimize_fixed_duty_continuous(
         "charger_capacity_caveat": CAPACITY_CAVEAT,
         "runtime_s": time.perf_counter() - started,
     }
-
-
 def _infeasible(
     trips,
     reason,
@@ -807,10 +859,12 @@ def _infeasible(
     started,
     *,
     solver_status=None,
+    classification="physical_infeasible",
 ):
     return {
         "schema": RESULT_SCHEMA,
-        "feasible": False,
+        "feasible": False if classification == "physical_infeasible" else None,
+        "classification": classification,
         "trip_sequence": list(trips),
         "reason": reason,
         "terminal_soc_policy": terminal_policy,
@@ -822,174 +876,3 @@ def _infeasible(
         "charger_capacity_caveat": CAPACITY_CAVEAT,
         "runtime_s": time.perf_counter() - started,
     }
-
-
-def solve_fixed_duty_lattice(
-    problem,
-    trip_sequence,
-    station_prices,
-    *,
-    g_kwh=240.0,
-    charge_kw=240.0,
-    reserve_kwh=0.0,
-    soc_step=10.0,
-    block_min=10,
-    compare_legacy=False,
-    tariff_id=None,
-    tariff_sha256=None,
-    instance_sha256=None,
-):
-    """Solve a fixed-duty SOC/time lattice as an independent flow MILP."""
-    trips = tuple(int(trip) for trip in trip_sequence)
-    g_kwh, charge_kw = float(g_kwh), float(charge_kw)
-    reserve_kwh, soc_step = float(reserve_kwh), float(soc_step)
-    block_min = int(block_min)
-    grid = [
-        round(index * soc_step, 6)
-        for index in range(int(g_kwh / soc_step) + 1)
-    ]
-    arcs = _arc_groups(problem)
-    first = arcs["depot_trip"].get(trips[0])
-    if first is None:
-        raise ValueError("lattice source arc missing")
-    first_level = _floor(grid, soc_step, g_kwh - first.deadhead_kwh)
-    reachable = {first_level}
-    transitions = []
-    for position, trip in enumerate(trips):
-        final = position == len(trips) - 1
-        successor = None if final else trips[position + 1]
-        next_reachable = set()
-        for level in sorted(reachable):
-            candidates, _trace = evaluate_fixed_duty_transition(
-                problem,
-                arcs,
-                trip=trip,
-                successor=successor,
-                final_gap=final,
-                level=level,
-                base_cost=0.0,
-                actions=(),
-                grid=grid,
-                soc_step=soc_step,
-                block_min=block_min,
-                g_kwh=g_kwh,
-                charge_kw=charge_kw,
-                reserve_kwh=reserve_kwh,
-                station_prices=station_prices,
-                n_blocks=int(HORIZON_MIN) // block_min,
-            )
-            cheapest = {}
-            for candidate in candidates:
-                target = None if final else candidate["next_level"]
-                current = cheapest.get(target)
-                key = (
-                    candidate["cost"],
-                    canonical_sha(candidate["action"]),
-                )
-                if current is None or key < current[0]:
-                    cheapest[target] = (key, candidate)
-            for target, (_key, candidate) in cheapest.items():
-                transitions.append({
-                    "position": position,
-                    "source": level,
-                    "target": target,
-                    "cost": candidate["cost"],
-                })
-                if target is not None:
-                    next_reachable.add(target)
-        if not final and not next_reachable:
-            break
-        reachable = next_reachable
-    reference = None
-    if compare_legacy:
-        reference = optimize_fixed_duty(
-            problem,
-            trips,
-            station_prices,
-            tariff_id=tariff_id,
-            tariff_sha256=tariff_sha256,
-            instance_sha256=instance_sha256,
-        )
-        if not reference["feasible"]:
-            return {
-                "feasible": False,
-                "reference_feasible": False,
-                "matches": True,
-                "reason": reference["reason"],
-            }
-    model = _Model()
-    variable = [
-        model.variable(cost=row["cost"], ub=1, integer=True)
-        for row in transitions
-    ]
-    nodes = {
-        (row["position"], row["source"]) for row in transitions
-    } | {
-        (row["position"] + 1, row["target"])
-        for row in transitions if row["target"] is not None
-    }
-    for position, level in sorted(nodes):
-        incoming = [
-            (variable[index], 1)
-            for index, row in enumerate(transitions)
-            if row["position"] == position - 1 and row["target"] == level
-        ]
-        outgoing = [
-            (variable[index], -1)
-            for index, row in enumerate(transitions)
-            if row["position"] == position and row["source"] == level
-        ]
-        supply = -1.0 if (position, level) == (0, first_level) else 0.0
-        model.constraint(incoming + outgoing, lower=supply, upper=supply)
-    terminal = [
-        (variable[index], 1)
-        for index, row in enumerate(transitions)
-        if row["position"] == len(trips) - 1 and row["target"] is None
-    ]
-    if not terminal:
-        return {"feasible": False, "reason": "lattice has no terminal path"}
-    model.constraint(terminal, lower=1, upper=1)
-    solved = model.solve()
-    if not solved.success or solved.x is None:
-        return {"feasible": False, "reason": str(solved.message)}
-    objective = BUS_COST_KX + float(solved.fun)
-    result = {
-        "feasible": True,
-        "objective": objective,
-        "transition_count": len(transitions),
-        "scope": (
-            f"{g_kwh:g}kWh_{charge_kw:g}kW_"
-            f"{soc_step:g}kWh_{block_min}min_lattice"
-        ),
-    }
-    if reference is not None:
-        difference = objective - float(reference["expanded_grid_objective"])
-        result.update({
-            "reference_feasible": True,
-            "milp_objective": objective,
-            "dp_objective": float(reference["expanded_grid_objective"]),
-            "difference": difference,
-            "matches": math.isclose(difference, 0.0, abs_tol=1e-7),
-        })
-    return result
-
-
-def validate_lattice_reproduction(
-    problem,
-    trip_sequence,
-    station_prices,
-    **identity,
-):
-    """Reproduce the frozen legacy 300/300, 15 kWh/10-minute DP."""
-    return solve_fixed_duty_lattice(
-        problem,
-        trip_sequence,
-        station_prices,
-        g_kwh=300,
-        charge_kw=300,
-        reserve_kwh=0,
-        soc_step=15,
-        block_min=10,
-        compare_legacy=True,
-        **identity,
-    )
