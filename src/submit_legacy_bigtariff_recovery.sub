@@ -51,7 +51,9 @@ case "$TASK" in
       PRICE="hourly_prices_single_peak_18.csv" ;;
   32) NAME="Practice_Custom_DutyUnion_k30_r2"; TAG="sek";
       PRICE="hourly_prices_transdev_sek.csv" ;;
-  *) fatal "task $TASK is not one of the recoverable tasks 22,24,32" ;;
+  34) NAME="Practice_Custom_DutyUnion_k30_r4"; TAG="sek";
+      PRICE="hourly_prices_transdev_sek.csv" ;;
+  *) fatal "task $TASK is not one of the recoverable tasks 22,24,32,34" ;;
 esac
 CSV="duty_unions_big/${NAME}.csv"
 SOURCE="$LEGACY_ROOT/src/results/tariff_big/${NAME}_${TAG}.json"
@@ -59,7 +61,10 @@ OUTDIR="$ROOT/src/results/legacy_recovery/job${ARRAY_JOB}/c${EXPECTED_COMMIT:0:1
 OUT="$OUTDIR/${NAME}_${TAG}.json"
 mkdir -p "$OUTDIR"
 command -v flock >/dev/null 2>&1 || fatal "flock is unavailable"
-exec 9>"$OUT.recovery.lock"
+# Open the lock fd in append mode: an O_TRUNC open would erase the current
+# owner's diagnostic record before this job even attempts (and loses) the
+# flock race.  The kernel lock, not the file contents, decides ownership.
+exec 9>>"$OUT.recovery.lock"
 if ! flock -n 9; then
   echo "[RECOVERY] SKIP_LOCKED another migration/pricer owns $OUT"
   exit 0
@@ -78,9 +83,17 @@ source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
 activated=""
 for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
   [ -n "$ENV" ] || continue
-  if conda activate "$ENV" 2>/dev/null; then activated=$ENV; break; fi
+  conda activate "$ENV" 2>/dev/null || continue
+  # An environment that activates but is not the validated Python 3.12
+  # runtime (e.g. a legacy 3.10 evsp_env) must not stop the search: keep
+  # trying later candidates instead of failing the whole job.
+  if python -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 12) else 1)' 2>/dev/null; then
+    activated=$ENV
+    break
+  fi
+  conda deactivate 2>/dev/null || true
 done
-[ -n "$activated" ] || fatal "no project conda environment could be activated"
+[ -n "$activated" ] || fatal "no Python 3.12 project conda environment could be activated"
 python -c 'import sys; assert sys.version_info[:2] == (3, 12), sys.version' \
   || fatal "recovery campaign requires the validated Python 3.12 runtime"
 echo "[RECOVERY] conda=$activated $(python -V 2>&1)"

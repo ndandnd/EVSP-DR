@@ -1,0 +1,90 @@
+#!/bin/bash
+# Prepare and attest the deterministic k40 inputs on a compute node.
+# Submitted by launch_k40_factorial.sh; do not invoke by hand.
+#SBATCH --job-name=K40-PREP
+#SBATCH --partition=default_partition
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=4G
+#SBATCH --time=00:20:00
+#SBATCH --open-mode=append
+#SBATCH --no-requeue
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+fatal() {
+  echo "[K40-PREP] FATAL: $*" >&2
+  exit 2
+}
+
+ROOT=${EVSP_DR_ROOT:?EVSP_DR_ROOT is required}
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:?EVSP_EXPECTED_COMMIT is required}
+CAMPAIGN=${K40_FACTORIAL_CAMPAIGN:?K40_FACTORIAL_CAMPAIGN is required}
+
+cd "$ROOT"
+
+[ "$(git rev-parse HEAD)" = "$EXPECTED_COMMIT" ] \
+  || fatal "checkout commit differs from $EXPECTED_COMMIT"
+if git symbolic-ref -q HEAD >/dev/null; then
+  fatal "campaign checkout must be detached"
+fi
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  fatal "tracked checkout is dirty"
+fi
+
+source /share/apps/software/anaconda3/etc/profile.d/conda.sh \
+  || fatal "could not source Anaconda"
+activated=""
+for ENV in "${EVSP_CONDA_ENV:-}" /home/nc437/evsp_env evsp_env312 evsp312 evsp_env py312; do
+  [ -n "$ENV" ] || continue
+  conda activate "$ENV" 2>/dev/null || continue
+  if python -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 12) else 1)' 2>/dev/null; then
+    activated=$ENV
+    break
+  fi
+  conda deactivate 2>/dev/null || true
+done
+[ -n "$activated" ] \
+  || fatal "no Python 3.12 project conda environment could be activated"
+python -c 'import pandas, scipy; import sys; assert sys.version_info[:2] == (3, 12)' \
+  || fatal "Python 3.12 environment lacks pandas/scipy"
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+
+python -u src/make_duty_pair_instances.py \
+  --union-sizes 15,20,30,40 \
+  --per-size 6 \
+  --seed 20260803 \
+  --union-dir-name duty_unions_big
+
+INSTANCE=data/duty_unions_big/Practice_Custom_DutyUnion_k40_r2.csv
+PRICES=data/hourly_prices_flat.csv
+EXPECTED_INSTANCE_SHA=3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd
+EXPECTED_PRICES_SHA=1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200
+
+INSTANCE_SHA=$(sha256sum "$INSTANCE" | awk '{print $1}')
+PRICES_SHA=$(sha256sum "$PRICES" | awk '{print $1}')
+[ "$INSTANCE_SHA" = "$EXPECTED_INSTANCE_SHA" ] \
+  || fatal "k40_r2 hash $INSTANCE_SHA differs from $EXPECTED_INSTANCE_SHA"
+[ "$PRICES_SHA" = "$EXPECTED_PRICES_SHA" ] \
+  || fatal "flat-price hash $PRICES_SHA differs from $EXPECTED_PRICES_SHA"
+
+RESULT_DIR="$ROOT/src/results/k40_factorial/$CAMPAIGN"
+mkdir -p "$RESULT_DIR"
+cp data/duty_unions_big/manifest.json "$RESULT_DIR/input_manifest.json"
+{
+  printf 'git_commit\t%s\n' "$EXPECTED_COMMIT"
+  printf 'instance_sha256\t%s\n' "$INSTANCE_SHA"
+  printf 'prices_sha256\t%s\n' "$PRICES_SHA"
+  printf 'python\t%s\n' "$(python -V 2>&1)"
+  printf 'conda_env\t%s\n' "$activated"
+} > "$RESULT_DIR/prep_attestation.tsv"
+
+echo "[K40-PREP] READY campaign=$CAMPAIGN commit=$EXPECTED_COMMIT"
+echo "[K40-PREP] instance=$INSTANCE_SHA prices=$PRICES_SHA"

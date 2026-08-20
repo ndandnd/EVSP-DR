@@ -26,6 +26,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import platform
 import subprocess
 import time
@@ -49,6 +50,67 @@ def git_value(*args) -> str | None:
         text=True, capture_output=True, check=False,
     )
     return result.stdout.strip() if result.returncode == 0 else None
+
+
+def git_result(*args) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", *args],
+        cwd=Path(__file__).resolve().parent,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
+def verified_mip_code_identity() -> dict:
+    """Bind a submitted solve to one clean reviewed Git commit."""
+
+    expected = os.environ.get("EVSP_EXPECTED_COMMIT")
+    slurm_job_id = os.environ.get("SLURM_JOB_ID")
+    require_detached = os.environ.get("EVSP_REQUIRE_DETACHED") == "1"
+    enforce = bool(expected or slurm_job_id or require_detached)
+    head_result = git_result("rev-parse", "--verify", "HEAD")
+    observed = head_result.stdout.strip()
+    tracked_result = git_result(
+        "status", "--porcelain", "--untracked-files=no"
+    )
+    symbolic_result = git_result("symbolic-ref", "-q", "HEAD")
+    if (head_result.returncode != 0 or len(observed) != 40
+            or any(character not in "0123456789abcdef"
+                   for character in observed)):
+        raise SystemExit("[MIP] solver has no verifiable Git HEAD")
+    if slurm_job_id and not expected:
+        raise SystemExit("[MIP] submitted solve lacks EVSP_EXPECTED_COMMIT")
+    if expected and observed != expected:
+        raise SystemExit(
+            f"[MIP] solver commit mismatch: expected {expected}, "
+            f"found {observed}"
+        )
+    if tracked_result.returncode != 0:
+        raise SystemExit("[MIP] could not verify solver worktree state")
+    tracked_status = tracked_result.stdout.strip()
+    if enforce and tracked_status:
+        raise SystemExit("[MIP] solver checkout has tracked modifications")
+    if symbolic_result.returncode == 0:
+        branch = symbolic_result.stdout.strip()
+        detached = False
+    elif symbolic_result.returncode == 1:
+        branch = ""
+        detached = True
+    else:
+        raise SystemExit("[MIP] could not verify detached solver HEAD")
+    if enforce and (require_detached or slurm_job_id) and not detached:
+        raise SystemExit(
+            f"[MIP] solver must run detached; found branch {branch}"
+        )
+    return {
+        "expected_commit": expected,
+        "observed_commit": observed,
+        "branch": branch,
+        "detached": detached,
+        "tracked_clean": not bool(tracked_status),
+        "enforced": enforce,
+    }
 
 
 def resolve_pool_journal(result_path: Path, status: dict) -> Path:
@@ -92,16 +154,62 @@ def load_pool(result_path: Path):
     with open(result_path) as fh:
         status = json.load(fh)
 
-    journal_path = resolve_pool_journal(result_path, status)
-    pool = {}
-    for rec in read_jsonl_records(journal_path, repair_trailing=False):
-        key = frozenset(rec["trips"])
-        if key not in pool or rec["cost"] < pool[key]["cost"] - 1e-9:
-            pool[key] = rec
     trips = status.get("trip_ids")
     if trips is None:
         raise SystemExit(f"{result_path} lacks trip_ids; rerun with current code.")
-    return status, list(pool.values()), [int(t) for t in trips]
+    trips = [int(trip) for trip in trips]
+    if len(trips) != len(set(trips)):
+        raise SystemExit(f"{result_path} repeats a trip in trip_ids")
+    allowed = set(trips)
+    journal_path = resolve_pool_journal(result_path, status)
+    pool = {}
+    records = read_jsonl_records(journal_path, repair_trailing=False)
+    for ordinal, rec in enumerate(records, start=1):
+        if not isinstance(rec, dict):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} is not a JSON object"
+            )
+        route_trips = rec.get("trips")
+        if not isinstance(route_trips, list) or not route_trips:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has no nonempty trips list"
+            )
+        if any(
+                not isinstance(trip, int) or isinstance(trip, bool)
+                for trip in route_trips):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has non-integer trips"
+            )
+        try:
+            unique_trips = set(route_trips)
+        except TypeError as exc:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has unhashable trips"
+            ) from exc
+        if len(route_trips) != len(unique_trips):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} repeats a trip"
+            )
+        unknown = [trip for trip in route_trips if trip not in allowed]
+        if unknown:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} contains trips outside "
+                f"the snapshot: {unknown[:15]}"
+            )
+        try:
+            cost = float(rec["cost"])
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has invalid cost"
+            ) from exc
+        if not math.isfinite(cost):
+            raise SystemExit(
+                f"{journal_path} record {ordinal} has non-finite cost"
+            )
+        key = frozenset(route_trips)
+        if key not in pool or cost < float(pool[key]["cost"]) - 1e-9:
+            pool[key] = rec
+    return status, list(pool.values()), trips
 
 
 def singleton_partition_indices(routes: list[dict], trips: list[int]) -> list[int]:
@@ -345,6 +453,377 @@ def merge_extra_routes(routes, trips, extra_paths, prices_csv, status=None):
     return list(pool.values())
 
 
+def merge_validated_partition_start(
+    routes,
+    trips,
+    partition_path,
+    prices_csv,
+    status=None,
+    *,
+    data_dir=None,
+):
+    """Merge and select one explicitly supplied exact-partition start.
+
+    Unlike ``--extra-routes``, this path is fail-closed: every supplied route
+    must be a real route under the pool's physics, and the supplied routes
+    together must cover every pool trip exactly once.  The selected start uses
+    the cheapest pool realization for each supplied trip incidence after
+    merging, so an existing cheaper duplicate never weakens the start.
+    """
+
+    from audit_giro_known_columns import HORIZON_MIN, build_problem
+    from config import (BUS_COST_KX, CHARGE_START_COST,
+                        CHARGING_STATIONS)
+    from utils_v2 import (
+        calculate_truck_route_cost_accurate,
+        load_station_hourly_prices,
+    )
+
+    path = Path(partition_path).expanduser().resolve()
+    if not path.is_file():
+        raise SystemExit(f"[MIP] initial partition source is missing: {path}")
+    raw = path.read_bytes()
+    source_sha256 = hashlib.sha256(raw).hexdigest()
+    try:
+        payload = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise SystemExit(
+            f"[MIP] initial partition is not valid JSON: {path}"
+        ) from exc
+    supplied = payload.get("routes") if isinstance(payload, dict) else None
+    if not isinstance(supplied, list) or not supplied:
+        raise SystemExit(
+            f"[MIP] initial partition must contain a nonempty routes list: {path}"
+        )
+
+    status = status or {}
+    required = (
+        "csv", "prices_csv", "soc_step", "block_min",
+        "g_kwh", "charge_kw", "min_soc_frac",
+    )
+    missing = [field for field in required if status.get(field) is None]
+    if missing:
+        raise SystemExit(
+            f"[MIP] pool snapshot lacks required start-validation fields: "
+            f"{missing}"
+        )
+    if prices_csv is not None and str(prices_csv) != str(status["prices_csv"]):
+        raise SystemExit(
+            "[MIP] requested start-validation prices differ from the pool "
+            "snapshot"
+        )
+    try:
+        g_kwh = float(status["g_kwh"])
+        charge_kw = float(status["charge_kw"])
+        reserve_frac = float(status["min_soc_frac"])
+        soc_step = float(status["soc_step"])
+        block_min = float(status["block_min"])
+    except (TypeError, ValueError) as exc:
+        raise SystemExit(
+            "[MIP] pool snapshot has non-numeric physics"
+        ) from exc
+    if (not all(math.isfinite(value) for value in (
+            g_kwh, charge_kw, reserve_frac, soc_step, block_min))
+            or g_kwh <= 0.0 or charge_kw <= 0.0
+            or soc_step <= 0.0 or block_min <= 0.0
+            or not 0.0 <= reserve_frac <= 1.0):
+        raise SystemExit("[MIP] pool snapshot has invalid or non-finite physics")
+    reserve_kwh = reserve_frac * g_kwh
+
+    provenance = status.get("provenance")
+    if not isinstance(provenance, dict):
+        raise SystemExit(
+            "[MIP] pool snapshot lacks hashed input provenance"
+        )
+    data_dir = Path(
+        data_dir
+        if data_dir is not None
+        else Path(__file__).resolve().parent.parent / "data"
+    ).resolve()
+
+    def verified_data_file(relative, hash_field, label):
+        expected_hash = provenance.get(hash_field)
+        if not isinstance(expected_hash, str) or len(expected_hash) != 64:
+            raise SystemExit(
+                f"[MIP] pool snapshot lacks {hash_field} provenance"
+            )
+        candidate = (data_dir / str(relative)).resolve()
+        try:
+            candidate.relative_to(data_dir)
+        except ValueError as exc:
+            raise SystemExit(
+                f"[MIP] pool {label} escapes the data directory: {relative}"
+            ) from exc
+        if not candidate.is_file():
+            raise SystemExit(
+                f"[MIP] pool {label} is missing: {candidate}"
+            )
+        actual_hash = file_sha256(candidate)
+        if actual_hash != expected_hash:
+            raise SystemExit(
+                f"[MIP] pool {label} hash mismatch: expected "
+                f"{expected_hash}, found {actual_hash}"
+            )
+        return candidate
+
+    instance_path = verified_data_file(
+        status["csv"], "instance_sha256", "instance"
+    )
+    prices_path = verified_data_file(
+        status["prices_csv"], "prices_sha256", "prices"
+    )
+    problem = build_problem(
+        data_dir,
+        str(instance_path.relative_to(data_dir)),
+        max_station_to_trip_wait_min=HORIZON_MIN,
+    )
+    trip_set = set(trips)
+    if list(problem.trips) != list(trips):
+        raise SystemExit(
+            "[MIP] initial partition validation reconstructed a different "
+            "ordered trip set from the pool snapshot"
+        )
+    for trip in problem.trips:
+        values = (
+            float(problem.start_min[trip]),
+            float(problem.end_min[trip]),
+            float(problem.trip_energy[trip]),
+        )
+        if (not all(math.isfinite(value) for value in values)
+                or values[2] < 0.0 or values[1] < values[0]):
+            raise SystemExit(
+                f"[MIP] reconstructed instance has invalid trip data for {trip}"
+            )
+    prices = load_station_hourly_prices(
+        prices_path, CHARGING_STATIONS
+    )
+    depot_curve = prices.get("PARX") or next(iter(prices.values()))
+    arc_deadhead = {}
+    for node, arcs in problem.adjacency.items():
+        for successor, travel, deadhead_kwh, _kind in arcs:
+            travel = float(travel)
+            deadhead_kwh = float(deadhead_kwh)
+            if (not math.isfinite(travel)
+                    or not math.isfinite(deadhead_kwh)
+                    or travel < 0.0 or deadhead_kwh < 0.0):
+                raise SystemExit(
+                    f"[MIP] reconstructed instance has invalid arc data "
+                    f"{node}->{successor}"
+                )
+            arc_deadhead[(node, successor)] = deadhead_kwh
+
+    validated = []
+    counts = Counter()
+    for ordinal, route in enumerate(supplied, start=1):
+        if not isinstance(route, dict):
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} is not a JSON object"
+            )
+        nodes = route.get("route")
+        if nodes is None:
+            nodes = route.get("route_nodes")
+        if not isinstance(nodes, list):
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} has no route nodes"
+            )
+        route_trips = [
+            node for node in nodes
+            if isinstance(node, int) and not isinstance(node, bool)
+        ]
+        if not route_trips:
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} contains no trips"
+            )
+        if len(route_trips) != len(set(route_trips)):
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} repeats a trip"
+            )
+        unknown = sorted(set(route_trips) - trip_set)
+        if unknown:
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} contains trips "
+                f"outside the pool instance: {unknown[:15]}"
+            )
+
+        candidate = {
+            "trips": route_trips,
+            "route_nodes": nodes,
+            "charging_stops": route.get("charging_stops", {}),
+        }
+        reason = validate_injected_route(
+            problem,
+            candidate,
+            g_kwh,
+            charge_kw,
+            reserve_kwh,
+            HORIZON_MIN,
+        )
+        if reason is not None:
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} failed physical "
+                f"validation: {reason}"
+            )
+        recomputed_deadhead_kwh = 0.0
+        for left, right in zip(nodes, nodes[1:]):
+            if isinstance(left, str) and isinstance(right, str) and left == right:
+                continue
+            try:
+                recomputed_deadhead_kwh += arc_deadhead[(left, right)]
+            except KeyError as exc:
+                # ``validate_injected_route`` should already have refused it;
+                # keep pricing independently fail-closed.
+                raise SystemExit(
+                    f"[MIP] initial partition route {ordinal} has no "
+                    f"deadhead-energy arc {left}->{right}"
+                ) from exc
+        pricing_route = dict(route)
+        pricing_route["route"] = nodes
+        pricing_route["route_nodes"] = nodes
+        pricing_route["deadhead_kwh"] = recomputed_deadhead_kwh
+        cost = calculate_truck_route_cost_accurate(
+            pricing_route,
+            BUS_COST_KX,
+            depot_curve,
+            charge_rate_kw=charge_kw,
+            station_hourly_prices=prices,
+            charge_start_cost=CHARGE_START_COST,
+        )
+        if not math.isfinite(float(cost)):
+            raise SystemExit(
+                f"[MIP] initial partition route {ordinal} has non-finite cost"
+            )
+        counts.update(route_trips)
+        validated.append({
+            **candidate,
+            "cost": float(cost),
+            "deadhead_kwh": recomputed_deadhead_kwh,
+            "charges_started": len(
+                (route.get("charging_stops") or {}).get("stations", [])
+            ),
+            "found_iter": 0,
+            "origin": f"initial_partition:{path.name[:40]}",
+        })
+
+    missing = [trip for trip in trips if counts[trip] == 0]
+    repeated = {trip: counts[trip] for trip in trips if counts[trip] > 1}
+    if missing or repeated:
+        raise SystemExit(
+            "[MIP] supplied initial routes are not an exact partition: "
+            f"missing={missing[:15]}, repeated={list(repeated.items())[:15]}"
+        )
+
+    existing_keys = {frozenset(route["trips"]) for route in routes}
+    merged = list(routes)
+    start_indices = []
+    added = preserved_duplicate = 0
+    for record in validated:
+        key = frozenset(record["trips"])
+        if key not in existing_keys:
+            added += 1
+        else:
+            # Preserve the supplied route record even when the pool already
+            # has a cheaper column with identical trip incidence. A MIP start
+            # names variables, not incidences; substituting the existing
+            # column would silently change the requested charging schedule.
+            preserved_duplicate += 1
+        start_indices.append(len(merged))
+        merged.append(record)
+        existing_keys.add(key)
+    if hashlib.sha256(path.read_bytes()).hexdigest() != source_sha256:
+        raise SystemExit(
+            f"[MIP] initial partition source changed while loading: {path}"
+        )
+
+    detail = {
+        "kind": "validated_exact_partition",
+        "source": str(path),
+        "source_sha256": source_sha256,
+        "validated": True,
+        "validated_bus_count": len(start_indices),
+        "expected_full_objective": float(
+            sum(merged[index]["cost"] for index in start_indices)
+        ),
+        "pool_columns_added": added,
+        "pool_columns_replaced": 0,
+        "pool_columns_reused": 0,
+        "pool_duplicate_incidences_preserved": preserved_duplicate,
+        "actual_start_columns": [
+            {
+                "index": index,
+                "sha256": hashlib.sha256(json.dumps(
+                    {
+                        "trips": merged[index]["trips"],
+                        "route_nodes": merged[index]["route_nodes"],
+                        "charging_stops": merged[index]["charging_stops"],
+                        "cost": merged[index]["cost"],
+                    },
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode()).hexdigest(),
+            }
+            for index in start_indices
+        ],
+    }
+    print(
+        f"[MIP] validated exact-partition start: {len(start_indices)} buses "
+        f"from {path} (added {added}, preserved duplicate incidences "
+        f"{preserved_duplicate})"
+    )
+    return merged, start_indices, detail
+
+
+def optimize_with_start_audit(model, GRB, *, start_supplied: bool) -> dict:
+    """Optimize while recording Gurobi's own MIP-start acceptance message."""
+
+    if not start_supplied:
+        model.optimize()
+        return {"status": "not_supplied", "accepted": None, "messages": []}
+
+    audit = {
+        "status": "not_observed",
+        "accepted": None,
+        "rejection_observed": False,
+        "messages": [],
+    }
+    callback_api = getattr(GRB, "Callback", None)
+    can_capture = (
+        callback_api is not None
+        and hasattr(callback_api, "MESSAGE")
+        and hasattr(callback_api, "MSG_STRING")
+        and callable(getattr(model, "cbGet", None))
+    )
+    if not can_capture:
+        model.optimize()
+        return audit
+
+    def callback(callback_model, where):
+        if where != callback_api.MESSAGE:
+            return
+        message = str(
+            callback_model.cbGet(callback_api.MSG_STRING)
+        ).strip()
+        if not message or "MIP start" not in message:
+            return
+        audit["messages"].append(message)
+        if ("Loaded user MIP start with objective" in message
+                or "User MIP start produced solution with objective" in message):
+            audit["status"] = "accepted"
+            audit["accepted"] = True
+        elif "User MIP start violates constraint" in message:
+            audit["rejection_observed"] = True
+            if audit["accepted"] is not True:
+                audit["status"] = "rejected_infeasible"
+                audit["accepted"] = False
+        elif "User MIP start did not produce a new incumbent" in message:
+            audit["rejection_observed"] = True
+            if audit["accepted"] is not True:
+                audit["status"] = "not_loaded_as_incumbent"
+                audit["accepted"] = False
+
+    model.optimize(callback)
+    return audit
+
+
 def finite_solver_value(value):
     """Map Gurobi infinity/sentinel values to JSON null."""
 
@@ -405,6 +884,14 @@ def main(argv=None) -> int:
              "the pool before solving. Costs are recomputed with the exact "
              "master cost function. Repeatable.",
     )
+    parser.add_argument(
+        "--initial-partition-routes",
+        type=Path,
+        default=None,
+        help="Runner-format routes JSON that must validate as one exact "
+             "partition under the pool physics. Its routes are merged into "
+             "the pool and used explicitly as the complete MIP start.",
+    )
     parser.add_argument("--validate-only", action="store_true")
     parser.add_argument(
         "--two-stage",
@@ -418,6 +905,7 @@ def main(argv=None) -> int:
 
     if args.out is not None and args.out.resolve() == args.result.resolve():
         parser.error("--out must not overwrite --result")
+    code_identity = verified_mip_code_identity()
 
     # Bind the solve to immutable bytes.  If a caller mistakenly gives a live
     # journal and it changes while being loaded, refuse the ambiguous result.
@@ -426,10 +914,53 @@ def main(argv=None) -> int:
     source_journal = resolve_pool_journal(args.result, source_status)
     source_result_sha256 = file_sha256(args.result)
     source_journal_sha256 = file_sha256(source_journal)
+    expected_result_sha256 = os.environ.get(
+        "EVSP_MIP_EXPECTED_RESULT_SHA256"
+    )
+    expected_journal_sha256 = os.environ.get(
+        "EVSP_MIP_EXPECTED_JOURNAL_SHA256"
+    )
+    if os.environ.get("SLURM_JOB_ID"):
+        if not expected_result_sha256 or not expected_journal_sha256:
+            raise SystemExit(
+                "[MIP] submitted solve lacks required input hashes"
+            )
+    if (expected_result_sha256
+            and source_result_sha256 != expected_result_sha256):
+        raise SystemExit(
+            "[MIP] staged result does not match its submission-manifest hash"
+        )
+    if (expected_journal_sha256
+            and source_journal_sha256 != expected_journal_sha256):
+        raise SystemExit(
+            "[MIP] staged journal does not match its submission-manifest hash"
+        )
+    expected_initial_partition_sha256 = os.environ.get(
+        "EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
+    )
+    if (os.environ.get("SLURM_JOB_ID")
+            and args.initial_partition_routes is not None
+            and not expected_initial_partition_sha256):
+        raise SystemExit(
+            "[MIP] submitted initial partition lacks required hash"
+        )
+    if expected_initial_partition_sha256:
+        if args.initial_partition_routes is None:
+            raise SystemExit(
+                "[MIP] submission expects an initial partition but none was "
+                "supplied"
+            )
+        if (file_sha256(args.initial_partition_routes)
+                != expected_initial_partition_sha256):
+            raise SystemExit(
+                "[MIP] staged initial partition does not match its "
+                "submission-manifest hash"
+            )
     extra_route_sources = [
         {"path": str(path), "sha256": file_sha256(path)}
         for path in (args.extra_routes or [])
     ]
+    initial_partition_start = None
 
     status, routes, trips = load_pool(args.result)
     if (file_sha256(args.result) != source_result_sha256
@@ -446,10 +977,36 @@ def main(argv=None) -> int:
                 raise SystemExit(
                     f"[MIP] extra route source changed while loading: {path}"
                 )
+    if args.initial_partition_routes is not None:
+        routes, mip_start, initial_partition_start = (
+            merge_validated_partition_start(
+                routes,
+                trips,
+                args.initial_partition_routes,
+                status.get("prices_csv"),
+                status,
+            )
+        )
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
     seed_partition = singleton_partition_indices(routes, trips)
-    mip_start = greedy_partition_start_indices(routes, trips, seed_partition)
+    if initial_partition_start is None:
+        mip_start = greedy_partition_start_indices(
+            routes, trips, seed_partition
+        )
+        initial_partition_start = {
+            "kind": (
+                "greedy_pool_partition" if mip_start else "none"
+            ),
+            "source": None,
+            "source_sha256": None,
+            "validated": bool(mip_start),
+            "validated_bus_count": len(mip_start) if mip_start else None,
+            "expected_full_objective": (
+                float(sum(routes[index]["cost"] for index in mip_start))
+                if mip_start else None
+            ),
+        }
     print(f"[MIP] pool: {len(routes)} columns over {len(trips)} trips "
           f"(instance {status['csv']}, soc_step={status['soc_step']}, "
           f"certified={status.get('certified_rc_optimal')})")
@@ -463,7 +1020,8 @@ def main(argv=None) -> int:
     if seed_partition:
         print(f"[MIP] strict-feasibility seed: {len(seed_partition)} exact "
               "singleton columns (one per trip)")
-        print(f"[MIP] greedy feasible MIP start: {len(mip_start)} buses")
+        if initial_partition_start["kind"] == "greedy_pool_partition":
+            print(f"[MIP] greedy feasible MIP start: {len(mip_start)} buses")
     else:
         print("[MIP] WARNING: row coverage is complete, but the pool has no "
               "known integer partition seed")
@@ -473,7 +1031,10 @@ def main(argv=None) -> int:
                 "with prepare_exact_pool_mip.py before submission"
             )
     if args.validate_only:
-        if seed_partition:
+        if initial_partition_start["kind"] == "validated_exact_partition":
+            print("[MIP] validate-only: supplied start is a physically valid "
+                  "exact partition. OK.")
+        elif seed_partition:
             print("[MIP] validate-only: strict partition feasibility is "
                   "guaranteed by the singleton seed. OK.")
         else:
@@ -509,6 +1070,13 @@ def main(argv=None) -> int:
         start_set = set(mip_start)
         for index in range(len(routes)):
             a[index].Start = 1.0 if index in start_set else 0.0
+    initial_partition_start["assignment_complete"] = bool(mip_start)
+    initial_partition_start["assigned_variable_count"] = (
+        len(routes) if mip_start else 0
+    )
+    initial_partition_start["selected_variable_count"] = (
+        len(mip_start) if mip_start else 0
+    )
     sense = ">" if args.cover else "="
     trip_rows = {t: [] for t in trips}
     for i, r in enumerate(routes):
@@ -531,7 +1099,11 @@ def main(argv=None) -> int:
         m.setObjective(
             gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE
         )
-        m.optimize()
+        initial_partition_start["solver_acceptance"] = (
+            optimize_with_start_audit(
+                m, GRB, start_supplied=bool(mip_start)
+            )
+        )
         if m.SolCount == 0:
             raise SystemExit(
                 "[MIP] two-stage: stage 1 found no feasible fleet solution "
@@ -583,11 +1155,16 @@ def main(argv=None) -> int:
                 GRB.MINIMIZE,
             )
             m.Params.TimeLimit = remaining_s
-            m.optimize()
+            stage2_start_acceptance = optimize_with_start_audit(
+                m, GRB, start_supplied=True
+            )
             cost_stage_executed = True
             cost_stage_has_solution = m.SolCount > 0
             two_stage_detail["stage2_executed"] = True
             two_stage_detail["stage2_has_solution"] = cost_stage_has_solution
+            two_stage_detail["stage2_start_acceptance"] = (
+                stage2_start_acceptance
+            )
         elif not fleet_proven:
             two_stage_detail["stage2_skip_reason"] = "fleet_not_proven"
         else:
@@ -598,7 +1175,11 @@ def main(argv=None) -> int:
                         for i in range(len(routes))),
             GRB.MINIMIZE,
         )
-        m.optimize()
+        initial_partition_start["solver_acceptance"] = (
+            optimize_with_start_audit(
+                m, GRB, start_supplied=bool(mip_start)
+            )
+        )
         fleet_proven = int(m.Status) == 2
 
     if args.two_stage and not cost_stage_executed:
@@ -663,10 +1244,26 @@ def main(argv=None) -> int:
                 else ("stage1_fallback" if cost_stage_executed else None)
             ),
         })
+    final_code_identity = verified_mip_code_identity()
+    if (final_code_identity["observed_commit"]
+            != code_identity["observed_commit"]):
+        raise SystemExit("[MIP] solver commit changed during optimization")
+    code_identity["final_observed_commit"] = final_code_identity[
+        "observed_commit"
+    ]
+    code_identity["final_tracked_clean"] = final_code_identity[
+        "tracked_clean"
+    ]
     summary = {
         "source_result": str(args.result),
         "instance": status["csv"],
         "partitioning": not args.cover,
+        "experiment_arm": {
+            (False, False): "A",
+            (True, False): "B",
+            (False, True): "C",
+            (True, True): "D",
+        }[(args.two_stage, args.initial_partition_routes is not None)],
         "status": status_code,
         "status_name": status_name,
         "optimal_scope": optimal_scope(
@@ -678,6 +1275,7 @@ def main(argv=None) -> int:
         "mip_obj": mip_obj,
         "mip_bound": mip_bound,
         "mip_bound_scope": mip_bound_scope,
+        "requested_mip_gap": args.mipgap,
         "mip_gap": mip_gap,
         "absolute_cost_gap": stage2_absolute_gap,
         "buses": len(chosen),
@@ -692,8 +1290,13 @@ def main(argv=None) -> int:
         "runtime_s": time.time() - t0,
         "pool_columns": len(routes),
         "singleton_partition_columns": len(seed_partition),
-        "mip_start_used": bool(mip_start),
+        "mip_start_assigned": bool(mip_start),
+        "mip_start_used": (
+            (initial_partition_start.get("solver_acceptance") or {})
+            .get("accepted") is True
+        ),
         "mip_start_buses": len(mip_start) if mip_start else None,
+        "mip_start": initial_partition_start,
         "pool_preparation": status.get("pool_preparation"),
         "source_cg_wall_s": status.get("wall_s"),
         "source_cg_iterations": status.get("iterations"),
@@ -715,9 +1318,16 @@ def main(argv=None) -> int:
         "source_journal_sha256": source_journal_sha256,
         "extra_route_sources": extra_route_sources,
         "mip_provenance": {
-            "git_commit": git_value("rev-parse", "HEAD"),
-            "git_branch": git_value("branch", "--show-current"),
-            "git_dirty": bool(git_value("status", "--porcelain")),
+            "git_commit": code_identity["observed_commit"],
+            "expected_git_commit": code_identity["expected_commit"],
+            "observed_git_commit": code_identity["observed_commit"],
+            "final_observed_git_commit": code_identity[
+                "final_observed_commit"
+            ],
+            "git_branch": code_identity["branch"],
+            "git_detached": code_identity["detached"],
+            "git_dirty": not code_identity["tracked_clean"],
+            "tracked_clean_at_end": code_identity["final_tracked_clean"],
             "python": platform.python_version(),
             "gurobi": ".".join(str(value) for value in gp.gurobi.version()),
             "arguments": {
@@ -726,6 +1336,10 @@ def main(argv=None) -> int:
                 "threads": args.threads,
                 "two_stage": args.two_stage,
                 "cover": args.cover,
+                "initial_partition_routes": (
+                    str(args.initial_partition_routes)
+                    if args.initial_partition_routes is not None else None
+                ),
             },
         },
         "selected_routes": [routes[i] for i in chosen],

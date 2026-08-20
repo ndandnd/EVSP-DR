@@ -1,5 +1,5 @@
 #!/bin/bash
-# Lightweight Unicorn launcher for the three preemption-damaged big-tariff
+# Lightweight Unicorn launcher for the four preemption-damaged big-tariff
 # tasks from array 867334.  Default is a dry run; add --submit to queue jobs.
 
 set -euo pipefail
@@ -9,7 +9,7 @@ SCRIPT_ROOT=$(git -C "$SCRIPT_DIR/.." rev-parse --show-toplevel)
 ROOT="${EVSP_DR_ROOT:-$SCRIPT_ROOT}"
 SOURCE_ROOT="$HOME/EVSP-DR"
 ARRAY_JOB=867334
-TASKS="22,24,32"
+TASKS="22,24,32,34"
 LEGACY_REF=f4e31c3
 SUBMIT=0
 
@@ -24,7 +24,7 @@ Options:
                        checkout from which this script is invoked)
   --source-root PATH   Legacy pinned checkout (default: $HOME/EVSP-DR)
   --array-job ID       Original Slurm array id (default: 867334)
-  --tasks CSV          Subset of 22,24,32 (default: 22,24,32)
+  --tasks CSV          Subset of 22,24,32,34 (default: 22,24,32,34)
   --legacy-ref REF     Legacy generation commit (default: f4e31c3)
   --submit             Actually submit; without this, print the plan only
 EOF
@@ -81,7 +81,11 @@ for TASK in "${TASK_LIST[@]}"; do
         CSV_REL="duty_unions_big/Practice_Custom_DutyUnion_k30_r2.csv";
         PRICE_REL="hourly_prices_transdev_sek.csv";
         SOURCE_CELL="Practice_Custom_DutyUnion_k30_r2_sek" ;;
-    *) echo "unsupported task: $TASK (allowed: 22,24,32)" >&2; exit 2 ;;
+    34) SHORT="30r4-sek";
+        CSV_REL="duty_unions_big/Practice_Custom_DutyUnion_k30_r4.csv";
+        PRICE_REL="hourly_prices_transdev_sek.csv";
+        SOURCE_CELL="Practice_Custom_DutyUnion_k30_r4_sek" ;;
+    *) echo "unsupported task: $TASK (allowed: 22,24,32,34)" >&2; exit 2 ;;
   esac
   missing=0
   for relative in "$CSV_REL" "$PRICE_REL"; do
@@ -101,9 +105,38 @@ for TASK in "${TASK_LIST[@]}"; do
   done
   [ "$missing" -eq 0 ] || exit 2
   JOB="R${TASK}-${SHORT}-c${COMMIT:0:6}"
-  active=$(squeue -h -u "$USER" -n "$JOB" -o '%A' 2>/dev/null || true)
-  if [ -n "$active" ]; then
-    echo "[RECOVERY] SKIP_ACTIVE $JOB job=${active%%$'\n'*}"
+  # The continuation commit is intentionally part of JOB for provenance, but
+  # not for duplicate detection.  A launcher from a newer commit must still
+  # see an active recovery of this task created by an older launcher.
+  if ! active_matches=$(squeue -h -u "$USER" -o '%i|%.128j' 2>/dev/null | awk \
+      -F '|' -v prefix="R${TASK}-" '
+        {
+          id = $1
+          name = $2
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", id)
+          gsub(/^[[:space:]]+|[[:space:]]+$/, "", name)
+          if (index(name, prefix) == 1) print id "|" name
+        }
+      '); then
+    echo "[RECOVERY] could not query active jobs for task $TASK; refusing submission" >&2
+    exit 2
+  fi
+  active_count=0
+  active_id=""
+  active_name=""
+  while IFS='|' read -r candidate_id candidate_name; do
+    [ -n "$candidate_id" ] || continue
+    active_count=$((active_count + 1))
+    active_id=$candidate_id
+    active_name=$candidate_name
+  done <<< "$active_matches"
+  if [ "$active_count" -gt 1 ]; then
+    echo "[RECOVERY] multiple active recovery jobs for task $TASK; refusing submission:" >&2
+    printf '%s\n' "$active_matches" >&2
+    exit 2
+  fi
+  if [ "$active_count" -eq 1 ]; then
+    echo "[RECOVERY] SKIP_ACTIVE task=$TASK name=$active_name job=$active_id"
     continue
   fi
   echo "[RECOVERY] task=$TASK job=$JOB source=$SOURCE_ROOT@$LEGACY_COMMIT continuation=$ROOT@$COMMIT"
@@ -122,7 +155,7 @@ for TASK in "${TASK_LIST[@]}"; do
 done
 
 if [ "$SUBMIT" -eq 0 ]; then
-  echo "[RECOVERY] dry run only; add --submit after checking the three lines above"
+  echo "[RECOVERY] dry run only; add --submit after checking the planned tasks above"
 else
   echo "[RECOVERY] submitted=$submitted"
   squeue --me -o '%.14i %.32j %.2t %.10M %R' | sed -n '1,20p'

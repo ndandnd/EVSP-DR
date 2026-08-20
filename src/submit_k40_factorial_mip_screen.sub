@@ -1,0 +1,304 @@
+#!/bin/bash
+# One strict two-stage MIP cell for the completed k40 factorial pools.
+# Submit only through launch_k40_factorial_mip_screen.py.
+#SBATCH --job-name=KM-UNNAMED
+#SBATCH --partition=scaglione
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=40G
+#SBATCH --time=00:40:00
+#SBATCH --open-mode=append
+#SBATCH --no-requeue
+#SBATCH --mail-type=FAIL,TIME_LIMIT
+#SBATCH --mail-user=nc437@cornell.edu
+
+set -euo pipefail
+
+MIP_CORE_COMMIT=ae736fbc9c5fef71f39d7d758b7062355c485313
+
+fatal() {
+  echo "[K40-MIP] FATAL: $*" >&2
+  exit 2
+}
+
+[[ "$#" -eq 2 ]] || fatal "usage: $0 JOB_SPEC EXPECTED_SPEC_SHA256"
+SPEC_PATH=$1
+EXPECTED_SPEC_SHA=$2
+ROOT=${EVSP_DR_ROOT:?EVSP_DR_ROOT is required}
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:?EVSP_EXPECTED_COMMIT is required}
+PYTHON=${EVSP_MIP_PYTHON:?EVSP_MIP_PYTHON is required}
+EXPECTED_ENV_SHA=${EVSP_MIP_ENV_SHA256:?EVSP_MIP_ENV_SHA256 is required}
+EXPECTED_WORKER_SHA=${EVSP_MIP_EXPECTED_WORKER_SHA256:?worker hash required}
+
+worker_sha=$(sha256sum "$0" | awk '{print $1}')
+[[ "$worker_sha" == "$EXPECTED_WORKER_SHA" ]] || fatal "worker hash mismatch"
+observed_commit=$(git -C "$ROOT" rev-parse --verify HEAD) \
+  || fatal "cannot resolve Git HEAD"
+[[ "$observed_commit" == "$EXPECTED_COMMIT" ]] || fatal "commit mismatch"
+if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "MIP checkout must be detached"
+else
+  symbolic_status=$?
+  [[ "$symbolic_status" -eq 1 ]] || fatal "cannot verify detached checkout"
+fi
+tracked=$(git -C "$ROOT" status --porcelain --untracked-files=no) \
+  || fatal "cannot verify tracked state"
+[[ -z "$tracked" ]] || fatal "MIP checkout has tracked modifications"
+git -C "$ROOT" merge-base --is-ancestor "$MIP_CORE_COMMIT" HEAD \
+  || fatal "reviewed MIP core is not an ancestor"
+CORE_PATHS=(
+  src/master_lp_scipy.py
+  src/config.py
+  src/audit_giro_known_columns.py
+  src/utils_v2.py
+  src/durable_io.py
+)
+git -C "$ROOT" diff --quiet "$MIP_CORE_COMMIT" -- "${CORE_PATHS[@]}" \
+  || fatal "MIP core differs from reviewed commit"
+
+[[ -x "$PYTHON" ]] || fatal "MIP Python is not executable"
+environment_json=$("$PYTHON" "$ROOT/src/exact_mip_environment.py") \
+  || fatal "MIP Python 3.12 environment validation failed"
+environment_sha=$(printf '%s' "$environment_json" | "$PYTHON" -c \
+  'import json,sys; print(json.load(sys.stdin)["identity_sha256"])')
+[[ "$environment_sha" == "$EXPECTED_ENV_SHA" ]] \
+  || fatal "MIP environment identity mismatch"
+
+spec_sha=$(sha256sum "$SPEC_PATH" | awk '{print $1}')
+[[ "$spec_sha" == "$EXPECTED_SPEC_SHA" ]] || fatal "job spec hash mismatch"
+readarray -t SPEC < <("$PYTHON" - "$SPEC_PATH" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+for key in (
+  "label","staged_result","staged_result_sha256",
+  "staged_journal","staged_journal_sha256",
+  "staged_instance","staged_instance_sha256","csv",
+  "staged_prices","staged_prices_sha256","prices_csv",
+  "staged_start","staged_start_sha256","output",
+  "time_limit_s","threads","mip_gap","expected_commit","mip_core_commit",
+  "runner_sha256",
+):
+  print(d[key])
+PY
+)
+LABEL=${SPEC[0]}
+RESULT=${SPEC[1]}
+RESULT_SHA=${SPEC[2]}
+JOURNAL=${SPEC[3]}
+JOURNAL_SHA=${SPEC[4]}
+INSTANCE=${SPEC[5]}
+INSTANCE_SHA=${SPEC[6]}
+CSV=${SPEC[7]}
+PRICES=${SPEC[8]}
+PRICES_SHA=${SPEC[9]}
+PRICES_CSV=${SPEC[10]}
+START=${SPEC[11]}
+START_SHA=${SPEC[12]}
+OUT=${SPEC[13]}
+TIME_LIMIT=${SPEC[14]}
+THREADS=${SPEC[15]}
+MIP_GAP=${SPEC[16]}
+SPEC_COMMIT=${SPEC[17]}
+SPEC_CORE=${SPEC[18]}
+RUNNER_SHA=${SPEC[19]}
+
+[[ "$SPEC_COMMIT" == "$EXPECTED_COMMIT" ]] || fatal "spec commit mismatch"
+[[ "$SPEC_CORE" == "$MIP_CORE_COMMIT" ]] || fatal "spec core mismatch"
+verify_runner_sha=$(sha256sum "$ROOT/src/run_exact_pool_mip.py" | awk '{print $1}')
+[[ "$verify_runner_sha" == "$RUNNER_SHA" ]] || fatal "MIP runner hash mismatch"
+[[ "$CSV" != /* && "$CSV" != *".."* ]] || fatal "unsafe csv path"
+[[ "$PRICES_CSV" != /* && "$PRICES_CSV" != *".."* ]] \
+  || fatal "unsafe prices path"
+
+verify_hash() {
+  local label=$1 path=$2 expected=$3
+  [[ -f "$path" ]] || fatal "$label missing: $path"
+  local actual
+  actual=$(sha256sum "$path" | awk '{print $1}')
+  [[ "$actual" == "$expected" ]] || fatal "$label hash mismatch"
+}
+verify_hash "status" "$RESULT" "$RESULT_SHA"
+verify_hash "journal" "$JOURNAL" "$JOURNAL_SHA"
+verify_hash "instance" "$INSTANCE" "$INSTANCE_SHA"
+verify_hash "prices" "$PRICES" "$PRICES_SHA"
+verify_hash "validated start" "$START" "$START_SHA"
+[[ ! -e "$OUT" ]] || fatal "MIP output already exists: $OUT"
+mkdir -p "$(dirname "$OUT")"
+mkdir "${OUT}.lock" || fatal "MIP output lock already exists: ${OUT}.lock"
+
+"$PYTHON" "$ROOT/src/install_exact_cg_profile_input.py" \
+  --source "$INSTANCE" --data-root "$ROOT/data" \
+  --relative "$CSV" --sha256 "$INSTANCE_SHA" \
+  || fatal "could not install instance"
+"$PYTHON" "$ROOT/src/install_exact_cg_profile_input.py" \
+  --source "$PRICES" --data-root "$ROOT/data" \
+  --relative "$PRICES_CSV" --sha256 "$PRICES_SHA" \
+  || fatal "could not install prices"
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
+export EVSP_REQUIRE_DETACHED=1
+export EVSP_MIP_EXPECTED_RESULT_SHA256="$RESULT_SHA"
+export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$JOURNAL_SHA"
+export EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256="$START_SHA"
+
+echo "[K40-MIP] label=$LABEL job=${SLURM_JOB_ID:-none} host=$(hostname)"
+echo "[K40-MIP] commit=$observed_commit limit=$TIME_LIMIT threads=$THREADS"
+cd "$ROOT"
+RAW="${OUT}.raw.${SLURM_JOB_ID:-$$}"
+[[ ! -e "$RAW" ]] || fatal "raw MIP output already exists: $RAW"
+"$PYTHON" -u src/run_exact_pool_mip.py \
+  --result "$RESULT" \
+  --initial-partition-routes "$START" \
+  --two-stage \
+  --timelimit "$TIME_LIMIT" \
+  --threads "$THREADS" \
+  --mipgap "$MIP_GAP" \
+  --out "$RAW"
+
+if ! "$PYTHON" - "$RAW" "$OUT" "$RESULT" "$SPEC_PATH" \
+    "$EXPECTED_SPEC_SHA" "$EXPECTED_WORKER_SHA" <<'PY'
+import collections, hashlib, json, math, os, sys, tempfile
+raw, out, source, spec_path, spec_sha, worker_sha = sys.argv[1:]
+sys.path.insert(0, os.path.join(os.getcwd(), "src"))
+from k40_factorial_mip_result import (  # noqa: E402
+    rename_directory_noreplace,
+    validate_scientific_result,
+)
+
+def fail(message):
+    raise SystemExit(message)
+
+with open(raw) as handle:
+    d = json.load(handle)
+with open(source) as handle:
+    s = json.load(handle)
+with open(spec_path) as handle:
+    spec = json.load(handle)
+if d.get("partitioning") is not True:
+    fail("result is not strict partitioning")
+if d.get("source_result_sha256") != spec["staged_result_sha256"]:
+    fail("result/status hash mismatch")
+if d.get("source_journal_sha256") != spec["staged_journal_sha256"]:
+    fail("result/journal hash mismatch")
+start = d.get("mip_start")
+if not isinstance(start, dict):
+    fail("result has no MIP-start evidence")
+if start.get("kind") != "validated_exact_partition":
+    fail("result start is not validated exact partition")
+if start.get("source_sha256") != spec["staged_start_sha256"]:
+    fail("result/start hash mismatch")
+acceptance = start.get("solver_acceptance")
+if not isinstance(acceptance, dict) or acceptance.get("accepted") is not True:
+    fail("Gurobi did not report accepting the supplied MIP start")
+actual_columns = start.get("actual_start_columns")
+if not isinstance(actual_columns, list) or len(actual_columns) != 40:
+    fail("result does not identify all 40 exact supplied start columns")
+if any(
+    not isinstance(column, dict)
+    or not isinstance(column.get("index"), int)
+    or len(str(column.get("sha256") or "")) != 64
+    for column in actual_columns
+):
+    fail("result has malformed actual start column hashes")
+provenance = d.get("mip_provenance")
+if not isinstance(provenance, dict):
+    fail("result has no MIP provenance")
+if (
+    provenance.get("expected_git_commit")
+    != provenance.get("observed_git_commit")
+    or provenance.get("final_observed_git_commit")
+    != provenance.get("observed_git_commit")
+    or provenance.get("tracked_clean_at_end") is not True
+):
+    fail("solver code identity changed or was dirty")
+selected = d.get("selected_routes")
+if not isinstance(selected, list) or not selected:
+    fail("result has no selected routes")
+counts = collections.Counter(
+    trip for route in selected for trip in route.get("trips", [])
+)
+if set(counts) != set(s["trip_ids"]):
+    fail("selected routes do not cover the exact trip set")
+if any(counts[trip] != 1 for trip in s["trip_ids"]):
+    fail("selected routes do not cover every trip exactly once")
+if any(not isinstance(route.get("charging_stops"), dict) for route in selected):
+    fail("selected route has no charging schedule")
+if d.get("buses") != len(selected):
+    fail("reported bus count differs from selected routes")
+for key in ("mip_obj", "runtime_s"):
+    value = d.get(key)
+    if not isinstance(value, (int, float)) or not math.isfinite(float(value)):
+        fail(f"result has invalid {key}")
+for key in ("fleet_bound", "fleet_proven", "mip_bound", "mip_gap", "two_stage"):
+    if key not in d:
+        fail(f"result omits {key}")
+if str(d.get("optimal_scope") or "").startswith("global"):
+    fail("result improperly claims global route-space optimality")
+d["route_space_scope"] = "finite_augmented_snapshot_pool_only"
+d["campaign_cell"] = {
+    key: spec[key] for key in (
+        "label", "replicate", "treatment", "snapshot_mark_minutes",
+        "time_limit_s", "threads", "mip_gap",
+    )
+}
+d["completion_attestation"] = {
+    "schema": "evsp-dr-k40-factorial-mip-result-v1",
+    "job_spec_sha256": spec_sha,
+    "worker_sha256": worker_sha,
+    "runner_sha256": spec["runner_sha256"],
+    "validated_start_sha256": spec["staged_start_sha256"],
+}
+validate_scientific_result(d, spec, s)
+encoded = (json.dumps(d, indent=2) + "\n").encode()
+directory = os.path.dirname(out)
+staging = tempfile.mkdtemp(
+    dir=directory, prefix="." + os.path.basename(out) + ".tmp."
+)
+result_path = os.path.join(staging, "result.json")
+with open(result_path, "xb") as handle:
+    handle.write(encoded)
+    handle.flush()
+    os.fsync(handle.fileno())
+output_sha = hashlib.sha256(encoded).hexdigest()
+completion = (json.dumps({
+    "schema": "evsp-dr-k40-factorial-mip-completion-v1",
+    "output_bundle": out,
+    "result_member": "result.json",
+    "output_sha256": output_sha,
+    "job_spec_sha256": spec_sha,
+    "worker_sha256": worker_sha,
+}, indent=2) + "\n").encode()
+with open(os.path.join(staging, "completion.json"), "xb") as handle:
+    handle.write(completion)
+    handle.flush()
+    os.fsync(handle.fileno())
+staging_fd = os.open(staging, os.O_RDONLY)
+try:
+    os.fsync(staging_fd)
+finally:
+    os.close(staging_fd)
+try:
+    rename_directory_noreplace(
+        __import__("pathlib").Path(staging),
+        __import__("pathlib").Path(out),
+    )
+except FileExistsError:
+    fail("validated output bundle already exists")
+parent = os.open(directory, os.O_RDONLY)
+try:
+    os.fsync(parent)
+finally:
+    os.close(parent)
+PY
+then
+  fatal "MIP result validation failed"
+fi
+rm -f "$RAW"
+echo "[K40-MIP] DONE label=$LABEL output=$OUT"

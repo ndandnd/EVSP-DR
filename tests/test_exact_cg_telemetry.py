@@ -1,0 +1,526 @@
+import hashlib
+import json
+import os
+import sys
+import tempfile
+import unittest
+from argparse import Namespace
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+import profile_exact_pool_prefixes as profiler  # noqa: E402
+import benchmark_exact_pricing as pricing_benchmark  # noqa: E402
+from durable_io import (  # noqa: E402
+    DurableFileError,
+    exclusive_output_lock,
+    read_jsonl_records,
+)
+from exact_cg_telemetry import PhaseTelemetry  # noqa: E402
+
+
+class ExactCgTelemetryTests(unittest.TestCase):
+    def test_shortest_path_materializes_duals_once_per_trip(self):
+        class CountingDuals(dict):
+            def __init__(self, values):
+                super().__init__(values)
+                self.lookups = []
+
+            def get(self, key, default=None):
+                self.lookups.append(key)
+                return super().get(key, default)
+
+        network = pricing_benchmark.ExpandedNetwork.__new__(
+            pricing_benchmark.ExpandedNetwork
+        )
+        network.problem = SimpleNamespace(trips=[10, 20])
+        network.topo = [0, 2, 1]
+        network.out = [
+            [(2, 100.0, 0)],
+            [],
+            [(1, 0.0, -1)],
+        ]
+        network.node_meta = [
+            ("source", None, None),
+            ("sink", None, None),
+            ("trip", 10, 0),
+        ]
+        network.grid = [0.0]
+        duals = CountingDuals({10: 25.0, 20: 50.0})
+
+        route = network.min_reduced_cost_route(duals)
+
+        self.assertEqual(duals.lookups, [10, 20])
+        self.assertEqual(route["trips"], [10])
+        self.assertEqual(route["rc"], 75.0)
+
+    def test_pair_routes_match_preoptimization_golden(self):
+        args = Namespace(
+            data_dir=REPO_ROOT / "data",
+            prices_data_dir=REPO_ROOT / "data",
+            prices_csv="hourly_prices_flat.csv",
+            soc_step=15.0,
+            block_min=10,
+            g_kwh=300.0,
+            charge_kw=300.0,
+            reserve=0.0,
+            columns=30,
+            dual_value=100000.0,
+            dual_mode="constant",
+            warmup=0,
+            repeat=1,
+        )
+        result = pricing_benchmark.benchmark_case(
+            args, "Practice_Custom_TwoDuty_13301_13302.csv"
+        )
+
+        self.assertEqual(result["network_nodes"], 21328)
+        self.assertEqual(result["network_arcs"], 1077619)
+        self.assertEqual(result["sink_arcs"], 21111)
+        self.assertEqual(result["returned_routes"], 30)
+        self.assertEqual(
+            result["route_sha256"],
+            "152e5691becae2953166d586827b570b5d3593cf5d5967c77846e92775cd63e5",
+        )
+        self.assertAlmostEqual(
+            result["best_route"]["rc"], -4499913.039999999, places=6
+        )
+
+        args.dual_mode = "heterogeneous"
+        heterogeneous = pricing_benchmark.benchmark_case(
+            args, "Practice_Custom_TwoDuty_13301_13302.csv"
+        )
+        self.assertEqual(heterogeneous["returned_routes"], 30)
+        self.assertEqual(
+            heterogeneous["route_sha256"],
+            "5a4c6434a2dc70cfb2195b3cfaf516848217e01e6e409a57b98ec65deb19fc2c",
+        )
+        self.assertAlmostEqual(
+            heterogeneous["best_route"]["rc"],
+            -4530091.575999999,
+            places=6,
+        )
+
+    def test_sidecar_repairs_only_trailing_row_and_resumes_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "phases.jsonl"
+            identity = {"output": "run.json", "instance_sha256": "abc"}
+            first = PhaseTelemetry(path, identity=identity)
+            first.phase("network_build", 1.25, network_nodes=10)
+            with path.open("ab") as handle:
+                handle.write(b'{"schema":')
+
+            second = PhaseTelemetry(path, identity=identity)
+            second.phase("master_attempt", 2.5, iteration=1)
+
+            records = read_jsonl_records(path, repair_trailing=False)
+            self.assertEqual(
+                [record["record_type"] for record in records],
+                ["session_start", "phase", "session_start", "phase"],
+            )
+            self.assertEqual(records[-1]["phase"], "master_attempt")
+            self.assertEqual(records[-1]["session"], 2)
+
+    def test_foreign_truncated_sidecar_is_rejected_without_modification(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "foreign.jsonl"
+            PhaseTelemetry(path, identity={"output": "foreign.json"})
+            with path.open("ab") as handle:
+                handle.write(b'{"schema":')
+            original = path.read_bytes()
+
+            with self.assertRaisesRegex(
+                ValueError, "belongs to different work"
+            ):
+                PhaseTelemetry(path, identity={"output": "current.json"})
+
+            self.assertEqual(path.read_bytes(), original)
+
+    def test_ordered_prefixes_preserve_first_reached_pool_semantics(self):
+        records = [
+            {"trips": [1], "cost": 5.0},
+            {"trips": [2], "cost": 6.0},
+            {"trips": [1], "cost": 4.0},
+            {"trips": [1, 2], "cost": 7.0},
+        ]
+        prefixes = profiler.ordered_unique_prefixes(
+            records, [1, 2], [1, 2, 3]
+        )
+        self.assertEqual([r["cost"] for r in prefixes[1]], [5.0])
+        self.assertEqual([r["cost"] for r in prefixes[2]], [5.0, 6.0])
+        self.assertEqual(
+            sorted(r["cost"] for r in prefixes[3]), [4.0, 6.0, 7.0]
+        )
+
+    def test_profiler_is_read_only_and_runs_all_requested_methods(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data = root / "data"
+            data.mkdir()
+            instance = data / "instance.csv"
+            prices = data / "prices.csv"
+            instance.write_text("instance\n")
+            prices.write_text("prices\n")
+            result = root / "pool.snapshot.json"
+            journal = Path(str(result) + ".columns.jsonl")
+            journal.write_text(
+                json.dumps({"trips": [1], "cost": 100000.0}) + "\n"
+                + json.dumps({"trips": [2], "cost": 100000.0}) + "\n"
+            )
+            result.write_text(json.dumps({
+                "csv": "instance.csv",
+                "prices_csv": "prices.csv",
+                "trip_ids": [1, 2],
+                "columns": 2,
+                "master_sense": "partition",
+                "columns_journal": str(journal),
+                "final_lp": {
+                    "positive_routes": [{"trips": [1], "value": 1.0}],
+                },
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices.read_bytes()
+                    ).hexdigest(),
+                },
+            }))
+            source_bytes = {
+                path: path.read_bytes()
+                for path in (result, journal, instance, prices)
+            }
+            methods = []
+
+            def solve(**kwargs):
+                methods.append(kwargs["method"])
+                return SimpleNamespace(
+                    runtime_s=0.01,
+                    objective=200000.0,
+                    route_weight=2.0,
+                    artificial_total=0.0,
+                    max_row_violation=0.0,
+                    max_bound_violation=0.0,
+                )
+
+            args = Namespace(
+                result=result,
+                prefixes=[1, 2, 5],
+                methods=["highs", "highs-ds", "highs-ipm"],
+                time_limit_s=None,
+                repeat=3,
+                expected_result_sha256=hashlib.sha256(
+                    result.read_bytes()
+                ).hexdigest(),
+                expected_journal_sha256=hashlib.sha256(
+                    journal.read_bytes()
+                ).hexdigest(),
+                out=None,
+            )
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                patch.object(
+                    profiler, "solve_restricted_master_lp",
+                    side_effect=solve,
+                ),
+            ):
+                payload = profiler.profile(args)
+
+            self.assertEqual(
+                methods,
+                (
+                    ["highs"] * 3
+                    + ["highs-ds"] * 3
+                    + ["highs-ipm"] * 3
+                ) * 2,
+            )
+            self.assertTrue(payload["source_unchanged"])
+            self.assertEqual(
+                payload["schema"],
+                "evsp-dr-frozen-pool-prefix-profile-v2",
+            )
+            self.assertEqual(
+                [row["available"] for row in payload["profiles"]],
+                [True, True, False],
+            )
+            first_method = payload["profiles"][0]["methods"][0]
+            self.assertEqual(len(first_method["repetitions"]), 3)
+            self.assertEqual(first_method["successful_repetitions"], 3)
+            self.assertLessEqual(
+                first_method["timing"]["total_min_s"],
+                first_method["timing"]["total_median_s"],
+            )
+            self.assertLessEqual(
+                first_method["timing"]["total_median_s"],
+                first_method["timing"]["total_max_s"],
+            )
+            for path, original in source_bytes.items():
+                self.assertEqual(path.read_bytes(), original)
+
+            def disagree(**kwargs):
+                offset = 1.0 if kwargs["method"] == "highs-ipm" else 0.0
+                return SimpleNamespace(
+                    runtime_s=0.01,
+                    objective=200000.0 + offset,
+                    route_weight=2.0,
+                    artificial_total=0.0,
+                    max_row_violation=0.0,
+                    max_bound_violation=0.0,
+                )
+
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                patch.object(
+                    profiler, "solve_restricted_master_lp",
+                    side_effect=disagree,
+                ),
+                self.assertRaisesRegex(
+                    ValueError, "solutions disagree"
+                ),
+            ):
+                profiler.profile(args)
+
+            calls_by_method = {}
+
+            def partial_disagreement(**kwargs):
+                method = kwargs["method"]
+                calls_by_method[method] = calls_by_method.get(method, 0) + 1
+                if method == "highs-ipm" and calls_by_method[method] > 1:
+                    raise RuntimeError("synthetic later repetition failure")
+                return SimpleNamespace(
+                    runtime_s=0.01,
+                    objective=(
+                        200001.0 if method == "highs-ipm" else 200000.0
+                    ),
+                    route_weight=2.0,
+                    artificial_total=0.0,
+                    max_row_violation=0.0,
+                    max_bound_violation=0.0,
+                )
+
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                patch.object(
+                    profiler, "solve_restricted_master_lp",
+                    side_effect=partial_disagreement,
+                ),
+                self.assertRaisesRegex(
+                    ValueError, "solutions disagree"
+                ),
+            ):
+                profiler.profile(args)
+
+            args.out = journal
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(
+                    FileExistsError, "refusing to overwrite"
+                ),
+            ):
+                profiler.profile(args)
+            self.assertEqual(journal.read_bytes(), source_bytes[journal])
+
+    def test_profiler_rejects_unbound_or_inconsistent_sources_and_outputs(self):
+        def fixture(root: Path, *, result_name="pool.snapshot.json"):
+            data = root / "data"
+            data.mkdir(parents=True)
+            instance = data / "instance.csv"
+            prices = data / "prices.csv"
+            instance.write_text("instance\n")
+            prices.write_text("prices\n")
+            result = root / result_name
+            journal = Path(str(result) + ".columns.jsonl")
+            journal.write_text(
+                json.dumps({"trips": [1], "cost": 100000.0}) + "\n"
+            )
+            status = {
+                "csv": "instance.csv",
+                "prices_csv": "prices.csv",
+                "trip_ids": [1],
+                "columns": 1,
+                "master_sense": "partition",
+                "columns_journal": str(journal),
+                "final_lp": {
+                    "positive_routes": [{"trips": [1], "value": 1.0}],
+                },
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            result.write_text(json.dumps(status))
+            args = Namespace(
+                result=result,
+                prefixes=[1],
+                methods=["highs"],
+                time_limit_s=None,
+                repeat=1,
+                expected_result_sha256=hashlib.sha256(
+                    result.read_bytes()
+                ).hexdigest(),
+                expected_journal_sha256=hashlib.sha256(
+                    journal.read_bytes()
+                ).hexdigest(),
+                out=None,
+            )
+            return data, result, journal, status, args
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            data, _result, _journal, _status, live_args = fixture(
+                root / "live", result_name="pool.json"
+            )
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "immutable"),
+            ):
+                profiler.profile(live_args)
+
+            data, _result, _journal, _status, hash_args = fixture(
+                root / "hash"
+            )
+            hash_args.expected_result_sha256 = "0" * 64
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "status hash"),
+            ):
+                profiler.profile(hash_args)
+
+            data, result, journal, status, sibling_args = fixture(
+                root / "sibling"
+            )
+            correct_dir = result.parent / "correct"
+            correct_dir.mkdir()
+            correct = correct_dir / "recorded.columns.jsonl"
+            correct.write_bytes(journal.read_bytes())
+            wrong_sibling = result.parent / correct.name
+            wrong_sibling.write_text(
+                json.dumps({"trips": [1], "cost": 999999.0}) + "\n"
+            )
+            status["columns_journal"] = str(correct)
+            result.write_text(json.dumps(status))
+            sibling_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            sibling_args.expected_journal_sha256 = hashlib.sha256(
+                correct.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "journal hash"),
+            ):
+                profiler.profile(sibling_args)
+
+            data, result, _journal, status, count_args = fixture(
+                root / "count"
+            )
+            status["columns"] = 2
+            result.write_text(json.dumps(status))
+            count_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "contains 1 unique"),
+            ):
+                profiler.profile(count_args)
+
+            data, result, _journal, status, positive_args = fixture(
+                root / "positive"
+            )
+            status["trip_ids"] = [1, 2]
+            status["final_lp"]["positive_routes"] = [
+                {"trips": [2], "value": 1.0},
+            ]
+            result.write_text(json.dumps(status))
+            positive_args.expected_result_sha256 = hashlib.sha256(
+                result.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "missing from journal"),
+            ):
+                profiler.profile(positive_args)
+
+            data, _result, journal, _status, type_args = fixture(
+                root / "types"
+            )
+            journal.write_text(
+                json.dumps({"trips": [True], "cost": 100000.0}) + "\n"
+            )
+            type_args.expected_journal_sha256 = hashlib.sha256(
+                journal.read_bytes()
+            ).hexdigest()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(ValueError, "unique integer trips"),
+            ):
+                profiler.profile(type_args)
+
+            data, _result, _journal, _status, output_args = fixture(
+                root / "output"
+            )
+            existing_output = root / "existing-profile.json"
+            existing_output.write_text("preserve\n")
+            output_args.out = existing_output
+            with self.assertRaisesRegex(
+                FileExistsError, "refusing to overwrite"
+            ):
+                profiler.run_profile(output_args)
+
+            data, result, journal, status, alias_args = fixture(
+                root / "lock-alias"
+            )
+            output = result.parent / "profile.json"
+            alias_lock = Path(str(output) + ".lock")
+            os.link(journal, alias_lock)
+            alias_args.out = output
+            original_journal = journal.read_bytes()
+            with (
+                patch.object(profiler, "DATA_DIR", data),
+                self.assertRaisesRegex(
+                    DurableFileError, "lock already exists"
+                ),
+            ):
+                profiler.run_profile(alias_args)
+            self.assertEqual(journal.read_bytes(), original_journal)
+
+            raced_output = root / "raced-profile.json"
+
+            def racing_link(_source, destination):
+                Path(destination).write_text("competitor\n")
+                raise FileExistsError(destination)
+
+            with (
+                patch.object(profiler.os, "link", side_effect=racing_link),
+                self.assertRaisesRegex(
+                    FileExistsError, "created concurrently"
+                ),
+            ):
+                profiler._write_json_no_clobber(
+                    raced_output, {"result": "ours"}
+                )
+            self.assertEqual(raced_output.read_text(), "competitor\n")
+            self.assertEqual(existing_output.read_text(), "preserve\n")
+
+            existing_output.unlink()
+            with (
+                exclusive_output_lock(existing_output, {"owner": "test"}),
+                self.assertRaisesRegex(
+                    DurableFileError, "lock already exists"
+                ),
+            ):
+                profiler.run_profile(output_args)
+
+
+if __name__ == "__main__":
+    unittest.main()

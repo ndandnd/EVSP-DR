@@ -52,6 +52,7 @@ from durable_io import (
     read_jsonl_records,
     valid_json_object,
 )
+from exact_cg_telemetry import PhaseTelemetry
 from master_lp_scipy import build_route_incidence, solve_restricted_master_lp
 from utils_v2 import base_station_name, load_station_hourly_prices
 
@@ -142,6 +143,9 @@ class ExpandedNetwork:
                  g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW,
                  reserve_kwh: float = 0.0):
         self.problem = problem
+        self.trip_position = {
+            trip: position for position, trip in enumerate(problem.trips)
+        }
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
@@ -221,9 +225,13 @@ class ExpandedNetwork:
     def _build_arcs(self):
         p = self.problem
         grid, floor = self.grid, self._floor
-        # out[node] = list of (succ_id, base_cost, trip_entered_or_-1)
+        # out[node] = list of (succ_id, base_cost, dense_trip_dual_index_or_-1)
         self.out: list[list] = [[] for _ in self.node_meta]
-        add = lambda u, v, cost, trip=-1: self.out[u].append((v, cost, trip))
+        def add(u, v, cost, trip=-1):
+            dual_index = (
+                self.trip_position[trip] if trip >= 0 else -1
+            )
+            self.out[u].append((v, cost, dual_index))
 
         # source -> trip
         for trip, (travel, dh) in self.depot_trip.items():
@@ -296,10 +304,19 @@ class ExpandedNetwork:
                     add(u, 1, cost)
 
         self.n_arcs = sum(len(a) for a in self.out)
+        self.sink_arcs = tuple(
+            (u, cost)
+            for u, arcs in enumerate(self.out[2:], start=2)
+            for successor, cost, _dual_index in arcs
+            if successor == self.SINK
+        )
 
     # ── exact pricing pass ────────────────────────────────────────────────
     def min_reduced_cost_route(self, alpha: dict[int, float]):
         INF = float("inf")
+        dense_duals = [
+            float(alpha.get(trip, 0.0)) for trip in self.problem.trips
+        ]
         value = [INF] * len(self.node_meta)
         parent: list[tuple[int, int] | None] = [None] * len(self.node_meta)
         value[0] = 0.0
@@ -307,11 +324,14 @@ class ExpandedNetwork:
             vu = value[u]
             if vu == INF:
                 continue
-            for v, cost, trip in self.out[u]:
-                cand = vu + cost - (alpha.get(trip, 0.0) if trip >= 0 else 0.0)
+            for v, cost, dual_index in self.out[u]:
+                cand = (
+                    vu + cost
+                    - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
+                )
                 if cand < value[v] - 1e-12:
                     value[v] = cand
-                    parent[v] = (u, trip)
+                    parent[v] = (u, dual_index)
         if value[1] == INF:
             return None
 
@@ -384,20 +404,38 @@ class ExpandedNetwork:
         return {"rc": value[1], "trips": best_trips, "charges_started": best_charges,
                 "_value": value, "_walk": _walk}
 
-    def k_best_routes(self, alpha: dict[int, float], k: int = 30):
+    def k_best_routes(
+        self,
+        alpha: dict[int, float],
+        k: int = 30,
+        *,
+        phase_callback=None,
+    ):
         """Best route plus up to k-1 additional negative columns from the same
         pass: min-cost paths ending at the k best distinct sink-predecessors."""
+        started = time.perf_counter()
         best = self.min_reduced_cost_route(alpha)
+        if phase_callback is not None:
+            phase_callback(
+                "pricing_shortest_path",
+                time.perf_counter() - started,
+                {"path_found": best is not None},
+            )
         if best is None:
+            if phase_callback is not None:
+                phase_callback(
+                    "pricing_extra_columns",
+                    0.0,
+                    {"sink_candidates": 0, "returned_routes": 0},
+                )
             return []
+        started = time.perf_counter()
         value, _walk = best.pop("_value"), best.pop("_walk")
         candidates = []
-        for u in range(2, len(self.node_meta)):
+        for u, cost in self.sink_arcs:
             if value[u] == float("inf"):
                 continue
-            for v, cost, _trip in self.out[u]:
-                if v == 1:
-                    candidates.append((value[u] + cost, u))
+            candidates.append((value[u] + cost, u))
         candidates.sort()
         routes, seen = [best], {frozenset(best["trips"])}
         for rc, u in candidates[: max(4 * k, 200)]:
@@ -411,6 +449,15 @@ class ExpandedNetwork:
             routes.append({"rc": rc, "trips": trips,
                            "charging_stops": charging, "route_nodes": route_nodes,
                            "charges_started": len(charging["stations"])})
+        if phase_callback is not None:
+            phase_callback(
+                "pricing_extra_columns",
+                time.perf_counter() - started,
+                {
+                    "sink_candidates": len(candidates),
+                    "returned_routes": len(routes),
+                },
+            )
         return routes
 
 
@@ -437,8 +484,11 @@ def _provenance(args) -> dict:
         "instance_sha256": _sha(DATA_DIR / args.csv),
         "prices_sha256": _sha(DATA_DIR / args.prices_csv),
         "rc_eps": args.rc_eps,
-        "args": {k: (str(v) if isinstance(v, Path) else v)
-                 for k, v in vars(args).items()},
+        "args": {
+            key: (str(value) if isinstance(value, Path) else value)
+            for key, value in vars(args).items()
+            if key != "phase_telemetry"
+        },
     }
 
 
@@ -546,6 +596,11 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
     if not isinstance(status, dict):
         return ["status is missing, unreadable, or not a JSON object"]
     mismatches = []
+    # Before this selector existed, exact CG unconditionally constructed the
+    # direct-singleton pool.  Treat that one legacy absence as the historical
+    # ``singletons`` identity while requiring explicit identity on every new
+    # status written below.  An artificial-mode resume still fails closed.
+    current_initial_pool = getattr(args, "initial_pool", "singletons")
     expected = {
         "csv": args.csv,
         "prices_csv": args.prices_csv,
@@ -555,9 +610,12 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         "charge_kw": args.charge_kw,
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
+        "initial_pool": current_initial_pool,
     }
     for key, value in expected.items():
         observed = status.get(key)
+        if key == "initial_pool" and key not in status:
+            observed = "singletons"
         if isinstance(value, float):
             try:
                 matches = math.isclose(
@@ -813,6 +871,58 @@ def run_cg(args) -> dict:
         except (TypeError, ValueError):
             pass
 
+    telemetry = None
+    telemetry_path = getattr(args, "phase_telemetry", None)
+    if telemetry_path is not None:
+        resolved_telemetry = Path(telemetry_path).expanduser().resolve()
+        protected = {
+            path.expanduser().resolve()
+            for path in (out_path, journal_path, iters_path)
+            if path is not None
+        }
+        protected.update({
+            (DATA_DIR / args.csv).resolve(),
+            (DATA_DIR / args.prices_csv).resolve(),
+        })
+        if resolved_telemetry in protected:
+            raise DurableFileError(
+                "phase telemetry must not overwrite model inputs or persisted "
+                "status/journal/iteration artifacts"
+            )
+        telemetry = PhaseTelemetry(
+            resolved_telemetry,
+            identity={
+                "output": str(out_path.resolve()) if out_path else None,
+                "csv": args.csv,
+                "prices_csv": args.prices_csv,
+                "instance_sha256": provenance.get("instance_sha256"),
+                "prices_sha256": provenance.get("prices_sha256"),
+                "git_commit": provenance.get("git_commit"),
+                "soc_step": args.soc_step,
+                "block_min": args.block_min,
+                "g_kwh": args.g_kwh,
+                "charge_kw": args.charge_kw,
+                "min_soc_frac": args.min_soc_frac,
+                "master_sense": args.master_sense,
+                "initial_pool": args.initial_pool,
+            },
+        )
+    detached_telemetry_overhead_s = 0.0
+
+    def _telemetry_overhead_s():
+        return (
+            detached_telemetry_overhead_s
+            + (telemetry.overhead_s if telemetry is not None else 0.0)
+        )
+
+    def _attempt_elapsed_s():
+        return max(
+            0.0, time.time() - t0 - _telemetry_overhead_s()
+        )
+
+    def _cumulative_elapsed_s():
+        return elapsed_offset + _attempt_elapsed_s()
+
     network_t0 = time.time()
     prices = load_station_hourly_prices(
         DATA_DIR / args.prices_csv, CHARGING_STATIONS
@@ -829,6 +939,54 @@ def run_cg(args) -> dict:
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
           f"built in {build_s:.1f}s", flush=True)
+    def _record_phase(
+        name,
+        duration_s,
+        *,
+        iteration=None,
+        attempt=None,
+        pool_columns=None,
+        incidence_nnz=None,
+        outcome="ok",
+        details=None,
+    ):
+        nonlocal telemetry, detached_telemetry_overhead_s
+        if telemetry is None:
+            return
+        try:
+            resolved_details = details() if callable(details) else details
+            telemetry.phase(
+                name,
+                duration_s,
+                iteration=iteration,
+                attempt=attempt,
+                pool_columns=(
+                    len(pool) if pool_columns is None else pool_columns
+                ),
+                incidence_nnz=incidence_nnz,
+                network_nodes=len(net.node_meta),
+                network_arcs=net.n_arcs,
+                outcome=outcome,
+                details=resolved_details,
+            )
+        except Exception as exc:
+            detached_telemetry_overhead_s += telemetry.overhead_s
+            telemetry = None
+            warning_started = time.perf_counter()
+            print(
+                f"[EXACT] WARNING: phase telemetry disabled after I/O error: "
+                f"{exc}",
+                flush=True,
+            )
+            detached_telemetry_overhead_s += (
+                time.perf_counter() - warning_started
+            )
+
+    _record_phase(
+        "network_build",
+        build_s,
+        pool_columns=len(pool),
+    )
 
     # Immutable timed pool snapshots (status + journal copy) for CG-vs-MIP
     # budget calibration, e.g. --snapshot-at-minutes 15,60,180,360.
@@ -952,11 +1110,12 @@ def run_cg(args) -> dict:
         # from an immutable *.snapshot.json file.
         resume_status = dict(prior_status)
         resume_status.update({
+            "initial_pool": args.initial_pool,
             "trip_ids": trips,
             "columns": len(pool),
             "columns_journal": str(journal_path),
-            "wall_s": elapsed_offset + time.time() - t0,
-            "attempt_wall_s": time.time() - t0,
+            "wall_s": _cumulative_elapsed_s(),
+            "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": "resume_starting",
             "provenance": provenance,
         })
@@ -976,6 +1135,7 @@ def run_cg(args) -> dict:
             "charge_kw": args.charge_kw,
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
+            "initial_pool": args.initial_pool,
             "trip_ids": trips,
             "iterations": 0,
             "attempt_iterations": 0,
@@ -983,8 +1143,8 @@ def run_cg(args) -> dict:
             "final": None,
             "columns": 0,
             "columns_journal": str(journal_path),
-            "wall_s": time.time() - t0,
-            "attempt_wall_s": time.time() - t0,
+            "wall_s": _attempt_elapsed_s(),
+            "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": "initializing",
             "history_tail": [],
             "final_lp": None,
@@ -1001,7 +1161,14 @@ def run_cg(args) -> dict:
         iters_csv = open(iters_path, "a")
         if iters_fresh:
             iters_csv.write(ITERATION_LOG_HEADER + "\n")
+            started = time.perf_counter()
             flush_and_fsync(iters_csv)
+            _record_phase(
+                "iteration_log_fsync",
+                time.perf_counter() - started,
+                iteration=iteration_offset,
+                details=lambda: {"header": True},
+            )
     if (compatible_prior
             and isinstance(prior_status.get("final_lp"), dict)):
         last_good_lp_detail = dict(prior_status["final_lp"])
@@ -1031,7 +1198,7 @@ def run_cg(args) -> dict:
             "master_method": lp_result.backend.method,
         }
 
-    def _freeze_snapshot(mark):
+    def _freeze_snapshot_impl(mark):
         if not args.out:
             return
         stem = Path(str(args.out).replace(".json", ""))
@@ -1072,44 +1239,105 @@ def run_cg(args) -> dict:
         print(f"[EXACT] froze snapshot at {mark:g} min: {snap_json.name}",
               flush=True)
 
-    singleton_seeds, missing_singletons = direct_singleton_seed_records(
-        problem,
-        g_kwh=args.g_kwh,
-        soc_step=args.soc_step,
-        reserve_kwh=args.min_soc_frac * args.g_kwh,
-    )
-    seeds_added = 0
-    for record in singleton_seeds:
-        key = frozenset(record["trips"])
-        if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
-            pool[key] = record
-            if journal:
-                journal.write(json.dumps(record) + "\n")
-            seeds_added += 1
-    if journal and seeds_added:
-        flush_and_fsync(journal)
-    print(
-        f"[EXACT] direct-singleton seed: {len(singleton_seeds)}/{len(trips)} "
-        f"trips feasible ({seeds_added} added to pool)",
-        flush=True,
-    )
-    if missing_singletons:
+    def _freeze_snapshot(mark):
+        started = time.perf_counter()
+        try:
+            _freeze_snapshot_impl(mark)
+        except Exception as exc:
+            _record_phase(
+                "snapshot",
+                time.perf_counter() - started,
+                outcome="error",
+                details=lambda: {
+                    "mark_minutes": mark, "error": repr(exc),
+                },
+            )
+            raise
+        _record_phase(
+            "snapshot",
+            time.perf_counter() - started,
+            details=lambda: {"mark_minutes": mark},
+        )
+
+    def _elapsed_s():
+        return _cumulative_elapsed_s()
+
+    def _freeze_crossed_snapshots():
+        """Publish every due mark from the last completed durable state."""
+
+        frozen = []
+        while snapshot_marks and _elapsed_s() >= snapshot_marks[0] * 60.0:
+            mark = snapshot_marks.pop(0)
+            _freeze_snapshot(mark)
+            frozen.append(mark)
+        return frozen
+
+    if args.initial_pool == "singletons":
+        singleton_seeds, missing_singletons = direct_singleton_seed_records(
+            problem,
+            g_kwh=args.g_kwh,
+            soc_step=args.soc_step,
+            reserve_kwh=args.min_soc_frac * args.g_kwh,
+        )
+        seeds_added = 0
+        for record in singleton_seeds:
+            key = frozenset(record["trips"])
+            if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
+                pool[key] = record
+                if journal:
+                    journal.write(json.dumps(record) + "\n")
+                seeds_added += 1
+        if journal and seeds_added:
+            started = time.perf_counter()
+            flush_and_fsync(journal)
+            _record_phase(
+                "journal_fsync",
+                time.perf_counter() - started,
+                iteration=iteration_offset,
+                details=lambda: {
+                    "records": seeds_added, "origin": "singleton_seed",
+                },
+            )
         print(
-            "[EXACT] WARNING: direct-singleton seed is not a full partition; "
-            f"missing {len(missing_singletons)} trips "
-            f"({missing_singletons[:15]}).",
+            f"[EXACT] direct-singleton seed: "
+            f"{len(singleton_seeds)}/{len(trips)} trips feasible "
+            f"({seeds_added} added to pool)",
             flush=True,
         )
+        if missing_singletons:
+            print(
+                "[EXACT] WARNING: direct-singleton seed is not a full "
+                f"partition; missing {len(missing_singletons)} trips "
+                f"({missing_singletons[:15]}).",
+                flush=True,
+            )
+    else:
+        if pool:
+            print(
+                "[EXACT] initial-pool policy: artificial; direct singleton "
+                f"construction is disabled (continuing {len(pool)} resumed "
+                "columns)",
+                flush=True,
+            )
+        else:
+            print(
+                "[EXACT] initial pool: artificial-only; direct singleton "
+                "construction is disabled and the first pricing iteration "
+                "uses Big-M artificial duals",
+                flush=True,
+            )
 
     def _write_partial(status):
         if not args.out:
             return
+        started = time.perf_counter()
         partial = {
             "csv": args.csv, "prices_csv": args.prices_csv,
             "soc_step": args.soc_step, "block_min": args.block_min,
             "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
+            "initial_pool": args.initial_pool,
             "trip_ids": trips,
             "iterations": iteration_offset + len(history),
             "attempt_iterations": len(history),
@@ -1117,8 +1345,8 @@ def run_cg(args) -> dict:
             "final": history[-1] if history else None,
             "columns": len(pool),
             "columns_journal": str(journal_path) if journal_path else None,
-            "wall_s": elapsed_offset + time.time() - t0,
-            "attempt_wall_s": time.time() - t0,
+            "wall_s": _cumulative_elapsed_s(),
+            "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": status, "history_tail": history[-5:],
             "final_lp": last_good_lp_detail,
             "final_lp_source": (last_good_lp_detail or {}).get("source"),
@@ -1126,6 +1354,12 @@ def run_cg(args) -> dict:
             "resume_parent": resume_parent,
         }
         atomic_write_json(args.out, partial)
+        _record_phase(
+            "status_checkpoint",
+            time.perf_counter() - started,
+            iteration=iteration_offset + len(history),
+            details=lambda: {"stop_reason": status},
+        )
     class _ArtificialOnlyLP:
         objective = len(trips) * BIG_M_PENALTY
         route_weight = 0.0
@@ -1136,9 +1370,29 @@ def run_cg(args) -> dict:
         if not args.wall_limit_s:
             return None
         remaining = (
-            args.wall_limit_s - (elapsed_offset + time.time() - t0) - reserve_s
+            args.wall_limit_s - _cumulative_elapsed_s() - reserve_s
         )
         return max(0.0, remaining)
+
+    def _master_attempt_time_limit(reserve_s=0.0):
+        """Return ``(seconds, snapshot_limited)`` for one master attempt."""
+
+        while True:
+            _freeze_crossed_snapshots()
+            wall_budget = _remaining_wall_s(reserve_s=reserve_s)
+            if wall_budget is not None and wall_budget <= 0.0:
+                return 0.0, False
+            if not snapshot_marks:
+                return wall_budget, False
+            snapshot_budget = snapshot_marks[0] * 60.0 - _elapsed_s()
+            if snapshot_budget <= 0.0:
+                # The clock crossed between the publication check and budget
+                # calculation.  Publish that mark before allowing a solve.
+                continue
+            if wall_budget is None:
+                return snapshot_budget, True
+            snapshot_limited = snapshot_budget < wall_budget
+            return min(wall_budget, snapshot_budget), snapshot_limited
 
     for iteration in range(1, args.max_iters + 1):
         global_iteration = iteration_offset + iteration
@@ -1151,34 +1405,124 @@ def run_cg(args) -> dict:
         if args.out and iteration % args.checkpoint_every == 0:
             _write_partial("running")
         routes = list(pool.values())
+        incidence_nnz = 0
         if routes:
+            started = time.perf_counter()
             incidence = build_route_incidence(
                 trip_ids=trips,
                 route_trip_ids=[r["trips"] for r in routes],
             )
+            incidence_nnz = int(getattr(incidence, "nnz", 0))
+            incidence_shape = getattr(
+                incidence, "shape", (len(trips), len(routes))
+            )
+            _record_phase(
+                "incidence_construction",
+                time.perf_counter() - started,
+                iteration=global_iteration,
+                pool_columns=len(routes),
+                incidence_nnz=incidence_nnz,
+                details=lambda: {
+                    "rows": incidence_shape[0],
+                    "columns": incidence_shape[1],
+                },
+            )
             lp = None
+            master_attempt = 0
             for method in method_order:
-                try:
-                    method_limit = _remaining_wall_s(reserve_s=30.0)
+                while True:
+                    method_limit, snapshot_limited = (
+                        _master_attempt_time_limit(reserve_s=30.0)
+                    )
                     if method_limit is not None and method_limit <= 0.0:
                         break
-                    lp = solve_restricted_master_lp(
-                        trip_ids=trips,
-                        route_incidence=incidence,
-                        route_costs=[r["cost"] for r in routes],
-                        artificial_penalty=BIG_M_PENALTY,
-                        method=method,
-                        coverage_sense=args.master_sense,
-                        time_limit_s=method_limit,
-                    )
+                    master_attempt += 1
+                    started = time.perf_counter()
+                    try:
+                        lp = solve_restricted_master_lp(
+                            trip_ids=trips,
+                            route_incidence=incidence,
+                            route_costs=[r["cost"] for r in routes],
+                            artificial_penalty=BIG_M_PENALTY,
+                            method=method,
+                            coverage_sense=args.master_sense,
+                            time_limit_s=method_limit,
+                        )
+                        _record_phase(
+                            "master_attempt",
+                            time.perf_counter() - started,
+                            iteration=global_iteration,
+                            attempt=master_attempt,
+                            pool_columns=len(routes),
+                            incidence_nnz=incidence_nnz,
+                            details=lambda: {
+                                "method": method,
+                                "time_limit_s": method_limit,
+                                "snapshot_limited": snapshot_limited,
+                                "backend_runtime_s": lp.runtime_s,
+                                "objective": lp.objective,
+                            },
+                        )
+                        # A solver may overrun its requested limit.  Freeze any
+                        # crossed mark before this newly completed LP becomes
+                        # the checkpoint fallback.
+                        _freeze_crossed_snapshots()
+                        break
+                    except Exception as exc:  # degenerate masters can stall
+                        _record_phase(
+                            "master_attempt",
+                            time.perf_counter() - started,
+                            iteration=global_iteration,
+                            attempt=master_attempt,
+                            pool_columns=len(routes),
+                            incidence_nnz=incidence_nnz,
+                            outcome="error",
+                            details=lambda: {
+                                "method": method,
+                                "time_limit_s": method_limit,
+                                "snapshot_limited": snapshot_limited,
+                                "error": repr(exc),
+                            },
+                        )
+                        # Preserve the pre-attempt pool/LP before either this
+                        # method or another one is allowed to run again.
+                        crossed = _freeze_crossed_snapshots()
+                        wall_remaining = _remaining_wall_s(reserve_s=30.0)
+                        retry_same_method = (
+                            snapshot_limited
+                            and bool(crossed)
+                            and (wall_remaining is None
+                                 or wall_remaining > 0.0)
+                        )
+                        if retry_same_method:
+                            print(
+                                f"[EXACT] master reached snapshot boundary "
+                                f"with {method}: {exc}; snapshot frozen, "
+                                "retrying the same method",
+                                flush=True,
+                            )
+                            continue
+                        print(f"[EXACT] master failed with {method}: {exc}; "
+                              "retrying with next method", flush=True)
+                        break
+                if lp is not None:
                     break
-                except Exception as exc:  # HiGHS can stall on degenerate pools
-                    print(f"[EXACT] master failed with {method}: {exc}; "
-                          "retrying with next method", flush=True)
             if lp is None:
-                print("[EXACT] all master methods failed — stopping uncertified",
-                      flush=True)
-                stop_reason = "master_failed"
+                # Evaluate wall exhaustion at this exit path itself: the final
+                # method attempt may have consumed the remaining budget before
+                # raising, and there is no later loop iteration to notice.  A
+                # timed-out attempt is a graceful, resumable wall stop, not
+                # evidence that every master method failed.
+                remaining_wall_s = _remaining_wall_s(reserve_s=30.0)
+                if remaining_wall_s is not None and remaining_wall_s <= 0.0:
+                    print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
+                          "reached during the master solve — stopping "
+                          "gracefully (partial result saved)", flush=True)
+                    stop_reason = "wall_limit"
+                else:
+                    print("[EXACT] all master methods failed — stopping "
+                          "uncertified", flush=True)
+                    stop_reason = "master_failed"
                 break
             last_good_lp_detail = _serialize_lp(
                 lp, routes, source="last_good_iterate",
@@ -1186,7 +1530,26 @@ def run_cg(args) -> dict:
             )
         else:
             lp = _ArtificialOnlyLP()
-        batch = net.k_best_routes(lp.trip_duals, k=args.columns_per_iter)
+        if telemetry is None:
+            batch = net.k_best_routes(
+                lp.trip_duals, k=args.columns_per_iter
+            )
+        else:
+            def pricing_phase(name, duration_s, details):
+                _record_phase(
+                    name,
+                    duration_s,
+                    iteration=global_iteration,
+                    pool_columns=len(routes),
+                    incidence_nnz=incidence_nnz,
+                    details=details,
+                )
+
+            batch = net.k_best_routes(
+                lp.trip_duals,
+                k=args.columns_per_iter,
+                phase_callback=pricing_phase,
+            )
         best = batch[0] if batch else None
         min_rc = best["rc"] if best else float("inf")
         history.append({"iter": global_iteration,
@@ -1199,14 +1562,19 @@ def run_cg(args) -> dict:
                         "max_bound_violation": getattr(
                             lp, "max_bound_violation", 0.0)})
         if iters_csv:
-            iters_csv.write(f"{elapsed_offset + time.time() - t0:.2f},"
+            iters_csv.write(f"{_cumulative_elapsed_s():.2f},"
                             f"{global_iteration},"
                             f"{lp.objective:.6f},{lp.route_weight:.9f},"
                             f"{lp.artificial_total:.6f},{min_rc:.6f},{len(pool)}\n")
+            started = time.perf_counter()
             flush_and_fsync(iters_csv)
-        while snapshot_marks and (elapsed_offset + time.time() - t0) >= snapshot_marks[0] * 60:
-            mark = snapshot_marks.pop(0)
-            _freeze_snapshot(mark)
+            _record_phase(
+                "iteration_log_fsync",
+                time.perf_counter() - started,
+                iteration=global_iteration,
+                incidence_nnz=incidence_nnz,
+            )
+        _freeze_crossed_snapshots()
         if iteration % 10 == 0 or min_rc >= -args.rc_eps:
             print(f"[EXACT] it {global_iteration:3d}: obj={lp.objective:,.2f} "
                   f"weight={lp.route_weight:.4f} art={lp.artificial_total:.2f} "
@@ -1216,7 +1584,7 @@ def run_cg(args) -> dict:
             stop_reason = "certified" if certified else "no_path"
             break
         if args.stall_window_min and lp.artificial_total < 1e-6:
-            now = elapsed_offset + time.time() - t0
+            now = _cumulative_elapsed_s()
             quarter = args.stall_window_min * 60.0 / 4.0
             recent = [h for h in stall_hist if h[0] >= now - quarter]
             old = [h for h in stall_hist
@@ -1244,10 +1612,11 @@ def run_cg(args) -> dict:
                     break
             stall_hist.append((now, lp.objective, min_rc))
         elif args.stall_window_min:
-            stall_hist.append((elapsed_offset + time.time() - t0,
+            stall_hist.append((_cumulative_elapsed_s(),
                                lp.objective, min_rc))
         added = 0
         added_charge_starts = []
+        started = time.perf_counter()
         for route in batch:
             cost = route["rc"] + sum(lp.trip_duals.get(t, 0.0) for t in route["trips"])
             key = frozenset(route["trips"])
@@ -1265,8 +1634,30 @@ def run_cg(args) -> dict:
                     journal.write(json.dumps(record) + "\n")
                 added += 1
                 added_charge_starts.append(route["charges_started"])
+        _record_phase(
+            "route_insertion",
+            time.perf_counter() - started,
+            iteration=global_iteration,
+            pool_columns=len(pool),
+            incidence_nnz=incidence_nnz,
+            details=lambda: {
+                "candidate_routes": len(batch),
+                "inserted_or_replaced": added,
+            },
+        )
         if journal and added:
+            started = time.perf_counter()
             flush_and_fsync(journal)
+            _record_phase(
+                "journal_fsync",
+                time.perf_counter() - started,
+                iteration=global_iteration,
+                pool_columns=len(pool),
+                incidence_nnz=incidence_nnz,
+                details=lambda: {
+                    "records": added, "origin": "pricing",
+                },
+            )
             max_charge_starts = max(added_charge_starts)
             if max_charge_starts > MAX_DAILY_RECHARGES:
                 print(f"[EXACT] note: column uses {max_charge_starts} charge "
@@ -1292,17 +1683,83 @@ def run_cg(args) -> dict:
         import random as _random
         rng = _random.Random(20260807)
         base_lp = None
+        diversify_attempt = 0
         try:
             routes_now = list(pool.values())
-            base_lp = solve_restricted_master_lp(
-                trip_ids=trips,
-                route_incidence=build_route_incidence(
+            while True:
+                method_limit, snapshot_limited = (
+                    _master_attempt_time_limit(reserve_s=30.0)
+                )
+                if method_limit is not None and method_limit <= 0.0:
+                    raise TimeoutError("no application time remains")
+                started = time.perf_counter()
+                diversify_incidence = build_route_incidence(
                     trip_ids=trips,
-                    route_trip_ids=[r["trips"] for r in routes_now]),
-                route_costs=[r["cost"] for r in routes_now],
-                artificial_penalty=BIG_M_PENALTY,
-            )
+                    route_trip_ids=[r["trips"] for r in routes_now],
+                )
+                diversify_nnz = int(getattr(diversify_incidence, "nnz", 0))
+                _record_phase(
+                    "incidence_construction",
+                    time.perf_counter() - started,
+                    iteration=iteration_offset + len(history),
+                    pool_columns=len(routes_now),
+                    incidence_nnz=diversify_nnz,
+                    details=lambda: {"purpose": "diversify"},
+                )
+                diversify_attempt += 1
+                started = time.perf_counter()
+                try:
+                    candidate_lp = solve_restricted_master_lp(
+                        trip_ids=trips,
+                        route_incidence=diversify_incidence,
+                        route_costs=[r["cost"] for r in routes_now],
+                        artificial_penalty=BIG_M_PENALTY,
+                        time_limit_s=method_limit,
+                    )
+                    _record_phase(
+                        "master_attempt",
+                        time.perf_counter() - started,
+                        iteration=iteration_offset + len(history),
+                        attempt=diversify_attempt,
+                        pool_columns=len(routes_now),
+                        incidence_nnz=diversify_nnz,
+                        details=lambda: {
+                            "method": "highs-ds",
+                            "purpose": "diversify",
+                            "time_limit_s": method_limit,
+                            "snapshot_limited": snapshot_limited,
+                            "backend_runtime_s": candidate_lp.runtime_s,
+                        },
+                    )
+                    _freeze_crossed_snapshots()
+                    base_lp = candidate_lp
+                    break
+                except Exception as exc:
+                    _record_phase(
+                        "master_attempt",
+                        time.perf_counter() - started,
+                        iteration=iteration_offset + len(history),
+                        attempt=diversify_attempt,
+                        pool_columns=len(routes_now),
+                        incidence_nnz=diversify_nnz,
+                        outcome="error",
+                        details=lambda: {
+                            "method": "highs-ds",
+                            "purpose": "diversify",
+                            "time_limit_s": method_limit,
+                            "snapshot_limited": snapshot_limited,
+                            "error": repr(exc),
+                        },
+                    )
+                    crossed = _freeze_crossed_snapshots()
+                    wall_remaining = _remaining_wall_s(reserve_s=30.0)
+                    if (snapshot_limited and crossed
+                            and (wall_remaining is None
+                                 or wall_remaining > 0.0)):
+                        continue
+                    raise
         except Exception as exc:
+            _freeze_crossed_snapshots()
             print(f"[EXACT] diversify: base LP failed ({exc}); skipping", flush=True)
         if base_lp is not None:
             added_div = 0
@@ -1310,7 +1767,30 @@ def run_cg(args) -> dict:
                 alpha = {t_: v * (1.0 + rng.uniform(-args.diversify_delta,
                                                     args.diversify_delta))
                          for t_, v in base_lp.trip_duals.items()}
-                for route in net.k_best_routes(alpha, k=args.columns_per_iter):
+                if telemetry is None:
+                    diversify_routes = net.k_best_routes(
+                        alpha, k=args.columns_per_iter
+                    )
+                else:
+                    def diversify_pricing_phase(name, duration_s, details):
+                        _record_phase(
+                            name,
+                            duration_s,
+                            iteration=iteration_offset + len(history),
+                            pool_columns=len(pool),
+                            details=lambda: {
+                                **details,
+                                "purpose": "diversify",
+                                "round": rnd,
+                            },
+                        )
+
+                    diversify_routes = net.k_best_routes(
+                        alpha,
+                        k=args.columns_per_iter,
+                        phase_callback=diversify_pricing_phase,
+                    )
+                for route in diversify_routes:
                     cost = route["rc"] + sum(alpha.get(t_, 0.0)
                                              for t_ in route["trips"])
                     key = frozenset(route["trips"])
@@ -1328,14 +1808,19 @@ def run_cg(args) -> dict:
                             journal.write(json.dumps(record) + "\n")
                         added_div += 1
             if journal:
+                started = time.perf_counter()
                 flush_and_fsync(journal)
+                _record_phase(
+                    "journal_fsync",
+                    time.perf_counter() - started,
+                    iteration=iteration_offset + len(history),
+                    details=lambda: {
+                        "records": added_div,
+                        "origin": "diversify",
+                    },
+                )
             print(f"[EXACT] diversify: {args.diversify_rounds} rounds added "
                   f"{added_div} complementary columns", flush=True)
-
-    if iters_csv:
-        iters_csv.close()
-    if journal:
-        journal.close()
 
     # Final LP over the persisted pool: store route values + duals so the
     # fractional solution is reconstructable without re-solving.
@@ -1344,32 +1829,93 @@ def run_cg(args) -> dict:
     routes = list(pool.values())
     if routes:
         final_errors = []
+        final_attempt = 0
         for method in ("highs-ds", "highs-ipm", "highs"):
-            try:
-                method_limit = _remaining_wall_s(reserve_s=10.0)
+            while True:
+                method_limit, snapshot_limited = (
+                    _master_attempt_time_limit(reserve_s=10.0)
+                )
                 if method_limit is not None and method_limit <= 0.0:
                     final_errors.append("no application time remains")
                     break
-                lp_final = solve_restricted_master_lp(
+                started = time.perf_counter()
+                final_incidence = build_route_incidence(
                     trip_ids=trips,
-                    route_incidence=build_route_incidence(
-                        trip_ids=trips,
-                        route_trip_ids=[r["trips"] for r in routes]),
-                    route_costs=[r["cost"] for r in routes],
-                    artificial_penalty=BIG_M_PENALTY,
-                    coverage_sense=args.master_sense,
-                    method=method,
-                    time_limit_s=method_limit,
+                    route_trip_ids=[r["trips"] for r in routes],
                 )
-                final_lp_detail = _serialize_lp(
-                    lp_final, routes, source="final_pool_resolve",
+                final_nnz = int(getattr(final_incidence, "nnz", 0))
+                _record_phase(
+                    "incidence_construction",
+                    time.perf_counter() - started,
                     iteration=iteration_offset + len(history),
                     pool_columns=len(routes),
+                    incidence_nnz=final_nnz,
+                    details=lambda: {
+                        "purpose": "final_resolve", "method": method,
+                    },
                 )
-                final_lp_source = "final_pool_resolve"
+                final_attempt += 1
+                started = time.perf_counter()
+                try:
+                    lp_final = solve_restricted_master_lp(
+                        trip_ids=trips,
+                        route_incidence=final_incidence,
+                        route_costs=[r["cost"] for r in routes],
+                        artificial_penalty=BIG_M_PENALTY,
+                        coverage_sense=args.master_sense,
+                        method=method,
+                        time_limit_s=method_limit,
+                    )
+                    _record_phase(
+                        "master_attempt",
+                        time.perf_counter() - started,
+                        iteration=iteration_offset + len(history),
+                        attempt=final_attempt,
+                        pool_columns=len(routes),
+                        incidence_nnz=final_nnz,
+                        details=lambda: {
+                            "purpose": "final_resolve",
+                            "method": method,
+                            "time_limit_s": method_limit,
+                            "snapshot_limited": snapshot_limited,
+                            "backend_runtime_s": lp_final.runtime_s,
+                        },
+                    )
+                    _freeze_crossed_snapshots()
+                    final_lp_detail = _serialize_lp(
+                        lp_final, routes, source="final_pool_resolve",
+                        iteration=iteration_offset + len(history),
+                        pool_columns=len(routes),
+                    )
+                    final_lp_source = "final_pool_resolve"
+                    break
+                except Exception as exc:
+                    _record_phase(
+                        "master_attempt",
+                        time.perf_counter() - started,
+                        iteration=iteration_offset + len(history),
+                        attempt=final_attempt,
+                        pool_columns=len(routes),
+                        incidence_nnz=final_nnz,
+                        outcome="error",
+                        details=lambda: {
+                            "purpose": "final_resolve",
+                            "method": method,
+                            "time_limit_s": method_limit,
+                            "snapshot_limited": snapshot_limited,
+                            "error": repr(exc),
+                        },
+                    )
+                    crossed = _freeze_crossed_snapshots()
+                    wall_remaining = _remaining_wall_s(reserve_s=10.0)
+                    if (snapshot_limited and crossed
+                            and (wall_remaining is None
+                                 or wall_remaining > 0.0)):
+                        continue
+                    final_errors.append(f"{method}: {exc}")
+                    break
+            if final_lp_detail is not None:
                 break
-            except Exception as exc:
-                final_errors.append(f"{method}: {exc}")
         if final_lp_detail is None:
             print("[EXACT] final LP re-solve failed with all methods: "
                   + " | ".join(final_errors), flush=True)
@@ -1380,6 +1926,11 @@ def run_cg(args) -> dict:
         final_lp_source = final_lp_detail.get("source", "last_good_iterate")
         final_lp_detail["source"] = final_lp_source
 
+    if iters_csv:
+        iters_csv.close()
+    if journal:
+        journal.close()
+
     result = {
         "csv": args.csv,
         "prices_csv": args.prices_csv,
@@ -1389,6 +1940,7 @@ def run_cg(args) -> dict:
         "charge_kw": args.charge_kw,
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
+        "initial_pool": args.initial_pool,
         "trip_ids": trips,
         "iterations": iteration_offset + len(history),
         "attempt_iterations": len(history),
@@ -1396,8 +1948,8 @@ def run_cg(args) -> dict:
         "final": history[-1] if history else None,
         "columns": len(pool),
         "columns_journal": str(journal_path) if journal_path else None,
-        "wall_s": elapsed_offset + time.time() - t0,
-        "attempt_wall_s": time.time() - t0,
+        "wall_s": _cumulative_elapsed_s(),
+        "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
@@ -1426,6 +1978,13 @@ def main(argv=None) -> int:
         default="partition",
         help="Trip-row sense in the exact-CG restricted master. Partition is "
              "the operational default; cover reproduces legacy campaigns.",
+    )
+    parser.add_argument(
+        "--initial-pool",
+        choices=("singletons", "artificial"),
+        default="singletons",
+        help="Initial real-column pool. Singletons preserves the operational "
+             "default; artificial starts pricing from Big-M artificials only.",
     )
     parser.add_argument("--stall-window-min", type=float, default=None,
                         help="Enable marginal-returns stopping: compare the "
@@ -1467,6 +2026,13 @@ def main(argv=None) -> int:
                         help="Comma-separated elapsed-minute marks at which to "
                              "freeze immutable pool snapshots (status+journal), "
                              "e.g. 15,60,180,360 for MIP-budget calibration.")
+    parser.add_argument(
+        "--phase-telemetry",
+        type=Path,
+        default=None,
+        help="Optional durable JSONL sidecar for phase timing/RSS evidence. "
+             "Operational only; excluded from model/resume identity.",
+    )
     parser.add_argument("--resume", action="store_true",
                         help="Reload the column journal next to --out and "
                              "continue from that pool.")
