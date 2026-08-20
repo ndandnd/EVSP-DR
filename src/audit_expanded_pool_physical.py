@@ -323,7 +323,7 @@ def audit_pools(
             charge_kw = float(status["charge_kw"])
             reserve_kwh = float(status["min_soc_frac"]) * g_kwh
             soc_step = float(status["soc_step"])
-            block_min = int(status["block_min"])
+            block_min = float(status["block_min"])
             pool = status_path.parent.name
             if pool in observed_pool_names:
                 raise ValueError(f"duplicate pool supplied: {pool}")

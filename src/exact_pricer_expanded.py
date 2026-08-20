@@ -56,7 +56,7 @@ from durable_io import (
     read_jsonl_records,
     valid_json_object,
 )
-from exact_cg_telemetry import PhaseTelemetry
+from exact_cg_telemetry import PhaseTelemetry, peak_rss_bytes
 from expanded_path_realization import (
     _arc_map as continuous_arc_map,
     BLOCK_SCHEDULE_SCHEMA,
@@ -81,6 +81,17 @@ def _file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _peak_rss_mb() -> float:
+    return peak_rss_bytes() / (1024.0 * 1024.0)
+
+
+def _block_minutes(value):
+    number = float(value)
+    if not math.isfinite(number) or number <= 0:
+        raise argparse.ArgumentTypeError("block minutes must be positive")
+    return int(number) if number.is_integer() else number
+
+
 def validated_fixed_duty_seed_records(
     path: Path,
     problem,
@@ -91,7 +102,7 @@ def validated_fixed_duty_seed_records(
     charge_kw: float,
     reserve_kwh: float,
     soc_step: float,
-    block_min: int,
+    block_min: float,
 ):
     """Load one tariff-specific exact partition as expanded-grid seed columns."""
 
@@ -375,7 +386,7 @@ def direct_singleton_seed_records(
 class ExpandedNetwork:
     """Static expanded DAG; arc costs are dual-free, trip duals applied on the fly."""
 
-    def __init__(self, problem, station_prices, *, soc_step: float, block_min: int,
+    def __init__(self, problem, station_prices, *, soc_step: float, block_min: float,
                  g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW,
                  reserve_kwh: float = 0.0,
                  strict_tariff_coverage: bool = False):
@@ -384,11 +395,15 @@ class ExpandedNetwork:
             trip: position for position, trip in enumerate(problem.trips)
         }
         self.soc_step = float(soc_step)
-        self.block_min = int(block_min)
+        parsed_block_min = float(block_min)
+        self.block_min = (
+            int(parsed_block_min)
+            if parsed_block_min.is_integer() else parsed_block_min
+        )
         self.g = float(g_kwh)
         self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
-        self.n_blocks = int(HORIZON_MIN) // self.block_min
+        self.n_blocks = int(math.floor(HORIZON_MIN / self.block_min + 1e-9))
         self.block_kwh = float(charge_kw) * self.block_min / 60.0
         self.prices = station_prices  # base station -> {hour: $/kWh}
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
@@ -1227,6 +1242,9 @@ def run_cg(args) -> dict:
     ]
     pool: dict[frozenset, dict] = {}
     history = []
+    prior_iteration_metrics = []
+    certificate_iteration = None
+    certificate_wall_s = None
     stall_hist = []  # (elapsed_s, lp_obj, min_rc) for --stall-window-min
     last_good_lp_detail = None
     certified = False
@@ -1354,6 +1372,13 @@ def run_cg(args) -> dict:
             )
         except (TypeError, ValueError):
             pass
+        saved_metrics = prior_status.get("iteration_metrics")
+        if isinstance(saved_metrics, list):
+            prior_iteration_metrics = [
+                row for row in saved_metrics if isinstance(row, dict)
+            ]
+        certificate_iteration = prior_status.get("iterations_to_certificate")
+        certificate_wall_s = prior_status.get("wall_to_certificate")
 
     telemetry = None
     telemetry_path = getattr(args, "phase_telemetry", None)
@@ -1408,21 +1433,66 @@ def run_cg(args) -> dict:
         return elapsed_offset + _attempt_elapsed_s()
 
     network_t0 = time.time()
-    net = ExpandedNetwork(
-        problem, prices,
-        soc_step=args.soc_step,
-        block_min=args.block_min,
-        g_kwh=args.g_kwh,
-        charge_kw=args.charge_kw,
-        reserve_kwh=args.min_soc_frac * args.g_kwh,
-        strict_tariff_coverage=getattr(
-            args, "strict_tariff_coverage", False
-        ),
-    )
+    try:
+        net = ExpandedNetwork(
+            problem, prices,
+            soc_step=args.soc_step,
+            block_min=args.block_min,
+            g_kwh=args.g_kwh,
+            charge_kw=args.charge_kw,
+            reserve_kwh=args.min_soc_frac * args.g_kwh,
+            strict_tariff_coverage=getattr(
+                args, "strict_tariff_coverage", False
+            ),
+        )
+    except MemoryError:
+        result = {
+            "csv": args.csv, "prices_csv": args.prices_csv,
+            "soc_step": args.soc_step, "block_min": args.block_min,
+            "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
+            "min_soc_frac": args.min_soc_frac,
+            "master_sense": args.master_sense,
+            "initial_pool": args.initial_pool,
+            "trip_ids": trips, "iterations": iteration_offset,
+            "attempt_iterations": 0, "certified_rc_optimal": False,
+            "certified": False, "stop_reason": "memory",
+            "memory_stage": "dag_build",
+            "dag_nodes": None, "dag_arcs": None,
+            "dag_build_wall_s": time.time() - network_t0,
+            "peak_rss_mb": _peak_rss_mb(),
+            "pool_columns_final": len(pool),
+            "columns": len(pool),
+            "columns_journal": str(journal_path) if journal_path else None,
+            "iteration_metrics": prior_iteration_metrics,
+            "iterations_to_certificate": None,
+            "wall_to_certificate": None,
+            "wall_s": _cumulative_elapsed_s(),
+            "provenance": provenance,
+        }
+        if out_path:
+            atomic_write_json(out_path, result)
+        for signum, previous in prior_signal_handlers.items():
+            signal.signal(signum, previous)
+        return result
     build_s = time.time() - network_t0
+    dag_nodes = len(net.node_meta)
+    dag_arcs = net.n_arcs
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
           f"built in {build_s:.1f}s", flush=True)
+    def _resolution_cost_fields():
+        return {
+            "dag_nodes": dag_nodes,
+            "dag_arcs": dag_arcs,
+            "dag_build_wall_s": build_s,
+            "iteration_metrics": prior_iteration_metrics + history,
+            "iterations_to_certificate": certificate_iteration,
+            "wall_to_certificate": certificate_wall_s,
+            "certified": certified,
+            "peak_rss_mb": _peak_rss_mb(),
+            "pool_columns_final": len(pool),
+            "memory_limit_mb": getattr(args, "memory_limit_mb", None),
+        }
     def _record_phase(
         name,
         duration_s,
@@ -1453,6 +1523,8 @@ def run_cg(args) -> dict:
                 outcome=outcome,
                 details=resolved_details,
             )
+        except MemoryError:
+            raise
         except Exception as exc:
             detached_telemetry_overhead_s += telemetry.overhead_s
             telemetry = None
@@ -1615,6 +1687,7 @@ def run_cg(args) -> dict:
             "attempt_wall_s": _attempt_elapsed_s(),
             "stop_reason": "resume_starting",
             "provenance": provenance,
+            **_resolution_cost_fields(),
         })
         atomic_write_json(Path(args.out), resume_status)
         print("[EXACT] published live resume status before extending the "
@@ -1661,6 +1734,7 @@ def run_cg(args) -> dict:
             "final_lp_source": None,
             "provenance": provenance,
             "resume_parent": None,
+            **_resolution_cost_fields(),
         }
         atomic_write_json(Path(args.out), initial_status)
         print("[EXACT] published initial identity before first journal append",
@@ -1753,6 +1827,8 @@ def run_cg(args) -> dict:
         started = time.perf_counter()
         try:
             _freeze_snapshot_impl(mark)
+        except MemoryError:
+            raise
         except Exception as exc:
             _record_phase(
                 "snapshot",
@@ -1909,6 +1985,7 @@ def run_cg(args) -> dict:
             "final_lp_source": (last_good_lp_detail or {}).get("source"),
             "provenance": provenance,
             "resume_parent": resume_parent,
+            **_resolution_cost_fields(),
         }
         atomic_write_json(args.out, partial)
         _record_phase(
@@ -1930,6 +2007,10 @@ def run_cg(args) -> dict:
             args.wall_limit_s - _cumulative_elapsed_s() - reserve_s
         )
         return max(0.0, remaining)
+
+    def _memory_limit_hit():
+        limit = getattr(args, "memory_limit_mb", None)
+        return limit is not None and _peak_rss_mb() >= float(limit)
 
     def _master_attempt_time_limit(reserve_s=0.0):
         """Return ``(seconds, snapshot_limited)`` for one master attempt."""
@@ -1961,6 +2042,11 @@ def run_cg(args) -> dict:
             )
             stop_reason = "external_signal"
             break
+        if _memory_limit_hit():
+            print("[EXACT] memory limit reached — stopping gracefully",
+                  flush=True)
+            stop_reason = "memory"
+            break
         if args.wall_limit_s and _remaining_wall_s(reserve_s=60.0) <= 0.0:
             print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
                   "reached (with a 60s serialization margin) — stopping "
@@ -1969,6 +2055,7 @@ def run_cg(args) -> dict:
             break
         if args.out and iteration % args.checkpoint_every == 0:
             _write_partial("running")
+        master_wall_s = 0.0
         routes = list(pool.values())
         incidence_nnz = 0
         if routes:
@@ -1981,9 +2068,11 @@ def run_cg(args) -> dict:
             incidence_shape = getattr(
                 incidence, "shape", (len(trips), len(routes))
             )
+            incidence_wall_s = time.perf_counter() - started
+            master_wall_s += incidence_wall_s
             _record_phase(
                 "incidence_construction",
-                time.perf_counter() - started,
+                incidence_wall_s,
                 iteration=global_iteration,
                 pool_columns=len(routes),
                 incidence_nnz=incidence_nnz,
@@ -2013,9 +2102,11 @@ def run_cg(args) -> dict:
                             coverage_sense=args.master_sense,
                             time_limit_s=method_limit,
                         )
+                        attempt_wall_s = time.perf_counter() - started
+                        master_wall_s += attempt_wall_s
                         _record_phase(
                             "master_attempt",
-                            time.perf_counter() - started,
+                            attempt_wall_s,
                             iteration=global_iteration,
                             attempt=master_attempt,
                             pool_columns=len(routes),
@@ -2033,10 +2124,14 @@ def run_cg(args) -> dict:
                         # the checkpoint fallback.
                         _freeze_crossed_snapshots()
                         break
+                    except MemoryError:
+                        raise
                     except Exception as exc:  # degenerate masters can stall
+                        attempt_wall_s = time.perf_counter() - started
+                        master_wall_s += attempt_wall_s
                         _record_phase(
                             "master_attempt",
-                            time.perf_counter() - started,
+                            attempt_wall_s,
                             iteration=global_iteration,
                             attempt=master_attempt,
                             pool_columns=len(routes),
@@ -2095,6 +2190,8 @@ def run_cg(args) -> dict:
             )
         else:
             lp = _ArtificialOnlyLP()
+        pricing_started = time.perf_counter()
+        pricing_overhead_before = _telemetry_overhead_s()
         if telemetry is None:
             batch = net.k_best_routes(
                 lp.trip_duals, k=args.columns_per_iter
@@ -2115,17 +2212,24 @@ def run_cg(args) -> dict:
                 k=args.columns_per_iter,
                 phase_callback=pricing_phase,
             )
+        pricing_wall_s = max(
+            0.0,
+            time.perf_counter() - pricing_started
+            - (_telemetry_overhead_s() - pricing_overhead_before),
+        )
         best = batch[0] if batch else None
         min_rc = best["rc"] if best else float("inf")
-        history.append({"iter": global_iteration,
-                        "attempt_iter": iteration,
-                        "lp_obj": lp.objective,
-                        "route_weight": lp.route_weight,
-                        "artificials": lp.artificial_total, "min_rc": min_rc,
-                        "max_row_violation": getattr(
-                            lp, "max_row_violation", 0.0),
-                        "max_bound_violation": getattr(
-                            lp, "max_bound_violation", 0.0)})
+        iteration_record = {
+            "iter": global_iteration, "attempt_iter": iteration,
+            "lp_obj": lp.objective, "route_weight": lp.route_weight,
+            "artificials": lp.artificial_total, "min_rc": min_rc,
+            "max_row_violation": getattr(lp, "max_row_violation", 0.0),
+            "max_bound_violation": getattr(lp, "max_bound_violation", 0.0),
+            "master_wall_s": master_wall_s,
+            "pricing_wall_s": pricing_wall_s,
+            "columns_added": 0,
+        }
+        history.append(iteration_record)
         if iters_csv:
             iters_csv.write(f"{_cumulative_elapsed_s():.2f},"
                             f"{global_iteration},"
@@ -2147,6 +2251,9 @@ def run_cg(args) -> dict:
         if best is None or min_rc >= -args.rc_eps:
             certified = best is not None
             stop_reason = "certified" if certified else "no_path"
+            if certified:
+                certificate_iteration = global_iteration
+                certificate_wall_s = _cumulative_elapsed_s()
             break
         if args.stall_window_min and lp.artificial_total < 1e-6:
             now = _cumulative_elapsed_s()
@@ -2234,6 +2341,7 @@ def run_cg(args) -> dict:
                     journal.write(json.dumps(record) + "\n")
                 added += 1
                 added_charge_starts.append(route["charges_started"])
+        iteration_record["columns_added"] = added
         _record_phase(
             "route_insertion",
             time.perf_counter() - started,
@@ -2340,6 +2448,8 @@ def run_cg(args) -> dict:
                     _freeze_crossed_snapshots()
                     base_lp = candidate_lp
                     break
+                except MemoryError:
+                    raise
                 except Exception as exc:
                     _record_phase(
                         "master_attempt",
@@ -2364,6 +2474,8 @@ def run_cg(args) -> dict:
                                  or wall_remaining > 0.0)):
                         continue
                     raise
+        except MemoryError:
+            raise
         except Exception as exc:
             _freeze_crossed_snapshots()
             print(f"[EXACT] diversify: base LP failed ({exc}); skipping", flush=True)
@@ -2485,7 +2597,7 @@ def run_cg(args) -> dict:
     final_lp_detail = None
     final_lp_source = None
     routes = list(pool.values())
-    if routes:
+    if routes and stop_reason != "memory":
         final_errors = []
         final_attempt = 0
         for method in ("highs-ds", "highs-ipm", "highs"):
@@ -2547,6 +2659,8 @@ def run_cg(args) -> dict:
                     )
                     final_lp_source = "final_pool_resolve"
                     break
+                except MemoryError:
+                    raise
                 except Exception as exc:
                     _record_phase(
                         "master_attempt",
@@ -2648,6 +2762,7 @@ def run_cg(args) -> dict:
         "final_lp_source": final_lp_source,
         "provenance": provenance,
         "resume_parent": resume_parent,
+        **_resolution_cost_fields(),
     }
     print(f"[EXACT] DONE: {json.dumps(result['final'], default=float)} "
           f"certified={certified} columns={len(pool)} "
@@ -2657,12 +2772,34 @@ def run_cg(args) -> dict:
     return result
 
 
+def _memory_failure_result(args):
+    payload = {}
+    if args.out and Path(args.out).is_file():
+        try:
+            payload = json.loads(Path(args.out).read_text())
+        except (OSError, ValueError):
+            payload = {}
+    payload.update({
+        "csv": args.csv, "prices_csv": args.prices_csv,
+        "soc_step": args.soc_step, "block_min": args.block_min,
+        "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
+        "min_soc_frac": args.min_soc_frac,
+        "certified": False, "certified_rc_optimal": False,
+        "stop_reason": "memory", "memory_stage": "solve",
+        "peak_rss_mb": _peak_rss_mb(),
+        "pool_columns_final": payload.get("columns", 0),
+        "iterations_to_certificate": None,
+        "wall_to_certificate": None,
+    })
+    return payload
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--csv", required=True)
     parser.add_argument("--prices_csv", default="hourly_prices_flat.csv")
     parser.add_argument("--soc-step", type=float, default=15.0)
-    parser.add_argument("--block-min", type=int, default=10)
+    parser.add_argument("--block-min", type=_block_minutes, default=10)
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument("--columns_per_iter", type=int, default=30)
     parser.add_argument("--rc-eps", type=float, default=1e-4)
@@ -2725,6 +2862,11 @@ def main(argv=None) -> int:
                         help="Stop gracefully after this many cumulative "
                              "journaled seconds across resumes (set below the "
                              "Slurm limit so results get written).")
+    parser.add_argument(
+        "--memory-limit-mb", type=float, default=None,
+        help="Gracefully stop with stop_reason=memory when peak RSS reaches "
+             "this limit. Omit to rely on the scheduler limit.",
+    )
     parser.add_argument("--checkpoint-every", type=int, default=25,
                         help="Write the partial --out JSON every N iterations.")
     parser.add_argument("--g-kwh", type=float, default=300.0,
@@ -2760,6 +2902,14 @@ def main(argv=None) -> int:
                              "continue from that pool.")
     parser.add_argument("--out", "--o", type=Path, default=None)
     args = parser.parse_args(argv)
+    if (
+        args.memory_limit_mb is not None
+        and (
+            not math.isfinite(args.memory_limit_mb)
+            or args.memory_limit_mb <= 0
+        )
+    ):
+        parser.error("--memory-limit-mb must be positive and finite")
     if bool(args.validated_seed_routes) != bool(args.augmentation_label):
         parser.error(
             "--validated-seed-routes and --augmentation-label are required "
@@ -2783,10 +2933,16 @@ def main(argv=None) -> int:
             "expected_commit": os.environ.get("EVSP_EXPECTED_COMMIT"),
         }
         with exclusive_output_lock(args.out, lock_metadata):
-            result = runner(args)
+            try:
+                result = runner(args)
+            except MemoryError:
+                result = _memory_failure_result(args)
             atomic_write_json(args.out, result)
     else:
-        result = runner(args)
+        try:
+            result = runner(args)
+        except MemoryError:
+            result = _memory_failure_result(args)
     return 0
 
 

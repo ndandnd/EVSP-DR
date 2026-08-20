@@ -589,7 +589,7 @@ def prepare_strict_partition_pool(
     charge_kw = float(status["charge_kw"])
     reserve_kwh = float(status["min_soc_frac"]) * g_kwh
     soc_step = float(status["soc_step"])
-    block_min = int(status["block_min"])
+    block_min = float(status["block_min"])
     accepted = []
     valid_hashes = []
     repaired_hashes = []
