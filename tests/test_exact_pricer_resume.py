@@ -437,6 +437,17 @@ class ExactPricerResumeTests(unittest.TestCase):
             for payload in (without, with_telemetry):
                 payload.pop("wall_s")
                 payload.pop("attempt_wall_s")
+                payload.pop("dag_build_wall_s")
+                payload.pop("peak_rss_mb")
+                for collection in (
+                    payload.get("iteration_metrics", []),
+                    payload.get("history_tail", []),
+                    [payload.get("final")],
+                ):
+                    for row in collection:
+                        if isinstance(row, dict):
+                            row.pop("master_wall_s", None)
+                            row.pop("pricing_wall_s", None)
             self.assertEqual(without, with_telemetry)
             self.assertFalse(with_telemetry["certified_rc_optimal"])
             records = [
