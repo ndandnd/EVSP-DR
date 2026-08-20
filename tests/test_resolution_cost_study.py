@@ -1,6 +1,7 @@
 import csv
 import json
 import math
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -17,6 +18,7 @@ from audit_giro_known_columns import HORIZON_MIN, build_problem  # noqa: E402
 from resolution_cost_study import (  # noqa: E402
     _failure_status,
     build_plan,
+    run_job,
 )
 from summarize_resolution_cost import summarize  # noqa: E402
 from utils_v2 import load_station_hourly_prices  # noqa: E402
@@ -155,6 +157,25 @@ class ResolutionCostStudyTests(unittest.TestCase):
             status = json.loads(output.read_text())
             self.assertEqual(status["stop_reason"], "memory")
             self.assertEqual(status["estimated_dag_nodes_upper"], 123456)
+
+    def test_arcflow_parent_timeout_is_an_honest_wall_row(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            plan = build_plan(Path(temporary) / "artifacts")
+            job = next(
+                row for row in plan["jobs"]
+                if row["method_arm"] == "arc_flow"
+            )
+            with patch(
+                "resolution_cost_study.subprocess.run",
+                side_effect=subprocess.TimeoutExpired(["arc"], 1),
+            ):
+                self.assertEqual(run_job(job, budget_override_s=1), 0)
+            status = json.loads(Path(job["output"]).read_text())
+            self.assertEqual(status["stop_reason"], "wall_limit")
+            self.assertEqual(
+                status["estimated_dag_nodes_upper"],
+                job["estimated_dag_nodes_upper"],
+            )
 
     def test_arcflow_arm_records_lp_mip_and_sparse_size(self):
         with tempfile.TemporaryDirectory() as temporary:

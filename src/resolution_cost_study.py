@@ -250,7 +250,7 @@ def write_plan(path, artifact_root):
     return plan
 
 
-def _failure_status(job, output, returncode):
+def _failure_status(job, output, returncode, reason=None):
     payload = {}
     if output.is_file():
         try:
@@ -261,7 +261,7 @@ def _failure_status(job, output, returncode):
     payload.update({
         "job_key": job["job_key"],
         "method_arm": job.get("method_arm", "exact_cg"),
-        "stop_reason": "memory" if memory else "process_error",
+        "stop_reason": reason or ("memory" if memory else "process_error"),
         "process_returncode": returncode,
         "certified": False,
         "certified_rc_optimal": False,
@@ -278,6 +278,16 @@ def _failure_status(job, output, returncode):
 
 def run_job(job, budget_override_s=None):
     output = Path(job["output"])
+    if job["method_arm"] == "arc_flow" and output.is_file():
+        try:
+            prior = json.loads(output.read_text())
+        except (OSError, ValueError):
+            prior = {}
+        if prior.get("stop_reason") == "initializing":
+            _failure_status(job, output, 124, "wall_limit")
+            return 0
+        if prior.get("stop_reason"):
+            return 0
     for key, expected in (
         ("instance_sha256", job["instance_sha256"]),
     ):
@@ -323,7 +333,14 @@ def run_job(job, budget_override_s=None):
             "--memory-limit-mb", str(job["memory_limit_mb"]),
             "--out", str(output),
         ]
-    completed = subprocess.run(command, cwd=REPO_ROOT, check=False)
+    try:
+        completed = subprocess.run(
+            command, cwd=REPO_ROOT, check=False,
+            timeout=(budget + 10 if job["method_arm"] == "arc_flow" else None),
+        )
+    except subprocess.TimeoutExpired:
+        _failure_status(job, output, 124, "wall_limit")
+        return 0
     if completed.returncode:
         _failure_status(job, output, completed.returncode)
         return completed.returncode
