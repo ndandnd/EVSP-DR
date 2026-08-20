@@ -154,6 +154,8 @@ class ResolutionPoolUnionTests(unittest.TestCase):
                 patch("union_resolution_pools.load_bound_pool_bytes",side_effect=loaded),
                 patch("union_resolution_pools.prepare_strict_partition_pool",
                       return_value=([route([0]),route([1])],audit)),
+                patch("union_resolution_pools._snapshot_inputs",
+                      return_value=(root,root)),
                 patch("audit_giro_known_columns.build_problem",
                       return_value=SimpleNamespace(trips=(0,1))),
                 patch("union_resolution_pools.verified_mip_code_identity",
