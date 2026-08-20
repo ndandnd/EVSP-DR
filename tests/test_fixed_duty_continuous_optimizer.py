@@ -290,6 +290,30 @@ class ContinuousFixedDutyTests(unittest.TestCase):
             places=6,
         )
 
+    def test_event_cap_limits_zero_cost_charge_fragmentation(self):
+        arguments = {
+            "problem": two_trip_problem(
+                first_energy=180.0, second_energy=160.0
+            ),
+            "trip_sequence": [0, 1],
+            "station_prices": prices(default=1.0, overrides={1: 100.0}),
+            "charge_kw": 60.0,
+            "charge_start_cost": 0.0,
+            "allow_diagnostic_physics": True,
+        }
+        uncapped = optimize_fixed_duty_continuous(**arguments)
+        capped = optimize_fixed_duty_continuous(
+            **arguments, max_charge_events=1
+        )
+        self.assertEqual(uncapped["charge_events"], 2)
+        self.assertEqual(capped["charge_events"], 1)
+        self.assertGreater(capped["charging_cost"], uncapped["charging_cost"])
+        self.assertEqual(capped["certificate"]["max_charge_events"], 1)
+        with self.assertRaisesRegex(ValueError, "max_charge_events"):
+            optimize_fixed_duty_continuous(
+                **arguments, max_charge_events=-1
+            )
+
     def test_terminal_policies_are_explicit_and_switchable(self):
         problem = SimpleNamespace(
             trips=[0],

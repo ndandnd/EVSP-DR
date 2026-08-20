@@ -230,6 +230,7 @@ def _build_model(
     timing_mode,
     terminal_policy,
     terminal_energy_price,
+    max_charge_events,
 ):
     model = _Model()
     y_idx, energy_idx, on_idx, start_idx = {}, {}, {}, {}
@@ -316,6 +317,11 @@ def _build_model(
             ],
             lower=1,
             upper=1,
+        )
+    if max_charge_events is not None:
+        model.constraint(
+            [(index, 1) for index in start_idx.values()],
+            upper=max_charge_events,
         )
 
     soc_idx = {
@@ -633,6 +639,7 @@ def optimize_fixed_duty_continuous(
     instance_sha256=None,
     time_limit_s=None,
     allow_diagnostic_physics=False,
+    max_charge_events=None,
 ):
     """Optimize one fixed ordered trip sequence and replay the exact schedule."""
     started = time.perf_counter()
@@ -667,6 +674,15 @@ def optimize_fixed_duty_continuous(
         )
     if timing_mode not in {"optimized", "arrival"}:
         raise ValueError("timing_mode must be optimized or arrival")
+    if (
+        max_charge_events is not None
+        and (
+            isinstance(max_charge_events, bool)
+            or not isinstance(max_charge_events, int)
+            or max_charge_events < 0
+        )
+    ):
+        raise ValueError("max_charge_events must be a nonnegative integer")
     terminal_policy = _normal_terminal_policy(terminal_soc_policy)
     if terminal_policy == "priced terminal energy":
         if terminal_energy_price is None or not math.isfinite(
@@ -697,6 +713,7 @@ def optimize_fixed_duty_continuous(
         timing_mode=timing_mode,
         terminal_policy=terminal_policy,
         terminal_energy_price=terminal_energy_price,
+        max_charge_events=max_charge_events,
     )
     if reason is not None:
         return _infeasible(
@@ -818,6 +835,7 @@ def optimize_fixed_duty_continuous(
             terminal_energy_price
             if terminal_policy == "priced terminal energy" else None
         ),
+        "max_charge_events": max_charge_events,
         "objective": objective,
         "replay_sha256": canonical_sha(replay),
     }
@@ -837,6 +855,7 @@ def optimize_fixed_duty_continuous(
         ),
         "terminal_soc_kwh": replay["terminal_soc_kwh"],
         "terminal_soc_policy": terminal_policy,
+        "max_charge_events": max_charge_events,
         "timing_mode": timing_mode,
         "peak_kw": replay["peak_kw"],
         "charger_concurrency_max": replay["charger_concurrency_max"],
