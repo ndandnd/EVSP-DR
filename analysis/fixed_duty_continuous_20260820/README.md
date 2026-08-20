@@ -59,6 +59,7 @@ Tests executed after the final model hardening:
 ```text
 13 passed in 7.78s
 51 passed, 4 subtests passed in 66.34s
+512 passed, 123 subtests passed in 162.15s (full repository suite)
 ```
 
 ## Goal-2 answers
