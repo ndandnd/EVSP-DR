@@ -104,6 +104,98 @@ def load_bound_pool(status, journal_path):
     return load_bound_pool_bytes(status, Path(journal_path).read_bytes())
 
 
+def _validate_witness(routes, trips, target, selected):
+    if len(selected) > target:
+        raise RuntimeError("solver witness exceeds target fleet")
+    counts = {trip: 0 for trip in trips}
+    for index in selected:
+        for trip in routes[index]["trips"]:
+            counts[trip] += 1
+    if any(value != 1 for value in counts.values()):
+        raise RuntimeError("solver witness is not an exact partition")
+
+
+def _solve_highs(routes, trips, target, *, timelimit, threads, seed):
+    import warnings
+
+    import numpy as np
+    from scipy.optimize import Bounds, LinearConstraint, milp
+    from scipy.sparse import coo_array
+
+    rows = _trip_rows(routes, trips)
+    row_indices = [
+        row_index for row_index, trip in enumerate(trips)
+        for _route_index in rows[trip]
+    ]
+    column_indices = [
+        route_index for trip in trips for route_index in rows[trip]
+    ]
+    fleet_row = len(trips)
+    row_indices.extend([fleet_row] * len(routes))
+    column_indices.extend(range(len(routes)))
+    matrix = coo_array(
+        (np.ones(len(row_indices)), (row_indices, column_indices)),
+        shape=(len(trips) + 1, len(routes)),
+    ).tocsc()
+    bounds = LinearConstraint(
+        matrix,
+        np.r_[np.ones(len(trips)), -np.inf],
+        np.r_[np.ones(len(trips)), target],
+    )
+    started = time.perf_counter()
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            "ignore", message="Unrecognized options detected",
+            category=RuntimeWarning,
+        )
+        result = milp(
+            c=np.zeros(len(routes)),
+            integrality=np.ones(len(routes)),
+            bounds=Bounds(0.0, 1.0),
+            constraints=bounds,
+            options={
+                "time_limit": float(timelimit),
+                "threads": int(threads),
+                "random_seed": int(seed),
+            },
+        )
+    has_solution = result.x is not None
+    selected = (
+        [index for index, value in enumerate(result.x) if value > 0.5]
+        if has_solution else []
+    )
+    outcome = (
+        "FEASIBLE" if has_solution
+        else {1: "TIME_LIMIT", 2: "INFEASIBLE"}.get(result.status)
+    )
+    if outcome is None:
+        raise RuntimeError(
+            "HiGHS target-feasibility solve ended without a classified "
+            f"outcome: status={result.status}, message={result.message}"
+        )
+    return {
+        "outcome": outcome,
+        "selected_indices": selected,
+        "runtime_s": time.perf_counter() - started,
+        "solver_status": int(result.status),
+        "solver_status_name": {
+            0: "OPTIMAL", 1: "LIMIT_REACHED", 2: "INFEASIBLE",
+            3: "UNBOUNDED", 4: "ERROR",
+        }.get(result.status, f"STATUS_{result.status}"),
+        "solution_count": int(has_solution),
+        "node_count": (
+            float(getattr(result, "mip_node_count", None))
+            if getattr(result, "mip_node_count", None) is not None else None
+        ),
+        "backend": "highs",
+        "parameters": {
+            "timelimit": float(timelimit), "threads": threads,
+            "seed": int(seed), "solution_limit": None,
+            "objective": "constant_zero_pure_feasibility",
+        },
+    }
+
+
 def solve_target_feasibility(
     routes,
     trips,
@@ -112,6 +204,7 @@ def solve_target_feasibility(
     timelimit,
     threads,
     seed=0,
+    solver="gurobi",
 ):
     """Run the constant-objective target-constrained partition MIP."""
 
@@ -121,6 +214,18 @@ def solve_target_feasibility(
         raise ValueError("timelimit must be positive and finite")
     if not isinstance(threads, int) or isinstance(threads, bool) or threads < 1:
         raise ValueError("threads must be a positive integer")
+    if solver not in {"gurobi", "highs"}:
+        raise ValueError("solver must be 'gurobi' or 'highs'")
+    if solver == "highs":
+        solved = _solve_highs(
+            routes, trips, target, timelimit=timelimit,
+            threads=threads, seed=seed,
+        )
+        if solved["outcome"] == "FEASIBLE":
+            _validate_witness(
+                routes, trips, target, solved["selected_indices"],
+            )
+        return solved
     import gurobipy as gp
     from gurobipy import GRB
 
@@ -158,14 +263,7 @@ def solve_target_feasibility(
         if outcome == "FEASIBLE" else []
     )
     if outcome == "FEASIBLE":
-        if len(selected) > target:
-            raise RuntimeError("solver witness exceeds target fleet")
-        counts = {trip: 0 for trip in trips}
-        for index in selected:
-            for trip in routes[index]["trips"]:
-                counts[trip] += 1
-        if any(value != 1 for value in counts.values()):
-            raise RuntimeError("solver witness is not an exact partition")
+        _validate_witness(routes, trips, target, selected)
     return {
         "outcome": outcome,
         "selected_indices": selected,
@@ -179,6 +277,7 @@ def solve_target_feasibility(
         }.get(model.Status, f"STATUS_{model.Status}"),
         "solution_count": int(model.SolCount),
         "node_count": float(model.NodeCount),
+        "backend": "gurobi",
         "parameters": {
             "timelimit": float(timelimit),
             "threads": threads,
@@ -231,6 +330,7 @@ def evaluate(args):
         timelimit=args.timelimit,
         threads=args.threads,
         seed=args.seed,
+        solver=getattr(args, "solver", "gurobi"),
     )
     selected_routes = [
         routes[index] for index in solved.pop("selected_indices")
@@ -308,6 +408,9 @@ def main(argv=None):
     parser.add_argument("--timelimit", type=float, required=True)
     parser.add_argument("--threads", type=int, default=8)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--solver", choices=("gurobi", "highs"), default="gurobi",
+    )
     parser.add_argument("--data-dir", type=Path, default=None)
     parser.add_argument("--reference-data-dir", type=Path, default=None)
     parser.add_argument("--out", type=Path, required=True)

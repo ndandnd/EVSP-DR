@@ -37,6 +37,7 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
             result["parameters"]["objective"],
             "constant_zero_pure_feasibility",
         )
+        self.assertEqual(result["backend"], "gurobi")
 
     def test_infeasible_is_proved_for_too_small_target(self):
         result = solve_target_feasibility(
@@ -49,6 +50,36 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
         self.assertEqual(result["outcome"], "INFEASIBLE")
         self.assertEqual(result["selected_indices"], [])
         self.assertEqual(result["solution_count"], 0)
+
+    def test_gurobi_and_highs_agree_on_three_cells(self):
+        cells = [
+            (
+                "combined_route_feasible",
+                [{"trips":[0]},{"trips":[1]},{"trips":[0,1]}],
+                [0,1], 1, "FEASIBLE",
+            ),
+            (
+                "split_routes_infeasible",
+                [{"trips":[0]},{"trips":[1]}],
+                [0,1], 1, "INFEASIBLE",
+            ),
+            (
+                "two_route_partition_feasible",
+                [{"trips":[0]},{"trips":[1]},{"trips":[2]},
+                 {"trips":[0,1]},{"trips":[1,2]}],
+                [0,1,2], 2, "FEASIBLE",
+            ),
+        ]
+        for name,routes,trips,target,expected in cells:
+            with self.subTest(cell=name):
+                outcomes = {
+                    solver: solve_target_feasibility(
+                        routes, trips, target, timelimit=30, threads=1,
+                        solver=solver,
+                    )["outcome"]
+                    for solver in ("gurobi","highs")
+                }
+                self.assertEqual(set(outcomes.values()),{expected})
 
     def test_time_limit_without_incumbent_is_censored(self):
         GRB = SimpleNamespace(
@@ -74,6 +105,11 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
             solve_target_feasibility(
                 [{"trips": [0]}], [0], 0,
                 timelimit=30, threads=1,
+            )
+        with self.assertRaisesRegex(ValueError, "solver must"):
+            solve_target_feasibility(
+                [{"trips": [0]}], [0], 1,
+                timelimit=30, threads=1, solver="unknown",
             )
 
     def test_evaluate_rejects_source_swap_before_physical_gate(self):
