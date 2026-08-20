@@ -498,6 +498,10 @@ def _replay(
             events = events_by_gap[gap]
             if not events:
                 route_nodes.append(option.station)
+                stops["stations"].append(option.station)
+                stops["cst"].append(option.arrival_min)
+                stops["cet"].append(option.arrival_min)
+                stops["kwh"].append(0.0)
             previous_end = option.arrival_min
             for event_index, event in enumerate(events):
                 if event["start_min"] < previous_end - TOL:

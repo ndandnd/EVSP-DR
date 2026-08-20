@@ -138,6 +138,31 @@ class ContinuousFixedDutyTests(unittest.TestCase):
             optimized["charge_events"], arrival["charge_events"]
         )
 
+    def test_zero_charge_station_waypoint_keeps_replay_alignment(self):
+        problem = SimpleNamespace(
+            trips=[0, 1, 2],
+            trip_energy={0: 10.0, 1: 200.0, 2: 100.0},
+            start_min={0: 0.0, 1: 10.0, 2: 120.0},
+            end_min={0: 10.0, 1: 20.0, 2: 130.0},
+            adjacency={
+                DEPOT: [(0, 0.0, 0.0, "depot_trip")],
+                0: [(STATION, 0.0, 0.0, "trip_station")],
+                1: [(STATION, 0.0, 0.0, "trip_station")],
+                2: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                STATION: [
+                    (1, 0.0, 0.0, "station_trip"),
+                    (2, 0.0, 0.0, "station_trip"),
+                ],
+            },
+        )
+        result = optimize_fixed_duty_continuous(
+            problem, [0, 1, 2], prices()
+        )
+        self.assertTrue(result["feasible"])
+        self.assertEqual(result["physical_replay_status"], "validated")
+        self.assertEqual(result["route"]["charging_stops"]["kwh"][0], 0.0)
+        self.assertEqual(result["charge_events"], 1)
+
     def test_legacy_lattice_milp_reproduces_dynamic_program(self):
         problem = two_trip_problem(first_energy=250.0, second_energy=40.0)
         result = validate_lattice_reproduction(
