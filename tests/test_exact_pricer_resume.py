@@ -226,6 +226,99 @@ class ExactPricerResumeTests(unittest.TestCase):
 
             self.assertEqual(result["columns"], 2)
 
+    def _run_master_labeling_case(self, tmp, *, wall_limit_s,
+                                  master_seconds_per_attempt):
+        """Resume a one-column pool against a failing master under fake time.
+
+        Returns the terminal result written by ``run_cg``.  Every master
+        attempt raises after advancing the fake clock, so the run must decide
+        between the honest ``wall_limit`` and ``master_failed`` labels.
+        """
+
+        out = Path(tmp) / "run.json"
+        status = self._status()
+        status["trip_ids"] = [1]
+        status["wall_s"] = 0.0
+        status["iterations"] = 0
+        out.write_text(json.dumps(status))
+        record = dict(self._record())
+        record["trips"] = [1]
+        Path(str(out) + ".columns.jsonl").write_text(
+            json.dumps(record) + "\n"
+        )
+        args = self._args(out)
+        args.wall_limit_s = wall_limit_s
+
+        class _FakeTime:
+            def __init__(self):
+                self.now = 1000.0
+
+            def time(self):
+                return self.now
+
+        fake_time = _FakeTime()
+
+        def _failing_master(*_args, **_kwargs):
+            fake_time.now += master_seconds_per_attempt
+            raise RuntimeError("synthetic master failure")
+
+        problem = SimpleNamespace(trips=[1], adjacency={})
+        network = SimpleNamespace(node_meta=[], n_arcs=0)
+        provenance = {
+            "instance_sha256": "instance-hash",
+            "prices_sha256": "prices-hash",
+        }
+        with (
+            patch.object(exact, "time", fake_time),
+            patch.object(exact, "build_problem", return_value=problem),
+            patch.object(exact, "load_station_hourly_prices", return_value={}),
+            patch.object(exact, "ExpandedNetwork", return_value=network),
+            patch.object(exact, "_provenance", return_value=provenance),
+            patch.object(
+                exact, "direct_singleton_seed_records",
+                return_value=([], [1]),
+            ),
+            patch.object(
+                exact, "build_route_incidence", return_value=None,
+            ),
+            patch.object(
+                exact, "solve_restricted_master_lp",
+                side_effect=_failing_master,
+            ),
+        ):
+            return exact.run_cg(args)
+
+    def test_wall_expiry_between_master_attempts_is_labeled_wall_limit(self):
+        # First attempt consumes the whole budget and fails; the second
+        # method sees no remaining wall time.  The stop must be recorded as
+        # the graceful timed stop it is, not as a solver failure.
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self._run_master_labeling_case(
+                tmp, wall_limit_s=200, master_seconds_per_attempt=180.0,
+            )
+        self.assertEqual(result["stop_reason"], "wall_limit")
+
+    def test_wall_expiry_during_final_master_attempt_is_labeled_wall_limit(self):
+        # Boundary case: every method still receives a positive time limit
+        # (170s, 110s, 50s), so no mid-loop exhaustion break ever fires; the
+        # third and FINAL attempt consumes the remaining budget and then
+        # raises.  There is no later loop iteration to notice the expiry, so
+        # the exit path itself must classify this as a wall stop.
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self._run_master_labeling_case(
+                tmp, wall_limit_s=200, master_seconds_per_attempt=60.0,
+            )
+        self.assertEqual(result["stop_reason"], "wall_limit")
+
+    def test_exhausting_all_master_methods_stays_labeled_master_failed(self):
+        # With ample wall budget, failing every master method is a genuine
+        # master failure and must keep its uncertified label.
+        with tempfile.TemporaryDirectory() as tmp:
+            result = self._run_master_labeling_case(
+                tmp, wall_limit_s=100000, master_seconds_per_attempt=1.0,
+            )
+        self.assertEqual(result["stop_reason"], "master_failed")
+
     def test_recovers_orphan_snapshot_only_from_matching_partial_status(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"

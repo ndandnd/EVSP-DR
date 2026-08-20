@@ -1176,9 +1176,21 @@ def run_cg(args) -> dict:
                     print(f"[EXACT] master failed with {method}: {exc}; "
                           "retrying with next method", flush=True)
             if lp is None:
-                print("[EXACT] all master methods failed — stopping uncertified",
-                      flush=True)
-                stop_reason = "master_failed"
+                # Evaluate wall exhaustion at this exit path itself: the final
+                # method attempt may have consumed the remaining budget before
+                # raising, and there is no later loop iteration to notice.  A
+                # timed-out attempt is a graceful, resumable wall stop, not
+                # evidence that every master method failed.
+                remaining_wall_s = _remaining_wall_s(reserve_s=30.0)
+                if remaining_wall_s is not None and remaining_wall_s <= 0.0:
+                    print(f"[EXACT] cumulative wall limit {args.wall_limit_s}s "
+                          "reached during the master solve — stopping "
+                          "gracefully (partial result saved)", flush=True)
+                    stop_reason = "wall_limit"
+                else:
+                    print("[EXACT] all master methods failed — stopping "
+                          "uncertified", flush=True)
+                    stop_reason = "master_failed"
                 break
             last_good_lp_detail = _serialize_lp(
                 lp, routes, source="last_good_iterate",

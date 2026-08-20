@@ -59,11 +59,11 @@ class SemanticSlurmNameTests(unittest.TestCase):
         }
         self.assertEqual(
             cluster_campaign._mip_job_name(status_300, "cover", 60),
-            "MC30r2G30R0T60",
+            "MCA30r2G30R0T60",
         )
         self.assertEqual(
             cluster_campaign._mip_job_name(status_240, "partition", 120),
-            "MP40r1G24R2T120",
+            "MPA40r1G24R2H2",
         )
         arbitrary = {
             "csv": "duty_pairs/Practice_Custom_DutyPair_13302_13325.csv",

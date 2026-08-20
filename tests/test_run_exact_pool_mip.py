@@ -1,6 +1,9 @@
 import contextlib
+import hashlib
 import io
 import json
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -18,9 +21,11 @@ from run_exact_pool_mip import (  # noqa: E402
     greedy_partition_start_indices,
     load_pool,
     main,
+    merge_validated_partition_start,
     optimal_scope,
     singleton_partition_indices,
     validate_injected_route,
+    verified_mip_code_identity,
 )
 from audit_giro_known_columns import DEPOT  # noqa: E402
 
@@ -51,6 +56,93 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertIsNone(finite_solver_value(float("inf")))
         self.assertIsNone(finite_solver_value(1.7976931348623157e308))
         self.assertEqual(finite_solver_value(42.5), 42.5)
+
+    def test_submitted_solver_rejects_commit_dirty_and_branch_mismatches(self):
+        def git_state(
+            commit="a" * 40,
+            status="",
+            branch="",
+            *,
+            status_returncode=0,
+        ):
+            def value(*args):
+                if args[:2] == ("rev-parse", "--verify"):
+                    return subprocess.CompletedProcess(
+                        args, 0, stdout=commit + "\n", stderr=""
+                    )
+                if args and args[0] == "status":
+                    return subprocess.CompletedProcess(
+                        args, status_returncode, stdout=status, stderr=""
+                    )
+                if args[:2] == ("symbolic-ref", "-q"):
+                    return subprocess.CompletedProcess(
+                        args,
+                        0 if branch else 1,
+                        stdout=(branch + "\n") if branch else "",
+                        stderr="",
+                    )
+                return subprocess.CompletedProcess(
+                    args, 1, stdout="", stderr="unsupported"
+                )
+            return value
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "b" * 40,
+                "EVSP_REQUIRE_DETACHED": "1",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_result",
+                side_effect=git_state(),
+            ),
+            self.assertRaisesRegex(SystemExit, "commit mismatch"),
+        ):
+            verified_mip_code_identity()
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "a" * 40,
+                "EVSP_REQUIRE_DETACHED": "0",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_result",
+                side_effect=git_state(status=" M src/run_exact_pool_mip.py"),
+            ),
+            self.assertRaisesRegex(SystemExit, "tracked modifications"),
+        ):
+            verified_mip_code_identity()
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "a" * 40,
+                "EVSP_REQUIRE_DETACHED": "0",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_result",
+                side_effect=git_state(status_returncode=2),
+            ),
+            self.assertRaisesRegex(
+                SystemExit, "could not verify solver worktree"
+            ),
+        ):
+            verified_mip_code_identity()
+
+        with (
+            patch.dict(os.environ, {
+                "SLURM_JOB_ID": "123",
+                "EVSP_EXPECTED_COMMIT": "a" * 40,
+                "EVSP_REQUIRE_DETACHED": "0",
+            }, clear=False),
+            patch(
+                "run_exact_pool_mip.git_result",
+                side_effect=git_state(branch="cursor/recovery-audit"),
+            ),
+            self.assertRaisesRegex(SystemExit, "must run detached"),
+        ):
+            verified_mip_code_identity()
 
     def test_integer_fleet_bound_can_prove_timeout_incumbent(self):
         self.assertTrue(fleet_bound_proves_incumbent(40, 39.001, 9))
@@ -150,6 +242,22 @@ class ExactPoolMipTests(unittest.TestCase):
 
             self.assertEqual(routes[0]["cost"], 1.0)
 
+    def test_pool_loader_rejects_repeated_trip_incidences(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = Path(tmp) / "malformed.json"
+            journal = Path(str(result) + ".columns.jsonl")
+            result.write_text(json.dumps({
+                "trip_ids": [1],
+                "columns_journal": str(journal),
+            }))
+            journal.write_text(json.dumps({
+                "trips": [1, 1],
+                "cost": 100000.0,
+            }) + "\n")
+
+            with self.assertRaisesRegex(SystemExit, "repeats a trip"):
+                load_pool(result)
+
     def test_runner_refuses_to_overwrite_input_status(self):
         with tempfile.TemporaryDirectory() as tmp:
             result = Path(tmp) / "sample.json"
@@ -159,6 +267,54 @@ class ExactPoolMipTests(unittest.TestCase):
                     main(["--result", str(result), "--out", str(result),
                           "--validate-only"])
             self.assertEqual(raised.exception.code, 2)
+
+    def test_runner_enforces_submission_manifest_hashes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = Path(tmp) / "sample.snapshot.json"
+            journal = Path(str(result) + ".columns.jsonl")
+            result.write_text(json.dumps({
+                "trip_ids": [1],
+                "columns_journal": str(journal),
+            }))
+            journal.write_text(json.dumps({
+                "trips": [1], "cost": 100000.0,
+            }) + "\n")
+
+            with (
+                patch.dict(os.environ, {
+                    "EVSP_MIP_EXPECTED_RESULT_SHA256": "0" * 64,
+                }, clear=False),
+                self.assertRaisesRegex(
+                    SystemExit, "submission-manifest hash"
+                ),
+            ):
+                main(["--result", str(result), "--validate-only"])
+
+            identity = {
+                "expected_commit": "a" * 40,
+                "observed_commit": "a" * 40,
+                "branch": "",
+                "detached": True,
+                "tracked_clean": True,
+                "enforced": True,
+            }
+            with (
+                patch.dict(os.environ, {
+                    "SLURM_JOB_ID": "123",
+                    "EVSP_EXPECTED_COMMIT": "a" * 40,
+                    "EVSP_REQUIRE_DETACHED": "1",
+                    "EVSP_MIP_EXPECTED_RESULT_SHA256": "",
+                    "EVSP_MIP_EXPECTED_JOURNAL_SHA256": "",
+                }, clear=False),
+                patch(
+                    "run_exact_pool_mip.verified_mip_code_identity",
+                    return_value=identity,
+                ),
+                self.assertRaisesRegex(
+                    SystemExit, "lacks required input hashes"
+                ),
+            ):
+                main(["--result", str(result), "--validate-only"])
 
     def test_required_singleton_partition_rejects_coverage_only_pool(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -281,7 +437,241 @@ class ExactPoolMipTests(unittest.TestCase):
         )
         self.assertRegex(verdict, r"starts before the horizon")
 
-    def run_fake_gurobi_mip(self, stages):
+    def test_explicit_partition_loader_validates_and_hashes_every_route(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            data_dir = folder / "data"
+            data_dir.mkdir()
+            instance = data_dir / "tiny.csv"
+            prices_path = data_dir / "prices.csv"
+            instance.write_text("instance bytes\n")
+            prices_path.write_text("price bytes\n")
+            path = folder / "partition.json"
+            path.write_text(json.dumps({"routes": [
+                {
+                    "route": [DEPOT, 1, DEPOT],
+                    "charging_stops": {},
+                    "deadhead_kwh": -999999.0,
+                },
+                {"route": [DEPOT, 2, DEPOT], "charging_stops": {}},
+            ]}))
+            problem = SimpleNamespace(
+                adjacency={
+                    DEPOT: [
+                        (1, 0.0, 2.0, "depot_trip"),
+                        (2, 0.0, 4.0, "depot_trip"),
+                    ],
+                    1: [(DEPOT, 0.0, 3.0, "trip_depot")],
+                    2: [(DEPOT, 0.0, 5.0, "trip_depot")],
+                },
+                start_min={1: 0.0, 2: 10.0},
+                end_min={1: 5.0, 2: 15.0},
+                trip_energy={1: 0.0, 2: 0.0},
+                trips=[1, 2],
+            )
+            status = {
+                "csv": "tiny.csv",
+                "prices_csv": "prices.csv",
+                "soc_step": 15.0,
+                "block_min": 10,
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices_path.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            pool = [
+                {"trips": [1], "cost": 100003.0},
+                {"trips": [2], "cost": 100004.0},
+            ]
+            priced_deadhead = []
+
+            def priced_route(route, *_args, **_kwargs):
+                priced_deadhead.append(route["deadhead_kwh"])
+                return 100000.0
+
+            with (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=problem,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.0}},
+                ),
+                patch(
+                    "utils_v2.calculate_truck_route_cost_accurate",
+                    side_effect=priced_route,
+                ),
+            ):
+                merged, start, detail = merge_validated_partition_start(
+                    pool, [1, 2], path, "prices.csv", status,
+                    data_dir=data_dir,
+                )
+
+            self.assertEqual(len(merged), 2)
+            self.assertEqual(len(start), 2)
+            self.assertEqual(
+                sorted(merged[index]["trips"] for index in start),
+                [[1], [2]],
+            )
+            self.assertEqual(detail["kind"], "validated_exact_partition")
+            self.assertEqual(detail["validated_bus_count"], 2)
+            self.assertEqual(detail["pool_columns_replaced"], 2)
+            self.assertEqual(priced_deadhead, [5.0, 9.0])
+            self.assertEqual(
+                detail["source_sha256"],
+                hashlib.sha256(path.read_bytes()).hexdigest(),
+            )
+
+    def test_explicit_partition_loader_fails_closed_on_coverage_or_physics(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            data_dir = folder / "data"
+            data_dir.mkdir()
+            instance = data_dir / "tiny.csv"
+            prices_path = data_dir / "prices.csv"
+            instance.write_text("instance bytes\n")
+            prices_path.write_text("price bytes\n")
+            problem = SimpleNamespace(
+                adjacency={
+                    DEPOT: [
+                        (1, 0.0, 0.0, "depot_trip"),
+                        (2, 0.0, 0.0, "depot_trip"),
+                    ],
+                    1: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                    2: [(DEPOT, 0.0, 0.0, "trip_depot")],
+                },
+                start_min={1: 0.0, 2: 10.0},
+                end_min={1: 5.0, 2: 15.0},
+                trip_energy={1: 0.0, 2: 0.0},
+                trips=[1, 2],
+            )
+            status = {
+                "csv": "tiny.csv",
+                "prices_csv": "prices.csv",
+                "soc_step": 15.0,
+                "block_min": 10,
+                "g_kwh": 300.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices_path.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            missing = folder / "missing.json"
+            missing.write_text(json.dumps({"routes": [
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+            ]}))
+            invalid = folder / "invalid.json"
+            invalid.write_text(json.dumps({"routes": [
+                {"route": ["elsewhere", 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 2, DEPOT], "charging_stops": {}},
+            ]}))
+            repeated = folder / "repeated.json"
+            repeated.write_text(json.dumps({"routes": [
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 1, DEPOT], "charging_stops": {}},
+                {"route": [DEPOT, 2, DEPOT], "charging_stops": {}},
+            ]}))
+            common_patches = (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=problem,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"PARX": {0: 0.0}},
+                ),
+                patch(
+                    "utils_v2.calculate_truck_route_cost_accurate",
+                    return_value=100000.0,
+                ),
+            )
+            with common_patches[0], common_patches[1], common_patches[2]:
+                with self.assertRaisesRegex(
+                    SystemExit, "not an exact partition"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], missing, "prices.csv", status,
+                        data_dir=data_dir,
+                    )
+                with self.assertRaisesRegex(
+                    SystemExit, "failed physical validation"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], invalid, "prices.csv", status,
+                        data_dir=data_dir,
+                    )
+                with self.assertRaisesRegex(
+                    SystemExit, "not an exact partition"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], repeated, "prices.csv", status,
+                        data_dir=data_dir,
+                    )
+                bad_physics = dict(status, g_kwh=float("nan"))
+                with self.assertRaisesRegex(
+                    SystemExit, "invalid or non-finite physics"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], missing, "prices.csv", bad_physics,
+                        data_dir=data_dir,
+                    )
+                bad_hash = {
+                    **status,
+                    "provenance": {
+                        **status["provenance"],
+                        "instance_sha256": "f" * 64,
+                    },
+                }
+                with self.assertRaisesRegex(
+                    SystemExit, "instance hash mismatch"
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], missing, "prices.csv", bad_hash,
+                        data_dir=data_dir,
+                    )
+                bad_problem = SimpleNamespace(
+                    **{
+                        **problem.__dict__,
+                        "adjacency": {
+                            **problem.adjacency,
+                            DEPOT: [
+                                (1, 0.0, float("nan"), "depot_trip"),
+                                (2, 0.0, 0.0, "depot_trip"),
+                            ],
+                        },
+                    }
+                )
+                with (
+                    patch(
+                        "audit_giro_known_columns.build_problem",
+                        return_value=bad_problem,
+                    ),
+                    self.assertRaisesRegex(
+                        SystemExit, "invalid arc data"
+                    ),
+                ):
+                    merge_validated_partition_start(
+                        [], [1, 2], missing, "prices.csv", status,
+                        data_dir=data_dir,
+                    )
+
+    def run_fake_gurobi_mip(
+        self, stages, *, explicit_start=False, mip_gap=0.0001,
+    ):
         class FakeExpression:
             def __init__(self, items):
                 self.items = list(items)
@@ -323,9 +713,19 @@ class ExactPoolMipTests(unittest.TestCase):
             def setObjective(self, expression, _sense):
                 self.objectives.append(expression)
 
-            def optimize(self):
+            def cbGet(self, _what):
+                return self.callback_message
+
+            def optimize(self, callback=None):
                 stage = stages[self.optimize_calls]
                 self.optimize_calls += 1
+                messages = stage.get("start_messages")
+                if messages is None:
+                    messages = [stage.get("start_message", "")]
+                for message in messages:
+                    self.callback_message = message
+                    if callback is not None and self.callback_message:
+                        callback(self, 6)
                 self.Status = stage["status"]
                 self.SolCount = stage.get("solutions", 1)
                 self.ObjVal = stage["objective"]
@@ -345,7 +745,11 @@ class ExactPoolMipTests(unittest.TestCase):
 
         fake_gp.Model = make_model
         fake_gp.quicksum = lambda values: FakeExpression(list(values))
-        fake_gp.GRB = SimpleNamespace(BINARY=1, MINIMIZE=1)
+        fake_gp.GRB = SimpleNamespace(
+            BINARY=1,
+            MINIMIZE=1,
+            Callback=SimpleNamespace(MESSAGE=6, MSG_STRING=6001),
+        )
         fake_gp.gurobi = SimpleNamespace(version=lambda: (12, 0, 0))
 
         temporary = tempfile.TemporaryDirectory()
@@ -372,14 +776,77 @@ class ExactPoolMipTests(unittest.TestCase):
             "columns_journal": str(journal),
         }))
         out = folder / "mip.json"
-        with patch.dict(sys.modules, {"gurobipy": fake_gp}):
+        arguments = [
+            "--result", str(result), "--two-stage",
+            "--timelimit", "60", "--mipgap", str(mip_gap),
+            "--out", str(out),
+        ]
+        explicit_patch = contextlib.nullcontext()
+        if explicit_start:
+            partition = folder / "partition.json"
+            partition.write_text(json.dumps({"routes": []}))
+            merged_routes = [
+                *routes,
+                {"trips": [1, 2], "cost": 100005.0},
+            ]
+            detail = {
+                "kind": "validated_exact_partition",
+                "source": str(partition),
+                "source_sha256": "partition-sha",
+                "validated": True,
+                "validated_bus_count": 1,
+                "expected_full_objective": 100005.0,
+            }
+            explicit_patch = patch(
+                "run_exact_pool_mip.merge_validated_partition_start",
+                return_value=(merged_routes, [2], detail),
+            )
+            arguments.extend([
+                "--initial-partition-routes", str(partition),
+            ])
+        with patch.dict(sys.modules, {"gurobipy": fake_gp}), explicit_patch:
             with contextlib.redirect_stdout(io.StringIO()):
-                rc = main([
-                    "--result", str(result), "--two-stage",
-                    "--timelimit", "60", "--out", str(out),
-                ])
+                rc = main(arguments)
         payload = json.loads(out.read_text())
         return temporary, models[0], payload, rc
+
+    def test_explicit_partition_is_assigned_and_solver_acceptance_recorded(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
+            "status": 9,
+            "objective": 1.0,
+            "bound": 0.0,
+            "gap": 1.0,
+            "selected": [2],
+            "start_messages": [
+                "Loaded user MIP start with objective 1",
+                "User MIP start did not produce a new incumbent solution",
+            ],
+        }], explicit_start=True, mip_gap=0.0125)
+        self.addCleanup(temporary.cleanup)
+
+        self.assertEqual(rc, 0)
+        self.assertEqual(payload["experiment_arm"], "D")
+        self.assertEqual(payload["requested_mip_gap"], 0.0125)
+        self.assertEqual(model.variables[2].Start, 1.0)
+        self.assertEqual(model.variables[0].Start, 0.0)
+        self.assertEqual(payload["mip_start"]["kind"],
+                         "validated_exact_partition")
+        self.assertEqual(payload["mip_start"]["validated_bus_count"], 1)
+        self.assertEqual(payload["mip_start"]["assigned_variable_count"], 3)
+        self.assertEqual(payload["mip_start"]["selected_variable_count"], 1)
+        self.assertTrue(
+            payload["mip_start"]["solver_acceptance"]["accepted"]
+        )
+        self.assertTrue(
+            payload["mip_start"]["solver_acceptance"][
+                "rejection_observed"
+            ]
+        )
+        self.assertEqual(
+            payload["mip_start"]["solver_acceptance"]["status"], "accepted"
+        )
+        self.assertTrue(payload["mip_start_used"])
+        self.assertTrue(payload["mip_start_assigned"])
 
     def test_unproven_fleet_uses_full_primary_stage_and_skips_cost_stage(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([{

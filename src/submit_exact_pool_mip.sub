@@ -28,17 +28,40 @@ fatal() {
     exit 2
 }
 
-if (( $# < 1 || $# > 3 )); then
-    fatal "Usage: sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON]"
+EXPECTED_WORKER_SHA256=${EVSP_MIP_EXPECTED_WORKER_SHA256:-}
+if [[ -n "${SLURM_JOB_ID:-}" && -z "$EXPECTED_WORKER_SHA256" ]]; then
+    fatal "submitted MIP job lacks expected worker hash"
+fi
+if [[ -n "$EXPECTED_WORKER_SHA256" ]]; then
+    ACTUAL_WORKER_SHA256=$(sha256sum "$0")
+    ACTUAL_WORKER_SHA256=${ACTUAL_WORKER_SHA256%% *}
+    [[ "$ACTUAL_WORKER_SHA256" == "$EXPECTED_WORKER_SHA256" ]] \
+        || fatal "MIP worker script hash mismatch: expected $EXPECTED_WORKER_SHA256, found $ACTUAL_WORKER_SHA256"
+fi
+
+if (( $# < 1 || $# > 5 )); then
+    fatal "Usage: sbatch submit_exact_pool_mip.sub RESULT [MIP_SECONDS] [OUT_JSON] [MIP_GAP] [INITIAL_PARTITION_ROUTES]"
 fi
 
 SUBMIT_DIR=${SLURM_SUBMIT_DIR:-$PWD}
 RESULT_ARG=$1
 MIP_SECONDS=${2:-7200}
 OUT_ARG=${3:-}
+MIP_GAP=${4:-0.0001}
+INITIAL_PARTITION_ARG=${5:-}
 
 [[ "$MIP_SECONDS" =~ ^[1-9][0-9]*$ ]] \
     || fatal "MIP_SECONDS must be a positive integer; got '$MIP_SECONDS'"
+if ! python3 - "$MIP_GAP" <<'PY'
+import math
+import sys
+
+value = float(sys.argv[1])
+raise SystemExit(0 if math.isfinite(value) and 0.0 <= value < 1.0 else 1)
+PY
+then
+    fatal "MIP_GAP must be finite and in [0, 1); got '$MIP_GAP'"
+fi
 
 # Slurm records the submit directory before this worker changes directories.
 # Resolve relative input/output arguments against it so submission works from
@@ -48,6 +71,21 @@ if [[ "$RESULT_ARG" == /* ]]; then
 else
     RESULT="$SUBMIT_DIR/$RESULT_ARG"
 fi
+
+INITIAL_PARTITION=""
+if [[ -n "$INITIAL_PARTITION_ARG" ]]; then
+    if [[ "$INITIAL_PARTITION_ARG" == /* ]]; then
+        INITIAL_PARTITION=$INITIAL_PARTITION_ARG
+    else
+        INITIAL_PARTITION="$SUBMIT_DIR/$INITIAL_PARTITION_ARG"
+    fi
+    [[ -f "$INITIAL_PARTITION" ]] \
+        || fatal "initial partition routes not found: $INITIAL_PARTITION"
+fi
+
+two_stage=${EXACT_MIP_TWO_STAGE:-0}
+[[ "$two_stage" == "0" || "$two_stage" == "1" ]] \
+    || fatal "EXACT_MIP_TWO_STAGE must be 0 or 1; got '$two_stage'"
 
 if [[ -n "$OUT_ARG" ]]; then
     if [[ "$OUT_ARG" == /* ]]; then
@@ -78,6 +116,32 @@ fi
     || fatal "EVSP_DR_ROOT=$ROOT has no src/run_exact_pool_mip.py"
 [[ -f "$RESULT" ]] || fatal "result JSON not found: $RESULT"
 
+EXPECTED_COMMIT=${EVSP_EXPECTED_COMMIT:-}
+if [[ -n "${SLURM_JOB_ID:-}" && -z "$EXPECTED_COMMIT" ]]; then
+    fatal "submitted MIP job lacks EVSP_EXPECTED_COMMIT"
+fi
+if ! OBSERVED_COMMIT=$(git -C "$ROOT" rev-parse --verify HEAD); then
+    fatal "could not resolve MIP worker Git HEAD"
+fi
+if [[ -n "$EXPECTED_COMMIT" && "$OBSERVED_COMMIT" != "$EXPECTED_COMMIT" ]]; then
+    fatal "MIP worker commit mismatch: expected $EXPECTED_COMMIT, found $OBSERVED_COMMIT"
+fi
+if ! TRACKED_STATUS=$(git -C "$ROOT" status --porcelain --untracked-files=no); then
+    fatal "could not verify MIP worker tracked state"
+fi
+if [[ -n "$TRACKED_STATUS" ]]; then
+    fatal "MIP worker checkout has tracked modifications"
+fi
+if [[ "${EVSP_REQUIRE_DETACHED:-0}" == "1" || -n "${SLURM_JOB_ID:-}" ]]; then
+    if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
+        fatal "MIP worker must run from an immutable detached checkout"
+    else
+        symbolic_status=$?
+        [[ "$symbolic_status" -eq 1 ]] \
+            || fatal "could not verify detached MIP worker HEAD"
+    fi
+fi
+
 required_partition=${EVSP_MIP_REQUIRED_PARTITION:-scaglione}
 if [[ -n "${SLURM_JOB_ID:-}" &&
       "${SLURM_JOB_PARTITION:-}" != "$required_partition" &&
@@ -107,41 +171,125 @@ export PYTHONUNBUFFERED=1
 mkdir -p "$(dirname "$OUT")"
 cd "$ROOT/src"
 
+verify_expected_hash() {
+    local label=$1
+    local path=$2
+    local expected=$3
+    [[ -n "$expected" ]] || return 0
+    [[ -f "$path" ]] || fatal "$label is missing: $path"
+    local actual
+    actual=$(sha256sum "$path")
+    actual=${actual%% *}
+    [[ "$actual" == "$expected" ]] \
+        || fatal "$label hash mismatch: expected $expected, found $actual"
+}
+
+# Authenticate the staged status before trusting its recorded journal path.
+if [[ -n "${SLURM_JOB_ID:-}" &&
+      -z "${EVSP_MIP_EXPECTED_RUNNER_SHA256:-}" ]]; then
+    fatal "submitted MIP job lacks expected runner hash"
+fi
+verify_expected_hash \
+    "reviewed MIP runner" "$ROOT/src/run_exact_pool_mip.py" \
+    "${EVSP_MIP_EXPECTED_RUNNER_SHA256:-}"
+verify_expected_hash \
+    "staged result" "$RESULT" "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}"
+
+SOURCE_JOURNAL=$(python - "$RESULT" "$ROOT/src" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, sys.argv[2])
+from run_exact_pool_mip import resolve_pool_journal
+
+result = Path(sys.argv[1])
+with result.open() as handle:
+    status = json.load(handle)
+print(resolve_pool_journal(result, status).resolve())
+PY
+)
+
+verify_campaign_inputs() {
+    if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+        [[ -n "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}" ]] \
+            || fatal "submitted MIP job lacks expected result hash"
+        [[ -n "${EVSP_MIP_EXPECTED_JOURNAL_SHA256:-}" ]] \
+            || fatal "submitted MIP job lacks expected journal hash"
+        if [[ -n "$INITIAL_PARTITION" ]]; then
+            [[ -n "${EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256:-}" ]] \
+                || fatal "submitted MIP start lacks expected hash"
+        fi
+    fi
+    verify_expected_hash \
+        "staged result" "$RESULT" "${EVSP_MIP_EXPECTED_RESULT_SHA256:-}"
+    verify_expected_hash \
+        "staged journal" "$SOURCE_JOURNAL" \
+        "${EVSP_MIP_EXPECTED_JOURNAL_SHA256:-}"
+    if [[ -n "${EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256:-}" ]]; then
+        [[ -n "$INITIAL_PARTITION" ]] \
+            || fatal "expected initial partition hash but no path was supplied"
+        verify_expected_hash \
+            "staged initial partition" "$INITIAL_PARTITION" \
+            "$EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256"
+    fi
+}
+
+verify_campaign_inputs
+
 echo "[MIP job] start       : $(date --iso-8601=seconds 2>/dev/null || date)"
 echo "[MIP job] host        : $(hostname)"
 echo "[MIP job] slurm job   : ${SLURM_JOB_ID:-none}"
 echo "[MIP job] partition   : ${SLURM_JOB_PARTITION:-none}"
 echo "[MIP job] restart     : ${SLURM_RESTART_COUNT:-0}"
 echo "[MIP job] commit      : $(git rev-parse HEAD)"
+echo "[MIP job] expected    : ${EXPECTED_COMMIT:-none}"
+echo "[MIP job] observed    : $OBSERVED_COMMIT"
 echo "[MIP job] result      : $RESULT"
 echo "[MIP job] output      : $OUT"
 echo "[MIP job] seconds     : $MIP_SECONDS"
 echo "[MIP job] threads     : ${SLURM_CPUS_PER_TASK:-8}"
+echo "[MIP job] mip gap     : $MIP_GAP"
+echo "[MIP job] two stage   : $two_stage"
+echo "[MIP job] start routes: ${INITIAL_PARTITION:-none}"
 python --version
 
 # This no-license code path catches a missing/truncated/relocated journal and
 # uncovered trips before attempting to construct a Gurobi model.
 partition_guard=()
-if [[ "${EXACT_MIP_COVER:-0}" != "1" ]]; then
+if [[ "${EXACT_MIP_COVER:-0}" != "1" && -z "$INITIAL_PARTITION" ]]; then
     partition_guard+=(--require-singleton-partition)
 fi
-python -u run_exact_pool_mip.py \
-    --result "$RESULT" \
-    "${partition_guard[@]}" \
+initial_start_args=()
+if [[ -n "$INITIAL_PARTITION" ]]; then
+    initial_start_args+=(--initial-partition-routes "$INITIAL_PARTITION")
+fi
+validation=(
+    python -u run_exact_pool_mip.py
+    --result "$RESULT"
+    "${partition_guard[@]}"
+    "${initial_start_args[@]}"
     --validate-only
+)
+"${validation[@]}"
+verify_campaign_inputs
 
 command=(
     python -u run_exact_pool_mip.py
     --result "$RESULT"
     "${partition_guard[@]}"
     --timelimit "$MIP_SECONDS"
-    --mipgap "${EXACT_MIP_GAP:-0.0001}"
+    --mipgap "$MIP_GAP"
     --threads "${SLURM_CPUS_PER_TASK:-8}"
     --out "$OUT"
 )
 if [[ "${EXACT_MIP_COVER:-0}" == "1" ]]; then
     command+=(--cover)
 fi
+if [[ "$two_stage" == "1" ]]; then
+    command+=(--two-stage)
+fi
+command+=("${initial_start_args[@]}")
 
 "${command[@]}"
 echo "[MIP job] end         : $(date --iso-8601=seconds 2>/dev/null || date)"
