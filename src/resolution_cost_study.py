@@ -333,19 +333,36 @@ def run_job(job, budget_override_s=None):
             "--memory-limit-mb", str(job["memory_limit_mb"]),
             "--out", str(output),
         ]
-    try:
-        completed = subprocess.run(
-            command, cwd=REPO_ROOT, check=False,
-            timeout=(budget + 10 if job["method_arm"] == "arc_flow" else None),
-        )
-    except subprocess.TimeoutExpired:
-        _failure_status(job, output, 124, "wall_limit")
-        return 0
+    skip_cg = False
+    if job["method_arm"] == "exact_cg" and output.is_file():
+        try:
+            skip_cg = bool(json.loads(output.read_text()).get("stop_reason"))
+        except (OSError, ValueError):
+            skip_cg = False
+    if skip_cg:
+        completed = subprocess.CompletedProcess(command, 0)
+    else:
+        try:
+            completed = subprocess.run(
+                command, cwd=REPO_ROOT, check=False,
+                timeout=(
+                    budget + 10 if job["method_arm"] == "arc_flow" else None
+                ),
+            )
+        except subprocess.TimeoutExpired:
+            _failure_status(job, output, 124, "wall_limit")
+            return 0
     if completed.returncode:
         _failure_status(job, output, completed.returncode)
         return completed.returncode
     if job["method_arm"] == "exact_cg":
         integer_output = Path(job["integer_output"])
+        if integer_output.is_file():
+            try:
+                if json.loads(integer_output.read_text()).get("stop_reason"):
+                    return 0
+            except (OSError, ValueError):
+                pass
         integer_budget = float(
             budget_override_s or job["integer_wall_limit_s"]
         )
