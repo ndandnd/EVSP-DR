@@ -556,7 +556,18 @@ class ExpandedNetwork:
         )
 
     # ── exact pricing pass ────────────────────────────────────────────────
-    def min_reduced_cost_route(self, alpha: dict[int, float]):
+    def min_reduced_cost_route(
+        self,
+        alpha: dict[int, float],
+        *,
+        objective: str = "combined-cost",
+        route_dual: float = 0.0,
+    ):
+        if objective not in {
+            "combined-cost", "artificial-elimination",
+            "fleet-only", "charging-cost",
+        }:
+            raise ValueError(f"unsupported pricing objective: {objective}")
         INF = float("inf")
         dense_duals = [
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
@@ -569,10 +580,24 @@ class ExpandedNetwork:
             if vu == INF:
                 continue
             for v, cost, dual_index in self.out[u]:
-                cand = (
-                    vu + cost
-                    - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
-                )
+                if objective == "combined-cost" and route_dual == 0.0:
+                    cand = (
+                        vu + cost
+                        - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
+                    )
+                else:
+                    objective_cost = (
+                        0.0 if objective == "artificial-elimination"
+                        else 1.0 if objective == "fleet-only" and u == 0
+                        else 0.0 if objective == "fleet-only"
+                        else cost - BUS_COST_KX
+                        if objective == "charging-cost" and u == 0
+                        else cost
+                    )
+                    cand = vu + objective_cost - (
+                        dense_duals[dual_index]
+                        if dual_index >= 0 else 0.0
+                    ) - (route_dual if u == 0 else 0.0)
                 if cand < value[v] - 1e-12:
                     value[v] = cand
                     parent[v] = (u, dual_index)
@@ -683,11 +708,18 @@ class ExpandedNetwork:
         k: int = 30,
         *,
         phase_callback=None,
+        objective: str = "combined-cost",
+        route_dual: float = 0.0,
     ):
         """Best route plus up to k-1 additional negative columns from the same
         pass: min-cost paths ending at the k best distinct sink-predecessors."""
         started = time.perf_counter()
-        best = self.min_reduced_cost_route(alpha)
+        if objective == "combined-cost" and route_dual == 0.0:
+            best = self.min_reduced_cost_route(alpha)
+        else:
+            best = self.min_reduced_cost_route(
+                alpha, objective=objective, route_dual=route_dual,
+            )
         if phase_callback is not None:
             phase_callback(
                 "pricing_shortest_path",
@@ -708,7 +740,11 @@ class ExpandedNetwork:
         for u, cost in self.sink_arcs:
             if value[u] == float("inf"):
                 continue
-            candidates.append((value[u] + cost, u))
+            sink_cost = (
+                cost if objective in {"combined-cost", "charging-cost"}
+                else 0.0
+            )
+            candidates.append((value[u] + sink_cost, u))
         candidates.sort()
         routes, seen = [best], {frozenset(best["trips"])}
         for rc, u in candidates[: max(4 * k, 200)]:
@@ -2502,6 +2538,13 @@ def main(argv=None) -> int:
              "default; artificial starts pricing from Big-M artificials only.",
     )
     parser.add_argument(
+        "--objective",
+        choices=("combined-cost", "lexicographic-fleet"),
+        default=argparse.SUPPRESS,
+        help="Opt in to three-phase artificial/fleet/charging exact CG. "
+             "Omitting this flag preserves the combined-cost path exactly.",
+    )
+    parser.add_argument(
         "--validated-seed-routes",
         type=Path,
         default=None,
@@ -2578,6 +2621,10 @@ def main(argv=None) -> int:
             "--validated-seed-routes and --augmentation-label are required "
             "together"
         )
+    runner = run_cg
+    if getattr(args, "objective", "combined-cost") == "lexicographic-fleet":
+        from lexicographic_fleet_cg import run_lexicographic_fleet_cg
+        runner = run_lexicographic_fleet_cg
     if args.out:
         lock_metadata = {
             "pid": os.getpid(),
@@ -2590,10 +2637,10 @@ def main(argv=None) -> int:
             "expected_commit": os.environ.get("EVSP_EXPECTED_COMMIT"),
         }
         with exclusive_output_lock(args.out, lock_metadata):
-            result = run_cg(args)
+            result = runner(args)
             atomic_write_json(args.out, result)
     else:
-        result = run_cg(args)
+        result = runner(args)
     return 0
 
 
