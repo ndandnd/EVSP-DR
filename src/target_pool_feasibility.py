@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -20,7 +21,6 @@ from run_exact_pool_mip import (
     verified_mip_code_identity,
     write_new_json,
 )
-from durable_io import read_jsonl_records
 
 
 SCHEMA = "evsp-dr-target-pool-feasibility-v1"
@@ -54,8 +54,8 @@ def _trip_rows(routes, trips):
     return rows
 
 
-def load_bound_pool(status, journal_path):
-    """Load records only from the already resolved and hash-bound journal."""
+def load_bound_pool_bytes(status, journal_bytes):
+    """Parse exactly the immutable journal bytes whose digest is recorded."""
 
     trips = status.get("trip_ids")
     if (
@@ -66,9 +66,16 @@ def load_bound_pool(status, journal_path):
     ):
         raise ValueError("source status has invalid trip_ids")
     allowed = set(trips)
-    routes = read_jsonl_records(
-        Path(journal_path), repair_trailing=False,
-    )
+    routes = []
+    for ordinal, line in enumerate(journal_bytes.splitlines(), start=1):
+        if not line.strip():
+            continue
+        try:
+            routes.append(json.loads(line))
+        except (UnicodeDecodeError, ValueError) as exc:
+            raise ValueError(
+                f"journal route {ordinal} is malformed"
+            ) from exc
     for ordinal, route in enumerate(routes, start=1):
         route_trips = route.get("trips") if isinstance(route, dict) else None
         if (
@@ -89,6 +96,12 @@ def load_bound_pool(status, journal_path):
         if not math.isfinite(cost):
             raise ValueError(f"journal route {ordinal} has non-finite cost")
     return routes, list(trips)
+
+
+def load_bound_pool(status, journal_path):
+    """Compatibility wrapper that reads one already canonical path once."""
+
+    return load_bound_pool_bytes(status, Path(journal_path).read_bytes())
 
 
 def solve_target_feasibility(
@@ -177,17 +190,27 @@ def solve_target_feasibility(
 
 
 def evaluate(args):
-    result_path = Path(args.result).resolve()
+    result_path = Path(args.result).resolve(strict=True)
     requested_output = Path(args.out)
     if os.path.lexists(requested_output):
         raise FileExistsError(requested_output)
     output_path = requested_output.resolve()
     code_identity = verified_mip_code_identity()
-    source_status = json.loads(result_path.read_text())
-    source_journal = resolve_pool_journal(result_path, source_status)
-    source_result_sha256 = file_sha256(result_path)
-    source_journal_sha256 = file_sha256(source_journal)
-    routes, trips = load_bound_pool(source_status, source_journal)
+    source_status_bytes = result_path.read_bytes()
+    source_status = json.loads(source_status_bytes)
+    source_journal = resolve_pool_journal(
+        result_path, source_status
+    ).resolve(strict=True)
+    source_journal_bytes = source_journal.read_bytes()
+    source_result_sha256 = hashlib.sha256(
+        source_status_bytes
+    ).hexdigest()
+    source_journal_sha256 = hashlib.sha256(
+        source_journal_bytes
+    ).hexdigest()
+    routes, trips = load_bound_pool_bytes(
+        source_status, source_journal_bytes
+    )
     if (
         file_sha256(result_path) != source_result_sha256
         or file_sha256(source_journal) != source_journal_sha256
@@ -252,7 +275,7 @@ def evaluate(args):
         "source": {
             "result": str(result_path),
             "result_sha256": source_result_sha256,
-            "journal": str(source_journal.resolve()),
+            "journal": str(source_journal),
             "journal_sha256": source_journal_sha256,
             "instance_sha256": (source_status.get("provenance") or {}).get(
                 "instance_sha256"

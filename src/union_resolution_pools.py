@@ -7,17 +7,21 @@ import argparse
 import hashlib
 import json
 import os
+import tempfile
 from pathlib import Path
 
 from run_exact_pool_mip import (
     file_sha256,
     prepare_strict_partition_pool,
-    validate_injected_route,
+    validate_final_selected_routes,
     resolve_pool_journal,
     verified_mip_code_identity,
     write_new_json,
 )
-from target_pool_feasibility import load_bound_pool, solve_target_feasibility
+from target_pool_feasibility import (
+    load_bound_pool_bytes,
+    solve_target_feasibility,
+)
 
 
 SCHEMA = "evsp-dr-resolution-pool-union-v1"
@@ -52,11 +56,57 @@ def _identity(status):
     }
 
 
+def _snapshot_inputs(status, expected_hashes, *, data_dir=None,
+                     reference_data_dir=None, target):
+    data_root = Path(
+        data_dir if data_dir is not None
+        else Path(__file__).resolve().parent.parent/"data"
+    ).resolve()
+    reference_root = Path(
+        reference_data_dir if reference_data_dir is not None else data_root
+    ).resolve()
+    relative_instance = Path(str(status["csv"]))
+    relative_prices = Path(str(status["prices_csv"]))
+    if (
+        relative_instance.is_absolute() or ".." in relative_instance.parts
+        or relative_prices.is_absolute() or ".." in relative_prices.parts
+    ):
+        raise ValueError("pool union input path escapes data root")
+    files = {
+        "instance_sha256": (
+            data_root/relative_instance, target/"data"/relative_instance
+        ),
+        "prices_sha256": (
+            data_root/relative_prices, target/"data"/relative_prices
+        ),
+        "reference_sha256": (
+            reference_root/"Ref_dict.csv", target/"reference"/"Ref_dict.csv"
+        ),
+        "deadhead_sha256": (
+            reference_root/"par_ref_dhd.csv",
+            target/"reference"/"par_ref_dhd.csv",
+        ),
+    }
+    for field, (source, destination) in files.items():
+        payload = source.read_bytes()
+        if hashlib.sha256(payload).hexdigest() != expected_hashes.get(field):
+            raise ValueError(f"pool union current {field} mismatch")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(payload)
+    return target/"data", target/"reference"
+
+
 def merge_route_sets(sources):
     """Return a deterministic route-hash union and superset proof."""
 
     if len(sources) < 2:
         raise ValueError("resolution union requires at least two sources")
+    source_ids = [
+        source.get("source_id", f"source_{index}")
+        for index, source in enumerate(sources)
+    ]
+    if len(source_ids) != len(set(source_ids)):
+        raise ValueError("resolution union repeats an exact source")
     expected = sources[0]["identity"]
     for source in sources:
         if source["identity"] != expected:
@@ -69,13 +119,16 @@ def merge_route_sets(sources):
                 + ",".join(differences)
             )
     union = {}
+    retained_sources = {}
     source_hash_sets = {}
     for source_index, source in enumerate(sources):
         hashes = set()
         for route in source["routes"]:
             digest = route_sha256(route)
             hashes.add(digest)
-            union.setdefault(digest, route)
+            if digest not in union:
+                union[digest] = route
+                retained_sources[digest] = source_ids[source_index]
         source_hash_sets[
             source.get("source_id", f"source_{source_index}")
         ] = hashes
@@ -95,6 +148,10 @@ def merge_route_sets(sources):
             "union_route_hashes_sha256": hashlib.sha256(
                 _canonical(ordered_hashes)
             ).hexdigest(),
+            "retained_route_sources": {
+                digest: retained_sources[digest]
+                for digest in ordered_hashes
+            },
         },
     )
 
@@ -119,51 +176,29 @@ def _write_new_jsonl(path, records):
 
 def validate_union_witness(union, routes, *, data_dir=None,
                            reference_data_dir=None):
-    from audit_giro_known_columns import HORIZON_MIN, build_problem
-    from expanded_path_realization import validate_continuous_charging_blocks
-    from config import CHARGING_STATIONS
-    from utils_v2 import load_station_hourly_prices
-
-    data_root = Path(
-        data_dir if data_dir is not None
-        else Path(__file__).resolve().parent.parent/"data"
-    ).resolve()
-    reference_root = Path(
-        reference_data_dir if reference_data_dir is not None else data_root
-    ).resolve()
-    problem = build_problem(
-        data_root,
-        union["csv"],
-        max_station_to_trip_wait_min=HORIZON_MIN,
-        reference_data_dir=reference_root,
-    )
-    if list(problem.trips) != list(union["trip_ids"]):
-        raise RuntimeError("union witness instance trip identity changed")
-    prices = load_station_hourly_prices(
-        data_root/union["prices_csv"], CHARGING_STATIONS,
-    )
-    counts = {trip: 0 for trip in problem.trips}
-    hashes = []
-    reserve = float(union["min_soc_frac"])*float(union["g_kwh"])
-    for route in routes:
-        reason = validate_injected_route(
-            problem, route, float(union["g_kwh"]),
-            float(union["charge_kw"]), reserve, HORIZON_MIN,
+    if not union.get("sources"):
+        raise RuntimeError("union witness lacks source provenance")
+    source = union["sources"][0]
+    status = source["status"]
+    with tempfile.TemporaryDirectory(
+        prefix="evsp-union-final-replay-"
+    ) as snapshot_tmp:
+        snapshot_data, snapshot_reference = _snapshot_inputs(
+            status,
+            union["provenance"],
+            data_dir=data_dir,
+            reference_data_dir=reference_data_dir,
+            target=Path(snapshot_tmp),
         )
-        if reason is not None:
-            raise RuntimeError(f"union witness route failed replay: {reason}")
-        validate_continuous_charging_blocks(
-            route,
-            route.get("continuous_realized_charging_blocks"),
-            station_prices=prices,
-            charge_kw=float(union["charge_kw"]),
-            expected_continuous_cost=route.get("continuous_realized_cost"),
+        validate_final_selected_routes(
+            status,
+            union["trip_ids"],
+            routes,
+            data_dir=snapshot_data,
+            reference_data_dir=snapshot_reference,
+            physical_pool_audit=source["physical_pool_audit"],
         )
-        for trip in route["trips"]:
-            counts[trip] += 1
-        hashes.append(route_sha256(route))
-    if any(value != 1 for value in counts.values()):
-        raise RuntimeError("union witness is not an immutable exact partition")
+    hashes = [route_sha256(route) for route in routes]
     return {
         "validated": True,
         "route_count": len(routes),
@@ -184,39 +219,59 @@ def build_union(result_paths, *, output_path, data_dir=None,
         raise FileExistsError("union output or journal already exists")
     code_identity = verified_mip_code_identity()
     from audit_giro_known_columns import HORIZON_MIN, build_problem
-    data_root = Path(
-        data_dir if data_dir is not None
-        else Path(__file__).resolve().parent.parent/"data"
-    ).resolve()
-    reference_root = Path(
-        reference_data_dir if reference_data_dir is not None else data_root
-    ).resolve()
     loaded = []
     for result in result_paths:
-        result = Path(result).resolve()
+        result = Path(result).resolve(strict=True)
         status_raw = result.read_bytes()
         status = json.loads(status_raw)
-        journal = resolve_pool_journal(result, status)
+        journal = resolve_pool_journal(
+            result, status
+        ).resolve(strict=True)
+        journal_raw = journal.read_bytes()
         result_sha = hashlib.sha256(status_raw).hexdigest()
-        journal_sha = file_sha256(journal)
-        routes, trips = load_bound_pool(status, journal)
+        journal_sha = hashlib.sha256(journal_raw).hexdigest()
+        routes, trips = load_bound_pool_bytes(status, journal_raw)
         if (
             file_sha256(result) != result_sha
             or file_sha256(journal) != journal_sha
         ):
             raise RuntimeError("pool union source changed while loading")
-        admitted, audit = prepare_strict_partition_pool(
-            status,
-            routes,
-            data_dir=data_dir,
-            reference_data_dir=reference_data_dir,
-        )
+        provenance = status.get("provenance") or {}
+        required_hashes = {
+            field: provenance.get(field) for field in (
+                "instance_sha256", "prices_sha256",
+                "reference_sha256", "deadhead_sha256",
+            )
+        }
+        if any(not value for value in required_hashes.values()):
+            raise ValueError("pool union source lacks mandatory input hashes")
+        with tempfile.TemporaryDirectory(
+            prefix="evsp-pool-union-inputs-"
+        ) as snapshot_tmp:
+            snapshot_data, snapshot_reference = _snapshot_inputs(
+                status,
+                required_hashes,
+                data_dir=data_dir,
+                reference_data_dir=reference_data_dir,
+                target=Path(snapshot_tmp),
+            )
+            admitted, audit = prepare_strict_partition_pool(
+                status,
+                routes,
+                data_dir=snapshot_data,
+                reference_data_dir=snapshot_reference,
+            )
+            problem = build_problem(
+                snapshot_data,
+                status["csv"],
+                max_station_to_trip_wait_min=HORIZON_MIN,
+                reference_data_dir=snapshot_reference,
+            )
         if (
             file_sha256(result) != result_sha
             or file_sha256(journal) != journal_sha
         ):
             raise RuntimeError("pool union source changed during physical audit")
-        provenance = status.get("provenance") or {}
         audited_hashes = audit.get("input_hashes") or {}
         for field in (
             "instance_sha256", "prices_sha256",
@@ -226,12 +281,6 @@ def build_union(result_paths, *, output_path, data_dir=None,
                 raise ValueError(
                     f"pool union source lacks matching {field}"
                 )
-        problem = build_problem(
-            data_root,
-            status["csv"],
-            max_station_to_trip_wait_min=HORIZON_MIN,
-            reference_data_dir=reference_root,
-        )
         if list(problem.trips) != trips:
             raise ValueError(
                 "pool union status trip_ids differ from immutable instance"
@@ -241,8 +290,9 @@ def build_union(result_paths, *, output_path, data_dir=None,
                 [str(result), result_sha, journal_sha]
             )).hexdigest(),
             "result": str(result),
+            "status": status,
             "result_sha256": result_sha,
-            "journal": str(journal.resolve()),
+            "journal": str(journal),
             "journal_sha256": journal_sha,
             "identity": _identity(status),
             "grid": {
@@ -281,8 +331,9 @@ def build_union(result_paths, *, output_path, data_dir=None,
         "sources": [
             {
                 key: source[key] for key in (
-                    "result", "result_sha256", "journal", "journal_sha256",
-                    "grid", "physical_pool_audit",
+                    "source_id", "result", "result_sha256", "journal",
+                    "journal_sha256", "status", "grid",
+                    "physical_pool_audit",
                 )
             }
             for source in loaded

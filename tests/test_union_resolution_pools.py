@@ -1,3 +1,4 @@
+import hashlib
 import json
 import sys
 import tempfile
@@ -11,8 +12,10 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from target_pool_feasibility import solve_target_feasibility  # noqa: E402
+import exact_pricer_expanded as exact  # noqa: E402
 from union_resolution_pools import (  # noqa: E402
     build_union,
+    evaluate,
     merge_route_sets,
     route_sha256,
     validate_union_witness,
@@ -186,13 +189,79 @@ class ResolutionPoolUnionTests(unittest.TestCase):
         union={
             "csv":"instance.csv","prices_csv":"prices.csv",
             "trip_ids":[0],"g_kwh":300.0,"charge_kw":300.0,
-            "min_soc_frac":0.0,
+            "min_soc_frac":0.0,"provenance":identity(),
+            "sources":[{
+                "status":{"csv":"instance.csv","prices_csv":"prices.csv"},
+                "physical_pool_audit":{"input_hashes":identity()},
+            }],
         }
-        with patch(
-            "audit_giro_known_columns.build_problem",
-            return_value=SimpleNamespace(trips=(0,1)),
-        ), self.assertRaisesRegex(RuntimeError,"trip identity"):
+        with (
+            patch("union_resolution_pools._snapshot_inputs",
+                  return_value=(Path("/data"),Path("/reference"))),
+            patch("union_resolution_pools.validate_final_selected_routes",
+                  side_effect=RuntimeError("trip identity")),
+            self.assertRaisesRegex(RuntimeError,"trip identity"),
+        ):
             validate_union_witness(union,[route([0])])
+
+    def test_union_rejects_repeated_exact_source_identity(self):
+        source={
+            "source_id":"same","identity":identity(),
+            "journal_sha256":"a","routes":[route([0]),route([1])],
+        }
+        with self.assertRaisesRegex(ValueError,"repeats an exact source"):
+            merge_route_sets([source,dict(source)])
+
+    def test_end_to_end_union_feasible_witness_is_strictly_replayed(self):
+        data=REPO/"data";csv_name="Practice_Selected_1buses.csv"
+        problem=exact.build_problem(
+            data,csv_name,
+            max_station_to_trip_wait_min=exact.HORIZON_MIN,
+        )
+        hashes={
+            "instance_sha256":hashlib.sha256((data/csv_name).read_bytes()).hexdigest(),
+            "prices_sha256":hashlib.sha256((data/"hourly_prices_flat.csv").read_bytes()).hexdigest(),
+            "reference_sha256":hashlib.sha256((data/"Ref_dict.csv").read_bytes()).hexdigest(),
+            "deadhead_sha256":hashlib.sha256((data/"par_ref_dhd.csv").read_bytes()).hexdigest(),
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);sources=[]
+            for soc_step in (15.0,5.0):
+                records,missing=exact.direct_singleton_seed_records(
+                    problem,g_kwh=300.0,soc_step=soc_step,reserve_kwh=0.0,
+                )
+                self.assertEqual(missing,[])
+                for record in records:
+                    record["cost_tariff_sha256"]=hashes["prices_sha256"]
+                status={
+                    "csv":csv_name,"prices_csv":"hourly_prices_flat.csv",
+                    "trip_ids":list(problem.trips),"g_kwh":300.0,
+                    "charge_kw":300.0,"min_soc_frac":0.0,
+                    "soc_step":soc_step,"block_min":10,
+                    "provenance":hashes,
+                }
+                result=root/f"source_{soc_step}.json"
+                journal=Path(str(result)+".columns.jsonl")
+                journal.write_text("".join(
+                    json.dumps(record)+"\n" for record in records
+                ))
+                result.write_text(json.dumps({
+                    **status,"columns_journal":str(journal),
+                }))
+                sources.append(result)
+            args=SimpleNamespace(
+                result=sources,target=len(problem.trips),timelimit=30,
+                threads=1,seed=0,data_dir=data,reference_data_dir=data,
+                out=root/"union.json",mip_out=root/"mip.json",
+            )
+            union,mip=evaluate(args)
+            self.assertEqual(mip["outcome"],"FEASIBLE")
+            self.assertTrue(mip["witness_audit"]["validated"])
+            self.assertEqual(union["source_count"],2)
+            self.assertEqual(
+                len({source["journal_sha256"] for source in union["sources"]}),
+                1,
+            )
 
 
 if __name__ == "__main__":
