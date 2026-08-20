@@ -87,3 +87,7 @@ grid infeasibility is therefore not evidence of physical infeasibility.
 - `duty_results.csv`: requested per-duty/tariff table.
 - `union_concurrency.csv`: simultaneous charging measured after independently
   optimizing every duty in each union.
+- `FACTORIAL_DIAGNOSTIC.md`: 2×2×2 start/terminal/tariff sweep and
+  prefix-causal bound.
+- `TWO_PEAK_INSTRUMENT.md`: construction and provenance for the synthetic
+  SE3-shaped two-peak instrument.

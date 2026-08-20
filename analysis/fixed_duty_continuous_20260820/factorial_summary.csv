@@ -1,0 +1,9 @@
+tariff,terminal_policy,start_treatment,duties_total,duties_comparable,infeasible_duties,event_cap_basis,arrival_cost,optimized_cost,saving,saving_pct,arrival_events,optimized_events,optimized_kwh,delayed_starts,replay_ok
+peak12,>= reserve,zero_uncapped,15,15,,,516.585654263042,508.790509566585,7.795144696457,1.508974287638,159,160,5202.715947030,20,true
+peak12,>= reserve,zero_observed_event_cap,15,15,,GIRO recorded charge count per duty,530.367189903627,523.939607795024,6.427582108603,1.211911715310,139,138,5191.115947030,15,true
+peak12,>= initial,zero_uncapped,15,12,13302;13410;13304,,537.536345889630,497.124615044303,40.411730845328,7.517953186672,121,119,6712.840963750,16,true
+peak12,>= initial,zero_observed_event_cap,15,12,13302;13410;13304,GIRO recorded charge count per duty,546.458045654545,506.046314809217,40.411730845327,7.395211977696,108,108,6711.640963750,15,true
+two_peak_se3_synthetic,>= reserve,zero_uncapped,15,15,,,522.714547043824,494.865558922573,27.848988121251,5.327762213382,136,132,5199.515947030,22,true
+two_peak_se3_synthetic,>= reserve,zero_observed_event_cap,15,15,,GIRO recorded charge count per duty,529.362513638229,500.528911788453,28.833601849776,5.446853735752,120,121,5194.115947038,22,true
+two_peak_se3_synthetic,>= initial,zero_uncapped,15,12,13302;13410;13304,,686.998822340254,505.308171849542,181.690650490712,26.447010472563,117,104,6711.640963750,19,true
+two_peak_se3_synthetic,>= initial,zero_observed_event_cap,15,12,13302;13410;13304,GIRO recorded charge count per duty,705.481370722218,511.992265179939,193.489105542279,27.426536485889,98,93,6711.640963750,19,true
