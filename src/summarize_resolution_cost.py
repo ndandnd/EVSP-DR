@@ -17,7 +17,9 @@ from resolution_cost_study import SCHEMA, _sha256_json
 LONG_FIELDS = (
     "job_key", "cell_id", "scale", "selection_replicate",
     "physics_profile", "g_kwh", "charge_kw", "soc_step", "block_min",
-    "commensurate", "charge_grid_loss_kwh", "trip_count", "target_fleet",
+    "grid_id", "grid_role", "commensurate", "charge_kwh_per_block",
+    "credited_charge_kwh_per_block", "charge_grid_loss_kwh",
+    "trip_count", "target_fleet", "instance_sha256",
     "status_path", "status_present", "stop_reason", "certified",
     "dag_nodes", "dag_arcs", "dag_build_wall_s", "estimated_dag_nodes_upper",
     "peak_rss_mb", "iterations_to_certificate", "wall_to_certificate",
@@ -223,6 +225,20 @@ def fit_log_model(rows, response):
         "inverse_soc_step_exponent": float(coefficients[2]),
         "inverse_block_min_exponent": float(coefficients[3]),
         "r_squared": 1.0 - residual / total if total > 0 else 1.0,
+        "training_ranges": {
+            "trips": [
+                min(row["trip_count"] for row in usable),
+                max(row["trip_count"] for row in usable),
+            ],
+            "soc_step": [
+                min(row["soc_step"] for row in usable),
+                max(row["soc_step"] for row in usable),
+            ],
+            "block_min": [
+                min(row["block_min"] for row in usable),
+                max(row["block_min"] for row in usable),
+            ],
+        },
     }
 
 
@@ -279,8 +295,9 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             if predicted_wall is not None else None
         ),
         "extrapolation_warning":
-            "1 kWh is outside the fitted 2.5-15 kWh study range; "
-            "wall fit uses certified, hence selected, cells only.",
+            "Target 947 trips and 1 kWh are outside the local fitted ranges "
+            "(k2/k3: 29-71 trips; 2.5-15 kWh); wall fit uses certified, "
+            "hence selected, cells only.",
         "rows": len(rows),
         "certified_rows": sum(bool(row["certified"]) for row in rows),
     }

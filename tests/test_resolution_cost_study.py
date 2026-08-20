@@ -206,12 +206,16 @@ class ResolutionCostStudyTests(unittest.TestCase):
                 result["wall_model"]["inverse_block_min_exponent"], 0.9,
                 places=6,
             )
+            self.assertEqual(
+                result["wall_model"]["training_ranges"]["trips"], [29, 71],
+            )
             with long_path.open(newline="") as handle:
                 rows = list(csv.DictReader(handle))
             joined = next(row for row in rows if row["job_key"] == first["job_key"])
             self.assertEqual(
                 float(joined["integer_fleet"]), first["target_fleet"] + 1,
             )
+            self.assertEqual(joined["grid_id"], first["grid_id"])
             self.assertEqual(len(rows), 168)
 
 
