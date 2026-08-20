@@ -224,6 +224,35 @@ class ExactPricerResumeTests(unittest.TestCase):
             self.assertEqual(journal.read_text(), journal_original)
             self.assertEqual(iters.read_text(), iters_original)
 
+    def test_resume_rejects_seed_hash_before_modifying_status_or_journal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            status = self._status(stop_reason="certified")
+            status.update({
+                "trip_ids": [1],
+                "initial_pool_sha256": "0" * 64,
+            })
+            status_original = json.dumps(status)
+            out.write_text(status_original)
+            record = dict(self._record())
+            record.update({
+                "trips": [1],
+                "origin": "exact_direct_singleton_seed",
+                "cost_tariff_sha256": "prices-hash",
+            })
+            journal = Path(str(out) + ".columns.jsonl")
+            journal_original = json.dumps(record) + "\n" + '{"trips":'
+            journal.write_text(journal_original)
+
+            with self.assertRaisesRegex(
+                    DurableFileError, "journal hash differs"):
+                self._run_with_lightweight_problem(
+                    self._args(out), trips=[1]
+                )
+
+            self.assertEqual(out.read_text(), status_original)
+            self.assertEqual(journal.read_text(), journal_original)
+
     def test_resume_rejects_status_ahead_of_missing_journal(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"

@@ -1073,6 +1073,39 @@ def load_column_pool(records: list[dict], trip_ids: list[int]) -> dict:
     return pool
 
 
+def persisted_initial_pool_sha256(path, mode):
+    """Hash complete seed records without repairing or rewriting a journal."""
+
+    from exact_initial_pools import pool_sha256
+
+    records = []
+    lines = Path(path).read_bytes().splitlines(keepends=True)
+    for index, line in enumerate(lines):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except (UnicodeDecodeError, ValueError) as exc:
+            if index == len(lines) - 1 and not line.endswith(b"\n"):
+                break
+            raise DurableFileError(
+                f"{path} has corrupt initial-pool journal data"
+            ) from exc
+        if (
+            mode == "singletons"
+            and record.get("origin") == "exact_direct_singleton_seed"
+        ) or (
+            mode in {"matching", "greedy"}
+            and record.get("origin") == f"exact_{mode}_initial_seed"
+        ):
+            records.append(record)
+    if mode in {"singletons", "matching", "greedy"} and not records:
+        raise DurableFileError(
+            f"{path} contains no complete {mode} initial-pool records"
+        )
+    return pool_sha256(records)
+
+
 def resume_pool_mismatches(status, pool: dict) -> list[str]:
     """Validate status claims that require the repaired journal contents."""
 
@@ -1171,6 +1204,35 @@ def run_cg(args) -> dict:
             f"refusing --resume for {journal_path} before modifying persisted "
             "artifacts: " + "; ".join(identity_mismatches)
         )
+    if args.resume and persisted_paths and not identity_mismatches:
+        saved_pool_hash = prior_status.get("initial_pool_sha256")
+        legacy_singletons = (
+            "initial_pool_sha256" not in prior_status
+            and args.initial_pool == "singletons"
+        )
+        interrupted_initialization = (
+            "initial_pool_sha256" in prior_status
+            and saved_pool_hash is None
+            and prior_status.get("stop_reason") == "initializing"
+            and int(prior_status.get("columns", -1)) == 0
+        )
+        if saved_pool_hash is None:
+            if not (legacy_singletons or interrupted_initialization):
+                raise DurableFileError(
+                    "persisted initial pool has no permitted hash identity"
+                )
+        else:
+            if journal_path is None or not journal_path.exists():
+                raise DurableFileError(
+                    "persisted initial-pool hash has no journal"
+                )
+            observed_pool_hash = persisted_initial_pool_sha256(
+                journal_path, args.initial_pool
+            )
+            if observed_pool_hash != saved_pool_hash:
+                raise DurableFileError(
+                    "persisted initial-pool journal hash differs"
+                )
 
     if args.resume and journal_path and journal_path.exists():
         # A hard preemption can interrupt only the last append.  Repair that

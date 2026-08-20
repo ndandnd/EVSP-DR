@@ -65,6 +65,20 @@ def _trip_sequences(problem, mode, *, depot, stations, g_kwh, charge_kw,
             charge_start_cost=CHARGE_START_COST,
         )
         generator = "matching_init.build_matching_initial_routes"
+        matching = dict((proposed[0].get("_matching_init") or {}))
+        generator_details = {
+            "heuristic_relaxed_route_count": matching.get(
+                "relaxed_minimum_path_count", len(proposed)
+            ),
+            "heuristic_realized_route_count": len(proposed),
+            "heuristic_contiguous_splits_added": matching.get(
+                "contiguous_splits_added", 0
+            ),
+            "heuristic_resource_repair_mode": matching.get(
+                "resource_repair_mode", "none"
+            ),
+            "matching_initialization": matching,
+        }
     elif mode == "greedy":
         tau, tau_min, energy = {}, {}, {}
         for source, entries in problem.adjacency.items():
@@ -100,6 +114,12 @@ def _trip_sequences(problem, mode, *, depot, stations, g_kwh, charge_kw,
             min_soc_fraction=reserve_kwh / g_kwh,
         )
         generator = "greedy_init.build_greedy_routes"
+        generator_details = {
+            "heuristic_relaxed_route_count": len(proposed),
+            "heuristic_realized_route_count": len(proposed),
+            "heuristic_contiguous_splits_added": 0,
+            "heuristic_resource_repair_mode": "none",
+        }
     else:
         raise ValueError(f"unsupported heuristic initial pool: {mode}")
     trip_set = set(trips)
@@ -115,7 +135,7 @@ def _trip_sequences(problem, mode, *, depot, stations, g_kwh, charge_kw,
         or set(covered) != trip_set
     ):
         raise ValueError(f"{mode} initializer is not an exact trip partition")
-    return sequences, generator
+    return sequences, generator, generator_details
 
 
 def build_heuristic_initial_pool(
@@ -135,7 +155,7 @@ def build_heuristic_initial_pool(
 ):
     """Generate heuristic sequences and realize them in the exact route space."""
 
-    sequences, generator = _trip_sequences(
+    sequences, generator, generator_details = _trip_sequences(
         problem,
         mode,
         depot=depot,
@@ -215,9 +235,18 @@ def build_heuristic_initial_pool(
         mode,
         records,
         generator=generator,
-        heuristic_route_count=len(sequences),
+        heuristic_route_count=generator_details[
+            "heuristic_relaxed_route_count"
+        ],
+        **generator_details,
         exact_route_count=len(records),
-        contiguous_splits_added=len(records) - len(sequences),
+        expanded_grid_contiguous_splits_added=(
+            len(records) - len(sequences)
+        ),
+        total_contiguous_splits_added=(
+            generator_details["heuristic_contiguous_splits_added"]
+            + len(records) - len(sequences)
+        ),
         realization="fixed_duty_expanded_optimizer",
         physics={
             "g_kwh": g_kwh,

@@ -355,6 +355,7 @@ def run_lexicographic_fleet_cg(args):
     pool = {}
     from exact_initial_pools import (
         build_heuristic_initial_pool,
+        pool_sha256,
         pool_provenance,
     )
     if args.initial_pool == "singletons":
@@ -395,14 +396,18 @@ def run_lexicographic_fleet_cg(args):
         initial_pool_provenance = pool_provenance(
             "artificial", [], generator="none_artificial_variables_only",
         )
-    initial_pool_sha256 = initial_pool_provenance["generated_pool_sha256"]
+    for seed in seeds:
+        seed["found_lexicographic_phase"] = 0
+        pool[frozenset(seed["trips"])] = seed
+    initial_pool_sha256 = pool_sha256(seeds)
+    initial_pool_provenance = {
+        **initial_pool_provenance,
+        "generated_pool_sha256": initial_pool_sha256,
+    }
     identity.update({
         "initial_pool": args.initial_pool,
         "initial_pool_sha256": initial_pool_sha256,
     })
-    for seed in seeds:
-        seed["found_lexicographic_phase"] = 0
-        pool[frozenset(seed["trips"])] = seed
     if output:
         output.parent.mkdir(parents=True, exist_ok=True)
     journal_handle = open(journal_path, "x") if journal_path else None
