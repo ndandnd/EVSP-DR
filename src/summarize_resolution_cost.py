@@ -193,10 +193,10 @@ def build_rows(plan, mip_roots=None):
     return rows
 
 
-def fit_log_model(rows, response):
+def fit_log_model(rows, response, physics_profile="p240"):
     usable = [
         row for row in rows
-        if row["physics_profile"] == "p240"
+        if row["physics_profile"] == physics_profile
         and _number(row.get(response)) not in {None, 0.0}
         and row["trip_count"] > 0
         and row["soc_step"] > 0
@@ -267,6 +267,13 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
     wall_model = fit_log_model([
         row for row in rows if row["certified"]
     ], "wall_to_certificate")
+    bridge_node_model = fit_log_model(
+        rows, "dag_nodes", physics_profile="p300_bridge",
+    )
+    bridge_wall_model = fit_log_model(
+        [row for row in rows if row["certified"]],
+        "wall_to_certificate", physics_profile="p300_bridge",
+    )
     target = plan["prediction_target"]
     predicted_nodes = predict(
         node_model, target["trip_count"], target["soc_step"], target["block_min"],
@@ -283,6 +290,10 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
         "schema": "evsp-dr-resolution-cost-extrapolation-v1",
         "node_model": node_model,
         "wall_model": wall_model,
+        "bridge_models": {
+            "node_model": bridge_node_model,
+            "wall_model": bridge_wall_model,
+        },
         "prediction_target": target,
         "predicted_dag_nodes": predicted_nodes,
         "predicted_wall_to_certificate_s": predicted_wall,

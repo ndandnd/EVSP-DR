@@ -195,6 +195,10 @@ class ResolutionCostStudyTests(unittest.TestCase):
             )
             self.assertEqual(result["rows"], 168)
             self.assertEqual(result["node_model"]["status"], "fit")
+            self.assertEqual(
+                result["bridge_models"]["node_model"]["status"],
+                "insufficient_data",
+            )
             self.assertAlmostEqual(
                 result["node_model"]["trips_exponent"], 1.2, places=6,
             )
