@@ -100,7 +100,7 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
                     return_value=journal,
                 ),
                 patch(
-                    "target_pool_feasibility.load_bound_pool",
+                    "target_pool_feasibility.load_bound_pool_bytes",
                     side_effect=swapped,
                 ),
                 patch(

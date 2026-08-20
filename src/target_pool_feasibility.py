@@ -190,11 +190,11 @@ def solve_target_feasibility(
 
 
 def evaluate(args):
-    result_path = Path(args.result).resolve(strict=True)
     requested_output = Path(args.out)
     if os.path.lexists(requested_output):
         raise FileExistsError(requested_output)
     output_path = requested_output.resolve()
+    result_path = Path(args.result).resolve(strict=True)
     code_identity = verified_mip_code_identity()
     source_status_bytes = result_path.read_bytes()
     source_status = json.loads(source_status_bytes)
