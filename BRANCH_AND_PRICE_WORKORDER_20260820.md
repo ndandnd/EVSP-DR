@@ -268,7 +268,9 @@ Then one paragraph each on:
 1. **Report executed output, never readiness.** "Packaged", "pushed", "tests
    pass", "ready" are not results. The reportable states are: code written →
    gates passing with pasted output → table produced.
-2. **If a gate fails**, say so plainly and stop. A failed G1 reported honestly is more, say so plainly and stop. A failed G1 reported honestly is more
+2. **If a gate fails, say so plainly and stop.** A failed G1 reported
+   honestly is more valuable than a working search tree built on a wrong
+   root.
 3. **RAW and KNOWN never share a row.** KNOWN is a plumbing positive control.
 4. **`route_weight` is labelled "combined-cost-master route weight"** unless
    accompanied by the §3.4 bracket.
