@@ -1153,7 +1153,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--phase-1-positive-tol", type=float, default=1e-8)
     parser.add_argument("--bound-tolerance", type=float, default=1e-5)
     parser.add_argument("--max-cg-iters", type=int, default=10000)
-    parser.add_argument("--max-depth", type=int, default=8)
+    parser.add_argument("--max-depth", type=int, default=6)
     parser.add_argument("--node-limit", type=int, default=1000)
     parser.add_argument("--wall-limit-s", type=float, default=21600.0)
     parser.add_argument("--root-mip-s", type=float, default=60.0)
