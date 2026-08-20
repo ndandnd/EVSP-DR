@@ -1,12 +1,5 @@
-"""Exact Ryan--Foster branch-and-price for the expanded-grid E-VSP.
-
-This adapter leaves the certified pricer unchanged. Active branch decisions
-expand into exact required/forbidden shortest paths, with required trips joined
-by min-plus DAG passes over all SOC states.
-"""
-
+"""Exact Ryan--Foster branch-and-price for the expanded-grid E-VSP."""
 from __future__ import annotations
-
 import argparse
 import json
 import math
@@ -19,42 +12,37 @@ from dataclasses import dataclass
 from itertools import combinations
 from pathlib import Path
 from typing import Iterable, Sequence
-
-import numpy as np
-from scipy.optimize import Bounds, LinearConstraint, milp
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, build_problem
-from config import (
-    BIG_M_PENALTY,
-    CHARGE_RATE_KW,
-    CHARGING_STATIONS,
-)
-from durable_io import atomic_write_json, read_jsonl_records
+from config import CHARGE_RATE_KW, CHARGING_STATIONS
+from durable_io import read_jsonl_records
 from exact_pricer_expanded import (
     DATA_DIR,
     ExpandedNetwork,
+    _file_sha256,
     _provenance,
     direct_singleton_seed_records,
     load_column_pool,
 )
-from expanded_path_realization import (
-    BLOCK_SCHEDULE_SCHEMA,
-    realize_expanded_path,
-    realized_costs,
-)
-from master_lp_scipy import (
-    RestrictedMasterSolveError,
-    build_route_incidence,
-    solve_restricted_master_lp,
+from expanded_path_realization import realize_expanded_path
+from lexicographic_fleet_cg import (
+    _candidate_record,
+    _solve_master as solve_phase_master,
 )
 from run_exact_pool_mip import validate_final_selected_routes
+from target_pool_feasibility import solve_target_feasibility
 from utils_v2 import load_station_hourly_prices
+from branch_and_price_state import (
+    DurableStateMixin,
+    baseline_identity as _state_baseline_identity,
+)
 class BranchAndPriceError(RuntimeError):
-    """Base class for fail-closed experiment errors."""
+    pass
 class ValidationGateError(BranchAndPriceError):
-    """A named validation gate failed."""
+    pass
+def _baseline_identity(args, provenance):
+    return _state_baseline_identity(args, provenance, ValidationGateError)
 @dataclass(frozen=True, order=True)
 class BranchConstraint:
-    """One Ryan--Foster route-incidence constraint."""
     kind: str
     left: int
     right: int
@@ -71,7 +59,8 @@ class BranchConstraint:
 class SearchNode:
     node_id: int
     constraints: tuple[BranchConstraint, ...]
-    parent_bound: float | None
+    lower_bound: float
+    parent_lp_value: float | None
     @property
     def depth(self) -> int:
         return len(self.constraints)
@@ -84,11 +73,22 @@ class NodeResult:
     min_rc: float | None
     cg_iterations: int
     reason: str
+    lower_bound: float | None
+    phase_1: dict
+    phase_2: dict | None
+@dataclass
+class PhaseResult:
+    certified: bool
+    lp: object | None
+    routes: list[dict]
+    min_rc: float | None
+    iterations: int
+    reason: str
+    stats: dict
 def route_satisfies(
     route_trips: Iterable[int],
     constraints: Sequence[BranchConstraint],
 ) -> bool:
-    """Whether a route incidence obeys every active branch decision."""
     present = set(route_trips)
     for constraint in constraints:
         left = constraint.left in present
@@ -101,11 +101,6 @@ def route_satisfies(
 def expand_constraint_assignments(
     constraints: Sequence[BranchConstraint],
 ) -> list[tuple[frozenset[int], frozenset[int]]]:
-    """Expand active decisions into exact required/forbidden subproblems.
-    The returned tuples are ``(required, forbidden)``.  Inconsistent and
-    duplicate assignments are removed, so the number of actual shortest-path
-    solves is at most ``2**len(constraints)``.
-    """
     states: set[tuple[frozenset[int], frozenset[int]]] = {
         (frozenset(), frozenset())
     }
@@ -146,7 +141,6 @@ def pair_alphas(
     *,
     value_tolerance: float = 1e-10,
 ) -> dict[tuple[int, int], float]:
-    """Compute Ryan--Foster pair co-assignment values."""
     alphas: dict[tuple[int, int], float] = {}
     for route, value in zip(routes, route_values):
         if value <= value_tolerance:
@@ -162,7 +156,6 @@ def choose_ryan_foster_pair(
     *,
     tolerance: float = 1e-7,
 ) -> tuple[tuple[int, int], float] | None:
-    """Choose the fractional pair nearest 0.5, or return ``None``."""
     fractional = [
         (abs(alpha - 0.5), pair, alpha)
         for pair, alpha in pair_alphas(routes, route_values).items()
@@ -176,7 +169,6 @@ def audit_exact_partition(
     trip_ids: Sequence[int],
     selected_routes: Sequence[dict],
 ) -> None:
-    """Fail unless selected routes cover every trip exactly once."""
     expected = set(trip_ids)
     counts = Counter()
     for ordinal, route in enumerate(selected_routes, start=1):
@@ -205,7 +197,6 @@ def assert_integral_solution(
     *,
     tolerance: float = 1e-7,
 ) -> list[dict]:
-    """G4: certify that a pair-integral LP solution is route-integral."""
     nonintegral = [
         (index, value)
         for index, value in enumerate(route_values)
@@ -229,7 +220,6 @@ def assert_child_bound(
     *,
     tolerance: float = 1e-5,
 ) -> None:
-    """G2 runtime assertion: branch restrictions cannot improve the LP."""
     allowed = max(tolerance, abs(parent_bound) * 1e-10)
     if child_bound < parent_bound - allowed:
         raise ValidationGateError(
@@ -237,8 +227,9 @@ def assert_child_bound(
             f"parent={parent_bound:.12f}, child={child_bound:.12f}, "
             f"tolerance={allowed:.3g}"
         )
+def conservative_dual_lower_bound(lp, trip_count, pricing_tolerance):
+    return sum(lp.trip_duals.values()) - trip_count * pricing_tolerance
 class ConstrainedDAGPricer:
-    """Exact shortest paths under required and forbidden trip sets."""
     def __init__(self, network):
         self.network = network
         self.problem = network.problem
@@ -278,8 +269,8 @@ class ConstrainedDAGPricer:
         forbidden: frozenset[int],
         dense_duals: Sequence[float],
         parent: list[int | None],
+        objective: str,
     ) -> tuple[list[float], dict[int, float]]:
-        """Run one DAG segment, stopping at all SOC states of target_trip."""
         inf = float("inf")
         values = [inf] * len(self.network.node_meta)
         for node, value in starts.items():
@@ -311,7 +302,13 @@ class ConstrainedDAGPricer:
                         continue
                     if key in required and key != target_trip:
                         continue
-                candidate = (value + float(base_cost)
+                objective_cost = (
+                    0.0 if objective == "artificial-elimination"
+                    else 1.0 if objective == "fleet-only" and node == 0
+                    else 0.0 if objective == "fleet-only"
+                    else float(base_cost)
+                )
+                candidate = (value + objective_cost
                              - (dense_duals[dual_index]
                                 if dual_index >= 0 else 0.0))
                 if candidate < values[successor] - 1e-12:
@@ -342,8 +339,8 @@ class ConstrainedDAGPricer:
         required: frozenset[int],
         forbidden: frozenset[int],
         max_candidates: int,
+        objective: str = "combined-cost",
     ) -> list[dict]:
-        """Solve one required/forbidden shortest-path subproblem exactly."""
         if not required.isdisjoint(forbidden):
             return []
         dense_duals = [
@@ -359,6 +356,7 @@ class ConstrainedDAGPricer:
                 forbidden=forbidden,
                 dense_duals=dense_duals,
                 parent=parent,
+                objective=objective,
             )
             if not starts:
                 return []
@@ -369,9 +367,12 @@ class ConstrainedDAGPricer:
             forbidden=forbidden,
             dense_duals=dense_duals,
             parent=parent,
+            objective=objective,
         )
         sink_candidates = sorted(
-            (values[node] + float(cost), node)
+            (values[node] + (
+                float(cost) if objective == "combined-cost" else 0.0
+            ), node)
             for node, cost in self.network.sink_arcs
             if values[node] != float("inf")
         )
@@ -409,8 +410,8 @@ class ConstrainedDAGPricer:
         constraints: Sequence[BranchConstraint],
         *,
         max_candidates: int,
+        objective: str = "combined-cost",
     ) -> tuple[list[dict], int]:
-        """Price the union of all exact disjunctive subproblems."""
         assignments = expand_constraint_assignments(constraints)
         combined: dict[frozenset[int], dict] = {}
         for required, forbidden in assignments:
@@ -419,6 +420,7 @@ class ConstrainedDAGPricer:
                 required=required,
                 forbidden=forbidden,
                 max_candidates=max_candidates,
+                objective=objective,
             )
             for route in routes:
                 if not route_satisfies(route["trips"], constraints):
@@ -436,7 +438,6 @@ class ConstrainedDAGPricer:
             len(assignments),
         )
 class ExpandedRouteAdapter:
-    """Convert a constrained DAG node path to the standard route record."""
     def __init__(self, network, prices, prices_sha256: str):
         self.network = network
         self.problem = network.problem
@@ -507,61 +508,19 @@ class ExpandedRouteAdapter:
             "_continuous_mapping": detail["mapping"],
             "_expanded_grid_charging": expanded_grid_charging,
         }
-    def record(
-        self,
-        route: dict,
-        duals: dict[int, float],
-        *,
-        found_iter: int,
-        origin: str,
-    ) -> dict:
-        cost = float(route["rc"]) + sum(
-            float(duals.get(trip, 0.0)) for trip in route["trips"]
-        )
-        record = {
-            "trips": list(route["trips"]), "cost": cost,
-            "route_nodes": list(route["route_nodes"]),
-            "charging_stops": route["charging_stops"],
-            "expanded_grid_charging_stops":
-                route["_expanded_grid_charging"],
-            "charges_started": int(route["charges_started"]),
-            "found_iter": found_iter,
-            "origin": origin,
-        }
-        mapping = route["_continuous_mapping"]
-        costs = realized_costs(record, mapping, station_prices=self.prices)
-        record.update({
-            "expanded_grid_cost": cost,
-            "continuous_realized_cost": costs["continuous_realized_cost"],
-            "continuous_realized_charging_blocks":
-                costs["continuous_realized_charging_blocks"],
-            "continuous_realized_charging_blocks_json_bytes": len(json.dumps(
-                costs["continuous_realized_charging_blocks"],
-                sort_keys=True,
-                separators=(",", ":"),
-            ).encode()),
-            "cost_semantics": "expanded_grid_cost",
-            "master_cost_semantics": "expanded_grid_cost",
-            "continuous_cost_pricing_certified": False,
-            "cost_tariff_sha256": self.prices_sha256,
-            "physical_realization": {
-                key: value
-                for key, value in mapping.items()
-                if key != "trace"
-            },
-        })
-        record["physical_realization"][
-            "continuous_realized_charging_blocks_sha256"
-        ] = costs["continuous_realized_charging_blocks_sha256"]
-        record["physical_realization"][
-            "continuous_realized_charging_blocks_schema"
-        ] = BLOCK_SCHEDULE_SCHEMA
-        return record
-class BranchAndPriceSolver:
-    """Depth-first exact branch-and-price driver."""
+class BranchAndPriceSolver(DurableStateMixin):
+    _checkpoint_fields = (
+        "pricing_solves", "pricing_calls", "pricing_wall_s", "master_solves",
+        "bound_assertions", "integrality_certificates", "integer_audits",
+        "infeasible_certificates", "nodes_explored", "nodes_depth_capped",
+        "next_node_id", "root_lower_bound", "root_min_rc",
+        "root_phase_stats", "root_record", "root_solved", "slow_nodes",
+        "ledger_events", "interrupted_reason",
+    )
     def __init__(self, args):
         self.args = args
         self.started = time.monotonic()
+        self.elapsed_offset = 0.0
         self.problem = build_problem(
             DATA_DIR,
             args.csv,
@@ -569,6 +528,7 @@ class BranchAndPriceSolver:
         )
         self.trips = list(self.problem.trips)
         self.provenance = _provenance(args)
+        self.baseline = _baseline_identity(args, self.provenance)
         self.prices = load_station_hourly_prices(
             DATA_DIR / args.prices_csv,
             CHARGING_STATIONS,
@@ -592,20 +552,52 @@ class BranchAndPriceSolver:
             self.provenance["prices_sha256"],
         )
         self.pool: dict[frozenset[int], dict] = {}
+        self.root_pool_source = None
         self._seed_singletons()
         if args.root_pool_result is not None:
             self._load_root_pool(args.root_pool_result)
         self.pricing_solves = 0
+        self.pricing_calls = 0
+        self.pricing_wall_s = 0.0
         self.master_solves = 0
         self.bound_assertions = 0
         self.integrality_certificates = 0
         self.integer_audits = 0
+        self.infeasible_certificates = 0
         self.nodes_explored = 0
         self.nodes_depth_capped = 0
         self.next_node_id = 1
         self.root_lp = None
+        self.root_lower_bound = None
         self.root_min_rc = None
+        self.root_phase_stats = None
+        self.root_record = None
         self.incumbent: dict | None = None
+        self.stack = [SearchNode(0, tuple(), 0.0, None)]
+        self.frontier_bounds: list[float] = []
+        self.root_solved = False
+        self.interrupted_reason = None
+        self.slow_nodes = 0
+        self.ledger_events = 0
+        self.run_identity = {
+            "schema": "evsp-dr-exact-branch-and-price-identity-v2",
+            "git_commit": self.provenance["git_commit"],
+            "git_dirty": self.provenance["git_dirty"],
+            **{key: self.provenance[key] for key in (
+                "instance_sha256", "prices_sha256",
+                "reference_sha256", "deadhead_sha256",
+            )},
+            **{key: getattr(args, key) for key in (
+                "csv", "prices_csv", "target_fleet", "soc_step", "block_min",
+                "g_kwh", "charge_kw", "min_soc_frac", "rc_eps", "max_depth",
+                "columns_per_iter", "integrality_tol",
+                "phase_1_positive_tol", "bound_tolerance",
+                "pricing_slowdown_limit", "pricing_slow_nodes",
+            )},
+            "baseline": self.baseline,
+            "root_pool_source": self.root_pool_source,
+        }
+        self._setup_io()
     def _seed_singletons(self) -> None:
         records, missing = direct_singleton_seed_records(
             self.problem,
@@ -654,10 +646,33 @@ class BranchAndPriceSolver:
             f"[B&P] loaded {len(loaded)} certified-root columns from {journal}",
             flush=True,
         )
+        self.root_pool_source = {
+            "result": str(path), "result_sha256": _file_sha256(path),
+            "journal": str(journal), "journal_sha256": _file_sha256(journal),
+        }
+    @staticmethod
+    def _node_payload(node):
+        return {
+            "node_id": node.node_id,
+            "constraints": [
+                {"kind": item.kind, "left": item.left, "right": item.right}
+                for item in node.constraints
+            ],
+            "lower_bound": node.lower_bound,
+            "parent_lp_value": node.parent_lp_value,
+        }
+    @staticmethod
+    def _node_from_payload(payload):
+        return SearchNode(
+            int(payload["node_id"]),
+            tuple(BranchConstraint(**item) for item in payload["constraints"]),
+            float(payload["lower_bound"]),
+            payload.get("parent_lp_value"),
+        )
     def _remaining_s(self) -> float | None:
         if self.args.wall_limit_s is None:
             return None
-        return self.args.wall_limit_s - (time.monotonic() - self.started)
+        return self.args.wall_limit_s - self._elapsed_s()
     def _expired(self, reserve_s: float = 0.0) -> bool:
         remaining = self._remaining_s()
         return remaining is not None and remaining <= reserve_s
@@ -670,133 +685,183 @@ class BranchAndPriceSolver:
             for route in self.pool.values()
             if route_satisfies(route["trips"], constraints)
         ]
-    def _solve_master(self, routes: Sequence[dict], method: str):
-        incidence = build_route_incidence(
-            self.trips,
-            [route["trips"] for route in routes],
-        )
+    def _solve_master(self, routes, phase, method_index):
         last_error = None
-        for candidate_method in dict.fromkeys(
-            (method, "highs-ds", "highs-ipm", "highs")
-        ):
-            remaining = self._remaining_s()
+        methods = ("highs-ds", "highs-ipm", "highs")
+        for candidate_method in methods[method_index:] + methods[:method_index]:
             self.master_solves += 1
             try:
-                return solve_restricted_master_lp(
-                    trip_ids=self.trips, route_incidence=incidence,
-                    route_costs=[route["cost"] for route in routes],
-                    artificial_penalty=BIG_M_PENALTY, method=candidate_method,
-                    coverage_sense="partition",
-                    time_limit_s=(None if remaining is None
-                                  else max(0.001, remaining)),
+                return solve_phase_master(
+                    self.trips, routes, phase, method=candidate_method
                 )
-            except RestrictedMasterSolveError as exc:
+            except RuntimeError as exc:
                 last_error = exc
-        raise last_error
-    def _price(
-        self,
-        duals: dict[int, float],
-        constraints: Sequence[BranchConstraint],
-    ) -> list[dict]:
+        raise BranchAndPriceError(f"all Phase-{phase} masters failed: {last_error}")
+    def _price(self, duals, constraints, objective):
+        started = time.perf_counter()
         if not constraints:
-            self.pricing_solves += 1
-            return self.network.k_best_routes(
-                duals,
-                k=self.args.columns_per_iter,
+            routes, solves = self.network.k_best_routes(
+                duals, k=self.args.columns_per_iter, objective=objective,
+            ), 1
+        else:
+            routes, solves = self.pricer.price(
+                duals, constraints, max_candidates=self.args.columns_per_iter,
+                objective=objective,
             )
-        routes, solves = self.pricer.price(
-            duals,
-            constraints,
-            max_candidates=self.args.columns_per_iter,
-        )
+        duration = time.perf_counter() - started
         self.pricing_solves += solves
-        return routes
-    def _solve_node(self, node: SearchNode) -> NodeResult:
-        preferred_method = "highs-ds"
-        stalled_once = False
+        self.pricing_calls += 1
+        self.pricing_wall_s += duration
+        return routes, solves, duration
+    def _solve_phase(self, node, phase):
+        preferred_method = 0
         last_lp = None
         last_routes: list[dict] = []
         last_rc = None
+        objective = {
+            1: "artificial-elimination", 2: "fleet-only",
+        }[phase]
+        stats = {"pricing_calls": 0, "pricing_solves": 0, "pricing_wall_s": 0.0}
+        pricing_eps = min(float(self.args.rc_eps), 1e-9)
         for iteration in range(1, self.args.max_cg_iters + 1):
             if self._expired():
-                return NodeResult(
-                    False, False, last_lp, last_routes, last_rc,
-                    iteration - 1, "wall_limit",
+                return PhaseResult(
+                    False, last_lp, last_routes, last_rc, iteration - 1,
+                    "wall_limit", stats,
                 )
             routes = self._allowed_routes(node.constraints)
-            try:
-                lp = self._solve_master(routes, preferred_method)
-            except RestrictedMasterSolveError as exc:
-                return NodeResult(
-                    False, False, last_lp, last_routes, last_rc,
-                    iteration - 1, f"master_failed:{exc}",
-                )
+            lp = self._solve_master(routes, phase, preferred_method)
             last_lp, last_routes = lp, routes
-            candidates = self._price(lp.trip_duals, node.constraints)
+            candidates, solves, duration = self._price(
+                lp.trip_duals, node.constraints, objective,
+            )
+            stats["pricing_calls"] += 1
+            stats["pricing_solves"] += solves
+            stats["pricing_wall_s"] += duration
             min_rc = candidates[0]["rc"] if candidates else float("inf")
             last_rc = float(min_rc)
+            self._event(
+                "pricing_iteration", node_id=node.node_id, depth=node.depth,
+                phase=phase, iteration=iteration, wall_s=duration,
+                subproblems=solves, minimum_reduced_cost=(
+                    last_rc if math.isfinite(last_rc) else None
+                ),
+                master_objective=lp.objective,
+                artificial_mass=lp.artificial_total, pool_columns=len(routes),
+            )
             if iteration == 1 or iteration % 25 == 0 or (
-                min_rc >= -self.args.rc_eps
+                min_rc >= -pricing_eps
             ):
                 print(
-                    f"[B&P] node={node.node_id} depth={node.depth} "
-                    f"cg={iteration} obj={lp.objective:.6f} "
+                    f"[B&P] node={node.node_id} depth={node.depth} phase={phase} "
+                    f"cg={iteration} obj={lp.objective:.9f} "
                     f"weight={lp.route_weight:.9f} "
                     f"art={lp.artificial_total:.3g} rc={min_rc:.6g} "
                     f"cols={len(routes)}",
                     flush=True,
                 )
-            if min_rc >= -self.args.rc_eps:
-                return NodeResult(
-                    True,
-                    lp.artificial_total > self.args.integrality_tol,
-                    lp,
-                    routes,
-                    float(min_rc),
-                    iteration,
-                    "infeasible" if (
-                        lp.artificial_total > self.args.integrality_tol
-                    ) else "certified",
+            if min_rc >= -pricing_eps:
+                return PhaseResult(
+                    True, lp, routes, float(min_rc), iteration,
+                    "certified", stats,
                 )
             added = 0
             for candidate in candidates:
-                if candidate["rc"] >= -self.args.rc_eps:
+                if candidate["rc"] >= -pricing_eps:
                     break
                 route = (
                     self.route_adapter.materialize(candidate)
                     if "path_nodes" in candidate
                     else candidate
                 )
-                record = self.route_adapter.record(
-                    route,
-                    lp.trip_duals,
-                    found_iter=iteration,
-                    origin=(
-                        "branch_constrained_pricing"
-                        if node.constraints else "root_pricing"
-                    ),
+                record = _candidate_record(
+                    route, self.prices, self.provenance["prices_sha256"],
+                    phase, iteration,
                 )
+                record["origin"] = "branch_and_price_phase_pricing"
+                record["found_branch_node"] = node.node_id
                 key = frozenset(record["trips"])
                 current = self.pool.get(key)
                 if current is None or (
                     record["cost"] < current["cost"] - 1e-9
                 ):
                     self.pool[key] = record
+                    self._append_column(record)
                     added += 1
             if not added:
-                if stalled_once:
-                    raise BranchAndPriceError(
-                        "negative constrained reduced cost persisted without "
-                        "a new or cheaper incidence under alternate duals"
+                if preferred_method == 2:
+                    return PhaseResult(
+                        False, lp, routes, last_rc, iteration,
+                        "degenerate_stall", stats,
                     )
-                stalled_once = True
-                preferred_method = "highs-ipm"
+                preferred_method += 1
             else:
-                stalled_once = False
-                preferred_method = "highs-ds"
+                preferred_method = 0
+        return PhaseResult(
+            False, last_lp, last_routes, last_rc,
+            self.args.max_cg_iters, "max_cg_iters", stats,
+        )
+    def _phase_summary(self, result, phase):
+        eps = min(float(self.args.rc_eps), 1e-9)
+        dual_bound = (
+            conservative_dual_lower_bound(result.lp, len(self.trips), eps)
+            if result.certified and result.lp is not None else None
+        )
+        return {
+            "phase": phase, "certified": result.certified,
+            "reason": result.reason, "iterations": result.iterations,
+            "objective": result.lp.objective if result.lp else None,
+            "artificial_mass": result.lp.artificial_total if result.lp else None,
+            "minimum_reduced_cost": (
+                result.min_rc
+                if result.min_rc is not None and math.isfinite(result.min_rc)
+                else None
+            ),
+            "conservative_dual_lower_bound": dual_bound,
+            **result.stats,
+        }
+    def _solve_node(self, node):
+        phase_1 = self._solve_phase(node, 1)
+        p1 = self._phase_summary(phase_1, 1)
+        if not phase_1.certified:
+            return NodeResult(
+                False, False, phase_1.lp, phase_1.routes, phase_1.min_rc,
+                phase_1.iterations, phase_1.reason, None, p1, None,
+            )
+        mass = phase_1.lp.artificial_total
+        if mass > self.args.integrality_tol:
+            if p1["conservative_dual_lower_bound"] <= self.args.phase_1_positive_tol:
+                return NodeResult(
+                    False, False, phase_1.lp, phase_1.routes, phase_1.min_rc,
+                    phase_1.iterations, "positive_mass_not_strictly_certified",
+                    None, p1, None,
+                )
+            self._event(
+                "node_infeasible_certified", node_id=node.node_id,
+                artificial_mass=mass,
+                dual_lower_bound=p1["conservative_dual_lower_bound"],
+            )
+            self.infeasible_certificates += 1
+            return NodeResult(
+                True, True, phase_1.lp, phase_1.routes, phase_1.min_rc,
+                phase_1.iterations, "phase_1_positive_mass_certified",
+                None, p1, None,
+            )
+        phase_2 = self._solve_phase(node, 2)
+        p2 = self._phase_summary(phase_2, 2)
+        if not phase_2.certified:
+            return NodeResult(
+                False, False, phase_2.lp, phase_2.routes, phase_2.min_rc,
+                phase_1.iterations + phase_2.iterations, phase_2.reason,
+                None, p1, p2,
+            )
+        bound = p2["conservative_dual_lower_bound"]
+        if bound > phase_2.lp.objective + self.args.bound_tolerance:
+            raise ValidationGateError("Phase-II dual bound exceeds primal")
         return NodeResult(
-            False, False, last_lp, last_routes, last_rc,
-            self.args.max_cg_iters, "max_cg_iters",
+            True, False, phase_2.lp, phase_2.routes, phase_2.min_rc,
+            phase_1.iterations + phase_2.iterations, "certified",
+            bound, p1, p2,
         )
     def _replay_status(self) -> dict:
         return {
@@ -817,12 +882,11 @@ class BranchAndPriceSolver:
     ) -> None:
         audit_exact_partition(self.trips, selected)
         cost = float(sum(float(route["cost"]) for route in selected))
-        if self.root_lp is not None and (
-            cost < self.root_lp.objective - self.args.bound_tolerance
-        ):
+        fleet = len(selected)
+        if (self.root_lower_bound is not None
+                and fleet < self.root_lower_bound - self.args.bound_tolerance):
             raise ValidationGateError(
-                "G5: integer candidate is below the certified root LP: "
-                f"candidate={cost}, root={self.root_lp.objective}"
+                "G5: integer fleet is below the certified root fleet bound"
             )
         validate_final_selected_routes(
             self._replay_status(),
@@ -830,17 +894,21 @@ class BranchAndPriceSolver:
             list(selected),
         )
         self.integer_audits += 1
-        if self.incumbent is None or (
-            cost < self.incumbent["cost"] - 1e-7
-        ):
+        if (self.incumbent is None
+                or fleet < self.incumbent["fleet"]
+                or (fleet == self.incumbent["fleet"]
+                    and cost < self.incumbent["cost"] - 1e-7)):
             self.incumbent = {
-                "cost": cost,
-                "fleet": len(selected),
+                "cost": cost, "fleet": fleet,
                 "routes": list(selected),
                 "source": source,
             }
+            self._event(
+                "incumbent", fleet=fleet, cost=cost, source=source,
+                routes=list(selected),
+            )
             print(
-                f"[B&P] incumbent={len(selected)} buses "
+                f"[B&P] incumbent={fleet} buses "
                 f"cost={cost:.6f} source={source}",
                 flush=True,
             )
@@ -857,49 +925,27 @@ class BranchAndPriceSolver:
     def _root_pool_mip_incumbent(self, routes: Sequence[dict]) -> None:
         if self.args.root_mip_s <= 0:
             return
-        incidence = build_route_incidence(
-            self.trips, [route["trips"] for route in routes]
-        )
-        ones_routes = np.ones(len(routes), dtype=np.uint8)
-        ones_trips = np.ones(len(self.trips), dtype=float)
-        result = milp(
-            c=np.asarray([route["cost"] for route in routes], dtype=float),
-            integrality=ones_routes,
-            bounds=Bounds(0.0, 1.0),
-            constraints=LinearConstraint(incidence, ones_trips, ones_trips),
-            options={
-                "time_limit": float(self.args.root_mip_s),
-                "mip_rel_gap": 0.0,
-                "presolve": True,
-            },
-        )
-        if result.x is None:
-            print(
-                f"[B&P] root-pool MIP found no incumbent: {result.message}",
-                flush=True,
+        attempts = min(6, len(self.trips) - self.args.target_fleet + 1)
+        for fleet in range(
+            self.args.target_fleet, self.args.target_fleet + attempts
+        ):
+            solved = solve_target_feasibility(
+                routes, self.trips, fleet,
+                timelimit=self.args.root_mip_s / attempts,
+                threads=1, solver="highs",
             )
-            return
-        selected = [route for route, value in zip(routes, result.x)
-                    if value > 0.5]
-        try:
-            audit_exact_partition(self.trips, selected)
-        except ValidationGateError:
-            print(
-                "[B&P] root-pool MIP returned no auditable integer incumbent",
-                flush=True,
-            )
-            return
-        self._update_incumbent(selected, source="root_pool_scipy_milp")
-    def _new_child(
-        self,
-        parent: SearchNode,
-        bound: float,
-        constraint: BranchConstraint,
-    ) -> SearchNode:
+            if solved["outcome"] == "FEASIBLE":
+                selected = [routes[index] for index in solved["selected_indices"]]
+                self._update_incumbent(
+                    selected, source=f"root_pool_highs_feasibility_{fleet}"
+                )
+                return
+    def _new_child(self, parent, result, constraint):
         child = SearchNode(
             self.next_node_id,
             parent.constraints + (constraint,),
-            bound,
+            result.lower_bound,
+            result.lp.objective,
         )
         self.next_node_id += 1
         return child
@@ -913,17 +959,41 @@ class BranchAndPriceSolver:
         if result.infeasible:
             return
         lp = result.lp
-        if node.parent_bound is not None:
+        if node.parent_lp_value is not None:
             assert_child_bound(
-                node.parent_bound,
+                node.parent_lp_value,
                 lp.objective,
                 tolerance=self.args.bound_tolerance,
             )
             self.bound_assertions += 1
+        if node.node_id and result.phase_2 and self.root_phase_stats:
+            root = self.root_phase_stats["phase_2"]
+            root_average = root["pricing_wall_s"] / root["pricing_calls"]
+            node_average = (
+                result.phase_2["pricing_wall_s"]
+                / result.phase_2["pricing_calls"]
+            )
+            ratio = node_average / max(root_average, 1e-12)
+            self._event(
+                "node_pricing_cost", node_id=node.node_id,
+                pricing_wall_s=result.phase_2["pricing_wall_s"],
+                pricing_calls=result.phase_2["pricing_calls"],
+                subproblems=result.phase_2["pricing_solves"],
+                root_average_s=root_average, slowdown_ratio=ratio,
+            )
+            if ratio > self.args.pricing_slowdown_limit:
+                self.slow_nodes += 1
+                if self.slow_nodes >= self.args.pricing_slow_nodes:
+                    self.interrupted_reason = "pricing_slowdown_kill_criterion"
         if self.incumbent is not None and (
-            lp.objective
-            >= self.incumbent["cost"] - self.args.bound_tolerance
+            result.lower_bound
+            >= self.incumbent["fleet"] - self.args.bound_tolerance
         ):
+            self._event(
+                "node_pruned_by_bound", node_id=node.node_id,
+                lower_bound=result.lower_bound,
+                incumbent_fleet=self.incumbent["fleet"],
+            )
             return
         branch = choose_ryan_foster_pair(
             result.routes,
@@ -945,17 +1015,15 @@ class BranchAndPriceSolver:
             return
         if node.depth >= self.args.max_depth:
             self.nodes_depth_capped += 1
-            frontier_bounds.append(lp.objective)
+            frontier_bounds.append(result.lower_bound)
             return
         (left, right), alpha = branch
         together = self._new_child(
-            node,
-            lp.objective,
+            node, result,
             BranchConstraint("together", left, right),
         )
         apart = self._new_child(
-            node,
-            lp.objective,
+            node, result,
             BranchConstraint("apart", left, right),
         )
         preferred, other = (
@@ -963,171 +1031,102 @@ class BranchAndPriceSolver:
         )
         stack.append(other)
         stack.append(preferred)
-    def _base_payload(self) -> dict:
-        return {
-            "schema": "evsp-dr-exact-branch-and-price-v1",
-            "csv": self.args.csv, "prices_csv": self.args.prices_csv,
-            "soc_step": self.args.soc_step, "block_min": self.args.block_min,
-            "g_kwh": self.args.g_kwh, "charge_kw": self.args.charge_kw,
-            "min_soc_frac": self.args.min_soc_frac, "master_sense": "partition",
-            "column_pool_treatment": "RAW",
-            "target_fleet": self.args.target_fleet, "trip_ids": self.trips,
-            "pricing_certificate_scope":
-                "conservative_expanded_grid_model_only",
-            "provenance": self.provenance,
-        }
     def run(self) -> dict:
-        root = SearchNode(0, tuple(), None)
-        root_result = self._solve_node(root)
-        self.nodes_explored = 1
-        if not root_result.certified or root_result.infeasible:
-            raise ValidationGateError(
-                "G1: root column generation did not certify a feasible LP: "
-                f"{root_result.reason}"
-            )
-        self.root_lp = root_result.lp
-        self.root_min_rc = root_result.min_rc
-        if self.args.expected_root_weight is not None and not math.isclose(
-            self.root_lp.route_weight,
-            self.args.expected_root_weight,
-            rel_tol=0.0,
-            abs_tol=1e-6,
-        ):
-            raise ValidationGateError(
-                "G1: certified root route weight mismatch: "
-                f"expected={self.args.expected_root_weight:.9f}, "
-                f"observed={self.root_lp.route_weight:.9f}"
-            )
-        print(
-            f"[B&P] G1 PASS root weight={self.root_lp.route_weight:.9f} "
-            f"objective={self.root_lp.objective:.6f} "
-            f"min_rc={self.root_min_rc:.6g}",
-            flush=True,
-        )
-        if self.args.root_only:
-            elapsed = time.monotonic() - self.started
-            return {
-                **self._base_payload(),
-                "root_certified": True,
-                "root_lp": {
-                    "objective": self.root_lp.objective,
-                    "route_weight": self.root_lp.route_weight,
-                    "min_rc": self.root_min_rc, "columns": len(root_result.routes),
-                    "cg_iterations": root_result.cg_iterations,
-                },
-                "best_integer_fleet": None, "best_integer_cost": None,
-                "global_lower_bound": self.root_lp.objective,
-                "gap": None, "proven_optimal": False, "nodes_explored": 1,
-                "nodes_depth_capped": 0, "pricing_solves": self.pricing_solves,
-                "master_solves": self.master_solves, "wall_s": elapsed,
-                "network_build_s": self.network_build_s,
-                "validation": {"G1": "pass"},
+        if not self.root_solved:
+            root = self.stack[-1]
+            self._event("node_started", **self._node_payload(root))
+            self._checkpoint()
+            root_result = self._solve_node(root)
+            if not root_result.certified or root_result.infeasible:
+                if root_result.infeasible:
+                    raise ValidationGateError("G1 root is Phase-I infeasible")
+                self.interrupted_reason = root_result.reason
+                return self._checkpoint()
+            self.stack.pop()
+            self.nodes_explored += 1
+            self.root_lp = root_result.lp
+            self.root_lower_bound = root_result.lower_bound
+            self.root_min_rc = root_result.min_rc
+            self.root_phase_stats = {
+                "phase_1": root_result.phase_1,
+                "phase_2": root_result.phase_2,
             }
-
-        self._singleton_incumbent()
-        self._root_pool_mip_incumbent(root_result.routes)
-        stack: list[SearchNode] = []
-        frontier_bounds: list[float] = []
-        self._process_certified_node(root, root_result, stack, frontier_bounds)
-        interrupted_reason = None
-        while stack:
+            self.root_record = {
+                "objective": root_result.lp.objective,
+                "route_weight": root_result.lp.route_weight,
+                "conservative_dual_lower_bound": root_result.lower_bound,
+                "min_rc": root_result.min_rc,
+                "columns": len(root_result.routes),
+                "cg_iterations": root_result.cg_iterations,
+                "phases": self.root_phase_stats,
+            }
+            expected = (
+                self.baseline["route_weight"] if self.baseline else None
+            )
+            if expected is not None and not math.isclose(
+                root_result.lp.route_weight, expected, rel_tol=0.0, abs_tol=1e-6
+            ):
+                raise ValidationGateError(
+                    f"G1 expected {expected:.9f}, "
+                    f"observed {root_result.lp.route_weight:.9f}"
+                )
+            self.root_solved = True
+            self._event("root_certified", root=self.root_record)
+            print(
+                f"[B&P] G1 PASS root fleet={root_result.lp.route_weight:.9f} "
+                f"LB={root_result.lower_bound:.9f}",
+                flush=True,
+            )
+            if self.incumbent is None:
+                self._singleton_incumbent()
+                self._root_pool_mip_incumbent(root_result.routes)
+            if self.args.root_only:
+                self.interrupted_reason = "root_only"
+                return self._checkpoint()
+            self._process_certified_node(
+                root, root_result, self.stack, self.frontier_bounds,
+            )
+            self._checkpoint()
+        while self.stack:
             if self.nodes_explored >= self.args.node_limit:
-                interrupted_reason = "node_limit"
+                self.interrupted_reason = "node_limit"
                 break
             if self._expired():
-                interrupted_reason = "wall_limit"
+                self.interrupted_reason = "wall_limit"
                 break
-            node = stack.pop()
+            if self.interrupted_reason == "pricing_slowdown_kill_criterion":
+                break
+            node = self.stack[-1]
+            self._event("node_started", **self._node_payload(node))
+            self._checkpoint()
             result = self._solve_node(node)
-            self.nodes_explored += 1
             if not result.certified:
-                frontier_bounds.append(
-                    node.parent_bound
-                    if node.parent_bound is not None else self.root_lp.objective
+                self.interrupted_reason = result.reason
+                self._event(
+                    "node_left_open", node_id=node.node_id, reason=result.reason,
+                    inherited_lower_bound=node.lower_bound,
                 )
-                if result.reason == "wall_limit":
-                    interrupted_reason = "wall_limit"
-                    break
-                continue
+                break
+            self.stack.pop()
+            self.nodes_explored += 1
+            self._event(
+                "node_certified", node_id=node.node_id,
+                infeasible=result.infeasible, lower_bound=result.lower_bound,
+                phase_1=result.phase_1, phase_2=result.phase_2,
+            )
             self._process_certified_node(
-                node, result, stack, frontier_bounds
+                node, result, self.stack, self.frontier_bounds,
             )
-
-        open_bounds = [float(bound) for bound in frontier_bounds] + [
-            float(
-                node.parent_bound
-                if node.parent_bound is not None
-                else self.root_lp.objective
-            )
-            for node in stack
-        ]
-        tree_closed = (
-            not frontier_bounds and not stack and interrupted_reason is None
-        )
-        proven = bool(tree_closed and self.incumbent is not None)
-        if proven:
-            global_bound = self.incumbent["cost"]
-        elif open_bounds:
-            global_bound = min(open_bounds)
-        else:
-            global_bound = self.root_lp.objective
-        best_cost = self.incumbent["cost"] if self.incumbent else None
-        gap = (
-            max(0.0, best_cost - global_bound) / max(1.0, abs(best_cost))
-            if best_cost is not None
-            else None
-        )
-        elapsed = time.monotonic() - self.started
-        return {
-            **self._base_payload(),
-            "root_certified": True,
-            "root_lp": {
-                "objective": self.root_lp.objective,
-                "route_weight": self.root_lp.route_weight,
-                "min_rc": self.root_min_rc, "columns": len(root_result.routes),
-                "cg_iterations": root_result.cg_iterations,
-            },
-            "best_integer_fleet": self.incumbent["fleet"] if self.incumbent else None,
-            "best_integer_cost": best_cost,
-            "best_integer_source": self.incumbent["source"] if self.incumbent else None,
-            "best_integer_routes": self.incumbent["routes"] if self.incumbent else [],
-            "global_lower_bound": global_bound, "gap": gap,
-            "proven_optimal": proven, "nodes_explored": self.nodes_explored,
-            "nodes_depth_capped": self.nodes_depth_capped,
-            "pricing_solves": self.pricing_solves, "master_solves": self.master_solves,
-            "wall_s": elapsed,
-            "network_build_s": self.network_build_s,
-            "interrupted_reason": interrupted_reason,
-            "open_frontier_nodes": len(frontier_bounds) + len(stack),
-            "validation": {
-                "G1": "pass",
-                "G2_bound_assertions": self.bound_assertions,
-                "G4_integrality_certificates": self.integrality_certificates,
-                "G5_integer_audits": self.integer_audits,
-            },
-        }
-
-    def write(self, result: dict, out: Path) -> None:
-        out = out.expanduser().resolve()
-        journal = Path(str(out) + ".columns.jsonl")
-        out.parent.mkdir(parents=True, exist_ok=True)
-        if out.exists() or journal.exists():
-            raise FileExistsError(
-                f"refusing to overwrite branch-and-price evidence: "
-                f"{out} or {journal}"
-            )
-        temporary = journal.with_name(f".{journal.name}.tmp.{os.getpid()}")
-        with temporary.open("x") as handle:
-            for record in self.pool.values():
-                handle.write(json.dumps(record, sort_keys=True) + "\n")
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary, journal)
-        result["columns"] = len(self.pool)
-        result["columns_journal"] = str(journal)
-        atomic_write_json(out, result)
-
-
+            self._checkpoint()
+        complete = not self.stack and not self.frontier_bounds
+        if complete:
+            self.interrupted_reason = None
+            self._event("search_complete")
+        return self._checkpoint(search_complete=complete)
+    def interrupt(self, reason="external_interrupt"):
+        self.interrupted_reason = reason
+        self._event("interrupted", reason=reason)
+        return self._checkpoint()
 def _validate_scope(csv_path: str, target_fleet: int) -> None:
     match = re.search(r"_k(\d{2})_", Path(csv_path).name)
     if match is None:
@@ -1136,11 +1135,7 @@ def _validate_scope(csv_path: str, target_fleet: int) -> None:
     if scale not in {2, 3, 5}:
         raise ValueError("branch-and-price scope is restricted to k2/k3/k5")
     if scale != target_fleet:
-        raise ValueError(
-            f"--target-fleet {target_fleet} disagrees with k{scale:02d} input"
-        )
-
-
+        raise ValueError(f"--target-fleet {target_fleet} disagrees with k{scale:02d}")
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--csv", required=True, help="Path relative to data/")
@@ -1152,26 +1147,29 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--charge-kw", type=float, default=CHARGE_RATE_KW)
     parser.add_argument("--min-soc-frac", type=float, default=0.0)
     parser.add_argument("--columns-per-iter", type=int, default=30)
-    parser.add_argument("--rc-eps", type=float, default=1e-7)
+    parser.add_argument("--rc-eps", type=float, default=1e-9)
     parser.add_argument("--integrality-tol", type=float, default=1e-7)
+    parser.add_argument("--phase-1-positive-tol", type=float, default=1e-8)
     parser.add_argument("--bound-tolerance", type=float, default=1e-5)
     parser.add_argument("--max-cg-iters", type=int, default=10000)
     parser.add_argument("--max-depth", type=int, default=8)
     parser.add_argument("--node-limit", type=int, default=1000)
     parser.add_argument("--wall-limit-s", type=float, default=21600.0)
     parser.add_argument("--root-mip-s", type=float, default=60.0)
+    parser.add_argument("--pricing-slowdown-limit", type=float, default=10.0)
+    parser.add_argument("--pricing-slow-nodes", type=int, default=3)
     parser.add_argument("--expected-root-weight", type=float)
     parser.add_argument("--root-only", action="store_true")
     parser.add_argument("--root-pool-result", type=Path)
+    parser.add_argument("--resume", action="store_true")
     parser.add_argument("--out", type=Path, required=True)
     return parser
-
-
 def main(argv=None) -> int:
     if os.environ.get("SLURM_JOB_ID"):
         print("[B&P] refusing cluster execution; local runs only", file=sys.stderr)
         return 2
     args = build_parser().parse_args(argv)
+    solver = None
     try:
         _validate_scope(args.csv, args.target_fleet)
         if args.max_depth < 0 or args.max_depth > 20:
@@ -1180,18 +1178,23 @@ def main(argv=None) -> int:
             raise ValueError("node and CG iteration limits must be positive")
         solver = BranchAndPriceSolver(args)
         result = solver.run()
-        solver.write(result, args.out)
-    except (BranchAndPriceError, FileExistsError, OSError, ValueError) as exc:
+    except KeyboardInterrupt:
+        if solver is not None:
+            solver.interrupt()
+        print("[B&P] interrupted after durable checkpoint", file=sys.stderr)
+        return 130
+    except (
+        BranchAndPriceError, FileExistsError, OSError, RuntimeError, ValueError
+    ) as exc:
+        if solver is not None:
+            solver.interrupt(f"error:{type(exc).__name__}")
         print(f"[B&P] FAILED: {exc}", file=sys.stderr, flush=True)
         return 2
-    print(
-        f"[B&P] wrote {args.out}: fleet={result['best_integer_fleet']} "
-        f"LB={result['global_lower_bound']:.6f} "
-        f"proven={result['proven_optimal']}",
-        flush=True,
-    )
+    finally:
+        if solver is not None:
+            solver.close()
+    print(f"[B&P] wrote {args.out}: fleet={result['best_integer_fleet']} "
+          f"LB={result['global_lower_bound']} proven={result['proven_optimal']}")
     return 0
-
-
 if __name__ == "__main__":
     raise SystemExit(main())
