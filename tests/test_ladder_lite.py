@@ -162,10 +162,11 @@ class LadderLiteTests(unittest.TestCase):
             lines = completed.stdout.splitlines()
             commands = [line for line in lines if line.startswith("sbatch ")]
             self.assertEqual(len(commands), 2)
-            self.assertTrue(any("--array=0,2%16" in line for line in commands))
-            self.assertTrue(any("--array=1%16" in line for line in commands))
-            self.assertTrue(all("--mem=16G" in line and "-c 2" in line
-                                for line in commands))
+            tokens = [shlex.split(line) for line in commands]
+            self.assertTrue(any("--array=0,2%16" in row for row in tokens))
+            self.assertTrue(any("--array=1%16" in row for row in tokens))
+            self.assertTrue(all("--mem=16G" in row and "-c" in row
+                                and row[row.index("-c")+1]=="2" for row in tokens))
             self.assertIn("total_tasks=3", lines)
 
     def test_record_results_is_idempotent(self):
