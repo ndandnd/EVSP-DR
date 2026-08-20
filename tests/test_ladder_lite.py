@@ -46,13 +46,14 @@ class LadderLiteTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.tmp.cleanup()
 
-    def _printed_command(self, group, index):
+    def _printed_command(self, group, index, extra_environment=None):
         environment = dict(os.environ)
         environment.update({
             "SLURM_ARRAY_TASK_ID": str(index),
             "LL_PYTHON": self.python,
             "LL_PRINT_COMMAND": "1",
         })
+        environment.update(extra_environment or {})
         completed = subprocess.run(
             [
                 "bash", str(REPO / "scripts/ladder_lite/run_cell.sh"),
@@ -81,7 +82,10 @@ class LadderLiteTests(unittest.TestCase):
 
     def test_science_commands_match_reviewed_worker(self):
         jobs = {job["job_key"]: job for job in self.plan["jobs"]}
-        for group in ("PREFLIGHT", "SEED", "CG", "MIP_RAW"):
+        for group in (
+            "PREFLIGHT", "SEED", "CG", "CG_SENSITIVITY",
+            "MIP_RAW", "MIP_KNOWN",
+        ):
             job = jobs[self.plan["task_groups"][group][0]]
             actual = self._printed_command(group, 0)
             instance = job["instance"]
@@ -103,7 +107,7 @@ class LadderLiteTests(unittest.TestCase):
                     "--instance-sha256", instance["instance_file_sha256"],
                     "--out", job["output"],
                 ]
-            elif group == "CG":
+            elif group in {"CG", "CG_SENSITIVITY"}:
                 expected = [
                     self.python, "-u", str(REPO / "src/exact_pricer_expanded.py"),
                     "--csv", instance["relative_path"], "--prices_csv",
@@ -128,7 +132,18 @@ class LadderLiteTests(unittest.TestCase):
                     "--mipgap", "0.0001", "--progress-dir",
                     job["progress_dir"], "--out", job["output"],
                 ]
+                if job["arm"] == "KNOWN-PARTITION":
+                    expected += [
+                        "--initial-partition-routes",
+                        jobs[job["dependency_seed"]]["output"],
+                    ]
             self.assertEqual(actual, expected, group)
+        overridden = self._printed_command(
+            "CG", 0, {"LL_BUDGET_OVERRIDE_S": "180"}
+        )
+        self.assertEqual(
+            overridden[overridden.index("--wall-limit-s") + 1], "180"
+        )
 
     def test_submit_dry_run_groups_budget_memory_and_scales(self):
         with tempfile.TemporaryDirectory() as tmp:
