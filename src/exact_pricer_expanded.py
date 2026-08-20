@@ -2614,7 +2614,7 @@ def main(argv=None) -> int:
     parser.add_argument("--resume", action="store_true",
                         help="Reload the column journal next to --out and "
                              "continue from that pool.")
-    parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument("--out", "--o", type=Path, default=None)
     args = parser.parse_args(argv)
     if bool(args.validated_seed_routes) != bool(args.augmentation_label):
         parser.error(

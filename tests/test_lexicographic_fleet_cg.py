@@ -18,6 +18,13 @@ from config import BUS_COST_KX  # noqa: E402
 
 
 class LexicographicFleetCGTests(unittest.TestCase):
+    @staticmethod
+    def _lex_args(output, *extra):
+        return ["--objective","lexicographic-fleet","--csv","Practice_Selected_1buses.csv",
+                "--prices_csv","hourly_prices_flat.csv","--soc-step","15","--block-min","10",
+                "--max-iters","400","--columns_per_iter","30","--master-sense","partition",
+                "--initial-pool","singletons","--out",str(output),*extra]
+
     def test_default_combined_cost_path_is_bit_identical_to_golden(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "run.json"
@@ -104,16 +111,7 @@ class LexicographicFleetCGTests(unittest.TestCase):
     def test_opt_in_run_emits_three_separate_scoped_certificates(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "lex.json"
-            exact.main([
-                "--objective", "lexicographic-fleet",
-                "--csv", "Practice_Selected_1buses.csv",
-                "--prices_csv", "hourly_prices_flat.csv",
-                "--soc-step", "15", "--block-min", "10",
-                "--max-iters", "400", "--columns_per_iter", "30",
-                "--master-sense", "partition",
-                "--initial-pool", "singletons",
-                "--out", str(output),
-            ])
+            exact.main(self._lex_args(output, "--rc-eps", "1e9"))
             status = json.loads(output.read_text())
             phases = status["phases"]
             self.assertEqual([row["phase"] for row in phases], [1, 2, 3])
@@ -125,22 +123,51 @@ class LexicographicFleetCGTests(unittest.TestCase):
             )
             self.assertEqual(phases[1]["real_route_objective_coefficient"], 1.0)
             self.assertFalse(phases[1]["charging_terms_in_objective"])
+            self.assertGreater(phases[1]["iterations"], 1)
+            self.assertLessEqual(phases[1]["fleet_lp_lower_bound"],
+                                 phases[1]["route_weight"])
             self.assertEqual(
                 phases[2]["fixed_optima"]["phase_2_fleet_optimum"],
-                phases[1]["fleet_lp_lower_bound"],
+                phases[1]["route_weight"],
             )
+            self.assertEqual(phases[1]["identity"]["instance_sha256"],
+                             status["provenance"]["instance_sha256"])
+            self.assertIn("phase_iteration_log_sha256", status)
             for certificate in phases:
-                observed = certificate["certificate_sha256"]
-                payload = dict(certificate)
-                del payload["certificate_sha256"]
-                self.assertEqual(
-                    observed, hashlib.sha256(
-                        json.dumps(
-                            payload, sort_keys=True, separators=(",", ":"),
-                            allow_nan=False,
-                        ).encode()
-                    ).hexdigest(),
-                )
+                payload=dict(certificate);observed=payload.pop("certificate_sha256")
+                encoded=json.dumps(payload,sort_keys=True,separators=(",",":"),
+                                   allow_nan=False).encode()
+                self.assertEqual(observed,hashlib.sha256(encoded).hexdigest())
+
+    def test_uncertified_phase_exports_no_fleet_bound(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "short.json"
+            exact.main(self._lex_args(output, "--max-iters", "1"))
+            status=json.loads(output.read_text());phase=status["phases"][-1]
+            self.assertFalse(status["all_phases_certified"])
+            self.assertEqual(phase["phase"],2);self.assertNotIn("fleet_lp_lower_bound",phase)
+            self.assertIsNone(status["phase_2_fleet_lp_bound"])
+            self.assertIsNone(status["phase_3_charging_cost"])
+
+    def test_wall_stop_and_no_path_are_serializable(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "wall.json"
+            exact.main(self._lex_args(output, "--wall-limit-s", "0"))
+            phase=json.loads(output.read_text())["phases"][0]
+            self.assertEqual(phase["stop_reason"],"wall_limit");self.assertFalse(phase["certified"])
+        args=SimpleNamespace(max_iters=1,wall_limit_s=None,columns_per_iter=1,rc_eps=1e-4)
+        with tempfile.TemporaryFile(mode="w+") as handle:
+            certificate=lex._run_phase(args,1,[0],{frozenset({0}):{"trips":[0],"cost":BUS_COST_KX}},
+              SimpleNamespace(k_best_routes=lambda *_a,**_k:[]),{},"hash",None,0.0,None,
+              lex._IterationWriter(handle),{})
+        self.assertEqual(certificate["stop_reason"],"no_path");json.dumps(certificate,allow_nan=False)
+
+    def test_short_out_alias_remains_unambiguous(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "alias.json"
+            with patch.object(exact, "run_cg", return_value={"alias": True}):
+                exact.main(["--csv", "unused.csv", "--o", str(output)])
+            self.assertEqual(json.loads(output.read_text()), {"alias": True})
 
 
 if __name__ == "__main__":

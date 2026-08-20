@@ -17,15 +17,12 @@ from scipy.sparse import eye, hstack, vstack
 
 from config import BUS_COST_KX
 from durable_io import DurableFileError, flush_and_fsync
-from expanded_path_realization import (
-    BLOCK_SCHEDULE_SCHEMA,
-    realized_costs,
-)
+from expanded_path_realization import BLOCK_SCHEDULE_SCHEMA, realized_costs
 from master_lp_scipy import build_route_incidence
 
 SCHEMA = "evsp-dr-lexicographic-fleet-cg-v1"
 CERTIFICATE_SCHEMA = "evsp-dr-lexicographic-cg-phase-certificate-v1"
-TOLERANCE = 1e-7
+TOLERANCE = 1e-7; PRICING_TOLERANCE = 1e-9
 
 @dataclass(frozen=True)
 class PhaseLP:
@@ -45,53 +42,31 @@ class PhaseLP:
         return float(sum(self.artificial_values))
 
 def _canonical(payload):
-    return json.dumps(
-        payload, sort_keys=True, separators=(",", ":"), allow_nan=False,
-    ).encode()
+    return json.dumps(payload,sort_keys=True,separators=(",",":"),allow_nan=False).encode()
 
 def _sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-
 def _solve_master(trips, routes, phase, fleet_optimum=None, method="highs-ds"):
-    incidence = build_route_incidence(
-        trips, [route["trips"] for route in routes],
-    )
+    incidence=build_route_incidence(trips,[route["trips"] for route in routes])
     n_trips, n_routes = incidence.shape
     if phase == 1:
-        matrix = hstack(
-            [incidence, eye(n_trips, format="csr")], format="csr",
-        )
-        objective = np.concatenate([
-            np.zeros(n_routes), np.ones(n_trips),
-        ])
+        matrix=hstack([incidence,eye(n_trips,format="csr")],format="csr")
+        objective=np.concatenate([np.zeros(n_routes),np.ones(n_trips)])
         rhs = np.ones(n_trips)
     elif phase == 2:
         if not n_routes:
             raise RuntimeError("fleet phase has no real routes")
-        matrix = incidence
-        objective = np.ones(n_routes)
-        rhs = np.ones(n_trips)
+        matrix=incidence;objective=np.ones(n_routes);rhs=np.ones(n_trips)
     elif phase == 3:
         if fleet_optimum is None or not math.isfinite(fleet_optimum):
             raise ValueError("charging phase requires a finite fleet optimum")
-        matrix = vstack([
-            incidence,
-            np.ones((1, n_routes), dtype=float),
-        ], format="csr")
-        objective = np.asarray([
-            float(route["cost"]) - BUS_COST_KX for route in routes
-        ])
+        matrix=vstack([incidence,np.ones((1,n_routes))],format="csr")
+        objective=np.asarray([float(route["cost"])-BUS_COST_KX for route in routes])
         rhs = np.concatenate([np.ones(n_trips), [fleet_optimum]])
     else:
         raise ValueError(f"unknown lexicographic phase: {phase}")
-    solved = linprog(
-        c=objective,
-        A_eq=matrix,
-        b_eq=rhs,
-        bounds=(0.0, None),
-        method=method,
-        options={"presolve": True},
-    )
+    solved=linprog(c=objective,A_eq=matrix,b_eq=rhs,bounds=(0.0,None),
+                   method=method,options={"presolve":True})
     if not solved.success or solved.x is None:
         raise RuntimeError(
             f"lexicographic master failed in phase {phase}: "
@@ -103,19 +78,13 @@ def _solve_master(trips, routes, phase, fleet_optimum=None, method="highs-ds"):
         raise RuntimeError("lexicographic master returned non-finite values")
     maximum_bound_violation = max(0.0, -float(np.min(primal)))
     maximum_row_violation = float(np.max(np.abs(matrix @ primal - rhs)))
-    if (
-        maximum_bound_violation > TOLERANCE
-        or maximum_row_violation > TOLERANCE
-    ):
+    if maximum_bound_violation>TOLERANCE or maximum_row_violation>TOLERANCE:
         raise RuntimeError(
             "lexicographic master violated a primal constraint: "
             f"row={maximum_row_violation}, bound={maximum_bound_violation}"
         )
     route_values = tuple(float(value) for value in primal[:n_routes])
-    artificial_values = (
-        tuple(float(value) for value in primal[n_routes:])
-        if phase == 1 else ()
-    )
+    artificial_values=tuple(map(float,primal[n_routes:])) if phase==1 else ()
     return PhaseLP(
         objective=float(solved.fun),
         route_values=route_values,
@@ -130,17 +99,11 @@ def _solve_master(trips, routes, phase, fleet_optimum=None, method="highs-ds"):
     )
 
 def _candidate_record(candidate, prices, tariff_sha, phase, iteration):
-    temporary = {
-        "trips": candidate["trips"],
-        "cost": 0.0,
-        "route_nodes": candidate["route_nodes"],
-        "charging_stops": candidate["charging_stops"],
-        "expanded_grid_charging_stops":
-            candidate["_expanded_grid_charging"],
-    }
-    mapping = candidate["_continuous_mapping"]
-    costs = realized_costs(temporary, mapping, station_prices=prices)
-    combined_cost = float(costs["recomputed_expanded_grid_cost"])
+    temporary={"trips":candidate["trips"],"cost":0.0,"route_nodes":candidate["route_nodes"],
+               "charging_stops":candidate["charging_stops"],
+               "expanded_grid_charging_stops":candidate["_expanded_grid_charging"]}
+    mapping=candidate["_continuous_mapping"];costs=realized_costs(temporary,mapping,station_prices=prices)
+    combined_cost=float(costs["recomputed_expanded_grid_cost"])
     record = {
         **temporary,
         "cost": combined_cost,
@@ -159,9 +122,7 @@ def _candidate_record(candidate, prices, tariff_sha, phase, iteration):
         "charges_started": candidate["charges_started"],
         "found_iter": iteration,
         "found_lexicographic_phase": phase,
-        "physical_realization": {
-            key: value for key, value in mapping.items() if key != "trace"
-        },
+        "physical_realization": {key:value for key,value in mapping.items() if key!="trace"},
     }
     record["physical_realization"].update({
         "continuous_realized_charging_blocks_sha256":
@@ -170,81 +131,74 @@ def _candidate_record(candidate, prices, tariff_sha, phase, iteration):
         "continuous_cost_pricing_certified": False,
     })
     return record
-
 def _certificate(phase, lp, *, pricing_certified, min_rc, iterations,
-                 columns, fixed_optima):
-    names = {
-        1: "artificial_elimination",
-        2: "fleet_only_minimization",
-        3: "charging_cost_at_fixed_fleet",
-    }
-    objectives = {
-        1: "minimize_sum_artificial_variables_real_route_coefficient_zero",
-        2: "minimize_sum_real_route_variables_each_coefficient_exactly_one",
-        3: "minimize_expanded_grid_charging_and_charge_start_cost",
-    }
-    reduced_costs = {
-        1: "0 - sum(trip_duals_on_route)",
-        2: "1 - sum(trip_duals_on_route)",
-        3: (
-            "expanded_grid_charging_cost - "
-            "sum(trip_duals_on_route) - fleet_equality_dual"
-        ),
-    }
-    zero_artificial = lp.artificial_total <= TOLERANCE
+                 columns, fixed_optima, identity, rc_tolerance):
+    names={1:"artificial_elimination",2:"fleet_only_minimization",3:"charging_cost_at_fixed_fleet"}
+    objectives={1:"minimize_sum_artificial_variables_real_route_coefficient_zero",2:"minimize_sum_real_route_variables_each_coefficient_exactly_one",3:"minimize_expanded_grid_charging_and_charge_start_cost"}
+    reduced_costs={1:"0 - sum(trip_duals_on_route)",2:"1 - sum(trip_duals_on_route)",3:"expanded_grid_charging_cost - sum(trip_duals_on_route) - fleet_equality_dual"}
+    zero_artificial = lp is not None and lp.artificial_total <= TOLERANCE
     certified = pricing_certified and (phase != 1 or zero_artificial)
+    dual_bound = None
+    if lp is not None and pricing_certified:
+        dual_bound = sum(lp.trip_duals.values()) - len(lp.trip_duals)*rc_tolerance
+        if phase == 3:
+            fleet = fixed_optima["phase_2_fleet_optimum"]
+            dual_bound = sum(lp.trip_duals.values()) + fleet*(lp.fleet_dual-rc_tolerance)
     payload = {
         "schema": CERTIFICATE_SCHEMA,
         "phase": phase,
         "name": names[phase],
+        "identity": identity,
         "objective_definition": objectives[phase],
         "fixed_optima": fixed_optima,
-        "objective_value": lp.objective,
-        "route_weight": lp.route_weight,
-        "artificial_mass": lp.artificial_total,
+        "objective_value": lp.objective if lp is not None else None,
+        "dual_objective_lower_bound": dual_bound,
+        "primal_dual_gap": lp.objective-dual_bound if dual_bound is not None else None,
+        "route_weight": lp.route_weight if lp is not None else None,
+        "artificial_mass": lp.artificial_total if lp is not None else None,
         "minimum_reduced_cost": min_rc,
+        "pricing_tolerance": rc_tolerance,
         "reduced_cost_definition": reduced_costs[phase],
         "pricing_certified": pricing_certified,
         "certified": certified,
         "zero_artificial_mass_certified":
             bool(pricing_certified and zero_artificial),
         "trip_duals": {
-            str(trip): value for trip, value in lp.trip_duals.items()
+            str(trip): value for trip, value in (lp.trip_duals.items() if lp else ())
         },
-        "fleet_equality_dual": lp.fleet_dual,
-        "master_method": lp.method,
+        "fleet_equality_dual": lp.fleet_dual if lp is not None else None,
+        "master_method": lp.method if lp is not None else None,
         "iterations": iterations,
         "pool_columns": columns,
-        "max_row_violation": lp.max_row_violation,
-        "max_bound_violation": lp.max_bound_violation,
+        "max_row_violation": lp.max_row_violation if lp is not None else None,
+        "max_bound_violation": lp.max_bound_violation if lp is not None else None,
         "continuous_cost_pricing_certified": False,
     }
     if phase == 1:
-        payload["certificate_scope"] = (
-            "zero_artificial_mass_in_expanded_route_space"
-        )
+        payload["certificate_scope"] = ("zero_artificial_mass_in_expanded_route_space"
+                                        if certified else "uncertified_artificial_elimination")
     elif phase == 2:
         payload.update({
-            "certificate_scope":
-                "fleet_lp_lower_bound_in_expanded_route_space",
-            "fleet_lp_lower_bound": lp.objective,
+            "certificate_scope": ("fleet_lp_lower_bound_in_expanded_route_space"
+                                  if certified else "uncertified_fleet_phase"),
             "real_route_objective_coefficient": 1.0,
             "charging_terms_in_objective": False,
         })
+        if certified: payload["fleet_lp_lower_bound"] = dual_bound
     else:
-        payload["certificate_scope"] = (
-            "expanded_grid_charging_cost_at_fixed_certified_fleet_lp_optimum"
-        )
+        payload["certificate_scope"] = ("expanded_grid_charging_cost_at_fixed_certified_fleet_lp_optimum"
+                                        if certified else "uncertified_charging_phase")
     return payload
 
 def _run_phase(args, phase, trips, pool, net, prices, tariff_sha,
-               fleet_optimum, started, journal, iterations):
+               fleet_optimum, started, journal, iterations, identity):
     preferred_method = 0
     methods = ("highs-ds", "highs-ipm", "highs")
     final_lp = None
-    min_rc = math.inf
+    min_rc = None
     pricing_certified = False
-    stop_reason = "max_iters"
+    stop_reason = "max_iters"; iteration = 0
+    rc_tolerance = min(float(args.rc_eps), PRICING_TOLERANCE)
     for iteration in range(1, args.max_iters + 1):
         if (
             args.wall_limit_s is not None
@@ -267,20 +221,25 @@ def _run_phase(args, phase, trips, pool, net, prices, tariff_sha,
             objective=mode,
             route_dual=final_lp.fleet_dual or 0.0,
         )
-        min_rc = float(batch[0]["rc"]) if batch else math.inf
+        min_rc = float(batch[0]["rc"]) if batch else None
         iterations.writerow({
             "phase": phase,
             "iteration": iteration,
             "objective": f"{final_lp.objective:.12g}",
             "route_weight": f"{final_lp.route_weight:.12g}",
             "artificial_mass": f"{final_lp.artificial_total:.12g}",
-            "minimum_reduced_cost": f"{min_rc:.12g}",
+            "minimum_reduced_cost": (
+                f"{min_rc:.12g}" if min_rc is not None else ""
+            ),
             "pool_columns": len(pool),
         })
         flush_and_fsync(iterations.writerows_handle)
-        if min_rc >= -args.rc_eps:
-            pricing_certified = bool(batch)
-            stop_reason = "certified" if pricing_certified else "no_path"
+        if min_rc is None:
+            stop_reason = "no_path"
+            break
+        if min_rc >= -rc_tolerance:
+            pricing_certified = True
+            stop_reason = "certified"
             break
         added = 0
         for candidate in batch:
@@ -305,8 +264,6 @@ def _run_phase(args, phase, trips, pool, net, prices, tariff_sha,
         else:
             stop_reason = "degenerate_stall"
             break
-    if final_lp is None:
-        raise RuntimeError(f"phase {phase} ended before any master solution")
     fixed = {}
     if phase >= 2:
         fixed["phase_1_artificial_optimum"] = 0.0
@@ -320,6 +277,8 @@ def _run_phase(args, phase, trips, pool, net, prices, tariff_sha,
         iterations=iteration,
         columns=len(pool),
         fixed_optima=fixed,
+        identity=identity,
+        rc_tolerance=rc_tolerance,
     )
     certificate["stop_reason"] = stop_reason
     certificate["certificate_sha256"] = hashlib.sha256(
@@ -355,6 +314,7 @@ def run_lexicographic_fleet_cg(args):
         or args.phase_telemetry is not None
         or args.stall_window_min is not None
         or getattr(args, "validated_seed_routes", None) is not None
+        or not math.isfinite(float(args.rc_eps)) or float(args.rc_eps) < 0.0
     )
     if unsupported:
         raise ValueError(
@@ -391,6 +351,7 @@ def run_lexicographic_fleet_cg(args):
         strict_tariff_coverage=args.strict_tariff_coverage,
     )
     provenance = exact._provenance(args)
+    identity={"git_commit":provenance.get("git_commit"),"instance_sha256":provenance["instance_sha256"],"prices_sha256":provenance["prices_sha256"],"csv":args.csv,"prices_csv":args.prices_csv,"soc_step":args.soc_step,"block_min":args.block_min,"g_kwh":args.g_kwh,"charge_kw":args.charge_kw,"min_soc_frac":args.min_soc_frac}
     pool = {}
     seeds, missing = exact.direct_singleton_seed_records(
         problem,
@@ -427,7 +388,7 @@ def run_lexicographic_fleet_cg(args):
             certificate = _run_phase(
                 args, phase, list(problem.trips), pool, net, prices,
                 provenance["prices_sha256"], fleet_optimum, started,
-                journal_handle, iteration_writer,
+                journal_handle, iteration_writer, identity,
             )
             certificates.append(certificate)
             if certificate_handle:
@@ -436,7 +397,7 @@ def run_lexicographic_fleet_cg(args):
             if not certificate["certified"]:
                 break
             if phase == 2:
-                fleet_optimum = certificate["fleet_lp_lower_bound"]
+                fleet_optimum = certificate["route_weight"]
         wall_s = time.perf_counter() - started
     finally:
         for handle in (journal_handle, iteration_handle, certificate_handle):
@@ -458,11 +419,11 @@ def run_lexicographic_fleet_cg(args):
         ),
         "phase_2_fleet_lp_bound": (
             certificates[1].get("fleet_lp_lower_bound")
-            if len(certificates) >= 2 else None
+            if len(certificates) >= 2 and certificates[1]["certified"] else None
         ),
         "phase_3_charging_cost": (
             certificates[2]["objective_value"]
-            if len(certificates) >= 3 else None
+            if len(certificates) >= 3 and certificates[2]["certified"] else None
         ),
         "columns": len(pool),
         "columns_journal": str(journal_path) if journal_path else None,
@@ -477,4 +438,6 @@ def run_lexicographic_fleet_cg(args):
         result["columns_journal_sha256"] = _sha256(journal_path)
     if certificate_path:
         result["phase_certificate_journal_sha256"] = _sha256(certificate_path)
+    if iteration_path:
+        result["phase_iteration_log_sha256"] = _sha256(iteration_path)
     return result
