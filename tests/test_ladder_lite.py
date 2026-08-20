@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -21,9 +22,22 @@ class LadderLiteTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
         root = Path(cls.tmp.name)
-        cls.plan = ladder.build_plan(
-            "ll_test", Path(sys.executable), root / "reservations"
-        )
+        executable = Path(sys.executable).resolve()
+        identity = {
+            "schema": "synthetic-test-environment",
+            "portable": {
+                "python": "3.12.test",
+                "executable": str(executable),
+                "executable_sha256": hashlib.sha256(
+                    executable.read_bytes()
+                ).hexdigest(),
+            },
+            "portable_identity_sha256": "a" * 64,
+        }
+        with patch.object(ladder, "_environment", return_value=identity):
+            cls.plan = ladder.build_plan(
+                "ll_test", executable, root / "reservations"
+            )
         cls.plan_path = root / "approved-plan.json"
         cls.plan_path.write_bytes(ladder.canonical(cls.plan))
         cls.python = sys.executable

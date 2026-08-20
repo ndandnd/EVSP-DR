@@ -5,9 +5,9 @@ main() {
   RUN_ID=$1; [[ "$RUN_ID" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo "unsafe RUN_ID" >&2; return 2; }
   LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd) || return 1
   PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}; NORM="$LL_ROOT/normalized"
-  [ -s "$NORM/cg_run_summary.csv" ] && [ -s "$NORM/mip_run_summary.csv" ] || {
-    echo "normalized summaries missing: $NORM" >&2; return 1;
-  }
+  if [ ! -s "$NORM/cg_run_summary.csv" ] || [ ! -s "$NORM/mip_run_summary.csv" ]; then
+    echo "normalized summaries missing: $NORM" >&2; return 1
+  fi
   RECORDS=${LL_RECORDS_ROOT:-"$REPO/records"}
   DEST="$RECORDS/runs/$RUN_ID"; mkdir -p "$DEST" || return 1
   cp -n "$NORM"/*.csv "$DEST/" || return 1

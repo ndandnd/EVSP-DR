@@ -17,9 +17,9 @@ main() {
   [ -x "$LL_PYTHON" ] || {
     echo "LL_PYTHON is not executable: $LL_PYTHON" >&2; return 1;
   }
-  [ ! -e "$PLAN" ] && [ ! -e "$MATRIX" ] || {
-    echo "plan or matrix already exists: $LL_ROOT/campaign" >&2; return 1;
-  }
+  if [ -e "$PLAN" ] || [ -e "$MATRIX" ]; then
+    echo "plan or matrix already exists: $LL_ROOT/campaign" >&2; return 1
+  fi
   mkdir -p "$LL_ROOT/campaign" || return 1
   (
     cd "$REPO" || exit 1

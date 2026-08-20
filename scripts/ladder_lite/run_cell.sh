@@ -76,10 +76,13 @@ PY
     JOURNAL=$("$PYTHON" -B -c \
       'import json,pathlib,sys;p=pathlib.Path(sys.argv[1]);q=pathlib.Path(json.load(p.open())["columns_journal"]);print((q if q.is_absolute() else p.resolve().parent/q).resolve())' \
       "$CG_OUT") || return 2
-    export EVSP_MIP_EXPECTED_RESULT_SHA256="$(sha256sum "$CG_OUT" | awk '{print $1}')"
-    export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$(sha256sum "$JOURNAL" | awk '{print $1}')"
+    [ -s "$JOURNAL" ] || { echo "dependent CG journal missing" >&2; return 2; }
+    EVSP_MIP_EXPECTED_RESULT_SHA256=$(sha256sum "$CG_OUT" | awk '{print $1}') || return 2
+    EVSP_MIP_EXPECTED_JOURNAL_SHA256=$(sha256sum "$JOURNAL" | awk '{print $1}') || return 2
+    export EVSP_MIP_EXPECTED_RESULT_SHA256 EVSP_MIP_EXPECTED_JOURNAL_SHA256
     if [ "$ARM" = "KNOWN-PARTITION" ]; then
-      export EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256="$(sha256sum "$SEED_OUT" | awk '{print $1}')"
+      EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256=$(sha256sum "$SEED_OUT" | awk '{print $1}') || return 2
+      export EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256
     else
       unset EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256 || true
     fi
