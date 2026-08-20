@@ -68,7 +68,7 @@ class LadderLiteTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(completed.returncode, 0, completed.stderr)
-        return shlex.split(completed.stdout)
+        return shlex.split(completed.stdout.splitlines()[-1])
 
     def test_all_138_array_indices_resolve_to_plan_jobs(self):
         jobs = {job["job_key"]: job for job in self.plan["jobs"]}
@@ -254,6 +254,21 @@ class LadderLiteTests(unittest.TestCase):
     def test_plan_is_campaign_scoped_and_logs_verbose_json(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); checkout = root / "repo"; state = root / "state"
+            fake_python = root / "python3.12"
+            fake_python.write_text(f"""#!{self.python}
+import json,os,sys
+args=sys.argv[1:]
+if args and args[0]=="-B":args=args[1:]
+if args and args[0].endswith("launch_scale_ladder.py"):
+ def value(flag):return args[args.index(flag)+1]
+ plan={{"campaign":value("--campaign"),"task_groups":{{"TEST":list(range(138))}}}}
+ open(value("--plan-out"),"x").write(json.dumps(plan))
+ open(value("--matrix-out"),"x").write("task\\n")
+ print(json.dumps(plan,indent=2));raise SystemExit(0)
+if args and args[0]=="-c":raise SystemExit(0)
+os.execv({self.python!r},[{self.python!r},"-B",*args])
+""")
+            fake_python.chmod(0o755)
             subprocess.run(
                 ["git", "worktree", "add", "--detach", str(checkout), "HEAD"],
                 cwd=REPO, check=True, text=True, capture_output=True,
@@ -264,7 +279,7 @@ class LadderLiteTests(unittest.TestCase):
                     environment = {
                         **os.environ,
                         "LL_ROOT": str(state),
-                        "LL_PYTHON": self.python,
+                        "LL_PYTHON": str(fake_python),
                         "LL_CAMPAIGN": campaign,
                     }
                     completed = subprocess.run(
