@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse,csv,hashlib,json,shutil,tempfile
 from pathlib import Path
 import summarize_scale_ladder as base
+ALLOW_CENSORED=set()
 
 def _sha(path): return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def _write(path,fields,rows):
@@ -12,10 +13,14 @@ def _write(path,fields,rows):
         w.writeheader();w.writerows(rows)
 def _validate(job,_plan_sha):
     out=Path(job["output"]); phase=job["phase"]
-    if not out.exists() or not Path(str(out)+".done").is_file():
+    if not out.exists() or (not Path(str(out)+".done").is_file()
+                            and job["job_key"] not in ALLOW_CENSORED):
         raise ValueError(f"ladder-lite completion missing: {job['job_key']}")
-    if phase=="PREFLIGHT" and not out.with_suffix(".csv").is_file():
-        raise ValueError("PREFLIGHT CSV missing")
+    if phase=="PREFLIGHT":
+        payload=json.loads(out.read_text()); observed=hashlib.sha256(
+            json.dumps(payload,sort_keys=True,separators=(",",":"),allow_nan=False).encode()).hexdigest()
+        if not out.with_suffix(".csv").is_file() or observed!=job.get("prelaunch_membership_sha256"):
+            raise ValueError("PREFLIGHT output/hash invalid")
     if phase in {"CG","CG_SENSITIVITY"}:
         status=json.loads(out.read_text()); provenance=status.get("provenance") or {}
         if (provenance.get("git_commit")!=PLAN["checkout_identity"]["commit"]
@@ -77,6 +82,18 @@ def _append_missing(output,omitted):
             mip.append({**common,"arm":job["arm"],"scientific_role":job.get("scientific_role"),
                         "output_available":False,"missing_reason":reason})
     for path,field,rows in zip(paths,fields,(cg,mip,progress)):_write(path,field,rows)
+def _mark_censored(output,jobs):
+    for name in ("cg_run_summary.csv","mip_run_summary.csv","scale_progress_summary.csv"):
+        path=output/name
+        with path.open(newline="") as h:r=csv.DictReader(h);rows=list(r);fields=r.fieldnames
+        for row in rows:
+            matches=[j for j in jobs if j["cell_id"]==row.get("cell_id")
+                     and (j["phase"]!="MIP" or j["arm"]==row.get("arm"))]
+            if matches:
+                row["censored"]="True"
+                if "stopping_reason" in row:row["stopping_reason"]="censored: output present without .done"
+                if "missing_reason" in row:row["missing_reason"]="censored: output present without .done"
+        _write(path,fields,rows)
 def summarize(campaign_root,output_dir):
     root=Path(campaign_root).resolve();output=Path(output_dir).resolve()
     raw=(root/"approved-plan.json").read_bytes();original=json.loads(raw)
@@ -85,7 +102,8 @@ def summarize(campaign_root,output_dir):
             or manifest.get("execution_mode")!="ladder_lite_direct_array"
             or manifest.get("commit")!=original["checkout_identity"]["commit"]):
         raise ValueError("ladder-lite approval/commit mismatch")
-    completed=[];omitted=[]
+    completed=[];omitted=[];censored_jobs=[]
+    global PLAN;PLAN=original
     for job in original["jobs"]:
         out=Path(job["output"])
         if Path(str(out)+".override.json").exists():
@@ -93,7 +111,12 @@ def summarize(campaign_root,output_dir):
         state=("completed" if Path(str(out)+".done").is_file() else "censored" if out.exists()
                else "blocked" if Path(str(out)+".blocked").exists()
                else "failed" if Path(str(out)+".failed").exists() else "missing")
-        if state=="completed":completed.append(job)
+        if state=="censored":
+            ALLOW_CENSORED.add(job["job_key"])
+            try:_validate(job,"")
+            except (OSError,ValueError,KeyError,json.JSONDecodeError):omitted.append((job,state,f"{state}: unusable partial output"))
+            else:completed.append(job);censored_jobs.append(job)
+        elif state=="completed":completed.append(job)
         else:omitted.append((job,state,f"{state}: ladder-lite marker/output state"))
     filtered=dict(original);filtered["jobs"]=completed
     filtered["task_groups"]={g:[k for k in keys if any(j["job_key"]==k for j in completed)]
@@ -104,10 +127,11 @@ def summarize(campaign_root,output_dir):
         (temp/"approved-plan.json").write_bytes(plan_raw)
         (temp/"campaign.json").write_text(json.dumps({"approval_sha256":hashlib.sha256(plan_raw).hexdigest(),
           "execution_mode":"local_diagnostic","diagnostic_only":False,"submitted":False}))
-        global PLAN;PLAN=original;saved=base._validate_completion;base._validate_completion=_validate
+        saved=base._validate_completion;base._validate_completion=_validate
         try:base.summarize(temp,output)
         finally:base._validate_completion=saved
-        _append_missing(output,omitted);provenance_path=output/"provenance.json"
+        _append_missing(output,omitted);_mark_censored(output,censored_jobs)
+        provenance_path=output/"provenance.json"
         provenance=json.loads(provenance_path.read_text())
         provenance.update({"plan_sha256":hashlib.sha256(raw).hexdigest(),
           "git_commit":original["checkout_identity"]["commit"],

@@ -9,7 +9,6 @@ main() {
   "$PYTHON" -B - "$PLAN" "$FILTER" <<'PY' || return 1
 import json,os,pathlib,sys
 p=json.load(open(sys.argv[1])); filt=sys.argv[2]
-codes={"PREFLIGHT":"pf","SEED":"sd","CG":"cg","CG_SENSITIVITY":"cs","MIP_RAW":"mr","MIP_KNOWN":"mk"}
 jobs={j["job_key"]:j for j in p["jobs"]}
 names=[f.split("|")[1] for f in os.environ.get("LL_QUEUE","").splitlines() if "|" in f]
 for group,keys in p["task_groups"].items():
@@ -18,7 +17,7 @@ for group,keys in p["task_groups"].items():
  for key in keys:
   out=pathlib.Path(jobs[key]["output"])
   for state in counts: counts[state]+=int(pathlib.Path(str(out)+"."+state).exists())
- running=sum(name.startswith("ll_"+codes[group]+"_") for name in names)
+ running=sum(name.startswith("ll_"+group+"_") for name in names)
  missing=len(keys)-sum(counts.values())-running
  print(group,len(keys),counts["done"],counts["failed"],counts["blocked"],running,max(0,missing))
 PY

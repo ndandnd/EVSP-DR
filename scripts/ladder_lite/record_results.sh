@@ -31,13 +31,13 @@ for j in plan["jobs"]:
  science=summary; dep=next((x for x in plan["jobs"] if j["phase"]=="MIP" and x["job_key"]==j["dependency_cg"]),None)
  if dep:seen_mip.add(key);science=cgmap.get((dep["cell_id"],role(dep),str(dep["soc_step"]),str(dep["block_min"]),str(dep["cg_replicate"])),{})
  if (run,j["job_key"]) in existing:skipped+=1;continue
- out=pathlib.Path(j["output"]); censored=(summary or {}).get("censored")=="True"; missing=summary is None
+ out=pathlib.Path(j["output"]); censored=(summary or {}).get("censored")=="True"; missing=summary is None; explicit_missing=missing or (summary or {}).get("stopping_reason")=="missing" or str((summary or {}).get("missing_reason","")).startswith("missing:")
  row={f:"" for f in fields}; row.update({
   "date_utc":datetime.datetime.now(datetime.timezone.utc).date().isoformat(),"run_id":run,"execution_mode":manifest["execution_mode"],"commit":manifest["commit"],
   "group":("MIP_"+("RAW" if j["arm"]=="RAW" else "KNOWN") if j["phase"]=="MIP" else j["phase"]),
   "cell_id":j["job_key"],"phase":j["phase"],"arm":j["arm"] or "","scale":j["scale"],
   "sel_rep":j["selection_replicate"],"cg_rep":j["cg_replicate"],"soc_step":j["soc_step"],
-  "block_min":j["block_min"],"budget_s":j["budget_s"],"status":"missing" if missing else "censored" if censored else "completed",
+  "block_min":j["block_min"],"budget_s":j["budget_s"],"status":"missing" if explicit_missing else "censored" if censored else "completed",
   "label":"budget_overridden" if pathlib.Path(str(out)+".override.json").exists() else "ladder_lite_direct_array",
   "route_weight":(science or {}).get("final_route_weight",""),"route_weight_meaning":"combined-cost-master route weight",
   "min_reduced_cost":(science or {}).get("final_min_reduced_cost",""),"certified":(summary or {}).get("pricing_certified",(summary or {}).get("fleet_proven","")),
