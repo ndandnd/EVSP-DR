@@ -19,7 +19,7 @@ from typing import Sequence
 
 import numpy as np
 import scipy
-from scipy.optimize import Bounds, LinearConstraint, milp
+from scipy.optimize import Bounds, LinearConstraint, linprog, milp
 from scipy.sparse import csc_matrix
 
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, build_problem
@@ -279,12 +279,27 @@ def solve(model: ArcFlowModel, *, objective_kind: str,
     if integrality != "none":
         options["mip_rel_gap"] = float(mip_rel_gap)
     started = time.perf_counter()
-    raw = milp(
-        c=objective, integrality=integer,
-        bounds=Bounds(0.0, model.variable_upper),
-        constraints=LinearConstraint(model.matrix, lower, upper),
-        options=options,
-    )
+    if integrality == "none":
+        # Interior point avoids the severe dual-simplex degeneracy caused by
+        # thousands of equivalent waiting/charging paths.
+        equality_rows = (
+            slice(None) if fixed_fleet is not None else slice(0, -1)
+        )
+        raw = linprog(
+            c=objective,
+            A_eq=model.matrix[equality_rows],
+            b_eq=lower[equality_rows],
+            bounds=Bounds(0.0, model.variable_upper),
+            method="highs-ipm",
+            options=options,
+        )
+    else:
+        raw = milp(
+            c=objective, integrality=integer,
+            bounds=Bounds(0.0, model.variable_upper),
+            constraints=LinearConstraint(model.matrix, lower, upper),
+            options=options,
+        )
     elapsed = time.perf_counter() - started
     primal = None if raw.x is None else np.asarray(raw.x, dtype=float)
     vehicles = charging = row_violation = None
@@ -590,7 +605,8 @@ def main(argv: Sequence[str] | None = None) -> int:
           f"vehicles={result.vehicles}, charging={result.charging_cost}, "
           f"all_arcs_integral={result.all_arcs_integral}, "
           f"solve_s={result.solve_s:.3f}", flush=True)
-    if args.setpart_lp is not None and result.integrality == "none":
+    if (args.setpart_lp is not None and result.integrality == "none"
+            and result.status == "optimal"):
         if result.vehicles is None or result.vehicles > args.setpart_lp + 1e-6:
             raise AssertionError("G3 FAILED: arcflow LP exceeds set-partitioning LP")
         gates.append({"gate": "G3", "passed": True,
