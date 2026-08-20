@@ -824,21 +824,29 @@ def _infeasible(
     }
 
 
-def validate_lattice_reproduction(
+def solve_fixed_duty_lattice(
     problem,
     trip_sequence,
     station_prices,
     *,
+    g_kwh=240.0,
+    charge_kw=240.0,
+    reserve_kwh=0.0,
+    soc_step=10.0,
+    block_min=10,
+    compare_legacy=False,
     tariff_id=None,
     tariff_sha256=None,
     instance_sha256=None,
 ):
-    """Solve the legacy lattice transition graph as a MILP and compare its DP."""
+    """Solve a fixed-duty SOC/time lattice as an independent flow MILP."""
     trips = tuple(int(trip) for trip in trip_sequence)
-    g_kwh, charge_kw, reserve_kwh = 300.0, 300.0, 0.0
-    soc_step, block_min = 15.0, 10
+    g_kwh, charge_kw = float(g_kwh), float(charge_kw)
+    reserve_kwh, soc_step = float(reserve_kwh), float(soc_step)
+    block_min = int(block_min)
     grid = [
-        index * soc_step for index in range(int(g_kwh / soc_step) + 1)
+        round(index * soc_step, 6)
+        for index in range(int(g_kwh / soc_step) + 1)
     ]
     arcs = _arc_groups(problem)
     first = arcs["depot_trip"].get(trips[0])
@@ -892,21 +900,23 @@ def validate_lattice_reproduction(
         if not final and not next_reachable:
             break
         reachable = next_reachable
-    reference = optimize_fixed_duty(
-        problem,
-        trips,
-        station_prices,
-        tariff_id=tariff_id,
-        tariff_sha256=tariff_sha256,
-        instance_sha256=instance_sha256,
-    )
-    if not reference["feasible"]:
-        return {
-            "feasible": False,
-            "reference_feasible": False,
-            "matches": True,
-            "reason": reference["reason"],
-        }
+    reference = None
+    if compare_legacy:
+        reference = optimize_fixed_duty(
+            problem,
+            trips,
+            station_prices,
+            tariff_id=tariff_id,
+            tariff_sha256=tariff_sha256,
+            instance_sha256=instance_sha256,
+        )
+        if not reference["feasible"]:
+            return {
+                "feasible": False,
+                "reference_feasible": False,
+                "matches": True,
+                "reason": reference["reason"],
+            }
     model = _Model()
     variable = [
         model.variable(cost=row["cost"], ub=1, integer=True)
@@ -936,19 +946,50 @@ def validate_lattice_reproduction(
         for index, row in enumerate(transitions)
         if row["position"] == len(trips) - 1 and row["target"] is None
     ]
+    if not terminal:
+        return {"feasible": False, "reason": "lattice has no terminal path"}
     model.constraint(terminal, lower=1, upper=1)
     solved = model.solve()
-    if not solved.success:
-        raise ValueError(f"lattice MILP failed: {solved.message}")
+    if not solved.success or solved.x is None:
+        return {"feasible": False, "reason": str(solved.message)}
     objective = BUS_COST_KX + float(solved.fun)
-    difference = objective - float(reference["expanded_grid_objective"])
-    return {
+    result = {
         "feasible": True,
-        "reference_feasible": True,
-        "milp_objective": objective,
-        "dp_objective": float(reference["expanded_grid_objective"]),
-        "difference": difference,
-        "matches": math.isclose(difference, 0.0, abs_tol=1e-7),
+        "objective": objective,
         "transition_count": len(transitions),
-        "scope": "legacy_300kWh_300kW_15kWh_10min_lattice",
+        "scope": (
+            f"{g_kwh:g}kWh_{charge_kw:g}kW_"
+            f"{soc_step:g}kWh_{block_min}min_lattice"
+        ),
     }
+    if reference is not None:
+        difference = objective - float(reference["expanded_grid_objective"])
+        result.update({
+            "reference_feasible": True,
+            "milp_objective": objective,
+            "dp_objective": float(reference["expanded_grid_objective"]),
+            "difference": difference,
+            "matches": math.isclose(difference, 0.0, abs_tol=1e-7),
+        })
+    return result
+
+
+def validate_lattice_reproduction(
+    problem,
+    trip_sequence,
+    station_prices,
+    **identity,
+):
+    """Reproduce the frozen legacy 300/300, 15 kWh/10-minute DP."""
+    return solve_fixed_duty_lattice(
+        problem,
+        trip_sequence,
+        station_prices,
+        g_kwh=300,
+        charge_kw=300,
+        reserve_kwh=0,
+        soc_step=15,
+        block_min=10,
+        compare_legacy=True,
+        **identity,
+    )
