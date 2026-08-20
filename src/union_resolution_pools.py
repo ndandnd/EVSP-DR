@@ -208,12 +208,32 @@ def validate_union_witness(union, routes, *, data_dir=None,
             physical_pool_audit=source["physical_pool_audit"],
         )
     hashes = [route_sha256(route) for route in routes]
+    retained = union["route_hash_deduplication"]["retained_route_sources"]
+    source_by_id = {
+        source["source_id"]: source for source in union["sources"]
+    }
+    source_counts = {}
+    for digest in hashes:
+        source_id = retained.get(digest)
+        if source_id not in source_by_id:
+            raise RuntimeError("union witness route lacks retained source")
+        source_counts[source_id] = source_counts.get(source_id, 0) + 1
     return {
         "validated": True,
         "route_count": len(routes),
         "route_hashes_sha256": hashlib.sha256(
             _canonical(sorted(hashes))
         ).hexdigest(),
+        "retained_source_counts": [
+            {
+                "source_id": source_id,
+                "route_count": count,
+                "grid": source_by_id[source_id]["grid"],
+                "journal_sha256":
+                    source_by_id[source_id]["journal_sha256"],
+            }
+            for source_id, count in sorted(source_counts.items())
+        ],
     }
 
 

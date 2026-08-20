@@ -284,6 +284,13 @@ class ResolutionPoolUnionTests(unittest.TestCase):
             self.assertEqual(mip["outcome"],"FEASIBLE")
             self.assertEqual(mip["solver"]["backend"],"highs")
             self.assertTrue(mip["witness_audit"]["validated"])
+            self.assertEqual(
+                sum(
+                    source["route_count"] for source
+                    in mip["witness_audit"]["retained_source_counts"]
+                ),
+                mip["witness_route_count"],
+            )
             self.assertEqual(union["source_count"],2)
             self.assertEqual(
                 len({source["journal_sha256"] for source in union["sources"]}),
