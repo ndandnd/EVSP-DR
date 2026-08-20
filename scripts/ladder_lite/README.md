@@ -24,5 +24,6 @@ Then start the production campaign:
 17. `bash scripts/ladder_lite/normalize.sh`
 18. `RUN_ID=ll_$(date -u +%Y%m%d) bash scripts/ladder_lite/record_results.sh "$RUN_ID"`
 
-For a confirmed exit 137 or `Exceeded job memory limit`, resubmit that group
-with `--mem 64G`. Do not automate memory escalation.
+For a confirmed exit 137 or `Exceeded job memory limit`, never lower the
+plan-bound memory: use `--mem 64G` only for rows planned at ≤64G, and
+`--mem 192G` for rows planned at 128G. Limit retries with `--scales`.
