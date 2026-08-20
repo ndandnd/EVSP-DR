@@ -20,7 +20,8 @@ supported through pricing, physical replay, and pool validation.
 
 ## Frozen full study
 
-`resolution_cost_plan.json` contains 168 jobs:
+`resolution_cost_plan.json` is the clean, portable 168-job operator plan.
+`local_validation_plan.json` is the exact plan used for the local subset:
 
 - 18 instances: 6 scales (`k2`, `k3`, `k5`, `k8`, `k13`, `k20`) × 3
   selections;
@@ -128,9 +129,13 @@ the event-based pricer.
 
 ## Artifacts
 
-- Internal plan SHA256:
+- Final operator-plan internal SHA256:
+  `56398692d8c59df4c13973b98326d77b8d7da9049f0e868303f6ef00ec8c92fd`
+- Final operator-plan file SHA256:
+  `387a68bcdd87e0520e82574ec2e1d7e66322ba4d07813b3d4b30abbbb841a975`
+- Executed local-plan internal SHA256:
   `0608f70d6ce79c7e33dae47a619350e1ad1eae2bf144b621dcbfe182537862e8`
-- Plan file SHA256:
+- Executed local-plan file SHA256:
   `e9377c89cb3465eb610cb7f9d85e8fa49baa492200c145fa51e4d8adb172d72b`
 - `local_k2_k3/resolution_cost_long.csv` SHA256:
   `e4de42759d72c470896f2d350f4728bd45ba837a9446c7ce9addc031866149b8`
