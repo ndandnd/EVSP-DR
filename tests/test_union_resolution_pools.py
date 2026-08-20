@@ -1,6 +1,10 @@
+import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -8,8 +12,10 @@ sys.path.insert(0, str(REPO / "src"))
 
 from target_pool_feasibility import solve_target_feasibility  # noqa: E402
 from union_resolution_pools import (  # noqa: E402
+    build_union,
     merge_route_sets,
     route_sha256,
+    validate_union_witness,
 )
 
 
@@ -115,6 +121,77 @@ class ResolutionPoolUnionTests(unittest.TestCase):
             route_sha256(route([0], cost=100000.0)),
             route_sha256(route([0], cost=100001.0)),
         )
+
+    def test_build_union_binds_audited_sources_and_allows_equal_journal_hashes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);results=[]
+            status={
+                "csv":"instance.csv","prices_csv":"prices.csv",
+                "trip_ids":[0,1],"g_kwh":300.0,"charge_kw":300.0,
+                "min_soc_frac":0.0,"soc_step":15.0,"block_min":10,
+                "provenance":{
+                    "instance_sha256":"i","prices_sha256":"p",
+                    "reference_sha256":"r","deadhead_sha256":"d",
+                },
+            }
+            for index in range(2):
+                result=root/f"source{index}.json";journal=Path(str(result)+".columns.jsonl")
+                journal.write_text(json.dumps(route([0]))+"\n")
+                result.write_text(json.dumps({**status,"columns_journal":str(journal)}))
+                results.append(result)
+            audit={"input_hashes":{
+                "instance_sha256":"i","prices_sha256":"p",
+                "reference_sha256":"r","deadhead_sha256":"d",
+            }}
+
+            def loaded(path,**_kwargs):
+                payload=json.loads(Path(path).read_text())
+                return payload,[route([0]),route([1])],[0,1]
+
+            with (
+                patch("union_resolution_pools.load_pool",side_effect=loaded),
+                patch("union_resolution_pools.prepare_strict_partition_pool",
+                      return_value=([route([0]),route([1])],audit)),
+                patch("audit_giro_known_columns.build_problem",
+                      return_value=SimpleNamespace(trips=(0,1))),
+                patch("union_resolution_pools.verified_mip_code_identity",
+                      return_value={"observed_commit":"a"*40}),
+            ):
+                payload,routes=build_union(
+                    results,output_path=root/"union.json",
+                )
+            self.assertEqual(len(payload["sources"]),2)
+            self.assertEqual(len(routes),2)
+            self.assertTrue(payload["route_hash_deduplication"]["verified"])
+
+    def test_build_union_rejects_loaded_status_swap(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);result=root/"source.json";journal=root/"source.jsonl"
+            status={"columns_journal":str(journal),"trip_ids":[0]}
+            result.write_text(json.dumps(status));journal.write_text("{}\n")
+            swapped={**status,"trip_ids":[1]}
+            with (
+                patch("union_resolution_pools.load_pool",
+                      return_value=(swapped,[route([1])],[1])),
+                patch("union_resolution_pools.verified_mip_code_identity",
+                      return_value={}),
+                self.assertRaisesRegex(RuntimeError,"changed while loading"),
+            ):
+                build_union(
+                    [result,result],output_path=root/"union.json",
+                )
+
+    def test_union_witness_rejects_falsified_immutable_trip_ids(self):
+        union={
+            "csv":"instance.csv","prices_csv":"prices.csv",
+            "trip_ids":[0],"g_kwh":300.0,"charge_kw":300.0,
+            "min_soc_frac":0.0,
+        }
+        with patch(
+            "audit_giro_known_columns.build_problem",
+            return_value=SimpleNamespace(trips=(0,1)),
+        ), self.assertRaisesRegex(RuntimeError,"trip identity"):
+            validate_union_witness(union,[route([0])])
 
 
 if __name__ == "__main__":

@@ -1,7 +1,11 @@
+import json
+import os
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -9,6 +13,7 @@ sys.path.insert(0, str(REPO / "src"))
 
 from target_pool_feasibility import (  # noqa: E402
     classify_outcome,
+    evaluate,
     solve_target_feasibility,
 )
 
@@ -69,6 +74,50 @@ class TargetPoolFeasibilityTests(unittest.TestCase):
                 [{"trips": [0]}], [0], 0,
                 timelimit=30, threads=1,
             )
+
+    def test_evaluate_rejects_source_swap_before_physical_gate(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            journal = root / "pool.jsonl"
+            journal.write_text('{"trips":[0],"cost":1}\n')
+            status = {"columns_journal": str(journal), "trip_ids": [0]}
+            result = root / "status.json"
+            result.write_text(json.dumps(status))
+            args = SimpleNamespace(
+                result=result, out=root/"out.json", target=1,
+                timelimit=30, threads=1, seed=0,
+                data_dir=None, reference_data_dir=None,
+            )
+
+            def swapped(*_args, **_kwargs):
+                journal.write_text('{"trips":[0],"cost":2}\n')
+                return status, [{"trips":[0],"cost":2}], [0]
+
+            with (
+                patch(
+                    "target_pool_feasibility.resolve_pool_journal",
+                    return_value=journal,
+                ),
+                patch(
+                    "target_pool_feasibility.load_pool",
+                    side_effect=swapped,
+                ),
+                patch(
+                    "target_pool_feasibility.verified_mip_code_identity",
+                    return_value={"observed_commit":"a"*40},
+                ),
+                self.assertRaisesRegex(RuntimeError, "changed while loading"),
+            ):
+                evaluate(args)
+            self.assertFalse((root/"out.json").exists())
+
+    def test_evaluate_refuses_dangling_output_symlink(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);output=root/"out.json"
+            os.symlink(root/"missing",output)
+            args=SimpleNamespace(result=root/"unused",out=output)
+            with self.assertRaises(FileExistsError):
+                evaluate(args)
 
 
 if __name__ == "__main__":

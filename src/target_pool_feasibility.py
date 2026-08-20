@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import time
 from pathlib import Path
 
@@ -141,13 +142,20 @@ def solve_target_feasibility(
 def evaluate(args):
     result_path = Path(args.result).resolve()
     output_path = Path(args.out).resolve()
-    if output_path.exists():
+    if os.path.lexists(output_path):
         raise FileExistsError(output_path)
+    code_identity = verified_mip_code_identity()
     source_status = json.loads(result_path.read_text())
     source_journal = resolve_pool_journal(result_path, source_status)
     source_result_sha256 = file_sha256(result_path)
     source_journal_sha256 = file_sha256(source_journal)
     status, routes, trips = load_pool(result_path, deduplicate=False)
+    if (
+        file_sha256(result_path) != source_result_sha256
+        or file_sha256(source_journal) != source_journal_sha256
+        or status != source_status
+    ):
+        raise RuntimeError("target-feasibility source changed while loading")
     routes, physical_audit = prepare_strict_partition_pool(
         status,
         routes,
@@ -176,6 +184,14 @@ def evaluate(args):
             reference_data_dir=args.reference_data_dir,
             physical_pool_audit=physical_audit,
         )
+    if (
+        file_sha256(result_path) != source_result_sha256
+        or file_sha256(source_journal) != source_journal_sha256
+    ):
+        raise RuntimeError("target-feasibility source changed during solve")
+    final_code_identity = verified_mip_code_identity()
+    if final_code_identity != code_identity:
+        raise RuntimeError("target-feasibility code identity changed during solve")
     payload = {
         "schema": SCHEMA,
         "outcome": solved["outcome"],
@@ -216,7 +232,7 @@ def evaluate(args):
         },
         "physical_pool_audit": physical_audit,
         "solver": solved,
-        "code_identity": verified_mip_code_identity(),
+        "code_identity": code_identity,
     }
     if payload["outcome"] not in OUTCOMES:
         raise RuntimeError("internal outcome classification error")

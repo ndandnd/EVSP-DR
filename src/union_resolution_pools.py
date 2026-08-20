@@ -13,6 +13,7 @@ from run_exact_pool_mip import (
     file_sha256,
     load_pool,
     prepare_strict_partition_pool,
+    validate_injected_route,
     resolve_pool_journal,
     verified_mip_code_identity,
     write_new_json,
@@ -33,16 +34,7 @@ def _canonical(payload):
 def route_sha256(route):
     """Hash one complete route realization for exact deduplication."""
 
-    return hashlib.sha256(_canonical({
-        "trips": route.get("trips"),
-        "route_nodes": route.get("route_nodes"),
-        "charging_stops": route.get("charging_stops"),
-        "expanded_grid_charging_stops":
-            route.get("expanded_grid_charging_stops"),
-        "cost": route.get("cost"),
-        "continuous_realized_charging_blocks":
-            route.get("continuous_realized_charging_blocks"),
-    })).hexdigest()
+    return hashlib.sha256(_canonical(route)).hexdigest()
 
 
 def _identity(status):
@@ -66,9 +58,6 @@ def merge_route_sets(sources):
 
     if len(sources) < 2:
         raise ValueError("resolution union requires at least two sources")
-    journal_ids = [source["journal_sha256"] for source in sources]
-    if len(set(journal_ids)) != len(journal_ids):
-        raise ValueError("resolution union repeats a source journal")
     expected = sources[0]["identity"]
     for source in sources:
         if source["identity"] != expected:
@@ -82,13 +71,15 @@ def merge_route_sets(sources):
             )
     union = {}
     source_hash_sets = {}
-    for source in sources:
+    for source_index, source in enumerate(sources):
         hashes = set()
         for route in source["routes"]:
             digest = route_sha256(route)
             hashes.add(digest)
             union.setdefault(digest, route)
-        source_hash_sets[source["journal_sha256"]] = hashes
+        source_hash_sets[
+            source.get("source_id", f"source_{source_index}")
+        ] = hashes
     ordered_hashes = sorted(union)
     union_hashes = set(ordered_hashes)
     if any(not hashes <= union_hashes for hashes in source_hash_sets.values()):
@@ -127,31 +118,131 @@ def _write_new_jsonl(path, records):
     os.close(parent_fd)
 
 
+def validate_union_witness(union, routes, *, data_dir=None,
+                           reference_data_dir=None):
+    from audit_giro_known_columns import HORIZON_MIN, build_problem
+    from expanded_path_realization import validate_continuous_charging_blocks
+    from config import CHARGING_STATIONS
+    from utils_v2 import load_station_hourly_prices
+
+    data_root = Path(
+        data_dir if data_dir is not None
+        else Path(__file__).resolve().parent.parent/"data"
+    ).resolve()
+    reference_root = Path(
+        reference_data_dir if reference_data_dir is not None else data_root
+    ).resolve()
+    problem = build_problem(
+        data_root,
+        union["csv"],
+        max_station_to_trip_wait_min=HORIZON_MIN,
+        reference_data_dir=reference_root,
+    )
+    if list(problem.trips) != list(union["trip_ids"]):
+        raise RuntimeError("union witness instance trip identity changed")
+    prices = load_station_hourly_prices(
+        data_root/union["prices_csv"], CHARGING_STATIONS,
+    )
+    counts = {trip: 0 for trip in problem.trips}
+    hashes = []
+    reserve = float(union["min_soc_frac"])*float(union["g_kwh"])
+    for route in routes:
+        reason = validate_injected_route(
+            problem, route, float(union["g_kwh"]),
+            float(union["charge_kw"]), reserve, HORIZON_MIN,
+        )
+        if reason is not None:
+            raise RuntimeError(f"union witness route failed replay: {reason}")
+        validate_continuous_charging_blocks(
+            route,
+            route.get("continuous_realized_charging_blocks"),
+            station_prices=prices,
+            charge_kw=float(union["charge_kw"]),
+            expected_continuous_cost=route.get("continuous_realized_cost"),
+        )
+        for trip in route["trips"]:
+            counts[trip] += 1
+        hashes.append(route_sha256(route))
+    if any(value != 1 for value in counts.values()):
+        raise RuntimeError("union witness is not an immutable exact partition")
+    return {
+        "validated": True,
+        "route_count": len(routes),
+        "route_hashes_sha256": hashlib.sha256(
+            _canonical(sorted(hashes))
+        ).hexdigest(),
+    }
+
+
 def build_union(result_paths, *, output_path, data_dir=None,
                 reference_data_dir=None):
     output_path = Path(output_path).resolve()
     journal_out = Path(str(output_path) + ".columns.jsonl")
-    if output_path.exists() or journal_out.exists():
+    if os.path.lexists(output_path) or os.path.lexists(journal_out):
         raise FileExistsError("union output or journal already exists")
+    code_identity = verified_mip_code_identity()
+    from audit_giro_known_columns import HORIZON_MIN, build_problem
+    data_root = Path(
+        data_dir if data_dir is not None
+        else Path(__file__).resolve().parent.parent/"data"
+    ).resolve()
+    reference_root = Path(
+        reference_data_dir if reference_data_dir is not None else data_root
+    ).resolve()
     loaded = []
     for result in result_paths:
         result = Path(result).resolve()
         status_raw = result.read_bytes()
         status = json.loads(status_raw)
         journal = resolve_pool_journal(result, status)
-        _loaded_status, routes, trips = load_pool(
+        result_sha = hashlib.sha256(status_raw).hexdigest()
+        journal_sha = file_sha256(journal)
+        loaded_status, routes, trips = load_pool(
             result, deduplicate=False,
         )
+        if (
+            loaded_status != status
+            or file_sha256(result) != result_sha
+            or file_sha256(journal) != journal_sha
+        ):
+            raise RuntimeError("pool union source changed while loading")
         admitted, audit = prepare_strict_partition_pool(
             status,
             routes,
             data_dir=data_dir,
             reference_data_dir=reference_data_dir,
         )
-        journal_sha = file_sha256(journal)
+        if (
+            file_sha256(result) != result_sha
+            or file_sha256(journal) != journal_sha
+        ):
+            raise RuntimeError("pool union source changed during physical audit")
+        provenance = status.get("provenance") or {}
+        audited_hashes = audit.get("input_hashes") or {}
+        for field in (
+            "instance_sha256", "prices_sha256",
+            "reference_sha256", "deadhead_sha256",
+        ):
+            if not provenance.get(field) or provenance[field] != audited_hashes.get(field):
+                raise ValueError(
+                    f"pool union source lacks matching {field}"
+                )
+        problem = build_problem(
+            data_root,
+            status["csv"],
+            max_station_to_trip_wait_min=HORIZON_MIN,
+            reference_data_dir=reference_root,
+        )
+        if list(problem.trips) != trips:
+            raise ValueError(
+                "pool union status trip_ids differ from immutable instance"
+            )
         loaded.append({
+            "source_id": hashlib.sha256(_canonical(
+                [str(result), result_sha, journal_sha]
+            )).hexdigest(),
             "result": str(result),
-            "result_sha256": hashlib.sha256(status_raw).hexdigest(),
+            "result_sha256": result_sha,
             "journal": str(journal.resolve()),
             "journal_sha256": journal_sha,
             "identity": _identity(status),
@@ -168,6 +259,14 @@ def build_union(result_paths, *, output_path, data_dir=None,
     identity = loaded[0]["identity"]
     if not identity["instance_sha256"] or not identity["trip_ids"]:
         raise ValueError("union source lacks immutable instance identity")
+    for source in loaded:
+        if (
+            file_sha256(Path(source["result"])) != source["result_sha256"]
+            or file_sha256(Path(source["journal"])) != source["journal_sha256"]
+        ):
+            raise RuntimeError("pool union source changed before publication")
+    if verified_mip_code_identity() != code_identity:
+        raise RuntimeError("pool union code identity changed during build")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     _write_new_jsonl(journal_out, routes)
     payload = {
@@ -206,6 +305,7 @@ def build_union(result_paths, *, output_path, data_dir=None,
         },
         "cross_resolution_cost_comparability": False,
         "intended_use": "fleet_partition_or_target_feasibility",
+        "code_identity": code_identity,
     }
     write_new_json(output_path, payload)
     return payload, routes
@@ -214,7 +314,7 @@ def build_union(result_paths, *, output_path, data_dir=None,
 def evaluate(args):
     union_path = Path(args.out).resolve()
     mip_path = Path(args.mip_out).resolve()
-    if mip_path.exists():
+    if os.path.lexists(mip_path):
         raise FileExistsError(mip_path)
     union, routes = build_union(
         args.result,
@@ -222,6 +322,7 @@ def evaluate(args):
         data_dir=args.data_dir,
         reference_data_dir=args.reference_data_dir,
     )
+    union_status_sha256 = file_sha256(union_path)
     solved = solve_target_feasibility(
         routes,
         union["trip_ids"],
@@ -231,6 +332,25 @@ def evaluate(args):
         seed=args.seed,
     )
     selected = solved.pop("selected_indices")
+    selected_routes = [routes[index] for index in selected]
+    witness_audit = (
+        validate_union_witness(
+            union,
+            selected_routes,
+            data_dir=args.data_dir,
+            reference_data_dir=args.reference_data_dir,
+        )
+        if solved["outcome"] == "FEASIBLE" else None
+    )
+    if (
+        file_sha256(union_path) != union_status_sha256
+        or file_sha256(Path(union["columns_journal"]))
+        != union["columns_journal_sha256"]
+    ):
+        raise RuntimeError("published union changed during target solve")
+    final_code_identity = verified_mip_code_identity()
+    if final_code_identity != union["code_identity"]:
+        raise RuntimeError("pool union code identity changed during target solve")
     payload = {
         "schema": MIP_SCHEMA,
         "outcome": solved["outcome"],
@@ -244,15 +364,15 @@ def evaluate(args):
         "censored": solved["outcome"] == "TIME_LIMIT",
         "target_fleet": args.target,
         "witness_route_count": (
-            len(selected) if solved["outcome"] == "FEASIBLE" else None
+            len(selected_routes) if solved["outcome"] == "FEASIBLE" else None
         ),
         "witness_routes": (
-            [routes[index] for index in selected]
-            if solved["outcome"] == "FEASIBLE" else []
+            selected_routes if solved["outcome"] == "FEASIBLE" else []
         ),
+        "witness_audit": witness_audit,
         "union": {
             "status": str(union_path),
-            "status_sha256": file_sha256(union_path),
+            "status_sha256": union_status_sha256,
             "journal": union["columns_journal"],
             "journal_sha256": union["columns_journal_sha256"],
             "columns": union["columns"],
@@ -260,7 +380,7 @@ def evaluate(args):
         },
         "finite_union_pool_scope_only": True,
         "solver": solved,
-        "code_identity": verified_mip_code_identity(),
+        "code_identity": union["code_identity"],
     }
     write_new_json(mip_path, payload)
     return union, payload
