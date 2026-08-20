@@ -20,8 +20,10 @@ supported through pricing, physical replay, and pool validation.
 
 ## Frozen full study
 
-`resolution_cost_plan.json` is the clean, portable 168-job operator plan.
-`local_validation_plan.json` is the exact plan used for the local subset:
+`resolution_cost_plan.json` is the clean, portable paired operator plan:
+168 scientific cells × 2 method arms = 336 runs. `cg_only_operator_plan.json`
+preserves the superseded one-arm plan, and `local_validation_plan.json` is the
+exact CG-only plan used for the first local subset:
 
 - 18 instances: 6 scales (`k2`, `k3`, `k5`, `k8`, `k13`, `k20`) × 3
   selections;
@@ -73,10 +75,13 @@ Certification by grid:
 | 240/240 | 6 | 6 | 4 | 4 | 1 | 3 | 1 |
 | 300/300 | 6 | 6 | 3 | 4 | 1 | 2 | 1 |
 
-The long-form output has 168 rows. The unexecuted k5-k20 rows are explicit
-`missing` rows rather than silent omissions. MIP columns are blank locally;
-passing MIP result roots to the summarizer fills integer fleet and integer-gap
-fields.
+The first CG-only long output has 168 rows. The unexecuted k5-k20 rows are
+explicit `missing` rows rather than silent omissions. The later paired
+selection-2 output fills local restricted-pool integer results and direct
+arc-flow rows.
+
+The paired selection-2 validation and method-crossover conclusions are in
+`PAIRED_METHODS_LOCAL.md`; its long output contains 336 method rows.
 
 ## Local scaling fits
 
@@ -129,9 +134,11 @@ the event-based pricer.
 
 ## Artifacts
 
-- Final operator-plan internal SHA256:
-  `56398692d8c59df4c13973b98326d77b8d7da9049f0e868303f6ef00ec8c92fd`
+- Final paired operator-plan internal SHA256:
+  `20cd79b437f098039f7c55e38374c7b042cefd86fe872c7cdfb5d61da918132e`
 - Final operator-plan file SHA256:
+  `e0f374c7de3b5d24e6bf030b5744f1de35258c3bb64ad390f98913576bd87b2d`
+- Archived CG-only operator-plan file SHA256:
   `387a68bcdd87e0520e82574ec2e1d7e66322ba4d07813b3d4b30abbbb841a975`
 - Executed local-plan internal SHA256:
   `0608f70d6ce79c7e33dae47a619350e1ad1eae2bf144b621dcbfe182537862e8`
