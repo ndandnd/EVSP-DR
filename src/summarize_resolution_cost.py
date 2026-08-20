@@ -446,6 +446,9 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
     arc_nonzero_model = fit_log_model(
         rows, "arcflow_nonzeros", method_arm="arc_flow",
     )
+    arc_rss_model = fit_log_model(
+        rows, "peak_rss_mb", method_arm="arc_flow",
+    )
     arc_lp_wall_model = fit_log_model(
         [row for row in rows if row["fleet_lp_bound"] is not None],
         "lp_wall_s", method_arm="arc_flow",
@@ -479,6 +482,10 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             arc_nonzero_model, target["trip_count"],
             target["soc_step"], target["block_min"],
         ),
+        "peak_rss_mb": predict(
+            arc_rss_model, target["trip_count"],
+            target["soc_step"], target["block_min"],
+        ),
         "lp_wall_s": predict(
             arc_lp_wall_model, target["trip_count"],
             target["soc_step"], target["block_min"],
@@ -488,6 +495,31 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             target["soc_step"], target["block_min"],
         ),
     }
+    local_arc_variables = [
+        row["arcflow_variables"] for row in rows
+        if row["method_arm"] == "arc_flow"
+        and row["arcflow_variables"] is not None
+        and row["physics_profile"] == "p240"
+    ]
+    max_local_arc_variables = (
+        max(local_arc_variables) if local_arc_variables else None
+    )
+    arc_predictions["max_training_variables"] = max_local_arc_variables
+    arc_predictions["size_extrapolation_factor"] = (
+        arc_predictions["variables"] / max_local_arc_variables
+        if arc_predictions["variables"] is not None
+        and max_local_arc_variables else None
+    )
+    arc_predictions["sparse_storage_lower_bound_gib"] = (
+        (
+            36.0 * arc_predictions["variables"]
+            + 12.0 * arc_predictions["nonzeros"]
+            + 16.0 * arc_predictions["constraints"]
+        ) / (1024.0 ** 3)
+        if all(arc_predictions[key] is not None for key in (
+            "variables", "nonzeros", "constraints",
+        )) else None
+    )
     threshold = float(
         affordable_hours
         if affordable_hours is not None
@@ -505,6 +537,7 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             "variables": arc_variable_model,
             "constraints": arc_constraint_model,
             "nonzeros": arc_nonzero_model,
+            "peak_rss": arc_rss_model,
             "lp_wall": arc_lp_wall_model,
             "integer_wall": arc_integer_wall_model,
         },
@@ -529,9 +562,14 @@ def summarize(plan, output_dir, mip_roots=None, affordable_hours=None):
             ),
             "arc_flow": (
                 arc_predictions["integer_wall_s"] / 3600.0 <= threshold
-                if arc_predictions["integer_wall_s"] is not None else None
+                if arc_predictions["integer_wall_s"] is not None else False
             ),
         },
+        "arcflow_affordability_basis": (
+            "integer wall model" if arc_predictions["integer_wall_s"] is not None
+            else "not affordable: no local all-arc-integer proof within budget; "
+                 "size extrapolation reported instead"
+        ),
         "extrapolation_warning":
             "Target 947 trips and 1 kWh are outside the local fitted ranges "
             "(k2/k3: 29-71 trips; 2.5-15 kWh); wall fit uses certified, "
