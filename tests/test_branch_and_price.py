@@ -243,6 +243,45 @@ class BranchAndPriceGateTests(unittest.TestCase):
         self.assertLessEqual(len(assignments), 4)
         for required, forbidden in assignments:
             self.assertTrue(required.isdisjoint(forbidden))
+        dominated = expand_constraint_assignments([
+            BranchConstraint("apart", 10, 20),
+            BranchConstraint("apart", 10, 30),
+        ])
+        self.assertEqual(
+            set(dominated),
+            {
+                (frozenset(), frozenset({10})),
+                (frozenset(), frozenset({20, 30})),
+            },
+        )
+
+    def test_signature_masks_and_dual_aware_result_cache(self):
+        constraints = [BranchConstraint("apart", 10, 20)]
+        first, _ = self.pricer.price(
+            self.duals, constraints, max_candidates=20,
+            objective="fleet-only",
+        )
+        after_first = self.pricer.cache_snapshot()
+        second, _ = self.pricer.price(
+            self.duals, constraints, max_candidates=20,
+            objective="fleet-only",
+        )
+        after_second = self.pricer.cache_snapshot()
+        self.assertEqual(first, second)
+        self.assertGreater(
+            after_second["result_hits"], after_first.get("result_hits", 0)
+        )
+        changed_duals = {**self.duals, 30: self.duals[30] + 0.125}
+        self.pricer.price(
+            changed_duals, constraints, max_candidates=20,
+            objective="fleet-only",
+        )
+        after_changed = self.pricer.cache_snapshot()
+        self.assertEqual(
+            after_changed["result_hits"], after_second["result_hits"],
+            "signature-only result reuse would be dual-unsafe",
+        )
+        self.assertGreater(after_changed["plan_hits"], 0)
 
     def test_g2_child_bound_monotonicity_is_a_runtime_assertion(self):
         assert_child_bound(100.0, 100.0)

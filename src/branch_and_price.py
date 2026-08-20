@@ -7,7 +7,7 @@ import os
 import re
 import sys
 import time
-from collections import Counter
+from collections import Counter, OrderedDict
 from dataclasses import dataclass
 from itertools import combinations
 from pathlib import Path
@@ -33,7 +33,11 @@ from target_pool_feasibility import solve_target_feasibility
 from utils_v2 import load_station_hourly_prices
 from branch_and_price_state import (
     DurableStateMixin,
+    assert_child_bound as _assert_child_bound,
+    assert_integral_solution as _assert_integral_solution,
+    audit_exact_partition as _audit_exact_partition,
     baseline_identity as _state_baseline_identity,
+    conservative_dual_lower_bound,
     fleet_bound_closes,
 )
 class BranchAndPriceError(RuntimeError): pass
@@ -126,6 +130,15 @@ def expand_constraint_assignments(
         states = next_states
         if not states:
             break
+    states = {
+        state for state in states
+        if not any(
+            other != state
+            and other[0] <= state[0]
+            and other[1] <= state[1]
+            for other in states
+        )
+    }
     return sorted(
         states,
         key=lambda state: (
@@ -163,69 +176,10 @@ def choose_ryan_foster_pair(
         return None
     _, pair, alpha = min(fractional)
     return pair, alpha
-def audit_exact_partition(
-    trip_ids: Sequence[int],
-    selected_routes: Sequence[dict],
-) -> None:
-    expected = set(trip_ids)
-    counts = Counter()
-    for ordinal, route in enumerate(selected_routes, start=1):
-        trips = list(route.get("trips") or [])
-        if not trips or len(trips) != len(set(trips)):
-            raise ValidationGateError(
-                f"G5: selected route {ordinal} is empty or repeats a trip"
-            )
-        unknown = set(trips) - expected
-        if unknown:
-            raise ValidationGateError(
-                f"G5: selected route {ordinal} has unknown trips "
-                f"{sorted(unknown)[:10]}"
-            )
-        counts.update(trips)
-    bad = {trip: counts[trip] for trip in trip_ids if counts[trip] != 1}
-    if bad:
-        raise ValidationGateError(
-            f"G5: selected routes are not an exact partition: "
-            f"{list(bad.items())[:15]}"
-        )
-def assert_integral_solution(
-    trip_ids: Sequence[int],
-    routes: Sequence[dict],
-    route_values: Sequence[float],
-    *,
-    tolerance: float = 1e-7,
-) -> list[dict]:
-    nonintegral = [
-        (index, value)
-        for index, value in enumerate(route_values)
-        if abs(float(value) - round(float(value))) > tolerance
-    ]
-    if nonintegral:
-        raise ValidationGateError(
-            "G4: every pair alpha is integral but route values are not: "
-            f"{nonintegral[:10]}"
-        )
-    selected = [
-        route
-        for route, value in zip(routes, route_values)
-        if round(float(value)) == 1
-    ]
-    audit_exact_partition(trip_ids, selected)
-    return selected
-def assert_child_bound(
-    parent_bound: float,
-    child_bound: float,
-    *,
-    tolerance: float = 1e-5,
-) -> None:
-    allowed = max(tolerance, abs(parent_bound) * 1e-10)
-    if child_bound < parent_bound - allowed:
-        raise ValidationGateError(
-            "G2: child LP bound decreased: "
-            f"parent={parent_bound:.12f}, child={child_bound:.12f}, "
-            f"tolerance={allowed:.3g}"
-        )
-def conservative_dual_lower_bound(lp, trip_count, pricing_tolerance): return sum(lp.trip_duals.values()) - trip_count * pricing_tolerance
+def audit_exact_partition(trips, routes): return _audit_exact_partition(trips, routes, ValidationGateError)
+def assert_integral_solution(trips, routes, values, tolerance=1e-7):
+    return _assert_integral_solution(trips, routes, values, tolerance, ValidationGateError)
+def assert_child_bound(parent, child, tolerance=1e-5): return _assert_child_bound(parent, child, tolerance, ValidationGateError)
 class ConstrainedDAGPricer:
     def __init__(self, network):
         self.network = network
@@ -241,6 +195,10 @@ class ConstrainedDAGPricer:
         self.trip_nodes = {
             trip: tuple(nodes) for trip, nodes in self.trip_nodes.items()
         }
+        self.plan_cache = {}
+        self.result_cache = OrderedDict()
+        self.result_cache_limit = 512
+        self.stats = Counter()
     def _ordered_required(self, required: frozenset[int]) -> tuple[int, ...]:
         unknown = required - set(self.problem.trips)
         if unknown:
@@ -257,13 +215,30 @@ class ConstrainedDAGPricer:
                 ),
             )
         )
+    def _signature_plan(self, required, forbidden):
+        signature = (required, forbidden)
+        if signature in self.plan_cache:
+            self.stats["plan_hits"] += 1
+            return self.plan_cache[signature]
+        ordered = self._ordered_required(required)
+        required_nodes = frozenset(
+            node for trip in required for node in self.trip_nodes[trip]
+        )
+        forbidden_nodes = frozenset(
+            node for trip in forbidden for node in self.trip_nodes[trip]
+        )
+        targets = {trip: frozenset(self.trip_nodes[trip]) for trip in ordered}
+        plan = (ordered, required_nodes, forbidden_nodes, targets)
+        self.plan_cache[signature] = plan
+        self.stats["plan_misses"] += 1
+        return plan
     def _relax_segment(
         self,
         starts: dict[int, float],
         *,
-        target_trip: int | None,
-        required: frozenset[int],
-        forbidden: frozenset[int],
+        target_nodes: frozenset[int],
+        required_nodes: frozenset[int],
+        forbidden_nodes: frozenset[int],
         dense_duals: Sequence[float],
         parent: list[int | None],
         objective: str,
@@ -274,31 +249,23 @@ class ConstrainedDAGPricer:
             values[node] = value
         if not starts:
             return values, {}
-        target_nodes = (set(self.trip_nodes.get(target_trip, ()))
-                        if target_trip is not None else set())
-        if target_trip is not None and not target_nodes:
-            return values, {}
         start_position = min(self.position[node] for node in starts)
         end_position = (max(self.position[node] for node in target_nodes)
-                        if target_trip is not None
+                        if target_nodes
                         else len(self.network.topo) - 2)
         if start_position > end_position:
             return values, {}
         for node in self.network.topo[start_position : end_position + 1]:
             value = values[node]
-            if value == inf or (
-                target_trip is not None and node in target_nodes
-            ):
+            if value == inf or node in target_nodes:
                 continue
             for successor, base_cost, dual_index in self.network.out[node]:
                 if successor == self.sink:
                     continue
-                kind, key, _level = self.network.node_meta[successor]
-                if kind == "trip":
-                    if key in forbidden:
-                        continue
-                    if key in required and key != target_trip:
-                        continue
+                if successor in forbidden_nodes:
+                    continue
+                if successor in required_nodes and successor not in target_nodes:
+                    continue
                 objective_cost = (
                     0.0 if objective == "artificial-elimination"
                     else 1.0 if objective == "fleet-only" and node == 0
@@ -311,9 +278,8 @@ class ConstrainedDAGPricer:
                 if candidate < values[successor] - 1e-12:
                     values[successor] = candidate
                     parent[successor] = node
-        reached = ({node: values[node] for node in target_nodes
-                    if values[node] != inf}
-                   if target_trip is not None else {})
+        reached = {node: values[node] for node in target_nodes
+                   if values[node] != inf}
         return values, reached
     @staticmethod
     def _reconstruct(parent: Sequence[int | None], endpoint: int) -> list[int]:
@@ -340,28 +306,42 @@ class ConstrainedDAGPricer:
     ) -> list[dict]:
         if not required.isdisjoint(forbidden):
             return []
-        dense_duals = [
+        dense_duals = tuple(
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
-        ]
+        )
+        cache_key = (
+            required, forbidden, objective, max_candidates, dense_duals,
+        )
+        if cache_key in self.result_cache:
+            self.stats["result_hits"] += 1
+            self.result_cache.move_to_end(cache_key)
+            return self.result_cache[cache_key]
+        self.stats["result_misses"] += 1
+        ordered, required_nodes, forbidden_nodes, targets = (
+            self._signature_plan(required, forbidden)
+        )
         parent: list[int | None] = [None] * len(self.network.node_meta)
         starts = {0: 0.0}
-        for target in self._ordered_required(required):
+        for target in ordered:
             _values, starts = self._relax_segment(
                 starts,
-                target_trip=target,
-                required=required,
-                forbidden=forbidden,
+                target_nodes=targets[target],
+                required_nodes=required_nodes,
+                forbidden_nodes=forbidden_nodes,
                 dense_duals=dense_duals,
                 parent=parent,
                 objective=objective,
             )
             if not starts:
+                self.result_cache[cache_key] = []
+                if len(self.result_cache) > self.result_cache_limit:
+                    self.result_cache.popitem(last=False)
                 return []
         values, _unused = self._relax_segment(
             starts,
-            target_trip=None,
-            required=required,
-            forbidden=forbidden,
+            target_nodes=frozenset(),
+            required_nodes=required_nodes,
+            forbidden_nodes=forbidden_nodes,
             dense_duals=dense_duals,
             parent=parent,
             objective=objective,
@@ -398,9 +378,13 @@ class ConstrainedDAGPricer:
                     "trips": trips,
                     "path_nodes": path,
                 }
-        return sorted(candidates.values(), key=lambda route: route["rc"])[
+        result = sorted(candidates.values(), key=lambda route: route["rc"])[
             :max_candidates
         ]
+        self.result_cache[cache_key] = result
+        if len(self.result_cache) > self.result_cache_limit:
+            self.result_cache.popitem(last=False)
+        return result
     def price(
         self,
         alpha: dict[int, float],
@@ -410,6 +394,7 @@ class ConstrainedDAGPricer:
         objective: str = "combined-cost",
     ) -> tuple[list[dict], int]:
         assignments = expand_constraint_assignments(constraints)
+        self.stats["signatures"] += len(assignments)
         combined: dict[frozenset[int], dict] = {}
         for required, forbidden in assignments:
             routes = self.shortest_subproblem(
@@ -434,6 +419,8 @@ class ConstrainedDAGPricer:
             ],
             len(assignments),
         )
+    def cache_snapshot(self):
+        return dict(self.stats)
 class ExpandedRouteAdapter:
     def __init__(self, network, prices, prices_sha256: str):
         self.network = network
@@ -696,6 +683,7 @@ class BranchAndPriceSolver(DurableStateMixin):
         raise BranchAndPriceError(f"all Phase-{phase} masters failed: {last_error}")
     def _price(self, duals, constraints, objective):
         started = time.perf_counter()
+        before = self.pricer.cache_snapshot()
         if not constraints:
             routes, solves = self.network.k_best_routes(
                 duals, k=self.args.columns_per_iter, objective=objective,
@@ -709,7 +697,13 @@ class BranchAndPriceSolver(DurableStateMixin):
         self.pricing_solves += solves
         self.pricing_calls += 1
         self.pricing_wall_s += duration
-        return routes, solves, duration
+        after = self.pricer.cache_snapshot()
+        cache_delta = {
+            key: after.get(key, 0) - before.get(key, 0)
+            for key in ("plan_hits", "plan_misses", "result_hits",
+                        "result_misses", "signatures")
+        }
+        return routes, solves, duration, cache_delta
     def _solve_phase(self, node, phase):
         preferred_method = 0
         last_lp = None
@@ -718,7 +712,10 @@ class BranchAndPriceSolver(DurableStateMixin):
         objective = {
             1: "artificial-elimination", 2: "fleet-only",
         }[phase]
-        stats = {"pricing_calls": 0, "pricing_solves": 0, "pricing_wall_s": 0.0}
+        stats = {
+            "pricing_calls": 0, "pricing_solves": 0, "pricing_wall_s": 0.0,
+            "plan_cache_hits": 0, "result_cache_hits": 0,
+        }
         pricing_eps = min(float(self.args.rc_eps), 1e-9)
         for iteration in range(1, self.args.max_cg_iters + 1):
             if self._expired():
@@ -729,12 +726,14 @@ class BranchAndPriceSolver(DurableStateMixin):
             routes = self._allowed_routes(node.constraints)
             lp = self._solve_master(routes, phase, preferred_method)
             last_lp, last_routes = lp, routes
-            candidates, solves, duration = self._price(
+            candidates, solves, duration, cache = self._price(
                 lp.trip_duals, node.constraints, objective,
             )
             stats["pricing_calls"] += 1
             stats["pricing_solves"] += solves
             stats["pricing_wall_s"] += duration
+            stats["plan_cache_hits"] += cache["plan_hits"]
+            stats["result_cache_hits"] += cache["result_hits"]
             min_rc = candidates[0]["rc"] if candidates else float("inf")
             last_rc = float(min_rc)
             self._event(
@@ -743,6 +742,7 @@ class BranchAndPriceSolver(DurableStateMixin):
                 subproblems=solves, minimum_reduced_cost=(
                     last_rc if math.isfinite(last_rc) else None
                 ),
+                signature_cache=cache,
                 master_objective=lp.objective,
                 artificial_mass=lp.artificial_total, pool_columns=len(routes),
             )

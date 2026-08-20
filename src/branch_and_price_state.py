@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import time
+from collections import Counter
 from pathlib import Path
 
 from durable_io import atomic_write_json, flush_and_fsync, read_jsonl_records
@@ -54,6 +55,64 @@ def baseline_identity(args, provenance, error_type=RuntimeError):
 
 def fleet_bound_closes(lower_bound, incumbent_fleet, tolerance=1e-7):
     return math.ceil(lower_bound - tolerance) >= incumbent_fleet
+
+
+def audit_exact_partition(trip_ids, selected_routes, error_type=RuntimeError):
+    expected = set(trip_ids)
+    counts = Counter()
+    for ordinal, route in enumerate(selected_routes, start=1):
+        trips = list(route.get("trips") or [])
+        if not trips or len(trips) != len(set(trips)):
+            raise error_type(
+                f"G5: selected route {ordinal} is empty or repeats a trip"
+            )
+        unknown = set(trips) - expected
+        if unknown:
+            raise error_type(
+                f"G5: selected route {ordinal} has unknown trips "
+                f"{sorted(unknown)[:10]}"
+            )
+        counts.update(trips)
+    bad = {trip: counts[trip] for trip in trip_ids if counts[trip] != 1}
+    if bad:
+        raise error_type(
+            f"G5: selected routes are not an exact partition: "
+            f"{list(bad.items())[:15]}"
+        )
+
+
+def assert_integral_solution(
+    trip_ids, routes, route_values, tolerance=1e-7, error_type=RuntimeError
+):
+    nonintegral = [
+        (index, value) for index, value in enumerate(route_values)
+        if abs(float(value) - round(float(value))) > tolerance
+    ]
+    if nonintegral:
+        raise error_type(
+            "G4: every pair alpha is integral but route values are not: "
+            f"{nonintegral[:10]}"
+        )
+    selected = [route for route, value in zip(routes, route_values)
+                if round(float(value)) == 1]
+    audit_exact_partition(trip_ids, selected, error_type)
+    return selected
+
+
+def assert_child_bound(
+    parent_bound, child_bound, tolerance=1e-5, error_type=RuntimeError
+):
+    allowed = max(tolerance, abs(parent_bound) * 1e-10)
+    if child_bound < parent_bound - allowed:
+        raise error_type(
+            "G2: child LP bound decreased: "
+            f"parent={parent_bound:.12f}, child={child_bound:.12f}, "
+            f"tolerance={allowed:.3g}"
+        )
+
+
+def conservative_dual_lower_bound(lp, trip_count, pricing_tolerance):
+    return sum(lp.trip_duals.values()) - trip_count * pricing_tolerance
 
 
 class DurableStateMixin:
@@ -144,6 +203,7 @@ class DurableStateMixin:
                 "conservative_expanded_grid_model_only",
             "master_objective": "phase_1_artificial_then_phase_2_fleet_only",
             "global_lower_bound_units": "fractional_fleet_route_count",
+            "network_build_count": 1,
             "provenance": self.provenance, "run_identity": self.run_identity,
             "root_baseline": self.baseline,
         }
@@ -188,6 +248,7 @@ class DurableStateMixin:
             "pricing_solves": self.pricing_solves,
             "pricing_calls": self.pricing_calls,
             "pricing_wall_s": self.pricing_wall_s,
+            "pricing_cache": self.pricer.cache_snapshot(),
             "master_solves": self.master_solves, "wall_s": self._elapsed_s(),
             "network_build_s": self.network_build_s,
             "interrupted_reason": self.interrupted_reason,
