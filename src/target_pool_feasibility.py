@@ -116,8 +116,6 @@ def _validate_witness(routes, trips, target, selected):
 
 
 def _solve_highs(routes, trips, target, *, timelimit, threads, seed):
-    import warnings
-
     import numpy as np
     from scipy.optimize import Bounds, LinearConstraint, milp
     from scipy.sparse import coo_array
@@ -143,22 +141,13 @@ def _solve_highs(routes, trips, target, *, timelimit, threads, seed):
         np.r_[np.ones(len(trips)), target],
     )
     started = time.perf_counter()
-    with warnings.catch_warnings():
-        warnings.filterwarnings(
-            "ignore", message="Unrecognized options detected",
-            category=RuntimeWarning,
-        )
-        result = milp(
-            c=np.zeros(len(routes)),
-            integrality=np.ones(len(routes)),
-            bounds=Bounds(0.0, 1.0),
-            constraints=bounds,
-            options={
-                "time_limit": float(timelimit),
-                "threads": int(threads),
-                "random_seed": int(seed),
-            },
-        )
+    result = milp(
+        c=np.zeros(len(routes)),
+        integrality=np.ones(len(routes)),
+        bounds=Bounds(0.0, 1.0),
+        constraints=bounds,
+        options={"time_limit": float(timelimit)},
+    )
     has_solution = result.x is not None
     selected = (
         [index for index, value in enumerate(result.x) if value > 0.5]
@@ -189,8 +178,9 @@ def _solve_highs(routes, trips, target, *, timelimit, threads, seed):
         ),
         "backend": "highs",
         "parameters": {
-            "timelimit": float(timelimit), "threads": threads,
-            "seed": int(seed), "solution_limit": None,
+            "timelimit": float(timelimit), "threads": None, "seed": None,
+            "requested_threads": threads, "requested_seed": int(seed),
+            "solution_limit": None,
             "objective": "constant_zero_pure_feasibility",
         },
     }
@@ -406,7 +396,11 @@ def main(argv=None):
     parser.add_argument("--result", type=Path, required=True)
     parser.add_argument("--target", type=int, required=True)
     parser.add_argument("--timelimit", type=float, required=True)
-    parser.add_argument("--threads", type=int, default=8)
+    parser.add_argument(
+        "--threads", type=int, default=8,
+        help="Gurobi thread count; scipy.optimize.milp uses the process-global "
+             "HiGHS default.",
+    )
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument(
         "--solver", choices=("gurobi", "highs"), default="gurobi",
