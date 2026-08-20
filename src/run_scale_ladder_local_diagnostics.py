@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
+from launch_scale_ladder import CG_GRIDS
 from prepare_scale_ladder_known_partition import prepare
 from audit_scale_ladder_known_membership import audit, write_outputs
 from scale_ladder_trip_identity import identity
@@ -28,6 +29,7 @@ INSTANCE_MANIFEST = (
 )
 LOCAL_CODE_PATHS = (
     "src/run_scale_ladder_local_diagnostics.py",
+    "src/launch_scale_ladder.py",
     "src/build_tariff_response_manifest.py",
     "src/scale_ladder_trip_identity.py",
     "src/prepare_scale_ladder_known_partition.py",
@@ -37,6 +39,8 @@ LOCAL_CODE_PATHS = (
     "src/rerealize_routes.py",
     "src/run_exact_pool_mip.py",
     "src/exact_pricer_expanded.py",
+    "src/exact_initial_pools.py",
+    "src/greedy_init.py",
     "src/expanded_path_realization.py",
     "src/audit_giro_known_columns.py",
     "src/master_lp_scipy.py",
@@ -242,50 +246,26 @@ def run(args):
             cell["selection_replicate"],
         )
         memberships[cell["cell_id"]] = membership
-        grids = [(15.0, 10)]
-        if (
-            cell["scale"] <= 5
-            and membership[
-                "known_partition_in_primary_expanded_space"
-            ] is not True
-        ):
-            first = membership.get("first_feasible_soc_step")
-            grids.extend(
-                [(5.0, 10)]
-                if first == 5.0
-                else [(5.0, 10), (2.5, 10)]
-                if first == 2.5
-                else [(5.0, 10), (2.5, 10), (1.0, 10)]
+        for grid_index, grid in enumerate(CG_GRIDS):
+            soc_step, block_min = grid["soc_step"], grid["block_min"]
+            primary = grid["grid_role"] == "primary"
+            key = (
+                f"cg_{cell['cell_id']}" if primary
+                else f"cg_{grid['grid_id']}_{cell['cell_id']}"
             )
-            if (
-                cell["scale"] == 2
-                and first == 1.0
-                and membership.get("first_feasible_block_min") == 5
-            ):
-                grids.append((1.0, 5))
-        for soc_step, block_min in grids:
-            label = str(soc_step).replace(".", "p")
             jobs.append({
                 **cell,
-                "job_key": (
-                    f"cgdiag_g{label}_b{block_min}_{cell['cell_id']}"
-                ),
-                "phase": (
-                    "CG" if soc_step == 15.0
-                    else "CG_SENSITIVITY"
-                ),
+                "job_key": key,
+                "phase": "CG" if primary else "CG_SENSITIVITY",
                 "arm": None,
+                **grid,
+                "grid_index": grid_index,
+                "diagnostic_only": False,
                 "soc_step": soc_step,
                 "block_min": block_min,
                 "budget_s": args.budget_s,
-                "output": str(
-                    root / "outputs"
-                    / f"cgdiag_g{label}_b{block_min}_{cell['cell_id']}.json"
-                ),
-                "telemetry": str(
-                    root / "telemetry"
-                    / f"cgdiag_g{label}_b{block_min}_{cell['cell_id']}.jsonl"
-                ),
+                "output": str(root / "outputs" / f"{key}.json"),
+                "telemetry": str(root / "telemetry" / f"{key}.jsonl"),
                 "progress_dir": None,
                 "snapshot_minutes": [
                     value for value in (5, 15, 30, 60, 120)
@@ -298,6 +278,7 @@ def run(args):
         "diagnostic_only": diagnostic_only,
         "local_diagnostic_environment": current_environment,
         "reference_environment": reference_environment,
+        "cg_grids": [dict(grid) for grid in CG_GRIDS],
         "jobs": jobs,
         "k40_reuse_slots": [],
         "trip_identity_schema": "evsp-dr-trip-identity-v1",

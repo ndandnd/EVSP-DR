@@ -4332,6 +4332,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn('CAMPAIGN=${LADDER_CAMPAIGN:-}', wrapper)
         self.assertNotIn('CAMPAIGN="slad_${STAMP}', wrapper)
         self.assertIn('.infrastructure_task_count == 3', wrapper)
+        self.assertIn('.task_count == 200', wrapper)
+        self.assertIn(
+            '(.task_groups.CG_SENSITIVITY | length) == 92', wrapper
+        )
         self.assertIn('--retry-failed-probes', wrapper)
         self.assertIn('--retry-failed-activation', wrapper)
         self.assertIn('--approved-plan-sha256 "$FILE_SHA" --submit', wrapper)
@@ -4669,6 +4673,8 @@ printf '%s %s\n' "$status" "$checks"
         ).read_text()
         self.assertNotIn("sbatch", local)
         self.assertNotIn('"phase": "PREFLIGHT"', local)
+        self.assertIn("enumerate(CG_GRIDS)", local)
+        self.assertNotIn("first_feasible_soc_step", local)
         self.assertIn("default=3", local)
         self.assertIn("diagnostic_only", local)
         self.assertFalse(set(LOCAL_CODE_PATHS) - set(ladder.CODE_PATHS))

@@ -108,7 +108,7 @@ main() {
       .checkout_identity.detached == true and
       .checkout_identity.tracked_clean == true and
       .submission_protocol == "probe_first_activation_v1" and
-      .task_count == 138 and
+      .task_count == 200 and
       .infrastructure_probe_task_count == 2 and
       .infrastructure_activation_task_count == 1 and
       .infrastructure_task_count == 3 and
@@ -117,7 +117,7 @@ main() {
       (.task_groups.PREFLIGHT | length) == 22 and
       (.task_groups.SEED | length) == 21 and
       (.task_groups.CG | length) == 23 and
-      (.task_groups.CG_SENSITIVITY | length) == 30 and
+      (.task_groups.CG_SENSITIVITY | length) == 92 and
       (.task_groups.MIP_RAW | length) == 21 and
       (.task_groups.MIP_KNOWN | length) == 21 and
       .physics.g_kwh == 300.0 and
@@ -140,14 +140,14 @@ main() {
     return 1
   fi
   MATRIX_ROWS=$(awk 'END {print NR-1}' "$MATRIX")
-  if [[ "$MATRIX_ROWS" -ne 138 ]]; then
-    echo "Task matrix does not contain exactly 138 rows." >&2
+  if [[ "$MATRIX_ROWS" -ne 200 ]]; then
+    echo "Task matrix does not contain exactly 200 rows." >&2
     return 1
   fi
 
   echo "CAMPAIGN=$CAMPAIGN"
   echo "PLAN_SHA256=$FILE_SHA"
-  echo "SCIENCE_TASKS=138"
+  echo "SCIENCE_TASKS=200"
   echo "INFRASTRUCTURE_TASKS=3 (2 probes + 1 activation controller)"
   echo "K40_MIP_TASKS=0"
   if [[ "$SUBMIT_APPROVAL" != "YES" ]]; then
