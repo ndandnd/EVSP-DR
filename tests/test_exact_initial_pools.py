@@ -185,6 +185,14 @@ class ExactInitialPoolTests(unittest.TestCase):
                 observed[10]["rounds"][:3],
                 observed[3]["rounds"],
             )
+            self.assertEqual(
+                observed[10]["added_columns"],
+                observed[3]["added_columns"],
+            )
+            self.assertTrue(all(
+                row["inserted_or_replaced"] == 0
+                for row in observed[10]["rounds"][3:]
+            ))
 
 
 if __name__ == "__main__":
