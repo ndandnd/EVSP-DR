@@ -176,9 +176,12 @@ def validate_union_witness(union, routes, *, data_dir=None,
 
 def build_union(result_paths, *, output_path, data_dir=None,
                 reference_data_dir=None):
-    output_path = Path(output_path).resolve()
+    requested_output = Path(output_path)
+    if os.path.lexists(requested_output):
+        raise FileExistsError("union output already exists")
+    output_path = requested_output.resolve()
     journal_out = Path(str(output_path) + ".columns.jsonl")
-    if os.path.lexists(output_path) or os.path.lexists(journal_out):
+    if os.path.lexists(journal_out):
         raise FileExistsError("union output or journal already exists")
     code_identity = verified_mip_code_identity()
     from audit_giro_known_columns import HORIZON_MIN, build_problem
@@ -312,16 +315,18 @@ def build_union(result_paths, *, output_path, data_dir=None,
 
 
 def evaluate(args):
-    union_path = Path(args.out).resolve()
-    mip_path = Path(args.mip_out).resolve()
-    if os.path.lexists(mip_path):
-        raise FileExistsError(mip_path)
+    union_path = Path(args.out)
+    requested_mip = Path(args.mip_out)
+    if os.path.lexists(requested_mip):
+        raise FileExistsError(requested_mip)
+    mip_path = requested_mip.resolve()
     union, routes = build_union(
         args.result,
         output_path=union_path,
         data_dir=args.data_dir,
         reference_data_dir=args.reference_data_dir,
     )
+    union_path = union_path.resolve()
     union_status_sha256 = file_sha256(union_path)
     solved = solve_target_feasibility(
         routes,
