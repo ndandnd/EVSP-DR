@@ -218,8 +218,15 @@ class LadderLiteTests(unittest.TestCase):
                 "target_fleet": 2, "cell_id": "k02_s1_c1",
                 "output": str(output), "scientific_role": None,
             }
+            missing_job = {
+                **job,
+                "job_key": "cg_b",
+                "cell_id": "k02_s2_c1",
+                "selection_replicate": 2,
+                "output": str(root / "missing.json"),
+            }
             (root / "campaign/approved-plan.json").write_text(
-                json.dumps({"jobs": [job]})
+                json.dumps({"jobs": [job, missing_job]})
             )
             (root / "campaign/campaign.json").write_text(json.dumps({
                 "execution_mode": "ladder_lite_direct_array",
@@ -236,12 +243,15 @@ class LadderLiteTests(unittest.TestCase):
             second=subprocess.run(command,cwd=REPO,env=env,text=True,capture_output=True)
             self.assertEqual(first.returncode,0,first.stderr)
             self.assertEqual(second.returncode,0,second.stderr)
-            self.assertIn("appended=1 skipped=0",first.stdout)
-            self.assertIn("appended=0 skipped=1",second.stdout)
+            self.assertIn("appended=2 skipped=0",first.stdout)
+            self.assertIn("appended=0 skipped=2",second.stdout)
             rows=list(csv.DictReader((records/"RESULTS_LOG.csv").open()))
-            self.assertEqual(len(rows),1)
+            self.assertEqual(len(rows),2)
             self.assertEqual(rows[0]["route_weight_meaning"],
                              "combined-cost-master route weight")
+            missing=next(row for row in rows if row["cell_id"]=="cg_b")
+            self.assertEqual(missing["status"],"missing")
+            self.assertEqual(missing["censor_reason"],"normalized row missing")
 
 
 if __name__ == "__main__":

@@ -47,7 +47,7 @@ for j in plan["jobs"]:
   "artificial_mass":(summary or {}).get("final_artificial_mass",""),"n_columns":(summary or {}).get("pool_columns",""),
   "iters":(summary or {}).get("iterations",""),"master_s":detail.get("master_time_s",""),"pricing_s":detail.get("pricing_time_s",""),
   "wall_s":(summary or {}).get("elapsed_s",(summary or {}).get("runtime_s","")),"stop_reason":(summary or {}).get("stopping_reason",(summary or {}).get("status_name","")),
-  "censor_reason":"normalized row missing" if missing else (summary or {}).get("missing_reason",""),"mip_incumbent_fleet":(summary or {}).get("buses",""),
+  "censor_reason":"normalized row missing" if missing else ((summary or {}).get("missing_reason") or (summary or {}).get("stopping_reason") or (summary or {}).get("status_name") or "censored") if censored else "","mip_incumbent_fleet":(summary or {}).get("buses",""),
   "mip_bound":(summary or {}).get("fleet_bound",""),"mip_gap":(summary or {}).get("mip_gap",""),"mip_nodes":detail.get("node_count",""),
   "target_fleet":j["target_fleet"],"artifact_path":str(out),"artifact_sha256":hashlib.sha256(out.read_bytes()).hexdigest() if out.is_file() else "",
   "notes":j.get("scientific_role") or ""})
