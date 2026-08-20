@@ -22,7 +22,6 @@ from typing import Iterable, Sequence
 
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
-
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, build_problem
 from config import (
     BIG_M_PENALTY,
@@ -49,8 +48,6 @@ from master_lp_scipy import (
 )
 from run_exact_pool_mip import validate_final_selected_routes
 from utils_v2 import load_station_hourly_prices
-
-
 class BranchAndPriceError(RuntimeError):
     """Base class for fail-closed experiment errors."""
 class ValidationGateError(BranchAndPriceError):
@@ -58,11 +55,9 @@ class ValidationGateError(BranchAndPriceError):
 @dataclass(frozen=True, order=True)
 class BranchConstraint:
     """One Ryan--Foster route-incidence constraint."""
-
     kind: str
     left: int
     right: int
-
     def __post_init__(self) -> None:
         if self.kind not in {"apart", "together"}:
             raise ValueError(f"unknown Ryan--Foster constraint {self.kind!r}")
@@ -77,7 +72,6 @@ class SearchNode:
     node_id: int
     constraints: tuple[BranchConstraint, ...]
     parent_bound: float | None
-
     @property
     def depth(self) -> int:
         return len(self.constraints)
@@ -108,7 +102,6 @@ def expand_constraint_assignments(
     constraints: Sequence[BranchConstraint],
 ) -> list[tuple[frozenset[int], frozenset[int]]]:
     """Expand active decisions into exact required/forbidden subproblems.
-
     The returned tuples are ``(required, forbidden)``.  Inconsistent and
     duplicate assignments are removed, so the number of actual shortest-path
     solves is at most ``2**len(constraints)``.
@@ -682,18 +675,24 @@ class BranchAndPriceSolver:
             self.trips,
             [route["trips"] for route in routes],
         )
-        remaining = self._remaining_s()
-        time_limit = None if remaining is None else max(0.001, remaining)
-        self.master_solves += 1
-        return solve_restricted_master_lp(
-            trip_ids=self.trips,
-            route_incidence=incidence,
-            route_costs=[route["cost"] for route in routes],
-            artificial_penalty=BIG_M_PENALTY,
-            method=method,
-            coverage_sense="partition",
-            time_limit_s=time_limit,
-        )
+        last_error = None
+        for candidate_method in dict.fromkeys(
+            (method, "highs-ds", "highs-ipm", "highs")
+        ):
+            remaining = self._remaining_s()
+            self.master_solves += 1
+            try:
+                return solve_restricted_master_lp(
+                    trip_ids=self.trips, route_incidence=incidence,
+                    route_costs=[route["cost"] for route in routes],
+                    artificial_penalty=BIG_M_PENALTY, method=candidate_method,
+                    coverage_sense="partition",
+                    time_limit_s=(None if remaining is None
+                                  else max(0.001, remaining)),
+                )
+            except RestrictedMasterSolveError as exc:
+                last_error = exc
+        raise last_error
     def _price(
         self,
         duals: dict[int, float],
