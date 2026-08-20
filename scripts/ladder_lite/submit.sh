@@ -4,7 +4,7 @@ main() {
   [ "$#" -ge 1 ] || { echo "usage: submit.sh GROUP [options]" >&2; return 2; }
   GROUP=$1; shift
   case "$GROUP" in PREFLIGHT|SEED|CG|CG_SENSITIVITY|MIP_RAW|MIP_KNOWN) ;; *) echo "invalid group" >&2; return 2;; esac
-  LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}
+  SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd) || return 1; REPO=$(cd "$SCRIPT_DIR/../.." && pwd) || return 1; LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}; PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}
   PLAN="$LL_ROOT/campaign/approved-plan.json"; CONC=16; SCALES=""; PART=""; MEM=""; DRY=0
   while [ "$#" -gt 0 ]; do
     case "$1" in
@@ -34,7 +34,7 @@ main() {
       -c "$THREADS" "--mem=$USE_MEM" "--time=$TIME" --signal=B:USR1@180 --open-mode=append
       -J "ll_${GROUP}_k${SCALE_TAG//,/x}" -o "$LL_ROOT/logs/ll_${GROUP}_%A_%a.out"
       -e "$LL_ROOT/logs/ll_${GROUP}_%A_%a.err"
-      --export="ALL,LL_PYTHON=$PYTHON" "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/run_cell.sh" "$PLAN" "$GROUP")
+      --export="ALL,LL_PYTHON=$PYTHON,LL_REPO=$REPO" "$SCRIPT_DIR/run_cell.sh" "$PLAN" "$GROUP")
     if [ "$DRY" -eq 1 ]; then printf '%q ' "${cmd[@]}"; echo; else
       raw=$("${cmd[@]}"); rc=$?; [ "$rc" -eq 0 ] || { echo "sbatch failed: $raw" >&2; return "$rc"; }
       id=${raw%%;*}; ids+=("$id")

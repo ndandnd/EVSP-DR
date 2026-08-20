@@ -4,7 +4,6 @@ set -uo pipefail
 main() {
   [ "$#" -eq 2 ] || { echo "usage: run_cell.sh PLAN_JSON GROUP" >&2; return 2; }
   PLAN=$1; GROUP=$2
-  REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd) || return 1
   LL_ROOT=${LL_ROOT:-"$HOME/ladder-lite"}
   PYTHON=${LL_PYTHON:-/home/nc437/evsp_env/bin/python3.12}
   unset PYTHONPATH PYTHONHOME PYTHONSTARTUP LD_LIBRARY_PATH
@@ -36,6 +35,11 @@ PY
   SOC=${F[15]}; BLOCK=${F[16]}; SNAPSHOTS=${F[17]}
   PREFLIGHT=${F[18]}; CG_OUT=${F[19]}; SEED_OUT=${F[20]}
   MARKER="$OUT.done"
+  record_failure() { rc=$?; trap - EXIT; if [ "$rc" -ne 0 ] && [ ! -s "$OUT.failed" ]; then mkdir -p "$(dirname "$OUT")" 2>/dev/null || true; printf 'exit_code=%s\njob_key=%s\nslurm_job_id=%s\nnode=%s\n' "$rc" "$JOB_KEY" "${SLURM_JOB_ID:-local}" "${SLURMD_NODENAME:-$(hostname)}" >"$OUT.failed" 2>/dev/null || true; fi; exit "$rc"; }; trap record_failure EXIT
+  mkdir -p "$(dirname "$OUT")" || return 1
+  rm -f "$OUT.failed" "$OUT.blocked"
+  REPO=${LL_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}
+  [ -f "$REPO/src/exact_pricer_expanded.py" ] || { echo "unresolved repository root: missing $REPO/src/exact_pricer_expanded.py" >&2; return 2; }
   if [ -n "${LL_BUDGET_OVERRIDE_S:-}" ] && [[ "$PHASE" == CG* || "$PHASE" == MIP ]]; then
     MARKER="$OUT.smoke.done"
   fi
@@ -74,8 +78,6 @@ PY
   [ -z "$(git -C "$REPO" status --porcelain --untracked-files=no)" ] || {
     echo "tracked checkout modifications" >&2; return 2;
   }
-  mkdir -p "$(dirname "$OUT")" || return 1
-  rm -f "$OUT.failed" "$OUT.blocked"
   "$PYTHON" -B "$REPO/src/install_exact_cg_profile_input.py" \
     --source "$INSTANCE" --data-root "$REPO/data" --relative "$INSTANCE_REL" \
     --sha256 "$INSTANCE_SHA" || return 2

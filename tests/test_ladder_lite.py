@@ -82,6 +82,39 @@ class LadderLiteTests(unittest.TestCase):
         self.assertEqual(len(observed), 138)
         self.assertEqual(set(observed), set(jobs))
 
+    def test_staged_worker_without_repo_fails_with_marker(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            staged = root / "slurm_script"
+            staged.write_bytes(
+                (REPO / "scripts/ladder_lite/run_cell.sh").read_bytes()
+            )
+            plan = copy.deepcopy(self.plan)
+            key = plan["task_groups"]["PREFLIGHT"][0]
+            job = next(row for row in plan["jobs"] if row["job_key"] == key)
+            output = root / "preflight.json"
+            job["output"] = str(output)
+            plan["task_groups"] = {"PREFLIGHT": [key]}
+            plan["jobs"] = [job]
+            plan_path = root / "approved-plan.json"
+            plan_path.write_text(json.dumps(plan))
+            environment = {
+                **os.environ,
+                "SLURM_ARRAY_TASK_ID": "0",
+                "LL_PYTHON": self.python,
+            }
+            environment.pop("LL_REPO", None)
+            completed = subprocess.run(
+                ["bash", str(staged), str(plan_path), "PREFLIGHT"],
+                cwd=root, env=environment, text=True,
+                capture_output=True, check=False,
+            )
+            self.assertEqual(completed.returncode, 2)
+            self.assertIn("unresolved repository root", completed.stderr)
+            failed = Path(f"{output}.failed")
+            self.assertTrue(failed.is_file())
+            self.assertIn("exit_code=2", failed.read_text())
+
     def test_science_commands_match_reviewed_worker(self):
         jobs = {job["job_key"]: job for job in self.plan["jobs"]}
         for group in (
@@ -187,6 +220,11 @@ class LadderLiteTests(unittest.TestCase):
             self.assertTrue(any("--array=1%16" in row for row in tokens))
             self.assertTrue(all("--mem=16G" in row and "-c" in row
                                 and row[row.index("-c")+1]=="2" for row in tokens))
+            self.assertTrue(all(
+                any(token == f"--export=ALL,LL_PYTHON={self.python},LL_REPO={REPO}"
+                    for token in row)
+                for row in tokens
+            ))
             self.assertIn("total_tasks=3", lines)
             for group, expected_mem in (("CG", "24G"), ("PREFLIGHT", "16G")):
                 long_run = subprocess.run(
