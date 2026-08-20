@@ -144,7 +144,7 @@ class ResolutionPoolUnionTests(unittest.TestCase):
                 "reference_sha256":"r","deadhead_sha256":"d",
             }}
 
-            def loaded(path,**_kwargs):
+            def loaded(*_args,**_kwargs):
                 return [route([0]),route([1])],[0,1]
 
             with (
