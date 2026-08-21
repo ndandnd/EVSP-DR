@@ -229,12 +229,28 @@ class EventExpandedNetwork:
         row = (target, float(cost), dual, action)
         key = (target, dual)
         candidate = (row[1], json.dumps(action, sort_keys=True))
-        current = self._best_arcs[source].get(key)
+        retained = self._building_arcs.setdefault(source, {})
+        current = retained.get(key)
         if current is None or candidate < current[0]:
-            self._best_arcs[source][key] = (candidate, row)
+            retained[key] = (candidate, row)
+
+    def _finalize_source(self, source):
+        retained = self._building_arcs.pop(source, {})
+        self.out[source] = sorted(
+            (value[1] for value in retained.values()),
+            key=lambda row: (
+                row[0], row[1], json.dumps(row[3], sort_keys=True)
+            ),
+        )
+        self.sink_arcs.extend(
+            (source, cost, action)
+            for target, cost, _dual, action in self.out[source]
+            if target == self.SINK
+        )
 
     def _build_arcs(self):
-        self._best_arcs = [{} for _node in self.node_meta]
+        self.out = [[] for _node in self.node_meta]
+        self._building_arcs = {}
         self.sink_arcs = []
         for trip, (travel, deadhead) in sorted(self.depot_trip.items()):
             if travel > self.problem.start_min[trip] + TOL:
@@ -246,26 +262,14 @@ class EventExpandedNetwork:
                     "kind": "source", "trip": trip,
                     "travel_min": travel, "deadhead_kwh": deadhead,
                 })
+        self._finalize_source(0)
         for (trip, level), source in sorted(self.trip_node.items()):
             soc_exit = self.grid[level] - self.problem.trip_energy[trip]
             depart = float(self.problem.end_min[trip])
             self._direct_arcs(source, trip, soc_exit, depart)
             self._charge_arcs(source, trip, soc_exit, depart)
-        self.out = []
-        for retained in self._best_arcs:
-            self.out.append(sorted(
-                (value[1] for value in retained.values()),
-                key=lambda row: (
-                    row[0], row[1], json.dumps(row[3], sort_keys=True)
-                ),
-            ))
-        del self._best_arcs
-        self.sink_arcs = [
-            (source, cost, action)
-            for source, arcs in enumerate(self.out)
-            for target, cost, _dual, action in arcs
-            if target == self.SINK
-        ]
+            self._finalize_source(source)
+        del self._building_arcs
         self.n_arcs = sum(len(arcs) for arcs in self.out)
 
     def _direct_arcs(self, source, trip, soc_exit, depart):
