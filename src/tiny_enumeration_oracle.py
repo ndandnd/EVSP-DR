@@ -164,6 +164,61 @@ class TinyNetwork:
         )
 
 
+class TinyExactCGPricer:
+    """Unconstrained DAG pricing mirroring the production exact-CG pass."""
+
+    def __init__(self, network: TinyNetwork):
+        self.network = network
+
+    def price(self, duals, _constraints, *, max_candidates, objective):
+        infinity = float("inf")
+        value = [infinity] * len(self.network.node_meta)
+        parent = [None] * len(self.network.node_meta)
+        value[0] = 0.0
+        for left in self.network.topo:
+            if value[left] == infinity:
+                continue
+            for right, _cost, trip in self.network.out[left]:
+                objective_cost = (
+                    1.0
+                    if objective == "fleet-only" and left == 0
+                    else 0.0
+                )
+                candidate = value[left] + objective_cost - (
+                    float(duals.get(trip, 0.0)) if trip >= 0 else 0.0
+                )
+                if candidate < value[right] - 1e-12:
+                    value[right] = candidate
+                    parent[right] = left
+
+        def record(node):
+            trips = []
+            while node != 0:
+                kind, key, _level = self.network.node_meta[node]
+                if kind == "trip":
+                    trips.append(key)
+                node = parent[node]
+            trips.reverse()
+            return {"trips": trips, "cost": 1.0}
+
+        candidates = sorted(
+            (value[left], left) for left, _cost in self.network.sink_arcs
+            if value[left] != infinity
+        )
+        records, seen = [], set()
+        limit = min(max_candidates, 30)
+        for _reduced_cost, left in candidates:
+            candidate = record(left)
+            incidence = frozenset(candidate["trips"])
+            if incidence in seen:
+                continue
+            seen.add(incidence)
+            records.append(candidate)
+            if len(records) == limit:
+                break
+        return records, 1
+
+
 def generate_spec(seed: int, ordinal: int) -> TinySpec:
     rng = random.Random((seed << 20) + ordinal)
     trip_count = rng.randint(8, 14)
@@ -288,7 +343,9 @@ def _priced_records(pricer, duals, constraints, objective):
     return records, solves
 
 
-def column_generation(network, initial_pool=None, constraints=()):
+def column_generation(
+    network, initial_pool=None, constraints=(), *, pricing="exact_cg",
+):
     trips = list(network.problem.trips)
     pool = {
         record["mask"]: record for record in (
@@ -297,7 +354,11 @@ def column_generation(network, initial_pool=None, constraints=()):
             )
         )
     }
-    pricer = ConstrainedDAGPricer(network)
+    pricer = (
+        TinyExactCGPricer(network)
+        if pricing == "exact_cg"
+        else ConstrainedDAGPricer(network)
+    )
 
     def phase(number):
         methods = ("highs-ds", "highs-ipm", "highs")
@@ -367,7 +428,9 @@ def solve_branch_and_price(network):
     stack = [tuple()]
     while stack:
         constraints = stack.pop()
-        solved = column_generation(network, list(pool.values()), constraints)
+        solved = column_generation(
+            network, list(pool.values()), constraints, pricing="branch",
+        )
         pool.update(solved["pool"])
         nodes += 1
         if solved["infeasible"]:
