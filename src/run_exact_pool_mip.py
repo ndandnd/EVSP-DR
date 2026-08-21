@@ -346,6 +346,7 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     else a short reason.
     """
     from audit_giro_known_columns import DEPOT
+    depot = getattr(problem, "depot", DEPOT)
 
     arc = arc_map
     if arc is None:
@@ -357,7 +358,7 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     nodes = record.get("route_nodes") or []
     if len(nodes) < 3:
         return "route_nodes missing"
-    if nodes[0] != DEPOT or nodes[-1] != DEPOT:
+    if nodes[0] != depot or nodes[-1] != depot:
         return "route must start and end at the depot"
     stops = record.get("charging_stops") or {}
     stop_fields = [list(stops.get(name, []))

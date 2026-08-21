@@ -22,7 +22,7 @@ import scipy
 from scipy.optimize import Bounds, LinearConstraint, linprog, milp
 from scipy.sparse import csc_matrix
 
-from audit_giro_known_columns import DEPOT, HORIZON_MIN, build_problem
+from audit_giro_known_columns import HORIZON_MIN, build_problem
 from config import BUS_COST_KX, CHARGING_STATIONS
 from durable_io import read_jsonl_records
 from exact_pricer_expanded import DATA_DIR, ExpandedNetwork
@@ -102,7 +102,8 @@ def _integer_multiple(value: float, unit: float) -> bool:
 
 def validate_configuration(*, g_kwh: float, charge_kw: float,
                            min_soc_frac: float, soc_step: float,
-                           block_min: int) -> None:
+                           block_min: int,
+                           horizon_min: float = HORIZON_MIN) -> None:
     values = (g_kwh, charge_kw, min_soc_frac, soc_step, float(block_min))
     if not all(math.isfinite(float(value)) for value in values):
         raise ValueError("physics and grid values must be finite")
@@ -110,8 +111,8 @@ def validate_configuration(*, g_kwh: float, charge_kw: float,
         raise ValueError("capacity, charge power, SOC step, and block must be positive")
     if not 0.0 <= min_soc_frac <= 1.0:
         raise ValueError("min_soc_frac must be between zero and one")
-    if not _integer_multiple(HORIZON_MIN, float(block_min)):
-        raise ValueError("block_min must divide the 1560-minute horizon")
+    if not _integer_multiple(horizon_min, float(block_min)):
+        raise ValueError("block_min must divide the model horizon")
     if not _integer_multiple(g_kwh, soc_step):
         raise ValueError("soc_step must divide battery capacity")
     block_kwh = charge_kw * block_min / 60.0
@@ -133,20 +134,40 @@ def build_network(csv_name: str, *, soc_step: float, block_min: int,
                   data_dir: Path = DATA_DIR, g_kwh: float = 300.0,
                   charge_kw: float = 300.0,
                   min_soc_frac: float = 0.0) -> NetworkData:
-    validate_configuration(
-        g_kwh=g_kwh, charge_kw=charge_kw, min_soc_frac=min_soc_frac,
-        soc_step=soc_step, block_min=block_min,
-    )
     problem = build_problem(data_dir, csv_name,
                             max_station_to_trip_wait_min=HORIZON_MIN)
     prices = load_station_hourly_prices(data_dir / prices_csv,
                                         CHARGING_STATIONS)
+    return build_network_from_problem(
+        csv_name, problem, prices, prices_csv=prices_csv,
+        soc_step=soc_step, block_min=block_min, g_kwh=g_kwh,
+        charge_kw=charge_kw, min_soc_frac=min_soc_frac,
+    )
+
+
+def build_network_from_problem(
+    instance_name: str,
+    problem,
+    station_prices: dict,
+    *,
+    soc_step: float,
+    block_min: int,
+    prices_csv: str = "hourly_prices_flat.csv",
+    g_kwh: float = 300.0,
+    charge_kw: float = 300.0,
+    min_soc_frac: float = 0.0,
+) -> NetworkData:
+    validate_configuration(
+        g_kwh=g_kwh, charge_kw=charge_kw, min_soc_frac=min_soc_frac,
+        soc_step=soc_step, block_min=block_min,
+        horizon_min=float(getattr(problem, "horizon_min", HORIZON_MIN)),
+    )
     network = ExpandedNetwork(
-        problem, prices, soc_step=soc_step, block_min=block_min,
+        problem, station_prices, soc_step=soc_step, block_min=block_min,
         g_kwh=g_kwh, charge_kw=charge_kw,
         reserve_kwh=min_soc_frac * g_kwh,
     )
-    return NetworkData(csv_name, prices_csv, problem, network,
+    return NetworkData(instance_name, prices_csv, problem, network,
                        float(soc_step), int(block_min), float(g_kwh),
                        float(charge_kw), float(min_soc_frac * g_kwh))
 
@@ -598,7 +619,9 @@ def path_record(model: ArcFlowModel, path: Sequence[int]) -> dict:
         charging["kwh"].append(round(soc - net.grid[level], 6))
     record = {
         "trips": trips,
-        "route_nodes": [DEPOT] + [value for _kind, value in sequence] + [DEPOT],
+        "route_nodes": [net.depot] + [
+            value for _kind, value in sequence
+        ] + [net.depot],
         "charging_stops": charging,
         "expanded_grid_charging_stops": charging,
         "cost": float(arcs.cost[np.asarray(path)].sum()),
@@ -624,10 +647,14 @@ def gate_g4(model: ArcFlowModel, primal: np.ndarray) -> tuple[dict, list[dict]]:
     if wrong:
         raise AssertionError(f"G4 FAILED: non-unit trip coverage {wrong}")
     for ordinal, route in enumerate(routes, 1):
+        arc_map = model.data.network.continuous_arc_map
+        route_arc_map = getattr(model.data.problem, "arc_map_for_route", None)
+        if route_arc_map is not None:
+            arc_map = route_arc_map(route)
         reason = validate_injected_route(
             model.data.problem, route, model.data.g_kwh,
-            model.data.charge_kw, model.data.reserve_kwh, HORIZON_MIN,
-            arc_map=model.data.network.continuous_arc_map,
+            model.data.charge_kw, model.data.reserve_kwh,
+            model.data.network.horizon, arc_map=arc_map,
         )
         if reason:
             raise AssertionError(f"G4 FAILED route {ordinal}: {reason}")
