@@ -101,7 +101,8 @@ multiples of one global integer `block_min`.
 
 This is a specification conflict:
 
-1. G3 succeeds because irregular arrival/deadline-induced windows are retained.
+1. The successful G3 sub-results depend on retaining irregular
+   arrival/deadline-induced windows.
 2. Snapping those windows to the uniform lattice reintroduces the restriction
    the event model exists to remove.
 3. Extending `realize_expanded_path` with an event-mode branch would resolve the
@@ -111,7 +112,7 @@ No exact event-route-space claim should be published until the operator chooses
 between:
 
 - preserving G5 literally and accepting uniform-aligned emission (which may
-  lose G3), or
+  lose the representability established by the successful G3 sub-results), or
 - versioning the realization contract for event windows while preserving all
   physical constraints.
 
