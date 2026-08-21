@@ -1,0 +1,40 @@
+canonical_id,kind,source_branch,source_local_label,title,assigned_utc
+B0010,B,cursor/ladder-lite-20260819-2969,B0010 (honored as allocated),LL_BUDGET_OVERRIDE_S initially retained the normal 60-second CG allocation cushion,2026-08-21
+B0011,B,cursor/ladder-lite-20260819-2969,B0011 (honored as allocated),Correction to B0008: checkpoint signal wait is now resilient,2026-08-21
+B0012,B,cursor/ladder-lite-20260819-2969,B0012 (honored as allocated),Correction to B0009: inherited Python environment is sanitized,2026-08-21
+B0100,B,cursor/ladder-lite-20260819-2969,LOCAL-1 (ex-branch B0023),Correction to B0022: diversify-rounds scales; equal endpoints indicate saturation,2026-08-21
+B0101,B,cursor/ladder-lite-20260819-2969,ex-branch B0024,Greedy warm-pool startup rejected plan-declared 240 kWh physics,2026-08-21
+B0102,B,cursor/ladder-lite-20260819-2969,LOCAL-2 (ex-branch B0025),"Correction to B0024: greedy exposed an unsupported frozen grid, not an algorithm regression",2026-08-21
+B0103,B,cursor/ladder-lite-20260819-2969,LOCAL-3 (ex-branch B0026),A chained analysis assumed target_pool_feasibility.py existed at 6d02f91,2026-08-21
+B0104,B,cursor/fixed-duty-charging-2969-b22e,LOCAL-2 (ex-branch B0023),Station-only waypoints are ambiguous in the legacy charging-stop replay format,2026-08-21
+B0105,B,cursor/event-based-pricer-2969,ex-branch B0031,Event-time columns cannot pass realize_expanded_path unchanged,2026-08-21
+B0106,B,cursor/event-based-pricer-2969,LOCAL-4 (ex-branch B0032),Event k_best_routes returns at most one shortest prefix per sink predecessor,2026-08-21
+B0107,B,cursor/event-based-pricer-2969,ex-branch B0033,Event report incorrectly claimed duty 13411 passed all five grid gates,2026-08-21
+B0108,B,cursor/branch-and-price-experiment-2969-1451,ex-branch B0031,"Exact-CG status omitted DAG size, per-iteration master/pricing cost, certificate time, and peak RSS",2026-08-21
+B0109,B,cursor/branch-and-price-experiment-2969-1451,ex-branch B0032,Correction to B0031: resolution-cost status instrumentation is locally validated,2026-08-21
+B0110,B,cursor/branch-and-price-experiment-2969-1451,ex-branch B0033,HiGHS LP time_limit does not bound model loading and presolve wall time on multi-million-variable arc-flow models,2026-08-21
+D0100,D,cursor/ladder-lite-20260819-2969,LOCAL-4 (ex-branch D0021),Keep columns_per_iter=30 as the scale-ladder default; do not raise it to 100 or 300.,2026-08-21
+D0101,D,cursor/fixed-duty-charging-2969-b22e,ex-branch D0021,"Use an event-based continuous-energy MILP for fixed GIRO trip sequences; enforce 240 kWh/240 kW/zero reserve/$5 starts by default, keep terminal SOC explicit and switchable, and classify non-frozen calls as diagnostic overrides.",2026-08-21
+D0102,D,cursor/fixed-duty-charging-2969-b22e,LOCAL-3 + LOCAL-4 (ex-branch D0022),"For the zero-start-cost event-cap treatment, set N separately for each duty to its observed GIRO recharge count; pair this with a mean-preserving synthetic SE3-shaped two-peak instrument whose status remains synthetic pending a frozen real series.",2026-08-21
+D0103,D,cursor/fixed-duty-charging-2969-b22e,ex-branch D0023,All capped-versus-uncapped timing savings use the uncapped charge-on-arrival cost under the same tariff and terminal policy as a fixed denominator.,2026-08-21
+D0104,D,cursor/event-based-pricer-2969,ex-branch D0031,"PAUSED: event-time pricing passes default identity and the motivating fleet/transition gates, but fails the unchanged expanded-realization gate",2026-08-21
+D0105,D,cursor/event-based-pricer-2969,ex-branch D0032,"Event-pricer sink batching is a performance heuristic, not a k-shortest-path guarantee",2026-08-21
+D0106,D,cursor/event-based-pricer-2969,ex-branch D0033,CORRECTION: G3 is the formal event-pricer stop; duty 13411 fails the 15/10 and 5/10 event grids,2026-08-21
+D0107,D,cursor/branch-and-price-experiment-2969-1451,ex-branch D0031,Freeze a paired 336-run resolution-cost study: 168 instance-grid-physics cells with exact-CG and direct all-arc-integer arc-flow arms,2026-08-21
+D0108,D,cursor/branch-and-price-experiment-2969-1451,ex-branch D0032,Fit exact-CG DAG size and arc-flow variable/constraint/nonzero size separately on 240/240 rows; use 300/300 only as bridge validation and classify affordability against 24 hours,2026-08-21
+D0109,D,cursor/branch-and-price-experiment-2969-1451,ex-branch D0033,"Local CG-only k2/k3 sanity fit predicts uniform k40 1kWh/5min refinement is unaffordable pending paired arc-flow calibration: 1,969 certificate-hours versus 24",2026-08-21
+D0110,D,cursor/branch-and-price-experiment-2969-1451,ex-branch D0034,Enforce arc-flow wall budgets in the parent process and preserve the model-size checkpoint when native HiGHS exceeds its internal time limit,2026-08-21
+D0111,D,cursor/branch-and-price-experiment-2969-1451,ex-branch D0035,"Local paired evidence places the strict all-arc arc-flow crossover at or before k2 under a 60-second budget, finds no LP equality break, and predicts neither uniform method affordable at k40 1kWh/5min",2026-08-21
+B0111,B,cursor/event-based-pricer-2969,LOCAL-5,Event tariff fallback labeled one price with two hour identities (52 k05_s2 audit rejections); shared event tariff normalization through the full horizon removes the discrepancy,2026-08-21
+D0112,D,cursor/ladder-lite-20260819-2969,LOCAL-6,"18 duty-union instances (selections 4-6 for k2/k3/k5/k8/k13/k20) produced from the seed-20260803 families at 72c7bf4; producer claim only, independent validation required",2026-08-21
+D0113,D,cursor/fixed-duty-charging-2969-b22e,LOCAL-5,"Matched-feasible-set factorial under two-peak / terminal >= reserve: uncapped timing value 27.849 (5.328%), capped 28.834 (5.447%), cap cost 6.648; aggregate prefix-causal bound 40.225 (7.695%); uncapped optimizer achieves 69.2% of the bound",2026-08-21
+D0114,D,cursor/event-based-pricer-2969,LOCAL-1,Coarse SOC does not preserve the event result: at 15 kWh only k02_s2 reaches 2.0; at 10 kWh k02_s2 is 2.090909 and k02_s3 is 2.081081; all three k02 cells reach 2.0 at 2.5 kWh,2026-08-21
+D0115,D,cursor/event-based-pricer-2969,LOCAL-2,"Opt-in event realization contract replays irregular event windows without snapping; corrected strict audits reject 0 of 15,882 k02_s3 and 0 of 16,253 k05_s2 records",2026-08-21
+D0116,D,cursor/event-based-pricer-2969,LOCAL-3,"Packed factorized arcs with lazy reconstruction clear the stated memory gates: k02_s3 certifies in 557.18 s at 671.07 MiB; k05_s2 canary in 1,013.33 s at 1,069.18 MiB versus 26,814.64 MiB for the prior explicit 22,161,911-arc build",2026-08-21
+D0117,D,cursor/branch-and-price-experiment-2969-1451,LOCAL-1,run_exact_pool_mip.py --progress-dir writes observational convergence snapshots only: no search-tree/bound/basis serialization and no incumbent reload into a relaunched solve,2026-08-21
+D0118,D,cursor/branch-and-price-experiment-2969-1451,LOCAL-2,Relaunched toy MIP re-explored nodes already searched by the interrupted process: two independently signalled launches explored 20 and 19 nodes and ended at the same incumbent 35 and bound 6,2026-08-21
+D0119,D,cursor/branch-and-price-experiment-2969-1451,LOCAL-3,Large pool MIPs still warrant protected scaglione scheduling when a high-quality start is needed; progress snapshots do not remove that need,2026-08-21
+D0120,D,cursor/arcflow-oracle-2969-3a99,LOCAL-4,Dual simplex returned no k02_s1 arc-flow LP primal in 600 s while HiGHS interior point solved the same LP in 16.188 s,2026-08-21
+D0121,D,cursor/arcflow-oracle-2969-3a99,LOCAL-5,First direct all-arc-integer k2 solve exhausted the 47 GiB local VM; subsequent runs used a 30 GB process cap and the explicitly labelled witness-search relaxation,2026-08-21
+D0122,D,cursor/arcflow-oracle-2969-3a99,LOCAL-6,"Explicit 300 kWh / 300 kW / reserve-0 CLI flags preserve the k02_s2 legacy regression byte-identical (fleet LP 2.1875, integer fleet 3)",2026-08-21
+D0123,D,cursor/arcflow-oracle-2969-3a99,LOCAL-7,"At 240 kWh / 240 kW with the 10 kWh / 10 min commensurate grid, k02_s2 has fleet LP 2.4 and a fully integral physically replayed three-bus witness; discretized integer optimum 3",2026-08-21
