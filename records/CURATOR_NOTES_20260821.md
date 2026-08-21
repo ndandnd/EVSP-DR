@@ -138,3 +138,31 @@ pre-fix extractor on the producer's machine, where its own replay gates
 passed. The fix changes replayed-schedule extraction only, not the MILP
 objective; the factorial cost numbers are solver-objective quantities and are
 unaffected, but any future re-run should use the fixed extractor.
+
+## 8. Independent re-review (convention 7.5)
+
+An independent reviewer agent (no prior context, read-only) audited every
+deliverable on 2026-08-21 against the work order and the underlying branch
+data: all 23 mapping pairs and 39 registry titles byte-verified against source
+ledgers plus a scan of all ~30 remote refs for unadjudicated collisions
+(none); all 118 import-manifest hashes recomputed against both the working
+tree and each producing commit; all 53 RESULTS_LOG rows recomputed from the
+committed aggregates; every corrected STATUS number recomputed from the cited
+artifacts; two duty-union instances (k03_r5, k08_r6) rebuilt from the GIRO
+master with reviewer-written code; ledger freeze, RAW/KNOWN separation and
+family separation checked; the full suite re-run independently (520 passed,
+126 subtests, 0 failed, reproduced).
+
+Verdict: **no blockers or majors; two minor wording-level provenance issues
+and two nits**, all addressed in the commit that adds this section:
+
+1. R16 asserted the work order's claim that "8.85% is a per-duty range
+   endpoint" although no committed artifact contains that figure — reworded to
+   retire the 7.70–8.85% range as unverified (origin untraceable in git).
+2. R14 said event cells "certify fleet LP" while the artifact says "certified
+   route weight"; for event cells the fleet-LP reading rests on the `D0013`
+   bracket only — reworded to the artifact's term with the bracket caveat.
+3. The re-review itself was not evidenced on the branch — this section is that
+   record.
+4. R11's warm-pool endpoints have cluster-only durable evidence — annotated in
+   R11, matching the treatment given to the §9 handoff citation.
