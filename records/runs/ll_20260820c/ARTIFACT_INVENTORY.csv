@@ -1,0 +1,16 @@
+artifact,status,location,sha256,note
+analysis/scale_ladder/ll_20260820c/ladder_summary.csv,present,this branch,4bfd2bb61eb7ff1eedec398ddfa3496c66ff19988bb42fc6f11a5fcfbafc1e2f,campaign aggregate; 23 primary-grid CG cells
+analysis/scale_ladder/ll_20260820c/resolution_matrix.csv,present,this branch,392cdba0002c907bf8b2ce2c0beb0e3f8de9a5bc0faee4ebfa397dc4daf984a7,campaign aggregate; 39 resolution-sensitivity rows
+analysis/scale_ladder/ll_20260820c/RESOLUTION_ANSWER_20260820.md,present,this branch,a21a8158a22fa18a1df1e44c1eea918c2af2e06dd81df80c37ed4726586dd77d,campaign analysis narrative
+records/RESULTS_LOG.csv,present,this branch,fc8e93019bfb59d86d2bad93b6fcb4b892f1e31a5a22bb412d6603c1b2fc6d08,backfilled results log (53 ll_20260820c rows)
+scripts/curator/backfill_results_log_ll_20260820c.py,present,this branch,9364c9427687f75777bf3dfd82a2a5b0dab3ab70d6d05df98727726ee3e90bb0,backfill producer script
+normalized/cg_run_summary.csv,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,required by record_results.sh; never committed to any git ref (verified across all refs 2026-08-21)
+normalized/mip_run_summary.csv,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,required by record_results.sh; never committed to any git ref (verified across all refs 2026-08-21)
+normalized/cg_iteration_long.csv,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,per-iteration CG traces; never committed to any git ref (verified across all refs 2026-08-21)
+normalized/mip_checkpoint_long.csv,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,MIP checkpoint traces; never committed to any git ref (verified across all refs 2026-08-21)
+campaign/ll_20260820c/approved-plan.json,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,plan sha256 063e413fc24f88a8801c2ebc03f979176994aa075631b86d4258e83f9220a277 per D0010; never committed to any git ref (verified across all refs 2026-08-21)
+campaign/ll_20260820c/campaign.json,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,"campaign manifest (execution_mode, commit); never committed to any git ref (verified across all refs 2026-08-21)"
+results/<cell>/*.status.json,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,raw per-cell status files; never committed to any git ref (verified across all refs 2026-08-21)
+results/<cell>/*.iters.csv,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,raw iteration traces; never committed to any git ref (verified across all refs 2026-08-21)
+results/<cell>/progress-dir MIP checkpoints,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,quarantine/recovery evidence per D0009; never committed to any git ref (verified across all refs 2026-08-21)
+handoff_*/sacct.txt,absent,cluster ~/ladder-lite only (nc437@unicorn-login-01),,scheduler accounting snapshots per STATUS_20260821.md section 8; never committed to any git ref (verified across all refs 2026-08-21)
