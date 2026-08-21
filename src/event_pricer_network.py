@@ -163,8 +163,9 @@ class EventExpandedNetwork:
         self.reserve = float(reserve_kwh)
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
         required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
+        required_hours = set(range(required_hour + 1))
         for curve in self.prices.values():
-            if self.strict_tariff_coverage and required_hour not in curve:
+            if self.strict_tariff_coverage and not required_hours <= set(curve):
                 raise ValueError("event tariff coverage is incomplete")
             if curve:
                 last = curve[max(curve)]
@@ -306,8 +307,6 @@ class EventExpandedNetwork:
                 "deadhead_kwh": deadhead,
             }
             self._add(source, target, 0.0, successor, action)
-            if successor is None:
-                self.sink_arcs.append((source, 0.0, action))
 
     def _charge_arcs(self, source, trip, soc_exit, depart):
         for station, (inbound_min, inbound_kwh) in sorted(
@@ -381,8 +380,6 @@ class EventExpandedNetwork:
                     }
                     cost = CHARGE_START_COST + energy_cost
                     self._add(source, target, cost, successor, action)
-                    if successor is None:
-                        self.sink_arcs.append((source, cost, action))
 
     def _record(self, actions):
         trips = [

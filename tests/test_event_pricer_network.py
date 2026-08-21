@@ -117,6 +117,18 @@ class EventPricerNetworkTests(unittest.TestCase):
         )
         self.assertEqual(network.prices[STATION.rsplit("_",1)[0]][25],0.1)
 
+    def test_strict_tariff_rejects_missing_intermediate_hour(self):
+        incomplete = prices()
+        for curve in incomplete.values():
+            del curve[1]
+        with self.assertRaisesRegex(ValueError,"coverage"):
+            EventExpandedNetwork(
+                two_trip_problem(),incomplete,
+                soc_step=2.5,block_min=5,g_kwh=240.0,
+                charge_kw=240.0,reserve_kwh=0.0,
+                strict_tariff_coverage=True,
+            )
+
     def test_event_dag_is_smaller_than_uniform_one_minute_grid(self):
         problem = two_trip_problem()
         event = EventExpandedNetwork(
@@ -138,6 +150,10 @@ class EventPricerNetworkTests(unittest.TestCase):
         for arcs in network.out:
             keys=[(target,dual) for target,_cost,dual,_action in arcs]
             self.assertEqual(len(keys),len(set(keys)))
+        self.assertEqual(
+            len(network.sink_arcs),
+            len({source for source,_cost,_action in network.sink_arcs}),
+        )
 
 
 if __name__ == "__main__":

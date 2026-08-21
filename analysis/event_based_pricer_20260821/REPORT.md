@@ -22,6 +22,14 @@ the pre-change source:
 
 Operational timing fields remain excluded.
 
+### G2 — incomplete
+
+The required nine-cell containment gate was not established before the G5 stop.
+Executed frozen-physics comparisons cover all three k2 uniform rows and
+certified event rows for k02_s1/k02_s2. Those two event LPs are no worse than
+both corresponding uniform LPs. k02_s3 event CG was interrupted uncertified,
+and no k3/k5 event LP was run. No nine-cell containment claim is made.
+
 ### G3 — pass
 
 At frozen 240 kWh / 240 kW / zero reserve, with a 2.5-kWh SOC lattice:
@@ -53,6 +61,10 @@ direct event-transition factorization still scales poorly:
 
 Thus the stored DAG is smaller than uniform 1/5, but its Python construction
 and arc representation are not yet a credible large-scale implementation.
+Additionally, `k_best_routes` is exact only for the minimum reduced-cost path;
+batch enrichment retains at most one route per sink predecessor and is not a
+genuine k-shortest-path enumeration (`B0032`). This affects performance, not
+the reduced-cost certificate.
 
 ## G5 — fail (stop condition)
 
@@ -97,3 +109,10 @@ between:
 - event network and known-transition tests: 8 passed;
 - default k2 bit-identity gate: passed;
 - no cluster or branch-and-price work was performed.
+
+## Reproducibility
+
+`artifacts/` contains the k02_s2 event status, full 1,710-record journal,
+iteration trace, six k2 uniform comparison statuses, k05 build metrics, and the
+machine-readable exhaustive G5 audit. `COMMANDS.md` records commands and
+producer commits. `SHA256SUMS` binds the complete evidence set.
