@@ -4250,6 +4250,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             extension=payload["selection_extensions"][0]
             self.assertEqual(extension["seed"],EXTENSION_SEED)
             self.assertEqual(
+                extension["validation_status"],
+                "producer_only_pending_independent_validation",
+            )
+            self.assertEqual(
                 extension["selection_replicates"],[4,5,6]
             )
             self.assertEqual(

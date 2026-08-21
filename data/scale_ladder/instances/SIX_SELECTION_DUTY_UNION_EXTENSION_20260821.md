@@ -4,6 +4,10 @@ The active manifest is
 `scale_ladder_instance_manifest_6sel_seed20260803.csv` (SHA-256
 `8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3`).
 
+Status: **producer output; independent curator validation pending**. The hashes
+below establish what this branch produced, not independent scientific
+validation of those instances.
+
 It is a strictly additive duty-union extension:
 
 - its first 22 data rows are the byte-identical legacy manifest at

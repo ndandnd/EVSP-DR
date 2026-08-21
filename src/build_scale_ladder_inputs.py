@@ -366,6 +366,8 @@ def build_six_selection_extension(
 
     extension_record = {
         "schema": "evsp-dr-duty-union-selection-extension-v1",
+        "validation_status":
+            "producer_only_pending_independent_validation",
         "generator": "src/build_scale_ladder_inputs.py",
         "seed": EXTENSION_SEED,
         "selection_replicates": list(EXTENSION_REPLICATES),
@@ -408,6 +410,8 @@ def build_six_selection_extension(
             LEGACY_INSTANCE_MANIFEST_SHA256,
         "selection_extensions": [{
             "generator": "src/build_scale_ladder_inputs.py",
+            "validation_status":
+                "producer_only_pending_independent_validation",
             "generator_families":
                 extension_record["generator_families"],
             "seed": EXTENSION_SEED,

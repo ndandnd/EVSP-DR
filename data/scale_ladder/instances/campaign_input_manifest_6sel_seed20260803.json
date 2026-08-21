@@ -15,7 +15,7 @@
   "selection_extensions": [
     {
       "extension_manifest": "data/scale_ladder/instances/duty_union_extension_seed20260803.json",
-      "extension_manifest_sha256": "0e83dd06c5bff64b63e8f73d0349a5372793445c09936c389026b0a66599de62",
+      "extension_manifest_sha256": "6465d1ef824c5031b4447c13050fdf3a5110782ae8a4598850c83e8d0ca16c54",
       "generator": "src/build_scale_ladder_inputs.py",
       "generator_families": {
         "13": "small_3_5_8_13_per6_seed20260803",
@@ -38,7 +38,8 @@
         4,
         5,
         6
-      ]
+      ],
+      "validation_status": "producer_only_pending_independent_validation"
     }
   ],
   "source_frozen_manifest": "data/tariff_response/frozen_instances/frozen_input_manifest.csv",
