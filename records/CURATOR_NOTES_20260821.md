@@ -97,11 +97,14 @@ registration assigns an identity, not a validation verdict.
    large pool MIPs off scaglione; `D0119` records the branch's own conclusion
    that the largest MIPs still warrant scaglione. The `D0033` rule of thumb
    itself already carries the right exception (long + unresumable + critical).
-2. **`EVSP_DR_HANDOFF_20260819.md` does not exist in this repository's git
-   history on any branch** (checked all refs). STATUS §9 item 8 and §2 of the
-   status preamble cite it; the citation is annotated in the corrected STATUS
-   rather than silently dropped. If a copy exists outside git, it should be
-   committed and hashed.
+2. **`EVSP_DR_HANDOFF_20260819.md` is external and operator-held** — resolved
+   by the operator on 2026-08-21: it lives at
+   `~/Documents/demandResponse/EVSP_DR_HANDOFF_20260819.md`, one level above
+   the checkout, was never in the repository, and is not needed
+   (`STATUS_20260821.md` carries the current state). STATUS §9 item 8 and the
+   status preamble now mark it as external rather than missing. The whole §9
+   reading list was audited the same way: items 1–7 all exist on this branch
+   (6 and 7 via the evidence import); item 8 is the only external entry.
 3. The authoritative `B0031` correction ("commit the CSVs") is executed:
    ladder commit `72c7bf4` committed the 18 duty-union instances. Independent
    validation is recorded in `analysis/duty_union_validation_20260821/`.
