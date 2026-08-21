@@ -700,12 +700,25 @@ class EventExpandedNetwork:
             "_event_record": record,
         }
 
-    def min_reduced_cost_route(self, alpha):
+    def min_reduced_cost_route(
+        self,
+        alpha,
+        *,
+        objective="combined-cost",
+        route_dual=0.0,
+    ):
+        if objective not in {
+            "combined-cost", "artificial-elimination",
+            "fleet-only", "charging-cost",
+        }:
+            raise ValueError(f"unsupported pricing objective: {objective}")
         dense = [
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
         ]
         if self.arc_mode == "lazy":
-            return self._min_reduced_cost_route_lazy(dense)
+            return self._min_reduced_cost_route_lazy(
+                dense, objective=objective, route_dual=route_dual,
+            )
         values = [float("inf")] * len(self.node_meta)
         parent = [None] * len(self.node_meta)
         values[0] = 0.0
@@ -713,9 +726,23 @@ class EventExpandedNetwork:
             if not math.isfinite(values[source]):
                 continue
             for target, cost, dual, action in self.out[source]:
-                candidate = values[source] + cost - (
-                    dense[dual] if dual >= 0 else 0.0
-                )
+                if objective == "combined-cost" and route_dual == 0.0:
+                    candidate = values[source] + cost - (
+                        dense[dual] if dual >= 0 else 0.0
+                    )
+                else:
+                    objective_cost = (
+                        0.0 if objective == "artificial-elimination"
+                        else 1.0
+                        if objective == "fleet-only" and source == 0
+                        else 0.0 if objective == "fleet-only"
+                        else cost - BUS_COST_KX
+                        if objective == "charging-cost" and source == 0
+                        else cost
+                    )
+                    candidate = values[source] + objective_cost - (
+                        dense[dual] if dual >= 0 else 0.0
+                    ) - (route_dual if source == 0 else 0.0)
                 if candidate < values[target] - 1e-12:
                     values[target] = candidate
                     parent[target] = (source, action)
@@ -729,7 +756,9 @@ class EventExpandedNetwork:
             "_parent": parent,
         }
 
-    def _min_reduced_cost_route_lazy(self, dense):
+    def _min_reduced_cost_route_lazy(
+        self, dense, *, objective, route_dual
+    ):
         values = np.full(len(self.node_meta), np.inf, dtype=np.float64)
         parent = np.full(len(self.node_meta), -1, dtype=np.int32)
         values[0] = 0.0
@@ -746,11 +775,28 @@ class EventExpandedNetwork:
             if start == end:
                 continue
             targets = self._arc_targets_np[start:end]
-            candidates = (
-                source_value
-                + self._arc_costs_np[start:end]
-                - dual_by_node[targets]
-            )
+            if objective == "combined-cost" and route_dual == 0.0:
+                candidates = (
+                    source_value
+                    + self._arc_costs_np[start:end]
+                    - dual_by_node[targets]
+                )
+            else:
+                if objective == "artificial-elimination":
+                    objective_costs = 0.0
+                elif objective == "fleet-only":
+                    objective_costs = 1.0 if source == 0 else 0.0
+                elif source == 0:
+                    objective_costs = (
+                        self._arc_costs_np[start:end] - BUS_COST_KX
+                    )
+                else:
+                    objective_costs = self._arc_costs_np[start:end]
+                candidates = (
+                    source_value + objective_costs
+                    - dual_by_node[targets]
+                    - (route_dual if source == 0 else 0.0)
+                )
             improved = candidates < values[targets] - 1e-12
             if not np.any(improved):
                 continue
@@ -768,7 +814,8 @@ class EventExpandedNetwork:
         }
 
     def sink_predecessor_route_batch(
-        self, alpha, limit=30, *, phase_callback=None
+        self, alpha, limit=30, *, phase_callback=None,
+        objective="combined-cost", route_dual=0.0,
     ):
         """Return the exact best route plus distinct sink-predecessor paths.
 
@@ -776,7 +823,12 @@ class EventExpandedNetwork:
         enumeration: each sink predecessor contributes only its best prefix.
         """
         started = time.perf_counter()
-        best = self.min_reduced_cost_route(alpha)
+        if objective == "combined-cost" and route_dual == 0.0:
+            best = self.min_reduced_cost_route(alpha)
+        else:
+            best = self.min_reduced_cost_route(
+                alpha, objective=objective, route_dual=route_dual,
+            )
         if phase_callback is not None:
             phase_callback(
                 "pricing_shortest_path",
@@ -790,7 +842,14 @@ class EventExpandedNetwork:
         candidates = []
         for source, cost, action in self.sink_arcs:
             if math.isfinite(values[source]):
-                candidates.append((values[source] + cost, source, action))
+                sink_cost = (
+                    cost
+                    if objective in {"combined-cost", "charging-cost"}
+                    else 0.0
+                )
+                candidates.append((
+                    values[source] + sink_cost, source, action
+                ))
         candidates.sort(key=lambda row: (
             row[0], row[1], json.dumps(row[2], sort_keys=True)
         ))

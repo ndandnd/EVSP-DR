@@ -211,6 +211,45 @@ class EventPricerNetworkTests(unittest.TestCase):
             explicit.fixed_sequence_record((0, 1)),
         )
 
+    def test_explicit_and_lazy_lexicographic_objectives_match(self):
+        problem = two_trip_problem()
+        explicit = EventExpandedNetwork(
+            problem, prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="explicit",
+        )
+        lazy = EventExpandedNetwork(
+            problem, prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="lazy",
+        )
+        duals = {0: 0.4, 1: 0.4}
+        for objective, route_dual in (
+            ("artificial-elimination", 0.0),
+            ("fleet-only", 0.0),
+            ("charging-cost", 0.25),
+        ):
+            with self.subTest(objective=objective):
+                expected = explicit.min_reduced_cost_route(
+                    duals, objective=objective, route_dual=route_dual,
+                )
+                observed = lazy.min_reduced_cost_route(
+                    duals, objective=objective, route_dual=route_dual,
+                )
+                self.assertAlmostEqual(observed["rc"], expected["rc"])
+                self.assertEqual(observed["trips"], expected["trips"])
+                self.assertEqual(
+                    observed["_event_record"],
+                    expected["_event_record"],
+                )
+        fleet = lazy.min_reduced_cost_route(
+            duals, objective="fleet-only",
+        )
+        self.assertAlmostEqual(
+            fleet["rc"],
+            1.0 - sum(duals[trip] for trip in fleet["trips"]),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

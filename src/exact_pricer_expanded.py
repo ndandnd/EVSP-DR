@@ -562,7 +562,18 @@ class ExpandedNetwork:
         )
 
     # ── exact pricing pass ────────────────────────────────────────────────
-    def min_reduced_cost_route(self, alpha: dict[int, float]):
+    def min_reduced_cost_route(
+        self,
+        alpha: dict[int, float],
+        *,
+        objective: str = "combined-cost",
+        route_dual: float = 0.0,
+    ):
+        if objective not in {
+            "combined-cost", "artificial-elimination",
+            "fleet-only", "charging-cost",
+        }:
+            raise ValueError(f"unsupported pricing objective: {objective}")
         INF = float("inf")
         dense_duals = [
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
@@ -575,10 +586,27 @@ class ExpandedNetwork:
             if vu == INF:
                 continue
             for v, cost, dual_index in self.out[u]:
-                cand = (
-                    vu + cost
-                    - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
-                )
+                if objective == "combined-cost" and route_dual == 0.0:
+                    cand = (
+                        vu + cost
+                        - (
+                            dense_duals[dual_index]
+                            if dual_index >= 0 else 0.0
+                        )
+                    )
+                else:
+                    objective_cost = (
+                        0.0 if objective == "artificial-elimination"
+                        else 1.0 if objective == "fleet-only" and u == 0
+                        else 0.0 if objective == "fleet-only"
+                        else cost - BUS_COST_KX
+                        if objective == "charging-cost" and u == 0
+                        else cost
+                    )
+                    cand = vu + objective_cost - (
+                        dense_duals[dual_index]
+                        if dual_index >= 0 else 0.0
+                    ) - (route_dual if u == 0 else 0.0)
                 if cand < value[v] - 1e-12:
                     value[v] = cand
                     parent[v] = (u, dual_index)
@@ -689,6 +717,8 @@ class ExpandedNetwork:
         limit: int = 30,
         *,
         phase_callback=None,
+        objective: str = "combined-cost",
+        route_dual: float = 0.0,
     ):
         """Return the exact best route plus distinct sink-predecessor paths.
 
@@ -696,7 +726,12 @@ class ExpandedNetwork:
         enumeration: each sink predecessor contributes only its best prefix.
         """
         started = time.perf_counter()
-        best = self.min_reduced_cost_route(alpha)
+        if objective == "combined-cost" and route_dual == 0.0:
+            best = self.min_reduced_cost_route(alpha)
+        else:
+            best = self.min_reduced_cost_route(
+                alpha, objective=objective, route_dual=route_dual,
+            )
         if phase_callback is not None:
             phase_callback(
                 "pricing_shortest_path",
@@ -717,7 +752,11 @@ class ExpandedNetwork:
         for u, cost in self.sink_arcs:
             if value[u] == float("inf"):
                 continue
-            candidates.append((value[u] + cost, u))
+            sink_cost = (
+                cost if objective in {"combined-cost", "charging-cost"}
+                else 0.0
+            )
+            candidates.append((value[u] + sink_cost, u))
         candidates.sort()
         routes, seen = [best], {frozenset(best["trips"])}
         for rc, u in candidates[: max(4 * limit, 200)]:
