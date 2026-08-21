@@ -18,6 +18,7 @@ from build_raw_recovery_feature_analysis import (  # noqa: E402
     _instance_metrics,
     _normalize_results,
     descriptive_associations,
+    feature_distribution,
     publish,
 )
 
@@ -56,6 +57,12 @@ class RawRecoveryFeatureAnalysisTests(unittest.TestCase):
         self.assertAlmostEqual(
             metrics["station_reachability_fraction"], 2 / 3,
         )
+        distribution = feature_distribution(pd.DataFrame([metrics]))
+        slack = distribution[
+            distribution["feature"] == "layover_slack_median"
+        ].iloc[0]
+        self.assertEqual(slack["n_instances"], 1)
+        self.assertEqual(slack["median"], 7.5)
 
     def test_recovery_requires_a_proven_finite_pool_optimum(self):
         instances = pd.DataFrame([

@@ -365,6 +365,25 @@ def descriptive_associations(instances, cells):
     return pd.DataFrame(rows)
 
 
+def feature_distribution(instances):
+    rows = []
+    for feature in FEATURES:
+        values = pd.to_numeric(
+            instances.get(feature, pd.Series(dtype=float)),
+            errors="coerce",
+        ).dropna()
+        rows.append({
+            "feature": feature,
+            "n_instances": len(values),
+            "min": values.min(),
+            "p25": values.quantile(0.25),
+            "median": values.median(),
+            "p75": values.quantile(0.75),
+            "max": values.max(),
+        })
+    return pd.DataFrame(rows)
+
+
 def _write_csv(frame, path):
     frame.to_csv(path, index=False, lineterminator="\n")
 
@@ -378,9 +397,11 @@ def publish(output_dir, *, manifest=MANIFEST, preflight=PREFLIGHT,
     instances = build_instance_features(manifest, preflight)
     cells = _normalize_results(tuple(raw_results), instances)
     associations = descriptive_associations(instances, cells)
+    distribution = feature_distribution(instances)
     _write_csv(instances, output / "instance_features.csv")
     _write_csv(cells, output / "raw_cell_outcomes.csv")
     _write_csv(associations, output / "feature_associations.csv")
+    _write_csv(distribution, output / "feature_distribution.csv")
     status = (
         "complete_descriptive_noncausal"
         if not cells.empty else "not_estimable_no_auditable_raw_results"
@@ -405,6 +426,13 @@ def publish(output_dir, *, manifest=MANIFEST, preflight=PREFLIGHT,
             "Instances overlap in duties and cells repeat instances across "
             "grids/physics/pools; associations are descriptive, not causal."
         ),
+        "output_sha256": {
+            name: sha256_file(output / name)
+            for name in (
+                "instance_features.csv", "feature_distribution.csv",
+                "raw_cell_outcomes.csv", "feature_associations.csv",
+            )
+        },
     }
     (output / "summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n"
@@ -431,6 +459,9 @@ def publish(output_dir, *, manifest=MANIFEST, preflight=PREFLIGHT,
         "one outgoing trip-to-station model arc.",
         "- grid fractions: fraction of GIRO duties feasible in the frozen "
         "fixed-duty expanded optimizer at each named 300/300 grid.",
+        "",
+        "Distribution summaries across the 40 duty-union instances are in "
+        "`feature_distribution.csv`.",
         "",
     ]
     if cells.empty:
