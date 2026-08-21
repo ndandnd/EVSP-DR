@@ -21,7 +21,7 @@ mipmap={(r["cell_id"],r["arm"],r["cg_replicate"]):r for r in mi}
 lastcg={(r["cell_id"],r["campaign_role"],r["soc_step"],r["block_min"],r["cg_replicate"]):r for r in ci}
 lastm={(r["cell_id"],r["arm"],r["cg_replicate"]):r for r in mc}
 with open(target,newline="") as h: reader=csv.DictReader(h); fields=reader.fieldnames; existing={(r["run_id"],r["cell_id"]) for r in reader}
-expected="date_utc,run_id,execution_mode,commit,group,cell_id,phase,arm,scale,sel_rep,cg_rep,soc_step,block_min,budget_s,status,label,route_weight,route_weight_meaning,min_reduced_cost,certified,artificial_mass,n_columns,iters,master_s,pricing_s,wall_s,stop_reason,censor_reason,max_rss_mb,mip_incumbent_fleet,mip_bound,mip_gap,first_incumbent_s,mip_nodes,target_fleet,artifact_path,artifact_sha256,notes".split(",")
+expected="date_utc,run_id,execution_mode,commit,group,cell_id,phase,arm,scale,sel_rep,cg_rep,soc_step,block_min,budget_s,status,label,route_weight,route_weight_meaning,min_reduced_cost,certified,artificial_mass,n_columns,iters,master_s,pricing_s,wall_s,stop_reason,censor_reason,max_rss_mb,mip_incumbent_fleet,mip_bound,mip_gap,first_incumbent_s,mip_nodes,target_fleet,artifact_path,artifact_sha256,notes,source_cg_certified,source_cg_stop_reason,source_cg_iterations,pool_fleet_proven,pool_mip_bound,model_fleet_proven,model_optimality_method,optimality_scope,physical_witness_valid".split(",")
 if fields!=expected:raise SystemExit("RESULTS_LOG.csv header differs")
 new=[]; skipped=0; seen_mip=set()
 for j in plan["jobs"]:
@@ -40,7 +40,14 @@ for j in plan["jobs"]:
   "block_min":j["block_min"],"budget_s":j["budget_s"],"status":"missing" if explicit_missing else "censored" if censored else "completed",
   "label":"budget_overridden" if pathlib.Path(str(out)+".override.json").exists() else "ladder_lite_direct_array",
   "route_weight":(science or {}).get("final_route_weight",""),"route_weight_meaning":("fleet LP lower bound (certified discretized model; grid stated; D0019)" if (science or {}).get("pricing_certified") in {True,"True"} else "upper bound on LP optimum only; no fleet LP lower bound") if (science or {}).get("final_route_weight","")!="" else "",
-  "min_reduced_cost":(science or {}).get("final_min_reduced_cost",""),"certified":(summary or {}).get("pricing_certified",(summary or {}).get("fleet_proven","")),
+  "min_reduced_cost":(science or {}).get("final_min_reduced_cost",""),"certified":("" if j["phase"]=="MIP" else (summary or {}).get("pricing_certified","")),
+  "source_cg_certified":((science or {}).get("pricing_certified","") if j["phase"]=="MIP" else ""),
+  "source_cg_stop_reason":((science or {}).get("stopping_reason","") if j["phase"]=="MIP" else ""),
+  "source_cg_iterations":((science or {}).get("iterations","") if j["phase"]=="MIP" else ""),
+  "pool_fleet_proven":((summary or {}).get("fleet_proven","") if j["phase"]=="MIP" else ""),
+  "pool_mip_bound":((summary or {}).get("fleet_bound","") if j["phase"]=="MIP" else ""),
+  "optimality_scope":("finite_pool" if j["phase"]=="MIP" and (summary or {}).get("fleet_proven") in {True,"True"} else ""),
+  "physical_witness_valid":((summary or {}).get("physically_validated_schedule","") if j["phase"]=="MIP" else ""),
   "artificial_mass":(science or {}).get("final_artificial_mass",""),"n_columns":(science or {}).get("pool_columns",""),
   "iters":(science or {}).get("iterations",""),"master_s":detail.get("master_time_s",""),"pricing_s":detail.get("pricing_time_s",""),
   "wall_s":(summary or {}).get("elapsed_s",(summary or {}).get("runtime_s","")),"stop_reason":(summary or {}).get("stopping_reason",(summary or {}).get("status_name","")),
@@ -52,7 +59,7 @@ for key,s in mipmap.items():
  if key in seen_mip:continue
  rid=f"reuse_{key[0]}_{key[1].lower().replace('-','_')}"
  if (run,rid) in existing:skipped+=1;continue
- row={f:"" for f in fields};row.update({"date_utc":datetime.datetime.now(datetime.timezone.utc).date().isoformat(),"run_id":run,"execution_mode":manifest["execution_mode"],"commit":manifest["commit"],"group":"MIP_REUSE","cell_id":rid,"phase":"MIP","arm":key[1],"scale":s.get("scale",40),"cg_rep":key[2],"budget_s":s.get("budget_s",""),"status":"missing" if s.get("output_available")=="False" else "censored" if s.get("censored")=="True" else "completed","label":"ladder_lite_direct_array","censor_reason":s.get("missing_reason",""),"mip_incumbent_fleet":s.get("buses",""),"mip_bound":s.get("fleet_bound",""),"mip_gap":s.get("mip_gap",""),"notes":"validated k40 reuse slot"});new.append(row);existing.add((run,rid))
+ row={f:"" for f in fields};row.update({"date_utc":datetime.datetime.now(datetime.timezone.utc).date().isoformat(),"run_id":run,"execution_mode":manifest["execution_mode"],"commit":manifest["commit"],"group":"MIP_REUSE","cell_id":rid,"phase":"MIP","arm":key[1],"scale":s.get("scale",40),"cg_rep":key[2],"budget_s":s.get("budget_s",""),"status":"missing" if s.get("output_available")=="False" else "censored" if s.get("censored")=="True" else "completed","label":"ladder_lite_direct_array","censor_reason":s.get("missing_reason",""),"mip_incumbent_fleet":s.get("buses",""),"mip_bound":s.get("fleet_bound",""),"mip_gap":s.get("mip_gap",""),"pool_fleet_proven":s.get("fleet_proven",""),"pool_mip_bound":s.get("fleet_bound",""),"optimality_scope":("finite_pool" if s.get("fleet_proven") in {True,"True"} else ""),"physical_witness_valid":s.get("physically_validated_schedule",""),"notes":"validated k40 reuse slot"});new.append(row);existing.add((run,rid))
 with open(target,"a",newline="") as h: csv.DictWriter(h,fieldnames=fields,lineterminator="\n").writerows(new)
 print(f"appended={len(new)} skipped={skipped}")
 PY

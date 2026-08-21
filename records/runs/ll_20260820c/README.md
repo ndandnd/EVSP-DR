@@ -50,6 +50,14 @@ Field-by-field provenance:
   `arm`, `budget_s`, `master_s`, `pricing_s`, `max_rss_mb`, all `mip_*`
   fields, `first_incumbent_s`, and `cg_rep` for sensitivity rows.
 
+## Schema note (2026-08-21, after this backfill)
+
+`records/RESULTS_LOG.csv` was later migrated to the qualified-optimality
+schema (nine appended columns; see
+`records/runs/model_optimality_20260821/README.md`). The 53 rows of this run
+are preserved byte-for-byte in their original columns; the new columns are
+empty because CG rows make no integer-optimality claim.
+
 ## What is absent, and why (see `ARTIFACT_INVENTORY.csv`)
 
 Raw per-cell status JSONs, iteration traces, MIP checkpoints/progress

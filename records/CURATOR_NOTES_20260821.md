@@ -159,6 +159,9 @@ family separation checked; the full suite re-run independently (520 passed,
 Verdict: **no blockers or majors; two minor wording-level provenance issues
 and two nits**, all addressed in the commit that adds this section:
 
+*(For the operator's afternoon directive — R7a, the qualified RESULTS_LOG
+schema, and the model-optimality backfill — see §10.)*
+
 1. R16 asserted the work order's claim that "8.85% is a per-duty range
    endpoint" although no committed artifact contains that figure — reworded to
    retire the 7.70–8.85% range as unverified (origin untraceable in git).
@@ -169,3 +172,36 @@ and two nits**, all addressed in the commit that adds this section:
    record.
 4. R11's warm-pool endpoints have cluster-only durable evidence — annotated in
    R11, matching the treatment given to the §9 handoff citation.
+
+## 10. Operator directive, 2026-08-21 afternoon
+
+The directive re-listed the five deliverables; items 1–3 were already executed
+on this branch (registry + inbox adjudication, mapping, instance validation —
+see §§4–5 and `analysis/duty_union_validation_20260821/`). On the inbox: five
+`LOCAL-*` entries restate findings already carried by authoritative rows
+(§5 table); they were adjudicated to those existing IDs rather than minted
+duplicates, so every inbox entry has exactly one canonical identity.
+
+Newly executed:
+
+1. **STATUS `R7a`** (two additional corrections): honest integer-optimum count
+   verified against `analysis/arcflow_oracle_20260820/results.csv`,
+   `CORRECTED_K2_PAUSE.md` and `PRICING_OPTIMIZATION_20260820.md` — exact
+   discrete LP 9/9 small primary cells; exact discrete-model integer fleet 7/9
+   historical-primary cells (all k2 3/3/3, all k3 4/4/3, k05_s2 5; k05_s1
+   6–11 and k05_s3 ≥5 unresolved; branch-and-price proved only k02_s2, on two
+   grids); all at historical 300/300 physics, frozen-physics table pending
+   (single committed 240/240 point: `D0123`). §5's Goal-1 paragraph qualified
+   to match.
+2. **Qualified-optimality RESULTS_LOG schema** (nine appended columns) via
+   `scripts/curator/migrate_results_log_qualified_optimality.py`;
+   `scripts/ladder_lite/record_results.sh` updated to emit the new columns and
+   to stop conflating `pricing_certified` with `fleet_proven` in the
+   `certified` field (**post-import curator modification** of that script —
+   the import manifest records the imported identity; this change is on top,
+   visible in git history).
+3. **27 model-optimality rows** (`run_id=model_optimality_20260821`) from
+   committed artifacts only, including five sandwich promotions; the
+   ~100-cell cluster pool-MIP table (e.g. `k08_s3_g2_b10`) remains absent
+   from git and is recorded as such — see
+   `records/runs/model_optimality_20260821/README.md`.
