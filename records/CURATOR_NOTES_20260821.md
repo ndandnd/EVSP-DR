@@ -105,3 +105,36 @@ registration assigns an identity, not a validation verdict.
 3. The authoritative `B0031` correction ("commit the CSVs") is executed:
    ladder commit `72c7bf4` committed the 18 duty-union instances. Independent
    validation is recorded in `analysis/duty_union_validation_20260821/`.
+
+## 7. Full-suite run and one superseded import
+
+First full-suite run on this branch (pinned stack, Python 3.12.3, Linux VM):
+**518 passed, 126 subtests passed, 1 failed** —
+`test_fixed_duty_continuous_optimizer.py::RealDutyContinuousGates::
+test_all_k2_k3_k5_duties_replay_under_both_tariffs`, `ValueError: replay SOC
+bound violation after direct deadhead`, with the fixed-duty branch's version
+of `src/fixed_duty_continuous_optimizer.py` (producer `70c88f4` lineage).
+
+This is a known, fixed defect: the event branch's committed report
+(`analysis/event_based_pricer_20260821/REPORT.md@92dd6c1`) states the
+continuous fixed-duty tests pass "after retaining solver-tolerance
+micro-energy in contiguous replay segments", and event commit `554fef32`
+carries exactly that fix (a segment counts as an active charge event when the
+binary indicator is on **or** the solved energy exceeds tolerance) plus a
+23-line regression test. The failure is solver-tolerance-sensitive, which is
+why the fixed-duty branch's own run reported green on its machine.
+
+The curator therefore superseded the import of
+`src/fixed_duty_continuous_optimizer.py` and
+`tests/test_fixed_duty_continuous_optimizer.py` with the event-branch versions
+(producing commit `554fef32fee7977f3fc6ee42aafe0c35939e39d1`);
+`records/EVIDENCE_IMPORT_20260821.csv` records the final identities and this
+branch's git history preserves the initial ones. Final full-suite run:
+**520 passed, 126 subtests passed, 0 failed** (153.8 s).
+
+Caveat for the operator: the fixed-duty factorial evidence
+(`analysis/fixed_duty_continuous_20260820/`, `D0113`) was produced with the
+pre-fix extractor on the producer's machine, where its own replay gates
+passed. The fix changes replayed-schedule extraction only, not the MILP
+objective; the factorial cost numbers are solver-objective quantities and are
+unaffected, but any future re-run should use the fixed extractor.
