@@ -12,7 +12,7 @@ from durable_io import atomic_write_json, read_jsonl_records
 from run_exact_pool_mip import resolve_pool_journal
 
 
-def prepare(source, output):
+def prepare(source, output, witness_result=None):
     source = Path(source).resolve()
     output = Path(output).resolve()
     status = json.loads(source.read_text())
@@ -21,6 +21,13 @@ def prepare(source, output):
     )
     trips = list(status["trip_ids"])
     retained = [record for record in records if len(record["trips"]) > 1]
+    witness_indices = []
+    if witness_result is not None:
+        witness = json.loads(Path(witness_result).read_text())
+        witness_indices = [
+            int(index) for index in witness.get("selected_route_indices", [])
+        ]
+        retained.extend(records[index] for index in witness_indices)
     covered = Counter(
         trip for record in retained for trip in record["trips"]
     )
@@ -33,6 +40,12 @@ def prepare(source, output):
     if all(any(record["trips"] == [trip] for record in retained)
            for trip in trips):
         raise RuntimeError("toy unexpectedly retains a complete singleton start")
+    unique = {}
+    for record in retained:
+        key = frozenset(record["trips"])
+        if key not in unique or record["cost"] < unique[key]["cost"]:
+            unique[key] = record
+    retained = list(unique.values())
     journal = Path(str(output) + ".columns.jsonl")
     output.parent.mkdir(parents=True, exist_ok=True)
     with journal.open("x") as handle:
@@ -48,16 +61,22 @@ def prepare(source, output):
         "final_lp": None,
     })
     atomic_write_json(output, status)
-    return len(retained), len(missing)
+    return len(retained), len(missing), len(witness_indices)
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--witness-result", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
-    columns, missing = prepare(args.source, args.out)
-    print(json.dumps({"columns": columns, "singleton_fallbacks": missing}))
+    columns, missing, witness = prepare(
+        args.source, args.out, args.witness_result,
+    )
+    print(json.dumps({
+        "columns": columns, "singleton_fallbacks": missing,
+        "witness_routes": witness,
+    }))
     return 0
 
 
