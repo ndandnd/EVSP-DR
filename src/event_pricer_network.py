@@ -435,6 +435,9 @@ class EventExpandedNetwork:
             **record,
             "charging_stops": deepcopy(expanded),
             "expanded_grid_charging_stops": deepcopy(expanded),
+            # The authoritative master cost is recomputed from validated
+            # tariff blocks below; realization itself only needs the path.
+            "cost": 0.0,
         }
         realized, detail = realize_expanded_path(
             self.problem,
