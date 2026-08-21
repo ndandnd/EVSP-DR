@@ -145,13 +145,21 @@ class EventExpandedNetwork:
         strict_tariff_coverage=False,
     ):
         self.problem = problem
-        self.prices = station_prices
+        self.prices = deepcopy(station_prices)
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
         self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
+        required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
+        for curve in self.prices.values():
+            if self.strict_tariff_coverage and required_hour not in curve:
+                raise ValueError("event tariff coverage is incomplete")
+            if curve:
+                last = curve[max(curve)]
+                for hour in range(required_hour + 1):
+                    curve.setdefault(hour, last)
         self.grid = [
             round(index * self.soc_step, 9)
             for index in range(int(self.g / self.soc_step) + 1)
@@ -160,7 +168,7 @@ class EventExpandedNetwork:
             trip: index for index, trip in enumerate(problem.trips)
         }
         self.events = _event_times(
-            problem, station_prices, self.block_min
+            problem, self.prices, self.block_min
         )
         self._split_arcs()
         self._build_nodes()

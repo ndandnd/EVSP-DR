@@ -78,6 +78,24 @@ class EventPricerNetworkTests(unittest.TestCase):
         self.assertIn(180.0, events)
         self.assertTrue(set(range(10, 181, 5)) <= events)
 
+    def test_historical_tariff_uses_uniform_model_last_hour_policy(self):
+        historical = {
+            station.rsplit("_", 1)[0]: {
+                hour: 0.1 for hour in range(25)
+            }
+            for station in STATIONS
+        }
+        network = EventExpandedNetwork(
+            two_trip_problem(),
+            historical,
+            soc_step=2.5,
+            block_min=5,
+            g_kwh=240.0,
+            charge_kw=240.0,
+            reserve_kwh=0.0,
+        )
+        self.assertEqual(network.prices[STATION.rsplit("_",1)[0]][25],0.1)
+
     def test_event_dag_is_smaller_than_uniform_one_minute_grid(self):
         problem = two_trip_problem()
         event = EventExpandedNetwork(
