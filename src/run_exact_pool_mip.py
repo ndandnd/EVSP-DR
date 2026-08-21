@@ -590,6 +590,8 @@ def prepare_strict_partition_pool(
     reserve_kwh = float(status["min_soc_frac"]) * g_kwh
     soc_step = float(status["soc_step"])
     block_min = int(status["block_min"])
+    time_model = status.get("time_model", "uniform")
+    arrival_grace_min = 0.0 if time_model == "event" else 1.0
     accepted = []
     valid_hashes = []
     repaired_hashes = []
@@ -619,7 +621,8 @@ def prepare_strict_partition_pool(
             if node_trips != list(route.get("trips") or [])
             else validate_injected_route(
                 problem, route, g_kwh, charge_kw, reserve_kwh,
-                HORIZON_MIN, arc_map=arc_map,
+                HORIZON_MIN, arrival_grace_min=arrival_grace_min,
+                arc_map=arc_map,
             )
         )
         persisted_blocks = route.get(
@@ -673,11 +676,13 @@ def prepare_strict_partition_pool(
             soc_step=soc_step,
             block_min=block_min,
             arc_map=arc_map,
+            time_model=time_model,
         )
         realized_reason = (
             validate_injected_route(
                 problem, realized, g_kwh, charge_kw, reserve_kwh,
-                HORIZON_MIN, arc_map=arc_map,
+                HORIZON_MIN, arrival_grace_min=arrival_grace_min,
+                arc_map=arc_map,
             )
             if realized is not None else detail.get("reason")
         )

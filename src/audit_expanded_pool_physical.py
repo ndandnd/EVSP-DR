@@ -324,6 +324,8 @@ def audit_pools(
             reserve_kwh = float(status["min_soc_frac"]) * g_kwh
             soc_step = float(status["soc_step"])
             block_min = int(status["block_min"])
+            time_model = status.get("time_model", "uniform")
+            arrival_grace_min = 0.0 if time_model == "event" else 1.0
             pool = status_path.parent.name
             if pool in observed_pool_names:
                 raise ValueError(f"duplicate pool supplied: {pool}")
@@ -432,7 +434,9 @@ def audit_pools(
                     if node_trips != trips
                     else validate_injected_route(
                         problem, record, g_kwh, charge_kw,
-                        reserve_kwh, HORIZON_MIN, arc_map=arc_map,
+                        reserve_kwh, HORIZON_MIN,
+                        arrival_grace_min=arrival_grace_min,
+                        arc_map=arc_map,
                     )
                 )
                 realized, detail = realize_expanded_path(
@@ -444,6 +448,7 @@ def audit_pools(
                     soc_step=soc_step,
                     block_min=block_min,
                     arc_map=arc_map,
+                    time_model=time_model,
                 )
                 realized_reason = None
                 costs = {}
@@ -451,7 +456,9 @@ def audit_pools(
                 if realized is not None:
                     realized_reason = validate_injected_route(
                         problem, realized, g_kwh, charge_kw,
-                        reserve_kwh, HORIZON_MIN, arc_map=arc_map,
+                        reserve_kwh, HORIZON_MIN,
+                        arrival_grace_min=arrival_grace_min,
+                        arc_map=arc_map,
                     )
                     if realized_reason is None:
                         costs = realized_costs(

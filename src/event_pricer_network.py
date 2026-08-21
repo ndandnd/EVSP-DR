@@ -12,9 +12,9 @@ from audit_giro_known_columns import DEPOT, HORIZON_MIN, STATIONS
 from config import BUS_COST_KX, CHARGE_START_COST, charge_cost_premium
 from expanded_path_realization import (
     BLOCK_SCHEDULE_SCHEMA,
-    blocks_from_continuous_stops,
     charging_block_schedule_sha256,
-    validate_continuous_charging_blocks,
+    realize_expanded_path,
+    realized_costs,
 )
 from fixed_duty_continuous_optimizer import _segments
 from run_exact_pool_mip import validate_injected_route
@@ -436,33 +436,32 @@ class EventExpandedNetwork:
             "charging_stops": deepcopy(expanded),
             "expanded_grid_charging_stops": deepcopy(expanded),
         }
-        blocks = blocks_from_continuous_stops(
+        realized, detail = realize_expanded_path(
+            self.problem,
             expanded_record,
-            station_prices=self.prices,
+            g_kwh=self.g,
             charge_kw=self.charge_kw,
+            reserve_kwh=self.reserve,
+            soc_step=self.soc_step,
+            block_min=self.block_min,
+            time_model="event",
         )
-        remaining_by_stop = list(charging["kwh"])
-        for block in blocks:
-            stop = int(block["stop_index"])
-            realized = min(
-                remaining_by_stop[stop],
-                (block["end_min"] - block["start_min"])
-                * self.charge_kw / 60.0,
+        if realized is None:
+            raise RuntimeError(
+                "event route has no continuous realization: "
+                f"{detail.get('reason')}"
             )
-            block["realized_kwh"] = realized
-            remaining_by_stop[stop] -= realized
-        if any(value > 1e-6 for value in remaining_by_stop):
-            raise RuntimeError("event route block allocation is incomplete")
-        validation = validate_continuous_charging_blocks(
+        record = realized
+        costs = realized_costs(
             record,
-            blocks,
+            detail["mapping"],
             station_prices=self.prices,
-            charge_kw=self.charge_kw,
         )
-        cost = float(validation["recomputed_expanded_grid_cost"])
+        blocks = costs["continuous_realized_charging_blocks"]
+        cost = float(costs["recomputed_expanded_grid_cost"])
         reason = validate_injected_route(
             self.problem, record, self.g, self.charge_kw,
-            self.reserve, HORIZON_MIN,
+            self.reserve, HORIZON_MIN, arrival_grace_min=0.0,
         )
         if reason is not None:
             raise RuntimeError(f"event route failed physical replay: {reason}")
@@ -470,7 +469,7 @@ class EventExpandedNetwork:
             "cost": cost,
             "expanded_grid_cost": cost,
             "continuous_realized_cost":
-                validation["continuous_realized_cost"],
+                costs["continuous_realized_cost"],
             "continuous_realized_charging_blocks": blocks,
             "continuous_realized_charging_blocks_json_bytes": len(
                 json.dumps(blocks, sort_keys=True, separators=(",", ":"))
@@ -479,8 +478,11 @@ class EventExpandedNetwork:
             "master_cost_semantics": "expanded_grid_cost",
             "continuous_cost_pricing_certified": False,
             "physical_realization": {
-                "status": "valid_event_time_mapped",
+                "status": "valid_event_time_realized",
                 "time_model": "event",
+                "realization_schema": detail["mapping"]["schema"],
+                "realization_mapping_sha256":
+                    detail["mapping"]["mapping_sha256"],
                 "continuous_realized_charging_blocks_schema":
                     BLOCK_SCHEDULE_SCHEMA,
                 "continuous_realized_charging_blocks_sha256":

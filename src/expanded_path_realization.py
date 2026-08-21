@@ -27,6 +27,7 @@ from utils_v2 import base_station_name
 
 
 REALIZATION_SCHEMA = "evsp-dr-expanded-path-continuous-realization-v1"
+EVENT_REALIZATION_SCHEMA = "evsp-dr-event-path-continuous-realization-v1"
 BLOCK_SCHEDULE_SCHEMA = (
     "evsp-dr-continuous-realized-charging-blocks-v1"
 )
@@ -68,11 +69,14 @@ def realize_expanded_path(
     soc_step: float,
     block_min: int,
     arc_map=None,
+    time_model: str = "uniform",
 ) -> tuple[dict | None, dict]:
     """Return a replay-valid schedule mapping or a classified rejection.
 
     No trip, station, route-node, cst, or cet value is changed.  Only per-stop
-    kWh is reduced, block by block, to hit the expanded path's grid target.
+    kWh is reduced to hit the expanded path's grid target.  Uniform mode keeps
+    the historical whole-block contract; event mode opt-in accepts irregular
+    continuous windows while applying the same SOC, capacity, and power gates.
     """
 
     try:
@@ -99,6 +103,11 @@ def realize_expanded_path(
         return None, {
             "classification": "infeasible_after_realization",
             "reason": "invalid/non-finite physics",
+        }
+    if time_model not in {"uniform", "event"}:
+        return None, {
+            "classification": "infeasible_after_realization",
+            "reason": f"unsupported time model: {time_model}",
         }
     levels = int(g_kwh / soc_step) + 1
     grid = [round(index * soc_step, 6) for index in range(levels)]
@@ -214,20 +223,44 @@ def realize_expanded_path(
                     "classification": "infeasible_after_realization",
                     "reason": f"charging stop alignment mismatch at {node}",
                 }
-            cst = float(fields["cst"][stop_index])
-            cet = float(fields["cet"][stop_index])
-            recorded = float(fields["kwh"][stop_index])
+            try:
+                cst = float(fields["cst"][stop_index])
+                cet = float(fields["cet"][stop_index])
+                recorded = float(fields["kwh"][stop_index])
+            except (TypeError, ValueError) as exc:
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": f"non-numeric charging stop at {node}: {exc}",
+                }
+            if not all(math.isfinite(value) for value in (cst, cet, recorded)):
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": f"non-finite charging stop at {node}",
+                }
             duration = cet - cst
-            block_count = int(round(duration / block_min))
             if (
                 duration < -TOLERANCE
-                or abs(duration - block_count * block_min) > TOLERANCE
+                or cst < -TOLERANCE
+                or recorded < -TOLERANCE
+            ):
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": f"invalid charging window at {node}",
+                }
+            block_count = int(round(duration / block_min))
+            if time_model == "uniform" and (
+                abs(duration - block_count * block_min) > TOLERANCE
                 or abs(cst / block_min - round(cst / block_min)) > TOLERANCE
                 or block_count <= 0
             ):
                 return None, {
                     "classification": "infeasible_after_realization",
                     "reason": f"non-grid charging window at {node}",
+                }
+            if time_model == "event" and duration <= TOLERANCE:
+                return None, {
+                    "classification": "infeasible_after_realization",
+                    "reason": f"empty event charging window at {node}",
                 }
             expanded_before_floor = grid_soc
             entry_level = _floor_level(
@@ -243,42 +276,100 @@ def realize_expanded_path(
             realized_gain = 0.0
             continuous_entry_soc = continuous_soc
             grid_entry_soc = grid_soc
-            for block_offset in range(block_count):
-                target_level = _floor_level(
-                    min(g_kwh, grid_soc + block_kwh),
-                    soc_step=soc_step,
-                    levels=levels,
-                )
-                target_soc = grid[target_level]
-                expanded_gain = max(0.0, target_soc - grid_soc)
+            if time_model == "event":
+                available = duration * charge_kw / 60.0
+                target_soc = grid_soc + recorded
+                target_level = int(round(target_soc / soc_step))
+                if (
+                    target_level < 0
+                    or target_level >= levels
+                    or not math.isclose(
+                        grid[target_level], target_soc,
+                        rel_tol=0.0, abs_tol=1e-5,
+                    )
+                ):
+                    return None, {
+                        "classification": "infeasible_after_realization",
+                        "reason": (
+                            f"event charge does not reach a grid SOC at {node}"
+                        ),
+                    }
                 necessary = max(0.0, target_soc - continuous_soc)
-                if necessary > block_kwh + TOLERANCE:
+                if recorded > available + TOLERANCE:
                     return None, {
                         "classification": "infeasible_after_realization",
-                        "reason": f"required block energy exceeds charger at {node}",
+                        "reason": (
+                            f"event grid charge exceeds charger power at {node}"
+                        ),
                     }
-                if continuous_soc + necessary > g_kwh + TOLERANCE:
+                if necessary > available + TOLERANCE:
                     return None, {
                         "classification": "infeasible_after_realization",
-                        "reason": f"continuous target exceeds capacity at {node}",
+                        "reason": (
+                            f"event realized charge exceeds charger power at {node}"
+                        ),
                     }
-                continuous_before = continuous_soc
+                if target_soc > g_kwh + TOLERANCE:
+                    return None, {
+                        "classification": "infeasible_after_realization",
+                        "reason": f"event target exceeds capacity at {node}",
+                    }
                 continuous_soc += necessary
                 grid_soc = target_soc
-                grid_gain += expanded_gain
-                realized_gain += necessary
+                grid_gain = recorded
+                realized_gain = necessary
                 block_trace.append({
-                    "block_start_min": cst + block_offset * block_min,
-                    "block_end_min": (
-                        cst + (block_offset + 1) * block_min
-                    ),
-                    "continuous_soc_before": continuous_before,
-                    "expanded_grid_soc_before": target_soc - expanded_gain,
+                    "block_start_min": cst,
+                    "block_end_min": cet,
+                    "continuous_soc_before":
+                        continuous_soc - necessary,
+                    "expanded_grid_soc_before": target_soc - recorded,
                     "expanded_target_soc": target_soc,
-                    "expanded_grid_gain_kwh": expanded_gain,
+                    "expanded_grid_gain_kwh": recorded,
                     "realized_kwh": necessary,
                     "continuous_soc_after": continuous_soc,
                 })
+            else:
+                for block_offset in range(block_count):
+                    target_level = _floor_level(
+                        min(g_kwh, grid_soc + block_kwh),
+                        soc_step=soc_step,
+                        levels=levels,
+                    )
+                    target_soc = grid[target_level]
+                    expanded_gain = max(0.0, target_soc - grid_soc)
+                    necessary = max(0.0, target_soc - continuous_soc)
+                    if necessary > block_kwh + TOLERANCE:
+                        return None, {
+                            "classification": "infeasible_after_realization",
+                            "reason": (
+                                f"required block energy exceeds charger at {node}"
+                            ),
+                        }
+                    if continuous_soc + necessary > g_kwh + TOLERANCE:
+                        return None, {
+                            "classification": "infeasible_after_realization",
+                            "reason":
+                                f"continuous target exceeds capacity at {node}",
+                        }
+                    continuous_before = continuous_soc
+                    continuous_soc += necessary
+                    grid_soc = target_soc
+                    grid_gain += expanded_gain
+                    realized_gain += necessary
+                    block_trace.append({
+                        "block_start_min": cst + block_offset * block_min,
+                        "block_end_min": (
+                            cst + (block_offset + 1) * block_min
+                        ),
+                        "continuous_soc_before": continuous_before,
+                        "expanded_grid_soc_before":
+                            target_soc - expanded_gain,
+                        "expanded_target_soc": target_soc,
+                        "expanded_grid_gain_kwh": expanded_gain,
+                        "realized_kwh": necessary,
+                        "continuous_soc_after": continuous_soc,
+                    })
             if abs(grid_gain - recorded) > 1e-5:
                 return None, {
                     "classification": "infeasible_after_realization",
@@ -336,7 +427,10 @@ def realize_expanded_path(
         for before, after in zip(fields["kwh"], realized_kwh)
     )
     mapping = {
-        "schema": REALIZATION_SCHEMA,
+        "schema": (
+            EVENT_REALIZATION_SCHEMA
+            if time_model == "event" else REALIZATION_SCHEMA
+        ),
         "trip_sequence_sha256": _canonical_sha(trips),
         "route_nodes_sha256": _canonical_sha(nodes),
         "recorded_charging_sha256": _canonical_sha(stops),
@@ -357,6 +451,11 @@ def realize_expanded_path(
         "continuous_cost_pricing_certified": False,
         "pricing_certificate_scope": "conservative_expanded_grid_model_only",
     }
+    if time_model == "event":
+        mapping.update({
+            "time_model": "event",
+            "irregular_charging_windows_accepted": True,
+        })
     mapping["mapping_sha256"] = _canonical_sha({
         key: value for key, value in mapping.items()
         if key != "trace"
@@ -613,28 +712,55 @@ def realized_costs(
 ) -> dict:
     """Report grid and realized charging costs without changing master cost."""
 
-    blocks = []
-    stop_index = 0
-    for event in mapping.get("trace", []):
-        if event.get("event") != "charge_run":
-            continue
-        station = event["station"]
-        for block_index, block in enumerate(event["blocks"]):
-            tariff = _tariff_identity(
-                station, block["block_start_min"], station_prices
+    if mapping.get("time_model") == "event":
+        expanded_record = deepcopy(record)
+        expanded_record["charging_stops"] = deepcopy(
+            record.get("expanded_grid_charging_stops")
+            or record.get("charging_stops")
+            or {}
+        )
+        blocks = blocks_from_continuous_stops(
+            expanded_record,
+            station_prices=station_prices,
+            charge_kw=float(mapping["charge_kw"]),
+        )
+        remaining_by_stop = list(
+            (record.get("charging_stops") or {}).get("kwh", [])
+        )
+        for block in blocks:
+            stop_index = int(block["stop_index"])
+            realized = min(
+                remaining_by_stop[stop_index],
+                (float(block["end_min"]) - float(block["start_min"]))
+                * float(mapping["charge_kw"]) / 60.0,
             )
-            blocks.append({
-                "stop_index": stop_index,
-                "block_index": block_index,
-                "station": station,
-                "start_min": block["block_start_min"],
-                "end_min": block["block_end_min"],
-                "realized_kwh": block["realized_kwh"],
-                "expanded_grid_kwh":
-                    block["expanded_grid_gain_kwh"],
-                **tariff,
-            })
-        stop_index += 1
+            block["realized_kwh"] = realized
+            remaining_by_stop[stop_index] -= realized
+        if any(value > TOLERANCE for value in remaining_by_stop):
+            raise ValueError("event realized block allocation is incomplete")
+    else:
+        blocks = []
+        stop_index = 0
+        for event in mapping.get("trace", []):
+            if event.get("event") != "charge_run":
+                continue
+            station = event["station"]
+            for block_index, block in enumerate(event["blocks"]):
+                tariff = _tariff_identity(
+                    station, block["block_start_min"], station_prices
+                )
+                blocks.append({
+                    "stop_index": stop_index,
+                    "block_index": block_index,
+                    "station": station,
+                    "start_min": block["block_start_min"],
+                    "end_min": block["block_end_min"],
+                    "realized_kwh": block["realized_kwh"],
+                    "expanded_grid_kwh":
+                        block["expanded_grid_gain_kwh"],
+                    **tariff,
+                })
+            stop_index += 1
     validation = validate_continuous_charging_blocks(
         record,
         blocks,

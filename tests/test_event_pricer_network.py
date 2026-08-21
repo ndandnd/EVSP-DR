@@ -81,7 +81,7 @@ class EventPricerNetworkTests(unittest.TestCase):
         )
         self.assertEqual(
             record["physical_realization"]["status"],
-            "valid_event_time_mapped",
+            "valid_event_time_realized",
         )
 
     def test_event_times_include_exact_and_reachable_uniform_breakpoints(self):

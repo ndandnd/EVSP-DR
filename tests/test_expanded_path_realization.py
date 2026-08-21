@@ -14,6 +14,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from audit_giro_known_columns import DEPOT, HORIZON_MIN  # noqa: E402
 from audit_expanded_pool_physical import audit_pools  # noqa: E402
 from expanded_path_realization import (  # noqa: E402
+    EVENT_REALIZATION_SCHEMA,
     blocks_from_continuous_stops,
     realize_expanded_path,
     realized_costs,
@@ -189,6 +190,75 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         )
         self.assertIsNone(realized)
         self.assertIn("non-grid charging window", detail["reason"])
+
+    def test_event_contract_accepts_irregular_window_with_full_validation(self):
+        station = "S"
+        nodes = [DEPOT, 0, station, 1, DEPOT]
+        p = problem([14.5, 0.1], list(zip(nodes, nodes[1:])))
+        record = {
+            "trips": [0, 1],
+            "route_nodes": nodes,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [5.5], "cet": [8.5], "kwh": [15.0],
+            },
+            "cost": 100006.65,
+        }
+        rejected, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10,
+        )
+        self.assertIsNone(rejected)
+        self.assertIn("non-grid charging window", detail["reason"])
+
+        realized, detail = realize_expanded_path(
+            p, record, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10, time_model="event",
+        )
+        self.assertEqual(detail["mapping"]["schema"], EVENT_REALIZATION_SCHEMA)
+        self.assertTrue(
+            detail["mapping"]["irregular_charging_windows_accepted"]
+        )
+        self.assertAlmostEqual(
+            realized["charging_stops"]["kwh"][0], 14.5, places=9,
+        )
+        self.assertIsNone(validate_injected_route(
+            p, realized, 300, 300, 0, HORIZON_MIN,
+            arrival_grace_min=0.0,
+        ))
+        costs = realized_costs(
+            realized,
+            detail["mapping"],
+            station_prices={"S": {0: 0.1}},
+        )
+        self.assertEqual(
+            sum(
+                block["expanded_grid_kwh"]
+                for block in costs["continuous_realized_charging_blocks"]
+            ),
+            15.0,
+        )
+        self.assertEqual(
+            sum(
+                block["realized_kwh"]
+                for block in costs["continuous_realized_charging_blocks"]
+            ),
+            14.5,
+        )
+
+        too_short = {
+            **record,
+            "charging_stops": {
+                "stations": [station],
+                "cst": [5.5], "cet": [8.4], "kwh": [15.0],
+            },
+        }
+        rejected, detail = realize_expanded_path(
+            p, too_short, g_kwh=300, charge_kw=300, reserve_kwh=0,
+            soc_step=15, block_min=10, time_model="event",
+        )
+        self.assertIsNone(rejected)
+        self.assertIn("charger power", detail["reason"])
 
     def test_emitted_windows_must_match_expanded_grid_path(self):
         station = "S"
