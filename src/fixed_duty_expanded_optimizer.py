@@ -472,16 +472,39 @@ def optimize_fixed_duty(
         float(soc_step), int(block_min),
     )
     if allow_declared_physics:
+        step = float(soc_step)
+        charge_per_block = (
+            float(charge_kw) * int(block_min) / 60.0
+        )
+        finite_physics = all(
+            math.isfinite(value) for value in physics_tuple[:4]
+        )
+        commensurate = finite_physics and step > 0.0 and all(
+            math.isclose(
+                value / step, round(value / step),
+                rel_tol=0.0, abs_tol=1e-9,
+            )
+            for value in (
+                float(g_kwh), float(reserve_kwh), charge_per_block,
+            )
+        )
         if (
-            not all(math.isfinite(value) for value in physics_tuple[:4])
+            not finite_physics
             or float(g_kwh) <= 0.0
             or float(charge_kw) <= 0.0
             or not 0.0 <= float(reserve_kwh) <= float(g_kwh)
             or not 0.0 < float(soc_step) <= float(g_kwh)
             or int(block_min) <= 0
             or int(HORIZON_MIN) % int(block_min) != 0
+            or (
+                physics_tuple != (300.0, 300.0, 0.0, 15.0, 10)
+                and not commensurate
+            )
         ):
-            raise ValueError("invalid plan-declared fixed-duty physics")
+            raise ValueError(
+                "plan-declared fixed-duty physics must use the historical "
+                "grid or a commensurate battery/charge/SOC grid"
+            )
     elif not allow_diagnostic_grid and physics_tuple != (
         300.0, 300.0, 0.0, 15.0, 10
     ):

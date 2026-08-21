@@ -196,28 +196,35 @@ class ExactInitialPoolTests(unittest.TestCase):
 
     def test_all_initial_pool_modes_start_nonempty_on_k2_declared_physics(self):
         with tempfile.TemporaryDirectory() as tmp:
-            for mode in ("singletons","artificial","matching","greedy"):
-                with self.subTest(mode=mode):
-                    output=Path(tmp)/f"{mode}.json"
-                    exact.main([
-                        "--csv",
-                        "scale_ladder/instances/"
-                        "Practice_Custom_DutyUnion_k02_r1.csv",
-                        "--prices_csv","hourly_prices_flat.csv",
-                        "--g-kwh","240","--charge-kw","240",
-                        "--min-soc-frac","0","--soc-step","10",
-                        "--block-min","10","--max-iters","1",
-                        "--columns_per_iter","5",
-                        "--initial-pool",mode,"--out",str(output),
-                    ])
-                    status=json.loads(output.read_text())
-                    records=[
-                        line for line in Path(
-                            str(output)+".columns.jsonl"
-                        ).read_text().splitlines() if line
-                    ]
-                    self.assertEqual(status["initial_pool"],mode)
-                    self.assertGreater(len(records),0)
+            settings = (
+                ("historical",300,300,15,10),
+                ("frozen",240,240,10,10),
+            )
+            for label,g_kwh,charge_kw,soc_step,block_min in settings:
+                for mode in ("singletons","artificial","matching","greedy"):
+                    with self.subTest(physics=label,mode=mode):
+                        output=Path(tmp)/f"{label}_{mode}.json"
+                        exact.main([
+                            "--csv",
+                            "scale_ladder/instances/"
+                            "Practice_Custom_DutyUnion_k02_r1.csv",
+                            "--prices_csv","hourly_prices_flat.csv",
+                            "--g-kwh",str(g_kwh),
+                            "--charge-kw",str(charge_kw),
+                            "--min-soc-frac","0",
+                            "--soc-step",str(soc_step),
+                            "--block-min",str(block_min),
+                            "--max-iters","1","--columns_per_iter","5",
+                            "--initial-pool",mode,"--out",str(output),
+                        ])
+                        status=json.loads(output.read_text())
+                        records=[
+                            line for line in Path(
+                                str(output)+".columns.jsonl"
+                            ).read_text().splitlines() if line
+                        ]
+                        self.assertEqual(status["initial_pool"],mode)
+                        self.assertGreater(len(records),0)
 
 
 if __name__ == "__main__":
