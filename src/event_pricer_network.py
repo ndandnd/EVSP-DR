@@ -578,6 +578,46 @@ class EventExpandedNetwork:
             )
         return routes
 
+    def fixed_sequence_record(self, trips):
+        """Return the cheapest event route for one fixed trip sequence."""
+
+        trips = tuple(trips)
+        if not trips or any(trip not in self.trip_position for trip in trips):
+            return None
+        frontier = {}
+        for target, cost, _dual, action in self.out[0]:
+            if self.node_meta[target][1] == trips[0]:
+                frontier[target] = (cost, [action])
+        for successor in (*trips[1:], None):
+            following = {}
+            for source, (base_cost, actions) in frontier.items():
+                for target, cost, _dual, action in self.out[source]:
+                    matches = (
+                        target == self.SINK if successor is None
+                        else self.node_meta[target][0] == "trip"
+                        and self.node_meta[target][1] == successor
+                    )
+                    if not matches:
+                        continue
+                    candidate = (
+                        base_cost + cost,
+                        actions + [action],
+                    )
+                    current = following.get(target)
+                    if current is None or (
+                        candidate[0],
+                        json.dumps(candidate[1], sort_keys=True),
+                    ) < (
+                        current[0],
+                        json.dumps(current[1], sort_keys=True),
+                    ):
+                        following[target] = candidate
+            frontier = following
+            if not frontier:
+                return None
+        _cost, actions = frontier[self.SINK]
+        return self._record(actions)
+
     def metrics(self):
         return {
             "time_model": "event",
