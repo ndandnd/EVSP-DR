@@ -1,3 +1,5 @@
+> **TASK STATE 2026-08-21: delivered, one open item.** Optimizer built, G1–G5 pass, duty 13411 admitted (`D0022`), first timing-only figure 5.328% (`R16` in `STATUS_20260821.md`). Open: `B0030` — the capped arm needs a capped-feasible baseline.
+
 # Work order: continuous / event-based fixed-duty charging optimizer
 
 **For a new agent with no prior context. Read §1–§3 before writing code.**
