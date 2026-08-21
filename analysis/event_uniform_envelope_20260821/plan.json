@@ -1,0 +1,204 @@
+{
+ "schema": "evsp-dr-event-uniform-envelope-plan-v1",
+ "date": "2026-08-21",
+ "producer_commit": "db9400ad122c52ea60e29f94a304ae041cea3b3d",
+ "objective": "decompose representation, LP-integrality, finite-pool-composition, and timed-MIP-search gaps; compare event against the equal-compute uniform envelope",
+ "physics": {
+  "g_kwh": 240.0,
+  "charge_kw": 240.0,
+  "min_soc_frac": 0.0,
+  "prices_csv": "hourly_prices_flat.csv",
+  "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+ },
+ "cg_policy": {
+  "initial_pool": "singletons",
+  "master_sense": "partition",
+  "columns_per_iter": 30,
+  "max_iters": 10000,
+  "rc_eps": 0.0001,
+  "checkpoint_every": 25,
+  "panel_a_certification_wall_limit_s": 21600,
+  "panel_b_matched_budget_definition": "event source status wall_s; uniform runner receives ceil(event_wall_s)+60 serialization margin",
+  "panel_b_uniform_stop_is_censored_unless_certified": true
+ },
+ "fleet_lp_policy": {
+  "method": "lexicographic_phase_2_from_immutable_certified_combined_cost_pool",
+  "rc_tolerance": 1e-09,
+  "max_iters": 10000,
+  "wall_limit_s": 21600
+ },
+ "mip_policy": {
+  "two_stage": true,
+  "timelimit_s": 1800,
+  "threads": 8,
+  "mipgap": 0.0001,
+  "raw_pool_only": true
+ },
+ "target_feasibility_policy": {
+  "target": "industrial_fleet",
+  "timelimit_s": 1800,
+  "threads": 8,
+  "seed": 0,
+  "solver": "gurobi"
+ },
+ "model_integer_policy": {
+  "lower_bound": "ceil(certified_phase_2_fleet_lp_lower_bound)",
+  "sandwich": "physically_validated_incumbent_at_lower_bound_proves_I_model",
+  "fallback": "arcflow_all_integrality_only_when_sandwich_open",
+  "arcflow_time_limit_s": 7200
+ },
+ "pool_integer_policy": {
+  "timed_incumbent": "two_stage_RAW_MIP_at_1800s",
+  "exact": "fleet_proven timed result, else monotone target-feasibility search from ceil(L_model) to I_timed",
+  "feasibility_probe_limit_s": 7200
+ },
+ "required_row_fields": [
+  "source_cg_certified",
+  "source_cg_stop_reason",
+  "source_cg_iterations",
+  "source_cg_wall_s",
+  "source_cg_peak_rss_mb",
+  "optimality_scope",
+  "physical_witness_valid"
+ ],
+ "instances": [
+  {
+   "cell_id": "k02_s1",
+   "scale": 2,
+   "target_fleet": 2,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k02_r1.csv",
+   "instance_sha256": "57f672139f86849429c2f580bb68126246aca7b804f9303239fbe1a35fba887e"
+  },
+  {
+   "cell_id": "k02_s2",
+   "scale": 2,
+   "target_fleet": 2,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k02_r2.csv",
+   "instance_sha256": "6ca7e2db690120699d59fc81428b0f1af00c5cc3889770e8f2860af040244932"
+  },
+  {
+   "cell_id": "k02_s3",
+   "scale": 2,
+   "target_fleet": 2,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k02_r3.csv",
+   "instance_sha256": "ec5d73b5b841b36be694c3ef8e4003b8cdfa1997f6f8afb8e6b7aad7581461b5"
+  },
+  {
+   "cell_id": "k03_s1",
+   "scale": 3,
+   "target_fleet": 3,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k03_r1.csv",
+   "instance_sha256": "e6ed7045cb2778b4de5954163a91d7ad439b9c6e3f42dd823c122c2ae35cbec5"
+  },
+  {
+   "cell_id": "k03_s2",
+   "scale": 3,
+   "target_fleet": 3,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k03_r2.csv",
+   "instance_sha256": "0205f86e964212942b6af5690adcbcd006df8263cc2fe103ea7923d28e378397"
+  },
+  {
+   "cell_id": "k03_s3",
+   "scale": 3,
+   "target_fleet": 3,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k03_r3.csv",
+   "instance_sha256": "2532b4fb13b6c22968578a3abd6d909986116318a08a3506ed7e41b41aa43f95"
+  },
+  {
+   "cell_id": "k05_s1",
+   "scale": 5,
+   "target_fleet": 5,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k05_r1.csv",
+   "instance_sha256": "fc10ac0707becb960364e76b8c1e1c414d5d5639cbc3b7dadaf67a77e03f5322"
+  },
+  {
+   "cell_id": "k05_s2",
+   "scale": 5,
+   "target_fleet": 5,
+   "csv": "tariff_response/frozen_instances/Practice_Custom_DutyUnion_k05_r2.csv",
+   "instance_sha256": "6ffea0b8cd3a9d15846946f6828705dd3431b7bafc69bd572ca30ed4530d5cb8"
+  },
+  {
+   "cell_id": "k05_s3",
+   "scale": 5,
+   "target_fleet": 5,
+   "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k05_r3.csv",
+   "instance_sha256": "4a783b4f96ec47e28a693b921d51a4453ecfb1107d8c181a7739f42c41fd8500"
+  }
+ ],
+ "representations": [
+  {
+   "representation_id": "event_2p5_event5",
+   "time_model": "event",
+   "soc_step": 2.5,
+   "block_min": 5
+  },
+  {
+   "representation_id": "uniform_10_10",
+   "time_model": "uniform",
+   "soc_step": 10.0,
+   "block_min": 10
+  },
+  {
+   "representation_id": "uniform_4_5",
+   "time_model": "uniform",
+   "soc_step": 4.0,
+   "block_min": 5
+  },
+  {
+   "representation_id": "uniform_2_5",
+   "time_model": "uniform",
+   "soc_step": 2.0,
+   "block_min": 5
+  },
+  {
+   "representation_id": "uniform_2_2",
+   "time_model": "uniform",
+   "soc_step": 2.0,
+   "block_min": 2
+  },
+  {
+   "representation_id": "uniform_2_1",
+   "time_model": "uniform",
+   "soc_step": 2.0,
+   "block_min": 1
+  }
+ ],
+ "code_identity": {
+  "src/exact_pricer_expanded.py": "bd0dbc9300d24ce70d82d1eac10f22d07cde40e9f252db06e4b4236c1fc10c9b",
+  "src/event_pricer_network.py": "43930adf6021877bd1374d7e33d6369945b10ef99387b557ce5d191f6bf9cb10",
+  "src/certify_fleet_lp_bound.py": "5aba44811b64a1611fa1e6c1fd61037c107eb0b0b992ac9ad8e9ae261fb6a40d",
+  "src/run_exact_pool_mip.py": "664c1ed6ee366fc5c33ab546cbcf02565b0c3513fd2991969a02f3921d9205b4",
+  "src/target_pool_feasibility.py": "263564b8e48f1df1ba42e8e7efc72e5149f205dbc6b994599a6281ffd1ee9900",
+  "src/arcflow_oracle.py": "01bd6f9092826dfe23c01fda53eea7e6cefec9f2ca06fd3dd50c3d37e986c5d6",
+  "src/expanded_path_realization.py": "23eccbe226c7fd34ca202e10823a27e280e3c475030ebe8c0d4d5f2b466bbe1e"
+ },
+ "panels": {
+  "A": {
+   "cells": 54,
+   "standard_CG": "run each representation to certification",
+   "fleet_phase_2": "certify from immutable standard pool",
+   "I_pool": "exact finite-pool optimum",
+   "I_timed": "1800-second incumbent"
+  },
+  "B": {
+   "cells": 54,
+   "event": "reuse certified Panel A event pool",
+   "uniform": "fresh run of every uniform grid under paired event wall budget",
+   "uniform_envelope": "best physically valid I_timed across five grids; preserve every row",
+   "target_feasibility_per_arm": true
+  }
+ },
+ "housekeeping": {
+  "authoritative_record_writes_forbidden": true,
+  "findings_path": "records/inbox/cursor-event-based-pricer-2969.md",
+  "default_identity_exclusions": [
+   "wall_s",
+   "attempt_wall_s",
+   "peak_rss_mb"
+  ]
+ },
+ "plan_hash_scope": "canonical JSON excluding plan_sha256 and execution_root",
+ "plan_sha256": "c08df1a5277b8409cbe6302439d1083bcf854c6f58db3d7cbbd73c24dd729de6",
+ "execution_root": "/tmp/evsp-event-uniform-envelope-c08df1a5277b"
+}
