@@ -262,6 +262,7 @@ def build_plan(campaign, python, reservation_root):
         "min_soc_frac": (
             float(physics["reserve_kwh"]) / float(physics["g_kwh"])
         ),
+        # D0021: equal-wall evidence is 30 < 100 < 300 in route weight.
         "columns_per_iter": 30,
         "max_iters": 100000,
         "diversify_rounds": 0,
