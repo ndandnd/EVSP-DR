@@ -40,3 +40,22 @@ These labels are branch-local. They are not authoritative bug or decision IDs.
   witness-search relaxation described in LOCAL-3.
 - Evidence path: `analysis/arcflow_oracle_20260820/REPORT.md`
 - Producing commit SHA: `b09284f313cb409e7d370284d491f681ca0eaff6`
+
+## LOCAL-6
+
+- Claim: Explicit 300 kWh / 300 kW / reserve-0 CLI flags preserve the k02_s2
+  legacy regression: fleet LP 2.1875, integer fleet 3, and deterministic
+  scientific LP/MIP payloads byte-identical to the prior artifacts.
+- Evidence path:
+  `analysis/arcflow_oracle_20260820/PHYSICS_FLAGS_REGRESSION.md`
+- Producing commit SHA: `2715b90b78f343b16d705031f47e4e2543cb463f`
+
+## LOCAL-7
+
+- Claim: At 240 kWh / 240 kW / reserve 0 with a 10 kWh / 10 minute
+  commensurate grid, k02_s2 has fleet LP 2.4 and a fully integral,
+  physically replayed three-bus witness; its discretized integer fleet
+  optimum is therefore 3.
+- Evidence path:
+  `analysis/arcflow_oracle_20260820/PHYSICS_FLAGS_REGRESSION.md`
+- Producing commit SHA: `2715b90b78f343b16d705031f47e4e2543cb463f`
