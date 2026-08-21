@@ -31,7 +31,7 @@ from run_exact_pool_mip import validate_injected_route
 from utils_v2 import load_station_hourly_prices
 
 
-SUPPORTED_GRIDS = {(15.0, 10), (1.0, 5)}
+LEGACY_INCOMMENSURATE_CONFIGS = {(300.0, 300.0, 15.0, 10)}
 STATUS = {0: "optimal", 1: "limit_reached", 2: "infeasible",
           3: "unbounded", 4: "solver_error"}
 
@@ -95,19 +95,60 @@ class SolveResult:
     max_row_violation: float | None
 
 
+def _integer_multiple(value: float, unit: float) -> bool:
+    ratio = value / unit
+    return math.isclose(ratio, round(ratio), rel_tol=0.0, abs_tol=1e-9)
+
+
+def validate_configuration(*, g_kwh: float, charge_kw: float,
+                           min_soc_frac: float, soc_step: float,
+                           block_min: int) -> None:
+    values = (g_kwh, charge_kw, min_soc_frac, soc_step, float(block_min))
+    if not all(math.isfinite(float(value)) for value in values):
+        raise ValueError("physics and grid values must be finite")
+    if g_kwh <= 0 or charge_kw <= 0 or soc_step <= 0 or block_min <= 0:
+        raise ValueError("capacity, charge power, SOC step, and block must be positive")
+    if not 0.0 <= min_soc_frac <= 1.0:
+        raise ValueError("min_soc_frac must be between zero and one")
+    if not _integer_multiple(HORIZON_MIN, float(block_min)):
+        raise ValueError("block_min must divide the 1560-minute horizon")
+    if not _integer_multiple(g_kwh, soc_step):
+        raise ValueError("soc_step must divide battery capacity")
+    block_kwh = charge_kw * block_min / 60.0
+    legacy = any(all(
+        math.isclose(value, expected, rel_tol=0.0, abs_tol=1e-9)
+        for value, expected in zip(
+            (g_kwh, charge_kw, soc_step, block_min), config
+        )
+    ) for config in LEGACY_INCOMMENSURATE_CONFIGS)
+    if not legacy and not _integer_multiple(block_kwh, soc_step):
+        raise ValueError(
+            "grid is not commensurate: charge_kw*block_min/60 "
+            "must be an integer multiple of soc_step"
+        )
+
+
 def build_network(csv_name: str, *, soc_step: float, block_min: int,
                   prices_csv: str = "hourly_prices_flat.csv",
-                  data_dir: Path = DATA_DIR) -> NetworkData:
+                  data_dir: Path = DATA_DIR, g_kwh: float = 300.0,
+                  charge_kw: float = 300.0,
+                  min_soc_frac: float = 0.0) -> NetworkData:
+    validate_configuration(
+        g_kwh=g_kwh, charge_kw=charge_kw, min_soc_frac=min_soc_frac,
+        soc_step=soc_step, block_min=block_min,
+    )
     problem = build_problem(data_dir, csv_name,
                             max_station_to_trip_wait_min=HORIZON_MIN)
     prices = load_station_hourly_prices(data_dir / prices_csv,
                                         CHARGING_STATIONS)
     network = ExpandedNetwork(
         problem, prices, soc_step=soc_step, block_min=block_min,
-        g_kwh=300.0, charge_kw=300.0, reserve_kwh=0.0,
+        g_kwh=g_kwh, charge_kw=charge_kw,
+        reserve_kwh=min_soc_frac * g_kwh,
     )
     return NetworkData(csv_name, prices_csv, problem, network,
-                       float(soc_step), int(block_min))
+                       float(soc_step), int(block_min), float(g_kwh),
+                       float(charge_kw), float(min_soc_frac * g_kwh))
 
 
 def _source_sink_reachability(network: ExpandedNetwork) -> tuple[np.ndarray, np.ndarray]:
@@ -422,10 +463,51 @@ def audit_route(data: NetworkData, arcs: ArcTable,
             "mapped_cost": mapped_cost, "stored_cost": stored_cost}
 
 
+def _validate_journal_identity(data: NetworkData, journal: Path) -> Path:
+    suffix = ".columns.jsonl"
+    if not journal.name.endswith(suffix):
+        raise ValueError("G2 journal name must end in .columns.jsonl")
+    status_path = Path(str(journal)[:-len(suffix)])
+    if not status_path.is_file():
+        raise FileNotFoundError(f"G2 journal status is missing: {status_path}")
+    status = json.loads(status_path.read_text())
+    expected = {
+        "csv": data.csv_name,
+        "prices_csv": data.prices_csv,
+        "soc_step": data.soc_step,
+        "block_min": data.block_min,
+        "g_kwh": data.g_kwh,
+        "charge_kw": data.charge_kw,
+        "min_soc_frac": data.reserve_kwh / data.g_kwh,
+    }
+    for key, wanted in expected.items():
+        observed = status.get(key)
+        if isinstance(wanted, (int, float)):
+            try:
+                matches = math.isclose(
+                    float(observed), float(wanted),
+                    rel_tol=0.0, abs_tol=1e-9,
+                )
+            except (TypeError, ValueError):
+                matches = False
+        else:
+            matches = observed == wanted
+        if not matches:
+            raise ValueError(
+                f"G2 journal identity mismatch for {key}: "
+                f"{observed!r} != {wanted!r}"
+            )
+    if list(status.get("trip_ids") or []) != list(data.problem.trips):
+        raise ValueError("G2 journal trip identity differs from the network")
+    return status_path
+
+
 def gate_g2(data: NetworkData, arcs: ArcTable, journal: Path,
             route_index: int | None = None) -> dict:
     """Round-trip a known feasible journal route at identical cost."""
 
+    journal = journal.expanduser().resolve()
+    status_path = _validate_journal_identity(data, journal)
     records = read_jsonl_records(journal, repair_trailing=False)
     if not records:
         raise ValueError("G2 journal is empty")
@@ -448,6 +530,7 @@ def gate_g2(data: NetworkData, arcs: ArcTable, journal: Path,
         f"cost={detail['mapped_cost']:.6f} PASS", flush=True,
     )
     return {"gate": "G2", "passed": True, "journal": str(journal),
+            "journal_status": str(status_path),
             "route_index": route_index, **detail}
 
 
@@ -554,11 +637,9 @@ def gate_g4(model: ArcFlowModel, primal: np.ndarray) -> tuple[dict, list[dict]]:
              "covered_trips": len(counts)}, routes)
 
 
-def _scope(csv_name: str, soc_step: float, block_min: int) -> None:
+def _scope(csv_name: str) -> None:
     if not any(f"_k{k:02d}_" in Path(csv_name).name for k in (2, 3, 5)):
         raise ValueError("CLI scope is k2/k3/k5 only")
-    if (float(soc_step), int(block_min)) not in SUPPORTED_GRIDS:
-        raise ValueError("CLI grids are 15 kWh/10 min and 1 kWh/5 min only")
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -567,6 +648,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--prices-csv", default="hourly_prices_flat.csv")
     parser.add_argument("--soc-step", type=float, required=True)
     parser.add_argument("--block-min", type=int, required=True)
+    parser.add_argument("--g-kwh", type=float, default=300.0)
+    parser.add_argument("--charge-kw", type=float, default=300.0)
+    parser.add_argument("--min-soc-frac", type=float, default=0.0)
     parser.add_argument("--journal", type=Path)
     parser.add_argument("--journal-route-index", type=int)
     parser.add_argument("--objective",
@@ -587,10 +671,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--disp", action="store_true")
     parser.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
-    _scope(args.csv, args.soc_step, args.block_min)
+    _scope(args.csv)
     data = build_network(
         args.csv, prices_csv=args.prices_csv,
         soc_step=args.soc_step, block_min=args.block_min,
+        g_kwh=args.g_kwh, charge_kw=args.charge_kw,
+        min_soc_frac=args.min_soc_frac,
     )
     arcs = index_active_arcs(data.network)
     gates = [gate_g1(data, arcs)]
@@ -643,6 +729,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         "scope": "exact_for_named_discretized_model_only",
         "csv": data.csv_name,
         "grid": {"soc_step": data.soc_step, "block_min": data.block_min},
+        "physics": {
+            "g_kwh": data.g_kwh,
+            "charge_kw": data.charge_kw,
+            "min_soc_frac": data.reserve_kwh / data.g_kwh,
+            "reserve_kwh": data.reserve_kwh,
+        },
         "network": {"nodes": arcs.full_nodes, "arcs": arcs.full_arcs,
                     "active_arcs": arcs.size,
                     "rows": model.matrix.shape[0],

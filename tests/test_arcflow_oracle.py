@@ -20,6 +20,7 @@ from arcflow_oracle import (  # noqa: E402
     index_active_arcs,
     map_route_to_arcs,
     solve,
+    validate_configuration,
 )
 
 
@@ -90,6 +91,9 @@ class ArcFlowOracleTests(unittest.TestCase):
             soc_step=15.0,
             block_min=10,
         )
+        self.assertEqual(data.g_kwh, 300.0)
+        self.assertEqual(data.charge_kw, 300.0)
+        self.assertEqual(data.reserve_kwh, 0.0)
         arcs = index_active_arcs(data.network)
         gate_g1(data, arcs)
         duals = {trip: 500000.0 for trip in data.problem.trips}
@@ -110,6 +114,42 @@ class ArcFlowOracleTests(unittest.TestCase):
         self.assertTrue(math.isclose(
             detail["mapped_cost"], cost, abs_tol=1e-6
         ))
+
+    def test_frozen_physics_and_commensurate_grid(self):
+        data = build_network(
+            "scale_ladder/instances/Practice_Custom_DutyUnion_k02_r2.csv",
+            soc_step=10.0,
+            block_min=10,
+            g_kwh=240.0,
+            charge_kw=240.0,
+            min_soc_frac=0.0,
+        )
+        self.assertEqual(data.g_kwh, 240.0)
+        self.assertEqual(data.charge_kw, 240.0)
+        self.assertEqual(data.reserve_kwh, 0.0)
+        self.assertEqual(data.network.grid[-1], 240.0)
+        self.assertEqual(data.network.block_kwh, 40.0)
+
+    def test_grid_validation_preserves_legacy_and_rejects_noncommensurate(self):
+        validate_configuration(
+            g_kwh=300.0, charge_kw=300.0, min_soc_frac=0.0,
+            soc_step=15.0, block_min=10,
+        )
+        validate_configuration(
+            g_kwh=240.0, charge_kw=240.0, min_soc_frac=0.0,
+            soc_step=10.0, block_min=10,
+        )
+        invalid = [
+            dict(g_kwh=240, charge_kw=240, min_soc_frac=0,
+                 soc_step=15, block_min=10),
+            dict(g_kwh=300, charge_kw=300, min_soc_frac=0,
+                 soc_step=10, block_min=7),
+            dict(g_kwh=240, charge_kw=240, min_soc_frac=1.1,
+                 soc_step=10, block_min=10),
+        ]
+        for values in invalid:
+            with self.subTest(values=values), self.assertRaises(ValueError):
+                validate_configuration(**values)
 
 
 if __name__ == "__main__":
