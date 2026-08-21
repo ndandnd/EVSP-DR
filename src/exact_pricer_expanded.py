@@ -388,7 +388,10 @@ class ExpandedNetwork:
         self.g = float(g_kwh)
         self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
-        self.n_blocks = int(HORIZON_MIN) // self.block_min
+        self.horizon = float(getattr(problem, "horizon_min", HORIZON_MIN))
+        self.stations = tuple(getattr(problem, "stations", STATIONS))
+        self.depot = getattr(problem, "depot", DEPOT)
+        self.n_blocks = int(self.horizon) // self.block_min
         self.block_kwh = float(charge_kw) * self.block_min / 60.0
         self.prices = station_prices  # base station -> {hour: $/kWh}
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
@@ -443,7 +446,7 @@ class ExpandedNetwork:
                     self.node_meta.append(("trip", trip, level))
                     self.trip_node[(trip, level)] = node_id
                     order.append((p.start_min[trip], 0, node_id))
-        for station in STATIONS:
+        for station in self.stations:
             for block in range(self.n_blocks):
                 for level in range(len(self.grid)):
                     node_id = len(self.node_meta)
@@ -465,6 +468,12 @@ class ExpandedNetwork:
 
     def _charge_result(self, level: int) -> float:
         return self.grid[self._floor(min(self.g, self.grid[level] + self.block_kwh))]
+
+    def _transition_at(self, source, target, departure, default):
+        resolver = getattr(self.problem, "transition_at", None)
+        if resolver is None:
+            return default
+        return resolver(source, target, departure)
 
     def _build_arcs(self):
         p = self.problem
@@ -491,7 +500,7 @@ class ExpandedNetwork:
             # trip -> sink
             if trip in self.trip_depot:
                 travel, dh = self.trip_depot[trip]
-                if depart + travel <= HORIZON_MIN + 1e-9 and soc_exit - dh >= self.reserve - 1e-9:
+                if depart + travel <= self.horizon + 1e-9 and soc_exit - dh >= self.reserve - 1e-9:
                     add(u, 1, 0.0)
             # trip -> trip
             for succ, travel, dh in self.trip_trip.get(trip, ()):  # gap-filtered upstream
@@ -530,7 +539,13 @@ class ExpandedNetwork:
             if gained > 1e-9 and block + 1 < self.n_blocks:
                 add(u, self.charge_node[(station, block + 1, after_level)], cost)
             # leave to a trip after this block
-            for succ, travel, dh in self.station_trip.get(station, ()):
+            for succ, default_travel, default_dh in self.station_trip.get(station, ()):
+                transition = self._transition_at(
+                    station, succ, block_end, (default_travel, default_dh)
+                )
+                if transition is None:
+                    continue
+                travel, dh = transition
                 if block_end + travel > p.start_min[succ] + 1e-9:
                     continue
                 nxt = floor(soc_after - dh)
@@ -543,8 +558,14 @@ class ExpandedNetwork:
                     add(u, node, cost, succ)
             # leave to sink
             if station in self.station_depot:
-                travel, dh = self.station_depot[station]
-                if block_end + travel <= HORIZON_MIN + 1e-9 and soc_after - dh >= self.reserve - 1e-9:
+                transition = self._transition_at(
+                    station, self.depot, block_end,
+                    self.station_depot[station],
+                )
+                if transition is None:
+                    continue
+                travel, dh = transition
+                if block_end + travel <= self.horizon + 1e-9 and soc_after - dh >= self.reserve - 1e-9:
                     add(u, 1, cost)
 
         self.n_arcs = sum(len(a) for a in self.out)
@@ -608,7 +629,7 @@ class ExpandedNetwork:
                 stops.append(run)
 
             charging = {"stations": [], "cst": [], "cet": [], "kwh": []}
-            route_nodes = [DEPOT]
+            route_nodes = [self.depot]
             # interleave trips and stops in path order for the route node list
             seq = []
             for nid in nodes:
@@ -625,7 +646,7 @@ class ExpandedNetwork:
                     collapsed.append(item)
             for tag, val in collapsed:
                 route_nodes.append(val if tag == "t" else val)
-            route_nodes.append(DEPOT)
+            route_nodes.append(self.depot)
 
             for station, b0, b1, lvl0 in stops:
                 soc = self.grid[lvl0]

@@ -1,0 +1,4 @@
+instance,arm,soc_step_kwh,block_min,lp_fleet,integer_fleet,comparison_fleet,gap_buses,status
+public_structural_s20260821,full_fine,5,5,2.0,2,,0,fleet_proven
+public_structural_s20260821,full_coarse,5,10,3.0,3,2,1,fleet_proven_resolution_penalty
+public_structural_s20260821,pair_limited_pool_fine,5,5,,3,2,1,pool_optimal_composition_gap
