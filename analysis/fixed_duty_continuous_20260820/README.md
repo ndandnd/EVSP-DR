@@ -91,3 +91,5 @@ grid infeasibility is therefore not evidence of physical infeasibility.
   prefix-causal bound.
 - `TWO_PEAK_INSTRUMENT.md`: construction and provenance for the synthetic
   SE3-shaped two-peak instrument.
+- `K40_FIXED_DUTY_RESULTS.md`: complete 40-duty matched timing values,
+  infeasibility counts, and station-time charger-concurrency measurements.

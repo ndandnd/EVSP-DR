@@ -1,0 +1,17 @@
+tariff,terminal_policy,arm,matched_feasible_duties,charge_events,charge_starts,total_kwh,global_charger_concurrency_max,peak_kW,charger_concurrency_max_per_station_time,station_concurrency_max_json,replay_ok
+peak12,>= reserve,uncapped_arrival,39,371,371,12159.711857130003,8,1920.0,2,"{""2190L_0"":2,""3127L_0"":2,""4808_0"":2,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":2}",True
+peak12,>= reserve,uncapped_optimized,39,371,371,12159.711857129996,13,3120.0,4,"{""2190L_0"":4,""3127L_0"":3,""4808_0"":4,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":2}",True
+peak12,>= reserve,capped_arrival,39,314,314,12141.58785713,7,1680.0,3,"{""2190L_0"":2,""3127L_0"":3,""4808_0"":2,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":1}",True
+peak12,>= reserve,capped_optimized,39,314,314,12144.787857129979,12,2880.0,4,"{""2190L_0"":4,""3127L_0"":3,""4808_0"":2,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":1}",True
+peak12,>= initial,uncapped_arrival,30,270,270,15636.84289984001,12,2880.0,8,"{""2190L_0"":2,""3127L_0"":2,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":8}",True
+peak12,>= initial,uncapped_optimized,30,268,268,15636.84289984,18,4320.0,16,"{""2190L_0"":3,""3127L_0"":2,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":16}",True
+peak12,>= initial,capped_arrival,30,224,224,15634.042899839997,11,2640.0,8,"{""2190L_0"":2,""3127L_0"":2,""4808_0"":1,""7880C_0"":1,""JON_A_0"":2,""PARX_1"":8}",True
+peak12,>= initial,capped_optimized,30,224,224,15634.042899840653,20,4800.0,20,"{""2190L_0"":3,""3127L_0"":2,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":20}",True
+two_peak_se3_synthetic,>= reserve,uncapped_arrival,39,331,331,12142.58785713,9,2160.0,3,"{""2190L_0"":3,""3127L_0"":2,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":1}",True
+two_peak_se3_synthetic,>= reserve,uncapped_optimized,39,326,326,12154.511857129999,24,5760.0,7,"{""2190L_0"":7,""3127L_0"":7,""4808_0"":5,""7880C_0"":3,""JON_A_0"":4,""PARX_1"":2}",True
+two_peak_se3_synthetic,>= reserve,capped_arrival,39,282,282,12133.663857129997,9,2160.0,3,"{""2190L_0"":3,""3127L_0"":2,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":1}",True
+two_peak_se3_synthetic,>= reserve,capped_optimized,39,287,287,12148.387857137737,22,5280.0,7,"{""2190L_0"":7,""3127L_0"":7,""4808_0"":5,""7880C_0"":2,""JON_A_0"":3,""PARX_1"":2}",True
+two_peak_se3_synthetic,>= initial,uncapped_arrival,30,275,275,15628.442899839998,9,2160.0,7,"{""2190L_0"":3,""3127L_0"":3,""4808_0"":1,""7880C_0"":2,""JON_A_0"":3,""PARX_1"":7}",True
+two_peak_se3_synthetic,>= initial,uncapped_optimized,30,233,233,15632.442899839985,30,7200.0,30,"{""2190L_0"":3,""3127L_0"":3,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":30}",True
+two_peak_se3_synthetic,>= initial,capped_arrival,30,213,213,15625.442899839969,8,1920.0,7,"{""2190L_0"":3,""3127L_0"":2,""4808_0"":1,""7880C_0"":2,""JON_A_0"":2,""PARX_1"":7}",True
+two_peak_se3_synthetic,>= initial,capped_optimized,30,202,202,15632.44289984002,30,7200.0,30,"{""2190L_0"":3,""3127L_0"":3,""4808_0"":1,""7880C_0"":3,""JON_A_0"":2,""PARX_1"":30}",True
