@@ -246,10 +246,25 @@ class EventExpandedNetwork:
             depart = float(self.problem.end_min[trip])
             self._direct_arcs(source, trip, soc_exit, depart)
             self._charge_arcs(source, trip, soc_exit, depart)
-        for arcs in self.out:
-            arcs.sort(key=lambda row: (
+        for source, arcs in enumerate(self.out):
+            retained = {}
+            for row in arcs:
+                key = (row[0], row[2])
+                candidate = (row[1], json.dumps(row[3], sort_keys=True))
+                if key not in retained or candidate < retained[key][0]:
+                    retained[key] = (candidate, row)
+            self.out[source] = sorted(
+                (value[1] for value in retained.values()),
+                key=lambda row: (
                 row[0], row[1], json.dumps(row[3], sort_keys=True)
-            ))
+                ),
+            )
+        self.sink_arcs = [
+            (source, cost, action)
+            for source, arcs in enumerate(self.out)
+            for target, cost, _dual, action in arcs
+            if target == self.SINK
+        ]
         self.n_arcs = sum(len(arcs) for arcs in self.out)
 
     def _direct_arcs(self, source, trip, soc_exit, depart):

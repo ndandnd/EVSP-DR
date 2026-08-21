@@ -130,6 +130,15 @@ class EventPricerNetworkTests(unittest.TestCase):
         self.assertLess(len(event.node_meta), len(uniform.node_meta))
         self.assertLess(event.n_arcs, uniform.n_arcs)
 
+    def test_parallel_event_options_are_deduplicated_by_future_state(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+        )
+        for arcs in network.out:
+            keys=[(target,dual) for target,_cost,dual,_action in arcs]
+            self.assertEqual(len(keys),len(set(keys)))
+
 
 if __name__ == "__main__":
     unittest.main()
