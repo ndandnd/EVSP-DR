@@ -72,3 +72,18 @@ IDs; a records curator may accept, rewrite, merge, or reject them.
   `data/scale_ladder/instances/SIX_SELECTION_DUTY_UNION_EXTENSION_20260821.md`
 - Producing commit SHA:
   `72c7bf418ddd175de0cf18371c24b72ecd79ab68`
+
+## LOCAL-7 — instance features built; RAW recovery association not estimable
+
+- Claim: a 40-instance duty-union feature table now records trip/duty counts,
+  direct-deadhead density and energy share, service-energy intensity, layover
+  slack, time-feasible station-bridge reachability, and five-grid duty
+  representability. No auditable normalized RAW integer-result rows are tracked
+  in this checkout or available git refs, so no feature/recovery correlation or
+  threshold claim is currently supportable.
+- Evidence paths:
+  `analysis/raw_recovery_feature_audit_20260821/instance_features.csv`;
+  `analysis/raw_recovery_feature_audit_20260821/summary.json`;
+  `analysis/raw_recovery_feature_audit_20260821/README.md`
+- Producing commit SHA:
+  `8f8907738c03aea01f051359dbc3158579bbbe60`
