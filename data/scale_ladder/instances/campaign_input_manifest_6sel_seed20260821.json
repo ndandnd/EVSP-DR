@@ -1,0 +1,50 @@
+{
+  "instance_manifest": "data/scale_ladder/instances/scale_ladder_instance_manifest_6sel_seed20260821.csv",
+  "instance_manifest_sha256": "d137fcdfaa6aba5d9425d5b0631d448609b71dc5c0474612c5ab38095a36a53d",
+  "legacy_instance_manifest": "data/scale_ladder/instances/scale_ladder_instance_manifest.csv",
+  "legacy_instance_manifest_sha256": "a7ef8b77351440a8d7873b949891663ca7b28f135d366d4c6b003d09ca84839a",
+  "legacy_trip_hash_policy": "classify_before_comparison_never_compare_cross_domain",
+  "physics": {
+    "block_min": 10,
+    "charge_kw": 300.0,
+    "g_kwh": 300.0,
+    "reserve_kwh": 0.0,
+    "soc_step_kwh": 15.0
+  },
+  "schema": "evsp-dr-scale-ladder-input-manifest-v1",
+  "selection_extensions": [
+    {
+      "generator": "src/generate_random_goal1_instances.py",
+      "generator_family": "generate_random_goal1_instances_v1_seed20260821",
+      "generator_manifest": "data/scale_ladder/instances/random_goal1_seed_20260821/manifest.json",
+      "generator_manifest_sha256": "c9bb8ca29929998da2a5fa4bf5d2f04e43125458152ebfffba7db05be0f76744",
+      "generator_version": 1,
+      "scales": [
+        2,
+        3,
+        5,
+        8,
+        13,
+        20
+      ],
+      "seed": 20260821,
+      "selection_replicates": [
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "source_frozen_manifest": "data/tariff_response/frozen_instances/frozen_input_manifest.csv",
+  "source_frozen_manifest_sha256": "5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6",
+  "tariff": {
+    "equivalence_scope": "hours_0_through_24_exact",
+    "equivalence_verified": true,
+    "extended_comparator_relative_path": "data/tariff_response/flat_h26.csv",
+    "extended_comparator_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "hours_25_26_policy": "historical_last_hour_extension_verified_constant",
+    "primary_tariff_relative_path": "data/hourly_prices_flat.csv",
+    "primary_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+  },
+  "trip_identity_schema": "evsp-dr-trip-identity-v1"
+}

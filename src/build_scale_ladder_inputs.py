@@ -6,17 +6,25 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import io
 import json
 import os
 import random
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
+from generate_random_goal1_instances import (
+    DEFAULT_SOURCE as RANDOM_SOURCE,
+    GENERATOR_VERSION as RANDOM_GENERATOR_VERSION,
+    _atomic_write,
+    generate_batch,
+)
 from make_duty_pair_instances import (
     _base_task,
     load_duty_frames,
     merge_duties,
 )
+from scale_ladder_trip_identity import identity
 
 
 SEED = 20260803
@@ -37,6 +45,22 @@ EXTENDED_FLAT_SHA256 = (
 )
 TRIP_IDENTITY_SCHEMA = "evsp-dr-trip-identity-v1"
 OUTPUT_DIR = REPO_ROOT / "data/scale_ladder/instances"
+LEGACY_INSTANCE_MANIFEST_SHA256 = (
+    "a7ef8b77351440a8d7873b949891663ca7b28f135d366d4c6b003d09ca84839a"
+)
+EXTENSION_SEED = 20260821
+EXTENSION_SCALES = (2, 3, 5, 8, 13, 20)
+EXTENSION_REPLICATES = (4, 5, 6)
+EXTENSION_FAMILY = (
+    "generate_random_goal1_instances_v1_seed20260821"
+)
+EXTENSION_DIRECTORY = "random_goal1_seed_20260821"
+EXTENDED_MANIFEST_NAME = (
+    "scale_ladder_instance_manifest_6sel_seed20260821.csv"
+)
+EXTENDED_CAMPAIGN_NAME = (
+    "campaign_input_manifest_6sel_seed20260821.json"
+)
 FIELDS = (
     "scale", "selection_replicate", "cg_replicates", "target_fleet",
     "relative_path", "instance_file_sha256", "trip_count",
@@ -254,11 +278,128 @@ def _row(
     }
 
 
+def _extension_row(path, generated):
+    identities = identity(path)
+    selected = list(generated["selected_literal_tasks"])
+    return {
+        "scale": int(generated["bus_count"]),
+        "selection_replicate": int(generated["replicate"]),
+        "cg_replicates": 1,
+        "target_fleet": int(generated["bus_count"]),
+        "relative_path": str(path.relative_to(REPO_ROOT)),
+        **identities,
+        "duty_count": len(selected),
+        "duties_json": json.dumps(selected, separators=(",", ":")),
+        "duty_set_sha256": canonical_sha(selected),
+        "generator_seed": EXTENSION_SEED,
+        "generator_family": EXTENSION_FAMILY,
+        "weekday_variant_policy":
+            "one_literal_per_numeric_base_no_siblings",
+        "reused_frozen_input": False,
+    }
+
+
+def build_six_selection_extension(
+    output_dir=OUTPUT_DIR,
+    *,
+    legacy_manifest=OUTPUT_DIR / "scale_ladder_instance_manifest.csv",
+    legacy_campaign=OUTPUT_DIR / "campaign_input_manifest.json",
+):
+    """Publish a versioned additive 4--6 selection extension."""
+
+    output_dir = Path(output_dir).resolve()
+    legacy_manifest = Path(legacy_manifest).resolve()
+    legacy_campaign = Path(legacy_campaign).resolve()
+    legacy_raw = legacy_manifest.read_bytes()
+    if hashlib.sha256(legacy_raw).hexdigest() != (
+        LEGACY_INSTANCE_MANIFEST_SHA256
+    ):
+        raise ValueError("legacy scale-ladder manifest identity changed")
+    with legacy_manifest.open(newline="") as handle:
+        legacy_rows = list(csv.DictReader(handle))
+    if len(legacy_rows) != 22:
+        raise ValueError("legacy scale-ladder manifest row count changed")
+
+    generated = generate_batch(
+        source_path=RANDOM_SOURCE,
+        output_dir=output_dir / EXTENSION_DIRECTORY,
+        sizes=EXTENSION_SCALES,
+        replicates=len(EXTENSION_REPLICATES),
+        replicate_start=min(EXTENSION_REPLICATES),
+        seed=EXTENSION_SEED,
+    )
+    new_rows = []
+    for row in generated["instances"]:
+        path = output_dir / EXTENSION_DIRECTORY / row["output_csv"]
+        new_rows.append(_extension_row(path, row))
+    new_rows.sort(key=lambda row: (
+        int(row["scale"]), int(row["selection_replicate"])
+    ))
+    old_keys = {
+        (int(row["scale"]), int(row["selection_replicate"]))
+        for row in legacy_rows
+    }
+    new_keys = {
+        (int(row["scale"]), int(row["selection_replicate"]))
+        for row in new_rows
+    }
+    if len(new_rows) != 18 or old_keys & new_keys:
+        raise ValueError("selection extension cardinality/identity differs")
+
+    suffix = io.StringIO(newline="")
+    writer = csv.DictWriter(
+        suffix, fieldnames=FIELDS, lineterminator="\n"
+    )
+    writer.writerows(new_rows)
+    manifest_payload = legacy_raw + suffix.getvalue().encode()
+    manifest = output_dir / EXTENDED_MANIFEST_NAME
+    _atomic_write(manifest, manifest_payload, force=False)
+
+    campaign = json.loads(legacy_campaign.read_text())
+    campaign.update({
+        "instance_manifest": str(manifest.relative_to(REPO_ROOT)),
+        "instance_manifest_sha256":
+            hashlib.sha256(manifest_payload).hexdigest(),
+        "legacy_instance_manifest": str(
+            legacy_manifest.relative_to(REPO_ROOT)
+        ),
+        "legacy_instance_manifest_sha256":
+            LEGACY_INSTANCE_MANIFEST_SHA256,
+        "selection_extensions": [{
+            "generator": "src/generate_random_goal1_instances.py",
+            "generator_version": RANDOM_GENERATOR_VERSION,
+            "generator_family": EXTENSION_FAMILY,
+            "seed": EXTENSION_SEED,
+            "scales": list(EXTENSION_SCALES),
+            "selection_replicates": list(EXTENSION_REPLICATES),
+            "generator_manifest": str(
+                (output_dir / EXTENSION_DIRECTORY / "manifest.json")
+                .relative_to(REPO_ROOT)
+            ),
+            "generator_manifest_sha256": sha256_file(
+                output_dir / EXTENSION_DIRECTORY / "manifest.json"
+            ),
+        }],
+    })
+    campaign_path = output_dir / EXTENDED_CAMPAIGN_NAME
+    _atomic_write(
+        campaign_path,
+        (json.dumps(campaign, indent=2, sort_keys=True) + "\n").encode(),
+        force=False,
+    )
+    return manifest, campaign_path, new_rows
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out-dir", type=Path, default=OUTPUT_DIR)
+    parser.add_argument("--extend-six-selections", action="store_true")
     args = parser.parse_args(argv)
-    manifest, campaign, rows = build(args.out_dir)
+    builder = (
+        build_six_selection_extension
+        if args.extend_six_selections else build
+    )
+    manifest, campaign, rows = builder(args.out_dir)
     print(json.dumps({
         "instance_manifest": str(manifest),
         "instance_manifest_sha256": sha256_file(manifest),
