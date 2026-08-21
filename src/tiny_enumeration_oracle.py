@@ -477,6 +477,79 @@ def compare_spec(spec: TinySpec) -> dict:
         "branch_and_price": bnp["lp_bound"],
         "arc_flow": arc["lp_bound"],
     }
+
+
+def _disagreement_signature(result):
+    brute = result["integer"]["brute_force"]
+    return (
+        not result["lp_agrees"],
+        tuple(sorted(
+            method for method, value in result["integer"].items()
+            if method != "brute_force" and value != brute
+        )),
+    )
+
+
+def induced_spec(spec: TinySpec, keep: tuple[int, ...]) -> TinySpec:
+    keep = tuple(sorted(keep))
+    return replace(
+        spec,
+        case_id=f"{spec.case_id}_min{len(keep)}",
+        trip_count=len(keep),
+        start=tuple(spec.start[index] for index in keep),
+        duration=tuple(spec.duration[index] for index in keep),
+        energy=tuple(spec.energy[index] for index in keep),
+        deadhead_energy=tuple(tuple(
+            spec.deadhead_energy[left][right] for right in keep
+        ) for left in keep),
+        trip_to_station=tuple(
+            spec.trip_to_station[index] for index in keep
+        ),
+        station_to_trip=tuple(tuple(
+            station[index] for index in keep
+        ) for station in spec.station_to_trip),
+    )
+
+
+def induced_stations(spec: TinySpec, keep: tuple[int, ...]) -> TinySpec:
+    keep = tuple(sorted(keep))
+    return replace(
+        spec,
+        station_count=len(keep),
+        trip_to_station=tuple(tuple(
+            row[index] for index in keep
+        ) for row in spec.trip_to_station),
+        station_to_trip=tuple(
+            spec.station_to_trip[index] for index in keep
+        ),
+    )
+
+
+def minimize_disagreement(spec: TinySpec, result: dict):
+    signature = _disagreement_signature(result)
+    current, current_result = spec, result
+    changed = True
+    while changed and current.trip_count > 2:
+        changed = False
+        for remove in range(current.trip_count):
+            keep = tuple(
+                index for index in range(current.trip_count)
+                if index != remove
+            )
+            candidate = induced_spec(current, keep)
+            candidate_result = compare_spec(candidate)
+            if _disagreement_signature(candidate_result) == signature:
+                current, current_result = candidate, candidate_result
+                changed = True
+                break
+    if current.station_count > 1:
+        for station in range(current.station_count):
+            candidate = induced_stations(current, (station,))
+            candidate_result = compare_spec(candidate)
+            if _disagreement_signature(candidate_result) == signature:
+                current, current_result = candidate, candidate_result
+                break
+    return current, current_result
     integer_values = {
         "brute_force": brute_integer,
         "exact_cg_pool_mip": cg_integer,
@@ -554,9 +627,14 @@ def run_campaign(seed, cases, output_dir):
         result = compare_spec(spec)
         rows.append(result)
         if not result["agreement"]:
+            minimal_spec, minimal_result = minimize_disagreement(spec, result)
             path = output_dir / f"disagreement_{spec.case_id}.json"
             path.write_text(json.dumps({
-                "schema": SCHEMA, "spec": asdict(spec), "result": result,
+                "schema": SCHEMA,
+                "original_spec": asdict(spec), "original_result": result,
+                "minimal_spec": asdict(minimal_spec),
+                "minimal_result": minimal_result,
+                "minimality": "greedy one-trip and one-station irreducible",
             }, indent=2, sort_keys=True) + "\n")
             disagreements.append(str(path))
     mutations = {}
