@@ -519,7 +519,7 @@ def mutation_specs():
         ((False,), (False,)), no_station_trip,
     )
     transfer = TinySpec(
-        "mutation_station_transfer", DEFAULT_SEED, 2, 2, 4, 1,
+        "mutation_station_transfer", DEFAULT_SEED, 2, 2, 5, 1,
         (5, 25), (3, 3), (2, 2), _zero_matrix(2),
         ((True, False), (False, False)),
         ((False, False), (False, True)),
