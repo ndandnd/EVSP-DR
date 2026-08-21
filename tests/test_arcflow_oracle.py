@@ -1,5 +1,7 @@
 import math
+import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -11,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from arcflow_oracle import (  # noqa: E402
+    _validate_journal_identity,
     NetworkData,
     audit_route,
     build_model,
@@ -139,6 +142,10 @@ class ArcFlowOracleTests(unittest.TestCase):
             g_kwh=240.0, charge_kw=240.0, min_soc_frac=0.0,
             soc_step=10.0, block_min=10,
         )
+        validate_configuration(
+            g_kwh=240.0, charge_kw=240.0, min_soc_frac=0.0,
+            soc_step=2.5, block_min=5,
+        )
         invalid = [
             dict(g_kwh=240, charge_kw=240, min_soc_frac=0,
                  soc_step=15, block_min=10),
@@ -150,6 +157,31 @@ class ArcFlowOracleTests(unittest.TestCase):
         for values in invalid:
             with self.subTest(values=values), self.assertRaises(ValueError):
                 validate_configuration(**values)
+
+    def test_g2_status_binds_physics(self):
+        data = fake_data()
+        with tempfile.TemporaryDirectory() as folder:
+            status_path = Path(folder) / "run.json"
+            journal = Path(str(status_path) + ".columns.jsonl")
+            journal.write_text("")
+            status = {
+                "csv": data.csv_name,
+                "prices_csv": data.prices_csv,
+                "soc_step": data.soc_step,
+                "block_min": data.block_min,
+                "g_kwh": data.g_kwh,
+                "charge_kw": data.charge_kw,
+                "min_soc_frac": 0.0,
+                "trip_ids": [0],
+            }
+            status_path.write_text(json.dumps(status))
+            self.assertEqual(
+                _validate_journal_identity(data, journal), status_path
+            )
+            status["g_kwh"] = 240.0
+            status_path.write_text(json.dumps(status))
+            with self.assertRaisesRegex(ValueError, "g_kwh"):
+                _validate_journal_identity(data, journal)
 
 
 if __name__ == "__main__":
