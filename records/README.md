@@ -1,15 +1,20 @@
 # records/ — durable project record
 
-Three append-only CSVs. **Rows are never edited in place.** A correction is a
-new row whose `supersedes` (or `notes`) names the row it replaces. This keeps the
-record auditable when a result or a diagnosis later turns out to be wrong.
+The three authoritative CSVs are curator-owned and append-only. Branch agents
+must not allocate `B####`/`D####` IDs or append result rows: parallel branches
+cannot coordinate the global ID namespace.
 
 | File | One row per | Written by |
 |---|---|---|
-| `DECISION_LOG.csv` | irreversible or scientifically material decision | human, by hand |
-| `BUG_LOG.csv` | defect, with symptom, root cause, fix commit, status | human, by hand |
-| `RESULTS_LOG.csv` | completed ladder cell | `scripts/ladder_lite/record_results.sh` |
+| `DECISION_LOG.csv` | irreversible or scientifically material decision | records curator |
+| `BUG_LOG.csv` | defect, with symptom, root cause, fix commit, status | records curator |
+| `RESULTS_LOG.csv` | completed ladder cell | curator-controlled ingestion |
 | `runs/<RUN_ID>/` | full normalized CSV set for one campaign run | `scripts/ladder_lite/record_results.sh` |
+| `inbox/<branch>.md` | provisional branch-local findings | branch agent |
+
+Branch inbox entries use `LOCAL-1`, `LOCAL-2`, ... and include the claim,
+evidence path, and producing commit SHA. These labels are never authoritative;
+the curator assigns final IDs after cross-branch deduplication and validation.
 
 ## Conventions
 
