@@ -1,0 +1,57 @@
+{
+  "instance_manifest": "data/scale_ladder/instances/scale_ladder_instance_manifest_6sel_seed20260803.csv",
+  "instance_manifest_sha256": "8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3",
+  "legacy_instance_manifest": "data/scale_ladder/instances/scale_ladder_instance_manifest.csv",
+  "legacy_instance_manifest_sha256": "a7ef8b77351440a8d7873b949891663ca7b28f135d366d4c6b003d09ca84839a",
+  "legacy_trip_hash_policy": "classify_before_comparison_never_compare_cross_domain",
+  "physics": {
+    "block_min": 10,
+    "charge_kw": 300.0,
+    "g_kwh": 300.0,
+    "reserve_kwh": 0.0,
+    "soc_step_kwh": 15.0
+  },
+  "schema": "evsp-dr-scale-ladder-input-manifest-v1",
+  "selection_extensions": [
+    {
+      "extension_manifest": "data/scale_ladder/instances/duty_union_extension_seed20260803.json",
+      "extension_manifest_sha256": "6465d1ef824c5031b4447c13050fdf3a5110782ae8a4598850c83e8d0ca16c54",
+      "generator": "src/build_scale_ladder_inputs.py",
+      "generator_families": {
+        "13": "small_3_5_8_13_per6_seed20260803",
+        "2": "pair_union_k2_seed20260803",
+        "20": "large_15_20_30_40_per6_seed20260803",
+        "3": "small_3_5_8_13_per6_seed20260803",
+        "5": "small_3_5_8_13_per6_seed20260803",
+        "8": "small_3_5_8_13_per6_seed20260803"
+      },
+      "scales": [
+        2,
+        3,
+        5,
+        8,
+        13,
+        20
+      ],
+      "seed": 20260803,
+      "selection_replicates": [
+        4,
+        5,
+        6
+      ],
+      "validation_status": "producer_only_pending_independent_validation"
+    }
+  ],
+  "source_frozen_manifest": "data/tariff_response/frozen_instances/frozen_input_manifest.csv",
+  "source_frozen_manifest_sha256": "5473e8d83c8e7e1f0b6e872125419466bb5044bbbb014df3184254f6a2b601c6",
+  "tariff": {
+    "equivalence_scope": "hours_0_through_24_exact",
+    "equivalence_verified": true,
+    "extended_comparator_relative_path": "data/tariff_response/flat_h26.csv",
+    "extended_comparator_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "hours_25_26_policy": "historical_last_hour_extension_verified_constant",
+    "primary_tariff_relative_path": "data/hourly_prices_flat.csv",
+    "primary_tariff_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+  },
+  "trip_identity_schema": "evsp-dr-trip-identity-v1"
+}

@@ -1,0 +1,10 @@
+instance,model,soc_step_kwh,block_min,certified_lp,certified,dag_nodes,dag_arcs,iterations,wall_s,reaches_giro_target,stop_reason
+k02_s1,uniform_15_10,15,10,2.340659340659349,True,16637,458592,238,15.90,False,certified
+k02_s1,uniform_1_5,1,5,2.0,True,461676,13248163,300,287.73,True,certified
+k02_s1,event,2.5,event,2.0,True,4233,5353758,523,371.83,True,certified
+k02_s2,uniform_15_10,15,10,2.333333333333334,True,16320,205576,124,5.52,False,certified
+k02_s2,uniform_1_5,1,5,2.125,True,456910,5806603,99,42.80,False,certified
+k02_s2,event,2.5,event,2.0,True,2322,1920614,117,60.74,True,certified
+k02_s3,uniform_15_10,15,10,2.437908496732024,True,16786,553347,557,52.28,False,certified
+k02_s3,uniform_1_5,1,5,2.0,True,463786,15923342,267,291.35,True,certified
+k02_s3,event,2.5,event,2.857142857142857,False,5077,7810190,17,671.54,False,external_signal

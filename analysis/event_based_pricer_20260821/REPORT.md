@@ -1,0 +1,132 @@
+# Event-based pricer — local gate report
+
+Date: 2026-08-21. Branch: `cursor/event-based-pricer-2969`.
+No cluster jobs were submitted. Machine-readable executed rows are in
+`results.csv`.
+
+## Outcome
+
+The prototype passes G1 and the k02_s2 fleet/13413 parts of G3, but fails G3's
+duty-13411 five-grid requirement. G2 is incomplete. G5 was also audited and
+fails as written. Per the work order's stop rule, the k3/k5 table was not run.
+
+### G1 — pass
+
+With `--time-model` omitted, the actual k02_s1 regression is byte-identical to
+the pre-change source:
+
+- column journal bytes and ordering;
+- ordered route hashes;
+- reduced-cost strings;
+- complete `iters.csv`;
+- final certification and route weight.
+
+Operational timing fields remain excluded.
+
+### G2 — incomplete
+
+The required nine-cell containment gate was not established before the G3 stop.
+Executed frozen-physics comparisons cover all three k2 uniform rows and
+certified event rows for k02_s1/k02_s2. Those two event LPs are no worse than
+both corresponding uniform LPs. k02_s3 event CG was interrupted uncertified,
+and no k3/k5 event LP was run. No nine-cell containment claim is made.
+
+### G3 — fail (formal stop)
+
+At frozen 240 kWh / 240 kW / zero reserve, with a 2.5-kWh SOC lattice:
+
+- k02_s2 event CG certified route weight **2.0000000000** in 117 iterations;
+- duty 13413's previously blocked local transition `14→16` is represented.
+
+Duty 13411 does **not** pass all five grid configurations:
+
+| SOC step / block | complete event duty representable? |
+|---|---:|
+| 15 / 10 | No |
+| 5 / 10 | No |
+| 2.5 / 10 | Yes |
+| 1 / 10 | Yes |
+| 1 / 5 | Yes |
+
+The earlier claim counted three unique transition pairs in one 2.5/5 event run
+and incorrectly called that all five grid-specific gates. The machine-readable
+correction is `duty_13411_event_matrix.csv`.
+
+k02_s1 also certified at 2.0000000000. A 10-kWh event run on k02_s2 certified
+at 2.0909090909, so event timing does not eliminate the need for a sufficiently
+fine SOC axis; 2.5 kWh remains the tested event setting.
+
+### G4 — pass on the motivating instance, with a scaling warning
+
+For k02_s2:
+
+| model | nodes | arcs |
+|---|---:|---:|
+| uniform 1 kWh / 5 min | 456,910 | 5,806,603 |
+| event, 2.5-kWh SOC | 2,322 | 1,920,614 |
+
+The event DAG has **99.49% fewer nodes** and **66.92% fewer arcs**. However,
+direct event-transition factorization still scales poorly:
+
+- k02_s3: 5,077 nodes, 7,810,190 arcs;
+- k05_s2: 8,784 nodes, 22,161,911 arcs, 544.66 s build,
+  26,814.64 MiB peak RSS.
+
+Thus the stored DAG is smaller than uniform 1/5, but its Python construction
+and arc representation are not yet a credible large-scale implementation.
+Additionally, `k_best_routes` is exact only for the minimum reduced-cost path;
+batch enrichment retains at most one route per sink predecessor and is not a
+genuine k-shortest-path enumeration (`B0032`). This affects performance, not
+the reduced-cost certificate.
+
+## G5 — fail (additional contract finding)
+
+The work order requires every event column to pass
+`realize_expanded_path` **unchanged**. An exhaustive audit of the completed
+k02_s2 event journal found:
+
+| unchanged realization result | columns |
+|---|---:|
+| pass | 39 |
+| reject: non-grid window at `2190L_0` | 1,041 |
+| reject: non-grid window at `4808_0` | 515 |
+| reject: non-grid window at `PARX_1` | 115 |
+| **total** | **1,710** |
+
+All inserted event columns already pass the unchanged restricted-graph,
+timing, SOC, reserve, battery-cap, charger-power, tariff-block, exact-trip-
+coverage, and continuous-block validators. The failure is specifically the
+realization function's hard requirement that `cst`, `cet`, and duration be
+multiples of one global integer `block_min`.
+
+This is a specification conflict:
+
+1. The successful G3 sub-results depend on retaining irregular
+   arrival/deadline-induced windows.
+2. Snapping those windows to the uniform lattice reintroduces the restriction
+   the event model exists to remove.
+3. Extending `realize_expanded_path` with an event-mode branch would resolve the
+   conflict, but would violate the current gate's word **unchanged**.
+
+No exact event-route-space claim should be published until the operator chooses
+between:
+
+- preserving G5 literally and accepting uniform-aligned emission (which may
+  lose the representability established by the successful G3 sub-results), or
+- versioning the realization contract for event windows while preserving all
+  physical constraints.
+
+## Additional executed validation
+
+- reviewed continuous fixed-duty optimizer: 15 tests passed after retaining
+  solver-tolerance micro-energy in contiguous replay segments;
+- event network and known-transition tests: 8 passed;
+- default k2 bit-identity gate: passed;
+- no cluster or branch-and-price work was performed.
+
+## Reproducibility
+
+`artifacts/` contains the k02_s2 event status, full 1,710-record journal,
+iteration trace, six k2 uniform comparison statuses, k05 build metrics, and the
+machine-readable exhaustive G5 audit. `COMMANDS.md` records commands and
+producer commits. `SHA256SUMS` binds the complete evidence set.

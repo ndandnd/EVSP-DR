@@ -1,0 +1,23 @@
+{
+  "counts": {
+    "non-grid charging window at 2190L_0": 1041,
+    "non-grid charging window at 4808_0": 515,
+    "non-grid charging window at PARX_1": 115,
+    "pass": 39
+  },
+  "failed": 1671,
+  "passed": 39,
+  "physics": {
+    "block_min": 5,
+    "charge_kw": 240.0,
+    "g_kwh": 240.0,
+    "reserve_kwh": 0.0,
+    "soc_step": 2.5
+  },
+  "schema": "evsp-dr-event-pricer-g5-audit-v1",
+  "source_journal": "analysis/event_based_pricer_20260821/artifacts/k02_s2_event.json.columns.jsonl",
+  "source_journal_sha256": "226c9e23115fe9a1fcabdaf58748eda63e170ac1cdd7d1888ffba7a4111173f5",
+  "total_records": 1710,
+  "validator": "expanded_path_realization.realize_expanded_path",
+  "validator_commit": "2abf65d94e4d8e6367b8405212e0cc8ef4cd2d3c"
+}
