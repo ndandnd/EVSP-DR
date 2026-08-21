@@ -146,6 +146,7 @@ class EventPricerNetworkTests(unittest.TestCase):
         network = EventExpandedNetwork(
             two_trip_problem(), prices(), soc_step=2.5, block_min=5,
             g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="explicit",
         )
         for arcs in network.out:
             keys=[(target,dual) for target,_cost,dual,_action in arcs]
@@ -153,6 +154,61 @@ class EventPricerNetworkTests(unittest.TestCase):
         self.assertEqual(
             len(network.sink_arcs),
             len({source for source,_cost,_action in network.sink_arcs}),
+        )
+
+    def test_explicit_and_lazy_shortest_path_oracles_match(self):
+        problem = two_trip_problem()
+        explicit = EventExpandedNetwork(
+            problem, prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="explicit",
+        )
+        lazy = EventExpandedNetwork(
+            problem, prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="lazy",
+        )
+        self.assertEqual(lazy.n_arcs, explicit.n_arcs)
+        self.assertEqual(
+            lazy.metrics()["materialized_python_arc_objects"], 0,
+        )
+        self.assertGreater(lazy.metrics()["packed_arc_bytes"], 0)
+        for duals in (
+            {0: 100000.0, 1: 100000.0},
+            {0: 100100.0, 1: 99900.0},
+            {0: 0.0, 1: 0.0},
+        ):
+            with self.subTest(duals=duals):
+                expected = explicit.min_reduced_cost_route(duals)
+                observed = lazy.min_reduced_cost_route(duals)
+                if expected is None:
+                    self.assertIsNone(observed)
+                    continue
+                self.assertAlmostEqual(observed["rc"], expected["rc"])
+                self.assertEqual(observed["trips"], expected["trips"])
+                self.assertEqual(
+                    observed["route_nodes"], expected["route_nodes"],
+                )
+                self.assertEqual(
+                    observed["_event_record"],
+                    expected["_event_record"],
+                )
+
+    def test_explicit_and_lazy_fixed_sequence_oracles_match(self):
+        problem = two_trip_problem(first_energy=191.2)
+        explicit = EventExpandedNetwork(
+            problem, prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="explicit",
+        )
+        lazy = EventExpandedNetwork(
+            problem, prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="lazy",
+        )
+        self.assertEqual(
+            lazy.fixed_sequence_record((0, 1)),
+            explicit.fixed_sequence_record((0, 1)),
         )
 
 

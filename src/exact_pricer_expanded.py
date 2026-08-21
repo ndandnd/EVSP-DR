@@ -1266,9 +1266,13 @@ def run_cg(args) -> dict:
         DATA_DIR / args.prices_csv, CHARGING_STATIONS
     )
     network_class = ExpandedNetwork
+    network_kwargs = {}
     if time_model == "event":
         from event_pricer_network import EventExpandedNetwork
         network_class = EventExpandedNetwork
+        network_kwargs["arc_mode"] = getattr(
+            args, "event_arc_mode", "lazy"
+        )
     net = network_class(
         problem, prices,
         soc_step=args.soc_step,
@@ -1279,6 +1283,7 @@ def run_cg(args) -> dict:
         strict_tariff_coverage=getattr(
             args, "strict_tariff_coverage", False
         ),
+        **network_kwargs,
     )
     build_s = time.time() - network_t0
     network_metrics = (
@@ -2538,6 +2543,14 @@ def main(argv=None) -> int:
         help="Opt in to instance-induced event times; omitted keeps the "
              "uniform time lattice byte-identical.",
     )
+    parser.add_argument(
+        "--event-arc-mode",
+        choices=("lazy", "explicit"),
+        default=argparse.SUPPRESS,
+        help="Event-only arc representation. Lazy stores packed endpoints and "
+             "costs while reconstructing physical actions on demand; explicit "
+             "is the small-network correctness oracle.",
+    )
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument("--columns_per_iter", type=int, default=30)
     parser.add_argument("--rc-eps", type=float, default=1e-4)
@@ -2637,6 +2650,11 @@ def main(argv=None) -> int:
         and args.diversify_rounds
     ):
         parser.error("event time model does not support diversification")
+    if (
+        hasattr(args, "event_arc_mode")
+        and getattr(args, "time_model", "uniform") != "event"
+    ):
+        parser.error("--event-arc-mode requires --time-model event")
     if args.out:
         lock_metadata = {
             "pid": os.getpid(),

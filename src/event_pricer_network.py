@@ -6,7 +6,10 @@ import hashlib
 import json
 import math
 import time
+from array import array
 from copy import deepcopy
+
+import numpy as np
 
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, STATIONS
 from config import BUS_COST_KX, CHARGE_START_COST, charge_cost_premium
@@ -153,6 +156,7 @@ class EventExpandedNetwork:
         charge_kw,
         reserve_kwh,
         strict_tariff_coverage=False,
+        arc_mode="lazy",
     ):
         self.problem = problem
         self.prices = deepcopy(station_prices)
@@ -162,6 +166,9 @@ class EventExpandedNetwork:
         self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
+        if arc_mode not in {"explicit", "lazy"}:
+            raise ValueError(f"unsupported event arc mode: {arc_mode}")
+        self.arc_mode = arc_mode
         required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
         required_hours = set(range(required_hour + 1))
         for curve in self.prices.values():
@@ -182,6 +189,7 @@ class EventExpandedNetwork:
             problem, self.prices, self.block_min
         )
         self._window_cache = {}
+        self._selected_action_cache = {}
         self._split_arcs()
         self._build_nodes()
         self._build_arcs()
@@ -237,32 +245,42 @@ class EventExpandedNetwork:
 
     def _finalize_source(self, source):
         retained = self._building_arcs.pop(source, {})
-        self.out[source] = sorted(
+        rows = sorted(
             (value[1] for value in retained.values()),
             key=lambda row: (
                 row[0], row[1], json.dumps(row[3], sort_keys=True)
             ),
         )
+        if self.arc_mode == "explicit":
+            self.out[source] = rows
+        else:
+            start = len(self._arc_targets)
+            self._arc_targets.extend(row[0] for row in rows)
+            self._arc_costs.extend(row[1] for row in rows)
+            self._arc_slices[source] = (start, len(self._arc_targets))
         self.sink_arcs.extend(
-            (source, cost, action)
-            for target, cost, _dual, action in self.out[source]
+            (
+                source,
+                cost,
+                action if self.arc_mode == "explicit" else None,
+            )
+            for target, cost, _dual, action in rows
             if target == self.SINK
         )
 
     def _build_arcs(self):
-        self.out = [[] for _node in self.node_meta]
+        self.out = (
+            [[] for _node in self.node_meta]
+            if self.arc_mode == "explicit" else None
+        )
+        if self.arc_mode == "lazy":
+            self._arc_targets = array("I")
+            self._arc_costs = array("d")
+            self._arc_slices = [(0, 0) for _node in self.node_meta]
         self._building_arcs = {}
         self.sink_arcs = []
-        for trip, (travel, deadhead) in sorted(self.depot_trip.items()):
-            if travel > self.problem.start_min[trip] + TOL:
-                continue
-            level = _floor_level(self.grid, self.soc_step, self.g - deadhead)
-            node = self.trip_node.get((trip, level))
-            if node is not None:
-                self._add(0, node, BUS_COST_KX, trip, {
-                    "kind": "source", "trip": trip,
-                    "travel_min": travel, "deadhead_kwh": deadhead,
-                })
+        for target, cost, trip, action in self._source_candidates():
+            self._add(0, target, cost, trip, action)
         self._finalize_source(0)
         for (trip, level), source in sorted(self.trip_node.items()):
             soc_exit = self.grid[level] - self.problem.trip_energy[trip]
@@ -271,9 +289,41 @@ class EventExpandedNetwork:
             self._charge_arcs(source, trip, soc_exit, depart)
             self._finalize_source(source)
         del self._building_arcs
-        self.n_arcs = sum(len(arcs) for arcs in self.out)
+        if self.arc_mode == "explicit":
+            self.n_arcs = sum(len(arcs) for arcs in self.out)
+        else:
+            self.n_arcs = len(self._arc_targets)
+            self._arc_targets_np = np.frombuffer(
+                self._arc_targets, dtype=np.uint32
+            )
+            self._arc_costs_np = np.frombuffer(
+                self._arc_costs, dtype=np.float64
+            )
+            self._node_dual_np = np.full(
+                len(self.node_meta), -1, dtype=np.int32
+            )
+            for (trip, _level), node in self.trip_node.items():
+                self._node_dual_np[node] = self.trip_position[trip]
+
+    def _source_candidates(self):
+        for trip, (travel, deadhead) in sorted(self.depot_trip.items()):
+            if travel > self.problem.start_min[trip] + TOL:
+                continue
+            level = _floor_level(self.grid, self.soc_step, self.g - deadhead)
+            node = self.trip_node.get((trip, level))
+            if node is not None:
+                yield node, BUS_COST_KX, trip, {
+                    "kind": "source", "trip": trip,
+                    "travel_min": travel, "deadhead_kwh": deadhead,
+                }
 
     def _direct_arcs(self, source, trip, soc_exit, depart):
+        for target, cost, successor, action in self._direct_candidates(
+            trip, soc_exit, depart
+        ):
+            self._add(source, target, cost, successor, action)
+
+    def _direct_candidates(self, trip, soc_exit, depart):
         options = list(sorted(self.trip_trip.get(trip, {}).items()))
         if trip in self.trip_depot:
             options.append((None, self.trip_depot[trip]))
@@ -306,9 +356,15 @@ class EventExpandedNetwork:
                 "next_trip": successor, "travel_min": travel,
                 "deadhead_kwh": deadhead,
             }
-            self._add(source, target, 0.0, successor, action)
+            yield target, 0.0, successor, action
 
     def _charge_arcs(self, source, trip, soc_exit, depart):
+        for target, cost, successor, action in self._charge_candidates(
+            trip, soc_exit, depart
+        ):
+            self._add(source, target, cost, successor, action)
+
+    def _charge_candidates(self, trip, soc_exit, depart):
         for station, (inbound_min, inbound_kwh) in sorted(
             self.trip_station.get(trip, {}).items()
         ):
@@ -379,7 +435,57 @@ class EventExpandedNetwork:
                         "exit_level": target_level,
                     }
                     cost = CHARGE_START_COST + energy_cost
-                    self._add(source, target, cost, successor, action)
+                    yield target, cost, successor, action
+
+    def _iter_arcs(self, source):
+        if self.arc_mode == "explicit":
+            for target, cost, _dual, _action in self.out[source]:
+                yield target, cost
+            return
+        start, end = self._arc_slices[source]
+        for offset in range(start, end):
+            yield (
+                int(self._arc_targets_np[offset]),
+                float(self._arc_costs_np[offset]),
+            )
+
+    def _edge_action(self, source, target):
+        key = (int(source), int(target))
+        cached = self._selected_action_cache.get(key)
+        if cached is not None:
+            return cached
+        if self.arc_mode == "explicit":
+            for candidate_target, _cost, _dual, action in self.out[source]:
+                if candidate_target == target:
+                    self._selected_action_cache[key] = action
+                    return action
+            raise RuntimeError(f"missing explicit event edge {source}->{target}")
+
+        if source == 0:
+            candidates = self._source_candidates()
+        else:
+            kind, trip, level = self.node_meta[source]
+            if kind != "trip":
+                raise RuntimeError(f"invalid event edge source {source}")
+            soc_exit = self.grid[level] - self.problem.trip_energy[trip]
+            depart = float(self.problem.end_min[trip])
+            candidates = (
+                *self._direct_candidates(trip, soc_exit, depart),
+                *self._charge_candidates(trip, soc_exit, depart),
+            )
+        retained = []
+        for candidate_target, cost, _trip, action in candidates:
+            if candidate_target == target:
+                retained.append((
+                    float(cost),
+                    json.dumps(action, sort_keys=True),
+                    action,
+                ))
+        if not retained:
+            raise RuntimeError(f"missing lazy event edge {source}->{target}")
+        action = min(retained, key=lambda row: (row[0], row[1]))[2]
+        self._selected_action_cache[key] = action
+        return action
 
     def _record(self, actions):
         trips = [
@@ -495,10 +601,21 @@ class EventExpandedNetwork:
         })
         return record
 
-    def _walk(self, parent, node):
+    def _walk(self, parent, node, *, terminal_source=None):
         actions = []
+        if terminal_source is not None:
+            actions.append(self._edge_action(terminal_source, self.SINK))
+            node = terminal_source
         while node != 0:
-            previous, action = parent[node]
+            if self.arc_mode == "explicit":
+                previous, action = parent[node]
+            else:
+                previous = int(parent[node])
+                if previous < 0:
+                    raise RuntimeError(
+                        f"event parent is missing for node {node}"
+                    )
+                action = self._edge_action(previous, node)
             actions.append(action)
             node = previous
         actions.reverse()
@@ -517,6 +634,8 @@ class EventExpandedNetwork:
         dense = [
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
         ]
+        if self.arc_mode == "lazy":
+            return self._min_reduced_cost_route_lazy(dense)
         values = [float("inf")] * len(self.node_meta)
         parent = [None] * len(self.node_meta)
         values[0] = 0.0
@@ -535,6 +654,44 @@ class EventExpandedNetwork:
         best = self._walk(parent, self.SINK)
         return {
             "rc": values[self.SINK],
+            **best,
+            "_value": values,
+            "_parent": parent,
+        }
+
+    def _min_reduced_cost_route_lazy(self, dense):
+        values = np.full(len(self.node_meta), np.inf, dtype=np.float64)
+        parent = np.full(len(self.node_meta), -1, dtype=np.int32)
+        values[0] = 0.0
+        dual_by_node = np.zeros(len(self.node_meta), dtype=np.float64)
+        trip_nodes = self._node_dual_np >= 0
+        dual_by_node[trip_nodes] = np.asarray(
+            dense, dtype=np.float64
+        )[self._node_dual_np[trip_nodes]]
+        for source in self.topo:
+            source_value = values[source]
+            if not np.isfinite(source_value):
+                continue
+            start, end = self._arc_slices[source]
+            if start == end:
+                continue
+            targets = self._arc_targets_np[start:end]
+            candidates = (
+                source_value
+                + self._arc_costs_np[start:end]
+                - dual_by_node[targets]
+            )
+            improved = candidates < values[targets] - 1e-12
+            if not np.any(improved):
+                continue
+            improved_targets = targets[improved]
+            values[improved_targets] = candidates[improved]
+            parent[improved_targets] = source
+        if not np.isfinite(values[self.SINK]):
+            return None
+        best = self._walk(parent, self.SINK)
+        return {
+            "rc": float(values[self.SINK]),
             **best,
             "_value": values,
             "_parent": parent,
@@ -562,12 +719,12 @@ class EventExpandedNetwork:
         ))
         routes = [best]
         seen = {frozenset(best["trips"])}
-        for reduced_cost, source, action in candidates:
+        for reduced_cost, source, _action in candidates:
             if len(routes) >= k or reduced_cost >= -1e-9:
                 break
-            terminal_parent = list(parent)
-            terminal_parent[self.SINK] = (source, action)
-            route = self._walk(terminal_parent, self.SINK)
+            route = self._walk(
+                parent, self.SINK, terminal_source=source
+            )
             key = frozenset(route["trips"])
             if key in seen:
                 continue
@@ -592,13 +749,13 @@ class EventExpandedNetwork:
         if not trips or any(trip not in self.trip_position for trip in trips):
             return None
         frontier = {}
-        for target, cost, _dual, action in self.out[0]:
+        for target, cost in self._iter_arcs(0):
             if self.node_meta[target][1] == trips[0]:
-                frontier[target] = (cost, [action])
+                frontier[target] = (cost, [(0, target)])
         for successor in (*trips[1:], None):
             following = {}
-            for source, (base_cost, actions) in frontier.items():
-                for target, cost, _dual, action in self.out[source]:
+            for source, (base_cost, edges) in frontier.items():
+                for target, cost in self._iter_arcs(source):
                     matches = (
                         target == self.SINK if successor is None
                         else self.node_meta[target][0] == "trip"
@@ -608,21 +765,25 @@ class EventExpandedNetwork:
                         continue
                     candidate = (
                         base_cost + cost,
-                        actions + [action],
+                        edges + [(source, target)],
                     )
                     current = following.get(target)
                     if current is None or (
                         candidate[0],
-                        json.dumps(candidate[1], sort_keys=True),
+                        candidate[1],
                     ) < (
                         current[0],
-                        json.dumps(current[1], sort_keys=True),
+                        current[1],
                     ):
                         following[target] = candidate
             frontier = following
             if not frontier:
                 return None
-        _cost, actions = frontier[self.SINK]
+        _cost, edges = frontier[self.SINK]
+        actions = [
+            self._edge_action(source, target)
+            for source, target in edges
+        ]
         return self._record(actions)
 
     def metrics(self):
@@ -630,6 +791,17 @@ class EventExpandedNetwork:
             "time_model": "event",
             "dag_nodes": len(self.node_meta),
             "dag_arcs": self.n_arcs,
+            "arc_mode": self.arc_mode,
+            "materialized_python_arc_objects": (
+                self.n_arcs if self.arc_mode == "explicit" else 0
+            ),
+            "packed_arc_bytes": (
+                0 if self.arc_mode == "explicit"
+                else (
+                    len(self._arc_targets) * self._arc_targets.itemsize
+                    + len(self._arc_costs) * self._arc_costs.itemsize
+                )
+            ),
             "station_event_times": {
                 station: len(times)
                 for station, times in self.events.items()
