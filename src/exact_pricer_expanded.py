@@ -56,7 +56,7 @@ from durable_io import (
     read_jsonl_records,
     valid_json_object,
 )
-from exact_cg_telemetry import PhaseTelemetry
+from exact_cg_telemetry import PhaseTelemetry, peak_rss_bytes
 from expanded_path_realization import (
     _arc_map as continuous_arc_map,
     BLOCK_SCHEDULE_SCHEMA,
@@ -70,6 +70,12 @@ from run_exact_pool_mip import validate_injected_route
 from utils_v2 import base_station_name, load_station_hourly_prices
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
+def _peak_rss_mb() -> float:
+    """Operational process peak; excluded from scientific identity."""
+
+    return peak_rss_bytes() / (1024.0 * 1024.0)
 G_KWH = 300.0
 
 
@@ -677,15 +683,18 @@ class ExpandedNetwork:
                 "_expanded_grid_charging": best_grid_charging,
                 "_value": value, "_walk": _walk}
 
-    def k_best_routes(
+    def sink_predecessor_route_batch(
         self,
         alpha: dict[int, float],
-        k: int = 30,
+        limit: int = 30,
         *,
         phase_callback=None,
     ):
-        """Best route plus up to k-1 additional negative columns from the same
-        pass: min-cost paths ending at the k best distinct sink-predecessors."""
+        """Return the exact best route plus distinct sink-predecessor paths.
+
+        This is a deterministic enrichment heuristic, not k-shortest-path
+        enumeration: each sink predecessor contributes only its best prefix.
+        """
         started = time.perf_counter()
         best = self.min_reduced_cost_route(alpha)
         if phase_callback is not None:
@@ -711,8 +720,8 @@ class ExpandedNetwork:
             candidates.append((value[u] + cost, u))
         candidates.sort()
         routes, seen = [best], {frozenset(best["trips"])}
-        for rc, u in candidates[: max(4 * k, 200)]:
-            if len(routes) >= k or rc >= -1e-9:
+        for rc, u in candidates[: max(4 * limit, 200)]:
+            if len(routes) >= limit or rc >= -1e-9:
                 break
             (
                 trips,
@@ -1484,6 +1493,7 @@ def run_cg(args) -> dict:
             "columns_journal": str(journal_path),
             "wall_s": _cumulative_elapsed_s(),
             "attempt_wall_s": _attempt_elapsed_s(),
+            "peak_rss_mb": _peak_rss_mb(),
             "stop_reason": "resume_starting",
             "provenance": provenance,
         })
@@ -1526,6 +1536,7 @@ def run_cg(args) -> dict:
             "columns_journal": str(journal_path),
             "wall_s": _attempt_elapsed_s(),
             "attempt_wall_s": _attempt_elapsed_s(),
+            "peak_rss_mb": _peak_rss_mb(),
             "stop_reason": "initializing",
             "history_tail": [],
             "final_lp": None,
@@ -1774,6 +1785,7 @@ def run_cg(args) -> dict:
             "columns_journal": str(journal_path) if journal_path else None,
             "wall_s": _cumulative_elapsed_s(),
             "attempt_wall_s": _attempt_elapsed_s(),
+            "peak_rss_mb": _peak_rss_mb(),
             "stop_reason": status, "history_tail": history[-5:],
             "final_lp": last_good_lp_detail,
             "final_lp_source": (last_good_lp_detail or {}).get("source"),
@@ -1966,8 +1978,8 @@ def run_cg(args) -> dict:
         else:
             lp = _ArtificialOnlyLP()
         if telemetry is None:
-            batch = net.k_best_routes(
-                lp.trip_duals, k=args.columns_per_iter
+            batch = net.sink_predecessor_route_batch(
+                lp.trip_duals, limit=args.columns_per_iter
             )
         else:
             def pricing_phase(name, duration_s, details):
@@ -1980,9 +1992,9 @@ def run_cg(args) -> dict:
                     details=details,
                 )
 
-            batch = net.k_best_routes(
+            batch = net.sink_predecessor_route_batch(
                 lp.trip_duals,
-                k=args.columns_per_iter,
+                limit=args.columns_per_iter,
                 phase_callback=pricing_phase,
             )
         best = batch[0] if batch else None
@@ -2259,8 +2271,8 @@ def run_cg(args) -> dict:
                                                     args.diversify_delta))
                          for t_, v in base_lp.trip_duals.items()}
                 if telemetry is None:
-                    diversify_routes = net.k_best_routes(
-                        alpha, k=args.columns_per_iter
+                    diversify_routes = net.sink_predecessor_route_batch(
+                        alpha, limit=args.columns_per_iter
                     )
                 else:
                     def diversify_pricing_phase(name, duration_s, details):
@@ -2276,9 +2288,9 @@ def run_cg(args) -> dict:
                             },
                         )
 
-                    diversify_routes = net.k_best_routes(
+                    diversify_routes = net.sink_predecessor_route_batch(
                         alpha,
-                        k=args.columns_per_iter,
+                        limit=args.columns_per_iter,
                         phase_callback=diversify_pricing_phase,
                     )
                 for route in diversify_routes:
@@ -2512,6 +2524,7 @@ def run_cg(args) -> dict:
         "columns_journal": str(journal_path) if journal_path else None,
         "wall_s": _cumulative_elapsed_s(),
         "attempt_wall_s": _attempt_elapsed_s(),
+        "peak_rss_mb": _peak_rss_mb(),
         "stop_reason": stop_reason,
         "termination_signal": termination["signal"],
         "network_metrics": network_metrics,
@@ -2552,7 +2565,11 @@ def main(argv=None) -> int:
              "is the small-network correctness oracle.",
     )
     parser.add_argument("--max-iters", type=int, default=2000)
-    parser.add_argument("--columns_per_iter", type=int, default=30)
+    parser.add_argument(
+        "--columns_per_iter", type=int, default=30,
+        help="Maximum columns from the sink-predecessor batch heuristic per "
+             "pricing pass; this is not k-shortest-path enumeration.",
+    )
     parser.add_argument("--rc-eps", type=float, default=1e-4)
     parser.add_argument(
         "--master-sense",

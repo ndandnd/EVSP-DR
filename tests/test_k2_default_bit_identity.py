@@ -18,6 +18,25 @@ import exact_pricer_expanded as current  # noqa: E402
 
 
 PRE_OBJECTIVE_COMMIT = "2b857f4"
+OPERATIONAL_STATUS_FIELDS_EXCLUDED = frozenset({
+    "wall_s",
+    "attempt_wall_s",
+    "peak_rss_mb",
+})
+SCIENTIFIC_STATUS_FIELDS = (
+    "iterations",
+    "certified_rc_optimal",
+    "final",
+    "columns",
+    "stop_reason",
+)
+
+
+def scientific_status(status):
+    return {
+        key: status[key]
+        for key in SCIENTIFIC_STATUS_FIELDS
+    }
 
 
 def load_prechange_module():
@@ -92,12 +111,29 @@ class K2DefaultBitIdentityTests(unittest.TestCase):
                     "reduced_costs": [row["min_rc"] for row in rows],
                     "iterations": iterations,
                     "status": json.loads(output.read_text()),
+                    "scientific_status": scientific_status(
+                        json.loads(output.read_text())
+                    ),
                 }
             before, after = outputs["prechange"], outputs["current"]
             self.assertEqual(after["journal"], before["journal"])
             self.assertEqual(after["route_hashes"], before["route_hashes"])
             self.assertEqual(after["reduced_costs"], before["reduced_costs"])
             self.assertEqual(after["iterations"], before["iterations"])
+            self.assertEqual(
+                after["scientific_status"],
+                before["scientific_status"],
+            )
+            self.assertEqual(
+                OPERATIONAL_STATUS_FIELDS_EXCLUDED,
+                frozenset({
+                    "wall_s", "attempt_wall_s", "peak_rss_mb",
+                }),
+            )
+            self.assertTrue(
+                OPERATIONAL_STATUS_FIELDS_EXCLUDED
+                & set(after["status"])
+            )
             self.assertTrue(after["status"]["certified_rc_optimal"])
             self.assertEqual(
                 after["status"]["final"]["route_weight"],

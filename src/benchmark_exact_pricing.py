@@ -87,13 +87,17 @@ def benchmark_case(args, csv_name: str) -> dict:
         }
 
     for _ in range(args.warmup):
-        network.k_best_routes(duals, k=args.columns)
+        network.sink_predecessor_route_batch(
+            duals, limit=args.columns
+        )
     durations = []
     route_hashes = []
     canonical = None
     for _ in range(args.repeat):
         started = time.perf_counter()
-        routes = network.k_best_routes(duals, k=args.columns)
+        routes = network.sink_predecessor_route_batch(
+            duals, limit=args.columns
+        )
         durations.append(time.perf_counter() - started)
         route_hash, canonical = _canonical_routes(routes)
         route_hashes.append(route_hash)

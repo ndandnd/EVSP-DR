@@ -697,7 +697,14 @@ class EventExpandedNetwork:
             "_parent": parent,
         }
 
-    def k_best_routes(self, alpha, k=30, *, phase_callback=None):
+    def sink_predecessor_route_batch(
+        self, alpha, limit=30, *, phase_callback=None
+    ):
+        """Return the exact best route plus distinct sink-predecessor paths.
+
+        This is a deterministic enrichment heuristic, not k-shortest-path
+        enumeration: each sink predecessor contributes only its best prefix.
+        """
         started = time.perf_counter()
         best = self.min_reduced_cost_route(alpha)
         if phase_callback is not None:
@@ -720,7 +727,7 @@ class EventExpandedNetwork:
         routes = [best]
         seen = {frozenset(best["trips"])}
         for reduced_cost, source, _action in candidates:
-            if len(routes) >= k or reduced_cost >= -1e-9:
+            if len(routes) >= limit or reduced_cost >= -1e-9:
                 break
             route = self._walk(
                 parent, self.SINK, terminal_source=source

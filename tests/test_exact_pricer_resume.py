@@ -261,7 +261,7 @@ class ExactPricerResumeTests(unittest.TestCase):
         problem = SimpleNamespace(trips=[1], adjacency={})
         network = SimpleNamespace(
             node_meta=[], n_arcs=0,
-            k_best_routes=lambda _duals, *, k: [],
+            sink_predecessor_route_batch=lambda _duals, *, limit: [],
         )
         provenance = {
             "instance_sha256": "instance-hash",
@@ -304,7 +304,7 @@ class ExactPricerResumeTests(unittest.TestCase):
                 args.phase_telemetry = path
                 problem = SimpleNamespace(trips=[1], adjacency={})
 
-                def k_best(_duals, *, k, phase_callback=None):
+                def route_batch(_duals, *, limit, phase_callback=None):
                     if phase_callback is not None:
                         phase_callback(
                             "pricing_shortest_path", 0.1,
@@ -317,7 +317,8 @@ class ExactPricerResumeTests(unittest.TestCase):
                     return []
 
                 network = SimpleNamespace(
-                    node_meta=[], n_arcs=0, k_best_routes=k_best,
+                    node_meta=[], n_arcs=0,
+                    sink_predecessor_route_batch=route_batch,
                 )
                 provenance = {
                     "instance_sha256": "instance-hash",
@@ -351,6 +352,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             for payload in (without, with_telemetry):
                 payload.pop("wall_s")
                 payload.pop("attempt_wall_s")
+                payload.pop("peak_rss_mb")
             self.assertEqual(without, with_telemetry)
             self.assertFalse(with_telemetry["certified_rc_optimal"])
             records = [
@@ -397,7 +399,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             )
             problem = SimpleNamespace(trips=[1], adjacency={})
 
-            def k_best(_duals, *, k, phase_callback=None):
+            def route_batch(_duals, *, limit, phase_callback=None):
                 if phase_callback is not None:
                     phase_callback(
                         "pricing_shortest_path", 0.0,
@@ -410,7 +412,8 @@ class ExactPricerResumeTests(unittest.TestCase):
                 return []
 
             network = SimpleNamespace(
-                node_meta=[], n_arcs=0, k_best_routes=k_best,
+                node_meta=[], n_arcs=0,
+                sink_predecessor_route_batch=route_batch,
             )
             provenance = {
                 "instance_sha256": "instance-hash",
@@ -464,7 +467,9 @@ class ExactPricerResumeTests(unittest.TestCase):
             network = SimpleNamespace(
                 node_meta=[],
                 n_arcs=0,
-                k_best_routes=lambda _duals, *, k, **_kwargs: [],
+                sink_predecessor_route_batch=(
+                    lambda _duals, *, limit, **_kwargs: []
+                ),
             )
             provenance = {
                 "instance_sha256": "instance-hash",
@@ -751,7 +756,7 @@ class ExactPricerResumeTests(unittest.TestCase):
         problem = SimpleNamespace(trips=[1], adjacency={})
         network = SimpleNamespace(
             node_meta=[], n_arcs=0,
-            k_best_routes=lambda _duals, *, k: [],
+            sink_predecessor_route_batch=lambda _duals, *, limit: [],
         )
         provenance = {
             "instance_sha256": "instance-hash",
