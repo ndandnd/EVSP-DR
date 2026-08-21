@@ -55,6 +55,7 @@ CODE_PATHS = (
     "src/prepare_scale_ladder_known_partition.py",
     "src/exact_pricer_expanded.py",
     "src/exact_initial_pools.py",
+    "src/warm_pool_fixed_duty_optimizer.py",
     "src/greedy_init.py",
     "src/run_exact_pool_mip.py",
     "src/expanded_path_realization.py",

@@ -41,6 +41,7 @@ LOCAL_CODE_PATHS = (
     "src/run_exact_pool_mip.py",
     "src/exact_pricer_expanded.py",
     "src/exact_initial_pools.py",
+    "src/warm_pool_fixed_duty_optimizer.py",
     "src/greedy_init.py",
     "src/expanded_path_realization.py",
     "src/audit_giro_known_columns.py",

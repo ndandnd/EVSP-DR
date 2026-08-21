@@ -7,9 +7,9 @@ import json
 import math
 
 from config import CHARGE_START_COST
-from fixed_duty_expanded_optimizer import optimize_fixed_duty
 from greedy_init import build_greedy_routes
 from matching_init import build_matching_initial_routes
+from warm_pool_fixed_duty_optimizer import optimize_fixed_duty
 
 
 SCHEMA = "evsp-dr-exact-initial-pool-v1"
