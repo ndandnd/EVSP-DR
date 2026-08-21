@@ -16,6 +16,7 @@ from config import BUS_COST_KX, CHARGE_START_COST, charge_cost_premium
 from expanded_path_realization import (
     BLOCK_SCHEDULE_SCHEMA,
     charging_block_schedule_sha256,
+    normalize_event_station_prices,
     realize_expanded_path,
     realized_costs,
 )
@@ -159,7 +160,6 @@ class EventExpandedNetwork:
         arc_mode="lazy",
     ):
         self.problem = problem
-        self.prices = deepcopy(station_prices)
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
@@ -172,15 +172,11 @@ class EventExpandedNetwork:
         self.station_position = {
             station: index for index, station in enumerate(STATIONS)
         }
-        required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
-        required_hours = set(range(required_hour + 1))
-        for curve in self.prices.values():
-            if self.strict_tariff_coverage and not required_hours <= set(curve):
-                raise ValueError("event tariff coverage is incomplete")
-            if curve:
-                last = curve[max(curve)]
-                for hour in range(required_hour + 1):
-                    curve.setdefault(hour, last)
+        self.prices = normalize_event_station_prices(
+            station_prices,
+            horizon_min=HORIZON_MIN,
+            strict_tariff_coverage=self.strict_tariff_coverage,
+        )
         self.grid = [
             round(index * self.soc_step, 9)
             for index in range(int(self.g / self.soc_step) + 1)

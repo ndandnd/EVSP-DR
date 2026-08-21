@@ -44,6 +44,31 @@ def charging_block_schedule_sha256(blocks: list[dict]) -> str:
     return _canonical_sha(blocks)
 
 
+def normalize_event_station_prices(
+    station_prices: dict,
+    *,
+    horizon_min: float,
+    strict_tariff_coverage: bool = False,
+) -> dict:
+    """Apply one event-mode tariff identity policy through the full horizon."""
+
+    normalized = deepcopy(station_prices)
+    required_hour = int(math.ceil(float(horizon_min) / 60.0)) - 1
+    required_hours = set(range(required_hour + 1))
+    for curve in normalized.values():
+        if not curve:
+            raise ValueError("event tariff curve is empty")
+        if (
+            strict_tariff_coverage
+            and not required_hours <= set(curve)
+        ):
+            raise ValueError("event tariff coverage is incomplete")
+        last = curve[max(curve)]
+        for hour in range(required_hour + 1):
+            curve.setdefault(hour, last)
+    return normalized
+
+
 def _arc_map(problem):
     return {
         (source, target): (float(travel), float(deadhead))

@@ -510,6 +510,7 @@ def prepare_strict_partition_pool(
     from expanded_path_realization import (
         BLOCK_SCHEDULE_SCHEMA,
         _arc_map,
+        normalize_event_station_prices,
         realize_expanded_path,
         realized_costs,
         validate_continuous_charging_blocks,
@@ -592,6 +593,14 @@ def prepare_strict_partition_pool(
     block_min = int(status["block_min"])
     time_model = status.get("time_model", "uniform")
     arrival_grace_min = 0.0 if time_model == "event" else 1.0
+    if time_model == "event":
+        prices = normalize_event_station_prices(
+            prices,
+            horizon_min=HORIZON_MIN,
+            strict_tariff_coverage=bool(
+                status.get("strict_tariff_coverage", False)
+            ),
+        )
     accepted = []
     valid_hashes = []
     repaired_hashes = []

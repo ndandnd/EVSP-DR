@@ -16,6 +16,7 @@ from audit_expanded_pool_physical import audit_pools  # noqa: E402
 from expanded_path_realization import (  # noqa: E402
     EVENT_REALIZATION_SCHEMA,
     blocks_from_continuous_stops,
+    normalize_event_station_prices,
     realize_expanded_path,
     realized_costs,
     validate_continuous_charging_blocks,
@@ -44,6 +45,31 @@ def problem(trip_energy, edges):
 
 
 class ExpandedPathRealizationTests(unittest.TestCase):
+    def test_event_tariff_fallback_has_stable_requested_hour_identity(self):
+        raw_prices = {"4808": {hour: 0.1 for hour in range(25)}}
+        normalized = normalize_event_station_prices(
+            raw_prices, horizon_min=1560,
+        )
+        self.assertNotIn(25, raw_prices["4808"])
+        self.assertEqual(normalized["4808"][25], 0.1)
+        record = {
+            "charging_stops": {
+                "stations": ["4808_0"],
+                "cst": [1523.0], "cet": [1525.5], "kwh": [10.0],
+            },
+        }
+        blocks = blocks_from_continuous_stops(
+            record, station_prices=normalized, charge_kw=240,
+        )
+        self.assertEqual(blocks[0]["tariff_hour"], 25)
+        validate_continuous_charging_blocks(
+            record, blocks, station_prices=normalized, charge_kw=240,
+        )
+        with self.assertRaisesRegex(ValueError, "tariff identity"):
+            validate_continuous_charging_blocks(
+                record, blocks, station_prices=raw_prices, charge_kw=240,
+            )
+
     def test_accumulated_floor_residual_repairs_large_overcharge(self):
         station = "3127L_0"
         route_nodes = [DEPOT, 0, 1, 2, station, 3, DEPOT]
