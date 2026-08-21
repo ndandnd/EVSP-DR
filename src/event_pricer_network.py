@@ -374,27 +374,68 @@ class EventExpandedNetwork:
         ]
         route_nodes = [DEPOT, trips[0]]
         charging = {"stations": [], "cst": [], "cet": [], "kwh": []}
+        expanded = {"stations": [], "cst": [], "cet": [], "kwh": []}
+        continuous_soc = self.g
+        continuous_soc -= actions[0]["deadhead_kwh"]
+        continuous_soc -= self.problem.trip_energy[trips[0]]
         for action in actions[1:]:
             if action["kind"] == "charge":
                 route_nodes.append(action["station"])
+                continuous_soc -= action["inbound_kwh"]
+                target_soc = self.grid[action["exit_level"]]
+                realized_kwh = max(0.0, target_soc - continuous_soc)
+                if realized_kwh > action["kwh"] + 1e-6:
+                    raise RuntimeError(
+                        "event route requires more than grid charge energy"
+                    )
+                continuous_soc += realized_kwh
+                continuous_soc -= action["outbound_kwh"]
                 charging["stations"].append(action["station"])
                 charging["cst"].append(action["cst"])
                 charging["cet"].append(action["cet"])
-                charging["kwh"].append(action["kwh"])
+                charging["kwh"].append(realized_kwh)
+                expanded["stations"].append(action["station"])
+                expanded["cst"].append(action["cst"])
+                expanded["cet"].append(action["cet"])
+                expanded["kwh"].append(action["kwh"])
+            elif action["kind"] == "direct":
+                continuous_soc -= action["deadhead_kwh"]
             if action.get("next_trip") is not None:
                 route_nodes.append(action["next_trip"])
+                continuous_soc -= self.problem.trip_energy[
+                    action["next_trip"]
+                ]
+            if continuous_soc < self.reserve - 1e-6:
+                raise RuntimeError("event route replay drops below reserve")
         route_nodes.append(DEPOT)
         record = {
             "trips": trips,
             "route_nodes": route_nodes,
             "charging_stops": charging,
-            "expanded_grid_charging_stops": deepcopy(charging),
+            "expanded_grid_charging_stops": expanded,
+        }
+        expanded_record = {
+            **record,
+            "charging_stops": deepcopy(expanded),
+            "expanded_grid_charging_stops": deepcopy(expanded),
         }
         blocks = blocks_from_continuous_stops(
-            record,
+            expanded_record,
             station_prices=self.prices,
             charge_kw=self.charge_kw,
         )
+        remaining_by_stop = list(charging["kwh"])
+        for block in blocks:
+            stop = int(block["stop_index"])
+            realized = min(
+                remaining_by_stop[stop],
+                (block["end_min"] - block["start_min"])
+                * self.charge_kw / 60.0,
+            )
+            block["realized_kwh"] = realized
+            remaining_by_stop[stop] -= realized
+        if any(value > 1e-6 for value in remaining_by_stop):
+            raise RuntimeError("event route block allocation is incomplete")
         validation = validate_continuous_charging_blocks(
             record,
             blocks,
