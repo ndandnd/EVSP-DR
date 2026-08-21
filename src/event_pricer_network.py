@@ -169,6 +169,9 @@ class EventExpandedNetwork:
         if arc_mode not in {"explicit", "lazy"}:
             raise ValueError(f"unsupported event arc mode: {arc_mode}")
         self.arc_mode = arc_mode
+        self.station_position = {
+            station: index for index, station in enumerate(STATIONS)
+        }
         required_hour = int(math.ceil(HORIZON_MIN / 60.0)) - 1
         required_hours = set(range(required_hour + 1))
         for curve in self.prices.values():
@@ -257,6 +260,9 @@ class EventExpandedNetwork:
             start = len(self._arc_targets)
             self._arc_targets.extend(row[0] for row in rows)
             self._arc_costs.extend(row[1] for row in rows)
+            self._arc_recipes.extend(
+                self._action_recipe(row[3]) for row in rows
+            )
             self._arc_slices[source] = (start, len(self._arc_targets))
         self.sink_arcs.extend(
             (
@@ -276,6 +282,7 @@ class EventExpandedNetwork:
         if self.arc_mode == "lazy":
             self._arc_targets = array("I")
             self._arc_costs = array("d")
+            self._arc_recipes = array("I")
             self._arc_slices = [(0, 0) for _node in self.node_meta]
         self._building_arcs = {}
         self.sink_arcs = []
@@ -299,6 +306,9 @@ class EventExpandedNetwork:
             self._arc_costs_np = np.frombuffer(
                 self._arc_costs, dtype=np.float64
             )
+            self._arc_recipes_np = np.frombuffer(
+                self._arc_recipes, dtype=np.uint32
+            )
             self._node_dual_np = np.full(
                 len(self.node_meta), -1, dtype=np.int32
             )
@@ -316,6 +326,15 @@ class EventExpandedNetwork:
                     "kind": "source", "trip": trip,
                     "travel_min": travel, "deadhead_kwh": deadhead,
                 }
+
+    def _action_recipe(self, action):
+        if action["kind"] != "charge":
+            return 0
+        return (
+            1
+            + self.station_position[action["station"]] * len(self.grid)
+            + int(action["exit_level"])
+        )
 
     def _direct_arcs(self, source, trip, soc_exit, depart):
         for target, cost, successor, action in self._direct_candidates(
@@ -461,29 +480,84 @@ class EventExpandedNetwork:
                     return action
             raise RuntimeError(f"missing explicit event edge {source}->{target}")
 
+        start, end = self._arc_slices[source]
+        relative = np.flatnonzero(
+            self._arc_targets_np[start:end] == int(target)
+        )
+        if len(relative) != 1:
+            raise RuntimeError(f"missing lazy event edge {source}->{target}")
+        recipe = int(self._arc_recipes_np[start + int(relative[0])])
         if source == 0:
-            candidates = self._source_candidates()
+            trip = self.node_meta[target][1]
+            travel, deadhead = self.depot_trip[trip]
+            action = {
+                "kind": "source", "trip": trip,
+                "travel_min": travel, "deadhead_kwh": deadhead,
+            }
         else:
             kind, trip, level = self.node_meta[source]
             if kind != "trip":
                 raise RuntimeError(f"invalid event edge source {source}")
-            soc_exit = self.grid[level] - self.problem.trip_energy[trip]
-            depart = float(self.problem.end_min[trip])
-            candidates = (
-                *self._direct_candidates(trip, soc_exit, depart),
-                *self._charge_candidates(trip, soc_exit, depart),
+            successor = (
+                None if target == self.SINK
+                else self.node_meta[target][1]
             )
-        retained = []
-        for candidate_target, cost, _trip, action in candidates:
-            if candidate_target == target:
-                retained.append((
-                    float(cost),
-                    json.dumps(action, sort_keys=True),
-                    action,
-                ))
-        if not retained:
-            raise RuntimeError(f"missing lazy event edge {source}->{target}")
-        action = min(retained, key=lambda row: (row[0], row[1]))[2]
+            if recipe == 0:
+                travel, deadhead = (
+                    self.trip_depot[trip] if successor is None
+                    else self.trip_trip[trip][successor]
+                )
+                action = {
+                    "kind": "direct", "from_trip": trip,
+                    "next_trip": successor, "travel_min": travel,
+                    "deadhead_kwh": deadhead,
+                }
+            else:
+                encoded = recipe - 1
+                station_index, target_level = divmod(
+                    encoded, len(self.grid)
+                )
+                station = STATIONS[station_index]
+                inbound_min, inbound_kwh = self.trip_station[trip][station]
+                outbound_min, outbound_kwh = (
+                    self.station_depot[station] if successor is None
+                    else self.station_trip[station][successor]
+                )
+                depart = float(self.problem.end_min[trip])
+                arrival = depart + inbound_min
+                deadline = (
+                    HORIZON_MIN if successor is None
+                    else self.problem.start_min[successor]
+                )
+                latest = float(deadline) - outbound_min
+                soc_exit = self.grid[level] - self.problem.trip_energy[trip]
+                entry = _floor_level(
+                    self.grid, self.soc_step, soc_exit - inbound_kwh
+                )
+                energy = self.grid[target_level] - self.grid[entry]
+                cache_key = (
+                    station, round(arrival, 9), round(latest, 9),
+                    round(energy, 9),
+                )
+                selected = self._window_cache.get(cache_key)
+                if selected is None:
+                    raise RuntimeError(
+                        f"missing event window recipe for {source}->{target}"
+                    )
+                _energy_cost, charge_start, charge_end = selected
+                action = {
+                    "kind": "charge", "from_trip": trip,
+                    "next_trip": successor, "station": station,
+                    "arrival_min": arrival,
+                    "deadline_min": latest,
+                    "cst": charge_start, "cet": charge_end, "kwh": energy,
+                    "inbound_min": inbound_min,
+                    "outbound_min": outbound_min,
+                    "inbound_kwh": inbound_kwh,
+                    "outbound_kwh": outbound_kwh,
+                    "entry_level": entry,
+                    "exit_level": target_level,
+                }
         self._selected_action_cache[key] = action
         return action
 
@@ -807,6 +881,7 @@ class EventExpandedNetwork:
                 else (
                     len(self._arc_targets) * self._arc_targets.itemsize
                     + len(self._arc_costs) * self._arc_costs.itemsize
+                    + len(self._arc_recipes) * self._arc_recipes.itemsize
                 )
             ),
             "station_event_times": {
