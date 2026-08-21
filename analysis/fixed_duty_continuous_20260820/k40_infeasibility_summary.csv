@@ -1,0 +1,6 @@
+row_kind,scope,terminal_policy,event_treatment,duties_total,infeasible_count,infeasible_fraction,infeasible_duties,note
+all40_uncapped_terminal_infeasibility,all40_giro_duties,>= reserve,uncapped,40,0,0.0,,tariff-invariant physical feasibility
+all40_capped_terminal_infeasibility,all40_giro_duties,>= reserve,observed_event_cap,40,1,0.025,13303,tariff-invariant physical feasibility
+all40_uncapped_terminal_infeasibility,all40_giro_duties,>= initial,uncapped,40,7,0.175,13302;13304;13312;13319;13325;13409;13410,tariff-invariant physical feasibility
+all40_capped_terminal_infeasibility,all40_giro_duties,>= initial,observed_event_cap,40,10,0.25,13302;13303;13304;13312;13319;13321;13325;13405;13409;13410,tariff-invariant physical feasibility
+prior_k5_terminal_infeasibility_observation,three_k5_cells_15_duties,>= initial,uncapped_and_observed_event_cap,15,3,0.2,13302;13410;13304,separate prior observation; not part of all40 aggregate

@@ -1,13 +1,20 @@
 {
+  "concurrency": {
+    "classification": "unconstrained_charger_demand_not_capacity_feasible",
+    "timeline": "one shared service-day timeline across fixed duty set"
+  },
   "counts": {
-    "aggregate_rows": 4,
+    "aggregate_rows": 6,
     "duties": 40,
-    "per_duty_rows": 160,
-    "solution_rows": 16,
-    "station_time_rows": 5343,
+    "fixed_matched_duties": 30,
+    "hourly_rows": 648,
+    "infeasibility_rows": 5,
+    "per_duty_rows": 240,
+    "solution_rows": 24,
+    "station_time_rows": 6341,
     "trips": 947
   },
-  "created_at_utc": "2026-08-21T14:23:15.062182+00:00",
+  "created_at_utc": "2026-08-21T14:43:04.419795+00:00",
   "factorial": {
     "arms": [
       "uncapped_arrival",
@@ -16,8 +23,41 @@
       "capped_optimized"
     ],
     "event_cap": "GIRO recorded_charge_count per duty",
-    "matched_set_rule": "all four arms feasible",
+    "fixed_matched_duties": [
+      "13301",
+      "13305",
+      "13306",
+      "13307",
+      "13308",
+      "13309",
+      "13310",
+      "13311",
+      "13313",
+      "13314",
+      "13315",
+      "13316uwt",
+      "13317",
+      "13318",
+      "13320",
+      "13322",
+      "13323",
+      "13324t",
+      "13326",
+      "13401",
+      "13402",
+      "13403",
+      "13404",
+      "13406",
+      "13407",
+      "13408",
+      "13411",
+      "13412",
+      "13413",
+      "13414"
+    ],
+    "fixed_matched_set_rule": "intersection feasible across every tariff, terminal, and arm",
     "tariffs": [
+      "flat",
       "peak12",
       "two_peak_se3_synthetic"
     ],
@@ -29,6 +69,7 @@
   "inputs": {
     "event_cap_manifest": "data/tariff_response/giro40_duty_manifest.csv",
     "event_cap_manifest_sha256": "0b7bff79de3868ca91adec732f87329ed9d54eb255e697ef57100ca1eeeb4e7b",
+    "flat_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
     "instance": "data/tariff_response/frozen_instances/Practice_Custom_DutyUnion_k40_r2.csv",
     "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
     "master": "data/Par_VehicleDetails_Updated.csv",
@@ -46,6 +87,6 @@
     "g_kwh": 240.0,
     "reserve_kwh": 0.0
   },
-  "producing_commit_sha": "e709eeda3cc566d15a9222c8a1d3b0af355ab3fe",
-  "schema": "evsp-dr-k40-fixed-duty-sweep-v1"
+  "producing_commit_sha": "fa47427b9e173f60969f824843dfef5d52e6bb0b",
+  "schema": "evsp-dr-k40-fixed-duty-sweep-v2"
 }
