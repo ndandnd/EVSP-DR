@@ -59,3 +59,30 @@ These labels are branch-local. They are not authoritative bug or decision IDs.
 - Evidence path:
   `analysis/arcflow_oracle_20260820/PHYSICS_FLAGS_REGRESSION.md`
 - Producing commit SHA: `2715b90b78f343b16d705031f47e4e2543cb463f`
+
+## LOCAL-8
+
+- Claim: On the public Utrecht qlink 8 timetable converted to EVSP-DR's stated
+  160 kWh, constant-charge, 20 kWh / 8 minute model, the fleet LP is
+  10.2272727273 and the proven integer fleet is 11. The published best solution
+  uses 10 buses, a one-bus comparison gap, but objective scores are not
+  comparable because charging and battery-degradation assumptions differ.
+- Evidence path: `analysis/public_benchmark_evsp_20260821/README.md`
+- Producing commit SHA: `7690f3e94add89da450afb8cc6c1bee77363ca3e`
+
+## LOCAL-9
+
+- Claim: The proprietary-data-free synthetic instance at seed 20260821 has
+  exact fleet 2 on a 5 kWh / 5 minute grid and exact fleet 3 on a
+  5 kWh / 10 minute grid, reproducing a one-bus time-discretization penalty.
+- Evidence path: `analysis/public_synthetic_evsp_20260821/README.md`
+- Producing commit SHA: `e2e99548d406b1ea3f19fd6d91b88607556b9559`
+
+## LOCAL-10
+
+- Claim: On the same public synthetic fine-grid model, an explicitly
+  pair-limited pool is pool-optimal at 3 buses while the full model is
+  2 buses, reproducing a controlled one-bus pool-composition gap. This is not
+  labelled as a naturally generated RAW CG pool.
+- Evidence path: `analysis/public_synthetic_evsp_20260821/README.md`
+- Producing commit SHA: `e2e99548d406b1ea3f19fd6d91b88607556b9559`
