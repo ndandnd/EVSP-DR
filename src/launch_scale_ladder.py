@@ -25,17 +25,20 @@ from scale_ladder_trip_identity import SCHEMA as TRIP_SCHEMA, identity
 SCHEMA = "evsp-dr-scale-ladder-plan-v1"
 REVIEWED_BASE = "77baf667a06946c692f959d66fed4e2bca36cd32"
 INPUT_MANIFEST = (
-    REPO_ROOT / "data/scale_ladder/instances/campaign_input_manifest.json"
+    REPO_ROOT / "data/scale_ladder/instances/"
+    "campaign_input_manifest_6sel_seed20260821.json"
 )
 MEMBERSHIP_PREFLIGHT = (
-    REPO_ROOT / "data/scale_ladder/known_membership_preflight.json"
+    REPO_ROOT
+    / "data/scale_ladder/known_membership_preflight_6sel_seed20260821.json"
 )
 MEMBERSHIP_PREFLIGHT_SHA256 = (
-    "5124534373e8d3aff981c55891b8f7ed321fdf1efe96c8bbfd093d957c1b94c8"
+    "d7791702562ca648b076de0c2554a70696ca394756876c8aba8b7857c9958f69"
 )
 INSTANCE_MANIFEST = (
     REPO_ROOT
-    / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
+    / "data/scale_ladder/instances/"
+    "scale_ladder_instance_manifest_6sel_seed20260821.csv"
 )
 HISTORICAL_FLAT_SHA256 = (
     "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
@@ -48,6 +51,7 @@ CODE_PATHS = (
     "src/launch_scale_ladder.py",
     "src/submit_scale_ladder.sub",
     "src/build_scale_ladder_inputs.py",
+    "src/generate_random_goal1_instances.py",
     "src/scale_ladder_trip_identity.py",
     "src/prepare_scale_ladder_known_partition.py",
     "src/exact_pricer_expanded.py",
@@ -269,7 +273,7 @@ def build_plan(campaign, python, reservation_root):
     }
     with INSTANCE_MANIFEST.open(newline="") as handle:
         rows = list(csv.DictReader(handle))
-    if len(rows) != 22:
+    if len(rows) != 40:
         raise ValueError("scale ladder instance row count differs")
     instances = {}
     for row in rows:
@@ -322,7 +326,7 @@ def build_plan(campaign, python, reservation_root):
             })
     non_k40 = [cell for cell in cg_cells if cell["scale"] < 40]
     k40 = [cell for cell in cg_cells if cell["scale"] == 40]
-    if len(non_k40) != 21 or len(k40) != 2:
+    if len(non_k40) != 39 or len(k40) != 2:
         raise ValueError("CG ladder cell count differs")
     cg_cells = non_k40 + k40
     jobs = []
@@ -464,8 +468,8 @@ def build_plan(campaign, python, reservation_root):
         ],
     }
     if {key: len(value) for key, value in groups.items()} != {
-        "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-        "CG_SENSITIVITY": 92, "MIP_RAW": 21, "MIP_KNOWN": 21,
+        "PREFLIGHT": 40, "SEED": 39, "CG": 41,
+        "CG_SENSITIVITY": 164, "MIP_RAW": 39, "MIP_KNOWN": 39,
     }:
         raise ValueError("task group counts differ")
     reuse_slots = [
@@ -570,12 +574,12 @@ def build_plan(campaign, python, reservation_root):
             "concurrency_field": "max_concurrency",
         },
         "task_count": sum(map(len, groups.values())),
-        "preflight_task_count": 22,
-        "cg_task_count": 115,
-        "primary_cg_task_count": 23,
-        "sensitivity_cg_task_count": 92,
-        "mip_task_count": 42,
-        "seed_task_count": 21,
+        "preflight_task_count": 40,
+        "cg_task_count": 205,
+        "primary_cg_task_count": 41,
+        "sensitivity_cg_task_count": 164,
+        "mip_task_count": 78,
+        "seed_task_count": 39,
         "k40_mip_submission_count": 0,
         "infrastructure_probe_task_count": 2,
         "infrastructure_activation_task_count": 1,
@@ -2874,8 +2878,8 @@ def main(argv=None):
     if not args.submit:
         print(
             f"[dry-run] tasks={plan['task_count']} "
-            "PREFLIGHT=22 SEED=21 PRIMARY_CG=23 "
-            "RESOLUTION_CG=92 MIP=42 k40_MIP=0"
+            "PREFLIGHT=40 SEED=39 PRIMARY_CG=41 "
+            "RESOLUTION_CG=164 MIP=78 k40_MIP=0"
         )
         return 0
     if args.approved_plan_sha256 != plan_sha:

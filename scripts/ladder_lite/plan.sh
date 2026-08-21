@@ -38,7 +38,7 @@ main() {
 import datetime,hashlib,json,sys
 praw=open(sys.argv[1],"rb").read(); p=json.loads(praw)
 counts={k:len(v) for k,v in sorted(p["task_groups"].items())}
-assert sum(counts.values())==200, counts
+assert sum(counts.values())==362, counts
 out={"approval_sha256":hashlib.sha256(praw).hexdigest(),
      "execution_mode":"ladder_lite_direct_array","campaign":p["campaign"],
      "commit":sys.argv[3],"created_utc":datetime.datetime.now(datetime.timezone.utc).isoformat(),
