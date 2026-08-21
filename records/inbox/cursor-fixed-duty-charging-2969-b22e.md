@@ -57,3 +57,23 @@ must not be cited as authoritative bug or decision IDs.
   `analysis/fixed_duty_continuous_20260820/factorial_summary.csv`;
   `analysis/fixed_duty_continuous_20260820/prefix_causal_bound_summary.csv`
 - **Producing commit SHA:** `70c88f474e21058068112d3aad92baf9a58bbddb`
+
+## LOCAL-6
+
+- **Claim:** The complete 40-duty, 947-trip GIRO fixed schedule has
+  two-peak/`>= reserve` timing value of 63.549 (5.213%) uncapped and 63.819
+  (5.156%) under observed event caps on 39 matched duties; cap cost is 18.733.
+  One reserve-policy duty is infeasible under cap. Under `>= initial`, 7/40
+  duties are infeasible uncapped and 10/40 under cap, consistent with the
+  single-day-horizon concern. The unconstrained two-peak/`>= reserve`
+  optimized schedule reaches 24 simultaneous buses system-wide and 7 at one
+  station; two-peak/`>= initial` reaches 30 at `PARX_1`. These are
+  unlimited-charger demand measurements, not peak-shaving claims.
+- **Evidence:**
+  `analysis/fixed_duty_continuous_20260820/K40_FIXED_DUTY_RESULTS.md`;
+  `analysis/fixed_duty_continuous_20260820/k40_matched_duty_results.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_matched_aggregate.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_solution_metrics.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_station_time_concurrency.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_sweep_metadata.json`
+- **Producing commit SHA:** `77da5da2b1bdd1cc738976ef2e0212cf071a898f`

@@ -112,6 +112,9 @@ frozen, hashed tariff with a documented selection rule. Real charging also
 tapers above about 80% SOC, so constant power to full is mildly optimistic.
 Chargers remain unlimited in this experiment.
 
+Post-artifact full repository test result:
+`513 passed, 123 subtests passed in 161.16s`.
+
 ## Machine-readable artifacts
 
 - `k40_matched_duty_results.csv`: 160 per-duty/configuration rows, including
