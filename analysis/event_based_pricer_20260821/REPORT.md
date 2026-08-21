@@ -6,8 +6,9 @@ No cluster jobs were submitted. Machine-readable executed rows are in
 
 ## Outcome
 
-The prototype passes G1 and G3, but fails G5 as written. Per the work order's
-stop rule, the k3/k5 table was not run.
+The prototype passes G1 and the k02_s2 fleet/13413 parts of G3, but fails G3's
+duty-13411 five-grid requirement. G2 is incomplete. G5 was also audited and
+fails as written. Per the work order's stop rule, the k3/k5 table was not run.
 
 ### G1 — pass
 
@@ -24,20 +25,32 @@ Operational timing fields remain excluded.
 
 ### G2 — incomplete
 
-The required nine-cell containment gate was not established before the G5 stop.
+The required nine-cell containment gate was not established before the G3 stop.
 Executed frozen-physics comparisons cover all three k2 uniform rows and
 certified event rows for k02_s1/k02_s2. Those two event LPs are no worse than
 both corresponding uniform LPs. k02_s3 event CG was interrupted uncertified,
 and no k3/k5 event LP was run. No nine-cell containment claim is made.
 
-### G3 — pass
+### G3 — fail (formal stop)
 
 At frozen 240 kWh / 240 kW / zero reserve, with a 2.5-kWh SOC lattice:
 
 - k02_s2 event CG certified route weight **2.0000000000** in 117 iterations;
-- duty 13413's previously blocked local transition `14→16` is represented;
-- duty 13411 is represented as one complete event route, including all five
-  previously recorded failures (`46→53` twice, `53→59` twice, `73→77`).
+- duty 13413's previously blocked local transition `14→16` is represented.
+
+Duty 13411 does **not** pass all five grid configurations:
+
+| SOC step / block | complete event duty representable? |
+|---|---:|
+| 15 / 10 | No |
+| 5 / 10 | No |
+| 2.5 / 10 | Yes |
+| 1 / 10 | Yes |
+| 1 / 5 | Yes |
+
+The earlier claim counted three unique transition pairs in one 2.5/5 event run
+and incorrectly called that all five grid-specific gates. The machine-readable
+correction is `duty_13411_event_matrix.csv`.
 
 k02_s1 also certified at 2.0000000000. A 10-kWh event run on k02_s2 certified
 at 2.0909090909, so event timing does not eliminate the need for a sufficiently
@@ -66,7 +79,7 @@ batch enrichment retains at most one route per sink predecessor and is not a
 genuine k-shortest-path enumeration (`B0032`). This affects performance, not
 the reduced-cost certificate.
 
-## G5 — fail (stop condition)
+## G5 — fail (additional contract finding)
 
 The work order requires every event column to pass
 `realize_expanded_path` **unchanged**. An exhaustive audit of the completed

@@ -93,15 +93,33 @@ class EventPricerTargetGates(unittest.TestCase):
         )
         self.assertIn((14,16),list(zip(record["trips"],record["trips"][1:])))
 
-    def test_duty_13411_all_previously_failed_transitions_are_representable(self):
-        record=self.event_record(
-            "data/scale_ladder/instances/"
-            "Practice_Custom_DutyUnion_k05_r1.csv",
-            "13411",
+    def test_duty_13411_event_grid_matrix(self):
+        path=REPO/"data/scale_ladder/instances/Practice_Custom_DutyUnion_k05_r1.csv"
+        problem=build_problem(
+            path.parent,path.name,
+            max_station_to_trip_wait_min=HORIZON_MIN,
+            reference_data_dir=REPO/"data",
         )
-        transitions=set(zip(record["trips"],record["trips"][1:]))
-        for transition in ((46,53),(46,53),(53,59),(53,59),(73,77)):
-            self.assertIn(transition,transitions)
+        route=next(
+            route for route in giro_routes_for_instance(
+                REPO/"data/Par_VehicleDetails_Updated.csv",path
+            )
+            if route["duty_id"]=="13411"
+        )
+        restricted=restricted_problem(problem,route["trips"])
+        observed=[]
+        for soc_step,block_min in (
+            (15.0,10),(5.0,10),(2.5,10),(1.0,10),(1.0,5)
+        ):
+            network=EventExpandedNetwork(
+                restricted,self.prices,
+                soc_step=soc_step,block_min=block_min,
+                g_kwh=240.0,charge_kw=240.0,reserve_kwh=0.0,
+            )
+            observed.append(
+                network.fixed_sequence_record(route["trips"]) is not None
+            )
+        self.assertEqual(observed,[False,False,True,True,True])
 
 
 if __name__=="__main__":
