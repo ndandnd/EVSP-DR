@@ -1,0 +1,129 @@
+{
+  "construction": "all singleton and temporally feasible two-trip routes; routes of length three are deliberately absent",
+  "expected_pool_fleet": 3,
+  "instance": "public_structural_s20260821",
+  "routes": [
+    {
+      "origin": "singleton",
+      "trips": [
+        0
+      ]
+    },
+    {
+      "origin": "singleton",
+      "trips": [
+        1
+      ]
+    },
+    {
+      "origin": "singleton",
+      "trips": [
+        2
+      ]
+    },
+    {
+      "origin": "singleton",
+      "trips": [
+        3
+      ]
+    },
+    {
+      "origin": "singleton",
+      "trips": [
+        4
+      ]
+    },
+    {
+      "origin": "singleton",
+      "trips": [
+        5
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        0,
+        2
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        0,
+        3
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        0,
+        4
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        0,
+        5
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        1,
+        2
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        1,
+        3
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        1,
+        4
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        1,
+        5
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        2,
+        4
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        2,
+        5
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        3,
+        4
+      ]
+    },
+    {
+      "origin": "all_feasible_pairs_only",
+      "trips": [
+        3,
+        5
+      ]
+    }
+  ],
+  "schema": "evsp-dr-public-restricted-pool-v1",
+  "seed": 20260821
+}

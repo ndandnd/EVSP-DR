@@ -1,0 +1,161 @@
+{
+  "conversion": {
+    "charging_model_changed": false,
+    "deadhead_energy": "zero-distance public synthetic geometry",
+    "deadhead_time": "static",
+    "trip_energy": "engineered explicit kWh"
+  },
+  "deadheads": [
+    {
+      "distance_km": 0.0,
+      "energy_kwh": 0.0,
+      "from": "DEPOT",
+      "to": "HUB",
+      "travel_min_by_version": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "distance_km": 0.0,
+      "energy_kwh": 0.0,
+      "from": "HUB",
+      "to": "DEPOT",
+      "travel_min_by_version": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "depot": "DEPOT",
+  "features": {
+    "coarse_grid": {
+      "block_min": 10,
+      "soc_step": 5.0
+    },
+    "expected_coarse_fleet": 3,
+    "expected_fine_fleet": 2,
+    "fine_grid": {
+      "block_min": 5,
+      "soc_step": 5.0
+    },
+    "mechanism": "two 15-minute layovers; fine grid charges 15+15 kWh, coarse grid charges only 10+10 kWh",
+    "simultaneous_trip_lower_bound": 2
+  },
+  "generator_sha256": "852c39743739e0ae3b435a50e4ed235c74603299687db9e2421b14e070dad3a9",
+  "horizon_min": 400,
+  "name": "public_structural_s20260821",
+  "schema": "evsp-dr-portable-problem-v1",
+  "source": {
+    "generator": "evsp-dr-public-structural-v1",
+    "proprietary_input": false,
+    "seed": 20260821
+  },
+  "station_parameters": {
+    "HUB": {
+      "infrastructure_charge_kwh_per_min": 1.0,
+      "max_bus_soc_fraction": 1.0,
+      "setup_min": 0.0,
+      "vehicle_capacity": 99
+    }
+  },
+  "stations": [
+    "HUB"
+  ],
+  "time_windows": [
+    {
+      "end_min": 399,
+      "start_min": 0,
+      "version": 0
+    }
+  ],
+  "trips": [
+    {
+      "distance_km": 0.0,
+      "end_min": 270,
+      "energy_kwh": 30.0,
+      "external_id": "wave1-stream1",
+      "from": "HUB",
+      "id": 0,
+      "line": "S1",
+      "source_ordinal": 0,
+      "start_min": 250,
+      "to": "HUB",
+      "trip_number": "1"
+    },
+    {
+      "distance_km": 0.0,
+      "end_min": 270,
+      "energy_kwh": 30.0,
+      "external_id": "wave1-stream2",
+      "from": "HUB",
+      "id": 1,
+      "line": "S2",
+      "source_ordinal": 1,
+      "start_min": 250,
+      "to": "HUB",
+      "trip_number": "1"
+    },
+    {
+      "distance_km": 0.0,
+      "end_min": 305,
+      "energy_kwh": 30.0,
+      "external_id": "wave2-stream1",
+      "from": "HUB",
+      "id": 2,
+      "line": "S1",
+      "source_ordinal": 2,
+      "start_min": 285,
+      "to": "HUB",
+      "trip_number": "2"
+    },
+    {
+      "distance_km": 0.0,
+      "end_min": 305,
+      "energy_kwh": 30.0,
+      "external_id": "wave2-stream2",
+      "from": "HUB",
+      "id": 3,
+      "line": "S2",
+      "source_ordinal": 3,
+      "start_min": 285,
+      "to": "HUB",
+      "trip_number": "2"
+    },
+    {
+      "distance_km": 0.0,
+      "end_min": 340,
+      "energy_kwh": 30.0,
+      "external_id": "wave3-stream1",
+      "from": "HUB",
+      "id": 4,
+      "line": "S1",
+      "source_ordinal": 4,
+      "start_min": 320,
+      "to": "HUB",
+      "trip_number": "3"
+    },
+    {
+      "distance_km": 0.0,
+      "end_min": 340,
+      "energy_kwh": 30.0,
+      "external_id": "wave3-stream2",
+      "from": "HUB",
+      "id": 5,
+      "line": "S2",
+      "source_ordinal": 5,
+      "start_min": 320,
+      "to": "HUB",
+      "trip_number": "3"
+    }
+  ],
+  "vehicle": {
+    "battery_kwh": 60.0,
+    "energy_kwh_per_km": 0.0,
+    "max_charge_kwh_per_min": 1.0
+  }
+}
