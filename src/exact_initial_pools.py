@@ -190,7 +190,7 @@ def build_heuristic_initial_pool(
                 tariff_id="exact-cg-initial-pool",
                 tariff_sha256=tariff_sha256,
                 instance_sha256=instance_sha256,
-                allow_diagnostic_grid=(soc_step, block_min) != (15.0, 10),
+                allow_declared_physics=True,
             )
         result = cache[sequence]
         return result["route"] if result.get("feasible") is True else None

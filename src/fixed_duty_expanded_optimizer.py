@@ -456,6 +456,7 @@ def optimize_fixed_duty(
     tariff_sha256=None,
     instance_sha256=None,
     allow_diagnostic_grid=False,
+    allow_declared_physics=False,
     trace=False,
 ):
     started = time.perf_counter()
@@ -470,7 +471,18 @@ def optimize_fixed_duty(
         float(g_kwh), float(charge_kw), float(reserve_kwh),
         float(soc_step), int(block_min),
     )
-    if not allow_diagnostic_grid and physics_tuple != (
+    if allow_declared_physics:
+        if (
+            not all(math.isfinite(value) for value in physics_tuple[:4])
+            or float(g_kwh) <= 0.0
+            or float(charge_kw) <= 0.0
+            or not 0.0 <= float(reserve_kwh) <= float(g_kwh)
+            or not 0.0 < float(soc_step) <= float(g_kwh)
+            or int(block_min) <= 0
+            or int(HORIZON_MIN) % int(block_min) != 0
+        ):
+            raise ValueError("invalid plan-declared fixed-duty physics")
+    elif not allow_diagnostic_grid and physics_tuple != (
         300.0, 300.0, 0.0, 15.0, 10
     ):
         raise ValueError("fixed-duty pilot physics differ")
