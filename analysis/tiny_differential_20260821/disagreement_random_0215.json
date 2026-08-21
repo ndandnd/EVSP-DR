@@ -1,0 +1,506 @@
+{
+  "minimal_result": {
+    "agreement": false,
+    "arc_variables": 818,
+    "bnp_nodes": 3,
+    "case_id": "random_0215_min12_min11_min10_min9_min8_min7",
+    "cg_pool_columns": 34,
+    "integer": {
+      "arc_flow": 2,
+      "branch_and_price": 2,
+      "brute_force": 2,
+      "exact_cg_pool_mip": 3
+    },
+    "integer_agrees": false,
+    "lp": {
+      "arc_flow": 2.0,
+      "branch_and_price": 2.0,
+      "brute_force": 2.0,
+      "exact_cg": 2.0
+    },
+    "lp_agrees": true,
+    "route_count": 56,
+    "station_count": 1,
+    "trip_count": 7,
+    "wall_s": 0.10453776599752018
+  },
+  "minimal_spec": {
+    "allow_station_transfer": false,
+    "block_min": 5,
+    "capacity": 7,
+    "case_id": "random_0215_min12_min11_min10_min9_min8_min7",
+    "charge_step": 2,
+    "deadhead_energy": [
+      [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "duration": [
+      2,
+      3,
+      4,
+      2,
+      3,
+      2,
+      5
+    ],
+    "energy": [
+      3,
+      1,
+      3,
+      3,
+      2,
+      3,
+      3
+    ],
+    "max_trip_gap": 57,
+    "reserve": 0,
+    "reserve_relax_steps": 0,
+    "seed": 20260821,
+    "start": [
+      43,
+      100,
+      117,
+      141,
+      160,
+      182,
+      192
+    ],
+    "station_count": 1,
+    "station_to_trip": [
+      [
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false
+      ]
+    ],
+    "trip_count": 7,
+    "trip_to_station": [
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        false
+      ],
+      [
+        false
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ]
+    ]
+  },
+  "minimality": "greedy one-trip and one-station irreducible",
+  "original_result": {
+    "agreement": false,
+    "arc_variables": 1958,
+    "bnp_nodes": 4,
+    "case_id": "random_0215",
+    "cg_pool_columns": 153,
+    "integer": {
+      "arc_flow": 2,
+      "branch_and_price": 2,
+      "brute_force": 2,
+      "exact_cg_pool_mip": 3
+    },
+    "integer_agrees": false,
+    "lp": {
+      "arc_flow": 2.0,
+      "branch_and_price": 2.0,
+      "brute_force": 1.9999999999999998,
+      "exact_cg": 2.0
+    },
+    "lp_agrees": true,
+    "route_count": 1459,
+    "station_count": 1,
+    "trip_count": 13,
+    "wall_s": 0.34463510399655206
+  },
+  "original_spec": {
+    "allow_station_transfer": false,
+    "block_min": 5,
+    "capacity": 7,
+    "case_id": "random_0215",
+    "charge_step": 2,
+    "deadhead_energy": [
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "duration": [
+      2,
+      4,
+      2,
+      5,
+      5,
+      3,
+      3,
+      4,
+      4,
+      2,
+      3,
+      2,
+      5
+    ],
+    "energy": [
+      1,
+      3,
+      3,
+      2,
+      2,
+      2,
+      1,
+      1,
+      3,
+      3,
+      2,
+      3,
+      3
+    ],
+    "max_trip_gap": 57,
+    "reserve": 0,
+    "reserve_relax_steps": 0,
+    "seed": 20260821,
+    "start": [
+      13,
+      25,
+      43,
+      56,
+      71,
+      89,
+      100,
+      111,
+      117,
+      141,
+      160,
+      182,
+      192
+    ],
+    "station_count": 1,
+    "station_to_trip": [
+      [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false
+      ]
+    ],
+    "trip_count": 13,
+    "trip_to_station": [
+      [
+        true
+      ],
+      [
+        false
+      ],
+      [
+        true
+      ],
+      [
+        false
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        false
+      ],
+      [
+        false
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ]
+    ]
+  },
+  "schema": "evsp-dr-tiny-differential-oracle-v1"
+}

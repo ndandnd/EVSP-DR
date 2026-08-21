@@ -1,0 +1,205 @@
+{
+  "agreement_rate": 0.8583333333333333,
+  "agreements": 206,
+  "cases": 240,
+  "disagreement_files": [
+    "analysis/tiny_differential_20260821/disagreement_random_0006.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0009.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0019.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0022.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0023.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0030.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0033.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0039.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0048.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0067.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0081.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0096.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0106.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0109.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0126.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0137.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0139.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0145.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0148.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0162.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0165.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0174.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0176.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0180.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0181.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0198.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0210.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0213.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0215.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0217.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0223.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0227.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0233.json",
+    "analysis/tiny_differential_20260821/disagreement_random_0237.json"
+  ],
+  "disagreements": 34,
+  "mutations": {
+    "gap_58_allowed": {
+      "baseline": {
+        "agreement": true,
+        "arc_variables": 4,
+        "bnp_nodes": 1,
+        "case_id": "mutation_gap57",
+        "cg_pool_columns": 2,
+        "integer": {
+          "arc_flow": 2,
+          "branch_and_price": 2,
+          "brute_force": 2,
+          "exact_cg_pool_mip": 2
+        },
+        "integer_agrees": true,
+        "lp": {
+          "arc_flow": 2.0,
+          "branch_and_price": 2.0,
+          "brute_force": 2.0,
+          "exact_cg": 2.0
+        },
+        "lp_agrees": true,
+        "route_count": 2,
+        "station_count": 1,
+        "trip_count": 2,
+        "wall_s": 0.008466339997539762
+      },
+      "mutated": {
+        "agreement": true,
+        "arc_variables": 6,
+        "bnp_nodes": 1,
+        "case_id": "mutation_gap58",
+        "cg_pool_columns": 3,
+        "integer": {
+          "arc_flow": 1,
+          "branch_and_price": 1,
+          "brute_force": 1,
+          "exact_cg_pool_mip": 1
+        },
+        "integer_agrees": true,
+        "lp": {
+          "arc_flow": 1.0,
+          "branch_and_price": 1.0,
+          "brute_force": 1.0,
+          "exact_cg": 1.0
+        },
+        "lp_agrees": true,
+        "route_count": 3,
+        "station_count": 1,
+        "trip_count": 2,
+        "wall_s": 0.010878647997742519
+      },
+      "optimum_changed": true
+    },
+    "soc_below_reserve": {
+      "baseline": {
+        "agreement": true,
+        "arc_variables": 4,
+        "bnp_nodes": 1,
+        "case_id": "mutation_reserve",
+        "cg_pool_columns": 2,
+        "integer": {
+          "arc_flow": 2,
+          "branch_and_price": 2,
+          "brute_force": 2,
+          "exact_cg_pool_mip": 2
+        },
+        "integer_agrees": true,
+        "lp": {
+          "arc_flow": 2.0,
+          "branch_and_price": 2.0,
+          "brute_force": 2.0,
+          "exact_cg": 2.0
+        },
+        "lp_agrees": true,
+        "route_count": 2,
+        "station_count": 1,
+        "trip_count": 2,
+        "wall_s": 0.008308493997901678
+      },
+      "mutated": {
+        "agreement": true,
+        "arc_variables": 6,
+        "bnp_nodes": 1,
+        "case_id": "mutation_reserve_minus_one",
+        "cg_pool_columns": 3,
+        "integer": {
+          "arc_flow": 1,
+          "branch_and_price": 1,
+          "brute_force": 1,
+          "exact_cg_pool_mip": 1
+        },
+        "integer_agrees": true,
+        "lp": {
+          "arc_flow": 1.0,
+          "branch_and_price": 1.0,
+          "brute_force": 1.0,
+          "exact_cg": 1.0
+        },
+        "lp_agrees": true,
+        "route_count": 3,
+        "station_count": 1,
+        "trip_count": 2,
+        "wall_s": 0.010831244995642919
+      },
+      "optimum_changed": true
+    },
+    "station_to_station": {
+      "baseline": {
+        "agreement": true,
+        "arc_variables": 40,
+        "bnp_nodes": 1,
+        "case_id": "mutation_station_transfer",
+        "cg_pool_columns": 2,
+        "integer": {
+          "arc_flow": 2,
+          "branch_and_price": 2,
+          "brute_force": 2,
+          "exact_cg_pool_mip": 2
+        },
+        "integer_agrees": true,
+        "lp": {
+          "arc_flow": 2.0,
+          "branch_and_price": 2.0,
+          "brute_force": 2.0,
+          "exact_cg": 2.0
+        },
+        "lp_agrees": true,
+        "route_count": 2,
+        "station_count": 2,
+        "trip_count": 2,
+        "wall_s": 0.008771709995926358
+      },
+      "mutated": {
+        "agreement": true,
+        "arc_variables": 82,
+        "bnp_nodes": 1,
+        "case_id": "mutation_station_transfer_allowed",
+        "cg_pool_columns": 3,
+        "integer": {
+          "arc_flow": 1,
+          "branch_and_price": 1,
+          "brute_force": 1,
+          "exact_cg_pool_mip": 1
+        },
+        "integer_agrees": true,
+        "lp": {
+          "arc_flow": 1.0,
+          "branch_and_price": 1.0,
+          "brute_force": 1.0,
+          "exact_cg": 1.0
+        },
+        "lp_agrees": true,
+        "route_count": 3,
+        "station_count": 2,
+        "trip_count": 2,
+        "wall_s": 0.011983101001533214
+      },
+      "optimum_changed": true
+    }
+  },
+  "schema": "evsp-dr-tiny-differential-oracle-v1",
+  "seed": 20260821
+}
