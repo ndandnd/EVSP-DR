@@ -900,6 +900,7 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
     # ``singletons`` identity while requiring explicit identity on every new
     # status written below.  An artificial-mode resume still fails closed.
     current_initial_pool = getattr(args, "initial_pool", "singletons")
+    current_time_model = getattr(args, "time_model", "uniform")
     expected = {
         "csv": args.csv,
         "prices_csv": args.prices_csv,
@@ -913,6 +914,7 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "initial_pool": current_initial_pool,
+        "time_model": current_time_model,
         "validated_seed_routes_sha256": (
             _file_sha256(Path(args.validated_seed_routes))
             if getattr(args, "validated_seed_routes", None) is not None
@@ -928,6 +930,8 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         observed = status.get(key)
         if key == "initial_pool" and key not in status:
             observed = "singletons"
+        if key == "time_model" and key not in status:
+            observed = "uniform"
         if key == "strict_tariff_coverage" and key not in status:
             observed = False
         if key == "column_pool_treatment" and key not in status:
@@ -1080,6 +1084,7 @@ def resume_pool_mismatches(status, pool: dict) -> list[str]:
 
 def run_cg(args) -> dict:
     t0 = time.time()
+    time_model = getattr(args, "time_model", "uniform")
     termination = {"requested": False, "signal": None}
     prior_signal_handlers = {}
 
@@ -1237,6 +1242,7 @@ def run_cg(args) -> dict:
                 "min_soc_frac": args.min_soc_frac,
                 "master_sense": args.master_sense,
                 "initial_pool": args.initial_pool,
+                "time_model": time_model,
             },
         )
     detached_telemetry_overhead_s = 0.0
@@ -1259,7 +1265,11 @@ def run_cg(args) -> dict:
     prices = load_station_hourly_prices(
         DATA_DIR / args.prices_csv, CHARGING_STATIONS
     )
-    net = ExpandedNetwork(
+    network_class = ExpandedNetwork
+    if time_model == "event":
+        from event_pricer_network import EventExpandedNetwork
+        network_class = EventExpandedNetwork
+    net = network_class(
         problem, prices,
         soc_step=args.soc_step,
         block_min=args.block_min,
@@ -1271,6 +1281,14 @@ def run_cg(args) -> dict:
         ),
     )
     build_s = time.time() - network_t0
+    network_metrics = (
+        net.metrics() if time_model == "event"
+        else {
+            "time_model": "uniform",
+            "dag_nodes": len(net.node_meta),
+            "dag_arcs": net.n_arcs,
+        }
+    )
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
           f"built in {build_s:.1f}s", flush=True)
@@ -1446,6 +1464,8 @@ def run_cg(args) -> dict:
         resume_status = dict(prior_status)
         resume_status.update({
             "initial_pool": args.initial_pool,
+            "time_model": time_model,
+            "network_metrics": network_metrics,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1482,6 +1502,8 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "time_model": time_model,
+            "network_metrics": network_metrics,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1728,6 +1750,8 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "time_model": time_model,
+            "network_metrics": network_metrics,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -2027,49 +2051,70 @@ def run_cg(args) -> dict:
             cost = route["rc"] + sum(lp.trip_duals.get(t, 0.0) for t in route["trips"])
             key = frozenset(route["trips"])
             if key not in pool or cost < pool[key]["cost"] - 1e-9:
-                record = {
-                    "trips": route["trips"],           # ordered
-                    "cost": cost,
-                    "route_nodes": route["route_nodes"],
-                    "charging_stops": route["charging_stops"],
-                    "expanded_grid_charging_stops":
-                        route["_expanded_grid_charging"],
-                    "charges_started": route["charges_started"],
-                    "found_iter": global_iteration,
-                }
-                mapping = route["_continuous_mapping"]
-                costs = realized_costs(
-                    record, mapping, station_prices=prices
-                )
-                record.update({
-                    "expanded_grid_cost": cost,
-                    "continuous_realized_cost":
-                        costs["continuous_realized_cost"],
-                    "continuous_realized_charging_blocks":
-                        costs["continuous_realized_charging_blocks"],
-                    "continuous_realized_charging_blocks_json_bytes":
-                        len(json.dumps(
+                if "_event_record" in route:
+                    record = deepcopy(route["_event_record"])
+                    if not math.isclose(
+                        float(record["cost"]), float(cost),
+                        rel_tol=1e-10, abs_tol=1e-6,
+                    ):
+                        raise RuntimeError(
+                            "event route path cost differs from replay cost"
+                        )
+                    record.update({
+                        "cost": float(cost),
+                        "expanded_grid_cost": float(cost),
+                        "charges_started": route["charges_started"],
+                        "found_iter": global_iteration,
+                        "origin": "event_time_pricing",
+                        "cost_tariff_sha256":
+                            provenance["prices_sha256"],
+                    })
+                else:
+                    record = {
+                        "trips": route["trips"],       # ordered
+                        "cost": cost,
+                        "route_nodes": route["route_nodes"],
+                        "charging_stops": route["charging_stops"],
+                        "expanded_grid_charging_stops":
+                            route["_expanded_grid_charging"],
+                        "charges_started": route["charges_started"],
+                        "found_iter": global_iteration,
+                    }
+                    mapping = route["_continuous_mapping"]
+                    costs = realized_costs(
+                        record, mapping, station_prices=prices
+                    )
+                    record.update({
+                        "expanded_grid_cost": cost,
+                        "continuous_realized_cost":
+                            costs["continuous_realized_cost"],
+                        "continuous_realized_charging_blocks":
                             costs["continuous_realized_charging_blocks"],
-                            sort_keys=True,
-                            separators=(",", ":"),
-                        ).encode()),
-                    "cost_semantics": "expanded_grid_cost",
-                    "master_cost_semantics": "expanded_grid_cost",
-                    "continuous_cost_pricing_certified": False,
-                    "cost_tariff_sha256": provenance["prices_sha256"],
-                    "physical_realization": {
-                        key: value for key, value in mapping.items()
-                        if key != "trace"
-                    },
-                })
-                record["physical_realization"][
-                    "continuous_realized_charging_blocks_sha256"
-                ] = costs[
-                    "continuous_realized_charging_blocks_sha256"
-                ]
-                record["physical_realization"][
-                    "continuous_realized_charging_blocks_schema"
-                ] = BLOCK_SCHEDULE_SCHEMA
+                        "continuous_realized_charging_blocks_json_bytes":
+                            len(json.dumps(
+                                costs["continuous_realized_charging_blocks"],
+                                sort_keys=True,
+                                separators=(",", ":"),
+                            ).encode()),
+                        "cost_semantics": "expanded_grid_cost",
+                        "master_cost_semantics": "expanded_grid_cost",
+                        "continuous_cost_pricing_certified": False,
+                        "cost_tariff_sha256":
+                            provenance["prices_sha256"],
+                        "physical_realization": {
+                            key: value
+                            for key, value in mapping.items()
+                            if key != "trace"
+                        },
+                    })
+                    record["physical_realization"][
+                        "continuous_realized_charging_blocks_sha256"
+                    ] = costs[
+                        "continuous_realized_charging_blocks_sha256"
+                    ]
+                    record["physical_realization"][
+                        "continuous_realized_charging_blocks_schema"
+                    ] = BLOCK_SCHEDULE_SCHEMA
                 pool[key] = record
                 if journal:
                     journal.write(json.dumps(record) + "\n")
@@ -2444,6 +2489,7 @@ def run_cg(args) -> dict:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "initial_pool": args.initial_pool,
+        "time_model": time_model,
         "validated_seed_routes_sha256": provenance.get(
             "validated_seed_routes_sha256"
         ),
@@ -2463,6 +2509,7 @@ def run_cg(args) -> dict:
         "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "termination_signal": termination["signal"],
+        "network_metrics": network_metrics,
         "snapshot_availability": snapshot_availability,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
@@ -2484,6 +2531,13 @@ def main(argv=None) -> int:
     parser.add_argument("--prices_csv", default="hourly_prices_flat.csv")
     parser.add_argument("--soc-step", type=float, default=15.0)
     parser.add_argument("--block-min", type=int, default=10)
+    parser.add_argument(
+        "--time-model",
+        choices=("uniform", "event"),
+        default=argparse.SUPPRESS,
+        help="Opt in to instance-induced event times; omitted keeps the "
+             "uniform time lattice byte-identical.",
+    )
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument("--columns_per_iter", type=int, default=30)
     parser.add_argument("--rc-eps", type=float, default=1e-4)
@@ -2578,6 +2632,11 @@ def main(argv=None) -> int:
             "--validated-seed-routes and --augmentation-label are required "
             "together"
         )
+    if (
+        getattr(args, "time_model", "uniform") == "event"
+        and args.diversify_rounds
+    ):
+        parser.error("event time model does not support diversification")
     if args.out:
         lock_metadata = {
             "pid": os.getpid(),
