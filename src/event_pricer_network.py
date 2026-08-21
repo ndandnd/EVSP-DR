@@ -9,7 +9,7 @@ import time
 from copy import deepcopy
 
 from audit_giro_known_columns import DEPOT, HORIZON_MIN, STATIONS
-from config import BUS_COST_KX, CHARGE_START_COST
+from config import BUS_COST_KX, CHARGE_START_COST, charge_cost_premium
 from expanded_path_realization import (
     BLOCK_SCHEDULE_SCHEMA,
     blocks_from_continuous_stops,
@@ -106,10 +106,20 @@ def _best_charge_window(
     latest_start = float(deadline) - duration
     if latest_start < arrival - TOL:
         return None
+    curve = station_prices[base_station_name(station)]
+    if len(set(curve.values())) == 1:
+        start = float(arrival)
+        return (
+            float(energy) * float(next(iter(curve.values())))
+            * float(charge_cost_premium),
+            start,
+            start + duration,
+        )
     candidates = {float(arrival), float(latest_start)}
     for event in event_times[station]:
-        candidates.add(float(event))
-        candidates.add(float(event) - duration)
+        if abs(event / 60.0 - round(event / 60.0)) <= TOL:
+            candidates.add(float(event))
+            candidates.add(float(event) - duration)
     feasible = sorted(
         value for value in candidates
         if value >= arrival - TOL and value <= latest_start + TOL
@@ -170,6 +180,7 @@ class EventExpandedNetwork:
         self.events = _event_times(
             problem, self.prices, self.block_min
         )
+        self._window_cache = {}
         self._split_arcs()
         self._build_nodes()
         self._build_arcs()
@@ -300,12 +311,18 @@ class EventExpandedNetwork:
                 latest = float(deadline) - outbound_min
                 for target_level in range(entry + 1, len(self.grid)):
                     energy = self.grid[target_level] - self.grid[entry]
-                    selected = _best_charge_window(
-                        station, arrival, latest, energy,
-                        event_times=self.events,
-                        station_prices=self.prices,
-                        charge_kw=self.charge_kw,
+                    cache_key = (
+                        station, round(arrival, 9), round(latest, 9),
+                        round(energy, 9),
                     )
+                    if cache_key not in self._window_cache:
+                        self._window_cache[cache_key] = _best_charge_window(
+                            station, arrival, latest, energy,
+                            event_times=self.events,
+                            station_prices=self.prices,
+                            charge_kw=self.charge_kw,
+                        )
+                    selected = self._window_cache[cache_key]
                     if selected is None:
                         break
                     energy_cost, start, end = selected
