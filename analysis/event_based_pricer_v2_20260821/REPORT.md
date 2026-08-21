@@ -109,7 +109,7 @@ accepts all 16,253 records; the pre-correction audit is retained in `artifacts/`
 
 ## Validation
 
-- focused API/identity/replay tests: 41 passed, 3 subtests;
+- final focused API/identity/replay tests: 44 passed, 3 subtests;
 - event realization and tariff tests: 21 passed, 3 subtests;
 - Python compilation: passed;
 - full repository suite: 526 passed and 126 subtests; two deterministic
