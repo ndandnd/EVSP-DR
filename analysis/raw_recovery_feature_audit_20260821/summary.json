@@ -1,0 +1,19 @@
+{
+  "analysis_status": "not_estimable_no_auditable_raw_results",
+  "instance_rows": 40,
+  "manifest": "/workspace/data/scale_ladder/instances/scale_ladder_instance_manifest_6sel_seed20260803.csv",
+  "manifest_sha256": "8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3",
+  "non_independence_warning": "Instances overlap in duties and cells repeat instances across grids/physics/pools; associations are descriptive, not causal.",
+  "observable_raw_rows": 0,
+  "output_sha256": {
+    "feature_associations.csv": "3bf62a72131e21e456301184f6d96b7c4e7380ba11dd3265d6a85579e9bd9c29",
+    "feature_distribution.csv": "32b7ca5064a9514bb9e439107b8aa7edf0b5f28b579d6217b555b87a7fbd340c",
+    "instance_features.csv": "95535800d9207df98deb91b6cdd7282c9561123c4daab3c8fa380236f21e18e1",
+    "raw_cell_outcomes.csv": "8e67f1d94f3697fc5a50599a0e306b1cd909a7fb84281b695bee3fe78c07a4fc"
+  },
+  "preflight": "/workspace/data/scale_ladder/known_membership_preflight_6sel_seed20260803.json",
+  "preflight_sha256": "ba7074a7ed5b342cb64d350fd95945099170b68bc3847619ef94d6f728fbe656",
+  "raw_result_inputs": [],
+  "raw_result_rows": 0,
+  "schema": "evsp-dr-raw-recovery-feature-analysis-v1"
+}
