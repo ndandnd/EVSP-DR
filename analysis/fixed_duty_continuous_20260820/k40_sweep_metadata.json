@@ -1,0 +1,92 @@
+{
+  "concurrency": {
+    "classification": "unconstrained_charger_demand_not_capacity_feasible",
+    "timeline": "one shared service-day timeline across fixed duty set"
+  },
+  "counts": {
+    "aggregate_rows": 6,
+    "duties": 40,
+    "fixed_matched_duties": 30,
+    "hourly_rows": 648,
+    "infeasibility_rows": 5,
+    "per_duty_rows": 240,
+    "solution_rows": 24,
+    "station_time_rows": 6341,
+    "trips": 947
+  },
+  "created_at_utc": "2026-08-21T14:43:04.419795+00:00",
+  "factorial": {
+    "arms": [
+      "uncapped_arrival",
+      "uncapped_optimized",
+      "capped_arrival",
+      "capped_optimized"
+    ],
+    "event_cap": "GIRO recorded_charge_count per duty",
+    "fixed_matched_duties": [
+      "13301",
+      "13305",
+      "13306",
+      "13307",
+      "13308",
+      "13309",
+      "13310",
+      "13311",
+      "13313",
+      "13314",
+      "13315",
+      "13316uwt",
+      "13317",
+      "13318",
+      "13320",
+      "13322",
+      "13323",
+      "13324t",
+      "13326",
+      "13401",
+      "13402",
+      "13403",
+      "13404",
+      "13406",
+      "13407",
+      "13408",
+      "13411",
+      "13412",
+      "13413",
+      "13414"
+    ],
+    "fixed_matched_set_rule": "intersection feasible across every tariff, terminal, and arm",
+    "tariffs": [
+      "flat",
+      "peak12",
+      "two_peak_se3_synthetic"
+    ],
+    "terminal_policies": [
+      ">= reserve",
+      ">= initial"
+    ]
+  },
+  "inputs": {
+    "event_cap_manifest": "data/tariff_response/giro40_duty_manifest.csv",
+    "event_cap_manifest_sha256": "0b7bff79de3868ca91adec732f87329ed9d54eb255e697ef57100ca1eeeb4e7b",
+    "flat_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3",
+    "instance": "data/tariff_response/frozen_instances/Practice_Custom_DutyUnion_k40_r2.csv",
+    "instance_sha256": "3508a11f73d1186ae87588656d65ea62812c6e222623ae85488eff26cafb35fd",
+    "master": "data/Par_VehicleDetails_Updated.csv",
+    "master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+    "peak12_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+    "two_peak_path": "analysis/fixed_duty_continuous_20260820/two_peak_se3_synthetic_h26.csv",
+    "two_peak_sha256": "21ac43bdd006582ea4a8acacf5168897b3495e28807a7bd247c5079693c79a59"
+  },
+  "physics": {
+    "all_buses_start": "full",
+    "charge_kw": 240.0,
+    "charge_start_cost": 0.0,
+    "chargers": "unlimited",
+    "deadhead": "zone_centroid",
+    "g_kwh": 240.0,
+    "reserve_kwh": 0.0
+  },
+  "producing_commit_sha": "fa47427b9e173f60969f824843dfef5d52e6bb0b",
+  "schema": "evsp-dr-k40-fixed-duty-sweep-v2"
+}
