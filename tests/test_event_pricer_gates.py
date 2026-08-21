@@ -78,7 +78,7 @@ class EventPricerTargetGates(unittest.TestCase):
         )
         record=network.fixed_sequence_record(route["trips"])
         continuous=optimize_fixed_duty_continuous(
-            restricted,route["trips"],self.prices
+            restricted,route["trips"],network.prices
         )
         self.assertTrue(continuous["feasible"])
         self.assertIsNotNone(record)
