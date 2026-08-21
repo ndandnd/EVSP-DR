@@ -1,3 +1,5 @@
+> **TASK STATE 2026-08-21: complete.** Confirmed the primary-grid k2 optimum is 3/3/3, found arc-flow LP equals the set-partitioning LP on all nine cells (`D0026`), and audited all 36 per-route constraints (`D0030`). Do not start this brief fresh.
+
 # Work order: independent arc-flow oracle (self-contained briefing)
 
 **For a new agent with no prior context. Read §1–§3 before writing code.**

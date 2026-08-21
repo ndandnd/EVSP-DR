@@ -1,3 +1,5 @@
+> **TASK STATE 2026-08-21: in progress, promising.** Certifies fleet LP 2.0000 at k02_s1/s2 and makes duties 13413 and 13411 representable, with 99.5% fewer nodes than uniform 1/5. Open: memory blowup at k02_s3 (7.81M arcs, 9.8 GiB). Next step is coarse SOC — SOC saturates below 2.5 kWh, so pairing event times with 1 kWh SOC is unnecessary.
+
 # Work order: event-based time discretization in the pricer
 
 **For a new agent. Read §1 (required reading) before writing any code.**

@@ -1,3 +1,5 @@
+> **TASK STATE 2026-08-21: complete, then parked.** Proved `k02_s2 = 3` on the primary grid and `= 2` at 1 kWh/5 min. Parked because it proves the coarse-grid optimum, which is worse than the industrial fleet, and the arc-flow oracle answers the same question more cheaply (`D0026`). Do not start this brief fresh.
+
 # Work order: exact branch-and-price experiment (self-contained briefing)
 
 **For a new agent with no prior context. Read all of §1–§4 before writing code.**
