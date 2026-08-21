@@ -20,6 +20,16 @@ This comparison uses the closest verifiable public successor:
   `d1b3b05939720355449cf20d47e2527e9a02e05c`
 - Selected instance: `qlink_8`.
 
+The Wen et al. instances reproduced by Parmentier, Martinelli, and Vidal
+(2023) were also evaluated. They have a clearer MIT-licensed code repository
+and published exact objective targets, but they are multi-depot and require
+every route to return to its originating depot. EVSP-DR currently has one
+depot. Collapsing Wen's depots into a super-depot would admit cross-depot
+routes and change the benchmark, so that set was not converted here. A faithful
+Wen comparator requires depot-tagged source/sink flows and benchmark-specific
+deadhead objective costs before its published LP/integer objectives can be
+used as regression targets.
+
 The upstream repository declares no license. Its files are therefore **not
 redistributed** here. `src/convert_utrecht_evsp.py` consumes a separately
 cloned copy and records the commit, byte counts, and SHA256 of all three source
