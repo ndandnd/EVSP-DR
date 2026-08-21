@@ -1,0 +1,42 @@
+# Provisional findings: cursor/arcflow-oracle-2969-3a99
+
+These labels are branch-local. They are not authoritative bug or decision IDs.
+
+## LOCAL-1
+
+- Claim: The primary-grid discretized integer fleet is three buses for all
+  three k2 replicates. The RAW pool-MIP excess is 1, 1, and 4 buses.
+- Evidence path: `analysis/arcflow_oracle_20260820/REPORT.md`
+- Producing commit SHA: `7641191a03a1ba908fdd6e56996f4c3edfe440cd`
+
+## LOCAL-2
+
+- Claim: On the fully expanded acyclic network, the arc-flow fleet LP equals
+  the set-partitioning fleet LP on all nine primary cells; path-flow
+  decomposition explains the equality.
+- Evidence path: `analysis/arcflow_oracle_20260820/results.csv`
+- Producing commit SHA: `7641191a03a1ba908fdd6e56996f4c3edfe440cd`
+
+## LOCAL-3
+
+- Claim: A service-integrality search result is accepted as an integer witness
+  only when every returned arc is integral and physical route replay passes.
+  Matching such a witness to a certified fleet lower bound proves the full
+  all-arc-integer fleet optimum without treating the relaxation as exact.
+- Evidence path: `analysis/arcflow_oracle_20260820/REPORT.md`
+- Producing commit SHA: `3b0d485845adca6d69c9b7452a06b2fa0d8a2612`
+
+## LOCAL-4
+
+- Claim: Dual simplex did not return a k02_s1 arc-flow LP primal in 600
+  seconds, while HiGHS interior point solved the same LP in 16.188 seconds.
+- Evidence path: `analysis/arcflow_oracle_20260820/REPORT.md`
+- Producing commit SHA: `4ac83d058b2d4d8befd2df4d9e86a6b0326bd33d`
+
+## LOCAL-5
+
+- Claim: The first direct all-arc-integer k2 solve exhausted the 47 GiB local
+  VM; subsequent runs used a 30 GB process cap and the explicitly labelled
+  witness-search relaxation described in LOCAL-3.
+- Evidence path: `analysis/arcflow_oracle_20260820/REPORT.md`
+- Producing commit SHA: `b09284f313cb409e7d370284d491f681ca0eaff6`
