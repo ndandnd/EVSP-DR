@@ -226,10 +226,15 @@ class EventExpandedNetwork:
 
     def _add(self, source, target, cost, trip, action):
         dual = self.trip_position[trip] if trip is not None else -1
-        self.out[source].append((target, float(cost), dual, action))
+        row = (target, float(cost), dual, action)
+        key = (target, dual)
+        candidate = (row[1], json.dumps(action, sort_keys=True))
+        current = self._best_arcs[source].get(key)
+        if current is None or candidate < current[0]:
+            self._best_arcs[source][key] = (candidate, row)
 
     def _build_arcs(self):
-        self.out = [[] for _node in self.node_meta]
+        self._best_arcs = [{} for _node in self.node_meta]
         self.sink_arcs = []
         for trip, (travel, deadhead) in sorted(self.depot_trip.items()):
             if travel > self.problem.start_min[trip] + TOL:
@@ -246,19 +251,15 @@ class EventExpandedNetwork:
             depart = float(self.problem.end_min[trip])
             self._direct_arcs(source, trip, soc_exit, depart)
             self._charge_arcs(source, trip, soc_exit, depart)
-        for source, arcs in enumerate(self.out):
-            retained = {}
-            for row in arcs:
-                key = (row[0], row[2])
-                candidate = (row[1], json.dumps(row[3], sort_keys=True))
-                if key not in retained or candidate < retained[key][0]:
-                    retained[key] = (candidate, row)
-            self.out[source] = sorted(
+        self.out = []
+        for retained in self._best_arcs:
+            self.out.append(sorted(
                 (value[1] for value in retained.values()),
                 key=lambda row: (
-                row[0], row[1], json.dumps(row[3], sort_keys=True)
+                    row[0], row[1], json.dumps(row[3], sort_keys=True)
                 ),
-            )
+            ))
+        del self._best_arcs
         self.sink_arcs = [
             (source, cost, action)
             for source, arcs in enumerate(self.out)
