@@ -19,7 +19,7 @@ def run(args):
     command = [
         sys.executable, "-u", str(Path(__file__).with_name("run_exact_pool_mip.py")),
         "--result", str(args.result),
-        "--timelimit", str(args.timelimit),
+        "--timelimit", str(int(args.timelimit)),
         "--mipgap", "0", "--threads", "1", "--two-stage",
         "--progress-dir", str(progress), "--out", str(args.out),
     ]
