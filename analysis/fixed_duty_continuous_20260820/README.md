@@ -93,3 +93,7 @@ grid infeasibility is therefore not evidence of physical infeasibility.
   SE3-shaped two-peak instrument.
 - `K40_FIXED_DUTY_RESULTS.md`: complete 40-duty matched timing values,
   infeasibility counts, and station-time charger-concurrency measurements.
+- `k40_hourly_unconstrained_demand.csv`: shared-timeline hourly demand
+  distribution for every all-40 analysis arm.
+- `k40_infeasibility_summary.csv`: separately labelled all-40 and prior-k5
+  terminal-policy infeasibility rows.

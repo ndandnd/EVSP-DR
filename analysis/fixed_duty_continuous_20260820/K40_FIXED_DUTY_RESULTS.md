@@ -145,4 +145,5 @@ optimistic. Chargers remain unlimited in this experiment.
 - `k40_sweep_metadata.json`: input hashes, physics, fixed-set rule, and
   producing commit.
 
-Post-artifact full repository test result will be recorded after validation.
+Post-artifact full repository test result:
+`513 passed, 123 subtests passed in 159.95s`.

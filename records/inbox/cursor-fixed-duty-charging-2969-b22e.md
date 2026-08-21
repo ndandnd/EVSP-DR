@@ -77,3 +77,27 @@ must not be cited as authoritative bug or decision IDs.
   `analysis/fixed_duty_continuous_20260820/k40_station_time_concurrency.csv`;
   `analysis/fixed_duty_continuous_20260820/k40_sweep_metadata.json`
 - **Producing commit SHA:** `77da5da2b1bdd1cc738976ef2e0212cf071a898f`
+
+## LOCAL-7
+
+- **Claim:** After adding a published flat control and freezing one 30-duty
+  intersection feasible across all tariffs, terminal policies, and four arms,
+  flat timing value is exactly zero. On that same population,
+  two-peak/`>= reserve` timing value is 39.699 (4.720%) uncapped and 40.542
+  (4.755%) under observed event caps; cap cost is 11.632. All 40 duties remain
+  in per-duty output. Separately, all-40 `>= initial` infeasibility is 7/40
+  uncapped and 10/40 capped, close to the prior k5 3/15 observation. Fleet
+  concurrency is measured on one shared service-day timeline and explicitly
+  classified as unconstrained charger demand: two-peak/`>= reserve` optimized
+  demand peaks at 18–20 buses globally and 6 at one station-time; two-peak/
+  `>= initial` peaks at 30 buses at `PARX_1`.
+- **Evidence:**
+  `analysis/fixed_duty_continuous_20260820/K40_FIXED_DUTY_RESULTS.md`;
+  `analysis/fixed_duty_continuous_20260820/k40_matched_duty_results.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_matched_aggregate.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_infeasibility_summary.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_solution_metrics.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_station_time_concurrency.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_hourly_unconstrained_demand.csv`;
+  `analysis/fixed_duty_continuous_20260820/k40_sweep_metadata.json`
+- **Producing commit SHA:** `509aeba45b0ffd1ff5354e1942e15852d3746448`
