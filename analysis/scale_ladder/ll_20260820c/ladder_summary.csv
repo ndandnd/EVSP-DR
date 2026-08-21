@@ -1,0 +1,24 @@
+cell,scale,target_fleet,route_weight,route_weight_minus_target,rel_penalty_pct,min_rc,certified,artificials,pool_columns,iterations,elapsed_h,charging_cost_usd,stop_state,route_weight_meaning
+k02_s1_c1,2,2,2.181818,0.181818,9.0909,-0,True,0.000000,2272,212,0.009,85.96,certified,combined-cost-master route weight
+k02_s2_c1,2,2,2.187500,0.187500,9.3750,-0,True,0.000000,548,93,0.002,120.26,certified,combined-cost-master route weight
+k02_s3_c1,2,2,2.274725,0.274725,13.7363,-0,True,0.000000,2906,546,0.030,96.06,certified,combined-cost-master route weight
+k03_s1_c1,3,3,3.181818,0.181818,6.0606,-0,True,0.000000,5412,330,0.021,145.09,certified,combined-cost-master route weight
+k03_s2_c1,3,3,3.404698,0.404698,13.4899,-0,True,0.000000,6285,693,0.057,173.47,certified,combined-cost-master route weight
+k03_s3_c1,3,3,3.000000,0.000000,0.0000,-0,True,0.000000,5036,264,0.012,101.23,certified,combined-cost-master route weight
+k05_s1_c1,5,5,5.323651,0.323651,6.4730,-0,True,0.000000,18515,691,0.163,332.68,certified,combined-cost-master route weight
+k05_s2_c1,5,5,5.000000,0.000000,0.0000,-0,True,0.000000,16689,798,0.180,251.42,certified,combined-cost-master route weight
+k05_s3_c1,5,5,5.000000,0.000000,0.0000,-0,True,0.000000,43297,1671,1.425,294.83,certified,combined-cost-master route weight
+k08_s1_c1,8,8,8.297625,0.297625,3.7203,-2112.02,False,0.000000,58721,2000,3.444,619.61,pricing_censored_max_iters,combined-cost-master route weight
+k08_s2_c1,8,8,8.000000,0.000000,0.0000,-0.505911,False,0.000000,57033,2000,4.298,376.55,near_converged,combined-cost-master route weight
+k08_s3_c1,8,8,8.000000,0.000000,0.0000,-0,True,0.000000,30118,1304,1.025,351.04,certified,combined-cost-master route weight
+k13_s1_c1,13,13,13.088176,0.088176,0.6783,-10790.2,False,0.000000,58263,2000,4.102,941.82,pricing_censored_max_iters,combined-cost-master route weight
+k13_s2_c1,13,13,13.000000,0.000000,0.0000,-0.820612,False,0.000000,55637,2000,5.589,566.26,near_converged,combined-cost-master route weight
+k13_s3_c1,13,13,13.000000,0.000000,0.0000,-57.1695,False,0.000000,52479,1790,6.002,765.53,near_converged,combined-cost-master route weight
+k20_s1_c1,20,20,20.124396,0.124396,0.6220,-31783.7,False,0.000000,56780,2000,6.124,1685.25,pricing_censored_max_iters,combined-cost-master route weight
+k20_s2_c1,20,20,20.454818,0.454818,2.2741,-31802,False,0.000000,57041,1900,8.251,1795.60,pricing_censored_max_iters,combined-cost-master route weight
+k20_s3_c1,20,20,20.008338,0.008338,0.0417,-22345.4,False,0.000000,59860,2000,7.129,1557.36,pricing_censored_max_iters,combined-cost-master route weight
+k30_s1_c1,30,30,106.567013,76.567013,255.2234,-1.39849e+06,False,0.000000,40211,1343,8.246,2299.72,mid_flight,combined-cost-master route weight
+k30_s2_c1,30,30,77.260440,47.260440,157.5348,-1.43744e+06,False,0.000000,46780,1591,8.251,2468.79,mid_flight,combined-cost-master route weight
+k30_s3_c1,30,30,83.841234,53.841234,179.4708,-1.36976e+06,False,0.000000,48194,1620,8.253,2293.68,mid_flight,combined-cost-master route weight
+k40_s2_c1,40,40,301.978951,261.978951,654.9474,-3.1703e+06,False,0.000000,30759,999,8.176,2013.65,mid_flight,combined-cost-master route weight
+k40_s2_c2,40,40,301.631484,261.631484,654.0787,-3.27257e+06,False,0.000000,30849,1002,8.244,2015.03,mid_flight,combined-cost-master route weight

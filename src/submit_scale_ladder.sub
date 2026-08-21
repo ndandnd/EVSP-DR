@@ -63,7 +63,14 @@ for value in (
     job["instance"]["path"], job["instance"]["instance_file_sha256"],
     job["instance"]["relative_path"], job["output"],
     job["progress_dir"], job["telemetry"],
-    job["soc_step"], job["block_min"], job.get("dependency_preflight"),
+    job["soc_step"], job["block_min"],
+    job.get("g_kwh",300), job.get("charge_kw",300),
+    job.get("min_soc_frac",0), job.get("columns_per_iter",30),
+    job.get("max_iters",2000), job.get("diversify_rounds",0),
+    job.get("initial_pool","singletons"),
+    job.get("objective","combined-cost"),
+    job.get("master_sense","partition"),
+    job.get("checkpoint_every",25), job.get("dependency_preflight"),
     job.get("prelaunch_membership_sha256"),
 ):
     print("" if value is None else value)
@@ -90,8 +97,18 @@ PROGRESS=${FIELDS[16]}
 TELEMETRY=${FIELDS[17]}
 SOC_STEP=${FIELDS[18]}
 BLOCK_MIN=${FIELDS[19]}
-PREFLIGHT_DEP=${FIELDS[20]}
-PREFLIGHT_EXPECTED_SHA=${FIELDS[21]}
+G_KWH=${FIELDS[20]}
+CHARGE_KW=${FIELDS[21]}
+MIN_SOC=${FIELDS[22]}
+COLUMNS_PER_ITER=${FIELDS[23]}
+MAX_ITERS=${FIELDS[24]}
+DIVERSIFY=${FIELDS[25]}
+INITIAL_POOL=${FIELDS[26]}
+OBJECTIVE=${FIELDS[27]}
+MASTER_SENSE=${FIELDS[28]}
+CHECKPOINT_EVERY=${FIELDS[29]}
+PREFLIGHT_DEP=${FIELDS[30]}
+PREFLIGHT_EXPECTED_SHA=${FIELDS[31]}
 
 [[ "$WORKER_TOKEN" == "$EXPECTED_WORKER_SHA" ]] \
   || fatal "worker token mismatch"
@@ -219,16 +236,27 @@ PY
     command=(
       "$PYTHON" -u "$ROOT/src/exact_pricer_expanded.py"
       --csv "$INSTANCE_REL" --prices_csv hourly_prices_flat.csv
-      --g-kwh 300 --charge-kw 300 --min-soc-frac 0
+      --g-kwh "$G_KWH" --charge-kw "$CHARGE_KW" --min-soc-frac "$MIN_SOC"
       --soc-step "$SOC_STEP" --block-min "$BLOCK_MIN"
-      --master-sense partition --initial-pool singletons
+      --master-sense "$MASTER_SENSE" --initial-pool "$INITIAL_POOL"
+      --objective "$OBJECTIVE" --columns_per_iter "$COLUMNS_PER_ITER"
+      --max-iters "$MAX_ITERS" --diversify-rounds "$DIVERSIFY"
       --wall-limit-s "$((BUDGET + 60))"
-      --checkpoint-every 25 --resume
-      --snapshot-at-minutes "$SNAPSHOTS"
-      --out "$OUTPUT"
     )
-    if [[ -n "$TELEMETRY" ]]; then
-      command+=(--phase-telemetry "$TELEMETRY")
+    if [[ "$OBJECTIVE" == "combined-cost" ]]; then
+      command+=(
+        --checkpoint-every "$CHECKPOINT_EVERY" --resume
+        --snapshot-at-minutes "$SNAPSHOTS" --out "$OUTPUT"
+      )
+      if [[ -n "$TELEMETRY" ]]; then
+        command+=(--phase-telemetry "$TELEMETRY")
+      fi
+    elif [[ "$OBJECTIVE" == "lexicographic-fleet" ]]; then
+      # The three-phase runner intentionally has no resume/snapshot/telemetry
+      # surface and writes its own phase-specific iteration journal.
+      command+=(--out "$OUTPUT")
+    else
+      fatal "unsupported plan objective: $OBJECTIVE"
     fi
     ;;
   MIP)

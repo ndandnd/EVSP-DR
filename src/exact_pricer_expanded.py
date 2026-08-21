@@ -556,7 +556,18 @@ class ExpandedNetwork:
         )
 
     # ── exact pricing pass ────────────────────────────────────────────────
-    def min_reduced_cost_route(self, alpha: dict[int, float]):
+    def min_reduced_cost_route(
+        self,
+        alpha: dict[int, float],
+        *,
+        objective: str = "combined-cost",
+        route_dual: float = 0.0,
+    ):
+        if objective not in {
+            "combined-cost", "artificial-elimination",
+            "fleet-only", "charging-cost",
+        }:
+            raise ValueError(f"unsupported pricing objective: {objective}")
         INF = float("inf")
         dense_duals = [
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
@@ -569,10 +580,24 @@ class ExpandedNetwork:
             if vu == INF:
                 continue
             for v, cost, dual_index in self.out[u]:
-                cand = (
-                    vu + cost
-                    - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
-                )
+                if objective == "combined-cost" and route_dual == 0.0:
+                    cand = (
+                        vu + cost
+                        - (dense_duals[dual_index] if dual_index >= 0 else 0.0)
+                    )
+                else:
+                    objective_cost = (
+                        0.0 if objective == "artificial-elimination"
+                        else 1.0 if objective == "fleet-only" and u == 0
+                        else 0.0 if objective == "fleet-only"
+                        else cost - BUS_COST_KX
+                        if objective == "charging-cost" and u == 0
+                        else cost
+                    )
+                    cand = vu + objective_cost - (
+                        dense_duals[dual_index]
+                        if dual_index >= 0 else 0.0
+                    ) - (route_dual if u == 0 else 0.0)
                 if cand < value[v] - 1e-12:
                     value[v] = cand
                     parent[v] = (u, dual_index)
@@ -683,11 +708,18 @@ class ExpandedNetwork:
         k: int = 30,
         *,
         phase_callback=None,
+        objective: str = "combined-cost",
+        route_dual: float = 0.0,
     ):
         """Best route plus up to k-1 additional negative columns from the same
         pass: min-cost paths ending at the k best distinct sink-predecessors."""
         started = time.perf_counter()
-        best = self.min_reduced_cost_route(alpha)
+        if objective == "combined-cost" and route_dual == 0.0:
+            best = self.min_reduced_cost_route(alpha)
+        else:
+            best = self.min_reduced_cost_route(
+                alpha, objective=objective, route_dual=route_dual,
+            )
         if phase_callback is not None:
             phase_callback(
                 "pricing_shortest_path",
@@ -708,7 +740,11 @@ class ExpandedNetwork:
         for u, cost in self.sink_arcs:
             if value[u] == float("inf"):
                 continue
-            candidates.append((value[u] + cost, u))
+            sink_cost = (
+                cost if objective in {"combined-cost", "charging-cost"}
+                else 0.0
+            )
+            candidates.append((value[u] + sink_cost, u))
         candidates.sort()
         routes, seen = [best], {frozenset(best["trips"])}
         for rc, u in candidates[: max(4 * k, 200)]:
@@ -1037,6 +1073,39 @@ def load_column_pool(records: list[dict], trip_ids: list[int]) -> dict:
     return pool
 
 
+def persisted_initial_pool_sha256(path, mode):
+    """Hash complete seed records without repairing or rewriting a journal."""
+
+    from exact_initial_pools import pool_sha256
+
+    records = []
+    lines = Path(path).read_bytes().splitlines(keepends=True)
+    for index, line in enumerate(lines):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line)
+        except (UnicodeDecodeError, ValueError) as exc:
+            if index == len(lines) - 1 and not line.endswith(b"\n"):
+                break
+            raise DurableFileError(
+                f"{path} has corrupt initial-pool journal data"
+            ) from exc
+        if (
+            mode == "singletons"
+            and record.get("origin") == "exact_direct_singleton_seed"
+        ) or (
+            mode in {"matching", "greedy"}
+            and record.get("origin") == f"exact_{mode}_initial_seed"
+        ):
+            records.append(record)
+    if mode in {"singletons", "matching", "greedy"} and not records:
+        raise DurableFileError(
+            f"{path} contains no complete {mode} initial-pool records"
+        )
+    return pool_sha256(records)
+
+
 def resume_pool_mismatches(status, pool: dict) -> list[str]:
     """Validate status claims that require the repaired journal contents."""
 
@@ -1107,6 +1176,55 @@ def run_cg(args) -> dict:
                             max_station_to_trip_wait_min=HORIZON_MIN)
     provenance = _provenance(args)
     trips = list(problem.trips)
+    prices = load_station_hourly_prices(
+        DATA_DIR / args.prices_csv, CHARGING_STATIONS
+    )
+    from exact_initial_pools import (
+        build_heuristic_initial_pool,
+        pool_provenance,
+    )
+    missing_singletons = []
+    if args.initial_pool == "singletons":
+        initial_pool_records, missing_singletons = (
+            direct_singleton_seed_records(
+                problem,
+                g_kwh=args.g_kwh,
+                soc_step=args.soc_step,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+            )
+        )
+        for record in initial_pool_records:
+            record["cost_tariff_sha256"] = provenance["prices_sha256"]
+        initial_pool_provenance = pool_provenance(
+            "singletons",
+            initial_pool_records,
+            generator="exact_pricer_expanded.direct_singleton_seed_records",
+        )
+    elif args.initial_pool in {"matching", "greedy"}:
+        initial_pool_records, initial_pool_provenance = (
+            build_heuristic_initial_pool(
+                problem,
+                prices,
+                mode=args.initial_pool,
+                depot=DEPOT,
+                stations=STATIONS,
+                g_kwh=args.g_kwh,
+                charge_kw=args.charge_kw,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+                soc_step=args.soc_step,
+                block_min=args.block_min,
+                tariff_sha256=provenance["prices_sha256"],
+                instance_sha256=provenance["instance_sha256"],
+            )
+        )
+    else:
+        initial_pool_records = []
+        initial_pool_provenance = pool_provenance(
+            "artificial", [], generator="none_artificial_variables_only",
+        )
+    initial_pool_sha256 = initial_pool_provenance[
+        "generated_pool_sha256"
+    ]
     pool: dict[frozenset, dict] = {}
     history = []
     stall_hist = []  # (elapsed_s, lp_obj, min_rc) for --stall-window-min
@@ -1135,6 +1253,40 @@ def run_cg(args) -> dict:
             f"refusing --resume for {journal_path} before modifying persisted "
             "artifacts: " + "; ".join(identity_mismatches)
         )
+    interrupted_initialization = False
+    if args.resume and persisted_paths and not identity_mismatches:
+        saved_pool_hash = prior_status.get("initial_pool_sha256")
+        legacy_singletons = (
+            "initial_pool_sha256" not in prior_status
+            and args.initial_pool == "singletons"
+        )
+        interrupted_initialization = (
+            "initial_pool_sha256" in prior_status
+            and saved_pool_hash is None
+            and prior_status.get("stop_reason") == "initializing"
+            and int(prior_status.get("columns", -1)) == 0
+        )
+        if saved_pool_hash is None:
+            if not (legacy_singletons or interrupted_initialization):
+                raise DurableFileError(
+                    "persisted initial pool has no permitted hash identity"
+                )
+        else:
+            if journal_path is None or not journal_path.exists():
+                raise DurableFileError(
+                    "persisted initial-pool hash has no journal"
+                )
+            observed_pool_hash = persisted_initial_pool_sha256(
+                journal_path, args.initial_pool
+            )
+            if observed_pool_hash != saved_pool_hash:
+                raise DurableFileError(
+                    "persisted initial-pool journal hash differs"
+                )
+            if initial_pool_sha256 != saved_pool_hash:
+                raise DurableFileError(
+                    "regenerated initial pool differs from persisted identity"
+                )
 
     if args.resume and journal_path and journal_path.exists():
         # A hard preemption can interrupt only the last append.  Repair that
@@ -1256,9 +1408,6 @@ def run_cg(args) -> dict:
         return elapsed_offset + _attempt_elapsed_s()
 
     network_t0 = time.time()
-    prices = load_station_hourly_prices(
-        DATA_DIR / args.prices_csv, CHARGING_STATIONS
-    )
     net = ExpandedNetwork(
         problem, prices,
         soc_step=args.soc_step,
@@ -1438,7 +1587,10 @@ def run_cg(args) -> dict:
               f"{mark:g} min: {snap_json.name}", flush=True)
 
     resume_parent = (prior_status or {}).get("resume_parent")
-    if args.resume and compatible_prior and args.out:
+    if (
+        args.resume and compatible_prior and args.out
+        and not interrupted_initialization
+    ):
         # A terminal status from the previous allocation must not remain
         # visible while this allocation is actively extending its journal.
         # Campaign discovery can therefore distinguish a live canonical pool
@@ -1446,6 +1598,8 @@ def run_cg(args) -> dict:
         resume_status = dict(prior_status)
         resume_status.update({
             "initial_pool": args.initial_pool,
+            "initial_pool_sha256": initial_pool_sha256,
+            "initial_pool_provenance": initial_pool_provenance,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1482,6 +1636,8 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "initial_pool_sha256": None,
+            "initial_pool_provenance": None,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -1658,36 +1814,30 @@ def run_cg(args) -> dict:
             flush=True,
         )
 
-    if args.initial_pool == "singletons":
-        singleton_seeds, missing_singletons = direct_singleton_seed_records(
-            problem,
-            g_kwh=args.g_kwh,
-            soc_step=args.soc_step,
-            reserve_kwh=args.min_soc_frac * args.g_kwh,
+    seeds_added = 0
+    for record in initial_pool_records:
+        key = frozenset(record["trips"])
+        if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
+            pool[key] = record
+            if journal:
+                journal.write(json.dumps(record) + "\n")
+            seeds_added += 1
+    if journal and seeds_added:
+        started = time.perf_counter()
+        flush_and_fsync(journal)
+        _record_phase(
+            "journal_fsync",
+            time.perf_counter() - started,
+            iteration=iteration_offset,
+            details=lambda: {
+                "records": seeds_added,
+                "origin": f"{args.initial_pool}_initial_seed",
+            },
         )
-        seeds_added = 0
-        for record in singleton_seeds:
-            record["cost_tariff_sha256"] = provenance["prices_sha256"]
-            key = frozenset(record["trips"])
-            if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
-                pool[key] = record
-                if journal:
-                    journal.write(json.dumps(record) + "\n")
-                seeds_added += 1
-        if journal and seeds_added:
-            started = time.perf_counter()
-            flush_and_fsync(journal)
-            _record_phase(
-                "journal_fsync",
-                time.perf_counter() - started,
-                iteration=iteration_offset,
-                details=lambda: {
-                    "records": seeds_added, "origin": "singleton_seed",
-                },
-            )
+    if args.initial_pool == "singletons":
         print(
             f"[EXACT] direct-singleton seed: "
-            f"{len(singleton_seeds)}/{len(trips)} trips feasible "
+            f"{len(initial_pool_records)}/{len(trips)} trips feasible "
             f"({seeds_added} added to pool)",
             flush=True,
         )
@@ -1698,6 +1848,13 @@ def run_cg(args) -> dict:
                 f"({missing_singletons[:15]}).",
                 flush=True,
             )
+    elif args.initial_pool in {"matching", "greedy"}:
+        print(
+            f"[EXACT] {args.initial_pool} initial pool: "
+            f"{len(initial_pool_records)} routes ({seeds_added} added), "
+            f"sha256={initial_pool_sha256}",
+            flush=True,
+        )
     else:
         if pool:
             print(
@@ -1728,6 +1885,8 @@ def run_cg(args) -> dict:
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
+            "initial_pool_sha256": initial_pool_sha256,
+            "initial_pool_provenance": initial_pool_provenance,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
@@ -2120,6 +2279,12 @@ def run_cg(args) -> dict:
             break
         stall_count = 0
 
+    diversification = {
+        "requested_rounds": int(args.diversify_rounds),
+        "executed_rounds": 0,
+        "added_columns": 0,
+        "rounds": [],
+    }
     if args.diversify_rounds and pool:
         import random as _random
         rng = _random.Random(20260807)
@@ -2205,6 +2370,7 @@ def run_cg(args) -> dict:
         if base_lp is not None:
             added_div = 0
             for rnd in range(1, args.diversify_rounds + 1):
+                round_added = 0
                 alpha = {t_: v * (1.0 + rng.uniform(-args.diversify_delta,
                                                     args.diversify_delta))
                          for t_, v in base_lp.trip_duals.items()}
@@ -2289,6 +2455,16 @@ def run_cg(args) -> dict:
                         if journal:
                             journal.write(json.dumps(record) + "\n")
                         added_div += 1
+                        round_added += 1
+                diversification["rounds"].append({
+                    "round": rnd,
+                    "candidate_routes": len(diversify_routes),
+                    "inserted_or_replaced": round_added,
+                })
+            diversification.update({
+                "executed_rounds": args.diversify_rounds,
+                "added_columns": added_div,
+            })
             if journal:
                 started = time.perf_counter()
                 flush_and_fsync(journal)
@@ -2444,6 +2620,8 @@ def run_cg(args) -> dict:
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "initial_pool": args.initial_pool,
+        "initial_pool_sha256": initial_pool_sha256,
+        "initial_pool_provenance": initial_pool_provenance,
         "validated_seed_routes_sha256": provenance.get(
             "validated_seed_routes_sha256"
         ),
@@ -2463,6 +2641,7 @@ def run_cg(args) -> dict:
         "attempt_wall_s": _attempt_elapsed_s(),
         "stop_reason": stop_reason,
         "termination_signal": termination["signal"],
+        "diversification": diversification,
         "snapshot_availability": snapshot_availability,
         "history_tail": history[-5:],
         "final_lp": final_lp_detail,
@@ -2496,10 +2675,18 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--initial-pool",
-        choices=("singletons", "artificial"),
+        choices=("singletons", "artificial", "matching", "greedy"),
         default="singletons",
         help="Initial real-column pool. Singletons preserves the operational "
-             "default; artificial starts pricing from Big-M artificials only.",
+             "default; matching/greedy use only model-derived heuristics; "
+             "artificial starts from Big-M variables only.",
+    )
+    parser.add_argument(
+        "--objective",
+        choices=("combined-cost", "lexicographic-fleet"),
+        default=argparse.SUPPRESS,
+        help="Opt in to three-phase artificial/fleet/charging exact CG. "
+             "Omitting this flag preserves the combined-cost path exactly.",
     )
     parser.add_argument(
         "--validated-seed-routes",
@@ -2571,13 +2758,19 @@ def main(argv=None) -> int:
     parser.add_argument("--resume", action="store_true",
                         help="Reload the column journal next to --out and "
                              "continue from that pool.")
-    parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument("--out", "--o", type=Path, default=None)
     args = parser.parse_args(argv)
     if bool(args.validated_seed_routes) != bool(args.augmentation_label):
         parser.error(
             "--validated-seed-routes and --augmentation-label are required "
             "together"
         )
+    if args.initial_pool in {"matching", "greedy"} and args.validated_seed_routes:
+        parser.error("model-derived warm pools cannot be mixed with validated seeds")
+    runner = run_cg
+    if getattr(args, "objective", "combined-cost") == "lexicographic-fleet":
+        from lexicographic_fleet_cg import run_lexicographic_fleet_cg
+        runner = run_lexicographic_fleet_cg
     if args.out:
         lock_metadata = {
             "pid": os.getpid(),
@@ -2590,10 +2783,10 @@ def main(argv=None) -> int:
             "expected_commit": os.environ.get("EVSP_EXPECTED_COMMIT"),
         }
         with exclusive_output_lock(args.out, lock_metadata):
-            result = run_cg(args)
+            result = runner(args)
             atomic_write_json(args.out, result)
     else:
-        result = run_cg(args)
+        result = runner(args)
     return 0
 
 

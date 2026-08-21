@@ -141,7 +141,32 @@ class RandomGoal1InstanceTests(unittest.TestCase):
 
             manifest_disk = json.loads((first_dir / "manifest.json").read_text())
             self.assertEqual(manifest_disk["source"]["sha256"], first["source"]["sha256"])
+            self.assertEqual(manifest_disk["replicate_start"], 1)
             self.assertTrue((first_dir / "manifest.csv").exists())
+
+    def test_replicate_start_generates_only_requested_suffixes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source_path = root / "source.csv"
+            self.write_source(source_path)
+            manifest = generate_batch(
+                source_path=source_path,
+                output_dir=root / "output",
+                sizes=(2,),
+                replicates=3,
+                replicate_start=4,
+                seed=20260821,
+            )
+            self.assertEqual(
+                [row["replicate"] for row in manifest["instances"]],
+                [4, 5, 6],
+            )
+            self.assertTrue(all(
+                f"_r{replicate:02d}.csv" in row["output_csv"]
+                for replicate, row in zip(
+                    (4, 5, 6), manifest["instances"]
+                )
+            ))
 
     def test_selection_is_a_base_task_sample_without_replacement(self):
         with tempfile.TemporaryDirectory() as tmp:

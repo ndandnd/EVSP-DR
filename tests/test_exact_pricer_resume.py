@@ -224,6 +224,92 @@ class ExactPricerResumeTests(unittest.TestCase):
             self.assertEqual(journal.read_text(), journal_original)
             self.assertEqual(iters.read_text(), iters_original)
 
+    def test_resume_rejects_seed_hash_before_modifying_status_or_journal(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            status = self._status(stop_reason="certified")
+            status.update({
+                "trip_ids": [1],
+                "initial_pool_sha256": "0" * 64,
+            })
+            status_original = json.dumps(status)
+            out.write_text(status_original)
+            record = dict(self._record())
+            record.update({
+                "trips": [1],
+                "origin": "exact_direct_singleton_seed",
+                "cost_tariff_sha256": "prices-hash",
+            })
+            journal = Path(str(out) + ".columns.jsonl")
+            journal_original = json.dumps(record) + "\n" + '{"trips":'
+            journal.write_text(journal_original)
+
+            with self.assertRaisesRegex(
+                    DurableFileError, "journal hash differs"):
+                self._run_with_lightweight_problem(
+                    self._args(out), trips=[1]
+                )
+
+            self.assertEqual(out.read_text(), status_original)
+            self.assertEqual(journal.read_text(), journal_original)
+
+    def test_resume_rejects_regenerated_seed_before_any_repair_or_status_write(self):
+        from exact_initial_pools import pool_sha256
+
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            persisted = dict(self._record())
+            persisted.update({
+                "trips": [1], "origin": "exact_matching_initial_seed",
+                "initial_pool": "matching",
+            })
+            regenerated = {**persisted, "cost": 90000.0}
+            status = self._status(stop_reason="certified")
+            status.update({
+                "trip_ids": [1],
+                "initial_pool": "matching",
+                "initial_pool_sha256": pool_sha256([persisted]),
+            })
+            status_original = json.dumps(status)
+            out.write_text(status_original)
+            journal = Path(str(out) + ".columns.jsonl")
+            journal_original = json.dumps(persisted) + "\n" + '{"trips":'
+            journal.write_text(journal_original)
+            iters = Path(str(out) + ".iters.csv")
+            iters_original = exact.ITERATION_LOG_HEADER + "\n1,1,"
+            iters.write_text(iters_original)
+            args = self._args(out)
+            args.initial_pool = "matching"
+            regenerated_provenance = {
+                "generated_pool_sha256": pool_sha256([regenerated])
+            }
+
+            with patch(
+                "exact_initial_pools.build_heuristic_initial_pool",
+                return_value=([regenerated], regenerated_provenance),
+            ), self.assertRaisesRegex(
+                DurableFileError, "regenerated initial pool differs"
+            ):
+                self._run_with_lightweight_problem(args, trips=[1])
+
+            self.assertEqual(out.read_text(), status_original)
+            self.assertEqual(journal.read_text(), journal_original)
+            self.assertEqual(iters.read_text(), iters_original)
+
+    def test_initializing_null_hash_resume_does_not_publish_unresumable_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "run.json"
+            status = self._status(stop_reason="initializing")
+            status.update({
+                "initial_pool_sha256": None,
+                "columns": 0,
+            })
+            original = json.dumps(status)
+            out.write_text(original)
+            for _attempt in range(2):
+                self._run_with_lightweight_problem(self._args(out))
+                self.assertEqual(out.read_text(), original)
+
     def test_resume_rejects_status_ahead_of_missing_journal(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "run.json"

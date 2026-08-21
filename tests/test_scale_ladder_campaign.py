@@ -29,7 +29,13 @@ from tariff_response_environment import (  # noqa: E402
     compare_portable,
     identity as environment_identity,
 )
-from build_scale_ladder_inputs import build as build_inputs  # noqa: E402
+from build_scale_ladder_inputs import (  # noqa: E402
+    EXTENSION_SEED,
+    LEGACY_INSTANCE_MANIFEST_SHA256,
+    build as build_inputs,
+    build_six_selection_extension,
+    extension_family,
+)
 from build_tariff_response_manifest import sha256_file  # noqa: E402
 from scale_ladder_trip_identity import (  # noqa: E402
     classify_legacy_trip_hash,
@@ -63,9 +69,14 @@ from reconcile_scale_ladder_gate import (  # noqa: E402
 )
 
 
-INSTANCE_MANIFEST = (
+LEGACY_INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
+)
+INSTANCE_MANIFEST = (
+    REPO_ROOT
+    / "data/scale_ladder/instances/"
+    "scale_ladder_instance_manifest_6sel_seed20260803.csv"
 )
 
 
@@ -4150,8 +4161,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
     def test_manifest_has_exact_cells_and_identity_domains(self):
         with INSTANCE_MANIFEST.open(newline="") as handle:
             rows = list(csv.DictReader(handle))
-        self.assertEqual(len(rows), 22)
+        self.assertEqual(len(rows), 40)
         counts = {}
+        duty_sets = {}
         for row in rows:
             counts[int(row["scale"])] = counts.get(
                 int(row["scale"]), 0
@@ -4176,9 +4188,102 @@ class ScaleLadderCampaignTests(unittest.TestCase):
                 for duty in duties
             ]
             self.assertEqual(len(bases), len(set(bases)))
+            duty_key=tuple(sorted(duties))
+            self.assertNotIn(duty_key,duty_sets.setdefault(
+                int(row["scale"]),set()
+            ))
+            duty_sets[int(row["scale"])].add(duty_key)
         self.assertEqual(
-            counts, {2: 3, 3: 3, 5: 3, 8: 3, 13: 3, 20: 3, 30: 3, 40: 1}
+            counts, {2: 6, 3: 6, 5: 6, 8: 6, 13: 6, 20: 6, 30: 3, 40: 1}
         )
+        self.assertFalse(any(
+            "SyntheticRandom" in row["relative_path"]
+            or row["generator_family"].startswith(
+                "generate_random_goal1_instances"
+            )
+            for row in rows
+        ))
+
+    def test_six_selection_manifest_is_strictly_additive(self):
+        legacy_raw = LEGACY_INSTANCE_MANIFEST.read_bytes()
+        self.assertEqual(
+            hashlib.sha256(legacy_raw).hexdigest(),
+            LEGACY_INSTANCE_MANIFEST_SHA256,
+        )
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT) as tmp:
+            manifest,campaign,new_rows=build_six_selection_extension(
+                Path(tmp)/"instances"
+            )
+            expanded_raw=manifest.read_bytes()
+            self.assertTrue(expanded_raw.startswith(legacy_raw))
+            with manifest.open(newline="") as handle:
+                rows=list(csv.DictReader(handle))
+            self.assertEqual(len(rows),40)
+            self.assertEqual(
+                rows[:22],
+                list(csv.DictReader(legacy_raw.decode().splitlines())),
+            )
+            counts={}
+            for row in rows:
+                counts[int(row["scale"])]=counts.get(
+                    int(row["scale"]),0
+                )+1
+            self.assertEqual(
+                counts,
+                {2:6,3:6,5:6,8:6,13:6,20:6,30:3,40:1},
+            )
+            self.assertEqual(len(new_rows),18)
+            self.assertTrue(all(
+                int(row["generator_seed"])==EXTENSION_SEED
+                and row["generator_family"]==extension_family(
+                    int(row["scale"])
+                )
+                and int(row["selection_replicate"]) in {4,5,6}
+                and int(row["target_fleet"])==int(row["scale"])
+                and int(row["duty_count"])==int(row["scale"])
+                and row["weekday_variant_policy"]==
+                    "one_literal_per_numeric_base_no_siblings"
+                and "Practice_Custom_DutyUnion_" in row["relative_path"]
+                for row in new_rows
+            ))
+            payload=json.loads(campaign.read_text())
+            extension=payload["selection_extensions"][0]
+            self.assertEqual(extension["seed"],EXTENSION_SEED)
+            self.assertEqual(
+                extension["validation_status"],
+                "producer_only_pending_independent_validation",
+            )
+            self.assertEqual(
+                extension["selection_replicates"],[4,5,6]
+            )
+            self.assertEqual(
+                set(extension["generator_families"].values()),
+                {
+                    "pair_union_k2_seed20260803",
+                    "small_3_5_8_13_per6_seed20260803",
+                    "large_15_20_30_40_per6_seed20260803",
+                },
+            )
+
+    def test_synthetic_random_family_has_separate_results_table(self):
+        synthetic_root=(
+            REPO_ROOT/"data/scale_ladder/instances/"
+            "random_goal1_seed_20260821"
+        )
+        synthetic=json.loads((synthetic_root/"manifest.json").read_text())
+        self.assertEqual(synthetic["seed"],20260821)
+        self.assertTrue(all(
+            "Practice_SyntheticRandom_" in row["output_csv"]
+            for row in synthetic["instances"]
+        ))
+        results=(
+            REPO_ROOT/"analysis/synthetic_random_goal1_seed_20260821/"
+            "results.csv"
+        )
+        with results.open(newline="") as handle:
+            rows=list(csv.DictReader(handle))
+        self.assertEqual(rows,[])
+        self.assertIn("comparator_scope",results.read_text().splitlines()[0])
 
     def test_k40_hash_domains_are_explicit_and_not_cross_compared(self):
         k40 = (
@@ -4220,7 +4325,7 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT) as tmp:
             manifest, _campaign, generated = build_inputs(Path(tmp) / "out")
             self.assertTrue(manifest.is_file())
-            with INSTANCE_MANIFEST.open(newline="") as handle:
+            with LEGACY_INSTANCE_MANIFEST.open(newline="") as handle:
                 reviewed = {
                     (int(row["scale"]), int(row["selection_replicate"])):
                         row["instance_file_sha256"]
@@ -4261,11 +4366,12 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             plan = ladder.build_plan(
                 "ladder-test", Path(sys.executable), Path("/tmp/reservations")
             )
-        self.assertEqual(plan["task_count"], 138)
-        self.assertEqual(plan["preflight_task_count"], 22)
-        self.assertEqual(plan["cg_task_count"], 23)
-        self.assertEqual(plan["sensitivity_cg_task_count"], 30)
-        self.assertEqual(plan["mip_task_count"], 42)
+        self.assertEqual(plan["task_count"], 362)
+        self.assertEqual(plan["preflight_task_count"], 40)
+        self.assertEqual(plan["cg_task_count"], 205)
+        self.assertEqual(plan["primary_cg_task_count"], 41)
+        self.assertEqual(plan["sensitivity_cg_task_count"], 164)
+        self.assertEqual(plan["mip_task_count"], 78)
         self.assertEqual(plan["k40_mip_submission_count"], 0)
         self.assertEqual(plan["infrastructure_probe_task_count"], 2)
         self.assertEqual(plan["infrastructure_activation_task_count"], 1)
@@ -4273,9 +4379,9 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertEqual(
             {key: len(value) for key, value in plan["task_groups"].items()},
             {
-                "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-                "CG_SENSITIVITY": 30,
-                "MIP_RAW": 21, "MIP_KNOWN": 21,
+                "PREFLIGHT": 40, "SEED": 39, "CG": 41,
+                "CG_SENSITIVITY": 164,
+                "MIP_RAW": 39, "MIP_KNOWN": 39,
             },
         )
         self.assertFalse(any(
@@ -4300,9 +4406,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             if job["phase"] == "CG_SENSITIVITY"
             and job["soc_step"] == 1.0 and job["block_min"] == 5
         ]
-        self.assertEqual(len(fallback), 3)
+        self.assertEqual(len(fallback), 41)
         self.assertTrue(all(
-            job["scale"] == 2 and job["diagnostic_only"] is True
+            job["grid_role"] == "resolution"
+            and job["diagnostic_only"] is False
             for job in fallback
         ))
         self.assertTrue(all(
@@ -4319,6 +4426,19 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             job["snapshot_minutes"] for job in plan["jobs"]
             if job["phase"] == "CG" and job["scale"] == 40
         ))
+        expected_parameters = {
+            "g_kwh": 300.0, "charge_kw": 300.0, "min_soc_frac": 0.0,
+            "columns_per_iter": 30, "max_iters": 100000,
+            "diversify_rounds": 0, "initial_pool": "singletons",
+            "objective": "combined-cost", "master_sense": "partition",
+            "checkpoint_every": 25,
+        }
+        self.assertEqual(plan["cg_parameter_policy"], expected_parameters)
+        self.assertTrue(all(
+            all(job[key] == value for key, value in expected_parameters.items())
+            for job in plan["jobs"]
+            if job["phase"] in {"CG", "CG_SENSITIVITY"}
+        ))
 
     def test_operator_wrapper_matches_probe_first_contract(self):
         wrapper = (
@@ -4330,6 +4450,10 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertIn('CAMPAIGN=${LADDER_CAMPAIGN:-}', wrapper)
         self.assertNotIn('CAMPAIGN="slad_${STAMP}', wrapper)
         self.assertIn('.infrastructure_task_count == 3', wrapper)
+        self.assertIn('.task_count == 362', wrapper)
+        self.assertIn(
+            '(.task_groups.CG_SENSITIVITY | length) == 164', wrapper
+        )
         self.assertIn('--retry-failed-probes', wrapper)
         self.assertIn('--retry-failed-activation', wrapper)
         self.assertIn('--approved-plan-sha256 "$FILE_SHA" --submit', wrapper)
@@ -4667,6 +4791,8 @@ printf '%s %s\n' "$status" "$checks"
         ).read_text()
         self.assertNotIn("sbatch", local)
         self.assertNotIn('"phase": "PREFLIGHT"', local)
+        self.assertIn("enumerate(CG_GRIDS)", local)
+        self.assertNotIn("first_feasible_soc_step", local)
         self.assertIn("default=3", local)
         self.assertIn("diagnostic_only", local)
         self.assertFalse(set(LOCAL_CODE_PATHS) - set(ladder.CODE_PATHS))
@@ -4681,7 +4807,11 @@ printf '%s %s\n' "$status" "$checks"
                 group: [f"job_{group.lower()}"] for group in groups
             },
             "jobs": [
-                {"job_key": f"job_{group.lower()}", "budget_s": 60}
+                {
+                    "job_key": f"job_{group.lower()}", "budget_s": 60,
+                    "memory_gb": 128 if group == "CG_SENSITIVITY" else 16,
+                    "max_concurrency": 1 if group == "CG_SENSITIVITY" else 16,
+                }
                 for group in groups
             ],
             "python": {"path": "/approved/python", "sha256": "p"},
@@ -4707,6 +4837,9 @@ printf '%s %s\n' "$status" "$checks"
                 if group in {"CG", "CG_SENSITIVITY"}:
                     self.assertIn("--requeue", arguments)
                     self.assertNotIn("--no-requeue", arguments)
+                    if group == "CG_SENSITIVITY":
+                        self.assertIn("--array=0-0%1", arguments)
+                        self.assertIn("--mem=128G", arguments)
                 else:
                     self.assertIn("--no-requeue", arguments)
                     self.assertNotIn("--requeue", arguments)
@@ -5009,9 +5142,13 @@ printf '%s %s\n' "$status" "$checks"
             cg5_status = json.loads(cg.read_text())
             cg5_status["columns_journal"] = str(cg5_journal)
             cg5_status["soc_step"] = 5.0
+            cg5_status["certified_rc_optimal"] = True
+            cg5_status["stop_reason"] = "certified"
             cg5.write_text(json.dumps(cg5_status))
             Path(str(cg5) + ".iters.csv").write_text(
-                Path(str(cg) + ".iters.csv").read_text()
+                "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,pool_columns\n"
+                "10,1,3,2.5,1,-1,1\n"
+                "100,2,2,2,0,0,2\n"
             )
             telemetry5 = root / "telemetry5.jsonl"
             telemetry5.write_text(telemetry.read_text())

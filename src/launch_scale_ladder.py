@@ -25,17 +25,20 @@ from scale_ladder_trip_identity import SCHEMA as TRIP_SCHEMA, identity
 SCHEMA = "evsp-dr-scale-ladder-plan-v1"
 REVIEWED_BASE = "77baf667a06946c692f959d66fed4e2bca36cd32"
 INPUT_MANIFEST = (
-    REPO_ROOT / "data/scale_ladder/instances/campaign_input_manifest.json"
+    REPO_ROOT / "data/scale_ladder/instances/"
+    "campaign_input_manifest_6sel_seed20260803.json"
 )
 MEMBERSHIP_PREFLIGHT = (
-    REPO_ROOT / "data/scale_ladder/known_membership_preflight.json"
+    REPO_ROOT
+    / "data/scale_ladder/known_membership_preflight_6sel_seed20260803.json"
 )
 MEMBERSHIP_PREFLIGHT_SHA256 = (
-    "5124534373e8d3aff981c55891b8f7ed321fdf1efe96c8bbfd093d957c1b94c8"
+    "ba7074a7ed5b342cb64d350fd95945099170b68bc3847619ef94d6f728fbe656"
 )
 INSTANCE_MANIFEST = (
     REPO_ROOT
-    / "data/scale_ladder/instances/scale_ladder_instance_manifest.csv"
+    / "data/scale_ladder/instances/"
+    "scale_ladder_instance_manifest_6sel_seed20260803.csv"
 )
 HISTORICAL_FLAT_SHA256 = (
     "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
@@ -51,6 +54,9 @@ CODE_PATHS = (
     "src/scale_ladder_trip_identity.py",
     "src/prepare_scale_ladder_known_partition.py",
     "src/exact_pricer_expanded.py",
+    "src/exact_initial_pools.py",
+    "src/warm_pool_fixed_duty_optimizer.py",
+    "src/greedy_init.py",
     "src/run_exact_pool_mip.py",
     "src/expanded_path_realization.py",
     "src/audit_giro_known_columns.py",
@@ -82,6 +88,18 @@ CG_BUDGET_S = {
     8: 21600, 13: 21600, 20: 43200,
     30: 86400, 40: 86400,
 }
+CG_GRIDS = (
+    {"grid_id": "soc15_b10", "soc_step": 15.0, "block_min": 10,
+     "grid_role": "primary"},
+    {"grid_id": "soc5_b10", "soc_step": 5.0, "block_min": 10,
+     "grid_role": "resolution"},
+    {"grid_id": "soc2p5_b10", "soc_step": 2.5, "block_min": 10,
+     "grid_role": "resolution"},
+    {"grid_id": "soc1_b10", "soc_step": 1.0, "block_min": 10,
+     "grid_role": "resolution"},
+    {"grid_id": "soc1_b5", "soc_step": 1.0, "block_min": 5,
+     "grid_role": "resolution"},
+)
 MIP_BUDGET_S = {
     2: 1800, 3: 1800, 5: 1800, 8: 1800,
     13: 3600, 20: 7200, 30: 14400,
@@ -189,6 +207,22 @@ def _name(job, nonce):
     return name
 
 
+def _resources(phase, scale, soc_step, block_min):
+    if phase == "MIP":
+        return 48, 16, "scaglione_mip"
+    if phase not in {"CG", "CG_SENSITIVITY"}:
+        return 16, 16, "small_non_cg"
+    if scale >= 30 and soc_step <= 1.0 and block_min <= 5:
+        return 128, 1, "unbenchmarked_fine_large_conservative"
+    if (scale >= 30 and soc_step <= 2.5) or (
+        scale >= 20 and soc_step <= 1.0
+    ):
+        return 64, 2, "unbenchmarked_fine_conservative"
+    if scale >= 20:
+        return 24, 8, "measured_large_scale_policy"
+    return 16, 16, "measured_small_scale_policy"
+
+
 def build_plan(campaign, python, reservation_root):
     if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{2,79}", campaign):
         raise ValueError("unsafe campaign name")
@@ -222,9 +256,25 @@ def build_plan(campaign, python, reservation_root):
         != "hourly_prices_flat.csv"
     ):
         raise ValueError("historical flat tariff identity changed")
+    physics = input_manifest["physics"]
+    cg_parameters = {
+        "g_kwh": float(physics["g_kwh"]),
+        "charge_kw": float(physics["charge_kw"]),
+        "min_soc_frac": (
+            float(physics["reserve_kwh"]) / float(physics["g_kwh"])
+        ),
+        # LOCAL-4: equal-wall evidence is 30 < 100 < 300 in route weight.
+        "columns_per_iter": 30,
+        "max_iters": 100000,
+        "diversify_rounds": 0,
+        "initial_pool": "singletons",
+        "objective": "combined-cost",
+        "master_sense": "partition",
+        "checkpoint_every": 25,
+    }
     with INSTANCE_MANIFEST.open(newline="") as handle:
         rows = list(csv.DictReader(handle))
-    if len(rows) != 22:
+    if len(rows) != 40:
         raise ValueError("scale ladder instance row count differs")
     instances = {}
     for row in rows:
@@ -277,7 +327,7 @@ def build_plan(campaign, python, reservation_root):
             })
     non_k40 = [cell for cell in cg_cells if cell["scale"] < 40]
     k40 = [cell for cell in cg_cells if cell["scale"] == 40]
-    if len(non_k40) != 21 or len(k40) != 2:
+    if len(non_k40) != 39 or len(k40) != 2:
         raise ValueError("CG ladder cell count differs")
     cg_cells = non_k40 + k40
     jobs = []
@@ -310,56 +360,36 @@ def build_plan(campaign, python, reservation_root):
         seed_key_by_cell[cell["cell_id"]] = key
         jobs.append(_job(root, cell, key, "SEED", None, nonce))
     for cell in cg_cells:
-        key = f"cg_{cell['cell_id']}"
-        cg_key_by_cell[cell["cell_id"]] = key
-        job = _job(root, cell, key, "CG", None, nonce)
-        job["dependency_preflight"] = preflight_key_by_cell[(
-            cell["scale"], cell["selection_replicate"]
-        )]
-        jobs.append(job)
-    for cell in non_k40:
-        if cell["scale"] > 5:
-            continue
-        membership = prelaunch_membership[(
-            cell["scale"], cell["selection_replicate"]
-        )]
-        if membership["known_partition_in_primary_expanded_space"] is True:
-            sensitivity_grids = ()
-        else:
-            first = membership.get("first_feasible_soc_step")
-            sensitivity_grids = (
-                ((5.0, 10),) if first == 5.0
-                else ((5.0, 10), (2.5, 10)) if first == 2.5
-                else ((5.0, 10), (2.5, 10), (1.0, 10))
-            )
-            if (
-                cell["scale"] == 2
-                and first == 1.0
-                and membership.get("first_feasible_block_min") == 5
-            ):
-                sensitivity_grids = (
-                    *sensitivity_grids, (1.0, 5),
-                )
-        for soc_step, diagnostic_block_min in sensitivity_grids:
-            label = str(soc_step).replace(".", "p")
+        for grid_index, grid in enumerate(CG_GRIDS):
+            primary = grid["grid_role"] == "primary"
             key = (
-                f"cgdiag_g{label}_b{diagnostic_block_min}_"
-                f"{cell['cell_id']}"
+                f"cg_{cell['cell_id']}" if primary
+                else f"cg_{grid['grid_id']}_{cell['cell_id']}"
             )
             job = _job(
-                root, cell, key, "CG_SENSITIVITY", None, nonce,
-                diagnostic_soc_step=soc_step,
-                diagnostic_block_min=diagnostic_block_min,
+                root, cell, key,
+                "CG" if primary else "CG_SENSITIVITY",
+                None, nonce,
+                diagnostic_soc_step=grid["soc_step"],
+                diagnostic_block_min=grid["block_min"],
             )
-            job["diagnostic_only"] = True
+            job.update({
+                **grid,
+                **cg_parameters,
+                "grid_index": grid_index,
+                "diagnostic_only": False,
+            })
             job["dependency_preflight"] = preflight_key_by_cell[(
                 cell["scale"], cell["selection_replicate"]
             )]
             jobs.append(job)
+            if primary:
+                cg_key_by_cell[cell["cell_id"]] = key
     for arm in ("RAW", "KNOWN-PARTITION"):
         for cell in non_k40:
             key = f"mip_{arm.lower().replace('-', '_')}_{cell['cell_id']}"
             job = _job(root, cell, key, "MIP", arm, nonce)
+            job.update(cg_parameters)
             job["dependency_cg"] = cg_key_by_cell[cell["cell_id"]]
             job["dependency_seed"] = (
                 seed_key_by_cell[cell["cell_id"]]
@@ -395,6 +425,16 @@ def build_plan(campaign, python, reservation_root):
             "snapshot_minutes": job["snapshot_minutes"],
             "soc_step": job["soc_step"],
             "block_min": job["block_min"],
+            "g_kwh": job.get("g_kwh"),
+            "charge_kw": job.get("charge_kw"),
+            "min_soc_frac": job.get("min_soc_frac"),
+            "columns_per_iter": job.get("columns_per_iter"),
+            "max_iters": job.get("max_iters"),
+            "diversify_rounds": job.get("diversify_rounds"),
+            "initial_pool": job.get("initial_pool"),
+            "objective": job.get("objective"),
+            "master_sense": job.get("master_sense"),
+            "checkpoint_every": job.get("checkpoint_every"),
             "instance_identity": {
                 field: job["instance"][field] for field in (
                     "instance_file_sha256",
@@ -429,8 +469,8 @@ def build_plan(campaign, python, reservation_root):
         ],
     }
     if {key: len(value) for key, value in groups.items()} != {
-        "PREFLIGHT": 22, "SEED": 21, "CG": 23,
-        "CG_SENSITIVITY": 30, "MIP_RAW": 21, "MIP_KNOWN": 21,
+        "PREFLIGHT": 40, "SEED": 39, "CG": 41,
+        "CG_SENSITIVITY": 164, "MIP_RAW": 39, "MIP_KNOWN": 39,
     }:
         raise ValueError("task group counts differ")
     reuse_slots = [
@@ -525,12 +565,22 @@ def build_plan(campaign, python, reservation_root):
         "reservation_root": str(Path(reservation_root).resolve()),
         "jobs": jobs,
         "task_groups": groups,
+        "cg_grids": [dict(grid) for grid in CG_GRIDS],
+        "cg_parameter_policy": dict(cg_parameters),
+        "resource_policy": {
+            "schema": "evsp-dr-scale-ladder-resource-policy-v1",
+            "fine_grid_large_scale_status":
+                "unbenchmarked_conservative_allocation",
+            "memory_gb_field": "memory_gb",
+            "concurrency_field": "max_concurrency",
+        },
         "task_count": sum(map(len, groups.values())),
-        "preflight_task_count": 22,
-        "cg_task_count": 23,
-        "sensitivity_cg_task_count": 30,
-        "mip_task_count": 42,
-        "seed_task_count": 21,
+        "preflight_task_count": 40,
+        "cg_task_count": 205,
+        "primary_cg_task_count": 41,
+        "sensitivity_cg_task_count": 164,
+        "mip_task_count": 78,
+        "seed_task_count": 39,
         "k40_mip_submission_count": 0,
         "infrastructure_probe_task_count": 2,
         "infrastructure_activation_task_count": 1,
@@ -554,6 +604,17 @@ def _job(
         value for value in SNAPSHOT_MINUTES
         if value * 60 <= budget
     ] if phase in {"CG", "CG_SENSITIVITY"} else []
+    soc_step = (
+        float(diagnostic_soc_step)
+        if diagnostic_soc_step is not None else 15.0
+    )
+    block_min = (
+        int(diagnostic_block_min)
+        if diagnostic_block_min is not None else 10
+    )
+    memory_gb, max_concurrency, resource_basis = _resources(
+        phase, scale, soc_step, block_min
+    )
     job = {
         **cell,
         "job_key": key,
@@ -564,14 +625,11 @@ def _job(
             if arm == "KNOWN-PARTITION" else None
         ),
         "budget_s": budget,
-        "soc_step": (
-            float(diagnostic_soc_step)
-            if diagnostic_soc_step is not None else 15.0
-        ),
-        "block_min": (
-            int(diagnostic_block_min)
-            if diagnostic_block_min is not None else 10
-        ),
+        "soc_step": soc_step,
+        "block_min": block_min,
+        "memory_gb": memory_gb,
+        "max_concurrency": max_concurrency,
+        "resource_basis": resource_basis,
         "snapshot_minutes": marks,
         "partition": (
             "scaglione" if phase == "MIP" else "default_partition"
@@ -599,8 +657,12 @@ def write_plan(plan, plan_path, matrix_path):
     with matrix_path.open("x", newline="") as handle:
         fields = (
             "job_key", "phase", "scale", "selection_replicate",
-            "cg_replicate", "arm", "budget_s", "partition", "threads",
-            "job_name", "output",
+            "cg_replicate", "arm", "grid_id", "grid_role", "grid_index",
+            "soc_step", "block_min", "g_kwh", "charge_kw", "min_soc_frac",
+            "columns_per_iter", "max_iters", "diversify_rounds",
+            "initial_pool", "objective", "master_sense", "checkpoint_every",
+            "memory_gb", "max_concurrency", "resource_basis", "budget_s",
+            "partition", "threads", "job_name", "output",
         )
         writer = csv.DictWriter(
             handle, fieldnames=fields, extrasaction="ignore",
@@ -2655,8 +2717,21 @@ def _submit_array(
         job["budget_s"] for job in plan["jobs"]
         if job["job_key"] in tasks
     )
+    task_jobs = [
+        job for job in plan["jobs"] if job["job_key"] in tasks
+    ]
+    cg_group = group in {"CG", "CG_SENSITIVITY"}
+    memory_gb = (
+        max(32, max(job.get("memory_gb", 32) for job in task_jobs))
+        if cg_group else 64 if group.startswith("MIP") else 32
+    )
+    concurrency = (
+        min(job.get("max_concurrency", 16) for job in task_jobs)
+        if cg_group else None
+    )
     arguments = [
-        f"--array=0-{len(tasks)-1}",
+        f"--array=0-{len(tasks)-1}"
+        + (f"%{concurrency}" if concurrency is not None else ""),
         f"--partition={partition}",
         "--requeue"
         if group in {"CG", "CG_SENSITIVITY"}
@@ -2664,7 +2739,7 @@ def _submit_array(
         "--signal=B:USR1@180",
         "--cpus-per-task=8" if group.startswith("MIP")
         else "--cpus-per-task=2",
-        "--mem=64G" if group.startswith("MIP") else "--mem=32G",
+        f"--mem={memory_gb}G",
         f"--time={math.ceil(max_budget/60)+(30 if group == 'CG' else 10)}",
         f"--job-name={_array_name(group, plan_sha)}",
         f"--comment=SLAD:{plan_sha[:20]}:{group}",
@@ -2804,8 +2879,8 @@ def main(argv=None):
     if not args.submit:
         print(
             f"[dry-run] tasks={plan['task_count']} "
-            "PREFLIGHT=22 SEED=21 PRIMARY_CG=23 "
-            "SENSITIVITY_CG=30 MIP=42 k40_MIP=0"
+            "PREFLIGHT=40 SEED=39 PRIMARY_CG=41 "
+            "RESOLUTION_CG=164 MIP=78 k40_MIP=0"
         )
         return 0
     if args.approved_plan_sha256 != plan_sha:

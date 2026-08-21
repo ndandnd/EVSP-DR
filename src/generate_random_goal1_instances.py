@@ -243,6 +243,7 @@ def generate_batch(
     output_dir: Path,
     sizes: Sequence[int] = (10, 15, 20),
     replicates: int = 5,
+    replicate_start: int = 1,
     seed: int = DEFAULT_SEED,
     force: bool = False,
 ) -> dict[str, object]:
@@ -250,6 +251,8 @@ def generate_batch(
 
     if replicates <= 0:
         raise ValueError("replicates must be positive")
+    if replicate_start <= 0:
+        raise ValueError("replicate_start must be positive")
     normalized_sizes = tuple(sorted(set(int(size) for size in sizes)))
     if not normalized_sizes or any(size <= 0 for size in normalized_sizes):
         raise ValueError("sizes must contain positive integers")
@@ -259,7 +262,9 @@ def generate_batch(
     instances: list[dict[str, object]] = []
 
     for size in normalized_sizes:
-        for replicate in range(1, replicates + 1):
+        for replicate in range(
+            replicate_start, replicate_start + replicates
+        ):
             selected_bases, selected_literals = select_vehicle_tasks(
                 source, size=size, seed=seed, replicate=replicate
             )
@@ -292,6 +297,7 @@ def generate_batch(
         "generator": "src/generate_random_goal1_instances.py",
         "seed": seed,
         "replicates_per_size": replicates,
+        "replicate_start": replicate_start,
         "sizes": list(normalized_sizes),
         "synthetic": True,
         "single_day_verified": False,
@@ -365,6 +371,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--sizes", type=_parse_sizes, default=(10, 15, 20))
     parser.add_argument("--replicates", type=int, default=5)
+    parser.add_argument("--replicate-start", type=int, default=1)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     parser.add_argument(
         "--force",
@@ -384,6 +391,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         output_dir=output_dir,
         sizes=args.sizes,
         replicates=args.replicates,
+        replicate_start=args.replicate_start,
         seed=args.seed,
         force=args.force,
     )

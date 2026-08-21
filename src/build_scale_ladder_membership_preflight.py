@@ -26,12 +26,13 @@ DEFAULT_OUTPUT = (
 )
 
 
-def build(output_path=DEFAULT_OUTPUT):
+def build(output_path=DEFAULT_OUTPUT, *, instance_manifest=INSTANCE_MANIFEST):
     output_path = Path(output_path).resolve()
+    instance_manifest = Path(instance_manifest).resolve()
     csv_path = output_path.with_suffix(".csv")
     if output_path.exists() or csv_path.exists():
         raise FileExistsError(output_path)
-    with INSTANCE_MANIFEST.open(newline="") as handle:
+    with instance_manifest.open(newline="") as handle:
         rows = list(csv.DictReader(handle))
     cells = []
     duty_rows = []
@@ -47,7 +48,7 @@ def build(output_path=DEFAULT_OUTPUT):
     package = {
         "schema": "evsp-dr-scale-ladder-membership-preflight-v1",
         "membership_schema": SCHEMA,
-        "instance_manifest_sha256": sha256_file(INSTANCE_MANIFEST),
+        "instance_manifest_sha256": sha256_file(instance_manifest),
         "cells": cells,
     }
     temporary = output_path.with_name(
@@ -77,8 +78,13 @@ def build(output_path=DEFAULT_OUTPUT):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--instance-manifest", type=Path, default=INSTANCE_MANIFEST,
+    )
     args = parser.parse_args(argv)
-    path, csv_path, payload = build(args.out)
+    path, csv_path, payload = build(
+        args.out, instance_manifest=args.instance_manifest,
+    )
     print(json.dumps({
         "json": str(path), "json_sha256": sha256_file(path),
         "csv": str(csv_path), "csv_sha256": sha256_file(csv_path),
