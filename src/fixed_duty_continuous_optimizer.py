@@ -397,13 +397,16 @@ def _build_model(
 
 def _selected_events(option, option_energy, option_on, charge_kw, timing_mode):
     runs = []
+    active = lambda index: (
+        option_on[index] > 0.5 or option_energy[index] > TOL
+    )
     cursor = 0
     while cursor < len(option.segments):
-        if option_on[cursor] <= 0.5:
+        if not active(cursor):
             cursor += 1
             continue
         end = cursor
-        while end + 1 < len(option.segments) and option_on[end + 1] > 0.5:
+        while end + 1 < len(option.segments) and active(end + 1):
             end += 1
         positive = [
             index for index in range(cursor, end + 1)

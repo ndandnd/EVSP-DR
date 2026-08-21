@@ -18,7 +18,10 @@ from audit_giro_known_columns import (  # noqa: E402
 )
 from config import BUS_COST_KX, CHARGE_START_COST  # noqa: E402
 from fixed_duty_continuous_optimizer import (  # noqa: E402
+    GapOption,
     _Model,
+    Segment,
+    _selected_events,
     optimize_fixed_duty_continuous,
 )
 from fixed_duty_expanded_optimizer import (  # noqa: E402
@@ -243,6 +246,26 @@ class ContinuousFixedDutyTests(unittest.TestCase):
             )
         self.assertIsNone(result["feasible"])
         self.assertEqual(result["classification"], "solver_limit")
+
+    def test_replay_keeps_contiguous_energy_above_binary_tolerance(self):
+        option = GapOption(
+            0, "station", "station", 0.0, 0.0, 0.0, 0.0,
+            0.0, 120.0,
+            (
+                Segment(0.0, 60.0, 0, 1.0, 240.0),
+                Segment(60.0, 120.0, 1, 1.0, 240.0),
+            ),
+        )
+        events = _selected_events(
+            option,
+            [10.0, 1.0e-5],
+            [1.0, 1.0e-8],
+            240.0,
+            "optimized",
+        )
+        self.assertEqual(len(events), 1)
+        self.assertEqual(len(events[0]["blocks"]), 2)
+        self.assertAlmostEqual(events[0]["delivered_kwh"], 10.00001)
 
     def test_delays_charge_into_cheap_hour_and_replays_cost(self):
         result = optimize_fixed_duty_continuous(
