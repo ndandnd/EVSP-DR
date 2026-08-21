@@ -1,0 +1,528 @@
+{
+  "minimal_result": {
+    "agreement": false,
+    "arc_variables": 396,
+    "bnp_nodes": 4,
+    "case_id": "random_0135",
+    "cg_pool_columns": 71,
+    "delayed_charging": false,
+    "integer": {
+      "arc_flow": 2,
+      "branch_and_price": 2,
+      "brute_force": 2,
+      "exact_cg_pool_mip": 3
+    },
+    "integer_agrees": false,
+    "lp": {
+      "arc_flow": 2.0,
+      "branch_and_price": 2.0,
+      "brute_force": 2.0,
+      "exact_cg": 2.0
+    },
+    "lp_agrees": true,
+    "pricing": {
+      "agreement_rate": 1.0,
+      "agreements": 32,
+      "constrained_dp_max_absolute_error": 1.1641532182693481e-10,
+      "exact_cg_dp_max_absolute_error": 1.1641532182693481e-10,
+      "max_absolute_error": 1.1641532182693481e-10,
+      "mismatches": [],
+      "near_or_exact_tie_vectors": 7,
+      "negative_component_vectors": 31,
+      "samples": 32
+    },
+    "pricing_agrees": true,
+    "route_count": 280,
+    "soc_step": 1.0,
+    "station_count": 1,
+    "station_reachability_density": 0.6,
+    "tariff_shape": "flat",
+    "trip_count": 10,
+    "wall_s": 0.07921617700048955
+  },
+  "minimal_spec": {
+    "allow_station_transfer": false,
+    "block_min": 5,
+    "capacity": 8,
+    "case_id": "random_0135",
+    "charge_step": 2,
+    "deadhead_energy": [
+      [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "delayed_charging": false,
+    "duration": [
+      2,
+      5,
+      4,
+      2,
+      5,
+      2,
+      4,
+      4,
+      5,
+      5
+    ],
+    "energy": [
+      1,
+      1,
+      3,
+      3,
+      3,
+      1,
+      3,
+      1,
+      2,
+      3
+    ],
+    "max_trip_gap": 57,
+    "reserve": 1,
+    "reserve_relax_steps": 0,
+    "seed": 20260821,
+    "soc_step": 1.0,
+    "start": [
+      6,
+      27,
+      49,
+      57,
+      67,
+      77,
+      92,
+      114,
+      135,
+      157
+    ],
+    "station_count": 1,
+    "station_to_trip": [
+      [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    ],
+    "tariff_phase": 1,
+    "tariff_shape": "flat",
+    "trip_count": 10,
+    "trip_to_station": [
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        false
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ]
+    ]
+  },
+  "minimality": "greedy one-trip and one-station irreducible",
+  "original_result": {
+    "agreement": false,
+    "arc_variables": 396,
+    "bnp_nodes": 4,
+    "case_id": "random_0135",
+    "cg_pool_columns": 71,
+    "delayed_charging": false,
+    "integer": {
+      "arc_flow": 2,
+      "branch_and_price": 2,
+      "brute_force": 2,
+      "exact_cg_pool_mip": 3
+    },
+    "integer_agrees": false,
+    "lp": {
+      "arc_flow": 2.0,
+      "branch_and_price": 2.0,
+      "brute_force": 2.0,
+      "exact_cg": 2.0
+    },
+    "lp_agrees": true,
+    "pricing": {
+      "agreement_rate": 1.0,
+      "agreements": 32,
+      "constrained_dp_max_absolute_error": 1.1641532182693481e-10,
+      "exact_cg_dp_max_absolute_error": 1.1641532182693481e-10,
+      "max_absolute_error": 1.1641532182693481e-10,
+      "mismatches": [],
+      "near_or_exact_tie_vectors": 7,
+      "negative_component_vectors": 31,
+      "samples": 32
+    },
+    "pricing_agrees": true,
+    "route_count": 280,
+    "soc_step": 1.0,
+    "station_count": 1,
+    "station_reachability_density": 0.6,
+    "tariff_shape": "flat",
+    "trip_count": 10,
+    "wall_s": 0.07921617700048955
+  },
+  "original_spec": {
+    "allow_station_transfer": false,
+    "block_min": 5,
+    "capacity": 8,
+    "case_id": "random_0135",
+    "charge_step": 2,
+    "deadhead_energy": [
+      [
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "delayed_charging": false,
+    "duration": [
+      2,
+      5,
+      4,
+      2,
+      5,
+      2,
+      4,
+      4,
+      5,
+      5
+    ],
+    "energy": [
+      1,
+      1,
+      3,
+      3,
+      3,
+      1,
+      3,
+      1,
+      2,
+      3
+    ],
+    "max_trip_gap": 57,
+    "reserve": 1,
+    "reserve_relax_steps": 0,
+    "seed": 20260821,
+    "soc_step": 1.0,
+    "start": [
+      6,
+      27,
+      49,
+      57,
+      67,
+      77,
+      92,
+      114,
+      135,
+      157
+    ],
+    "station_count": 1,
+    "station_to_trip": [
+      [
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    ],
+    "tariff_phase": 1,
+    "tariff_shape": "flat",
+    "trip_count": 10,
+    "trip_to_station": [
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        false
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ],
+      [
+        true
+      ]
+    ]
+  },
+  "schema": "evsp-dr-tiny-differential-oracle-v2"
+}
