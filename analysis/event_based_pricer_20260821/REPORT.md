@@ -97,4 +97,3 @@ between:
 - event network and known-transition tests: 8 passed;
 - default k2 bit-identity gate: passed;
 - no cluster or branch-and-price work was performed.
-
