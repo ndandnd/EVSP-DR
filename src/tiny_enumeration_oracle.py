@@ -477,6 +477,29 @@ def compare_spec(spec: TinySpec) -> dict:
         "branch_and_price": bnp["lp_bound"],
         "arc_flow": arc["lp_bound"],
     }
+    integer_values = {
+        "brute_force": brute_integer,
+        "exact_cg_pool_mip": cg_integer,
+        "branch_and_price": bnp["integer"],
+        "arc_flow": arc["integer"],
+    }
+    lp_agrees = max(lp_values.values()) - min(lp_values.values()) <= 1e-7
+    integer_agrees = len(set(integer_values.values())) == 1
+    return {
+        "case_id": spec.case_id,
+        "trip_count": spec.trip_count,
+        "station_count": spec.station_count,
+        "route_count": len(masks),
+        "lp": lp_values,
+        "integer": integer_values,
+        "lp_agrees": lp_agrees,
+        "integer_agrees": integer_agrees,
+        "agreement": lp_agrees and integer_agrees,
+        "cg_pool_columns": len(cg["pool"]),
+        "bnp_nodes": bnp["nodes"],
+        "arc_variables": arc["variables"],
+        "wall_s": time.perf_counter() - started,
+    }
 
 
 def _disagreement_signature(result):
@@ -550,29 +573,6 @@ def minimize_disagreement(spec: TinySpec, result: dict):
                 current, current_result = candidate, candidate_result
                 break
     return current, current_result
-    integer_values = {
-        "brute_force": brute_integer,
-        "exact_cg_pool_mip": cg_integer,
-        "branch_and_price": bnp["integer"],
-        "arc_flow": arc["integer"],
-    }
-    lp_agrees = max(lp_values.values()) - min(lp_values.values()) <= 1e-7
-    integer_agrees = len(set(integer_values.values())) == 1
-    return {
-        "case_id": spec.case_id,
-        "trip_count": spec.trip_count,
-        "station_count": spec.station_count,
-        "route_count": len(masks),
-        "lp": lp_values,
-        "integer": integer_values,
-        "lp_agrees": lp_agrees,
-        "integer_agrees": integer_agrees,
-        "agreement": lp_agrees and integer_agrees,
-        "cg_pool_columns": len(cg["pool"]),
-        "bnp_nodes": bnp["nodes"],
-        "arc_variables": arc["variables"],
-        "wall_s": time.perf_counter() - started,
-    }
 
 
 def _zero_matrix(size):
