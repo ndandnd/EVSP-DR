@@ -25,7 +25,12 @@ def prepare(source, output, witness_result=None):
     if witness_result is not None:
         witness = json.loads(Path(witness_result).read_text())
         witness_indices = [
-            int(index) for index in witness.get("selected_route_indices", [])
+            int(index) for index in (
+                witness.get("selected_route_indices")
+                or (witness.get("final") or {}).get(
+                    "selected_route_indices", []
+                )
+            )
         ]
         retained.extend(records[index] for index in witness_indices)
     covered = Counter(
