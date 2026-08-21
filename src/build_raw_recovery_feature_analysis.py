@@ -45,6 +45,7 @@ FEATURES = (
     "service_kwh_per_duty", "layover_slack_min",
     "layover_slack_median", "layover_slack_max",
     "station_reachability_fraction",
+    "station_only_bridge_fraction",
     *(f"representable_fraction_{key}" for key, _soc, _block in GRIDS),
 )
 CELL_ID = re.compile(r"^k(?P<scale>\d+)_s(?P<selection>\d+)(?:_c\d+)?$")
@@ -83,20 +84,33 @@ def _instance_metrics(problem, routes):
         for right, _minutes, _kwh, kind in entries
         if kind == "trip_trip" and right in trip_set
     }
-    station_out = {
-        trip for trip in trips
-        if any(
-            kind == "trip_station" and target in STATIONS
-            for target, _minutes, _kwh, kind
+    station_out_arcs = {
+        trip: [
+            (target, float(minutes))
+            for target, minutes, _kwh, kind
             in problem.adjacency.get(trip, ())
-        )
+            if kind == "trip_station" and target in STATIONS
+        ]
+        for trip in trips
     }
-    station_in = {
-        target
+    station_in_arcs = {
+        station: [
+            (target, float(minutes))
+            for target, minutes, _kwh, kind
+            in problem.adjacency.get(station, ())
+            if kind == "station_trip" and target in trip_set
+        ]
         for station in STATIONS
-        for target, _minutes, _kwh, kind
-        in problem.adjacency.get(station, ())
-        if kind == "station_trip" and target in trip_set
+    }
+    station_pairs = {
+        (left, right)
+        for left in trips
+        for station, to_station_min in station_out_arcs[left]
+        for right, from_station_min in station_in_arcs[station]
+        if left != right and (
+            problem.end_min[left] + to_station_min + from_station_min
+            <= problem.start_min[right] + 1e-9
+        )
     }
 
     slack = []
@@ -155,8 +169,22 @@ def _instance_metrics(problem, routes):
         "layover_slack_p10": _percentile(slack, 10),
         "layover_slack_p90": _percentile(slack, 90),
         "layover_direct_pair_count": len(slack),
-        "station_reachability_fraction": len(station_out) / len(trips),
-        "station_return_reachability_fraction": len(station_in) / len(trips),
+        "station_reachability_fraction": (
+            len(station_pairs) / temporal_pairs if temporal_pairs else 0.0
+        ),
+        "station_only_bridge_fraction": (
+            len(station_pairs - direct_pairs) / temporal_pairs
+            if temporal_pairs else 0.0
+        ),
+        "trip_to_station_arc_fraction": (
+            sum(bool(station_out_arcs[trip]) for trip in trips) / len(trips)
+        ),
+        "station_return_reachability_fraction": (
+            len({
+                trip for entries in station_in_arcs.values()
+                for trip, _minutes in entries
+            }) / len(trips)
+        ),
     }
 
 
@@ -455,8 +483,10 @@ def publish(output_dir, *, manifest=MANIFEST, preflight=PREFLIGHT,
         "- layover slack: calendar gap minus direct deadhead minutes for "
         "consecutive trips in the GIRO duty; missing direct legs are counted "
         "and excluded from the distribution.",
-        "- `station_reachability_fraction`: fraction of trips with at least "
-        "one outgoing trip-to-station model arc.",
+        "- `station_reachability_fraction`: time-feasible trip-pair station "
+        "bridges divided by all temporally ordered trip pairs; "
+        "`station_only_bridge_fraction` excludes pairs already connected by "
+        "a direct deadhead arc.",
         "- grid fractions: fraction of GIRO duties feasible in the frozen "
         "fixed-duty expanded optimizer at each named 300/300 grid.",
         "",

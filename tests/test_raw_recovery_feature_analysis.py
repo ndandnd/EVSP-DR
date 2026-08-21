@@ -57,6 +57,9 @@ class RawRecoveryFeatureAnalysisTests(unittest.TestCase):
         self.assertAlmostEqual(
             metrics["station_reachability_fraction"], 2 / 3,
         )
+        self.assertAlmostEqual(
+            metrics["station_only_bridge_fraction"], 1 / 3,
+        )
         distribution = feature_distribution(pd.DataFrame([metrics]))
         slack = distribution[
             distribution["feature"] == "layover_slack_median"
