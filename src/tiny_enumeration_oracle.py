@@ -29,7 +29,7 @@ from config import BUS_COST_KX
 from lexicographic_fleet_cg import _solve_master as solve_phase_master
 
 
-SCHEMA = "evsp-dr-tiny-differential-oracle-v1"
+SCHEMA = "evsp-dr-tiny-differential-oracle-v2"
 DEFAULT_SEED = 20260821
 
 
@@ -463,6 +463,10 @@ def evaluate_dual_vector(
         "expected_min_reduced_cost": expected,
         "exact_cg_dp_min_reduced_cost": actual,
         "constrained_dp_min_reduced_cost": constrained_actual,
+        "exact_cg_dp_absolute_error": abs(actual - expected),
+        "constrained_dp_absolute_error": abs(
+            constrained_actual - expected
+        ),
         "absolute_error": error,
         "exhaustive_minimizer_masks": ties,
     }
@@ -473,6 +477,8 @@ def check_arbitrary_duals(
 ):
     mismatches = []
     maximum_error = 0.0
+    exact_maximum_error = 0.0
+    constrained_maximum_error = 0.0
     negative_vectors = 0
     tied_vectors = 0
     exact_pricer = TinyExactCGPricer(network)
@@ -490,6 +496,13 @@ def check_arbitrary_duals(
         )
         tied_vectors += len(detail["exhaustive_minimizer_masks"]) > 1
         maximum_error = max(maximum_error, detail["absolute_error"])
+        exact_maximum_error = max(
+            exact_maximum_error, detail["exact_cg_dp_absolute_error"],
+        )
+        constrained_maximum_error = max(
+            constrained_maximum_error,
+            detail["constrained_dp_absolute_error"],
+        )
         if detail["absolute_error"] > 1e-7:
             mismatches.append(detail)
     return {
@@ -501,6 +514,8 @@ def check_arbitrary_duals(
         "negative_component_vectors": negative_vectors,
         "near_or_exact_tie_vectors": tied_vectors,
         "max_absolute_error": maximum_error,
+        "exact_cg_dp_max_absolute_error": exact_maximum_error,
+        "constrained_dp_max_absolute_error": constrained_maximum_error,
         "mismatches": mismatches,
     }
 
@@ -777,7 +792,10 @@ def compare_spec(spec: TinySpec, *, dual_samples=0) -> dict:
             "samples": 0, "agreements": 0, "agreement_rate": None,
             "negative_component_vectors": 0,
             "near_or_exact_tie_vectors": 0,
-            "max_absolute_error": 0.0, "mismatches": [],
+            "max_absolute_error": 0.0,
+            "exact_cg_dp_max_absolute_error": 0.0,
+            "constrained_dp_max_absolute_error": 0.0,
+            "mismatches": [],
         }
     )
     lp_agrees = max(lp_values.values()) - min(lp_values.values()) <= 1e-7
@@ -790,6 +808,13 @@ def compare_spec(spec: TinySpec, *, dual_samples=0) -> dict:
         "soc_step": spec.soc_step,
         "delayed_charging": spec.delayed_charging,
         "tariff_shape": spec.tariff_shape,
+        "station_reachability_density": (
+            (
+                sum(sum(row) for row in spec.trip_to_station)
+                + sum(sum(row) for row in spec.station_to_trip)
+            )
+            / (2 * spec.trip_count * spec.station_count)
+        ),
         "route_count": len(masks),
         "lp": lp_values,
         "integer": integer_values,
@@ -1046,6 +1071,17 @@ def run_campaign(seed, cases, output_dir, dual_samples=32):
         "pricing_disagreements": sum(
             len(row["pricing"]["mismatches"]) for row in rows
         ),
+        "pricing_max_absolute_error": max(
+            row["pricing"]["max_absolute_error"] for row in rows
+        ),
+        "exact_cg_dp_max_absolute_error": max(
+            row["pricing"]["exact_cg_dp_max_absolute_error"]
+            for row in rows
+        ),
+        "constrained_dp_max_absolute_error": max(
+            row["pricing"]["constrained_dp_max_absolute_error"]
+            for row in rows
+        ),
         "pricing_domain_coverage": {
             "soc_step": {
                 str(value): sum(row["soc_step"] == value for row in rows)
@@ -1077,6 +1113,14 @@ def run_campaign(seed, cases, output_dir, dual_samples=32):
                 row["pricing"]["near_or_exact_tie_vectors"]
                 for row in rows
             ),
+            "station_reachability_density": {
+                "minimum": min(
+                    row["station_reachability_density"] for row in rows
+                ),
+                "maximum": max(
+                    row["station_reachability_density"] for row in rows
+                ),
+            },
         },
         "disagreement_files": disagreements,
         "mutations": mutations,
@@ -1088,6 +1132,7 @@ def run_campaign(seed, cases, output_dir, dual_samples=32):
         fields = (
             "case_id", "trip_count", "station_count", "route_count",
             "soc_step", "delayed_charging", "tariff_shape",
+            "station_reachability_density",
             "lp_agrees", "integer_agrees", "pricing_agrees", "agreement",
             "pricing_samples", "pricing_max_absolute_error",
             "cg_pool_columns", "bnp_nodes", "arc_variables", "wall_s",

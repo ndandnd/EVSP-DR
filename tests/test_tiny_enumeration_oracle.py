@@ -50,6 +50,8 @@ class TinyEnumerationOracleTests(unittest.TestCase):
         self.assertFalse(pricing["mismatches"], pricing)
         self.assertGreater(pricing["negative_component_vectors"], 0)
         self.assertGreater(pricing["near_or_exact_tie_vectors"], 0)
+        self.assertLess(pricing["exact_cg_dp_max_absolute_error"], 1e-7)
+        self.assertLess(pricing["constrained_dp_max_absolute_error"], 1e-7)
 
     def test_generator_covers_pricing_domain_dimensions(self):
         specs = [generate_spec(DEFAULT_SEED, index) for index in range(60)]
@@ -62,6 +64,14 @@ class TinyEnumerationOracleTests(unittest.TestCase):
             {spec.tariff_shape for spec in specs},
             {"flat", "time_varying"},
         )
+        densities = {
+            (
+                sum(sum(row) for row in spec.trip_to_station)
+                + sum(sum(row) for row in spec.station_to_trip)
+            ) / (2 * spec.trip_count * spec.station_count)
+            for spec in specs
+        }
+        self.assertGreater(len(densities), 10)
 
     def test_each_targeted_mutation_changes_optimum(self):
         for name, (baseline, mutated) in mutation_specs().items():
