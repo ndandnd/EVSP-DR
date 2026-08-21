@@ -13,18 +13,11 @@ import random
 from pathlib import Path
 
 from build_tariff_response_manifest import REPO_ROOT, sha256_file
-from generate_random_goal1_instances import (
-    DEFAULT_SOURCE as RANDOM_SOURCE,
-    GENERATOR_VERSION as RANDOM_GENERATOR_VERSION,
-    _atomic_write,
-    generate_batch,
-)
 from make_duty_pair_instances import (
     _base_task,
     load_duty_frames,
     merge_duties,
 )
-from scale_ladder_trip_identity import identity
 
 
 SEED = 20260803
@@ -48,19 +41,16 @@ OUTPUT_DIR = REPO_ROOT / "data/scale_ladder/instances"
 LEGACY_INSTANCE_MANIFEST_SHA256 = (
     "a7ef8b77351440a8d7873b949891663ca7b28f135d366d4c6b003d09ca84839a"
 )
-EXTENSION_SEED = 20260821
+EXTENSION_SEED = SEED
 EXTENSION_SCALES = (2, 3, 5, 8, 13, 20)
 EXTENSION_REPLICATES = (4, 5, 6)
-EXTENSION_FAMILY = (
-    "generate_random_goal1_instances_v1_seed20260821"
-)
-EXTENSION_DIRECTORY = "random_goal1_seed_20260821"
 EXTENDED_MANIFEST_NAME = (
-    "scale_ladder_instance_manifest_6sel_seed20260821.csv"
+    "scale_ladder_instance_manifest_6sel_seed20260803.csv"
 )
 EXTENDED_CAMPAIGN_NAME = (
-    "campaign_input_manifest_6sel_seed20260821.json"
+    "campaign_input_manifest_6sel_seed20260803.json"
 )
+EXTENSION_RECORD_NAME = "duty_union_extension_seed20260803.json"
 FIELDS = (
     "scale", "selection_replicate", "cg_replicates", "target_fleet",
     "relative_path", "instance_file_sha256", "trip_count",
@@ -278,25 +268,26 @@ def _row(
     }
 
 
-def _extension_row(path, generated):
-    identities = identity(path)
-    selected = list(generated["selected_literal_tasks"])
-    return {
-        "scale": int(generated["bus_count"]),
-        "selection_replicate": int(generated["replicate"]),
-        "cg_replicates": 1,
-        "target_fleet": int(generated["bus_count"]),
-        "relative_path": str(path.relative_to(REPO_ROOT)),
-        **identities,
-        "duty_count": len(selected),
-        "duties_json": json.dumps(selected, separators=(",", ":")),
-        "duty_set_sha256": canonical_sha(selected),
-        "generator_seed": EXTENSION_SEED,
-        "generator_family": EXTENSION_FAMILY,
-        "weekday_variant_policy":
-            "one_literal_per_numeric_base_no_siblings",
-        "reused_frozen_input": False,
-    }
+def extension_family(scale):
+    if scale == 2:
+        return "pair_union_k2_seed20260803"
+    if scale in {3, 5, 8, 13}:
+        return "small_3_5_8_13_per6_seed20260803"
+    if scale == 20:
+        return "large_15_20_30_40_per6_seed20260803"
+    raise ValueError(f"unsupported extension scale: {scale}")
+
+
+def _write_generated(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists():
+        if path.read_bytes() != payload:
+            raise FileExistsError(f"generated file differs: {path}")
+        return
+    with path.open("xb") as handle:
+        handle.write(payload)
+        handle.flush()
+        os.fsync(handle.fileno())
 
 
 def build_six_selection_extension(
@@ -320,18 +311,36 @@ def build_six_selection_extension(
     if len(legacy_rows) != 22:
         raise ValueError("legacy scale-ladder manifest row count changed")
 
-    generated = generate_batch(
-        source_path=RANDOM_SOURCE,
-        output_dir=output_dir / EXTENSION_DIRECTORY,
-        sizes=EXTENSION_SCALES,
-        replicates=len(EXTENSION_REPLICATES),
-        replicate_start=min(EXTENSION_REPLICATES),
-        seed=EXTENSION_SEED,
-    )
+    frames = load_duty_frames()
+    duties = sorted(frames)
+    selections = {
+        2: replicate_selections(duties, (2,), per_size=6),
+        "small": replicate_selections(duties, (3, 5, 8, 13)),
+        "large": replicate_selections(duties, (15, 20, 30, 40)),
+    }
     new_rows = []
-    for row in generated["instances"]:
-        path = output_dir / EXTENSION_DIRECTORY / row["output_csv"]
-        new_rows.append(_extension_row(path, row))
+    for scale in EXTENSION_SCALES:
+        source = (
+            selections[2] if scale == 2
+            else selections["small"] if scale <= 13
+            else selections["large"]
+        )
+        for replicate in EXTENSION_REPLICATES:
+            selected = source[(scale, replicate)]
+            frame = merge_duties(frames, selected)
+            path = output_dir / (
+                f"Practice_Custom_DutyUnion_k{scale:02d}_r{replicate}.csv"
+            )
+            _write_generated(
+                path,
+                frame.to_csv(
+                    index=False, lineterminator="\n"
+                ).encode(),
+            )
+            new_rows.append(_row(
+                path, frame, selected, scale, replicate,
+                extension_family(scale), False,
+            ))
     new_rows.sort(key=lambda row: (
         int(row["scale"]), int(row["selection_replicate"])
     ))
@@ -353,7 +362,39 @@ def build_six_selection_extension(
     writer.writerows(new_rows)
     manifest_payload = legacy_raw + suffix.getvalue().encode()
     manifest = output_dir / EXTENDED_MANIFEST_NAME
-    _atomic_write(manifest, manifest_payload, force=False)
+    _write_generated(manifest, manifest_payload)
+
+    extension_record = {
+        "schema": "evsp-dr-duty-union-selection-extension-v1",
+        "generator": "src/build_scale_ladder_inputs.py",
+        "seed": EXTENSION_SEED,
+        "selection_replicates": list(EXTENSION_REPLICATES),
+        "weekday_variant_policy":
+            "one_literal_per_numeric_base_no_siblings",
+        "generator_families": {
+            str(scale): extension_family(scale)
+            for scale in EXTENSION_SCALES
+        },
+        "instances": [
+            {
+                key: row[key] for key in (
+                    "scale", "selection_replicate", "relative_path",
+                    "instance_file_sha256", "duty_count", "duties_json",
+                    "duty_set_sha256", "target_fleet",
+                    "generator_seed", "generator_family",
+                    "weekday_variant_policy",
+                )
+            }
+            for row in new_rows
+        ],
+    }
+    extension_record_path = output_dir / EXTENSION_RECORD_NAME
+    _write_generated(
+        extension_record_path,
+        (json.dumps(
+            extension_record, indent=2, sort_keys=True
+        ) + "\n").encode(),
+    )
 
     campaign = json.loads(legacy_campaign.read_text())
     campaign.update({
@@ -366,26 +407,24 @@ def build_six_selection_extension(
         "legacy_instance_manifest_sha256":
             LEGACY_INSTANCE_MANIFEST_SHA256,
         "selection_extensions": [{
-            "generator": "src/generate_random_goal1_instances.py",
-            "generator_version": RANDOM_GENERATOR_VERSION,
-            "generator_family": EXTENSION_FAMILY,
+            "generator": "src/build_scale_ladder_inputs.py",
+            "generator_families":
+                extension_record["generator_families"],
             "seed": EXTENSION_SEED,
             "scales": list(EXTENSION_SCALES),
             "selection_replicates": list(EXTENSION_REPLICATES),
-            "generator_manifest": str(
-                (output_dir / EXTENSION_DIRECTORY / "manifest.json")
-                .relative_to(REPO_ROOT)
+            "extension_manifest": str(
+                extension_record_path.relative_to(REPO_ROOT)
             ),
-            "generator_manifest_sha256": sha256_file(
-                output_dir / EXTENSION_DIRECTORY / "manifest.json"
+            "extension_manifest_sha256": sha256_file(
+                extension_record_path
             ),
         }],
     })
     campaign_path = output_dir / EXTENDED_CAMPAIGN_NAME
-    _atomic_write(
+    _write_generated(
         campaign_path,
         (json.dumps(campaign, indent=2, sort_keys=True) + "\n").encode(),
-        force=False,
     )
     return manifest, campaign_path, new_rows
 

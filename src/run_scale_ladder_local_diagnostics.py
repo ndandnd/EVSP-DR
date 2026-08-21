@@ -26,7 +26,7 @@ from tariff_response_environment import (
 INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/"
-    "scale_ladder_instance_manifest_6sel_seed20260821.csv"
+    "scale_ladder_instance_manifest_6sel_seed20260803.csv"
 )
 LOCAL_CODE_PATHS = (
     "src/run_scale_ladder_local_diagnostics.py",

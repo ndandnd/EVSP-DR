@@ -30,11 +30,11 @@ from tariff_response_environment import (  # noqa: E402
     identity as environment_identity,
 )
 from build_scale_ladder_inputs import (  # noqa: E402
-    EXTENSION_FAMILY,
     EXTENSION_SEED,
     LEGACY_INSTANCE_MANIFEST_SHA256,
     build as build_inputs,
     build_six_selection_extension,
+    extension_family,
 )
 from build_tariff_response_manifest import sha256_file  # noqa: E402
 from scale_ladder_trip_identity import (  # noqa: E402
@@ -76,7 +76,7 @@ LEGACY_INSTANCE_MANIFEST = (
 INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/"
-    "scale_ladder_instance_manifest_6sel_seed20260821.csv"
+    "scale_ladder_instance_manifest_6sel_seed20260803.csv"
 )
 
 
@@ -4196,6 +4196,13 @@ class ScaleLadderCampaignTests(unittest.TestCase):
         self.assertEqual(
             counts, {2: 6, 3: 6, 5: 6, 8: 6, 13: 6, 20: 6, 30: 3, 40: 1}
         )
+        self.assertFalse(any(
+            "SyntheticRandom" in row["relative_path"]
+            or row["generator_family"].startswith(
+                "generate_random_goal1_instances"
+            )
+            for row in rows
+        ))
 
     def test_six_selection_manifest_is_strictly_additive(self):
         legacy_raw = LEGACY_INSTANCE_MANIFEST.read_bytes()
@@ -4228,8 +4235,15 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertEqual(len(new_rows),18)
             self.assertTrue(all(
                 int(row["generator_seed"])==EXTENSION_SEED
-                and row["generator_family"]==EXTENSION_FAMILY
+                and row["generator_family"]==extension_family(
+                    int(row["scale"])
+                )
                 and int(row["selection_replicate"]) in {4,5,6}
+                and int(row["target_fleet"])==int(row["scale"])
+                and int(row["duty_count"])==int(row["scale"])
+                and row["weekday_variant_policy"]==
+                    "one_literal_per_numeric_base_no_siblings"
+                and "Practice_Custom_DutyUnion_" in row["relative_path"]
                 for row in new_rows
             ))
             payload=json.loads(campaign.read_text())
@@ -4238,6 +4252,34 @@ class ScaleLadderCampaignTests(unittest.TestCase):
             self.assertEqual(
                 extension["selection_replicates"],[4,5,6]
             )
+            self.assertEqual(
+                set(extension["generator_families"].values()),
+                {
+                    "pair_union_k2_seed20260803",
+                    "small_3_5_8_13_per6_seed20260803",
+                    "large_15_20_30_40_per6_seed20260803",
+                },
+            )
+
+    def test_synthetic_random_family_has_separate_results_table(self):
+        synthetic_root=(
+            REPO_ROOT/"data/scale_ladder/instances/"
+            "random_goal1_seed_20260821"
+        )
+        synthetic=json.loads((synthetic_root/"manifest.json").read_text())
+        self.assertEqual(synthetic["seed"],20260821)
+        self.assertTrue(all(
+            "Practice_SyntheticRandom_" in row["output_csv"]
+            for row in synthetic["instances"]
+        ))
+        results=(
+            REPO_ROOT/"analysis/synthetic_random_goal1_seed_20260821/"
+            "results.csv"
+        )
+        with results.open(newline="") as handle:
+            rows=list(csv.DictReader(handle))
+        self.assertEqual(rows,[])
+        self.assertIn("comparator_scope",results.read_text().splitlines()[0])
 
     def test_k40_hash_domains_are_explicit_and_not_cross_compared(self):
         k40 = (

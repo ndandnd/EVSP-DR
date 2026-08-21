@@ -26,19 +26,19 @@ SCHEMA = "evsp-dr-scale-ladder-plan-v1"
 REVIEWED_BASE = "77baf667a06946c692f959d66fed4e2bca36cd32"
 INPUT_MANIFEST = (
     REPO_ROOT / "data/scale_ladder/instances/"
-    "campaign_input_manifest_6sel_seed20260821.json"
+    "campaign_input_manifest_6sel_seed20260803.json"
 )
 MEMBERSHIP_PREFLIGHT = (
     REPO_ROOT
-    / "data/scale_ladder/known_membership_preflight_6sel_seed20260821.json"
+    / "data/scale_ladder/known_membership_preflight_6sel_seed20260803.json"
 )
 MEMBERSHIP_PREFLIGHT_SHA256 = (
-    "d7791702562ca648b076de0c2554a70696ca394756876c8aba8b7857c9958f69"
+    "ba7074a7ed5b342cb64d350fd95945099170b68bc3847619ef94d6f728fbe656"
 )
 INSTANCE_MANIFEST = (
     REPO_ROOT
     / "data/scale_ladder/instances/"
-    "scale_ladder_instance_manifest_6sel_seed20260821.csv"
+    "scale_ladder_instance_manifest_6sel_seed20260803.csv"
 )
 HISTORICAL_FLAT_SHA256 = (
     "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
@@ -51,7 +51,6 @@ CODE_PATHS = (
     "src/launch_scale_ladder.py",
     "src/submit_scale_ladder.sub",
     "src/build_scale_ladder_inputs.py",
-    "src/generate_random_goal1_instances.py",
     "src/scale_ladder_trip_identity.py",
     "src/prepare_scale_ladder_known_partition.py",
     "src/exact_pricer_expanded.py",
