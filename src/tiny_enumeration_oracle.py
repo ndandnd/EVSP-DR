@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import random
@@ -51,6 +52,10 @@ class TinySpec:
     max_trip_gap: int = 57
     reserve_relax_steps: int = 0
     allow_station_transfer: bool = False
+    soc_step: float = 1.0
+    delayed_charging: bool = True
+    tariff_shape: str = "flat"
+    tariff_phase: int = 0
 
 
 class TinyNetwork:
@@ -86,6 +91,15 @@ class TinyNetwork:
             for i in self.problem.trips
         ) + 3 * spec.block_min
         self.n_blocks = int(math.ceil(horizon / spec.block_min))
+        if spec.tariff_shape not in {"flat", "time_varying"}:
+            raise ValueError(f"unknown tariff shape {spec.tariff_shape!r}")
+        self.tariff_by_block = tuple(
+            0.2 if spec.tariff_shape == "flat"
+            else (0.05, 0.4, 0.15, 0.6)[
+                (block + spec.tariff_phase) % 4
+            ]
+            for block in range(self.n_blocks)
+        )
         for station in range(spec.station_count):
             for block in range(self.n_blocks):
                 for level in range(effective_reserve, spec.capacity + 1):
@@ -130,7 +144,11 @@ class TinyNetwork:
                 if not spec.trip_to_station[trip][station]:
                     continue
                 first = int(math.ceil((end + 1) / spec.block_min))
-                for block in range(first, self.n_blocks):
+                blocks = (
+                    range(first, self.n_blocks)
+                    if spec.delayed_charging else (first,)
+                )
+                for block in blocks:
                     node = self.charge_node.get(
                         (station, block, exit_level)
                     )
@@ -139,23 +157,34 @@ class TinyNetwork:
         for (station, block, level), left in self.charge_node.items():
             after = min(spec.capacity, level + spec.charge_step)
             block_end = (block + 1) * spec.block_min
+            charge_cost = (
+                (after - level) * spec.soc_step
+                * self.tariff_by_block[block]
+            )
             if block + 1 < self.n_blocks and after > level:
-                add(left, self.charge_node[(station, block + 1, after)])
+                add(
+                    left, self.charge_node[(station, block + 1, after)],
+                    charge_cost,
+                )
             for trip in self.problem.trips:
                 if (
                     spec.station_to_trip[station][trip]
                     and block_end + 1 <= spec.start[trip]
                     and (trip, after) in self.trip_node
                 ):
-                    add(left, self.trip_node[(trip, after)], trip=trip)
+                    add(
+                        left, self.trip_node[(trip, after)],
+                        charge_cost, trip=trip,
+                    )
             if after >= effective_reserve:
-                add(left, self.SINK)
+                add(left, self.SINK, charge_cost)
             if spec.allow_station_transfer and block + 1 < self.n_blocks:
                 for other in range(spec.station_count):
                     if other != station:
                         add(
                             left,
                             self.charge_node[(other, block + 1, after)],
+                            charge_cost,
                         )
         self.n_arcs = sum(len(arcs) for arcs in self.out)
         self.sink_arcs = tuple(
@@ -170,7 +199,7 @@ class TinyExactCGPricer:
     def __init__(self, network: TinyNetwork):
         self.network = network
 
-    def price(self, duals, _constraints, *, max_candidates, objective):
+    def _solve(self, duals, objective):
         infinity = float("inf")
         value = [infinity] * len(self.network.node_meta)
         parent = [None] * len(self.network.node_meta)
@@ -178,18 +207,29 @@ class TinyExactCGPricer:
         for left in self.network.topo:
             if value[left] == infinity:
                 continue
-            for right, _cost, trip in self.network.out[left]:
-                objective_cost = (
-                    1.0
-                    if objective == "fleet-only" and left == 0
-                    else 0.0
-                )
+            for right, cost, trip in self.network.out[left]:
+                if objective == "combined-cost":
+                    objective_cost = cost
+                elif objective == "fleet-only":
+                    objective_cost = 1.0 if left == 0 else 0.0
+                elif objective == "artificial-elimination":
+                    objective_cost = 0.0
+                else:
+                    raise ValueError(f"unknown pricing objective {objective!r}")
                 candidate = value[left] + objective_cost - (
                     float(duals.get(trip, 0.0)) if trip >= 0 else 0.0
                 )
                 if candidate < value[right] - 1e-12:
                     value[right] = candidate
                     parent[right] = left
+        return value, parent
+
+    def minimum_reduced_cost(self, duals, *, objective="combined-cost"):
+        value, _parent = self._solve(duals, objective)
+        return value[self.network.SINK]
+
+    def price(self, duals, _constraints, *, max_candidates, objective):
+        value, parent = self._solve(duals, objective)
 
         def record(node):
             trips = []
@@ -202,8 +242,14 @@ class TinyExactCGPricer:
             return {"trips": trips, "cost": 1.0}
 
         candidates = sorted(
-            (value[left], left) for left, _cost in self.network.sink_arcs
-            if value[left] != infinity
+            (
+                value[left] + (
+                    cost if objective == "combined-cost" else 0.0
+                ),
+                left,
+            )
+            for left, cost in self.network.sink_arcs
+            if value[left] != math.inf
         )
         records, seen = [], set()
         limit = min(max_candidates, 30)
@@ -223,6 +269,7 @@ def generate_spec(seed: int, ordinal: int) -> TinySpec:
     rng = random.Random((seed << 20) + ordinal)
     trip_count = rng.randint(8, 14)
     station_count = rng.randint(1, 2)
+    soc_step = rng.choice((0.5, 1.0, 2.0))
     reserve = rng.randint(0, 2)
     capacity = rng.randint(max(6, reserve + 4), 9)
     maximum_energy = max(1, capacity - reserve - 2)
@@ -256,6 +303,10 @@ def generate_spec(seed: int, ordinal: int) -> TinySpec:
         trip_to_station=trip_to_station,
         station_to_trip=station_to_trip,
         charge_step=rng.randint(1, 2),
+        soc_step=soc_step,
+        delayed_charging=bool(rng.getrandbits(1)),
+        tariff_shape=rng.choice(("flat", "time_varying")),
+        tariff_phase=rng.randrange(4),
     )
 
 
@@ -284,6 +335,174 @@ def enumerate_route_masks(network: TinyNetwork) -> list[int]:
     if not singleton_masks <= routes:
         raise AssertionError("generator failed to provide every singleton")
     return sorted(routes)
+
+
+def enumerate_route_costs(network: TinyNetwork) -> dict[int, float]:
+    """Enumerate every reachable incidence, retaining its cheapest path."""
+    labels = [dict() for _ in network.node_meta]
+    labels[0][0] = 0.0
+    routes = {}
+    for node in network.topo:
+        for mask, prefix_cost in tuple(labels[node].items()):
+            for successor, arc_cost, trip_index in network.out[node]:
+                next_mask = (
+                    mask | (1 << trip_index)
+                    if trip_index >= 0 else mask
+                )
+                next_cost = prefix_cost + arc_cost
+                if successor == network.SINK:
+                    if next_mask and next_cost < routes.get(
+                        next_mask, math.inf,
+                    ):
+                        routes[next_mask] = next_cost
+                    continue
+                if next_cost < labels[successor].get(next_mask, math.inf):
+                    labels[successor][next_mask] = next_cost
+    if set(enumerate_route_masks(network)) != set(routes):
+        raise AssertionError("cost enumeration changed route incidence set")
+    return routes
+
+
+def sampled_dual_vectors(spec: TinySpec, count: int):
+    if count < 1:
+        return []
+    material = json.dumps(asdict(spec), sort_keys=True).encode()
+    derived = int.from_bytes(
+        hashlib.sha256(material + b"|arbitrary-duals-v1").digest(),
+        "big",
+    )
+    rng = random.Random(derived)
+    vectors = [
+        ("exact_tie_zero", tuple(0.0 for _ in range(spec.trip_count))),
+        (
+            "near_tie_signed",
+            tuple(
+                (-1.0 if trip % 2 else 1.0) * 1e-8
+                for trip in range(spec.trip_count)
+            ),
+        ),
+        (
+            "all_negative",
+            tuple(
+                -rng.uniform(1.0, BUS_COST_KX)
+                for _ in range(spec.trip_count)
+            ),
+        ),
+    ][:count]
+    while len(vectors) < count:
+        sample = len(vectors)
+        mode = sample % 3
+        if mode == 0:
+            values = tuple(
+                rng.uniform(-BUS_COST_KX, 1.25 * BUS_COST_KX)
+                for _ in range(spec.trip_count)
+            )
+            label = "wide_signed"
+        elif mode == 1:
+            center = BUS_COST_KX / max(1, spec.trip_count // 2)
+            values = tuple(
+                center + rng.uniform(-500.0, 500.0)
+                for _ in range(spec.trip_count)
+            )
+            values = tuple(
+                -abs(value) if trip % 5 == 0 else value
+                for trip, value in enumerate(values)
+            )
+            label = "cg_scale_signed"
+        else:
+            choices = (
+                -0.5 * BUS_COST_KX, -1e-8, 0.0, 1e-8,
+                0.25 * BUS_COST_KX, 0.5 * BUS_COST_KX,
+            )
+            values = tuple(
+                choices[rng.randrange(len(choices))]
+                for _ in range(spec.trip_count)
+            )
+            label = "quantized_ties"
+        vectors.append((f"{label}_{sample:02d}", values))
+    return vectors
+
+
+def evaluate_dual_vector(
+    network, route_costs, vector, *, kind, sample_index,
+    exact_pricer=None, constrained_pricer=None,
+):
+    reduced = {
+        mask: cost - sum(
+            vector[trip] for trip in range(network.spec.trip_count)
+            if mask & (1 << trip)
+        )
+        for mask, cost in route_costs.items()
+    }
+    expected = min(reduced.values())
+    ties = [
+        mask for mask, value in reduced.items()
+        if abs(value - expected) <= 1e-7
+    ]
+    duals = {trip: vector[trip] for trip in range(len(vector))}
+    exact_pricer = exact_pricer or TinyExactCGPricer(network)
+    constrained_pricer = constrained_pricer or ConstrainedDAGPricer(network)
+    actual = exact_pricer.minimum_reduced_cost(
+        duals, objective="combined-cost",
+    )
+    constrained_candidates, _solves = constrained_pricer.price(
+        duals, (), max_candidates=1, objective="combined-cost",
+    )
+    constrained_actual = (
+        constrained_candidates[0]["rc"]
+        if constrained_candidates else math.inf
+    )
+    error = max(
+        abs(actual - expected),
+        abs(constrained_actual - expected),
+    )
+    return {
+        "sample_index": sample_index,
+        "kind": kind,
+        "dual_vector": list(vector),
+        "expected_min_reduced_cost": expected,
+        "exact_cg_dp_min_reduced_cost": actual,
+        "constrained_dp_min_reduced_cost": constrained_actual,
+        "absolute_error": error,
+        "exhaustive_minimizer_masks": ties,
+    }
+
+
+def check_arbitrary_duals(
+    network: TinyNetwork, route_costs: dict[int, float], count: int,
+):
+    mismatches = []
+    maximum_error = 0.0
+    negative_vectors = 0
+    tied_vectors = 0
+    exact_pricer = TinyExactCGPricer(network)
+    constrained_pricer = ConstrainedDAGPricer(network)
+    for sample_index, (kind, vector) in enumerate(
+        sampled_dual_vectors(network.spec, count)
+    ):
+        if any(value < 0.0 for value in vector):
+            negative_vectors += 1
+        detail = evaluate_dual_vector(
+            network, route_costs, vector,
+            kind=kind, sample_index=sample_index,
+            exact_pricer=exact_pricer,
+            constrained_pricer=constrained_pricer,
+        )
+        tied_vectors += len(detail["exhaustive_minimizer_masks"]) > 1
+        maximum_error = max(maximum_error, detail["absolute_error"])
+        if detail["absolute_error"] > 1e-7:
+            mismatches.append(detail)
+    return {
+        "samples": count,
+        "agreements": count - len(mismatches),
+        "agreement_rate": (
+            (count - len(mismatches)) / count if count else None
+        ),
+        "negative_component_vectors": negative_vectors,
+        "near_or_exact_tie_vectors": tied_vectors,
+        "max_absolute_error": maximum_error,
+        "mismatches": mismatches,
+    }
 
 
 def route_records(masks: list[int], trip_count: int) -> list[dict]:
@@ -521,10 +740,16 @@ def solve_arcflow(network):
     }
 
 
-def compare_spec(spec: TinySpec) -> dict:
+def compare_spec(spec: TinySpec, *, dual_samples=0) -> dict:
     network = TinyNetwork(spec)
     started = time.perf_counter()
-    masks = enumerate_route_masks(network)
+    route_costs = (
+        enumerate_route_costs(network) if dual_samples else None
+    )
+    masks = (
+        sorted(route_costs) if route_costs is not None
+        else enumerate_route_masks(network)
+    )
     full_records = route_records(masks, spec.trip_count)
     brute_integer = exact_cover_fleet(masks, spec.trip_count)
     brute_lp, _lp = fleet_lp(full_records, list(range(spec.trip_count)))
@@ -546,18 +771,33 @@ def compare_spec(spec: TinySpec) -> dict:
         "branch_and_price": bnp["integer"],
         "arc_flow": arc["integer"],
     }
+    pricing = (
+        check_arbitrary_duals(network, route_costs, dual_samples)
+        if route_costs is not None else {
+            "samples": 0, "agreements": 0, "agreement_rate": None,
+            "negative_component_vectors": 0,
+            "near_or_exact_tie_vectors": 0,
+            "max_absolute_error": 0.0, "mismatches": [],
+        }
+    )
     lp_agrees = max(lp_values.values()) - min(lp_values.values()) <= 1e-7
     integer_agrees = len(set(integer_values.values())) == 1
+    pricing_agrees = not pricing["mismatches"]
     return {
         "case_id": spec.case_id,
         "trip_count": spec.trip_count,
         "station_count": spec.station_count,
+        "soc_step": spec.soc_step,
+        "delayed_charging": spec.delayed_charging,
+        "tariff_shape": spec.tariff_shape,
         "route_count": len(masks),
         "lp": lp_values,
         "integer": integer_values,
         "lp_agrees": lp_agrees,
         "integer_agrees": integer_agrees,
-        "agreement": lp_agrees and integer_agrees,
+        "pricing": pricing,
+        "pricing_agrees": pricing_agrees,
+        "agreement": lp_agrees and integer_agrees and pricing_agrees,
         "cg_pool_columns": len(cg["pool"]),
         "bnp_nodes": bnp["nodes"],
         "arc_variables": arc["variables"],
@@ -569,6 +809,7 @@ def _disagreement_signature(result):
     brute = result["integer"]["brute_force"]
     return (
         not result["lp_agrees"],
+        not result.get("pricing_agrees", True),
         tuple(sorted(
             method for method, value in result["integer"].items()
             if method != "brute_force" and value != brute
@@ -609,6 +850,47 @@ def induced_stations(spec: TinySpec, keep: tuple[int, ...]) -> TinySpec:
             spec.station_to_trip[index] for index in keep
         ),
     )
+
+
+def minimize_pricing_disagreement(spec: TinySpec, detail: dict):
+    current = spec
+    vector = tuple(detail["dual_vector"])
+    current_detail = detail
+    changed = True
+    while changed and current.trip_count > 1:
+        changed = False
+        for remove in range(current.trip_count):
+            keep = tuple(
+                index for index in range(current.trip_count)
+                if index != remove
+            )
+            candidate = induced_spec(current, keep)
+            candidate_vector = tuple(vector[index] for index in keep)
+            network = TinyNetwork(candidate)
+            candidate_detail = evaluate_dual_vector(
+                network, enumerate_route_costs(network), candidate_vector,
+                kind=detail["kind"],
+                sample_index=detail["sample_index"],
+            )
+            if candidate_detail["absolute_error"] > 1e-7:
+                current = candidate
+                vector = candidate_vector
+                current_detail = candidate_detail
+                changed = True
+                break
+    if current.station_count > 1:
+        for station in range(current.station_count):
+            candidate = induced_stations(current, (station,))
+            network = TinyNetwork(candidate)
+            candidate_detail = evaluate_dual_vector(
+                network, enumerate_route_costs(network), vector,
+                kind=detail["kind"],
+                sample_index=detail["sample_index"],
+            )
+            if candidate_detail["absolute_error"] > 1e-7:
+                current, current_detail = candidate, candidate_detail
+                break
+    return current, current_detail
 
 
 def minimize_disagreement(spec: TinySpec, result: dict):
@@ -681,24 +963,54 @@ def mutation_specs():
     }
 
 
-def run_campaign(seed, cases, output_dir):
+def run_campaign(seed, cases, output_dir, dual_samples=32):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     rows, disagreements = [], []
     for ordinal in range(cases):
         spec = generate_spec(seed, ordinal)
-        result = compare_spec(spec)
+        result = compare_spec(spec, dual_samples=dual_samples)
         rows.append(result)
         if not result["agreement"]:
-            minimal_spec, minimal_result = minimize_disagreement(spec, result)
-            path = output_dir / f"disagreement_{spec.case_id}.json"
-            path.write_text(json.dumps({
+            payload = {
                 "schema": SCHEMA,
                 "original_spec": asdict(spec), "original_result": result,
-                "minimal_spec": asdict(minimal_spec),
-                "minimal_result": minimal_result,
-                "minimality": "greedy one-trip and one-station irreducible",
-            }, indent=2, sort_keys=True) + "\n")
+            }
+            if not result["lp_agrees"] or not result["integer_agrees"]:
+                method_result = {
+                    **result, "pricing_agrees": True,
+                    "agreement": (
+                        result["lp_agrees"] and result["integer_agrees"]
+                    ),
+                }
+                minimal_spec, minimal_result = minimize_disagreement(
+                    spec, method_result,
+                )
+                payload.update({
+                    "minimal_spec": asdict(minimal_spec),
+                    "minimal_result": minimal_result,
+                    "minimality": (
+                        "greedy one-trip and one-station irreducible"
+                    ),
+                })
+            if result["pricing"]["mismatches"]:
+                pricing_reproducers = []
+                for detail in result["pricing"]["mismatches"]:
+                    minimal_spec, minimal_detail = (
+                        minimize_pricing_disagreement(spec, detail)
+                    )
+                    pricing_reproducers.append({
+                        "minimal_spec": asdict(minimal_spec),
+                        "minimal_pricing_disagreement": minimal_detail,
+                        "minimality": (
+                            "greedy one-trip and one-station irreducible"
+                        ),
+                    })
+                payload["minimal_pricing_reproducers"] = pricing_reproducers
+            path = output_dir / f"disagreement_{spec.case_id}.json"
+            path.write_text(
+                json.dumps(payload, indent=2, sort_keys=True) + "\n"
+            )
             disagreements.append(str(path))
     mutations = {}
     for name, (baseline, mutated) in mutation_specs().items():
@@ -720,6 +1032,52 @@ def run_campaign(seed, cases, output_dir):
         "agreements": sum(row["agreement"] for row in rows),
         "disagreements": len(disagreements),
         "agreement_rate": sum(row["agreement"] for row in rows) / cases,
+        "dual_samples_per_network": dual_samples,
+        "pricing_dual_samples": sum(
+            row["pricing"]["samples"] for row in rows
+        ),
+        "pricing_agreements": sum(
+            row["pricing"]["agreements"] for row in rows
+        ),
+        "pricing_agreement_rate": (
+            sum(row["pricing"]["agreements"] for row in rows)
+            / max(1, sum(row["pricing"]["samples"] for row in rows))
+        ),
+        "pricing_disagreements": sum(
+            len(row["pricing"]["mismatches"]) for row in rows
+        ),
+        "pricing_domain_coverage": {
+            "soc_step": {
+                str(value): sum(row["soc_step"] == value for row in rows)
+                for value in sorted({row["soc_step"] for row in rows})
+            },
+            "station_count": {
+                str(value): sum(
+                    row["station_count"] == value for row in rows
+                )
+                for value in sorted({
+                    row["station_count"] for row in rows
+                })
+            },
+            "delayed_charging": {
+                str(value).lower(): sum(
+                    row["delayed_charging"] == value for row in rows
+                )
+                for value in (False, True)
+            },
+            "tariff_shape": {
+                value: sum(row["tariff_shape"] == value for row in rows)
+                for value in ("flat", "time_varying")
+            },
+            "negative_component_vectors": sum(
+                row["pricing"]["negative_component_vectors"]
+                for row in rows
+            ),
+            "near_or_exact_tie_vectors": sum(
+                row["pricing"]["near_or_exact_tie_vectors"]
+                for row in rows
+            ),
+        },
         "disagreement_files": disagreements,
         "mutations": mutations,
     }
@@ -729,12 +1087,20 @@ def run_campaign(seed, cases, output_dir):
     with (output_dir / "agreement.csv").open("w", newline="") as handle:
         fields = (
             "case_id", "trip_count", "station_count", "route_count",
-            "lp_agrees", "integer_agrees", "agreement",
+            "soc_step", "delayed_charging", "tariff_shape",
+            "lp_agrees", "integer_agrees", "pricing_agrees", "agreement",
+            "pricing_samples", "pricing_max_absolute_error",
             "cg_pool_columns", "bnp_nodes", "arc_variables", "wall_s",
         )
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
-        writer.writerows({field: row[field] for field in fields} for row in rows)
+        for row in rows:
+            flat = dict(row)
+            flat["pricing_samples"] = row["pricing"]["samples"]
+            flat["pricing_max_absolute_error"] = (
+                row["pricing"]["max_absolute_error"]
+            )
+            writer.writerow({field: flat[field] for field in fields})
     return summary
 
 
@@ -742,15 +1108,22 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     parser.add_argument("--cases", type=int, default=240)
+    parser.add_argument("--dual-samples", type=int, default=32)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.cases < 1:
         parser.error("--cases must be positive")
-    summary = run_campaign(args.seed, args.cases, args.output_dir)
+    if args.dual_samples < 1:
+        parser.error("--dual-samples must be positive")
+    summary = run_campaign(
+        args.seed, args.cases, args.output_dir, args.dual_samples,
+    )
     print(json.dumps({
         "seed": summary["seed"], "cases": summary["cases"],
         "agreements": summary["agreements"],
         "disagreements": summary["disagreements"],
+        "pricing_dual_samples": summary["pricing_dual_samples"],
+        "pricing_disagreements": summary["pricing_disagreements"],
     }))
     return 0
 
