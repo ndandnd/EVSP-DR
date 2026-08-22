@@ -1479,6 +1479,7 @@ def validate_final_selected_routes(
     from config import CHARGING_STATIONS
     from expanded_path_realization import (
         BLOCK_SCHEDULE_SCHEMA,
+        normalize_event_station_prices,
         validate_continuous_charging_blocks,
     )
     from utils_v2 import load_station_hourly_prices
@@ -1560,6 +1561,8 @@ def validate_final_selected_routes(
         or not 0.0 <= reserve_frac <= 1.0
     ):
         raise SystemExit("[MIP] final replay physics are invalid/non-finite")
+    time_model = status.get("time_model", "uniform")
+    arrival_grace_min = 0.0 if time_model == "event" else 1.0
     counts = Counter()
     for ordinal, route in enumerate(selected_routes, start=1):
         route_trips = list(route.get("trips") or [])
@@ -1588,6 +1591,7 @@ def validate_final_selected_routes(
             charge_kw,
             reserve_kwh,
             HORIZON_MIN,
+            arrival_grace_min=arrival_grace_min,
         )
         if reason is not None:
             message = (
@@ -1638,6 +1642,14 @@ def validate_final_selected_routes(
                     tariff_path,
                     CHARGING_STATIONS,
                 )
+                if time_model == "event":
+                    prices = normalize_event_station_prices(
+                        prices,
+                        horizon_min=HORIZON_MIN,
+                        strict_tariff_coverage=bool(
+                            status.get("strict_tariff_coverage", False)
+                        ),
+                    )
             except (KeyError, OSError, ValueError) as exc:
                 raise PhysicalReplayError(
                     "[MIP] final replay tariff provenance is invalid",
