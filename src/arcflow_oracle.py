@@ -654,7 +654,8 @@ def gate_g4(model: ArcFlowModel, primal: np.ndarray) -> tuple[dict, list[dict]]:
         reason = validate_injected_route(
             model.data.problem, route, model.data.g_kwh,
             model.data.charge_kw, model.data.reserve_kwh,
-            model.data.network.horizon, arc_map=arc_map,
+            getattr(model.data.network, "horizon", HORIZON_MIN),
+            arc_map=arc_map,
         )
         if reason:
             raise AssertionError(f"G4 FAILED route {ordinal}: {reason}")
