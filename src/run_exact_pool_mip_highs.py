@@ -9,8 +9,10 @@ import json
 import math
 import os
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
+import highspy
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
 from scipy.sparse import csr_matrix, vstack
@@ -41,6 +43,25 @@ STATUS = {
     4: "SOLVER_ERROR",
 }
 
+NATIVE_STATUS = {
+    highspy.HighsModelStatus.kOptimal: 0,
+    highspy.HighsModelStatus.kTimeLimit: 1,
+    highspy.HighsModelStatus.kIterationLimit: 1,
+    highspy.HighsModelStatus.kSolutionLimit: 1,
+    highspy.HighsModelStatus.kInfeasible: 2,
+    highspy.HighsModelStatus.kUnbounded: 3,
+    highspy.HighsModelStatus.kUnboundedOrInfeasible: 4,
+}
+
+
+@dataclass
+class NativeResult:
+    status: int
+    x: np.ndarray | None
+    mip_dual_bound: float | None
+    mip_gap: float | None
+    message: str
+
 
 def _sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
@@ -60,6 +81,68 @@ def _incidence(routes, trips):
             (np.asarray(rows), np.asarray(columns)),
         ),
         shape=(len(trips), len(routes)),
+    )
+
+
+def _native_milp(
+    *,
+    objective,
+    matrix,
+    row_lower,
+    row_upper,
+    time_limit,
+    mip_gap,
+    threads,
+    start_indices,
+) -> NativeResult:
+    columns = matrix.tocsc()
+    lp = highspy.HighsLp()
+    lp.num_col_ = int(columns.shape[1])
+    lp.num_row_ = int(columns.shape[0])
+    lp.col_cost_ = np.asarray(objective, dtype=np.float64)
+    lp.col_lower_ = np.zeros(columns.shape[1], dtype=np.float64)
+    lp.col_upper_ = np.ones(columns.shape[1], dtype=np.float64)
+    lp.row_lower_ = np.asarray(row_lower, dtype=np.float64)
+    lp.row_upper_ = np.asarray(row_upper, dtype=np.float64)
+    lp.integrality_ = [
+        highspy.HighsVarType.kInteger for _ in range(columns.shape[1])
+    ]
+    lp.a_matrix_.format_ = highspy.MatrixFormat.kColwise
+    lp.a_matrix_.start_ = columns.indptr.astype(np.int32)
+    lp.a_matrix_.index_ = columns.indices.astype(np.int32)
+    lp.a_matrix_.value_ = columns.data.astype(np.float64)
+    highspy.Highs.resetGlobalScheduler(True)
+    solver = highspy.Highs()
+    solver.setOptionValue("output_flag", False)
+    solver.setOptionValue("time_limit", float(time_limit))
+    solver.setOptionValue("mip_rel_gap", float(mip_gap))
+    solver.setOptionValue("threads", int(threads))
+    solver.setOptionValue("random_seed", 0)
+    solver.passModel(lp)
+    if start_indices:
+        indices = np.asarray(start_indices, dtype=np.int32)
+        values = np.ones(len(indices), dtype=np.float64)
+        solver.setSolution(len(indices), indices, values)
+    solver.run()
+    model_status = solver.getModelStatus()
+    info = solver.getInfo()
+    solution = solver.getSolution()
+    primal = (
+        np.asarray(solution.col_value, dtype=float)
+        if solution.value_valid else None
+    )
+    return NativeResult(
+        status=NATIVE_STATUS.get(model_status, 4),
+        x=primal,
+        mip_dual_bound=(
+            float(info.mip_dual_bound)
+            if math.isfinite(float(info.mip_dual_bound)) else None
+        ),
+        mip_gap=(
+            float(info.mip_gap)
+            if math.isfinite(float(info.mip_gap)) else None
+        ),
+        message=solver.modelStatusToString(model_status),
     )
 
 
@@ -132,13 +215,25 @@ def solve(args) -> dict:
         routes, trips, seed_partition
     )
     started = time.perf_counter()
-    stage1 = milp(
-        c=np.ones(len(routes)),
-        integrality=integrality,
-        bounds=bounds,
-        constraints=constraints,
-        options=options,
-    )
+    if args.solver == "native":
+        stage1 = _native_milp(
+            objective=np.ones(len(routes)),
+            matrix=matrix,
+            row_lower=np.ones(len(trips)),
+            row_upper=np.ones(len(trips)),
+            time_limit=args.timelimit,
+            mip_gap=args.mipgap,
+            threads=args.threads,
+            start_indices=greedy,
+        )
+    else:
+        stage1 = milp(
+            c=np.ones(len(routes)),
+            integrality=integrality,
+            bounds=bounds,
+            constraints=constraints,
+            options=options,
+        )
     stage1_wall_s = time.perf_counter() - started
     stage1_selected = _selected_indices(stage1)
     incumbent_source = "highs"
@@ -174,17 +269,29 @@ def solve(args) -> dict:
             float(route["cost"]) - 100000.0 for route in routes
         ])
         stage2_started = time.perf_counter()
-        stage2 = milp(
-            c=variable_cost,
-            integrality=integrality,
-            bounds=bounds,
-            constraints=stage2_constraints,
-            options={
-                "presolve": True,
-                "time_limit": remaining_s,
-                "mip_rel_gap": float(args.mipgap),
-            },
-        )
+        if args.solver == "native":
+            stage2 = _native_milp(
+                objective=variable_cost,
+                matrix=stage2_matrix,
+                row_lower=lower,
+                row_upper=lower,
+                time_limit=remaining_s,
+                mip_gap=args.mipgap,
+                threads=args.threads,
+                start_indices=stage1_selected,
+            )
+        else:
+            stage2 = milp(
+                c=variable_cost,
+                integrality=integrality,
+                bounds=bounds,
+                constraints=stage2_constraints,
+                options={
+                    "presolve": True,
+                    "time_limit": remaining_s,
+                    "mip_rel_gap": float(args.mipgap),
+                },
+            )
         stage2_wall_s = time.perf_counter() - stage2_started
         stage2_selected = _selected_indices(stage2)
         if stage2_selected:
@@ -215,15 +322,20 @@ def solve(args) -> dict:
     )
     payload = {
         "schema": SCHEMA,
-        "backend": "scipy_highs",
+        "backend": (
+            "highspy_native" if args.solver == "native"
+            else "scipy_highs"
+        ),
         "two_stage": True,
         "requested_timelimit_s": float(args.timelimit),
         "requested_mip_gap": float(args.mipgap),
         "threads_requested": int(args.threads),
-        "native_thread_control_available": False,
-        "thread_control_note":
-            "SciPy milp does not expose HiGHS thread count; all arms use "
-            "the same backend and process environment.",
+        "native_thread_control_available": args.solver == "native",
+        "thread_control_note": (
+            "Native HiGHS threads set explicitly."
+            if args.solver == "native"
+            else "SciPy milp does not expose HiGHS thread count."
+        ),
         "status_name": STATUS.get(
             int(stage2.status if stage2 is not None else stage1.status),
             "UNKNOWN",
@@ -289,6 +401,9 @@ def main(argv=None) -> int:
     parser.add_argument("--timelimit", type=float, default=1800)
     parser.add_argument("--mipgap", type=float, default=1e-4)
     parser.add_argument("--threads", type=int, default=8)
+    parser.add_argument(
+        "--solver", choices=("native", "scipy"), default="native"
+    )
     parser.add_argument("--data-dir", type=Path, default=None)
     parser.add_argument("--reference-data-dir", type=Path, default=None)
     parser.add_argument("--out", type=Path, required=True)

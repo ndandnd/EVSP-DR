@@ -22,7 +22,7 @@ import scipy
 from scipy.optimize import Bounds, LinearConstraint, linprog, milp
 from scipy.sparse import csc_matrix
 
-from audit_giro_known_columns import HORIZON_MIN, build_problem
+from audit_giro_known_columns import DEPOT, HORIZON_MIN, build_problem
 from config import BUS_COST_KX, CHARGING_STATIONS
 from durable_io import read_jsonl_records
 from exact_pricer_expanded import DATA_DIR, ExpandedNetwork
@@ -619,9 +619,9 @@ def path_record(model: ArcFlowModel, path: Sequence[int]) -> dict:
         charging["kwh"].append(round(soc - net.grid[level], 6))
     record = {
         "trips": trips,
-        "route_nodes": [net.depot] + [
+        "route_nodes": [getattr(net, "depot", DEPOT)] + [
             value for _kind, value in sequence
-        ] + [net.depot],
+        ] + [getattr(net, "depot", DEPOT)],
         "charging_stops": charging,
         "expanded_grid_charging_stops": charging,
         "cost": float(arcs.cost[np.asarray(path)].sum()),
