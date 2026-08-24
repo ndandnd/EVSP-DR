@@ -106,3 +106,13 @@ per-instance envelope comparison. `evidence_manifest.csv` binds every consumed
 artifact. Full journals remain external because the execution tree is 11 GiB;
 their hashes are transitively bound by the MIP, phase-2, target, and snapshot
 artifacts.
+
+## Validation
+
+- focused envelope, identity, replay, feasibility, native-HiGHS, and arc-flow
+  tests: **43 passed, 12 subtests**;
+- Python source/test compilation: passed;
+- full repository suite: **547 passed, 135 subtests**;
+- two historical deterministic-artifact tests fail only because their embedded
+  producer-code hashes detect the modified realization/MIP sources. Their
+  scientific membership tables were not overwritten.
