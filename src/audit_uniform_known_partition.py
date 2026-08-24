@@ -13,6 +13,7 @@ from pathlib import Path
 from audit_giro_known_columns import HORIZON_MIN, build_problem
 from config import CHARGING_STATIONS
 from durable_io import atomic_write_json
+from expanded_path_realization import normalize_event_station_prices
 from tariff_response_core import giro_routes_for_instance
 from utils_v2 import load_station_hourly_prices
 from warm_pool_fixed_duty_optimizer import optimize_fixed_duty
@@ -45,7 +46,11 @@ def audit(args) -> dict:
         status["csv"],
         max_station_to_trip_wait_min=HORIZON_MIN,
     )
-    prices = load_station_hourly_prices(tariff, CHARGING_STATIONS)
+    prices = normalize_event_station_prices(
+        load_station_hourly_prices(tariff, CHARGING_STATIONS),
+        horizon_min=HORIZON_MIN,
+        strict_tariff_coverage=False,
+    )
     known = giro_routes_for_instance(
         data_dir / "Par_VehicleDetails_Updated.csv",
         instance,
