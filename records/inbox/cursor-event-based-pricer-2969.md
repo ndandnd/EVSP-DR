@@ -28,12 +28,14 @@ Evidence:
 
 Producing commit: `f7baa6221f2ab87074c57964c7f1de4f13d7900a`
 
-## LOCAL-6 — Event wins the equal-compute envelope, without dominance
+## LOCAL-6 — Event is lower on four per-arm-capped envelope cells
 
-Claim: Across k2/k3/k5 × three selections, event produces a better timed
-integer fleet on four cells, ties on three, and loses on k05_s2/k05_s3. Event
-reaches the industrial fleet on 7/9 cells versus 3/9 for the best of five
-uniform grids.
+Claim: Across k2/k3/k5 × three selections, event produces a lower timed
+integer fleet on four cells, the same fleet on three, and a higher fleet on
+k05_s2/k05_s3. Event reaches the industrial fleet on 7/9 cells versus 3/9 for
+the best of five uniform grids. Budgets are equal per arm; the five-arm
+uniform envelope uses more total compute and fleet counts do not compare
+schedule cost.
 
 Evidence:
 
@@ -52,9 +54,9 @@ Producing commits:
 Claim: Certified phase-2 bounds plus physical industrial witnesses prove the
 event model integer optimum equals the industrial fleet on all 9/9 cells.
 Event RAW pools also attain it on all k2/k3 cells and k05_s1, but k05_s2 and
-k05_s3 remain finite-pool intervals `[5,12]` and `[5,15]` after long exact
+k05_s3 remain finite-pool intervals `[6,12]` and `[5,15]` after long exact
 fallbacks. The event representation solves the route-space problem but does
-not eliminate pool composition at k5.
+not eliminate the combined unresolved pool/search shortfall at k5.
 
 Evidence:
 

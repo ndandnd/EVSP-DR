@@ -52,12 +52,13 @@ def _uniform_source(root, panel, cell, representation):
     if panel == "A" and panel_a.is_file():
         return panel_a
     if panel == "B":
-        snapshot = (
-            root / "panel_b/snapshots" / cell
-            / representation / "cg.json"
-        )
-        if snapshot.is_file():
-            return snapshot
+        for snapshot_root in ("snapshots_v2", "snapshots"):
+            snapshot = (
+                root / "panel_b" / snapshot_root / cell
+                / representation / "cg.json"
+            )
+            if snapshot.is_file():
+                return snapshot
     return (
         root / "panel_b/uniform" / cell
         / representation / "cg.json"
@@ -188,6 +189,11 @@ def summarize(plan_path: Path, execution_root: Path, output_dir: Path):
                 / cell / representation_id
             )
             targets = _target_results(target_folder, manifest)
+            if time_model == "event":
+                targets.extend(_target_results(
+                    root / "panel_b/target/event" / cell,
+                    manifest,
+                ))
             pool_lower = integer_lower
             pool_upper = (
                 int(mip["buses"]) if mip.get("buses") is not None else None
@@ -303,10 +309,17 @@ def summarize(plan_path: Path, execution_root: Path, output_dir: Path):
                     root, "B", cell, representation_id
                 )
                 target_paths = [
+                    root / "panel_b/target_v2/uniform"
+                    / cell / representation_id / "target.json",
                     root / "panel_b/target/uniform"
                     / cell / representation_id / "target.json"
                 ]
+                v2_mip = (
+                    root / "panel_b/mip_native_v2/uniform"
+                    / cell / representation_id / "mip.json"
+                )
                 panel_b_mip_path = (
+                    v2_mip if v2_mip.is_file() else
                     root / "panel_b/mip_native/uniform"
                     / cell / representation_id / "mip.json"
                 )

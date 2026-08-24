@@ -47,13 +47,12 @@ industrial-target feasibility solve. The uniform envelope is the best
 physically valid timed integer incumbent across all five uniform grids; every
 underlying row remains published.
 
-If event wins, the licensed wording is:
-
-> At equal compute, the event representation produces better integral
-> schedules.
-
-No claim that its finite pool is intrinsically better is licensed without
-Panel A's representation-relative pool-gap decomposition.
+Licensed wording must report the exact lower/tied/higher fleet counts under
+equal **per-arm** caps and the target-attainment counts. The uniform envelope
+uses five separately budgeted arms, so no equal-total-compute or aggregate
+schedule-quality claim is licensed. No claim that the event pool is
+intrinsically better is licensed without Panel A's representation-relative
+pool-gap decomposition.
 
 ## Provenance and censorship
 

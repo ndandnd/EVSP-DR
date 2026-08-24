@@ -14,7 +14,7 @@ from durable_io import atomic_write_json, flush_and_fsync
 from run_exact_pool_mip import resolve_pool_journal
 
 
-SCHEMA = "evsp-dr-exact-cg-matched-wall-snapshot-v1"
+SCHEMA = "evsp-dr-exact-cg-matched-wall-snapshot-v2"
 
 
 def _sha256(payload: bytes) -> str:
@@ -30,20 +30,74 @@ def _load_iteration_rows(path: Path) -> tuple[list[str], list[dict]]:
         return list(reader.fieldnames), rows
 
 
-def _selected_row(rows: list[dict], budget_s: float) -> dict:
+def _telemetry_records(path: Path) -> tuple[bytes, list[dict]]:
+    payload = path.read_bytes()
+    records = [
+        json.loads(line)
+        for line in payload.splitlines()
+        if line.strip()
+    ]
+    return payload, records
+
+
+def _durable_iterations(records: list[dict], budget_s: float) -> dict:
+    route_insertions = {
+        int(record["iteration"]): record
+        for record in records
+        if (
+            record.get("record_type") == "phase"
+            and record.get("phase") == "route_insertion"
+            and record.get("iteration") is not None
+        )
+    }
+    journal_fsyncs = {
+        int(record["iteration"]): record
+        for record in records
+        if (
+            record.get("record_type") == "phase"
+            and record.get("phase") == "journal_fsync"
+            and record.get("iteration") is not None
+        )
+    }
+    durable = {}
+    for iteration, insertion in route_insertions.items():
+        added = int(
+            (insertion.get("details") or {}).get(
+                "inserted_or_replaced", 0
+            )
+        )
+        marker = (
+            journal_fsyncs.get(iteration) if added else insertion
+        )
+        if (
+            marker is not None
+            and float(marker["elapsed_session_s"])
+            <= float(budget_s) + 1e-9
+        ):
+            durable[iteration] = marker
+    return durable
+
+
+def _selected_row(
+    rows: list[dict], budget_s: float, durable: dict
+) -> tuple[dict, dict]:
     eligible = [
         row for row in rows
-        if float(row["elapsed_s"]) <= float(budget_s) + 1e-9
+        if (
+            float(row["elapsed_s"]) <= float(budget_s) + 1e-9
+            and int(row["iteration"]) in durable
+        )
     ]
     if not eligible:
         raise ValueError("no complete CG iteration exists within wall budget")
-    return eligible[-1]
+    selected = eligible[-1]
+    return selected, durable[int(selected["iteration"])]
 
 
 def _freeze_journal(
     journal_bytes: bytes,
     *,
-    before_iteration: int,
+    through_iteration: int,
 ) -> tuple[bytes, int, int]:
     retained_lines = []
     best_by_incidence = {}
@@ -59,9 +113,7 @@ def _freeze_journal(
             raise ValueError(
                 f"journal line {ordinal} has invalid found_iter"
             )
-        # The iteration CSV row is written before that iteration's candidate
-        # columns are inserted, so its complete state contains found_iter < t.
-        if found >= before_iteration:
+        if found > through_iteration:
             continue
         trips = record.get("trips")
         if (
@@ -87,16 +139,11 @@ def _freeze_journal(
     return payload, len(retained_lines), len(best_by_incidence)
 
 
-def _snapshot_peak_rss_mb(telemetry: Path | None, budget_s: float):
-    if telemetry is None:
-        return None, None
-    telemetry = telemetry.expanduser().resolve(strict=True)
-    payload = telemetry.read_bytes()
+def _snapshot_peak_rss_mb(
+    telemetry: Path, payload: bytes, records: list[dict], budget_s: float
+):
     peaks = []
-    for raw_line in payload.splitlines():
-        if not raw_line.strip():
-            continue
-        record = json.loads(raw_line)
+    for record in records:
         elapsed = record.get("elapsed_session_s")
         peak = record.get("peak_rss_bytes")
         if (
@@ -131,16 +178,23 @@ def freeze(args) -> dict:
     source_iterations = Path(
         str(source) + ".iters.csv"
     ).resolve(strict=True)
+    if args.telemetry is None:
+        raise ValueError("matched-wall snapshot requires phase telemetry")
+    telemetry = Path(args.telemetry).expanduser().resolve(strict=True)
+    telemetry_bytes, telemetry_rows = _telemetry_records(telemetry)
+    durable = _durable_iterations(telemetry_rows, args.budget_s)
     iteration_fields, iteration_rows = _load_iteration_rows(
         source_iterations
     )
-    selected = _selected_row(iteration_rows, args.budget_s)
+    selected, durable_marker = _selected_row(
+        iteration_rows, args.budget_s, durable
+    )
     selected_iteration = int(selected["iteration"])
     frozen_journal, journal_records, unique_columns = _freeze_journal(
         source_journal_bytes,
-        before_iteration=selected_iteration,
+        through_iteration=selected_iteration,
     )
-    expected_columns = int(selected["pool_columns"])
+    expected_columns = int(durable_marker["pool_columns"])
     if unique_columns != expected_columns:
         raise ValueError(
             "frozen journal does not reproduce iteration pool size: "
@@ -162,7 +216,7 @@ def freeze(args) -> dict:
         writer.writerows(frozen_rows)
         flush_and_fsync(handle)
     peak_rss_mb, telemetry_identity = _snapshot_peak_rss_mb(
-        args.telemetry, args.budget_s
+        telemetry, telemetry_bytes, telemetry_rows, args.budget_s
     )
     final = {
         "iter": selected_iteration,
@@ -205,11 +259,14 @@ def freeze(args) -> dict:
             "requested_budget_s": float(args.budget_s),
             "included_iteration": selected_iteration,
             "included_elapsed_s": float(selected["elapsed_s"]),
+            "durable_completion_phase": durable_marker["phase"],
+            "durable_completion_elapsed_s":
+                float(durable_marker["elapsed_session_s"]),
             "journal_record_count": journal_records,
             "unique_pool_columns": unique_columns,
             "telemetry": telemetry_identity,
             "conservative_boundary":
-                "columns_found_at_included_iteration_are_excluded",
+                "include_columns_only_through_last_durably_completed_iteration",
         },
     })
     atomic_write_json(output, snapshot)

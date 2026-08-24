@@ -6,8 +6,8 @@ No cluster jobs were submitted.
 
 ## Answer
 
-At equal compute, the event representation produces better integral schedules
-overall, but it does not dominate every instance:
+Under equal **per-arm** compute caps, event produces a lower fleet incumbent on
+four instances, the same fleet on three, and a higher fleet on two:
 
 | cell | industrial fleet | event timed fleet | uniform-envelope timed fleet | result |
 |---|---:|---:|---:|---|
@@ -25,14 +25,11 @@ The event arm reaches the industrial fleet on **7/9** instances; the best of
 five uniform grids reaches it on **3/9**. Event is better on four cells, tied on
 three, and worse on two.
 
-This licenses:
-
-> At equal compute, the event representation produces better integral
-> schedules on this nine-instance panel.
-
-It does **not** license “the event pool is intrinsically better.” The two
-k5 losses and Panel A show that event pools can still have severe composition
-and search gaps.
+The exact licensed observation is the 4/3/2 comparison above and the
+7/9-versus-3/9 industrial-target count. The uniform result is an envelope over
+five separately budgeted arms, so this is not an equal-total-compute claim.
+Fleet counts do not compare schedule cost. It also does **not** license “the
+event pool is intrinsically better.”
 
 ## Matched-compute construction
 
@@ -41,9 +38,9 @@ initialization, partition master, and `columns_per_iter=30`.
 
 The event arm is the certified 2.5-kWh event lattice. Every uniform grid in
 10/10, 4/5, 2/5, 2/2, and 2/1 receives that cell’s observed event certification
-wall budget. For a solver iteration that crossed the boundary, the published
-uniform pool is the last complete pre-budget state; columns inserted during the
-boundary iteration are excluded.
+wall budget. The published pool includes every iteration whose route insertion
+and, when needed, journal fsync completed before the budget. Later iterations
+are excluded.
 
 Every arm then receives the same native HiGHS 1.15.1 two-stage RAW MIP:
 1,800 seconds, eight explicitly configured threads, zero injected routes.
@@ -72,12 +69,13 @@ For the event representation specifically:
   `I_model = industrial fleet` on **9/9**;
 - `I_pool` is exact and equals the industrial fleet on all k2/k3 cells and
   k05_s1;
-- k05_s2 remains `I_pool ∈ [5,12]`, with `I_timed = 12`;
+- k05_s2 remains `I_pool ∈ [6,12]`, with `I_timed = 12`;
 - k05_s3 remains `I_pool ∈ [5,15]`, with `I_timed = 15`.
 
 Thus the event representation itself has no measured representation or LP
-integrality gap on these nine cells. Its failures at k05_s2/k05_s3 are
-finite-pool composition/search failures, not model infeasibility.
+integrality gap on these nine cells. The combined unresolved finite-pool and
+search shortfalls at k05_s2/k05_s3 are not model infeasibility. Panel A does
+not separately identify their composition and search components.
 
 The uniform results are strongly non-monotone. Examples:
 
