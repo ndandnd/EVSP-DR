@@ -68,7 +68,7 @@ def audit(args) -> dict:
             tariff_id="historical_flat",
             tariff_sha256=provenance.get("prices_sha256"),
             instance_sha256=provenance.get("instance_sha256"),
-            allow_diagnostic_grid=True,
+            allow_declared_physics=True,
         )
         if not result["feasible"]:
             failures.append({
