@@ -13,9 +13,9 @@ from pathlib import Path
 from audit_giro_known_columns import HORIZON_MIN, build_problem
 from config import CHARGING_STATIONS
 from durable_io import atomic_write_json
-from fixed_duty_expanded_optimizer import optimize_fixed_duty
 from tariff_response_core import giro_routes_for_instance
 from utils_v2 import load_station_hourly_prices
+from warm_pool_fixed_duty_optimizer import optimize_fixed_duty
 
 
 SCHEMA = "evsp-dr-uniform-known-partition-model-witness-v1"
