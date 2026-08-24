@@ -1,0 +1,27 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_CAMPAIGN_ROOT:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 1))p" "$EVSP_CAMPAIGN_ROOT/matrix.tsv")
+IFS=$'\t' read -r INDEX CELL TARGET CSV_PATH REP SOC BLOCK BUDGET RUNNER_LIMIT <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+OUT="$EVSP_CAMPAIGN_ROOT/cg/B__${CELL}__${REP}.json"
+
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
+  --csv "$CSV_PATH" --prices_csv hourly_prices_flat.csv \
+  --soc-step "$SOC" --block-min "$BLOCK" --max-iters 10000 \
+  --columns_per_iter 30 --rc-eps 0.0001 --master-sense partition \
+  --initial-pool singletons --wall-limit-s "$RUNNER_LIMIT" \
+  --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
+  --phase-telemetry "$OUT.phase-telemetry.jsonl" --out "$OUT"

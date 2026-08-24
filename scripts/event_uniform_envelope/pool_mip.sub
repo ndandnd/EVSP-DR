@@ -1,0 +1,35 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_CAMPAIGN_ROOT:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_PANEL:?}"
+: "${EVSP_INTEGER_MANIFEST:?}"
+: "${EVSP_MIP_OUTPUT_DIR:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
+[[ -r "$GRB_LICENSE_FILE" ]]
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$EVSP_INTEGER_MANIFEST")
+IFS=$'\t' read -r INDEX CELL TARGET REP SOURCE STATUS_SHA JOURNAL JOURNAL_SHA <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+
+export EVSP_REQUIRE_DETACHED=1
+export EVSP_MIP_EXPECTED_RESULT_SHA256="$STATUS_SHA"
+export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$JOURNAL_SHA"
+OUT="$EVSP_MIP_OUTPUT_DIR/${EVSP_PANEL}__${CELL}__${REP}.json"
+[[ ! -e "$OUT" ]]
+
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/run_exact_pool_mip.py \
+  --result "$SOURCE" --data-dir "$EVSP_EXECUTION_REPO/data" \
+  --timelimit 1800 --mipgap 0.0001 --threads 8 --two-stage --out "$OUT"

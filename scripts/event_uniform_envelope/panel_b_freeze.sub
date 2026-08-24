@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_CAMPAIGN_ROOT:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 1))p" "$EVSP_CAMPAIGN_ROOT/matrix.tsv")
+IFS=$'\t' read -r INDEX CELL TARGET CSV_PATH REP SOC BLOCK BUDGET RUNNER_LIMIT <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+SOURCE="$EVSP_CAMPAIGN_ROOT/cg/B__${CELL}__${REP}.json"
+TELEMETRY="$SOURCE.phase-telemetry.jsonl"
+OUT="$EVSP_CAMPAIGN_ROOT/frozen/B__${CELL}__${REP}.json"
+if [[ ! -s "$SOURCE" ]]; then
+  echo "missing source: $SOURCE" > "$OUT.skipped"
+  exit 0
+fi
+ARGS=(
+  "$PYTHON_BIN" -u "$EVSP_EXECUTION_REPO/src/freeze_exact_cg_at_wall.py"
+  --result "$SOURCE" --budget-s "$BUDGET" --out "$OUT"
+)
+[[ ! -s "$TELEMETRY" ]] || ARGS+=(--telemetry "$TELEMETRY")
+cd "$EVSP_EXECUTION_REPO"
+exec "${ARGS[@]}"

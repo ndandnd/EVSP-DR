@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_PANEL:?}"
+: "${EVSP_INTEGER_MANIFEST:?}"
+: "${EVSP_TARGET_OUTPUT_DIR:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
+[[ -r "$GRB_LICENSE_FILE" ]]
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$EVSP_INTEGER_MANIFEST")
+IFS=$'\t' read -r INDEX CELL TARGET REP SOURCE STATUS_SHA JOURNAL JOURNAL_SHA <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+OUT="$EVSP_TARGET_OUTPUT_DIR/${EVSP_PANEL}__${CELL}__${REP}.json"
+[[ ! -e "$OUT" ]]
+
+export EVSP_REQUIRE_DETACHED=1
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/target_pool_feasibility.py \
+  --result "$SOURCE" --target "$TARGET" --timelimit 1800 \
+  --threads 8 --seed 0 --solver gurobi \
+  --data-dir "$EVSP_EXECUTION_REPO/data" --out "$OUT"
