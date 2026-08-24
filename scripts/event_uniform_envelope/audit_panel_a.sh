@@ -34,6 +34,7 @@ sha256sum \
   "$ROOT/panel_a_stage_counts.csv" \
   "$ROOT/slurm_accounting.psv" \
   "$ROOT/stderr_inventory.csv" \
+  "$ROOT/stderr_signatures.csv" \
   "$ROOT/panel_b_gate.json" \
   > "$ROOT/SUMMARY_SHA256SUMS"
 

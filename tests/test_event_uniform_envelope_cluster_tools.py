@@ -60,6 +60,9 @@ def test_audit_panel_a_writes_normalized_csv(tmp_path):
         "outcome": "FEASIBLE",
         "solver": {"runtime_s": 0.5, "backend": "gurobi"},
     }))
+    (root / "logs" / "mipr_102_0.err").write_text(
+        "Traceback (most recent call last):\nRuntimeError: example failure\n"
+    )
     sacct = root / "slurm.psv"
     sacct.write_text(
         "100_0|cg|COMPLETED|0:0|00:01|1G||24G|node\n"
@@ -75,6 +78,10 @@ def test_audit_panel_a_writes_normalized_csv(tmp_path):
     assert row["mip_status"] == "OPTIMAL"
     assert row["target_runtime_s"] == "0.5"
     assert row["cg_slurm_state"] == "COMPLETED"
+    signature = next(csv.DictReader((root / "stderr_signatures.csv").open()))
+    assert signature["stage"] == "mipr"
+    assert signature["count"] == "1"
+    assert signature["last_line"] == "RuntimeError: example failure"
 
 
 def test_prepare_integer_manifest_hashes_status_and_journal(tmp_path):

@@ -187,23 +187,50 @@ def main() -> int:
         writer.writerows(stage_rows)
 
     error_rows = []
+    signature_counts = Counter()
+    signature_sizes = Counter()
+    signature_examples = {}
     for path in sorted((root / "logs").glob("*.err")):
         if path.stat().st_size == 0:
             continue
         payload = path.read_bytes()
         lines = [line.strip() for line in payload.decode(errors="replace").splitlines() if line.strip()]
+        stage = path.name.split("_", 1)[0]
+        last_line = lines[-1] if lines else ""
+        signature = (stage, last_line)
+        signature_counts[signature] += 1
+        signature_sizes[signature] += len(payload)
+        signature_examples.setdefault(signature, str(path))
         error_rows.append({
             "path": str(path),
             "size": len(payload),
             "sha256": hashlib.sha256(payload).hexdigest(),
             "first_line": lines[0] if lines else "",
-            "last_line": lines[-1] if lines else "",
+            "last_line": last_line,
         })
     with (root / "stderr_inventory.csv").open("w", newline="") as handle:
         fields = ["path", "size", "sha256", "first_line", "last_line"]
         writer = csv.DictWriter(handle, fieldnames=fields)
         writer.writeheader()
         writer.writerows(error_rows)
+
+    signature_rows = [
+        {
+            "stage": stage,
+            "count": count,
+            "total_bytes": signature_sizes[(stage, last_line)],
+            "last_line": last_line,
+            "example_path": signature_examples[(stage, last_line)],
+        }
+        for (stage, last_line), count in sorted(
+            signature_counts.items(), key=lambda item: (item[0][0], -item[1], item[0][1])
+        )
+    ]
+    with (root / "stderr_signatures.csv").open("w", newline="") as handle:
+        fields = ["stage", "count", "total_bytes", "last_line", "example_path"]
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(signature_rows)
 
     event = [row for row in rows if row["time_model"] == "event"]
     eligible = [
@@ -226,6 +253,12 @@ def main() -> int:
     print("MIP:", dict(sorted(Counter(str(row["mip_status"]) for row in rows).items())))
     print("target:", dict(sorted(Counter(str(row["target_outcome"]) for row in rows).items())))
     print(f"Panel B event gate: {len(eligible)}/9 certified")
+    print("stderr signatures:")
+    if signature_rows:
+        for row in signature_rows:
+            print(f"  {row['count']:>3} {row['stage']:<5} | {row['last_line']}")
+    else:
+        print("    0 (all stderr files empty)")
     return 0
 
 
