@@ -1,0 +1,10 @@
+cell_id,target_fleet,event_I_timed,event_reaches_target,uniform_envelope_I_timed,uniform_envelope_reaches_target,uniform_winning_representations,comparison
+k02_s1,2,2,True,3,False,uniform_4_5|uniform_2_5|uniform_2_2,event_better
+k02_s2,2,2,True,2,True,uniform_2_2,tie
+k02_s3,2,2,True,2,True,uniform_2_5,tie
+k03_s1,3,3,True,4,False,uniform_4_5|uniform_2_5,event_better
+k03_s2,3,3,True,4,False,uniform_2_2|uniform_2_1,event_better
+k03_s3,3,3,True,3,True,uniform_10_10|uniform_4_5|uniform_2_5|uniform_2_2,tie
+k05_s1,5,5,True,7,False,uniform_4_5|uniform_2_5,event_better
+k05_s2,5,12,False,6,False,uniform_10_10,uniform_better
+k05_s3,5,15,False,12,False,uniform_10_10,uniform_better

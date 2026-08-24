@@ -28,6 +28,70 @@ Evidence:
 
 Producing commit: `f7baa6221f2ab87074c57964c7f1de4f13d7900a`
 
+## LOCAL-6 — Event wins the equal-compute envelope, without dominance
+
+Claim: Across k2/k3/k5 × three selections, event produces a better timed
+integer fleet on four cells, ties on three, and loses on k05_s2/k05_s3. Event
+reaches the industrial fleet on 7/9 cells versus 3/9 for the best of five
+uniform grids.
+
+Evidence:
+
+- `analysis/event_uniform_envelope_20260821/panel_b.csv`
+- `analysis/event_uniform_envelope_20260821/panel_b_envelope.csv`
+- `analysis/event_uniform_envelope_20260821/REPORT.md`
+
+Producing commits:
+
+- CG plan and sources: `2dd2b4cd81fb15da137f6d443f5a495e22fd0255`
+- native timed MIPs: `c968dbb517f4f81c19c4dae8e184cc3481c2b1d2`
+- normalization: `e760051161b58eb646482b26d921a6e491e162e9`
+
+## LOCAL-7 — Event model completeness and event pool completeness differ
+
+Claim: Certified phase-2 bounds plus physical industrial witnesses prove the
+event model integer optimum equals the industrial fleet on all 9/9 cells.
+Event RAW pools also attain it on all k2/k3 cells and k05_s1, but k05_s2 and
+k05_s3 remain finite-pool intervals `[5,12]` and `[5,15]` after long exact
+fallbacks. The event representation solves the route-space problem but does
+not eliminate pool composition at k5.
+
+Evidence:
+
+- `analysis/event_uniform_envelope_20260821/panel_a.csv`
+- `analysis/event_uniform_envelope_20260821/REPORT.md`
+
+Producing commit: `e760051161b58eb646482b26d921a6e491e162e9`
+
+## LOCAL-8 — Uniform integer outcomes are strongly non-monotone
+
+Claim: Equal-compute uniform timed fleets vary sharply with resolution. For
+k05_s2 the five grids return 6, 12, 18, 12, and 24 buses (ordered 10/10, 4/5,
+2/5, 2/2, 2/1). Every row retains CG certification, stop reason, iteration
+count, wall/RSS, MIP scope, and physical-witness validity.
+
+Evidence:
+
+- `analysis/event_uniform_envelope_20260821/panel_b.csv`
+- `analysis/event_uniform_envelope_20260821/evidence_manifest.csv`
+
+Producing commit: `e760051161b58eb646482b26d921a6e491e162e9`
+
+## LOCAL-9 — Local Gurobi cannot execute the comparison matrix
+
+Claim: The local restricted Gurobi license rejects most RAW pools before
+search for model size. Final comparable rows therefore use native HiGHS 1.15.1
+for every arm with an explicit eight-thread setting and identical 1,800-second
+budget. Gurobi failures and preliminary SciPy rows are excluded from normalized
+results.
+
+Evidence:
+
+- `analysis/event_uniform_envelope_20260821/COMMANDS.md`
+- `analysis/event_uniform_envelope_20260821/REPORT.md`
+
+Producing commit: `c968dbb517f4f81c19c4dae8e184cc3481c2b1d2`
+
 ## LOCAL-3 — Packed factorized arcs clear the stated memory gates
 
 Claim: Packed target/cost/recipe arrays with lazy physical-action
