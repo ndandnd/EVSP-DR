@@ -81,7 +81,7 @@ def audit(args) -> dict:
                 "reason": result.get("reason"),
             })
             continue
-        record = result["record"]
+        record = result["route"]
         counts.update(record["trips"])
         records.append({
             "duty_id": route["duty_id"],
