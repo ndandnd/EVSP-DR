@@ -11,8 +11,10 @@ ROOT=$(cd "$1" && pwd)
 [[ -f "$ROOT/matrix.tsv" ]] || evsp_die "missing $ROOT/matrix.tsv"
 
 JOB_FILES=("$ROOT/jobs.tsv")
-[[ ! -f "$ROOT/integer_recovery_jobs.tsv" ]] \
-  || JOB_FILES+=("$ROOT/integer_recovery_jobs.tsv")
+while IFS= read -r path; do
+  JOB_FILES+=("$path")
+done < <(find "$ROOT" -maxdepth 1 -type f \
+  -name 'integer_recovery*_jobs.tsv' -print | sort)
 mapfile -t JOB_IDS < <(
   awk -F'\t' 'FNR > 1 {print $2}' "${JOB_FILES[@]}" | sort -u
 )

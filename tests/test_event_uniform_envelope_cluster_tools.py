@@ -108,6 +108,7 @@ def test_prepare_integer_manifest_hashes_status_and_journal(tmp_path):
         "--solver-commit", "b" * 40,
     )
     row = next(csv.DictReader(output.open(), delimiter="\t"))
+    assert b"\r" not in output.read_bytes()
     assert len(row["source_status_sha256"]) == 64
     assert len(row["source_journal_sha256"]) == 64
     assert json.loads(provenance.read_text())["source_rows"] == 1
@@ -159,3 +160,42 @@ def test_prepare_panel_b_writes_five_uniform_arms_per_event_cell(tmp_path):
     assert len(output_rows) == 45
     assert all(row[4].startswith("uniform_") for row in output_rows)
     assert json.loads((panel_b / "execution_plan.json").read_text())["uniform_arms"] == 45
+
+
+def test_audit_panel_b_compares_v1_and_v2_frozen_pools(tmp_path):
+    root = tmp_path / "panel_b"
+    for name in ("cg", "frozen", "frozen_v2"):
+        (root / name).mkdir(parents=True, exist_ok=True)
+    (root / "matrix.tsv").write_text(
+        "0\tk02_s1\t2\tinstance.csv\tuniform_2_2\t2\t2\t10.5\t71\n"
+    )
+    (root / "jobs.tsv").write_text(
+        "stage\tarray_job_id\ttasks\n"
+        "cg\t200\t1\nfreeze\t201\t1\n"
+    )
+    (root / "refreeze_v2_jobs.tsv").write_text(
+        "stage\tarray_job_id\ttasks\tsolver_commit\n"
+        "freeze_v2\t202\t1\t" + "a" * 40 + "\n"
+    )
+    stem = "B__k02_s1__uniform_2_2.json"
+    (root / "cg" / stem).write_text(json.dumps({
+        "stop_reason": "wall_limit", "certified_rc_optimal": False,
+    }))
+    (root / "frozen" / stem).write_text(json.dumps({
+        "iterations": 3, "columns": 10,
+    }))
+    (root / "frozen_v2" / stem).write_text(json.dumps({
+        "iterations": 3, "columns": 12,
+    }))
+    sacct = root / "slurm.psv"
+    sacct.write_text(
+        "200_0|cg|COMPLETED|0:0|00:01|1G||24G|node\n"
+        "201_0|freeze|COMPLETED|0:0|00:01|1G||4G|node\n"
+        "202_0|freeze2|COMPLETED|0:0|00:01|1G||4G|node\n"
+    )
+
+    run_tool("audit_panel_b.py", "--root", root, "--sacct", sacct)
+    row = next(csv.DictReader((root / "panel_b_summary.csv").open()))
+    assert row["frozen_v2_present"] == "True"
+    assert row["frozen_v2_column_delta"] == "2"
+    assert row["freeze_v2_slurm_state"] == "COMPLETED"

@@ -17,14 +17,15 @@ def load(path: Path) -> tuple[dict, str]:
         return {}, f"{type(exc).__name__}: {exc}"
 
 
-def load_jobs(path: Path) -> dict[str, str]:
-    if not path.exists():
-        return {}
-    with path.open(newline="") as handle:
-        return {
-            row["stage"]: row["array_job_id"]
-            for row in csv.DictReader(handle, delimiter="\t")
-        }
+def load_jobs(root: Path) -> dict[str, str]:
+    jobs = {}
+    for path in (root / "jobs.tsv", root / "refreeze_v2_jobs.tsv"):
+        if not path.exists():
+            continue
+        with path.open(newline="") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                jobs[row["stage"]] = row["array_job_id"]
+    return jobs
 
 
 def load_slurm(path: Path) -> dict[str, dict]:
@@ -59,7 +60,7 @@ def main() -> int:
     parser.add_argument("--sacct", type=Path, required=True)
     args = parser.parse_args()
     root = args.root.resolve()
-    jobs = load_jobs(root / "jobs.tsv")
+    jobs = load_jobs(root)
     slurm = load_slurm(args.sacct)
     rows = []
     for fields in csv.reader((root / "matrix.tsv").open(), delimiter="\t"):
@@ -67,15 +68,22 @@ def main() -> int:
         stem = f"B__{cell}__{rep}"
         cg_path = root / "cg" / f"{stem}.json"
         frozen_path = root / "frozen" / f"{stem}.json"
+        frozen_v2_path = root / "frozen_v2" / f"{stem}.json"
         cg, cg_error = load(cg_path) if cg_path.exists() else ({}, "missing")
         frozen, frozen_error = (
             load(frozen_path) if frozen_path.exists() else ({}, "missing")
         )
+        frozen_v2, frozen_v2_error = (
+            load(frozen_v2_path)
+            if frozen_v2_path.exists() else ({}, "missing")
+        )
         final = cg.get("final") or {}
         frozen_final = frozen.get("final") or {}
+        frozen_v2_final = frozen_v2.get("final") or {}
         network = cg.get("network_metrics") or {}
         cg_slurm = task(slurm, jobs.get("cg"), index)
         freeze_slurm = task(slurm, jobs.get("freeze"), index)
+        freeze_v2_slurm = task(slurm, jobs.get("freeze_v2"), index)
         rows.append({
             "index": index,
             "cell": cell,
@@ -106,12 +114,29 @@ def main() -> int:
             "frozen_route_weight": frozen_final.get("route_weight"),
             "frozen_min_rc": frozen_final.get("min_rc"),
             "frozen_error": frozen_error,
+            "frozen_v2_present": frozen_v2_path.exists(),
+            "frozen_v2_iteration": frozen_v2.get("iterations"),
+            "frozen_v2_columns": frozen_v2.get("columns"),
+            "frozen_v2_wall_s": frozen_v2.get("wall_s"),
+            "frozen_v2_peak_rss_mb": frozen_v2.get("peak_rss_mb"),
+            "frozen_v2_route_weight": frozen_v2_final.get("route_weight"),
+            "frozen_v2_min_rc": frozen_v2_final.get("min_rc"),
+            "frozen_v2_column_delta": (
+                frozen_v2.get("columns") - frozen.get("columns")
+                if isinstance(frozen_v2.get("columns"), int)
+                and isinstance(frozen.get("columns"), int)
+                else None
+            ),
+            "frozen_v2_error": frozen_v2_error,
             "cg_slurm_state": cg_slurm.get("state"),
             "cg_slurm_exit": cg_slurm.get("exit"),
             "cg_slurm_max_rss": cg_slurm.get("max_rss"),
             "freeze_slurm_state": freeze_slurm.get("state"),
             "freeze_slurm_exit": freeze_slurm.get("exit"),
             "freeze_slurm_max_rss": freeze_slurm.get("max_rss"),
+            "freeze_v2_slurm_state": freeze_v2_slurm.get("state"),
+            "freeze_v2_slurm_exit": freeze_v2_slurm.get("exit"),
+            "freeze_v2_slurm_max_rss": freeze_v2_slurm.get("max_rss"),
         })
     with (root / "panel_b_summary.csv").open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
@@ -119,6 +144,11 @@ def main() -> int:
         writer.writerows(rows)
     print("Panel B CG stops:", dict(sorted(Counter(str(row["cg_stop_reason"]) for row in rows).items())))
     print("Panel B frozen rows:", sum(row["frozen_present"] for row in rows), "/", len(rows))
+    if (root / "frozen_v2").exists():
+        print("Panel B v2 frozen rows:", sum(row["frozen_v2_present"] for row in rows), "/", len(rows))
+        print("Panel B v2 added columns:", sum(
+            row["frozen_v2_column_delta"] or 0 for row in rows
+        ))
     print(f"CSV: {root / 'panel_b_summary.csv'}")
     return 0
 

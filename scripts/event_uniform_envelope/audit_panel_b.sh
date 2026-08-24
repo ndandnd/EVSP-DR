@@ -8,7 +8,12 @@ evsp_require_unicorn
 ROOT=$(cd "$1" && pwd)
 [[ -f "$ROOT/jobs.tsv" ]] || evsp_die "missing $ROOT/jobs.tsv"
 
-mapfile -t JOB_IDS < <(awk -F'\t' 'NR > 1 {print $2}' "$ROOT/jobs.tsv")
+JOB_FILES=("$ROOT/jobs.tsv")
+[[ ! -f "$ROOT/refreeze_v2_jobs.tsv" ]] \
+  || JOB_FILES+=("$ROOT/refreeze_v2_jobs.tsv")
+mapfile -t JOB_IDS < <(
+  awk -F'\t' 'FNR > 1 {print $2}' "${JOB_FILES[@]}" | sort -u
+)
 JOB_LIST=$(IFS=,; echo "${JOB_IDS[*]}")
 sacct -j "$JOB_LIST" -n -P \
   -o JobIDRaw,JobName%40,State,ExitCode,Elapsed,MaxRSS,MaxVMSize,ReqMem,NodeList \

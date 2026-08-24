@@ -31,7 +31,9 @@ def load_jobs(root: Path) -> dict[str, str]:
         "mip_recovery": "mip",
         "target_recovery": "target",
     }
-    for path in (root / "jobs.tsv", root / "integer_recovery_jobs.tsv"):
+    paths = [root / "jobs.tsv"]
+    paths.extend(sorted(root.glob("integer_recovery*_jobs.tsv")))
+    for path in paths:
         if not path.exists():
             continue
         with path.open(newline="") as handle:

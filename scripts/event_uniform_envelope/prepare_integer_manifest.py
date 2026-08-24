@@ -48,7 +48,15 @@ def main() -> int:
             "source_journal_sha256": sha256(journal),
         })
     with args.out.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(manifest[0]), delimiter="\t")
+        # Slurm workers parse this file with Bash ``read``.  The csv module's
+        # default CRLF terminator would leave ``\r`` attached to the final
+        # SHA-256 field and make every immutable-input comparison fail.
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=list(manifest[0]),
+            delimiter="\t",
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(manifest)
     if args.provenance:

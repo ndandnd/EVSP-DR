@@ -37,3 +37,23 @@ finite-pool MIP result, target-feasibility result, and Slurm state/exit/RSS.
 
 `panel_a_stage_counts.csv` is the compact stage-level table.  Raw artifacts
 remain authoritative; the CSVs are indexes, not replacements.
+
+## Corrected recovery and matched-wall boundary
+
+The first recovery manifest used the Python CSV default CRLF line ending.
+Bash therefore retained a carriage return on the final journal-hash field and
+all 54 MIP workers correctly refused the mismatch.  In addition, the original
+matched-wall freezer conservatively omitted insertions from the last durable
+iteration.  Preserve those failed/v1 artifacts and run the reviewed v2 path:
+
+```bash
+bash scripts/event_uniform_envelope/recover_and_refreeze_v2.sh \
+  "$HOME/ladder-lite/event_uniform_A_20260824_2dd2b4c" \
+  "$HOME/ladder-lite/event_uniform_B_20260824_13596d0"
+```
+
+This writes an LF-only immutable manifest, reruns missing Panel A MIPs, retries
+only the one missing target result with the reviewed event-tariff replay fix,
+and creates new Panel B snapshots under `frozen_v2/`.  It pins solver/freezer
+code to reviewed Agent E commit `44b6d5030a78ddca9c74f582d70ad87572e61794`
+and accepts a later Agent E tip only when that commit remains an ancestor.
