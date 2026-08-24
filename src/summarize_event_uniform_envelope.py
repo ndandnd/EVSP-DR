@@ -210,6 +210,27 @@ def summarize(plan_path: Path, execution_root: Path, output_dir: Path):
                 int(model_value) if model_proven
                 else pool_upper
             )
+            if (
+                not model_proven
+                and model_upper is not None
+                and int(model_upper) == integer_lower
+            ):
+                model_value = integer_lower
+                model_proven = True
+                model_method = "finite_pool_witness_sandwich"
+                model_evidence = (
+                    str(mip_path)
+                    if mip.get("buses") == integer_lower
+                    else next(
+                        (
+                            target["path"] for target in targets
+                            if target["outcome"] == "FEASIBLE"
+                            and target["target"] == integer_lower
+                        ),
+                        None,
+                    )
+                )
+                model_upper = integer_lower
             panel_a.append({
                 "cell_id": cell,
                 "target_fleet": target_fleet,
