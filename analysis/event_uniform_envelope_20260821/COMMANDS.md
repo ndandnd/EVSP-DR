@@ -10,6 +10,8 @@ the current branch tip:
 
 - plan-bound pricing sources: `db9400ad122c52ea60e29f94a304ae041cea3b3d`;
 - plan commit / initial CG producer: `2dd2b4cd81fb15da137f6d443f5a495e22fd0255`;
+- operational matched-wall snapshot tool:
+  `23c1ddd0138e73d210d63912597062811ad928a4`;
 - event replay and portable MIP tools:
   `72082c3ca1a280cbf53b954c11e6e9b4c7092468`;
 - native HiGHS timed MIPs:
@@ -24,6 +26,8 @@ the current branch tip:
   `44b6d5030a78ddca9c74f582d70ad87572e61794`;
 - corrected normalized evidence:
   `988046f85a1ecb6f8fe0abf7abdad6f8100b8263`.
+- deterministic evidence packaging implementation:
+  `958457fbcf5f41f422a95a46b71279c203fc64e5`.
 
 Target feasibility used SciPy/HiGHS because the local Gurobi license rejected
 the planned model sizes. The initial CG runner limit is 21,660 seconds so the
@@ -151,7 +155,27 @@ python3.12 src/summarize_event_uniform_envelope.py \
 python3.12 analysis/event_uniform_envelope_20260821/package_evidence.py \
   --execution-root /tmp/evsp-event-uniform-envelope-c08df1a5277b \
   --analysis-dir analysis/event_uniform_envelope_20260821 \
-  --bundle-out analysis/event_uniform_envelope_20260821/evidence_bundle.tar.gz
+  --bundle-out /tmp/event_uniform_envelope_evidence_reproduced.tar.gz
 
+sha256sum \
+  analysis/event_uniform_envelope_20260821/evidence_bundle.tar.gz \
+  /tmp/event_uniform_envelope_evidence_reproduced.tar.gz
+
+python3.12 -c '
+import hashlib
+from pathlib import Path
+root = Path("analysis/event_uniform_envelope_20260821")
+out = Path("/tmp/event_uniform_envelope_SHA256SUMS.reproduced")
+with out.open("x") as handle:
+    for path in sorted(
+        item for item in root.rglob("*")
+        if item.is_file() and item.name != "SHA256SUMS"
+    ):
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        handle.write(f"{digest}  {path.relative_to(root).as_posix()}\n")
+'
+cmp \
+  analysis/event_uniform_envelope_20260821/SHA256SUMS \
+  /tmp/event_uniform_envelope_SHA256SUMS.reproduced
 sha256sum -c analysis/event_uniform_envelope_20260821/SHA256SUMS
 ```
