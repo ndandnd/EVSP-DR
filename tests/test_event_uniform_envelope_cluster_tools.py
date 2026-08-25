@@ -199,3 +199,36 @@ def test_audit_panel_b_compares_v1_and_v2_frozen_pools(tmp_path):
     assert row["frozen_v2_present"] == "True"
     assert row["frozen_v2_column_delta"] == "2"
     assert row["freeze_v2_slurm_state"] == "COMPLETED"
+
+
+def test_select_missing_integer_indices_validates_json_semantics(tmp_path):
+    root = tmp_path / "panel_a"
+    (root / "mip").mkdir(parents=True)
+    (root / "target").mkdir()
+    manifest = root / "manifest.tsv"
+    manifest.write_text(
+        "index\tcell\ttarget_fleet\trepresentation_id\tsource_status\t"
+        "source_status_sha256\tsource_journal\tsource_journal_sha256\n"
+        "0\tk02_s1\t2\tevent\t/a\t" + "a" * 64 + "\t/b\t" + "b" * 64 + "\n"
+        "1\tk02_s2\t2\tevent\t/c\t" + "c" * 64 + "\t/d\t" + "d" * 64 + "\n"
+    )
+    (root / "mip" / "A__k02_s1__event.json").write_text(
+        json.dumps({"status_name": "OPTIMAL"})
+    )
+    (root / "mip" / "A__k02_s2__event.json").write_text("{}")
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(TOOLS / "select_missing_integer_indices.py"),
+            "--manifest", str(manifest),
+            "--root", str(root),
+            "--panel", "A",
+            "--stage", "mip",
+        ],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    assert completed.stdout.splitlines() == ["1"]
+    assert "invalid_schema=1" in completed.stderr
+    assert "valid=1" in completed.stderr

@@ -45,34 +45,34 @@ MANIFEST="$A_ROOT/panel_a_integer_inputs_v2.tsv"
 sha256sum "$MANIFEST" > "$A_ROOT/panel_a_integer_inputs_v2.sha256"
 
 mapfile -t MIP_INDICES < <(
-  tail -n +2 "$MANIFEST" |
-    while IFS=$'\t' read -r index cell target rep source rest; do
-      [[ -s "$A_ROOT/mip/A__${cell}__${rep}.json" ]] || echo "$index"
-    done
+  "$PYTHON_BIN" "$SCRIPT_DIR/select_missing_integer_indices.py" \
+    --manifest "$MANIFEST" --root "$A_ROOT" --panel A --stage mip
 )
 mapfile -t TARGET_INDICES < <(
-  tail -n +2 "$MANIFEST" |
-    while IFS=$'\t' read -r index cell target rep source rest; do
-      [[ -s "$A_ROOT/target/A__${cell}__${rep}.json" ]] || echo "$index"
-    done
+  "$PYTHON_BIN" "$SCRIPT_DIR/select_missing_integer_indices.py" \
+    --manifest "$MANIFEST" --root "$A_ROOT" --panel A --stage target
 )
-[[ ${#MIP_INDICES[@]} -gt 0 ]] || evsp_die "no missing Panel A MIP outputs"
-[[ ${#TARGET_INDICES[@]} -gt 0 ]] || evsp_die "no missing Panel A target outputs"
-MIP_ARRAY=$(IFS=,; echo "${MIP_INDICES[*]}")
-TARGET_ARRAY=$(IFS=,; echo "${TARGET_INDICES[*]}")
 
 EXPORTS="ALL,EVSP_EXECUTION_REPO=$EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$A_ROOT,EVSP_EXPECTED_COMMIT=$SOLVER_COMMIT,EVSP_PANEL=A,EVSP_INTEGER_MANIFEST=$MANIFEST,EVSP_MIP_OUTPUT_DIR=$A_ROOT/mip,EVSP_TARGET_OUTPUT_DIR=$A_ROOT/target,EVSP_PYTHON=$PYTHON_BIN"
-MIP_JOB=$(evsp_submit_and_resolve eua24_mip2 \
-  --array="${MIP_ARRAY}%54" -p default_partition -c 8 --mem=24G -t 00:45:00 \
-  --no-requeue --export="$EXPORTS" \
-  -o "$A_ROOT/logs/mip2_%A_%a.out" -e "$A_ROOT/logs/mip2_%A_%a.err" \
-  "$SCRIPT_DIR/pool_mip.sub")
-sleep 1
-TF_JOB=$(evsp_submit_and_resolve eua24_tf2 \
-  --array="$TARGET_ARRAY" -p default_partition -c 8 --mem=24G -t 00:45:00 \
-  --no-requeue --export="$EXPORTS" \
-  -o "$A_ROOT/logs/tf2_%A_%a.out" -e "$A_ROOT/logs/tf2_%A_%a.err" \
-  "$SCRIPT_DIR/target_feasibility.sub")
+MIP_JOB=""
+if [[ ${#MIP_INDICES[@]} -gt 0 ]]; then
+  MIP_ARRAY=$(IFS=,; echo "${MIP_INDICES[*]}")
+  MIP_JOB=$(evsp_submit_and_resolve eua24_mip2 \
+    --array="${MIP_ARRAY}%54" -p default_partition -c 8 --mem=24G -t 00:45:00 \
+    --no-requeue --export="$EXPORTS" \
+    -o "$A_ROOT/logs/mip2_%A_%a.out" -e "$A_ROOT/logs/mip2_%A_%a.err" \
+    "$SCRIPT_DIR/pool_mip.sub")
+  sleep 1
+fi
+TF_JOB=""
+if [[ ${#TARGET_INDICES[@]} -gt 0 ]]; then
+  TARGET_ARRAY=$(IFS=,; echo "${TARGET_INDICES[*]}")
+  TF_JOB=$(evsp_submit_and_resolve eua24_tf2 \
+    --array="$TARGET_ARRAY" -p default_partition -c 8 --mem=24G -t 00:45:00 \
+    --no-requeue --export="$EXPORTS" \
+    -o "$A_ROOT/logs/tf2_%A_%a.out" -e "$A_ROOT/logs/tf2_%A_%a.err" \
+    "$SCRIPT_DIR/target_feasibility.sub")
+fi
 
 FROZEN_V2="$B_ROOT/frozen_v2"
 [[ ! -e "$FROZEN_V2" ]] || evsp_die "v2 frozen directory already exists: $FROZEN_V2"
@@ -86,8 +86,10 @@ FREEZE_JOB=$(evsp_submit_and_resolve eub24_fz2 \
 
 {
   echo -e "stage\tarray_job_id\ttasks\tsolver_commit"
-  echo -e "mip_recovery\t$MIP_JOB\t${#MIP_INDICES[@]}\t$SOLVER_COMMIT"
-  echo -e "target_recovery\t$TF_JOB\t${#TARGET_INDICES[@]}\t$SOLVER_COMMIT"
+  [[ -z "$MIP_JOB" ]] \
+    || echo -e "mip_recovery\t$MIP_JOB\t${#MIP_INDICES[@]}\t$SOLVER_COMMIT"
+  [[ -z "$TF_JOB" ]] \
+    || echo -e "target_recovery\t$TF_JOB\t${#TARGET_INDICES[@]}\t$SOLVER_COMMIT"
 } | tee "$A_ROOT/integer_recovery_v2_jobs.tsv"
 {
   echo -e "stage\tarray_job_id\ttasks\tsolver_commit"
@@ -100,6 +102,14 @@ sha256sum \
   "$B_ROOT/refreeze_v2_jobs.tsv" \
   > "$B_ROOT/RECOVERY_V2_SHA256SUMS"
 
-echo "Panel A MIP recovery: $MIP_JOB (${#MIP_INDICES[@]} tasks)"
-echo "Panel A target retry: $TF_JOB (${#TARGET_INDICES[@]} tasks)"
+if [[ -n "$MIP_JOB" ]]; then
+  echo "Panel A MIP recovery: $MIP_JOB (${#MIP_INDICES[@]} tasks)"
+else
+  echo "Panel A MIP recovery: skipped (54 valid artifacts already exist)"
+fi
+if [[ -n "$TF_JOB" ]]; then
+  echo "Panel A target retry: $TF_JOB (${#TARGET_INDICES[@]} tasks)"
+else
+  echo "Panel A target retry: skipped (54 valid artifacts already exist)"
+fi
 echo "Panel B v2 refreeze: $FREEZE_JOB (45 tasks)"
