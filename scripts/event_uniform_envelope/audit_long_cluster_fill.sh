@@ -65,6 +65,16 @@ B_SUMMARY_FILES=(
   "$B_RESUME_ROOT/resume_summary.csv"
   "$B_ROOT/long_fill_slurm_accounting.psv"
 )
+for path in \
+  "$A_ROOT/highs_native_preflight.txt" \
+  "$A_ROOT/highs_native_vendor_sha256s.txt"; do
+  [[ ! -f "$path" ]] || A_SUMMARY_FILES+=("$path")
+done
+for path in \
+  "$B_ROOT/highs_native_preflight.txt" \
+  "$B_ROOT/highs_native_vendor_sha256s.txt"; do
+  [[ ! -f "$path" ]] || B_SUMMARY_FILES+=("$path")
+done
 [[ ! -f "$A_ROOT/backend_reproduction.csv" ]] \
   || A_SUMMARY_FILES+=("$A_ROOT/backend_reproduction.csv")
 [[ ! -f "$B_ROOT/backend_reproduction.csv" ]] \

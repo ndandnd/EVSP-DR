@@ -40,9 +40,15 @@ A_EXECUTION_REPO=$(evsp_execution_checkout "$REPO" "$A_RESUME_COMMIT")
 B_EXECUTION_REPO=$(evsp_execution_checkout "$REPO" "$B_RESUME_COMMIT")
 HIGHS_EXECUTION_REPO=$(evsp_execution_checkout "$REPO" "$HIGHS_COMMIT")
 
-if squeue --me -h -o '%j' | grep -qE '^(eua25_r24|eub25_r6|eua25_hgh|eub25_hgh)$'; then
-  evsp_die "one or more long-fill jobs already exist"
-fi
+queued_job_id() {
+  local name="$1"
+  local ids
+  ids=$(squeue --me -h -o '%A|%j' | awk -F'|' -v name="$name" '$2 == name {print $1}' | sort -u)
+  local count
+  count=$(printf '%s\n' "$ids" | awk 'NF {n++} END {print n+0}')
+  [[ "$count" -le 1 ]] || evsp_die "multiple active jobs named $name"
+  printf '%s\n' "$ids"
+}
 
 A_RESUME_ROOT="$A_ROOT/cg_resume24h_2dd2b4c"
 B_RESUME_ROOT="$B_ROOT/cg_certification6h_13596d0"
@@ -74,7 +80,10 @@ mapfile -t A_RESUME_INDICES < "$A_RESUME_INDEX_FILE"
 mapfile -t B_RESUME_INDICES < "$B_RESUME_INDEX_FILE"
 
 A_RESUME_JOB=""
-if [[ ${#A_RESUME_INDICES[@]} -gt 0 ]]; then
+A_ACTIVE_JOB=$(queued_job_id eua25_r24)
+if [[ -n "$A_ACTIVE_JOB" ]]; then
+  A_RESUME_JOB="$A_ACTIVE_JOB (already active)"
+elif [[ ${#A_RESUME_INDICES[@]} -gt 0 ]]; then
   A_ARRAY=$(IFS=,; echo "${A_RESUME_INDICES[*]}")
   A_EXPORTS="ALL,EVSP_EXECUTION_REPO=$A_EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$A_RESUME_ROOT,EVSP_EXPECTED_COMMIT=$A_RESUME_COMMIT,EVSP_CUMULATIVE_WALL_LIMIT_S=86400,EVSP_PYTHON=$PYTHON_BIN"
   A_RESUME_JOB=$(evsp_submit_and_resolve eua25_r24 \
@@ -91,7 +100,10 @@ if [[ ${#A_RESUME_INDICES[@]} -gt 0 ]]; then
 fi
 
 B_RESUME_JOB=""
-if [[ ${#B_RESUME_INDICES[@]} -gt 0 ]]; then
+B_ACTIVE_JOB=$(queued_job_id eub25_r6)
+if [[ -n "$B_ACTIVE_JOB" ]]; then
+  B_RESUME_JOB="$B_ACTIVE_JOB (already active)"
+elif [[ ${#B_RESUME_INDICES[@]} -gt 0 ]]; then
   B_ARRAY=$(IFS=,; echo "${B_RESUME_INDICES[*]}")
   B_EXPORTS="ALL,EVSP_EXECUTION_REPO=$B_EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$B_RESUME_ROOT,EVSP_EXPECTED_COMMIT=$B_RESUME_COMMIT,EVSP_CUMULATIVE_WALL_LIMIT_S=21600,EVSP_PYTHON=$PYTHON_BIN"
   B_RESUME_JOB=$(evsp_submit_and_resolve eub25_r6 \
@@ -107,14 +119,33 @@ if [[ ${#B_RESUME_INDICES[@]} -gt 0 ]]; then
   } > "$B_RESUME_ROOT/jobs_${B_RESUME_JOB}.tsv"
 fi
 
+PYTHON_TAG=$("$PYTHON_BIN" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+HIGHS_VENDOR_ROOT="$HOME/ladder-lite/vendor"
+HIGHS_TARGET="$HIGHS_VENDOR_ROOT/highspy-1.15.1-py${PYTHON_TAG}"
+mkdir -p "$HIGHS_VENDOR_ROOT"
 set +e
-HIGHS_VERSION=$("$PYTHON_BIN" -c \
-  'import highspy; solver=highspy.Highs(); print(solver.version())' 2>&1)
+HIGHS_VERSION=$(PYTHONPATH="$HIGHS_TARGET" "$PYTHON_BIN" -c \
+  'import highspy; print(highspy.Highs().version()); print(highspy.__file__)' 2>&1)
 HIGHS_RC=$?
 set -e
+if [[ "$HIGHS_RC" != 0 ]]; then
+  [[ ! -e "$HIGHS_TARGET" ]] \
+    || evsp_die "existing native-HiGHS vendor directory failed validation: $HIGHS_TARGET"
+  HIGHS_TMP=$(mktemp -d "$HIGHS_VENDOR_ROOT/.highspy-1.15.1.XXXXXX")
+  "$PYTHON_BIN" -m pip install --disable-pip-version-check --no-deps \
+    --target "$HIGHS_TMP" highspy==1.15.1
+  HIGHS_VERSION=$(PYTHONPATH="$HIGHS_TMP" "$PYTHON_BIN" -c \
+    'import highspy; assert highspy.Highs().version() == "1.15.1"; print(highspy.Highs().version()); print(highspy.__file__)')
+  mv "$HIGHS_TMP" "$HIGHS_TARGET"
+  HIGHS_RC=0
+fi
 printf 'return_code=%s\n%s\n' "$HIGHS_RC" "$HIGHS_VERSION" \
   | tee "$A_ROOT/highs_native_preflight.txt"
 cp "$A_ROOT/highs_native_preflight.txt" "$B_ROOT/highs_native_preflight.txt"
+find "$HIGHS_TARGET" -type f -print0 | sort -z | xargs -0 sha256sum \
+  > "$A_ROOT/highs_native_vendor_sha256s.txt"
+cp "$A_ROOT/highs_native_vendor_sha256s.txt" \
+  "$B_ROOT/highs_native_vendor_sha256s.txt"
 
 A_HIGHS_JOB=""
 B_HIGHS_JOB=""
@@ -145,9 +176,12 @@ if [[ "$HIGHS_RC" == 0 ]]; then
   mapfile -t A_HIGHS_INDICES < "$A_HIGHS_INDEX_FILE"
   mapfile -t B_HIGHS_INDICES < "$B_HIGHS_INDEX_FILE"
 
-  if [[ ${#A_HIGHS_INDICES[@]} -gt 0 ]]; then
+  A_HIGHS_ACTIVE=$(queued_job_id eua25_hgh)
+  if [[ -n "$A_HIGHS_ACTIVE" ]]; then
+    A_HIGHS_JOB="$A_HIGHS_ACTIVE (already active)"
+  elif [[ ${#A_HIGHS_INDICES[@]} -gt 0 ]]; then
     A_HIGHS_ARRAY=$(IFS=,; echo "${A_HIGHS_INDICES[*]}")
-    A_HIGHS_EXPORTS="ALL,EVSP_EXECUTION_REPO=$HIGHS_EXECUTION_REPO,EVSP_EXPECTED_COMMIT=$HIGHS_COMMIT,EVSP_PANEL=A,EVSP_INTEGER_MANIFEST=$A_MANIFEST,EVSP_HIGHS_OUTPUT_DIR=$A_ROOT/mip_highs_native,EVSP_PYTHON=$PYTHON_BIN"
+    A_HIGHS_EXPORTS="ALL,EVSP_EXECUTION_REPO=$HIGHS_EXECUTION_REPO,EVSP_EXPECTED_COMMIT=$HIGHS_COMMIT,EVSP_PANEL=A,EVSP_INTEGER_MANIFEST=$A_MANIFEST,EVSP_HIGHS_OUTPUT_DIR=$A_ROOT/mip_highs_native,EVSP_HIGHS_PYTHONPATH=$HIGHS_TARGET,EVSP_PYTHON=$PYTHON_BIN"
     A_HIGHS_JOB=$(evsp_submit_and_resolve eua25_hgh \
       --array="${A_HIGHS_ARRAY}%54" -p default_partition -c 8 --mem=24G \
       -t 01:15:00 --no-requeue --export="$A_HIGHS_EXPORTS" \
@@ -158,9 +192,12 @@ if [[ "$HIGHS_RC" == 0 ]]; then
       echo -e "mip_highs_native\t$A_HIGHS_JOB\t${#A_HIGHS_INDICES[@]}\t$HIGHS_COMMIT\thighspy_native\t1800\t8"
     } > "$A_ROOT/highs_native_${A_HIGHS_JOB}_jobs.tsv"
   fi
-  if [[ ${#B_HIGHS_INDICES[@]} -gt 0 ]]; then
+  B_HIGHS_ACTIVE=$(queued_job_id eub25_hgh)
+  if [[ -n "$B_HIGHS_ACTIVE" ]]; then
+    B_HIGHS_JOB="$B_HIGHS_ACTIVE (already active)"
+  elif [[ ${#B_HIGHS_INDICES[@]} -gt 0 ]]; then
     B_HIGHS_ARRAY=$(IFS=,; echo "${B_HIGHS_INDICES[*]}")
-    B_HIGHS_EXPORTS="ALL,EVSP_EXECUTION_REPO=$HIGHS_EXECUTION_REPO,EVSP_EXPECTED_COMMIT=$HIGHS_COMMIT,EVSP_PANEL=B,EVSP_INTEGER_MANIFEST=$B_MANIFEST,EVSP_HIGHS_OUTPUT_DIR=$B_ROOT/mip_highs_native,EVSP_PYTHON=$PYTHON_BIN"
+    B_HIGHS_EXPORTS="ALL,EVSP_EXECUTION_REPO=$HIGHS_EXECUTION_REPO,EVSP_EXPECTED_COMMIT=$HIGHS_COMMIT,EVSP_PANEL=B,EVSP_INTEGER_MANIFEST=$B_MANIFEST,EVSP_HIGHS_OUTPUT_DIR=$B_ROOT/mip_highs_native,EVSP_HIGHS_PYTHONPATH=$HIGHS_TARGET,EVSP_PYTHON=$PYTHON_BIN"
     B_HIGHS_JOB=$(evsp_submit_and_resolve eub25_hgh \
       --array="${B_HIGHS_ARRAY}%45" -p default_partition -c 8 --mem=24G \
       -t 01:15:00 --no-requeue --export="$B_HIGHS_EXPORTS" \

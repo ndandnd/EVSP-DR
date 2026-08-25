@@ -88,8 +88,12 @@ and (b) all 18 censored Panel B cells, resumed to a separate six-hour
 certification cap.  The latter is a certification-tail diagnostic and does not
 replace Panel B's matched-wall snapshots.  It also reproduces all 99 immutable
 finite pools with explicitly eight-thread native HiGHS, when the Unicorn
-environment passes a native-HiGHS preflight.  Rerunning the launcher submits
-only artifacts that are still incomplete.
+environment passes a native-HiGHS preflight.  If the base environment lacks
+the repository-pinned `highspy==1.15.1`, the launcher installs that single
+wheel without dependencies into an isolated `$HOME/ladder-lite/vendor`
+directory; it does not mutate `evsp_env`.  The import path, version, and vendor
+file hashes are recorded under both panel roots.  Rerunning the launcher
+recognizes active arrays and submits only artifacts that are still incomplete.
 
 Once the queue is empty, normalize the results with:
 
