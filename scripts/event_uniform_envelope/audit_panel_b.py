@@ -19,7 +19,9 @@ def load(path: Path) -> tuple[dict, str]:
 
 def load_jobs(root: Path) -> dict[str, str]:
     jobs = {}
-    for path in (root / "jobs.tsv", root / "refreeze_v2_jobs.tsv"):
+    paths = [root / "jobs.tsv"]
+    paths.extend(sorted(root.glob("refreeze_v2*_jobs.tsv")))
+    for path in paths:
         if not path.exists():
             continue
         with path.open(newline="") as handle:

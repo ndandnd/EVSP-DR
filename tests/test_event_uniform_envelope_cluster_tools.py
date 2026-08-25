@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import subprocess
 import sys
@@ -213,9 +214,12 @@ def test_select_missing_integer_indices_validates_json_semantics(tmp_path):
         "1\tk02_s2\t2\tevent\t/c\t" + "c" * 64 + "\t/d\t" + "d" * 64 + "\n"
     )
     (root / "mip" / "A__k02_s1__event.json").write_text(
-        json.dumps({"status_name": "OPTIMAL"})
+        json.dumps({
+            "status_name": "OPTIMAL",
+            "source_result_sha256": "a" * 64,
+            "source_journal_sha256": "b" * 64,
+        })
     )
-    (root / "mip" / "A__k02_s2__event.json").write_text("{}")
     completed = subprocess.run(
         [
             sys.executable,
@@ -230,5 +234,70 @@ def test_select_missing_integer_indices_validates_json_semantics(tmp_path):
         capture_output=True,
     )
     assert completed.stdout.splitlines() == ["1"]
-    assert "invalid_schema=1" in completed.stderr
+    assert "missing=1" in completed.stderr
+    assert "valid=1" in completed.stderr
+    (root / "mip" / "A__k02_s2__event.json").write_text(json.dumps({
+        "status_name": "TIME_LIMIT",
+        "source_result_sha256": "c" * 64,
+        "source_journal_sha256": "d" * 64,
+    }))
+    completed = subprocess.run(completed.args, check=True, text=True,
+                               capture_output=True)
+    assert completed.stdout == ""
+    assert "valid=2" in completed.stderr
+    (root / "mip" / "A__k02_s2__event.json").write_text(json.dumps({
+        "status_name": "TIME_LIMIT",
+        "source_result_sha256": "x" * 64,
+        "source_journal_sha256": "d" * 64,
+    }))
+    completed = subprocess.run(completed.args, check=False, text=True,
+                               capture_output=True)
+    assert completed.returncode == 2
+    assert completed.stdout == ""
+    assert "1:identity_mismatch" in completed.stderr
+
+
+def test_select_missing_frozen_v2_indices_checks_source_identity(tmp_path):
+    root = tmp_path / "panel_b"
+    (root / "cg").mkdir(parents=True)
+    output_dir = root / "frozen_v2"
+    output_dir.mkdir()
+    (root / "matrix.tsv").write_text(
+        "0\tk02_s1\t2\tinstance.csv\tuniform_2_2\t2\t2\t10\t70\n"
+    )
+    source = root / "cg" / "B__k02_s1__uniform_2_2.json"
+    source_journal = Path(str(source) + ".columns.jsonl")
+    source_journal.write_text('{"trips":[1],"found_iter":0,"cost":1}\n')
+    source.write_text(json.dumps({"columns_journal": str(source_journal)}))
+    command = [
+        sys.executable,
+        str(TOOLS / "select_missing_frozen_v2_indices.py"),
+        "--root", str(root),
+        "--output-dir", str(output_dir),
+    ]
+    completed = subprocess.run(command, check=True, text=True,
+                               capture_output=True)
+    assert completed.stdout.splitlines() == ["0"]
+    output = output_dir / "B__k02_s1__uniform_2_2.json"
+    output_journal = Path(str(output) + ".columns.jsonl")
+    output_journal.write_text(source_journal.read_text())
+    Path(str(output) + ".iters.csv").write_text("iteration\n0\n")
+    digest = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+    output.write_text(json.dumps({
+        "stop_reason": "matched_wall_snapshot",
+        "columns_journal": str(output_journal),
+        "resume_parent": {
+            "source_status_sha256": digest(source),
+            "source_journal_sha256": digest(source_journal),
+        },
+        "matched_wall_snapshot": {
+            "schema": "evsp-dr-exact-cg-matched-wall-snapshot-v2",
+            "conservative_boundary":
+                "include_columns_only_through_last_durably_completed_iteration",
+            "journal_record_count": 1,
+        },
+    }))
+    completed = subprocess.run(command, check=True, text=True,
+                               capture_output=True)
+    assert completed.stdout == ""
     assert "valid=1" in completed.stderr
