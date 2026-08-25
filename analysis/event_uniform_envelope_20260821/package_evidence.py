@@ -64,13 +64,12 @@ def main(argv=None) -> int:
         "--analysis-dir",
         type=Path,
         required=True,
-        help="Bound for command readability; bundle must be inside it.",
+        help="Validate the analysis directory used by the command.",
     )
     parser.add_argument("--bundle-out", type=Path, required=True)
     args = parser.parse_args(argv)
-    analysis_dir = args.analysis_dir.expanduser().resolve(strict=True)
+    args.analysis_dir.expanduser().resolve(strict=True)
     bundle_out = args.bundle_out.expanduser().resolve()
-    bundle_out.relative_to(analysis_dir)
     count = package(args.execution_root, bundle_out)
     print(f"packaged {count} compact evidence artifacts")
     return 0
