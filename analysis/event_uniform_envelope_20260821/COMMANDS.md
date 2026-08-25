@@ -177,5 +177,8 @@ with out.open("x") as handle:
 cmp \
   analysis/event_uniform_envelope_20260821/SHA256SUMS \
   /tmp/event_uniform_envelope_SHA256SUMS.reproduced
-sha256sum -c analysis/event_uniform_envelope_20260821/SHA256SUMS
+(
+  cd analysis/event_uniform_envelope_20260821
+  sha256sum -c SHA256SUMS
+)
 ```
