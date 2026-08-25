@@ -49,6 +49,10 @@ Target feasibility is reported separately.
 The local Gurobi license rejected most pools for model size before search.
 Those attempts are excluded. Preliminary SciPy/HiGHS rows are retained outside
 the normalized tables; final rows all use native HiGHS.
+Target-feasibility diagnostics use SciPy/HiGHS rather than the plan's Gurobi
+backend. `execution_deviations.json` binds this substitution, the exact
+pricer's 60-second serialization margin, two extended Panel A certification
+runs, and stage-specific producer commits.
 
 ## Panel A — decomposition
 
@@ -104,6 +108,10 @@ per-instance envelope comparison. `evidence_manifest.csv` binds every consumed
 artifact. Full journals remain external because the execution tree is 11 GiB;
 their hashes are transitively bound by the MIP, phase-2, target, and snapshot
 artifacts.
+
+The inbox-only records policy applies to this experiment and policy-effective
+commits. The long-lived branch contains pre-policy B0031-B0033/D0031-D0033
+history; this experiment neither rewrote nor extended those ledgers.
 
 ## Validation
 

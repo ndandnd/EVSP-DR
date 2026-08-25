@@ -2,6 +2,25 @@
 
 All commands ran locally from repository root. No Slurm command ran.
 
+## Producer commits and plan deviations
+
+The templates below describe executed stages; reproductions must pin the
+stage-specific commits recorded in `execution_deviations.json`, not substitute
+the current branch tip:
+
+- plan-bound pricing sources: `db9400ad122c52ea60e29f94a304ae041cea3b3d`;
+- plan commit / initial CG producer: `2dd2b4cd81fb15da137f6d443f5a495e22fd0255`;
+- corrected matched-wall snapshot and reruns:
+  `44b6d5030a78ddca9c74f582d70ad87572e61794`;
+- corrected normalized evidence:
+  `988046f85a1ecb6f8fe0abf7abdad6f8100b8263`.
+
+Target feasibility used SciPy/HiGHS because the local Gurobi license rejected
+the planned model sizes. The initial CG runner limit is 21,660 seconds so the
+pricer can reserve 60 seconds for serialization while retaining a 21,600
+second scientific budget. Two Panel A 2/1 k5 cells required attested
+86,400-second continuations to satisfy the run-to-certification requirement.
+
 ## Certified combined-cost CG
 
 ```bash

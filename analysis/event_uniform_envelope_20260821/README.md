@@ -67,5 +67,10 @@ Every row must retain:
 
 An unproven timed incumbent is an upper bound, not an exact pool result.
 Uncertified CG gives no model LP bound. Findings go only to
-`records/inbox/cursor-event-based-pricer-2969.md`; the authoritative ledgers
-are not modified by this branch.
+`records/inbox/cursor-event-based-pricer-2969.md` during this experiment and
+since the inbox-only policy took effect. This long-lived branch contains
+pre-policy ledger commits; this experiment did not rewrite or extend them.
+
+`execution_deviations.json` records the target-solver substitution, exact
+pricer serialization margin, extended Panel A certification cells, and
+stage-specific producer commits without altering the immutable plan.

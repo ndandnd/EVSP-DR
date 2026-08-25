@@ -1,0 +1,49 @@
+{
+ "schema": "evsp-dr-event-uniform-envelope-execution-deviations-v1",
+ "plan_sha256": "c08df1a5277b8409cbe6302439d1083bcf854c6f58db3d7cbbd73c24dd729de6",
+ "deviations": [
+  {
+   "field": "target_feasibility_policy.solver",
+   "planned": "gurobi",
+   "executed": "scipy_milp_highs",
+   "reason": "The local restricted Gurobi license rejected most finite pools for model size before search.",
+   "scope": "Target-feasibility diagnostics only. Final timed MIP rows uniformly use native HiGHS 1.15.1 with threads=8.",
+   "reporting": "Target outcomes retain solver identity and censorship; no Gurobi target claim is made."
+  },
+  {
+   "field": "cg_policy.panel_a_certification_wall_limit_s",
+   "planned": 21600,
+   "executed_runner_limit": 21660,
+   "reason": "The exact pricer reserves 60 seconds for durable serialization. Passing 21660 enforces approximately 21600 seconds of scientific compute.",
+   "scope": "Initial Panel A certification runs.",
+   "reporting": "Status wall time and stop reason are retained on every row."
+  },
+  {
+   "field": "cg_policy.panel_a_certification_wall_limit_s",
+   "planned": 21600,
+   "executed_runner_limit": 86400,
+   "cells": [
+    "k05_s1/uniform_2_1",
+    "k05_s3/uniform_2_1"
+   ],
+   "reason": "Panel A requires certification; these two cells remained uncertified after the initial ceiling and were continued from immutable, attested pools.",
+   "scope": "Panel A only. Panel B continues to use snapshots frozen at the paired event wall budget.",
+   "reporting": "Resume lineage, cumulative wall time, certification, and producing commit remain in source statuses."
+  }
+ ],
+ "producer_commits": {
+  "plan_and_scientific_pricing_tools": "db9400ad122c52ea60e29f94a304ae041cea3b3d",
+  "plan_commit": "2dd2b4cd81fb15da137f6d443f5a495e22fd0255",
+  "operational_snapshot_tool": "23c1ddd0138e73d210d63912597062811ad928a4",
+  "native_highs_backend": "c968dbb517f4f81c19c4dae8e184cc3481c2b1d2",
+  "corrected_matched_wall_snapshot_and_reruns": "44b6d5030a78ddca9c74f582d70ad87572e61794",
+  "corrected_normalized_evidence": "988046f85a1ecb6f8fe0abf7abdad6f8100b8263"
+ },
+ "records_policy": {
+  "effective_scope": "The inbox-only instruction applies from the policy correction onward and to this experiment.",
+  "experiment_writes": [
+   "records/inbox/cursor-event-based-pricer-2969.md"
+  ],
+  "pre_policy_history": "This long-lived branch contains earlier B0031-B0033 and D0031-D0033 ledger commits made before the inbox-only instruction. They were not rewritten or extended by this experiment."
+ }
+}
