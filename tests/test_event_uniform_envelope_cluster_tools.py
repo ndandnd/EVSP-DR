@@ -341,3 +341,141 @@ def test_select_missing_frozen_v2_indices_checks_source_identity(tmp_path):
                                capture_output=True)
     assert completed.stdout == ""
     assert "valid=1" in completed.stderr
+
+
+def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
+    root = tmp_path / "panel_a"
+    (root / "cg").mkdir(parents=True)
+    matrix_rows = []
+    source_bytes = {}
+    for index, cell in enumerate(("k05_s1", "k05_s3")):
+        rep = "uniform_2_1"
+        stem = f"A__{cell}__{rep}.json"
+        status_path = root / "cg" / stem
+        journal = Path(str(status_path) + ".columns.jsonl")
+        journal.write_text('{"trips":[1],"cost":1}\n')
+        Path(str(status_path) + ".iters.csv").write_text(
+            "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,pool_columns\n"
+            "100,1,2,2,0,-1,5\n"
+        )
+        status_path.write_text(json.dumps({
+            "stop_reason": "wall_limit",
+            "certified_rc_optimal": False,
+            "wall_s": 43200,
+            "iterations": 1,
+            "columns": 5,
+            "columns_journal": str(journal),
+        }))
+        source_bytes[status_path] = status_path.read_bytes()
+        source_bytes[journal] = journal.read_bytes()
+        matrix_rows.append([
+            index, cell, 5, "instance.csv", rep, "uniform", 2, 1,
+        ])
+    with (root / "matrix.tsv").open("w", newline="") as handle:
+        csv.writer(handle, delimiter="\t", lineterminator="\n").writerows(
+            matrix_rows
+        )
+    resume = root / "cg_resume24h"
+
+    run_tool(
+        "prepare_cg_resume.py",
+        "--root", root,
+        "--out-root", resume,
+        "--panel", "A",
+        "--representation", "uniform_2_1",
+        "--expected-cells", "2",
+        "--wall-limit-s", "86400",
+        "--solver-commit", "a" * 40,
+    )
+    for path, payload in source_bytes.items():
+        assert path.read_bytes() == payload
+    manifest = list(csv.DictReader(
+        (resume / "matrix.tsv").open(), delimiter="\t"
+    ))
+    assert len(manifest) == 2
+    command = [
+        sys.executable,
+        str(TOOLS / "select_cg_resume_indices.py"),
+        "--resume-root", str(resume),
+    ]
+    completed = subprocess.run(
+        command, check=True, text=True, capture_output=True
+    )
+    assert completed.stdout.splitlines() == ["0", "1"]
+    first = Path(manifest[0]["resume_status"])
+    first_payload = json.loads(first.read_text())
+    first_payload.update({
+        "certified_rc_optimal": True,
+        "stop_reason": "certified",
+        "wall_s": 50000,
+    })
+    first.write_text(json.dumps(first_payload))
+    second = Path(manifest[1]["resume_status"])
+    second_payload = json.loads(second.read_text())
+    second_payload["wall_s"] = 86400
+    second.write_text(json.dumps(second_payload))
+    completed = subprocess.run(
+        command, check=True, text=True, capture_output=True
+    )
+    assert completed.stdout == ""
+    assert "certified=1" in completed.stderr
+    assert "wall_cap=1" in completed.stderr
+
+
+def test_audit_backend_reproduction_compares_identical_sources(tmp_path):
+    root = tmp_path / "panel_a"
+    (root / "mip").mkdir(parents=True)
+    (root / "mip_highs_native").mkdir()
+    status_hash = "a" * 64
+    journal_hash = "b" * 64
+    manifest = root / "panel_a_highs_inputs.tsv"
+    manifest.write_text(
+        "index\tcell\ttarget_fleet\trepresentation_id\tsource_status\t"
+        "source_status_sha256\tsource_journal\tsource_journal_sha256\n"
+        f"0\tk02_s1\t2\tevent\t/a\t{status_hash}\t/b\t{journal_hash}\n"
+    )
+    stem = "A__k02_s1__event.json"
+    common = {
+        "status_name": "OPTIMAL",
+        "buses": 2,
+        "fleet_bound": 2,
+        "mip_gap": 0,
+        "fleet_proven": True,
+        "optimality_scope": "full_pool_lexicographic",
+        "runtime_s": 2.0,
+        "physical_witness_valid": True,
+        "source_result_sha256": status_hash,
+        "source_journal_sha256": journal_hash,
+    }
+    (root / "mip" / stem).write_text(json.dumps({
+        **common, "backend": "gurobi", "runtime_s": 1.0,
+    }))
+    (root / "mip_highs_native" / stem).write_text(json.dumps({
+        **common, "backend": "highspy_native",
+    }))
+    (root / "highs_native_300_jobs.tsv").write_text(
+        "stage\tarray_job_id\ttasks\n"
+        "mip_highs_native\t300\t1\n"
+    )
+    sacct = root / "long_fill.psv"
+    sacct.write_text(
+        "300_0|highs|COMPLETED|0:0|00:02|2G||24G|node\n"
+        "300_0.batch|batch|COMPLETED|0:0|00:02|3G||24G|node\n"
+    )
+    output = root / "backend_reproduction.csv"
+
+    run_tool(
+        "audit_backend_reproduction.py",
+        "--root", root,
+        "--panel", "A",
+        "--manifest", manifest,
+        "--sacct", sacct,
+        "--out", output,
+    )
+    row = next(csv.DictReader(output.open()))
+    assert row["fleet_agreement"] == "True"
+    assert row["proof_agreement"] == "True"
+    assert row["highs_source_hash_match"] == "True"
+    assert row["runtime_ratio_highs_over_gurobi"] == "2.0"
+    assert row["highs_slurm_state"] == "COMPLETED"
+    assert row["highs_slurm_max_rss"] == "3G"

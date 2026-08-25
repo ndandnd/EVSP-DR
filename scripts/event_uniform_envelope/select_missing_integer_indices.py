@@ -46,9 +46,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--root", type=Path, required=True)
+    parser.add_argument("--artifact-dir", type=Path)
     parser.add_argument("--panel", choices=("A", "B"), required=True)
     parser.add_argument("--stage", choices=("mip", "target"), required=True)
     args = parser.parse_args()
+    artifact_dir = args.artifact_dir or (args.root / args.stage)
     counts = Counter()
     missing = []
     invalid = []
@@ -59,7 +61,7 @@ def main() -> int:
                 f"{row['representation_id']}.json"
             )
             state = classify(
-                args.root / args.stage / stem, args.stage, row
+                artifact_dir / stem, args.stage, row
             )
             counts[state] += 1
             if state == "missing":

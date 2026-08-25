@@ -70,3 +70,36 @@ eight-thread two-stage RAW-pool MIPs plus independently parallel target-fleet
 feasibility solves.  The scientific solver limit is 1,800 seconds; the Slurm
 wrapper allows 75 minutes for source validation, physical replay, and durable
 serialization.  No routes are injected.
+
+## Extended free-capacity campaigns
+
+After the corrected Panel B integer arrays have been submitted, one command
+launches three non-duplicative follow-ups:
+
+```bash
+bash scripts/event_uniform_envelope/submit_long_cluster_fill.sh \
+  "$HOME/ladder-lite/event_uniform_A_20260824_2dd2b4c" \
+  "$HOME/ladder-lite/event_uniform_B_20260824_13596d0"
+```
+
+It preserves the primary artifacts and stages independent copies for (a) the
+two censored Panel A `uniform_2_1` cells, resumed to a 24-hour cumulative cap,
+and (b) all 18 censored Panel B cells, resumed to a separate six-hour
+certification cap.  The latter is a certification-tail diagnostic and does not
+replace Panel B's matched-wall snapshots.  It also reproduces all 99 immutable
+finite pools with explicitly eight-thread native HiGHS, when the Unicorn
+environment passes a native-HiGHS preflight.  Rerunning the launcher submits
+only artifacts that are still incomplete.
+
+Once the queue is empty, normalize the results with:
+
+```bash
+bash scripts/event_uniform_envelope/audit_long_cluster_fill.sh \
+  "$HOME/ladder-lite/event_uniform_A_20260824_2dd2b4c" \
+  "$HOME/ladder-lite/event_uniform_B_20260824_13596d0"
+```
+
+The accessible statistics are `resume_summary.csv` inside each extended-CG
+directory and `backend_reproduction.csv` at each panel root.  The latter gives
+per-cell source hashes, solver status, fleet, bound, gap, proof scope, runtime,
+RSS, physical validation, backend agreement, and Slurm accounting.

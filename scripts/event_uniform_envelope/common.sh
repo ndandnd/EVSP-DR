@@ -69,6 +69,17 @@ evsp_submit_and_resolve() {
   set -e
   echo "sbatch[$name]: $response" >&2
 
+  # ``--parsable`` is authoritative and survives jobs that start and finish
+  # before they can ever be observed in squeue.  Retain the queue lookup only
+  # as a compatibility fallback for nonstandard sbatch wrappers.
+  if [[ "$rc" == 0 ]]; then
+    local parsed_id="${response%%;*}"
+    if [[ "$parsed_id" =~ ^[0-9]+$ ]]; then
+      printf '%s\n' "$parsed_id"
+      return 0
+    fi
+  fi
+
   for attempt in 1 2 3 4 5 6; do
     ids=$(
       squeue --me -h -o '%A|%j' |
