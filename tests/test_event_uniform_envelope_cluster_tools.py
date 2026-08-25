@@ -165,7 +165,7 @@ def test_prepare_panel_b_writes_five_uniform_arms_per_event_cell(tmp_path):
 
 def test_audit_panel_b_compares_v1_and_v2_frozen_pools(tmp_path):
     root = tmp_path / "panel_b"
-    for name in ("cg", "frozen", "frozen_v2"):
+    for name in ("cg", "frozen", "frozen_v2", "mip", "target", "logs"):
         (root / name).mkdir(parents=True, exist_ok=True)
     (root / "matrix.tsv").write_text(
         "0\tk02_s1\t2\tinstance.csv\tuniform_2_2\t2\t2\t10.5\t71\n"
@@ -178,6 +178,11 @@ def test_audit_panel_b_compares_v1_and_v2_frozen_pools(tmp_path):
         "stage\tarray_job_id\ttasks\tsolver_commit\n"
         "freeze_v2\t202\t1\t" + "a" * 40 + "\n"
     )
+    (root / "integer_v2_jobs.tsv").write_text(
+        "stage\tarray_job_id\ttasks\tsolver_commit\n"
+        "mip_v2\t203\t1\t" + "a" * 40 + "\n"
+        "target_v2\t204\t1\t" + "a" * 40 + "\n"
+    )
     stem = "B__k02_s1__uniform_2_2.json"
     (root / "cg" / stem).write_text(json.dumps({
         "stop_reason": "wall_limit", "certified_rc_optimal": False,
@@ -188,11 +193,33 @@ def test_audit_panel_b_compares_v1_and_v2_frozen_pools(tmp_path):
     (root / "frozen_v2" / stem).write_text(json.dumps({
         "iterations": 3, "columns": 12,
     }))
+    (root / "mip" / stem).write_text(json.dumps({
+        "status_name": "OPTIMAL", "buses": 2, "mip_bound": 2,
+        "mip_gap": 0, "fleet_proven": True,
+        "optimality_scope": "full_pool_lexicographic",
+        "runtime_s": 1.0, "peak_rss_mb": 5.0,
+        "physical_witness_valid": True,
+        "source_result_sha256": "b" * 64,
+        "source_journal_sha256": "c" * 64,
+    }))
+    (root / "target" / stem).write_text(json.dumps({
+        "outcome": "FEASIBLE",
+        "solver": {"runtime_s": 0.5, "backend": "gurobi"},
+        "source": {
+            "result_sha256": "b" * 64,
+            "journal_sha256": "c" * 64,
+        },
+    }))
+    (root / "logs" / "mip2_203_0.err").write_text(
+        "RuntimeError: example panel B error\n"
+    )
     sacct = root / "slurm.psv"
     sacct.write_text(
         "200_0|cg|COMPLETED|0:0|00:01|1G||24G|node\n"
         "201_0|freeze|COMPLETED|0:0|00:01|1G||4G|node\n"
         "202_0|freeze2|COMPLETED|0:0|00:01|1G||4G|node\n"
+        "203_0|mip2|COMPLETED|0:0|00:01|2G||24G|node\n"
+        "204_0|tf2|COMPLETED|0:0|00:01|2G||24G|node\n"
     )
 
     run_tool("audit_panel_b.py", "--root", root, "--sacct", sacct)
@@ -200,6 +227,19 @@ def test_audit_panel_b_compares_v1_and_v2_frozen_pools(tmp_path):
     assert row["frozen_v2_present"] == "True"
     assert row["frozen_v2_column_delta"] == "2"
     assert row["freeze_v2_slurm_state"] == "COMPLETED"
+    assert row["mip_status"] == "OPTIMAL"
+    assert row["finite_pool_proven"] == "True"
+    assert row["target_outcome"] == "FEASIBLE"
+    assert row["target_solver"] == "gurobi"
+    assert row["mip_slurm_state"] == "COMPLETED"
+    stages = {
+        row["stage"]: row
+        for row in csv.DictReader((root / "panel_b_stage_counts.csv").open())
+    }
+    assert stages["mip_v2"]["artifact_rows"] == "1"
+    signature = next(csv.DictReader((root / "stderr_signatures.csv").open()))
+    assert signature["stage"] == "mip2"
+    assert signature["count"] == "1"
 
 
 def test_select_missing_integer_indices_validates_json_semantics(tmp_path):

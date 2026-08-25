@@ -18,7 +18,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--panel", choices=("A", "B"), required=True)
-    parser.add_argument("--source-dir", choices=("cg", "frozen"), required=True)
+    parser.add_argument(
+        "--source-dir", choices=("cg", "frozen", "frozen_v2"),
+        required=True,
+    )
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--provenance", type=Path)
     parser.add_argument("--wrapper-commit")

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 from collections import Counter
 from pathlib import Path
@@ -21,6 +22,7 @@ def load_jobs(root: Path) -> dict[str, str]:
     jobs = {}
     paths = [root / "jobs.tsv"]
     paths.extend(sorted(root.glob("refreeze_v2*_jobs.tsv")))
+    paths.extend(sorted(root.glob("integer_v2*_jobs.tsv")))
     for path in paths:
         if not path.exists():
             continue
@@ -71,6 +73,8 @@ def main() -> int:
         cg_path = root / "cg" / f"{stem}.json"
         frozen_path = root / "frozen" / f"{stem}.json"
         frozen_v2_path = root / "frozen_v2" / f"{stem}.json"
+        mip_path = root / "mip" / f"{stem}.json"
+        target_path = root / "target" / f"{stem}.json"
         cg, cg_error = load(cg_path) if cg_path.exists() else ({}, "missing")
         frozen, frozen_error = (
             load(frozen_path) if frozen_path.exists() else ({}, "missing")
@@ -79,6 +83,10 @@ def main() -> int:
             load(frozen_v2_path)
             if frozen_v2_path.exists() else ({}, "missing")
         )
+        mip, mip_error = load(mip_path) if mip_path.exists() else ({}, "missing")
+        target_payload, target_error = (
+            load(target_path) if target_path.exists() else ({}, "missing")
+        )
         final = cg.get("final") or {}
         frozen_final = frozen.get("final") or {}
         frozen_v2_final = frozen_v2.get("final") or {}
@@ -86,6 +94,9 @@ def main() -> int:
         cg_slurm = task(slurm, jobs.get("cg"), index)
         freeze_slurm = task(slurm, jobs.get("freeze"), index)
         freeze_v2_slurm = task(slurm, jobs.get("freeze_v2"), index)
+        mip_slurm = task(slurm, jobs.get("mip_v2"), index)
+        target_slurm = task(slurm, jobs.get("target_v2"), index)
+        target_solver = target_payload.get("solver") or {}
         rows.append({
             "index": index,
             "cell": cell,
@@ -130,6 +141,28 @@ def main() -> int:
                 else None
             ),
             "frozen_v2_error": frozen_v2_error,
+            "mip_present": mip_path.exists(),
+            "mip_status": mip.get("status_name"),
+            "mip_buses": mip.get("buses"),
+            "mip_bound": mip.get("mip_bound", mip.get("fleet_bound")),
+            "mip_gap": mip.get("mip_gap"),
+            "finite_pool_proven": mip.get("fleet_proven"),
+            "mip_optimality_scope": mip.get("optimality_scope"),
+            "mip_runtime_s": mip.get("runtime_s"),
+            "mip_peak_rss_mb": mip.get("peak_rss_mb"),
+            "mip_physical_witness_valid": mip.get("physical_witness_valid"),
+            "mip_source_result_sha256": mip.get("source_result_sha256"),
+            "mip_source_journal_sha256": mip.get("source_journal_sha256"),
+            "mip_error": mip_error,
+            "target_present": target_path.exists(),
+            "target_outcome": target_payload.get("outcome"),
+            "target_runtime_s": target_solver.get("runtime_s"),
+            "target_solver": target_solver.get("backend"),
+            "target_source_result_sha256":
+                (target_payload.get("source") or {}).get("result_sha256"),
+            "target_source_journal_sha256":
+                (target_payload.get("source") or {}).get("journal_sha256"),
+            "target_error": target_error,
             "cg_slurm_state": cg_slurm.get("state"),
             "cg_slurm_exit": cg_slurm.get("exit"),
             "cg_slurm_max_rss": cg_slurm.get("max_rss"),
@@ -139,11 +172,82 @@ def main() -> int:
             "freeze_v2_slurm_state": freeze_v2_slurm.get("state"),
             "freeze_v2_slurm_exit": freeze_v2_slurm.get("exit"),
             "freeze_v2_slurm_max_rss": freeze_v2_slurm.get("max_rss"),
+            "mip_slurm_state": mip_slurm.get("state"),
+            "mip_slurm_exit": mip_slurm.get("exit"),
+            "mip_slurm_max_rss": mip_slurm.get("max_rss"),
+            "target_slurm_state": target_slurm.get("state"),
+            "target_slurm_exit": target_slurm.get("exit"),
+            "target_slurm_max_rss": target_slurm.get("max_rss"),
         })
     with (root / "panel_b_summary.csv").open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
+    stage_rows = [
+        {
+            "stage": stage,
+            "expected_rows": len(rows),
+            "artifact_rows": sum(row[present] for row in rows),
+            "slurm_completed": sum(
+                row[state] == "COMPLETED" for row in rows
+            ),
+            "slurm_failed": sum(row[state] == "FAILED" for row in rows),
+        }
+        for stage, present, state in (
+            ("cg", "cg_present", "cg_slurm_state"),
+            ("freeze_v1", "frozen_present", "freeze_slurm_state"),
+            ("freeze_v2", "frozen_v2_present", "freeze_v2_slurm_state"),
+            ("mip_v2", "mip_present", "mip_slurm_state"),
+            ("target_v2", "target_present", "target_slurm_state"),
+        )
+    ]
+    with (root / "panel_b_stage_counts.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(stage_rows[0]))
+        writer.writeheader()
+        writer.writerows(stage_rows)
+    error_rows = []
+    signatures = Counter()
+    signature_examples = {}
+    for path in sorted((root / "logs").glob("*.err")):
+        if path.stat().st_size == 0:
+            continue
+        payload = path.read_bytes()
+        lines = [
+            line.strip() for line in payload.decode(errors="replace").splitlines()
+            if line.strip()
+        ]
+        stage = path.name.split("_", 1)[0]
+        last_line = lines[-1] if lines else ""
+        signatures[(stage, last_line)] += 1
+        signature_examples.setdefault((stage, last_line), str(path))
+        error_rows.append({
+            "path": str(path),
+            "size": len(payload),
+            "sha256": hashlib.sha256(payload).hexdigest(),
+            "first_line": lines[0] if lines else "",
+            "last_line": last_line,
+        })
+    with (root / "stderr_inventory.csv").open("w", newline="") as handle:
+        fields = ["path", "size", "sha256", "first_line", "last_line"]
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(error_rows)
+    signature_rows = [
+        {
+            "stage": stage,
+            "count": count,
+            "last_line": last_line,
+            "example_path": signature_examples[(stage, last_line)],
+        }
+        for (stage, last_line), count in sorted(
+            signatures.items(), key=lambda item: (item[0][0], -item[1], item[0][1])
+        )
+    ]
+    with (root / "stderr_signatures.csv").open("w", newline="") as handle:
+        fields = ["stage", "count", "last_line", "example_path"]
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(signature_rows)
     print("Panel B CG stops:", dict(sorted(Counter(str(row["cg_stop_reason"]) for row in rows).items())))
     print("Panel B frozen rows:", sum(row["frozen_present"] for row in rows), "/", len(rows))
     if (root / "frozen_v2").exists():
@@ -151,6 +255,18 @@ def main() -> int:
         print("Panel B v2 added columns:", sum(
             row["frozen_v2_column_delta"] or 0 for row in rows
         ))
+    print("Panel B MIP:", dict(sorted(Counter(
+        str(row["mip_status"]) for row in rows
+    ).items())))
+    print("Panel B target:", dict(sorted(Counter(
+        str(row["target_outcome"]) for row in rows
+    ).items())))
+    print("stderr signatures:")
+    if signature_rows:
+        for row in signature_rows:
+            print(f"  {row['count']:>3} {row['stage']:<5} | {row['last_line']}")
+    else:
+        print("    0 (all stderr files empty)")
     print(f"CSV: {root / 'panel_b_summary.csv'}")
     return 0
 

@@ -57,3 +57,16 @@ only the one missing target result with the reviewed event-tariff replay fix,
 and creates new Panel B snapshots under `frozen_v2/`.  It pins solver/freezer
 code to reviewed Agent E commit `44b6d5030a78ddca9c74f582d70ad87572e61794`
 and accepts a later Agent E tip only when that commit remains an ancestor.
+
+Once all 45 `frozen_v2/` snapshots validate, submit their integer comparison:
+
+```bash
+bash scripts/event_uniform_envelope/submit_panel_b_v2_integer.sh \
+  "$HOME/ladder-lite/event_uniform_B_20260824_13596d0"
+```
+
+This runs the plan-specified Gurobi backend on Unicorn: 1,800-second,
+eight-thread two-stage RAW-pool MIPs plus independently parallel target-fleet
+feasibility solves.  The scientific solver limit is 1,800 seconds; the Slurm
+wrapper allows 75 minutes for source validation, physical replay, and durable
+serialization.  No routes are injected.

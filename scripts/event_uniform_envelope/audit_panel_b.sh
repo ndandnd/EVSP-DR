@@ -13,6 +13,10 @@ while IFS= read -r path; do
   JOB_FILES+=("$path")
 done < <(find "$ROOT" -maxdepth 1 -type f \
   -name 'refreeze_v2*_jobs.tsv' -print | sort)
+while IFS= read -r path; do
+  JOB_FILES+=("$path")
+done < <(find "$ROOT" -maxdepth 1 -type f \
+  -name 'integer_v2*_jobs.tsv' -print | sort)
 mapfile -t JOB_IDS < <(
   awk -F'\t' 'FNR > 1 {print $2}' "${JOB_FILES[@]}" | sort -u
 )
@@ -23,5 +27,10 @@ sacct -j "$JOB_LIST" -n -P \
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 "$PYTHON_BIN" "$SCRIPT_DIR/audit_panel_b.py" \
   --root "$ROOT" --sacct "$ROOT/slurm_accounting.psv"
-sha256sum "$ROOT/panel_b_summary.csv" "$ROOT/slurm_accounting.psv" \
+sha256sum \
+  "$ROOT/panel_b_summary.csv" \
+  "$ROOT/panel_b_stage_counts.csv" \
+  "$ROOT/slurm_accounting.psv" \
+  "$ROOT/stderr_inventory.csv" \
+  "$ROOT/stderr_signatures.csv" \
   > "$ROOT/SUMMARY_SHA256SUMS"
