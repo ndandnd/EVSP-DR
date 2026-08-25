@@ -52,7 +52,9 @@ the normalized tables; final rows all use native HiGHS.
 Target-feasibility diagnostics use SciPy/HiGHS rather than the plan's Gurobi
 backend. `execution_deviations.json` binds this substitution, the exact
 pricer's 60-second serialization margin, two extended Panel A certification
-runs, and stage-specific producer commits.
+runs, and stage-specific producer commits. The target interface records the
+requested threads/seed as 8/0, but SciPy exposes neither control; effective
+values are `null/null` and are not claimed as enforced.
 
 ## Panel A — decomposition
 

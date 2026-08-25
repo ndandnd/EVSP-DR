@@ -11,6 +11,24 @@
    "reporting": "Target outcomes retain solver identity and censorship; no Gurobi target claim is made."
   },
   {
+   "field": "target_feasibility_policy.threads_and_seed",
+   "planned": {
+    "threads": 8,
+    "seed": 0
+   },
+   "requested": {
+    "threads": 8,
+    "seed": 0
+   },
+   "effective": {
+    "threads": null,
+    "seed": null
+   },
+   "reason": "scipy.optimize.milp does not expose native HiGHS thread-count or random-seed controls.",
+   "scope": "Target-feasibility diagnostics only. All target arms use the same SciPy/HiGHS interface; final timed MIPs use native HiGHS with threads=8 and seed=0.",
+   "reporting": "Target rows bind requested and effective controls; no enforced target thread/seed claim is made."
+  },
+  {
    "field": "cg_policy.panel_a_certification_wall_limit_s",
    "planned": 21600,
    "executed_runner_limit": 21660,
@@ -35,7 +53,11 @@
   "plan_and_scientific_pricing_tools": "db9400ad122c52ea60e29f94a304ae041cea3b3d",
   "plan_commit": "2dd2b4cd81fb15da137f6d443f5a495e22fd0255",
   "operational_snapshot_tool": "23c1ddd0138e73d210d63912597062811ad928a4",
+  "event_replay_and_portable_mip_tools": "72082c3ca1a280cbf53b954c11e6e9b4c7092468",
   "native_highs_backend": "c968dbb517f4f81c19c4dae8e184cc3481c2b1d2",
+  "arcflow_compatibility": "7a8887b2f2d4a46e0cd2afe378266910e6e3a803",
+  "event_model_witness": "23b0cf928a4c9421e129704e36d48b037c410665",
+  "uniform_model_witness": "1e984c89c11098dcafe8df96560ed24882df7891",
   "corrected_matched_wall_snapshot_and_reruns": "44b6d5030a78ddca9c74f582d70ad87572e61794",
   "corrected_normalized_evidence": "988046f85a1ecb6f8fe0abf7abdad6f8100b8263"
  },

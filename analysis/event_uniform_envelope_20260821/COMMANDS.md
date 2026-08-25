@@ -10,6 +10,16 @@ the current branch tip:
 
 - plan-bound pricing sources: `db9400ad122c52ea60e29f94a304ae041cea3b3d`;
 - plan commit / initial CG producer: `2dd2b4cd81fb15da137f6d443f5a495e22fd0255`;
+- event replay and portable MIP tools:
+  `72082c3ca1a280cbf53b954c11e6e9b4c7092468`;
+- native HiGHS timed MIPs:
+  `c968dbb517f4f81c19c4dae8e184cc3481c2b1d2`;
+- arc-flow compatibility:
+  `7a8887b2f2d4a46e0cd2afe378266910e6e3a803`;
+- event model witnesses:
+  `23b0cf928a4c9421e129704e36d48b037c410665`;
+- uniform model witnesses:
+  `1e984c89c11098dcafe8df96560ed24882df7891`;
 - corrected matched-wall snapshot and reruns:
   `44b6d5030a78ddca9c74f582d70ad87572e61794`;
 - corrected normalized evidence:
@@ -37,6 +47,30 @@ Event adds `--time-model event --event-arc-mode lazy` and uses 2.5/5.
 Panel A continuations used `--resume`; 2/1 k05 cells received a final
 86,400-second cumulative ceiling where the initial certification ceiling was
 insufficient.
+
+## Matched-budget uniform CG
+
+For each uniform grid and instance, `EVENT_WALL_S` came from that instance's
+certified event status. The runner limit includes the exact pricer's 60-second
+serialization reserve:
+
+```bash
+RUNNER_LIMIT_S=$(
+  python3.12 -c \
+    "import math; print(math.ceil(float('$EVENT_WALL_S')) + 60)"
+)
+python3.12 src/exact_pricer_expanded.py \
+  --csv <instance> --prices_csv hourly_prices_flat.csv \
+  --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
+  --soc-step <10|4|2> --block-min <10|5|2|1> \
+  --master-sense partition --initial-pool singletons \
+  --max-iters 10000 --columns_per_iter 30 --checkpoint-every 25 \
+  --wall-limit-s "$RUNNER_LIMIT_S" \
+  --phase-telemetry <phase-jsonl> --out <uniform-status>
+```
+
+Certified rows are reused directly by Panel A. Uncertified rows are frozen for
+Panel B and copied into separate, attested `--resume` paths for Panel A.
 
 ## Matched-wall snapshots
 
@@ -81,6 +115,10 @@ python3.12 src/target_pool_feasibility.py \
   --solver highs --out <target-result>
 ```
 
+`--threads 8 --seed 0` were requested uniformly. Under the executed
+`--solver highs` SciPy interface, effective thread and seed controls are
+`null`; they were not enforced. This applies only to target diagnostics.
+
 ## Model integer witnesses
 
 ```bash
@@ -109,4 +147,11 @@ python3.12 src/summarize_event_uniform_envelope.py \
   --plan analysis/event_uniform_envelope_20260821/plan.json \
   --execution-root /tmp/evsp-event-uniform-envelope-c08df1a5277b \
   --output-dir analysis/event_uniform_envelope_20260821
+
+python3.12 analysis/event_uniform_envelope_20260821/package_evidence.py \
+  --execution-root /tmp/evsp-event-uniform-envelope-c08df1a5277b \
+  --analysis-dir analysis/event_uniform_envelope_20260821 \
+  --bundle-out analysis/event_uniform_envelope_20260821/evidence_bundle.tar.gz
+
+sha256sum -c analysis/event_uniform_envelope_20260821/SHA256SUMS
 ```
