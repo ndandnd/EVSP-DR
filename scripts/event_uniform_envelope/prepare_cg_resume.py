@@ -66,7 +66,7 @@ def main() -> int:
         if source_telemetry.is_file():
             companions.append((
                 source_telemetry,
-                Path(str(destination) + ".phase-telemetry.jsonl"),
+                Path(str(destination) + ".source-phase-telemetry.jsonl"),
             ))
         for source_path, destination_path in companions:
             if not source_path.is_file():
@@ -111,6 +111,10 @@ def main() -> int:
         "cumulative_scientific_wall_limit_s": args.wall_limit_s,
         "max_iters": 10000,
         "columns_per_iter": 30,
+        "telemetry_policy": (
+            "archive source telemetry separately; start identity-bound "
+            "resume telemetry at a fresh canonical path"
+        ),
         "preserves_original_artifacts": True,
     }, indent=2, sort_keys=True) + "\n")
     print(

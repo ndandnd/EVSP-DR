@@ -64,6 +64,10 @@ if [[ ! -e "$B_RESUME_ROOT" ]]; then
     --expected-cells 18 --wall-limit-s 21600 \
     --solver-commit "$B_RESUME_COMMIT"
 fi
+"$PYTHON_BIN" "$SCRIPT_DIR/repair_cg_resume_telemetry.py" \
+  --resume-root "$A_RESUME_ROOT"
+"$PYTHON_BIN" "$SCRIPT_DIR/repair_cg_resume_telemetry.py" \
+  --resume-root "$B_RESUME_ROOT"
 
 A_RESUME_INDEX_FILE=$(mktemp)
 B_RESUME_INDEX_FILE=$(mktemp)
@@ -94,8 +98,8 @@ elif [[ ${#A_RESUME_INDICES[@]} -gt 0 ]]; then
     -e "$A_RESUME_ROOT/logs/resume_%A_%a.err" \
     "$SCRIPT_DIR/cg_resume_extended.sub")
   {
-    echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tcumulative_wall_limit_s\tcategory"
-    echo -e "panel_a_resume24h\t$A_RESUME_JOB\t${#A_RESUME_INDICES[@]}\t$A_RESUME_COMMIT\t86400\textended_cg"
+    echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tcumulative_wall_limit_s\tcategory\tpartition"
+    echo -e "panel_a_resume24h\t$A_RESUME_JOB\t${#A_RESUME_INDICES[@]}\t$A_RESUME_COMMIT\t86400\textended_cg\tdefault_partition"
   } > "$A_RESUME_ROOT/jobs_${A_RESUME_JOB}.tsv"
 fi
 
@@ -114,8 +118,8 @@ elif [[ ${#B_RESUME_INDICES[@]} -gt 0 ]]; then
     -e "$B_RESUME_ROOT/logs/resume_%A_%a.err" \
     "$SCRIPT_DIR/cg_resume_extended.sub")
   {
-    echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tcumulative_wall_limit_s\tcategory"
-    echo -e "panel_b_certification6h\t$B_RESUME_JOB\t${#B_RESUME_INDICES[@]}\t$B_RESUME_COMMIT\t21600\textended_cg"
+    echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tcumulative_wall_limit_s\tcategory\tpartition"
+    echo -e "panel_b_certification6h\t$B_RESUME_JOB\t${#B_RESUME_INDICES[@]}\t$B_RESUME_COMMIT\t21600\textended_cg\tdefault_partition"
   } > "$B_RESUME_ROOT/jobs_${B_RESUME_JOB}.tsv"
 fi
 
@@ -139,6 +143,14 @@ if [[ "$HIGHS_RC" != 0 ]]; then
   mv "$HIGHS_TMP" "$HIGHS_TARGET"
   HIGHS_RC=0
 fi
+for root in "$A_ROOT" "$B_ROOT"; do
+  prior="$root/highs_native_preflight.txt"
+  if [[ -f "$prior" ]]; then
+    prior_sha=$(sha256sum "$prior" | awk '{print $1}')
+    prior_archive="$root/highs_native_preflight_${prior_sha:0:12}.txt"
+    [[ -e "$prior_archive" ]] || cp "$prior" "$prior_archive"
+  fi
+done
 printf 'return_code=%s\n%s\n' "$HIGHS_RC" "$HIGHS_VERSION" \
   | tee "$A_ROOT/highs_native_preflight.txt"
 cp "$A_ROOT/highs_native_preflight.txt" "$B_ROOT/highs_native_preflight.txt"
@@ -183,13 +195,13 @@ if [[ "$HIGHS_RC" == 0 ]]; then
     A_HIGHS_ARRAY=$(IFS=,; echo "${A_HIGHS_INDICES[*]}")
     A_HIGHS_EXPORTS="ALL,EVSP_EXECUTION_REPO=$HIGHS_EXECUTION_REPO,EVSP_EXPECTED_COMMIT=$HIGHS_COMMIT,EVSP_PANEL=A,EVSP_INTEGER_MANIFEST=$A_MANIFEST,EVSP_HIGHS_OUTPUT_DIR=$A_ROOT/mip_highs_native,EVSP_HIGHS_PYTHONPATH=$HIGHS_TARGET,EVSP_PYTHON=$PYTHON_BIN"
     A_HIGHS_JOB=$(evsp_submit_and_resolve eua25_hgh \
-      --array="${A_HIGHS_ARRAY}%54" -p default_partition -c 8 --mem=24G \
+      --array="${A_HIGHS_ARRAY}%54" -p scaglione -c 8 --mem=24G \
       -t 01:15:00 --no-requeue --export="$A_HIGHS_EXPORTS" \
       -o "$A_ROOT/logs/highs_%A_%a.out" -e "$A_ROOT/logs/highs_%A_%a.err" \
       "$SCRIPT_DIR/pool_mip_highs_native.sub")
     {
-      echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tbackend\ttimelimit_s\tthreads"
-      echo -e "mip_highs_native\t$A_HIGHS_JOB\t${#A_HIGHS_INDICES[@]}\t$HIGHS_COMMIT\thighspy_native\t1800\t8"
+      echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tbackend\ttimelimit_s\tthreads\tpartition"
+      echo -e "mip_highs_native\t$A_HIGHS_JOB\t${#A_HIGHS_INDICES[@]}\t$HIGHS_COMMIT\thighspy_native\t1800\t8\tscaglione"
     } > "$A_ROOT/highs_native_${A_HIGHS_JOB}_jobs.tsv"
   fi
   B_HIGHS_ACTIVE=$(queued_job_id eub25_hgh)
@@ -199,13 +211,13 @@ if [[ "$HIGHS_RC" == 0 ]]; then
     B_HIGHS_ARRAY=$(IFS=,; echo "${B_HIGHS_INDICES[*]}")
     B_HIGHS_EXPORTS="ALL,EVSP_EXECUTION_REPO=$HIGHS_EXECUTION_REPO,EVSP_EXPECTED_COMMIT=$HIGHS_COMMIT,EVSP_PANEL=B,EVSP_INTEGER_MANIFEST=$B_MANIFEST,EVSP_HIGHS_OUTPUT_DIR=$B_ROOT/mip_highs_native,EVSP_HIGHS_PYTHONPATH=$HIGHS_TARGET,EVSP_PYTHON=$PYTHON_BIN"
     B_HIGHS_JOB=$(evsp_submit_and_resolve eub25_hgh \
-      --array="${B_HIGHS_ARRAY}%45" -p default_partition -c 8 --mem=24G \
+      --array="${B_HIGHS_ARRAY}%45" -p scaglione -c 8 --mem=24G \
       -t 01:15:00 --no-requeue --export="$B_HIGHS_EXPORTS" \
       -o "$B_ROOT/logs/highs_%A_%a.out" -e "$B_ROOT/logs/highs_%A_%a.err" \
       "$SCRIPT_DIR/pool_mip_highs_native.sub")
     {
-      echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tbackend\ttimelimit_s\tthreads"
-      echo -e "mip_highs_native\t$B_HIGHS_JOB\t${#B_HIGHS_INDICES[@]}\t$HIGHS_COMMIT\thighspy_native\t1800\t8"
+      echo -e "stage\tarray_job_id\ttasks\tsolver_commit\tbackend\ttimelimit_s\tthreads\tpartition"
+      echo -e "mip_highs_native\t$B_HIGHS_JOB\t${#B_HIGHS_INDICES[@]}\t$HIGHS_COMMIT\thighspy_native\t1800\t8\tscaglione"
     } > "$B_ROOT/highs_native_${B_HIGHS_JOB}_jobs.tsv"
   fi
 else

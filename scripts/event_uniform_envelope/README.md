@@ -94,6 +94,10 @@ wheel without dependencies into an isolated `$HOME/ladder-lite/vendor`
 directory; it does not mutate `evsp_env`.  The import path, version, and vendor
 file hashes are recorded under both panel roots.  Rerunning the launcher
 recognizes active arrays and submits only artifacts that are still incomplete.
+Native-HiGHS MIPs run on the non-preemptible `scaglione` partition.  Source CG
+telemetry is archived separately because telemetry identity includes its output
+path; each resumed copy starts a fresh canonical telemetry stream.  The
+fail-closed repair and hashes are recorded in `telemetry_repair.csv`.
 
 Once the queue is empty, normalize the results with:
 

@@ -59,19 +59,21 @@ fi
 
 A_SUMMARY_FILES=(
   "$A_RESUME_ROOT/resume_summary.csv"
+  "$A_RESUME_ROOT/telemetry_repair.csv"
   "$A_ROOT/long_fill_slurm_accounting.psv"
 )
 B_SUMMARY_FILES=(
   "$B_RESUME_ROOT/resume_summary.csv"
+  "$B_RESUME_ROOT/telemetry_repair.csv"
   "$B_ROOT/long_fill_slurm_accounting.psv"
 )
 for path in \
-  "$A_ROOT/highs_native_preflight.txt" \
+  "$A_ROOT"/highs_native_preflight*.txt \
   "$A_ROOT/highs_native_vendor_sha256s.txt"; do
   [[ ! -f "$path" ]] || A_SUMMARY_FILES+=("$path")
 done
 for path in \
-  "$B_ROOT/highs_native_preflight.txt" \
+  "$B_ROOT"/highs_native_preflight*.txt \
   "$B_ROOT/highs_native_vendor_sha256s.txt"; do
   [[ ! -f "$path" ]] || B_SUMMARY_FILES+=("$path")
 done

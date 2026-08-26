@@ -358,6 +358,10 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
             "elapsed_s,iteration,lp_obj,route_weight,artificials,min_rc,pool_columns\n"
             "100,1,2,2,0,-1,5\n"
         )
+        source_telemetry = Path(
+            str(status_path) + ".phase-telemetry.jsonl"
+        )
+        source_telemetry.write_text('{"source":"telemetry"}\n')
         status_path.write_text(json.dumps({
             "stop_reason": "wall_limit",
             "certified_rc_optimal": False,
@@ -368,6 +372,7 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
         }))
         source_bytes[status_path] = status_path.read_bytes()
         source_bytes[journal] = journal.read_bytes()
+        source_bytes[source_telemetry] = source_telemetry.read_bytes()
         matrix_rows.append([
             index, cell, 5, "instance.csv", rep, "uniform", 2, 1,
         ])
@@ -393,6 +398,23 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
         (resume / "matrix.tsv").open(), delimiter="\t"
     ))
     assert len(manifest) == 2
+    for row in manifest:
+        status = Path(row["resume_status"])
+        archived = Path(str(status) + ".source-phase-telemetry.jsonl")
+        live = Path(str(status) + ".phase-telemetry.jsonl")
+        assert archived.is_file()
+        assert not live.exists()
+        archived.rename(live)
+    run_tool(
+        "repair_cg_resume_telemetry.py",
+        "--resume-root", resume,
+    )
+    repair_rows = list(csv.DictReader(
+        (resume / "telemetry_repair.csv").open()
+    ))
+    assert {row["action"] for row in repair_rows} == {
+        "archived_misplaced_source_copy"
+    }
     command = [
         sys.executable,
         str(TOOLS / "select_cg_resume_indices.py"),
@@ -414,6 +436,25 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
     second_payload = json.loads(second.read_text())
     second_payload["wall_s"] = 86400
     second.write_text(json.dumps(second_payload))
+    for row in manifest:
+        status = Path(row["resume_status"])
+        Path(str(status) + ".phase-telemetry.jsonl").write_text(json.dumps({
+            "record_type": "session_start",
+            "identity": {
+                "output": str(status.resolve()),
+                "git_commit": "a" * 40,
+            },
+        }) + "\n")
+    run_tool(
+        "repair_cg_resume_telemetry.py",
+        "--resume-root", resume,
+    )
+    repair_rows = list(csv.DictReader(
+        (resume / "telemetry_repair.csv").open()
+    ))
+    assert {row["action"] for row in repair_rows} == {
+        "resume_telemetry_active"
+    }
     completed = subprocess.run(
         command, check=True, text=True, capture_output=True
     )
