@@ -143,6 +143,9 @@ if [[ "$HIGHS_RC" != 0 ]]; then
   mv "$HIGHS_TMP" "$HIGHS_TARGET"
   HIGHS_RC=0
 fi
+# Record the durable post-rename import path, not the temporary install path.
+HIGHS_VERSION=$(PYTHONPATH="$HIGHS_TARGET" "$PYTHON_BIN" -c \
+  'import highspy; assert highspy.Highs().version() == "1.15.1"; print(highspy.Highs().version()); print(highspy.__file__)')
 for root in "$A_ROOT" "$B_ROOT"; do
   prior="$root/highs_native_preflight.txt"
   if [[ -f "$prior" ]]; then
