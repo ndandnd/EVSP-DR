@@ -119,3 +119,10 @@ and SHA-256 summary manifests under both panel roots.  The row-level CSV keeps
 Gurobi, 30-minute HiGHS, and two-hour HiGHS status, incumbent, fleet bound,
 proof, physical validation, runtime, identity hashes, and resource statistics
 separate; Slurm `COMPLETED` is never treated as mathematical optimality.
+
+`submit_highs_unresolved_retry28800.sh PANEL_A_ROOT PANEL_B_ROOT` consumes that
+audited CSV and submits only safe rows that still lack an independent proof.
+It refuses identity, configuration, physical-validation, accounting, or proven
+fleet contradictions.  The eight-hour native-HiGHS jobs remain on `scaglione`,
+use eight threads and 24 GiB each, write to a new immutable output directory,
+and have a TSV job/configuration record under both panel roots.

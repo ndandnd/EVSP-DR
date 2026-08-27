@@ -540,6 +540,7 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
     panel_roots = {}
     status_hash = "a" * 64
     journal_hash = "b" * 64
+    solver_commit = "44b6d5030a78ddca9c74f582d70ad87572e61794"
     for panel, manifest_name, index in (
         ("A", "panel_a_highs_inputs.tsv", "38"),
         ("B", "panel_b_highs_inputs.tsv", "31"),
@@ -562,8 +563,8 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
             "source_result_sha256": status_hash,
             "source_journal_sha256": journal_hash,
             "code_identity": {
-                "expected_commit": "c" * 40,
-                "observed_commit": "c" * 40,
+                "expected_commit": solver_commit,
+                "observed_commit": solver_commit,
             },
         }
         (root / "mip" / stem).write_text(json.dumps({
@@ -587,7 +588,12 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
         }))
         (root / "mip_highs_native_retry7200" / stem).write_text(json.dumps({
             **common,
-            "status_name": "OPTIMAL",
+            "status_name": (
+                "OPTIMAL" if panel == "A"
+                else "TIME_LIMIT_OR_ITERATION_LIMIT"
+            ),
+            "fleet_bound": 6.0 if panel == "A" else 5.5,
+            "fleet_proven": panel == "A",
             "backend": "highspy_native",
             "physical_witness_valid": True,
             "requested_timelimit_s": 7200,
@@ -596,8 +602,8 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
     jobs = (
         "panel\tarray_job_id\tindices\tsolver_commit\tbackend\t"
         "timelimit_s\tthreads\tpartition\n"
-        "A\t400\t38\t" + "c" * 40 + "\thighspy_native\t7200\t8\tscaglione\n"
-        "B\t401\t31\t" + "c" * 40 + "\thighspy_native\t7200\t8\tscaglione\n"
+        f"A\t400\t38\t{solver_commit}\thighspy_native\t7200\t8\tscaglione\n"
+        f"B\t401\t31\t{solver_commit}\thighspy_native\t7200\t8\tscaglione\n"
     )
     for root in panel_roots.values():
         (root / "highs_disagreement_retry_jobs.tsv").write_text(jobs)
@@ -635,3 +641,21 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
         (panel_roots["A"] / "backend_retry7200_unresolved.csv").open()
     ))
     assert unresolved == []
+    a_selection = subprocess.run(
+        [
+            sys.executable,
+            str(TOOLS / "select_highs_unresolved_retry_indices.py"),
+            "--root", str(panel_roots["A"]), "--panel", "A",
+        ],
+        check=True, text=True, capture_output=True,
+    )
+    b_selection = subprocess.run(
+        [
+            sys.executable,
+            str(TOOLS / "select_highs_unresolved_retry_indices.py"),
+            "--root", str(panel_roots["B"]), "--panel", "B",
+        ],
+        check=True, text=True, capture_output=True,
+    )
+    assert a_selection.stdout == ""
+    assert b_selection.stdout == "31\n"
