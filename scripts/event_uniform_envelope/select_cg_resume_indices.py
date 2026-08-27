@@ -63,7 +63,10 @@ def main() -> int:
                 continue
             if status.get("certified_rc_optimal") is True:
                 counts["certified"] += 1
-            elif wall_s >= limit - 1.0:
+            elif (
+                status.get("stop_reason") == "wall_limit"
+                and wall_s >= limit - 120.0
+            ):
                 counts["wall_cap"] += 1
             else:
                 counts["pending"] += 1

@@ -434,7 +434,9 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
     first.write_text(json.dumps(first_payload))
     second = Path(manifest[1]["resume_status"])
     second_payload = json.loads(second.read_text())
-    second_payload["wall_s"] = 86400
+    # The solver reserves 60 seconds for durable serialization, so a terminal
+    # wall-limit status just below the nominal cap is scientifically capped.
+    second_payload["wall_s"] = 86340
     second.write_text(json.dumps(second_payload))
     for row in manifest:
         status = Path(row["resume_status"])
@@ -455,6 +457,18 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
     assert {row["action"] for row in repair_rows} == {
         "resume_telemetry_active"
     }
+    sacct = resume / "slurm.psv"
+    sacct.write_text("")
+    run_tool(
+        "audit_cg_resume.py",
+        "--resume-root", resume,
+        "--sacct", sacct,
+    )
+    outcomes = {
+        row["local_index"]: row["outcome"]
+        for row in csv.DictReader((resume / "resume_summary.csv").open())
+    }
+    assert outcomes == {"0": "certified", "1": "wall_cap"}
     completed = subprocess.run(
         command, check=True, text=True, capture_output=True
     )

@@ -91,7 +91,10 @@ def main() -> int:
                 "cumulative_wall_cap_s": cap,
                 "outcome": (
                     "certified" if resumed.get("certified_rc_optimal") is True
-                    else "wall_cap" if resumed_wall >= cap - 1.0
+                    else "wall_cap" if (
+                        resumed.get("stop_reason") == "wall_limit"
+                        and resumed_wall >= cap - 120.0
+                    )
                     else "incomplete"
                 ),
                 "slurm_state": slurm_row.get("state"),
