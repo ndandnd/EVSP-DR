@@ -534,3 +534,104 @@ def test_audit_backend_reproduction_compares_identical_sources(tmp_path):
     assert row["runtime_ratio_highs_over_gurobi"] == "2.0"
     assert row["highs_slurm_state"] == "COMPLETED"
     assert row["highs_slurm_max_rss"] == "3G"
+
+
+def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
+    panel_roots = {}
+    status_hash = "a" * 64
+    journal_hash = "b" * 64
+    for panel, manifest_name, index in (
+        ("A", "panel_a_highs_inputs.tsv", "38"),
+        ("B", "panel_b_highs_inputs.tsv", "31"),
+    ):
+        root = tmp_path / f"panel_{panel.lower()}"
+        panel_roots[panel] = root
+        for name in ("mip", "mip_highs_native", "mip_highs_native_retry7200"):
+            (root / name).mkdir(parents=True, exist_ok=True)
+        (root / manifest_name).write_text(
+            "index\tcell\ttarget_fleet\trepresentation_id\tsource_status\t"
+            "source_status_sha256\tsource_journal\tsource_journal_sha256\n"
+            f"{index}\tk05_s1\t5\tuniform_4_5\t/a\t{status_hash}\t/b\t{journal_hash}\n"
+        )
+        stem = f"{panel}__k05_s1__uniform_4_5.json"
+        common = {
+            "buses": 6,
+            "fleet_bound": 6.0,
+            "fleet_proven": True,
+            "runtime_s": 100.0,
+            "source_result_sha256": status_hash,
+            "source_journal_sha256": journal_hash,
+            "code_identity": {
+                "expected_commit": "c" * 40,
+                "observed_commit": "c" * 40,
+            },
+        }
+        (root / "mip" / stem).write_text(json.dumps({
+            **common,
+            "partitioning": True,
+            "incumbent_found": True,
+            "selected_routes": [0, 1, 2, 3, 4, 5],
+            "status_name": "OPTIMAL",
+            "optimal_scope": "full_pool_lexicographic",
+        }))
+        (root / "mip_highs_native" / stem).write_text(json.dumps({
+            **common,
+            "buses": 7,
+            "fleet_bound": 5.0,
+            "fleet_proven": False,
+            "status_name": "TIME_LIMIT_OR_ITERATION_LIMIT",
+            "backend": "highspy_native",
+            "physical_witness_valid": True,
+            "requested_timelimit_s": 1800,
+            "threads_requested": 8,
+        }))
+        (root / "mip_highs_native_retry7200" / stem).write_text(json.dumps({
+            **common,
+            "status_name": "OPTIMAL",
+            "backend": "highspy_native",
+            "physical_witness_valid": True,
+            "requested_timelimit_s": 7200,
+            "threads_requested": 8,
+        }))
+    jobs = (
+        "panel\tarray_job_id\tindices\tsolver_commit\tbackend\t"
+        "timelimit_s\tthreads\tpartition\n"
+        "A\t400\t38\t" + "c" * 40 + "\thighspy_native\t7200\t8\tscaglione\n"
+        "B\t401\t31\t" + "c" * 40 + "\thighspy_native\t7200\t8\tscaglione\n"
+    )
+    for root in panel_roots.values():
+        (root / "highs_disagreement_retry_jobs.tsv").write_text(jobs)
+    sacct = tmp_path / "retry.psv"
+    sacct.write_text(
+        "400_38|402|eua27_h2|COMPLETED|0:0|01:00:00|02:30:00|"
+        "07:30:00|8||||scaglione-cpu-01\n"
+        "400_38.batch|402.batch|batch|COMPLETED|0:0|01:00:00|"
+        "|07:30:00|8|4G|8G||scaglione-cpu-01\n"
+        "401_31|403|eub27_h2|COMPLETED|0:0|01:00:00|02:30:00|"
+        "07:30:00|8||||scaglione-cpu-02\n"
+        "401_31.batch|403.batch|batch|COMPLETED|0:0|01:00:00|"
+        "|07:30:00|8|5G|9G||scaglione-cpu-02\n"
+    )
+    run_tool(
+        "audit_highs_disagreement_retry.py",
+        "--panel-a", panel_roots["A"],
+        "--panel-b", panel_roots["B"],
+        "--sacct", sacct,
+    )
+    a_row = next(csv.DictReader(
+        (panel_roots["A"] / "backend_retry7200.csv").open()
+    ))
+    assert a_row["classification"] == "proven_fleet_agreement"
+    assert a_row["retry_progress"] == "became_proven"
+    assert a_row["highs30_buses"] == "7"
+    assert a_row["highs2_buses"] == "6"
+    assert a_row["highs2_requested_timelimit_s"] == "7200"
+    assert a_row["highs2_configuration_match"] == "True"
+    assert a_row["highs2_became_proven"] == "True"
+    assert a_row["highs2_incumbent_changed"] == "True"
+    assert a_row["highs2_slurm_state"] == "COMPLETED"
+    assert a_row["highs2_slurm_max_rss"] == "4G"
+    unresolved = list(csv.DictReader(
+        (panel_roots["A"] / "backend_retry7200_unresolved.csv").open()
+    ))
+    assert unresolved == []

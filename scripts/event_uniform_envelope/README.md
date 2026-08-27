@@ -111,3 +111,11 @@ The accessible statistics are `resume_summary.csv` inside each extended-CG
 directory and `backend_reproduction.csv` at each panel root.  The latter gives
 per-cell source hashes, solver status, fleet, bound, gap, proof scope, runtime,
 RSS, physical validation, backend agreement, and Slurm accounting.
+
+The two-hour native-HiGHS disagreement retries are normalized after completion
+with `audit_highs_disagreement_retry.sh PANEL_A_ROOT PANEL_B_ROOT`.  It writes
+`backend_retry7200.csv`, `backend_retry7200_unresolved.csv`, Slurm accounting,
+and SHA-256 summary manifests under both panel roots.  The row-level CSV keeps
+Gurobi, 30-minute HiGHS, and two-hour HiGHS status, incumbent, fleet bound,
+proof, physical validation, runtime, identity hashes, and resource statistics
+separate; Slurm `COMPLETED` is never treated as mathematical optimality.
