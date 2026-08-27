@@ -18,14 +18,20 @@ printf '%s\n' "$REMOTE" >&2
 [[ "$(printf '%s\n' "$REMOTE" | awk '{print $2}')" == "refs/heads/$AGENT_BRANCH" ]] \
   || evsp_die "unexpected Agent E ref"
 AGENT_SHA=$(printf '%s\n' "$REMOTE" | awk '{print $1}')
-git -C "$REPO" fetch origin \
-  "refs/heads/$AGENT_BRANCH:refs/remotes/origin/$AGENT_BRANCH"
-git -C "$REPO" merge-base --is-ancestor "$SOLVER_COMMIT" "$AGENT_SHA" \
-  || evsp_die "Panel B solver commit is not an ancestor of Agent E tip"
+git -C "$REPO" cat-file -e "$SOLVER_COMMIT^{commit}" \
+  || evsp_die "historical Panel B solver commit is unavailable"
 EXECUTION_REPO=$(evsp_execution_checkout "$REPO" "$SOLVER_COMMIT")
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 PARENT="$B_ROOT/cg_certification6h_13596d0"
 RESUME="$B_ROOT/cg_certification24h_13596d0"
+PARENT_CHECK=$(mktemp)
+trap 'rm -f "$PARENT_CHECK" "${INDEX_FILE:-}"' EXIT
+"$PYTHON_BIN" "$SCRIPT_DIR/select_cg_resume_indices.py" \
+  --resume-root "$PARENT" --expected-panel B \
+  --expected-commit "$SOLVER_COMMIT" --expected-wall-limit-s 21600 \
+  > "$PARENT_CHECK"
+[[ ! -s "$PARENT_CHECK" ]] \
+  || evsp_die "six-hour parent still contains incomplete, uncapped rows"
 if [[ ! -e "$RESUME" ]]; then
   "$PYTHON_BIN" "$SCRIPT_DIR/prepare_cg_reresume.py" \
     --source-resume-root "$PARENT" --out-root "$RESUME" --panel B \
@@ -36,7 +42,6 @@ fi
 "$PYTHON_BIN" "$SCRIPT_DIR/repair_cg_resume_telemetry.py" \
   --resume-root "$RESUME"
 INDEX_FILE=$(mktemp)
-trap 'rm -f "$INDEX_FILE"' EXIT
 "$PYTHON_BIN" "$SCRIPT_DIR/select_cg_resume_indices.py" \
   --resume-root "$RESUME" --expected-panel B \
   --expected-commit "$SOLVER_COMMIT" --expected-wall-limit-s 86400 \
@@ -63,8 +68,8 @@ JOB=$(evsp_submit_and_resolve eub27_r24 \
   -e "$RESUME/logs/resume_%A_%a.err" \
   "$SCRIPT_DIR/cg_resume_extended.sub")
 {
-  echo -e "stage\tarray_job_id\ttasks\twrapper_commit\tsolver_commit\tcumulative_wall_limit_s\tcategory\tpartition"
-  echo -e "panel_b_certification24h\t$JOB\t${#INDICES[@]}\t$WRAPPER_COMMIT\t$SOLVER_COMMIT\t86400\textended_cg\tdefault_partition"
+  echo -e "stage\tarray_job_id\ttasks\twrapper_commit\tsolver_commit\tagent_tip_observed\tcumulative_wall_limit_s\tcategory\tpartition"
+  echo -e "panel_b_certification24h\t$JOB\t${#INDICES[@]}\t$WRAPPER_COMMIT\t$SOLVER_COMMIT\t$AGENT_SHA\t86400\textended_cg\tdefault_partition"
 } > "$RESUME/jobs_${JOB}.tsv"
 sha256sum "$RESUME/execution_plan.json" "$RESUME/matrix.tsv" \
   > "$RESUME/SUBMISSION_INPUT_SHA256SUMS"

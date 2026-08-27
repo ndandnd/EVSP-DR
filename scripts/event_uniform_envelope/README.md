@@ -135,3 +135,7 @@ two pending cells on `default_partition` to a 24-hour cumulative scientific
 cap.  `audit_panel_b_cg24h_tail.sh PANEL_B_ROOT` writes their row-level outcome,
 iteration, column, runtime, memory, node, and Slurm statistics to
 `cg_certification24h_13596d0/resume_summary.csv`.
+The historical execution commit is validated against the immutable parent
+resume plan; it is intentionally not required to be an ancestor of Agent E's
+later development tip, because the reproducible cluster-workflow commit is a
+sibling child of the reviewed Agent E base.
