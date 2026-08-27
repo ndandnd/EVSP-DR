@@ -22,6 +22,25 @@ def load(path: Path) -> tuple[dict, str]:
         return {}, f"{type(exc).__name__}: {exc}"
 
 
+def gurobi_physical_witness(payload: dict) -> tuple[bool | None, str]:
+    if "physical_witness_valid" in payload:
+        return payload.get("physical_witness_valid"), "explicit"
+    selected = payload.get("selected_routes")
+    buses = payload.get("buses")
+    if (
+        payload.get("partitioning") is True
+        and payload.get("incumbent_found") is True
+        and isinstance(selected, list)
+        and isinstance(buses, int)
+        and len(selected) == buses
+    ):
+        # This Gurobi schema publishes a normal result only after
+        # validate_final_selected_routes succeeds.  Failed replay is diverted
+        # to a rejected_physical_replay diagnostic instead.
+        return True, "inferred_from_success_only_gurobi_schema"
+    return None, "unavailable"
+
+
 def load_slurm(path: Path) -> dict[str, dict]:
     result = {}
     if not path.is_file():
@@ -83,6 +102,10 @@ def main() -> int:
             hb = highs.get("buses")
             gr = gurobi.get("runtime_s")
             hr = highs.get("runtime_s")
+            gurobi_two_stage = gurobi.get("two_stage") or {}
+            gurobi_physical, gurobi_physical_source = (
+                gurobi_physical_witness(gurobi)
+            )
             rows.append({
                 "index": source["index"],
                 "cell": source["cell"],
@@ -92,15 +115,26 @@ def main() -> int:
                 "source_journal_sha256": source["source_journal_sha256"],
                 "gurobi_present": not bool(gurobi_error),
                 "gurobi_error": gurobi_error,
-                "gurobi_status": gurobi.get("status_name"),
+                "gurobi_status": gurobi_two_stage.get(
+                    "stage1_status_name", gurobi.get("status_name")
+                ),
+                "gurobi_final_status": gurobi.get("status_name"),
                 "gurobi_buses": gb,
-                "gurobi_bound": gurobi.get("mip_bound", gurobi.get("fleet_bound")),
-                "gurobi_gap": gurobi.get("mip_gap"),
+                "gurobi_bound": gurobi.get(
+                    "fleet_bound", gurobi_two_stage.get("stage1_bound")
+                ),
+                "gurobi_gap": gurobi_two_stage.get(
+                    "stage1_gap", gurobi.get("mip_gap")
+                ),
                 "gurobi_fleet_proven": gurobi.get("fleet_proven"),
-                "gurobi_optimality_scope": gurobi.get("optimality_scope"),
+                "gurobi_optimality_scope": gurobi.get(
+                    "optimal_scope", gurobi.get("optimality_scope")
+                ),
                 "gurobi_runtime_s": gr,
                 "gurobi_peak_rss_mb": gurobi.get("peak_rss_mb"),
-                "gurobi_physical_witness_valid": gurobi.get("physical_witness_valid"),
+                "gurobi_physical_witness_valid": gurobi_physical,
+                "gurobi_physical_witness_valid_source":
+                    gurobi_physical_source,
                 "gurobi_source_hash_match": (
                     gurobi.get("source_result_sha256") == source["source_status_sha256"]
                     and gurobi.get("source_journal_sha256") == source["source_journal_sha256"]

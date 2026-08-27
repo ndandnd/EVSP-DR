@@ -12,6 +12,8 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_TH
 : "${EVSP_HIGHS_OUTPUT_DIR:?}"
 : "${EVSP_HIGHS_PYTHONPATH:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+TIMELIMIT_S="${EVSP_MIP_TIMELIMIT_S:-1800}"
+THREADS="${EVSP_MIP_THREADS:-8}"
 [[ -d "$EVSP_HIGHS_PYTHONPATH" ]]
 export PYTHONPATH="$EVSP_HIGHS_PYTHONPATH"
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
@@ -28,5 +30,5 @@ OUT="$EVSP_HIGHS_OUTPUT_DIR/${EVSP_PANEL}__${CELL}__${REP}.json"
 export EVSP_REQUIRE_DETACHED=1
 cd "$EVSP_EXECUTION_REPO"
 exec "$PYTHON_BIN" -u src/run_exact_pool_mip_highs.py \
-  --result "$SOURCE" --solver native --timelimit 1800 \
-  --mipgap 0.0001 --threads 8 --out "$OUT"
+  --result "$SOURCE" --solver native --timelimit "$TIMELIMIT_S" \
+  --mipgap 0.0001 --threads "$THREADS" --out "$OUT"
