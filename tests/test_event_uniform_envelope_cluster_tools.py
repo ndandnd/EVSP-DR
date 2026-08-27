@@ -476,6 +476,37 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
     assert "certified=1" in completed.stderr
     assert "wall_cap=1" in completed.stderr
 
+    child = root / "cg_resume48h"
+    run_tool(
+        "prepare_cg_reresume.py",
+        "--source-resume-root", resume,
+        "--out-root", child,
+        "--panel", "A",
+        "--representation", "uniform_2_1",
+        "--expected-cells", "1",
+        "--wall-limit-s", "172800",
+        "--max-iters", "50000",
+        "--solver-commit", "a" * 40,
+    )
+    child_rows = list(csv.DictReader(
+        (child / "matrix.tsv").open(), delimiter="\t"
+    ))
+    assert len(child_rows) == 1
+    assert child_rows[0]["cell"] == "k05_s3"
+    assert Path(child_rows[0]["source_status"]) == second
+    assert hashlib.sha256(
+        Path(child_rows[0]["resume_status"]).read_bytes()
+    ).hexdigest() == child_rows[0]["staged_status_sha256"]
+    child_plan = json.loads((child / "execution_plan.json").read_text())
+    assert child_plan["parent_cumulative_wall_limit_s"] == 86400
+    assert child_plan["cumulative_scientific_wall_limit_s"] == 172800
+    assert child_plan["max_iters"] == 50000
+    run_tool("repair_cg_resume_telemetry.py", "--resume-root", child)
+    child_repair = next(csv.DictReader(
+        (child / "telemetry_repair.csv").open()
+    ))
+    assert child_repair["action"] == "already_archived"
+
 
 def test_audit_backend_reproduction_compares_identical_sources(tmp_path):
     root = tmp_path / "panel_a"

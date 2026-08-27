@@ -126,3 +126,12 @@ It refuses identity, configuration, physical-validation, accounting, or proven
 fleet contradictions.  The eight-hour native-HiGHS jobs remain on `scaglione`,
 use eight threads and 24 GiB each, write to a new immutable output directory,
 and have a TSV job/configuration record under both panel roots.
+
+The two Panel B `uniform_2_1` CG rows that exhausted the six-hour cumulative
+cap can be continued independently with `submit_panel_b_cg24h_tail.sh
+PANEL_B_ROOT`.  This stages immutable children from the capped resume outputs,
+preserves both generations of source evidence and telemetry, and runs only the
+two pending cells on `default_partition` to a 24-hour cumulative scientific
+cap.  `audit_panel_b_cg24h_tail.sh PANEL_B_ROOT` writes their row-level outcome,
+iteration, column, runtime, memory, node, and Slurm statistics to
+`cg_certification24h_13596d0/resume_summary.csv`.
