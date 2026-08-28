@@ -126,6 +126,10 @@ It refuses identity, configuration, physical-validation, accounting, or proven
 fleet contradictions.  The eight-hour native-HiGHS jobs remain on `scaglione`,
 use eight threads and 24 GiB each, write to a new immutable output directory,
 and have a TSV job/configuration record under both panel roots.
+After completion, `audit_highs_unresolved_retry28800.sh PANEL_A_ROOT
+PANEL_B_ROOT` writes per-panel `backend_retry28800.csv` and unresolved subsets
+with the Gurobi/30-minute/two-hour/eight-hour proof trajectory, identities,
+runtime, memory, node, Slurm accounting, and SHA-256 summary manifests.
 
 The two Panel B `uniform_2_1` CG rows that exhausted the six-hour cumulative
 cap can be continued independently with `submit_panel_b_cg24h_tail.sh

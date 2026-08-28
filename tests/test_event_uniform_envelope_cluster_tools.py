@@ -690,3 +690,41 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
     )
     assert a_selection.stdout == ""
     assert b_selection.stdout == "31\n"
+
+    b_root = panel_roots["B"]
+    b_stem = "B__k05_s1__uniform_4_5.json"
+    (b_root / "mip_highs_native_retry28800").mkdir()
+    two_hour = json.loads(
+        (b_root / "mip_highs_native_retry7200" / b_stem).read_text()
+    )
+    (b_root / "mip_highs_native_retry28800" / b_stem).write_text(json.dumps({
+        **two_hour,
+        "status_name": "OPTIMAL",
+        "fleet_bound": 6.0,
+        "fleet_proven": True,
+        "requested_timelimit_s": 28800,
+    }))
+    (b_root / "highs_unresolved_retry28800_jobs.tsv").write_text(
+        "panel\tarray_job_id\tindices\twrapper_commit\tsolver_commit\t"
+        "backend\ttimelimit_s\tthreads\tpartition\n"
+        f"B\t500\t31\t{'d' * 40}\t{solver_commit}\t"
+        "highspy_native\t28800\t8\tscaglione\n"
+    )
+    eight_sacct = tmp_path / "eight.psv"
+    eight_sacct.write_text(
+        "500_31|501|eub27_h8|COMPLETED|0:0|04:00:00|08:30:00|"
+        "31:00:00|8||||scaglione-cpu-01\n"
+        "500_31.batch|501.batch|batch|COMPLETED|0:0|04:00:00|"
+        "|31:00:00|8|6G|10G||scaglione-cpu-01\n"
+    )
+    run_tool(
+        "audit_highs_unresolved_retry28800.py",
+        "--root", b_root, "--panel", "B", "--sacct", eight_sacct,
+    )
+    eight_row = next(csv.DictReader(
+        (b_root / "backend_retry28800.csv").open()
+    ))
+    assert eight_row["classification"] == "proven_fleet_agreement"
+    assert eight_row["retry_progress_from_2h"] == "became_proven"
+    assert eight_row["highs8_slurm_state"] == "COMPLETED"
+    assert eight_row["highs8_slurm_max_rss"] == "6G"

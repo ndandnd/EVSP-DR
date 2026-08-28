@@ -109,6 +109,15 @@ def main() -> int:
         writer.writeheader()
         writer.writerows(rows)
     print("CG resume outcomes:", dict(sorted(Counter(row["outcome"] for row in rows).items())))
+    for row in rows:
+        if row["outcome"] != "certified":
+            print(
+                f"CG {row['cell']} {row['representation_id']} "
+                f"outcome={row['outcome']} stop={row['resume_stop_reason']} "
+                f"wall={row['resume_wall_s']}/{row['cumulative_wall_cap_s']} "
+                f"iterations={row['resume_iterations']} "
+                f"slurm={row['slurm_state']}/{row['slurm_exit']}"
+            )
     print(f"CSV: {output}")
     return 0
 
