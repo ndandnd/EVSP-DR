@@ -728,3 +728,48 @@ def test_audit_highs_retry_records_proof_and_slurm_stats(tmp_path):
     assert eight_row["retry_progress_from_2h"] == "became_proven"
     assert eight_row["highs8_slurm_state"] == "COMPLETED"
     assert eight_row["highs8_slurm_max_rss"] == "6G"
+
+
+def test_select_24h_highs_retry_uses_only_safe_unresolved_rows(tmp_path):
+    root = tmp_path / "panel_a"
+    root.mkdir()
+    (root / "highs_unresolved_retry28800_jobs.tsv").write_text(
+        "panel\tarray_job_id\tindices\nA\t600\t1,2\n"
+    )
+    fields = [
+        "index", "classification", "highs8_present",
+        "highs8_physical_witness_valid", "highs8_source_hash_match",
+        "highs8_configuration_match", "highs8_slurm_state",
+        "highs8_slurm_exit",
+    ]
+    with (root / "backend_retry28800.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        writer.writerow({
+            "index": "1", "classification": "both_unproven",
+            "highs8_present": True,
+            "highs8_physical_witness_valid": True,
+            "highs8_source_hash_match": True,
+            "highs8_configuration_match": True,
+            "highs8_slurm_state": "COMPLETED",
+            "highs8_slurm_exit": "0:0",
+        })
+        writer.writerow({
+            "index": "2", "classification": "proven_fleet_agreement",
+            "highs8_present": True,
+            "highs8_physical_witness_valid": True,
+            "highs8_source_hash_match": True,
+            "highs8_configuration_match": True,
+            "highs8_slurm_state": "COMPLETED",
+            "highs8_slurm_exit": "0:0",
+        })
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(TOOLS / "select_highs_unresolved_retry86400_indices.py"),
+            "--root", str(root), "--panel", "A",
+        ],
+        check=True, text=True, capture_output=True,
+    )
+    assert completed.stdout == "1\n"
+    assert "retry=1 resolved=1" in completed.stderr

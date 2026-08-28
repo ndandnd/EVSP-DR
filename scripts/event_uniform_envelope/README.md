@@ -130,6 +130,10 @@ After completion, `audit_highs_unresolved_retry28800.sh PANEL_A_ROOT
 PANEL_B_ROOT` writes per-panel `backend_retry28800.csv` and unresolved subsets
 with the Gurobi/30-minute/two-hour/eight-hour proof trajectory, identities,
 runtime, memory, node, Slurm accounting, and SHA-256 summary manifests.
+`submit_highs_unresolved_retry86400.sh PANEL_A_ROOT PANEL_B_ROOT` then selects
+only safe eight-hour rows that remain unproven and launches fresh 24-hour
+native-HiGHS solves on `scaglione`; proved rows are never resubmitted, and the
+new immutable output directories and TSV job record preserve the experiment.
 
 The two Panel B `uniform_2_1` CG rows that exhausted the six-hour cumulative
 cap can be continued independently with `submit_panel_b_cg24h_tail.sh
