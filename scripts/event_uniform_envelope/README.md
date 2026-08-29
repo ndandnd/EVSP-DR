@@ -147,3 +147,23 @@ The historical execution commit is validated against the immutable parent
 resume plan; it is intentionally not required to be an ancestor of Agent E's
 later development tip, because the reproducible cluster-workflow commit is a
 sibling child of the reviewed Agent E base.
+
+## 2026-08-30 overnight research fill
+
+`audit_and_submit_overnight_20260830.sh` first audits the completed 24-hour
+native-HiGHS pool retries and writes `backend_retry86400.csv` under each panel
+root. It then submits only still-unproved, fully validated rows for a 48-hour
+native-HiGHS solve on `scaglione`.
+
+The same guarded command starts 18 new event-CG legacy medium probes: all six
+validated duty unions at each of targets 8, 13, and 20. These use the reviewed
+event solver commit `44b6d503...`, the validated input commit `ff7fb2ba...`,
+240/240/zero-reserve physics, a 2.5 kWh event representation, and a 12-hour
+scientific wall cap. Arrays use scale-specific memory requests of 32, 64, and
+96 GiB on `default_partition`. The matrix, execution plan, job IDs, source
+commits, and hashes are durable under
+`$HOME/ladder-lite/medium_event_legacy_20260830_44b6d5`.
+After the arrays finish, `audit_medium_event_legacy.sh CAMPAIGN_ROOT` writes
+`medium_event_summary.csv` with row-level proof status, LP value, iterations,
+columns, wall time, memory, event-DAG size, pricing/master/build telemetry, and
+Slurm accounting.
