@@ -1,0 +1,46 @@
+column_name,unit,stage,required,definition
+run_id,identifier,all,true,Unique immutable run identifier
+cell_id,identifier,all,true,Instance/selection identifier
+sample_family,category,all,true,"legacy, probability, or feature-space stress sample"
+scale,buses,all,true,"Number of GIRO duties used to form the instance; comparator, not assumed optimum"
+selection_replicate,index,all,true,Replicate within scale
+trip_count,trips,all,true,Number of service trips
+instance_sha256,sha256,all,true,Input identity
+solver_commit,git sha,all,true,Exact producing code
+battery_kwh,kWh,all,true,Battery capacity
+charge_kw,kW,all,true,Maximum constant charging power
+reserve_fraction,fraction,all,true,Minimum SOC fraction
+representation_id,category,CG,true,Named route representation
+soc_step_kwh,kWh,CG,true,SOC lattice step
+time_model,category,CG,true,event or uniform time representation
+cg_status,category,CG,true,"certified, wall_limit, memory, or failure"
+t_first_target_s,seconds,CG,true,Earliest durable iteration at or below the GIRO fleet comparator
+t_certificate_s,seconds,CG,true,Wall time to exact reduced-cost certificate; blank when censored
+cg_censor_time_s,seconds,CG,true,Observed wall time for an uncertified run
+cg_iterations,count,CG,true,Completed pricing iterations
+master_lp_wall_s,seconds,CG,true,Cumulative restricted-master LP time
+pricing_wall_s,seconds,CG,true,Cumulative pricing time
+serialization_wall_s,seconds,CG,true,Durable output overhead
+peak_rss_mb,MiB,CG,true,Peak resident memory
+pool_columns,columns,CG,true,Final RAW pool size
+L_model,fleet buses,LP,true,Certified full-representation fleet LP bound
+I_model_lower,fleet buses,model integer,true,Rigorous lower endpoint
+I_model_upper,fleet buses,model integer,true,Validated same-model feasible upper endpoint
+I_model_proven,boolean,model integer,true,Whether lower and upper endpoints close
+I_pool_lower,fleet buses,pool MIP,true,Rigorous finite-pool lower endpoint
+I_pool_upper,fleet buses,pool MIP,true,Validated finite-pool incumbent
+I_pool_proven,boolean,pool MIP,true,Whether finite-pool interval closes
+I_timed,fleet buses,pool MIP,true,Best validated incumbent at the time cap
+mip_bound,fleet buses,pool MIP,true,Solver lower bound at stop
+mip_gap,fraction,pool MIP,true,Reported relative gap
+mip_nodes,count,pool MIP,true,Branch-and-bound nodes
+mip_wall_s,seconds,pool MIP,true,Total finite-pool MIP wall time
+t_first_incumbent_s,seconds,pool MIP,true,Time to first validated incumbent
+t_mip_proof_s,seconds,pool MIP,false,Proof time; blank if unproven
+physical_witness_valid,boolean,integer,true,Strict route and charging replay result
+slurm_state,category,accounting,true,Terminal scheduler state
+partition,category,accounting,true,Slurm partition
+node,identifier,accounting,true,Compute node for hardware adjustment
+censor_reason,category,all,true,Reason result is an interval rather than a point
+artifact_path,path,all,true,Durable result artifact
+artifact_sha256,sha256,all,true,Artifact identity

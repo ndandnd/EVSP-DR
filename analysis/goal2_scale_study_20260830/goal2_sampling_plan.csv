@@ -1,0 +1,10 @@
+target_fleet,analysis_role,existing_validated_n,new_probability_sample_n,new_feature_space_n,planned_total_n,primary_reporting,selection_rule
+2,small calibration anchor,6,0,0,6,anchor only,existing validated duty unions
+3,small calibration anchor,6,0,0,6,anchor only,existing validated duty unions
+5,small calibration anchor,6,0,0,6,anchor only,existing validated duty unions
+8,primary medium scale,6,6,6,18,new probability sample; legacy and stress rows separate,fixed-seed random within trip-count x compatibility strata plus maximin feature-space stress sample
+10,primary medium scale,0,6,6,12,new probability sample; stress rows separate,fixed-seed random within trip-count x compatibility strata plus maximin feature-space stress sample
+13,primary medium scale,6,6,6,18,new probability sample; legacy and stress rows separate,fixed-seed random within trip-count x compatibility strata plus maximin feature-space stress sample
+20,primary medium scale,6,6,6,18,new probability sample; legacy and stress rows separate,fixed-seed random within trip-count x compatibility strata plus maximin feature-space stress sample
+30,upper-scale case study,3,0,0,3,case study; no mean-generalization claim,existing validated duty unions
+40,full-system case study,1,0,0,1,single full-system case,complete 40-duty union
