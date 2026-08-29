@@ -9,7 +9,7 @@ ROOT=$(cd "$1" && pwd)
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 [[ -f "$ROOT/jobs.tsv" ]] || evsp_die "missing medium event jobs.tsv"
 mapfile -t IDS < <(awk -F'\t' 'FNR > 1 {print $2}' "$ROOT/jobs.tsv" | sort -u)
-[[ ${#IDS[@]} == 3 ]] || evsp_die "expected three medium event array IDs"
+[[ ${#IDS[@]} -ge 1 ]] || evsp_die "expected at least one event array ID"
 JOB_LIST=$(IFS=,; echo "${IDS[*]}")
 if squeue --me -h -j "$JOB_LIST" | grep -q .; then
   evsp_die "medium event arrays are still active"

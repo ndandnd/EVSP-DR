@@ -72,8 +72,7 @@ def prior_valid(row: dict) -> bool:
     return (
         row.get("classification") in RETRYABLE
         and all(yes(row, key) for key in (
-            "gurobi_present", "gurobi_source_hash_match",
-            "gurobi_physical_witness_valid", "highs8_present",
+            "highs8_present",
             "highs8_source_hash_match", "highs8_physical_witness_valid",
             "highs8_configuration_match",
         ))

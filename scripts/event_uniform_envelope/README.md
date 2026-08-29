@@ -167,3 +167,12 @@ After the arrays finish, `audit_medium_event_legacy.sh CAMPAIGN_ROOT` writes
 `medium_event_summary.csv` with row-level proof status, LP value, iterations,
 columns, wall time, memory, event-DAG size, pricing/master/build telemetry, and
 Slurm accounting.
+
+`submit_event_extension_overnight.sh` adds a non-overlapping second wave: the
+nine validated `r4`--`r6` duty unions at targets 2, 3, and 5, all three
+target-30 cases, and the target-40 case. The small extension doubles the event
+model's small-instance sample; targets 30 and 40 are explicitly boundary case
+studies. They share the pinned event solver, immutable input manifest, physics,
+telemetry, 12-hour cap, and CSV auditor described above. Memory requests are
+16 GiB for the small extension, 128 GiB for target 30, and 192 GiB for target
+40; Slurm may leave the boundary jobs pending until a suitable node is free.

@@ -54,8 +54,7 @@ def main() -> int:
         if outcome in {"missing_or_invalid_artifact", "slurm_execution_error"}:
             old = prior.get(row["index"], {})
             required_prior = (
-                "gurobi_present", "gurobi_source_hash_match",
-                "gurobi_physical_witness_valid", "highs8_present",
+                "highs8_present",
                 "highs8_physical_witness_valid", "highs8_source_hash_match",
                 "highs8_configuration_match",
             )

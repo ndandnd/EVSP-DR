@@ -73,7 +73,7 @@ def main() -> int:
             if index in index_job:
                 raise SystemExit(f"duplicate task index in jobs.tsv: {index}")
             index_job[index] = job["array_job_id"]
-    if set(index_job) != set(range(18)):
+    if set(index_job) != set(range(len(matrix))):
         raise SystemExit(f"job index set mismatch: {sorted(index_job)}")
     accounting = load_accounting(args.sacct)
     output_rows = []
