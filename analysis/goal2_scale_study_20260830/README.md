@@ -68,19 +68,24 @@ label and industrial comparator, not a claim about the optimized fleet.
 The primary medium-scale study will focus on targets 8, 10, 13, and 20.  To
 avoid outcome-driven selection, new rows must be selected before optimization:
 
-1. Draw six fixed-seed probability-sample instances at each medium target from
+1. Draw twelve fixed-seed probability-sample instances at each medium target from
    a declared candidate universe, stratified by trip-count tercile and direct
    compatibility-density class.
 2. Select six additional feature-space stress instances at each medium target
    using a deterministic maximin rule.  These diagnose mechanisms and are never
    pooled into the probability-sample mean.
-3. Retain the six existing target-8, target-13, and target-20 rows as a separately
+3. Execute the new rows in three declared waves: two probability plus two stress
+   rows per target as a pipeline pilot; then four additional rows from each
+   family; then the final six probability rows.  A failed or censored pilot may
+   change resource caps, but must not change which instances belong to the
+   predeclared sample.
+4. Retain the six existing target-8, target-13, and target-20 rows as a separately
    labelled legacy cohort.  Generate the target-10 cohort from scratch.
-4. Treat targets 30 and 40 as upper-scale case studies, without population-mean
+5. Treat targets 30 and 40 as upper-scale case studies, without population-mean
    claims.
 
-The planned medium study has 66 rows: 18 each at targets 8, 13, and 20 and 12 at
-target 10.  The 48 new selections will expand the full registry from 40 to 88
+The planned medium study has 90 rows: 24 each at targets 8, 13, and 20 and 18 at
+target 10.  The 72 new selections will expand the full registry from 40 to 112
 instances once generated and validated.
 
 Trip count alone is not an adequate hardness descriptor.  Selection and

@@ -97,8 +97,8 @@ def main() -> None:
 
     require(len(sampling) == 9, "sampling plan must contain nine target rows")
     medium = [r for r in sampling if int(r["target_fleet"]) in {8, 10, 13, 20}]
-    require(sum(int(r["planned_total_n"]) for r in medium) == 66, "medium study must plan 66 rows")
-    require(sum(int(r["new_probability_sample_n"]) + int(r["new_feature_space_n"]) for r in sampling) == 48, "expected 48 new selections")
+    require(sum(int(r["planned_total_n"]) for r in medium) == 90, "medium study must plan 90 rows")
+    require(sum(int(r["new_probability_sample_n"]) + int(r["new_feature_space_n"]) for r in sampling) == 72, "expected 72 new selections")
 
     required_schema = {r["column_name"] for r in schema if truth(r["required"])}
     for field in {
@@ -113,7 +113,7 @@ def main() -> None:
     print(
         "validated Goal 1/2 registry: "
         "54 current proof rows, 9 historical rows, 40 existing instances, "
-        "66 planned medium-study rows"
+        "90 planned medium-study rows"
     )
 
 
