@@ -42,12 +42,39 @@ def main() -> int:
     expected = jobs[0]["indices"].split(",")
     with (root / "backend_retry86400.csv").open(newline="") as handle:
         rows = list(csv.DictReader(handle))
+    with (root / "backend_retry28800.csv").open(newline="") as handle:
+        prior = {row["index"]: row for row in csv.DictReader(handle)}
     if [row["index"] for row in rows] != expected:
         raise SystemExit(f"Panel {args.panel} 24-hour CSV/job indices differ")
     retry = []
     for row in rows:
         outcome = row["classification"]
-        if outcome not in RETRYABLE | RESOLVED:
+        if outcome in RESOLVED:
+            continue
+        if outcome in {"missing_or_invalid_artifact", "slurm_execution_error"}:
+            old = prior.get(row["index"], {})
+            required_prior = (
+                "gurobi_present", "gurobi_source_hash_match",
+                "gurobi_physical_witness_valid", "highs8_present",
+                "highs8_physical_witness_valid", "highs8_source_hash_match",
+                "highs8_configuration_match",
+            )
+            if (
+                old.get("classification") not in RETRYABLE
+                or any(not yes(old, key) for key in required_prior)
+            ):
+                raise SystemExit(
+                    f"unsafe Panel {args.panel} fallback row "
+                    f"{row['index']}: invalid eight-hour evidence"
+                )
+            print(
+                f"Panel {args.panel} row {row['index']}: selecting 48h "
+                f"from validated 8h evidence after {outcome}",
+                file=sys.stderr,
+            )
+            retry.append(row["index"])
+            continue
+        if outcome not in RETRYABLE:
             raise SystemExit(
                 f"unsafe Panel {args.panel} row {row['index']}: {outcome}"
             )
@@ -65,8 +92,7 @@ def main() -> int:
             raise SystemExit(
                 f"unsafe Panel {args.panel} row {row['index']}: Slurm mismatch"
             )
-        if outcome in RETRYABLE:
-            retry.append(row["index"])
+        retry.append(row["index"])
     sys.stdout.write("\n".join(retry) + ("\n" if retry else ""))
     print(
         f"Panel {args.panel} 48h selection: "

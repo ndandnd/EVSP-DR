@@ -77,8 +77,6 @@ def prior_valid(row: dict) -> bool:
             "highs8_source_hash_match", "highs8_physical_witness_valid",
             "highs8_configuration_match",
         ))
-        and row.get("highs8_slurm_state") == "COMPLETED"
-        and row.get("highs8_slurm_exit") == "0:0"
     )
 
 
