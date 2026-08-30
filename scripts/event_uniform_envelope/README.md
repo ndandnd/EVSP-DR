@@ -199,3 +199,20 @@ committed solver identity, matching instance hashes, a completed Slurm state,
 a validated configuration, and a source checkpoint at the parent wall cap.
 `audit_wall_capped_event_resume24h.sh` writes the corresponding row-level CSVs
 and Slurm accounting after all continuation jobs leave the queue.
+
+## 2026-08-31 event-launch correction
+
+The 2026-08-30 medium and extension launch worker omitted the explicit
+`--time-model event` option.  The solver therefore wrote `time_model=uniform`,
+despite the event-labeled matrix and output names.  Those roots are quarantined
+as misconfigured uniform-lattice runs and must never be used as event evidence
+or resumed by the event continuation tools.
+
+The corrected launch contract is fail closed at both layers.  The launchers
+export `EVSP_TIME_MODEL=event` and `EVSP_EVENT_ARC_MODE=lazy`; the batch worker
+requires those exact values and passes both CLI options to the reviewed solver.
+Fresh corrected roots default to
+`medium_event_corrected_20260831_44b6d5` and
+`event_extension_corrected_20260831_44b6d5`, with distinct `me31_*` and
+`xe31_*` job names.  Their execution plans and `jobs.tsv` files record the
+time-model and arc-mode identities explicitly.

@@ -72,7 +72,7 @@ def main() -> int:
         "src/exact_cg_telemetry.py",
     )
     plan = {
-        "schema": "evsp-dr-medium-event-legacy-v1",
+        "schema": "evsp-dr-medium-event-corrected-v2",
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "wrapper_commit": args.wrapper_commit,
         "solver_commit": args.solver_commit,
@@ -89,6 +89,12 @@ def main() -> int:
             "tariff": "flat",
         },
         "representation": "event_2p5_event5",
+        "time_model": "event",
+        "event_arc_mode": "lazy",
+        "launch_contract": (
+            "medium_event_cg.sub requires EVSP_TIME_MODEL=event and "
+            "EVSP_EVENT_ARC_MODE=lazy"
+        ),
         "wall_limit_s": 43200,
         "code_sha256": {path: sha256(solver_repo / path) for path in code_paths},
     }
