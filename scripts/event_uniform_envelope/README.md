@@ -176,3 +176,16 @@ studies. They share the pinned event solver, immutable input manifest, physics,
 telemetry, 12-hour cap, and CSV auditor described above. Memory requests are
 16 GiB for the small extension, 128 GiB for target 30, and 192 GiB for target
 40; Slurm may leave the boundary jobs pending until a suitable node is free.
+
+If Slurm preempts the original medium index 12 (target 20) and extension index
+12 (target 40), `submit_preempted_event_recovery.sh` stages each durable
+checkpoint, column journal, iteration log, and telemetry stream under a new
+immutable recovery root.  It then submits only those two cells with the
+original 43,200-second cumulative scientific cap.  The source artifacts are
+never modified, and the launcher refuses a certified source, a non-signal
+checkpoint, changed input identity, or a mismatched solver commit.  This
+recovery is safe while the other original array tasks remain active.
+After both recovery jobs leave the queue,
+`audit_preempted_event_recovery.sh` writes a row-level `resume_summary.csv`
+and Slurm accounting under each recovery root, including cumulative and added
+wall time, iterations, columns, peak RSS, node, stop reason, and outcome.
