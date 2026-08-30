@@ -86,7 +86,6 @@ def main() -> int:
         source_status = required_file(source_status, "wall-capped status")
         if (
             audit.get("result_present") != "True"
-            or audit.get("configuration_match") != "True"
             or audit.get("result_sha256") != sha256(source_status)
             or audit.get("slurm_state") != "COMPLETED"
         ):
@@ -105,10 +104,32 @@ def main() -> int:
         instance_path = required_file(Path(instance_csv), "instance CSV")
         if sha256(instance_path) != instance_sha256:
             raise SystemExit(f"instance hash changed at {source_index}")
-        if status.get("csv") != str(instance_path):
+        status_csv = required_file(
+            Path(str(status.get("csv", ""))), "status CSV"
+        )
+        if status_csv != instance_path:
             raise SystemExit(f"status instance mismatch at {source_index}")
-        if status.get("time_model") != "event":
-            raise SystemExit(f"status time model mismatch at {source_index}")
+        expected_config = {
+            "time_model": "event",
+            "soc_step": float(soc_step),
+            "block_min": int(block_min),
+            "g_kwh": 240.0,
+            "charge_kw": 240.0,
+            "min_soc_frac": 0.0,
+        }
+        observed_config = {
+            "time_model": status.get("time_model"),
+            "soc_step": float(status.get("soc_step", -1)),
+            "block_min": int(status.get("block_min", -1)),
+            "g_kwh": float(status.get("g_kwh", -1)),
+            "charge_kw": float(status.get("charge_kw", -1)),
+            "min_soc_frac": float(status.get("min_soc_frac", -1)),
+        }
+        if observed_config != expected_config:
+            raise SystemExit(
+                f"status configuration mismatch at {source_index}: "
+                f"{observed_config}"
+            )
         source_journal_text = status.get("columns_journal")
         if not source_journal_text:
             raise SystemExit(f"missing columns journal at {source_index}")

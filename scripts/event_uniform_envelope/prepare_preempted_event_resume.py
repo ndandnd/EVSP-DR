@@ -102,7 +102,6 @@ def main() -> int:
         if (
             audit_row.get("slurm_state") != "PREEMPTED"
             or audit_row.get("result_present") != "True"
-            or audit_row.get("configuration_match") != "True"
             or audit_row.get("stop_reason") != "running"
             or audit_row.get("result_sha256") != sha256(source_status)
         ):
@@ -120,10 +119,29 @@ def main() -> int:
         raise SystemExit(
             f"source wall time {wall_s} is not an incomplete capped run"
         )
-    if status.get("csv") != str(instance_path):
+    status_csv = required_file(Path(str(status.get("csv", ""))), "status CSV")
+    if status_csv != instance_path:
         raise SystemExit("source status instance path mismatch")
-    if status.get("time_model") != "event":
-        raise SystemExit("source status is not the event model")
+    expected_config = {
+        "time_model": "event",
+        "soc_step": float(soc_step),
+        "block_min": int(block_min),
+        "g_kwh": 240.0,
+        "charge_kw": 240.0,
+        "min_soc_frac": 0.0,
+    }
+    observed_config = {
+        "time_model": status.get("time_model"),
+        "soc_step": float(status.get("soc_step", -1)),
+        "block_min": int(status.get("block_min", -1)),
+        "g_kwh": float(status.get("g_kwh", -1)),
+        "charge_kw": float(status.get("charge_kw", -1)),
+        "min_soc_frac": float(status.get("min_soc_frac", -1)),
+    }
+    if observed_config != expected_config:
+        raise SystemExit(
+            f"source configuration mismatch: {observed_config}"
+        )
 
     source_journal_text = status.get("columns_journal")
     if not source_journal_text:
