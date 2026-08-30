@@ -1,0 +1,11 @@
+evidence_era,physics,representation,target_k,replicates_or_attempts,stage_reached,certified_count,observed_state,interpretation,source
+historical,300/300,uniform_15_10,8,3,S1,1,"One certified; two uncertified after capped runs","Proof boundary begins near k=8 in the old representation; not transferable to current physics",analysis/scale_ladder/ll_20260820c/ladder_summary.csv
+historical,300/300,uniform_15_10,13,3,S1,0,"All uncertified at roughly 6h/2000 iterations; route weights near 13","Combined-cost CG convergence/pricing was limiting",analysis/scale_ladder/ll_20260820c/ladder_summary.csv
+historical,300/300,uniform_15_10,20,3,S1,0,"All uncertified at roughly 6-8.25h; route weights near 20","Near-target incumbents did not constitute proof",analysis/scale_ladder/ll_20260820c/ladder_summary.csv
+historical,300/300,uniform_15_10,30,3,S1,0,"Mid-flight/uncertified after roughly 8.25h with very negative reduced cost","Still far from LP certification",analysis/scale_ladder/ll_20260820c/ladder_summary.csv
+historical,300/300,uniform_15_10,40,2,S1,0,"Two k40_s2 attempts mid-flight/uncertified after roughly 8.2h","Full-size result is a computational boundary observation only",analysis/scale_ladder/ll_20260820c/ladder_summary.csv
+current,240/240,event_2p5_event5,8,6,S1,,"Launched; two active and four absent/unaudited","Current-model evidence pending audit",job 922550 snapshot
+current,240/240,event_2p5_event5,13,6,S1,,"All six active","Current-model evidence pending audit",job 922551 snapshot
+current,240/240,event_2p5_event5,20,6,S1,,"Five active and one absent/unaudited","Current-model evidence pending audit",job 922553 snapshot
+current,240/240,event_2p5_event5,30,3,S1,,"All three active","Current-model boundary evidence pending audit",job 922875 snapshot
+current,240/240,event_2p5_event5,40,1,S1,,"k40_s2 with 947 trips absent from queue and unaudited","Inspect accounting and artifact before interpreting",job 922876 snapshot

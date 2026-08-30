@@ -1,0 +1,10 @@
+campaign,job_id,stage,partition,total_tasks,active_tasks,not_in_queue_unaudited,snapshot_date,interpretation
+Medium event k8,922550,S1,default_partition,6,2,4,2026-08-30,"Two tasks visible; four require sacct and artifact audit"
+Medium event k13,922551,S1,default_partition,6,6,0,2026-08-30,All six tasks visible as running
+Medium event k20,922553,S1,default_partition,6,5,1,2026-08-30,"Five tasks visible; one requires sacct and artifact audit"
+Event extension small,922874,S1,default_partition,9,2,7,2026-08-30,"Two tasks visible; seven require sacct and artifact audit"
+Event extension k30,922875,S1,default_partition,3,3,0,2026-08-30,All three tasks visible as running
+Event extension k40,922876,S1,default_partition,1,0,1,2026-08-30,Task absent from queue and unaudited
+Panel A HiGHS 48h tail,922864,S5,scaglione,5,5,0,2026-08-30,Five unresolved finite-pool MIPs visible as running
+Panel B HiGHS 48h tail,922865,S5,scaglione,3,3,0,2026-08-30,Three unresolved finite-pool MIPs visible as running
+TOTAL,grouped_snapshot,mixed,mixed,39,26,13,2026-08-30,"Queue state is not an outcome; audit all 13 absent tasks"

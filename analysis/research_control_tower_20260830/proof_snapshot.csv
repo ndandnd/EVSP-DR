@@ -1,0 +1,9 @@
+evidence_class,model_scope,physics,representation,cells,l_model_proved,i_model_proved,i_pool_proved,status,open_cells_or_caveat,source
+committed,current_core,240/240,event_2p5_event5,9,9,9,7,integer_model_core_proved,"I_pool open at k05_s2 and k05_s3 in committed evidence; later retries remain provisional",records branch and committed campaign artifacts
+committed,current_panel_a_all_representations,240/240,"event plus five uniform representations",54,54,39,42,mixed_proof_state,"15 I_model and 12 I_pool cells are not proved; denominators cover different representations",Panel A committed audit
+committed,historical_primary,300/300,uniform_15_10,9,,7,,historical_not_current,"I_model open at k05_s1 and k05_s3; do not combine with 240/240 counts",historical decision records
+provisional,current_pool_retry_A,240/240,Panel A frozen pools,7,,,2,retry_results_not_committed,"After 8h one additional A cell became proved; 48h jobs currently target five A cells",8h audit plus live queue snapshot
+provisional,current_pool_retry_B,240/240,Panel B frozen pools,5,,,1,retry_results_not_committed,"After 8h one additional B cell became proved; 48h jobs currently target three B cells",8h audit plus live queue snapshot
+live,new_small_extension,240/240,event_2p5_event5,9,,,,stage1_only,"r4-r6 at k=2/3/5 launched; absent tasks must be audited; no S2-S4 claims yet",Slurm snapshot 2026-08-30
+live,new_medium_legacy_matched,240/240,event_2p5_event5,18,,,,stage1_only,"k=8/13/20 x6 launched; no k=10; absent tasks must be audited",Slurm snapshot 2026-08-30
+live,new_large_boundary,240/240,event_2p5_event5,4,,,,stage1_only,"k=30 x3 and k=40 x1 launched; outputs unaudited",Slurm snapshot 2026-08-30
