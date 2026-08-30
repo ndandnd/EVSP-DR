@@ -189,3 +189,13 @@ After both recovery jobs leave the queue,
 `audit_preempted_event_recovery.sh` writes a row-level `resume_summary.csv`
 and Slurm accounting under each recovery root, including cumulative and added
 wall time, iterations, columns, peak RSS, node, stop reason, and outcome.
+
+After the original medium and extension audits qualify their 12-hour
+wall-limited cells, `submit_wall_capped_event_resume24h.sh` stages immutable
+continuations and submits them by target scale with the established memory
+policy.  The scientific cap is cumulative 86,400 seconds: these are 12h-to-24h
+continuations, not fresh 24-hour repetitions.  The launcher requires the
+committed solver identity, matching instance hashes, a completed Slurm state,
+a validated configuration, and a source checkpoint at the parent wall cap.
+`audit_wall_capped_event_resume24h.sh` writes the corresponding row-level CSVs
+and Slurm accounting after all continuation jobs leave the queue.

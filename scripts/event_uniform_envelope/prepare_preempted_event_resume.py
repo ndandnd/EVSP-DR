@@ -83,10 +83,37 @@ def main() -> int:
     status = json.loads(source_status.read_text())
     if status.get("certified_rc_optimal") is True:
         raise SystemExit("source cell is already certified")
-    if status.get("stop_reason") != "external_signal":
+    stop_reason = status.get("stop_reason")
+    if stop_reason == "external_signal":
+        checkpoint_class = "clean_signal_checkpoint"
+    elif stop_reason == "running":
+        audit_path = required_file(
+            source_root / "medium_event_summary.csv",
+            "completed source audit for abrupt preemption",
+        )
+        with audit_path.open(newline="") as handle:
+            audited = [
+                row for row in csv.DictReader(handle)
+                if int(row["index"]) == args.source_index
+            ]
+        if len(audited) != 1:
+            raise SystemExit("source audit does not identify exactly one row")
+        audit_row = audited[0]
+        if (
+            audit_row.get("slurm_state") != "PREEMPTED"
+            or audit_row.get("result_present") != "True"
+            or audit_row.get("configuration_match") != "True"
+            or audit_row.get("stop_reason") != "running"
+            or audit_row.get("result_sha256") != sha256(source_status)
+        ):
+            raise SystemExit(
+                "running checkpoint is not bound to an audited PREEMPTED task"
+            )
+        checkpoint_class = "audited_abrupt_preemption_checkpoint"
+    else:
         raise SystemExit(
-            "source cell is not a clean signal checkpoint: "
-            f"{status.get('stop_reason')!r}"
+            "source cell is not a resumable preemption checkpoint: "
+            f"{stop_reason!r}"
         )
     wall_s = float(status.get("wall_s", 0.0))
     if not (0.0 < wall_s < args.wall_limit_s - 120.0):
@@ -164,7 +191,8 @@ def main() -> int:
             "source_execution_plan_sha256": sha256(source_plan_path),
             "source_matrix_sha256": sha256(matrix_path),
             "source_index": args.source_index,
-            "source_stop_reason": "external_signal",
+            "source_stop_reason": stop_reason,
+            "source_checkpoint_class": checkpoint_class,
             "source_wall_s": wall_s,
             "solver_commit": args.solver_commit,
             "cells": 1,
