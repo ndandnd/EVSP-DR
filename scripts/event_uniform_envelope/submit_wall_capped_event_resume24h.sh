@@ -3,16 +3,30 @@ set -euo pipefail
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 source "$SCRIPT_DIR/common.sh"
-evsp_require_unicorn
+if [[ "${EVSP_DEFERRED_CONTROLLER:-0}" == "1" ]]; then
+  [[ "$(id -un)" == "nc437" ]] || evsp_die "expected user nc437"
+  [[ -n "${SLURM_JOB_ID:-}" ]] || evsp_die "controller mode requires Slurm"
+else
+  evsp_require_unicorn
+fi
 [[ $# -le 2 ]] || evsp_die "usage: $0 [MEDIUM_ROOT] [EXTENSION_ROOT]"
 
-MEDIUM_ROOT="${1:-$HOME/ladder-lite/medium_event_legacy_20260830_44b6d5}"
-EXTENSION_ROOT="${2:-$HOME/ladder-lite/event_extension_20260830_44b6d5}"
+MEDIUM_ROOT="${1:-$HOME/ladder-lite/medium_event_corrected_20260831_44b6d5}"
+EXTENSION_ROOT="${2:-$HOME/ladder-lite/event_extension_corrected_20260831_44b6d5}"
 MEDIUM_ROOT=$(cd "$MEDIUM_ROOT" && pwd)
 EXTENSION_ROOT=$(cd "$EXTENSION_ROOT" && pwd)
-REPO=$(evsp_repo_root)
-BRANCH=$(git -C "$REPO" branch --show-current)
-WRAPPER_COMMIT=$(evsp_verify_remote_head "$REPO" "$BRANCH" | tail -1)
+if [[ "${EVSP_DEFERRED_CONTROLLER:-0}" == "1" ]]; then
+  REPO="${EVSP_WRAPPER_REPO:?}"
+  WRAPPER_COMMIT="${EVSP_WRAPPER_COMMIT:?}"
+  [[ "$(git -C "$REPO" rev-parse HEAD)" == "$WRAPPER_COMMIT" ]] \
+    || evsp_die "controller wrapper commit mismatch"
+  [[ -z "$(git -C "$REPO" status --porcelain)" ]] \
+    || evsp_die "controller wrapper checkout is dirty"
+else
+  REPO=$(evsp_repo_root)
+  BRANCH=$(git -C "$REPO" branch --show-current)
+  WRAPPER_COMMIT=$(evsp_verify_remote_head "$REPO" "$BRANCH" | tail -1)
+fi
 SOLVER_COMMIT="44b6d5030a78ddca9c74f582d70ad87572e61794"
 EXECUTION_REPO=$(evsp_execution_checkout "$REPO" "$SOLVER_COMMIT")
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
@@ -23,20 +37,23 @@ MEDIUM_RESUME="$MEDIUM_ROOT/cg_resume24h_20260831"
 EXTENSION_RESUME="$EXTENSION_ROOT/cg_resume24h_20260831"
 
 prepare_root() {
-  local source_root="$1" resume_root="$2" expected="$3"
+  local source_root="$1" resume_root="$2"
   if [[ ! -e "$resume_root" ]]; then
     "$PYTHON_BIN" "$SCRIPT_DIR/prepare_wall_capped_event_resume.py" \
       --source-root "$source_root" --out-root "$resume_root" \
       --solver-commit "$SOLVER_COMMIT" \
-      --parent-wall-limit-s "$PARENT_CAP" --wall-limit-s "$CHILD_CAP" \
-      --expected-cells "$expected"
+      --parent-wall-limit-s "$PARENT_CAP" --wall-limit-s "$CHILD_CAP"
   fi
-  "$PYTHON_BIN" "$SCRIPT_DIR/repair_cg_resume_telemetry.py" \
-    --resume-root "$resume_root"
+  if [[ "$(awk 'END {print NR-1}' "$resume_root/matrix.tsv")" -gt 0 ]]; then
+    "$PYTHON_BIN" "$SCRIPT_DIR/repair_cg_resume_telemetry.py" \
+      --resume-root "$resume_root"
+  else
+    echo "No qualified wall-capped cells under $source_root"
+  fi
 }
 
-prepare_root "$MEDIUM_ROOT" "$MEDIUM_RESUME" 13
-prepare_root "$EXTENSION_ROOT" "$EXTENSION_RESUME" 4
+prepare_root "$MEDIUM_ROOT" "$MEDIUM_RESUME"
+prepare_root "$EXTENSION_ROOT" "$EXTENSION_RESUME"
 
 memory_for_scale() {
   case "$1" in
@@ -81,7 +98,7 @@ submit_root() {
     fi
     array=$(IFS=,; echo "${indices[*]}")
     count=${#indices[@]}
-    exports="ALL,EVSP_EXECUTION_REPO=$EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$root,EVSP_EXPECTED_COMMIT=$SOLVER_COMMIT,EVSP_CUMULATIVE_WALL_LIMIT_S=$CHILD_CAP,EVSP_MAX_ITERS=20000,EVSP_PYTHON=$PYTHON_BIN"
+    exports="ALL,EVSP_EXECUTION_REPO=$EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$root,EVSP_EXPECTED_COMMIT=$SOLVER_COMMIT,EVSP_CUMULATIVE_WALL_LIMIT_S=$CHILD_CAP,EVSP_MAX_ITERS=20000,EVSP_TIME_MODEL=event,EVSP_EVENT_ARC_MODE=lazy,EVSP_PYTHON=$PYTHON_BIN"
     job=$(evsp_submit_and_resolve "$name" \
       --array="$array%$count" -p default_partition -c 1 --mem="$memory" \
       -t 12:30:00 --no-requeue --signal=B:TERM@180 \

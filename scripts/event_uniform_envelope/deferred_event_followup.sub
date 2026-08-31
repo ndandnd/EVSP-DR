@@ -1,0 +1,50 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+: "${EVSP_WRAPPER_REPO:?}"
+: "${EVSP_WRAPPER_COMMIT:?}"
+: "${EVSP_MEDIUM_ROOT:?}"
+: "${EVSP_EXTENSION_ROOT:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+SCRIPT_DIR="$EVSP_WRAPPER_REPO/scripts/event_uniform_envelope"
+
+[[ "$(id -un)" == "nc437" ]]
+[[ "$(git -C "$EVSP_WRAPPER_REPO" rev-parse HEAD)" == "$EVSP_WRAPPER_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_WRAPPER_REPO" status --porcelain)" ]]
+
+audit_root() {
+  local root="$1" job_list sacct_file
+  local -a ids
+  mapfile -t ids < <(
+    awk -F'\t' 'FNR > 1 {print $2}' "$root/jobs.tsv" | sort -u
+  )
+  [[ ${#ids[@]} -ge 1 ]]
+  job_list=$(IFS=,; echo "${ids[*]}")
+  if squeue --me -h -j "$job_list" | grep -q .; then
+    echo "source arrays are unexpectedly still active: $job_list" >&2
+    return 2
+  fi
+  sacct_file="$root/slurm_accounting.psv"
+  sacct -j "$job_list" -n -P \
+    -o JobID%48,JobIDRaw,JobName%40,State,ExitCode,Elapsed,Timelimit,TotalCPU,AllocCPUS,MaxRSS,MaxVMSize,ReqMem,NodeList \
+    > "$sacct_file"
+  "$PYTHON_BIN" "$SCRIPT_DIR/audit_medium_event_legacy.py" \
+    --root "$root" --sacct "$sacct_file"
+  sha256sum "$root/matrix.tsv" "$root/execution_plan.json" \
+    "$root/jobs.tsv" "$sacct_file" "$root/medium_event_summary.csv" \
+    > "$root/AUDIT_SHA256SUMS"
+}
+
+audit_root "$EVSP_MEDIUM_ROOT"
+audit_root "$EVSP_EXTENSION_ROOT"
+
+EVSP_DEFERRED_CONTROLLER=1 \
+EVSP_WRAPPER_REPO="$EVSP_WRAPPER_REPO" \
+EVSP_WRAPPER_COMMIT="$EVSP_WRAPPER_COMMIT" \
+EVSP_PYTHON="$PYTHON_BIN" \
+bash "$SCRIPT_DIR/submit_wall_capped_event_resume24h.sh" \
+  "$EVSP_MEDIUM_ROOT" "$EVSP_EXTENSION_ROOT"

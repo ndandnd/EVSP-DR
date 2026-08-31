@@ -11,6 +11,17 @@ export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_TH
 : "${EVSP_CUMULATIVE_WALL_LIMIT_S:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 MAX_ITERS="${EVSP_MAX_ITERS:-10000}"
+TIME_MODEL="${EVSP_TIME_MODEL:-uniform}"
+EVENT_ARC_MODE="${EVSP_EVENT_ARC_MODE:-}"
+[[ "$TIME_MODEL" == "uniform" || "$TIME_MODEL" == "event" ]]
+MODEL_ARGS=(--time-model "$TIME_MODEL")
+if [[ "$TIME_MODEL" == "event" ]]; then
+  EVENT_ARC_MODE="${EVENT_ARC_MODE:-lazy}"
+  [[ "$EVENT_ARC_MODE" == "lazy" || "$EVENT_ARC_MODE" == "explicit" ]]
+  MODEL_ARGS+=(--event-arc-mode "$EVENT_ARC_MODE")
+else
+  [[ -z "$EVENT_ARC_MODE" ]]
+fi
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
 [[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
 
@@ -24,6 +35,7 @@ TELEMETRY="$OUT.phase-telemetry.jsonl"
 cd "$EVSP_EXECUTION_REPO"
 exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
   --csv "$CSV_PATH" --prices_csv hourly_prices_flat.csv \
+  "${MODEL_ARGS[@]}" \
   --soc-step "$SOC" --block-min "$BLOCK" --max-iters "$MAX_ITERS" \
   --columns_per_iter 30 --rc-eps 0.0001 --master-sense partition \
   --initial-pool singletons --wall-limit-s "$EVSP_CUMULATIVE_WALL_LIMIT_S" \

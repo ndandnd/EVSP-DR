@@ -28,7 +28,7 @@ def main() -> int:
     parser.add_argument("--solver-commit", required=True)
     parser.add_argument("--parent-wall-limit-s", type=float, required=True)
     parser.add_argument("--wall-limit-s", type=float, required=True)
-    parser.add_argument("--expected-cells", type=int, required=True)
+    parser.add_argument("--expected-cells", type=int)
     args = parser.parse_args()
 
     source_root = args.source_root.resolve()
@@ -111,6 +111,7 @@ def main() -> int:
             raise SystemExit(f"status instance mismatch at {source_index}")
         expected_config = {
             "time_model": "event",
+            "event_arc_mode": "lazy",
             "soc_step": float(soc_step),
             "block_min": int(block_min),
             "g_kwh": 240.0,
@@ -119,6 +120,9 @@ def main() -> int:
         }
         observed_config = {
             "time_model": status.get("time_model"),
+            "event_arc_mode": (status.get("network_metrics") or {}).get(
+                "arc_mode"
+            ),
             "soc_step": float(status.get("soc_step", -1)),
             "block_min": int(status.get("block_min", -1)),
             "g_kwh": float(status.get("g_kwh", -1)),
@@ -158,7 +162,7 @@ def main() -> int:
             "source_wall_s": wall_s,
         })
 
-    if len(selected) != args.expected_cells:
+    if args.expected_cells is not None and len(selected) != args.expected_cells:
         raise SystemExit(
             f"expected {args.expected_cells} wall-capped cells, "
             f"found {len(selected)}"
@@ -166,6 +170,13 @@ def main() -> int:
     (out_root / "cg").mkdir(parents=True)
     (out_root / "logs").mkdir()
     manifest_rows = []
+    fieldnames = [
+        "local_index", "source_panel_index", "cell", "target_fleet",
+        "instance_csv", "representation_id", "soc_step", "block_min",
+        "source_status", "source_status_sha256", "source_journal",
+        "source_journal_sha256", "resume_status", "resume_journal",
+        "staged_status_sha256", "staged_journal_sha256",
+    ]
     for local_index, item in enumerate(selected):
         source_status = item["source_status"]
         source_journal = item["source_journal"]
@@ -202,7 +213,7 @@ def main() -> int:
     with (out_root / "matrix.tsv").open("w", newline="") as handle:
         writer = csv.DictWriter(
             handle,
-            fieldnames=list(manifest_rows[0]),
+            fieldnames=fieldnames,
             delimiter="\t",
             lineterminator="\n",
         )

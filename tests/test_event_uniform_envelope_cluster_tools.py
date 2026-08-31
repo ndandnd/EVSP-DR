@@ -508,6 +508,98 @@ def test_prepare_and_select_extended_cg_resume_preserves_sources(tmp_path):
     assert child_repair["action"] == "already_archived"
 
 
+def test_event_audit_and_dynamic_wall_resume_require_lazy_identity(tmp_path):
+    root = tmp_path / "medium_event"
+    (root / "cg").mkdir(parents=True)
+    instance = root / "instance.csv"
+    instance.write_text("trip_id\n1\n")
+    instance_sha = hashlib.sha256(instance.read_bytes()).hexdigest()
+    representation = "event_2p5_event5"
+    cell = "k08_s1"
+    status = root / "cg" / f"M__{cell}__{representation}.json"
+    journal = Path(str(status) + ".columns.jsonl")
+    journal.write_text('{"trips":[1],"cost":1}\n')
+    Path(str(status) + ".iters.csv").write_text(
+        "elapsed_s,iteration\n43200,1\n"
+    )
+    Path(str(status) + ".phase-telemetry.jsonl").write_text(
+        '{"record_type":"phase","phase":"network_build",'
+        '"duration_s":1}\n'
+    )
+    status.write_text(json.dumps({
+        "csv": str(instance.resolve()),
+        "soc_step": 2.5,
+        "block_min": 5,
+        "g_kwh": 240.0,
+        "charge_kw": 240.0,
+        "min_soc_frac": 0.0,
+        "time_model": "event",
+        "network_metrics": {"arc_mode": "lazy", "dag_nodes": 10,
+                            "dag_arcs": 20},
+        "stop_reason": "wall_limit",
+        "certified_rc_optimal": False,
+        "wall_s": 43200,
+        "iterations": 1,
+        "columns": 5,
+        "columns_journal": str(journal),
+        "final": {"route_weight": 8.0},
+    }))
+    (root / "matrix.tsv").write_text(
+        f"0\t{cell}\t8\t1\t1\t{instance.resolve()}\t{instance_sha}\t"
+        f"{representation}\t2.5\t5\t43200\n"
+    )
+    (root / "jobs.tsv").write_text(
+        "scale\tarray_job_id\tindices\n8\t700\t0\n"
+    )
+    solver_commit = "44b6d5030a78ddca9c74f582d70ad87572e61794"
+    (root / "execution_plan.json").write_text(json.dumps({
+        "solver_commit": solver_commit,
+        "time_model": "event",
+        "event_arc_mode": "lazy",
+        "wall_limit_s": 43200,
+    }))
+    sacct = root / "slurm.psv"
+    sacct.write_text(
+        "700_0|700|me31_k8|COMPLETED|0:0|12:00:00|12:15:00|"
+        "12:00:00|1|1G|2G|32G|node\n"
+    )
+
+    run_tool("audit_medium_event_legacy.py", "--root", root,
+             "--sacct", sacct)
+    audit = next(csv.DictReader(
+        (root / "medium_event_summary.csv").open()
+    ))
+    assert audit["configuration_match"] == "True"
+
+    resume = root / "cg_resume24h_20260831"
+    run_tool(
+        "prepare_wall_capped_event_resume.py",
+        "--source-root", root,
+        "--out-root", resume,
+        "--solver-commit", solver_commit,
+        "--parent-wall-limit-s", "43200",
+        "--wall-limit-s", "86400",
+    )
+    rows = list(csv.DictReader(
+        (resume / "matrix.tsv").open(), delimiter="\t"
+    ))
+    assert len(rows) == 1
+    assert rows[0]["cell"] == cell
+    assert json.loads(
+        (resume / "execution_plan.json").read_text()
+    )["cells"] == 1
+
+    explicit = json.loads(status.read_text())
+    explicit["network_metrics"]["arc_mode"] = "explicit"
+    status.write_text(json.dumps(explicit))
+    run_tool("audit_medium_event_legacy.py", "--root", root,
+             "--sacct", sacct)
+    audit = next(csv.DictReader(
+        (root / "medium_event_summary.csv").open()
+    ))
+    assert audit["configuration_match"] == "False"
+
+
 def test_audit_backend_reproduction_compares_identical_sources(tmp_path):
     root = tmp_path / "panel_a"
     (root / "mip").mkdir(parents=True)

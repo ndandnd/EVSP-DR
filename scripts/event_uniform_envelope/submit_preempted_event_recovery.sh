@@ -62,7 +62,7 @@ submit_one() {
   fi
   array=$(paste -sd, "$index_file")
   rm -f "$index_file"
-  exports="ALL,EVSP_EXECUTION_REPO=$EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$root,EVSP_EXPECTED_COMMIT=$SOLVER_COMMIT,EVSP_CUMULATIVE_WALL_LIMIT_S=$WALL_LIMIT,EVSP_MAX_ITERS=10000,EVSP_PYTHON=$PYTHON_BIN"
+  exports="ALL,EVSP_EXECUTION_REPO=$EXECUTION_REPO,EVSP_CAMPAIGN_ROOT=$root,EVSP_EXPECTED_COMMIT=$SOLVER_COMMIT,EVSP_CUMULATIVE_WALL_LIMIT_S=$WALL_LIMIT,EVSP_MAX_ITERS=10000,EVSP_TIME_MODEL=event,EVSP_EVENT_ARC_MODE=lazy,EVSP_PYTHON=$PYTHON_BIN"
   job=$(evsp_submit_and_resolve "$name" \
     --array="$array%1" -p default_partition -c 1 --mem="$memory" \
     -t 10:00:00 --no-requeue --signal=B:TERM@180 \

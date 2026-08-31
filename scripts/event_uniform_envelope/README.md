@@ -216,3 +216,14 @@ Fresh corrected roots default to
 `event_extension_corrected_20260831_44b6d5`, with distinct `me31_*` and
 `xe31_*` job names.  Their execution plans and `jobs.tsv` files record the
 time-model and arc-mode identities explicitly.
+
+When the corrected arrays are still active but the operator will be offline,
+`queue_deferred_event_followup.sh` submits one small `afterany` controller job.
+The controller waits for all six source arrays, writes both final audits, and
+stages 12h-to-24h continuations only for rows whose immutable event/lazy status,
+Slurm completion state, wall-cap status, input hash, journal, iteration log, and
+telemetry all validate.  Certified rows and non-wall-cap failures are not
+resubmitted.  The controller and every child array use immutable detached
+checkouts and write machine-readable job records.  The generic continuation
+worker now passes the saved time-model explicitly; uniform callers retain the
+uniform default, while event callers must export the event/lazy identity.

@@ -98,6 +98,7 @@ def main() -> int:
             and float(result.get("charge_kw")) == 240.0
             and float(result.get("min_soc_frac")) == 0.0
             and result.get("time_model") == "event"
+            and metrics.get("arc_mode") == "lazy"
         )
         output_rows.append({
             "index": index,
