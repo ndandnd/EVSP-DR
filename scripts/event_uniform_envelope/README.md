@@ -234,3 +234,7 @@ Slurm outcomes to the validated 24-hour rows, writes
 `backend_retry172800.csv` plus an unresolved subset in each panel root, and
 classifies OOM or other non-completed tasks as execution errors rather than
 silently treating a missing JSON artifact as an optimization result.
+Rows that were intentionally selected for 48 hours after a missing or failed
+24-hour artifact retain the selector's validated eight-hour fallback basis;
+the output records `prior_validated_stage` so that fallback is never confused
+with a valid 24-hour optimization result.

@@ -894,18 +894,43 @@ def test_audit_48h_highs_retry_distinguishes_completed_and_oom(tmp_path):
                 "representation_id": "uniform_2_1",
                 "source_status_sha256": status_hash,
                 "source_journal_sha256": journal_hash,
-                "classification": "both_unproven",
+                "classification": (
+                    "both_unproven" if index == 1
+                    else "slurm_execution_error"
+                ),
                 "gurobi_buses": 6,
                 "gurobi_bound": 6,
                 "gurobi_fleet_proven": True,
-                "highs24_present": True,
+                "highs24_present": index == 1,
                 "highs24_buses": 7,
                 "highs24_bound": 5,
                 "highs24_fleet_proven": False,
                 "highs24_runtime_s": 86400,
-                "highs24_source_hash_match": True,
-                "highs24_physical_witness_valid": True,
-                "highs24_configuration_match": True,
+                "highs24_source_hash_match": index == 1,
+                "highs24_physical_witness_valid": index == 1,
+                "highs24_configuration_match": index == 1,
+            })
+    fields8 = [
+        "index", "classification", "highs8_present", "highs8_buses",
+        "highs8_bound", "highs8_fleet_proven", "highs8_runtime_s",
+        "highs8_source_hash_match", "highs8_physical_witness_valid",
+        "highs8_configuration_match",
+    ]
+    with (root / "backend_retry28800.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields8)
+        writer.writeheader()
+        for index in (1, 2):
+            writer.writerow({
+                "index": index,
+                "classification": "both_unproven",
+                "highs8_present": True,
+                "highs8_buses": 7,
+                "highs8_bound": 5,
+                "highs8_fleet_proven": False,
+                "highs8_runtime_s": 28800,
+                "highs8_source_hash_match": True,
+                "highs8_physical_witness_valid": True,
+                "highs8_configuration_match": True,
             })
     (root / "highs_unresolved_retry172800_jobs.tsv").write_text(
         "panel\tarray_job_id\tindices\twrapper_commit\tsolver_commit\t"
@@ -947,5 +972,7 @@ def test_audit_48h_highs_retry_distinguishes_completed_and_oom(tmp_path):
     }
     assert rows["1"]["classification"] == "proven_fleet_agreement"
     assert rows["1"]["retry_progress_from_24h"] == "became_proven"
+    assert rows["1"]["prior_validated_stage"] == "24h"
     assert rows["2"]["classification"] == "slurm_execution_error"
+    assert rows["2"]["prior_validated_stage"] == "8h_fallback"
     assert rows["2"]["highs48_slurm_state"] == "OUT_OF_MEMORY"

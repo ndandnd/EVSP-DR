@@ -68,14 +68,13 @@ def job_record(root: Path, panel: str) -> tuple[dict, list[str]]:
     return rows[0], indices
 
 
-def prior_valid(row: dict) -> bool:
-    return (
-        row.get("classification") in RETRYABLE
-        and all(yes(row, key) for key in (
-            "highs24_present",
-            "highs24_source_hash_match", "highs24_physical_witness_valid",
-            "highs24_configuration_match",
-        ))
+def valid_stage(row: dict, prefix: str) -> bool:
+    return row.get("classification") in RETRYABLE and all(
+        yes(row, f"{prefix}_{suffix}")
+        for suffix in (
+            "present", "source_hash_match", "physical_witness_valid",
+            "configuration_match",
+        )
     )
 
 
@@ -88,11 +87,36 @@ def main() -> int:
     root = args.root.resolve()
     with (root / "backend_retry86400.csv").open(newline="") as handle:
         prior = {row["index"]: row for row in csv.DictReader(handle)}
+    with (root / "backend_retry28800.csv").open(newline="") as handle:
+        prior8 = {row["index"]: row for row in csv.DictReader(handle)}
     record, indices = job_record(root, args.panel)
-    expected = [
-        index for index, row in prior.items()
-        if row.get("classification") in RETRYABLE
-    ]
+    expected = []
+    prior_basis = {}
+    for index, row in prior.items():
+        outcome = row.get("classification")
+        if outcome in RESOLVED:
+            continue
+        if outcome in RETRYABLE:
+            if not valid_stage(row, "highs24"):
+                raise SystemExit(
+                    f"unsafe Panel {args.panel} 24-hour row {index}"
+                )
+            expected.append(index)
+            prior_basis[index] = ("24h", row, "highs24")
+            continue
+        if outcome in {"missing_or_invalid_artifact", "slurm_execution_error"}:
+            fallback = prior8.get(index, {})
+            if not valid_stage(fallback, "highs8"):
+                raise SystemExit(
+                    f"unsafe Panel {args.panel} eight-hour fallback row "
+                    f"{index}"
+                )
+            expected.append(index)
+            prior_basis[index] = ("8h_fallback", fallback, "highs8")
+            continue
+        raise SystemExit(
+            f"unsafe Panel {args.panel} 24-hour row {index}: {outcome}"
+        )
     if indices != expected:
         raise SystemExit(
             f"Panel {args.panel} 48-hour indices differ from the 24-hour audit: "
@@ -102,6 +126,7 @@ def main() -> int:
     rows = []
     for index in indices:
         old = prior[index]
+        basis_label, baseline, baseline_prefix = prior_basis[index]
         stem = f"{args.panel}__{old['cell']}__{old['representation_id']}.json"
         path = root / "mip_highs_native_retry172800" / stem
         retry, error = load(path)
@@ -120,9 +145,7 @@ def main() -> int:
             == old["source_journal_sha256"]
         )
         slurm = slurm_task(accounting, record["array_job_id"], index)
-        if not prior_valid(old):
-            outcome = "prior_audit_error"
-        elif slurm.get("state") != "COMPLETED" or slurm.get("exit") != "0:0":
+        if slurm.get("state") != "COMPLETED" or slurm.get("exit") != "0:0":
             outcome = "slurm_execution_error"
         else:
             outcome = classification(
@@ -138,10 +161,15 @@ def main() -> int:
                 retry_configuration_match=configuration_match,
             )
         change = progress({
-            "buses": integer(old.get("highs24_buses")),
-            "fleet_bound": as_float(old.get("highs24_bound")),
-            "fleet_proven": yes(old, "highs24_fleet_proven"),
+            "buses": integer(baseline.get(f"{baseline_prefix}_buses")),
+            "fleet_bound": as_float(
+                baseline.get(f"{baseline_prefix}_bound")
+            ),
+            "fleet_proven": yes(
+                baseline, f"{baseline_prefix}_fleet_proven"
+            ),
         }, retry)
+        old8 = prior8.get(index, {})
         rows.append({
             "panel": args.panel,
             "index": index,
@@ -151,6 +179,16 @@ def main() -> int:
             "source_status_sha256": old["source_status_sha256"],
             "source_journal_sha256": old["source_journal_sha256"],
             "prior_24h_classification": old["classification"],
+            "prior_validated_stage": basis_label,
+            "prior_baseline_buses": baseline.get(
+                f"{baseline_prefix}_buses"
+            ),
+            "prior_baseline_bound": baseline.get(
+                f"{baseline_prefix}_bound"
+            ),
+            "prior_baseline_fleet_proven": baseline.get(
+                f"{baseline_prefix}_fleet_proven"
+            ),
             "classification": outcome,
             "retry_progress_from_24h": change,
             "gurobi_buses": old["gurobi_buses"],
@@ -160,6 +198,10 @@ def main() -> int:
             "highs24_bound": old["highs24_bound"],
             "highs24_fleet_proven": old["highs24_fleet_proven"],
             "highs24_runtime_s": old["highs24_runtime_s"],
+            "highs8_buses": old8.get("highs8_buses"),
+            "highs8_bound": old8.get("highs8_bound"),
+            "highs8_fleet_proven": old8.get("highs8_fleet_proven"),
+            "highs8_runtime_s": old8.get("highs8_runtime_s"),
             "highs48_present": not bool(error),
             "highs48_error": error,
             "highs48_status": retry.get("status_name"),
@@ -204,8 +246,10 @@ def main() -> int:
             f"{row['retry_progress_from_24h']} | "
             f"G={row['gurobi_buses']}/{row['gurobi_bound']} "
             f"proven={row['gurobi_fleet_proven']} | "
-            f"H24={row['highs24_buses']}/{row['highs24_bound']} "
-            f"proven={row['highs24_fleet_proven']} | "
+            f"BASE[{row['prior_validated_stage']}]="
+            f"{row['prior_baseline_buses']}/"
+            f"{row['prior_baseline_bound']} "
+            f"proven={row['prior_baseline_fleet_proven']} | "
             f"H48={row['highs48_buses']}/{row['highs48_bound']} "
             f"proven={row['highs48_fleet_proven']}"
         )
