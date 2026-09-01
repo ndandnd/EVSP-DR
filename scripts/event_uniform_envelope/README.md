@@ -238,3 +238,10 @@ Rows that were intentionally selected for 48 hours after a missing or failed
 24-hour artifact retain the selector's validated eight-hour fallback basis;
 the output records `prior_validated_stage` so that fallback is never confused
 with a valid 24-hour optimization result.
+
+`submit_highs_oom_retry172800_mem48.sh` selects only normalized 48-hour rows
+whose Slurm state is `OUT_OF_MEMORY`, whose exit is `0:125`, whose output
+artifact is absent, and whose prior 24-hour or explicit eight-hour fallback
+evidence remains validated.  It repeats the same 172800-second, eight-thread
+native-HiGHS solve with 48 GiB on Scaglione and writes a separate output
+directory and job record; completed or merely unproven rows are not rerun.

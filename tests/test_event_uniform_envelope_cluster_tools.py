@@ -976,3 +976,13 @@ def test_audit_48h_highs_retry_distinguishes_completed_and_oom(tmp_path):
     assert rows["2"]["classification"] == "slurm_execution_error"
     assert rows["2"]["prior_validated_stage"] == "8h_fallback"
     assert rows["2"]["highs48_slurm_state"] == "OUT_OF_MEMORY"
+    selection = subprocess.run(
+        [
+            sys.executable,
+            str(TOOLS / "select_highs_oom_retry172800_indices.py"),
+            "--root", str(root), "--panel", "A",
+        ],
+        check=True, text=True, capture_output=True,
+    )
+    assert selection.stdout == "2\n"
+    assert "OOM selection: 1" in selection.stderr
