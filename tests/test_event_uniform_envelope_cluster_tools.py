@@ -865,3 +865,87 @@ def test_select_24h_highs_retry_uses_only_safe_unresolved_rows(tmp_path):
     )
     assert completed.stdout == "1\n"
     assert "retry=1 resolved=1" in completed.stderr
+
+
+def test_audit_48h_highs_retry_distinguishes_completed_and_oom(tmp_path):
+    root = tmp_path / "panel_a"
+    output = root / "mip_highs_native_retry172800"
+    output.mkdir(parents=True)
+    solver_commit = "44b6d5030a78ddca9c74f582d70ad87572e61794"
+    status_hash = "a" * 64
+    journal_hash = "b" * 64
+    fields = [
+        "index", "cell", "target_fleet", "representation_id",
+        "source_status_sha256", "source_journal_sha256", "classification",
+        "gurobi_buses", "gurobi_bound", "gurobi_fleet_proven",
+        "highs24_present", "highs24_buses", "highs24_bound",
+        "highs24_fleet_proven", "highs24_runtime_s",
+        "highs24_source_hash_match", "highs24_physical_witness_valid",
+        "highs24_configuration_match",
+    ]
+    with (root / "backend_retry86400.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fields)
+        writer.writeheader()
+        for index in (1, 2):
+            writer.writerow({
+                "index": index,
+                "cell": f"k05_s{index}",
+                "target_fleet": 5,
+                "representation_id": "uniform_2_1",
+                "source_status_sha256": status_hash,
+                "source_journal_sha256": journal_hash,
+                "classification": "both_unproven",
+                "gurobi_buses": 6,
+                "gurobi_bound": 6,
+                "gurobi_fleet_proven": True,
+                "highs24_present": True,
+                "highs24_buses": 7,
+                "highs24_bound": 5,
+                "highs24_fleet_proven": False,
+                "highs24_runtime_s": 86400,
+                "highs24_source_hash_match": True,
+                "highs24_physical_witness_valid": True,
+                "highs24_configuration_match": True,
+            })
+    (root / "highs_unresolved_retry172800_jobs.tsv").write_text(
+        "panel\tarray_job_id\tindices\twrapper_commit\tsolver_commit\t"
+        "agent_tip_observed\tbackend\ttimelimit_s\tthreads\tpartition\n"
+        f"A\t700\t1,2\t{'c' * 40}\t{solver_commit}\t{'d' * 40}\t"
+        "highspy_native\t172800\t8\tscaglione\n"
+    )
+    (output / "A__k05_s1__uniform_2_1.json").write_text(json.dumps({
+        "backend": "highspy_native",
+        "requested_timelimit_s": 172800,
+        "threads_requested": 8,
+        "code_identity": {
+            "expected_commit": solver_commit,
+            "observed_commit": solver_commit,
+        },
+        "source_result_sha256": status_hash,
+        "source_journal_sha256": journal_hash,
+        "status_name": "OPTIMAL",
+        "buses": 6,
+        "fleet_bound": 6,
+        "fleet_proven": True,
+        "physical_witness_valid": True,
+        "runtime_s": 100000,
+    }))
+    sacct = root / "slurm.psv"
+    sacct.write_text(
+        "700_1|701|eua30_h48|COMPLETED|0:0|1-04:00:00|2-00:30:00|"
+        "8-00:00:00|8||||scaglione-cpu-01\n"
+        "700_2|702|eua30_h48|OUT_OF_MEMORY|0:125|1-04:00:00|"
+        "2-00:30:00|8-00:00:00|8||||scaglione-cpu-01\n"
+    )
+    run_tool(
+        "audit_highs_unresolved_retry172800.py",
+        "--root", root, "--panel", "A", "--sacct", sacct,
+    )
+    rows = {
+        row["index"]: row
+        for row in csv.DictReader((root / "backend_retry172800.csv").open())
+    }
+    assert rows["1"]["classification"] == "proven_fleet_agreement"
+    assert rows["1"]["retry_progress_from_24h"] == "became_proven"
+    assert rows["2"]["classification"] == "slurm_execution_error"
+    assert rows["2"]["highs48_slurm_state"] == "OUT_OF_MEMORY"

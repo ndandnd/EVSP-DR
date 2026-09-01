@@ -227,3 +227,10 @@ resubmitted.  The controller and every child array use immutable detached
 checkouts and write machine-readable job records.  The generic continuation
 worker now passes the saved time-model explicitly; uniform callers retain the
 uniform default, while event callers must export the event/lazy identity.
+
+`audit_highs_unresolved_retry172800.sh PANEL_A_ROOT PANEL_B_ROOT` is the
+normalized 48-hour native-HiGHS auditor.  It joins the 48-hour artifacts and
+Slurm outcomes to the validated 24-hour rows, writes
+`backend_retry172800.csv` plus an unresolved subset in each panel root, and
+classifies OOM or other non-completed tasks as execution errors rather than
+silently treating a missing JSON artifact as an optimization result.

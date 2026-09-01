@@ -20,7 +20,7 @@ audit_one() {
   )
   [[ ${#job_ids[@]} -ge 1 ]] || evsp_die "no 24h resume jobs for $label"
   job_list=$(IFS=,; echo "${job_ids[*]}")
-  if squeue --me -h -j "$job_list" | grep -q .; then
+  if squeue --me -h -j "$job_list" 2>/dev/null | grep -q .; then
     evsp_die "$label 24h resume is still active"
   fi
   sacct_file="$root/slurm_accounting.psv"
