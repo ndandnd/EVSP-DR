@@ -283,3 +283,34 @@ bash scripts/event_uniform_envelope/audit_medium_event_legacy.sh \
 No downstream fleet-only or integer stage is launched automatically.  The
 Stage-1 audit is reviewed first; certified k3/k4 cells are then candidates for
 the full L_model/I_model proof pipeline, while capped rows remain censored.
+
+## 2026-09-03 small exact-recovery threshold fill
+
+`data/scale_ladder/instances/small_threshold_20260903` adds 50 inputs at
+targets 2, 5, 8, 9, and 10.  Each target has six fixed-seed probability rows
+and four pre-outcome structural rows: trip-light, trip-heavy,
+service-energy-heavy, and tight-gap.  This fills the missing threshold scales
+without selecting “easy” cases after seeing solver outcomes.  Existing
+scale-ladder duty sets are excluded, and the same independently certified
+240/240 continuous-duty upper-bound contract used for the transition campaign
+is preserved.  The known routes are not injected into raw CG.
+
+Launch the 50-cell event/lazy campaign on Unicorn with:
+
+```bash
+bash scripts/event_uniform_envelope/submit_small_threshold_event.sh
+```
+
+It submits five ten-task arrays on `default_partition`, with 16, 24, 40, 48,
+and 56 GiB at k2, k5, k8, k9, and k10 respectively.  Every task uses one CPU,
+a 43,200-second scientific cap, a 12:15 Slurm limit, immutable inputs, and the
+reviewed solver commit `44b6d503...`.  Audit after all arrays finish with:
+
+```bash
+bash scripts/event_uniform_envelope/audit_medium_event_legacy.sh \
+  "$HOME/ladder-lite/small_threshold_event_20260903_44b6d5"
+```
+
+This is Stage 1 only.  Exact fleet recovery and finite-pool integrality are
+different claims, so target-feasibility and integer-pool stages are held until
+the Stage-1 audit identifies certified LP rows.
