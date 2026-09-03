@@ -1,0 +1,56 @@
+{
+  "candidate_universe_per_scale": 512,
+  "created_date": "2026-09-02",
+  "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+  "existing_set_exclusion_manifest": "excluded_existing_scale_ladder_manifest.csv",
+  "existing_set_exclusion_manifest_sha256": "8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3",
+  "existing_set_exclusion_source_commit": "ff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20",
+  "files": {
+    "candidate_universe.csv": "7376b8c096e60e4467c4914c68b034a57f4bd8d0b2212bdf23c6e48760c55e11",
+    "excluded_existing_scale_ladder_manifest.csv": "8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3",
+    "known_duty_continuous_240_240.csv": "9055ddab95a67ec5ffa9dffd284a4dd7f9e580096f62596e48527db9398ba46a",
+    "selection_manifest.csv": "01c8249f5e1cb8ebc5513ed4f8422c15d162e5eb6b192129069d02e1af3cf2d6"
+  },
+  "generator_script_sha256": "c50ce2e4ae685c036ce0a495f1949fa0e82040aac2014948f51e5546cd9208c7",
+  "generator_seed": 20260902,
+  "known_partition_caveat": "physical k-route upper bound only; not an event-lattice representability certificate and not injected into raw CG",
+  "known_partition_scope": "each original GIRO duty trip order has an independently optimized and replay-validated continuous schedule",
+  "physics": {
+    "battery_kwh": 240.0,
+    "charge_kw": 240.0,
+    "charge_start_cost": 5.0,
+    "reserve_kwh": 0.0,
+    "terminal_soc_policy": "free"
+  },
+  "probability_per_scale": 6,
+  "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+  "scales": [
+    3,
+    4,
+    6,
+    7
+  ],
+  "schema": "evsp-dr-transition-gap-inputs-v1",
+  "selected_rows": 36,
+  "source_master": "data/Par_VehicleDetails_Updated.csv",
+  "source_master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "stress_rules": [
+    {
+      "direction": "max",
+      "field": "trip_count",
+      "role": "trip_heavy"
+    },
+    {
+      "direction": "max",
+      "field": "service_kwh_per_duty",
+      "role": "energy_heavy"
+    },
+    {
+      "direction": "min",
+      "field": "scheduled_intertrip_gap_median_min",
+      "role": "tight_gap"
+    }
+  ],
+  "tariff": "data/tariff_response/flat_h26.csv",
+  "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3"
+}

@@ -245,3 +245,41 @@ artifact is absent, and whose prior 24-hour or explicit eight-hour fallback
 evidence remains validated.  It repeats the same 172800-second, eight-thread
 native-HiGHS solve with 48 GiB on Scaglione and writes a separate output
 directory and job record; completed or merely unproven rows are not rerun.
+
+## 2026-09-02 k3/k4/k6/k7 transition-gap campaign
+
+`data/scale_ladder/instances/transition_gap_20260902` freezes 36 new duty-union
+instances before solver outcomes are observed: six fixed-seed probability rows
+and three structural-stress rows at each of k3, k4, k6, and k7.  The stress
+rows are selected from a committed 512-candidate universe per scale using the
+pre-outcome criteria trip-heavy, service-energy-heavy, and tight scheduled
+inter-trip gaps.  Existing six-selection duty sets are excluded.
+
+Every one of the 42 source GIRO duty orders has an independently optimized and
+replay-validated continuous charging schedule under 240 kWh, 240 kW,
+zero reserve, and the flat tariff.  Each selected union therefore has a
+physical k-route upper bound.  This is deliberately **not** described as an
+event-lattice representability certificate or an optimum, and the known routes
+are not injected into the RAW column-generation runs.
+
+On Unicorn, after resolving the branch name with `git ls-remote` and pulling
+the exact remote tip, launch the 36-cell 12-hour event/lazy campaign with:
+
+```bash
+bash scripts/event_uniform_envelope/submit_transition_gap_event.sh
+```
+
+It submits four nine-task arrays on `default_partition`, using 24 GiB for k3
+and k4 and 32 GiB for k6 and k7.  The current four memory-only pool-MIP retries
+run on `scaglione` and are not duplicated or made dependencies.  After every
+transition array leaves the queue, write the row-level telemetry and Slurm CSV
+with:
+
+```bash
+bash scripts/event_uniform_envelope/audit_medium_event_legacy.sh \
+  "$HOME/ladder-lite/transition_gap_event_20260902_44b6d5"
+```
+
+No downstream fleet-only or integer stage is launched automatically.  The
+Stage-1 audit is reviewed first; certified k3/k4 cells are then candidates for
+the full L_model/I_model proof pipeline, while capped rows remain censored.
