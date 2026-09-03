@@ -1,0 +1,180 @@
+import csv
+import hashlib
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+
+REPO = Path(__file__).resolve().parents[1]
+TOOLS = REPO / "scripts" / "event_uniform_envelope"
+
+
+class CgAccelerationToolingTests(unittest.TestCase):
+    def test_prepare_freezes_six_replicates_at_k13_and_k20(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            input_repo = base / "input"
+            solver_repo = base / "solver"
+            instances = input_repo / "data" / "scale_ladder" / "instances"
+            instances.mkdir(parents=True)
+            manifest_rows = []
+            for scale in (8, 13, 20):
+                for replicate in range(1, 7):
+                    relative = f"data/scale_ladder/instances/k{scale}_{replicate}.csv"
+                    path = input_repo / relative
+                    path.write_text(f"scale,replicate\n{scale},{replicate}\n")
+                    manifest_rows.append({
+                        "scale": scale,
+                        "selection_replicate": replicate,
+                        "trip_count": scale * 10 + replicate,
+                        "relative_path": relative,
+                        "instance_file_sha256": hashlib.sha256(
+                            path.read_bytes()
+                        ).hexdigest(),
+                    })
+            manifest = instances / (
+                "scale_ladder_instance_manifest_6sel_seed20260803.csv"
+            )
+            with manifest.open("w", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle, fieldnames=list(manifest_rows[0])
+                )
+                writer.writeheader()
+                writer.writerows(manifest_rows)
+            for relative in (
+                "src/exact_pricer_expanded.py",
+                "src/event_pricer_network.py",
+                "src/exact_cg_telemetry.py",
+            ):
+                path = solver_repo / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(relative)
+            root = base / "campaign"
+            subprocess.run([
+                sys.executable,
+                str(TOOLS / "prepare_cg_acceleration.py"),
+                "--input-repo", str(input_repo),
+                "--solver-repo", str(solver_repo),
+                "--root", str(root),
+                "--input-commit", "a" * 40,
+                "--solver-commit", "b" * 40,
+                "--wrapper-commit", "c" * 40,
+            ], check=True)
+            with (root / "matrix.tsv").open() as handle:
+                rows = list(csv.reader(handle, delimiter="\t"))
+            self.assertEqual(len(rows), 12)
+            self.assertEqual({int(row[2]) for row in rows}, {13, 20})
+            plan = json.loads((root / "execution_plan.json").read_text())
+            self.assertEqual(len(plan["arms"]), 6)
+            self.assertEqual(
+                {arm["columns_per_iter"] for arm in plan["arms"]},
+                {30, 60, 120, 200},
+            )
+
+    def test_audit_writes_phase_and_slurm_statistics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "cg" / "b030_reduced").mkdir(parents=True)
+            (root / "network_cache").mkdir()
+            (root / "matrix.tsv").write_text(
+                "0\tk13_s1\t13\t1\t100\t/input.csv\tsha\t"
+                "event_2p5_event5\t2.5\t5\t43200\n"
+            )
+            (root / "execution_plan.json").write_text(json.dumps({
+                "arms": [{
+                    "arm": "b030_reduced",
+                    "columns_per_iter": 30,
+                    "selection": "reduced_cost",
+                    "diversity_weight": 0.0,
+                }]
+            }))
+            (root / "jobs.tsv").write_text(
+                "stage\tarm\tarray_job_id\n"
+                "cg\tb030_reduced\t123\n"
+            )
+            cache = root / "network_cache" / (
+                "M__k13_s1__event_2p5_event5.pkl"
+            )
+            Path(str(cache) + ".manifest.json").write_text(json.dumps({
+                "original_build_s": 60.0
+            }))
+            status = root / "cg" / "b030_reduced" / (
+                "M__k13_s1__event_2p5_event5.json"
+            )
+            status.write_text(json.dumps({
+                "certified_rc_optimal": True,
+                "stop_reason": "certified",
+                "wall_s": 120.0,
+                "iterations": 10,
+                "columns": 250,
+                "peak_rss_mb": 500,
+                "network_metrics": {"cache_hit": True, "cache_io_s": 2.0},
+                "final": {
+                    "route_weight": 13.0,
+                    "lp_obj": 1300000.0,
+                    "artificials": 0.0,
+                    "min_rc": 0.0,
+                },
+            }))
+            Path(str(status) + ".phase-telemetry.jsonl").write_text(
+                json.dumps({
+                    "record_type": "phase",
+                    "phase": "master_attempt",
+                    "duration_s": 70.0,
+                }) + "\n" + json.dumps({
+                    "record_type": "phase",
+                    "phase": "pricing_extra_columns",
+                    "duration_s": 30.0,
+                }) + "\n"
+            )
+            sacct = root / "sacct.psv"
+            sacct.write_text(
+                "123_0|123_0|ca03_30r|COMPLETED|0:0|00:02:00|"
+                "12:15:00|00:01:50|1|500M|1G|96Gn|node01\n"
+            )
+            subprocess.run([
+                sys.executable,
+                str(TOOLS / "audit_cg_acceleration.py"),
+                str(root), "--sacct", str(sacct),
+            ], check=True)
+            with (root / "cg_acceleration_rows.csv").open() as handle:
+                row = next(csv.DictReader(handle))
+            self.assertEqual(row["outcome"], "certified")
+            self.assertEqual(row["slurm_state"], "COMPLETED")
+            self.assertEqual(float(row["end_to_end_s"]), 180.0)
+            self.assertEqual(float(row["pricing_batch_s"]), 30.0)
+            self.assertEqual(float(row["master_lp_s"]), 70.0)
+
+    def test_cg_workers_are_requeue_safe_and_mips_remain_nonpreemptible(self):
+        worker = (TOOLS / "cg_acceleration.sub").read_text()
+        launcher = (TOOLS / "submit_cg_acceleration_ladder.sh").read_text()
+        medium = (TOOLS / "medium_event_cg.sub").read_text()
+        self.assertIn("--requeue", launcher)
+        self.assertIn("--open-mode=append", launcher)
+        self.assertIn("aftercorr:$CACHE_JOB", launcher)
+        self.assertIn("--resume", worker)
+        self.assertIn("SLURM_RESTART_COUNT", worker)
+        self.assertIn("--event-network-cache-mode require", worker)
+        self.assertIn("--resume", medium)
+        mip = (REPO / "src" / "submit_exact_pool_mip.sub").read_text()
+        self.assertIn("#SBATCH --partition=scaglione", mip)
+        self.assertIn("#SBATCH --no-requeue", mip)
+
+    def test_shell_scripts_parse(self):
+        for relative in (
+            "event_network_cache.sub",
+            "cg_acceleration.sub",
+            "submit_cg_acceleration_ladder.sh",
+            "audit_cg_acceleration.sh",
+            "medium_event_cg.sub",
+        ):
+            subprocess.run(
+                ["/bin/bash", "-n", str(TOOLS / relative)], check=True
+            )
+
+
+if __name__ == "__main__":
+    unittest.main()

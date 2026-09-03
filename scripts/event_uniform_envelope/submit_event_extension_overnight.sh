@@ -52,7 +52,7 @@ submit_cohort() {
   local job
   job=$(evsp_submit_and_resolve "$name" \
     --array="$indices%$concurrency" -p default_partition -c 1 --mem="$memory" \
-    -t 12:15:00 --no-requeue --signal=B:TERM@180 \
+    -t 12:15:00 --requeue --open-mode=append --signal=B:TERM@180 \
     --export="ALL,$COMMON" \
     -o "$ROOT/logs/${name}_%A_%a.out" -e "$ROOT/logs/${name}_%A_%a.err" \
     "$SCRIPT_DIR/medium_event_cg.sub")

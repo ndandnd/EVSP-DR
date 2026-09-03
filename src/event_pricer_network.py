@@ -193,6 +193,47 @@ class EventExpandedNetwork:
         self._build_nodes()
         self._build_arcs()
 
+    def __getstate__(self):
+        """Return a compact, reconstructable state for durable graph caches."""
+
+        state = dict(self.__dict__)
+        # These dictionaries are construction/runtime accelerators, not graph
+        # identity.  The window entries can dominate serialized size, and any
+        # selected action is cheaply reconstructed only for paths actually
+        # returned by pricing.
+        state["_window_cache"] = {}
+        state["_selected_action_cache"] = {}
+        if self.arc_mode == "lazy":
+            # NumPy views duplicate their backing arrays when pickled.  Persist
+            # the canonical ``array`` buffers only and rebuild zero-copy views
+            # after loading.
+            for name in (
+                "_arc_targets_np", "_arc_costs_np", "_arc_recipes_np",
+                "_node_dual_np",
+            ):
+                state.pop(name, None)
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._window_cache = {}
+        self._selected_action_cache = {}
+        if self.arc_mode == "lazy":
+            self._arc_targets_np = np.frombuffer(
+                self._arc_targets, dtype=np.uint32
+            )
+            self._arc_costs_np = np.frombuffer(
+                self._arc_costs, dtype=np.float64
+            )
+            self._arc_recipes_np = np.frombuffer(
+                self._arc_recipes, dtype=np.uint32
+            )
+            self._node_dual_np = np.full(
+                len(self.node_meta), -1, dtype=np.int32
+            )
+            for (trip, _level), node in self.trip_node.items():
+                self._node_dual_np[node] = self.trip_position[trip]
+
     def _split_arcs(self):
         self.trip_trip = {}
         self.trip_station = {}
@@ -537,9 +578,21 @@ class EventExpandedNetwork:
                 )
                 selected = self._window_cache.get(cache_key)
                 if selected is None:
-                    raise RuntimeError(
-                        f"missing event window recipe for {source}->{target}"
+                    selected = _best_charge_window(
+                        station,
+                        arrival,
+                        latest,
+                        energy,
+                        event_times=self.events,
+                        station_prices=self.prices,
+                        charge_kw=self.charge_kw,
                     )
+                    if selected is None:
+                        raise RuntimeError(
+                            "cannot reconstruct event window recipe for "
+                            f"{source}->{target}"
+                        )
+                    self._window_cache[cache_key] = selected
                 _energy_cost, charge_start, charge_end = selected
                 action = {
                     "kind": "charge", "from_trip": trip,
@@ -816,12 +869,22 @@ class EventExpandedNetwork:
     def sink_predecessor_route_batch(
         self, alpha, limit=30, *, phase_callback=None,
         objective="combined-cost", route_dual=0.0,
+        selection_mode="reduced_cost", diversity_weight=0.5,
+        candidate_multiplier=4,
     ):
         """Return the exact best route plus distinct sink-predecessor paths.
 
         This is a deterministic enrichment heuristic, not k-shortest-path
         enumeration: each sink predecessor contributes only its best prefix.
         """
+        if selection_mode not in {"reduced_cost", "complementary"}:
+            raise ValueError(
+                f"unsupported event column selection: {selection_mode}"
+            )
+        if not 0.0 <= float(diversity_weight) <= 1.0:
+            raise ValueError("diversity_weight must be between zero and one")
+        if int(candidate_multiplier) < 1:
+            raise ValueError("candidate_multiplier must be positive")
         started = time.perf_counter()
         if objective == "combined-cost" and route_dual == 0.0:
             best = self.min_reduced_cost_route(alpha)
@@ -855,8 +918,13 @@ class EventExpandedNetwork:
         ))
         routes = [best]
         seen = {frozenset(best["trips"])}
+        if selection_mode == "reduced_cost":
+            scan_limit = limit
+        else:
+            scan_limit = max(limit, int(candidate_multiplier) * limit)
+        eligible = []
         for reduced_cost, source, _action in candidates:
-            if len(routes) >= limit or reduced_cost >= -1e-9:
+            if reduced_cost >= -1e-9:
                 break
             route = self._walk(
                 parent, self.SINK, terminal_source=source
@@ -865,14 +933,84 @@ class EventExpandedNetwork:
             if key in seen:
                 continue
             seen.add(key)
-            routes.append({"rc": reduced_cost, **route})
+            eligible.append({"rc": reduced_cost, **route})
+            if (
+                selection_mode == "reduced_cost"
+                and len(routes) + len(eligible) >= limit
+            ):
+                break
+            if selection_mode == "complementary" and len(eligible) >= scan_limit:
+                break
+
+        novelty_trace = []
+        if selection_mode == "reduced_cost":
+            routes.extend(eligible[: max(0, limit - 1)])
+            selected_sets = [frozenset(routes[0]["trips"])]
+            for route in routes[1:]:
+                incidence = frozenset(route["trips"])
+                novelty_trace.append(min(
+                    1.0 - len(incidence & selected) / len(incidence | selected)
+                    for selected in selected_sets
+                ))
+                selected_sets.append(incidence)
+        else:
+            # The exact best route is never displaced.  Remaining slots trade
+            # reduced-cost quality against trip-incidence novelty.  This is a
+            # column-selection heuristic only: every retained route remains
+            # negative under the unmodified master duals, and the exact LP
+            # certificate still comes solely from ``best`` above.
+            remaining = list(eligible)
+            selected_sets = [frozenset(best["trips"])]
+            best_rc = float(best["rc"])
+            worst_rc = max(
+                [float(route["rc"]) for route in remaining] or [best_rc]
+            )
+            quality_span = max(worst_rc - best_rc, 1e-12)
+            while remaining and len(routes) < limit:
+                scored = []
+                for index, route in enumerate(remaining):
+                    incidence = frozenset(route["trips"])
+                    novelty = min(
+                        1.0 - len(incidence & selected) / len(incidence | selected)
+                        for selected in selected_sets
+                    )
+                    quality = (worst_rc - float(route["rc"])) / quality_span
+                    score = (
+                        (1.0 - float(diversity_weight)) * quality
+                        + float(diversity_weight) * novelty
+                    )
+                    scored.append((
+                        -score,
+                        float(route["rc"]),
+                        tuple(route["trips"]),
+                        index,
+                    ))
+                _neg_score, _rc, _trips, chosen = min(scored)
+                route = remaining.pop(chosen)
+                routes.append(route)
+                novelty_trace.append(
+                    min(
+                        1.0
+                        - len(frozenset(route["trips"]) & selected)
+                        / len(frozenset(route["trips"]) | selected)
+                        for selected in selected_sets
+                    )
+                )
+                selected_sets.append(frozenset(route["trips"]))
         if phase_callback is not None:
             phase_callback(
                 "pricing_extra_columns",
                 time.perf_counter() - started,
                 {
                     "sink_candidates": len(candidates),
+                    "eligible_distinct_routes": len(eligible),
                     "returned_routes": len(routes),
+                    "selection_mode": selection_mode,
+                    "diversity_weight": float(diversity_weight),
+                    "mean_incremental_novelty": (
+                        sum(novelty_trace) / len(novelty_trace)
+                        if novelty_trace else None
+                    ),
                     "time_model": "event",
                 },
             )

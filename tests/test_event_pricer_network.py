@@ -1,4 +1,5 @@
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -9,7 +10,11 @@ sys.path.insert(0, str(REPO / "src"))
 
 from audit_giro_known_columns import DEPOT, STATIONS  # noqa: E402
 from event_pricer_network import EventExpandedNetwork  # noqa: E402
-from exact_pricer_expanded import ExpandedNetwork  # noqa: E402
+from exact_pricer_expanded import (  # noqa: E402
+    ExpandedNetwork,
+    _load_event_network_cache,
+    _write_event_network_cache,
+)
 
 
 STATION = STATIONS[0]
@@ -45,7 +50,78 @@ def prices():
     }
 
 
+def four_trip_chain_problem():
+    trips = tuple(range(4))
+    adjacency = {
+        DEPOT: [
+            (trip, 0.0, 0.0, "depot_trip") for trip in trips
+        ],
+    }
+    for trip in trips:
+        adjacency[trip] = [
+            (successor, 0.0, 0.0, "trip_trip")
+            for successor in trips[trip + 1:]
+        ] + [(DEPOT, 0.0, 0.0, "trip_depot")]
+    return SimpleNamespace(
+        trips=trips,
+        start_min={trip: float(60 * trip) for trip in trips},
+        end_min={trip: float(60 * trip + 10) for trip in trips},
+        trip_energy={trip: 1.0 for trip in trips},
+        adjacency=adjacency,
+    )
+
+
 class EventPricerNetworkTests(unittest.TestCase):
+    def test_complementary_batch_keeps_exact_best_and_adds_novel_incidence(self):
+        network = EventExpandedNetwork(
+            four_trip_chain_problem(), prices(), soc_step=15,
+            block_min=10, g_kwh=240.0, charge_kw=240.0,
+            reserve_kwh=0.0,
+        )
+        duals = {trip: 110000.0 for trip in range(4)}
+        reduced = network.sink_predecessor_route_batch(
+            duals, limit=3, selection_mode="reduced_cost",
+        )
+        complementary = network.sink_predecessor_route_batch(
+            duals, limit=3, selection_mode="complementary",
+            diversity_weight=1.0, candidate_multiplier=4,
+        )
+        self.assertEqual(complementary[0]["trips"], reduced[0]["trips"])
+        self.assertAlmostEqual(complementary[0]["rc"], reduced[0]["rc"])
+        self.assertEqual(len(complementary), 3)
+        self.assertEqual(
+            len({frozenset(route["trips"]) for route in complementary}), 3,
+        )
+        self.assertTrue(all(route["rc"] < 0 for route in complementary))
+        self.assertEqual(complementary[1]["trips"], [0])
+
+    def test_completed_event_network_cache_is_hash_validated(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=15, block_min=10,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+        )
+        identity = {"schema": "test", "instance_sha256": "a" * 64}
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "network.pkl"
+            manifest = _write_event_network_cache(
+                cache, network, identity, 12.5
+            )
+            loaded, observed = _load_event_network_cache(cache, identity)
+            self.assertEqual(observed, manifest)
+            self.assertEqual(loaded.metrics(), network.metrics())
+            self.assertEqual(loaded._window_cache, {})
+            self.assertEqual(
+                loaded.min_reduced_cost_route({0: 100000.0, 1: 100000.0})[
+                    "trips"
+                ],
+                network.min_reduced_cost_route({0: 100000.0, 1: 100000.0})[
+                    "trips"
+                ],
+            )
+            self.assertTrue(loaded._window_cache)
+            with self.assertRaisesRegex(ValueError, "identity mismatch"):
+                _load_event_network_cache(cache, {"schema": "wrong"})
+
     def test_event_route_uses_exact_window_and_replays(self):
         network = EventExpandedNetwork(
             two_trip_problem(),

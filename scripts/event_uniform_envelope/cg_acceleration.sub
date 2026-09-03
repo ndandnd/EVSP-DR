@@ -3,16 +3,17 @@ set -euo pipefail
 
 unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
-export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
 
 : "${EVSP_EXECUTION_REPO:?}"
 : "${EVSP_CAMPAIGN_ROOT:?}"
 : "${EVSP_EXPECTED_COMMIT:?}"
-: "${EVSP_TIME_MODEL:?}"
-: "${EVSP_EVENT_ARC_MODE:?}"
+: "${EVSP_ARM:?}"
+: "${EVSP_COLUMNS_PER_ITER:?}"
+: "${EVSP_COLUMN_SELECTION:?}"
+: "${EVSP_COLUMN_DIVERSITY_WEIGHT:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
-[[ "$EVSP_TIME_MODEL" == "event" ]]
-[[ "$EVSP_EVENT_ARC_MODE" == "lazy" ]]
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
 [[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
 
@@ -20,9 +21,10 @@ LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 1))p" "$EVSP_CAMPAIGN_ROOT/matrix.tsv")
 IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS CSV_PATH CSV_SHA REP SOC BLOCK WALL <<< "$LINE"
 [[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
 [[ "$(sha256sum "$CSV_PATH" | awk '{print $1}')" == "$CSV_SHA" ]]
-OUT="$EVSP_CAMPAIGN_ROOT/cg/M__${CELL}__${REP}.json"
 CACHE="$EVSP_CAMPAIGN_ROOT/network_cache/M__${CELL}__${REP}.pkl"
-mkdir -p "$EVSP_CAMPAIGN_ROOT/network_cache"
+[[ -s "$CACHE" && -s "$CACHE.manifest.json" ]]
+OUT="$EVSP_CAMPAIGN_ROOT/cg/$EVSP_ARM/M__${CELL}__${REP}.json"
+
 RESUME_ARGS=()
 if [[ -e "$OUT" || -e "$OUT.columns.jsonl" || -e "$OUT.iters.csv" ]]; then
   RESUME_ARGS=(--resume)
@@ -39,36 +41,19 @@ printf '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' \
   "$([[ ${#RESUME_ARGS[@]} -gt 0 ]] && echo resume || echo fresh)" \
   >> "$ALLOCATIONS"
 
-COLUMNS_PER_ITER="${EVSP_COLUMNS_PER_ITER:-30}"
-COLUMN_SELECTION="${EVSP_COLUMN_SELECTION:-reduced_cost}"
-DIVERSITY_WEIGHT="${EVSP_COLUMN_DIVERSITY_WEIGHT:-0.5}"
-CANDIDATE_MULTIPLIER="${EVSP_COLUMN_CANDIDATE_MULTIPLIER:-4}"
-ACCEL_ARGS=()
-HELP_TEXT=$("$PYTHON_BIN" "$EVSP_EXECUTION_REPO/src/exact_pricer_expanded.py" --help)
-if grep -q -- '--event-network-cache' <<< "$HELP_TEXT"; then
-  ACCEL_ARGS+=(--event-network-cache "$CACHE")
-fi
-if grep -q -- '--column-selection' <<< "$HELP_TEXT"; then
-  ACCEL_ARGS+=(
-    --column-selection "$COLUMN_SELECTION"
-    --column-diversity-weight "$DIVERSITY_WEIGHT"
-    --column-candidate-multiplier "$CANDIDATE_MULTIPLIER"
-  )
-elif [[ "$COLUMN_SELECTION" != "reduced_cost" ]]; then
-  echo "solver lacks requested column-selection support" >&2
-  exit 2
-fi
-
 export EVSP_REQUIRE_DETACHED=1
 cd "$EVSP_EXECUTION_REPO"
 exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
   --csv "$CSV_PATH" --prices_csv hourly_prices_flat.csv \
-  --time-model "$EVSP_TIME_MODEL" --event-arc-mode "$EVSP_EVENT_ARC_MODE" \
+  --time-model event --event-arc-mode lazy \
+  --event-network-cache "$CACHE" --event-network-cache-mode require \
   --soc-step "$SOC" --block-min "$BLOCK" --max-iters 10000 \
-  --columns_per_iter "$COLUMNS_PER_ITER" \
+  --columns_per_iter "$EVSP_COLUMNS_PER_ITER" \
+  --column-selection "$EVSP_COLUMN_SELECTION" \
+  --column-diversity-weight "$EVSP_COLUMN_DIVERSITY_WEIGHT" \
+  --column-candidate-multiplier 4 \
   --rc-eps 0.0001 --master-sense partition \
   --initial-pool singletons --wall-limit-s "$WALL" \
   --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
   --phase-telemetry "$OUT.phase-telemetry.jsonl" --out "$OUT" \
-  "${ACCEL_ARGS[@]}" \
   "${RESUME_ARGS[@]}"

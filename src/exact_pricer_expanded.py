@@ -33,6 +33,7 @@ import hashlib
 import json
 import math
 import os
+import pickle
 import signal
 import time
 from collections import Counter
@@ -70,6 +71,7 @@ from run_exact_pool_mip import validate_injected_route
 from utils_v2 import base_station_name, load_station_hourly_prices
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+EVENT_NETWORK_CACHE_SCHEMA = "evsp-dr-event-network-cache-v1"
 
 
 def _peak_rss_mb() -> float:
@@ -85,6 +87,91 @@ def _file_sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _event_network_cache_identity(args, provenance: dict) -> dict:
+    return {
+        "schema": EVENT_NETWORK_CACHE_SCHEMA,
+        "git_commit": provenance.get("git_commit"),
+        "instance_sha256": provenance.get("instance_sha256"),
+        "prices_sha256": provenance.get("prices_sha256"),
+        "reference_sha256": provenance.get("reference_sha256"),
+        "deadhead_sha256": provenance.get("deadhead_sha256"),
+        "soc_step": float(args.soc_step),
+        "block_min": int(args.block_min),
+        "g_kwh": float(args.g_kwh),
+        "charge_kw": float(args.charge_kw),
+        "reserve_kwh": float(args.min_soc_frac * args.g_kwh),
+        "strict_tariff_coverage": bool(args.strict_tariff_coverage),
+        "event_arc_mode": getattr(args, "event_arc_mode", "lazy"),
+    }
+
+
+def _event_network_cache_manifest_path(cache_path: Path) -> Path:
+    return Path(str(cache_path) + ".manifest.json")
+
+
+def _load_event_network_cache(cache_path: Path, expected: dict):
+    from event_pricer_network import EventExpandedNetwork
+
+    cache_path = cache_path.expanduser().resolve()
+    manifest_path = _event_network_cache_manifest_path(cache_path)
+    try:
+        manifest = json.loads(manifest_path.read_text())
+    except (OSError, ValueError) as exc:
+        raise DurableFileError(
+            f"event-network cache manifest is unavailable: {manifest_path}"
+        ) from exc
+    if manifest.get("identity") != expected:
+        raise DurableFileError(
+            f"event-network cache identity mismatch: {manifest_path}"
+        )
+    observed_sha256 = _file_sha256(cache_path)
+    if observed_sha256 != manifest.get("pickle_sha256"):
+        raise DurableFileError(
+            f"event-network cache hash mismatch: {cache_path}"
+        )
+    with cache_path.open("rb") as handle:
+        network = pickle.load(handle)
+    if not isinstance(network, EventExpandedNetwork):
+        raise DurableFileError(
+            f"event-network cache has unexpected object type: {cache_path}"
+        )
+    if network.metrics() != manifest.get("network_metrics"):
+        raise DurableFileError(
+            f"event-network cache metrics mismatch: {cache_path}"
+        )
+    return network, manifest
+
+
+def _write_event_network_cache(
+    cache_path: Path, network, identity: dict, build_s: float,
+) -> dict:
+    cache_path = cache_path.expanduser().resolve()
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = cache_path.with_name(
+        f".{cache_path.name}.tmp.{os.getpid()}"
+    )
+    try:
+        with temporary.open("wb") as handle:
+            pickle.dump(network, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            flush_and_fsync(handle)
+        os.replace(temporary, cache_path)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    manifest = {
+        "schema": EVENT_NETWORK_CACHE_SCHEMA,
+        "identity": identity,
+        "pickle_sha256": _file_sha256(cache_path),
+        "pickle_bytes": cache_path.stat().st_size,
+        "network_metrics": network.metrics(),
+        "original_build_s": float(build_s),
+    }
+    atomic_write_json(
+        _event_network_cache_manifest_path(cache_path), manifest
+    )
+    return manifest
 
 
 def validated_fixed_duty_seed_records(
@@ -963,6 +1050,16 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         "master_sense": args.master_sense,
         "initial_pool": current_initial_pool,
         "time_model": current_time_model,
+        "columns_per_iter": args.columns_per_iter,
+        "column_selection": getattr(
+            args, "column_selection", "reduced_cost"
+        ),
+        "column_diversity_weight": getattr(
+            args, "column_diversity_weight", 0.5
+        ),
+        "column_candidate_multiplier": getattr(
+            args, "column_candidate_multiplier", 4
+        ),
         "validated_seed_routes_sha256": (
             _file_sha256(Path(args.validated_seed_routes))
             if getattr(args, "validated_seed_routes", None) is not None
@@ -980,6 +1077,17 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
             observed = "singletons"
         if key == "time_model" and key not in status:
             observed = "uniform"
+        if key == "columns_per_iter" and key not in status:
+            # Legacy status schemas did not persist batching controls.  They
+            # cannot be reconstructed from the journal, so preserve historical
+            # resume compatibility; every newly written status records them.
+            observed = value
+        if key == "column_selection" and key not in status:
+            observed = value
+        if key == "column_diversity_weight" and key not in status:
+            observed = value
+        if key == "column_candidate_multiplier" and key not in status:
+            observed = value
         if key == "strict_tariff_coverage" and key not in status:
             observed = False
         if key == "column_pool_treatment" and key not in status:
@@ -1291,6 +1399,16 @@ def run_cg(args) -> dict:
                 "master_sense": args.master_sense,
                 "initial_pool": args.initial_pool,
                 "time_model": time_model,
+                "columns_per_iter": args.columns_per_iter,
+                "column_selection": getattr(
+                    args, "column_selection", "reduced_cost"
+                ),
+                "column_diversity_weight": getattr(
+                    args, "column_diversity_weight", 0.5
+                ),
+                "column_candidate_multiplier": getattr(
+                    args, "column_candidate_multiplier", 4
+                ),
             },
         )
     detached_telemetry_overhead_s = 0.0
@@ -1309,7 +1427,6 @@ def run_cg(args) -> dict:
     def _cumulative_elapsed_s():
         return elapsed_offset + _attempt_elapsed_s()
 
-    network_t0 = time.time()
     prices = load_station_hourly_prices(
         DATA_DIR / args.prices_csv, CHARGING_STATIONS
     )
@@ -1321,18 +1438,44 @@ def run_cg(args) -> dict:
         network_kwargs["arc_mode"] = getattr(
             args, "event_arc_mode", "lazy"
         )
-    net = network_class(
-        problem, prices,
-        soc_step=args.soc_step,
-        block_min=args.block_min,
-        g_kwh=args.g_kwh,
-        charge_kw=args.charge_kw,
-        reserve_kwh=args.min_soc_frac * args.g_kwh,
-        strict_tariff_coverage=getattr(
-            args, "strict_tariff_coverage", False
-        ),
-        **network_kwargs,
+    cache_path = getattr(args, "event_network_cache", None)
+    cache_identity = (
+        _event_network_cache_identity(args, provenance)
+        if time_model == "event" and cache_path is not None else None
     )
+    cache_manifest = None
+    cache_hit = False
+    network_t0 = time.time()
+    if cache_path is not None and args.event_network_cache_mode == "require":
+        net, cache_manifest = _load_event_network_cache(
+            cache_path, cache_identity
+        )
+        cache_hit = True
+    elif (
+        cache_path is not None
+        and _event_network_cache_manifest_path(cache_path).is_file()
+    ):
+        net, cache_manifest = _load_event_network_cache(
+            cache_path, cache_identity
+        )
+        cache_hit = True
+    else:
+        net = network_class(
+            problem, prices,
+            soc_step=args.soc_step,
+            block_min=args.block_min,
+            g_kwh=args.g_kwh,
+            charge_kw=args.charge_kw,
+            reserve_kwh=args.min_soc_frac * args.g_kwh,
+            strict_tariff_coverage=getattr(
+                args, "strict_tariff_coverage", False
+            ),
+            **network_kwargs,
+        )
+        if cache_path is not None:
+            cache_manifest = _write_event_network_cache(
+                cache_path, net, cache_identity, time.time() - network_t0
+            )
     build_s = time.time() - network_t0
     network_metrics = (
         net.metrics() if time_model == "event"
@@ -1342,9 +1485,28 @@ def run_cg(args) -> dict:
             "dag_arcs": net.n_arcs,
         }
     )
+    if cache_path is not None:
+        network_metrics.update({
+            "cache_hit": cache_hit,
+            "cache_path": str(cache_path),
+            "cache_io_s": build_s,
+            "cache_original_build_s": cache_manifest.get(
+                "original_build_s"
+            ),
+            "cache_pickle_bytes": cache_manifest.get("pickle_bytes"),
+        })
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
-          f"built in {build_s:.1f}s", flush=True)
+          f"{'loaded' if cache_hit else 'built'} in {build_s:.1f}s", flush=True)
+    if getattr(args, "event_network_cache_only", False):
+        return {
+            "schema": EVENT_NETWORK_CACHE_SCHEMA,
+            "cache_path": str(cache_path),
+            "cache_hit": cache_hit,
+            "cache_io_s": build_s,
+            "network_metrics": network_metrics,
+            "provenance": provenance,
+        }
     def _record_phase(
         name,
         duration_s,
@@ -1518,6 +1680,16 @@ def run_cg(args) -> dict:
         resume_status.update({
             "initial_pool": args.initial_pool,
             "time_model": time_model,
+            "columns_per_iter": args.columns_per_iter,
+            "column_selection": getattr(
+                args, "column_selection", "reduced_cost"
+            ),
+            "column_diversity_weight": getattr(
+                args, "column_diversity_weight", 0.5
+            ),
+            "column_candidate_multiplier": getattr(
+                args, "column_candidate_multiplier", 4
+            ),
             "network_metrics": network_metrics,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
@@ -1557,6 +1729,16 @@ def run_cg(args) -> dict:
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
             "time_model": time_model,
+            "columns_per_iter": args.columns_per_iter,
+            "column_selection": getattr(
+                args, "column_selection", "reduced_cost"
+            ),
+            "column_diversity_weight": getattr(
+                args, "column_diversity_weight", 0.5
+            ),
+            "column_candidate_multiplier": getattr(
+                args, "column_candidate_multiplier", 4
+            ),
             "network_metrics": network_metrics,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
@@ -1806,6 +1988,16 @@ def run_cg(args) -> dict:
             "master_sense": args.master_sense,
             "initial_pool": args.initial_pool,
             "time_model": time_model,
+            "columns_per_iter": args.columns_per_iter,
+            "column_selection": getattr(
+                args, "column_selection", "reduced_cost"
+            ),
+            "column_diversity_weight": getattr(
+                args, "column_diversity_weight", 0.5
+            ),
+            "column_candidate_multiplier": getattr(
+                args, "column_candidate_multiplier", 4
+            ),
             "network_metrics": network_metrics,
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
@@ -2016,9 +2208,22 @@ def run_cg(args) -> dict:
             )
         else:
             lp = _ArtificialOnlyLP()
+        pricing_batch_kwargs = {"limit": args.columns_per_iter}
+        if time_model == "event":
+            pricing_batch_kwargs.update({
+                "selection_mode": getattr(
+                    args, "column_selection", "reduced_cost"
+                ),
+                "diversity_weight": getattr(
+                    args, "column_diversity_weight", 0.5
+                ),
+                "candidate_multiplier": getattr(
+                    args, "column_candidate_multiplier", 4
+                ),
+            })
         if telemetry is None:
             batch = net.sink_predecessor_route_batch(
-                lp.trip_duals, limit=args.columns_per_iter
+                lp.trip_duals, **pricing_batch_kwargs
             )
         else:
             def pricing_phase(name, duration_s, details):
@@ -2033,8 +2238,8 @@ def run_cg(args) -> dict:
 
             batch = net.sink_predecessor_route_batch(
                 lp.trip_duals,
-                limit=args.columns_per_iter,
                 phase_callback=pricing_phase,
+                **pricing_batch_kwargs,
             )
         best = batch[0] if batch else None
         min_rc = best["rc"] if best else float("inf")
@@ -2546,6 +2751,16 @@ def run_cg(args) -> dict:
         "master_sense": args.master_sense,
         "initial_pool": args.initial_pool,
         "time_model": time_model,
+        "columns_per_iter": args.columns_per_iter,
+        "column_selection": getattr(
+            args, "column_selection", "reduced_cost"
+        ),
+        "column_diversity_weight": getattr(
+            args, "column_diversity_weight", 0.5
+        ),
+        "column_candidate_multiplier": getattr(
+            args, "column_candidate_multiplier", 4
+        ),
         "validated_seed_routes_sha256": provenance.get(
             "validated_seed_routes_sha256"
         ),
@@ -2603,11 +2818,41 @@ def main(argv=None) -> int:
              "costs while reconstructing physical actions on demand; explicit "
              "is the small-network correctness oracle.",
     )
+    parser.add_argument(
+        "--event-network-cache", type=Path, default=None,
+        help="Hash-validated pickle cache for a completed event network.",
+    )
+    parser.add_argument(
+        "--event-network-cache-mode",
+        choices=("build-or-load", "require"),
+        default="build-or-load",
+        help="Build a missing cache atomically or require a completed cache.",
+    )
+    parser.add_argument(
+        "--event-network-cache-only", action="store_true",
+        help="Build or validate the event-network cache, then exit before CG.",
+    )
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument(
         "--columns_per_iter", type=int, default=30,
         help="Maximum columns from the sink-predecessor batch heuristic per "
              "pricing pass; this is not k-shortest-path enumeration.",
+    )
+    parser.add_argument(
+        "--column-selection",
+        choices=("reduced_cost", "complementary"),
+        default="reduced_cost",
+        help="Event-pricer selection for additional columns. The exact best "
+             "route is always retained; complementary mode trades reduced "
+             "cost against trip-incidence novelty.",
+    )
+    parser.add_argument(
+        "--column-diversity-weight", type=float, default=0.5,
+        help="Complementary-selection weight on incidence novelty in [0,1].",
+    )
+    parser.add_argument(
+        "--column-candidate-multiplier", type=int, default=4,
+        help="Complementary mode scans this multiple of the retained batch.",
     )
     parser.add_argument("--rc-eps", type=float, default=1e-4)
     parser.add_argument(
@@ -2696,6 +2941,12 @@ def main(argv=None) -> int:
                              "continue from that pool.")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
+    if args.columns_per_iter < 1:
+        parser.error("--columns_per_iter must be positive")
+    if not 0.0 <= args.column_diversity_weight <= 1.0:
+        parser.error("--column-diversity-weight must be between zero and one")
+    if args.column_candidate_multiplier < 1:
+        parser.error("--column-candidate-multiplier must be positive")
     if bool(args.validated_seed_routes) != bool(args.augmentation_label):
         parser.error(
             "--validated-seed-routes and --augmentation-label are required "
@@ -2711,6 +2962,23 @@ def main(argv=None) -> int:
         and getattr(args, "time_model", "uniform") != "event"
     ):
         parser.error("--event-arc-mode requires --time-model event")
+    if args.event_network_cache is not None and (
+        getattr(args, "time_model", "uniform") != "event"
+    ):
+        parser.error("--event-network-cache requires --time-model event")
+    if args.event_network_cache_only and args.event_network_cache is None:
+        parser.error(
+            "--event-network-cache-only requires --event-network-cache"
+        )
+    if (
+        args.event_network_cache_mode == "require"
+        and args.event_network_cache is None
+    ):
+        parser.error(
+            "--event-network-cache-mode require needs --event-network-cache"
+        )
+    if args.event_network_cache_only and args.out is not None:
+        parser.error("--event-network-cache-only does not use --out")
     if args.out:
         lock_metadata = {
             "pid": os.getpid(),

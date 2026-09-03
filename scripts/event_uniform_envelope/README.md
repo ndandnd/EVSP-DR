@@ -324,3 +324,54 @@ treated as mathematical certification.
 The pricing total uses the full `pricing_extra_columns` pass, which already
 contains the exact shortest-path computation; the exact-best-route component
 is also reported separately and is not added a second time.
+
+## 2026-09-03 k13/k20 column-generation acceleration study
+
+The current event campaigns show two different medium-scale costs.  At k13 and
+k20, one-time event-network construction accounts for roughly 51% and 69% of
+observed wall time respectively.  The completed networks can now be written
+atomically to a hash-validated cache and loaded by later allocations.  A
+partial cache is never accepted.  If a cache-building task is preempted before
+atomic publication, Slurm requeues it and it rebuilds; after publication,
+every downstream CG allocation reuses the same graph.
+
+CG launchers in this directory now request `--requeue`, append rather than
+truncate Slurm logs, and invoke `--resume` whenever a durable result, column
+journal, or iteration log exists.  Requeue eligibility alone is not a
+checkpoint: explicit solver resume preserves the column pool and iteration
+history.  Integer pool-MIP workers remain on nonpreemptible `scaglione` with
+`--no-requeue`, because the current backends do not serialize a resumable
+branch-and-bound tree.
+
+`submit_cg_acceleration_ladder.sh` freezes the six reviewed k13 and six k20
+replicates, prebuilds one event graph per input, and launches six paired arms:
+30, 60, 120, and 200 sink-predecessor columns under reduced-cost ordering,
+plus 120 and 200 under complementary selection.  Complementary selection
+always retains the exact minimum-reduced-cost route, then balances reduced-cost
+quality with trip-incidence Jaccard novelty among additional negative routes.
+It is an enrichment heuristic, not k-shortest-path enumeration; exact LP
+certification still depends only on the unchanged exact best-path calculation.
+All arms have a 43,200-second scientific CG budget excluding original graph
+construction, while the audit also reports end-to-end time with that one-time
+cost restored.
+
+Launch on Unicorn from the current remote-tip checkout with:
+
+```bash
+bash scripts/event_uniform_envelope/submit_cg_acceleration_ladder.sh
+```
+
+The submission creates 12 requeue-safe cache tasks and 72 requeue-safe CG
+tasks.  Each CG array has an `aftercorr` dependency on the corresponding cache
+task.  After all `ca03_*` jobs leave the queue, write the normalized CSVs with:
+
+```bash
+bash scripts/event_uniform_envelope/audit_cg_acceleration.sh \
+  "$HOME/ladder-lite/cg_acceleration_20260903"
+```
+
+The audit preserves Slurm state, restart/allocation count, cache build/load
+time, CG time, iterations, pool growth, LP endpoint, exact minimum reduced
+cost, memory, and master/pricing phase shares.  Certification rate is the
+primary comparison; runtime among certified rows and progress at the fixed
+12-hour cap are secondary comparisons.
