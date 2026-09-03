@@ -104,10 +104,22 @@ def enrich(row: dict[str, str]) -> dict[str, object]:
     )
     shortest = number(row.get("pricing_shortest_path_s")) or 0.0
     batch = number(row.get("pricing_batch_s")) or 0.0
-    result["pricing_total_s"] = shortest + batch
+    # In the pinned pricer, pricing_extra_columns is measured from the start
+    # of the pass and therefore already includes the exact shortest path.
+    # Do not add shortest again.  Older artifacts without the batch phase use
+    # the exact-shortest-path time as the conservative pricing total.
+    result["pricing_total_s"] = batch if batch > 0.0 else shortest
+    result["pricing_exact_best_s"] = shortest
+    iterations = integer(row.get("iterations"))
+    columns = integer(row.get("pool_columns"))
+    trips = integer(row.get("trip_count"))
+    result["retained_pool_growth_per_iteration"] = (
+        max(0, columns - trips) / iterations
+        if iterations and columns is not None and trips is not None else ""
+    )
     wall = number(row.get("cg_wall_s"))
     for name, seconds in (
-        ("pricing_share_wall", shortest + batch),
+        ("pricing_share_wall", float(result["pricing_total_s"])),
         ("master_share_wall", number(row.get("master_lp_s")) or 0.0),
         ("network_build_share_wall", number(row.get("network_build_s")) or 0.0),
         (
@@ -116,6 +128,9 @@ def enrich(row: dict[str, str]) -> dict[str, object]:
         ),
     ):
         result[name] = seconds / wall if wall and wall > 0 else ""
+    result["pricing_exact_best_share_wall"] = (
+        shortest / wall if wall and wall > 0 else ""
+    )
     return result
 
 
@@ -143,6 +158,13 @@ def aggregate(scale: int, rows: list[dict[str, object]]) -> dict[str, object]:
         float(value)
         for row in rows
         if (value := integer(row.get("pool_columns"))) is not None
+    ]
+    pool_growth = [
+        value
+        for row in rows
+        if (
+            value := number(row.get("retained_pool_growth_per_iteration"))
+        ) is not None
     ]
     trips = [
         value
@@ -179,8 +201,13 @@ def aggregate(scale: int, rows: list[dict[str, object]]) -> dict[str, object]:
         "iterations_max": max(iterations) if iterations else "",
         "pool_columns_median": median(columns),
         "pool_columns_max": max(columns) if columns else "",
+        "retained_pool_growth_per_iteration_median": median(pool_growth),
         "pricing_share_aggregate": (
             phase_total("pricing_total_s") / total_wall if total_wall else ""
+        ),
+        "pricing_exact_best_share_aggregate": (
+            phase_total("pricing_exact_best_s") / total_wall
+            if total_wall else ""
         ),
         "master_share_aggregate": (
             phase_total("master_lp_s") / total_wall if total_wall else ""
@@ -207,7 +234,8 @@ def print_table(rows: list[dict[str, object]]) -> None:
         "scale", "rows", "certified", "wall_limit", "preempted",
         "fleet_target_proved", "certification_rate", "trip_count_min",
         "trip_count_max", "certified_wall_h_median", "iterations_median",
-        "pool_columns_median", "pricing_share_aggregate",
+        "pool_columns_median", "retained_pool_growth_per_iteration_median",
+        "pricing_share_aggregate", "pricing_exact_best_share_aggregate",
         "master_share_aggregate", "network_build_share_aggregate",
     )
     print(" | ".join(columns))

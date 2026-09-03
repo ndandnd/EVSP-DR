@@ -321,3 +321,6 @@ certification and fleet-proof counts separately from wall caps, preemptions,
 and execution failures; they also expose aggregate and row-level pricing,
 master, network-build, and incidence timing.  Slurm completion is never
 treated as mathematical certification.
+The pricing total uses the full `pricing_extra_columns` pass, which already
+contains the exact shortest-path computation; the exact-best-route component
+is also reported separately and is not added a second time.
