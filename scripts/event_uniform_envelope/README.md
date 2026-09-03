@@ -314,3 +314,10 @@ bash scripts/event_uniform_envelope/audit_medium_event_legacy.sh \
 This is Stage 1 only.  Exact fleet recovery and finite-pool integrality are
 different claims, so target-feasibility and integer-pool stages are held until
 the Stage-1 audit identifies certified LP rows.
+
+After any event campaign has been audited, `summarize_cg_frontier.sh ROOT`
+writes `cg_frontier_by_scale.csv` and `cg_frontier_rows.csv`.  These preserve
+certification and fleet-proof counts separately from wall caps, preemptions,
+and execution failures; they also expose aggregate and row-level pricing,
+master, network-build, and incidence timing.  Slurm completion is never
+treated as mathematical certification.
