@@ -410,3 +410,46 @@ from Slurm, uses automatic requeue plus application-level resume, and records
 every allocation beside the staged result.  Certified cells, the live k9
 recovery, and all non-wall-limit outcomes are excluded.  After every array is
 terminal, `audit_small_threshold_resume48h.sh` writes `resume_summary.csv`.
+
+## 2026-09-04 k11--k15 threshold extension
+
+`data/scale_ladder/instances/threshold_11_15_20260904` extends the same
+pre-outcome threshold design through k15.  There are 10 new duty unions at
+each of k11, k12, k13, k14, and k15: six fixed-seed probability samples and
+four structural samples (trip-light, trip-heavy, energy-heavy, and tight-gap).
+The generator excludes the reviewed six-selection scale-ladder manifest, so
+the 10 k13 rows are not duplicates of prior k13 evidence.  All 42 source GIRO
+duty orders again pass independent continuous 240 kWh / 240 kW optimization
+and physical replay.  That establishes a k-route physical upper bound for each
+union; it does not seed CG or assert event-lattice representability.
+
+Validate and launch from a remote-tip Unicorn checkout with:
+
+```bash
+bash scripts/event_uniform_envelope/submit_threshold_11_15_event.sh
+```
+
+The launcher creates 50 hash-validated event-network cache tasks with a
+24-hour scientific envelope and then 50 paired baseline exact-CG tasks with a
+12-hour scientific envelope.  The separation is intentional: it reports graph
+construction and CG time independently instead of charging a larger instance
+for graph construction inside its CG budget.  The baseline retains at most 30
+sink-predecessor candidates per iteration under reduced-cost ordering, matching
+the current threshold evidence.  Cache and CG tasks request Slurm requeue; CG
+also resumes its authenticated column journal every 25 iterations.  A cache
+preempted before atomic publication must rebuild because network construction
+does not yet have an internal checkpoint.
+
+After both arrays are terminal, write row-level and by-scale CSVs with:
+
+```bash
+bash scripts/event_uniform_envelope/audit_cg_acceleration.sh \
+  "$HOME/ladder-lite/threshold_11_15_event_20260904_COMMIT"
+```
+
+Replace `COMMIT` with the seven-character commit suffix printed by the
+launcher.  The row CSV includes the exact duty IDs and the frozen trip, energy,
+gap, concurrency, and compatibility descriptors alongside graph-build time,
+CG time, iterations, columns, phase timing, Slurm state, and certification.
+The by-scale CSV is descriptive; inference about a scale threshold must still
+condition on these instance descriptors.
