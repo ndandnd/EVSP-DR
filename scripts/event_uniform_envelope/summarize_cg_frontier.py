@@ -65,13 +65,17 @@ def family_role(cell: str) -> tuple[str, str]:
 
 
 def classify(row: dict[str, str]) -> str:
-    if not truth(row.get("configuration_match")):
-        return "invalid_configuration"
     state = str(row.get("slurm_state") or "")
+    # A task killed by Slurm can have no result-side configuration fields.
+    # Classify the observed scheduler event before inspecting those fields so
+    # operational censoring is not mislabeled as a scientific configuration
+    # failure.
     if state == "PREEMPTED":
         return "preempted"
     if state in {"FAILED", "OUT_OF_MEMORY", "NODE_FAIL", "CANCELLED"}:
         return "execution_failure"
+    if not truth(row.get("configuration_match")):
+        return "invalid_configuration"
     if truth(row.get("certified_rc_optimal")):
         return "certified"
     stop = str(row.get("stop_reason") or "")

@@ -198,6 +198,27 @@ class CgAccelerationToolingTests(unittest.TestCase):
             ], check=True, capture_output=True, text=True)
             self.assertEqual(result.stdout.strip(), "30")
 
+    def test_frontier_summary_preserves_preemption_without_result(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "medium_event_summary.csv"
+            rows = [{
+                "index": "30", "cell_id": "k9_p1", "scale": "9",
+                "slurm_state": "PREEMPTED", "result_present": "False",
+                "configuration_match": "False",
+            }]
+            with source.open("w", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows)
+            subprocess.run([
+                sys.executable, str(TOOLS / "summarize_cg_frontier.py"),
+                str(root),
+            ], check=True, capture_output=True, text=True)
+            with (root / "cg_frontier_rows.csv").open() as handle:
+                result = next(csv.DictReader(handle))
+            self.assertEqual(result["outcome"], "preempted")
+
 
 if __name__ == "__main__":
     unittest.main()
