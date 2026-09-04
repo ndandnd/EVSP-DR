@@ -393,3 +393,11 @@ without an authenticating status are moved to a hashed quarantine rather than
 used or deleted.  Both campaign auditors read `jobs_recovery_*.tsv` after the
 original job record so a recovered index is attributed to its replacement
 Slurm task without rewriting submission history.
+
+While either campaign is active, use `inspect_active_event_campaigns.sh`
+instead of a final auditor.  It records a UTC-stamped, read-only view under
+the acceleration campaign's `progress_snapshots/` directory, including
+row-level outcomes, current Slurm state, and compact arm/scale counts.  Active
+tasks remain `running` or `pending`; scheduler failures are printed as
+`ATTENTION` rows.  The command never submits, cancels, or modifies a job and
+does not overwrite final audit CSVs.

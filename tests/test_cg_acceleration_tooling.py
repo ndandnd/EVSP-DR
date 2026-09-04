@@ -172,6 +172,7 @@ class CgAccelerationToolingTests(unittest.TestCase):
             "medium_event_cg.sub",
             "recover_cg_acceleration_cache_timeout.sh",
             "submit_small_threshold_preempted_recovery.sh",
+            "inspect_active_event_campaigns.sh",
         ):
             subprocess.run(
                 ["/bin/bash", "-n", str(TOOLS / relative)], check=True
@@ -218,6 +219,28 @@ class CgAccelerationToolingTests(unittest.TestCase):
             with (root / "cg_frontier_rows.csv").open() as handle:
                 result = next(csv.DictReader(handle))
             self.assertEqual(result["outcome"], "preempted")
+
+    def test_live_inspector_prioritizes_active_and_scheduler_states(self):
+        import importlib.util
+        path = TOOLS / "inspect_active_event_campaigns.py"
+        spec = importlib.util.spec_from_file_location("live_inspector", path)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        sys.path.insert(0, str(TOOLS))
+        try:
+            spec.loader.exec_module(module)
+        finally:
+            sys.path.pop(0)
+        self.assertEqual(
+            module.classify({"certified_rc_optimal": True}, "RUNNING"),
+            "running",
+        )
+        self.assertEqual(module.classify(None, "PREEMPTED"),
+                         "execution_preempted")
+        self.assertEqual(
+            module.classify({"certified_rc_optimal": True}, "COMPLETED"),
+            "certified",
+        )
 
 
 if __name__ == "__main__":
