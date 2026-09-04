@@ -375,3 +375,21 @@ time, CG time, iterations, pool growth, LP endpoint, exact minimum reduced
 cost, memory, and master/pricing phase shares.  Certification rate is the
 primary comparison; runtime among certified rows and progress at the fixed
 12-hour cap are secondary comparisons.
+
+A Slurm `TIMEOUT` is not automatically requeued.  In the first acceleration
+campaign, cache index 9 (`k20_s4`) needed slightly more than the 12:15
+allocation and therefore left its six `aftercorr` children in
+`DependencyNeverSatisfied`.  `recover_cg_acceleration_cache_timeout.sh`
+validates that exact missing cache, gives graph construction 24:30, submits
+only the six missing arms behind it, cancels only their six superseded blocked
+tasks, and records the replacements separately from the immutable original
+`jobs.tsv`.
+
+The original small-threshold campaign was submitted before D0038 restored
+requeue.  `submit_small_threshold_preempted_recovery.sh` selects only audited
+`PREEMPTED` rows with no published status, requires all three to be k9, and
+runs them fresh under the corrected requeue-safe worker.  Any orphan sidecars
+without an authenticating status are moved to a hashed quarantine rather than
+used or deleted.  Both campaign auditors read `jobs_recovery_*.tsv` after the
+original job record so a recovered index is attributed to its replacement
+Slurm task without rewriting submission history.

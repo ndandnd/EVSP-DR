@@ -65,14 +65,18 @@ def main() -> int:
     root = args.root.resolve()
     with (root / "matrix.tsv").open(newline="") as handle:
         matrix = list(csv.reader(handle, delimiter="\t"))
-    with (root / "jobs.tsv").open(newline="") as handle:
-        jobs = list(csv.DictReader(handle, delimiter="\t"))
     index_job: dict[int, str] = {}
-    for job in jobs:
-        for index in expand_indices(job["indices"]):
-            if index in index_job:
-                raise SystemExit(f"duplicate task index in jobs.tsv: {index}")
-            index_job[index] = job["array_job_id"]
+    job_paths = [
+        root / "jobs.tsv", *sorted(root.glob("jobs_recovery_*.tsv"))
+    ]
+    for job_path in job_paths:
+        with job_path.open(newline="") as handle:
+            jobs = list(csv.DictReader(handle, delimiter="\t"))
+        for job in jobs:
+            for index in expand_indices(job["indices"]):
+                # Recovery records are sorted after the immutable original
+                # jobs.tsv and intentionally replace only retried indices.
+                index_job[index] = job["array_job_id"]
     if set(index_job) != set(range(len(matrix))):
         raise SystemExit(f"job index set mismatch: {sorted(index_job)}")
     accounting = load_accounting(args.sacct)

@@ -73,13 +73,14 @@ def telemetry(path: Path):
     return totals, rows, malformed
 
 
-def arm_jobs(path: Path):
-    with path.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle, delimiter="\t"))
-    return {
-        row["arm"]: row["array_job_id"]
-        for row in rows if row["stage"] == "cg"
-    }
+def arm_jobs(root: Path):
+    resolved = {}
+    for path in [root / "jobs.tsv", *sorted(root.glob("jobs_recovery_*.tsv"))]:
+        with path.open(newline="", encoding="utf-8") as handle:
+            for row in csv.DictReader(handle, delimiter="\t"):
+                if row["stage"] == "cg":
+                    resolved[row["arm"]] = row["array_job_id"]
+    return resolved
 
 
 def outcome(status, slurm_state=""):
@@ -102,7 +103,7 @@ def main() -> int:
     root = args.campaign_root.resolve()
     matrix = read_matrix(root / "matrix.tsv")
     arms = read_arms(root / "execution_plan.json")
-    jobs = arm_jobs(root / "jobs.tsv")
+    jobs = arm_jobs(root)
     accounting = load_accounting(args.sacct)
     rows = []
     for source in matrix:

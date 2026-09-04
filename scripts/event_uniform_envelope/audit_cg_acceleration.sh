@@ -9,10 +9,14 @@ ROOT="$1"
 [[ -f "$ROOT/matrix.tsv" && -f "$ROOT/execution_plan.json" ]] \
   || evsp_die "not a CG acceleration campaign: $ROOT"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
-mapfile -t IDS < <(
-  awk -F'\t' 'FNR > 1 {print $3}' "$ROOT/jobs.tsv" | sort -u
+mapfile -t JOB_FILES < <(
+  find "$ROOT" -maxdepth 1 -type f \
+    \( -name 'jobs.tsv' -o -name 'jobs_recovery_*.tsv' \) | sort
 )
-[[ ${#IDS[@]} -eq 7 ]] || evsp_die "expected seven campaign arrays"
+mapfile -t IDS < <(
+  awk -F'\t' 'FNR > 1 {print $3}' "${JOB_FILES[@]}" | sort -u
+)
+[[ ${#IDS[@]} -ge 7 ]] || evsp_die "expected at least seven campaign arrays"
 JOB_LIST=$(IFS=,; echo "${IDS[*]}")
 if squeue --me -h -j "$JOB_LIST" | grep -q .; then
   evsp_die "CG acceleration arrays are still active"
@@ -24,6 +28,6 @@ sacct -j "$JOB_LIST" -n -P \
 "$PYTHON_BIN" "$SCRIPT_DIR/audit_cg_acceleration.py" \
   "$ROOT" --sacct "$SACCT"
 sha256sum "$ROOT/matrix.tsv" "$ROOT/execution_plan.json" \
-  "$ROOT/jobs.tsv" "$SACCT" "$ROOT/cg_acceleration_rows.csv" \
+  "${JOB_FILES[@]}" "$SACCT" "$ROOT/cg_acceleration_rows.csv" \
   "$ROOT/cg_acceleration_by_arm_scale.csv" \
   > "$ROOT/AUDIT_SHA256SUMS"

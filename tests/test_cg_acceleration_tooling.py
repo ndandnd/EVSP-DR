@@ -170,10 +170,33 @@ class CgAccelerationToolingTests(unittest.TestCase):
             "submit_cg_acceleration_ladder.sh",
             "audit_cg_acceleration.sh",
             "medium_event_cg.sub",
+            "recover_cg_acceleration_cache_timeout.sh",
+            "submit_small_threshold_preempted_recovery.sh",
         ):
             subprocess.run(
                 ["/bin/bash", "-n", str(TOOLS / relative)], check=True
             )
+
+    def test_missing_preempted_selector_is_strict_by_scale(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            summary = root / "medium_event_summary.csv"
+            rows = [
+                {"index": "30", "scale": "9", "slurm_state": "PREEMPTED",
+                 "result_present": "False"},
+                {"index": "31", "scale": "9", "slurm_state": "COMPLETED",
+                 "result_present": "True"},
+            ]
+            with summary.open("w", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows)
+            result = subprocess.run([
+                sys.executable,
+                str(TOOLS / "select_missing_preempted_event_indices.py"),
+                "--root", str(root), "--expected-scale", "9",
+            ], check=True, capture_output=True, text=True)
+            self.assertEqual(result.stdout.strip(), "30")
 
 
 if __name__ == "__main__":

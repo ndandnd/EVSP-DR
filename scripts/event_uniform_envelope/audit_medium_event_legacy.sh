@@ -8,7 +8,13 @@ evsp_require_unicorn
 ROOT=$(cd "$1" && pwd)
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 [[ -f "$ROOT/jobs.tsv" ]] || evsp_die "missing medium event jobs.tsv"
-mapfile -t IDS < <(awk -F'\t' 'FNR > 1 {print $2}' "$ROOT/jobs.tsv" | sort -u)
+mapfile -t JOB_FILES < <(
+  find "$ROOT" -maxdepth 1 -type f \
+    \( -name 'jobs.tsv' -o -name 'jobs_recovery_*.tsv' \) | sort
+)
+mapfile -t IDS < <(
+  awk -F'\t' 'FNR > 1 {print $2}' "${JOB_FILES[@]}" | sort -u
+)
 [[ ${#IDS[@]} -ge 1 ]] || evsp_die "expected at least one event array ID"
 JOB_LIST=$(IFS=,; echo "${IDS[*]}")
 if squeue --me -h -j "$JOB_LIST" | grep -q .; then
@@ -20,5 +26,6 @@ sacct -j "$JOB_LIST" -n -P \
   > "$SACCT"
 "$PYTHON_BIN" "$SCRIPT_DIR/audit_medium_event_legacy.py" \
   --root "$ROOT" --sacct "$SACCT"
-sha256sum "$ROOT/matrix.tsv" "$ROOT/execution_plan.json" "$ROOT/jobs.tsv" \
+sha256sum "$ROOT/matrix.tsv" "$ROOT/execution_plan.json" \
+  "${JOB_FILES[@]}" \
   "$SACCT" "$ROOT/medium_event_summary.csv" > "$ROOT/AUDIT_SHA256SUMS"
