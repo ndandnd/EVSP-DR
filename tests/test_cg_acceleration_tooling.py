@@ -173,6 +173,8 @@ class CgAccelerationToolingTests(unittest.TestCase):
             "recover_cg_acceleration_cache_timeout.sh",
             "submit_small_threshold_preempted_recovery.sh",
             "inspect_active_event_campaigns.sh",
+            "submit_small_threshold_resume48h.sh",
+            "audit_small_threshold_resume48h.sh",
         ):
             subprocess.run(
                 ["/bin/bash", "-n", str(TOOLS / relative)], check=True
@@ -241,6 +243,16 @@ class CgAccelerationToolingTests(unittest.TestCase):
             module.classify({"certified_rc_optimal": True}, "COMPLETED"),
             "certified",
         )
+
+    def test_small_threshold_long_resume_is_separate_and_requeue_safe(self):
+        launcher = (TOOLS / "submit_small_threshold_resume48h.sh").read_text()
+        worker = (TOOLS / "cg_resume_extended.sub").read_text()
+        self.assertIn("--expected-cells 23", launcher)
+        self.assertIn("CHILD_CAP=172800", launcher)
+        self.assertIn("-t 1-12:30:00 --requeue", launcher)
+        self.assertIn("cg_resume48h_20260904", launcher)
+        self.assertIn("SLURM_RESTART_COUNT", worker)
+        self.assertIn("--resume", worker)
 
     def test_acceleration_recovery_overrides_only_selected_index(self):
         import importlib.util

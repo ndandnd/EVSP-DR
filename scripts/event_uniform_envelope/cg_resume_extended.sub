@@ -32,6 +32,15 @@ IFS=$'\t' read -r LOCAL_INDEX SOURCE_INDEX CELL TARGET CSV_PATH REP SOC BLOCK SO
 [[ "$(sha256sum "$SOURCE_JOURNAL" | awk '{print $1}')" == "$SOURCE_JOURNAL_SHA" ]]
 
 TELEMETRY="$OUT.phase-telemetry.jsonl"
+ALLOCATIONS="$OUT.allocations.tsv"
+if [[ ! -e "$ALLOCATIONS" ]]; then
+  printf 'utc\tjob_id\tarray_job_id\ttask_id\trestart_count\thost\tmode\n' \
+    > "$ALLOCATIONS"
+fi
+printf '%s\t%s\t%s\t%s\t%s\t%s\tresume\n' \
+  "$(date -u +%FT%TZ)" "${SLURM_JOB_ID:-}" \
+  "${SLURM_ARRAY_JOB_ID:-}" "${SLURM_ARRAY_TASK_ID:-}" \
+  "${SLURM_RESTART_COUNT:-0}" "$(hostname -s)" >> "$ALLOCATIONS"
 cd "$EVSP_EXECUTION_REPO"
 exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
   --csv "$CSV_PATH" --prices_csv hourly_prices_flat.csv \

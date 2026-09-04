@@ -401,3 +401,12 @@ row-level outcomes, current Slurm state, and compact arm/scale counts.  Active
 tasks remain `running` or `pending`; scheduler failures are printed as
 `ATTENTION` rows.  The command never submits, cancels, or modifies a job and
 does not overwrite final audit CSVs.
+
+`submit_small_threshold_resume48h.sh` stages the 23 completed, wall-capped
+k5/k8/k9/k10 cells into a separate immutable continuation root and resumes
+them from 12 hours to a 48-hour cumulative scientific budget.  The original
+12-hour benchmark is never overwritten.  Each continuation requests 36:30
+from Slurm, uses automatic requeue plus application-level resume, and records
+every allocation beside the staged result.  Certified cells, the live k9
+recovery, and all non-wall-limit outcomes are excluded.  After every array is
+terminal, `audit_small_threshold_resume48h.sh` writes `resume_summary.csv`.
