@@ -46,6 +46,14 @@ def read_arms(path: Path):
     return plan["arms"]
 
 
+def input_descriptors(root: Path):
+    path = root / "input_selection_manifest.csv"
+    if not path.is_file():
+        return {}
+    with path.open(newline="", encoding="utf-8") as handle:
+        return {row["cell_id"]: row for row in csv.DictReader(handle)}
+
+
 def allocation_count(path: Path) -> int:
     if not path.is_file():
         return 0
@@ -115,10 +123,12 @@ def main() -> int:
     root = args.campaign_root.resolve()
     matrix = read_matrix(root / "matrix.tsv")
     arms = read_arms(root / "execution_plan.json")
+    descriptors = input_descriptors(root)
     jobs = arm_jobs(root)
     accounting = load_accounting(args.sacct)
     rows = []
     for source in matrix:
+        descriptor = descriptors.get(source["cell"], {})
         cache = root / "network_cache" / (
             f"M__{source['cell']}__{source['representation']}.pkl"
         )
@@ -156,6 +166,34 @@ def main() -> int:
                 ) / int(iterations)
             rows.append({
                 **source,
+                "sample_family": descriptor.get("sample_family", ""),
+                "selection_role": descriptor.get("selection_role", ""),
+                "nested_chain_id": descriptor.get("nested_chain_id", ""),
+                "nested_parent_cell_id": descriptor.get(
+                    "nested_parent_cell_id", ""
+                ),
+                "duties_json": descriptor.get("duties_json", ""),
+                "duty_set_sha256": descriptor.get("duty_set_sha256", ""),
+                "peak_concurrency_lb": descriptor.get(
+                    "peak_concurrency_lb", ""
+                ),
+                "direct_compatibility_density": descriptor.get(
+                    "direct_compatibility_density", ""
+                ),
+                "service_kwh_total": descriptor.get("service_kwh_total", ""),
+                "service_kwh_per_duty": descriptor.get(
+                    "service_kwh_per_duty", ""
+                ),
+                "duty_trip_count_max": descriptor.get(
+                    "duty_trip_count_max", ""
+                ),
+                "duty_trip_count_cv": descriptor.get(
+                    "duty_trip_count_cv", ""
+                ),
+                "scheduled_intertrip_gap_median_min": descriptor.get(
+                    "scheduled_intertrip_gap_median_min", ""
+                ),
+                "service_span_min": descriptor.get("service_span_min", ""),
                 "arm": arm["arm"],
                 "columns_per_iter": arm["columns_per_iter"],
                 "selection": arm["selection"],
@@ -216,8 +254,9 @@ def main() -> int:
         writer.writerows(rows)
 
     summary = []
+    scales = sorted({row["scale"] for row in rows})
     for arm in arms:
-        for scale in (13, 20):
+        for scale in scales:
             group = [
                 row for row in rows
                 if row["arm"] == arm["arm"] and row["scale"] == scale

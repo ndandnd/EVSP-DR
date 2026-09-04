@@ -16,7 +16,7 @@ mapfile -t JOB_FILES < <(
 mapfile -t IDS < <(
   awk -F'\t' 'FNR > 1 {print $3}' "${JOB_FILES[@]}" | sort -u
 )
-[[ ${#IDS[@]} -ge 7 ]] || evsp_die "expected at least seven campaign arrays"
+[[ ${#IDS[@]} -ge 2 ]] || evsp_die "expected at least two campaign arrays"
 JOB_LIST=$(IFS=,; echo "${IDS[*]}")
 if squeue --me -h -j "$JOB_LIST" | grep -q .; then
   evsp_die "CG acceleration arrays are still active"

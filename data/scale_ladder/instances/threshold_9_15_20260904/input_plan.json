@@ -1,0 +1,81 @@
+{
+  "candidate_universe_per_scale": 512,
+  "created_date": "2026-09-04",
+  "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+  "existing_set_exclusion_manifests": [
+    "excluded_existing_scale_ladder_manifest.csv",
+    "excluded_small_threshold_manifest.csv"
+  ],
+  "existing_set_exclusion_sources": [
+    {
+      "name": "reviewed_six_selection_scale_ladder",
+      "sha256": "8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3",
+      "source_commit": "ff7fb2ba93cf13a31171e1e4aeb2d28dc8aeee20"
+    },
+    {
+      "name": "small_threshold_20260903",
+      "sha256": "e9523cf67a28d9e1cd531eda2f78bfa8b9383e9fbf8ed524d64a47e910992f11",
+      "source_commit": "91e05d7590e4fe310137bf93ad7f6b4438dc3d72"
+    }
+  ],
+  "files": {
+    "candidate_universe.csv": "730821fa6b1496298fb65cb7a625a8f8d042216b49bb14fd84e5282e3d7d42fa",
+    "excluded_existing_scale_ladder_manifest.csv": "8bf292bf71229d29feffa7dca4bfaa2f5d6b5943863559468c594a731bd904d3",
+    "excluded_small_threshold_manifest.csv": "e9523cf67a28d9e1cd531eda2f78bfa8b9383e9fbf8ed524d64a47e910992f11",
+    "known_duty_continuous_240_240.csv": "9055ddab95a67ec5ffa9dffd284a4dd7f9e580096f62596e48527db9398ba46a",
+    "selection_manifest.csv": "ce7672efacf415f3257badaab397bd1f56dea83051a05221522b3ae64d4ce560"
+  },
+  "generator_script_sha256": "d35b4a6212eb96515335bf8439ae813b66ee261428e25efdb745ae5399dd698e",
+  "generator_seed": 20260904,
+  "known_partition_caveat": "physical k-route upper bound only; not an event-lattice representability certificate and not injected into raw CG",
+  "known_partition_scope": "each original GIRO duty trip order has an independently optimized and replay-validated continuous schedule",
+  "physics": {
+    "battery_kwh": 240.0,
+    "charge_kw": 240.0,
+    "charge_start_cost": 5.0,
+    "reserve_kwh": 0.0,
+    "terminal_soc_policy": "free"
+  },
+  "probability_design": "six_nested_chains_k9_through_k15",
+  "probability_per_scale": 6,
+  "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+  "scales": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "schema": "evsp-dr-threshold-9-15-inputs-v1",
+  "selected_rows": 70,
+  "selection_uses_solver_outcomes": false,
+  "shared_builder_sha256": "1506abe092f8904bb714b4c3f271fd68a1022b73d24de42666eca60e0c257462",
+  "source_master": "data/Par_VehicleDetails_Updated.csv",
+  "source_master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "structural_rules": [
+    {
+      "direction": "min",
+      "field": "trip_count",
+      "role": "trip_light"
+    },
+    {
+      "direction": "max",
+      "field": "trip_count",
+      "role": "trip_heavy"
+    },
+    {
+      "direction": "max",
+      "field": "service_kwh_per_duty",
+      "role": "energy_heavy"
+    },
+    {
+      "direction": "min",
+      "field": "scheduled_intertrip_gap_median_min",
+      "role": "tight_gap"
+    }
+  ],
+  "tariff": "data/tariff_response/flat_h26.csv",
+  "tariff_sha256": "59a9d3b7c1516b19b56267de7309cfe014a13f84b8b390738754a5f652f451f3"
+}
