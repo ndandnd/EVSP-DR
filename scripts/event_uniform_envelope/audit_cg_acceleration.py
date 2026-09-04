@@ -79,8 +79,20 @@ def arm_jobs(root: Path):
         with path.open(newline="", encoding="utf-8") as handle:
             for row in csv.DictReader(handle, delimiter="\t"):
                 if row["stage"] == "cg":
-                    resolved[row["arm"]] = row["array_job_id"]
+                    for index in expand_indices(row["indices"]):
+                        resolved[(row["arm"], index)] = row["array_job_id"]
     return resolved
+
+
+def expand_indices(text: str) -> list[int]:
+    values = []
+    for token in text.split(","):
+        if "-" in token:
+            lo, hi = (int(value) for value in token.split("-", 1))
+            values.extend(range(lo, hi + 1))
+        elif token:
+            values.append(int(token))
+    return values
 
 
 def outcome(status, slurm_state=""):
@@ -130,7 +142,9 @@ def main() -> int:
             telemetry_path = Path(str(status_path) + ".phase-telemetry.jsonl")
             phases, phase_rows, malformed = telemetry(telemetry_path)
             slurm = slurm_task(
-                accounting, jobs[arm["arm"]], str(source["index"])
+                accounting,
+                jobs[(arm["arm"], source["index"])],
+                str(source["index"]),
             )
             row_outcome = outcome(status, slurm.get("state", ""))
             iterations = (status or {}).get("iterations", "")
@@ -183,6 +197,7 @@ def main() -> int:
                 "allocations": allocation_count(
                     Path(str(status_path) + ".allocations.tsv")
                 ),
+                "array_job_id": jobs[(arm["arm"], source["index"])],
                 "slurm_job_id_raw": slurm.get("job_id_raw", ""),
                 "slurm_state": slurm.get("state", ""),
                 "slurm_exit": slurm.get("exit", ""),

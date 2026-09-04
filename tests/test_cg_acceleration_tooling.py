@@ -92,8 +92,8 @@ class CgAccelerationToolingTests(unittest.TestCase):
                 }]
             }))
             (root / "jobs.tsv").write_text(
-                "stage\tarm\tarray_job_id\n"
-                "cg\tb030_reduced\t123\n"
+                "stage\tarm\tarray_job_id\tindices\n"
+                "cg\tb030_reduced\t123\t0\n"
             )
             cache = root / "network_cache" / (
                 "M__k13_s1__event_2p5_event5.pkl"
@@ -241,6 +241,31 @@ class CgAccelerationToolingTests(unittest.TestCase):
             module.classify({"certified_rc_optimal": True}, "COMPLETED"),
             "certified",
         )
+
+    def test_acceleration_recovery_overrides_only_selected_index(self):
+        import importlib.util
+        path = TOOLS / "audit_cg_acceleration.py"
+        spec = importlib.util.spec_from_file_location("acceleration_audit", path)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        sys.path.insert(0, str(TOOLS))
+        try:
+            spec.loader.exec_module(module)
+        finally:
+            sys.path.pop(0)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "jobs.tsv").write_text(
+                "stage\tarm\tarray_job_id\tindices\n"
+                "cg\tb030_reduced\t100\t0-11\n"
+            )
+            (root / "jobs_recovery_200.tsv").write_text(
+                "stage\tarm\tarray_job_id\tindices\n"
+                "cg\tb030_reduced\t200\t9\n"
+            )
+            jobs = module.arm_jobs(root)
+            self.assertEqual(jobs[("b030_reduced", 1)], "100")
+            self.assertEqual(jobs[("b030_reduced", 9)], "200")
 
 
 if __name__ == "__main__":

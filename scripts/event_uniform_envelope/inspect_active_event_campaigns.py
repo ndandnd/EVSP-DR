@@ -66,13 +66,15 @@ def acceleration_rows(root: Path, accounting: dict) -> list[dict]:
         with path.open(newline="", encoding="utf-8") as handle:
             for row in csv.DictReader(handle, delimiter="\t"):
                 if row["stage"] == "cg":
-                    jobs[row["arm"]] = row["array_job_id"]
+                    for index in expand_indices(row["indices"]):
+                        jobs[(row["arm"], index)] = row["array_job_id"]
     rows = []
     for fields in matrix:
         index, cell, scale, replicate, trips = fields[:5]
         representation = fields[7]
         for arm in plan["arms"]:
-            task = slurm_task(accounting, jobs[arm["arm"]], index)
+            job = jobs[(arm["arm"], int(index))]
+            task = slurm_task(accounting, job, index)
             state = str(task.get("state") or "")
             path = root / "cg" / arm["arm"] / (
                 f"M__{cell}__{representation}.json"
@@ -82,8 +84,8 @@ def acceleration_rows(root: Path, accounting: dict) -> list[dict]:
                 "campaign": "acceleration", "index": index,
                 "cell_id": cell, "scale": scale, "replicate": replicate,
                 "trip_count": trips, "arm": arm["arm"],
-                "array_job_id": jobs[arm["arm"]],
-                "slurm_task": f"{jobs[arm['arm']]}_{index}",
+                "array_job_id": job,
+                "slurm_task": f"{job}_{index}",
                 "slurm_state": state, "slurm_exit": task.get("exit", ""),
                 "slurm_elapsed": task.get("elapsed", ""),
                 "slurm_max_rss": task.get("max_rss", ""),
