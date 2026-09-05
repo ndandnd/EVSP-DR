@@ -1,3 +1,4 @@
+import copy
 import hashlib
 import json
 import sys
@@ -22,6 +23,8 @@ def base_row(**overrides):
         "scale": "13",
         "result_sha256": "r" * 64,
         "journal_sha256": "j" * 64,
+        "instance_sha256": "i" * 64,
+        "time_model": "event",
         "artificials": "0",
         "route_weight": "13",
     }
@@ -69,6 +72,7 @@ def witness(row, **overrides):
     payload = {
         "physical_witness_valid": True,
         "witness_scope": "event_representation",
+        "model_optimum_proven_by_sandwich": True,
         "buses": 13,
         "source_result_sha256": row["result_sha256"],
         "source_journal_sha256": row["journal_sha256"],
@@ -138,11 +142,7 @@ def test_identity_mismatch_blocks_proof():
     result = assess_row(
         row,
         fleet_certificate=fleet_certificate(
-            row, source_cg={
-                "result": "/campaign/cg/M__k13_s1__uniform_2_1.json",
-                "result_sha256": row["result_sha256"],
-                "journal_sha256": row["journal_sha256"],
-            }
+            row, representation_id="uniform_2_1"
         ),
         integer_witness=witness(row),
     )
@@ -153,7 +153,7 @@ def test_identity_mismatch_blocks_proof():
         row,
         fleet_certificate=fleet_certificate(
             row, source_cg={
-                "result": "/campaign/cg/M__k13_s1__event_2p5_event5.json",
+                "result": "/campaign/renamed-status-payload.dat",
                 "result_sha256": "x" * 64,
                 "journal_sha256": row["journal_sha256"],
             }
@@ -161,6 +161,171 @@ def test_identity_mismatch_blocks_proof():
         integer_witness=witness(row),
     )
     assert result["L_model"] == ""
+    assert result["I_model_proven"] is False
+
+
+FIXTURE_ROOT = (
+    Path(__file__).resolve().parent
+    / "fixtures"
+    / "event_uniform_proof"
+    / "k02_s1"
+)
+
+
+def real_fixture_payloads():
+    def load(name):
+        return json.loads((FIXTURE_ROOT / name).read_text())
+
+    cg = load("cg.json")
+    certificate = load("fleet_phase2.json")
+    witness_payload = load("witness.json")
+    row = {
+        "cell_id": "k02_s1",
+        "representation_id": "event_2p5_event5",
+        "scale": "2",
+        "result_sha256": certificate["source_cg"]["result_sha256"],
+        "journal_sha256": certificate["source_cg"]["journal_sha256"],
+        "instance_sha256": witness_payload["instance_sha256"],
+        "time_model": cg["time_model"],
+        "soc_step": cg["soc_step"],
+        "block_min": cg["block_min"],
+        "g_kwh": cg["g_kwh"],
+        "charge_kw": cg["charge_kw"],
+        "min_soc_frac": cg["min_soc_frac"],
+        "artificials": cg["final"]["artificials"],
+        "route_weight": cg["final"]["route_weight"],
+    }
+    return row, certificate, witness_payload
+
+
+def refresh_certificate_digest(certificate):
+    inner = certificate["certificate"]
+    unsigned = {
+        key: value for key, value in inner.items()
+        if key != "certificate_sha256"
+    }
+    inner["certificate_sha256"] = hashlib.sha256(
+        json.dumps(
+            unsigned, sort_keys=True, separators=(",", ":"),
+            allow_nan=False,
+        ).encode()
+    ).hexdigest()
+
+
+def test_minimized_committed_event_fixtures_prove_named_representation():
+    row, certificate, witness_payload = real_fixture_payloads()
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=witness_payload,
+    )
+    assert result["L_model"] == certificate["fleet_lp_lower_bound"]
+    assert result["L_model_proven"] is True
+    assert result["I_model"] == 2
+    assert result["I_model_proven"] is True
+
+
+def test_real_fixture_status_path_is_not_an_identity_requirement():
+    row, certificate, witness_payload = real_fixture_payloads()
+    certificate = copy.deepcopy(certificate)
+    certificate["source_cg"]["result"] = "/renamed/status.payload"
+    witness_payload = copy.deepcopy(witness_payload)
+    witness_payload["status"] = "/another/name"
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=witness_payload,
+    )
+    assert result["I_model_proven"] is True
+
+
+def test_real_fixture_altered_hashes_block_proof():
+    row, certificate, witness_payload = real_fixture_payloads()
+    altered_certificate = copy.deepcopy(certificate)
+    altered_certificate["source_cg"]["result_sha256"] = "a" * 64
+    result = assess_row(row, fleet_certificate=altered_certificate)
+    assert result["L_model_proven"] is False
+
+    altered_witness = copy.deepcopy(witness_payload)
+    altered_witness["status_sha256"] = "b" * 64
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=altered_witness,
+    )
+    assert result["L_model_proven"] is True
+    assert result["I_model_proven"] is False
+
+
+def test_real_fixture_representation_and_cell_mismatches_block_proof():
+    row, certificate, witness_payload = real_fixture_payloads()
+    altered_certificate = copy.deepcopy(certificate)
+    altered_certificate["representation"]["time_model"] = "uniform"
+    result = assess_row(row, fleet_certificate=altered_certificate)
+    assert result["L_model_proven"] is False
+
+    altered_witness = copy.deepcopy(witness_payload)
+    altered_witness["cell_id"] = "k02_s2"
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=altered_witness,
+    )
+    assert result["I_model_proven"] is False
+
+    altered_row = dict(row)
+    altered_row["instance_sha256"] = "c" * 64
+    result = assess_row(
+        altered_row,
+        fleet_certificate=certificate,
+        integer_witness=witness_payload,
+    )
+    assert result["L_model_proven"] is True
+    assert result["I_model_proven"] is False
+
+
+def test_real_fixture_physical_validity_and_bus_count_mismatches_block_proof():
+    row, certificate, witness_payload = real_fixture_payloads()
+    altered_witness = copy.deepcopy(witness_payload)
+    altered_witness["physical_witness_valid"] = False
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=altered_witness,
+    )
+    assert result["I_model_proven"] is False
+
+    altered_witness = copy.deepcopy(witness_payload)
+    altered_witness["integer_fleet_witness"] = 3
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=altered_witness,
+    )
+    assert result["I_model_proven"] is False
+
+
+def test_real_fixture_certificate_scope_mismatch_blocks_fleet_proof():
+    row, certificate, _ = real_fixture_payloads()
+    altered_certificate = copy.deepcopy(certificate)
+    altered_certificate["certificate"]["certificate_scope"] = "wrong"
+    refresh_certificate_digest(altered_certificate)
+    result = assess_row(row, fleet_certificate=altered_certificate)
+    assert result["fleet_certificate_valid"] is False
+    assert result["proof_blocker"] == "wrong_fleet_certificate_scope"
+
+
+def test_real_fixture_residual_artificials_block_formal_fields():
+    row, certificate, witness_payload = real_fixture_payloads()
+    row["artificials"] = 1.0
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=witness_payload,
+    )
+    assert result["fleet_certificate_valid"] is True
+    assert result["integer_witness_valid"] is True
+    assert result["L_model_proven"] is False
     assert result["I_model_proven"] is False
 
 

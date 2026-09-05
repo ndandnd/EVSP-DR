@@ -1,0 +1,12 @@
+{
+  "fleet_lp_lower_bound": 1.9999999529999963,
+  "instance": "/workspace/EVSP-DR-event-pricer/data/scale_ladder/instances/Practice_Custom_DutyUnion_k02_r1.csv",
+  "instance_sha256": "57f672139f86849429c2f580bb68126246aca7b804f9303239fbe1a35fba887e",
+  "integer_fleet_witness": 2,
+  "model_integer_optimum": 2,
+  "model_optimum_proven_by_sandwich": true,
+  "physical_witness_valid": true,
+  "scope": "named_discrete_event_model_only",
+  "status": "/committed/panel_a/event/k02_s1/cg.json",
+  "status_sha256": "a6c43a77b7e974105de437c929a568d0a172c9dad71a35bfbcdc42050ac7e0b7"
+}
