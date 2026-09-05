@@ -30,6 +30,8 @@ ARTIFICIAL_TOLERANCE = 1e-7
 CEILING_TOLERANCE = 1e-7
 FLEET_CERTIFICATE_SCHEMA = "evsp-dr-fleet-lp-phase2-certificate-v1"
 FLEET_CERTIFICATE_SCOPE = "fleet_lp_lower_bound_in_named_discrete_route_space"
+FLEET_CERTIFICATE_DOCUMENT_SCHEMA = "evsp-dr-certified-fleet-lp-phase2-v1"
+INTEGER_WITNESS_SCHEMA = "evsp-dr-event-known-partition-model-witness-v1"
 
 REPORTING_FIELDS = (
     "cg_route_weight_endpoint",
@@ -183,6 +185,24 @@ def _number_equal(left: Any, right: Any) -> bool:
     return math.isclose(left_number, right_number, rel_tol=0.0, abs_tol=1e-9)
 
 
+REPRESENTATION_ALIASES = {
+    "time_model": ("time_model",),
+    "soc_step": ("soc_step", "soc_step_kwh"),
+    "block_min": ("block_min",),
+    "g_kwh": ("g_kwh", "battery_kwh"),
+    "charge_kw": ("charge_kw", "charge_power_kw"),
+    "min_soc_frac": ("min_soc_frac", "reserve_frac"),
+}
+
+
+def _first_nonempty(payload: Mapping[str, Any], names: tuple[str, ...]) -> Any:
+    for name in names:
+        value = payload.get(name)
+        if value is not None and value != "":
+            return value
+    return None
+
+
 def _matches_representation(
     payload: Mapping[str, Any], row: Mapping[str, Any]
 ) -> bool:
@@ -198,21 +218,22 @@ def _matches_representation(
         metadata = representation
     else:
         metadata = {}
+    if not declared_id:
+        declared_id = _context_value(metadata, "representation_id")
     if declared_id and expected_id and _text(declared_id) != expected_id:
         return False
 
     expected_metadata = REPRESENTATIONS.get(expected_id, {})
-    aliases = {
-        "soc_step": ("soc_step", "soc_step_kwh"),
-        "block_min": ("block_min",),
-        "time_model": ("time_model",),
-        "g_kwh": ("g_kwh", "battery_kwh"),
-        "charge_kw": ("charge_kw", "charge_power_kw"),
-        "min_soc_frac": ("min_soc_frac", "reserve_frac"),
-    }
-    for key, expected_value in expected_metadata.items():
-        actual_value = _context_value(metadata, *aliases[key])
-        if actual_value is not None and not _number_equal(
+    for key, aliases in REPRESENTATION_ALIASES.items():
+        actual_value = _first_nonempty(metadata, aliases)
+        if actual_value is None:
+            actual_value = _first_nonempty(payload, aliases)
+        if actual_value is None:
+            continue
+        expected_value = _first_nonempty(row, aliases)
+        if expected_value is None:
+            expected_value = expected_metadata.get(key)
+        if expected_value is not None and not _number_equal(
             actual_value, expected_value
         ):
             return False
@@ -227,6 +248,9 @@ def validate_fleet_certificate(
 
     if not isinstance(certificate, Mapping):
         return False, "missing_fleet_certificate", None
+    document_schema = certificate.get("schema")
+    if document_schema not in (None, "", FLEET_CERTIFICATE_DOCUMENT_SCHEMA):
+        return False, "wrong_fleet_certificate_document_schema", None
     inner = certificate.get("certificate", certificate)
     if not isinstance(inner, Mapping):
         return False, "invalid_fleet_certificate_shape", None
@@ -272,6 +296,9 @@ def validate_integer_witness(
 
     if not isinstance(witness, Mapping):
         return False, "missing_integer_witness", None
+    witness_schema = witness.get("schema")
+    if witness_schema not in (None, "", INTEGER_WITNESS_SCHEMA):
+        return False, "wrong_integer_witness_schema", None
     if witness.get("physical_witness_valid") is not True:
         return False, "integer_witness_not_physically_valid", None
     if (

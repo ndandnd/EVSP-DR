@@ -29,6 +29,13 @@ the named representation rather than the finite CG pool. A continuous
 physical upper-bound flag is never promoted to an event representation
 witness. Missing or conflicting authenticated identity fails closed.
 
+For every representation/physics value supplied by an artifact, the validator
+compares it with the audited row: `time_model`, `soc_step`, `block_min`,
+`g_kwh`/`battery_kwh`, `charge_kw`, and `min_soc_frac`/`reserve_frac`. The
+audited row is authoritative when it contains the corresponding field; known
+representation metadata is only a compatibility fallback for fields omitted
+by an older row schema.
+
 The stage-1 auditors do not guess sidecars from neighboring filenames. Unless
 a certificate or witness is explicitly supplied by the status/audit input,
 formal proof fields remain false.
