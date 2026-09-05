@@ -16,6 +16,8 @@ import statistics
 from collections import Counter
 from pathlib import Path
 
+from proof_reporting import CEILING_TOLERANCE
+
 
 TRUE = {"1", "true", "yes"}
 
@@ -94,17 +96,45 @@ def enrich(row: dict[str, str]) -> dict[str, object]:
     result["selection_role"] = role
     result["outcome"] = classify(row)
     scale = integer(row.get("scale"))
-    lower = number(row.get("L_model"))
-    artificials = number(row.get("artificials"))
-    result["ceil_L_model"] = (
-        math.ceil(lower - 1e-7) if lower is not None else ""
+    endpoint = number(row.get("cg_route_weight_endpoint"))
+    legacy_endpoint_fallback = endpoint is None and bool(
+        str(row.get("L_model") or "").strip()
     )
-    result["fleet_target_proved"] = bool(
-        result["outcome"] == "certified"
-        and scale is not None
-        and lower is not None
-        and math.ceil(lower - 1e-7) == scale
-        and (artificials is None or artificials <= 1e-7)
+    if legacy_endpoint_fallback:
+        # Pre-contract CSVs called this combined-cost endpoint L_model.  It is
+        # readable as a descriptive endpoint, but it is never trusted as a
+        # proof value during re-auditing.
+        endpoint = number(row.get("L_model"))
+    result["cg_route_weight_endpoint"] = (
+        endpoint if endpoint is not None else ""
+    )
+    result["legacy_l_model_endpoint_fallback"] = legacy_endpoint_fallback
+    result["lp_route_weight_matches_target"] = (
+        truth(row.get("lp_route_weight_matches_target"))
+        if "lp_route_weight_matches_target" in row
+        else bool(
+            endpoint is not None
+            and scale is not None
+            and math.ceil(endpoint - CEILING_TOLERANCE) == scale
+        )
+    )
+    # Only the auditor's explicit formal-proof fields are accepted here.  In
+    # particular, certification plus a matching ceiling is not enough.
+    l_model_proven = truth(row.get("L_model_proven"))
+    lower = number(row.get("L_model")) if l_model_proven else None
+    i_model_proven = bool(
+        l_model_proven and truth(row.get("I_model_proven"))
+        and integer(row.get("I_model")) is not None
+    )
+    result["L_model"] = lower if lower is not None else ""
+    result["L_model_proven"] = l_model_proven
+    result["I_model"] = (
+        integer(row.get("I_model")) if i_model_proven else ""
+    )
+    result["I_model_proven"] = i_model_proven
+    result["fleet_target_proved"] = i_model_proven
+    result["ceil_L_model"] = (
+        math.ceil(lower - CEILING_TOLERANCE) if lower is not None else ""
     )
     shortest = number(row.get("pricing_shortest_path_s")) or 0.0
     batch = number(row.get("pricing_batch_s")) or 0.0
@@ -188,7 +218,17 @@ def aggregate(scale: int, rows: list[dict[str, object]]) -> dict[str, object]:
         "preempted": outcomes["preempted"],
         "execution_failure": outcomes["execution_failure"],
         "invalid_configuration": outcomes["invalid_configuration"],
-        "fleet_target_proved": sum(truth(row["fleet_target_proved"]) for row in rows),
+        "I_model_proven": sum(
+            truth(row["I_model_proven"]) for row in rows
+        ),
+        # Deprecated compatibility alias.  It now means the formal integer
+        # proof count, not the old endpoint-ceiling heuristic.
+        "fleet_target_proved": sum(
+            truth(row["I_model_proven"]) for row in rows
+        ),
+        "lp_route_weight_matches_target": sum(
+            truth(row["lp_route_weight_matches_target"]) for row in rows
+        ),
         "probability_rows": len(probability),
         "probability_certified": len(probability_certified),
         "certification_rate": outcomes["certified"] / len(rows),
@@ -227,8 +267,42 @@ def aggregate(scale: int, rows: list[dict[str, object]]) -> dict[str, object]:
 
 
 def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
+    rows = sorted(
+        rows,
+        key=lambda row: (
+            integer(row.get("scale")) is None,
+            integer(row.get("scale")) or 0,
+            str(row.get("cell_id", "")),
+            str(row.get("arm", "")),
+            integer(row.get("index")) is None,
+            integer(row.get("index")) or 0,
+        ),
+    )
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        fieldnames = list(rows[0])
+        derived = (
+            "cg_route_weight_endpoint",
+            "legacy_l_model_endpoint_fallback",
+            "lp_route_weight_matches_target",
+            "L_model",
+            "L_model_proven",
+            "I_model",
+            "I_model_proven",
+            "fleet_target_proved",
+            "ceil_L_model",
+            "pricing_total_s",
+            "pricing_exact_best_s",
+            "retained_pool_growth_per_iteration",
+            "pricing_share_wall",
+            "master_share_wall",
+            "network_build_share_wall",
+            "incidence_share_wall",
+            "pricing_exact_best_share_wall",
+        )
+        fieldnames = [
+            field for field in fieldnames if field not in derived
+        ] + [field for field in derived if field in fieldnames]
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
 
@@ -268,6 +342,7 @@ def main() -> int:
         aggregate(scale, [row for row in rows if integer(row.get("scale")) == scale])
         for scale in scales
     ]
+    summary = sorted(summary, key=lambda row: int(row["scale"]))
     row_output = root / "cg_frontier_rows.csv"
     scale_output = root / "cg_frontier_by_scale.csv"
     write_csv(row_output, rows)

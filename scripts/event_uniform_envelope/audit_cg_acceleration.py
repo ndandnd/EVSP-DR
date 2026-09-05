@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import statistics
@@ -12,6 +13,11 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from audit_highs_disagreement_retry import load_accounting, slurm_task
+from proof_reporting import REPORTING_FIELDS, assess_row, embedded_evidence
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else ""
 
 
 def finite(value):
@@ -148,6 +154,16 @@ def main() -> int:
                 status = None
             metrics = (status or {}).get("network_metrics") or {}
             final = (status or {}).get("final") or {}
+            journal_path = Path(str((status or {}).get("columns_journal", "")))
+            journal_sha = (
+                sha256(journal_path) if journal_path.is_file() else ""
+            )
+            journal_sha = journal_sha or (status or {}).get(
+                "journal_sha256", ""
+            )
+            journal_sha = journal_sha or (status or {}).get(
+                "source_journal_sha256", ""
+            )
             cg_wall_s = finite((status or {}).get("wall_s"))
             telemetry_path = Path(str(status_path) + ".phase-telemetry.jsonl")
             phases, phase_rows, malformed = telemetry(telemetry_path)
@@ -164,7 +180,7 @@ def main() -> int:
                 retained_growth = max(
                     0, int(pool_columns) - int(source["trip_count"])
                 ) / int(iterations)
-            rows.append({
+            row = {
                 **source,
                 "sample_family": descriptor.get("sample_family", ""),
                 "selection_role": descriptor.get("selection_role", ""),
@@ -200,6 +216,9 @@ def main() -> int:
                 "diversity_weight": arm["diversity_weight"],
                 "outcome": row_outcome,
                 "certified": row_outcome == "certified",
+                "certified_rc_optimal": (status or {}).get(
+                    "certified_rc_optimal", ""
+                ),
                 "stop_reason": (status or {}).get("stop_reason", ""),
                 "cg_wall_s": cg_wall_s if cg_wall_s is not None else "",
                 "network_original_build_s": (
@@ -214,7 +233,8 @@ def main() -> int:
                 "iterations": iterations,
                 "pool_columns": pool_columns,
                 "retained_pool_growth_per_iteration": retained_growth,
-                "L_model": final.get("route_weight", ""),
+                "result_sha256": sha256(status_path),
+                "journal_sha256": journal_sha,
                 "lp_objective": final.get("lp_obj", ""),
                 "artificials": final.get("artificials", ""),
                 "minimum_reduced_cost": final.get("min_rc", ""),
@@ -245,13 +265,32 @@ def main() -> int:
                 "slurm_node": slurm.get("node", ""),
                 "status_path": str(status_path),
                 "cache_path": str(cache),
-            })
+            }
+            certificate, witness = embedded_evidence(status or {})
+            row.update(assess_row({
+                **row,
+                "cell_id": source["cell"],
+                "representation_id": source["representation"],
+                "scale": source["scale"],
+                "artificials": final.get("artificials", ""),
+                "route_weight": final.get("route_weight", ""),
+            }, fleet_certificate=certificate, integer_witness=witness))
+            rows.append(row)
 
     row_path = root / "cg_acceleration_rows.csv"
     with row_path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        fieldnames = list(rows[0])
+        fieldnames = [
+            field for field in fieldnames if field not in REPORTING_FIELDS
+        ] + list(REPORTING_FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(rows)
+        writer.writerows(sorted(
+            rows, key=lambda item: (
+                str(item.get("arm", "")),
+                int(item.get("index", 0)),
+            )
+        ))
 
     summary = []
     scales = sorted({row["scale"] for row in rows})
