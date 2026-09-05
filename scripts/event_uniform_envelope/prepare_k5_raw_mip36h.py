@@ -54,7 +54,9 @@ def load_matrix(path: Path) -> list[dict[str, str]]:
     return sorted(selected, key=lambda row: row["cell"])
 
 
-def validate_source(row: dict[str, str], budget_s: float) -> Path:
+def validate_source(
+    row: dict[str, str], budget_s: float, planned_columns_per_iter: int = 30,
+) -> Path:
     source = required_file(Path(row["resume_status"]), "resume status")
     status = json.loads(source.read_text())
     expected = {
@@ -68,7 +70,7 @@ def validate_source(row: dict[str, str], budget_s: float) -> Path:
         "prices_csv": "hourly_prices_flat.csv",
         "master_sense": "partition",
         "initial_pool": "singletons",
-        "columns_per_iter": 30,
+        "columns_per_iter": planned_columns_per_iter,
         "column_pool_treatment": "RAW",
     }
     observed = {
@@ -82,7 +84,12 @@ def validate_source(row: dict[str, str], budget_s: float) -> Path:
         "prices_csv": status.get("prices_csv"),
         "master_sense": status.get("master_sense"),
         "initial_pool": status.get("initial_pool"),
-        "columns_per_iter": int(status.get("columns_per_iter", -1)),
+        # The reviewed resume solver predates this field in some periodic
+        # status payloads. In that case its immutable execution plan is the
+        # authority; a present status value must still agree with the plan.
+        "columns_per_iter": int(
+            status.get("columns_per_iter", planned_columns_per_iter)
+        ),
         "column_pool_treatment": status.get("column_pool_treatment"),
     }
     if observed != expected:
@@ -263,6 +270,30 @@ def main() -> int:
     output_root = args.output_root.resolve()
     freezer = required_file(args.freezer.resolve(), "reviewed freezer")
     python = required_file(args.python.resolve(), "Python interpreter")
+    plan_path = required_file(
+        resume_root / "execution_plan.json", "resume execution plan"
+    )
+    plan = json.loads(plan_path.read_text())
+    expected_plan = {
+        "schema": "evsp-dr-wall-capped-event-resume-v1",
+        "cells": 23,
+        "parent_cumulative_wall_limit_s": 43200.0,
+        "cumulative_scientific_wall_limit_s": 172800.0,
+        "columns_per_iter": 30,
+    }
+    observed_plan = {
+        "schema": plan.get("schema"),
+        "cells": int(plan.get("cells", -1)),
+        "parent_cumulative_wall_limit_s": float(
+            plan.get("parent_cumulative_wall_limit_s", -1)
+        ),
+        "cumulative_scientific_wall_limit_s": float(
+            plan.get("cumulative_scientific_wall_limit_s", -1)
+        ),
+        "columns_per_iter": int(plan.get("columns_per_iter", -1)),
+    }
+    if observed_plan != expected_plan:
+        raise SystemExit(f"resume execution-plan mismatch: {observed_plan}")
     rows = load_matrix(required_file(resume_root / "matrix.tsv", "resume matrix"))
     if output_root.exists():
         raise SystemExit(f"output root already exists: {output_root}")
@@ -272,7 +303,9 @@ def main() -> int:
 
     records = []
     for local_index, row in enumerate(rows):
-        source = validate_source(row, args.budget_s)
+        source = validate_source(
+            row, args.budget_s, planned_columns_per_iter=plan["columns_per_iter"]
+        )
         snapshot = (
             output_root / "snapshots"
             / f"M__{row['cell']}__{EXPECTED_REPRESENTATION}.snapshot.json"

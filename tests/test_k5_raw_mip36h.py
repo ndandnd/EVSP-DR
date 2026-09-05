@@ -94,6 +94,20 @@ def prepare_four_predeclared_raw_snapshots(tmp_path: Path):
         )
         writer.writeheader()
         writer.writerows(rows)
+    (resume / "execution_plan.json").write_text(json.dumps({
+        "schema": "evsp-dr-wall-capped-event-resume-v1",
+        "cells": 23,
+        "parent_cumulative_wall_limit_s": 43200.0,
+        "cumulative_scientific_wall_limit_s": 172800.0,
+        "columns_per_iter": 30,
+    }))
+
+    # Exercise the historical periodic-status shape that omitted the field;
+    # the immutable resume plan remains authoritative.
+    first_status = Path(rows[0]["resume_status"])
+    first_payload = json.loads(first_status.read_text())
+    first_payload.pop("columns_per_iter")
+    first_status.write_text(json.dumps(first_payload))
 
     output = tmp_path / "mip36"
     subprocess.run([

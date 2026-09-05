@@ -6,7 +6,7 @@ source "$SCRIPT_DIR/common.sh"
 evsp_require_unicorn
 [[ $# -le 1 ]] || evsp_die "usage: $0 [SMALL_THRESHOLD_ROOT]"
 SOURCE_ROOT="${1:-$HOME/ladder-lite/small_threshold_event_20260903_44b6d5}"
-ROOT=$(cd "$SOURCE_ROOT/k5_raw_mip36h_20260905" && pwd)
+ROOT=$(cd "$SOURCE_ROOT/k5_raw_mip36h_20260905_v2" && pwd)
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 mapfile -t IDS < <(
   awk -F'\t' 'FNR > 1 {print $2}' "$ROOT"/jobs_*.tsv | sort -u

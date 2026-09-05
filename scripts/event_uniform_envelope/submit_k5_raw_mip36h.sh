@@ -20,7 +20,7 @@ PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 [[ -r /share/apps/software/gurobi/gurobi.lic ]] \
   || evsp_die "shared Gurobi license is unreadable"
 
-MIP_ROOT="$SOURCE_ROOT/k5_raw_mip36h_20260905"
+MIP_ROOT="$SOURCE_ROOT/k5_raw_mip36h_20260905_v2"
 if [[ ! -e "$MIP_ROOT" ]]; then
   "$PYTHON_BIN" "$SCRIPT_DIR/prepare_k5_raw_mip36h.py" \
     --resume-root "$RESUME_ROOT" --output-root "$MIP_ROOT" \
