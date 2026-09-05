@@ -1,0 +1,37 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+
+fatal() { echo "[FATAL] $*" >&2; exit 2; }
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_RESUME_ROOT:?}"
+: "${EVSP_MIP_ROOT:?}"
+: "${EVSP_FREEZE_EXPECTED_WORKER_SHA256:?}"
+: "${EVSP_FREEZE_EXPECTED_RUNNER_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+
+[[ "${SLURM_JOB_PARTITION:-}" == "scaglione" ]] \
+  || fatal "snapshot worker requires scaglione"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]] \
+  || fatal "execution checkout commit mismatch"
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]] \
+  || fatal "execution checkout has tracked modifications"
+if git -C "$EVSP_EXECUTION_REPO" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "execution checkout must be detached"
+fi
+worker_sha=$(sha256sum "$0"); worker_sha=${worker_sha%% *}
+[[ "$worker_sha" == "$EVSP_FREEZE_EXPECTED_WORKER_SHA256" ]] \
+  || fatal "snapshot worker hash mismatch"
+freezer="$EVSP_EXECUTION_REPO/src/freeze_exact_cg_prefix.py"
+freezer_sha=$(sha256sum "$freezer"); freezer_sha=${freezer_sha%% *}
+[[ "$freezer_sha" == "$EVSP_FREEZE_EXPECTED_RUNNER_SHA256" ]] \
+  || fatal "prefix freezer hash mismatch"
+
+exec "$PYTHON_BIN" -u \
+  "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/prepare_k5_raw_mip36h.py" \
+  --resume-root "$EVSP_RESUME_ROOT" --output-root "$EVSP_MIP_ROOT" \
+  --freezer "$freezer" --python "$PYTHON_BIN"

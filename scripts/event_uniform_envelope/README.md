@@ -432,7 +432,9 @@ Four independent strict-partition MIPs then run on nonpreemptible
 limit, two-stage fleet-first optimization, and no injected GIRO or other
 known routes. These jobs measure `I_pool` for the frozen finite pools; they
 do not establish `I_model`. `snapshot_manifest.csv`, the immutable job TSV,
-input checksums, and logs are stored under `k5_raw_mip36h_20260905_v2/`. After
+input checksums, and logs are stored under `k5_raw_mip36h_20260905_v3/`. The
+bounded-memory snapshot stage runs first on `scaglione`; the four-MIP array is
+released only after all snapshots and the CSV manifest publish successfully. After
 the array leaves the queue, run:
 
 ```bash

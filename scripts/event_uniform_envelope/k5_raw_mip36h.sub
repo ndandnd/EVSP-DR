@@ -16,6 +16,7 @@ fatal() { echo "[FATAL] $*" >&2; exit 2; }
 : "${EVSP_MIP_EXPECTED_WORKER_SHA256:?}"
 : "${EVSP_MIP_EXPECTED_RUNNER_SHA256:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ -s "$EVSP_MIP_MANIFEST" ]] || fatal "snapshot manifest was not published"
 
 [[ "${SLURM_JOB_PARTITION:-}" == "scaglione" ]] \
   || fatal "RAW pool MIP requires the non-preemptible scaglione partition"

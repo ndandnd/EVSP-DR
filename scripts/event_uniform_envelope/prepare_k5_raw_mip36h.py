@@ -182,7 +182,8 @@ def run_freezer(
         shutil.rmtree(temporary)
         if "source CG artifacts changed during snapshot" not in diagnostic:
             raise SystemExit(
-                f"freezer failed for {source} (attempt {attempt}):\n{diagnostic}"
+                f"freezer failed for {source} (attempt {attempt}, "
+                f"return code {completed.returncode}):\n{diagnostic}"
             )
         if attempt == attempts:
             raise SystemExit(
@@ -202,7 +203,10 @@ def validate_snapshot(path: Path, cell: str, budget_s: float) -> dict:
     journal = required_file(
         Path(str(payload.get("columns_journal", ""))), "snapshot journal"
     )
-    if matched.get("schema") != "evsp-dr-exact-cg-matched-wall-snapshot-v1":
+    if matched.get("schema") not in {
+        "evsp-dr-exact-cg-matched-wall-snapshot-v1",
+        "evsp-dr-exact-cg-prefix-snapshot-v1",
+    }:
         raise SystemExit(f"snapshot schema mismatch for {cell}")
     if abs(float(matched.get("requested_budget_s", -1)) - budget_s) > 1e-9:
         raise SystemExit(f"snapshot budget mismatch for {cell}")
@@ -295,11 +299,14 @@ def main() -> int:
     if observed_plan != expected_plan:
         raise SystemExit(f"resume execution-plan mismatch: {observed_plan}")
     rows = load_matrix(required_file(resume_root / "matrix.tsv", "resume matrix"))
-    if output_root.exists():
-        raise SystemExit(f"output root already exists: {output_root}")
-    (output_root / "snapshots").mkdir(parents=True)
+    output_root.mkdir(parents=True, exist_ok=True)
+    if any((output_root / name).exists() for name in (
+        "snapshots", "mip", "snapshot_manifest.csv", "snapshot_manifest.tsv",
+    )):
+        raise SystemExit(f"output root already contains prepared artifacts: {output_root}")
+    (output_root / "snapshots").mkdir()
     (output_root / "mip").mkdir()
-    (output_root / "logs").mkdir()
+    (output_root / "logs").mkdir(exist_ok=True)
 
     records = []
     for local_index, row in enumerate(rows):
