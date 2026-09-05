@@ -9,8 +9,9 @@ from the two claims that require authenticated evidence:
     A certified fleet-only LP lower bound tied to the exact CG status and
     column journal represented by the row.
 ``I_model_proven``
-    A physically valid integer witness for the same represented pool and
-    representation whose bus count equals ``ceil(L_model)``.
+    A physically valid integer witness for the same named representation
+    whose bus count equals ``ceil(L_model)``.  The witness need not be a
+    member of the finite CG pool used by the fleet certificate.
 
 The functions are reporting-only.  They do not solve, repair, or mutate any
 optimization artifact.
@@ -22,7 +23,6 @@ import hashlib
 import json
 import math
 from collections.abc import Mapping
-from pathlib import Path
 from typing import Any
 
 
@@ -42,6 +42,43 @@ REPORTING_FIELDS = (
     "integer_witness_valid",
     "proof_blocker",
 )
+
+
+# These are the representation identifiers used by the committed campaign
+# manifests.  Metadata is checked when an artifact supplies it; no filename
+# convention is inferred from a source path.
+REPRESENTATIONS = {
+    "event_2p5_event5": {
+        "time_model": "event",
+        "soc_step": 2.5,
+        "block_min": 5,
+    },
+    "uniform_10_10": {
+        "time_model": "uniform",
+        "soc_step": 10.0,
+        "block_min": 10,
+    },
+    "uniform_4_5": {
+        "time_model": "uniform",
+        "soc_step": 4.0,
+        "block_min": 5,
+    },
+    "uniform_2_5": {
+        "time_model": "uniform",
+        "soc_step": 2.0,
+        "block_min": 5,
+    },
+    "uniform_2_2": {
+        "time_model": "uniform",
+        "soc_step": 2.0,
+        "block_min": 2,
+    },
+    "uniform_2_1": {
+        "time_model": "uniform",
+        "soc_step": 2.0,
+        "block_min": 1,
+    },
+}
 
 
 def finite_number(value: Any) -> float | None:
@@ -87,49 +124,99 @@ def _matches_optional_identity(
     return _text(value) == _text(row.get(name))
 
 
-def _matches_source_path(payload: Mapping[str, Any], row: Mapping[str, Any]) -> bool:
-    source = payload.get("source_cg") or payload.get("source") or {}
-    if not isinstance(source, Mapping):
-        return False
-    source_result = _context_value(
-        source, "result", "result_path", "source_result"
-    )
-    if not source_result:
-        return True
-    cell = _text(row.get("cell_id") or row.get("cell"))
-    representation = _text(
-        row.get("representation_id") or row.get("representation")
-    )
-    if not cell or not representation:
-        return False
-    expected = f"M__{cell}__{representation}.json"
-    return Path(str(source_result)).name == expected
-
-
 def _source_hashes_match(
-    payload: Mapping[str, Any], row: Mapping[str, Any]
+    payload: Mapping[str, Any],
+    row: Mapping[str, Any],
+    *,
+    require_journal: bool,
 ) -> bool:
     source = payload.get("source_cg") or payload.get("source") or payload
     if not isinstance(source, Mapping):
         return False
     result_hash = _context_value(
-        source, "result_sha256", "source_result_sha256"
+        source, "result_sha256", "source_result_sha256", "status_sha256"
     )
     journal_hash = _context_value(
         source, "journal_sha256", "source_journal_sha256"
     )
-    expected_result = _text(row.get("result_sha256"))
+    expected_result = _text(
+        row.get("result_sha256") or row.get("source_result_sha256")
+    )
     expected_journal = _text(
         row.get("journal_sha256") or row.get("source_journal_sha256")
     )
+    if not result_hash or not expected_result:
+        return False
+    if _text(result_hash) != expected_result:
+        return False
+    if not require_journal:
+        return True
     return (
-        bool(result_hash)
-        and bool(journal_hash)
-        and bool(expected_result)
+        bool(journal_hash)
         and bool(expected_journal)
-        and _text(result_hash) == expected_result
         and _text(journal_hash) == expected_journal
     )
+
+
+def _matches_instance_hash(
+    payload: Mapping[str, Any], row: Mapping[str, Any]
+) -> bool:
+    instance_hash = _context_value(
+        payload, "instance_sha256", "source_instance_sha256"
+    )
+    source = payload.get("source_cg") or payload.get("source")
+    if instance_hash is None and isinstance(source, Mapping):
+        instance_hash = _context_value(
+            source, "instance_sha256", "source_instance_sha256"
+        )
+    if instance_hash is None or instance_hash == "":
+        return True
+    expected = _text(row.get("instance_sha256"))
+    return bool(expected) and _text(instance_hash) == expected
+
+
+def _number_equal(left: Any, right: Any) -> bool:
+    left_number = finite_number(left)
+    right_number = finite_number(right)
+    if left_number is None or right_number is None:
+        return _text(left) == _text(right)
+    return math.isclose(left_number, right_number, rel_tol=0.0, abs_tol=1e-9)
+
+
+def _matches_representation(
+    payload: Mapping[str, Any], row: Mapping[str, Any]
+) -> bool:
+    expected_id = _text(
+        row.get("representation_id") or row.get("representation")
+    )
+    declared_id = _context_value(payload, "representation_id")
+    representation = payload.get("representation")
+    if isinstance(representation, str):
+        declared_id = declared_id or representation
+        metadata: Mapping[str, Any] = {}
+    elif isinstance(representation, Mapping):
+        metadata = representation
+    else:
+        metadata = {}
+    if declared_id and expected_id and _text(declared_id) != expected_id:
+        return False
+
+    expected_metadata = REPRESENTATIONS.get(expected_id, {})
+    aliases = {
+        "soc_step": ("soc_step", "soc_step_kwh"),
+        "block_min": ("block_min",),
+        "time_model": ("time_model",),
+        "g_kwh": ("g_kwh", "battery_kwh"),
+        "charge_kw": ("charge_kw", "charge_power_kw"),
+        "min_soc_frac": ("min_soc_frac", "reserve_frac"),
+    }
+    for key, expected_value in expected_metadata.items():
+        actual_value = _context_value(metadata, *aliases[key])
+        if actual_value is not None and not _number_equal(
+            actual_value, expected_value
+        ):
+            return False
+    return True
 
 
 def validate_fleet_certificate(
@@ -158,10 +245,17 @@ def validate_fleet_certificate(
     )
     if lower is None:
         return False, "missing_fleet_lower_bound", None
-    if not _source_hashes_match(certificate, row):
+    source = certificate.get("source_cg") or certificate.get("source")
+    if not isinstance(source, Mapping):
+        return False, "missing_fleet_certificate_source", None
+    if source.get("certified") is False:
+        return False, "fleet_certificate_source_not_certified", None
+    if not _source_hashes_match(certificate, row, require_journal=True):
         return False, "fleet_certificate_source_hash_mismatch", None
-    if not _matches_source_path(certificate, row):
-        return False, "fleet_certificate_source_path_mismatch", None
+    if not _matches_instance_hash(certificate, row):
+        return False, "fleet_certificate_instance_hash_mismatch", None
+    if not _matches_representation(certificate, row):
+        return False, "fleet_certificate_representation_mismatch", None
     for name in ("cell_id", "representation_id"):
         if not _matches_optional_identity(certificate, row, name=name):
             return False, f"fleet_certificate_{name}_mismatch", None
@@ -185,17 +279,44 @@ def validate_integer_witness(
         or witness.get("known_continuous_physical_upper_bound") is True
     ):
         return False, "continuous_upper_bound_is_not_event_witness", None
-    scope = witness.get("witness_scope")
-    if scope not in (None, "", "event_representation", "same_representation"):
+    scope = _context_value(witness, "scope", "witness_scope")
+    if scope not in (
+        None,
+        "",
+        "event_representation",
+        "same_representation",
+        "named_discrete_event_model_only",
+    ):
         return False, "wrong_integer_witness_scope", None
-    buses_value = finite_number(witness.get("buses"))
+    if scope == "named_discrete_event_model_only":
+        expected_representation = _text(
+            row.get("representation_id") or row.get("representation")
+        )
+        row_time_model = _text(row.get("time_model"))
+        if (
+            expected_representation
+            and expected_representation in REPRESENTATIONS
+            and not expected_representation.startswith("event_")
+        ) or (row_time_model and row_time_model != "event"):
+            return False, "integer_witness_representation_mismatch", None
+    if (
+        scope == "named_discrete_event_model_only"
+        or witness.get("schema")
+        == "evsp-dr-event-known-partition-model-witness-v1"
+    ) and witness.get("model_optimum_proven_by_sandwich") is not True:
+        return False, "integer_witness_model_optimum_not_proven", None
+    buses_value = finite_number(
+        _context_value(witness, "integer_fleet_witness", "buses")
+    )
     buses = int(buses_value) if buses_value is not None else None
     if buses is None or abs(buses_value - buses) > ARTIFICIAL_TOLERANCE:
         return False, "invalid_integer_witness_bus_count", None
-    if not _source_hashes_match(witness, row):
+    if not _source_hashes_match(witness, row, require_journal=False):
         return False, "integer_witness_source_hash_mismatch", None
-    if not _matches_source_path(witness, row):
-        return False, "integer_witness_source_path_mismatch", None
+    if not _matches_instance_hash(witness, row):
+        return False, "integer_witness_instance_hash_mismatch", None
+    if not _matches_representation(witness, row):
+        return False, "integer_witness_representation_mismatch", None
     for name in ("cell_id", "representation_id"):
         if not _matches_optional_identity(witness, row, name=name):
             return False, f"integer_witness_{name}_mismatch", None
