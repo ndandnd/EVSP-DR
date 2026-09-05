@@ -824,6 +824,71 @@ class ExactPoolMipTests(unittest.TestCase):
                         data_dir=data,
                     )
 
+    def test_final_replay_accepts_prepared_hash_bound_absolute_instance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data = root / "data"
+            external = root / "external"
+            data.mkdir()
+            external.mkdir()
+            instance = external / "tiny.csv"
+            prices = data / "prices.csv"
+            reference = data / "Ref_dict.csv"
+            deadhead = data / "par_ref_dhd.csv"
+            for path, payload in (
+                (instance, "instance\n"),
+                (prices, "prices\n"),
+                (reference, "reference\n"),
+                (deadhead, "deadhead\n"),
+            ):
+                path.write_text(payload)
+            hashes = {
+                "instance_sha256": hashlib.sha256(
+                    instance.read_bytes()
+                ).hexdigest(),
+                "prices_sha256": hashlib.sha256(
+                    prices.read_bytes()
+                ).hexdigest(),
+                "reference_sha256": hashlib.sha256(
+                    reference.read_bytes()
+                ).hexdigest(),
+                "deadhead_sha256": hashlib.sha256(
+                    deadhead.read_bytes()
+                ).hexdigest(),
+            }
+            status = {
+                "csv": str(instance),
+                "prices_csv": "prices.csv",
+                "g_kwh": 240.0,
+                "charge_kw": 240.0,
+                "min_soc_frac": 0.0,
+                "provenance": hashes,
+            }
+            problem = SimpleNamespace(trips=[])
+            with patch(
+                "audit_giro_known_columns.build_problem",
+                return_value=problem,
+            ):
+                validate_final_selected_routes(
+                    status,
+                    [],
+                    [],
+                    data_dir=data,
+                    reference_data_dir=data,
+                    physical_pool_audit={"input_hashes": hashes},
+                )
+                with self.assertRaisesRegex(
+                    SystemExit, "escapes data/ without a matching",
+                ):
+                    validate_final_selected_routes(
+                        status,
+                        [],
+                        [],
+                        data_dir=data,
+                        reference_data_dir=data,
+                        physical_pool_audit=None,
+                    )
+
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
         two_stage=True,

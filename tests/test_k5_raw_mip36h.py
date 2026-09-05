@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import subprocess
 import sys
@@ -263,6 +264,82 @@ def audit_writes_pool_scoped_result(tmp_path: Path):
     assert all(row["slurm_max_rss"] == "1G" for row in rows)
 
 
+def prepare_path_policy_recovery(tmp_path: Path):
+    failed = tmp_path / "failed"
+    (failed / "mip").mkdir(parents=True)
+    fields = (
+        "local_index", "source_panel_index", "cell", "target_fleet",
+        "representation_id", "source_status", "snapshot", "snapshot_sha256",
+        "journal", "journal_sha256", "iteration", "elapsed_s",
+        "pool_columns", "route_weight_endpoint", "artificials", "min_rc",
+        "lp_obj", "instance", "instance_sha256",
+    )
+    rows = []
+    for index, cell in enumerate((
+        "k05_p5", "k05_xenergy", "k05_xgap", "k05_xtrip",
+    )):
+        snapshot = failed / f"{cell}.snapshot.json"
+        journal = failed / f"{cell}.columns.jsonl"
+        snapshot.write_text(json.dumps({"cell": cell}))
+        journal.write_text(json.dumps({"trips": [index + 1]}) + "\n")
+        instance_sha = hashlib.sha256(cell.encode()).hexdigest()
+        row = dict.fromkeys(fields, "")
+        row.update({
+            "local_index": str(index),
+            "source_panel_index": str(index + 14),
+            "cell": cell,
+            "target_fleet": "5",
+            "representation_id": "event_2p5_event5",
+            "snapshot": str(snapshot),
+            "snapshot_sha256": hashlib.sha256(snapshot.read_bytes()).hexdigest(),
+            "journal": str(journal),
+            "journal_sha256": hashlib.sha256(journal.read_bytes()).hexdigest(),
+            "instance_sha256": instance_sha,
+        })
+        rows.append(row)
+        result = (
+            failed / "mip"
+            / f"M__{cell}__event_2p5_event5.raw_pool_mip36h.json"
+        )
+        diagnostic = result.with_name(
+            f"{result.name}.rejected_physical_replay.json"
+        )
+        diagnostic.write_text(json.dumps({
+            "schema": "evsp-dr-mip-rejected-physical-replay-v1",
+            "physical_replay_validated": False,
+            "source_result_sha256": row["snapshot_sha256"],
+            "source_journal_sha256": row["journal_sha256"],
+            "failure": {
+                "reason": "[MIP] final replay instance escapes data/",
+            },
+            "solver_incumbent": {"buses": 5},
+            "physical_pool_audit": {
+                "input_hashes": {"instance_sha256": instance_sha},
+            },
+        }))
+    for name, delimiter in (
+        ("snapshot_manifest.csv", ","),
+        ("snapshot_manifest.tsv", "\t"),
+    ):
+        with (failed / name).open("w", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fields, delimiter=delimiter)
+            writer.writeheader()
+            writer.writerows(rows)
+    (failed / "snapshot_manifest.sha256").write_text("fixture\n")
+
+    output = tmp_path / "recovery"
+    subprocess.run([
+        sys.executable,
+        str(TOOLS / "prepare_k5_raw_mip36h_recovery.py"),
+        "--failed-root", str(failed),
+        "--output-root", str(output),
+    ], check=True)
+    payload = json.loads((output / "recovery_provenance.json").read_text())
+    assert payload["schema"] == "evsp-dr-k5-raw-mip36h-path-policy-recovery-v1"
+    assert len(payload["cells"]) == 4
+    assert (output / "snapshot_manifest.tsv").is_file()
+
+
 class K5RawMip36hTests(unittest.TestCase):
     def test_prepare_four_predeclared_raw_snapshots(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -275,6 +352,10 @@ class K5RawMip36hTests(unittest.TestCase):
     def test_audit_writes_pool_scoped_result(self):
         with tempfile.TemporaryDirectory() as folder:
             audit_writes_pool_scoped_result(Path(folder))
+
+    def test_prepare_path_policy_recovery(self):
+        with tempfile.TemporaryDirectory() as folder:
+            prepare_path_policy_recovery(Path(folder))
 
 
 if __name__ == "__main__":

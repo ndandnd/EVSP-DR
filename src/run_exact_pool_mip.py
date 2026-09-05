@@ -1494,7 +1494,18 @@ def validate_final_selected_routes(
     try:
         instance_path.relative_to(data_dir)
     except ValueError as exc:
-        raise SystemExit("[MIP] final replay instance escapes data/") from exc
+        # Strict pool preparation already accepts an absolute, hash-bound
+        # instance path.  Final replay may reuse that same external path only
+        # when the preparation audit binds the exact bytes; otherwise retain
+        # the historical data/ confinement rule.
+        prepared_hash = (
+            (physical_pool_audit or {}).get("input_hashes") or {}
+        ).get("instance_sha256")
+        if prepared_hash != provenance.get("instance_sha256"):
+            raise SystemExit(
+                "[MIP] final replay instance escapes data/ without a "
+                "matching physical-pool input hash"
+            ) from exc
     expected_hash = provenance.get("instance_sha256")
     if (
         not instance_path.is_file()
@@ -1538,7 +1549,7 @@ def validate_final_selected_routes(
             )
     problem = build_problem(
         data_dir,
-        str(instance_path.relative_to(data_dir)),
+        str(instance_path),
         max_station_to_trip_wait_min=HORIZON_MIN,
         reference_data_dir=reference_data_dir,
     )

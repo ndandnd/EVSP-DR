@@ -445,6 +445,16 @@ The audit writes `k5_raw_mip36h_summary.csv` with the pool incumbent and
 bound, pool-scoped proof flag, target recovery, source/code identity checks,
 physical replay status, solver statistics, resource use, and Slurm outcome.
 
+The first four MIPs exposed a final-replay path-policy inconsistency: strict
+pool preparation accepted the absolute, provenance-hashed research-instance
+path, while the post-solve replay rejected the same path before examining a
+selected route. `submit_k5_raw_mip36h_recovery.sh` validates that all four
+failed diagnostics have exactly that cause, reuses the hash-identical v3
+snapshots, and writes retry results under `k5_raw_mip36h_20260905_v4/`.
+External instance paths remain forbidden unless the physical-pool audit binds
+the same instance hash. Audit the retry by passing the v4 directory name as
+the second argument to `audit_k5_raw_mip36h.sh`.
+
 ## 2026-09-04 k9--k15 nested threshold extension
 
 `data/scale_ladder/instances/threshold_9_15_20260904` extends the same
