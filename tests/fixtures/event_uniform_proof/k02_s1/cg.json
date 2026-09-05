@@ -1,0 +1,17 @@
+{
+  "block_min": 5,
+  "certified_rc_optimal": true,
+  "charge_kw": 240.0,
+  "csv": "scale_ladder/instances/Practice_Custom_DutyUnion_k02_r1.csv",
+  "final": {
+    "artificials": 0.0,
+    "lp_obj": 200065.38399999996,
+    "min_rc": -2.384208386274622e-10,
+    "route_weight": 2.0
+  },
+  "g_kwh": 240.0,
+  "min_soc_frac": 0.0,
+  "prices_csv": "hourly_prices_flat.csv",
+  "soc_step": 2.5,
+  "time_model": "event"
+}

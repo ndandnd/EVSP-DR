@@ -1,0 +1,35 @@
+{
+  "certificate": {
+    "certificate_scope": "fleet_lp_lower_bound_in_named_discrete_route_space",
+    "certificate_sha256": "3581068c205e9cded258ea40e27575b94febfeaf9271f935b2f007cdb2da0e00",
+    "certified": true,
+    "fleet_lp_lower_bound": 1.9999999529999963,
+    "fleet_lp_primal": 1.9999999999999483,
+    "iterations": 1,
+    "max_bound_violation": 2.735034421164073e-13,
+    "max_row_violation": 3.0886404545071855e-13,
+    "minimum_reduced_cost": 1.042499420123022e-13,
+    "objective_definition": "minimize_sum_real_route_variables_each_coefficient_exactly_one",
+    "pricing_tolerance": 1e-09,
+    "primal_dual_gap": 4.6999951930359884e-08,
+    "schema": "evsp-dr-fleet-lp-phase2-certificate-v1",
+    "stop_reason": "certified"
+  },
+  "fleet_lp_lower_bound": 1.9999999529999963,
+  "representation": {
+    "block_min": 5,
+    "charge_kw": 240.0,
+    "g_kwh": 240.0,
+    "min_soc_frac": 0.0,
+    "soc_step": 2.5,
+    "time_model": "event"
+  },
+  "schema": "evsp-dr-certified-fleet-lp-phase2-v1",
+  "source_cg": {
+    "certified": true,
+    "journal": "/committed/panel_a/event/k02_s1/cg.json.columns.jsonl",
+    "journal_sha256": "0f3c4051cdb643c511d9c15fdeaa228d9f2685ad1adde782d0a932035ad98621",
+    "result": "/committed/panel_a/event/k02_s1/cg.json",
+    "result_sha256": "a6c43a77b7e974105de437c929a568d0a172c9dad71a35bfbcdc42050ac7e0b7"
+  }
+}
