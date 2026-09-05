@@ -17,9 +17,22 @@ def make_source(root: Path, cell: str) -> tuple[Path, Path]:
     status = root / f"M__{cell}__event_2p5_event5.json"
     journal = Path(str(status) + ".columns.jsonl")
     iterations = Path(str(status) + ".iters.csv")
-    journal.write_text(json.dumps({
-        "trips": [1], "cost": 100001.0, "found_iter": 0,
-    }) + "\n")
+    journal.write_text("".join((
+        json.dumps({
+            "trips": [1], "cost": 100001.0, "found_iter": 0,
+        }) + "\n",
+        # A legitimate cheaper replacement has the same incidence. The
+        # bounded-memory freezer must retain both journal records while
+        # counting one unique pool column.
+        json.dumps({
+            "trips": [1], "cost": 100000.0, "found_iter": 0,
+        }) + "\n",
+        # This record was found by the selected iteration and is outside the
+        # conservative state represented by that iteration-log row.
+        json.dumps({
+            "trips": [2], "cost": 100000.0, "found_iter": 1,
+        }) + "\n",
+    )))
     status.write_text(json.dumps({
         "csv": str(instance.resolve()),
         "prices_csv": "hourly_prices_flat.csv",
@@ -115,7 +128,7 @@ def prepare_four_predeclared_raw_snapshots(tmp_path: Path):
         str(TOOLS / "prepare_k5_raw_mip36h.py"),
         "--resume-root", str(resume),
         "--output-root", str(output),
-        "--freezer", str(REPO / "src" / "freeze_exact_cg_at_wall.py"),
+        "--freezer", str(REPO / "src" / "freeze_exact_cg_prefix.py"),
         "--python", sys.executable,
     ], check=True)
 
@@ -128,6 +141,8 @@ def prepare_four_predeclared_raw_snapshots(tmp_path: Path):
     for row in manifest:
         snapshot = json.loads(Path(row["snapshot"]).read_text())
         assert snapshot["matched_wall_snapshot"]["requested_budget_s"] == 129600
+        assert snapshot["matched_wall_snapshot"]["journal_record_count"] == 2
+        assert snapshot["matched_wall_snapshot"]["unique_pool_columns"] == 1
         assert Path(snapshot["columns_journal"]).is_file()
 
 
