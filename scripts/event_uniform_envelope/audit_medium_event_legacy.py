@@ -11,6 +11,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from audit_highs_disagreement_retry import load_accounting, slurm_task
+from proof_reporting import REPORTING_FIELDS, assess_row, embedded_evidence
 
 
 def sha256(path: Path) -> str:
@@ -93,6 +94,10 @@ def main() -> int:
         phases, phase_rows, malformed = telemetry(telemetry_path)
         final = result.get("final") or {}
         metrics = result.get("network_metrics") or {}
+        journal_path = Path(str(result.get("columns_journal", "")))
+        journal_sha = sha256(journal_path) if journal_path.is_file() else ""
+        journal_sha = journal_sha or result.get("journal_sha256", "")
+        journal_sha = journal_sha or result.get("source_journal_sha256", "")
         slurm = slurm_task(accounting, index_job[index], index)
         config_match = bool(result) and (
             result.get("csv") == csv_path
@@ -104,7 +109,7 @@ def main() -> int:
             and result.get("time_model") == "event"
             and metrics.get("arc_mode") == "lazy"
         )
-        output_rows.append({
+        row = {
             "index": index,
             "cell_id": cell,
             "scale": scale,
@@ -119,10 +124,10 @@ def main() -> int:
             "result_present": result_path.is_file(),
             "result_error": error,
             "result_sha256": sha256(result_path),
+            "journal_sha256": journal_sha,
             "configuration_match": config_match,
             "certified_rc_optimal": result.get("certified_rc_optimal"),
             "stop_reason": result.get("stop_reason"),
-            "L_model": final.get("route_weight"),
             "lp_objective": final.get("lp_obj"),
             "artificials": final.get("artificials"),
             "min_reduced_cost": final.get("min_rc"),
@@ -155,12 +160,28 @@ def main() -> int:
             "slurm_max_rss": slurm.get("max_rss"),
             "slurm_max_vm_size": slurm.get("max_vm_size"),
             "slurm_node": slurm.get("node"),
-        })
+        }
+        certificate, witness = embedded_evidence(result)
+        row.update(assess_row({
+            **row,
+            "cell_id": cell,
+            "representation_id": representation,
+            "scale": scale,
+            "artificials": final.get("artificials"),
+            "route_weight": final.get("route_weight"),
+        }, fleet_certificate=certificate, integer_witness=witness))
+        output_rows.append(row)
     output = root / "medium_event_summary.csv"
     with output.open("w", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(output_rows[0]))
+        fieldnames = list(output_rows[0])
+        # Keep the historical columns stable and append the proof contract in
+        # one explicit, versioned block.
+        fieldnames = [
+            field for field in fieldnames if field not in REPORTING_FIELDS
+        ] + list(REPORTING_FIELDS)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(output_rows)
+        writer.writerows(sorted(output_rows, key=lambda item: item["index"]))
     print("Medium event result presence:", dict(Counter(row["result_present"] for row in output_rows)))
     print("Medium event CG stops:", dict(Counter(str(row["stop_reason"]) for row in output_rows)))
     print("Medium event Slurm states:", dict(Counter(str(row["slurm_state"]) for row in output_rows)))
