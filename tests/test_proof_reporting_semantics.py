@@ -284,6 +284,63 @@ def test_real_fixture_representation_and_cell_mismatches_block_proof():
     assert result["I_model_proven"] is False
 
 
+def assert_real_certificate_physics_mismatch(field, value):
+    row, certificate, _ = real_fixture_payloads()
+    altered_certificate = copy.deepcopy(certificate)
+    altered_certificate["representation"][field] = value
+    result = assess_row(row, fleet_certificate=altered_certificate)
+    assert result["fleet_certificate_valid"] is False
+    assert result["L_model_proven"] is False
+
+
+def test_real_fixture_battery_capacity_mismatch_blocks_fleet_proof():
+    assert_real_certificate_physics_mismatch("g_kwh", 360.0)
+
+
+def test_real_fixture_charging_power_mismatch_blocks_fleet_proof():
+    assert_real_certificate_physics_mismatch("charge_kw", 360.0)
+
+
+def test_real_fixture_minimum_soc_mismatch_blocks_fleet_proof():
+    assert_real_certificate_physics_mismatch("min_soc_frac", 0.2)
+
+
+def test_real_fixture_time_model_mismatch_blocks_fleet_proof():
+    assert_real_certificate_physics_mismatch("time_model", "uniform")
+
+
+def test_real_fixture_soc_step_mismatch_blocks_fleet_proof():
+    assert_real_certificate_physics_mismatch("soc_step", 5.0)
+
+
+def test_real_fixture_charging_block_duration_mismatch_blocks_fleet_proof():
+    assert_real_certificate_physics_mismatch("block_min", 10)
+
+
+def test_real_fixture_wrong_outer_certificate_schema_blocks_fleet_proof():
+    row, certificate, _ = real_fixture_payloads()
+    altered_certificate = copy.deepcopy(certificate)
+    altered_certificate["schema"] = "wrong-fleet-document-schema"
+    result = assess_row(row, fleet_certificate=altered_certificate)
+    assert result["fleet_certificate_valid"] is False
+    assert result["proof_blocker"] == "wrong_fleet_certificate_document_schema"
+
+
+def test_real_fixture_wrong_witness_schema_blocks_integer_proof():
+    row, certificate, witness_payload = real_fixture_payloads()
+    altered_witness = copy.deepcopy(witness_payload)
+    altered_witness["schema"] = "wrong-witness-schema"
+    result = assess_row(
+        row,
+        fleet_certificate=certificate,
+        integer_witness=altered_witness,
+    )
+    assert result["L_model_proven"] is True
+    assert result["integer_witness_valid"] is False
+    assert result["I_model_proven"] is False
+    assert result["proof_blocker"] == "wrong_integer_witness_schema"
+
+
 def test_real_fixture_physical_validity_and_bus_count_mismatches_block_proof():
     row, certificate, witness_payload = real_fixture_payloads()
     altered_witness = copy.deepcopy(witness_payload)
