@@ -1,0 +1,72 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+
+fatal() { echo "[FATAL] $*" >&2; exit 2; }
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_MIP_ROOT:?}"
+: "${EVSP_MIP_MANIFEST:?}"
+: "${EVSP_MIP_EXPECTED_WORKER_SHA256:?}"
+: "${EVSP_MIP_EXPECTED_RUNNER_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+
+[[ "${SLURM_JOB_PARTITION:-}" == "scaglione" ]] \
+  || fatal "RAW pool MIP requires the non-preemptible scaglione partition"
+[[ "${SLURM_RESTART_COUNT:-0}" == "0" ]] \
+  || fatal "MIP worker cannot resume a branch-and-bound tree"
+[[ -r "$GRB_LICENSE_FILE" ]] || fatal "shared Gurobi license is unreadable"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]] \
+  || fatal "execution checkout commit mismatch"
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]] \
+  || fatal "execution checkout has tracked modifications"
+if git -C "$EVSP_EXECUTION_REPO" symbolic-ref -q HEAD >/dev/null 2>&1; then
+  fatal "execution checkout must be detached"
+fi
+
+worker_sha=$(sha256sum "$0"); worker_sha=${worker_sha%% *}
+[[ "$worker_sha" == "$EVSP_MIP_EXPECTED_WORKER_SHA256" ]] \
+  || fatal "Slurm worker hash mismatch"
+runner_sha=$(sha256sum "$EVSP_EXECUTION_REPO/src/run_exact_pool_mip.py")
+runner_sha=${runner_sha%% *}
+[[ "$runner_sha" == "$EVSP_MIP_EXPECTED_RUNNER_SHA256" ]] \
+  || fatal "MIP runner hash mismatch"
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$EVSP_MIP_MANIFEST")
+IFS=$'\t' read -r LOCAL_INDEX SOURCE_INDEX CELL TARGET REP SOURCE \
+  SNAPSHOT SNAPSHOT_SHA JOURNAL JOURNAL_SHA ITERATION ELAPSED COLUMNS \
+  ROUTE_WEIGHT ARTIFICIALS MIN_RC LP_OBJ INSTANCE INSTANCE_SHA <<< "$LINE"
+[[ "$LOCAL_INDEX" == "$SLURM_ARRAY_TASK_ID" ]] \
+  || fatal "array index does not match manifest"
+[[ "$TARGET" == "5" && "$REP" == "event_2p5_event5" ]] \
+  || fatal "unexpected scientific cell"
+[[ "$ROUTE_WEIGHT" == "5.0" && "$ARTIFICIALS" == "0.0" ]] \
+  || fatal "snapshot has unexpected fleet endpoint or artificials"
+
+actual_snapshot_sha=$(sha256sum "$SNAPSHOT"); actual_snapshot_sha=${actual_snapshot_sha%% *}
+actual_journal_sha=$(sha256sum "$JOURNAL"); actual_journal_sha=${actual_journal_sha%% *}
+[[ "$actual_snapshot_sha" == "$SNAPSHOT_SHA" ]] || fatal "snapshot hash mismatch"
+[[ "$actual_journal_sha" == "$JOURNAL_SHA" ]] || fatal "journal hash mismatch"
+
+export EVSP_EXPECTED_COMMIT EVSP_REQUIRE_DETACHED=1
+export EVSP_MIP_EXPECTED_RESULT_SHA256="$SNAPSHOT_SHA"
+export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$JOURNAL_SHA"
+OUT="$EVSP_MIP_ROOT/mip/M__${CELL}__${REP}.raw_pool_mip36h.json"
+[[ ! -e "$OUT" ]] || fatal "refusing to overwrite MIP output: $OUT"
+
+echo "[k5 RAW MIP] cell=$CELL source_index=$SOURCE_INDEX snapshot_iter=$ITERATION"
+echo "[k5 RAW MIP] elapsed_s=$ELAPSED columns=$COLUMNS min_rc=$MIN_RC"
+echo "[k5 RAW MIP] commit=$EVSP_EXPECTED_COMMIT node=$(hostname -s)"
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/run_exact_pool_mip.py \
+  --result "$SNAPSHOT" --data-dir "$EVSP_EXECUTION_REPO/data" \
+  --reference-data-dir "$EVSP_EXECUTION_REPO/data" \
+  --require-singleton-partition \
+  --timelimit 1800 --mipgap 0.0001 --threads 8 --two-stage \
+  --out "$OUT"

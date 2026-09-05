@@ -411,6 +411,38 @@ every allocation beside the staged result.  Certified cells, the live k9
 recovery, and all non-wall-limit outcomes are excluded.  After every array is
 terminal, `audit_small_threshold_resume48h.sh` writes `resume_summary.csv`.
 
+The four deliberately hard k5 continuation rows can be tested for integer
+recovery without waiting for, cancelling, or modifying the live CG jobs:
+
+```bash
+bash scripts/event_uniform_envelope/submit_k5_raw_mip36h.sh
+```
+
+The launcher freezes the last complete iteration at or before a common
+129,600-second cumulative CG boundary. It accepts only the predeclared
+`k05_p5`, `k05_xenergy`, `k05_xtrip`, and `k05_xgap` RAW event/lazy cells,
+requires the 240-kWh/240-kW/zero-reserve/flat-tariff configuration, a five-bus
+RMP endpoint, zero artificials, complete hash provenance, and a boundary no
+more than ten minutes before 36 hours. A live durable source may advance
+during a read, so the freezer retries that benign race but fails closed on
+every other discrepancy.
+
+Four independent strict-partition MIPs then run on nonpreemptible
+`scaglione`, with eight threads, 32 GiB, a 1,800-second scientific solver
+limit, two-stage fleet-first optimization, and no injected GIRO or other
+known routes. These jobs measure `I_pool` for the frozen finite pools; they
+do not establish `I_model`. `snapshot_manifest.csv`, the immutable job TSV,
+input checksums, and logs are stored under `k5_raw_mip36h_20260905/`. After
+the array leaves the queue, run:
+
+```bash
+bash scripts/event_uniform_envelope/audit_k5_raw_mip36h.sh
+```
+
+The audit writes `k5_raw_mip36h_summary.csv` with the pool incumbent and
+bound, pool-scoped proof flag, target recovery, source/code identity checks,
+physical replay status, solver statistics, resource use, and Slurm outcome.
+
 ## 2026-09-04 k9--k15 nested threshold extension
 
 `data/scale_ladder/instances/threshold_9_15_20260904` extends the same
