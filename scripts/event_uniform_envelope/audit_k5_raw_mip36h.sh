@@ -20,8 +20,8 @@ if squeue --me -h -j "${MIP_IDS[0]},${FREEZE_IDS[0]}" 2>/dev/null | grep -q .; t
   evsp_die "k=5 RAW 36h MIP array is still active"
 fi
 SACCT="$ROOT/slurm_accounting.psv"
-sacct -j "${MIP_IDS[0]},${FREEZE_IDS[0]}" -X -n -P \
-  -o JobIDRaw,JobName%24,State,ExitCode,Elapsed,TotalCPU,MaxRSS,MaxVMSize,NodeList \
+sacct -j "${MIP_IDS[0]},${FREEZE_IDS[0]}" -n -P \
+  -o JobID%48,JobName%24,State,ExitCode,Elapsed,TotalCPU,MaxRSS,MaxVMSize,NodeList \
   > "$SACCT"
 "$PYTHON_BIN" "$SCRIPT_DIR/audit_k5_raw_mip36h.py" \
   --root "$ROOT" --sacct "$SACCT"

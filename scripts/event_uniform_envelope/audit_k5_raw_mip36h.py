@@ -27,9 +27,7 @@ def load_accounting(path: Path) -> dict[str, dict[str, str]]:
             if len(values) < len(fields):
                 continue
             record = dict(zip(fields, values))
-            raw = record["job_id_raw"]
-            if "." not in raw:
-                records[raw] = record
+            records[record["job_id_raw"]] = record
     return records
 
 
@@ -56,7 +54,11 @@ def main() -> int:
     for source in sources:
         index = source["local_index"]
         task = f"{job['array_job_id']}_{index}"
-        slurm = accounting.get(task, {})
+        slurm = dict(accounting.get(task, {}))
+        batch = accounting.get(f"{task}.batch", {})
+        for field in ("total_cpu", "max_rss", "max_vm_size"):
+            if batch.get(field):
+                slurm[field] = batch[field]
         result_path = (
             root / "mip"
             / f"M__{source['cell']}__{source['representation_id']}.raw_pool_mip36h.json"

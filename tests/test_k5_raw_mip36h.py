@@ -245,7 +245,8 @@ def audit_writes_pool_scoped_result(tmp_path: Path):
     )
     sacct = root / "sacct.psv"
     sacct.write_text("".join(
-        f"123_{index}|job|COMPLETED|0:0|00:30:00|01:00:00|1G|2G|node\n"
+        f"123_{index}|job|COMPLETED|0:0|00:30:00|01:00:00|||node\n"
+        f"123_{index}.batch|batch|COMPLETED|0:0|00:30:00|00:59:00|1G|2G|node\n"
         for index in range(4)
     ))
     subprocess.run([
@@ -259,6 +260,7 @@ def audit_writes_pool_scoped_result(tmp_path: Path):
     assert all(row["physical_witness_valid"] == "True" for row in rows)
     assert all(row["experiment_configuration_valid"] == "True" for row in rows)
     assert all(row["source_hash_match"] == "True" for row in rows)
+    assert all(row["slurm_max_rss"] == "1G" for row in rows)
 
 
 class K5RawMip36hTests(unittest.TestCase):
