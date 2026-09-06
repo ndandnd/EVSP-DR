@@ -1,0 +1,46 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+
+: "${EVSP_EXECUTION_REPO:?}"
+: "${EVSP_CAMPAIGN_ROOT:?}"
+: "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_CUMULATIVE_WALL_LIMIT_S:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$EVSP_CAMPAIGN_ROOT/matrix.tsv")
+IFS=$'\t' read -r LOCAL_INDEX SOURCE_INDEX CELL TARGET CSV_PATH REP SOC BLOCK SOURCE SOURCE_SHA SOURCE_JOURNAL SOURCE_JOURNAL_SHA OUT OUT_JOURNAL STAGED_SHA STAGED_JOURNAL_SHA CACHE CACHE_MANIFEST CACHE_MANIFEST_SHA <<< "$LINE"
+[[ "$LOCAL_INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+[[ "$(sha256sum "$SOURCE" | awk '{print $1}')" == "$SOURCE_SHA" ]]
+[[ "$(sha256sum "$SOURCE_JOURNAL" | awk '{print $1}')" == "$SOURCE_JOURNAL_SHA" ]]
+[[ -s "$CACHE" && -s "$CACHE_MANIFEST" ]]
+[[ "$(sha256sum "$CACHE_MANIFEST" | awk '{print $1}')" == "$CACHE_MANIFEST_SHA" ]]
+
+ALLOCATIONS="$OUT.allocations.tsv"
+if [[ ! -e "$ALLOCATIONS" ]]; then
+  printf 'utc\tjob_id\tarray_job_id\ttask_id\trestart_count\thost\tmode\n' \
+    > "$ALLOCATIONS"
+fi
+printf '%s\t%s\t%s\t%s\t%s\t%s\tresume\n' \
+  "$(date -u +%FT%TZ)" "${SLURM_JOB_ID:-}" \
+  "${SLURM_ARRAY_JOB_ID:-}" "${SLURM_ARRAY_TASK_ID:-}" \
+  "${SLURM_RESTART_COUNT:-0}" "$(hostname -s)" >> "$ALLOCATIONS"
+
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
+  --csv "$CSV_PATH" --prices_csv hourly_prices_flat.csv \
+  --time-model event --event-arc-mode lazy \
+  --event-network-cache "$CACHE" --event-network-cache-mode require \
+  --soc-step "$SOC" --block-min "$BLOCK" --max-iters 50000 \
+  --columns_per_iter 30 --column-selection reduced_cost \
+  --column-diversity-weight 0.0 --column-candidate-multiplier 4 \
+  --rc-eps 0.0001 --master-sense partition \
+  --initial-pool singletons --wall-limit-s "$EVSP_CUMULATIVE_WALL_LIMIT_S" \
+  --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
+  --phase-telemetry "$OUT.phase-telemetry.jsonl" --resume --out "$OUT"

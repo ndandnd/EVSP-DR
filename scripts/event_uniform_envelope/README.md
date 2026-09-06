@@ -466,6 +466,20 @@ supports controlled adjacent-scale comparisons without relying on one
 arbitrary sequential ordering.  Four independently selected structural rows
 per scale (trip-light, trip-heavy, energy-heavy, and tight-gap) preserve broad
 stress coverage.
+
+After the 70-cell baseline finished with 21 combined-objective reduced-cost
+certificates and 49 twelve-hour wall caps,
+`submit_threshold_9_15_resume48h.sh` was added as a distinct continuation
+experiment.  It fail-closes unless the immutable baseline has exactly 49
+qualified wall-capped statuses, reuses each status's validated event-network
+cache, copies the column journal and iteration history into a separate
+`cg_resume48h_20260906/` root, and resumes to a cumulative 172,800-second
+scientific cap.  The original 12-hour results are never overwritten.  The
+single `th48cg` array runs at most 36 tasks concurrently with 96 GiB per task,
+application checkpoints, Slurm requeue, and a three-minute termination signal.
+This experiment extends the *combined-cost LP* convergence frontier; it does
+not create fleet-only LP or integer-model proofs.
+
 The generator excludes both the reviewed six-selection scale-ladder manifest
 and the prior small-threshold manifest, so the new k9, k10, and k13 rows do not
 duplicate those earlier duty sets.  All 42 source GIRO

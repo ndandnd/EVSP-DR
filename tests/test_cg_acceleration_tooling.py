@@ -174,6 +174,8 @@ class CgAccelerationToolingTests(unittest.TestCase):
             "submit_small_threshold_preempted_recovery.sh",
             "inspect_active_event_campaigns.sh",
             "inspect_small_threshold_resume48h.sh",
+            "threshold_9_15_resume48h.sub",
+            "submit_threshold_9_15_resume48h.sh",
             "submit_small_threshold_resume48h.sh",
             "audit_small_threshold_resume48h.sh",
         ):
@@ -279,6 +281,113 @@ class CgAccelerationToolingTests(unittest.TestCase):
             module.outcome({"stop_reason": "running"}, "RUNNING", cap),
             "running",
         )
+
+    def test_prepare_threshold_resume_selects_only_49_wall_caps(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            source = base / "source"
+            (source / "cg" / "b030_reduced").mkdir(parents=True)
+            (source / "network_cache").mkdir()
+            selection = source / "input_selection_manifest.csv"
+            selection.write_text("cell_id\n")
+            selection_hash = hashlib.sha256(selection.read_bytes()).hexdigest()
+            (source / "execution_plan.json").write_text(json.dumps({
+                "schema": "evsp-dr-threshold-9-15-event-cg-v1",
+                "solver_commit": "a" * 40,
+                "cells": 70,
+                "wall_limit_s_per_cg_arm": 43200,
+                "representation": "event_2p5_event5",
+                "input_selection_manifest_sha256": selection_hash,
+                "arms": [{
+                    "arm": "b030_reduced", "columns_per_iter": 30,
+                    "selection": "reduced_cost", "diversity_weight": 0.0,
+                }],
+            }))
+            matrix = []
+            for index in range(70):
+                scale = 9 + index // 10
+                cell = f"k{scale:02d}_p{index % 10 + 1}"
+                instance = base / f"instance_{index}.csv"
+                instance.write_text("trip\n1\n")
+                instance_hash = hashlib.sha256(instance.read_bytes()).hexdigest()
+                matrix.append([
+                    index, cell, scale, index % 10 + 1, 100 + index,
+                    str(instance), instance_hash, "event_2p5_event5",
+                    2.5, 5, 43200,
+                ])
+                status_path = source / "cg" / "b030_reduced" / (
+                    f"M__{cell}__event_2p5_event5.json"
+                )
+                status = {
+                    "csv": str(instance),
+                    "prices_csv": "hourly_prices_flat.csv",
+                    "time_model": "event",
+                    "network_metrics": {"arc_mode": "lazy"},
+                    "soc_step": 2.5, "block_min": 5, "g_kwh": 240,
+                    "charge_kw": 240, "min_soc_frac": 0,
+                    "master_sense": "partition",
+                    "initial_pool": "singletons",
+                    "columns_per_iter": 30,
+                    "column_selection": "reduced_cost",
+                    "column_diversity_weight": 0.0,
+                    "column_candidate_multiplier": 4,
+                    "column_pool_treatment": "RAW",
+                    "provenance": {
+                        "git_commit": "a" * 40,
+                        "instance_sha256": instance_hash,
+                        "rc_eps": 0.0001,
+                    },
+                    "certified_rc_optimal": index < 21,
+                    "stop_reason": "certified" if index < 21 else "wall_limit",
+                    "wall_s": 1000 if index < 21 else 43190,
+                }
+                if index >= 21:
+                    journal = Path(str(status_path) + ".columns.jsonl")
+                    journal.write_text("{}\n")
+                    status["columns_journal"] = str(journal)
+                    Path(str(status_path) + ".iters.csv").write_text("row\n")
+                    Path(str(status_path) + ".phase-telemetry.jsonl").write_text(
+                        "{}\n"
+                    )
+                    cache = source / "network_cache" / (
+                        f"M__{cell}__event_2p5_event5.pkl"
+                    )
+                    cache.write_bytes(b"cache")
+                    Path(str(cache) + ".manifest.json").write_text(json.dumps({
+                        "schema": "evsp-dr-event-network-cache-v1",
+                        "pickle_sha256": hashlib.sha256(
+                            cache.read_bytes()
+                        ).hexdigest(),
+                        "identity": {
+                            "git_commit": "a" * 40,
+                            "instance_sha256": instance_hash,
+                            "soc_step": 2.5,
+                            "block_min": 5,
+                            "g_kwh": 240,
+                            "charge_kw": 240,
+                            "reserve_kwh": 0,
+                            "event_arc_mode": "lazy",
+                        },
+                    }))
+                status_path.write_text(json.dumps(status))
+            with (source / "matrix.tsv").open("w", newline="") as handle:
+                csv.writer(handle, delimiter="\t", lineterminator="\n").writerows(
+                    matrix
+                )
+            output = base / "resume"
+            subprocess.run([
+                sys.executable,
+                str(TOOLS / "prepare_threshold_9_15_resume48h.py"),
+                "--source-root", str(source), "--out-root", str(output),
+                "--solver-commit", "a" * 40,
+                "--parent-wall-limit-s", "43200",
+                "--wall-limit-s", "172800", "--expected-cells", "49",
+            ], check=True)
+            with (output / "matrix.tsv").open() as handle:
+                rows = list(csv.DictReader(handle, delimiter="\t"))
+            self.assertEqual(len(rows), 49)
+            self.assertEqual(rows[0]["source_panel_index"], "21")
+            self.assertTrue(rows[0]["event_network_cache"].endswith(".pkl"))
 
     def test_acceleration_recovery_overrides_only_selected_index(self):
         import importlib.util

@@ -4,9 +4,10 @@ set -euo pipefail
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 source "$SCRIPT_DIR/common.sh"
 evsp_require_unicorn
-[[ $# -le 1 ]] || evsp_die "usage: $0 [SMALL_THRESHOLD_ROOT]"
+[[ $# -le 2 ]] || evsp_die "usage: $0 [SOURCE_ROOT] [RESUME_DIRECTORY]"
 SOURCE_ROOT="${1:-$HOME/ladder-lite/small_threshold_event_20260903_44b6d5}"
-ROOT=$(cd "$SOURCE_ROOT/cg_resume48h_20260904" && pwd)
+RESUME_DIRECTORY="${2:-cg_resume48h_20260904}"
+ROOT=$(cd "$SOURCE_ROOT/$RESUME_DIRECTORY" && pwd)
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
 mapfile -t IDS < <(
   awk -F'\t' 'FNR > 1 {print $2}' "$ROOT"/jobs_*.tsv | sort -u
