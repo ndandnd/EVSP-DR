@@ -850,11 +850,15 @@ def _apply_migration_locked(plan: dict) -> dict:
         legacy_provenance = legacy.get("provenance") or {}
         if not isinstance(legacy_provenance, dict):
             legacy_provenance = {}
+        source_master_backend = legacy_provenance.get(
+            "master_backend", "scipy"
+        )
         provenance_args = {
             "csv": legacy["csv"],
             "prices_csv": legacy["prices_csv"],
             **{field: legacy[field] for field in MODEL_FIELDS},
             "rc_eps": (legacy_provenance.get("rc_eps") or 1e-4),
+            "master_backend": "gurobi",
             "out": str(destination),
             "resume": True,
         }
@@ -866,6 +870,13 @@ def _apply_migration_locked(plan: dict) -> dict:
             "instance_sha256": plan["instance_hash"],
             "prices_sha256": plan["prices_hash"],
             "rc_eps": provenance_args["rc_eps"],
+            "master_backend": "gurobi",
+            "source_master_backend": source_master_backend,
+            "backend_migration": {
+                "from": source_master_backend,
+                "to": "gurobi",
+                "scope": "reuse_authenticated_column_pool_only",
+            },
             "args": provenance_args,
             "input_hash_origin": "reconstructed_split_status_witness",
         }
@@ -874,6 +885,7 @@ def _apply_migration_locked(plan: dict) -> dict:
             "iterations": cumulative_iterations,
             "attempt_iterations": 0,
             "certified_rc_optimal": False,
+            "master_backend": "gurobi",
             "columns": len(pool),
             "columns_journal": str(destination_journal),
             "wall_s": wall_s,

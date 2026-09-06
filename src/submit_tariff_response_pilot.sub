@@ -27,6 +27,9 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
   || fatal "Python hash mismatch"
 unset PYTHONPATH || true
 export PYTHONNOUSERSITE=1
+export PYTHON_BIN="$PYTHON"
+source "$ROOT/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
+  || fatal "Gurobi preflight failed"
 observed_plan_sha=$(sha256sum "$PLAN" | awk '{print $1}')
 [[ "$observed_plan_sha" == "$EXPECTED_PLAN_SHA" ]] \
   || fatal "approved plan hash mismatch"
@@ -242,7 +245,8 @@ case "$PHASE" in
       --prices_csv "$TARIFF_REL"
       --soc-step 15 --block-min 10
       --g-kwh 300 --charge-kw 300 --min-soc-frac 0
-      --master-sense partition --initial-pool singletons
+      --master-sense partition --master-backend gurobi \
+      --initial-pool singletons
       --strict-tariff-coverage
       --wall-limit-s "$((WALL_LIMIT - 300))"
       --checkpoint-every 25 --resume

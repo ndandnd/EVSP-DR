@@ -62,6 +62,11 @@ done
 python -c 'import pandas, scipy; import sys; assert sys.version_info[:2] == (3, 12)' \
   || fatal "Python 3.12 environment lacks pandas/scipy"
 
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+[[ -r "$GRB_LICENSE_FILE" ]] || fatal "Gurobi license is missing or unreadable"
+python -u src/gurobi_preflight.py || fatal "Gurobi preflight failed"
+
 export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export MKL_NUM_THREADS=1
@@ -119,6 +124,7 @@ python -u src/exact_pricer_expanded.py \
   --charge-kw 300 \
   --min-soc-frac 0 \
   --master-sense "$MASTER_SENSE" \
+  --master-backend gurobi \
   --initial-pool "$INITIAL_POOL" \
   --rc-eps 0.0001 \
   --columns_per_iter 30 \

@@ -32,7 +32,11 @@ class LPBackendMetadata:
 
     solver: str
     method: str
-    scipy_version: str
+    scipy_version: str | None = None
+    solver_version: str | None = None
+    requested_method: str | None = None
+    threads: int | None = None
+    parameters: dict | None = None
 
 
 @dataclass(frozen=True)

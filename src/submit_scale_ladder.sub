@@ -37,6 +37,9 @@ unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH || true
 unset PYTHONPATH || true
 export PYTHONNOUSERSITE=1
 export PYTHONDONTWRITEBYTECODE=1
+export PYTHON_BIN="$PYTHON"
+source "$ROOT/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
+  || fatal "Gurobi preflight failed"
 
 TASK=${SLURM_ARRAY_TASK_ID:-}
 [[ "$TASK" =~ ^[0-9]+$ ]] || fatal "array task ID missing"
@@ -221,7 +224,8 @@ PY
       --csv "$INSTANCE_REL" --prices_csv hourly_prices_flat.csv
       --g-kwh 300 --charge-kw 300 --min-soc-frac 0
       --soc-step "$SOC_STEP" --block-min "$BLOCK_MIN"
-      --master-sense partition --initial-pool singletons
+      --master-sense partition --master-backend gurobi \
+      --initial-pool singletons
       --wall-limit-s "$((BUDGET + 60))"
       --checkpoint-every 25 --resume
       --snapshot-at-minutes "$SNAPSHOTS"

@@ -16,6 +16,7 @@ fatal() { echo "[FATAL] $*" >&2; exit 2; }
 : "${EVSP_MIP_EXPECTED_WORKER_SHA256:?}"
 : "${EVSP_MIP_EXPECTED_RUNNER_SHA256:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 [[ -s "$EVSP_MIP_MANIFEST" ]] || fatal "snapshot manifest was not published"
 
 [[ "${SLURM_JOB_PARTITION:-}" == "scaglione" ]] \
@@ -70,4 +71,4 @@ exec "$PYTHON_BIN" -u src/run_exact_pool_mip.py \
   --reference-data-dir "$EVSP_EXECUTION_REPO/data" \
   --require-singleton-partition \
   --timelimit 1800 --mipgap 0.0001 --threads 8 --two-stage \
-  --out "$OUT"
+  --gurobi-log "$OUT.gurobi.log" --out "$OUT"

@@ -11,6 +11,7 @@ export NUMEXPR_NUM_THREADS=1
 : "${EVSP_EXPECTED_COMMIT:?}"
 : "${EVSP_CUMULATIVE_WALL_LIMIT_S:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
 [[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
 
@@ -40,7 +41,7 @@ exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
   --soc-step "$SOC" --block-min "$BLOCK" --max-iters 50000 \
   --columns_per_iter 30 --column-selection reduced_cost \
   --column-diversity-weight 0.0 --column-candidate-multiplier 4 \
-  --rc-eps 0.0001 --master-sense partition \
+  --rc-eps 0.0001 --master-sense partition --master-backend gurobi \
   --initial-pool singletons --wall-limit-s "$EVSP_CUMULATIVE_WALL_LIMIT_S" \
   --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
   --phase-telemetry "$OUT.phase-telemetry.jsonl" --resume --out "$OUT"

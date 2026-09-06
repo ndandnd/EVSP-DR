@@ -186,6 +186,7 @@ class LegacyExactPoolMigrationTests(unittest.TestCase):
             csv="instance.csv", prices_csv="prices.csv", soc_step=15.0,
             block_min=10, g_kwh=300.0, charge_kw=300.0,
             min_soc_frac=0.0, master_sense="partition",
+            master_backend="gurobi",
         )
         self.assertEqual(
             resume_identity_mismatches(
@@ -195,6 +196,15 @@ class LegacyExactPoolMigrationTests(unittest.TestCase):
         )
         pool = load_column_pool(records, [1, 2])
         self.assertEqual(resume_pool_mismatches(migrated, pool), [])
+        self.assertEqual(migrated["master_backend"], "gurobi")
+        self.assertEqual(
+            migrated["provenance"]["backend_migration"],
+            {
+                "from": "scipy",
+                "to": "gurobi",
+                "scope": "reuse_authenticated_column_pool_only",
+            },
+        )
 
     def test_migration_is_idempotent_after_resume_extends_journal(self):
         plan = self._plan()

@@ -98,6 +98,12 @@ python -c 'import sys; assert sys.version_info[:2] == (3, 12), sys.version' \
   || fatal "recovery campaign requires the validated Python 3.12 runtime"
 echo "[RECOVERY] conda=$activated $(python -V 2>&1)"
 
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+[[ -r "$GRB_LICENSE_FILE" ]] || fatal "Gurobi license is missing or unreadable"
+python -u "$ROOT/src/gurobi_preflight.py" \
+  || fatal "Gurobi preflight failed"
+
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 export EVSP_EXPECTED_COMMIT="$EXPECTED_COMMIT"
 
@@ -154,6 +160,7 @@ python -u exact_pricer_expanded.py \
   --prices_csv "$PRICE" \
   --soc-step 15 \
   --block-min 10 \
+  --master-backend gurobi \
   --rc-eps 0.0001 \
   --max-iters 200000 \
   --stall-window-min 120 \

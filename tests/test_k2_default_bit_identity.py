@@ -83,7 +83,7 @@ class K2DefaultBitIdentityTests(unittest.TestCase):
                         module, "_provenance", return_value=provenance,
                     ),
                 ):
-                    module.main([
+                    arguments = [
                         "--csv",
                         "scale_ladder/instances/"
                         "Practice_Custom_DutyUnion_k02_r1.csv",
@@ -95,7 +95,13 @@ class K2DefaultBitIdentityTests(unittest.TestCase):
                         "--master-sense", "partition",
                         "--initial-pool", "singletons",
                         "--out", str(output),
-                    ])
+                    ]
+                    if label == "current":
+                        # The test compares the historical HiGHS behavior;
+                        # the production default is now Gurobi, so make this
+                        # legacy backend choice explicit.
+                        arguments.extend(["--master-backend", "scipy"])
+                    module.main(arguments)
                 journal = Path(str(output) + ".columns.jsonl").read_bytes()
                 iterations = Path(str(output) + ".iters.csv").read_bytes()
                 route_hashes = [

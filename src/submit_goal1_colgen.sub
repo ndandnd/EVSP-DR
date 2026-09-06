@@ -60,9 +60,23 @@ fi
 source "$CONDA_SH"
 conda activate "$CONDA_ENV"
 
-if [[ -z "${GRB_LICENSE_FILE:-}" && -f /share/apps/software/gurobi/gurobi.lic ]]; then
-    export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
-fi
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+[[ -r "$GRB_LICENSE_FILE" ]] || {
+    echo "Gurobi license is missing or unreadable: $GRB_LICENSE_FILE" >&2
+    exit 2
+}
+python - <<'PY'
+import gurobipy as gp
+m = gp.Model("evsp_worker_preflight")
+m.Params.OutputFlag = 0
+m.Params.Threads = 1
+x = m.addVar(lb=0, ub=1, obj=1)
+m.addConstr(x >= 0.5)
+m.optimize()
+if m.Status != gp.GRB.OPTIMAL:
+    raise SystemExit(f"Gurobi preflight status={m.Status}")
+m.dispose()
+PY
 unset LM_LICENSE_FILE || true
 export PYTHONUNBUFFERED=1
 

@@ -45,6 +45,7 @@ done
 [ -n "$activated" ] || { conda env list >&2; fatal "no conda env worked"; }
 echo "[diag] conda env: $activated  $(python -V 2>&1)"
 python -c "import gurobipy" 2>/dev/null || fatal "env lacks gurobipy"
+python -u gurobi_preflight.py || fatal "Gurobi preflight failed"
 
 set -e
 export OMP_NUM_THREADS=8
@@ -72,6 +73,7 @@ python -u exact_pricer_expanded.py \
   --prices_csv hourly_prices_flat.csv \
   --soc-step "$SOC" \
   --block-min "$BLOCK" \
+  --master-backend gurobi \
   --rc-eps 5 \
   --max-iters 1 \
   --diversify-rounds 40 \

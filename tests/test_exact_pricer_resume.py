@@ -28,6 +28,7 @@ class ExactPricerResumeTests(unittest.TestCase):
             columns_per_iter=1,
             rc_eps=1e-4,
             master_sense="partition",
+            master_backend="scipy",
             initial_pool="singletons",
             stall_window_min=None,
             stall_rc_frac=0.05,
