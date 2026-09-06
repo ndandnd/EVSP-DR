@@ -46,6 +46,9 @@ echo "[diag] conda env: $activated  $(python -V 2>&1)"
 python -c "import pandas, scipy" 2>/dev/null || fatal "env lacks pandas/scipy"
 
 set -e
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+python -u gurobi_preflight.py || fatal "Gurobi preflight failed"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 
 UNIONS_FILE="$ROOT/data/duty_unions_big/unions.txt"
@@ -90,6 +93,7 @@ python -u exact_pricer_expanded.py \
   --g-kwh "$GKWH" \
   --charge-kw "$CKW" \
   --min-soc-frac "$RESERVE" \
+  --master-backend gurobi \
   --rc-eps "$RCEPS" \
   --max-iters 200000 \
   --wall-limit-s "$WALL" \

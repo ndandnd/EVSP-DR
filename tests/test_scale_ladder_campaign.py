@@ -4732,6 +4732,7 @@ printf '%s %s\n' "$status" "$checks"
                         "--block-min", "10",
                         "--max-iters", "2000",
                         "--master-sense", "partition",
+                        "--master-backend", "scipy",
                         "--initial-pool", "singletons",
                         "--wall-limit-s", "300",
                         "--checkpoint-every", "25",

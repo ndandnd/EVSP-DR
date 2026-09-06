@@ -891,12 +891,31 @@ def _provenance(args) -> dict:
         import hashlib
         return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
+    master_backend = getattr(args, "master_backend", "gurobi")
+    gurobi_version = None
+    if master_backend == "gurobi":
+        try:
+            import gurobipy as gp
+            gurobi_version = ".".join(
+                str(value) for value in gp.gurobi.version()
+            )
+        except Exception:
+            # The worker preflight reports the actionable license/import
+            # failure.  Keep provenance construction serializable here.
+            gurobi_version = None
+
     return {
         "git_commit": _git("rev-parse", "HEAD"),
         "git_branch": _git("branch", "--show-current"),
         "git_dirty": bool(_git("status", "--porcelain")),
         "python": platform.python_version(),
         "scipy": scipy.__version__,
+        "master_backend": master_backend,
+        "gurobi_version": gurobi_version,
+        "gurobi_license_file": (
+            os.environ.get("GRB_LICENSE_FILE")
+            if master_backend == "gurobi" else None
+        ),
         "instance_sha256": _sha(DATA_DIR / args.csv),
         "prices_sha256": _sha(DATA_DIR / args.prices_csv),
         "reference_sha256": _sha(DATA_DIR / "Ref_dict.csv"),
@@ -1036,6 +1055,7 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
     # status written below.  An artificial-mode resume still fails closed.
     current_initial_pool = getattr(args, "initial_pool", "singletons")
     current_time_model = getattr(args, "time_model", "uniform")
+    current_master_backend = getattr(args, "master_backend", "gurobi")
     expected = {
         "csv": args.csv,
         "prices_csv": args.prices_csv,
@@ -1048,9 +1068,10 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         "charge_kw": args.charge_kw,
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
+        "master_backend": current_master_backend,
         "initial_pool": current_initial_pool,
         "time_model": current_time_model,
-        "columns_per_iter": args.columns_per_iter,
+        "columns_per_iter": getattr(args, "columns_per_iter", 30),
         "column_selection": getattr(
             args, "column_selection", "reduced_cost"
         ),
@@ -1092,6 +1113,11 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
             observed = False
         if key == "column_pool_treatment" and key not in status:
             observed = "RAW"
+        if key == "master_backend" and key not in status:
+            # Old exact-CG status files predate backend identity and were
+            # produced by the HiGHS path.  They cannot resume as Gurobi
+            # without an explicit attested migration.
+            observed = "scipy"
         if isinstance(value, float):
             try:
                 matches = math.isclose(
@@ -1241,6 +1267,14 @@ def resume_pool_mismatches(status, pool: dict) -> list[str]:
 def run_cg(args) -> dict:
     t0 = time.time()
     time_model = getattr(args, "time_model", "uniform")
+    master_backend = getattr(args, "master_backend", "gurobi")
+    if master_backend not in {"gurobi", "scipy"}:
+        raise DurableFileError(
+            f"unsupported restricted-master backend: {master_backend!r}"
+        )
+    if master_backend == "gurobi":
+        from master_lp_gurobi import gurobi_preflight
+        gurobi_preflight()
     termination = {"requested": False, "signal": None}
     prior_signal_handlers = {}
 
@@ -1275,7 +1309,11 @@ def run_cg(args) -> dict:
     certified = False
     stop_reason = "max_iters"
     stall_count = 0
-    method_order = ("highs-ds", "highs-ipm", "highs")
+    method_order = (
+        ("gurobi",) if master_backend == "gurobi"
+        else ("highs-ds", "highs-ipm", "highs")
+    )
+    persistent_master = None
 
     persisted_paths = [
         path for path in (out_path, journal_path, iters_path)
@@ -1397,6 +1435,7 @@ def run_cg(args) -> dict:
                 "charge_kw": args.charge_kw,
                 "min_soc_frac": args.min_soc_frac,
                 "master_sense": args.master_sense,
+                "master_backend": master_backend,
                 "initial_pool": args.initial_pool,
                 "time_model": time_model,
                 "columns_per_iter": args.columns_per_iter,
@@ -1706,6 +1745,7 @@ def run_cg(args) -> dict:
             "attempt_wall_s": _attempt_elapsed_s(),
             "peak_rss_mb": _peak_rss_mb(),
             "stop_reason": "resume_starting",
+            "master_backend": master_backend,
             "provenance": provenance,
         })
         atomic_write_json(Path(args.out), resume_status)
@@ -1727,6 +1767,7 @@ def run_cg(args) -> dict:
             "charge_kw": args.charge_kw,
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
+            "master_backend": master_backend,
             "initial_pool": args.initial_pool,
             "time_model": time_model,
             "columns_per_iter": args.columns_per_iter,
@@ -1809,6 +1850,9 @@ def run_cg(args) -> dict:
             "max_bound_violation": lp_result.max_bound_violation,
             "feasibility_tolerance": lp_result.feasibility_tolerance,
             "master_method": lp_result.backend.method,
+            "master_backend": getattr(
+                lp_result.backend, "solver", master_backend
+            ),
         }
 
     def _freeze_snapshot_impl(mark):
@@ -1986,6 +2030,7 @@ def run_cg(args) -> dict:
             "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
+            "master_backend": master_backend,
             "initial_pool": args.initial_pool,
             "time_model": time_model,
             "columns_per_iter": args.columns_per_iter,
@@ -2064,6 +2109,34 @@ def run_cg(args) -> dict:
             snapshot_limited = snapshot_budget < wall_budget
             return min(wall_budget, snapshot_budget), snapshot_limited
 
+    def _solve_master(routes, incidence, *, method_limit, method):
+        """Solve one master while preserving the selected backend contract."""
+
+        nonlocal persistent_master
+        if master_backend == "gurobi":
+            if persistent_master is None:
+                from master_lp_gurobi import GurobiRestrictedMaster
+                persistent_master = GurobiRestrictedMaster(
+                    trip_ids=trips,
+                    artificial_penalty=BIG_M_PENALTY,
+                    coverage_sense=args.master_sense,
+                    threads=1,
+                    time_limit_s=method_limit,
+                    log_file=getattr(args, "gurobi_log", None),
+                )
+            persistent_master.set_time_limit(method_limit)
+            persistent_master.sync_routes(routes)
+            return persistent_master.solve()
+        return solve_restricted_master_lp(
+            trip_ids=trips,
+            route_incidence=incidence,
+            route_costs=[route["cost"] for route in routes],
+            artificial_penalty=BIG_M_PENALTY,
+            method=method,
+            coverage_sense=args.master_sense,
+            time_limit_s=method_limit,
+        )
+
     for iteration in range(1, args.max_iters + 1):
         global_iteration = iteration_offset + iteration
         if termination["requested"]:
@@ -2117,14 +2190,9 @@ def run_cg(args) -> dict:
                     master_attempt += 1
                     started = time.perf_counter()
                     try:
-                        lp = solve_restricted_master_lp(
-                            trip_ids=trips,
-                            route_incidence=incidence,
-                            route_costs=[r["cost"] for r in routes],
-                            artificial_penalty=BIG_M_PENALTY,
+                        lp = _solve_master(
+                            routes, incidence, method_limit=method_limit,
                             method=method,
-                            coverage_sense=args.master_sense,
-                            time_limit_s=method_limit,
                         )
                         _record_phase(
                             "master_attempt",
@@ -2418,7 +2486,8 @@ def run_cg(args) -> dict:
             if stall_count == 1:
                 print("[EXACT] degenerate stall — switching to interior-point "
                       "duals and continuing", flush=True)
-                method_order = ("highs-ipm", "highs-ds", "highs")
+                if master_backend == "scipy":
+                    method_order = ("highs-ipm", "highs-ds", "highs")
                 continue
             print("[EXACT] stall persists under alternate duals — stopping "
                   "uncertified.", flush=True)
@@ -2456,12 +2525,9 @@ def run_cg(args) -> dict:
                 diversify_attempt += 1
                 started = time.perf_counter()
                 try:
-                    candidate_lp = solve_restricted_master_lp(
-                        trip_ids=trips,
-                        route_incidence=diversify_incidence,
-                        route_costs=[r["cost"] for r in routes_now],
-                        artificial_penalty=BIG_M_PENALTY,
-                        time_limit_s=method_limit,
+                    candidate_lp = _solve_master(
+                        routes_now, diversify_incidence,
+                        method_limit=method_limit, method="highs-ds",
                     )
                     _record_phase(
                         "master_attempt",
@@ -2645,14 +2711,9 @@ def run_cg(args) -> dict:
                 final_attempt += 1
                 started = time.perf_counter()
                 try:
-                    lp_final = solve_restricted_master_lp(
-                        trip_ids=trips,
-                        route_incidence=final_incidence,
-                        route_costs=[r["cost"] for r in routes],
-                        artificial_penalty=BIG_M_PENALTY,
-                        coverage_sense=args.master_sense,
+                    lp_final = _solve_master(
+                        routes, final_incidence, method_limit=method_limit,
                         method=method,
-                        time_limit_s=method_limit,
                     )
                     _record_phase(
                         "master_attempt",
@@ -2736,6 +2797,8 @@ def run_cg(args) -> dict:
         iters_csv.close()
     if journal:
         journal.close()
+    if persistent_master is not None:
+        persistent_master.close()
 
     result = {
         "csv": args.csv,
@@ -2749,6 +2812,7 @@ def run_cg(args) -> dict:
         "charge_kw": args.charge_kw,
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
+        "master_backend": master_backend,
         "initial_pool": args.initial_pool,
         "time_model": time_model,
         "columns_per_iter": args.columns_per_iter,
@@ -2861,6 +2925,18 @@ def main(argv=None) -> int:
         default="partition",
         help="Trip-row sense in the exact-CG restricted master. Partition is "
              "the operational default; cover reproduces legacy campaigns.",
+    )
+    parser.add_argument(
+        "--master-backend", "--master_backend",
+        dest="master_backend",
+        choices=("gurobi", "scipy"),
+        default="gurobi",
+        help="Restricted-master LP backend. Gurobi is the production default; "
+             "choose scipy explicitly for historical HiGHS comparisons.",
+    )
+    parser.add_argument(
+        "--gurobi-log", type=Path, default=None,
+        help="Optional native Gurobi log path for the persistent master.",
     )
     parser.add_argument(
         "--initial-pool",

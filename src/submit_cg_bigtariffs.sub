@@ -53,6 +53,9 @@ done
 echo "[diag] conda env: $activated  $(python -V 2>&1)"
 
 set -e
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+python -u gurobi_preflight.py || fatal "Gurobi preflight failed"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 
 # Instance index 0-9: 0-5 = k30 r1-6 | 6-9 = k40 r1-4
@@ -87,6 +90,7 @@ python -u exact_pricer_expanded.py \
   --stall-window-min 120 \
   --stall-rc-frac 0.05 \
   --stall-obj-frac 1e-5 \
+  --master-backend gurobi \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180,360,600,900 \
   --resume \

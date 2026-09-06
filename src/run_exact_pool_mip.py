@@ -1870,6 +1870,10 @@ def main(argv=None) -> int:
     parser.add_argument("--timelimit", type=int, default=3600)
     parser.add_argument("--mipgap", type=float, default=1e-4)
     parser.add_argument("--threads", type=int, default=2)
+    parser.add_argument(
+        "--gurobi-log", type=Path, default=None,
+        help="Optional native Gurobi log path.",
+    )
     parser.add_argument("--cover", action="store_true",
                         help="Relax partitioning (==1) to covering (>=1).")
     parser.add_argument(
@@ -2259,6 +2263,12 @@ def main(argv=None) -> int:
 
     t0 = time.time()
     m = gp.Model("exact_pool_mip")
+    if args.gurobi_log is not None:
+        args.gurobi_log.expanduser().resolve().parent.mkdir(
+            parents=True, exist_ok=True
+        )
+        m.Params.LogFile = str(args.gurobi_log.expanduser().resolve())
+        m.Params.OutputFlag = 1
     m.Params.TimeLimit = args.timelimit
     m.Params.MIPGap = args.mipgap
     m.Params.Threads = args.threads

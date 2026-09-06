@@ -195,6 +195,7 @@ def solve_target_feasibility(
     threads,
     seed=0,
     solver="gurobi",
+    gurobi_log=None,
 ):
     """Run the constant-objective target-constrained partition MIP."""
 
@@ -221,6 +222,11 @@ def solve_target_feasibility(
 
     rows = _trip_rows(routes, trips)
     model = gp.Model("target_pool_feasibility")
+    if gurobi_log is not None:
+        log_path = Path(gurobi_log).expanduser().resolve()
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        model.Params.LogFile = str(log_path)
+        model.Params.OutputFlag = 1
     model.Params.TimeLimit = float(timelimit)
     model.Params.Threads = threads
     model.Params.Seed = int(seed)
@@ -321,6 +327,7 @@ def evaluate(args):
         threads=args.threads,
         seed=args.seed,
         solver=getattr(args, "solver", "gurobi"),
+        gurobi_log=getattr(args, "gurobi_log", None),
     )
     selected_routes = [
         routes[index] for index in solved.pop("selected_indices")
@@ -404,6 +411,10 @@ def main(argv=None):
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument(
         "--solver", choices=("gurobi", "highs"), default="gurobi",
+    )
+    parser.add_argument(
+        "--gurobi-log", type=Path, default=None,
+        help="Optional native Gurobi log path.",
     )
     parser.add_argument("--data-dir", type=Path, default=None)
     parser.add_argument("--reference-data-dir", type=Path, default=None)

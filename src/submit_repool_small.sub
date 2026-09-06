@@ -46,6 +46,9 @@ done
 echo "[diag] conda env: $activated  $(python -V 2>&1)"
 
 set -e
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+python -u gurobi_preflight.py || fatal "Gurobi preflight failed"
 export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 
 PAIRS_FILE="$ROOT/data/duty_pairs/pairs.txt"
@@ -78,6 +81,7 @@ python -u exact_pricer_expanded.py \
   --prices_csv hourly_prices_flat.csv \
   --soc-step "$SOC" \
   --block-min "$BLOCK" \
+  --master-backend gurobi \
   --rc-eps 0.0001 \
   --max-iters 200000 \
   --wall-limit-s 54000 \
