@@ -26,6 +26,24 @@ def load_json(path: Path) -> dict | None:
     return value if isinstance(value, dict) else None
 
 
+def load_squeue(path: Path | None) -> dict[str, dict]:
+    """Load the live per-array-task state emitted by the inspector wrapper."""
+    result: dict[str, dict] = {}
+    if path is None or not path.is_file():
+        return result
+    with path.open(newline="", encoding="utf-8") as handle:
+        for fields in csv.reader(handle, delimiter="|"):
+            if len(fields) < 7:
+                continue
+            job, _, _, state, elapsed, _, reason = fields[:7]
+            result[job] = {
+                "state": state,
+                "elapsed": elapsed,
+                "node": reason,
+            }
+    return result
+
+
 def outcome(status: dict | None, state: str, cap: float) -> str:
     state = state.split()[0] if state else ""
     if state in ACTIVE_STATES:
@@ -45,6 +63,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--resume-root", type=Path, required=True)
     parser.add_argument("--sacct", type=Path, required=True)
+    parser.add_argument("--squeue", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
@@ -52,6 +71,7 @@ def main() -> int:
     plan = json.loads((root / "execution_plan.json").read_text())
     cap = float(plan["cumulative_scientific_wall_limit_s"])
     accounting = load_slurm(args.sacct)
+    live_queue = load_squeue(args.squeue)
     job_ids = jobs(root)
     rows: list[dict] = []
 
@@ -60,6 +80,9 @@ def main() -> int:
             status_path = Path(item["resume_status"])
             status = load_json(status_path)
             slurm = task(accounting, job_ids, item["local_index"])
+            live = task(live_queue, job_ids, item["local_index"])
+            if live:
+                slurm.update(live)
             state = str(slurm.get("state") or "")
             current = outcome(status, state, cap)
             rows.append({

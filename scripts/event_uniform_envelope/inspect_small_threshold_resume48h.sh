@@ -19,12 +19,13 @@ OUTPUT_DIR="$ROOT/progress_snapshots/$STAMP"
 mkdir -p "$OUTPUT_DIR"
 SACCT="$OUTPUT_DIR/slurm_accounting.psv"
 sacct -j "$JOB_LIST" -n -P \
-  -o JobID%48,JobIDRaw,JobName%40,State,ExitCode,Elapsed,MaxRSS,MaxVMSize,NodeList \
+  -o JobID%48,JobIDRaw,State,ExitCode,Elapsed,MaxRSS,ReqMem,MaxVMSize,NodeList \
   > "$SACCT"
-"$PYTHON_BIN" "$SCRIPT_DIR/inspect_small_threshold_resume48h.py" \
-  --resume-root "$ROOT" --sacct "$SACCT" \
-  --output "$OUTPUT_DIR/resume_progress.csv"
+SQUEUE="$OUTPUT_DIR/active_queue.psv"
 squeue -r --me -h -j "$JOB_LIST" -o '%i|%j|%P|%T|%M|%l|%R' \
-  > "$OUTPUT_DIR/active_queue.psv"
+  > "$SQUEUE"
+"$PYTHON_BIN" "$SCRIPT_DIR/inspect_small_threshold_resume48h.py" \
+  --resume-root "$ROOT" --sacct "$SACCT" --squeue "$SQUEUE" \
+  --output "$OUTPUT_DIR/resume_progress.csv"
 sha256sum "$OUTPUT_DIR"/*.csv "$OUTPUT_DIR"/*.psv \
   > "$OUTPUT_DIR/SHA256SUMS"

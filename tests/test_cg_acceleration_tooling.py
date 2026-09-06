@@ -281,6 +281,16 @@ class CgAccelerationToolingTests(unittest.TestCase):
             module.outcome({"stop_reason": "running"}, "RUNNING", cap),
             "running",
         )
+        with tempfile.TemporaryDirectory() as directory:
+            queue = Path(directory) / "queue.psv"
+            queue.write_text(
+                "481176_45|th48cg|default_partition|PENDING|0:00|"
+                "1-12:30:00|(JobArrayTaskLimit)\n"
+            )
+            self.assertEqual(
+                module.load_squeue(queue)["481176_45"]["state"],
+                "PENDING",
+            )
 
     def test_prepare_threshold_resume_selects_only_49_wall_caps(self):
         with tempfile.TemporaryDirectory() as directory:
