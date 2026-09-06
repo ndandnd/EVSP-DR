@@ -480,6 +480,13 @@ application checkpoints, Slurm requeue, and a three-minute termination signal.
 This experiment extends the *combined-cost LP* convergence frontier; it does
 not create fleet-only LP or integer-model proofs.
 
+`inspect_master_failures.sh` extracts any restricted-master failures from a
+completed CG-resume root.  It writes the preserved last-good LP, primal
+residuals, final reduced cost, and the exact SciPy/HiGHS exceptions recorded
+by phase telemetry to `master_failure_summary.csv`.  These failures do not
+come from Gurobi: exact CG uses SciPy's HiGHS LP interface for its continuous
+restricted master; Gurobi is used only by the separate integer-pool stage.
+
 The generator excludes both the reviewed six-selection scale-ladder manifest
 and the prior small-threshold manifest, so the new k9, k10, and k13 rows do not
 duplicate those earlier duty sets.  All 42 source GIRO

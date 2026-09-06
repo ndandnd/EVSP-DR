@@ -403,6 +403,82 @@ class CgAccelerationToolingTests(unittest.TestCase):
             ], check=True)
             self.assertTrue((output / "STAGING_COMPLETE").is_file())
 
+    def test_master_failure_inspector_extracts_lp_and_highs_errors(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "cg").mkdir()
+            (root / "logs").mkdir()
+            (root / "execution_plan.json").write_text(json.dumps({
+                "cumulative_scientific_wall_limit_s": 172800,
+            }))
+            status_path = root / "cg" / "M__k08_p2__event.json"
+            status_path.write_text(json.dumps({
+                "stop_reason": "master_failed",
+                "wall_s": 121108,
+                "iterations": 4916,
+                "columns": 147678,
+                "final": {
+                    "iter": 4916, "lp_obj": 800321.5,
+                    "route_weight": 8.0, "artificials": 0.0,
+                    "min_rc": -50.7,
+                },
+                "final_lp_source": "last_good_iterate",
+                "final_lp": {
+                    "source": "last_good_iterate", "iteration": 4916,
+                    "pool_columns": 147648, "objective": 800321.5,
+                    "route_weight": 8.0, "artificial_total": 0.0,
+                    "master_method": "highs-ds",
+                    "max_row_violation": 1e-12,
+                    "max_bound_violation": 0.0,
+                    "feasibility_tolerance": 1e-6,
+                },
+            }))
+            telemetry = Path(str(status_path) + ".phase-telemetry.jsonl")
+            records = [
+                {
+                    "record_type": "phase", "phase": "master_attempt",
+                    "outcome": "error", "iteration": 4917,
+                    "duration_s": 10.0,
+                    "details": {
+                        "method": "highs-ds", "time_limit_s": 100.0,
+                        "error": "RestrictedMasterSolveError('failed')",
+                    },
+                },
+                {
+                    "record_type": "phase", "phase": "master_attempt",
+                    "outcome": "error", "iteration": 4916,
+                    "duration_s": 11.0,
+                    "details": {
+                        "purpose": "final_resolve", "method": "highs-ipm",
+                        "time_limit_s": 90.0,
+                        "error": "RestrictedMasterSolveError('resolve')",
+                    },
+                },
+            ]
+            telemetry.write_text("".join(json.dumps(row) + "\n" for row in records))
+            with (root / "matrix.tsv").open("w", newline="") as handle:
+                writer = csv.DictWriter(handle, fieldnames=[
+                    "local_index", "source_panel_index", "cell",
+                    "target_fleet", "representation_id", "resume_status",
+                ], delimiter="\t", lineterminator="\n")
+                writer.writeheader()
+                writer.writerow({
+                    "local_index": 0, "source_panel_index": 21,
+                    "cell": "k08_p2", "target_fleet": 8,
+                    "representation_id": "event", "resume_status": status_path,
+                })
+            output = root / "master_failure_summary.csv"
+            subprocess.run([
+                sys.executable, str(TOOLS / "inspect_master_failures.py"),
+                "--resume-root", str(root), "--output", str(output),
+                "--expected", "1",
+            ], check=True)
+            with output.open(newline="") as handle:
+                row = next(csv.DictReader(handle))
+            self.assertEqual(row["preserved_lp_charging_component"], "321.5")
+            self.assertEqual(row["failed_methods"], "highs-ds | highs-ipm")
+            self.assertEqual(row["failed_purposes"], "main | final_resolve")
+
     def test_acceleration_recovery_overrides_only_selected_index(self):
         import importlib.util
         path = TOOLS / "audit_cg_acceleration.py"
