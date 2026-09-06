@@ -132,6 +132,7 @@ python -u src/exact_pricer_expanded.py \
   --wall-limit-s 90000 \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180,360,720,1320,1440 \
+  --gurobi-log "$OUT.gurobi.log" \
   --resume \
   --out "$OUT"
 

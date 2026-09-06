@@ -14,11 +14,11 @@ unset LM_LICENSE_FILE || true
 : "${EVSP_INTEGER_MANIFEST:?}"
 : "${EVSP_MIP_OUTPUT_DIR:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
-source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
 [[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
 [[ -r "$GRB_LICENSE_FILE" ]]
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 
 LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$EVSP_INTEGER_MANIFEST")
 IFS=$'\t' read -r INDEX CELL TARGET REP SOURCE STATUS_SHA JOURNAL JOURNAL_SHA <<< "$LINE"

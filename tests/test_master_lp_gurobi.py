@@ -74,6 +74,37 @@ class GurobiRestrictedMasterTests(unittest.TestCase):
         finally:
             master.close()
 
+    def test_sync_routes_replaces_route_with_cheaper_charging_realization(self):
+        master = GurobiRestrictedMaster(
+            trip_ids=[1, 2],
+            artificial_penalty=100.0,
+            coverage_sense="partition",
+        )
+        try:
+            master.sync_routes([{"trips": [1, 2], "cost": 12.0}])
+            initial = master.solve()
+            self.assertAlmostEqual(initial.objective, 12.0, places=7)
+
+            # The ordered trip incidence is unchanged; only the charging
+            # realization made the column cheaper.
+            self.assertEqual(
+                master.sync_routes([{"trips": [1, 2], "cost": 7.0}]), 0
+            )
+            cheaper = master.solve()
+            self.assertAlmostEqual(cheaper.objective, 7.0, places=7)
+            self.assertAlmostEqual(cheaper.route_weight, 1.0, places=7)
+            self.assertAlmostEqual(master._routes[0][1], 7.0, places=7)
+            self.assertAlmostEqual(master._routes[0][2].Obj, 7.0, places=7)
+
+            with self.assertRaises(RestrictedMasterInputError):
+                master.sync_routes([{"trips": [2, 1], "cost": 6.0}])
+            with self.assertRaises(RestrictedMasterInputError):
+                master.sync_routes([{"trips": [1, 2], "cost": 8.0}])
+            with self.assertRaises(RestrictedMasterInputError):
+                master.sync_routes([])
+        finally:
+            master.close()
+
     def test_route_prefix_identity_and_cost_are_immutable(self):
         master = GurobiRestrictedMaster(
             trip_ids=[1, 2],

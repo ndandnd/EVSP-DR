@@ -78,4 +78,5 @@ python -u exact_pricer_expanded.py \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180,360 \
   --resume \
+  --gurobi-log "$OUTDIR/${NAME}_${TAGSOC}_b${BLOCK}.json.gurobi.log" \
   --out "$OUTDIR/${NAME}_${TAGSOC}_b${BLOCK}.json"

@@ -28,8 +28,6 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 unset PYTHONPATH || true
 export PYTHONNOUSERSITE=1
 export PYTHON_BIN="$PYTHON"
-source "$ROOT/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
-  || fatal "Gurobi preflight failed"
 observed_plan_sha=$(sha256sum "$PLAN" | awk '{print $1}')
 [[ "$observed_plan_sha" == "$EXPECTED_PLAN_SHA" ]] \
   || fatal "approved plan hash mismatch"
@@ -118,6 +116,8 @@ if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
 fi
 [[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=no)" ]] \
   || fatal "worker checkout has tracked modifications"
+source "$ROOT/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
+  || fatal "Gurobi preflight failed"
 export PYTHONDONTWRITEBYTECODE=1
 while IFS=$'\t' read -r RELATIVE EXPECTED; do
   [[ "$(sha256sum "$ROOT/$RELATIVE" | awk '{print $1}')" == "$EXPECTED" ]] \
@@ -251,6 +251,7 @@ case "$PHASE" in
       --wall-limit-s "$((WALL_LIMIT - 300))"
       --checkpoint-every 25 --resume
       --phase-telemetry "$TELEMETRY"
+      --gurobi-log "$OUTPUT.gurobi.log"
       --out "$OUTPUT"
     )
     if [[ "$TREATMENT" != "RAW" ]]; then

@@ -83,4 +83,5 @@ python -u exact_pricer_expanded.py \
   --master-backend gurobi \
   --max-iters "$MAXIT" \
   --resume \
+  --gurobi-log "$OUTDIR/${BASE}.json.gurobi.log" \
   --out "$OUTDIR/${BASE}.json"

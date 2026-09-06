@@ -222,6 +222,8 @@ class GurobiRestrictedMaster:
         self,
         route_trip_ids: Sequence[Iterable[Hashable]],
         route_costs: Sequence[float],
+        *,
+        allow_lower_cost_rewrites: bool = False,
     ) -> int:
         if len(route_trip_ids) != len(route_costs):
             raise RestrictedMasterInputError(
@@ -232,16 +234,35 @@ class GurobiRestrictedMaster:
             for index, (route, cost) in enumerate(zip(route_trip_ids, route_costs))
         ]
         prefix = len(self._routes)
+        if len(normalized) < prefix:
+            raise RestrictedMasterInputError(
+                "route list is shorter than the persistent route prefix"
+            )
+
+        rewrites = []
         for index, (route, cost) in enumerate(normalized):
             if index < prefix:
-                old_route, old_cost, _ = self._routes[index]
-                if route != old_route or not math.isclose(
-                    cost, old_cost, rel_tol=0.0, abs_tol=1e-9
-                ):
+                old_route, old_cost, variable = self._routes[index]
+                if route != old_route:
                     raise RestrictedMasterInputError(
                         f"route prefix mismatch at column {index}"
                     )
-                continue
+                if math.isclose(cost, old_cost, rel_tol=0.0, abs_tol=1e-9):
+                    continue
+                if allow_lower_cost_rewrites and cost < old_cost:
+                    rewrites.append((index, cost, variable))
+                    continue
+                raise RestrictedMasterInputError(
+                    f"route prefix cost mismatch at column {index}: "
+                    f"old={old_cost} new={cost}"
+                )
+
+        for index, cost, variable in rewrites:
+            variable.Obj = cost
+            route, _, _ = self._routes[index]
+            self._routes[index] = (route, cost, variable)
+
+        for index, (route, cost) in enumerate(normalized[prefix:], start=prefix):
             column = self._gp.Column()
             for trip in route:
                 column.addTerms(1.0, self._trip_constraints[trip])
@@ -252,17 +273,21 @@ class GurobiRestrictedMaster:
             self._routes.append((route, cost, variable))
             for trip in route:
                 self._route_indices_by_trip[trip].append(index)
-        if len(normalized) < prefix:
-            raise RestrictedMasterInputError(
-                "route list is shorter than the persistent route prefix"
-            )
         self.model.update()
         return len(normalized) - prefix
 
     def sync_routes(self, routes: Sequence[dict]) -> int:
+        """Synchronize a route pool, allowing cheaper same-incidence rewrites.
+
+        Exact pricing can rediscover the same ordered trip sequence after a
+        cheaper charging realization is found.  Gurobi columns are immutable
+        in incidence but their objective coefficient may safely decrease.
+        """
+
         return self.add_routes(
             [route["trips"] for route in routes],
             [route["cost"] for route in routes],
+            allow_lower_cost_rewrites=True,
         )
 
     def _validate_solution(self, route_values, artificial_values) -> tuple[float, float]:

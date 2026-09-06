@@ -89,5 +89,6 @@ python -u exact_pricer_expanded.py \
   --wall-limit-s 46800 \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180 \
+  --gurobi-log "$OUTDIR/${NAME}_${TAG}.json.gurobi.log" \
   --resume \
   --out "$OUTDIR/${NAME}_${TAG}.json"

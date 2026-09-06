@@ -11,9 +11,9 @@ export NUMEXPR_NUM_THREADS=1
 : "${EVSP_EXPECTED_COMMIT:?}"
 : "${EVSP_CUMULATIVE_WALL_LIMIT_S:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
-source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
 [[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain)" ]]
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 
 LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$EVSP_CAMPAIGN_ROOT/matrix.tsv")
 IFS=$'\t' read -r LOCAL_INDEX SOURCE_INDEX CELL TARGET CSV_PATH REP SOC BLOCK SOURCE SOURCE_SHA SOURCE_JOURNAL SOURCE_JOURNAL_SHA OUT OUT_JOURNAL STAGED_SHA STAGED_JOURNAL_SHA CACHE CACHE_MANIFEST CACHE_MANIFEST_SHA <<< "$LINE"
@@ -44,4 +44,5 @@ exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
   --rc-eps 0.0001 --master-sense partition --master-backend gurobi \
   --initial-pool singletons --wall-limit-s "$EVSP_CUMULATIVE_WALL_LIMIT_S" \
   --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
-  --phase-telemetry "$OUT.phase-telemetry.jsonl" --resume --out "$OUT"
+  --phase-telemetry "$OUT.phase-telemetry.jsonl" \
+  --gurobi-log "$OUT.gurobi.log" --resume --out "$OUT"

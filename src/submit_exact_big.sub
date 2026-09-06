@@ -99,4 +99,5 @@ python -u exact_pricer_expanded.py \
   --wall-limit-s "$WALL" \
   --checkpoint-every 25 \
   --resume \
+  --gurobi-log "$OUTDIR/${BASE}_g${GKWH}_res${RESERVE}.json.gurobi.log" \
   --out "$OUTDIR/${BASE}_g${GKWH}_res${RESERVE}.json"

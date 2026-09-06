@@ -78,6 +78,7 @@ TAG=${TAGS[$TARIFF_IDX]}
 
 OUTDIR="$ROOT/src/results/tariff_big"
 mkdir -p "$OUTDIR"
+OUT="$OUTDIR/${NAME}_${TAG}.json"
 
 echo "[SLURM $SLURM_ARRAY_TASK_ID] $NAME under $TAG (no wall limit; stall-stop 120min/5%)"
 python -u exact_pricer_expanded.py \
@@ -94,4 +95,5 @@ python -u exact_pricer_expanded.py \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180,360,600,900 \
   --resume \
-  --out "$OUTDIR/${NAME}_${TAG}.json"
+  --gurobi-log "$OUT.gurobi.log" \
+  --out "$OUT"

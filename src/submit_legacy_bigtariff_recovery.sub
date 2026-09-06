@@ -168,5 +168,6 @@ python -u exact_pricer_expanded.py \
   --stall-obj-frac 1e-5 \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180,360,600,900,1440,2880,4320 \
+  --gurobi-log "$OUT.gurobi.log" \
   --resume \
   --out "$OUT"

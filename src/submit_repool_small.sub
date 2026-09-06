@@ -86,6 +86,7 @@ python -u exact_pricer_expanded.py \
   --max-iters 200000 \
   --wall-limit-s 54000 \
   --checkpoint-every 25 \
+  --gurobi-log "$RESULT.gurobi.log" \
   --snapshot-at-minutes 15,60,180 \
   --resume \
   --out "$OUTDIR/${NAME}_soc${SOC}_b${BLOCK}.json"

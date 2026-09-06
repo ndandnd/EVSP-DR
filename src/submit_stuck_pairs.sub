@@ -71,5 +71,6 @@ python -u exact_pricer_expanded.py \
   --wall-limit-s 79200 \
   --checkpoint-every 25 \
   --snapshot-at-minutes 60,180,360 \
+  --gurobi-log "$OUTDIR/${NAME}_soc2p5_b5.json.gurobi.log" \
   --resume \
   --out "$OUTDIR/${NAME}_soc2p5_b5.json"

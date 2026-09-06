@@ -38,8 +38,6 @@ unset PYTHONPATH || true
 export PYTHONNOUSERSITE=1
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHON_BIN="$PYTHON"
-source "$ROOT/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
-  || fatal "Gurobi preflight failed"
 
 TASK=${SLURM_ARRAY_TASK_ID:-}
 [[ "$TASK" =~ ^[0-9]+$ ]] || fatal "array task ID missing"
@@ -107,6 +105,8 @@ if git -C "$ROOT" symbolic-ref -q HEAD >/dev/null 2>&1; then
 fi
 [[ -z "$(git -C "$ROOT" status --porcelain --untracked-files=no)" ]] \
   || fatal "tracked checkout modifications"
+source "$ROOT/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
+  || fatal "Gurobi preflight failed"
 UNTRACKED_IMPORTS=$(
   git -C "$ROOT" status --porcelain --untracked-files=all \
   | awk '$1=="??" && $2 ~ /\.(py|pyc|pyo|so|pth)$/ {print $2}'
@@ -229,6 +229,7 @@ PY
       --wall-limit-s "$((BUDGET + 60))"
       --checkpoint-every 25 --resume
       --snapshot-at-minutes "$SNAPSHOTS"
+      --gurobi-log "$OUTPUT.gurobi.log"
       --out "$OUTPUT"
     )
     if [[ -n "$TELEMETRY" ]]; then

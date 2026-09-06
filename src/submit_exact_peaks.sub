@@ -93,4 +93,5 @@ python -u exact_pricer_expanded.py \
   --wall-limit-s 39600 \
   --checkpoint-every 25 \
   --resume \
+  --gurobi-log "$OUTDIR/${NAME}_${TAG}.json.gurobi.log" \
   --out "$OUTDIR/${NAME}_${TAG}.json"

@@ -16,7 +16,6 @@ fatal() { echo "[FATAL] $*" >&2; exit 2; }
 : "${EVSP_MIP_EXPECTED_WORKER_SHA256:?}"
 : "${EVSP_MIP_EXPECTED_RUNNER_SHA256:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
-source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 [[ -s "$EVSP_MIP_MANIFEST" ]] || fatal "snapshot manifest was not published"
 
 [[ "${SLURM_JOB_PARTITION:-}" == "scaglione" ]] \
@@ -31,6 +30,8 @@ source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_prefli
 if git -C "$EVSP_EXECUTION_REPO" symbolic-ref -q HEAD >/dev/null 2>&1; then
   fatal "execution checkout must be detached"
 fi
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" \
+  || fatal "Gurobi preflight failed"
 
 worker_sha=$(sha256sum "$0"); worker_sha=${worker_sha%% *}
 [[ "$worker_sha" == "$EVSP_MIP_EXPECTED_WORKER_SHA256" ]] \
