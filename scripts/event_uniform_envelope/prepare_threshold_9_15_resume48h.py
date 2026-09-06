@@ -7,13 +7,34 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import shutil
 from collections import Counter
 from pathlib import Path
 
 
 def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def copy_verified(source: Path, target: Path) -> str:
+    source_digest = sha256(source)
+    if target.is_file() and sha256(target) == source_digest:
+        return source_digest
+    temporary = target.with_name(f".{target.name}.tmp.{os.getpid()}")
+    try:
+        shutil.copyfile(source, temporary)
+        if sha256(temporary) != source_digest:
+            raise SystemExit(f"copied artifact hash mismatch: {target}")
+        os.replace(temporary, target)
+    finally:
+        if temporary.exists():
+            temporary.unlink()
+    return source_digest
 
 
 def required(path: Path, label: str) -> Path:
@@ -30,12 +51,16 @@ def main() -> int:
     parser.add_argument("--parent-wall-limit-s", type=float, required=True)
     parser.add_argument("--wall-limit-s", type=float, required=True)
     parser.add_argument("--expected-cells", type=int, required=True)
+    parser.add_argument("--resume-incomplete", action="store_true")
     args = parser.parse_args()
 
     source_root = args.source_root.resolve()
     out_root = args.out_root.resolve()
-    if out_root.exists():
+    completion_marker = out_root / "STAGING_COMPLETE"
+    if out_root.exists() and not args.resume_incomplete:
         raise SystemExit(f"resume root already exists: {out_root}")
+    if completion_marker.exists():
+        raise SystemExit(f"resume root is already complete: {out_root}")
     if args.wall_limit_s <= args.parent_wall_limit_s:
         raise SystemExit("continuation cap must exceed parent cap")
 
@@ -174,7 +199,8 @@ def main() -> int:
         identity = manifest.get("identity") or {}
         if (
             manifest.get("schema") != "evsp-dr-event-network-cache-v1"
-            or manifest.get("pickle_sha256") != sha256(cache)
+            or not isinstance(manifest.get("pickle_sha256"), str)
+            or len(manifest["pickle_sha256"]) != 64
             or identity.get("git_commit") != args.solver_commit
             or identity.get("instance_sha256") != instance_hash
             or float(identity.get("soc_step", -1)) != float(soc_step)
@@ -209,12 +235,13 @@ def main() -> int:
             f"found {len(selected)}; outcomes={dict(terminal)}"
         )
 
-    (out_root / "cg").mkdir(parents=True)
-    (out_root / "logs").mkdir()
+    (out_root / "cg").mkdir(parents=True, exist_ok=True)
+    (out_root / "logs").mkdir(exist_ok=True)
     rows = []
     for local_index, item in enumerate(selected):
         destination = out_root / "cg" / item["source_status"].name
         destination_journal = Path(str(destination) + ".columns.jsonl")
+        copied_digests = {}
         for source, target in (
             (item["source_status"], destination),
             (item["source_journal"], destination_journal),
@@ -224,7 +251,7 @@ def main() -> int:
                 Path(str(destination) + ".source-phase-telemetry.jsonl"),
             ),
         ):
-            shutil.copyfile(source, target)
+            copied_digests[target] = copy_verified(source, target)
         rows.append({
             "local_index": local_index,
             "source_panel_index": item["source_index"],
@@ -235,13 +262,13 @@ def main() -> int:
             "soc_step": item["soc_step"],
             "block_min": item["block_min"],
             "source_status": str(item["source_status"]),
-            "source_status_sha256": sha256(item["source_status"]),
+            "source_status_sha256": copied_digests[destination],
             "source_journal": str(item["source_journal"]),
-            "source_journal_sha256": sha256(item["source_journal"]),
+            "source_journal_sha256": copied_digests[destination_journal],
             "resume_status": str(destination),
             "resume_journal": str(destination_journal),
-            "staged_status_sha256": sha256(destination),
-            "staged_journal_sha256": sha256(destination_journal),
+            "staged_status_sha256": copied_digests[destination],
+            "staged_journal_sha256": copied_digests[destination_journal],
             "event_network_cache": str(item["cache"]),
             "event_network_cache_manifest": str(item["cache_manifest"]),
             "event_network_cache_manifest_sha256": sha256(
@@ -258,7 +285,8 @@ def main() -> int:
         )
         writer.writeheader()
         writer.writerows(rows)
-    (out_root / "execution_plan.json").write_text(json.dumps({
+    plan_output = out_root / "execution_plan.json"
+    plan_output.write_text(json.dumps({
         "schema": "evsp-dr-threshold-9-15-resume48h-v1",
         "source_root": str(source_root),
         "source_execution_plan_sha256": sha256(plan_path),
@@ -277,6 +305,11 @@ def main() -> int:
         "event_network_cache_policy": "reuse_source_require_valid",
         "preserves_original_artifacts": True,
     }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    completion_marker.write_text(
+        f"execution_plan.json {sha256(plan_output)}\n"
+        f"matrix.tsv {sha256(out_root / 'matrix.tsv')}\n",
+        encoding="utf-8",
+    )
     counts = Counter(row["target_fleet"] for row in rows)
     print(
         f"staged {len(rows)} cumulative-48h continuations: "

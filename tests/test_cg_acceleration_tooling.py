@@ -388,6 +388,20 @@ class CgAccelerationToolingTests(unittest.TestCase):
             self.assertEqual(len(rows), 49)
             self.assertEqual(rows[0]["source_panel_index"], "21")
             self.assertTrue(rows[0]["event_network_cache"].endswith(".pkl"))
+            self.assertTrue((output / "STAGING_COMPLETE").is_file())
+
+            # Interrupted staging is resumable and preserves a verified copy.
+            (output / "STAGING_COMPLETE").unlink()
+            subprocess.run([
+                sys.executable,
+                str(TOOLS / "prepare_threshold_9_15_resume48h.py"),
+                "--source-root", str(source), "--out-root", str(output),
+                "--solver-commit", "a" * 40,
+                "--parent-wall-limit-s", "43200",
+                "--wall-limit-s", "172800", "--expected-cells", "49",
+                "--resume-incomplete",
+            ], check=True)
+            self.assertTrue((output / "STAGING_COMPLETE").is_file())
 
     def test_acceleration_recovery_overrides_only_selected_index(self):
         import importlib.util

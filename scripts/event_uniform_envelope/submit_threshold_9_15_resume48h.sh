@@ -29,12 +29,14 @@ fi
 PARENT_CAP=43200
 CHILD_CAP=172800
 RESUME_ROOT="$SOURCE_ROOT/cg_resume48h_20260906"
-if [[ ! -e "$RESUME_ROOT" ]]; then
+if [[ ! -s "$RESUME_ROOT/STAGING_COMPLETE" ]]; then
+  RESUME_ARGS=()
+  [[ ! -e "$RESUME_ROOT" ]] || RESUME_ARGS=(--resume-incomplete)
   "$PYTHON_BIN" "$SCRIPT_DIR/prepare_threshold_9_15_resume48h.py" \
     --source-root "$SOURCE_ROOT" --out-root "$RESUME_ROOT" \
     --solver-commit "$SOLVER_COMMIT" \
     --parent-wall-limit-s "$PARENT_CAP" --wall-limit-s "$CHILD_CAP" \
-    --expected-cells 49
+    --expected-cells 49 "${RESUME_ARGS[@]}"
 fi
 
 "$PYTHON_BIN" "$SCRIPT_DIR/repair_cg_resume_telemetry.py" \
