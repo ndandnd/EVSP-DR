@@ -173,6 +173,7 @@ class CgAccelerationToolingTests(unittest.TestCase):
             "recover_cg_acceleration_cache_timeout.sh",
             "submit_small_threshold_preempted_recovery.sh",
             "inspect_active_event_campaigns.sh",
+            "inspect_small_threshold_resume48h.sh",
             "submit_small_threshold_resume48h.sh",
             "audit_small_threshold_resume48h.sh",
         ):
@@ -253,6 +254,31 @@ class CgAccelerationToolingTests(unittest.TestCase):
         self.assertIn("cg_resume48h_20260904", launcher)
         self.assertIn("SLURM_RESTART_COUNT", worker)
         self.assertIn("--resume", worker)
+
+    def test_resume_live_inspector_preserves_terminal_reason(self):
+        import importlib.util
+        path = TOOLS / "inspect_small_threshold_resume48h.py"
+        spec = importlib.util.spec_from_file_location("resume_inspector", path)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        sys.path.insert(0, str(TOOLS))
+        try:
+            spec.loader.exec_module(module)
+        finally:
+            sys.path.pop(0)
+        cap = 172800.0
+        self.assertEqual(
+            module.outcome({"certified_rc_optimal": True}, "COMPLETED", cap),
+            "certified",
+        )
+        self.assertEqual(
+            module.outcome({"stop_reason": "master_failed"}, "COMPLETED", cap),
+            "master_failed",
+        )
+        self.assertEqual(
+            module.outcome({"stop_reason": "running"}, "RUNNING", cap),
+            "running",
+        )
 
     def test_acceleration_recovery_overrides_only_selected_index(self):
         import importlib.util
