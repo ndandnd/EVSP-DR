@@ -487,6 +487,21 @@ by phase telemetry to `master_failure_summary.csv`.  These failures do not
 come from Gurobi: exact CG uses SciPy's HiGHS LP interface for its continuous
 restricted master; Gurobi is used only by the separate integer-pool stage.
 
+For analysis, `collect_threshold_deep_dive.sh BASELINE_ROOT RESUME_ROOT`
+writes a timestamped snapshot below the continuation root and records that
+directory in `LATEST_DEEP_DIVE`.  Unlike the live continuation CSV, the
+snapshot contains the complete 70-cell pre-outcome cohort: it joins the 21
+baseline certificates to the 49 continuation cells, attaches the frozen
+nested-chain and structural descriptors, sums phase telemetry across both
+stages, extracts restricted-master errors, and down-samples every convergence
+trace.  Its outputs are `threshold_deep_dive_rows.csv`,
+`threshold_deep_dive_convergence.csv`, `threshold_master_failures.csv`, and
+`metadata.json`.  `pricing_total_s` already contains the exact-shortest-path
+work, so `pricing_exact_best_s` is a diagnostic subset and must not be added
+to it.  Cached event-network construction is reported separately from the CG
+wall budget.  The historical threshold master backend is explicitly labeled
+`scipy_highs`; these files contain no Gurobi master log.
+
 The generator excludes both the reviewed six-selection scale-ladder manifest
 and the prior small-threshold manifest, so the new k9, k10, and k13 rows do not
 duplicate those earlier duty sets.  All 42 source GIRO
