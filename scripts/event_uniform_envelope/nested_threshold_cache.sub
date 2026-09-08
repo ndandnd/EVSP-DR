@@ -4,6 +4,7 @@ unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
 export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 : "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}" "${EVSP_CAMPAIGN_ROOT:?}" "${EVSP_PLAN_SHA256:?}" "${EVSP_MATRIX_SHA256:?}"
 PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
 [[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
 [[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]]
 [[ "$(sha256sum "$EVSP_CAMPAIGN_ROOT/execution_plan.json"|awk '{print $1}')" == "$EVSP_PLAN_SHA256" ]]
