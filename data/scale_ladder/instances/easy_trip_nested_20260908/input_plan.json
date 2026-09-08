@@ -1,0 +1,34 @@
+{
+  "created_date": "2026-09-08",
+  "files": {
+    "duty_order.csv": "237c18dcee4b8c1cafff945a5f4ceb73148e38b1f20018b5b3c9ace19d2daa63",
+    "known_duty_continuous_240_240.csv": "9055ddab95a67ec5ffa9dffd284a4dd7f9e580096f62596e48527db9398ba46a",
+    "selection_manifest.csv": "1187e109ff1c55e8ec5ae97382360510daf13881c05816379a31ebdea7d44bf3"
+  },
+  "generator_script_sha256": "87aeb8ad74de6cbd72462cd3739d070abdd1ea29d47bf5bd119b08168c799740",
+  "known_partition_caveat": "continuous fixed-duty feasibility is not event-grid representability; RAW column generation does not receive these routes",
+  "known_partition_scope": "the k source-duty sequences are independently feasible under the continuous 240 kWh / 240 kW fixed-duty model",
+  "physics": {
+    "battery_kwh": 240.0,
+    "charge_kw": 240.0,
+    "charge_start_cost": 5.0,
+    "reserve_kwh": 0.0,
+    "terminal_soc_policy": "free"
+  },
+  "scales": [
+    5,
+    8,
+    10,
+    15,
+    20,
+    30
+  ],
+  "schema": "evsp-dr-easy-trip-nested-inputs-v1",
+  "selected_rows": 6,
+  "selection_rule": "published canonical GIRO40 duties sorted by (regular trip count ascending, literal duty_id ascending); prefix k",
+  "selection_uses_solver_outcomes": false,
+  "shared_builder_sha256": "1506abe092f8904bb714b4c3f271fd68a1022b73d24de42666eca60e0c257462",
+  "source_certificate_sha256": "9055ddab95a67ec5ffa9dffd284a4dd7f9e580096f62596e48527db9398ba46a",
+  "source_giro40_manifest_sha256": "0b7bff79de3868ca91adec732f87329ed9d54eb255e697ef57100ca1eeeb4e7b",
+  "source_master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f"
+}
