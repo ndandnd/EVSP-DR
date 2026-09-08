@@ -904,6 +904,9 @@ class ExactPoolMipTests(unittest.TestCase):
             def __ge__(self, other):
                 return ("ge", self, other)
 
+            def __le__(self, other):
+                return ("le", self, other)
+
         class FakeVariable:
             def __init__(self, index):
                 self.index = index
@@ -920,6 +923,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 self.optimize_calls = 0
                 self.time_limits = []
                 self.objectives = []
+                self.constraints = []
                 self.SolCount = 0
                 self.ObjVal = 0.0
                 self.ObjBound = 0.0
@@ -930,7 +934,8 @@ class ExactPoolMipTests(unittest.TestCase):
                 self.variables = {i: FakeVariable(i) for i in range(count)}
                 return self.variables
 
-            def addConstr(self, constraint, **_kwargs):
+            def addConstr(self, constraint, **kwargs):
+                self.constraints.append((constraint, kwargs.get("name")))
                 return constraint
 
             def setObjective(self, expression, _sense):
@@ -1011,7 +1016,7 @@ class ExactPoolMipTests(unittest.TestCase):
         explicit_patch = contextlib.nullcontext()
         if explicit_start:
             partition = folder / "partition.json"
-            partition.write_text(json.dumps({"routes": []}))
+            partition.write_text(json.dumps({"source": "GREEDY", "routes": []}))
             merged_routes = [
                 *routes,
                 {"trips": [1, 2], "cost": 100005.0},
@@ -1020,6 +1025,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 "kind": "validated_exact_partition",
                 "source": str(partition),
                 "source_sha256": "partition-sha",
+                "seed_source_type": "GREEDY",
                 "validated": True,
                 "validated_bus_count": 1,
                 "expected_full_objective": 100005.0,
@@ -1127,6 +1133,14 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertEqual(payload["mip_start"]["kind"],
                          "validated_exact_partition")
         self.assertEqual(payload["mip_start"]["validated_bus_count"], 1)
+        self.assertEqual(payload["mip_start"]["seed_source_type"], "GREEDY")
+        self.assertEqual(
+            payload["physical_pool_audit"]["added_giro_route_count"], 0
+        )
+        self.assertEqual(
+            payload["physical_pool_audit"]["initial_partition_source_type"],
+            "GREEDY",
+        )
         self.assertEqual(payload["mip_start"]["assigned_variable_count"], 3)
         self.assertEqual(payload["mip_start"]["selected_variable_count"], 1)
         self.assertTrue(
@@ -1142,6 +1156,15 @@ class ExactPoolMipTests(unittest.TestCase):
         )
         self.assertTrue(payload["mip_start_used"])
         self.assertTrue(payload["mip_start_assigned"])
+        fleet_caps = [
+            constraint for constraint, name in model.constraints
+            if name == "validated_partition_fleet_upper_bound"
+        ]
+        self.assertEqual(len(fleet_caps), 1)
+        self.assertEqual(fleet_caps[0][0], "le")
+        self.assertEqual(fleet_caps[0][2], 1)
+        self.assertTrue(payload["mip_start"]["fleet_upper_bound_enforced"])
+        self.assertEqual(payload["mip_start"]["fleet_upper_bound"], 1)
 
     def test_unproven_fleet_uses_full_primary_stage_and_skips_cost_stage(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([{
@@ -1275,7 +1298,7 @@ class ExactPoolMipTests(unittest.TestCase):
         )
 
     def test_single_stage_preserves_validated_start_without_solver_solution(self):
-        temporary, _model, payload, rc = self.run_fake_gurobi_mip([{
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
             "status": 9,
             "objective": 0.0,
             "bound": 100000.0,
@@ -1291,6 +1314,11 @@ class ExactPoolMipTests(unittest.TestCase):
             payload["incumbent_source"], "validated_start_fallback"
         )
         self.assertEqual(payload["buses"], 1)
+        self.assertFalse(payload["mip_start"]["fleet_upper_bound_enforced"])
+        self.assertFalse(any(
+            name == "validated_partition_fleet_upper_bound"
+            for _constraint, name in model.constraints
+        ))
 
 
 if __name__ == "__main__":

@@ -1032,6 +1032,7 @@ def merge_validated_partition_start(
         raise SystemExit(
             f"[MIP] initial partition must contain a nonempty routes list: {path}"
         )
+    seed_source_type = payload.get("source") or "UNSPECIFIED"
 
     status = status or {}
     required = (
@@ -1335,6 +1336,7 @@ def merge_validated_partition_start(
         "kind": "validated_exact_partition",
         "source": str(path),
         "source_sha256": source_sha256,
+        "seed_source_type": seed_source_type,
         "validated": True,
         "validated_bus_count": len(start_indices),
         "assigned_mip_start_route_count": len(start_indices),
@@ -1359,13 +1361,18 @@ def merge_validated_partition_start(
             for index in start_indices
         ],
     }
-    detail["added_giro_route_count"] = len(start_indices)
-    detail["added_giro_route_set_sha256"] = hashlib.sha256(
+    detail["added_initial_partition_route_count"] = len(start_indices)
+    detail["added_initial_partition_route_set_sha256"] = hashlib.sha256(
         json.dumps(
             detail["actual_start_column_hashes"],
             separators=(",", ":"),
         ).encode()
     ).hexdigest()
+    if str(seed_source_type).startswith("GIRO"):
+        detail["added_giro_route_count"] = len(start_indices)
+        detail["added_giro_route_set_sha256"] = (
+            detail["added_initial_partition_route_set_sha256"]
+        )
     print(
         f"[MIP] validated exact-partition start: {len(start_indices)} buses "
         f"from {path} (added {added}, preserved duplicate incidences "
@@ -2109,10 +2116,10 @@ def main(argv=None) -> int:
         )
         if physical_pool_audit is not None:
             added_route_count = initial_partition_start.get(
-                "added_giro_route_count", len(mip_start)
+                "added_initial_partition_route_count", len(mip_start)
             )
             added_route_hash = initial_partition_start.get(
-                "added_giro_route_set_sha256"
+                "added_initial_partition_route_set_sha256"
             ) or hashlib.sha256(json.dumps(
                 initial_partition_start.get(
                     "actual_start_column_hashes", []
@@ -2127,13 +2134,19 @@ def main(argv=None) -> int:
                     physical_pool_audit["mip_unique_accepted_columns"],
                 "base_pool_ordered_sha256":
                     physical_pool_audit["mip_ordered_pool_sha256"],
-                "added_giro_route_count":
-                    added_route_count,
-                "added_giro_route_set_sha256":
-                    added_route_hash,
+                "added_initial_partition_route_count": added_route_count,
+                "added_initial_partition_route_set_sha256": added_route_hash,
+                "initial_partition_source_type":
+                    initial_partition_start.get("seed_source_type"),
                 "assigned_mip_start_route_count":
                     assigned_route_count,
             })
+            if str(initial_partition_start.get(
+                    "seed_source_type", "")).startswith("GIRO"):
+                physical_pool_audit.update({
+                    "added_giro_route_count": added_route_count,
+                    "added_giro_route_set_sha256": added_route_hash,
+                })
     coverage = Counter(t for r in routes for t in r["trips"])
     uncovered = [t for t in trips if coverage[t] == 0]
     seed_partition = singleton_partition_indices(routes, trips)
@@ -2380,6 +2393,28 @@ def main(argv=None) -> int:
             m.addConstr(expr >= 1, name=f"cov_{t}")
         else:
             m.addConstr(expr == 1, name=f"part_{t}")
+
+    validated_fleet_upper_bound = None
+    if (
+        args.two_stage
+        and initial_partition_start["kind"] == "validated_exact_partition"
+        and mip_start
+    ):
+        validated_fleet_upper_bound = len(mip_start)
+        m.addConstr(
+            gp.quicksum(a[i] for i in range(len(routes)))
+            <= validated_fleet_upper_bound,
+            name="validated_partition_fleet_upper_bound",
+        )
+        initial_partition_start.update({
+            "fleet_upper_bound_enforced": True,
+            "fleet_upper_bound": validated_fleet_upper_bound,
+            "fleet_upper_bound_scope": (
+                "two_stage_fleet_minimization_from_validated_exact_partition"
+            ),
+        })
+    else:
+        initial_partition_start["fleet_upper_bound_enforced"] = False
 
     def progress_observer(stage, fixed_fleet=None):
         if progress is None:
