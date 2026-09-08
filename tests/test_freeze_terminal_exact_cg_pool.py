@@ -14,7 +14,8 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def make_source(tmp_path, name, *, stop="certified", artificials=0.0):
+def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
+                final_lp_fallback=False):
     status = tmp_path / f"{name}.json"
     journal = Path(str(status) + ".columns.jsonl")
     iterations = Path(str(status) + ".iters.csv")
@@ -32,7 +33,10 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0):
         "column_pool_treatment": "RAW", "column_selection": "reduced_cost",
         "column_diversity_weight": 0.0, "column_candidate_multiplier": 4,
         "stop_reason": stop, "certified_rc_optimal": stop == "certified",
-        "columns": 2, "final": {"artificials": artificials},
+        "columns": 2,
+        "final": None if final_lp_fallback else {"artificials": artificials},
+        "final_lp": ({"artificial_total": artificials}
+                     if final_lp_fallback else None),
         "columns_journal": str(journal),
         "provenance": {"git_commit": COMMIT, "instance_sha256": "a" * 64,
                        "rc_eps": 0.0001},
@@ -75,3 +79,16 @@ def test_rejects_nonfinite_artificials_without_publishing(tmp_path):
     assert "no usable terminal source" in result.stderr
     assert not out.exists() and not record.exists()
     assert not Path(str(out) + ".columns.jsonl").exists()
+
+
+def test_accepts_terminal_last_good_lp_when_final_iteration_is_absent(tmp_path):
+    base = make_source(
+        tmp_path, "base", stop="master_failed", final_lp_fallback=True
+    )
+    result, _out, record = invoke(tmp_path, base, base)
+    assert result.returncode == 0, result.stderr
+    rec = json.loads(record.read_text())
+    assert rec["source_stop_reason"] == "master_failed"
+    assert rec["source_certified"] is False
+    assert rec["artificials"] == 0.0
+    assert rec["artificials_source"] == "final_lp"

@@ -15,7 +15,20 @@ from run_exact_pool_mip import resolve_pool_journal
 
 
 SCHEMA = "evsp-dr-terminal-exact-cg-pool-snapshot-v1"
-TERMINAL_STOPS = {"certified", "wall_limit", "master_failed"}
+TERMINAL_STOPS = {
+    "certified", "wall_limit", "master_failed", "max_iters", "no_path",
+    "stalled_marginal_returns", "degenerate_stall",
+}
+
+
+def terminal_artificials(status: dict) -> tuple[float, str]:
+    final = status.get("final") or {}
+    if "artificials" in final:
+        return float(final["artificials"]), "final"
+    final_lp = status.get("final_lp") or {}
+    if "artificial_total" in final_lp:
+        return float(final_lp["artificial_total"]), "final_lp"
+    return math.nan, "missing"
 
 
 def sha256(path: Path) -> str:
@@ -75,7 +88,7 @@ def valid_status(
         raise ValueError(f"source is not terminal for {cell}: {status.get('stop_reason')}")
     if status.get("stop_reason") == "certified" and status.get("certified_rc_optimal") is not True:
         raise ValueError(f"certified stop lacks certificate flag for {cell}")
-    artificials = float(final.get("artificials", math.nan))
+    artificials, _artificial_source = terminal_artificials(status)
     if not math.isfinite(artificials) or artificials < 0 or artificials > 1e-7:
         raise ValueError(f"source retains artificials for {cell}")
     if provenance.get("instance_sha256") != instance_sha:
@@ -222,7 +235,8 @@ def main() -> int:
         "source_stop_reason": status.get("stop_reason"),
         "source_certified": status.get("certified_rc_optimal") is True,
         "columns": len(unique),
-        "artificials": float((status.get("final") or {})["artificials"]),
+        "artificials": terminal_artificials(status)[0],
+        "artificials_source": terminal_artificials(status)[1],
         "instance_sha256": args.instance_sha256,
     }
     record_path.parent.mkdir(parents=True, exist_ok=True)

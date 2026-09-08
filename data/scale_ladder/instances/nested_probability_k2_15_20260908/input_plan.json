@@ -1,0 +1,47 @@
+{
+  "created_date": "2026-09-08",
+  "files": {
+    "chain_order.csv": "3e96d92e4cefed8e5d1d8e3f26fd2c4c17f1d0022b8c79aff5315a9dbbf3aa70",
+    "known_duty_continuous_240_240.csv": "9055ddab95a67ec5ffa9dffd284a4dd7f9e580096f62596e48527db9398ba46a",
+    "selection_manifest.csv": "3d3fdf1d13f3849dd4af9d7d24d5cdef3108f03c1a6521af9d98b596402d4899"
+  },
+  "generator_script_sha256": "f92608e561a13e916e217da3543e541f034a6cbbaee67c5a7f73088598ecb9f7",
+  "generator_seed": 20260904,
+  "known_partition_caveat": "physical k-route upper bound only; not an event-lattice representability certificate and not injected into raw CG",
+  "known_partition_scope": "each original GIRO duty trip order has an independently optimized and replay-validated continuous schedule",
+  "physics": {
+    "battery_kwh": 240.0,
+    "charge_kw": 240.0,
+    "charge_start_cost": 5.0,
+    "reserve_kwh": 0.0,
+    "terminal_soc_policy": "free"
+  },
+  "probability_design": "six_original_rng_prefix_chains_k2_through_k15",
+  "probability_per_scale": 6,
+  "published_upper_bytes_preserved": true,
+  "published_upper_rows": 42,
+  "removal_policy": "descending k removes the duty with addition_rank k",
+  "scales": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "schema": "evsp-dr-nested-probability-k2-15-inputs-v1",
+  "selected_rows": 84,
+  "selection_uses_solver_outcomes": false,
+  "shared_builder_sha256": "1506abe092f8904bb714b4c3f271fd68a1022b73d24de42666eca60e0c257462",
+  "source_generator_sha256": "d35b4a6212eb96515335bf8439ae813b66ee261428e25efdb745ae5399dd698e",
+  "source_input_plan_sha256": "8da33a9a424de5588d0cd7e31ef6123aedfea6aa75d9ad2d3089b496c88bbdd3",
+  "source_selection_manifest_sha256": "ce7672efacf415f3257badaab397bd1f56dea83051a05221522b3ae64d4ce560"
+}
