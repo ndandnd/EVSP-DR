@@ -1,0 +1,41 @@
+duty,trips,source_valid,model_valid,source_reason,model_reason
+13323,8,False,False,row 1357: SOC 240.018347 exceeds capacity,charge at PARX_1 raises SOC to 241.0 > capacity 240.0
+13408,11,True,True,,
+13401,12,True,True,,
+13414,12,True,True,,
+13405,13,True,True,,
+13311,14,False,False,row 654: SOC 240.026656 exceeds capacity,charge at PARX_1 raises SOC to 240.4 > capacity 240.0
+13403,14,True,True,,
+13406,14,True,True,,
+13411,14,True,True,,
+13307,15,True,False,,charge at PARX_1 raises SOC to 240.4 > capacity 240.0
+13410,15,False,False,row 2015: SOC 240.020008 exceeds capacity,charge at PARX_1 raises SOC to 242.0 > capacity 240.0
+13412,15,True,False,,missing model arc 262->359
+13413,15,True,True,,
+13314,16,False,False,row 848: SOC 240.026667 exceeds capacity,charge at PARX_1 raises SOC to 240.5 > capacity 240.0
+13320,16,True,True,,
+13402,17,True,True,,
+13404,17,True,True,,
+13407,17,True,True,,
+13409,17,True,True,,
+13324t,18,True,True,,
+13316uwt,21,True,True,,
+13326,21,True,True,,
+13309,22,True,True,,
+13321,22,False,False,row 1256: SOC 240.006679 exceeds capacity,charge at PARX_1 raises SOC to 240.5 > capacity 240.0
+13310,24,True,True,,
+13322,26,True,True,,
+13319,27,False,False,row 1167: SOC 240.025017 exceeds capacity,charge at PARX_1 raises SOC to 240.2 > capacity 240.0
+13305,30,True,True,,
+13306,30,True,True,,
+13308,31,False,False,row 498: SOC 240.01667 exceeds capacity,charge at PARX_1 raises SOC to 240.3 > capacity 240.0
+13315,31,True,True,,
+13318,33,False,False,row 1102: SOC 240.003374 exceeds capacity,charge at PARX_1 raises SOC to 240.4 > capacity 240.0
+13301,36,False,False,row 18: SOC 240.018347 exceeds capacity,charge at PARX_1 raises SOC to 240.2 > capacity 240.0
+13304,37,False,False,row 281: SOC 240.034998 exceeds capacity,charge at PARX_1 raises SOC to 240.8 > capacity 240.0
+13313,37,True,True,,
+13317,37,True,True,,
+13325,42,True,True,,
+13312,46,True,True,,
+13302,50,True,True,,
+13303,54,True,True,,
