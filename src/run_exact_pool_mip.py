@@ -1456,14 +1456,23 @@ def fleet_bound_proves_incumbent(
     )
 
 
+def stage_time_budget(total_seconds, stage_cap, elapsed_seconds=0.0):
+    """Per-stage cap bounded by the remaining total solve clock."""
+    remaining = max(0.0, float(total_seconds) - float(elapsed_seconds))
+    return remaining if stage_cap is None else min(remaining, float(stage_cap))
+
+
 def optimal_scope(*, two_stage: bool, fleet_proven: bool,
-                  cost_stage_executed: bool, final_status: int) -> str:
+                  cost_stage_executed: bool, final_status: int,
+                  allow_unproven_fleet_cost: bool = False) -> str:
     """Name exactly what, if anything, the final status proves."""
 
     if not two_stage:
         return "full_pool_objective" if final_status == 2 else "none"
     if not fleet_proven:
-        return "none"
+        return ("conditional_on_incumbent_fleet"
+                if allow_unproven_fleet_cost and cost_stage_executed and final_status == 2
+                else "none")
     if cost_stage_executed and final_status == 2:
         return "full_pool_lexicographic"
     return "fleet_only"
@@ -1868,6 +1877,12 @@ def main(argv=None) -> int:
     parser.add_argument("--result", type=Path, required=True,
                         help="Exact-pricer status JSON (with columns_journal).")
     parser.add_argument("--timelimit", type=int, default=3600)
+    parser.add_argument("--fleet-timelimit", type=int, default=None,
+                        help="Optional fleet-stage cap in seconds; supply with --cost-timelimit and --two-stage.")
+    parser.add_argument("--cost-timelimit", type=int, default=None,
+                        help="Optional cost-stage cap, also bounded by the remaining --timelimit total.")
+    parser.add_argument("--allow-unproven-fleet-cost", action="store_true",
+                        help="With --two-stage, optimize cost at the incumbent fleet even if its minimum is unproved; report conditional cost scope.")
     parser.add_argument("--mipgap", type=float, default=1e-4)
     parser.add_argument("--threads", type=int, default=2)
     parser.add_argument(
@@ -1935,6 +1950,14 @@ def main(argv=None) -> int:
              "checkpoints (not a Gurobi tree restart).",
     )
     args = parser.parse_args(argv)
+    if args.timelimit <= 0:
+        parser.error("--timelimit must be positive")
+    if (args.fleet_timelimit is None) != (args.cost_timelimit is None):
+        parser.error("--fleet-timelimit and --cost-timelimit must be supplied together")
+    if (args.fleet_timelimit is not None or args.allow_unproven_fleet_cost) and not args.two_stage:
+        parser.error("stage caps and --allow-unproven-fleet-cost require --two-stage")
+    if args.fleet_timelimit is not None and min(args.fleet_timelimit, args.cost_timelimit) <= 0:
+        parser.error("stage time limits must be positive")
     if (
         args.verified_expanded_initial_partition
         and args.initial_partition_routes is None
@@ -2377,10 +2400,10 @@ def main(argv=None) -> int:
         and bool(mip_start)
     )
     if args.two_stage:
-        # Fleet recovery is the primary experiment.  Stage 1 may consume the
-        # complete budget.  Cost optimization is allowed only after the
-        # integer fleet count has been proved, using whatever time remains.
-        m.Params.TimeLimit = args.timelimit
+        # Default preserves proof-first use of the full primary budget.
+        # Explicit caps reserve a bounded opportunity for the cost stage.
+        fleet_time_limit_s = stage_time_budget(args.timelimit, args.fleet_timelimit)
+        m.Params.TimeLimit = fleet_time_limit_s
         m.setObjective(
             gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE
         )
@@ -2436,7 +2459,8 @@ def main(argv=None) -> int:
             progress.elapsed_s() if progress is not None
             else time.time() - t0
         )
-        remaining_s = max(0.0, float(args.timelimit) - stage1_runtime_s)
+        remaining_s = stage_time_budget(args.timelimit, None, stage1_runtime_s)
+        cost_time_limit_s = stage_time_budget(args.timelimit, args.cost_timelimit, stage1_runtime_s)
         print(
             f"[MIP] stage 1: fleet={stage1_buses} "
             f"(bound {stage1_bound}, gap {stage1_gap}, "
@@ -2460,6 +2484,14 @@ def main(argv=None) -> int:
             "stage1_gap": stage1_gap,
             "fleet_proven": fleet_proven,
             "stage1_runtime_s": stage1_runtime_s,
+            "stage1_optimize_wall_s": gurobi_optimize_wall_s[0],
+            "stage1_time_limit_s": fleet_time_limit_s,
+            "stage2_time_limit_s": cost_time_limit_s,
+            "stage2_optimize_wall_s": None,
+            "total_time_limit_s": args.timelimit,
+            "budget_policy": ("explicit_stage_caps_with_total_guard" if args.fleet_timelimit is not None else "shared_total_conditional_cost" if args.allow_unproven_fleet_cost else "shared_total_proof_first"),
+            "allow_unproven_fleet_cost": args.allow_unproven_fleet_cost,
+            "stage2_conditional_on_unproven_fleet": False,
             "stage1_node_count": finite_solver_value(
                 getattr(m, "NodeCount", None)
             ),
@@ -2470,8 +2502,8 @@ def main(argv=None) -> int:
         }
         if (
             stage1_has_solution
-            and fleet_proven
-            and remaining_s >= 1.0
+            and (fleet_proven or args.allow_unproven_fleet_cost)
+            and cost_time_limit_s >= 1.0
             and not (termination and termination.requested)
             and pool_master_cost_semantics
             != "mixed_expanded_grid_and_continuous_augmented_cost"
@@ -2491,7 +2523,7 @@ def main(argv=None) -> int:
                             for i in range(len(routes))),
                 GRB.MINIMIZE,
             )
-            m.Params.TimeLimit = remaining_s
+            m.Params.TimeLimit = cost_time_limit_s
             if progress is not None:
                 progress.transition_stage(
                     "cost", elapsed_s=progress.elapsed_s()
@@ -2511,6 +2543,8 @@ def main(argv=None) -> int:
             cost_stage_executed = True
             cost_stage_has_solution = m.SolCount > 0
             two_stage_detail["stage2_executed"] = True
+            two_stage_detail["stage2_optimize_wall_s"] = gurobi_optimize_wall_s[-1]
+            two_stage_detail["stage2_conditional_on_unproven_fleet"] = not fleet_proven
             two_stage_detail["stage2_has_solution"] = cost_stage_has_solution
             two_stage_detail["stage2_start_acceptance"] = (
                 stage2_start_acceptance
@@ -2525,7 +2559,7 @@ def main(argv=None) -> int:
             )
         elif not stage1_has_solution:
             two_stage_detail["stage2_skip_reason"] = "no_fleet_incumbent"
-        elif not fleet_proven:
+        elif not fleet_proven and not args.allow_unproven_fleet_cost:
             two_stage_detail["stage2_skip_reason"] = "fleet_not_proven"
         elif (
             pool_master_cost_semantics
@@ -2575,7 +2609,7 @@ def main(argv=None) -> int:
         solver_bound = stage1_bound
         mip_gap = stage1_gap
     elif args.two_stage and not cost_stage_has_solution:
-        # The proved fleet incumbent is still a valid deliverable even if the
+        # The stage-one fleet incumbent is still a valid deliverable even if the
         # second optimizer fails to accept its warm start before interruption.
         chosen = list(stage1_solution)
         status_code = int(m.Status)
@@ -2807,7 +2841,8 @@ def main(argv=None) -> int:
     if cost_stage_executed and solver_bound is not None and two_stage_detail:
         mip_bound = (BUS_COST_KX * two_stage_detail["stage1_buses"]
                      + solver_bound)
-        mip_bound_scope = "fixed_proven_fleet_variable_cost"
+        mip_bound_scope = ("fixed_proven_fleet_variable_cost" if fleet_proven
+                           else "conditional_fixed_incumbent_fleet_variable_cost")
     elif args.two_stage and solver_bound is not None:
         # A negative-price tariff can make route-variable costs negative.
         # At most one nonempty selected route per trip is needed in a strict
@@ -2872,6 +2907,7 @@ def main(argv=None) -> int:
             fleet_proven=fleet_proven,
             cost_stage_executed=cost_stage_executed,
             final_status=status_code,
+            allow_unproven_fleet_cost=args.allow_unproven_fleet_cost,
         ),
         "mip_obj": mip_obj,
         "mip_bound": mip_bound,
@@ -2997,6 +3033,8 @@ def main(argv=None) -> int:
             "host": platform.node(),
             "gurobi_parameters": {
                 "TimeLimit_s": args.timelimit,
+                "fleet_stage_TimeLimit_s": (two_stage_detail or {}).get("stage1_time_limit_s"),
+                "cost_stage_TimeLimit_s": (two_stage_detail or {}).get("stage2_time_limit_s"),
                 "MIPGap": args.mipgap,
                 "Threads": args.threads,
                 "Seed": int(getattr(m.Params, "Seed", 0)),
@@ -3005,6 +3043,9 @@ def main(argv=None) -> int:
             },
             "arguments": {
                 "timelimit": args.timelimit,
+                "fleet_timelimit": args.fleet_timelimit,
+                "cost_timelimit": args.cost_timelimit,
+                "allow_unproven_fleet_cost": args.allow_unproven_fleet_cost,
                 "mipgap": args.mipgap,
                 "threads": args.threads,
                 "two_stage": args.two_stage,
