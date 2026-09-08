@@ -1,0 +1,21 @@
+{
+  "created_date": "2026-09-08",
+  "current_replay_physics": {
+    "battery_kwh": 240.0,
+    "block_min": 5,
+    "charge_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "soc_step": 2.5
+  },
+  "files": {
+    "Practice_Selected_10bus_20260426.csv": "75673708acf2b2099b2240829e2603920bc5608d34fef2f7d28cd7d2931868c7",
+    "selection_manifest.csv": "2d54394c21124c7e0af3401579a50b102f330e06cf73c2d9bf590a006d4b39cc"
+  },
+  "historical_result_scope": "April 26 one-hour MIP incumbent 12, not proven optimal",
+  "schema": "evsp-dr-legacy-selected10-input-v1",
+  "selected_rows": 1,
+  "selection_uses_solver_outcomes": false,
+  "source_commit": "7c564da",
+  "source_instance_sha256": "75673708acf2b2099b2240829e2603920bc5608d34fef2f7d28cd7d2931868c7",
+  "source_path": "data/Practice_Selected_10bus.csv"
+}
