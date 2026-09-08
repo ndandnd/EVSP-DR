@@ -541,3 +541,32 @@ gap, concurrency, and compatibility descriptors alongside graph-build time,
 CG time, iterations, columns, phase timing, Slurm state, and certification.
 The by-scale CSV is descriptive; inference about a scale threshold must still
 condition on these instance descriptors.
+
+To solve the saved k9--k15 column pools as integer partitioning models, use:
+
+```bash
+git -C "$HOME/ladder-lite/repo-manager" pull --ff-only
+bash "$HOME/ladder-lite/repo-manager/scripts/event_uniform_envelope/submit_threshold_pool_mip8h.sh"
+```
+
+The launcher does not rerun column generation.  It freezes each newest valid
+terminal continuation, falling back only to a certified baseline, then runs a
+Gurobi two-stage RAW-pool MIP on `scaglione`.  The 69 already-terminal cells
+start immediately; the continuation task named by
+`EVSP_SOURCE_DEPENDENCY_JOB` (default `481176_48`) is mapped through the resume
+matrix and deferred separately.  Each MIP receives eight threads, 48 GiB by
+default, and 28,800 total solver seconds shared by fleet and cost stages.  The
+10:30 Slurm limit leaves time for strict physical replay and pool loading.  At
+most 12 MIPs run concurrently (`EVSP_MIP_MAX_CONCURRENT`), including the
+deferred cell.  `EVSP_MIP_MEM` may raise the per-task memory request for a new
+campaign root.
+
+The execution checkout, plan, matrix, workers, runner, source statuses, and
+column journals are hash-bound.  MIPs are non-requeue because a Gurobi search
+tree is not restartable here; observational progress files do not resume the
+tree.  The launcher uses an exclusive lock, records every successful `sbatch`
+with `fsync`, and refuses an unrecorded same-name job.  A failed physical
+replay or an incomplete progress directory requires operator review before
+that cell is retried.  `master_failed` and `wall_limit` continuations remain
+valid RAW finite pools, but their MIP results do not gain a column-generation
+certificate.

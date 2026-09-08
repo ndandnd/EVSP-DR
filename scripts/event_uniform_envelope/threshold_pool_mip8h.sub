@@ -1,0 +1,72 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+unset LM_LICENSE_FILE || true
+fatal() { echo "[FATAL] $*" >&2; exit 2; }
+
+: "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_POOL_MIP_ROOT:?}" "${EVSP_POOL_PLAN_SHA256:?}"
+: "${EVSP_POOL_MATRIX_SHA256:?}" "${EVSP_MIP_WORKER_SHA256:?}"
+: "${EVSP_MIP_RUNNER_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "${SLURM_JOB_PARTITION:-}" == scaglione ]] || fatal "MIP requires scaglione"
+[[ "${SLURM_RESTART_COUNT:-0}" == 0 ]] || fatal "MIP tree cannot resume"
+[[ -r "$GRB_LICENSE_FILE" ]] || fatal "Gurobi license unreadable"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]] || fatal "commit mismatch"
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]] || fatal "tracked checkout changes"
+git -C "$EVSP_EXECUTION_REPO" symbolic-ref -q HEAD >/dev/null 2>&1 && fatal "checkout must be detached"
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh" || fatal "Gurobi preflight failed"
+worker_sha=$(sha256sum "$0"); worker_sha=${worker_sha%% *}
+[[ "$worker_sha" == "$EVSP_MIP_WORKER_SHA256" ]] || fatal "worker hash mismatch"
+RUNNER="$EVSP_EXECUTION_REPO/src/run_exact_pool_mip.py"
+runner_sha=$(sha256sum "$RUNNER"); runner_sha=${runner_sha%% *}
+[[ "$runner_sha" == "$EVSP_MIP_RUNNER_SHA256" ]] || fatal "runner hash mismatch"
+PLAN="$EVSP_POOL_MIP_ROOT/execution_plan.json"; MATRIX="$EVSP_POOL_MIP_ROOT/matrix.tsv"
+plan_sha=$(sha256sum "$PLAN"); plan_sha=${plan_sha%% *}
+matrix_sha=$(sha256sum "$MATRIX"); matrix_sha=${matrix_sha%% *}
+[[ "$plan_sha" == "$EVSP_POOL_PLAN_SHA256" && "$matrix_sha" == "$EVSP_POOL_MATRIX_SHA256" ]] || fatal "control hash mismatch"
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$MATRIX")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS REPRESENTATION INSTANCE_REL INSTANCE_SHA BASE_STATUS RESUME_STATUS SNAPSHOT RECORD OUT <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" && "$REPRESENTATION" == event_2p5_event5 ]] || fatal "matrix row mismatch"
+[[ -s "$RECORD" ]] || fatal "freeze record missing: $RECORD"
+read -r SNAPSHOT_SHA JOURNAL_SHA < <(
+  "$PYTHON_BIN" - "$RECORD" "$CELL" "$SNAPSHOT" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1])); assert d["cell"]==sys.argv[2] and d["snapshot"]==sys.argv[3]
+assert d["schema"]=="evsp-dr-terminal-exact-cg-pool-freeze-record-v1"
+print(d["snapshot_sha256"],d["journal_sha256"])
+PY
+)
+actual=$(sha256sum "$SNAPSHOT"); actual=${actual%% *}; [[ "$actual" == "$SNAPSHOT_SHA" ]] || fatal "snapshot hash mismatch"
+actual=$(sha256sum "$SNAPSHOT.columns.jsonl"); actual=${actual%% *}; [[ "$actual" == "$JOURNAL_SHA" ]] || fatal "journal hash mismatch"
+
+if [[ -s "$OUT" ]]; then
+  "$PYTHON_BIN" - "$OUT" "$SNAPSHOT_SHA" "$JOURNAL_SHA" "$EVSP_EXPECTED_COMMIT" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1])); p=d["mip_provenance"]
+assert d["source_result_sha256"]==sys.argv[2] and d["source_journal_sha256"]==sys.argv[3]
+assert p["observed_git_commit"]==sys.argv[4] and p["arguments"]["timelimit"]==28800
+assert p["arguments"]["threads"]==8 and p["arguments"]["two_stage"] is True
+PY
+  echo "[MIP] already complete cell=$CELL out=$OUT"
+  exit 0
+fi
+[[ ! -e "$OUT.rejected_physical_replay.json" ]] || fatal "prior physical replay rejection exists: $OUT.rejected_physical_replay.json"
+PROGRESS="$EVSP_POOL_MIP_ROOT/progress/$CELL"
+[[ ! -e "$PROGRESS" ]] || fatal "prior incomplete progress directory requires operator review: $PROGRESS"
+
+export EVSP_EXPECTED_COMMIT EVSP_REQUIRE_DETACHED=1
+export EVSP_MIP_EXPECTED_RESULT_SHA256="$SNAPSHOT_SHA"
+export EVSP_MIP_EXPECTED_JOURNAL_SHA256="$JOURNAL_SHA"
+echo "[MIP] cell=$CELL commit=$EVSP_EXPECTED_COMMIT node=$(hostname -s) RAW_pool=true"
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u "$RUNNER" \
+  --result "$SNAPSHOT" --data-dir "$EVSP_EXECUTION_REPO/data" \
+  --reference-data-dir "$EVSP_EXECUTION_REPO/data" --require-singleton-partition \
+  --timelimit 28800 --mipgap 0.0001 --threads 8 --two-stage \
+  --progress-dir "$PROGRESS" --gurobi-log "$OUT.gurobi.log" --out "$OUT"

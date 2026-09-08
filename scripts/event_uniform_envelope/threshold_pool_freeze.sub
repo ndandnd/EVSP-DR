@@ -1,0 +1,63 @@
+#!/bin/bash
+set -euo pipefail
+
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+fatal() { echo "[FATAL] $*" >&2; exit 2; }
+
+: "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_POOL_MIP_ROOT:?}" "${EVSP_POOL_PLAN_SHA256:?}"
+: "${EVSP_POOL_MATRIX_SHA256:?}" "${EVSP_FREEZE_WORKER_SHA256:?}"
+: "${EVSP_FREEZER_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "${SLURM_JOB_PARTITION:-}" == scaglione ]] || fatal "freeze requires scaglione"
+[[ "${SLURM_RESTART_COUNT:-0}" == 0 ]] || fatal "freeze is deliberately non-requeue"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]] || fatal "commit mismatch"
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]] || fatal "tracked checkout changes"
+git -C "$EVSP_EXECUTION_REPO" symbolic-ref -q HEAD >/dev/null 2>&1 && fatal "checkout must be detached"
+worker_sha=$(sha256sum "$0"); worker_sha=${worker_sha%% *}
+[[ "$worker_sha" == "$EVSP_FREEZE_WORKER_SHA256" ]] || fatal "worker hash mismatch"
+FREEZER="$EVSP_EXECUTION_REPO/src/freeze_terminal_exact_cg_pool.py"
+freezer_sha=$(sha256sum "$FREEZER"); freezer_sha=${freezer_sha%% *}
+[[ "$freezer_sha" == "$EVSP_FREEZER_SHA256" ]] || fatal "freezer hash mismatch"
+PLAN="$EVSP_POOL_MIP_ROOT/execution_plan.json"
+MATRIX="$EVSP_POOL_MIP_ROOT/matrix.tsv"
+plan_sha=$(sha256sum "$PLAN"); plan_sha=${plan_sha%% *}
+matrix_sha=$(sha256sum "$MATRIX"); matrix_sha=${matrix_sha%% *}
+[[ "$plan_sha" == "$EVSP_POOL_PLAN_SHA256" ]] || fatal "plan hash mismatch"
+[[ "$matrix_sha" == "$EVSP_POOL_MATRIX_SHA256" ]] || fatal "matrix hash mismatch"
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID + 2))p" "$MATRIX")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS REPRESENTATION INSTANCE_REL INSTANCE_SHA BASE_STATUS RESUME_STATUS SNAPSHOT RECORD MIP_OUT <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" && "$REPRESENTATION" == event_2p5_event5 ]] || fatal "matrix row mismatch"
+
+if [[ -s "$RECORD" ]]; then
+  "$PYTHON_BIN" - "$RECORD" "$CELL" "$SNAPSHOT" <<'PY'
+import hashlib,json,sys
+p,cell,snapshot=sys.argv[1:]
+d=json.load(open(p))
+assert d["schema"] == "evsp-dr-terminal-exact-cg-pool-freeze-record-v1"
+assert d["cell"] == cell and d["snapshot"] == snapshot
+for key,path_key in (("snapshot_sha256","snapshot"),("journal_sha256","journal"),("iterations_sha256","iterations")):
+    h=hashlib.sha256(open(d[path_key],"rb").read()).hexdigest()
+    assert h == d[key]
+PY
+  echo "[freeze] already complete cell=$CELL record=$RECORD"
+  exit 0
+fi
+for path in "$SNAPSHOT" "$SNAPSHOT.columns.jsonl" "$SNAPSHOT.iters.csv"; do
+  [[ ! -e "$path" ]] || fatal "partial freeze exists without record: $path"
+done
+
+SOURCE_COMMIT=$(
+  "$PYTHON_BIN" - "$PLAN" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1]))
+print(d["source_solver_commit"])
+PY
+)
+exec "$PYTHON_BIN" -u "$FREEZER" \
+  --base-status "$BASE_STATUS" --resume-status "$RESUME_STATUS" \
+  --cell "$CELL" --instance-relative-to-data "$INSTANCE_REL" \
+  --instance-sha256 "$INSTANCE_SHA" --source-solver-commit "$SOURCE_COMMIT" \
+  --out "$SNAPSHOT" --record "$RECORD"
