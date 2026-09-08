@@ -30,12 +30,18 @@ def prepare(args):
     if args.root.exists(): raise FileExistsError(args.root)
     from make_duty_pair_instances import _peak_concurrency
     import pandas as pd
+    tariff_ids=getattr(args,'tariffs',('flat','peak08'))
+    with (ROOT/'data/tariff_response/tariff_manifest.csv').open() as handle:
+        manifest={row['tariff_id']:row for row in csv.DictReader(handle)}
+    for tariff in tariff_ids:
+        if sha(ROOT/manifest[tariff]['relative_path'])!=manifest[tariff]['sha256']:
+            raise ValueError('tracked tariff manifest hash mismatch')
     cells=[]
     for label,k,power,sub in [('easy',k,240,'easy_trip_nested_20260908') for k in (5,8,10)]+[('original_eligible',5,350,'original_replay_eligible_20260908')]:
         instance=ROOT/f'data/scale_ladder/instances/{sub}/Practice_Custom_DutyUnion_{label}_k{k:02d}_20260908.csv'
         frame=pd.read_csv(instance); peak=_peak_concurrency(frame)
         if peak!=k: raise ValueError('peak fleet lower bound is not the declared matched fleet')
-        for tariff in ('flat','peak08'):
+        for tariff in tariff_ids:
             prices=ROOT/f'data/tariff_response/{tariff}_h26.csv'
             cells.append(dict(index=len(cells),cell=f'{label}_k{k:02d}_g240_p{power}_{tariff}',
                 fleet=k,trips=len(frame),peak_concurrency=peak,g_kwh=240,charge_kw=power,
@@ -48,7 +54,12 @@ def prepare(args):
         semantics='GIRO-AUGMENTED event pool; k proved by overlap bound plus validated k-duty witness; charging objective conservative expanded grid; physical realized invoices reported separately',
         terminal_policy='full initial240; returnSOC>=0; actual surplus reported; no forced restoration',
         power_scenario='350kW is a declared comparison scenario, not a claim about actual rated hardware; shared station capacity is not modeled',
-        requeue=False,threads=8,memory='96G',network_build_excluded_from_cg_budget=True)
+        requeue=False,threads=8,memory='48G' if getattr(args,'split_stages',False) else '96G',
+        layout='split_cg_mip' if getattr(args,'split_stages',False) else 'sequential',
+        tariff_manifest_sha256=sha(ROOT/'data/tariff_response/tariff_manifest.csv'),tariff_ids=list(tariff_ids),
+        stage_resources={'cg':{'partition':'default_partition','cpus':1,'memory':'16G'},
+                         'mip':{'partition':'scaglione','cpus':8,'memory':'48G','exclude':['scaglione-compute-01','scaglione-cpu-04']}},
+        network_build_excluded_from_cg_budget=True)
     args.root.mkdir(parents=True); (args.root/'logs').mkdir(); write_json(args.root/'plan.json',plan)
     print(json.dumps({'root':str(args.root),'cells':len(cells),'plan_sha256':sha(args.root/'plan.json')}))
 
@@ -99,8 +110,13 @@ def worker(args):
     if sha(plan_path)!=os.environ['EVSP_PLAN_SHA256']: raise ValueError('plan hash mismatch')
     plan=json.loads(plan_path.read_text()); check_identity(plan['commit'])
     if os.environ.get('SLURM_RESTART_COUNT','0')!='0': raise ValueError('MIP tree cannot resume; allocation is censored')
-    cell=plan['cells'][args.index]; folder=args.root/cell['cell']; folder.mkdir()
-    write_json(folder/'allocation.json',dict(hostname=platform.node(),platform=platform.platform(),
+    stage=getattr(args,'stage','all')
+    if plan.get('layout')=='split_cg_mip' and stage=='all':
+        raise ValueError('split plan requires an explicit CG or MIP worker')
+    cell=plan['cells'][args.index]; folder=args.root/cell['cell']
+    if stage in ('all','cg'): folder.mkdir()
+    elif not folder.is_dir(): raise ValueError('CG cell directory missing')
+    write_json(folder/('allocation.json' if stage=='all' else stage+'.allocation.json'),dict(hostname=platform.node(),platform=platform.platform(),
         cpu_count=os.cpu_count(),slurm_job_id=os.environ.get('SLURM_JOB_ID'),slurm_array_id=os.environ.get('SLURM_ARRAY_TASK_ID'),
         cpuinfo=Path('/proc/cpuinfo').read_text() if Path('/proc/cpuinfo').exists() else None))
     for key in ('instance','tariff'):
@@ -117,15 +133,30 @@ def worker(args):
             write_json(folder/(script+'.timing.json'),dict(elapsed_s=time.monotonic()-started,success=success))
     shared=['--instance',cell['instance'],'--instance-sha256',cell['instance_sha256'],'--master-sha256',plan['master_sha256'],'--fleet',cell['fleet'],'--g-kwh',240,'--charge-kw',cell['charge_kw']]
     original=folder/'original.json'
-    call('compare_original_giro_charging.py',*shared,'--tariffs',cell['tariff'],'--terminal-energy-price',0.1,'--out',original)
-    original_summary=json.loads(original.read_text())['summary'][0]
-    if cell['literal_original_required'] and not original_summary['matched_physics_comparator_eligible']: raise ValueError('original comparator failed combined-instance replay')
     seed=folder/'seed.json'; cache=folder/'network.pkl'; cg=folder/'cg.json'; snapshot=folder/'snapshot.json'; mip=folder/'mip.json'
-    call('prepare_event_giro_seed.py',*shared,'--tariff',cell['tariff'],'--tariff-sha256',cell['tariff_sha256'],'--network-cache',cache,'--out',seed)
-    call('exact_pricer_expanded.py','--csv',cell['instance'],'--prices_csv',cell['tariff'],'--time-model','event','--event-arc-mode','lazy','--event-network-cache',cache,'--event-network-cache-mode','require','--soc-step',2.5,'--block-min',5,'--max-iters',50000,'--columns_per_iter',30,'--column-selection','reduced_cost','--column-diversity-weight',0.,'--column-candidate-multiplier',4,'--rc-eps',0.0001,'--master-sense','partition','--master-backend','gurobi','--initial-pool','singletons','--wall-limit-s',plan['cg_seconds'],'--checkpoint-every',25,'--g-kwh',240,'--charge-kw',cell['charge_kw'],'--min-soc-frac',0,'--validated-seed-routes',seed,'--augmentation-label','GIRO-AUGMENTED','--strict-tariff-coverage','--phase-telemetry',folder/'cg.phase-telemetry.jsonl','--gurobi-log',folder/'cg.gurobi.log','--out',cg)
-    freeze_started=time.monotonic()
-    snapshot_sha,journal_sha=freeze(cg,snapshot,cell,plan,seed)
-    write_json(folder/'freeze.timing.json',dict(elapsed_s=time.monotonic()-freeze_started,success=True))
+    frozen_record=folder/'FROZEN.json'
+    if stage in ('all','cg'):
+        call('compare_original_giro_charging.py',*shared,'--tariffs',cell['tariff'],'--terminal-energy-price',0.1,'--out',original)
+        original_summary=json.loads(original.read_text())['summary'][0]
+        if cell['literal_original_required'] and not original_summary['matched_physics_comparator_eligible']: raise ValueError('original comparator failed combined-instance replay')
+        call('prepare_event_giro_seed.py',*shared,'--tariff',cell['tariff'],'--tariff-sha256',cell['tariff_sha256'],'--network-cache',cache,'--out',seed)
+        call('exact_pricer_expanded.py','--csv',cell['instance'],'--prices_csv',cell['tariff'],'--time-model','event','--event-arc-mode','lazy','--event-network-cache',cache,'--event-network-cache-mode','require','--soc-step',2.5,'--block-min',5,'--max-iters',50000,'--columns_per_iter',30,'--column-selection','reduced_cost','--column-diversity-weight',0.,'--column-candidate-multiplier',4,'--rc-eps',0.0001,'--master-sense','partition','--master-backend','gurobi','--initial-pool','singletons','--wall-limit-s',plan['cg_seconds'],'--checkpoint-every',25,'--g-kwh',240,'--charge-kw',cell['charge_kw'],'--min-soc-frac',0,'--validated-seed-routes',seed,'--augmentation-label','GIRO-AUGMENTED','--strict-tariff-coverage','--phase-telemetry',folder/'cg.phase-telemetry.jsonl','--gurobi-log',folder/'cg.gurobi.log','--out',cg)
+        freeze_started=time.monotonic()
+        snapshot_sha,journal_sha=freeze(cg,snapshot,cell,plan,seed)
+        write_json(folder/'freeze.timing.json',dict(elapsed_s=time.monotonic()-freeze_started,success=True))
+        write_json(frozen_record,dict(cell=cell['cell'],commit=plan['commit'],
+            plan_sha256=sha(plan_path),snapshot_sha256=snapshot_sha,journal_sha256=journal_sha,
+            seed_sha256=sha(seed),original_sha256=sha(original)))
+        if stage=='cg': return
+    else:
+        record=json.loads(frozen_record.read_text())
+        if record['cell']!=cell['cell'] or record['commit']!=plan['commit'] or record['plan_sha256']!=sha(plan_path):
+            raise ValueError('frozen stage identity mismatch')
+        for path,key in ((snapshot,'snapshot_sha256'),(Path(str(snapshot)+'.columns.jsonl'),'journal_sha256'),
+                         (seed,'seed_sha256'),(original,'original_sha256')):
+            if sha(path)!=record[key]: raise ValueError('frozen stage artifact hash mismatch')
+        snapshot_sha=record['snapshot_sha256'];journal_sha=record['journal_sha256']
+        original_summary=json.loads(original.read_text())['summary'][0]
     os.environ.update(EVSP_MIP_EXPECTED_RESULT_SHA256=snapshot_sha,EVSP_MIP_EXPECTED_JOURNAL_SHA256=journal_sha,EVSP_MIP_EXPECTED_INITIAL_PARTITION_SHA256=sha(seed))
     call('run_exact_pool_mip.py','--result',snapshot,'--data-dir',ROOT/'data','--reference-data-dir',ROOT/'data','--initial-partition-routes',seed,'--verified-expanded-initial-partition','--two-stage','--timelimit',plan['mip_seconds'],'--mipgap',0.0001,'--threads',8,'--progress-dir',folder/'mip_progress','--gurobi-log',folder/'mip.gurobi.log','--out',mip)
     result=json.loads(mip.read_text())
@@ -155,8 +186,8 @@ def worker(args):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__); sub=parser.add_subparsers(dest='mode',required=True)
-    p=sub.add_parser('prepare'); p.add_argument('--root',type=Path,required=True);p.add_argument('--commit',required=True);p.add_argument('--cg-seconds',type=int,default=14400);p.add_argument('--mip-seconds',type=int,default=14400)
-    p=sub.add_parser('worker');p.add_argument('--root',type=Path,required=True);p.add_argument('--index',type=int,required=True)
+    p=sub.add_parser('prepare'); p.add_argument('--root',type=Path,required=True);p.add_argument('--commit',required=True);p.add_argument('--cg-seconds',type=int,default=14400);p.add_argument('--mip-seconds',type=int,default=14400);p.add_argument('--tariffs',nargs='+',choices=('flat','peak08','peak12','peak18'),default=['flat','peak08']);p.add_argument('--split-stages',action='store_true')
+    p=sub.add_parser('worker');p.add_argument('--root',type=Path,required=True);p.add_argument('--index',type=int,required=True);p.add_argument('--stage',choices=('all','cg','mip'),default='all')
     args=parser.parse_args();args.root=args.root.expanduser().resolve()
     (prepare if args.mode=='prepare' else worker)(args)
 if __name__=='__main__': main()

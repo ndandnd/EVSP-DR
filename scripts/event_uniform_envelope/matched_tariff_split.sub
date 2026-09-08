@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+: "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}" "${EVSP_CAMPAIGN_ROOT:?}" "${EVSP_PLAN_SHA256:?}" "${EVSP_TARIFF_STAGE:?}" "${EVSP_WORKER_SHA256:?}"
+[[ "$(sha256sum "$0" | awk '{print $1}')" == "$EVSP_WORKER_SHA256" ]]
+[[ "${SLURM_RESTART_COUNT:-0}" == 0 ]]
+case "$EVSP_TARIFF_STAGE" in
+  cg) [[ "${SLURM_JOB_PARTITION:-}" == default_partition ]] ;;
+  mip)
+    [[ "${SLURM_JOB_PARTITION:-}" == scaglione ]]
+    NODE=$(hostname -s)
+    [[ "$NODE" != scaglione-compute-01 && "$NODE" != scaglione-cpu-04 ]]
+    ;;
+  *) echo 'invalid tariff stage' >&2; exit 2 ;;
+esac
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+export EVSP_REQUIRE_DETACHED=1
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u scripts/event_uniform_envelope/matched_tariff_pilot.py worker --root "$EVSP_CAMPAIGN_ROOT" --index "$SLURM_ARRAY_TASK_ID" --stage "$EVSP_TARIFF_STAGE"
