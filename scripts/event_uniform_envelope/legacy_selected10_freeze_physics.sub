@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+: "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}" "${EVSP_SOURCE_SOLVER_COMMIT:?}" "${EVSP_CAMPAIGN_ROOT:?}" "${EVSP_REPLACEMENT_PLAN:?}" "${EVSP_REPLACEMENT_PLAN_SHA256:?}" "${EVSP_POOL_MATRIX_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+FREEZER="$EVSP_EXECUTION_REPO/src/freeze_terminal_exact_cg_pool.py"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]]
+[[ "$(sha256sum "$EVSP_REPLACEMENT_PLAN"|awk '{print $1}')" == "$EVSP_REPLACEMENT_PLAN_SHA256" ]]
+[[ "$(sha256sum "$EVSP_CAMPAIGN_ROOT/pool_matrix.tsv"|awk '{print $1}')" == "$EVSP_POOL_MATRIX_SHA256" ]]
+read -r WORKER_SHA FREEZER_SHA G_KWH CHARGE_KW < <("$PYTHON_BIN" - "$EVSP_REPLACEMENT_PLAN" "$SLURM_ARRAY_TASK_ID" <<'PY'
+import json,sys
+d=json.load(open(sys.argv[1])); index=int(sys.argv[2]); cell=d["cells"][index]
+assert cell["index"]==index
+print(d["code_sha256"]["scripts/event_uniform_envelope/legacy_selected10_freeze_physics.sub"],d["code_sha256"]["src/freeze_terminal_exact_cg_pool.py"],cell["g_kwh"],cell["charge_kw"])
+PY
+)
+[[ "$(sha256sum "$0"|awk '{print $1}')" == "$WORKER_SHA" ]]
+[[ "$(sha256sum "$FREEZER"|awk '{print $1}')" == "$FREEZER_SHA" ]]
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID+2))p" "$EVSP_CAMPAIGN_ROOT/pool_matrix.tsv")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS REP INSTANCE_REL INSTANCE_SHA SOURCE _SAME SNAPSHOT RECORD MIP_OUT <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+[[ ! -e "$RECORD" ]] || { echo "existing freeze record requires explicit audit: $RECORD" >&2; exit 2; }
+for p in "$SNAPSHOT" "$SNAPSHOT.columns.jsonl" "$SNAPSHOT.iters.csv"; do [[ ! -e "$p" ]] || { echo "partial snapshot: $p" >&2; exit 2; }; done
+exec "$PYTHON_BIN" -u "$FREEZER" --base-status "$SOURCE" --resume-status "$SOURCE" --cell "$CELL" --instance-relative-to-data "$INSTANCE_REL" --instance-sha256 "$INSTANCE_SHA" --source-solver-commit "$EVSP_SOURCE_SOLVER_COMMIT" --expected-g-kwh "$G_KWH" --expected-charge-kw "$CHARGE_KW" --out "$SNAPSHOT" --record "$RECORD"

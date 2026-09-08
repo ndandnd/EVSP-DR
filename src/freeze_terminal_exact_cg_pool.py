@@ -46,7 +46,9 @@ def required(path: Path, label: str) -> Path:
 
 
 def valid_status(
-    path: Path, cell: str, instance_sha: str, solver_commit: str
+    path: Path, cell: str, instance_sha: str, solver_commit: str,
+    expected_g_kwh: float = 240.0,
+    expected_charge_kw: float = 240.0,
 ) -> tuple[dict, bytes]:
     raw = required(path, "CG status").read_bytes()
     status = json.loads(raw)
@@ -75,7 +77,8 @@ def valid_status(
     }
     expected = {
         "time_model": "event", "arc_mode": "lazy", "soc_step": 2.5,
-        "block_min": 5, "g_kwh": 240.0, "charge_kw": 240.0,
+        "block_min": 5, "g_kwh": expected_g_kwh,
+        "charge_kw": expected_charge_kw,
         "min_soc_frac": 0.0, "prices_csv": "hourly_prices_flat.csv",
         "master_sense": "partition", "initial_pool": "singletons",
         "columns_per_iter": 30, "column_pool_treatment": "RAW",
@@ -110,6 +113,8 @@ def main() -> int:
     parser.add_argument("--instance-relative-to-data", required=True)
     parser.add_argument("--instance-sha256", required=True)
     parser.add_argument("--source-solver-commit", required=True)
+    parser.add_argument("--expected-g-kwh", type=float, default=240.0)
+    parser.add_argument("--expected-charge-kw", type=float, default=240.0)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--record", type=Path, required=True)
     args = parser.parse_args()
@@ -132,7 +137,9 @@ def main() -> int:
     for stage, path in candidates:
         try:
             status, status_bytes = valid_status(
-                path, args.cell, args.instance_sha256, args.source_solver_commit
+                path, args.cell, args.instance_sha256,
+                args.source_solver_commit, args.expected_g_kwh,
+                args.expected_charge_kw,
             )
             if stage == "baseline" and status.get("certified_rc_optimal") is not True:
                 raise ValueError("baseline fallback is not certified")

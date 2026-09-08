@@ -15,7 +15,8 @@ def digest(path):
 
 
 def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
-                final_lp_fallback=False):
+                final_lp_fallback=False, g_kwh=240.0, charge_kw=240.0):
+    tmp_path.mkdir(parents=True, exist_ok=True)
     status = tmp_path / f"{name}.json"
     journal = Path(str(status) + ".columns.jsonl")
     iterations = Path(str(status) + ".iters.csv")
@@ -26,8 +27,8 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
     iterations.write_text("iteration,columns\n0,2\n")
     status.write_text(json.dumps({
         "time_model": "event", "network_metrics": {"arc_mode": "lazy"},
-        "soc_step": 2.5, "block_min": 5, "g_kwh": 240.0,
-        "charge_kw": 240.0, "min_soc_frac": 0.0,
+        "soc_step": 2.5, "block_min": 5, "g_kwh": g_kwh,
+        "charge_kw": charge_kw, "min_soc_frac": 0.0,
         "prices_csv": "hourly_prices_flat.csv", "master_sense": "partition",
         "initial_pool": "singletons", "columns_per_iter": 30,
         "column_pool_treatment": "RAW", "column_selection": "reduced_cost",
@@ -44,7 +45,8 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
     return status
 
 
-def invoke(tmp_path, base, resume):
+def invoke(tmp_path, base, resume, *, expected_g=240.0,
+           expected_charge=240.0):
     out = tmp_path / "frozen.json"
     record = tmp_path / "record.json"
     result = subprocess.run([
@@ -52,6 +54,8 @@ def invoke(tmp_path, base, resume):
         "--resume-status", str(resume), "--cell", "k09_p1",
         "--instance-relative-to-data", "scale_ladder/instances/x.csv",
         "--instance-sha256", "a" * 64, "--source-solver-commit", COMMIT,
+        "--expected-g-kwh", str(expected_g),
+        "--expected-charge-kw", str(expected_charge),
         "--out", str(out), "--record", str(record),
     ], text=True, capture_output=True)
     return result, out, record
@@ -92,3 +96,32 @@ def test_accepts_terminal_last_good_lp_when_final_iteration_is_absent(tmp_path):
     assert rec["source_certified"] is False
     assert rec["artificials"] == 0.0
     assert rec["artificials_source"] == "final_lp"
+
+
+def test_expected_physics_accepts_240_and_300_and_rejects_mismatch(tmp_path):
+    source240 = make_source(tmp_path / "p240", "source", g_kwh=240.0,
+                            charge_kw=240.0)
+    result240, _out240, _record240 = invoke(
+        tmp_path / "p240", source240, source240,
+        expected_g=240.0, expected_charge=240.0,
+    )
+    assert result240.returncode == 0, result240.stderr
+
+    source300 = make_source(tmp_path / "p300", "source", g_kwh=300.0,
+                            charge_kw=300.0)
+    result300, _out300, _record300 = invoke(
+        tmp_path / "p300", source300, source300,
+        expected_g=300.0, expected_charge=300.0,
+    )
+    assert result300.returncode == 0, result300.stderr
+
+    source_wrong = make_source(
+        tmp_path / "wrong", "source", g_kwh=240.0, charge_kw=240.0
+    )
+    result_wrong, out_wrong, record_wrong = invoke(
+        tmp_path / "wrong", source_wrong, source_wrong,
+        expected_g=300.0, expected_charge=300.0,
+    )
+    assert result_wrong.returncode != 0
+    assert "configuration mismatch" in result_wrong.stderr
+    assert not out_wrong.exists() and not record_wrong.exists()
