@@ -24,6 +24,7 @@ from run_exact_pool_mip import (  # noqa: E402
     main,
     merge_validated_partition_start,
     optimal_scope,
+    stage_time_budget,
     publish_rejected_physical_replay,
     singleton_partition_indices,
     validate_final_selected_routes,
@@ -891,7 +892,7 @@ class ExactPoolMipTests(unittest.TestCase):
 
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
-        two_stage=True,
+        two_stage=True, extra_args=(),
     ):
         class FakeExpression:
             def __init__(self, items):
@@ -917,6 +918,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 self.Params = SimpleNamespace()
                 self.variables = {}
                 self.optimize_calls = 0
+                self.time_limits = []
                 self.objectives = []
                 self.SolCount = 0
                 self.ObjVal = 0.0
@@ -938,6 +940,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 return self.callback_message
 
             def optimize(self, callback=None):
+                self.time_limits.append(self.Params.TimeLimit)
                 stage = stages[self.optimize_calls]
                 self.optimize_calls += 1
                 messages = stage.get("start_messages")
@@ -1002,6 +1005,7 @@ class ExactPoolMipTests(unittest.TestCase):
             "--timelimit", "60", "--mipgap", str(mip_gap),
             "--out", str(out),
         ]
+        arguments.extend(extra_args)
         if two_stage:
             arguments.append("--two-stage")
         explicit_patch = contextlib.nullcontext()
@@ -1050,6 +1054,56 @@ class ExactPoolMipTests(unittest.TestCase):
                 rc = main(arguments)
         payload = json.loads(out.read_text())
         return temporary, models[0], payload, rc
+
+    def test_explicit_stage_caps_preserve_unproven_fleet_cost_condition(self):
+        first={"status":9,"objective":2.,"bound":.9,"selected":[0,1]}
+        second={"status":2,"objective":7.,"bound":7.,"selected":[0,1]}
+        temporary,model,payload,rc=self.run_fake_gurobi_mip([first,second],extra_args=[
+            "--fleet-timelimit","30","--cost-timelimit","20","--allow-unproven-fleet-cost"])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(model.time_limits,[30.,20.])
+        self.assertFalse(payload["fleet_proven"])
+        self.assertEqual(payload["fleet_bound"],.9)
+        self.assertEqual(payload["optimal_scope"],"conditional_on_incumbent_fleet")
+        self.assertEqual(payload["mip_bound_scope"],"conditional_fixed_incumbent_fleet_variable_cost")
+        self.assertTrue(payload["two_stage"]["stage2_conditional_on_unproven_fleet"])
+        self.assertEqual(payload["mip_provenance"]["arguments"]["cost_timelimit"],20)
+        self.assertGreaterEqual(payload["two_stage"]["stage2_optimize_wall_s"],0.)
+
+    def test_explicit_caps_without_optin_still_skip_unproven_cost(self):
+        temporary,model,payload,rc=self.run_fake_gurobi_mip([
+            {"status":9,"objective":2.,"bound":.9,"selected":[0,1]}],extra_args=[
+            "--fleet-timelimit","30","--cost-timelimit","30"])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(model.time_limits,[30.])
+        self.assertEqual(payload["two_stage"]["stage2_skip_reason"],"fleet_not_proven")
+
+    def test_unproven_cost_failure_retains_stage_one_incumbent_and_bound(self):
+        temporary,model,payload,rc=self.run_fake_gurobi_mip([
+            {"status":9,"objective":2.,"bound":.9,"selected":[0,1]},
+            {"status":11,"objective":0.,"bound":0.,"solutions":0,"selected":[]}],extra_args=[
+            "--fleet-timelimit","30","--cost-timelimit","30","--allow-unproven-fleet-cost"])
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(payload["buses"],2)
+        self.assertEqual(payload["mip_obj"],200007.)
+        self.assertFalse(payload["fleet_proven"])
+        self.assertEqual(payload["fleet_bound"],.9)
+        self.assertEqual(payload["optimal_scope"],"none")
+        self.assertEqual(payload["two_stage"]["stage2_reported_incumbent_source"],"stage1_fallback")
+
+    def test_stage_budget_total_guard_and_old_default(self):
+        self.assertEqual(stage_time_budget(60,None,17),43.)
+        self.assertEqual(stage_time_budget(60,30,47),13.)
+        self.assertEqual(stage_time_budget(60,30,61),0.)
+        self.assertEqual(stage_time_budget(60,90),60.)
+
+    def test_invalid_stage_flags_rejected_before_reading_pool(self):
+        for flags in (["--fleet-timelimit","30"],
+                      ["--fleet-timelimit","30","--cost-timelimit","30"],
+                      ["--allow-unproven-fleet-cost"],
+                      ["--two-stage","--fleet-timelimit","-1","--cost-timelimit","30"]):
+            with self.subTest(flags=flags),contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):
+                main(["--result","nonexistent.json",*flags])
 
     def test_explicit_partition_is_assigned_and_solver_acceptance_recorded(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([{
