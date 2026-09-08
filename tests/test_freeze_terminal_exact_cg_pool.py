@@ -15,7 +15,8 @@ def digest(path):
 
 
 def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
-                final_lp_fallback=False, g_kwh=240.0, charge_kw=240.0):
+                final_lp_fallback=False, g_kwh=240.0, charge_kw=240.0,
+                treatment="RAW", seed_sha=None):
     tmp_path.mkdir(parents=True, exist_ok=True)
     status = tmp_path / f"{name}.json"
     journal = Path(str(status) + ".columns.jsonl")
@@ -31,7 +32,7 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
         "charge_kw": charge_kw, "min_soc_frac": 0.0,
         "prices_csv": "hourly_prices_flat.csv", "master_sense": "partition",
         "initial_pool": "singletons", "columns_per_iter": 30,
-        "column_pool_treatment": "RAW", "column_selection": "reduced_cost",
+        "column_pool_treatment": treatment, "column_selection": "reduced_cost",
         "column_diversity_weight": 0.0, "column_candidate_multiplier": 4,
         "stop_reason": stop, "certified_rc_optimal": stop == "certified",
         "columns": 2,
@@ -39,6 +40,9 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
         "final_lp": ({"artificial_total": artificials}
                      if final_lp_fallback else None),
         "columns_journal": str(journal),
+        "validated_seed_routes_sha256": seed_sha,
+        "validated_seed_source_type": "GREEDY" if seed_sha else None,
+        "validated_seed_route_count": 3 if seed_sha else None,
         "provenance": {"git_commit": COMMIT, "instance_sha256": "a" * 64,
                        "rc_eps": 0.0001},
     }))
@@ -46,7 +50,7 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
 
 
 def invoke(tmp_path, base, resume, *, expected_g=240.0,
-           expected_charge=240.0):
+           expected_charge=240.0, treatment="RAW", seed_sha=None):
     out = tmp_path / "frozen.json"
     record = tmp_path / "record.json"
     result = subprocess.run([
@@ -56,6 +60,8 @@ def invoke(tmp_path, base, resume, *, expected_g=240.0,
         "--instance-sha256", "a" * 64, "--source-solver-commit", COMMIT,
         "--expected-g-kwh", str(expected_g),
         "--expected-charge-kw", str(expected_charge),
+        "--expected-column-pool-treatment", treatment,
+        *(["--expected-seed-sha256", seed_sha] if seed_sha else []),
         "--out", str(out), "--record", str(record),
     ], text=True, capture_output=True)
     return result, out, record
@@ -125,3 +131,28 @@ def test_expected_physics_accepts_240_and_300_and_rejects_mismatch(tmp_path):
     assert result_wrong.returncode != 0
     assert "configuration mismatch" in result_wrong.stderr
     assert not out_wrong.exists() and not record_wrong.exists()
+
+
+def test_greedy_freeze_requires_matching_seed_identity(tmp_path):
+    seed_sha = "d" * 64
+    source = make_source(
+        tmp_path / "greedy", "source", treatment="GREEDY",
+        seed_sha=seed_sha,
+    )
+    accepted, _out, _record = invoke(
+        tmp_path / "greedy", source, source,
+        treatment="GREEDY", seed_sha=seed_sha,
+    )
+    assert accepted.returncode == 0, accepted.stderr
+
+    wrong = make_source(
+        tmp_path / "wrong_greedy", "source", treatment="GREEDY",
+        seed_sha=seed_sha,
+    )
+    rejected, out, record = invoke(
+        tmp_path / "wrong_greedy", wrong, wrong,
+        treatment="GREEDY", seed_sha="e" * 64,
+    )
+    assert rejected.returncode != 0
+    assert "GREEDY seed provenance mismatch" in rejected.stderr
+    assert not out.exists() and not record.exists()

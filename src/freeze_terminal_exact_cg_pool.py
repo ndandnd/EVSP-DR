@@ -49,6 +49,8 @@ def valid_status(
     path: Path, cell: str, instance_sha: str, solver_commit: str,
     expected_g_kwh: float = 240.0,
     expected_charge_kw: float = 240.0,
+    expected_column_pool_treatment: str = "RAW",
+    expected_seed_sha256: str | None = None,
 ) -> tuple[dict, bytes]:
     raw = required(path, "CG status").read_bytes()
     status = json.loads(raw)
@@ -81,7 +83,8 @@ def valid_status(
         "charge_kw": expected_charge_kw,
         "min_soc_frac": 0.0, "prices_csv": "hourly_prices_flat.csv",
         "master_sense": "partition", "initial_pool": "singletons",
-        "columns_per_iter": 30, "column_pool_treatment": "RAW",
+        "columns_per_iter": 30,
+        "column_pool_treatment": expected_column_pool_treatment,
         "column_selection": "reduced_cost", "column_diversity_weight": 0.0,
         "column_candidate_multiplier": 4,
     }
@@ -98,6 +101,12 @@ def valid_status(
         raise ValueError(f"instance provenance mismatch for {cell}")
     if provenance.get("git_commit") != solver_commit:
         raise ValueError(f"source solver commit mismatch for {cell}")
+    if expected_seed_sha256 is not None and (
+        status.get("validated_seed_routes_sha256") != expected_seed_sha256
+        or status.get("validated_seed_source_type") != "GREEDY"
+        or int(status.get("validated_seed_route_count", 0)) <= 0
+    ):
+        raise ValueError(f"GREEDY seed provenance mismatch for {cell}")
     if float(provenance.get("rc_eps", math.nan)) != 1e-4:
         raise ValueError(f"source reduced-cost tolerance mismatch for {cell}")
     if int(status.get("columns", -1)) <= 0:
@@ -115,6 +124,10 @@ def main() -> int:
     parser.add_argument("--source-solver-commit", required=True)
     parser.add_argument("--expected-g-kwh", type=float, default=240.0)
     parser.add_argument("--expected-charge-kw", type=float, default=240.0)
+    parser.add_argument(
+        "--expected-column-pool-treatment", default="RAW"
+    )
+    parser.add_argument("--expected-seed-sha256")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--record", type=Path, required=True)
     args = parser.parse_args()
@@ -140,6 +153,8 @@ def main() -> int:
                 path, args.cell, args.instance_sha256,
                 args.source_solver_commit, args.expected_g_kwh,
                 args.expected_charge_kw,
+                args.expected_column_pool_treatment,
+                args.expected_seed_sha256,
             )
             if stage == "baseline" and status.get("certified_rc_optimal") is not True:
                 raise ValueError("baseline fallback is not certified")

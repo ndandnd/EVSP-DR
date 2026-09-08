@@ -372,6 +372,109 @@ def validated_fixed_duty_seed_records(
     return accepted, hashlib.sha256(raw).hexdigest()
 
 
+def validated_event_greedy_seed_records(
+    path: Path,
+    problem,
+    network,
+    *,
+    cache_manifest: dict,
+    provenance: dict,
+    tariff_path: Path,
+    g_kwh: float,
+    charge_kw: float,
+    reserve_kwh: float,
+    soc_step: float,
+    block_min: int,
+):
+    """Reload and independently reproduce a GREEDY event seed partition."""
+
+    source = path.expanduser().resolve()
+    raw = source.read_bytes()
+    payload = json.loads(raw)
+    physics = payload.get("physics") or {}
+    inputs = payload.get("input_hashes") or {}
+    event_cache = payload.get("event_network_cache") or {}
+    routes = payload.get("routes")
+    route_hashes = payload.get("route_record_sha256")
+    expected_physics = {
+        "g_kwh": float(g_kwh),
+        "charge_kw": float(charge_kw),
+        "reserve_kwh": float(reserve_kwh),
+        "soc_step": float(soc_step),
+        "block_min": int(block_min),
+    }
+    if (
+        payload.get("schema") != "evsp-dr-event-greedy-partition-v1"
+        or payload.get("source") != "GREEDY"
+        or payload.get("continuous_cost_pricing_certified") is not False
+        or payload.get("exact_trip_partition") is not True
+        or not isinstance(routes, list)
+        or not routes
+        or not isinstance(route_hashes, list)
+        or len(route_hashes) != len(routes)
+        or inputs != {
+            key: provenance.get(key)
+            for key in (
+                "instance_sha256", "prices_sha256",
+                "reference_sha256", "deadhead_sha256",
+            )
+        }
+        or inputs.get("prices_sha256") != _file_sha256(tariff_path)
+        or event_cache.get("identity") != cache_manifest.get("identity")
+        or event_cache.get("pickle_sha256")
+        != cache_manifest.get("pickle_sha256")
+        or any(
+            not math.isclose(
+                float(physics.get(key, math.nan)), float(value),
+                rel_tol=0.0, abs_tol=1e-9,
+            )
+            for key, value in expected_physics.items()
+        )
+    ):
+        raise ValueError("event GREEDY seed identity/physics/cache mismatch")
+    counts = Counter()
+    accepted = []
+    for ordinal, (route, expected_hash) in enumerate(
+        zip(routes, route_hashes), start=1
+    ):
+        trips = list(route.get("trips") or [])
+        if not trips or len(trips) != len(set(trips)):
+            raise ValueError(f"invalid event GREEDY seed route {ordinal}")
+        recomputed = network.fixed_sequence_record(trips)
+        if recomputed is None:
+            raise ValueError(
+                f"event GREEDY seed route {ordinal} is absent from event graph"
+            )
+        recomputed["cost_tariff_sha256"] = inputs["prices_sha256"]
+        observed_rendered = json.dumps(
+            recomputed, sort_keys=True, separators=(",", ":"),
+            allow_nan=False,
+        )
+        observed_hash = hashlib.sha256(observed_rendered.encode()).hexdigest()
+        if (
+            observed_hash != expected_hash
+            or json.loads(observed_rendered) != route
+        ):
+            raise ValueError(
+                f"event GREEDY seed route {ordinal} reproduction mismatch"
+            )
+        counts.update(trips)
+        accepted.append({
+            **recomputed,
+            "origin": "validated_event_greedy_seed",
+            "seed_source_sha256": hashlib.sha256(raw).hexdigest(),
+        })
+    trip_set = set(problem.trips)
+    if (
+        set(counts) != trip_set
+        or any(counts[trip] != 1 for trip in trip_set)
+        or payload.get("trip_count") != len(trip_set)
+        or payload.get("route_count") != len(routes)
+    ):
+        raise ValueError("event GREEDY seeds are not an exact partition")
+    return accepted, hashlib.sha256(raw).hexdigest()
+
+
 def direct_singleton_seed_records(
     problem,
     *,
@@ -892,6 +995,22 @@ def _provenance(args) -> dict:
         return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
     master_backend = getattr(args, "master_backend", "gurobi")
+    seed_metadata = {}
+    if getattr(args, "validated_seed_routes", None) is not None:
+        try:
+            seed_payload = json.loads(
+                Path(args.validated_seed_routes).read_text()
+            )
+            seed_metadata = {
+                "validated_seed_source_type": seed_payload.get("source"),
+                "validated_seed_route_count": seed_payload.get("route_count"),
+                "validated_seed_route_sequence_sha256": seed_payload.get(
+                    "route_sequence_sha256"
+                ),
+            }
+        except (OSError, ValueError, TypeError):
+            # The strict loader below emits the actionable schema error.
+            seed_metadata = {}
     gurobi_version = None
     if master_backend == "gurobi":
         try:
@@ -925,6 +1044,7 @@ def _provenance(args) -> dict:
             if getattr(args, "validated_seed_routes", None) is not None
             else None
         ),
+        **seed_metadata,
         "column_pool_treatment": (
             getattr(args, "augmentation_label", None)
             if getattr(args, "validated_seed_routes", None) is not None
@@ -1931,19 +2051,42 @@ def run_cg(args) -> dict:
 
     validated_seed_sha256 = None
     if getattr(args, "validated_seed_routes", None) is not None:
-        seed_records, validated_seed_sha256 = (
-            validated_fixed_duty_seed_records(
-                Path(args.validated_seed_routes),
-                problem,
-                prices,
-                tariff_path=DATA_DIR / args.prices_csv,
-                g_kwh=args.g_kwh,
-                charge_kw=args.charge_kw,
-                reserve_kwh=args.min_soc_frac * args.g_kwh,
-                soc_step=args.soc_step,
-                block_min=args.block_min,
+        seed_path = Path(args.validated_seed_routes)
+        seed_schema = json.loads(seed_path.read_text()).get("schema")
+        if seed_schema == "evsp-dr-event-greedy-partition-v1":
+            if time_model != "event" or cache_manifest is None:
+                raise ValueError(
+                    "event GREEDY seeds require a validated event cache"
+                )
+            seed_records, validated_seed_sha256 = (
+                validated_event_greedy_seed_records(
+                    seed_path,
+                    problem,
+                    net,
+                    cache_manifest=cache_manifest,
+                    provenance=provenance,
+                    tariff_path=DATA_DIR / args.prices_csv,
+                    g_kwh=args.g_kwh,
+                    charge_kw=args.charge_kw,
+                    reserve_kwh=args.min_soc_frac * args.g_kwh,
+                    soc_step=args.soc_step,
+                    block_min=args.block_min,
+                )
             )
-        )
+        else:
+            seed_records, validated_seed_sha256 = (
+                validated_fixed_duty_seed_records(
+                    seed_path,
+                    problem,
+                    prices,
+                    tariff_path=DATA_DIR / args.prices_csv,
+                    g_kwh=args.g_kwh,
+                    charge_kw=args.charge_kw,
+                    reserve_kwh=args.min_soc_frac * args.g_kwh,
+                    soc_step=args.soc_step,
+                    block_min=args.block_min,
+                )
+            )
         seed_added = 0
         for record in seed_records:
             key = frozenset(record["trips"])
@@ -1955,7 +2098,7 @@ def run_cg(args) -> dict:
         if journal and seed_added:
             flush_and_fsync(journal)
         print(
-            "[EXACT] tariff-specific validated fixed-duty seeds: "
+            "[EXACT] validated seed partition: "
             f"{len(seed_records)} routes ({seed_added} added), "
             f"sha256={validated_seed_sha256}",
             flush=True,
@@ -2828,6 +2971,15 @@ def run_cg(args) -> dict:
         "validated_seed_routes_sha256": provenance.get(
             "validated_seed_routes_sha256"
         ),
+        "validated_seed_source_type": provenance.get(
+            "validated_seed_source_type"
+        ),
+        "validated_seed_route_count": provenance.get(
+            "validated_seed_route_count"
+        ),
+        "validated_seed_route_sequence_sha256": provenance.get(
+            "validated_seed_route_sequence_sha256"
+        ),
         "column_pool_treatment": (
             getattr(args, "augmentation_label", None)
             if getattr(args, "validated_seed_routes", None)
@@ -2956,7 +3108,7 @@ def main(argv=None) -> int:
     )
     parser.add_argument(
         "--augmentation-label",
-        choices=("GIRO-AUGMENTED", "GIRO40-AUGMENTED"),
+        choices=("GIRO-AUGMENTED", "GIRO40-AUGMENTED", "GREEDY"),
         default=None,
         help="Scientific column-pool label required with validated seeds.",
     )
