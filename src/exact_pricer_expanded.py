@@ -185,12 +185,20 @@ def validated_fixed_duty_seed_records(
     reserve_kwh: float,
     soc_step: float,
     block_min: int,
+    event_network=None,
+    instance_sha256=None,
 ):
     """Load one tariff-specific exact partition as expanded-grid seed columns."""
 
     source = path.expanduser().resolve()
     raw = source.read_bytes()
     payload = json.loads(raw)
+    if payload.get("schema") == "evsp-dr-event-fixed-duty-partition-v1":
+        from prepare_event_giro_seed import validate_event_seed
+        records = validate_event_seed(payload, event_network, problem=problem,
+            tariff_sha256=_file_sha256(tariff_path),
+            instance_sha256=instance_sha256)
+        return records, hashlib.sha256(raw).hexdigest()
     routes = payload.get("routes")
     certificates = payload.get("certificates")
     physics = payload.get("physics") or {}
@@ -2085,6 +2093,8 @@ def run_cg(args) -> dict:
                     reserve_kwh=args.min_soc_frac * args.g_kwh,
                     soc_step=args.soc_step,
                     block_min=args.block_min,
+                    event_network=net if time_model == "event" else None,
+                    instance_sha256=provenance["instance_sha256"],
                 )
             )
         seed_added = 0
