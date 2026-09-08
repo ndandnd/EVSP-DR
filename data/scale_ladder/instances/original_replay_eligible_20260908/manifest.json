@@ -1,0 +1,23 @@
+{
+  "schema": "evsp-original-replay-eligible-cohort-v1",
+  "selection_rule": "Canonical GIRO40 duties sorted by regular-trip count then duty ID; retain source and production replay valid duties before tariff cost evaluation",
+  "source_master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "g_kwh": 240,
+  "vehicle_charging_power_limit_kw": 350,
+  "initial_soc_kwh": 240,
+  "terminal_reserve_kwh": 0,
+  "repair_or_clip": false,
+  "selected_duties": [
+    "13408",
+    "13401",
+    "13414",
+    "13405",
+    "13403"
+  ],
+  "trips": 62,
+  "fleet": 5,
+  "peak_concurrency": 5,
+  "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+  "audit_sha256": "39e7ffa374f848d311656aa1429e055716e9235562f71d51badebda7a291cc38",
+  "excluded_interpretation": "Rejected by current replay model; source rounding and production energy mismatch can differ from actual operational feasibility."
+}

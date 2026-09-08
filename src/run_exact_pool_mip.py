@@ -1191,6 +1191,8 @@ def merge_validated_partition_start(
             "route_nodes": nodes,
             "charging_stops": route.get("charging_stops", {}),
         }
+        if preserve_expanded_grid_cost and route.get("expanded_grid_charging_stops") is not None:
+            candidate["expanded_grid_charging_stops"] = route["expanded_grid_charging_stops"]
         reason = validate_injected_route(
             problem,
             candidate,
@@ -1244,14 +1246,16 @@ def merge_validated_partition_start(
             "found_iter": 0,
             "origin": f"initial_partition:{path.name[:40]}",
         }
-        blocks = blocks_from_continuous_stops(
-            validated_record,
-            station_prices=prices,
-            charge_kw=charge_kw,
-            earliest_start_by_stop=charging_stop_arrivals(
-                problem, validated_record
-            ),
-        )
+        blocks = route.get("continuous_realized_charging_blocks") if preserve_expanded_grid_cost else None
+        if blocks is None:
+            blocks = blocks_from_continuous_stops(
+                validated_record,
+                station_prices=prices,
+                charge_kw=charge_kw,
+                earliest_start_by_stop=charging_stop_arrivals(
+                    problem, validated_record
+                ),
+            )
         block_validation = validate_continuous_charging_blocks(
             validated_record,
             blocks,
