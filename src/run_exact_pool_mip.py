@@ -1471,7 +1471,7 @@ def optimal_scope(*, two_stage: bool, fleet_proven: bool,
 
 def validate_final_selected_routes(
     status, trips, selected_routes, *, data_dir=None,
-    reference_data_dir=None, physical_pool_audit=None,
+    reference_data_dir=None, physical_pool_audit=None, cover=False,
 ) -> None:
     """Rebuild the instance and physically replay every final selected route."""
 
@@ -1725,9 +1725,14 @@ def validate_final_selected_routes(
                 reason="master cost/block schedule mismatch",
                 route=route,
             )
-    if any(counts[trip] != 1 for trip in trips):
+    invalid_coverage = (
+        any(counts[trip] < 1 for trip in trips)
+        if cover else any(counts[trip] != 1 for trip in trips)
+    )
+    if invalid_coverage:
         raise SystemExit(
-            "[MIP] final selected routes do not cover every trip exactly once"
+            "[MIP] final selected routes do not cover every trip "
+            + ("at least once" if cover else "exactly once")
         )
 
 
@@ -2008,47 +2013,42 @@ def main(argv=None) -> int:
     ]
     initial_partition_start = None
 
-    physical_preparation_started = (
-        time.perf_counter() if not args.cover else None
-    )
+    physical_preparation_started = time.perf_counter()
     status, routes, trips = load_pool(
         args.result, deduplicate=args.cover
     )
-    physical_pool_audit = None
-    if not args.cover:
-        routes, physical_pool_audit = prepare_strict_partition_pool(
-            status,
-            routes,
-            data_dir=args.data_dir,
-            reference_data_dir=args.reference_data_dir,
+    routes, physical_pool_audit = prepare_strict_partition_pool(
+        status,
+        routes,
+        data_dir=args.data_dir,
+        reference_data_dir=args.reference_data_dir,
+    )
+    routes = deduplicate_pool(routes)
+    physical_pool_audit["master_sense"] = (
+        "cover" if args.cover else "partition"
+    )
+    physical_pool_audit["mip_unique_accepted_columns"] = len(routes)
+    recomputed_pool_hash = ordered_pool_sha256(routes)
+    recorded_pool_hash = physical_pool_audit.get(
+        "mip_ordered_pool_sha256"
+    )
+    if (
+        recorded_pool_hash is not None
+        and recorded_pool_hash != recomputed_pool_hash
+    ):
+        raise SystemExit(
+            "[MIP] physical pool identity changed after preparation"
         )
-        routes = deduplicate_pool(routes)
-        physical_pool_audit["mip_unique_accepted_columns"] = len(
-            routes
-        )
-        recomputed_pool_hash = ordered_pool_sha256(routes)
-        recorded_pool_hash = physical_pool_audit.get(
-            "mip_ordered_pool_sha256"
-        )
-        if (
-            recorded_pool_hash is not None
-            and recorded_pool_hash != recomputed_pool_hash
-        ):
-            raise SystemExit(
-                "[MIP] physical pool identity changed after preparation"
-            )
-        physical_pool_audit["mip_ordered_pool_sha256"] = (
-            recomputed_pool_hash
-        )
-        physical_pool_audit.update({
-            "base_pool_column_count": len(routes),
-            "base_pool_ordered_sha256":
-                physical_pool_audit["mip_ordered_pool_sha256"],
-            "added_giro_route_count": 0,
-            "added_giro_route_set_sha256": hashlib.sha256(
-                b"[]"
-            ).hexdigest(),
-        })
+    physical_pool_audit["mip_ordered_pool_sha256"] = recomputed_pool_hash
+    physical_pool_audit.update({
+        "base_pool_column_count": len(routes),
+        "base_pool_ordered_sha256":
+            physical_pool_audit["mip_ordered_pool_sha256"],
+        "added_giro_route_count": 0,
+        "added_giro_route_set_sha256": hashlib.sha256(
+            b"[]"
+        ).hexdigest(),
+    })
     if (file_sha256(args.result) != source_result_sha256
             or file_sha256(source_journal) != source_journal_sha256):
         raise SystemExit(
@@ -2611,7 +2611,7 @@ def main(argv=None) -> int:
 
     status_name = status_names.get(status_code, f"UNKNOWN_{status_code}")
     selected_routes = [routes[i] for i in chosen]
-    if selected_routes and not args.cover:
+    if selected_routes:
         try:
             validate_final_selected_routes(
                 status,
@@ -2620,6 +2620,7 @@ def main(argv=None) -> int:
                 data_dir=args.data_dir,
                 reference_data_dir=args.reference_data_dir,
                 physical_pool_audit=physical_pool_audit,
+                cover=args.cover,
             )
         except (PhysicalReplayError, SystemExit, Exception) as caught:
             exc = (
@@ -2811,7 +2812,8 @@ def main(argv=None) -> int:
     elif args.two_stage and solver_bound is not None:
         # A negative-price tariff can make route-variable costs negative.
         # At most one nonempty selected route per trip is needed in a strict
-        # partition, so this remains conservative without assuming
+        # inclusion-minimal cover or partition, so this remains conservative
+        # without assuming
         # nonnegative charging cost.
         minimum_variable_cost = min(
             float(route["cost"]) - BUS_COST_KX for route in routes
@@ -2954,6 +2956,16 @@ def main(argv=None) -> int:
         "mip_start": initial_partition_start,
         "pool_preparation": status.get("pool_preparation"),
         "physical_pool_audit": physical_pool_audit,
+        "physical_replay_validated": bool(selected_routes),
+        "physical_replay_scope": (
+            "selected_routes_individually_plus_at_least_once_trip_coverage"
+            if args.cover else
+            "selected_routes_individually_plus_exact_trip_partition"
+        ),
+        "duplicate_trip_removal_validated": bool(
+            selected_routes and not over
+        ),
+        "cross_route_charger_capacity_validated": False,
         "physical_pool_preparation_wall_s": (
             physical_pool_audit.get("preparation_wall_s")
             if physical_pool_audit else None

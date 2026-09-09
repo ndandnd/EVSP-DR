@@ -891,7 +891,7 @@ class ExactPoolMipTests(unittest.TestCase):
 
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
-        two_stage=True,
+        two_stage=True, cover=False, return_replay_mock=False,
     ):
         class FakeExpression:
             def __init__(self, items):
@@ -1004,6 +1004,8 @@ class ExactPoolMipTests(unittest.TestCase):
         ]
         if two_stage:
             arguments.append("--two-stage")
+        if cover:
+            arguments.append("--cover")
         explicit_patch = contextlib.nullcontext()
         if explicit_start:
             partition = folder / "partition.json"
@@ -1044,12 +1046,43 @@ class ExactPoolMipTests(unittest.TestCase):
                     },
                 ),
             ),
-            patch("run_exact_pool_mip.validate_final_selected_routes"),
+            patch(
+                "run_exact_pool_mip.validate_final_selected_routes"
+            ) as replay_mock,
         ):
             with contextlib.redirect_stdout(io.StringIO()):
                 rc = main(arguments)
         payload = json.loads(out.read_text())
-        return temporary, models[0], payload, rc
+        result = (temporary, models[0], payload, rc)
+        if return_replay_mock:
+            return result + (replay_mock,)
+        return result
+
+    def test_cover_runs_strict_pool_gate_and_cover_aware_final_replay(self):
+        temporary, _model, payload, rc, replay = self.run_fake_gurobi_mip(
+            [{
+                "status": 2,
+                "objective": 2.0,
+                "bound": 2.0,
+                "gap": 0.0,
+                "selected": [0, 1],
+            }],
+            two_stage=False,
+            cover=True,
+            return_replay_mock=True,
+        )
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(payload["physical_pool_audit"]["master_sense"],
+                         "cover")
+        self.assertTrue(payload["physical_replay_validated"])
+        self.assertEqual(
+            payload["physical_replay_scope"],
+            "selected_routes_individually_plus_at_least_once_trip_coverage",
+        )
+        self.assertTrue(payload["duplicate_trip_removal_validated"])
+        self.assertFalse(payload["cross_route_charger_capacity_validated"])
+        self.assertTrue(replay.call_args.kwargs["cover"])
 
     def test_explicit_partition_is_assigned_and_solver_acceptance_recorded(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([{
