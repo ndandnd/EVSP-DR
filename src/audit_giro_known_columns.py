@@ -167,8 +167,10 @@ def build_problem(
     csv_name: str,
     *,
     max_trip2trip_min: float = 57.0,
+    max_trip_to_station_min: float = 61.0,
     max_station_to_trip_wait_min: float = MAX_STATION_TO_TRIP_WAIT_MIN,
     reference_data_dir: Path | None = None,
+    horizon_min: float = HORIZON_MIN,
 ) -> ProblemData:
     """Reconstruct the exact issue20 restricted graph for one trip instance."""
 
@@ -264,12 +266,12 @@ def build_problem(
         el=end_loc,
         epsilon=trip_energy,
         TB_MIN=1,
-        bar_t=int(HORIZON_MIN),
+        bar_t=int(horizon_min),
         tau_min=tau_min,
         st_min=start_min,
         et_min=end_min,
         max_trip2trip=max_trip2trip_min,
-        max_trip2charge=61,
+        max_trip2charge=int(max_trip_to_station_min),
         max_charge2trip=int(max_station_to_trip_wait_min),
     )
     return ProblemData(
