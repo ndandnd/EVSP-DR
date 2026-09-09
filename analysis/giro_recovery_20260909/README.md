@@ -1,5 +1,10 @@
 # Partille GIRO duty recovery gate — 2026-09-09
 
+The first saved result at commit `369d3878` used conservative full-window
+charger holding. The current v2 rerun uses early disconnect followed by the
+documented idle draw. Both policies recover 42/42 fixed duties and 42/42
+unrestricted duty trip sets. The capacity columns below report the v2 policy.
+
 This experiment asks whether the current route-pricing representation can
 express the supplied Partille duties after adding the documented battery and
 charging physics. It is a deliberately bounded academic model gate, not a
@@ -52,10 +57,11 @@ blocking, `4808` FIFO movement, complete interlining preferences, and crew
 rules. A 42/42 result therefore establishes single-vehicle representability,
 not full operational feasibility.
 
-For the feasibility gate, a selected charger remains occupied from setup
-start through the downstream departure deadline. If the battery becomes full,
-the charger is assumed to maintain SOC. This is conservative for charger-count
-overlap and avoids unmodeled idle loss after an early disconnect.
+For the feasibility gate, charging starts after arrival and setup and the bus
+disconnects after reaching full SOC or after the minimum recharge duration.
+The documented idle draw is deducted between disconnect and the downstream
+departure. This fixed early-charge policy is a restriction of the experiment;
+later tariff work should optimize charging placement inside each feasible gap.
 
 ## Bounded k=2 probe
 
@@ -67,7 +73,7 @@ route, then prices the exact residual once.
 | Cell | Duties | Trips | Greedy two-route recovery | Route sizes | Trips left | Known-duty ports fit | Greedy ports fit |
 |---|---|---:|---|---|---:|---|---|
 | `e2_short` | 13323 + 13311 | 22 | yes | 15 + 7 | 0 | yes | yes |
-| `e2_long` | 13303 + 13302 | 104 | no | 59 + 41 | 4 | no | yes |
+| `e2_long` | 13303 + 13302 | 104 | no | 59 + 41 | 4 | yes | yes |
 | `e1_short` | 13408 + 13401 | 23 | yes | 12 + 11 | 0 | no | no |
 | `e1_long` | 13409 + 13407 | 34 | no | 17 + 16 | 1 | yes | no |
 

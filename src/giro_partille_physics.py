@@ -199,6 +199,8 @@ def charge_window(
     station: object,
     start_soc_kwh: float,
     available_minutes: float,
+    *,
+    hold_until_departure: bool = False,
 ) -> dict | None:
     """Return the maximum feasible charge in a fixed idle window."""
 
@@ -216,14 +218,19 @@ def charge_window(
         available_connected,
         minutes_to_full(profile, site, charge_start_soc),
     )
-    # Keep the vehicle connected for the full feasible window.  If it reaches
-    # usable capacity early, the charger is assumed to maintain that level
-    # against the tiny idle load.  This avoids inventing an unmodeled idle
-    # interval and is conservative for the later charger-overlap audit.
-    connected = available_connected
-    end_soc = charge_soc_after_minutes(
+    connected = (
+        available_connected
+        if hold_until_departure
+        else max(minimum, power_delivery)
+    )
+    charged_soc = charge_soc_after_minutes(
         profile, site, charge_start_soc, power_delivery
     )
+    post_charge_idle_min = max(0.0, available_connected - connected)
+    post_charge_idle_kwh = post_charge_idle_min * profile.idle_kw / 60.0
+    end_soc = charged_soc - post_charge_idle_kwh
+    if end_soc < profile.reserve_kwh - TOL:
+        return None
     return {
         "station": site,
         "setup_min": setup,
@@ -235,6 +242,13 @@ def charge_window(
         "end_soc_kwh": end_soc,
         "setup_idle_kwh": float(start_soc_kwh) - charge_start_soc,
         "delivered_kwh": end_soc - charge_start_soc,
+        "charger_delivered_kwh": charged_soc - charge_start_soc,
+        "post_charge_idle_min": post_charge_idle_min,
+        "post_charge_idle_kwh": post_charge_idle_kwh,
+        "connection_policy": (
+            "hold_until_departure" if hold_until_departure
+            else "early_disconnect"
+        ),
     }
 
 
@@ -262,6 +276,6 @@ def documented_single_vehicle_scope() -> dict:
             "65 percent is a recharge-activity target, not a proven hard terminal SOC",
             "charger-side efficiency convention is unspecified; usable-energy values are used directly",
             "three-minute minimum recharge duration is applied after setup; power delivery may stop at full SOC",
-            "a vehicle remains connected through the available window; after full SOC the charger is assumed to maintain SOC",
+            "charging starts after arrival/setup; after disconnect, documented idle draw applies until departure",
         ],
     }

@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -39,8 +40,8 @@ from make_duty_pair_instances import (
 )
 
 
-SCHEMA = "evsp-dr-giro-duty-recovery-v1"
-PAIR_SCHEMA = "evsp-dr-giro-k2-recovery-plan-v1"
+SCHEMA = "evsp-dr-giro-duty-recovery-v2"
+PAIR_SCHEMA = "evsp-dr-giro-k2-recovery-plan-v2"
 DEFAULT_HORIZON_MIN = 1620.0
 TOL = 1e-8
 
@@ -104,6 +105,7 @@ def _transition_options(
     successor: int | None,
     *,
     horizon_min: float,
+    charge_policy: str = "early_disconnect",
 ) -> list[tuple[float, dict]]:
     reserve = profile.reserve_kwh
     after_trip = entry_soc_kwh - float(problem.trip_energy[trip])
@@ -157,13 +159,21 @@ def _transition_options(
         available = latest_departure - station_arrival
         if arrival_soc < reserve - TOL or available < -TOL:
             continue
-        charge = charge_window(profile, station, arrival_soc, available)
+        if charge_policy not in {"early_disconnect", "hold_until_departure"}:
+            raise ValueError(f"unknown charge policy {charge_policy!r}")
+        charge = charge_window(
+            profile,
+            station,
+            arrival_soc,
+            available,
+            hold_until_departure=charge_policy == "hold_until_departure",
+        )
         if charge is None:
             continue
         remaining = charge["end_soc_kwh"] - outbound.energy_kwh
         if successor is not None:
-            # The bus remains connected until the downstream departure, so
-            # the charger maintains SOC after the usable battery becomes full.
+            # This gate uses a deterministic early-charge policy. Any idle
+            # time after disconnect has already been deducted by charge_window.
             required = float(problem.trip_energy[successor]) + reserve
             if remaining + TOL < required:
                 continue
@@ -181,7 +191,9 @@ def _transition_options(
             "outbound_min": outbound.travel_min,
             "outbound_kwh": outbound.energy_kwh,
             "connection_start_min": station_arrival + charge["setup_min"],
-            "connection_end_min": latest_departure,
+            "connection_end_min": (
+                station_arrival + charge["setup_min"] + charge["connected_min"]
+            ),
             "setup_start_min": station_arrival,
             **charge,
         }))
@@ -192,6 +204,19 @@ def _best_transition(*args, **kwargs) -> tuple[float, dict] | None:
     options = _transition_options(*args, **kwargs)
     if not options:
         return None
+    successor = args[5] if len(args) > 5 else kwargs.get("successor")
+    if successor is None:
+        direct = [row for row in options if row[1]["kind"] == "direct"]
+        if direct:
+            return max(direct, key=lambda row: row[0])
+        return min(
+            options,
+            key=lambda row: (
+                row[1].get("connected_min", math.inf),
+                -row[0],
+                json.dumps(row[1], sort_keys=True),
+            ),
+        )
     return max(options, key=lambda row: (row[0], json.dumps(row[1], sort_keys=True)))
 
 
@@ -604,6 +629,7 @@ def run_audit(
         "source_master_sha256": sha256(source_master),
         "input_dir": str(input_dir),
         "horizon_min": horizon_min,
+        "charge_connection_policy": "early_disconnect_then_idle_draw",
         "duty_count": len(duty_rows),
         "fixed_duty_feasible_count": sum(
             row["fixed_duty_feasible"] for row in duty_rows

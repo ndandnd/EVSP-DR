@@ -1,0 +1,116 @@
+{
+  "cells": [
+    {
+      "cell_id": "e1_short_k2",
+      "cohort": "short",
+      "duties": [
+        "13408",
+        "13401"
+      ],
+      "instance": "e1_short_k2.csv",
+      "instance_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "k": 2,
+      "trip_count": 23,
+      "vehicle_profile": "18E1"
+    },
+    {
+      "cell_id": "e1_short_k3",
+      "cohort": "short",
+      "duties": [
+        "13408",
+        "13401",
+        "13414"
+      ],
+      "instance": "e1_short_k3.csv",
+      "instance_sha256": "c12ad3f575f7f70fd9b58a339ef79ace69266c28c7781e415028b15a298fd3ae",
+      "k": 3,
+      "trip_count": 35,
+      "vehicle_profile": "18E1"
+    },
+    {
+      "cell_id": "e1_long_k2",
+      "cohort": "long",
+      "duties": [
+        "13409",
+        "13407"
+      ],
+      "instance": "e1_long_k2.csv",
+      "instance_sha256": "f101b8fbe80898fe26282d383599368b4e3103b2940e072da7538e527aafe6bf",
+      "k": 2,
+      "trip_count": 34,
+      "vehicle_profile": "18E1"
+    },
+    {
+      "cell_id": "e1_long_k3",
+      "cohort": "long",
+      "duties": [
+        "13409",
+        "13407",
+        "13404"
+      ],
+      "instance": "e1_long_k3.csv",
+      "instance_sha256": "4f600326667b43310a25cfd432a774de1610c8fb3cbe10f494e3f7ef83194537",
+      "k": 3,
+      "trip_count": 51,
+      "vehicle_profile": "18E1"
+    },
+    {
+      "cell_id": "e2_short_k2",
+      "cohort": "short",
+      "duties": [
+        "13323",
+        "13311"
+      ],
+      "instance": "e2_short_k2.csv",
+      "instance_sha256": "0847a1ec0c0f40593e765e3909b44edca3ee47e0f7468cfba692c075f92dc14f",
+      "k": 2,
+      "trip_count": 22,
+      "vehicle_profile": "18E2"
+    },
+    {
+      "cell_id": "e2_short_k3",
+      "cohort": "short",
+      "duties": [
+        "13323",
+        "13311",
+        "13307"
+      ],
+      "instance": "e2_short_k3.csv",
+      "instance_sha256": "5d34cc9d559f5983ba890457d8a7881d6ce99aa9998e540d94187bd73bc5eab6",
+      "k": 3,
+      "trip_count": 37,
+      "vehicle_profile": "18E2"
+    },
+    {
+      "cell_id": "e2_long_k2",
+      "cohort": "long",
+      "duties": [
+        "13303",
+        "13302"
+      ],
+      "instance": "e2_long_k2.csv",
+      "instance_sha256": "7115703ada3fc9e380d60e9ddd9034da68a477d2b42a99f23997d4064ca5152f",
+      "k": 2,
+      "trip_count": 104,
+      "vehicle_profile": "18E2"
+    },
+    {
+      "cell_id": "e2_long_k3",
+      "cohort": "long",
+      "duties": [
+        "13303",
+        "13302",
+        "13312"
+      ],
+      "instance": "e2_long_k3.csv",
+      "instance_sha256": "b8b394b4eeb1c60eecd3c737a216bc5cd6a7cc048bca82ac08a023a6872b0157",
+      "k": 3,
+      "trip_count": 150,
+      "vehicle_profile": "18E2"
+    }
+  ],
+  "master": "/private/tmp/evsp-giro-k1-recovery/data/Par_VehicleDetails_Updated.csv",
+  "master_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "schema": "evsp-dr-giro-small-cg-cohorts-v1",
+  "selection": "shortest/longest literal duties within each Partille vehicle group; no mixed type and no weekday-variant siblings"
+}
