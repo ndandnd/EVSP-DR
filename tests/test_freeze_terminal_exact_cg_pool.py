@@ -15,7 +15,7 @@ def digest(path):
 
 
 def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
-                final_lp_fallback=False):
+                final_lp_fallback=False, master_sense="partition"):
     status = tmp_path / f"{name}.json"
     journal = Path(str(status) + ".columns.jsonl")
     iterations = Path(str(status) + ".iters.csv")
@@ -28,7 +28,7 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
         "time_model": "event", "network_metrics": {"arc_mode": "lazy"},
         "soc_step": 2.5, "block_min": 5, "g_kwh": 240.0,
         "charge_kw": 240.0, "min_soc_frac": 0.0,
-        "prices_csv": "hourly_prices_flat.csv", "master_sense": "partition",
+        "prices_csv": "hourly_prices_flat.csv", "master_sense": master_sense,
         "initial_pool": "singletons", "columns_per_iter": 30,
         "column_pool_treatment": "RAW", "column_selection": "reduced_cost",
         "column_diversity_weight": 0.0, "column_candidate_multiplier": 4,
@@ -44,7 +44,7 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
     return status
 
 
-def invoke(tmp_path, base, resume):
+def invoke(tmp_path, base, resume, *, master_sense="partition"):
     out = tmp_path / "frozen.json"
     record = tmp_path / "record.json"
     result = subprocess.run([
@@ -52,6 +52,7 @@ def invoke(tmp_path, base, resume):
         "--resume-status", str(resume), "--cell", "k09_p1",
         "--instance-relative-to-data", "scale_ladder/instances/x.csv",
         "--instance-sha256", "a" * 64, "--source-solver-commit", COMMIT,
+        "--master-sense", master_sense,
         "--out", str(out), "--record", str(record),
     ], text=True, capture_output=True)
     return result, out, record
@@ -92,3 +93,21 @@ def test_accepts_terminal_last_good_lp_when_final_iteration_is_absent(tmp_path):
     assert rec["source_certified"] is False
     assert rec["artificials"] == 0.0
     assert rec["artificials_source"] == "final_lp"
+
+
+def test_freezes_cover_source_only_when_cover_is_explicit(tmp_path):
+    cover = make_source(tmp_path, "cover", master_sense="cover")
+    result, out, record = invoke(
+        tmp_path, cover, cover, master_sense="cover"
+    )
+    assert result.returncode == 0, result.stderr
+    assert json.loads(out.read_text())["master_sense"] == "cover"
+    assert json.loads(record.read_text())["master_sense"] == "cover"
+
+
+def test_rejects_cover_source_under_partition_default(tmp_path):
+    cover = make_source(tmp_path, "cover", master_sense="cover")
+    result, out, record = invoke(tmp_path, cover, cover)
+    assert result.returncode != 0
+    assert "configuration mismatch" in result.stderr
+    assert not out.exists() and not record.exists()

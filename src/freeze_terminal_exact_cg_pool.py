@@ -46,7 +46,8 @@ def required(path: Path, label: str) -> Path:
 
 
 def valid_status(
-    path: Path, cell: str, instance_sha: str, solver_commit: str
+    path: Path, cell: str, instance_sha: str, solver_commit: str,
+    master_sense: str = "partition",
 ) -> tuple[dict, bytes]:
     raw = required(path, "CG status").read_bytes()
     status = json.loads(raw)
@@ -77,7 +78,7 @@ def valid_status(
         "time_model": "event", "arc_mode": "lazy", "soc_step": 2.5,
         "block_min": 5, "g_kwh": 240.0, "charge_kw": 240.0,
         "min_soc_frac": 0.0, "prices_csv": "hourly_prices_flat.csv",
-        "master_sense": "partition", "initial_pool": "singletons",
+        "master_sense": master_sense, "initial_pool": "singletons",
         "columns_per_iter": 30, "column_pool_treatment": "RAW",
         "column_selection": "reduced_cost", "column_diversity_weight": 0.0,
         "column_candidate_multiplier": 4,
@@ -110,6 +111,11 @@ def main() -> int:
     parser.add_argument("--instance-relative-to-data", required=True)
     parser.add_argument("--instance-sha256", required=True)
     parser.add_argument("--source-solver-commit", required=True)
+    parser.add_argument(
+        "--master-sense", choices=("partition", "cover"),
+        default="partition",
+        help="Expected master sense of both source CG statuses.",
+    )
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--record", type=Path, required=True)
     args = parser.parse_args()
@@ -132,7 +138,8 @@ def main() -> int:
     for stage, path in candidates:
         try:
             status, status_bytes = valid_status(
-                path, args.cell, args.instance_sha256, args.source_solver_commit
+                path, args.cell, args.instance_sha256,
+                args.source_solver_commit, args.master_sense,
             )
             if stage == "baseline" and status.get("certified_rc_optimal") is not True:
                 raise ValueError("baseline fallback is not certified")
@@ -238,6 +245,7 @@ def main() -> int:
         "artificials": terminal_artificials(status)[0],
         "artificials_source": terminal_artificials(status)[1],
         "instance_sha256": args.instance_sha256,
+        "master_sense": args.master_sense,
     }
     record_path.parent.mkdir(parents=True, exist_ok=True)
     atomic_write_json(record_path, record)
