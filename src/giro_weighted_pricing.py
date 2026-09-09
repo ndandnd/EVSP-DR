@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass
 
-from audit_giro_duty_recovery import _arc_groups, _best_transition
+from audit_giro_duty_recovery import _arc_groups, _transition_options
 
 
 TOL = 1e-9
@@ -15,9 +16,34 @@ TOL = 1e-9
 class WeightedLabel:
     trip: int
     reward: float
+    trip_reward: float
+    capacity_dual_reward: float
     entry_soc_kwh: float
     trips: tuple[int, ...]
     actions: tuple[dict, ...]
+    capacity_rows: frozenset[tuple[str, int]]
+
+
+def action_capacity_rows(action: dict) -> frozenset[tuple[str, int]]:
+    """Return the same conservative one-minute plug rows used by the master."""
+
+    if action.get("kind") != "charge" or action.get("station") == "PARX":
+        return frozenset()
+    start = float(action["setup_start_min"])
+    end = float(action["connection_end_min"])
+    rows = {
+        (str(action["station"]), minute)
+        for minute in range(int(math.floor(start)), int(math.ceil(end)))
+        if minute + 1e-9 < end and minute + 1.0 > start + 1e-9
+    }
+    return frozenset(rows)
+
+
+def _extend_reward(label, action, capacity_duals):
+    action_rows = action_capacity_rows(action)
+    new_rows = action_rows - label.capacity_rows
+    capacity_delta = sum(float(capacity_duals.get(row, 0.0)) for row in new_rows)
+    return capacity_delta, label.capacity_rows | action_rows
 
 
 def _dominates(left: WeightedLabel, right: WeightedLabel) -> bool:
@@ -45,20 +71,24 @@ def weighted_price_route(
     problem,
     profile,
     trip_duals,
+    capacity_duals=None,
     *,
     horizon_min,
     wall_limit_s,
     label_limit,
 ) -> dict:
-    """Minimize ``1 - sum(trip duals)`` over one feasible route.
+    """Price one route with trip and conservative charger-row duals.
 
     The DP uses hold-until-departure charging while labeling. Under that
-    policy, higher entry SOC and higher collected reward are valid dominance
-    resources. The driver separately replays the selected trip order with its
-    early-disconnect policy to add a less capacity-intensive schedule variant.
+    policy, higher entry SOC and higher collected dual reward are valid
+    dominance resources. Every direct and charging transition is retained
+    through the reward/SOC Pareto test. The driver separately replays the
+    selected trip order with its early-disconnect policy to add a less
+    capacity-intensive schedule variant outside this pricing space.
     """
 
     started = time.perf_counter()
+    capacity_duals = capacity_duals or {}
     hard_deadline = started + float(wall_limit_s)
     expansion_deadline = started + 0.80 * float(wall_limit_s)
     limit = int(label_limit)
@@ -79,6 +109,8 @@ def weighted_price_route(
         label = WeightedLabel(
             trip=trip,
             reward=float(trip_duals.get(trip, 0.0)),
+            trip_reward=float(trip_duals.get(trip, 0.0)),
+            capacity_dual_reward=0.0,
             entry_soc_kwh=soc,
             trips=(trip,),
             actions=({
@@ -86,6 +118,7 @@ def weighted_price_route(
                 "travel_min": first.travel_min,
                 "deadhead_kwh": first.energy_kwh,
             },),
+            capacity_rows=frozenset(),
         )
         _accept(frontiers[trip], label)
         labels_created += 1
@@ -108,26 +141,35 @@ def weighted_price_route(
                 if problem.start_min[successor] < problem.end_min[trip] - TOL:
                     continue
                 transitions_tested += 1
-                selected = _best_transition(
+                options = _transition_options(
                     problem, arcs, profile, trip, label.entry_soc_kwh,
                     successor, horizon_min=horizon_min,
                     charge_policy="hold_until_departure",
                 )
-                if selected is None:
-                    continue
-                soc, action = selected
-                candidate = WeightedLabel(
-                    trip=successor,
-                    reward=label.reward + float(trip_duals.get(successor, 0.0)),
-                    entry_soc_kwh=soc,
-                    trips=label.trips + (successor,),
-                    actions=label.actions + (action,),
-                )
-                if _accept(frontiers[successor], candidate):
-                    labels_created += 1
-                    if labels_created >= limit:
-                        guard = "pricing_label_limit"
-                        break
+                for soc, action in options:
+                    capacity_delta, capacity_rows = _extend_reward(
+                        label, action, capacity_duals,
+                    )
+                    trip_delta = float(trip_duals.get(successor, 0.0))
+                    candidate = WeightedLabel(
+                        trip=successor,
+                        reward=label.reward + trip_delta + capacity_delta,
+                        trip_reward=label.trip_reward + trip_delta,
+                        capacity_dual_reward=(
+                            label.capacity_dual_reward + capacity_delta
+                        ),
+                        entry_soc_kwh=soc,
+                        trips=label.trips + (successor,),
+                        actions=label.actions + (action,),
+                        capacity_rows=capacity_rows,
+                    )
+                    if _accept(frontiers[successor], candidate):
+                        labels_created += 1
+                        if labels_created >= limit:
+                            guard = "pricing_label_limit"
+                            break
+                if guard:
+                    break
             if guard:
                 break
             if guard:
@@ -149,15 +191,24 @@ def weighted_price_route(
             )
             terminal_time_exhausted = True
             break
-        selected = _best_transition(
+        options = _transition_options(
             problem, arcs, profile, label.trip, label.entry_soc_kwh,
             None, horizon_min=horizon_min,
             charge_policy="hold_until_departure",
         )
-        if selected is None:
-            continue
-        soc, action = selected
-        terminal.append((1.0 - label.reward, -soc, label, action))
+        for soc, action in options:
+            capacity_delta, capacity_rows = _extend_reward(
+                label, action, capacity_duals,
+            )
+            total_reward = label.reward + capacity_delta
+            terminal.append((
+                1.0 - total_reward,
+                -soc,
+                label,
+                action,
+                label.capacity_dual_reward + capacity_delta,
+                capacity_rows,
+            ))
     if not terminal:
         return {
             "route": None,
@@ -166,7 +217,7 @@ def weighted_price_route(
             "transitions_tested": transitions_tested,
             "runtime_s": time.perf_counter() - started,
         }
-    reduced_cost, negative_soc, label, action = min(
+    reduced_cost, negative_soc, label, action, capacity_reward, capacity_rows = min(
         terminal,
         key=lambda row: (row[0], row[1], row[2].trips),
     )
@@ -177,12 +228,16 @@ def weighted_price_route(
             "profile": profile.name,
             "cost": 1.0,
             "pricing_charge_policy": "hold_until_departure",
+            "capacity_rows": sorted([list(row) for row in capacity_rows]),
         },
-        "reduced_cost_without_capacity_duals": float(reduced_cost),
-        "reward": float(label.reward),
+        "reduced_cost_with_capacity_duals": float(reduced_cost),
+        "trip_dual_reward": float(label.trip_reward),
+        "capacity_dual_reward": float(capacity_reward),
+        "total_dual_reward": float(label.trip_reward + capacity_reward),
         "guard": guard,
         "labels_created": labels_created,
         "transitions_tested": transitions_tested,
         "runtime_s": time.perf_counter() - started,
-        "single_vehicle_weighted_pricing_complete": guard is None,
+        "hold_policy_label_search_complete": guard is None,
+        "full_pricing_space_certified": False,
     }

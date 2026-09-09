@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Bounded nonlinear-physics CG prototype for Partille k2/k3 cohorts.
 
-This experiment generates columns from trip-coverage duals while enforcing
-station-time capacity in every restricted master. Pricing does not consume
-capacity duals, and guard-limited pricing may be incomplete. Consequently the
-reported LPs are restricted-pool values, never full-model lower bounds.
+This experiment generates columns from trip-coverage and conservative
+station-time capacity duals. Pricing enumerates the direct/charge transitions
+in a bounded hold-until-departure policy; early-disconnect schedules are added
+only as replay variants. Consequently the reported LPs are restricted-pool
+values, never full-model lower bounds.
 """
 
 from __future__ import annotations
@@ -12,7 +13,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import tempfile
 import time
@@ -28,10 +28,10 @@ from audit_giro_duty_recovery import (
 )
 from audit_giro_known_columns import build_problem
 from giro_partille_physics import PARTILLE_PROFILES
-from giro_weighted_pricing import weighted_price_route
+from giro_weighted_pricing import action_capacity_rows, weighted_price_route
 
 
-SCHEMA = "evsp-dr-giro-small-cg-v1"
+SCHEMA = "evsp-dr-giro-small-cg-v2-capacity-dual-pricing"
 CHARGER_COUNTS = {
     "2190L": 1, "4808": 1, "3127L": 2, "7880C": 1, "JON_A": 1,
 }
@@ -87,19 +87,12 @@ def route_key(route: dict) -> str:
 
 
 def capacity_incidence(route: dict) -> set[tuple[str, int]]:
-    rows = set()
-    for action in route["actions"]:
-        if action.get("kind") != "charge":
-            continue
-        site = str(action["station"])
-        if site not in CHARGER_COUNTS:
-            continue
-        start = float(action["setup_start_min"])
-        end = float(action["connection_end_min"])
-        for minute in range(int(math.floor(start)), int(math.ceil(end))):
-            if minute + 1e-9 < end and minute + 1.0 > start + 1e-9:
-                rows.add((site, minute))
-    return rows
+    return {
+        row
+        for action in route["actions"]
+        for row in action_capacity_rows(action)
+        if row[0] in CHARGER_COUNTS
+    }
 
 
 def _master(
@@ -202,7 +195,11 @@ def _master(
         result["trip_duals"] = {
             trip: float(constraint.Pi) for trip, constraint in trip_rows.items()
         }
-        result["capacity_duals_ignored_by_pricing"] = {
+        result["capacity_duals"] = {
+            (site, minute): float(constraint.Pi)
+            for (site, minute), constraint in capacity_rows.items()
+        }
+        result["nonzero_capacity_duals"] = {
             f"{site}@{minute}": float(constraint.Pi)
             for (site, minute), constraint in capacity_rows.items()
             if abs(float(constraint.Pi)) > 1e-10
@@ -267,7 +264,6 @@ def run_cg_arm(
     stop_reason = None
     any_pricing_guard = False
     capacity_active = True
-    switched_to_capacity_relaxed_enrichment = False
     for iteration in range(int(cg_max_iters)):
         if time.perf_counter() - started >= cg_wall_s:
             stop_reason = "cg_wall_limit"
@@ -282,6 +278,7 @@ def run_cg_arm(
             break
         priced = weighted_price_route(
             problem, profile, lp["trip_duals"],
+            capacity_duals=lp["capacity_duals"],
             horizon_min=DEFAULT_HORIZON_MIN,
             wall_limit_s=min(
                 pricing_wall_s,
@@ -292,7 +289,7 @@ def run_cg_arm(
         any_pricing_guard = any_pricing_guard or priced.get("guard") is not None
         added = []
         candidate = priced.get("route")
-        if candidate is not None and priced["reduced_cost_without_capacity_duals"] < -1e-8:
+        if candidate is not None and priced["reduced_cost_with_capacity_duals"] < -1e-8:
             candidate["source"] = f"weighted_pricing:{sense}:{iteration}"
             variants = [candidate]
             early = _route(
@@ -313,7 +310,10 @@ def run_cg_arm(
         iterations.append({
             "iteration": iteration,
             "pricing_master_capacity_rows_enabled": capacity_active,
-            "lp": {key: value for key, value in lp.items() if key != "trip_duals"},
+            "lp": {
+                key: value for key, value in lp.items()
+                if key not in {"trip_duals", "capacity_duals"}
+            },
             "pricing": {key: value for key, value in priced.items() if key != "route"},
             "added_route_keys": added,
             "arm_pool_size": len(routes),
@@ -323,18 +323,11 @@ def run_cg_arm(
         if candidate is None:
             stop_reason = "no_feasible_pricing_route"
             break
-        if priced["reduced_cost_without_capacity_duals"] >= -1e-8:
-            stop_reason = "no_negative_route_under_omitted_capacity_duals"
+        if priced["reduced_cost_with_capacity_duals"] >= -1e-8:
+            stop_reason = "no_negative_route_in_hold_policy_pricing"
             break
         if not added:
-            if capacity_active:
-                capacity_active = False
-                switched_to_capacity_relaxed_enrichment = True
-                iterations[-1]["next_action"] = (
-                    "switch_to_capacity_relaxed_master_for_pool_enrichment"
-                )
-                continue
-            stop_reason = "duplicate_best_route_after_capacity_relaxation"
+            stop_reason = "duplicate_best_capacity_aware_route"
             break
     else:
         stop_reason = "cg_iteration_limit"
@@ -345,8 +338,6 @@ def run_cg_arm(
         "runtime_s": time.perf_counter() - started,
         "stop_reason": stop_reason,
         "pricing_guard_encountered": any_pricing_guard,
-        "switched_to_capacity_relaxed_enrichment":
-            switched_to_capacity_relaxed_enrichment,
         "full_model_lp_bound_certified": False,
         "iterations": iterations,
     }
@@ -426,6 +417,8 @@ def execute(args):
                 mip["cover_repair_scope"] = cover_repair(
                     union_routes, mip["selected_indices"], list(problem.trips)
                 )
+            lp.pop("trip_duals", None)
+            lp.pop("capacity_duals", None)
             final[capacity_name][sense] = {"lp": lp, "mip": mip}
     payload = {
         "schema": SCHEMA,
@@ -451,8 +444,10 @@ def execute(args):
         "reporting_scope": {
             "full_model_lp_bound_certified": False,
             "reason": (
-                "pricing ignores station-capacity duals and is guard-limited; "
-                "all LP/MIP values are for generated finite pools"
+                "pricing includes conservative station-capacity duals but is "
+                "guard-limited and searches only the hold-until-departure "
+                "charging policy; early-disconnect variants are replayed only "
+                "after a trip sequence is selected"
             ),
             "capacity_discretization": (
                 "plug occupancy is conservatively rounded onto one-minute rows; "

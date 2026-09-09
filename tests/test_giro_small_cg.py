@@ -52,7 +52,49 @@ class WeightedPricingTests(unittest.TestCase):
         )
         self.assertIsNone(priced["guard"])
         self.assertEqual(priced["route"]["trips"], [0, 1])
-        self.assertAlmostEqual(priced["reduced_cost_without_capacity_duals"], -1.0)
+        self.assertAlmostEqual(priced["reduced_cost_with_capacity_duals"], -1.0)
+
+    def test_capacity_dual_selects_lower_soc_no_charge_transition(self):
+        problem = toy_problem()
+        problem.adjacency[0].extend([
+            ("2190L_0", 0.0, 0.0, "trip_station"),
+        ])
+        problem.adjacency["2190L_0"] = [
+            (1, 0.0, 0.0, "station_trip"),
+            ("PARX_0", 0.0, 0.0, "station_depot"),
+        ]
+        unpenalized = weighted_price_route(
+            problem, PARTILLE_PROFILES["18E1"], {0: 1.0, 1: 1.0},
+            capacity_duals={}, horizon_min=120.0,
+            wall_limit_s=2.0, label_limit=1000,
+        )
+        self.assertTrue(any(
+            action.get("kind") == "charge"
+            for action in unpenalized["route"]["actions"]
+        ))
+        saturated_master = _master(
+            [
+                route([0, 1], 30.0, 60.0),
+                route([0]),
+                route([1]),
+                route([2], 30.0, 60.0),
+            ],
+            [0, 1, 2], sense="partition", binary=False,
+            capacity=True, threads=1,
+        )
+        self.assertTrue(saturated_master["nonzero_capacity_duals"])
+        penalized = weighted_price_route(
+            problem, PARTILLE_PROFILES["18E1"],
+            {trip: saturated_master["trip_duals"][trip] for trip in (0, 1)},
+            capacity_duals=saturated_master["capacity_duals"],
+            horizon_min=120.0, wall_limit_s=2.0, label_limit=1000,
+        )
+        self.assertFalse(any(
+            action.get("kind") == "charge"
+            for action in penalized["route"]["actions"]
+        ))
+        self.assertEqual(penalized["route"]["trips"], [0, 1])
+        self.assertAlmostEqual(penalized["capacity_dual_reward"], 0.0)
 
     def test_wall_guard_reserves_terminal_scan_and_returns_a_route(self):
         priced = weighted_price_route(
