@@ -9,7 +9,11 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from audit_giro_known_columns import ProblemData  # noqa: E402
 from giro_partille_physics import PARTILLE_PROFILES  # noqa: E402
-from giro_weighted_pricing import weighted_price_route  # noqa: E402
+from giro_weighted_pricing import (  # noqa: E402
+    WeightedLabel,
+    _extend_reward,
+    weighted_price_route,
+)
 from run_giro_small_cg import _master  # noqa: E402
 
 
@@ -45,6 +49,20 @@ def route(trips, start=None, end=None):
 
 
 class WeightedPricingTests(unittest.TestCase):
+    def test_chronological_capacity_rows_cannot_be_reused(self):
+        label = WeightedLabel(
+            trip=0, reward=0.0, trip_reward=0.0,
+            capacity_dual_reward=0.0, entry_soc_kwh=100.0,
+            trips=(0,), actions=(),
+            capacity_rows=frozenset({("2190L", 30)}),
+        )
+        action = {
+            "kind": "charge", "station": "2190L",
+            "setup_start_min": 30.0, "connection_end_min": 31.0,
+        }
+        with self.assertRaisesRegex(AssertionError, "reused charger rows"):
+            _extend_reward(label, action, {("2190L", 30): -1.0})
+
     def test_trip_duals_drive_full_two_trip_route(self):
         priced = weighted_price_route(
             toy_problem(), PARTILLE_PROFILES["18E2"], {0: 1.0, 1: 1.0},

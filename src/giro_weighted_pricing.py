@@ -41,12 +41,22 @@ def action_capacity_rows(action: dict) -> frozenset[tuple[str, int]]:
 
 def _extend_reward(label, action, capacity_duals):
     action_rows = action_capacity_rows(action)
+    overlap = action_rows & label.capacity_rows
+    if overlap:
+        raise AssertionError(
+            "chronological pricing transition reused charger rows: "
+            f"{sorted(overlap)[:5]}"
+        )
     new_rows = action_rows - label.capacity_rows
     capacity_delta = sum(float(capacity_duals.get(row, 0.0)) for row in new_rows)
     return capacity_delta, label.capacity_rows | action_rows
 
 
 def _dominates(left: WeightedLabel, right: WeightedLabel) -> bool:
+    # Prior charger rows are not a separate future resource. Transition times
+    # are chronological: every charge ends before its successor trip starts,
+    # and the next charge cannot start before that trip ends. _extend_reward
+    # asserts the resulting row sets are disjoint for every generated label.
     return (
         left.reward >= right.reward - TOL
         and left.entry_soc_kwh >= right.entry_soc_kwh - TOL
