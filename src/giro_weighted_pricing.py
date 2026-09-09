@@ -59,7 +59,8 @@ def weighted_price_route(
     """
 
     started = time.perf_counter()
-    deadline = started + float(wall_limit_s)
+    hard_deadline = started + float(wall_limit_s)
+    expansion_deadline = started + 0.80 * float(wall_limit_s)
     limit = int(label_limit)
     arcs = _arc_groups(problem)
     ordered = sorted(problem.trips, key=lambda trip: (problem.start_min[trip], trip))
@@ -91,15 +92,18 @@ def weighted_price_route(
 
     for position, trip in enumerate(ordered):
         for label in tuple(frontiers[trip]):
-            if time.perf_counter() >= deadline:
-                guard = "pricing_wall_limit"
+            if time.perf_counter() >= expansion_deadline:
+                guard = "pricing_expansion_wall_reserve"
                 break
             if labels_created >= limit:
                 guard = "pricing_label_limit"
                 break
             for successor in ordered[position + 1:]:
-                if transitions_tested % 128 == 0 and time.perf_counter() >= deadline:
-                    guard = "pricing_wall_limit"
+                if (
+                    transitions_tested % 128 == 0
+                    and time.perf_counter() >= expansion_deadline
+                ):
+                    guard = "pricing_expansion_wall_reserve"
                     break
                 if problem.start_min[successor] < problem.end_min[trip] - TOL:
                     continue
@@ -133,23 +137,27 @@ def weighted_price_route(
 
     terminal = []
     terminal_time_exhausted = False
-    for frontier in frontiers.values():
-        for label in frontier:
-            if time.perf_counter() >= deadline:
-                guard = guard or "pricing_wall_limit"
-                terminal_time_exhausted = True
-                break
-            selected = _best_transition(
-                problem, arcs, profile, label.trip, label.entry_soc_kwh,
-                None, horizon_min=horizon_min,
-                charge_policy="hold_until_departure",
+    terminal_candidates = sorted(
+        (label for frontier in frontiers.values() for label in frontier),
+        key=lambda label: (-label.reward, -label.entry_soc_kwh, label.trips),
+    )
+    for label in terminal_candidates:
+        if time.perf_counter() >= hard_deadline:
+            guard = (
+                f"{guard}+pricing_terminal_wall_limit"
+                if guard else "pricing_terminal_wall_limit"
             )
-            if selected is None:
-                continue
-            soc, action = selected
-            terminal.append((1.0 - label.reward, -soc, label, action))
-        if terminal_time_exhausted:
+            terminal_time_exhausted = True
             break
+        selected = _best_transition(
+            problem, arcs, profile, label.trip, label.entry_soc_kwh,
+            None, horizon_min=horizon_min,
+            charge_policy="hold_until_departure",
+        )
+        if selected is None:
+            continue
+        soc, action = selected
+        terminal.append((1.0 - label.reward, -soc, label, action))
     if not terminal:
         return {
             "route": None,

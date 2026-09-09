@@ -54,6 +54,13 @@ class WeightedPricingTests(unittest.TestCase):
         self.assertEqual(priced["route"]["trips"], [0, 1])
         self.assertAlmostEqual(priced["reduced_cost_without_capacity_duals"], -1.0)
 
+    def test_wall_guard_reserves_terminal_scan_and_returns_a_route(self):
+        priced = weighted_price_route(
+            toy_problem(), PARTILLE_PROFILES["18E2"], {0: 1.0, 1: 1.0},
+            horizon_min=120.0, wall_limit_s=0.05, label_limit=100,
+        )
+        self.assertIsNotNone(priced["route"])
+
 
 class SharedPoolMasterTests(unittest.TestCase):
     def test_capacity_row_changes_selected_route_and_cover_le_partition(self):
