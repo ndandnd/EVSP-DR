@@ -1,0 +1,660 @@
+from pathlib import Path
+import csv, hashlib, json, datetime, re
+
+ROOT = Path('/Users/nadan/Documents/projects/demandresponse').resolve()
+OUT = ROOT / 'outputs' / 'research_register'
+OUT.mkdir(parents=True, exist_ok=True)
+CSV_PATH = OUT / 'historical_inventory.csv'
+MD_PATH = OUT / 'HISTORICAL_EVIDENCE.md'
+
+
+def ap(rel):
+    return str((ROOT / rel).resolve())
+
+def existing_glob(pattern):
+    return [str(x.resolve()) for x in sorted(ROOT.glob(pattern))]
+
+def sha(path):
+    p = Path(path)
+    if not p.is_file():
+        return ''
+    h = hashlib.sha256()
+    with p.open('rb') as f:
+        for block in iter(lambda: f.read(1024 * 1024), b''):
+            h.update(block)
+    return h.hexdigest()
+
+def join_paths(paths):
+    return '; '.join(paths)
+
+def make(record_id, period, artifact_kind, evidence_class, campaign_or_family,
+         primary_rel, related_rels=(), source_commit_or_timestamp='',
+         result_scope='', comparability_warnings='', deduplication_note='',
+         availability='local'):
+    primary = ap(primary_rel) if not primary_rel.startswith('(') else primary_rel
+    related = []
+    for rel in related_rels:
+        if rel.startswith('('): related.append(rel)
+        else: related.append(ap(rel))
+    all_local = [primary] + [p for p in related if not p.startswith('(')]
+    missing = [p for p in all_local if not Path(p).exists()]
+    if missing:
+        # Keep the record searchable while making missing material explicit.
+        availability = availability if availability != 'local' else 'partially retained locally'
+    return {
+        'record_id': record_id,
+        'period': period,
+        'artifact_kind': artifact_kind,
+        'evidence_class': evidence_class,
+        'campaign_or_family': campaign_or_family,
+        'primary_path': primary,
+        'related_paths': join_paths(related),
+        'source_commit_or_timestamp': source_commit_or_timestamp,
+        'result_scope': result_scope,
+        'comparability_warnings': comparability_warnings,
+        'deduplication_note': deduplication_note,
+        'availability': availability,
+        'primary_sha256': sha(primary) if not primary.startswith('(') else '',
+        'missing_local_paths': join_paths(missing),
+    }
+
+records = []
+
+# Historical raw artifacts. Directory families intentionally group empty retries and
+# companion checkpoint/diagnostic directories.
+records.append(make(
+    'apr_legacy_10bus', '2026-04-23 to 2026-04-28', 'raw pricing/MIP family',
+    'historical evidence', 'April legacy 10-bus workflows',
+    'src/results/Practice_10bus_20260424_152031',
+    ['src/results/Practice_10bus_20260428_103722',
+     'src/results/Practice_10bus_20260423_141146',
+     'src/results/Practice_10bus_20260423_141214',
+     'src/results/Practice_10bus_20260424_145724',
+     'src/results/Practice_10bus_20260424_150015'],
+    '2026-04-30 retention commit 8ef80490403d36ae74cfc6ac2431e948c62b31a7',
+    'Legacy DP pricing traces plus finite-pool MIPs for 10-bus practice instances; raw logs/solutions retained for only some attempts.',
+    'Not a matched-configuration comparison with current work; coverage rule, time grid, tariff binding and seed policy vary.',
+    'All same-family retries/checkpoint and diagnostic directories are one historical family, not separate replications.',
+))
+records.append(make(
+    'apr_selected10_175', '2026-04-26', 'raw pricing/MIP + audit',
+    'historical evidence', 'April selected 10-bus / 175-trip anchor',
+    'src/results/Practice_Selected_10bus_20260426_173852',
+    ['outputs/meeting_20260910/HISTORICAL_175_TRIP_REGRESSION_AUDIT.md',
+     'outputs/meeting_20260910/april_source_replay/README.md',
+     'outputs/meeting_20260910/full_cache_witness_audit/LEGACY_SUMMARY.md'],
+    'candidate behavior match 14364901ec74c85df90c8ac0b3d635f7e0547776; selected input hash 75673708acf2b2099b2240829e2603920bc5608d34fef2f7d28cd7d2931868c7',
+    'Retained April trace has a 12-bus timed incumbent, 1-hour MIP, objective 1,200,421.972423, bound 1,000,363.857969, gap 16.6656%; source replay was launched separately as job 653567.',
+    'Exact historical executable, source commit, price-file binding, route pool and physical replay are absent. Full-cache audit later proves a 10-duty event-model witness, but does not recover the April pool.',
+    'The source-replay directory is a behavior-matching reconstruction, not the original run identity.',
+    'local report + remote replay artifacts',
+))
+records.append(make(
+    'apr_legacy_15_20', '2026-04-18 to 2026-04-28', 'raw pricing/MIP family',
+    'historical evidence', 'April legacy 15- and 20-bus scale attempts',
+    'src/results/Practice_15bus_20260428_103124',
+    ['src/results/Practice_20bus_20260428_103325',
+     'src/results/Practice_15bus_20260424_152129',
+     'src/results/Practice_20bus_20260424_152107',
+     'src/results/Practice_20bus_20260418_231739',
+     'src/Practice_15bus_g300_20260429_015514',
+     'src/Practice_15bus_g9999_20260429_015514',
+     'src/Practice_20bus_g300_20260429_015514',
+     'src/Practice_20bus_g9999_20260429_015514'],
+    '2026-04-30 retention commit 8ef80490403d36ae74cfc6ac2431e948c62b31a7',
+    'Legacy pricing traces, checkpoints and selected finite-model MIPs; includes April-29 200-column checkpoints for g300/g9999.',
+    'Heterogeneous legacy settings and incomplete route/physical provenance; retained analysis reports 20/30/43 pricing walls of about 11.99/1.94/1.55 hours with negative reduced costs, not a global certificate.',
+    'Group result-bearing runs with same named scale and collapse empty retries.',
+))
+records.append(make(
+    'apr_legacy_30_43', '2026-04-26 to 2026-04-29', 'raw pricing/MIP family',
+    'historical evidence', 'April legacy 30- and 43-bus scale attempts',
+    'src/results/Practice_43bus_20260426_194616',
+    ['src/results/Practice_30bus_20260426_174020',
+     'src/Practice_30bus_g300_20260429_015514',
+     'src/Practice_30bus_g9999_20260429_015514',
+     'src/Practice_43bus_g300_20260429_015514',
+     'src/Practice_43bus_g9999_20260429_015514',
+     'src/benchmark_43bus_lex.log',
+     'src/benchmark_43bus_win.log'],
+    '2026-04-30 retention commit 8ef80490403d36ae74cfc6ac2431e948c62b31a7',
+    'Finite historical models include 43 g300 objective 3,500,630 with equal bound/gap 0 and 43 g9999 objective 3,700,640 with 0.0001% gap; separate 900s/7200s benchmark logs remain timed.',
+    'These are finite legacy models with artificial/covering behavior and no complete route-space certificate. The retained 43 label can include dummy routes; objective values are not comparable to current event costs.',
+    'Scale siblings and repeated checkpoint directories are one campaign family.',
+))
+records.append(make(
+    'apr29_checkpoints_10_20', '2026-04-29', 'checkpoint/pricing CSV family',
+    'historical evidence', 'April-29 g300/g9999 checkpoint sweep, k10/15/20',
+    'src/Practice_10bus_g300_20260429_015514',
+    ['src/Practice_10bus_g300_20260429_102535',
+     'src/Practice_10bus_g9999_20260429_015514',
+     'src/Practice_15bus_g300_20260429_015514',
+     'src/Practice_15bus_g9999_20260429_015514',
+     'src/Practice_20bus_g300_20260429_015514',
+     'src/Practice_20bus_g9999_20260429_015514'],
+    '2026-04-29 filename timestamp; retained by 8ef80490403d36ae74cfc6ac2431e948c62b31a7',
+    'Pricing journals and latest checkpoints; no final MIP log for k10/15/20 in these directories.',
+    'A checkpoint is a progress snapshot, not convergence or an integer optimum; settings use the historical g300/g9999 variants.',
+    'All six checkpoint directories are one sweep, not six independent datasets.',
+))
+records.append(make(
+    'may_10bus_giro_seed', '2026-05-01', 'raw pricing/MIP family + audit',
+    'historical evidence', 'May GIRO-initialized 10-bus groups',
+    'src/results/Practice_10bus_20260501_133845',
+    ['src/results/Inst_10B_G02_13311_13319_20260501_143224',
+     'src/results/Inst_10B_G03_13320_13402_20260501_143001',
+     'src/results/Inst_10B_G04_13403_13412_20260501_143421',
+     'src/results/Inst_10B_G05_last10_20260501_144839',
+     'outputs/meeting_20260910/HISTORICAL_EASY10_AUDIT.md'],
+    '7c564dae2566aaf47bdc6413aad0ec9fbfe89ac9 (2026-05-01)',
+    'GIRO initialization path for 10-bus groups. May-1 329-row record reports objective 1,000,885.36, bound 981,232.513, 1.9635% gap and status optimal at requested 2%.',
+    'Legacy DP/covering behavior, no SOC/physical replay certificate; the 329-row universe and 175-row selected universe are different instances.',
+    'G01--G05 and empty launch retries are grouped as one initialization family.',
+))
+records.append(make(
+    'may_rnd004', '2026-05-12', 'raw pricing/MIP family',
+    'historical evidence', 'May RND004 CHEAT versus NO_CHEAT',
+    'src/results/Inst_10B_RND004_CHEAT_stag50_imp5.0_g300_20260512_163950',
+    ['src/results/Inst_10B_RND004_NO_CHEAT_stag50_imp5.0_g300_20260512_163258',
+     'src/results/Inst_10B_RND004_NO_CHEAT_stag50_imp5.0_g300_20260512_171108',
+     'src/results/Inst_10B_RND004_NO_CHEAT_stag50_imp5.0_g300_20260512_171405',
+     'data/pricing_Inst_10B_RND004_NO_CHEAT_stag999999_imp-1.0_150cols.csv'],
+    'timestamps 2026-05-12; exact source commit not retained with the output family',
+    'Four result-bearing runs: one CHEAT and three NO_CHEAT; each has pricing CSV, checkpoint, final MIP log and solution.',
+    'Old 300-kWh/300-kW and legacy seed/master semantics; no unified audit in this checkout ties every row to the same input hash.',
+    'Three NO_CHEAT attempts and empty retries are not independent random datasets.',
+))
+records.append(make(
+    'may_rnd002_audit', '2026-05', 'derived audit of raw/remote artifacts',
+    'audit', 'May RND002 CHEAT/NO_CHEAT peak tariff comparison',
+    'outputs/meeting_20260910/HISTORICAL_RND002_AUDIT.md',
+    ['outputs/meeting_20260910/HISTORICAL_RND002_AUDIT.csv',
+     'outputs/meeting_20260910/HISTORICAL_RND002_AUDIT.json'],
+    'audit prepared 2026-09-08; source work is May legacy workflow',
+    'CHEAT: 10 buses at peaks 08/12/18, first two proved and peak18 timed with 0.018624% gap; NO_CHEAT: 12/12/11 buses, all time-limited. Imports historical VehicleTask routes versus empty/artificial start.',
+    'Old G=300, full-SOC, 15-kWh/10-minute settings; only retained audit is local, some source route pools are remote. No greedy RND002 row was retained.',
+    'One audit row summarizes six tariff cells; peak variants are not six independent instances.',
+))
+records.append(make(
+    'legacy_summary_tables', '2026-04 to 2026-05', 'CSV summary tables',
+    'historical evidence', 'Legacy final_results and phase-time summaries',
+    'src/final_results.csv', ['src/final_full_results.csv'],
+    'files retained by 8ef80490403d36ae74cfc6ac2431e948c62b31a7; current local copies are untracked',
+    '81 heterogeneous rows; final_results statuses are 71 RUNNING/END, 8 STAGNATED, 2 CONVERGED. full_results adds master/pricing seconds and percentages.',
+    'Rows mix instances, budgets, stopping rules and backends; many retain negative reduced cost at wall stop. It is a historical telemetry archive, not a clean algorithm benchmark.',
+    'Two CSV views of the same 81-row archive; do not count them as 162 experiments.',
+))
+records.append(make(
+    'legacy_10b_analysis', '2026-04 to 2026-05', 'pricing traces, plots and stats',
+    'historical evidence', 'Legacy 10B analysis bundle',
+    'src/results/10B_analysis', ['src/results/vehicle_gap_analysis'],
+    'archived by 4c57cc1/2962f69/c747645 (2026-08-05); original run dates vary',
+    'Contains 10/15/20/30-bus random-instance pricing CSVs, plots, convergence/time summaries and legacy vehicle-gap diagnostics.',
+    'Trace-only and derived plots do not establish a common input, a route-space certificate or physical feasibility; vehicle-gap files are diagnostics.',
+    'Plots, duplicate trace exports and diagnostics remain grouped as one archive.',
+))
+
+# Summer code/provenance and audits.
+records.append(make(
+    'summer_code_reset', '2026-07-30 to 2026-08-04', 'Git provenance and workflow docs',
+    'audit', 'Summer algorithm reset: greedy, event pricing and durable pools',
+    'outputs/meeting_20260910/HISTORY_EVIDENCE.md',
+    ['outputs/meeting_20260910/CHAIN3_NESTING_AND_DP_CHANGES.md',
+     '(src/exact_pricer_expanded.py is referenced by the reports but is not retained in this checkout)', '(src/event_pricer_network.py is referenced by the reports but is not retained in this checkout)',
+     'outputs/meeting_20260910/EXACT_SOLVER_AND_RESTART_AUDIT.md'],
+    '0d7b48b5, 2c10945, cb7d7cc, d8516e6, 9a5241c; ecfec4c; 2f5935f; b96c046; e1b436b; c74148c',
+    'Documents greedy initialization, full-SOC start correction, SOC-safe DP pruning/pass-through, event-native SOC-time DAG pricing, physical replay and durable JSONL/checkpoint/pool provenance.',
+    'These are implementation/provenance changes, not a one-factor performance result. The June 2026 Git period has no commits in this checkout.',
+    'Commit chronology and related code are summarized once; individual commits are not experiments.',
+))
+records.append(make(
+    'summer_resolution_sweep', '2026-08-20 to 2026-08-21', 'referenced analysis tables/plans',
+    'audit', 'Resolution and event/uniform representation sweeps',
+    'outputs/meeting_20260910/HISTORY_EVIDENCE.md',
+    ['outputs/meeting_20260910/FIGURE_SOURCE_REPORT_2683c775.md',
+     'outputs/meeting_20260910/FIGURE_SOURCE_PANEL_A_2683c775.csv'],
+    'resolution report cites 7909cf283b285b9ac22aa2a48d909dc3e1e0fedb; event/uniform plan cites 2dd2b4cd81fb15da137f6d443f5a495e22fd0255',
+    'Historical report cites a 39-cell resolution sweep and a six-representation event/uniform plan, including 10-to-5-minute k2 sensitivity.',
+    'The cited analysis directories are not retained in this local checkout; only summaries/figure source artifacts remain. Do not treat cited rows as locally reproducible raw data.',
+    'Summary and figure-source files refer to the same underlying studies.',
+    'local summary + referenced-not-retained raw source'))
+records.append(make(
+    'summer_k40_physical_audit', '2026-08-18', 'physical replay audit',
+    'audit', 'K40 route-pool and continuous-realization audit',
+    'outputs/meeting_20260910/HISTORY_EVIDENCE.md',
+    ['outputs/meeting_20260910/GIRO_FULL_FLEET_CAPACITY_AUDIT.md'],
+    'e2b6939b5a5af7033acabec033f6b3d8dde3af4c (2026-08-18)',
+    'Report cites four frozen pools with zero routes infeasible after continuous realization; stored-grid overfill was repairable. GIRO full-fleet capacity audit separately measures source schedule overlap.',
+    'Expanded-grid reduced-cost certification does not transfer to continuous costs; the referenced raw K40 directory is not locally retained. Capacity audit is source/operational evidence, not solver proof.',
+    'K40 raw physical audit and capacity audit are separate scopes; keep them separate in claims.',
+    'local audit + referenced remote raw'))
+records.append(make(
+    'summer_full_cache_witness', '2026-09-09', 'event-model witness audit',
+    'matched replay', 'Original-chain full-cache GIRO witnesses',
+    'outputs/meeting_20260910/full_cache_witness_audit/SUMMARY.md',
+    ['outputs/meeting_20260910/full_cache_witness_audit/LEGACY_SUMMARY.md',
+     'outputs/meeting_20260910/full_cache_witness_audit/summary.csv'],
+    'snapshot 20260909T2054Z; audit driver SHA 7eb8ba1a924555c66d8b2f333a0ea72bec5d1c519a5f02d68d2a2f6b7d2e1905; array 652908',
+    'All 12 retained proved-above-target frozen-pool cases have physically valid target-fleet GIRO partitions in the exact original event cache; selected 175-trip extension proves 10 under 240/240 and 300/300 named event models.',
+    'This establishes event-model witnesses and overlap lower bounds, not recovery by the RAW generated pool and not unrestricted continuous or shared-capacity optimality.',
+    'The 12 rows and 175-trip two-arm extension are one cache-witness audit, not independent instances.',
+))
+
+# Current six-chain, extra chain, easy/heavy and warm campaigns.
+records.append(make(
+    'current_nested84_results', '2026-09-07 to 2026-09-09', 'CG/MIP result tables and audit',
+    'results available', 'Six random nested chains, k=2..15',
+    'outputs/meeting_20260910/CHAIN_DIAGNOSIS_20260909.csv',
+    ['outputs/meeting_20260910/CHAIN_DIAGNOSIS_20260909.md',
+     'outputs/meeting_20260910/CHAIN_CHARACTERISTICS.csv',
+     'outputs/meeting_20260910/CHAIN_CHARACTERISTICS.md',
+     'outputs/meeting_20260910/CURRENT_STATE.md',
+     'outputs/meeting_20260910/integer_results.csv',
+     'outputs/meeting_20260910/actual_fleet_nested84.md'],
+    'CG execution commit 21fbecba826824c44f897feef038fcf51c532582; source snapshot 20260909T2054Z SHA 40eb776f6528f62016628276157ce6f38d468bbc063dd7f3ce2caa46024285f6',
+    '240/240, event 2.5-kWh/5-minute, strict partition. Six-chain final finite-pool fleets at k2..k7 are in CHAIN_DIAGNOSIS; 81/84 CG runs have pricing certificates, three hit CG time limits. k2 all six equal2; k3 3,4,3,3,3,3; k4 4,5,7,4,8,5; k5 5,8,6,9,13,5; larger rows are censored/time-limited as documented.',
+    'The route-weight LP endpoint can equal the overlap floor while the frozen-pool integer optimum is above it; finite-pool values are not global route-space values. Current chain rows are not statistically representative of all 40 duties.',
+    'CSV, markdown, charts and integer snapshot are views of one 84-cell campaign; do not count as independent chains.',
+))
+records.append(make(
+    'current_nested84_convergence', '2026-09-09 to 2026-09-10', 'CG traces and figures',
+    'results available', 'Nested-chain LP convergence and timing evidence',
+    'outputs/meeting_20260910/cg_convergence_evidence',
+    ['outputs/meeting_20260910/LP_FLOORS_AND_NESTED_RUNS_20260909.md',
+     'outputs/meeting_20260910/LP_K_EQUALS_AUDIT_20260910.csv',
+     'outputs/meeting_20260910/LP_K_EQUALS_AUDIT_20260910.md',
+     'outputs/meeting_20260910/lp_audit_logs'],
+    'source CG commit 21fbecba826824c44f897feef038fcf51c532582; timing audit 2026-09-10',
+    'Shows fractional route-weight trajectories, cumulative CG time/iteration, certified stopping rows and corrected phase telemetry. Representative k02_p1 pricing 74.5%, master 13.8%, incidence 10.7%; k07_p1 pricing 67.4%, master 24.5%, incidence 7.6%.',
+    'Pricing certificate is for the named discretized event/SOC graph under reduced-cost tolerance; it does not certify integer route-pool completeness or shared-station capacity. `pricing_extra_columns` already includes shortest-path time.',
+    'Trace files and plot exports describe the same nested campaign; log copies are evidence extracts, not new solves.',
+))
+records.append(make(
+    'current_small_pool_causal', '2026-09-08 to 2026-09-09', 'causal/provenance audit',
+    'audit', 'Small finite-pool deficits and witness transfer',
+    'outputs/meeting_20260910/SMALL_POOL_CAUSAL_AUDIT_20260909.md',
+    ['outputs/meeting_20260910/K2_HISTORY_AUDIT_20260909.md',
+     'outputs/meeting_20260910/EXACT_SOLVER_AND_RESTART_AUDIT.md',
+     'outputs/meeting_20260910/CHAIN3_NESTING_AND_DP_CHANGES.md'],
+    'audit snapshots 2026-09-09; source current event CG commit 21fbecba826824c44f897feef038fcf51c532582',
+    'For k03_p2/p12/p14/p17, CG certifies the finite-pool LP and Gurobi proves pool optima 4/9/7/10 while independent event witnesses and overlap floors give fleet optima 3; missing known-duty routes have positive terminal reduced cost in the current duals.',
+    'This is evidence of pool composition/integer compatibility, not a universal explanation for every large case; a finite-pool MIP proof excludes only omitted-pool routes.',
+    'Multiple reports inspect the same small cases; one causal audit, not several replications.',
+))
+records.append(make(
+    'current_warm_p3', '2026-09-09 to 2026-09-10', 'dependent CG/freeze/MIP result',
+    'matched replay', 'Previous-k inherited-column chain, p3 k2..10',
+    'outputs/post_meeting_20260910/warm_chain_status/README.md',
+    ['outputs/post_meeting_20260910/warm_chain_status/cg_status.csv',
+     'outputs/post_meeting_20260910/warm_chain_status/mip_status.csv',
+     'outputs/meeting_20260910/chain3_warmstart_control',
+     'outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md'],
+    'CG ecb60c154a9a5db385e3a573949ec9fd0a737af3; MIP 871d057e1067411f09581e37d78f7c1ca43f68bb; warm p3 k8 source comparison hash-bound',
+    'Only p3 received predecessor-column inheritance; duals/bases/certificates were not inherited. Warm k8 and fresh k8 have matching LP objective to about 1.6e-8, while fresh pool proves 9 and warm pool proves 8. Warm k10 Stage1 proves10; Stage2 is time-limited at 14.3934% gap with fleet<=10.',
+    'The p3 warm result is not a general speed claim: k10 import dominates elapsed time, and the k8 outcome points to pool contents. The recovered k10 job had a valid result but scheduler publication failed due to duplicate output path; the duplicate artifact is excluded.',
+    'Warm-chain status, recovery records and report excerpts are one dependent campaign.',
+))
+records.append(make(
+    'current_warm_p5_plan', '2026-09-10', 'launch plan/scripts',
+    'audit', 'Second nested warm-chain replication, p5 k2..10',
+    'outputs/post_meeting_20260910/warm_chain_p5/README.md',
+    ['outputs/post_meeting_20260910/warm_chain_p5/PROVENANCE.json' if (ROOT/'outputs/post_meeting_20260910/warm_chain_p5/PROVENANCE.json').exists() else 'outputs/post_meeting_20260910/warm_chain_p5/README.md'],
+    'CG ecb60c154a9a5db385e3a573949ec9fd0a737af3; MIP 871d057e1067411f09581e37d78f7c1ca43f68bb',
+    'Prepared dependent chain that imports predecessor event columns and adds real child singletons; scripts default to dry-run and the local package does not itself prove completed results.',
+    'Launch package/plan only in local evidence; no result row should be counted until frozen pool, MIP scope and physical replay are published.',
+    'Plan, scripts and manifests describe one proposed chain.',
+    'local plan only'))
+records.append(make(
+    'current_replication42', '2026-09-08 to 2026-09-10', 'submission plan/job manifest',
+    'audit', 'Additional random nested chains p7..p20 at k3/k5/k6',
+    'outputs/meeting_20260910/REPLICATION42_JOBS.tsv',
+    ['outputs/meeting_20260910/REPLICATION42_PLAN.json',
+     'outputs/meeting_20260910/REPLICATION42_SUBMISSION.json',
+     'outputs/meeting_20260910/SAMPLING_AND_REPLICATION_PLAN_20260909.md'],
+    '0209d3e05d7b024f5aba6854f857b3ce22ff1e1c; array 599269/599270/599271/599292',
+    '42-cell cache→CG→freeze→MIP submission with dependency chain; designed to expand the six-chain sample and estimate censor-aware rates.',
+    'Local files are launch/progress evidence, not a completed 42-cell result table. Do not call the six chains statistically significant or treat submitted cells as observations.',
+    'Four pipeline stages for the same 42 cells; job rows are not independent experiments.',
+    'local submission + remote execution'))
+records.append(make(
+    'current_easy_ladder', '2026-09-08 to 2026-09-10', 'deterministic nested plan/submission',
+    'matched replay', 'Fewest-trip deterministic easy ladder',
+    'outputs/meeting_20260910/EASY_LADDER_PLAN.md',
+    ['outputs/meeting_20260910/EASY_K10_RAW_SPLIT_REPLAY_SUBMISSION.json',
+     'outputs/meeting_20260910/easy_ladder_launch',
+     'outputs/meeting_20260910/HISTORICAL_EASY10_AUDIT.md'],
+    '9665429111b461006cc6b844d7d6989daf323454; current easy campaign arrays 582988/582989/582990/583001',
+    'Sorts eligible duties by regular-trip count and duty ID, then takes nested prefixes; canonical k5/k8/k10 are 56/98/127 trips. Includes RAW and GIRO-seeded/tariff controls.',
+    'This deterministic chain is a separate cohort from the random six chains and from the historical 329-row May set. A seeded GIRO/fresh-cover start is not RAW algorithm recovery.',
+    'Plan, launch manifest, replay and historical audit are one easy-ladder family; separate tariffs are matched cells, not new duty sets.',
+))
+records.append(make(
+    'current_heavy_ladder', '2026-09-08 to 2026-09-10', 'deterministic stress plan/submission',
+    'matched replay', 'Trip-heavy deterministic nested stress ladder',
+    'outputs/meeting_20260910/HEAVY_LADDER_LAUNCH_20260908.md',
+    ['outputs/meeting_20260910/heavy_launch'],
+    '9665429111b461006cc6b844d7d6989daf323454; arrays 592465/592466/592472/592473',
+    'Descending trip-count prefixes k2/3/5/8/10/15 with 104/150/229/339/403/547 trips; CG and MIP budgets and exclusions recorded.',
+    'Stress sample, not an upper bound on runtime or fleet difficulty; many higher cases are censored and the local package is mostly launch/provenance evidence.',
+    'Pipeline stages and per-case files are one stress ladder.',
+))
+records.append(make(
+    'current_greedy_controls', '2026-09-08 to 2026-09-09', 'paired CG/MIP comparison + audit',
+    'matched replay', 'GREEDY versus RAW initialization controls',
+    'outputs/meeting_20260910/presentation_manager/greedy_comparison.md',
+    ['outputs/meeting_20260910/presentation_manager/greedy_comparison.json',
+     'outputs/meeting_20260910/GREEDY_PLAN.json',
+     'outputs/meeting_20260910/GREEDY_SUBMISSION.json',
+     'src/results/greedy_init_debug'],
+    'GREEDY submission commit eaca565903772e356c280b686ad2e95761123935; control source commits differ as documented',
+    'Same-parameter paired observations: target3 p2 4 vs4 proved; target5 p2 8 vs8 proved; target6 p1 RAW14 versus GREEDY8 incumbents (neither proved); easy10 RAW12 versus GREEDY13 (neither fleet proved).',
+    'Useful diagnostic, but not a clean one-factor experiment because source commits and pool paths differ; a seed is an incumbent/starting column set, not a lower bound.',
+    'The four cases, plan, JSON and debug files are one small control study.',
+))
+records.append(make(
+    'current_tariff_charging', '2026-09-08 to 2026-09-10', 'matched charging comparison',
+    'matched replay', 'GIRO retained charging versus fixed-duty and joint reoptimization',
+    'outputs/meeting_20260910/presentation_manager/charging_audit/README.md',
+    ['outputs/meeting_20260910/presentation_manager/charging_audit/charging_three_baselines.csv',
+     'outputs/post_meeting_20260910/charging_shift/README.md',
+     'outputs/meeting_20260910/CHARGING_BASELINE_EXPLANATION_20260909.md',
+     'outputs/meeting_20260910/TARIFF_EXTENSION_REVIEW.md',
+     'outputs/meeting_20260910/TARIFF_MATRIX_COVERAGE.csv'],
+    'a9a9720f471e5d3b30acff6f46208f20c22f18fc; extension a6e5059688703641db9aa3349b6ab6a9f76c1987; arrays 583447/592644/592645',
+    'Same 62 trips/five duties, 240-kWh battery and declared 350-kW charging scenario: original repriced/fixed-duty/joint totals peak08 490.29–490.98/267.34/242.55, peak12 549.59–550.60/320.09/304.78, peak18 483.45–483.72/211.83/182.35.',
+    'Original within-window power is unobserved; optimized schedules end with far less terminal surplus and lower modeled start fees. These are model-currency comparisons, not pure time-shifting or verified operator savings; shared ports and newly recovered nonlinear charging are outside this cohort.',
+    'Sixteen tariff cells across four cohorts/tariffs are one matched study; demand-shift PNGs are views of the same CSV.',
+))
+records.append(make(
+    'current_giro_k1_recovery', '2026-09-09', 'source recovery and feasibility audit',
+    'matched replay', 'GIRO single-duty recovery probes',
+    'outputs/meeting_20260910/giro_k1_recovery_review/README.md',
+    ['outputs/meeting_20260910/giro_k1_recovery_review/k1_results.json',
+     'outputs/meeting_20260910/giro_k1_recovery_review/k2_results.json',
+     'outputs/meeting_20260910/PARTILLE_RECHARGE_PIECEWISE_AUDIT.md'],
+    '369d3878f96a1164a7b2319a137d136fb66de52d; branch codex/giro-k1-recovery-20260909',
+    '42/42 literal duties feasible in fixed-sequence and unrestricted single-vehicle DP probes; recovered trip order matches GIRO 42/42; six regression checks passed.',
+    'Feasibility/max-cardinality probes, not production cost pricing, column-generation convergence or multi-vehicle optimality. Pair probes expose greedy/charger-overlap limitations.',
+    'Weekday/suffix variants are grouped by the source audit and are not independent samples.',
+))
+records.append(make(
+    'current_giro_k23_capacity', '2026-09-09', 'bounded cluster pilot',
+    'results available', 'Capacity-aware k2/k3 comparison',
+    'outputs/meeting_20260910/giro_k23_capacity_duals/README.md',
+    ['outputs/meeting_20260910/giro_k23_capacity_duals'],
+    'ed3f1538d1987a5692fabb2961b3245b6cf7c257; array 652944',
+    'Eight matched cells with capacity duals and retained charging/no-charging alternatives; pilot documents an E1-short-k2 constrained LP2 and pool MIP3 versus unconstrained2.',
+    'Full-window policy remains restrictive; bounded pilot does not eliminate all integer gaps or certify the complete event model. Local directory contains package/manifest rather than a full consolidated result table.',
+    'Eight cells are one bounded diagnostic pilot.',
+))
+records.append(make(
+    'current_giro_k23_newphysics', '2026-09-09 to 2026-09-10', 'new-physics plan and submission',
+    'audit', 'GIRO constraints, nonlinear charging and k2/k3 diagnostic cases',
+    'outputs/meeting_20260910/giro_k23_newphysics/PLAN.md',
+    ['outputs/meeting_20260910/giro_k23_newphysics'],
+    '43c84ad3f51a157bc21fdc383ef5eb46d902ebe3; array 650667',
+    'Eight deterministic same-type shortest/longest k2/k3 cases; 15% floor, vehicle-specific energy, nonlinear remote charging, 60-kW depot, setup/minimum connected time and conservative one-minute port rows.',
+    'Plan explicitly withholds full-model LP/MIP certification when charger duals/labels are limited; no hard 65% terminal duty requirement is imposed. Treat any package without final JSON as a plan, not a result.',
+    'Four chains with two scales are diagnostic extremes, not eight random samples.',
+    'local plan + remote execution'))
+records.append(make(
+    'current_giro_source_capacity', '2026-09-09', 'source-document audit',
+    'audit', 'GIRO email attachments, station capacity and SOC interpretation',
+    'outputs/meeting_20260910/GIRO_EMAIL_ATTACHMENT_AUDIT.md',
+    ['outputs/meeting_20260910/GIRO_EMAIL_CONFIRMED_ASSUMPTIONS.md',
+     'outputs/meeting_20260910/GIRO_FULL_FLEET_CAPACITY_AUDIT.md',
+     'outputs/meeting_20260910/GIRO_SOC_CAPACITY_CALIBRATION.json',
+     'outputs/meeting_20260910/giro_email_sources'],
+    'audit prepared 2026-09-09; source attachment hashes embedded in report',
+    'Documents 15% minimum SOC, 65% recharge target (not hard terminal duty floor), 60-kW PARX depot, SOC-dependent opportunity charging, documented charger counts, blocking/FIFO and other operational restrictions.',
+    'Current 240/240 constant-power experiments approximate only one vehicle group; master currently omits shared station-time rows, blocking and crew constraints. Original source charging interval occupancy is auditable but within-window power traces are absent.',
+    'Email attachment renders, JSON, MD and source files are one source-audit bundle.',
+))
+records.append(make(
+    'current_april_replay_and_cover_controls', '2026-09-08 to 2026-09-10', 'matched replay/control plan',
+    'matched replay', 'Historical 175-trip source replay and cover-versus-partition controls',
+    'outputs/meeting_20260910/april_source_replay/README.md',
+    ['outputs/meeting_20260910/historical_cover_controls/README.md',
+     'outputs/meeting_20260910/historical_matched_regression_plan.md',
+     'outputs/meeting_20260910/historical_matched_regression_plan.json'],
+    'candidate source 14364901ec74c85df90c8ac0b3d635f7e0547776; cover controls Slurm array 651623',
+    'Behavior-matching April replay preserves old DP/covering settings; cover-vs-partition plan fixes four arms (300/300 and 240/240). The report identifies current full-cache 10-route witnesses separately.',
+    'Replay is a reconstructed source, not bitwise historical identity; cover and partition change feasible set semantics. Remote output may be incomplete at inventory time.',
+    'Replay, controls and plan JSON are one regression study, not independent trials.',
+    'local plan + remote execution'))
+records.append(make(
+    'current_terminal_energy', '2026-09-10', 'matched pilot plan/results package',
+    'matched replay', 'Equal terminal-energy charging comparison',
+    'outputs/post_meeting_20260910/terminal_energy/README.md',
+    ['outputs/post_meeting_20260910/terminal_energy/plan.json',
+     'outputs/post_meeting_20260910/terminal_energy/local_peak12_frontier_smoke_summary.json'],
+    '2424369f4b5c40198a22698b7a460d6aa8129169; arrays 778801/778802',
+    '62-trip, five-duty cohort; common aggregate terminal minimum 280.7833253 kWh; fixed-duty frontier and joint pool pilot with equal terminal-energy condition.',
+    'Local peak12 fixed-duty smoke is complete; joint remote outputs may still be pending. Fixed result is exact only over enumerated event frontiers; joint old pool lacked terminal-energy dual and is not a full-model certificate.',
+    'Plan, smoke and remote array form one pilot; do not count the fixed smoke and joint job as separate datasets.',
+    'local smoke + remote execution'))
+records.append(make(
+    'current_capacity_speed', '2026-09-10', 'implementation audit and launch package',
+    'audit', 'Capacity-aware/depot-speed pilot',
+    'outputs/post_meeting_20260910/capacity_speed/IMPLEMENTATION_REPORT.md',
+    ['outputs/post_meeting_20260910/capacity_speed/TWO_STAGE_CORRECTION.md',
+     'outputs/post_meeting_20260910/capacity_speed/LAUNCH_STATUS.md',
+     'outputs/post_meeting_20260910/capacity_speed/TEST_RESULTS.txt'],
+    'execution 7d38efdd39857438c4a6e30b43b09e973ce51086; corrected MIP wrapper 9bf3f752a5d2786bf5a1e9c613ff6440415569a9; arrays 772080/773334',
+    'Corrected two-stage implementation and launch package: CG on default partition, dependent MIP on Scaglione, one completed legacy weighted control retained.',
+    'At inventory cutoff this is primarily implementation/launch evidence; rows must be promoted only when final result JSON, physical checks and MIP proof scope are available.',
+    'First staging root and canceled weighted array are recorded as superseded controls, not new scientific campaigns.',
+    'local implementation + remote execution'))
+records.append(make(
+    'current_mip_recovery', '2026-09-10', 'solver recovery audit/result',
+    'audit', 'Saved-start/license and warm k10 recovery',
+    'outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md',
+    ['outputs/post_meeting_20260910/license_and_mip_recovery/publication_recovery_772009.json',
+     'outputs/post_meeting_20260910/license_and_mip_recovery/warm_k10_job772009_validated.json'],
+    '871d057e1067411f09581e37d78f7c1ca43f68bb; authoritative job 772009; duplicate 772031 excluded',
+    'Audits two independent saved-start failures, validates route-block preservation, and recovers k10 Stage1 fleet10/bound10; Stage2 conditional cost TIME_LIMIT with 14.3934% gap and all selected routes physically replayed.',
+    'Scheduler publication FAILED because a duplicate job occupied the shared path; scientific result was recovered from the per-job artifact. Generic added_giro field refers to a fresh solver covering start, not original GIRO routes.',
+    'Failure/retry artifacts are one recovery incident, not independent MIP experiments.',
+))
+
+# Derived reports, phase snapshots and unreliable figures.
+records.append(make(
+    'current_research_state_snapshots', '2026-09-06 to 2026-09-09', 'manager snapshot/reports',
+    'audit', 'Dated research-state snapshots and phase-1 interim artifacts',
+    'outputs/meeting_20260910/RESEARCH_STATE_20260909_1124.md',
+    ['outputs/meeting_20260910/RESEARCH_STATE_20260909_MORNING.md',
+     'outputs/meeting_20260910/CURRENT_STATE.md',
+     'outputs/research_state_20260908/RESEARCH_MANAGER_UPDATE.md',
+     'outputs/research_state_20260908/provenance.json',
+     'outputs/phase1_interim_20260906/threshold_9_15_interim_20260906.xlsx',
+     'outputs/phase1_interim_20260907/threshold_9_15_interim_20260907.xlsx',
+     'outputs/manager_review_20260907/MANAGER_ASSESSMENT.md'],
+    'snapshots dated 2026-09-06 to 2026-09-09; source hashes embedded in each report',
+    'Derived state summaries of 70-pool, nested-chain, tariff, greedy and replication campaigns; interim notebooks/XLSX organize but do not replace raw result JSON/logs.',
+    'Not primary solver evidence; later snapshots supersede earlier denominator/progress counts. Use their cited source paths and scope labels before quoting numbers.',
+    'Morning/1124 reports and interim workbooks are snapshots of overlapping work, not separate campaigns.',
+))
+records.append(make(
+    'figure_discrepancy', '2026-08 to 2026-09', 'figure-source/audit report',
+    'figure-only/unreliable', 'Historical/event comparison figure provenance correction',
+    'outputs/meeting_20260910/FIGURE_DISCREPANCY_AUDIT.md',
+    ['outputs/meeting_20260910/FIGURE_SOURCE_REPORT_2683c775.md',
+     'outputs/meeting_20260910/FIGURE_SOURCE_PANEL_A_2683c775.csv',
+     'outputs/meeting_20260910/comments_and_slides'],
+    'figure-source commit 2683c775c2ba29018404c5f41ca2aff3266b5739',
+    'Explains the manually assembled nine-cell figure and why it mixed historical 300/300, current 240/240, I_model, finite-pool and timed-incumbent values.',
+    'No saved plotting script or authoritative consolidated dataset existed for the original image; it must not be reused as research evidence. The CSV/source report is a corrected provenance aid, not a new solver run.',
+    'All PNG/PDF/Slides exports of the image are one figure artifact.',
+))
+records.append(make(
+    'legacy_comparison_figures', '2026-04 to 2026-05', 'PNG/PDF figure exports',
+    'figure-only/unreliable', 'Legacy algorithm/charging comparison figures',
+    'data/aggregate_algorithm_comparison.png',
+    ['data/algorithm_comparison.png',
+     'data/algorithm_comparison_RND001.png',
+     'data/algorithm_comparison_RND002.png',
+     'data/algorithm_comparison_RND003.png',
+     'data/algorithm_comparison_RND004.png',
+     'data/algorithm_comparison_RND005.png',
+     'data/algorithm_comparison_RND006.png',
+     'data/cheat_algorithm_comparison.png'],
+    'file timestamps only; exact plotting commit/source CSV not bound in the images',
+    'Visual comparisons retained for historical orientation only.',
+    'No authoritative machine-readable binding to input hash, parameter set, proof scope or route pool; use RND002 audit and raw logs instead.',
+    'Nine image exports/variants are one figure family, not nine experiments.',
+))
+records.append(make(
+    'legacy_root_plots', '2026-04 to 2026-08', 'PNG/PDF figure exports',
+    'figure-only/unreliable', 'Legacy convergence, Gantt and bottleneck plots',
+    'src/evsp_k_convergence.png',
+    ['src/evsp_bottleneck_shift.png', 'src/G300_10Bus_Gantt_Clean.pdf',
+     'src/10bus_convergence.pdf', 'src/15bus_convergence.pdf',
+     'src/20bus_convergence.pdf', 'src/30bus_convergence_zoom.pdf',
+     'src/43bus_convergence_zoom.pdf'],
+    'file names/timestamps; source code and exact run binding vary',
+    'Legacy visualizations of convergence, Gantt schedules and time breakdowns.',
+    'Plots may combine different grids, tariffs, instances and stopping rules; figures cannot establish integer or route-space optimality without raw source binding.',
+    'All root-level plot exports are one legacy visualization archive.',
+))
+records.append(make(
+    'meeting_and_handoff_docs', '2026-09-07 to 2026-09-10', 'derived brief/handoff documents',
+    'audit', 'Independent-review, manager and meeting documentation',
+    'outputs/independent_review_20260907/EVSP_DR_INDEPENDENT_REVIEW_HANDOFF_20260907.md',
+    ['outputs/manager_review_20260907/MANAGER_ASSESSMENT.md',
+     'outputs/meeting_20260910/MEETING_BRIEF.md',
+     'outputs/meeting_20260910/GOOGLE_DOC_SAVED_20260909.md',
+     'outputs/post_meeting_20260910/README.md',
+     'outputs/post_meeting_20260910/STOCHASTIC_REVIEW_HANDOFF.md'],
+    'document timestamps 2026-09-07 to 2026-09-10; source hashes/cutoffs are stated inside individual docs',
+    'Human-facing summaries, working briefs and handoff notes that point to raw artifacts and current audits.',
+    'Derived narrative is not primary evidence and may contain superseded interpretations; quote the linked source row instead of treating prose as a run.',
+    'Briefs and handoffs are overlapping documentation views, not experiments.',
+))
+records.append(make(
+    'monitor_snapshot_family', '2026-09-08 to 2026-09-10', 'queue/monitor snapshots',
+    'audit', 'Cluster monitoring and scheduler evidence',
+    'outputs/post_meeting_20260910/cluster_snapshot_verified.json',
+    ['outputs/post_meeting_20260910/cluster_snapshot.json',
+     'outputs/post_meeting_20260910/cluster_snapshot_final.json',
+     'outputs/post_meeting_20260910/resource_check_20260910.json',
+     'outputs/meeting_20260910/snapshots'],
+    'snapshot timestamps 2026-09-08 to 2026-09-10',
+    'Scheduler state, resource policy, dependencies and job completion/censoring observations.',
+    'Queue snapshots are operational evidence, not research outcomes; state changes over time and should not be used as a resource benchmark.',
+    'All monitor snapshots are one time-varying scheduler record.',
+))
+records.append(make(
+    'unclassified_local_leftovers', 'through 2026-09-10', 'unclassified raw/derived leftovers',
+    'audit', 'Inventory boundary leftovers requiring future curation',
+    'src/results',
+    ['outputs', 'data'],
+    'inventory generated 2026-09-10; no claim of complete Git/object enumeration',
+    'Includes empty checkpoint/retry directories, trace-only files, copied remote artifacts, untracked datasets and additional notebooks/plots outside the selected logical families.',
+    'This row is deliberately not a scientific result. Several analysis paths cited by reports (notably analysis/scale_ladder, analysis/event_uniform_envelope, analysis/research_control_tower and legacy_exact) are not retained locally.',
+    'Empty retries and derivative exports were not counted as independent experiments; future curation should promote only hash-bound result artifacts.',
+    'partially classified'))
+
+# Validate local links for accidental typos, but permit explicit parenthetical remote references.
+for r in records:
+    if not r['primary_path'].startswith('(') and not Path(r['primary_path']).exists():
+        raise FileNotFoundError(f"missing primary path for {r['record_id']}: {r['primary_path']}")
+
+fieldnames = list(records[0].keys())
+with CSV_PATH.open('w', newline='') as f:
+    w = csv.DictWriter(f, fieldnames=fieldnames)
+    w.writeheader()
+    w.writerows(records)
+
+from collections import Counter
+classes = Counter(r['evidence_class'] for r in records)
+avails = Counter(r['availability'] for r in records)
+# Build markdown with links to local primary paths.
+def md_link(path, label=None):
+    if path.startswith('('): return path
+    p = Path(path)
+    label = label or str(p.relative_to(ROOT)) if str(p).startswith(str(ROOT)) else (label or path)
+    return f'[{label}](<{path}>)'
+
+def short(text, n=300):
+    text = text.replace('\n',' ')
+    return text if len(text)<=n else text[:n-1]+'…'
+
+lines=[]
+lines += [
+'# Historical evidence inventory',
+'',
+'Generated 2026-09-10 from the local checkout and retained workspace artifacts. This is a searchable index, not a claim that every Git object, Unicorn output, download, or historical run is present.',
+'',
+'## How to read it',
+'',
+'Each CSV row is one logical campaign, report, or evidence family. Repeated attempts, empty checkpoint directories, monitor snapshots, and PNG/PDF exports are grouped so they are not mistaken for independent replications. The `evidence_class` column uses:',
+'',
+'- `historical evidence`: retained April/May raw logs, checkpoints, solutions, or legacy summaries.',
+'- `results available`: current local result tables or auditable result bundles with explicit scope.',
+'- `matched replay`: a same-input or source-bound replay/control, including charging and GIRO-witness comparisons.',
+'- `audit`: provenance, implementation, physical-capacity, queue, plan, or interpretation work; it may contain no completed solver result.',
+'- `figure-only/unreliable`: a visual artifact whose source binding is incomplete or mixed.',
+'',
+'Use `result_scope` before quoting a number. In particular, `I_pool` is an integer optimum of one frozen generated column pool, `I_timed` is a censored incumbent, and a certified reduced-cost LP is scoped to its named discretized route graph. Neither automatically proves the unrestricted physical or shared-capacity problem.',
+'',
+'## Inventory counts',
+'',
+'| Measure | Count |',
+'|---|---:|',
+]
+for k,v in sorted(classes.items()): lines.append(f'| evidence class: {k} | {v} |')
+for k,v in sorted(avails.items()): lines.append(f'| availability: {k} | {v} |')
+lines += [
+'',
+'## High-value anchors',
+'',
+'| Evidence family | What the retained material supports | Main caveat |',
+'|---|---|---|',
+'| April/May legacy raw families | Finite historical pricing/MIP observations, including April 43 finite-model solves and May GIRO-seeded workflows. | Old grids, master semantics, seeds and route pools differ; no clean algorithm regression is present. |',
+'| April selected 175-trip anchor | 12-bus timed incumbent in the retained legacy trace; later full-cache audit has a separate 10-route named-event-model witness. | Original run identity and pool are incomplete; do not call the 12-bus row a global optimum. |',
+'| Current six nested chains | Exact row-level LP/MIP outcomes for 84 random nested cells, with event-grid hashes, CG stop/proof metadata and physical replay fields. | Six dependent chains are a sample, not a statistically significant estimate for all 40 duties; large cells are censored. |',
+'| Full-cache witness audit | Target-fleet GIRO partitions physically replay in the current named event model for 12 above-target pool cases and the 175-trip extension. | This diagnoses missing pool columns; it is not RAW recovery and omits shared station capacity. |',
+'| Warm p3 chain | A controlled inherited-column p3 comparison; k8 has the same LP objective but different pool integer outcome (fresh proves 9, warm proves 8). | Only p3 used inheritance; import time dominates k10; one case cannot establish a general warm-start speed claim. |',
+'| Charging tariff study | Three-way original repriced/fixed-duty/joint costs at peaks 08/12/18 on the matched 62-trip cohort. | Original power trace and terminal policy are unknown; optimized schedules carry less terminal energy and lower modeled start fees. |',
+'| GIRO source audit | Documented 15% floor, 65% recharge target, 60-kW depot, nonlinear opportunity charging and station/blocking constraints. | Current production master does not enforce all documented operational constraints. |',
+]
+lines += [
+'',
+'## Current nested-chain result snapshot',
+'',
+'The detailed machine-readable source is '+md_link(ap('outputs/meeting_20260910/CHAIN_DIAGNOSIS_20260909.csv'))+'. The following compact table is copied from the dated report; “fleet” is the finite-pool integer outcome, not a full route-space optimum:',
+'',
+'| target k | chain 1 | chain 2 | chain 3 | chain 4 | chain 5 | chain 6 |',
+'|---:|---:|---:|---:|---:|---:|---:|',
+'| 2 | 2 | 2 | 2 | 2 | 2 | 2 |',
+'| 3 | 3 | 4 | 3 | 3 | 3 | 3 |',
+'| 4 | 4 | 5 | 7 | 4 | 8 | 5 |',
+'| 5 | 5 | 8 | 6 | 9 | 13 | 5 |',
+'| 6 | 12* | 13 | 13 | 14* | 24* | 6 |',
+'| 7 | 27* | 25* | 21* | 21* | 22* | 8 |',
+'',
+'`*` marks a time-limited MIP status in the dated diagnosis. The CG terminal route-weight endpoint is approximately k for 82/84 cells because an independently computed simultaneous-trip overlap lower bound is k and the feasible fractional endpoint attains it; that does not imply the frozen pool contains a k-route integer combination.',
+'',
+'## Git and retention boundary',
+'',
+'- April/May anchors are tied to commits `8ef8049` (artifact retention), `7c564da` (GIRO initialization), `323c586` (continuation fixes), `22186da` (pricing stopping/escalation), and `58772c7` (full-SOC start/no artificial initial charging cost).',
+'- The local `git log --all` has no tracked commits from 2026-05-22 through 2026-07-29. That is an evidence gap, not evidence that no work happened.',
+'- July/August provenance includes the greedy reset (`0d7b48b`), event/pricing correctness (`ecfec4c`, `2f5935f`, `b96c046`, `e1b436b`) and durable exact-CG pools (`c74148c`).',
+'- Current result packages bind to later commits listed in the CSV. The local checkout has many `codex/` and remote branches, but branch existence alone is not an experiment; only rows with retained outputs are indexed as evidence.',
+'',
+'## Missing and unclassified material',
+'',
+'Raw directories cited by historical reports but not retained locally include `analysis/scale_ladder/ll_20260820c`, `analysis/event_uniform_envelope_20260821`, `analysis/research_control_tower_20260830`, `analysis/legacy_exact_20260805`, and several Unicorn campaign roots under `/home/nc437`. The reports preserve some summaries, hashes and remote paths, so those entries are indexed as partial or referenced-not-retained rather than silently promoted to local results.',
+'',
+'Within local `src/results`, many `ckpt_*`, `diag_*`, empty retries and trace-only files remain in the `unclassified_local_leftovers` row. They need an explicit source hash and run identity before being promoted into the register. This avoids inflating the sample with retries or treating a screenshot as a solver result.',
+'',
+'## Reproduction and search',
+'',
+'The CSV can be filtered by `evidence_class`, `campaign_or_family`, `period`, `availability`, or `comparability_warnings`. Primary paths are absolute for direct opening in the workspace. The generation script is '+md_link(ap('outputs/research_register/build_historical_inventory.py'))+'.',
+'',
+'Raw numeric claims remain anchored in the linked audit reports: '+md_link(ap('outputs/meeting_20260910/HISTORY_EVIDENCE.md'))+', '+md_link(ap('outputs/meeting_20260910/HISTORICAL_175_TRIP_REGRESSION_AUDIT.md'))+', '+md_link(ap('outputs/meeting_20260910/CHAIN_DIAGNOSIS_20260909.md'))+', and '+md_link(ap('outputs/meeting_20260910/LP_K_EQUALS_AUDIT_20260910.md'))+'.',
+]
+MD_PATH.write_text('\n'.join(lines) + '\n')
+
+# Write a sidecar metadata report for quick machine inspection in stdout only.
+print(json.dumps({'csv':str(CSV_PATH),'md':str(MD_PATH),'records':len(records),'evidence_class':classes,'availability':avails}, indent=2))
