@@ -77,14 +77,27 @@ def check_identity(commit):
         raise ValueError("clean detached execution checkout required")
 
 
-def terminal(route, kind="grid"):
+def _recorded_terminal(route, kind="grid"):
     key = (
         "expanded_grid_terminal_soc_kwh"
         if kind == "grid" else "continuous_terminal_soc_kwh"
     )
-    value = float((route.get("continuous_realization") or {})[key])
+    realization = route.get("continuous_realization") or {}
+    if key not in realization:
+        return None
+    try:
+        value = float(realization[key])
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"invalid {kind} terminal energy") from exc
     if not math.isfinite(value) or value < -TOL:
         raise ValueError(f"invalid {kind} terminal energy")
+    return value
+
+
+def terminal(route, kind="grid"):
+    value = _recorded_terminal(route, kind)
+    if value is None:
+        raise ValueError(f"missing {kind} terminal energy metadata")
     return value
 
 
@@ -153,7 +166,14 @@ def validate_saved_status(status, cell, unique_trip_sets):
 
 
 def replay_pool_routes(problem, routes, prices):
-    """Recompute every terminal coefficient and grid cost used by the MIP."""
+    """Recompute every coefficient and cost used by the MIP.
+
+    A saved pool can contain older singleton records without a
+    ``continuous_realization`` object.  Those records are admitted only after
+    the current expanded-path replay succeeds.  The replayed mapping is then
+    carried forward in the in-memory route; no terminal energy is inferred or
+    defaulted.
+    """
     from audit_giro_known_columns import HORIZON_MIN
     from expanded_path_realization import realize_expanded_path, realized_costs
     from run_exact_pool_mip import validate_injected_route
@@ -178,16 +198,45 @@ def replay_pool_routes(problem, routes, prices):
         costs = realized_costs(
             realized, detail["mapping"], station_prices=prices,
         )
-        checks = (
+        mapping = detail["mapping"]
+        recomputed_grid_terminal = float(
+            mapping["expanded_grid_terminal_soc_kwh"]
+        )
+        recomputed_continuous_terminal = float(
+            mapping["continuous_terminal_soc_kwh"]
+        )
+        checks = [
             (float(route["cost"]),
              float(costs["recomputed_expanded_grid_cost"]), "grid cost"),
-            (terminal(route, "grid"),
-             float(detail["mapping"]["expanded_grid_terminal_soc_kwh"]),
-             "grid terminal energy"),
-            (terminal(route, "continuous"),
-             float(detail["mapping"]["continuous_terminal_soc_kwh"]),
-             "continuous terminal energy"),
+        ]
+        recorded_grid_terminal = _recorded_terminal(route, "grid")
+        if recorded_grid_terminal is not None:
+            checks.append((
+                recorded_grid_terminal, recomputed_grid_terminal,
+                "grid terminal energy",
+            ))
+        recorded_continuous_terminal = _recorded_terminal(
+            route, "continuous"
         )
+        if recorded_continuous_terminal is not None:
+            checks.append((
+                recorded_continuous_terminal, recomputed_continuous_terminal,
+                "continuous terminal energy",
+            ))
+        if route.get("continuous_realized_cost") is not None:
+            try:
+                recorded_continuous_cost = float(
+                    route["continuous_realized_cost"]
+                )
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    f"pool route {ordinal} has invalid continuous cost"
+                ) from exc
+            checks.append((
+                recorded_continuous_cost,
+                float(costs["continuous_realized_cost"]),
+                "continuous cost",
+            ))
         for recorded, recomputed, label in checks:
             if not math.isclose(
                 recorded, recomputed, abs_tol=1e-6, rel_tol=1e-10,
@@ -195,11 +244,24 @@ def replay_pool_routes(problem, routes, prices):
                 raise ValueError(
                     f"pool route {ordinal} {label} metadata mismatch"
                 )
-        if terminal(route, "continuous") + TOL < terminal(route, "grid"):
+        if recomputed_continuous_terminal + TOL < recomputed_grid_terminal:
             raise ValueError(
                 f"pool route {ordinal} grid terminal energy is not conservative"
             )
-        validated.append(route)
+        normalized = dict(realized)
+        normalized["continuous_realized_cost"] = float(
+            costs["continuous_realized_cost"]
+        )
+        normalized["continuous_realized_charging_blocks"] = costs[
+            "continuous_realized_charging_blocks"
+        ]
+        normalized["continuous_realized_charging_blocks_json_bytes"] = len(
+            json.dumps(
+                normalized["continuous_realized_charging_blocks"],
+                sort_keys=True, separators=(",", ":"),
+            ).encode()
+        )
+        validated.append(normalized)
     return validated
 
 

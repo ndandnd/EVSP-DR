@@ -2,6 +2,7 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,6 +31,47 @@ def route(trip, terminal_kwh, variable_cost):
 
 
 class TerminalEnergyFairPilotTests(unittest.TestCase):
+    def test_replay_reconstructs_legacy_terminal_metadata(self):
+        legacy = route(0, 0.0, 0.0)
+        legacy.pop("continuous_realization")
+        with self.assertRaisesRegex(ValueError, "missing grid terminal"):
+            PILOT.terminal(legacy, "grid")
+        mapping = {
+            "expanded_grid_terminal_soc_kwh": 12.5,
+            "continuous_terminal_soc_kwh": 14.25,
+        }
+        replayed = dict(legacy)
+        replayed["continuous_realization"] = dict(mapping)
+        costs = {
+            "recomputed_expanded_grid_cost": legacy["cost"],
+            "continuous_realized_cost": legacy["cost"],
+            "continuous_realized_charging_blocks": [],
+        }
+        with patch(
+            "expanded_path_realization.realize_expanded_path",
+            return_value=(replayed, {"mapping": mapping}),
+        ), patch(
+            "expanded_path_realization.realized_costs",
+            return_value=costs,
+        ), patch(
+            "run_exact_pool_mip.validate_injected_route",
+            return_value=None,
+        ):
+            result = PILOT.replay_pool_routes(object(), [legacy], {})
+
+        self.assertEqual(len(result), 1)
+        normalized = result[0]
+        self.assertEqual(
+            PILOT.terminal(normalized, "grid"),
+            mapping["expanded_grid_terminal_soc_kwh"],
+        )
+        self.assertEqual(
+            PILOT.terminal(normalized, "continuous"),
+            mapping["continuous_terminal_soc_kwh"],
+        )
+        self.assertEqual(normalized["continuous_realized_cost"], legacy["cost"])
+        self.assertEqual(normalized["continuous_realized_charging_blocks"], [])
+
     def test_fixed_and_joint_use_same_aggregate_terminal_row(self):
         frontiers = []
         for duty in range(5):
