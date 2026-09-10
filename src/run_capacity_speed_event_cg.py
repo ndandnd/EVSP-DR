@@ -156,12 +156,15 @@ def build_network(args, problem, prices):
 
 
 class ExactCapacityMaster:
-    def __init__(self, trips, *, capacity: bool, threads: int):
+    def __init__(self, trips, *, capacity: bool, threads: int, log_path=None):
         self.trips = tuple(trips)
         self.capacity = bool(capacity)
-        self.model = gp.Model("capacity_speed_exact_event_lp")
-        self.model.Params.OutputFlag = 0
+        self.model = gp.Model("capacity_speed_exact_event_cover_lp")
+        self.model.Params.OutputFlag = 1 if log_path else 0
         self.model.Params.Threads = int(threads)
+        if log_path:
+            Path(log_path).parent.mkdir(parents=True, exist_ok=True)
+            self.model.Params.LogFile = str(log_path)
         self.model.ModelSense = GRB.MINIMIZE
         self.artificial = {}
         self.trip_rows = {}
@@ -171,7 +174,7 @@ class ExactCapacityMaster:
             )
             self.artificial[trip] = artificial
             self.trip_rows[trip] = self.model.addConstr(
-                artificial == 1.0, name=f"partition_{trip}",
+                artificial >= 1.0, name=f"cover_{trip}",
             )
         self.capacity_rows = {}
         if self.capacity:
@@ -203,11 +206,17 @@ class ExactCapacityMaster:
         self.model.update()
 
     def solve(self):
+        started = time.perf_counter()
         self.model.optimize()
+        runtime = time.perf_counter() - started
         if self.model.Status != GRB.OPTIMAL:
             raise RuntimeError(f"restricted LP status {self.model.Status}")
         return {
             "objective": float(self.model.ObjVal),
+            "runtime_s": runtime,
+            "rows": int(self.model.NumConstrs),
+            "columns": int(self.model.NumVars),
+            "nonzeros": int(self.model.NumNZs),
             "artificial_total": sum(value.X for value in self.artificial.values()),
             "route_weight": sum(value.X for value in self.variables),
             "trip_duals": {
@@ -224,9 +233,13 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
     if out.exists() or pool_out.exists():
         raise FileExistsError("refusing to overwrite CG output")
     started = time.perf_counter()
+    network_started = time.perf_counter()
     network = build_network(args, problem, prices)
+    network_build_s = time.perf_counter() - network_started
+    log_path = out.with_suffix(out.suffix + ".gurobi.log")
     master = ExactCapacityMaster(
         problem.trips, capacity=ARMS[args.arm]["capacity"], threads=args.threads,
+        log_path=log_path,
     )
     keys = set()
     for trip in problem.trips:
@@ -246,12 +259,14 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
             stop_reason = "cg_wall_limit"
             break
         lp = master.solve()
+        pricing_started = time.perf_counter()
         candidate = network.min_reduced_cost_route(
             lp["trip_duals"],
             capacity_duals=lp["capacity_duals"],
             capacity_sites=set(CHARGER_COUNTS) if ARMS[args.arm]["capacity"] else None,
             capacity_grid_min=1,
         )
+        pricing_s = time.perf_counter() - pricing_started
         if candidate is None:
             stop_reason = "pricing_no_path"
             break
@@ -270,6 +285,11 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
         iterations.append({
             "iteration": iteration,
             "lp_objective": lp["objective"],
+            "lp_solve_s": lp["runtime_s"],
+            "lp_rows": lp["rows"],
+            "lp_columns": lp["columns"],
+            "lp_nonzeros": lp["nonzeros"],
+            "pricing_s": pricing_s,
             "artificial_total": lp["artificial_total"],
             "route_weight": lp["route_weight"],
             "nonzero_capacity_duals": len(lp["capacity_duals"]),
@@ -300,10 +320,10 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
         "stop_reason": stop_reason,
         "certified_rc_optimal": certified,
         "pricing_certificate_scope": (
-            "full conservative event-time/SOC partition LP with documented "
+            "full conservative event-time/SOC covering LP with documented "
             "one-minute station-capacity rows"
             if ARMS[args.arm]["capacity"] else
-            "full conservative event-time/SOC partition LP without shared capacity"
+            "full conservative event-time/SOC covering LP without shared capacity"
         ),
         "terminal_exact_min_reduced_cost": terminal_rc,
         "final": {
@@ -326,6 +346,8 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
             "parx_capacity": "unlimited",
         },
         "network": network.metrics(),
+        "network_build_s": network_build_s,
+        "gurobi_log": str(log_path),
         "iterations": iterations,
         "runtime_s": time.perf_counter() - started,
         "pool": str(pool_out),
@@ -372,8 +394,23 @@ def physical_capacity_audit(routes, selected):
     return {"valid": valid, "half_open_intervals": True, "stations": detail}
 
 
+def duplicate_service_audit(routes, selected, trips):
+    counts = {trip: 0 for trip in trips}
+    for index in selected:
+        for trip in routes[index]["trips"]:
+            counts[trip] += 1
+    return {
+        "all_trips_covered": all(count >= 1 for count in counts.values()),
+        "overcovered_trip_count": sum(count > 1 for count in counts.values()),
+        "extra_trip_assignments": sum(max(0, count - 1) for count in counts.values()),
+        "overcovered_trips": {
+            str(trip): count for trip, count in counts.items() if count > 1
+        },
+    }
+
+
 def solve_mip(args, problem, routes, capacity, log_path):
-    model = gp.Model("capacity_speed_exact_event_mip")
+    model = gp.Model("capacity_speed_exact_event_cover_mip")
     model.Params.OutputFlag = 1
     model.Params.LogFile = str(log_path)
     model.Params.Threads = int(args.threads)
@@ -383,8 +420,8 @@ def solve_mip(args, problem, routes, capacity, log_path):
     for trip in problem.trips:
         model.addConstr(
             gp.quicksum(x[index] for index, route in enumerate(routes)
-                        if trip in route["trips"]) == 1.0,
-            name=f"partition_{trip}",
+                        if trip in route["trips"]) >= 1.0,
+            name=f"cover_{trip}",
         )
     if capacity:
         memberships = [route_capacity_rows(route) for route in routes]
@@ -438,6 +475,9 @@ def run_mip(args, problem, prov, out: Path, pool: Path, cg_status: Path):
         args, problem, routes, ARMS[args.arm]["capacity"], log_path,
     )
     audit = physical_capacity_audit(routes, result["selected_indices"])
+    duplicate_audit = duplicate_service_audit(
+        routes, result["selected_indices"], problem.trips,
+    )
     if ARMS[args.arm]["capacity"] and result["has_solution"] and not audit["valid"]:
         raise RuntimeError("selected MIP solution fails continuous capacity audit")
     payload = {
@@ -450,6 +490,7 @@ def run_mip(args, problem, prov, out: Path, pool: Path, cg_status: Path):
         "pool_sha256": sha256_file(pool),
         "result": result,
         "physical_station_capacity_audit": audit,
+        "duplicate_service_audit": duplicate_audit,
         "capacity_enforced_in_mip": ARMS[args.arm]["capacity"],
         "provenance": prov,
     }
