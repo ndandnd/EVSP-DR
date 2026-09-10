@@ -7,8 +7,9 @@ Differences from the historical final MIP (master.py / run_final_mip.py):
   * trip coverage is exact partitioning (== 1) by default (--cover relaxes
     to >= 1, reporting overcovered trips);
   * costs are the exact-pricer's stored route costs (bus 100k + charging),
-    so "minimize buses first, charging second" holds lexicographically
-    because charging never reaches 1% of one bus.
+    so a proven stage-1 fleet plus stage-2 charging objective is
+    lexicographic; when fleet proof is unavailable, stage 2 is explicitly
+    reported as charging-cost minimization under an at-most fleet cap.
 
 Usage (Gurobi required, e.g. on Unicorn):
 
@@ -1463,10 +1464,43 @@ def optimal_scope(*, two_stage: bool, fleet_proven: bool,
     if not two_stage:
         return "full_pool_objective" if final_status == 2 else "none"
     if not fleet_proven:
+        if cost_stage_executed and final_status == 2:
+            return "charging_cost_under_fleet_cap"
         return "none"
     if cost_stage_executed and final_status == 2:
         return "full_pool_lexicographic"
     return "fleet_only"
+
+
+def validate_incumbent_assignment(indices, routes, trips, *, cover=False):
+    """Validate a solver incumbent before using it as a stage-2 start.
+
+    Gurobi guarantees feasibility for a reported incumbent, but this explicit
+    check keeps stage transitions fail-closed when a callback or test double
+    supplies stale variable values.  It also gives the output a truthful
+    record of why a stage-1 fallback was safe to reuse.
+    """
+
+    if not indices:
+        return False, "empty_incumbent"
+    if any(index < 0 or index >= len(routes) for index in indices):
+        return False, "route_index_out_of_range"
+    expected = set(trips)
+    counts = Counter()
+    for index in indices:
+        route_trips = routes[index].get("trips") or []
+        if not route_trips or not set(route_trips) <= expected:
+            return False, "route_trip_set_invalid"
+        counts.update(route_trips)
+    missing = sorted(expected - set(counts))
+    if missing:
+        return False, "uncovered_trips"
+    if cover:
+        return True, None
+    repeated = sorted(trip for trip in expected if counts[trip] != 1)
+    if repeated:
+        return False, "partition_trip_multiplicity"
+    return True, None
 
 
 def validate_final_selected_routes(
@@ -1873,6 +1907,14 @@ def main(argv=None) -> int:
     parser.add_argument("--result", type=Path, required=True,
                         help="Exact-pricer status JSON (with columns_journal).")
     parser.add_argument("--timelimit", type=int, default=3600)
+    parser.add_argument(
+        "--stage1-timelimit", type=float, default=None,
+        help=(
+            "Two-stage fleet-search budget in seconds. By default stage 1 "
+            "gets half of --timelimit, reserving the remaining half for "
+            "charging-cost stage 2 (3600s therefore means 1800s + 1800s)."
+        ),
+    )
     parser.add_argument("--mipgap", type=float, default=1e-4)
     parser.add_argument("--threads", type=int, default=2)
     parser.add_argument(
@@ -1928,8 +1970,9 @@ def main(argv=None) -> int:
         "--two-stage",
         action="store_true",
         help="Lexicographic solve: stage 1 minimizes the bus count alone; "
-             "stage 1 may use the full --timelimit. Stage 2 minimizes route "
-             "cost only if stage 1 proves the fleet early and time remains.",
+             "stage 2 minimizes charging-related route cost under the "
+             "best feasible stage-1 fleet cap, whether or not stage 1 proves "
+             "that cap globally.",
     )
     parser.add_argument("--out", type=Path, default=None)
     parser.add_argument(
@@ -2281,6 +2324,11 @@ def main(argv=None) -> int:
     progress = None
     termination = None
     if progress_path is not None:
+        configured_stage1_limit = (
+            float(args.stage1_timelimit)
+            if args.stage1_timelimit is not None
+            else float(args.timelimit) / 2.0
+        )
         progress = MIPProgressRecorder(
             progress_path,
             time_limit_s=args.timelimit,
@@ -2297,6 +2345,18 @@ def main(argv=None) -> int:
                 ),
                 "parameters": {
                     "time_limit_s": args.timelimit,
+                    "stage1_time_limit_s": min(
+                        float(args.timelimit),
+                        max(0.0, configured_stage1_limit),
+                    ),
+                    "stage2_default_reserved_time_s": max(
+                        0.0,
+                        float(args.timelimit)
+                        - min(
+                            float(args.timelimit),
+                            max(0.0, configured_stage1_limit),
+                        ),
+                    ),
                     "mip_gap": args.mipgap,
                     "threads": args.threads,
                     "two_stage": args.two_stage,
@@ -2354,7 +2414,9 @@ def main(argv=None) -> int:
         else:
             m.addConstr(expr == 1, name=f"part_{t}")
 
-    def progress_observer(stage, fixed_fleet=None):
+    def progress_observer(
+        stage, fixed_fleet=None, fleet_cap_proven=False,
+    ):
         if progress is None:
             return None
         return GurobiProgressObserver(
@@ -2365,6 +2427,7 @@ def main(argv=None) -> int:
             bus_cost=BUS_COST_KX,
             stage=stage,
             fixed_fleet=fixed_fleet,
+            fleet_cap_proven=fleet_cap_proven,
             termination=termination,
         )
 
@@ -2376,11 +2439,32 @@ def main(argv=None) -> int:
         initial_partition_start["kind"] == "validated_exact_partition"
         and bool(mip_start)
     )
+    stage1_time_limit_s = None
+    stage2_fleet_cap = None
+    stage2_fleet_cap_proven = False
+    stage2_incumbent_validated = False
+    stage2_solver_has_solution = False
+    stage2_solution = []
+    stage2_validation_reason = None
+    stage1_incumbent_validated = False
+    stage1_validation_reason = None
+    stage1_solver_has_solution = False
+    stage1_fallback_used = False
+    final_incumbent_source = None
     if args.two_stage:
-        # Fleet recovery is the primary experiment.  Stage 1 may consume the
-        # complete budget.  Cost optimization is allowed only after the
-        # integer fleet count has been proved, using whatever time remains.
-        m.Params.TimeLimit = args.timelimit
+        # Reserve half of the shared budget for charging-cost optimization by
+        # default.  If fleet search finishes early, stage 2 receives all
+        # remaining time rather than a fixed slice.
+        requested_stage1_limit = (
+            float(args.stage1_timelimit)
+            if args.stage1_timelimit is not None
+            else float(args.timelimit) / 2.0
+        )
+        stage1_time_limit_s = max(
+            0.0,
+            min(float(args.timelimit), requested_stage1_limit),
+        )
+        m.Params.TimeLimit = stage1_time_limit_s
         m.setObjective(
             gp.quicksum(a[i] for i in range(len(routes))), GRB.MINIMIZE
         )
@@ -2396,21 +2480,39 @@ def main(argv=None) -> int:
         gurobi_optimize_wall_s.append(
             time.perf_counter() - optimize_started
         )
-        stage1_has_solution = m.SolCount > 0
+        stage1_solver_has_solution = m.SolCount > 0
+        raw_stage1_solution = (
+            [i for i in range(len(routes) if m.SolCount > 0 else 0)
+             if a[i].X > 0.5]
+        )
+        stage1_incumbent_validated, stage1_validation_reason = (
+            validate_incumbent_assignment(
+                raw_stage1_solution,
+                routes,
+                trips,
+                cover=args.cover,
+            )
+            if stage1_solver_has_solution
+            else (False, "no_solver_incumbent")
+        )
         validated_start_fallback = (
-            not stage1_has_solution
+            not stage1_incumbent_validated
             and validated_start_available
+        )
+        stage1_fallback_used = validated_start_fallback
+        stage1_has_solution = bool(
+            stage1_incumbent_validated or validated_start_fallback
         )
         stage1_buses = (
             int(round(m.ObjVal))
-            if stage1_has_solution
+            if stage1_incumbent_validated
             else (len(mip_start) if validated_start_fallback else None)
         )
         stage1_bound = finite_solver_value(m.ObjBound)
         stage1_status = int(m.Status)
         stage1_gap = (
             finite_solver_value(m.MIPGap)
-            if stage1_has_solution else None
+            if stage1_incumbent_validated else None
         )
         fleet_proven = (
             fleet_bound_proves_incumbent(
@@ -2418,9 +2520,11 @@ def main(argv=None) -> int:
             )
             if (stage1_has_solution or validated_start_fallback) else False
         )
+        stage2_fleet_cap = stage1_buses
+        stage2_fleet_cap_proven = fleet_proven
         stage1_solution = (
-            [i for i in range(len(routes)) if a[i].X > 0.5]
-            if stage1_has_solution
+            raw_stage1_solution
+            if stage1_incumbent_validated
             else (list(mip_start) if validated_start_fallback else [])
         )
         if (
@@ -2437,16 +2541,28 @@ def main(argv=None) -> int:
             else time.time() - t0
         )
         remaining_s = max(0.0, float(args.timelimit) - stage1_runtime_s)
+        stage1_variable_objective = (
+            float(sum(routes[index]["cost"] - BUS_COST_KX
+                      for index in stage1_solution))
+            if stage1_solution else None
+        )
+        stage1_total_objective = (
+            float(sum(routes[index]["cost"] for index in stage1_solution))
+            if stage1_solution else None
+        )
         print(
             f"[MIP] stage 1: fleet={stage1_buses} "
             f"(bound {stage1_bound}, gap {stage1_gap}, "
-            f"proven={fleet_proven}, remaining={remaining_s:.1f}s)"
+            f"proven={fleet_proven}, limit={stage1_time_limit_s:.1f}s, "
+            f"remaining={remaining_s:.1f}s)"
         )
         two_stage_detail = {
             "stage1_buses": stage1_buses,
-            "stage1_solver_has_solution": stage1_has_solution,
+            "stage1_solver_has_solution": stage1_solver_has_solution,
+            "stage1_incumbent_validated": stage1_incumbent_validated,
+            "stage1_validation_reason": stage1_validation_reason,
             "stage1_incumbent_source": (
-                "solver" if stage1_has_solution
+                "solver" if stage1_incumbent_validated
                 else (
                     "validated_start_fallback"
                     if validated_start_fallback else None
@@ -2460,25 +2576,41 @@ def main(argv=None) -> int:
             "stage1_gap": stage1_gap,
             "fleet_proven": fleet_proven,
             "stage1_runtime_s": stage1_runtime_s,
+            "stage1_time_limit_s": stage1_time_limit_s,
+            "stage2_reserved_time_s": max(
+                0.0, float(args.timelimit) - stage1_time_limit_s
+            ),
+            "stage2_available_time_s": remaining_s,
             "stage1_node_count": finite_solver_value(
                 getattr(m, "NodeCount", None)
             ),
             "stage1_solution_count": int(m.SolCount),
+            "stage1_selected_route_indices": list(stage1_solution),
+            "stage1_total_objective": stage1_total_objective,
+            "stage1_charging_related_objective": stage1_variable_objective,
             "stage2_executed": False,
             "stage2_has_solution": False,
+            "stage2_solver_has_solution": False,
+            "stage2_incumbent_validated": False,
+            "stage2_validation_reason": None,
+            "stage2_fleet_cap": stage1_buses,
+            "stage2_fleet_constraint": "at_most",
+            "stage2_fleet_cap_proven": fleet_proven,
+            "stage2_objective": (
+                "charging_related_route_cost_including_charge_start_fee"
+            ),
             "stage2_skip_reason": None,
         }
         if (
             stage1_has_solution
-            and fleet_proven
             and remaining_s >= 1.0
             and not (termination and termination.requested)
             and pool_master_cost_semantics
             != "mixed_expanded_grid_and_continuous_augmented_cost"
         ):
             m.addConstr(
-                gp.quicksum(a[i] for i in range(len(routes))) == stage1_buses,
-                name="fleet_budget",
+                gp.quicksum(a[i] for i in range(len(routes))) <= stage1_buses,
+                name="fleet_cap",
             )
             stage1_set = set(stage1_solution)
             for index in range(len(routes)):
@@ -2502,16 +2634,41 @@ def main(argv=None) -> int:
                 GRB,
                 start_supplied=True,
                 progress_observer=progress_observer(
-                    "cost", fixed_fleet=stage1_buses
+                    "cost", fixed_fleet=stage1_buses,
+                    fleet_cap_proven=fleet_proven,
                 ),
             )
             gurobi_optimize_wall_s.append(
                 time.perf_counter() - optimize_started
             )
             cost_stage_executed = True
-            cost_stage_has_solution = m.SolCount > 0
+            stage2_solver_has_solution = m.SolCount > 0
+            stage2_solution = (
+                [i for i in range(len(routes)) if a[i].X > 0.5]
+                if stage2_solver_has_solution else []
+            )
+            stage2_incumbent_validated, stage2_validation_reason = (
+                validate_incumbent_assignment(
+                    stage2_solution,
+                    routes,
+                    trips,
+                    cover=args.cover,
+                )
+                if stage2_solver_has_solution
+                else (False, "no_solver_incumbent")
+            )
+            cost_stage_has_solution = stage2_incumbent_validated
             two_stage_detail["stage2_executed"] = True
             two_stage_detail["stage2_has_solution"] = cost_stage_has_solution
+            two_stage_detail["stage2_solver_has_solution"] = (
+                stage2_solver_has_solution
+            )
+            two_stage_detail["stage2_incumbent_validated"] = (
+                stage2_incumbent_validated
+            )
+            two_stage_detail["stage2_validation_reason"] = (
+                stage2_validation_reason
+            )
             two_stage_detail["stage2_start_acceptance"] = (
                 stage2_start_acceptance
             )
@@ -2525,8 +2682,6 @@ def main(argv=None) -> int:
             )
         elif not stage1_has_solution:
             two_stage_detail["stage2_skip_reason"] = "no_fleet_incumbent"
-        elif not fleet_proven:
-            two_stage_detail["stage2_skip_reason"] = "fleet_not_proven"
         elif (
             pool_master_cost_semantics
             == "mixed_expanded_grid_and_continuous_augmented_cost"
@@ -2556,13 +2711,7 @@ def main(argv=None) -> int:
         )
         fleet_proven = int(m.Status) == 2
 
-    if args.two_stage and not stage1_has_solution and validated_start_fallback:
-        chosen = list(stage1_solution)
-        status_code = stage1_status
-        solver_obj = float(stage1_buses)
-        solver_bound = stage1_bound
-        mip_gap = stage1_gap
-    elif args.two_stage and not stage1_has_solution:
+    if args.two_stage and not stage1_has_solution:
         chosen = []
         status_code = stage1_status
         solver_obj = None
@@ -2574,19 +2723,34 @@ def main(argv=None) -> int:
         solver_obj = float(stage1_buses)
         solver_bound = stage1_bound
         mip_gap = stage1_gap
-    elif args.two_stage and not cost_stage_has_solution:
-        # The proved fleet incumbent is still a valid deliverable even if the
-        # second optimizer fails to accept its warm start before interruption.
+        final_incumbent_source = (
+            "validated_start_fallback"
+            if stage1_fallback_used else "stage1_solver"
+        )
+    elif args.two_stage and cost_stage_has_solution:
+        chosen = list(stage2_solution)
+        status_code = int(m.Status)
+        solver_obj = finite_solver_value(m.ObjVal)
+        solver_bound = finite_solver_value(m.ObjBound)
+        mip_gap = finite_solver_value(m.MIPGap)
+        final_incumbent_source = "stage2_solver"
+    elif args.two_stage:
+        # Preserve the validated stage-1 solution when stage 2 has no usable
+        # incumbent (timeout, interruption, or an unexpected invalid vector).
         chosen = list(stage1_solution)
         status_code = int(m.Status)
-        solver_obj = float(sum(
-            routes[i]["cost"] - BUS_COST_KX for i in chosen
-        ))
+        solver_obj = stage1_variable_objective
         solver_bound = finite_solver_value(m.ObjBound)
         mip_gap = (
-            max(0.0, solver_obj - solver_bound) / max(1.0, abs(solver_obj))
-            if solver_bound is not None else None
+            max(0.0, solver_obj - solver_bound)
+            / max(1.0, abs(solver_obj))
+            if solver_obj is not None and solver_bound is not None
+            else None
         )
+        final_incumbent_source = (
+            "validated_start_fallback"
+            if stage1_fallback_used else "stage1_solver_fallback"
+        ) if stage1_has_solution else None
     elif (
         not args.two_stage
         and m.SolCount == 0
@@ -2676,7 +2840,11 @@ def main(argv=None) -> int:
                 progress_path=progress_path,
                 physical_pool_audit=physical_pool_audit,
                 bound_scope=(
-                    "fixed_fleet_variable_cost"
+                    (
+                        "fixed_fleet_variable_cost"
+                        if fleet_proven
+                        else "charging_related_objective_under_fleet_cap"
+                    )
                     if cost_stage_executed
                     else "fleet_count"
                     if args.two_stage
@@ -2730,16 +2898,24 @@ def main(argv=None) -> int:
         t for i in chosen for t in routes[i]["trips"]).items() if c > 1}
     has_incumbent = bool(chosen)
     solver_incumbent_found = (
-        bool(stage1_has_solution)
+        bool(stage1_solver_has_solution)
         if args.two_stage and not cost_stage_executed
-        else bool(m.SolCount > 0)
+        else (
+            bool(stage2_solver_has_solution)
+            if args.two_stage
+            else bool(m.SolCount > 0)
+        )
     )
     incumbent_source = (
-        "validated_start_fallback"
-        if validated_start_available
-        and not solver_incumbent_found
-        and has_incumbent
-        else ("solver" if has_incumbent else None)
+        final_incumbent_source
+        if args.two_stage
+        else (
+            "validated_start_fallback"
+            if validated_start_available
+            and not solver_incumbent_found
+            and has_incumbent
+            else ("solver" if has_incumbent else None)
+        )
     )
     mip_obj = (float(sum(routes[i]["cost"] for i in chosen))
                if chosen else None)
@@ -2806,9 +2982,16 @@ def main(argv=None) -> int:
         else "none_for_mixed_or_continuous_augmented_pool"
     )
     if cost_stage_executed and solver_bound is not None and two_stage_detail:
-        mip_bound = (BUS_COST_KX * two_stage_detail["stage1_buses"]
-                     + solver_bound)
-        mip_bound_scope = "fixed_proven_fleet_variable_cost"
+        if fleet_proven:
+            mip_bound = (BUS_COST_KX * two_stage_detail["stage1_buses"]
+                         + solver_bound)
+            mip_bound_scope = "fixed_proven_fleet_variable_cost"
+        else:
+            # Stage 2 minimizes charging-related cost with an upper fleet cap.
+            # Its variable-cost bound cannot be added to a fixed bus charge:
+            # the selected fleet may be smaller than the cap.
+            mip_bound = None
+            mip_bound_scope = "charging_related_objective_under_fleet_cap"
     elif args.two_stage and solver_bound is not None:
         # A negative-price tariff can make route-variable costs negative.
         # At most one nonempty selected route per trip is needed in a strict
@@ -2835,6 +3018,10 @@ def main(argv=None) -> int:
         if (cost_stage_executed and solver_obj is not None
             and solver_bound is not None) else None
     )
+    absolute_cost_gap = (
+        stage2_absolute_gap if fleet_proven and cost_stage_executed
+        else None
+    )
     if two_stage_detail is not None:
         two_stage_detail.update({
             "stage2_status": status_code if cost_stage_executed else None,
@@ -2842,10 +3029,11 @@ def main(argv=None) -> int:
             "stage2_variable_obj": solver_obj if cost_stage_executed else None,
             "stage2_variable_bound": (solver_bound
                                       if cost_stage_executed else None),
-            "stage2_absolute_gap": stage2_absolute_gap,
+            "stage2_variable_absolute_gap": stage2_absolute_gap,
+            "stage2_absolute_gap": absolute_cost_gap,
             "stage2_reported_incumbent_source": (
-                "stage2_solver" if cost_stage_has_solution
-                else ("stage1_fallback" if cost_stage_executed else None)
+                final_incumbent_source
+                if cost_stage_executed else None
             ),
         })
     final_code_identity = verified_mip_code_identity()
@@ -2880,12 +3068,30 @@ def main(argv=None) -> int:
         "mip_bound_scope": mip_bound_scope,
         "requested_mip_gap": args.mipgap,
         "mip_gap": mip_gap,
-        "absolute_cost_gap": stage2_absolute_gap,
+        "absolute_cost_gap": absolute_cost_gap,
+        "stage2_variable_absolute_gap": stage2_absolute_gap,
         "buses": len(chosen) if has_incumbent else None,
         "incumbent_found": has_incumbent,
         "solver_incumbent_found": solver_incumbent_found,
         "incumbent_source": incumbent_source,
         "fleet_proven": fleet_proven,
+        "stage1_incumbent_validated": (
+            two_stage_detail.get("stage1_incumbent_validated")
+            if two_stage_detail else None
+        ),
+        "stage1_time_limit_s": (
+            two_stage_detail.get("stage1_time_limit_s")
+            if two_stage_detail else None
+        ),
+        "stage2_fleet_cap": stage2_fleet_cap,
+        "stage2_fleet_cap_proven": stage2_fleet_cap_proven,
+        "stage2_fleet_constraint": (
+            "at_most" if args.two_stage else None
+        ),
+        "stage2_objective_semantics": (
+            "charging_related_route_cost_including_charge_start_fee"
+            if args.two_stage else None
+        ),
         "fleet_bound": (two_stage_detail.get("stage1_bound")
                         if two_stage_detail else None),
         "charging_cost": (mip_obj - BUS_COST_KX * len(chosen))
