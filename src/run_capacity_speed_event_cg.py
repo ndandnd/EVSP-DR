@@ -471,6 +471,11 @@ def _status_name(status):
     }.get(status, f"STATUS_{status}")
 
 
+def _finite_or_none(value):
+    value = float(value)
+    return value if math.isfinite(value) else None
+
+
 def solve_mip(args, problem, routes, capacity, log_path):
     model = gp.Model("capacity_speed_exact_event_cover_mip")
     model.Params.OutputFlag = 1
@@ -512,10 +517,11 @@ def solve_mip(args, problem, routes, capacity, log_path):
         if stage1_has_solution and x[index].X > 0.5
     ]
     stage1_incumbent = len(stage1_selected) if stage1_has_solution else None
-    stage1_bound_raw = float(model.ObjBound)
+    stage1_bound_value = float(model.ObjBound)
+    stage1_bound_raw = _finite_or_none(stage1_bound_value)
     stage1_integer_bound = (
-        math.ceil(stage1_bound_raw - 1e-7)
-        if math.isfinite(stage1_bound_raw) else None
+        math.ceil(stage1_bound_value - 1e-7)
+        if math.isfinite(stage1_bound_value) else None
     )
     fleet_proven = bool(
         stage1_has_solution and stage1_integer_bound is not None
@@ -545,11 +551,17 @@ def solve_mip(args, problem, routes, capacity, log_path):
         "fleet_bound_raw": stage1_bound_raw,
         "fleet_integer_lower_bound": stage1_integer_bound,
         "fleet_proven": fleet_proven,
-        "mip_gap": float(model.MIPGap) if stage1_has_solution else None,
+        "mip_gap": (
+            _finite_or_none(model.MIPGap) if stage1_has_solution else None
+        ),
         "node_count": float(model.NodeCount),
         "runtime_s": stage1_runtime_s,
         "time_limit_s": stage1_budget_s,
         "selected_indices": stage1_selected,
+        "incumbent_validation_scope": (
+            "covering rows plus cross-route station-capacity sweep; "
+            "individual exact-event route feasibility is by construction"
+        ),
     }
     remaining_s = max(0.0, total_budget_s - (time.perf_counter() - total_started))
     stage2 = {
@@ -594,9 +606,9 @@ def solve_mip(args, problem, routes, capacity, log_path):
             "charging_cost": (
                 float(model.ObjVal) if stage2_has_solution else None
             ),
-            "charging_cost_bound": float(model.ObjBound),
+            "charging_cost_bound": _finite_or_none(model.ObjBound),
             "charging_cost_gap": (
-                float(model.MIPGap) if stage2_has_solution else None
+                _finite_or_none(model.MIPGap) if stage2_has_solution else None
             ),
             "node_count": float(model.NodeCount),
             "runtime_s": stage2_runtime_s,

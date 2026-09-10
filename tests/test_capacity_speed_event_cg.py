@@ -1,6 +1,9 @@
 import sys
+import json
 import unittest
+import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -16,6 +19,7 @@ from run_capacity_speed_event_cg import (  # noqa: E402
     duplicate_service_audit,
     fleet_cap_from_stage1,
     physical_capacity_audit,
+    solve_mip,
 )
 
 
@@ -107,6 +111,27 @@ class CapacitySpeedPilotTests(unittest.TestCase):
         self.assertFalse(accepted["cg_pricing_certified"])
         with self.assertRaisesRegex(ValueError, "no usable saved pool"):
             classify_saved_pool(status, [route([0], 1.0)], (0, 1))
+
+    def test_infeasible_capacity_pool_is_strict_json_serializable(self):
+        problem = SimpleNamespace(trips=(0, 1))
+        routes = [
+            route([0], 1.0, 10.0, 20.0),
+            route([1], 1.0, 10.0, 20.0),
+        ]
+        args = SimpleNamespace(
+            threads=1, mip_gap=1e-4, mip_wall_s=1.0,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            result = solve_mip(
+                args, problem, routes, True,
+                Path(directory) / "capacity_infeasible.log",
+            )
+        self.assertFalse(result["has_solution"])
+        self.assertEqual(
+            result["stage2"]["skip_reason"],
+            "no_usable_stage1_fleet_incumbent",
+        )
+        json.dumps(result, allow_nan=False)
 
 
 if __name__ == "__main__":
