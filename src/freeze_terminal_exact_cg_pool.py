@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Stream one terminal exact-CG RAW pool into an immutable MIP snapshot."""
+"""Stream one terminal exact-CG pool into an immutable MIP snapshot.
+
+Both unseeded ``RAW`` pools and event-native inherited pools can be frozen.
+The latter retain their treatment label and must carry the inherited-pool
+audit emitted by the child CG run; they are never relabeled as RAW.
+"""
 
 from __future__ import annotations
 
@@ -18,6 +23,12 @@ SCHEMA = "evsp-dr-terminal-exact-cg-pool-snapshot-v1"
 TERMINAL_STOPS = {
     "certified", "wall_limit", "master_failed", "max_iters", "no_path",
     "stalled_marginal_returns", "degenerate_stall",
+}
+RAW_POOL_TREATMENT = "RAW"
+INHERITED_EVENT_POOL_TREATMENT = "WARM-INHERITED-EVENT"
+SUPPORTED_POOL_TREATMENTS = {
+    RAW_POOL_TREATMENT,
+    INHERITED_EVENT_POOL_TREATMENT,
 }
 
 
@@ -43,6 +54,57 @@ def required(path: Path, label: str) -> Path:
     if not path.is_file() or path.stat().st_size == 0:
         raise ValueError(f"missing or empty {label}: {path}")
     return path.resolve()
+
+
+def _sha256_text(value, label: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise ValueError(f"invalid {label}")
+    return value
+
+
+def validate_inherited_event_pool(status: dict, provenance: dict, cell: str) -> None:
+    """Require the child-CG audit before freezing an inherited event pool.
+
+    Inherited columns are replayed and reoptimized in the child's event graph
+    by the CG worker.  The status must attest that operation, its source hash,
+    and a zero-rejection import.  This keeps the freeze gate narrow while
+    preserving the truthful ``WARM-INHERITED-EVENT`` treatment in the snapshot.
+    """
+
+    audit = status.get("inherited_event_pool_audit")
+    if not isinstance(audit, dict):
+        raise ValueError(f"missing inherited event-pool audit for {cell}")
+    if audit.get("schema") != "evsp-dr-inherited-event-pool-audit-v1":
+        raise ValueError(f"invalid inherited event-pool audit schema for {cell}")
+    if audit.get("child_event_graph_reoptimization") is not True:
+        raise ValueError(f"inherited pool was not reoptimized in child graph for {cell}")
+    inherited_hash = _sha256_text(
+        status.get("inherited_event_pool_status_sha256"),
+        f"inherited source status hash for {cell}",
+    )
+    if provenance.get("inherited_event_pool_status_sha256") != inherited_hash:
+        raise ValueError(f"inherited source status hash mismatch for {cell}")
+    for field in ("inherited_basis", "inherited_duals", "inherited_lp_certificate"):
+        if audit.get(field) is not False:
+            raise ValueError(f"inherited pool incorrectly carries {field} for {cell}")
+    if audit.get("source_status_sha256") != inherited_hash:
+        raise ValueError(f"inherited audit source hash mismatch for {cell}")
+    for field in ("source_journal_sha256",):
+        _sha256_text(audit.get(field), f"inherited audit {field} for {cell}")
+    for field in ("attempted_unique_columns", "source_unique_columns", "accepted_columns"):
+        value = audit.get(field)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+            raise ValueError(f"invalid inherited audit {field} for {cell}")
+    if audit["attempted_unique_columns"] != audit["source_unique_columns"]:
+        raise ValueError(f"inherited audit attempted/source count mismatch for {cell}")
+    if audit["accepted_columns"] != audit["attempted_unique_columns"]:
+        raise ValueError(f"inherited audit accepted count mismatch for {cell}")
+    if audit.get("rejected_columns") != 0:
+        raise ValueError(f"inherited pool contains rejected columns for {cell}")
 
 
 def valid_status(
@@ -79,12 +141,20 @@ def valid_status(
         "block_min": 5, "g_kwh": 240.0, "charge_kw": 240.0,
         "min_soc_frac": 0.0, "prices_csv": "hourly_prices_flat.csv",
         "master_sense": master_sense, "initial_pool": "singletons",
-        "columns_per_iter": 30, "column_pool_treatment": "RAW",
+        "columns_per_iter": 30,
+        "column_pool_treatment": status.get("column_pool_treatment"),
         "column_selection": "reduced_cost", "column_diversity_weight": 0.0,
         "column_candidate_multiplier": 4,
     }
+    if observed.get("column_pool_treatment") not in SUPPORTED_POOL_TREATMENTS:
+        raise ValueError(
+            f"unsupported column-pool treatment for {cell}: "
+            f"{observed.get('column_pool_treatment')}"
+        )
     if observed != expected:
         raise ValueError(f"configuration mismatch for {cell}: {observed}")
+    if observed["column_pool_treatment"] == INHERITED_EVENT_POOL_TREATMENT:
+        validate_inherited_event_pool(status, provenance, cell)
     if status.get("stop_reason") not in TERMINAL_STOPS:
         raise ValueError(f"source is not terminal for {cell}: {status.get('stop_reason')}")
     if status.get("stop_reason") == "certified" and status.get("certified_rc_optimal") is not True:
@@ -227,6 +297,7 @@ def main() -> int:
         "source_certified": status.get("certified_rc_optimal") is True,
         "source_stop_reason": status.get("stop_reason"),
         "path_rebound_to_execution_data": True,
+        "column_pool_treatment": status.get("column_pool_treatment"),
     }
     atomic_write_json(output, snapshot)
     record = {
@@ -246,6 +317,7 @@ def main() -> int:
         "artificials_source": terminal_artificials(status)[1],
         "instance_sha256": args.instance_sha256,
         "master_sense": args.master_sense,
+        "column_pool_treatment": status.get("column_pool_treatment"),
     }
     record_path.parent.mkdir(parents=True, exist_ok=True)
     atomic_write_json(record_path, record)

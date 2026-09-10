@@ -15,7 +15,8 @@ def digest(path):
 
 
 def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
-                final_lp_fallback=False, master_sense="partition"):
+                final_lp_fallback=False, master_sense="partition",
+                treatment="RAW", inherited_metadata=False):
     status = tmp_path / f"{name}.json"
     journal = Path(str(status) + ".columns.jsonl")
     iterations = Path(str(status) + ".iters.csv")
@@ -24,13 +25,13 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
         + json.dumps({"found_iter": 1, "trips": [1], "cost": 6.0}) + "\n"
     )
     iterations.write_text("iteration,columns\n0,2\n")
-    status.write_text(json.dumps({
+    payload = {
         "time_model": "event", "network_metrics": {"arc_mode": "lazy"},
         "soc_step": 2.5, "block_min": 5, "g_kwh": 240.0,
         "charge_kw": 240.0, "min_soc_frac": 0.0,
         "prices_csv": "hourly_prices_flat.csv", "master_sense": master_sense,
         "initial_pool": "singletons", "columns_per_iter": 30,
-        "column_pool_treatment": "RAW", "column_selection": "reduced_cost",
+        "column_pool_treatment": treatment, "column_selection": "reduced_cost",
         "column_diversity_weight": 0.0, "column_candidate_multiplier": 4,
         "stop_reason": stop, "certified_rc_optimal": stop == "certified",
         "columns": 2,
@@ -40,7 +41,25 @@ def make_source(tmp_path, name, *, stop="certified", artificials=0.0,
         "columns_journal": str(journal),
         "provenance": {"git_commit": COMMIT, "instance_sha256": "a" * 64,
                        "rc_eps": 0.0001},
-    }))
+    }
+    if inherited_metadata:
+        inherited_hash = "b" * 64
+        payload["inherited_event_pool_status_sha256"] = inherited_hash
+        payload["inherited_event_pool_audit"] = {
+            "schema": "evsp-dr-inherited-event-pool-audit-v1",
+            "child_event_graph_reoptimization": True,
+            "inherited_basis": False,
+            "inherited_duals": False,
+            "inherited_lp_certificate": False,
+            "source_status_sha256": inherited_hash,
+            "source_journal_sha256": "c" * 64,
+            "attempted_unique_columns": 2,
+            "source_unique_columns": 2,
+            "accepted_columns": 2,
+            "rejected_columns": 0,
+        }
+        payload["provenance"]["inherited_event_pool_status_sha256"] = inherited_hash
+    status.write_text(json.dumps(payload))
     return status
 
 
@@ -110,4 +129,35 @@ def test_rejects_cover_source_under_partition_default(tmp_path):
     result, out, record = invoke(tmp_path, cover, cover)
     assert result.returncode != 0
     assert "configuration mismatch" in result.stderr
+    assert not out.exists() and not record.exists()
+
+
+def test_freezes_valid_inherited_event_pool_without_relabeling(tmp_path):
+    source = make_source(
+        tmp_path, "warm", master_sense="cover",
+        treatment="WARM-INHERITED-EVENT", inherited_metadata=True,
+    )
+    result, out, record = invoke(
+        tmp_path, source, source, master_sense="cover"
+    )
+    assert result.returncode == 0, result.stderr
+    frozen = json.loads(out.read_text())
+    rec = json.loads(record.read_text())
+    assert frozen["column_pool_treatment"] == "WARM-INHERITED-EVENT"
+    assert frozen["terminal_pool_snapshot"]["column_pool_treatment"] == (
+        "WARM-INHERITED-EVENT"
+    )
+    assert rec["column_pool_treatment"] == "WARM-INHERITED-EVENT"
+
+
+def test_rejects_inherited_pool_without_child_replay_audit(tmp_path):
+    source = make_source(
+        tmp_path, "warm_missing_audit", master_sense="cover",
+        treatment="WARM-INHERITED-EVENT",
+    )
+    result, out, record = invoke(
+        tmp_path, source, source, master_sense="cover"
+    )
+    assert result.returncode != 0
+    assert "inherited event-pool audit" in result.stderr
     assert not out.exists() and not record.exists()
