@@ -1016,49 +1016,103 @@ class EventExpandedNetwork:
             )
         return routes
 
-    def fixed_sequence_record(self, trips):
-        """Return the cheapest event route for one fixed trip sequence."""
+    def fixed_sequence_record(self, trips, *, min_terminal_soc_kwh=0.0):
+        """Return the cheapest event route for one fixed trip sequence.
+
+        ``min_terminal_soc_kwh`` is enforced on the conservative expanded-grid
+        SOC at depot arrival.  Terminal alternatives are generated before the
+        ordinary sink-arc dominance rule so that a more expensive final charge
+        is retained when it is needed to satisfy the requested return energy.
+        """
 
         trips = tuple(trips)
+        min_terminal_soc_kwh = float(min_terminal_soc_kwh)
+        if (
+            not math.isfinite(min_terminal_soc_kwh)
+            or min_terminal_soc_kwh < -TOL
+            or min_terminal_soc_kwh > self.g + TOL
+        ):
+            raise ValueError("terminal SOC threshold must be finite in [0, g]")
         if not trips or any(trip not in self.trip_position for trip in trips):
             return None
         frontier = {}
         for target, cost in self._iter_arcs(0):
             if self.node_meta[target][1] == trips[0]:
-                frontier[target] = (cost, [(0, target)])
-        for successor in (*trips[1:], None):
+                frontier[target] = (
+                    cost,
+                    [self._edge_action(0, target)],
+                )
+        for successor in trips[1:]:
             following = {}
-            for source, (base_cost, edges) in frontier.items():
+            for source, (base_cost, actions) in frontier.items():
                 for target, cost in self._iter_arcs(source):
                     matches = (
-                        target == self.SINK if successor is None
-                        else self.node_meta[target][0] == "trip"
+                        self.node_meta[target][0] == "trip"
                         and self.node_meta[target][1] == successor
                     )
                     if not matches:
                         continue
                     candidate = (
                         base_cost + cost,
-                        edges + [(source, target)],
+                        actions + [self._edge_action(source, target)],
                     )
                     current = following.get(target)
                     if current is None or (
                         candidate[0],
-                        candidate[1],
+                        json.dumps(candidate[1], sort_keys=True),
                     ) < (
                         current[0],
-                        current[1],
+                        json.dumps(current[1], sort_keys=True),
                     ):
                         following[target] = candidate
             frontier = following
             if not frontier:
                 return None
-        _cost, edges = frontier[self.SINK]
-        actions = [
-            self._edge_action(source, target)
-            for source, target in edges
-        ]
-        return self._record(actions)
+
+        terminal = []
+        for source, (base_cost, actions) in frontier.items():
+            _kind, trip, level = self.node_meta[source]
+            soc_exit = self.grid[level] - self.problem.trip_energy[trip]
+            candidates = list(self._direct_candidates(trip, soc_exit,
+                                                       self.problem.end_min[trip]))
+            candidates.extend(self._charge_candidates(
+                trip, soc_exit, self.problem.end_min[trip]
+            ))
+            for target, cost, successor, action in candidates:
+                if target != self.SINK or successor is not None:
+                    continue
+                if action["kind"] == "direct":
+                    remaining = soc_exit - action["deadhead_kwh"]
+                else:
+                    remaining = (
+                        self.grid[action["exit_level"]]
+                        - action["outbound_kwh"]
+                    )
+                final_level = _floor_level(
+                    self.grid, self.soc_step, remaining
+                )
+                if (
+                    final_level < 0
+                    or self.grid[final_level] + TOL
+                    < min_terminal_soc_kwh
+                ):
+                    continue
+                terminal.append((
+                    base_cost + cost,
+                    json.dumps(action, sort_keys=True),
+                    actions + [action],
+                ))
+        if not terminal:
+            return None
+        _cost, _tie, actions = min(terminal)
+        record = self._record(actions)
+        if (
+            record["continuous_realization"][
+                "expanded_grid_terminal_soc_kwh"
+            ] + TOL < min_terminal_soc_kwh
+        ):
+            raise RuntimeError("terminal SOC threshold was not preserved")
+        return record
 
     def metrics(self):
         return {
