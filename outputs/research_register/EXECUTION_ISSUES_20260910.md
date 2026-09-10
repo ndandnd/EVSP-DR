@@ -11,6 +11,8 @@ This page distinguishes execution errors from optimization results. The normaliz
 
 ## Terminal-energy repair
 
+**Status at register delivery: repair prepared locally; no retry submitted.** The compatibility code and regression are preserved in `.codex-work/terminal-replay-compat-20260910`. That draft worktree uses an older base, so the minimal change must be applied and rechecked on the original execution commit `2424369f4b5c40198a22698b7a460d6aa8129169` before any submission. This prevents unrelated dependency changes from entering the experiment.
+
 The bounded fix deterministically replays every saved route and carries the recomputed terminal energy and cost into the in-memory record. Where old metadata exists, it is checked against the replay. Missing energy is never replaced by a guessed SOC or zero.
 
 The compatibility regression and real-pool smoke checks cover all three saved tariff pools: 3,464 records at peak08, 3,739 at peak12, and 3,328 at peak18, including 62 older singleton records per pool. The retry must preserve the original fixed-duty frontiers, saved CG pools, input hashes, physics and objective. Its immutable execution code must retain the original terminal-threshold dependencies. A successful smoke check is not a completed optimization result.
