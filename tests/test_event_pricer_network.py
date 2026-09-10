@@ -160,6 +160,39 @@ class EventPricerNetworkTests(unittest.TestCase):
             "valid_event_time_realized",
         )
 
+    def test_fixed_sequence_can_enforce_conservative_terminal_soc(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+        )
+        free = network.fixed_sequence_record((0, 1))
+        restored = network.fixed_sequence_record(
+            (0, 1), min_terminal_soc_kwh=100.0,
+        )
+        self.assertLess(
+            free["continuous_realization"][
+                "expanded_grid_terminal_soc_kwh"
+            ],
+            100.0,
+        )
+        self.assertGreaterEqual(
+            restored["continuous_realization"][
+                "expanded_grid_terminal_soc_kwh"
+            ],
+            100.0,
+        )
+        self.assertGreater(restored["cost"], free["cost"])
+
+    def test_fixed_sequence_rejects_invalid_terminal_soc(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+        )
+        with self.assertRaisesRegex(ValueError, "terminal SOC"):
+            network.fixed_sequence_record(
+                (0, 1), min_terminal_soc_kwh=241.0,
+            )
+
     def test_event_times_include_exact_and_reachable_uniform_breakpoints(self):
         network = EventExpandedNetwork(
             two_trip_problem(),
