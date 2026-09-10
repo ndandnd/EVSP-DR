@@ -23,8 +23,9 @@ connection intervals. Existing nonlinear new-physics results use a 15% SOC
 floor and model recharge targets; they are separate evidence. A 65% recharge
 target is not treated here as a hard end-of-duty SOC constraint.
 
-The first pilot is deliberately bounded: one GIRO duty cohort and one aligned
-k2/k3 short cohort, crossed with the four arms. CG uses the default partition
+The first pilot is deliberately bounded: two GIRO duty cohorts (including
+duty 13406, whose recorded GIRO duty charges at PARX) and one aligned k2/k3
+short cohort, crossed with the four arms. CG uses the default partition
 with array concurrency two. MIP runs depend on their matched CG cells and use
 Scaglione, excluding `scaglione-compute-01`, also at concurrency two.
 This cohort does not by itself exercise every documented station inventory;

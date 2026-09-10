@@ -29,6 +29,11 @@
       "instance": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv"
     },
     {
+      "cohort": "k1_duty13406",
+      "instance": "analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "selection_reason": "recorded GIRO duty includes a PARX charge; optimized arms may still avoid PARX"
+    },
+    {
       "cohort": "e1_short_k2",
       "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv"
     },
