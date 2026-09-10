@@ -95,6 +95,7 @@ def realize_expanded_path(
     block_min: int,
     arc_map=None,
     time_model: str = "uniform",
+    station_charge_kw: dict | None = None,
 ) -> tuple[dict | None, dict]:
     """Return a replay-valid schedule mapping or a classified rejection.
 
@@ -137,6 +138,16 @@ def realize_expanded_path(
     levels = int(g_kwh / soc_step) + 1
     grid = [round(index * soc_step, 6) for index in range(levels)]
     block_kwh = charge_kw * block_min / 60.0
+    station_charge_kw = {
+        str(key): float(value)
+        for key, value in (station_charge_kw or {}).items()
+    }
+
+    def charge_power(station) -> float:
+        return station_charge_kw.get(
+            str(station),
+            station_charge_kw.get(base_station_name(station), charge_kw),
+        )
     nodes = list(record.get("route_nodes", record.get("route", [])) or [])
     trips = list(record.get("trips") or [])
     node_trips = [
@@ -302,7 +313,8 @@ def realize_expanded_path(
             continuous_entry_soc = continuous_soc
             grid_entry_soc = grid_soc
             if time_model == "event":
-                available = duration * charge_kw / 60.0
+                station_kw = charge_power(node)
+                available = duration * station_kw / 60.0
                 target_soc = grid_soc + recorded
                 target_level = int(round(target_soc / soc_step))
                 if (
@@ -470,6 +482,7 @@ def realize_expanded_path(
         "discarded_grid_residual_kwh": total_discarded,
         "changed": changed,
         "charge_kw": charge_kw,
+        "station_charge_kw": dict(sorted(station_charge_kw.items())),
         "block_min": block_min,
         "trace": trace,
         "pricing_cost_semantics": "expanded_grid_cost_unchanged",

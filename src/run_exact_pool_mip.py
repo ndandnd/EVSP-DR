@@ -335,7 +335,8 @@ def greedy_partition_start_indices(
 
 def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
                             horizon_min, arrival_grace_min=1.0,
-                            rate_grace_min=0.0, arc_map=None):
+                            rate_grace_min=0.0, arc_map=None,
+                            station_charge_kw=None):
     """Replay an injected route against the model graph and pool physics.
 
     Checks every consecutive arc exists in the restricted adjacency, times
@@ -346,6 +347,18 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
     else a short reason.
     """
     from audit_giro_known_columns import DEPOT
+    from utils_v2 import base_station_name
+
+    station_charge_kw = {
+        str(key): float(value)
+        for key, value in (station_charge_kw or {}).items()
+    }
+
+    def charge_power(station):
+        return station_charge_kw.get(
+            str(station),
+            station_charge_kw.get(base_station_name(station), float(charge_kw)),
+        )
 
     arc = arc_map
     if arc is None:
@@ -428,8 +441,9 @@ def validate_injected_route(problem, record, g_kwh, charge_kw, reserve_kwh,
                 window = max(
                     0.0, float(cet) - effective_start
                 ) + rate_grace_min
-                if kwh > window * charge_kw / 60.0 + 1e-6:
-                    return (f"charge {kwh:.1f} kWh exceeds {charge_kw:.0f} kW "
+                station_kw = charge_power(v)
+                if kwh > window * station_kw / 60.0 + 1e-6:
+                    return (f"charge {kwh:.1f} kWh exceeds {station_kw:.0f} kW "
                             f"in {window:.0f} min at {v}")
                 if soc + float(kwh) > float(g_kwh) + 1e-6:
                     return (f"charge at {v} raises SOC to "

@@ -1,0 +1,43 @@
+{
+  "schema": "evsp-dr-capacity-speed-pilot-manifest-v1",
+  "created_date": "2026-09-10",
+  "master_sense": "partition",
+  "battery_kwh": 240.0,
+  "initial_soc_kwh": 240.0,
+  "reserve_kwh": 0.0,
+  "terminal_soc_constraint": "reserve_only",
+  "soc_step_kwh": 2.5,
+  "event_block_min": 5,
+  "non_parx_kw": 240.0,
+  "documented_charger_counts": {
+    "2190L": 1,
+    "4808": 1,
+    "3127L": 2,
+    "7880C": 1,
+    "JON_A": 1
+  },
+  "parx_capacity": "unlimited",
+  "arms": {
+    "baseline": {"capacity": false, "parx_kw": 240.0},
+    "capacity": {"capacity": true, "parx_kw": 240.0},
+    "parx60": {"capacity": false, "parx_kw": 60.0},
+    "combined": {"capacity": true, "parx_kw": 60.0}
+  },
+  "cohorts": [
+    {
+      "cohort": "k1_duty13408",
+      "instance": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv"
+    },
+    {
+      "cohort": "e1_short_k2",
+      "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv"
+    },
+    {
+      "cohort": "e1_short_k3",
+      "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv"
+    }
+  ],
+  "prices": "data/hourly_prices_flat.csv",
+  "prior_nonlinear_results_are_distinct": true,
+  "opportunity_soc_dependent_curve_in_scope": false
+}

@@ -106,31 +106,56 @@ def _best_charge_window(
     station_prices,
     charge_kw,
 ):
+    options = _charge_window_options(
+        station,
+        arrival,
+        deadline,
+        energy,
+        event_times=event_times,
+        station_prices=station_prices,
+        charge_kw=charge_kw,
+    )
+    return min(options) if options else None
+
+
+def _charge_window_options(
+    station,
+    arrival,
+    deadline,
+    energy,
+    *,
+    event_times,
+    station_prices,
+    charge_kw,
+    extra_grid_min=None,
+):
+    """Enumerate breakpoints sufficient for tariff/capacity window costs."""
+
     duration = float(energy) * 60.0 / float(charge_kw)
     latest_start = float(deadline) - duration
     if latest_start < arrival - TOL:
-        return None
+        return []
     curve = station_prices[base_station_name(station)]
-    if len(set(curve.values())) == 1:
-        start = float(arrival)
-        return (
-            float(energy) * float(next(iter(curve.values())))
-            * float(charge_cost_premium),
-            start,
-            start + duration,
-        )
     candidates = {float(arrival), float(latest_start)}
     for event in event_times[station]:
         if abs(event / 60.0 - round(event / 60.0)) <= TOL:
             candidates.add(float(event))
             candidates.add(float(event) - duration)
+    if extra_grid_min is not None:
+        grid = int(extra_grid_min)
+        if grid <= 0:
+            raise ValueError("capacity grid must be positive")
+        first = int(math.floor(arrival / grid))
+        last = int(math.ceil(deadline / grid))
+        for index in range(first, last + 1):
+            boundary = float(index * grid)
+            candidates.add(boundary)
+            candidates.add(boundary - duration)
     feasible = sorted(
         value for value in candidates
         if value >= arrival - TOL and value <= latest_start + TOL
     )
-    if not feasible:
-        return None
-    return min(
+    return sorted(
         (
             _window_cost(
                 station, start, duration, energy,
@@ -140,6 +165,29 @@ def _best_charge_window(
             start + duration,
         )
         for start in feasible
+    )
+
+
+def conservative_capacity_rows(action, *, sites=None, grid_min=1):
+    """Return half-open conservative station/time rows for one charge action."""
+
+    if action.get("kind") != "charge":
+        return frozenset()
+    station = base_station_name(action["station"])
+    if sites is not None and station not in sites:
+        return frozenset()
+    grid = int(grid_min)
+    if grid <= 0:
+        raise ValueError("capacity grid must be positive")
+    start = float(action["cst"])
+    end = float(action["cet"])
+    first = int(math.floor(start / grid))
+    last = int(math.ceil(end / grid))
+    return frozenset(
+        (station, index * grid)
+        for index in range(first, last)
+        if (index + 1) * grid > start + TOL
+        and index * grid < end - TOL
     )
 
 
@@ -158,12 +206,17 @@ class EventExpandedNetwork:
         reserve_kwh,
         strict_tariff_coverage=False,
         arc_mode="lazy",
+        station_charge_kw=None,
     ):
         self.problem = problem
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
         self.g = float(g_kwh)
         self.charge_kw = float(charge_kw)
+        self.station_charge_kw = {
+            str(key): float(value)
+            for key, value in (station_charge_kw or {}).items()
+        }
         self.reserve = float(reserve_kwh)
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
         if arc_mode not in {"explicit", "lazy"}:
@@ -192,6 +245,59 @@ class EventExpandedNetwork:
         self._split_arcs()
         self._build_nodes()
         self._build_arcs()
+
+    def _charge_power(self, station):
+        return self.station_charge_kw.get(
+            str(station),
+            self.station_charge_kw.get(
+                base_station_name(station), self.charge_kw,
+            ),
+        )
+
+    def _capacity_adjusted_arc(
+        self, cost, action, capacity_duals, capacity_sites, capacity_grid_min,
+    ):
+        """Choose the exact tariff/capacity-dual charging-window breakpoint."""
+
+        if action.get("kind") != "charge" or not capacity_duals:
+            capacity_term = sum(
+                float(capacity_duals.get(row, 0.0))
+                for row in conservative_capacity_rows(
+                    action, sites=capacity_sites, grid_min=capacity_grid_min,
+                )
+            )
+            return float(cost) - capacity_term, action
+        options = _charge_window_options(
+            action["station"],
+            action["arrival_min"],
+            action["deadline_min"],
+            action["kwh"],
+            event_times=self.events,
+            station_prices=self.prices,
+            charge_kw=self._charge_power(action["station"]),
+            extra_grid_min=capacity_grid_min,
+        )
+        candidates = []
+        for energy_cost, start, end in options:
+            selected = {**action, "cst": start, "cet": end}
+            capacity_term = sum(
+                float(capacity_duals.get(row, 0.0))
+                for row in conservative_capacity_rows(
+                    selected,
+                    sites=capacity_sites,
+                    grid_min=capacity_grid_min,
+                )
+            )
+            candidates.append((
+                CHARGE_START_COST + energy_cost - capacity_term,
+                start,
+                end,
+                selected,
+            ))
+        if not candidates:
+            raise RuntimeError("stored event charge arc has no feasible window")
+        adjusted, _start, _end, selected = min(candidates)
+        return adjusted, selected
 
     def __getstate__(self):
         """Return a compact, reconstructable state for durable graph caches."""
@@ -276,7 +382,17 @@ class EventExpandedNetwork:
     def _add(self, source, target, cost, trip, action):
         dual = self.trip_position[trip] if trip is not None else -1
         row = (target, float(cost), dual, action)
-        key = (target, dual)
+        # Explicit graphs are also used with dynamic station-capacity duals.
+        # Different stations can reach the same trip/SOC state but have
+        # different capacity rows, so retain one best transition per station.
+        # Lazy graphs preserve their historical unique-target recipe contract.
+        key = (
+            target,
+            dual,
+            action.get("station") if (
+                self.arc_mode == "explicit" and action.get("kind") == "charge"
+            ) else None,
+        )
         candidate = (row[1], json.dumps(action, sort_keys=True))
         retained = self._building_arcs.setdefault(source, {})
         current = retained.get(key)
@@ -451,7 +567,7 @@ class EventExpandedNetwork:
                             station, arrival, latest, energy,
                             event_times=self.events,
                             station_prices=self.prices,
-                            charge_kw=self.charge_kw,
+                            charge_kw=self._charge_power(station),
                         )
                     selected = self._window_cache[cache_key]
                     if selected is None:
@@ -489,6 +605,7 @@ class EventExpandedNetwork:
                         "outbound_kwh": outbound_kwh,
                         "entry_level": entry,
                         "exit_level": target_level,
+                        "charge_kw": self._charge_power(station),
                     }
                     cost = CHARGE_START_COST + energy_cost
                     yield target, cost, successor, action
@@ -585,7 +702,7 @@ class EventExpandedNetwork:
                         energy,
                         event_times=self.events,
                         station_prices=self.prices,
-                        charge_kw=self.charge_kw,
+                        charge_kw=self._charge_power(station),
                     )
                     if selected is None:
                         raise RuntimeError(
@@ -606,6 +723,7 @@ class EventExpandedNetwork:
                     "outbound_kwh": outbound_kwh,
                     "entry_level": entry,
                     "exit_level": target_level,
+                    "charge_kw": self._charge_power(station),
                 }
         self._selected_action_cache[key] = action
         return action
@@ -677,6 +795,7 @@ class EventExpandedNetwork:
             soc_step=self.soc_step,
             block_min=self.block_min,
             time_model="event",
+            station_charge_kw=self.station_charge_kw,
         )
         if realized is None:
             raise RuntimeError(
@@ -694,6 +813,7 @@ class EventExpandedNetwork:
         reason = validate_injected_route(
             self.problem, record, self.g, self.charge_kw,
             self.reserve, HORIZON_MIN, arrival_grace_min=0.0,
+            station_charge_kw=self.station_charge_kw,
         )
         if reason is not None:
             raise RuntimeError(f"event route failed physical replay: {reason}")
@@ -759,6 +879,9 @@ class EventExpandedNetwork:
         *,
         objective="combined-cost",
         route_dual=0.0,
+        capacity_duals=None,
+        capacity_sites=None,
+        capacity_grid_min=1,
     ):
         if objective not in {
             "combined-cost", "artificial-elimination",
@@ -768,6 +891,11 @@ class EventExpandedNetwork:
         dense = [
             float(alpha.get(trip, 0.0)) for trip in self.problem.trips
         ]
+        capacity_duals = capacity_duals or {}
+        if capacity_duals and self.arc_mode == "lazy":
+            raise ValueError(
+                "capacity-dual event pricing currently requires explicit arcs"
+            )
         if self.arc_mode == "lazy":
             return self._min_reduced_cost_route_lazy(
                 dense, objective=objective, route_dual=route_dual,
@@ -779,8 +907,12 @@ class EventExpandedNetwork:
             if not math.isfinite(values[source]):
                 continue
             for target, cost, dual, action in self.out[source]:
+                adjusted_cost, selected_action = self._capacity_adjusted_arc(
+                    cost, action, capacity_duals, capacity_sites,
+                    capacity_grid_min,
+                )
                 if objective == "combined-cost" and route_dual == 0.0:
-                    candidate = values[source] + cost - (
+                    candidate = values[source] + adjusted_cost - (
                         dense[dual] if dual >= 0 else 0.0
                     )
                 else:
@@ -793,12 +925,14 @@ class EventExpandedNetwork:
                         if objective == "charging-cost" and source == 0
                         else cost
                     )
+                    if action.get("kind") == "charge":
+                        objective_cost += adjusted_cost - cost
                     candidate = values[source] + objective_cost - (
                         dense[dual] if dual >= 0 else 0.0
                     ) - (route_dual if source == 0 else 0.0)
                 if candidate < values[target] - 1e-12:
                     values[target] = candidate
-                    parent[target] = (source, action)
+                    parent[target] = (source, selected_action)
         if not math.isfinite(values[self.SINK]):
             return None
         best = self._walk(parent, self.SINK)
@@ -1081,6 +1215,7 @@ class EventExpandedNetwork:
                 station: len(times)
                 for station, times in self.events.items()
             },
+            "station_charge_kw": dict(sorted(self.station_charge_kw.items())),
             "event_lattice_sha256": hashlib.sha256(json.dumps(
                 {
                     station: list(times)

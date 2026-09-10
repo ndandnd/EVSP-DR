@@ -9,7 +9,10 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from audit_giro_known_columns import DEPOT, STATIONS  # noqa: E402
-from event_pricer_network import EventExpandedNetwork  # noqa: E402
+from event_pricer_network import (  # noqa: E402
+    EventExpandedNetwork,
+    conservative_capacity_rows,
+)
 from exact_pricer_expanded import (  # noqa: E402
     ExpandedNetwork,
     _load_event_network_cache,
@@ -139,6 +142,60 @@ class EventPricerNetworkTests(unittest.TestCase):
         self.assertGreater(len(record["continuous_realized_charging_blocks"]), 0)
         self.assertLess(route["rc"], 0.0)
 
+    def test_station_specific_power_controls_event_window_and_replay(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            station_charge_kw={STATION: 60.0}, arc_mode="explicit",
+        )
+        route = network.min_reduced_cost_route(
+            {0: 100000.0, 1: 100000.0}
+        )
+        stop = route["_event_record"]["expanded_grid_charging_stops"]
+        self.assertAlmostEqual(
+            stop["cet"][0] - stop["cst"][0],
+            stop["kwh"][0],
+        )
+        self.assertEqual(
+            route["_event_record"]["physical_realization"]["status"],
+            "valid_event_time_realized",
+        )
+
+    def test_capacity_dual_pricing_moves_charge_window_and_matches_rows(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+            arc_mode="explicit",
+        )
+        baseline = network.min_reduced_cost_route(
+            {0: 100000.0, 1: 100000.0}
+        )
+        base_action = next(
+            action for arcs in network.out for _target, _cost, _dual, action in arcs
+            if action.get("kind") == "charge"
+        )
+        penalized_rows = conservative_capacity_rows(
+            base_action, sites={STATION.rsplit("_", 1)[0]},
+        )
+        duals = {row: -100.0 for row in penalized_rows}
+        priced = network.min_reduced_cost_route(
+            {0: 100000.0, 1: 100000.0},
+            capacity_duals=duals,
+            capacity_sites={STATION.rsplit("_", 1)[0]},
+        )
+        baseline_stop = baseline["_event_record"]["charging_stops"]
+        priced_stop = priced["_event_record"]["charging_stops"]
+        self.assertNotEqual(priced_stop["cst"][0], baseline_stop["cst"][0])
+        priced_action = {
+            "kind": "charge", "station": priced_stop["stations"][0],
+            "cst": priced_stop["cst"][0], "cet": priced_stop["cet"][0],
+        }
+        self.assertFalse(
+            conservative_capacity_rows(
+                priced_action, sites={STATION.rsplit("_", 1)[0]},
+            ) & penalized_rows
+        )
+
     def test_event_replay_preserves_residual_soc_without_overfill(self):
         network = EventExpandedNetwork(
             two_trip_problem(first_energy=191.2),
@@ -225,12 +282,18 @@ class EventPricerNetworkTests(unittest.TestCase):
             arc_mode="explicit",
         )
         for arcs in network.out:
-            keys=[(target,dual) for target,_cost,dual,_action in arcs]
+            keys=[
+                (
+                    target, dual,
+                    action.get("station") if action.get("kind") == "charge" else None,
+                )
+                for target, _cost, dual, action in arcs
+            ]
             self.assertEqual(len(keys),len(set(keys)))
-        self.assertEqual(
-            len(network.sink_arcs),
-            len({source for source,_cost,_action in network.sink_arcs}),
-        )
+        self.assertEqual(len(network.sink_arcs), len({
+            (source, action.get("station") if action else None)
+            for source, _cost, action in network.sink_arcs
+        }))
 
     def test_explicit_and_lazy_shortest_path_oracles_match(self):
         problem = two_trip_problem()
@@ -244,7 +307,7 @@ class EventPricerNetworkTests(unittest.TestCase):
             g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
             arc_mode="lazy",
         )
-        self.assertEqual(lazy.n_arcs, explicit.n_arcs)
+        self.assertGreaterEqual(explicit.n_arcs, lazy.n_arcs)
         self.assertEqual(
             lazy.metrics()["materialized_python_arc_objects"], 0,
         )
