@@ -29,6 +29,7 @@ Usage (from src/):
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import math
@@ -370,6 +371,153 @@ def validated_fixed_duty_seed_records(
     ):
         raise ValueError("fixed-duty seeds are not an exact partition")
     return accepted, hashlib.sha256(raw).hexdigest()
+
+
+def _trip_id_maps(csv_path: Path) -> tuple[dict[int, int], dict[int, int]]:
+    """Map instance-local trip ids to stable Ordered_Trip_ID values."""
+
+    with csv_path.open(newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    try:
+        local_to_stable = {
+            int(row["count_trip_id"]): int(row["Ordered_Trip_ID"])
+            for row in rows
+        }
+    except (KeyError, TypeError, ValueError) as exc:
+        raise ValueError(
+            f"warm-start instance lacks integer count_trip_id/Ordered_Trip_ID: "
+            f"{csv_path}"
+        ) from exc
+    stable_to_local = {stable: local for local, stable in local_to_stable.items()}
+    if (
+        len(local_to_stable) != len(rows)
+        or len(stable_to_local) != len(rows)
+    ):
+        raise ValueError(f"warm-start trip ids are not one-to-one: {csv_path}")
+    return local_to_stable, stable_to_local
+
+
+def inherited_event_pool_records(
+    status_path: Path,
+    *,
+    child_csv_path: Path,
+    child_problem,
+    child_network,
+    g_kwh: float,
+    charge_kw: float,
+    reserve_kwh: float,
+) -> tuple[list[dict], dict]:
+    """Replay a predecessor event-CG pool in a nested child event graph.
+
+    Trip ids in generated instances are local row numbers and can change when
+    another duty is added.  We therefore translate through Ordered_Trip_ID,
+    then ask the *child* event network for the cheapest path for each inherited
+    trip sequence.  This transfers columns only; no duals, basis, lower bound,
+    or pricing certificate is inherited.
+    """
+
+    source = status_path.expanduser().resolve()
+    status_raw = source.read_bytes()
+    status = json.loads(status_raw)
+    journal_value = status.get("columns_journal")
+    if not journal_value:
+        raise ValueError("inherited event-pool status has no columns_journal")
+    journal_path = Path(journal_value).expanduser()
+    if not journal_path.is_absolute():
+        journal_path = source.parent / journal_path
+    journal_path = journal_path.resolve()
+    journal_raw_sha256 = _file_sha256(journal_path)
+    journal_records = read_jsonl_records(
+        journal_path, repair_trailing=False
+    )
+    source_trips = status.get("trip_ids")
+    if not isinstance(source_trips, list):
+        raise ValueError("inherited event-pool status has no trip_ids list")
+    source_pool = load_column_pool(journal_records, source_trips)
+
+    parent_csv_value = status.get("csv")
+    if not parent_csv_value:
+        raise ValueError("inherited event-pool status has no csv identity")
+    parent_csv_path = (DATA_DIR / parent_csv_value).resolve()
+    expected_instance_sha = (status.get("provenance") or {}).get(
+        "instance_sha256"
+    )
+    observed_instance_sha = _file_sha256(parent_csv_path)
+    if expected_instance_sha != observed_instance_sha:
+        raise ValueError(
+            "inherited event-pool parent instance hash differs from status"
+        )
+    parent_local_to_stable, _ = _trip_id_maps(parent_csv_path)
+    _, child_stable_to_local = _trip_id_maps(child_csv_path.resolve())
+    if set(child_problem.trips) != set(child_stable_to_local.values()):
+        raise ValueError("child CSV trip mapping differs from built problem")
+
+    accepted = []
+    rejected = Counter()
+    for source_record in source_pool.values():
+        try:
+            stable_sequence = [
+                parent_local_to_stable[int(trip)]
+                for trip in source_record["trips"]
+            ]
+        except (KeyError, TypeError, ValueError):
+            rejected["invalid_parent_trip_sequence"] += 1
+            continue
+        if any(stable not in child_stable_to_local for stable in stable_sequence):
+            rejected["parent_trip_absent_from_child"] += 1
+            continue
+        child_sequence = [
+            child_stable_to_local[stable] for stable in stable_sequence
+        ]
+        record = child_network.fixed_sequence_record(child_sequence)
+        if record is None:
+            rejected["sequence_absent_from_child_event_graph"] += 1
+            continue
+        reason = validate_injected_route(
+            child_problem, record, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
+        )
+        if reason is not None:
+            rejected[f"physical_replay:{reason}"] += 1
+            continue
+        physical = record.get("physical_realization") or {}
+        blocks = record.get("continuous_realized_charging_blocks")
+        if (
+            physical.get("status") != "valid_event_time_realized"
+            or charging_block_schedule_sha256(blocks)
+            != physical.get("continuous_realized_charging_blocks_sha256")
+        ):
+            rejected["invalid_child_event_realization"] += 1
+            continue
+        record.update({
+            "origin": "inherited_event_pool_replayed_in_child_graph",
+            "inherited_source_status_sha256": hashlib.sha256(
+                status_raw
+            ).hexdigest(),
+            "inherited_source_journal_sha256": journal_raw_sha256,
+            "inherited_source_ordered_trip_ids": stable_sequence,
+            "inherited_source_cost": source_record.get("cost"),
+        })
+        accepted.append(record)
+
+    audit = {
+        "schema": "evsp-dr-inherited-event-pool-audit-v1",
+        "source_status": str(source),
+        "source_status_sha256": hashlib.sha256(status_raw).hexdigest(),
+        "source_journal": str(journal_path),
+        "source_journal_sha256": journal_raw_sha256,
+        "source_raw_records": len(journal_records),
+        "source_unique_columns": len(source_pool),
+        "attempted_unique_columns": len(source_pool),
+        "accepted_columns": len(accepted),
+        "rejected_columns": sum(rejected.values()),
+        "rejected_reasons": dict(sorted(rejected.items())),
+        "mapping_key": "Ordered_Trip_ID",
+        "child_event_graph_reoptimization": True,
+        "inherited_duals": False,
+        "inherited_basis": False,
+        "inherited_lp_certificate": False,
+    }
+    return accepted, audit
 
 
 def direct_singleton_seed_records(
@@ -925,11 +1073,12 @@ def _provenance(args) -> dict:
             if getattr(args, "validated_seed_routes", None) is not None
             else None
         ),
-        "column_pool_treatment": (
-            getattr(args, "augmentation_label", None)
-            if getattr(args, "validated_seed_routes", None) is not None
-            else "RAW"
+        "inherited_event_pool_status_sha256": (
+            _sha(args.inherit_event_pool_from)
+            if getattr(args, "inherit_event_pool_from", None) is not None
+            else None
         ),
+        "column_pool_treatment": _column_pool_treatment(args),
         "rc_eps": args.rc_eps,
         "pricing_cost_semantics": "conservative_expanded_grid_cost",
         "charging_realization_schema":
@@ -943,6 +1092,14 @@ def _provenance(args) -> dict:
             if key != "phase_telemetry"
         },
     }
+
+
+def _column_pool_treatment(args) -> str:
+    if getattr(args, "inherit_event_pool_from", None) is not None:
+        return "WARM-INHERITED-EVENT"
+    if getattr(args, "validated_seed_routes", None) is not None:
+        return getattr(args, "augmentation_label", None)
+    return "RAW"
 
 
 ITERATION_LOG_HEADER = (
@@ -1086,11 +1243,12 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
             if getattr(args, "validated_seed_routes", None) is not None
             else None
         ),
-        "column_pool_treatment": (
-            getattr(args, "augmentation_label", None)
-            if getattr(args, "validated_seed_routes", None) is not None
-            else "RAW"
+        "inherited_event_pool_status_sha256": (
+            _file_sha256(Path(args.inherit_event_pool_from))
+            if getattr(args, "inherit_event_pool_from", None) is not None
+            else None
         ),
+        "column_pool_treatment": _column_pool_treatment(args),
     }
     for key, value in expected.items():
         observed = status.get(key)
@@ -1524,6 +1682,7 @@ def run_cg(args) -> dict:
             "dag_arcs": net.n_arcs,
         }
     )
+    inherited_event_pool_audit = None
     if cache_path is not None:
         network_metrics.update({
             "cache_hit": cache_hit,
@@ -1733,11 +1892,11 @@ def run_cg(args) -> dict:
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
-            "column_pool_treatment": (
-                getattr(args, "augmentation_label", None)
-                if getattr(args, "validated_seed_routes", None)
-                else "RAW"
+            "inherited_event_pool_status_sha256": provenance.get(
+                "inherited_event_pool_status_sha256"
             ),
+            "inherited_event_pool_audit": inherited_event_pool_audit,
+            "column_pool_treatment": _column_pool_treatment(args),
             "trip_ids": trips,
             "columns": len(pool),
             "columns_journal": str(journal_path),
@@ -1784,11 +1943,11 @@ def run_cg(args) -> dict:
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
-            "column_pool_treatment": (
-                getattr(args, "augmentation_label", None)
-                if getattr(args, "validated_seed_routes", None)
-                else "RAW"
+            "inherited_event_pool_status_sha256": provenance.get(
+                "inherited_event_pool_status_sha256"
             ),
+            "inherited_event_pool_audit": inherited_event_pool_audit,
+            "column_pool_treatment": _column_pool_treatment(args),
             "trip_ids": trips,
             "iterations": 0,
             "attempt_iterations": 0,
@@ -1929,6 +2088,60 @@ def run_cg(args) -> dict:
             frozen.append(mark)
         return frozen
 
+    if getattr(args, "inherit_event_pool_from", None) is not None:
+        started = time.perf_counter()
+        inherited_records, inherited_event_pool_audit = (
+            inherited_event_pool_records(
+                Path(args.inherit_event_pool_from),
+                child_csv_path=DATA_DIR / args.csv,
+                child_problem=problem,
+                child_network=net,
+                g_kwh=args.g_kwh,
+                charge_kw=args.charge_kw,
+                reserve_kwh=args.min_soc_frac * args.g_kwh,
+            )
+        )
+        inherited_added = 0
+        inherited_replaced = 0
+        inherited_existing = 0
+        for record in inherited_records:
+            record["cost_tariff_sha256"] = provenance["prices_sha256"]
+            key = frozenset(record["trips"])
+            if key not in pool:
+                pool[key] = record
+                inherited_added += 1
+            elif record["cost"] < pool[key]["cost"] - 1e-9:
+                pool[key] = record
+                inherited_replaced += 1
+            else:
+                inherited_existing += 1
+                continue
+            if journal:
+                journal.write(json.dumps(record) + "\n")
+        if journal and (inherited_added or inherited_replaced):
+            flush_and_fsync(journal)
+        inherited_event_pool_audit.update({
+            "added_to_child_pool": inherited_added,
+            "replaced_child_columns": inherited_replaced,
+            "already_present_or_not_cheaper": inherited_existing,
+            "import_runtime_s": time.perf_counter() - started,
+        })
+        _record_phase(
+            "inherited_event_pool_import",
+            time.perf_counter() - started,
+            iteration=iteration_offset,
+            details=lambda: dict(inherited_event_pool_audit),
+        )
+        print(
+            "[EXACT] inherited event pool: "
+            f"{inherited_event_pool_audit['accepted_columns']}/"
+            f"{inherited_event_pool_audit['attempted_unique_columns']} "
+            "source columns replayed in child graph; "
+            f"{inherited_added} added, {inherited_replaced} replaced, "
+            f"{inherited_event_pool_audit['rejected_columns']} rejected",
+            flush=True,
+        )
+
     validated_seed_sha256 = None
     if getattr(args, "validated_seed_routes", None) is not None:
         seed_records, validated_seed_sha256 = (
@@ -2047,11 +2260,11 @@ def run_cg(args) -> dict:
             "validated_seed_routes_sha256": provenance.get(
                 "validated_seed_routes_sha256"
             ),
-            "column_pool_treatment": (
-                getattr(args, "augmentation_label", None)
-                if getattr(args, "validated_seed_routes", None)
-                else "RAW"
+            "inherited_event_pool_status_sha256": provenance.get(
+                "inherited_event_pool_status_sha256"
             ),
+            "inherited_event_pool_audit": inherited_event_pool_audit,
+            "column_pool_treatment": _column_pool_treatment(args),
             "trip_ids": trips,
             "iterations": iteration_offset + len(history),
             "attempt_iterations": len(history),
@@ -2828,11 +3041,11 @@ def run_cg(args) -> dict:
         "validated_seed_routes_sha256": provenance.get(
             "validated_seed_routes_sha256"
         ),
-        "column_pool_treatment": (
-            getattr(args, "augmentation_label", None)
-            if getattr(args, "validated_seed_routes", None)
-            else "RAW"
+        "inherited_event_pool_status_sha256": provenance.get(
+            "inherited_event_pool_status_sha256"
         ),
+        "inherited_event_pool_audit": inherited_event_pool_audit,
+        "column_pool_treatment": _column_pool_treatment(args),
         "trip_ids": trips,
         "iterations": iteration_offset + len(history),
         "attempt_iterations": len(history),
@@ -2955,6 +3168,17 @@ def main(argv=None) -> int:
         ),
     )
     parser.add_argument(
+        "--inherit-event-pool-from",
+        type=Path,
+        default=None,
+        help=(
+            "Completed predecessor exact-CG status whose unique route "
+            "sequences are translated through Ordered_Trip_ID and replayed "
+            "in this nested child event graph. Columns only are inherited; "
+            "duals, bases, and certificates are not."
+        ),
+    )
+    parser.add_argument(
         "--augmentation-label",
         choices=("GIRO-AUGMENTED", "GIRO40-AUGMENTED"),
         default=None,
@@ -3027,6 +3251,18 @@ def main(argv=None) -> int:
         parser.error(
             "--validated-seed-routes and --augmentation-label are required "
             "together"
+        )
+    if args.inherit_event_pool_from is not None and (
+        getattr(args, "time_model", "uniform") != "event"
+    ):
+        parser.error("--inherit-event-pool-from requires --time-model event")
+    if (
+        args.inherit_event_pool_from is not None
+        and args.validated_seed_routes is not None
+    ):
+        parser.error(
+            "--inherit-event-pool-from cannot be combined with "
+            "--validated-seed-routes"
         )
     if (
         getattr(args, "time_model", "uniform") == "event"
