@@ -1,0 +1,70 @@
+# Research experiment register
+
+Source snapshot: `20260910T225621Z.json` (`bb304f3b663be49f31e7b090183e269dd5487b41574bf7b32b41d88b49852d38`), captured 2026-09-10T22:56:21.796005+00:00.
+
+This build contains **989 normalized artifact/stage rows** across **26 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
+
+## Campaign index
+
+| campaign_id | family | root | row_count | workflow_job_ids | report_links |
+|---|---|---|---|---|---|
+| capacity_speed_pilot | controlled_physics_pilot | /home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd | 22 | 772080<br>772082<br>772111<br>772112<br>772798<br>772826<br>772985<br>773334<br>773335<br>773336<br>773337<br>773338<br>773339<br>773341<br>773343<br>773437<br>773638<br>773706<br>773708<br>773710<br>773712<br>773714<br>774569 | [capacity_speed/IMPLEMENTATION_REPORT.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/capacity_speed/IMPLEMENTATION_REPORT.md>)<br>[capacity_speed/LAUNCH_STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/capacity_speed/LAUNCH_STATUS.md>) |
+| covering_rerun9 | production_or_historical | /home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb | 32 | 657972<br>659482<br>659492<br>669246<br>676020 | [covering_rerun9/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/covering_rerun9/README.md>)<br>[meeting_20260910/RESEARCH_INDEX.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/RESEARCH_INDEX.md>) |
+| easy_k10_raw_split_replay | production_or_historical | /home/nc437/ladder-lite/easy_k10_raw_split_replay_20260908_9665429 | 2 | 592976 | [snapshots/20260909T0515Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0515Z.md>)<br>[meeting_20260910/comment_response_evidence.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/comment_response_evidence.md>) |
+| easy_raw6 | production_or_historical | /home/nc437/ladder-lite/easy_trip_ladder_raw6_20260908_aaf83f6 | 19 | unknown | [meeting_20260910/EASY_LADDER_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/EASY_LADDER_PLAN.md>)<br>[snapshots/20260908T1752Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260908T1752Z.md>) |
+| giro_small_cg_capacity_duals | small_reference_cg | /home/nc437/ladder-lite/giro_small_cg_capacity_duals_20260909 | 80 | unknown | [giro_k23_capacity_duals/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/giro_k23_capacity_duals/README.md>) |
+| giro_small_cg_newphysics | small_reference_cg | /home/nc437/ladder-lite/giro_small_cg_20260909 | 80 | unknown | unknown |
+| greedy_event4 | production_or_historical | /home/nc437/ladder-lite/greedy_event4_eaca565 | 12 | unknown | [snapshots/20260909T0125Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0125Z.md>)<br>[snapshots/20260909T0300Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0300Z.md>) |
+| heavy_raw6 | production_or_historical | /home/nc437/ladder-lite/heavy_trip_ladder_raw6_20260908_9665429 | 19 | unknown | [snapshots/20260909T0228Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0228Z.md>)<br>[snapshots/20260909T0717Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0717Z.md>) |
+| historical_cover_controls | production_or_historical | /home/nc437/ladder-lite/historical_cover_controls_20260909_bead344 | 5 | unknown | [meeting_20260910/RESEARCH_INDEX.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/RESEARCH_INDEX.md>)<br>[full_cache_witness_audit/LEGACY_SUMMARY.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/full_cache_witness_audit/LEGACY_SUMMARY.md>) |
+| legacy_selected10_current2 | production_or_historical | /home/nc437/ladder-lite/legacy_selected10_current2_20260908_bead344 | 7 | unknown | [meeting_20260910/EASY_LADDER_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/EASY_LADDER_PLAN.md>)<br>[snapshots/20260908T1752Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260908T1752Z.md>) |
+| matched_tariff8 | production_or_historical | /home/nc437/ladder-lite/matched_tariff8_20260908_a9a9720 | 49 | 583447 | [meeting_20260910/TARIFF_EXPERIMENT_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/TARIFF_EXPERIMENT_PLAN.md>)<br>[snapshots/20260908T1752Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260908T1752Z.md>) |
+| matched_tariff_peak12_peak18 | production_or_historical | /home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059 | 48 | unknown | [meeting_20260910/TARIFF_EXTENSION_REVIEW.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/TARIFF_EXTENSION_REVIEW.md>)<br>[snapshots/20260909T0053Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0053Z.md>) |
+| nested84 | production_or_historical | /home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb | 253 | unknown | [warm_chain_p5/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_p5/README.md>)<br>[meeting_20260910/ACTION_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/ACTION_PLAN.md>) |
+| nested_replication42 | production_or_historical | /home/nc437/ladder-lite/nested_replication_p7_20_fresh42_20260909_0209d3e | 127 | unknown | [snapshots/20260909T0617Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0617Z.md>)<br>[snapshots/20260909T0717Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0717Z.md>) |
+| old70 | production_or_historical | /home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17/pool_mip8h_20260908_2d7a21a07e | 38 | unknown | [meeting_20260910/ACTION_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/ACTION_PLAN.md>)<br>[meeting_20260910/HISTORY_EVIDENCE.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/HISTORY_EVIDENCE.md>) |
+| overnight_cpu04_raw_controls | production_or_historical | /home/nc437/ladder-lite/overnight_cpu04_raw_controls_20260909 | 3 | 598960<br>598961 | [snapshots/20260909T0515Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0515Z.md>)<br>[snapshots/20260909T0617Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0617Z.md>) |
+| post_meeting_log_tails | solver_progress_log | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 2 | unknown | [license_and_mip_recovery/STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md>) |
+| scheduler_snapshot | scheduler | unknown | 51 | 537227<br>779030<br>779031<br>779032<br>779033<br>779034<br>779035<br>779062<br>779063<br>779064<br>779065<br>779066<br>779067<br>779068<br>779069<br>779070<br>779071<br>779072<br>779073 | unknown |
+| stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | [license_and_mip_recovery/STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md>) |
+| stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | [post_meeting_20260910/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/README.md>)<br>[snapshots/20260910T1829Z_heartbeat.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260910T1829Z_heartbeat.md>) |
+| targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | [april_source_replay/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/README.md>)<br>[april_source_replay/SUBMISSION.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/SUBMISSION.md>) |
+| targeted_audit:full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_audit_20260909_1745 | 12 | unknown | unknown |
+| targeted_audit:legacy_full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_legacy175_20260909_1755 | 4 | unknown | unknown |
+| terminal_energy_fair | matched_terminal_energy | /home/nc437/ladder-lite/terminal_energy_fair_20260910_2424369 | 9 | 778801<br>778802 | [terminal_energy/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/terminal_energy/README.md>) |
+| warm_chain_p3_k2_10 | production_or_historical | /home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34 | 56 | 676119<br>679879<br>679893<br>679894<br>679895<br>679896<br>679897<br>679898<br>679899<br>679900<br>679901<br>679933<br>679934<br>679935<br>679936<br>679937<br>679938<br>679939<br>679940<br>679941<br>679942<br>679943<br>679944<br>679945<br>679946<br>679947<br>679948<br>679949<br>679950<br>679993<br>687063<br>687297<br>687298<br>687299<br>687300<br>687301<br>687302<br>687303<br>687304<br>687305<br>687306<br>687307<br>687308<br>687309<br>687310 | [warm_chain_status/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_status/README.md>)<br>[snapshots/20260910T0415Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260910T0415Z.md>) |
+| warm_chain_p5_k2_10 | production_or_historical | /home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1 | 48 | 779026<br>779027<br>779028<br>779030<br>779031<br>779032<br>779033<br>779034<br>779035<br>779056<br>779057<br>779058<br>779059<br>779060<br>779061<br>779062<br>779063<br>779064<br>779065<br>779066<br>779067<br>779068<br>779069<br>779070<br>779071<br>779072<br>779073 | [warm_chain_p5/resource_plan.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_p5/resource_plan.md>) |
+
+## Row coverage by family and stage
+
+| result_family | stage | rows |
+|---|---|---|
+| capacity_speed_exact_event | cg | 10 |
+| capacity_speed_exact_event | mip | 10 |
+| cg_phase_telemetry | telemetry | 182 |
+| column_generation | cg | 182 |
+| matched_tariff_comparison | comparison_arm | 48 |
+| pool_mip | mip | 226 |
+| rejected_mip_output | mip_rejected | 2 |
+| scheduler | queue_state | 51 |
+| small_reference_cg | cg_arm | 32 |
+| small_same_pool_comparison | lp | 64 |
+| small_same_pool_comparison | mip | 64 |
+| solver_progress_log | log_tail | 2 |
+| targeted_audit | audit_result | 17 |
+| targeted_audit | workflow | 1 |
+| targeted_audit_log | log_tail | 2 |
+| terminal_energy | frontier | 3 |
+| terminal_energy | mip_failed_preoptimization | 3 |
+| workflow | workflow | 27 |
+| workflow | workflow_cg | 9 |
+| workflow | workflow_cg_reference | 18 |
+| workflow | workflow_freeze | 18 |
+| workflow | workflow_mip | 18 |
+
+## Interpretation rules
+
+- `recorded_lp_objective` is the exact source objective and `lp_objective_kind` records whether it is fleet-only or bus-plus-charging. `weighted_lp_objective` is populated only for bus-plus-charging LPs. `fractional_fleet` is the separately stored sum of route weights. The register never divides an objective by 100,000 to manufacture a fleet value.
+- `fleet_lower_bound_scope` distinguishes a simultaneous-overlap bound, a restricted-pool LP/MIP bound, and a full-model statement. Missing scope remains unknown.
+- Rows marked `superseded_duplicate_772031` or `rejected_observational` are retained for provenance and are not authoritative results.
+- Physical route replay, duplicate passenger coverage, and cross-route charger capacity are separate fields.

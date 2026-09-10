@@ -18,4 +18,4 @@ The inspected fields do not prove that no parent-account or system limit exists.
 
 Cornell’s [Unicorn guide](https://it.coecis.cornell.edu/researchit/using-the-unicorn-cluster/) requires accurate resource requests and describes the default partition. Its [resource FAQ](https://it.coecis.cornell.edu/researchit/using-the-unicorn-cluster/unicorn-faqs/) explains scheduler admission. Neither inspected page states a 50-job prohibition. Slurm’s [array documentation](https://slurm.schedmd.com/job_array.html) defines the optional percent throttle.
 
-Evidence: ../post_meeting_20260910/capacity_speed/concurrency50_cluster_limits.json and concurrency50_update.json. Durable policy: /home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md and local ../../AGENTS.md. Future pilot launcher default is 50 in commit 9422455.
+Evidence: ../post_meeting_20260910/capacity_speed/concurrency50_cluster_limits.json and concurrency50_update.json. Durable policy: /home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md and local ../../AGENTS.md. Future pilot launcher default is 50 in commit 9422455; commit 37d26e7 records the requested concurrency and task-count rule in submission metadata.

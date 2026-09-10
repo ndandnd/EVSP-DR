@@ -2,7 +2,7 @@
 
 This is the common index for experiment settings, execution records, results and source evidence. The [Google Doc register tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.icnyriwovxgf) explains the index; the other tabs contain interpretation and figures.
 
-Current build: **997 artifact/stage records across 26 campaign/source groups**, from the 10 September 2026, 18:37 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **989 artifact/stage records across 26 campaign/source groups**, from the 10 September 2026, 18:56 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -34,10 +34,12 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260910T223757Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260910T225621Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs
 ```
 
 Replace the snapshot with the newly collected dated file. The workbook builder requires the bundled `@oai/artifact-tool` package; `node_modules` here is a local dependency symlink, not experiment data. `validation.json` checks source identity and result scopes; the workbook's `workbook_checks.json` checks record counts and formula errors. All seven workbook tabs were rendered and visually checked for this build.
+
+A copy of this index, dated snapshots and workbook is stored on Unicorn at `/home/nc437/ladder-lite/research-register/`. Local documentation paths refer to the Mac project; solver source paths refer to Unicorn. See `cluster_mirror.json` for the copied version and hashes.
