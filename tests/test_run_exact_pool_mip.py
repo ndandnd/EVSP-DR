@@ -790,6 +790,118 @@ class ExactPoolMipTests(unittest.TestCase):
                         data_dir=data_dir,
                     )
 
+    def test_saved_start_round_trip_preserves_expanded_path_and_blocks(self):
+        """A saved grid path must survive start-column reconstruction."""
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            data_dir = folder / "data"
+            data_dir.mkdir()
+            instance = data_dir / "tiny.csv"
+            prices_path = data_dir / "prices.csv"
+            instance.write_text("instance bytes\n")
+            prices_path.write_text("price bytes\n")
+            station = "2190L_0"
+            blocks = [{
+                "stop_index": 0,
+                "block_index": 0,
+                "station": station,
+                "start_min": 0.0,
+                "end_min": 2.5,
+                "realized_kwh": 10.0,
+                "expanded_grid_kwh": 12.5,
+                "tariff_hour": 0,
+                "tariff_key": "2190L:0",
+                "price_per_kwh": 1.0,
+            }]
+            route = {
+                "route": [DEPOT, 1, station, DEPOT],
+                "charging_stops": {
+                    "stations": [station],
+                    "cst": [0.0],
+                    "cet": [10.0],
+                    "kwh": [10.0],
+                },
+                "expanded_grid_charging_stops": {
+                    "stations": [station],
+                    "cst": [0.0],
+                    "cet": [10.0],
+                    "kwh": [12.5],
+                },
+                "cost": 100017.5,
+                "expanded_grid_cost": 100017.5,
+                "master_cost_semantics": "expanded_grid_cost",
+                "continuous_realized_charging_blocks": blocks,
+            }
+            path = folder / "saved_start.json"
+            path.write_text(json.dumps({"routes": [route]}))
+            problem = SimpleNamespace(
+                adjacency={
+                    DEPOT: [(1, 0.0, 0.0, "depot_trip")],
+                    1: [(station, 0.0, 0.0, "trip_station")],
+                    station: [(DEPOT, 0.0, 0.0, "station_depot")],
+                },
+                start_min={1: 0.0},
+                end_min={1: 0.0},
+                trip_energy={1: 20.0},
+                trips=[1],
+            )
+            status = {
+                "csv": "tiny.csv",
+                "prices_csv": "prices.csv",
+                "soc_step": 15.0,
+                "block_min": 10.0,
+                "g_kwh": 400.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices_path.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            with (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=problem,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"2190L": {0: 1.0}},
+                ),
+                patch(
+                    "utils_v2.calculate_truck_route_cost_accurate",
+                    return_value=100015.0,
+                ),
+            ):
+                merged, start, _detail = merge_validated_partition_start(
+                    [], [1], path, "prices.csv", status,
+                    data_dir=data_dir,
+                    preserve_expanded_grid_cost=True,
+                )
+
+            self.assertEqual(start, [0])
+            saved = merged[start[0]]
+            self.assertEqual(
+                saved["expanded_grid_charging_stops"],
+                route["expanded_grid_charging_stops"],
+            )
+            self.assertEqual(
+                saved["continuous_realized_charging_blocks"], blocks
+            )
+            self.assertAlmostEqual(saved["cost"], 100017.5)
+            self.assertEqual(
+                saved["physical_realization"]
+                ["continuous_realized_charging_blocks_sha256"],
+                hashlib.sha256(
+                    json.dumps(
+                        blocks, sort_keys=True, separators=(",", ":")
+                    ).encode()
+                ).hexdigest(),
+            )
+
     def test_final_replay_rejects_incidence_mismatch_and_nonfinite_physics(self):
         with tempfile.TemporaryDirectory() as tmp:
             data = Path(tmp)

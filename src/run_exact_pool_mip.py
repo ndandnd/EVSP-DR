@@ -32,6 +32,7 @@ import platform
 import subprocess
 import time
 from collections import Counter
+from copy import deepcopy
 from pathlib import Path
 
 from durable_io import read_jsonl_records
@@ -1188,11 +1189,23 @@ def merge_validated_partition_start(
                 f"outside the pool instance: {unknown[:15]}"
             )
 
+        # A saved route has two charging paths: the continuous realized path
+        # used for physical validation and the expanded-grid path used by the
+        # master objective.  Keep both paths when reusing a saved incumbent.
+        # Dropping the expanded path silently made the regenerated block
+        # schedule price the realized kWh on the expanded grid, so the saved
+        # master cost no longer matched its selected column.
+        expanded_stops = route.get("expanded_grid_charging_stops")
+        saved_blocks = route.get("continuous_realized_charging_blocks")
         candidate = {
             "trips": route_trips,
             "route_nodes": nodes,
             "charging_stops": route.get("charging_stops", {}),
         }
+        if expanded_stops is not None:
+            candidate["expanded_grid_charging_stops"] = deepcopy(
+                expanded_stops
+            )
         reason = validate_injected_route(
             problem,
             candidate,
@@ -1246,14 +1259,34 @@ def merge_validated_partition_start(
             "found_iter": 0,
             "origin": f"initial_partition:{path.name[:40]}",
         }
-        blocks = blocks_from_continuous_stops(
-            validated_record,
-            station_prices=prices,
-            charge_kw=charge_kw,
-            earliest_start_by_stop=charging_stop_arrivals(
-                problem, validated_record
-            ),
-        )
+        if saved_blocks is not None:
+            if not isinstance(saved_blocks, list):
+                raise SystemExit(
+                    f"[MIP] initial partition route {ordinal} has an "
+                    "invalid saved continuous block schedule"
+                )
+            # Reuse the recorded block schedule when available.  It carries
+            # the realized and expanded kWh side by side; rebuilding blocks
+            # from charging_stops alone would erase that distinction.
+            blocks = deepcopy(saved_blocks)
+        else:
+            if (
+                expanded_stops is not None
+                and expanded_stops != candidate["charging_stops"]
+            ):
+                raise SystemExit(
+                    f"[MIP] initial partition route {ordinal} has an "
+                    "expanded-grid path but no saved continuous block "
+                    "schedule"
+                )
+            blocks = blocks_from_continuous_stops(
+                validated_record,
+                station_prices=prices,
+                charge_kw=charge_kw,
+                earliest_start_by_stop=charging_stop_arrivals(
+                    problem, validated_record
+                ),
+            )
         block_validation = validate_continuous_charging_blocks(
             validated_record,
             blocks,
@@ -1280,6 +1313,16 @@ def merge_validated_partition_start(
                 raise SystemExit(
                     "[MIP] verified expanded-grid initial route cost is absent "
                     "or inconsistent with its saved master cost"
+                )
+            if not math.isclose(
+                float(expanded_cost),
+                float(block_validation["recomputed_expanded_grid_cost"]),
+                rel_tol=1e-10,
+                abs_tol=1e-6,
+            ):
+                raise SystemExit(
+                    f"[MIP] verified expanded-grid initial route {ordinal} "
+                    "cost does not match its saved grid charging path"
                 )
             # The saved MIP route is priced on the expanded grid.  The
             # continuous replay above remains the physical validation; its
