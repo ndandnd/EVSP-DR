@@ -70,7 +70,10 @@ exec /home/nc437/evsp_env/bin/python ''' + shlex.quote(str(runner)) + ''' "$1"
         f"--output={root}/logs/cg_%A_%a.out",
         f"--error={root}/logs/cg_%A_%a.err", str(worker), "cg",
     ]
-    cg = subprocess.run(cg_cmd, check=True, capture_output=True, text=True)
+    cg = subprocess.run(
+        ["bash", "-lc", shlex.join(cg_cmd)],
+        check=True, capture_output=True, text=True,
+    )
     cg_id = cg.stdout.strip().split(";")[0]
     mip_cmd = [
         "sbatch", "--parsable", "--job-name=capspdMIP",
@@ -81,7 +84,10 @@ exec /home/nc437/evsp_env/bin/python ''' + shlex.quote(str(runner)) + ''' "$1"
         f"--output={root}/logs/mip_%A_%a.out",
         f"--error={root}/logs/mip_%A_%a.err", str(worker), "mip",
     ]
-    mip = subprocess.run(mip_cmd, check=True, capture_output=True, text=True)
+    mip = subprocess.run(
+        ["bash", "-lc", shlex.join(mip_cmd)],
+        check=True, capture_output=True, text=True,
+    )
     record = {
         "schema": "evsp-dr-capacity-speed-pilot-submission-v1",
         "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
