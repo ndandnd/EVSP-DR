@@ -723,6 +723,18 @@ class ExactPoolMipTests(unittest.TestCase):
                         [], [1, 2], invalid, "prices.csv", status,
                         data_dir=data_dir,
                     )
+                merged, start, detail = merge_validated_partition_start(
+                    [], [1, 2], repeated, "prices.csv", status,
+                    data_dir=data_dir, allow_covering=True,
+                )
+                self.assertEqual(len(start), 3)
+                self.assertEqual(detail["kind"], "validated_covering_start")
+                self.assertEqual(detail["repeated_trip_count"], 1)
+                self.assertTrue(detail["covering"])
+                self.assertEqual(
+                    sorted(merged[index]["trips"] for index in start),
+                    [[1], [1], [2]],
+                )
                 with self.assertRaisesRegex(
                     SystemExit, "not an exact partition"
                 ):

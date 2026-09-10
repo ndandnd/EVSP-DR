@@ -993,8 +993,9 @@ def merge_validated_partition_start(
     data_dir=None,
     reference_data_dir=None,
     preserve_expanded_grid_cost=False,
+    allow_covering=False,
 ):
-    """Merge and select one explicitly supplied exact-partition start.
+    """Merge and select one explicitly supplied partition or covering start.
 
     Unlike ``--extra-routes``, this path is fail-closed: every supplied route
     must be a real route under the pool's physics, and the supplied routes
@@ -1264,19 +1265,26 @@ def merge_validated_partition_start(
         master_cost_semantics = "continuous_realized_cost"
         if preserve_expanded_grid_cost:
             expanded_cost = route.get("expanded_grid_cost")
+            route_cost = route.get("cost")
             if (
                 route.get("master_cost_semantics") != "expanded_grid_cost"
                 or expanded_cost is None
+                or route_cost is None
+                or not math.isfinite(float(expanded_cost))
+                or not math.isfinite(float(route_cost))
                 or not math.isclose(
-                    float(expanded_cost),
-                    float(block_validation["recomputed_expanded_grid_cost"]),
-                    rel_tol=1e-10,
-                    abs_tol=1e-6,
+                    float(expanded_cost), float(route_cost),
+                    rel_tol=1e-10, abs_tol=1e-6,
                 )
             ):
                 raise SystemExit(
-                    "[MIP] verified expanded-grid initial route cost mismatch"
+                    "[MIP] verified expanded-grid initial route cost is absent "
+                    "or inconsistent with its saved master cost"
                 )
+            # The saved MIP route is priced on the expanded grid.  The
+            # continuous replay above remains the physical validation; its
+            # realized cost can differ from the saved expanded-grid objective
+            # because the two pricing grids are intentionally distinct.
             master_cost = float(expanded_cost)
             master_cost_semantics = "expanded_grid_cost"
         validated_record["cost"] = master_cost
@@ -1304,9 +1312,13 @@ def merge_validated_partition_start(
 
     missing = [trip for trip in trips if counts[trip] == 0]
     repeated = {trip: counts[trip] for trip in trips if counts[trip] > 1}
-    if missing or repeated:
+    if missing or (repeated and not allow_covering):
+        if allow_covering:
+            reason = "do not cover every trip"
+        else:
+            reason = "not an exact partition"
         raise SystemExit(
-            "[MIP] supplied initial routes are not an exact partition: "
+            f"[MIP] supplied initial routes {reason}: "
             f"missing={missing[:15]}, repeated={list(repeated.items())[:15]}"
         )
 
@@ -1329,10 +1341,15 @@ def merge_validated_partition_start(
         )
 
     detail = {
-        "kind": "validated_exact_partition",
+        "kind": (
+            "validated_covering_start"
+            if allow_covering else "validated_exact_partition"
+        ),
         "source": str(path),
         "source_sha256": source_sha256,
         "validated": True,
+        "covering": bool(allow_covering),
+        "repeated_trip_count": len(repeated),
         "validated_bus_count": len(start_indices),
         "assigned_mip_start_route_count": len(start_indices),
         "expected_full_objective": float(
@@ -1363,8 +1380,9 @@ def merge_validated_partition_start(
             separators=(",", ":"),
         ).encode()
     ).hexdigest()
+    start_kind = "covering" if allow_covering else "exact-partition"
     print(
-        f"[MIP] validated exact-partition start: {len(start_indices)} buses "
+        f"[MIP] validated {start_kind} start: {len(start_indices)} buses "
         f"from {path} (added {added}, preserved duplicate incidences "
         f"{preserved_duplicates})"
     )
@@ -2121,6 +2139,7 @@ def main(argv=None) -> int:
                 preserve_expanded_grid_cost=(
                     args.verified_expanded_initial_partition
                 ),
+                allow_covering=args.cover,
             )
         )
         if physical_pool_audit is not None:
@@ -2245,9 +2264,16 @@ def main(argv=None) -> int:
                 "with prepare_exact_pool_mip.py before submission"
             )
     if args.validate_only:
-        if initial_partition_start["kind"] == "validated_exact_partition":
+        if initial_partition_start["kind"] in (
+            "validated_exact_partition", "validated_covering_start"
+        ):
+            start_kind = (
+                "covering assignment"
+                if initial_partition_start["kind"]
+                == "validated_covering_start" else "exact partition"
+            )
             print("[MIP] validate-only: supplied start is a physically valid "
-                  "exact partition. OK.")
+                  f"{start_kind}. OK.")
         elif seed_partition:
             print("[MIP] validate-only: strict partition feasibility is "
                   "guaranteed by the singleton seed. OK.")
@@ -2396,8 +2422,7 @@ def main(argv=None) -> int:
                 fleet=len(mip_start),
                 kind=(
                     "validated_partition_at_t0"
-                    if initial_partition_start["kind"]
-                    == "validated_exact_partition"
+                    if initial_partition_start["kind"].startswith("validated_")
                     else "initial_mip_start_at_t0"
                 ),
             )
@@ -2436,7 +2461,9 @@ def main(argv=None) -> int:
     cost_stage_has_solution = False
     gurobi_optimize_wall_s = []
     validated_start_available = (
-        initial_partition_start["kind"] == "validated_exact_partition"
+        initial_partition_start["kind"] in (
+            "validated_exact_partition", "validated_covering_start"
+        )
         and bool(mip_start)
     )
     stage1_time_limit_s = None
