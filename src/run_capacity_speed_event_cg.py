@@ -33,6 +33,7 @@ from utils_v2 import base_station_name, load_station_hourly_prices
 
 
 SCHEMA = "evsp-dr-capacity-speed-exact-event-pilot-v1"
+MIP_SCHEMA = "evsp-dr-capacity-speed-two-stage-cover-mip-v2"
 CHARGER_COUNTS = {
     "2190L": 1,
     "4808": 1,
@@ -409,12 +410,72 @@ def duplicate_service_audit(routes, selected, trips):
     }
 
 
+def classify_saved_pool(cg_status, routes, trips):
+    """Classify a hash-bound saved pool and require usable trip coverage."""
+
+    if not routes:
+        raise ValueError("no usable saved pool: pool contains no routes")
+    expected = set(trips)
+    covered = {
+        trip for route in routes for trip in route.get("trips", [])
+        if trip in expected
+    }
+    missing = sorted(expected - covered)
+    if missing:
+        raise ValueError(
+            "no usable saved pool: missing trip coverage for "
+            f"{len(missing)} trip(s), sample={missing[:10]}"
+        )
+    certified = cg_status.get("certified_rc_optimal") is True
+    return {
+        "usable": True,
+        "cg_pricing_certified": certified,
+        "classification": (
+            "certified_exact_event_cg_pool"
+            if certified else "timed_uncertified_exact_event_cg_pool"
+        ),
+        "cg_status": cg_status.get("status"),
+        "cg_stop_reason": cg_status.get("stop_reason"),
+        "route_count": len(routes),
+        "covered_trip_count": len(covered),
+    }
+
+
+def fleet_cap_from_stage1(stage1):
+    """Return the authorized stage-two cap from any feasible stage-one incumbent."""
+
+    if not stage1.get("has_solution"):
+        raise ValueError("no usable stage-one fleet incumbent")
+    return {
+        "sense": "<=",
+        "rhs": int(stage1["incumbent_fleet"]),
+        "source": "best_validated_stage1_incumbent",
+        "source_fleet_proven": bool(stage1["fleet_proven"]),
+    }
+
+
+def add_fleet_incumbent_cap(model, fleet_expression, stage1):
+    """Add the nonbinding-direction cap that allows a smaller stage-two fleet."""
+
+    cap = fleet_cap_from_stage1(stage1)
+    constraint = model.addConstr(
+        fleet_expression <= cap["rhs"], name="stage2_fleet_incumbent_cap",
+    )
+    return constraint, cap
+
+
+def _status_name(status):
+    return {
+        GRB.OPTIMAL: "OPTIMAL", GRB.TIME_LIMIT: "TIME_LIMIT",
+        GRB.INFEASIBLE: "INFEASIBLE", GRB.INF_OR_UNBD: "INF_OR_UNBD",
+    }.get(status, f"STATUS_{status}")
+
+
 def solve_mip(args, problem, routes, capacity, log_path):
     model = gp.Model("capacity_speed_exact_event_cover_mip")
     model.Params.OutputFlag = 1
     model.Params.LogFile = str(log_path)
     model.Params.Threads = int(args.threads)
-    model.Params.TimeLimit = float(args.mip_wall_s)
     model.Params.MIPGap = float(args.mip_gap)
     x = model.addVars(len(routes), vtype=GRB.BINARY, name="route")
     for trip in problem.trips:
@@ -432,30 +493,136 @@ def solve_mip(args, problem, routes, capacity, log_path):
                 if members:
                     model.addConstr(gp.quicksum(members) <= count,
                                     name=f"capacity_{site}_{minute}")
-    model.setObjective(
-        gp.quicksum(float(route["cost"]) * x[index]
-                    for index, route in enumerate(routes)),
-        GRB.MINIMIZE,
+    fleet_expression = gp.quicksum(x.values())
+    charging_expression = gp.quicksum(
+        (float(route["cost"]) - BUS_COST_KX) * x[index]
+        for index, route in enumerate(routes)
     )
+    total_budget_s = float(args.mip_wall_s)
+    stage1_budget_s = total_budget_s / 2.0
+    model.Params.TimeLimit = stage1_budget_s
+    model.setObjective(fleet_expression, GRB.MINIMIZE)
+    total_started = time.perf_counter()
+    stage1_started = time.perf_counter()
     model.optimize()
-    has_solution = model.SolCount > 0
-    selected = [index for index in range(len(routes)) if has_solution and x[index].X > 0.5]
-    return {
+    stage1_runtime_s = time.perf_counter() - stage1_started
+    stage1_has_solution = model.SolCount > 0
+    stage1_selected = [
+        index for index in range(len(routes))
+        if stage1_has_solution and x[index].X > 0.5
+    ]
+    stage1_incumbent = len(stage1_selected) if stage1_has_solution else None
+    stage1_bound_raw = float(model.ObjBound)
+    stage1_integer_bound = (
+        math.ceil(stage1_bound_raw - 1e-7)
+        if math.isfinite(stage1_bound_raw) else None
+    )
+    fleet_proven = bool(
+        stage1_has_solution and stage1_integer_bound is not None
+        and stage1_integer_bound >= stage1_incumbent
+    )
+    stage1_audit = (
+        physical_capacity_audit(routes, stage1_selected)
+        if stage1_has_solution else None
+    )
+    stage1_cover = (
+        duplicate_service_audit(routes, stage1_selected, problem.trips)
+        if stage1_has_solution else None
+    )
+    stage1_validated = bool(
+        stage1_has_solution
+        and stage1_cover["all_trips_covered"]
+        and (not capacity or stage1_audit["valid"])
+    )
+    if stage1_has_solution and not stage1_validated:
+        raise RuntimeError("stage-one solver incumbent failed physical validation")
+    stage1 = {
         "status_code": int(model.Status),
-        "status": {
-            GRB.OPTIMAL: "OPTIMAL", GRB.TIME_LIMIT: "TIME_LIMIT",
-            GRB.INFEASIBLE: "INFEASIBLE", GRB.INF_OR_UNBD: "INF_OR_UNBD",
-        }.get(model.Status, f"STATUS_{model.Status}"),
-        "has_solution": has_solution,
-        "objective": float(model.ObjVal) if has_solution else None,
-        "objective_bound": float(model.ObjBound),
-        "mip_gap": float(model.MIPGap) if has_solution else None,
+        "status": _status_name(model.Status),
+        "has_solution": stage1_has_solution,
+        "validated_incumbent": stage1_validated,
+        "incumbent_fleet": stage1_incumbent,
+        "fleet_bound_raw": stage1_bound_raw,
+        "fleet_integer_lower_bound": stage1_integer_bound,
+        "fleet_proven": fleet_proven,
+        "mip_gap": float(model.MIPGap) if stage1_has_solution else None,
         "node_count": float(model.NodeCount),
+        "runtime_s": stage1_runtime_s,
+        "time_limit_s": stage1_budget_s,
+        "selected_indices": stage1_selected,
+    }
+    remaining_s = max(0.0, total_budget_s - (time.perf_counter() - total_started))
+    stage2 = {
+        "executed": False,
+        "skip_reason": None,
+        "time_limit_s": remaining_s,
+        "has_solution": False,
+    }
+    selected = stage1_selected
+    if not stage1_has_solution:
+        stage2["skip_reason"] = "no_usable_stage1_fleet_incumbent"
+    elif remaining_s <= 1e-3:
+        stage2["skip_reason"] = "no_remaining_mip_budget"
+    else:
+        _constraint, cap = add_fleet_incumbent_cap(
+            model, fleet_expression, stage1,
+        )
+        for index in range(len(routes)):
+            x[index].Start = 1.0 if index in stage1_selected else 0.0
+        model.setObjective(charging_expression, GRB.MINIMIZE)
+        model.Params.TimeLimit = remaining_s
+        stage2_started = time.perf_counter()
+        model.optimize()
+        stage2_runtime_s = time.perf_counter() - stage2_started
+        stage2_has_solution = model.SolCount > 0
+        stage2_selected = [
+            index for index in range(len(routes))
+            if stage2_has_solution and x[index].X > 0.5
+        ]
+        if stage2_has_solution:
+            selected = stage2_selected
+        stage2 = {
+            "executed": True,
+            "skip_reason": None,
+            "status_code": int(model.Status),
+            "status": _status_name(model.Status),
+            "has_solution": stage2_has_solution,
+            "fleet_cap": cap,
+            "incumbent_fleet": (
+                len(stage2_selected) if stage2_has_solution else None
+            ),
+            "charging_cost": (
+                float(model.ObjVal) if stage2_has_solution else None
+            ),
+            "charging_cost_bound": float(model.ObjBound),
+            "charging_cost_gap": (
+                float(model.MIPGap) if stage2_has_solution else None
+            ),
+            "node_count": float(model.NodeCount),
+            "runtime_s": stage2_runtime_s,
+            "time_limit_s": remaining_s,
+            "selected_indices": stage2_selected,
+        }
+    has_solution = bool(selected)
+    charging_cost = sum(
+        float(routes[index]["cost"]) - BUS_COST_KX for index in selected
+    ) if has_solution else None
+    return {
+        "method": "two_stage_fleet_then_charging_cost",
+        "status": (
+            stage2.get("status") if stage2["executed"] else stage1["status"]
+        ),
+        "has_solution": has_solution,
         "selected_indices": selected,
         "fleet": len(selected) if has_solution else None,
-        "charging_related_cost": (
-            float(model.ObjVal) - BUS_COST_KX * len(selected) if has_solution else None
+        "charging_related_cost": charging_cost,
+        "reconstructed_weighted_cost": (
+            BUS_COST_KX * len(selected) + charging_cost
+            if has_solution else None
         ),
+        "total_budget_s": total_budget_s,
+        "stage1": stage1,
+        "stage2": stage2,
     }
 
 
@@ -463,13 +630,12 @@ def run_mip(args, problem, prov, out: Path, pool: Path, cg_status: Path):
     if out.exists():
         raise FileExistsError(out)
     status = json.loads(cg_status.read_text())
-    if status.get("certified_rc_optimal") is not True:
-        raise ValueError("MIP requires a certified exact CG pool")
     if status.get("arm") != args.arm:
         raise ValueError("CG arm mismatch")
     if status.get("pool_sha256") != sha256_file(pool):
         raise ValueError("CG pool hash mismatch")
     routes = load_pool(pool)
+    pool_acceptance = classify_saved_pool(status, routes, problem.trips)
     log_path = out.with_suffix(out.suffix + ".gurobi.log")
     result = solve_mip(
         args, problem, routes, ARMS[args.arm]["capacity"], log_path,
@@ -481,13 +647,14 @@ def run_mip(args, problem, prov, out: Path, pool: Path, cg_status: Path):
     if ARMS[args.arm]["capacity"] and result["has_solution"] and not audit["valid"]:
         raise RuntimeError("selected MIP solution fails continuous capacity audit")
     payload = {
-        "schema": SCHEMA,
+        "schema": MIP_SCHEMA,
         "mode": "mip",
         "arm": args.arm,
         "cg_status": str(cg_status),
         "cg_status_sha256": sha256_file(cg_status),
         "pool": str(pool),
         "pool_sha256": sha256_file(pool),
+        "pool_acceptance": pool_acceptance,
         "result": result,
         "physical_station_capacity_audit": audit,
         "duplicate_service_audit": duplicate_audit,

@@ -2,13 +2,19 @@ import sys
 import unittest
 from pathlib import Path
 
+import gurobipy as gp
+from gurobipy import GRB
+
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
 from run_capacity_speed_event_cg import (  # noqa: E402
     ExactCapacityMaster,
+    add_fleet_incumbent_cap,
+    classify_saved_pool,
     duplicate_service_audit,
+    fleet_cap_from_stage1,
     physical_capacity_audit,
 )
 
@@ -61,6 +67,46 @@ class CapacitySpeedPilotTests(unittest.TestCase):
         self.assertTrue(audit["all_trips_covered"])
         self.assertEqual(audit["overcovered_trip_count"], 1)
         self.assertEqual(audit["overcovered_trips"], {"1": 2})
+
+    def test_unproved_incumbent_is_valid_stage2_upper_cap(self):
+        stage1 = {
+            "has_solution": True,
+            "incumbent_fleet": 3,
+            "fleet_proven": False,
+        }
+        cap = fleet_cap_from_stage1(stage1)
+        self.assertEqual(cap["sense"], "<=")
+        self.assertEqual(cap["rhs"], 3)
+        self.assertFalse(cap["source_fleet_proven"])
+
+        model = gp.Model("test_fleet_cap_direction")
+        model.Params.OutputFlag = 0
+        x = model.addVars(3, vtype=GRB.BINARY)
+        constraint, _cap = add_fleet_incumbent_cap(
+            model, gp.quicksum(x.values()), stage1,
+        )
+        model.addConstr(x[0] + x[1] >= 2)
+        model.setObjective(gp.quicksum(x.values()), GRB.MINIMIZE)
+        model.optimize()
+        self.assertEqual(constraint.Sense, "<")
+        self.assertAlmostEqual(model.ObjVal, 2.0)
+
+    def test_timed_cg_pool_is_usable_but_explicitly_uncertified(self):
+        status = {
+            "certified_rc_optimal": False,
+            "status": "incomplete",
+            "stop_reason": "cg_wall_limit",
+        }
+        accepted = classify_saved_pool(
+            status, [route([0], 1.0), route([1], 1.0)], (0, 1),
+        )
+        self.assertEqual(
+            accepted["classification"],
+            "timed_uncertified_exact_event_cg_pool",
+        )
+        self.assertFalse(accepted["cg_pricing_certified"])
+        with self.assertRaisesRegex(ValueError, "no usable saved pool"):
+            classify_saved_pool(status, [route([0], 1.0)], (0, 1))
 
 
 if __name__ == "__main__":
