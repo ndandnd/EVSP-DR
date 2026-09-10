@@ -33,6 +33,7 @@ import csv
 import hashlib
 import json
 import math
+import multiprocessing
 import os
 import pickle
 import signal
@@ -397,6 +398,36 @@ def _trip_id_maps(csv_path: Path) -> tuple[dict[int, int], dict[int, int]]:
     return local_to_stable, stable_to_local
 
 
+_INHERITED_EVENT_REPLAY_CONTEXT = None
+
+
+def _replay_inherited_event_sequence(item):
+    """Fork worker for one child-graph fixed-sequence replay."""
+
+    child_sequence, stable_sequence, source_cost = item
+    context = _INHERITED_EVENT_REPLAY_CONTEXT
+    if context is None:
+        raise RuntimeError("inherited event replay worker has no context")
+    network, problem, g_kwh, charge_kw, reserve_kwh = context
+    record = network.fixed_sequence_record(child_sequence)
+    if record is None:
+        return None, "sequence_absent_from_child_event_graph"
+    reason = validate_injected_route(
+        problem, record, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
+    )
+    if reason is not None:
+        return None, f"physical_replay:{reason}"
+    physical = record.get("physical_realization") or {}
+    blocks = record.get("continuous_realized_charging_blocks")
+    if (
+        physical.get("status") != "valid_event_time_realized"
+        or charging_block_schedule_sha256(blocks)
+        != physical.get("continuous_realized_charging_blocks_sha256")
+    ):
+        return None, "invalid_child_event_realization"
+    return (record, stable_sequence, source_cost), None
+
+
 def inherited_event_pool_records(
     status_path: Path,
     *,
@@ -406,6 +437,7 @@ def inherited_event_pool_records(
     g_kwh: float,
     charge_kw: float,
     reserve_kwh: float,
+    workers: int = 1,
 ) -> tuple[list[dict], dict]:
     """Replay a predecessor event-CG pool in a nested child event graph.
 
@@ -452,8 +484,11 @@ def inherited_event_pool_records(
     if set(child_problem.trips) != set(child_stable_to_local.values()):
         raise ValueError("child CSV trip mapping differs from built problem")
 
+    if int(workers) < 1:
+        raise ValueError("inherited event-pool workers must be positive")
     accepted = []
     rejected = Counter()
+    replay_items = []
     for source_record in source_pool.values():
         try:
             stable_sequence = [
@@ -469,35 +504,47 @@ def inherited_event_pool_records(
         child_sequence = [
             child_stable_to_local[stable] for stable in stable_sequence
         ]
-        record = child_network.fixed_sequence_record(child_sequence)
-        if record is None:
-            rejected["sequence_absent_from_child_event_graph"] += 1
-            continue
-        reason = validate_injected_route(
-            child_problem, record, g_kwh, charge_kw, reserve_kwh, HORIZON_MIN
+        replay_items.append(
+            (child_sequence, stable_sequence, source_record.get("cost"))
         )
-        if reason is not None:
-            rejected[f"physical_replay:{reason}"] += 1
-            continue
-        physical = record.get("physical_realization") or {}
-        blocks = record.get("continuous_realized_charging_blocks")
-        if (
-            physical.get("status") != "valid_event_time_realized"
-            or charging_block_schedule_sha256(blocks)
-            != physical.get("continuous_realized_charging_blocks_sha256")
-        ):
-            rejected["invalid_child_event_realization"] += 1
-            continue
-        record.update({
-            "origin": "inherited_event_pool_replayed_in_child_graph",
-            "inherited_source_status_sha256": hashlib.sha256(
-                status_raw
-            ).hexdigest(),
-            "inherited_source_journal_sha256": journal_raw_sha256,
-            "inherited_source_ordered_trip_ids": stable_sequence,
-            "inherited_source_cost": source_record.get("cost"),
-        })
-        accepted.append(record)
+
+    global _INHERITED_EVENT_REPLAY_CONTEXT
+    _INHERITED_EVENT_REPLAY_CONTEXT = (
+        child_network, child_problem, g_kwh, charge_kw, reserve_kwh
+    )
+    if workers == 1:
+        replay_results = map(_replay_inherited_event_sequence, replay_items)
+        pool_context = None
+    else:
+        if "fork" not in multiprocessing.get_all_start_methods():
+            raise ValueError(
+                "parallel inherited event replay requires fork support"
+            )
+        pool_context = multiprocessing.get_context("fork").Pool(workers)
+        replay_results = pool_context.imap(
+            _replay_inherited_event_sequence, replay_items, chunksize=8
+        )
+    try:
+        for replayed, reason in replay_results:
+            if reason is not None:
+                rejected[reason] += 1
+                continue
+            record, stable_sequence, source_cost = replayed
+            record.update({
+                "origin": "inherited_event_pool_replayed_in_child_graph",
+                "inherited_source_status_sha256": hashlib.sha256(
+                    status_raw
+                ).hexdigest(),
+                "inherited_source_journal_sha256": journal_raw_sha256,
+                "inherited_source_ordered_trip_ids": stable_sequence,
+                "inherited_source_cost": source_cost,
+            })
+            accepted.append(record)
+    finally:
+        if pool_context is not None:
+            pool_context.close()
+            pool_context.join()
+        _INHERITED_EVENT_REPLAY_CONTEXT = None
 
     audit = {
         "schema": "evsp-dr-inherited-event-pool-audit-v1",
@@ -513,6 +560,7 @@ def inherited_event_pool_records(
         "rejected_reasons": dict(sorted(rejected.items())),
         "mapping_key": "Ordered_Trip_ID",
         "child_event_graph_reoptimization": True,
+        "replay_workers": int(workers),
         "inherited_duals": False,
         "inherited_basis": False,
         "inherited_lp_certificate": False,
@@ -2099,6 +2147,7 @@ def run_cg(args) -> dict:
                 g_kwh=args.g_kwh,
                 charge_kw=args.charge_kw,
                 reserve_kwh=args.min_soc_frac * args.g_kwh,
+                workers=args.inherit_event_pool_workers,
             )
         )
         inherited_added = 0
@@ -3179,6 +3228,15 @@ def main(argv=None) -> int:
         ),
     )
     parser.add_argument(
+        "--inherit-event-pool-workers",
+        type=int,
+        default=1,
+        help=(
+            "Fork workers used only to replay inherited route sequences in "
+            "the child event graph. Default 1 preserves portable behavior."
+        ),
+    )
+    parser.add_argument(
         "--augmentation-label",
         choices=("GIRO-AUGMENTED", "GIRO40-AUGMENTED"),
         default=None,
@@ -3243,6 +3301,15 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     if args.columns_per_iter < 1:
         parser.error("--columns_per_iter must be positive")
+    if args.inherit_event_pool_workers < 1:
+        parser.error("--inherit-event-pool-workers must be positive")
+    if (
+        args.inherit_event_pool_workers != 1
+        and args.inherit_event_pool_from is None
+    ):
+        parser.error(
+            "--inherit-event-pool-workers requires --inherit-event-pool-from"
+        )
     if not 0.0 <= args.column_diversity_weight <= 1.0:
         parser.error("--column-diversity-weight must be between zero and one")
     if args.column_candidate_multiplier < 1:
