@@ -1,6 +1,6 @@
 # Execution issues — 10 September 2026
 
-This page distinguishes execution errors from optimization results. The normalized result register uses the 18:56 EDT snapshot; detailed recovery evidence may have a later timestamp.
+This page distinguishes execution errors from optimization results. Read the register README for its current snapshot timestamp; original failures and later recoveries are retained separately.
 
 | Campaign / jobs | Verified issue | What the evidence does and does not say |
 |---|---|---|
@@ -11,7 +11,7 @@ This page distinguishes execution errors from optimization results. The normaliz
 
 ## Terminal-energy repair
 
-**Status at register delivery: repair prepared locally; no retry submitted.** The compatibility code and regression are preserved in `.codex-work/terminal-replay-compat-20260910`. That draft worktree uses an older base, so the minimal change must be applied and rechecked on the original execution commit `2424369f4b5c40198a22698b7a460d6aa8129169` before any submission. This prevents unrelated dependency changes from entering the experiment.
+**Recovery completed:** retry array **810459** completed all three tariff MIPs using immutable commit `5cdb8138c29faef9d5bf949175cb1e815a0b4220`, based on the original `2424369` execution. Original fixed-duty frontiers were reused with identical hashes. All three runs prove fleet five and charging-stage optimality within their replay-validated saved pools. Model charging objectives: 08:00 **261.5697635682**; 12:00 **332.0255245396**; 18:00 **217.5050887809**. The shared aggregate terminal-energy floor remains 280.7833253 kWh. These are finite-pool results, not a new full-model pricing certificate. See [recovery provenance](../parallel_research_20260911/README.md). The earlier local draft is historical, not the production retry source.
 
 The bounded fix deterministically replays every saved route and carries the recomputed terminal energy and cost into the in-memory record. Where old metadata exists, it is checked against the replay. Missing energy is never replaced by a guessed SOC or zero.
 
@@ -27,3 +27,7 @@ The original failed attempts remain in the register. Any repair submission and e
 - [Verified warm-k10 recovery](../post_meeting_20260910/license_and_mip_recovery/STATUS.md)
 
 Independent default-partition arrays now request concurrency 50. Increasing an array throttle does not increase an individual job's wall-time or memory allowance.
+
+## Capacity timeout reruns
+
+Six original cells saved no resumable pools: the driver kept columns in memory and published only at termination. Fresh matched reruns are now CG **811181**, dependent MIP **811182**, at `/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef`. The CG budget is extended to eight hours with nine-hour scheduler allocation. Code, inputs and arm physics remain fixed. A longer budget is an explicit experimental change; these are not resumed checkpoints. Original timeouts remain recorded.

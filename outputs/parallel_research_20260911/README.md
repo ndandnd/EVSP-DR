@@ -48,3 +48,7 @@ New figures: [fresh formulation matrix](figures/fresh_partition_vs_cover_fleet_m
 Six fresh matched CG reruns: array **811181**, tasks **5,7,9,11,13,15**, eight-hour algorithm budget, nine-hour scheduler allocation, 1 CPU/24 GiB. Original code and arm physics are preserved; old driver saved no resumable pools. New root: `/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef`. Dependent two-stage MIP array **811182**, corresponding-task dependencies, 8 CPU/16 GiB, 1500-second total solver budget and 750-second first stage. GPU compute-01 excluded. These are budget-extension experiments, not checkpoint resumes. Original timeouts remain in the record.
 
 At the 23:22 EDT snapshot, fresh array810454 had **50 running** and **25 pending** tasks. Sample log task3 reached Gurobi LP optimization with empty stderr. See cover75/startup_check.json. This validates startup only.
+
+## Default-partition MIP migration
+
+User-authorized overnight trial: fresh75 MIPs now use **812766/812767** on default_partition (combined concurrency50), one-hour solver budget with two-hour allocation and unchanged per-case freeze dependencies. Warm and capacity MIPs remain on Scaglione. Previous pending arrays were administratively cancelled before any solve. See [preemption study](../research_register/preemption_study/README.md) and [exact final migration audit](../post_meeting_20260910/warm_multichain_p1246/records/fresh75/default_mip_migration_a02.json).

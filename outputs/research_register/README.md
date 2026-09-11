@@ -2,7 +2,7 @@
 
 This is the common index for experiment settings, execution records, results and source evidence. The [Google Doc register tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.icnyriwovxgf) explains the index; the other tabs contain interpretation and figures.
 
-Current build: **1889 artifact/stage records across 29 campaign/source groups**, from the 10 September 2026, 23:22 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **1897 artifact/stage records across 30 campaign/source groups**, from the 10 September 2026, 23:40 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -47,3 +47,7 @@ A copy of this index, dated snapshots and workbook is stored on Unicorn at `/hom
 ## Parallel expansion — 11 September 2026 UTC
 
 [Launch records](../parallel_research_20260911/README.md): 75 independent fresh covering CG cases (array 810454, concurrency 50) complete the six-chain k=2–15 grid without repeating the nine existing covering cases. Four additional inherited-column chains P1/P2/P4/P6 have 36 CG jobs with dependencies only within each chain. These are submissions, not results or certificates.
+
+## Default-partition MIP reliability
+
+[Preemption study](preemption_study/README.md) tracks per-attempt scheduler outcomes, priority samples, queue wait, runtime exposure and preemption cost for overnight default MIPs. Scientific results and scheduler outcomes are separate; pending/running jobs do not count as completed attempts. The dated collector snapshots retain accounting history.

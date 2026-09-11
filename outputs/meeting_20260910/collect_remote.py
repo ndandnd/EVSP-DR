@@ -25,11 +25,12 @@ roots = {
     'stage2_cap_saved_pool_reruns': home / 'stage2_cap_saved_pool_reruns_20260910_15e781a',
     'stage2_cap_license_recovery': home / 'stage2_cap_license_recovery_20260910_871d057',
     'terminal_energy_fair_mip_retry_5cdb813': home / 'terminal_energy_fair_mip_retry_5cdb813_20260910',
+    'capacity_timeout6_rerun': home / 'capacity_speed_pilot_20260910_timeout6_rerun_7d38ef',
 }
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json'))):
+    for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json'))):
         raw = p.read_bytes()
         d = json.loads(raw)
         row = {k: d.get(k) for k in ['buses','fleet_bound','fleet_proven','status','status_name','mip_gap','optimal_scope','pool_columns','source_cg_iterations','source_cg_wall_s','runtime_s','gurobi_optimize_wall_s','partitioning','overcovered_trips','charging_cost','continuous_realized_charging_cost','two_stage','physical_pool_audit','physical_replay_validated','physical_replay_scope','duplicate_trip_removal_validated','cross_route_charger_capacity_validated']}
@@ -44,7 +45,7 @@ for name, root in roots.items():
         row.update(physics=d.get('physics'), mip_start=d.get('mip_start'), column_pool_treatment=(d.get('pricer_provenance') or {}).get('column_pool_treatment'))
         rows.append(row)
     cg = []
-    cg_paths=set((root/'cg').glob('*.json')) | set(root.glob('*/cg.json'))
+    cg_paths=set((root/'cg').glob('*.json')) | set(root.glob('p*/cg/M__*.json')) | set(root.glob('*/cg.json'))
     if cg_paths:
         for p in sorted(cg_paths):
             if p.stat().st_size > 100_000_000: continue
@@ -54,7 +55,7 @@ for name, root in roots.items():
             row['path']=str(p)
             cg.append(row)
     phases=[]
-    phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl'))
+    phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl'))
     for p in sorted(phase_paths):
         sums=defaultdict(float); counts=Counter(); last=None; partial=0
         for line in p.open():
@@ -74,7 +75,7 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
-    for record_name in ['resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.mip.json', 'retry_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
+    for record_name in ['downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():
             out['campaigns'][name]['workflow'][record_name] = json.loads(record_path.read_bytes())
@@ -188,4 +189,11 @@ for name, directory in [('april_source_replay','april175_replay_20260909'), ('fu
 
 q=subprocess.run(['/usr/local/slurm/slurm-25.05.5/bin/squeue','--me','-r','-h','-o','%i|%T|%M|%R'],capture_output=True,text=True)
 out['squeue']={'returncode':q.returncode,'stdout':q.stdout,'stderr':q.stderr}
+study_script = home / 'mip_preemption_study_20260911' / 'collect_attempts.py'
+if study_script.exists() and (study_script.parent / 'registry.json').exists():
+    try:
+        study_run = subprocess.run(['python3', str(study_script)], capture_output=True, text=True, timeout=45)
+        out['mip_preemption_study'] = json.loads(study_run.stdout) if study_run.returncode == 0 else {'collection_error': study_run.stderr, 'returncode': study_run.returncode}
+    except Exception as exc:
+        out['mip_preemption_study'] = {'collection_error': str(exc)}
 print(json.dumps(out))

@@ -1,0 +1,133 @@
+{
+  "default_cancelled_before_budget_correction": {
+    "registered_tasks": 75,
+    "accounting_missing_task_ids": [
+      "812608_0",
+      "812608_1",
+      "812608_2",
+      "812608_3",
+      "812608_4",
+      "812608_5",
+      "812608_6",
+      "812608_7",
+      "812608_8",
+      "812608_9",
+      "812619_45",
+      "812619_46",
+      "812619_47",
+      "812619_48",
+      "812619_49",
+      "812619_50",
+      "812619_51",
+      "812619_52",
+      "812619_53",
+      "812619_54"
+    ],
+    "attempts": 55,
+    "started": 0,
+    "ended_started_attempts": 0,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": null,
+    "descriptive_wilson95": null,
+    "state_counts": {
+      "CANCELLED": 55
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 0
+  },
+  "default_fresh_3600": {
+    "registered_tasks": 75,
+    "accounting_missing_task_ids": [
+      "812766_0",
+      "812766_1",
+      "812766_2",
+      "812766_3",
+      "812766_4",
+      "812766_5",
+      "812766_6",
+      "812766_7",
+      "812766_8",
+      "812766_9",
+      "812767_45",
+      "812767_46",
+      "812767_47",
+      "812767_48",
+      "812767_49",
+      "812767_50",
+      "812767_51",
+      "812767_52",
+      "812767_53",
+      "812767_54"
+    ],
+    "attempts": 55,
+    "started": 0,
+    "ended_started_attempts": 0,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": null,
+    "descriptive_wilson95": null,
+    "state_counts": {
+      "PENDING": 55
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 0
+  },
+  "scaglione_cancelled_before_migration": {
+    "registered_tasks": 75,
+    "accounting_missing_task_ids": [
+      "810588_0",
+      "810588_1",
+      "810588_2",
+      "810588_3",
+      "810588_4",
+      "810588_5",
+      "810588_6",
+      "810588_7",
+      "810588_8",
+      "810588_9",
+      "810589_45",
+      "810589_46",
+      "810589_47",
+      "810589_48",
+      "810589_49",
+      "810589_50",
+      "810589_51",
+      "810589_52",
+      "810589_53",
+      "810589_54"
+    ],
+    "attempts": 55,
+    "started": 0,
+    "ended_started_attempts": 0,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": null,
+    "descriptive_wilson95": null,
+    "state_counts": {
+      "CANCELLED": 55
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 0
+  },
+  "scaglione_warm_3600": {
+    "registered_tasks": 36,
+    "accounting_missing_task_ids": [],
+    "attempts": 36,
+    "started": 11,
+    "ended_started_attempts": 11,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": 0.0,
+    "descriptive_wilson95": [
+      0,
+      0.2588329669680317
+    ],
+    "state_counts": {
+      "COMPLETED": 11,
+      "PENDING": 25
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 132
+  }
+}

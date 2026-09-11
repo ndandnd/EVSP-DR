@@ -1,0 +1,55 @@
+{
+  "all_effective_checks_passed": true,
+  "attempt_tag": "default1h_a02",
+  "effective": [
+    {
+      "effective_checks_passed": true,
+      "job_id": "812766",
+      "missing": [],
+      "scontrol": "JobId=812766 ArrayJobId=812766 ArrayTaskId=0-44%30 ArrayTaskThrottle=30 JobName=MPdv75s\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15365 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=None Dependency=aftercorr:810587_*(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-10T23:36:24 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-10T23:36:24 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3822477\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01,scaglione-cpu-[01-05]\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=16G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/downstream/fresh_mip_default_attempt.sub\n   WorkDir=/home/nc437\n   StdErr=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/logs/mip_default/812766_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/logs/mip_default/812766_4294967294.out\n   TresPerTask=cpu=8\n   \n\n"
+    },
+    {
+      "effective_checks_passed": true,
+      "job_id": "812767",
+      "missing": [],
+      "scontrol": "JobId=812767 ArrayJobId=812767 ArrayTaskId=45-74%20 ArrayTaskThrottle=20 JobName=MPdv75l\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15365 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=None Dependency=aftercorr:810587_*(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-10T23:36:24 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-10T23:36:24 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:3822477\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01,scaglione-cpu-[01-05]\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=32G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/downstream/fresh_mip_default_attempt.sub\n   WorkDir=/home/nc437\n   StdErr=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/logs/mip_default/812767_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/logs/mip_default/812767_4294967294.out\n   TresPerTask=cpu=8\n   \n\n"
+    }
+  ],
+  "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "freeze_dependency": "aftercorr:810587",
+  "global_concurrency_cap": 50,
+  "new_arrays": [
+    {
+      "cpus": 8,
+      "indices": "0-44",
+      "job_id": "812766",
+      "memory": "16G",
+      "throttle": 30
+    },
+    {
+      "cpus": 8,
+      "indices": "45-74",
+      "job_id": "812767",
+      "memory": "32G",
+      "throttle": 20
+    }
+  ],
+  "old_arrays": [
+    {
+      "disposition": "cancelled_before_start_scientific_budget_correction",
+      "job_id": "812608"
+    },
+    {
+      "disposition": "cancelled_before_start_scientific_budget_correction",
+      "job_id": "812619"
+    }
+  ],
+  "recorded_at_utc": "2026-09-11T03:36:24.627059+00:00",
+  "runner_sha256": "bcb5a6b76040ff6ddfa932433d296a1f0f72207b28cbba738b1b4dd39f1eaac7",
+  "schema": "evsp-dr-fresh75-default-mip-correction-v1",
+  "slurm_time": "02:00:00",
+  "solver_budget_seconds": 3600,
+  "stage1_max_seconds": 1800,
+  "worker_sha256": "d9aa1144742f65fac2b3cd533c6ef8bc75c24c2759aaa322314a172b67f9db71",
+  "wrapper_sha256": "13d9d5a6d2cd674e78ca046146254aa6b817cdda215609ba575467b5eadeea52"
+}
