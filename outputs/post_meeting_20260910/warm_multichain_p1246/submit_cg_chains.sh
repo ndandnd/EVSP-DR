@@ -52,8 +52,9 @@ for replicate in 1 2 4 6; do
   done
 done
 if [[ "$DRY_RUN" == 1 ]]; then
+  mv "${RECORD}.planned" "$BATCH/cg_jobs.dryrun.tsv"
   echo "DRY_RUN=1; commands written to $command_file"
-  cat "${RECORD}.planned"
+  cat "$BATCH/cg_jobs.dryrun.tsv"
   exit 0
 fi
 mv "${RECORD}.planned" "$RECORD"
