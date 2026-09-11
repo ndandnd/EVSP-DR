@@ -542,9 +542,8 @@ class Register:
                     },
                 )
 
-    def capacity_speed(self):
-        campaign_id = "capacity_speed_pilot"
-        value = self.snapshot.get(campaign_id, {})
+    def capacity_speed(self, campaign_id="capacity_speed_pilot"):
+        value = self.snapshot.get(campaign_id, self.snapshot.get("campaigns", {}).get(campaign_id, {}))
         root = value.get("root")
         self.campaign(campaign_id, root, "controlled_physics_pilot")
         for item in value.get("records", []):
@@ -810,6 +809,8 @@ class Register:
     def build(self):
         self.standard_campaigns()
         self.capacity_speed()
+        if self.snapshot.get("campaigns", {}).get("capacity_timeout6_rerun", {}).get("records"):
+            self.capacity_speed("capacity_timeout6_rerun")
         self.terminal_energy()
         self.small_cg()
         self.targeted()

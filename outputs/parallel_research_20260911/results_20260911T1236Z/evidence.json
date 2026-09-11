@@ -1,0 +1,390 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260911T123652Z.json",
+  "snapshot_sha256": "c0997c515b6e87ad548b18a5f31c63208facaa4b98d2a65053046ce346c5327b",
+  "warm_p5_k9": {
+    "buses": 9,
+    "fleet_bound": 9.0,
+    "fleet_proven": true,
+    "status": 2,
+    "status_name": "OPTIMAL",
+    "mip_gap": 0.0,
+    "optimal_scope": "full_pool_lexicographic",
+    "pool_columns": 34665,
+    "source_cg_iterations": 260,
+    "source_cg_wall_s": 14249.819808664499,
+    "runtime_s": 1177.9904751819558,
+    "gurobi_optimize_wall_s": 1176.9805645179003,
+    "partitioning": false,
+    "overcovered_trips": 10,
+    "charging_cost": 482.57600000000093,
+    "continuous_realized_charging_cost": 470.50405232969206,
+    "two_stage": {
+      "fleet_proven": true,
+      "stage1_bound": 9.0,
+      "stage1_buses": 9,
+      "stage1_charging_related_objective": 671.6400000001886,
+      "stage1_gap": 0.0,
+      "stage1_incumbent_source": "solver",
+      "stage1_incumbent_validated": true,
+      "stage1_node_count": 1.0,
+      "stage1_runtime_s": 2.7716477068606764,
+      "stage1_selected_route_indices": [
+        690,
+        1474,
+        7507,
+        13695,
+        14915,
+        16907,
+        25384,
+        27854,
+        29437
+      ],
+      "stage1_solution_count": 4,
+      "stage1_solver_has_solution": true,
+      "stage1_status": 2,
+      "stage1_status_name": "OPTIMAL",
+      "stage1_time_limit_s": 1800.0,
+      "stage1_total_objective": 900671.6400000001,
+      "stage1_validation_reason": null,
+      "stage2_absolute_gap": 0.0,
+      "stage2_available_time_s": 3597.2283522931393,
+      "stage2_executed": true,
+      "stage2_fleet_cap": 9,
+      "stage2_fleet_cap_proven": true,
+      "stage2_fleet_constraint": "at_most",
+      "stage2_has_solution": true,
+      "stage2_incumbent_validated": true,
+      "stage2_node_count": 280554.0,
+      "stage2_objective": "charging_related_route_cost_including_charge_start_fee",
+      "stage2_reported_incumbent_source": "stage2_solver",
+      "stage2_reserved_time_s": 1800.0,
+      "stage2_skip_reason": null,
+      "stage2_solution_count": 10,
+      "stage2_solver_has_solution": true,
+      "stage2_start_acceptance": {
+        "accepted": true,
+        "messages": [
+          "Loaded user MIP start with objective 671.64",
+          "MIP start from previous solve did not produce a new incumbent solution"
+        ],
+        "rejection_observed": false,
+        "status": "accepted"
+      },
+      "stage2_status": 2,
+      "stage2_status_name": "OPTIMAL",
+      "stage2_validation_reason": null,
+      "stage2_variable_absolute_gap": 0.0,
+      "stage2_variable_bound": 482.57600000000093,
+      "stage2_variable_obj": 482.57600000000093
+    },
+    "physical_pool_audit": {
+      "accepted_columns": 34665,
+      "added_giro_route_count": 0,
+      "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "assigned_mip_start_route_count": 58,
+      "augmented_pool_column_count": 34665,
+      "augmented_pool_ordered_sha256": "d040ca8d84719b8edb48300a4ef715dafc87bd4b6d08a4e4db2609959082c57c",
+      "base_pool_column_count": 34665,
+      "base_pool_ordered_sha256": "d040ca8d84719b8edb48300a4ef715dafc87bd4b6d08a4e4db2609959082c57c",
+      "continuous_cost_pricing_certified": false,
+      "deterministically_repaired": 0,
+      "input_hashes": {
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "instance_sha256": "1404e67b125af0141372b16603d127d8c7666c5d57320b4c6509ca7767f4043b",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+      },
+      "master_cost_semantics": "expanded_grid_cost_unchanged",
+      "master_sense": "cover",
+      "mip_ordered_pool_sha256": "d040ca8d84719b8edb48300a4ef715dafc87bd4b6d08a4e4db2609959082c57c",
+      "mip_unique_accepted_columns": 34665,
+      "persisted_charging_block_count": 156758,
+      "persisted_charging_block_payload_bytes": 31587996,
+      "post_augmentation_columns": 34665,
+      "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+      "preparation_wall_s": 25.631339896004647,
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "rejected_columns": 0,
+      "rejected_samples": [],
+      "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "schema": "evsp-dr-strict-pool-physical-gate-v1",
+      "source_pricing_certified": true,
+      "source_reference_hashes_bound": true,
+      "total_columns": 34665,
+      "valid_as_recorded": 34665,
+      "valid_set_sha256": "9e1f8bfe976b48d83dd85dd7ef1a7266bb6f32a684a17170f1edc9a661a40e58"
+    },
+    "physical_replay_validated": true,
+    "physical_replay_scope": "selected_routes_individually_plus_at_least_once_trip_coverage",
+    "duplicate_trip_removal_validated": false,
+    "cross_route_charger_capacity_validated": false,
+    "path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/mip/M__k09_p5__warm_cover__event_2p5_event5__1h2stage.json",
+    "sha256": "0d14145ba9154761bf4c303f455da110e5f84a09cbe0032f0cf4fec7b6d889d4",
+    "file_mtime_utc": "2026-09-11T12:29:27.909775+00:00",
+    "instance": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k09_p05_20260908.csv",
+    "selected_physical_statuses": {
+      "valid_as_recorded_mapped": 9
+    },
+    "physics": {
+      "block_min": 5,
+      "charge_kw": 240.0,
+      "g_kwh": 240.0,
+      "min_soc_frac": 0.0,
+      "prices_csv": "hourly_prices_flat.csv",
+      "soc_step": 2.5
+    },
+    "mip_start": {
+      "assigned_variable_count": 34665,
+      "assignment_complete": true,
+      "expected_full_objective": 5800328.496,
+      "kind": "greedy_pool_partition",
+      "selected_variable_count": 58,
+      "solver_acceptance": {
+        "accepted": true,
+        "messages": [
+          "Loaded user MIP start with objective 58"
+        ],
+        "rejection_observed": false,
+        "status": "accepted"
+      },
+      "source": null,
+      "source_sha256": null,
+      "validated": true,
+      "validated_bus_count": 58
+    },
+    "column_pool_treatment": "WARM-INHERITED-EVENT"
+  },
+  "capacity_retry": [
+    {
+      "phase": "cg",
+      "path": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef/results/k1_duty13406__combined/cg.json",
+      "sha256": "b0342865cd7d1d2a5f4b12fe29fe1a0a65131fa99305764a8edc0ee274c5ab65",
+      "result": {
+        "arm": "combined",
+        "certified_rc_optimal": false,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 100056.952,
+          "pool_columns": 35,
+          "route_weight": 1.0
+        },
+        "gurobi_log": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef/results/k1_duty13406__combined/cg.json.gurobi.log",
+        "mode": "cg",
+        "network": {
+          "arc_mode": "explicit",
+          "dag_arcs": 932814,
+          "dag_nodes": 1122,
+          "event_lattice_sha256": "fa66ec2df5c5bd564715e71f0f3ea779a5f25693dcc982438aaa482fe62a9df9",
+          "materialized_python_arc_objects": 932814,
+          "packed_arc_bytes": 0,
+          "station_charge_kw": {
+            "PARX": 60.0
+          },
+          "station_event_times": {
+            "2190L_0": 267,
+            "3127L_0": 28,
+            "4808_0": 271,
+            "7880C_0": 28,
+            "JON_A_0": 28,
+            "PARX_1": 265
+          },
+          "time_model": "event"
+        },
+        "network_build_s": 35.44928025198169,
+        "physics": {
+          "battery_kwh": 240.0,
+          "capacity_enforced": true,
+          "charger_counts": {
+            "2190L": 1,
+            "3127L": 2,
+            "4808": 1,
+            "7880C": 1,
+            "JON_A": 1
+          },
+          "event_block_min": 5,
+          "initial_soc_kwh": 240.0,
+          "non_parx_kw": 240.0,
+          "parx_capacity": "unlimited",
+          "parx_kw": 60.0,
+          "reserve_kwh": 0.0,
+          "soc_step_kwh": 2.5,
+          "terminal_soc_constraint": "reserve_only"
+        },
+        "pool": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef/results/k1_duty13406__combined/pool.jsonl",
+        "pool_sha256": "0bbd5c9437a0c9ff8ef5dc27b82d6408cab0a4a9ce2c2f397a48f3ac8a177c71",
+        "pricing_certificate_scope": "full conservative event-time/SOC covering LP with documented one-minute station-capacity rows",
+        "provenance": {
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+          "git_commit": "7d38efdd39857438c4a6e30b43b09e973ce51086",
+          "git_tracked_dirty": false,
+          "gurobi_version": "12.0.3",
+          "host": "unicorn-cpu-76",
+          "instance": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+          "instance_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+          "prices": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd/code/data/hourly_prices_flat.csv",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_data_dir": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd/code/data",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "slurm_array_task_id": "7",
+          "slurm_job_id": "811192"
+        },
+        "runtime_s": 30879.596631682012,
+        "schema": "evsp-dr-capacity-speed-exact-event-pilot-v1",
+        "status": "incomplete",
+        "stop_reason": "cg_wall_limit",
+        "terminal_exact_min_reduced_cost": -18.240000000051978,
+        "iteration_count": 21,
+        "last_iteration": {
+          "artificial_total": 0.0,
+          "iteration": 21,
+          "lp_columns": 48,
+          "lp_nonzeros": 499,
+          "lp_objective": 100056.952,
+          "lp_rows": 7814,
+          "lp_solve_s": 0.0060356599278748035,
+          "min_reduced_cost": -18.240000000051978,
+          "nonzero_capacity_duals": 2,
+          "pool_columns": 34,
+          "priced_trip_count": 7,
+          "pricing_s": 3864.282191981096,
+          "route_weight": 1.0
+        }
+      }
+    },
+    {
+      "phase": "mip",
+      "path": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef/results/k1_duty13406__combined/mip_twostage.json",
+      "sha256": "ca3c56b7118f61c5d7b9485ec7ae289e96aa8641f9455e950444d0950e485bb9",
+      "result": {
+        "arm": "combined",
+        "capacity_enforced_in_mip": true,
+        "cg_status": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef/results/k1_duty13406__combined/cg.json",
+        "cg_status_sha256": "b0342865cd7d1d2a5f4b12fe29fe1a0a65131fa99305764a8edc0ee274c5ab65",
+        "duplicate_service_audit": {
+          "all_trips_covered": true,
+          "extra_trip_assignments": 0,
+          "overcovered_trip_count": 0,
+          "overcovered_trips": {}
+        },
+        "mode": "mip",
+        "physical_station_capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 491.0,
+              "valid": true
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": true
+        },
+        "pool": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef/results/k1_duty13406__combined/pool.jsonl",
+        "pool_acceptance": {
+          "cg_pricing_certified": false,
+          "cg_status": "incomplete",
+          "cg_stop_reason": "cg_wall_limit",
+          "classification": "timed_uncertified_exact_event_cg_pool",
+          "covered_trip_count": 14,
+          "route_count": 35,
+          "usable": true
+        },
+        "pool_sha256": "0bbd5c9437a0c9ff8ef5dc27b82d6408cab0a4a9ce2c2f397a48f3ac8a177c71",
+        "provenance": {
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+          "git_commit": "9bf3f752a5d2786bf5a1e9c613ff6440415569a9",
+          "git_tracked_dirty": false,
+          "gurobi_version": "12.0.3",
+          "host": "scaglione-cpu-01.tech.cornell.edu",
+          "instance": "/home/nc437/ladder-lite/capacity_speed_twostage_9bf3f75/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+          "instance_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+          "prices": "/home/nc437/ladder-lite/capacity_speed_twostage_9bf3f75/code/data/hourly_prices_flat.csv",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_data_dir": "/home/nc437/ladder-lite/capacity_speed_twostage_9bf3f75/code/data",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+          "slurm_array_task_id": "7",
+          "slurm_job_id": "811184"
+        },
+        "result": {
+          "charging_related_cost": 56.95200000000477,
+          "fleet": 1,
+          "has_solution": true,
+          "method": "two_stage_fleet_then_charging_cost",
+          "reconstructed_weighted_cost": 100056.952,
+          "selected_indices": [
+            14
+          ],
+          "stage1": {
+            "fleet_bound_raw": 1.0,
+            "fleet_integer_lower_bound": 1,
+            "fleet_proven": true,
+            "has_solution": true,
+            "incumbent_fleet": 1,
+            "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+            "mip_gap": 0.0,
+            "node_count": 1.0,
+            "runtime_s": 0.004805888049304485,
+            "selected_indices": [
+              14
+            ],
+            "status": "OPTIMAL",
+            "status_code": 2,
+            "time_limit_s": 750.0,
+            "validated_incumbent": true
+          },
+          "stage2": {
+            "charging_cost": 56.95200000000477,
+            "charging_cost_bound": 56.95200000000477,
+            "charging_cost_gap": 0.0,
+            "executed": true,
+            "fleet_cap": {
+              "rhs": 1,
+              "sense": "<=",
+              "source": "best_validated_stage1_incumbent",
+              "source_fleet_proven": true
+            },
+            "has_solution": true,
+            "incumbent_fleet": 1,
+            "node_count": 0.0,
+            "runtime_s": 0.0007995550986379385,
+            "selected_indices": [
+              14
+            ],
+            "skip_reason": null,
+            "status": "OPTIMAL",
+            "status_code": 2,
+            "time_limit_s": 1499.995032572886
+          },
+          "status": "OPTIMAL",
+          "total_budget_s": 1500.0
+        },
+        "schema": "evsp-dr-capacity-speed-two-stage-cover-mip-v2"
+      }
+    }
+  ]
+}
