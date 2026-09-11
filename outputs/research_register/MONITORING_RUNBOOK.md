@@ -27,3 +27,5 @@ After every successful preemption-study collection, run python3 outputs/research
 ## Storage archival follow-up — 11 September
 
 Read outputs/storage_cleanup_20260911/README.md and submission/manifest files when present. Track the bounded serial archival worker until complete; notify on an archive validation error or final measured savings. No expansion to other directories is authorized by the monitor. Archived historical finetime/factfill pools are intentionally compressed, not lost outputs. Preserve source hashes and restore mapping; do not rerun experiments merely because the original uncompressed path is absent. Active, held and EVSPV2G stochastic data remain protected.
+
+Snapshot selection: choose the previous successful collection by embedded timestamp_utc, not filename lexicographic order (some older files start with cluster_). If a job leaves the queue during collection but its result was not captured, check sacct and its known result path before diagnosing a failure; retain a timestamped supplemental collection if needed.
