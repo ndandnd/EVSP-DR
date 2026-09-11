@@ -32,13 +32,21 @@ while IFS=$'\t' read -r replicate scale cg_job dependency rest; do
   campaign="$BATCH/p$replicate"; cell=$(printf 'k%02d_p%d' "$scale" "$replicate"); rep=event_2p5_event5
   instance=$(printf 'scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k%02d_p%02d_20260908.csv' "$scale" "$replicate")
   source="$campaign/cg/M__${cell}__warm_cover__${rep}.json"; snapshot="$campaign/snapshots/M__${cell}__warm_cover__${rep}.json"; freeze_record="$campaign/records/freeze__${cell}__warm_cover__${rep}.json"
+  cg_state=$("$SBATCH" --version >/dev/null; /usr/local/slurm/slurm-25.05.5/bin/sacct -X -j "$cg_job" --format=State -n -P | sed -n '1p' | cut -d'|' -f1)
+  freeze_dependency="afterok:$cg_job"; freeze_dependency_args=(--dependency="$freeze_dependency")
+  if [[ "$cg_state" == COMPLETED* ]]; then
+    [[ -f "$source" && -f "$source.columns.jsonl" ]] || fatal "completed CG lacks result/journal: $cell"
+    freeze_dependency="already_completed:$cg_job"; freeze_dependency_args=()
+  elif [[ "$cg_state" =~ ^(FAILED|CANCELLED|TIMEOUT|OUT_OF_MEMORY|NODE_FAIL) ]]; then
+    fatal "CG $cg_job for $cell ended $cg_state; refusing downstream submission"
+  fi
   freeze_name=$(printf 'fi%dk%02d' "$replicate" "$scale")
-  freeze_args=("$SBATCH" --parsable --partition=default_partition --exclude=scaglione-compute-01,scaglione-cpu-[01-05] --cpus-per-task=1 --mem=16G --time=02:00:00 --no-requeue --dependency="afterok:$cg_job" --job-name="$freeze_name" --output="$campaign/logs/freeze/%j.out" --error="$campaign/logs/freeze/%j.err" --export=ALL,EVSP_MIP_REPO="$MIP_REPO",EVSP_MIP_COMMIT="$MIP_COMMIT",EVSP_FREEZE_ONE_SHA256="$FREEZE_ONE_SHA" "$FREEZE_ONE" "$source" "$snapshot" "$freeze_record" "$cell" "$instance" "$SOURCE_COMMIT")
+  freeze_args=("$SBATCH" --parsable --partition=default_partition --exclude=scaglione-compute-01,scaglione-cpu-[01-05] --cpus-per-task=1 --mem=16G --time=02:00:00 --no-requeue "${freeze_dependency_args[@]}" --job-name="$freeze_name" --output="$campaign/logs/freeze/%j.out" --error="$campaign/logs/freeze/%j.err" --export=ALL,EVSP_MIP_REPO="$MIP_REPO",EVSP_MIP_COMMIT="$MIP_COMMIT",EVSP_FREEZE_ONE_SHA256="$FREEZE_ONE_SHA" "$FREEZE_ONE" "$source" "$snapshot" "$freeze_record" "$cell" "$instance" "$SOURCE_COMMIT")
   if [[ "$DRY_RUN" == 1 ]]; then freeze_job="DRYRUN_FREEZE_P${replicate}_K${scale}"; printf '%q ' "${freeze_args[@]}" >> "$command_file"; printf '\n' >> "$command_file"; else freeze_job=$("${freeze_args[@]}"); [[ "$freeze_job" =~ ^[0-9]+$ ]] || fatal "bad freeze ID"; fi
   out="$campaign/mip/M__${cell}__warm_cover__${rep}__1h2stage.json"; case_key="warm_p${replicate}_k${scale}_cover_${rep}"; mip_name=$(printf 'MCw%dk%02d' "$replicate" "$scale")
   mip_args=("$SBATCH" --parsable --partition=scaglione --exclude=scaglione-compute-01 --cpus-per-task=8 --mem=16G --time=02:00:00 --no-requeue --dependency="afterok:$freeze_job" --job-name="$mip_name" --output="$campaign/logs/mip/%j.out" --error="$campaign/logs/mip/%j.err" --export=ALL,EVSP_DR_ROOT="$MIP_REPO",EVSP_EXPECTED_COMMIT="$MIP_COMMIT",EVSP_REQUIRE_DETACHED=1,EVSP_MIP_EXPECTED_WORKER_SHA256="$MIP_WORKER_SHA",EVSP_MIP_EXPECTED_RUNNER_SHA256="$MIP_RUNNER_SHA",EVSP_MIP_CASE_KEY="$case_key",EVSP_MIP_CASE_LOCK_PATH="$campaign/locks/${case_key}.lock",EXACT_MIP_TWO_STAGE=1,EXACT_MIP_COVER=1,EXACT_MIP_STAGE1_SECONDS=1800,EXACT_MIP_PROGRESS_DIR="$campaign/progress/${case_key}",EVSP_CONDA_ENV=/home/nc437/evsp_env "$MIP_WORKER" "$snapshot" 3600 "$out" 0.0001)
   if [[ "$DRY_RUN" == 1 ]]; then mip_job="DRYRUN_MIP_P${replicate}_K${scale}"; printf '%q ' "${mip_args[@]}" >> "$command_file"; printf '\n' >> "$command_file"; else mip_job=$("${mip_args[@]}"); [[ "$mip_job" =~ ^[0-9]+$ ]] || fatal "bad MIP ID"; fi
-  printf '%s\t%s\t%s\t%s\t%s\tafterok:%s\tafterok:%s\tdefault_partition\tscaglione\tscaglione-compute-01\t8\t16G\t02:00:00\t1800\tat_most\ttrue\n' "$replicate" "$scale" "$cg_job" "$freeze_job" "$mip_job" "$cg_job" "$freeze_job" >> "$record"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\tafterok:%s\tdefault_partition\tscaglione\tscaglione-compute-01\t8\t16G\t02:00:00\t1800\tat_most\ttrue\n' "$replicate" "$scale" "$cg_job" "$freeze_job" "$mip_job" "$freeze_dependency" "$freeze_job" >> "$record"
 done < "$CG_RECORD"
 [[ "$(($(wc -l < "$record")-1))" -eq 36 ]] || fatal "expected 36 downstream rows"
 if [[ "$DRY_RUN" == 1 ]]; then cat "$record"; exit 0; fi
