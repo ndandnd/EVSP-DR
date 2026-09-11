@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 26,
+  "campaign_count": 31,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -12,14 +12,14 @@
     "non-finite numeric values normalized to null/unknown"
   ],
   "families_and_stages": {
-    "capacity_speed_exact_event:cg": 10,
-    "capacity_speed_exact_event:mip": 10,
-    "cg_phase_telemetry:telemetry": 184,
-    "column_generation:cg": 184,
-    "matched_tariff_comparison:comparison_arm": 48,
-    "pool_mip:mip": 228,
+    "capacity_speed_exact_event:cg": 11,
+    "capacity_speed_exact_event:mip": 11,
+    "cg_phase_telemetry:telemetry": 294,
+    "column_generation:cg": 294,
+    "matched_tariff_comparison:comparison_arm": 57,
+    "pool_mip:mip": 339,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 45,
+    "scheduler:queue_state": 64,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -29,18 +29,18 @@
     "targeted_audit_log:log_tail": 2,
     "terminal_energy:frontier": 3,
     "terminal_energy:mip_failed_preoptimization": 3,
-    "workflow:workflow": 27,
-    "workflow:workflow_cg": 9,
-    "workflow:workflow_cg_reference": 18,
-    "workflow:workflow_freeze": 18,
-    "workflow:workflow_mip": 18
+    "workflow:workflow": 44,
+    "workflow:workflow_cg": 45,
+    "workflow:workflow_cg_reference": 54,
+    "workflow:workflow_freeze": 54,
+    "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 989,
-  "rows_with_source_sha256": 480,
-  "rows_without_source_sha256": 509,
+  "row_count": 1511,
+  "rows_with_source_sha256": 602,
+  "rows_without_source_sha256": 909,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "c3b26da35c13124a1df792efedaf18743f66dd3bcd8e75ef32b0766673134af6",
+  "source_snapshot_sha256": "e1dc031ad0c073bdfdde838e0da8de9ffdbc930fe23ab8463e748fcfefe1d6ee",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 989
+  "unique_row_ids": 1511
 }

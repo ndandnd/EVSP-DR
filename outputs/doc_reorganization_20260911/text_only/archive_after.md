@@ -1,0 +1,303 @@
+Meeting archive — 10 Sep 2026 — historical results preserved
+
+# **Meeting archive — 10 Sep 2026**
+
+EVSP demand-response research meeting — 10 September 2026
+
+Archive scope: these are the figures and numerical snapshots used around the 10 September meeting. They preserve the older partitioning experiments and the first covering/warm-start results. Use Start here and Current results and research figures for the latest outcomes. In the historical chain tables, each cell states integer buses and CG time; “pool fleet unproved” means the MIP did not prove that fleet optimal within its saved columns. Other cells report proved saved-pool fleet optima. “CG unproved” separately means pricing optimality was not certified. None of these tables is the new station-capacity/return-energy chain.
+
+**Key result.** Exact LP pricing can finish while the saved integer pool still lacks a useful route combination. Charging comparisons must separate electricity, charging-start fees and terminal energy.
+
+## **1 Historical GIRO initialization**
+
+![][image1]
+
+May RND002, 193 trips: ten buses at each tariff peak. Historical settings were 300 kWh / 300 kW. The historical imported duties lacked today’s physical-replay gate. This is neither the April 175-trip experiment nor a matched before-and-after comparison.
+
+## **2 Historical runs without GIRO initialization**
+
+![][image2]
+
+The same historical cohort ended at 12, 12 and 11 buses for the 08:00, 12:00 and 18:00 peaks. NO\_CHEAT began with no real routes and used artificial feasibility variables; it is not greedy initialization. These are time-limit incumbents.
+
+The route coefficient in the current experiment is **100,000 × buses \+ electricity cost \+ 5 × charging starts**; monetary deadhead cost is zero. The five-unit charging-start fee is a modeling assumption, so electricity and fee components are reported separately.
+
+## **3 How the pricing algorithm changed**
+
+| Spring label-based DP | Current event-graph DP |
+| :---- | :---- |
+| State labels carry time, SOC and cost; dominance removes weaker labels. | Nodes identify a trip and battery-grid state; arcs encode feasible travel and charging. |
+| The executed loop capped labels and runtime. Charging used coarse target levels and began on arrival. | Charging candidates include arrival, latest feasible starts and tariff boundaries. SOC spacing is 2.5 kWh; storage is packed. |
+| A stopped search could miss a negative route. The saved April trace ended with a negative reduced cost. | A complete acyclic shortest-path pass certifies the best reduced cost on the represented graph. Returned routes also undergo physical replay. |
+
+With a 30-column batch, the exact best complete route uses one slot. The other at most 29 candidates are the cheapest prefixes ending at different time/location/SOC states, completed to the depot and deduplicated by trip set. They are not the globally second through thirtieth shortest routes.
+
+## **4 Fresh covering results**
+
+In this experiment the trip rows changed from partitioning, **sum \= 1**, to covering, **sum ≥ 1**, in both the CG master and final MIP. Other recorded controls were held to the stated launch configuration.
+
+### **Historical warm-chain snapshot: chain 3, 10 September**
+
+| GIRO target (buses) | Initialization / evidence source | Total CG time (including import) | Previous-k column import time | CG time excluding import | MIP time and stop reason | Integer buses and saved-pool proof |
+| :---- | :---- | :---- | :---- | :---- | :---- | :---- |
+| k=2 | RAW | 1.7 min | 0.0 | 1.7 min | \<0.1 min, optimal | 2 buses, pool fleet proved, exact service |
+| k=3 | warm from k=2 | 5.8 min | 4.9 min | 1.0 min | \<0.1 min, optimal | 3 buses, pool fleet proved, exact service |
+| k=4 | warm from k=3 | 11.0 min | 9.2 min | 1.8 min | \<0.1 min, optimal | 4 buses, pool fleet proved, exact service |
+| k=5 | warm from k=4 | 32.4 min | 25.9 min | 6.5 min | 0.5 min, optimal | 5 buses, pool fleet proved; 3 duplicated trips |
+| k=6 | warm from k=5 | 81.4 min | 74.9 min | 6.5 min | 0.5 min, optimal | 6 buses, pool fleet proved; 3 duplicated trips |
+| k=7 | warm from k=6 | 108.5 min | 102.6 min | 6.0 min | 4.4 min, optimal | 7 buses, pool fleet proved; 5 duplicated trips |
+| k=8 | warm from k=7 | 137.1 min | 133.2 min | 3.9 min | 5.8 min, optimal | 8 buses, pool fleet proved; 2 duplicated trips |
+| k=9 | warm from k=8 | 215.7 min | 200.4 min | 15.3 min | 60.0 min, time limit | 9 buses, pool fleet proved; charging cost unproved; 4 duplicated trips |
+
+### **Earlier nine-cell fresh covering comparison**
+
+| Chain | k | LP fractional route weight (buses) | CG elapsed time and pricing stop | Integer buses found / Gurobi fleet bound in saved pool | MIP proof within saved column pool |
+| :---- | :---- | :---- | :---- | :---- | :---- |
+| 1 | 5 | 5.000 | 30.6 min, certified | 5 / 5 | Fleet and cost proved; exact service |
+| 3 | 5 | 5.000 | 8.4 min, certified | 5 / 5 | Fleet and cost proved; exact service |
+| 5 | 5 | 5.000 | 12.6 min, certified | 6 / 6 | Pool optimum; 12 duplicated trips |
+| 1 | 8 | 8.000 | 81.5 min, certified | 9 / 9 | Pool fleet proved; 40 duplicated trips |
+| 3 | 8 | 8.000 | 22.2 min, certified | 9 / 9 | Pool fleet proved; 25 duplicated trips |
+| 5 | 8 | 8.000 | 41.7 min, certified | 9 / 9 | Pool fleet proved; 16 duplicated trips |
+| 1 | 10 | 10.000 | 127.2 min, certified | 11 / 11 | Pool fleet proved; 30 duplicated trips |
+| 3 | 10 | 10.000 | 48.9 min, certified | 11 / 10 | Best found; 58 duplicated trips |
+| 5 | 10 | 10.000 | 64.4 min, certified | 11 / 11 | Pool fleet proved; 46 duplicated trips |
+
+The launch record gives no easy/medium/hard rationale. It selected odd chains 1, 3 and 5 at k=5, 8 and 10 as a bounded nine-cell comparison. Chain 5 at k=5 has a separately validated five-bus full-model witness, so six is a MIP proof within saved column pool rather than a full-model lower bound.
+
+## **5 Historical partitioning results: chains 1–3, k=2–8**
+
+| GIRO target (buses) | Chain 1 | Chain 2 | Chain 3 |
+| :---- | :---- | :---- | :---- |
+| 2 | 2 buses; CG 14.3m | 2 buses; CG 0.2m | 2 buses; CG 0.9m |
+| 3 | 3 buses; CG 7.2m | 4 buses; CG 1.4m | 3 buses; CG 1.6m |
+| 4 | 4 buses; CG 13.9m | 5 buses; CG 4.8m | 7 buses; CG 2.6m |
+| 5 | 5 buses; CG 36.8m | 8 buses; CG 25.3m | 6 buses; CG 14.2m |
+| 6 | 12 buses; pool fleet unproved; CG 172.3 min | 13 buses; CG 35.1m | 13 buses; CG 24.4m |
+| 7 | 27 buses (pool fleet unproved); CG 108.4m | 25 buses (pool fleet unproved); CG 34.7m | 21 buses (pool fleet unproved); CG 29.2m |
+| 8 | 32 buses (pool fleet unproved); CG 132.7m | 30 buses (pool fleet unproved); CG 67.6m | 27 buses (pool fleet unproved); CG 38.9m |
+
+## **6 Historical partitioning results: chains 4–6, k=2–8**
+
+| GIRO target (buses) | Chain 4 | Chain 5 | Chain 6 |
+| :---- | :---- | :---- | :---- |
+| 2 | 2 buses; CG 1.0m | 2 buses; CG 0.7m | 2 buses; CG 0.9m |
+| 3 | 3 buses; CG 2.3m | 3 buses; CG 6.8m | 3 buses; CG 1.7m |
+| 4 | 4 buses; CG 5.4m | 8 buses; CG 8.4m | 5 buses; CG 3.1m |
+| 5 | 9 buses; CG 17.3m | 13 buses; CG 23.2m | 5 buses; CG 13.8m |
+| 6 | 14 buses (pool fleet unproved); CG 43.9m | 24 buses (pool fleet unproved); CG 57.8m | 6 buses; CG 16.4m |
+| 7 | 21 buses (pool fleet unproved); CG 51.4m | 22 buses (pool fleet unproved); CG 62.0m | 8 buses; CG 30.3m |
+| 8 | 31 buses (pool fleet unproved); CG 138.5m | 24 buses (pool fleet unproved); CG 36.1m | 12 buses (pool fleet unproved); CG 11.7m |
+
+The nonmonotone pool results do not require randomness. Adding a duty changes master duals and generated columns. At chain 3, k=4 proves seven buses in its pool while k=5 proves six, even though independently replayed witnesses establish full-model fleet optima of four and five for those stated graphs.
+
+## **7 Chain 3 convergence at target 5**
+
+![][image3]
+
+The fractional fleet reaches 5.000 at iteration 144 (5.47 minutes), where the independent five-trip overlap floor proves the fleet component. CG continues improving charging-related cost until pricing certification at iteration 552 (14.18 minutes). The 99.466 value at iteration 144 is retrospective objective improvement remaining; it is not reduced cost. Minimum reduced cost there is −1448.467. Cache construction and the final MIP are excluded.
+
+## **8 Chain 3 convergence at target 10**
+
+![][image4]
+
+Left: fractional fleet excess above the independent simultaneous-trip floor. Right: retrospective restricted-pool LP objective residual. The stop marker is the pricing certificate. Exact zeros use a small display epsilon; cache construction and the final integer solve are excluded.
+
+## **9 Where column generation spends its time**
+
+![][image5]
+
+Shares use total saved CG wall time across six audited 240 kWh / 240 kW event-grid traces. The pricing timer already includes shortest-path work, so the nested shortest-path timer is not added again. Incidence construction is the trip-by-route coefficient build. Earlier network-cache construction and the final integer solve are excluded.
+
+### **LP size and Gurobi evidence**
+
+| Case | Trip rows | Route variables | Artificial variables | Nonzeros | Cumulative LP time |
+| ----- | ----- | ----- | ----- | ----- | ----- |
+| k=2, chain 1 | 61 | 20,574 | 61 | 537,137 | 118.2 s (13.8%) |
+| k=7, chain 1 | 177 | 45,891 | 177 | 1,282,151 | 1,593.3 s (24.5%) |
+
+These are final restricted-master dimensions. LP times sum all solves during CG, not just the last solve. The final k=7 log reports zero simplex iterations and 0.00 seconds for its last reoptimization; earlier solves account for the cumulative time. Artificial variables finish at zero.
+
+**Gurobi log, k=7 chain 1, lines 43760–43768:**
+
+Optimize a model with 177 rows, 46068 columns and 1282151 nonzeros
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+
+Optimal objective 7.003134571e+05
+
+Cluster directory: /home/nc437/ladder-lite/nested\_probability\_k2\_15\_fresh84\_20260908\_21fbecb/cg/
+
+Log files: M\_\_k07\_p1\_\_event\_2p5\_event5.json.gurobi.log (lines 43760–43768); M\_\_k02\_p1\_\_event\_2p5\_event5.json.gurobi.log (lines 21728–21736). Local copies are in outputs/meeting\_20260910/lp\_audit\_logs/. The full audit is LP\_K\_EQUALS\_AUDIT\_20260910.md and its CSV.
+
+## **10 Why exact pricing certifies the LP**
+
+**Restricted master.** Let P be the saved route subset of the represented full route set R.
+
+min ∑r∈P crλr   subject to   APλ ≥ 1, λ ≥ 0
+
+max 1Tπ   subject to   APTπ ≤ cP, π ≥ 0
+
+**Pricing checks omitted dual constraints.**
+
+c̄min \= minr∈R (cr − ∑iairπi)
+
+If c̄min ≥ 0, the same dual is feasible for every represented route. Then
+
+1Tπ ≤ z\*LP,R ≤ z\*LP,P \= 1Tπ.
+
+Therefore the full represented LP is optimal. Exact DAG pricing evaluates every represented path by a topological shortest-path recurrence. Implemented runs use feasibility and reduced-cost tolerances, including RC threshold 0.0001. The certificate applies to the named event/SOC graph and does not complete the integer route pool; a zero-reduced-cost route may still be essential to an integer solution.
+
+### **How to read fractional fleet from the combined objective**
+
+| Audited cell | Certified combined objective | Fractional route weight | Independent overlap lower bound | Fleet conclusion |
+| :---- | :---- | :---- | :---- | :---- |
+| Original chain 1, k=7 | 700,313.457099 | 6.999999999999993 | 7 trips at 07:21 | Fleet-only LP value is 7 by matching lower and upper bounds |
+
+*The lower bound is the maximum number of passenger trips active under the half-open rule Start1 ≤ t \< End1, computed on the hash-matched input CSV.*
+
+The nested84 CG solves one combined bus-plus-charging LP; it has no target constraint and did not run a separate fleet-only phase. The fleet conclusion above comes from the independent overlap lower bound matching the feasible fractional route weight. Dividing the weighted objective by 100,000 does not recover the exact fleet because charging-related cost is also present. The same matching-bounds argument establishes the fleet-only LP value for all original k=2 through k=14 cells. At k=15 in chains 1 and 3, the overlap bound is only 14 while route weight is 15, so the same argument leaves a 14–15 interval.
+
+## **11 Why a feasible route can remain missing**
+
+| Old six-trip instance | Add trip G | Integer consequence |
+| :---- | :---- | :---- |
+| Trips A–F. Saved pairs AB, AC, BC and DE, DF, EF, plus singletons. The LP uses each pair at ½ for 3 buses; the pool integer solution needs 4\. Feasible AD is absent. With π=½ for each old trip, rc(AD)=1−½−½=0. | Keep the old pool and add singleton G. Suppose ADG is feasible and πG\=1. Then rc(ADG)=1−½−½−1=−1, so pricing has a strict reason to generate it. | ADG \+ BC \+ EF covers the seven trips with 3 buses. Deleting G leaves AD \+ BC \+ EF for the original six trips. The old full route space could already use 3 buses, while its saved pool could not. |
+
+Measured chain-3 evidence is consistent with this mechanism: independently replayed witnesses prove full-model fleet optima of 4 and 5 at k=4 and k=5, while the corresponding saved pools prove 7 and 6\.
+
+## **12 Fixed duties means optimizing charging only**
+
+| Baseline | Trips and duties | Charging decision |
+| :---- | :---- | :---- |
+| GIRO recorded charging | Five recorded GIRO duties retained | Recorded charging windows and kWh retained; tariff crossing gives a cost range because within-window power was not observed. |
+| Fixed duties, charging reoptimized | Same duty and trip order on each bus | Dynamic programming through the same event graph selects feasible charging stops, starts and quantities. |
+| Joint routes and charging | Starts from the five validated GIRO routes; trips may be reassigned | Column generation adds routes, then the finite-pool MIP chooses routes and charging. |
+
+| Illustrative free interval | Charge | Electricity cost |
+| :---- | :---- | :---- |
+| 10:00–12:00 | 60 kWh at 60 kW, 11:00–12:00 at 0.30/kWh | 18 |
+| 10:00–12:00 | Same 60 kWh, 10:00–11:00 at 0.10/kWh | 6 |
+
+## **13 All three tariff peaks on the same cohort**
+
+![][image6]
+
+One separate cohort: 62 passenger trips and duties 13401, 13403, 13405, 13408 and 13414, with five buses throughout. Battery capacity is 240 kWh and this declared scenario holds charging power at 350 kW. It is not one of the six random chains or the easy ladder. Totals are continuously realized electricity charges plus the modeled start fee. Recorded GIRO charging ends with about 281 kWh; optimized schedules end with 8–13 kWh, so the differences are model outcomes rather than clean operator savings.
+
+Input CSV: data/scale\_ladder/instances/original\_replay\_eligible\_20260908/Practice\_Custom\_DutyUnion\_original\_eligible\_k05\_20260908.csv.
+
+## **14 Separate electricity cost from start fees**
+
+| Tariff | GIRO recorded: energy \+ fees \= total | Fixed duties: energy \+ fees \= total | Joint: energy \+ fees \= total |
+| :---- | :---- | :---- | :---- |
+| Peak 08:00 | 230.29–230.98 \+ 260 \= 490.29–490.98 | 157.34 \+ 110 \= 267.34 | 152.55 \+ 90 \= 242.55 |
+| Peak 12:00 | 289.59–290.60 \+ 260 \= 549.59–550.60 | 180.09 \+ 140 \= 320.09 | 189.78 \+ 115 \= 304.78 |
+| Peak 18:00 | 223.45–223.72 \+ 260 \= 483.45–483.72 | 101.83 \+ 110 \= 211.83 | 107.35 \+ 75 \= 182.35 |
+
+### **Joint minus fixed-duty optimized**
+
+| Tariff | Electricity difference | Start-fee difference | Total difference |
+| :---- | :---- | :---- | :---- |
+| Peak 08:00 | −4.78 | −20 | −24.78 |
+| Peak 12:00 | \+9.69 | −25 | −15.31 |
+| Peak 18:00 | \+5.52 | −35 | −29.48 |
+
+route coefficient \= 100,000 × bus \+ tariff-priced charging \+ 5 × charging starts; monetary travel cost \= 0\.
+
+Historical two-stage results first minimize fleet and execute the charging-related stage only after the fleet stage is proved, fixing fleet equality. **Implemented policy as of 10 September 2026:** within the 3,600-second solver budget, Stage 1 reserves up to 1,800 seconds to find and improve a validated fleet incumbent. Stage 2 uses the remaining time, constrains fleet to be no larger than the best validated incumbent even if Stage 1 did not prove it optimal, and minimizes charging-related cost. Reruns are queued; every result above predates this implementation and retains its historical proof scope.
+
+## **15 Historical partitioning results: chains 1–3, k=9–15**
+
+| GIRO target (buses) | Chain 1 | Chain 2 | Chain 3 |
+| :---- | :---- | :---- | :---- |
+| 9 | 31 buses (pool fleet unproved); CG 81.6m | 41 buses (pool fleet unproved); CG 64.9m | 34 buses (pool fleet unproved); CG 43.8m |
+| 10 | 38 buses (pool fleet unproved); CG 91.8m | 46 buses (pool fleet unproved); CG 80.0m | 43 buses (pool fleet unproved); CG 48.2m |
+| 11 | 49 buses (pool fleet unproved); CG 97.1m | 54 buses (pool fleet unproved); CG 82.4m | 40 buses (pool fleet unproved); CG 55.5m |
+| 12 | 48 buses (pool fleet unproved); CG 108.5m | 75 buses (pool fleet unproved); CG 111.0m | 47 buses (pool fleet unproved); CG 59.9m |
+| 13 | 68 buses (pool fleet unproved); CG 175.1m | 80 buses (pool fleet unproved); CG 159.1m | 72 buses (pool fleet unproved); CG 106.7m |
+| 14 | 58 buses (pool fleet unproved); CG 355.2m | 95 buses (pool fleet unproved); CG 371.4m | 71 buses (pool fleet unproved); CG 217.1m |
+| 15 | 142 buses (pool fleet unproved); CG 479.3m, CG unproved | 149 buses (pool fleet unproved); CG 479.2m, CG unproved | 86 buses (pool fleet unproved); CG 228.1m |
+
+At k=15 in chains 1 and 3, the independent simultaneous-trip bound is 14 while the feasible fractional route weight is 15\. Thus the fleet interval is 14–15. The difference is a weaker overlap floor, not uncovered trips; artificials are zero. Chain 1 ended at the CG time limit without a pricing certificate, while chain 3 certified the weighted LP objective. Neither saved-pool integer solve proved its large incumbent optimal.
+
+## **16 Historical partitioning results: chains 4–6, k=9–15**
+
+| GIRO target (buses) | Chain 4 | Chain 5 | Chain 6 |
+| :---- | :---- | :---- | :---- |
+| 9 | 38 buses (pool fleet unproved); CG 72.1m | 21 buses (pool fleet unproved); CG 42.1m | 27 buses (pool fleet unproved); CG 36.2m |
+| 10 | 30 buses (pool fleet unproved); CG 76.9m | 27 buses (pool fleet unproved); CG 46.1m | 36 buses (pool fleet unproved); CG 40.8m |
+| 11 | 55 buses (pool fleet unproved); CG 102.6m | 37 buses (pool fleet unproved); CG 107.5m | 43 buses (pool fleet unproved); CG 46.5m |
+| 12 | 53 buses (pool fleet unproved); CG 152.9m | 63 buses (pool fleet unproved); CG 156.1m | 58 buses (pool fleet unproved); CG 146.1m |
+| 13 | 67 buses (pool fleet unproved); CG 180.1m | 57 buses (pool fleet unproved); CG 251.6m | 84 buses (pool fleet unproved); CG 456.3m |
+| 14 | 94 buses (pool fleet unproved); CG 412.5m | 66 buses (pool fleet unproved); CG 260.1m | 117 buses (pool fleet unproved); CG 414.1m |
+| 15 | 164 buses (pool fleet unproved); CG 479.3m, CG unproved | 67 buses (pool fleet unproved); CG 231.2m | 163 buses (pool fleet unproved); CG 323.1m |
+
+### **Easy-order appendix: initialization changes what is recovered**
+
+The easy ladder is one deterministic chain: eligible GIRO duties are sorted by regular-trip count, then literal duty ID, and nested prefixes are taken. It is not a set of difficulty-ranked chains.
+
+| GIRO target (buses) | Trips | Single-trip initialization | Validated GIRO routes supplied (GIRO initialization) | Greedy initialization |
+| :---- | :---- | :---- | :---- | :---- |
+| 5 | 56 | 5 / bound 5, proved | 5 / 5, proved | Not run |
+| 8 | 98 | 11 / bound 8, interrupted | 8 / 8, proved | Not run |
+| 10 | 127 | 12 / bound 10, fleet unproved | 10 / 10, proved | 13 / bound 10, fleet unproved |
+| 15 | 204 | 33 / bound 15, time limit | Not run | Not run |
+| 20 | 290 | 58 / bound 19, time limit | Not run | Not run |
+| 30 | 544 | 300 / pool bound 116; CG unproved | Not run | Not run |
+
+RAW currently recovers the target through k=5. GIRO-seeded initialization recovers and fleet-proves the tested targets through k=10. The only easy greedy run is k=10, where it found 13 buses. Every displayed solver bound is a bound within the frozen generated pool, not a full-model fleet bound. A validated route set meeting the independent simultaneous-trip lower bound—such as the GIRO-seeded 5, 8 and 10 bus witnesses—is what closes the fleet proof for the named event model. Charging-cost proof remains limited to the saved pool.
+
+## **17 Appendix convergence for chain 3, target 4**
+
+![][image7]
+
+Fractional fleet excess and retrospective LP objective residual against cumulative CG minutes. This is an input-specific trace; it is not a randomized replication. Cached-network construction is excluded.
+
+## **18 Appendix convergence for chain 3, target 8**
+
+![][image8]
+
+Same measurements and scope as section 17\. Objective residual is cost above the eventual certified endpoint, not reduced cost.
+
+## **19 Appendix convergence for chain 1, target 5**
+
+![][image9]
+
+Same measurements and scope as section 17\. Exact zero values are displayed at a small positive plotting epsilon.
+
+## **20 Appendix convergence for chain 5, target 10**
+
+![][image10]
+
+Same measurements and scope as section 17\. The presentation uses chain 3 at k=5 as its principal convergence example; these appendix traces are references.
+
+### **Local provenance**
+
+Primary tables: snapshots/20260910T1426Z.json; presentation\_figures/NESTED84\_HEATMAP\_PROVENANCE\_20260910.csv; presentation\_manager/charging\_audit/charging\_three\_baselines.csv. Captions and qualifications: comments\_and\_slides/inline\_gallery\_verified.txt and presentation\_manager/charging\_audit/README.md. Plot-slot paths and checksums are recorded in the adjacent JSON manifest.
+
+*The spring executable is reconstructed from the best retained source match; it is not a perfectly bound historical replay.*
+
+*Snapshot 20260910T1426Z. All eight CG runs are pricing-certified with fractional fleet equal to k. “CG time excluding import” is total saved CG wall time minus inherited event-pool import. Selected routes pass individual physical replay; shared charger capacity is unchecked, and duplicate removal is unvalidated where duplicates remain.*
+
+*Covering in CG and final MIP, 240 kWh / 240 kW. Integer proof applies to the frozen saved pool. Physical replay validates each selected route, not removal of duplicated trips or shared charging capacity.*
+
+**How to read the next tables.** Each reported fractional fleet is route weight from the combined bus-plus-charging LP. When that feasible weight equals the independent simultaneous-trip lower bound, matching bounds establish the fleet-only LP value. Dividing the weighted objective by 100,000 is not an exact fleet calculation because the objective also contains charging-related cost.
+
+*Each cell is integer buses and CG time in minutes. LP fractional route weight (buses) equals the target and is pricing-certified throughout. \* Integer solve stopped without a saved-pool proof; otherwise the displayed integer fleet is proved within the saved pool.*
+
+*Original partitioning benchmark; same notation and proof scope as section 5\. Each k is a new model and route-search history.*
+
+*Illustrative unit-cost set-covering example; AD and ADG are assumed physically feasible. No random choice is required.*
+
+*Illustrative one-hour shift only; battery headroom and charger availability are assumed.*
+
+*Joint optimization uses slightly more electricity cost than fixed-duty optimization at noon and 18:00, but fewer charging starts lowers the modeled total. The five-unit start fee is not operator-verified.*
+
+*These differences compare joint route-and-charging optimization directly with fixed-duty charging optimization. They do not use original repriced GIRO charging as the reference.*
+
+*integer buses and CG time in minutes. \* Integer time limit: incumbent only. LP fractional route weight (buses) is 9–15 respectively; all rows are pricing-certified except the marked k=15 chain-1 and chain-2 cells.*
+
+*Original partitioning benchmark continued. Same notation and proof scope as section 15\.*
+
+*Latest recorded easy-order results. “GIRO-added,” “GIRO-augmented,” “GIRO-seeded,” and the older “CHEAT” label all denote supplying validated GIRO duties to the initial/saved pool; they do not mean that RAW pricing discovered them.*
