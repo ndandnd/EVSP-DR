@@ -4,7 +4,7 @@
   "scope": "Bounded inventory of current and already submitted experiments relevant to the 2026-09-11 launch decision. It does not claim a complete Git history or a fresh remote status query.",
   "launch_recommendation": {
     "priority": "P0",
-    "campaign": "covering_complement_random6",
+    "campaign": "covering_complement75_20260911_21fbecb",
     "cells": [
       {
         "cell": "k05_p2",
@@ -201,7 +201,10 @@
     },
     "question": "Does set covering improve finite-pool integer fleet compatibility across the six random nested chains when current event physics are held fixed?",
     "execution_order": "CG nine cells in parallel -> per-cell freeze -> dependent Scaglione MIPs; record physical replay, overcoverage, pool proof scope, and stage2 status.",
-    "resource_note": "This report recommends work only; it does not submit or cancel jobs."
+    "resource_note": "This report recommends work only; it does not submit or cancel jobs.",
+    "status": "submitted",
+    "job_id": "810454",
+    "note": "The nine prioritized cells are part of the 75-case fresh covering campaign; output cells remain missing until validated collector records arrive."
   },
   "matrix": [
     {
@@ -452,7 +455,7 @@
     }
   ],
   "boundary_notes": [
-    "The six-chain partitioning campaign and covering p1/p3/p5 campaign do not share a frozen route pool; changing master row sense also changes duals and route discovery. The proposed complement is therefore a workflow comparison, not a same-pool MIP-only ablation.",
+    "The six-chain partitioning campaign and covering p1/p3/p5 campaign do not share a frozen route pool; changing master row sense also changes duals and route discovery. The submitted complement is therefore a workflow comparison, not a same-pool MIP-only ablation.",
     "A certified reduced-cost endpoint certifies the implemented event-grid pricing model to rc_eps; it does not prove the integer optimum over all mathematically possible routes. A frozen-pool MIP proof is exact only over that pool.",
     "The random chains are dependent prefixes within chain. The new p7-p20 campaign is already submitted and should be harvested as descriptive replication, not used for optional stopping.",
     "Censored, pending, or preempted jobs are not counted as algorithmic failures. Missing cells in the figure should stay missing until their saved evidence passes the collector gates."

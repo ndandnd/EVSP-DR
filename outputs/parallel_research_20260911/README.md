@@ -36,3 +36,9 @@ Terminal-energy MIP retry 810459 completed all three tariffs. The common aggrega
 | 18:00 | 232.249933738 | 217.5050887809 | 6.35% |
 
 Objective includes electricity plus charging-start fees. Equal minimum return energy does not imply equal realized return energy. Source root: `/home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910`, commit `5cdb8138c29faef9d5bf949175cb1e815a0b4220`. Comparison hashes in peak order: `c5bd813c9f2c8f727150be77a95b3f80db2990a83b0fee6d6b0944bbdf87335d`, `d2f8ddfce55c5dfcc1680ba0c2204fd9305711f8c454667d8b0a220028fbc008`, `dcff1c7807b643cfad4b0642d506bc30c98162a98ddbde4a43b2e567afb47037`. Original failures remain retained; no full-model optimality claim.
+
+Fresh75 downstream is submitted: freeze array **810587** uses `aftercorr:810454`; small MIP array **810588** and large MIP array **810589** each use the corresponding freeze task. Small k≤10 requests 16 GiB; k≥11 requests 32 GiB. Both MIP arrays allow eight concurrent tasks, subject to scheduler admission. No all-CG-completion barrier.
+
+All 36 warm-chain cases now have their own freeze and MIP jobs, listed in `nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/freeze_mip_jobs.tsv` on Unicorn. Completed upstream cases are accepted only after scheduler COMPLETED plus saved result/journal verification; active predecessors retain their dependencies.
+
+New figures: [fresh formulation matrix](figures/fresh_partition_vs_cover_fleet_matrix.png) and [fresh versus inherited chain 3](figures/fresh_vs_inherited_covering_chain3.png), with editable explanations and proof scopes in [figure provenance](figures/FIGURE_PROVENANCE.md).

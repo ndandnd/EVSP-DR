@@ -2,9 +2,9 @@
 
 Generated 2026-09-11T03:08:23.416581+00:00. This is a bounded inventory of the saved local register and current collector snapshots; it is not a complete Git-history census.
 
-## Recommended launch now
+## Submitted fresh covering campaign
 
-Launch the nine **fresh set-covering CG** cells below on the default partition. The six-chain partitioning campaign is already complete, and covering currently exists only for chains 1, 3, and 5. This grid completes the formulation comparison on all six random chains at k=5, 8, and 10. Keep the downstream MIPs dependent on each frozen pool; do not submit a second independent MIP before its CG pool is frozen.
+The nine-cell complement below was submitted inside fresh covering campaign **810454** (75 cases, with the k=5/8/10 chain-2/4/6 cells prioritized). The six-chain partitioning campaign is already complete, and covering previously existed only for chains 1, 3, and 5. These cells complete the formulation comparison on all six random chains at k=5, 8, and 10 once their outputs pass the collector checks. Keep downstream MIPs dependent on each frozen pool; do not treat a queued job as a numerical result.
 
 Configuration held fixed: current event implementation commit `21fbecba826824c44f897feef038fcf51c532582`, 240 kWh / 240 kW, zero reserve, 2.5 kWh / 5-minute event grid, flat tariff, singleton RAW initialization, 30 reduced-cost columns per iteration, `rc_eps=1e-4`, eight-hour CG wall limit, default partition. The changed factor is the master row sense (`>=1` covering versus equality partitioning). Because the duals change, the route pool changes too; this is a full workflow comparison, not a same-pool MIP ablation.
 
@@ -43,7 +43,7 @@ The existing work therefore gives a clear launch boundary: the missing independe
 
 The machine-readable version has the full fields and exact input IDs. The short decision list is:
 
-- **P0 launch:** nine-cell fresh covering complement above.
+- **P0 submitted:** nine-cell fresh covering complement above, inside campaign 810454.
 - **P0 harvest:** existing covering MIPs; warm P3/P5; retain proof scope and overcoverage fields.
 - **P1 harvest:** p7–p20 replication, equal-terminal-energy pilot, capacity/depot-power pilot, easy/heavy scale ladders.
 - **P2 later:** easy covering control after the random covering complement; exact April-code/grid replay only if the current 240/300 sensitivity leaves the regression unresolved.

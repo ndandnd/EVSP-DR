@@ -1,0 +1,10 @@
+{
+  "freeze_array": "810587",
+  "freeze_dependency": "aftercorr:810454",
+  "mip_small_array": "810588",
+  "mip_large_array": "810589",
+  "mip_dependency": "aftercorr:810587",
+  "small_memory_gib": 16,
+  "large_memory_gib": 32,
+  "mip_array_concurrency_each": 8
+}
