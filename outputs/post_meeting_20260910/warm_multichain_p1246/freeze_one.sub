@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+: "${EVSP_MIP_REPO:?}" "${EVSP_MIP_COMMIT:?}" "${EVSP_FREEZE_ONE_SHA256:?}"
+(( $# == 6 )) || { echo "usage: freeze_one.sub SOURCE OUT RECORD CELL INSTANCE_REL SOURCE_COMMIT" >&2; exit 2; }
+SOURCE=$1; OUT=$2; RECORD=$3; CELL=$4; INSTANCE=$5; SOURCE_COMMIT=$6
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "$(git -C "$EVSP_MIP_REPO" rev-parse HEAD)" == "$EVSP_MIP_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_MIP_REPO" status --porcelain --untracked-files=no)" ]]
+[[ "$(sha256sum "$0" | cut -d' ' -f1)" == "$EVSP_FREEZE_ONE_SHA256" ]]
+[[ -f "$SOURCE" && -f "$SOURCE.columns.jsonl" ]]
+[[ ! -e "$OUT" && ! -e "$OUT.columns.jsonl" && ! -e "$RECORD" ]]
+INSTANCE_SHA=$(sha256sum "$EVSP_MIP_REPO/data/$INSTANCE" | cut -d' ' -f1)
+mkdir -p "$(dirname "$OUT")" "$(dirname "$RECORD")"
+exec 7>>"$OUT.freeze.lock"
+flock -n 7 || { echo "freeze output lock is already held: $OUT.freeze.lock" >&2; exit 3; }
+cd "$EVSP_MIP_REPO"
+exec "$PYTHON_BIN" -u src/freeze_terminal_exact_cg_pool.py \
+  --base-status "$SOURCE" --resume-status "$SOURCE" --cell "$CELL" \
+  --instance-relative-to-data "$INSTANCE" --instance-sha256 "$INSTANCE_SHA" \
+  --source-solver-commit "$SOURCE_COMMIT" --master-sense cover \
+  --out "$OUT" --record "$RECORD"

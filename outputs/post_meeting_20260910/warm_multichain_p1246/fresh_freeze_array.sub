@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+: "${EVSP_FRESH_ROOT:?}" "${EVSP_MATRIX_SHA256:?}" "${EVSP_FREEZE_WRAPPER_SHA256:?}" "${EVSP_FREEZE_ONE_SHA256:?}"
+[[ "$(sha256sum "$0" | cut -d' ' -f1)" == "$EVSP_FREEZE_WRAPPER_SHA256" ]]
+MATRIX="$EVSP_FRESH_ROOT/matrix.tsv"
+[[ "$(sha256sum "$MATRIX" | cut -d' ' -f1)" == "$EVSP_MATRIX_SHA256" ]]
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" "$MATRIX")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS CSV_PATH CSV_SHA REP SOC BLOCK WALL CACHE CACHE_MANIFEST_SHA CACHE_PICKLE_SHA CACHE_PICKLE_BYTES <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+INSTANCE=${CSV_PATH#"$EVSP_SOURCE_EXECUTION/data/"}
+[[ "$INSTANCE" != "$CSV_PATH" ]]
+SOURCE="$EVSP_FRESH_ROOT/cg/M__${CELL}__cover__${REP}.json"
+OUT="$EVSP_FRESH_ROOT/snapshots/M__${CELL}__cover__${REP}.json"
+RECORD="$EVSP_FRESH_ROOT/records/freeze__${CELL}__cover__${REP}.json"
+exec "$EVSP_FREEZE_ONE" "$SOURCE" "$OUT" "$RECORD" "$CELL" "$INSTANCE" "$EVSP_SOURCE_COMMIT"

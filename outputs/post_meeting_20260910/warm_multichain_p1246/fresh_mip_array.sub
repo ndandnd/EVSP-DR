@@ -1,0 +1,16 @@
+#!/bin/bash
+set -euo pipefail
+: "${EVSP_FRESH_ROOT:?}" "${EVSP_MATRIX_SHA256:?}" "${EVSP_MIP_ARRAY_WRAPPER_SHA256:?}" "${EVSP_MIP_WORKER:?}"
+[[ "$(sha256sum "$0" | cut -d' ' -f1)" == "$EVSP_MIP_ARRAY_WRAPPER_SHA256" ]]
+MATRIX="$EVSP_FRESH_ROOT/matrix.tsv"
+[[ "$(sha256sum "$MATRIX" | cut -d' ' -f1)" == "$EVSP_MATRIX_SHA256" ]]
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" "$MATRIX")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS CSV_PATH CSV_SHA REP SOC BLOCK WALL CACHE CACHE_MANIFEST_SHA CACHE_PICKLE_SHA CACHE_PICKLE_BYTES <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+SNAPSHOT="$EVSP_FRESH_ROOT/snapshots/M__${CELL}__cover__${REP}.json"
+OUT="$EVSP_FRESH_ROOT/mip/M__${CELL}__cover__${REP}__1h2stage.json"
+CASE_KEY="fresh_${CELL}_cover_${REP}"
+export EVSP_MIP_CASE_KEY="$CASE_KEY"
+export EVSP_MIP_CASE_LOCK_PATH="$EVSP_FRESH_ROOT/locks/${CASE_KEY}.lock"
+export EXACT_MIP_PROGRESS_DIR="$EVSP_FRESH_ROOT/progress/${CASE_KEY}"
+exec "$EVSP_MIP_WORKER" "$SNAPSHOT" 3600 "$OUT" 0.0001
