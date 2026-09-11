@@ -7,14 +7,24 @@ STAGING=$BASE/launch_packages/warm_multichain_p1246_20260910
 EXECUTION=$BASE/execution/ecb60c154a9a5db385e3a573949ec9fd0a737af3
 SOURCE_CACHE=$BASE/nested_probability_k2_15_fresh84_20260908_21fbecb
 COMMIT=ecb60c154a9a5db385e3a573949ec9fd0a737af3
-[[ ! -e "$BATCH" ]] || fatal "batch already exists: $BATCH"
 [[ -d "$STAGING" && -f "$STAGING/prepare_chain.py" && -f "$STAGING/warm_chain_cg.sub" ]] || fatal "staging package incomplete"
 [[ "$(git -C "$EXECUTION" rev-parse HEAD)" == "$COMMIT" ]] || fatal "execution commit mismatch"
 [[ -z "$(git -C "$EXECUTION" status --porcelain --untracked-files=no)" ]] || fatal "execution checkout dirty"
-mkdir -p "$BATCH/launch"
+if [[ ! -e "$BATCH" ]]; then
+  mkdir -p "$BATCH/launch"
+elif [[ -f "$BATCH/batch_manifest.json" ]]; then
+  fatal "completed batch manifest already exists: $BATCH/batch_manifest.json"
+else
+  mkdir -p "$BATCH/launch"
+fi
 cp "$STAGING"/* "$BATCH/launch/"
 chmod 755 "$BATCH/launch/"*.sh "$BATCH/launch/"*.py "$BATCH/launch/"*.sub
 for replicate in 1 2 4 6; do
+  if [[ -f "$BATCH/p$replicate/execution_plan.json" ]]; then
+    echo "reuse verified prepared chain p$replicate"
+    continue
+  fi
+  [[ ! -e "$BATCH/p$replicate" ]] || fatal "partial chain without execution plan: p$replicate"
   "$HOME/evsp_env/bin/python" "$BATCH/launch/prepare_chain.py" \
     "$BATCH/p$replicate" "$EXECUTION" "$SOURCE_CACHE" "$COMMIT" \
     --replicate "$replicate" --worker-source "$BATCH/launch/warm_chain_cg.sub"
@@ -32,7 +42,7 @@ for replicate in (1,2,4,6):
         "replicate":replicate,"campaign_root":str(root/f"p{replicate}"),
         "execution_plan":str(path),"execution_plan_sha256":sha(path),
         "cache_count":len(plan["cache_rows"]),
-        "input_sha256_by_scale":{str(r["scale"]):r["instance_sha256"] for r in plan["selection_rows"]},
+        "input_sha256_by_scale":{str(r["scale"]):r["instance_file_sha256"] for r in plan["selection_rows"]},
         "cache_sha256_by_scale":{str(r["scale"]):r["pickle_sha256"] for r in plan["cache_rows"]},
     })
 payload={
