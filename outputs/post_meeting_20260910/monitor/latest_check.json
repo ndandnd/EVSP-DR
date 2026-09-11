@@ -1,9 +1,8 @@
 {
-  "snapshot": "20260911T143701Z.json",
-  "sha256": "bc70c69be4a33a0064d5ce93ad12a4063e21d00ffcc509fca2cf1de347eebdc8",
+  "snapshot": "20260911T151007Z.json",
   "access": "healthy",
-  "new_result": "warm P2 k8 fleet8 pool proof; charging time limit6.128%gap",
-  "capacity": "5 running, all5 nonempty checkpoints",
-  "default_mip_completed": 75,
-  "default_mip_preempted": 0
+  "new_cg": "P4k9 certified grid LP; MIP running",
+  "new_completed_mip": false,
+  "default_completed": 75,
+  "default_preempted": 0
 }

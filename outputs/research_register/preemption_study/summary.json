@@ -96,7 +96,7 @@
     "registered_tasks": 36,
     "accounting_missing_task_ids": [],
     "attempts": 36,
-    "started": 28,
+    "started": 29,
     "ended_started_attempts": 28,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
@@ -106,10 +106,11 @@
     ],
     "state_counts": {
       "COMPLETED": 28,
-      "PENDING": 8
+      "PENDING": 7,
+      "RUNNING": 1
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 12944
+    "allocation_exposure_seconds": 13350
   }
 }
