@@ -1,0 +1,76 @@
+#!/bin/bash
+set -euo pipefail
+
+fatal() { echo "[fresh default MIP attempt] $*" >&2; exit 2; }
+
+: "${EVSP_FRESH_ROOT:?}" "${EVSP_MATRIX_SHA256:?}"
+: "${EVSP_MIP_ATTEMPT_WRAPPER_SHA256:?}" "${EVSP_MIP_WORKER:?}"
+: "${EVSP_ATTEMPT_TAG:?}"
+
+actual_wrapper_sha=$(sha256sum "$0" | awk '{print $1}')
+[[ "$actual_wrapper_sha" == "$EVSP_MIP_ATTEMPT_WRAPPER_SHA256" ]] \
+  || fatal "attempt wrapper hash mismatch"
+[[ "$EVSP_ATTEMPT_TAG" =~ ^[A-Za-z0-9._-]+$ ]] \
+  || fatal "unsafe attempt tag: $EVSP_ATTEMPT_TAG"
+
+MATRIX="$EVSP_FRESH_ROOT/matrix.tsv"
+[[ "$(sha256sum "$MATRIX" | awk '{print $1}')" == "$EVSP_MATRIX_SHA256" ]] \
+  || fatal "matrix hash mismatch"
+[[ "${SLURM_JOB_PARTITION:-}" == "default_partition" ]] \
+  || fatal "expected default_partition; got ${SLURM_JOB_PARTITION:-unknown}"
+[[ "${SLURM_RESTART_COUNT:-0}" == "0" ]] \
+  || fatal "this no-requeue attempt cannot have a Slurm restart"
+
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" "$MATRIX")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS CSV_PATH CSV_SHA REP SOC BLOCK WALL CACHE CACHE_MANIFEST_SHA CACHE_PICKLE_SHA CACHE_PICKLE_BYTES <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]] || fatal "matrix index mismatch"
+
+SNAPSHOT="$EVSP_FRESH_ROOT/snapshots/M__${CELL}__cover__${REP}.json"
+CASE_KEY="fresh_${CELL}_cover_${REP}"
+ATTEMPT_DIR="$EVSP_FRESH_ROOT/mip_attempts/$CASE_KEY/$EVSP_ATTEMPT_TAG"
+OUT="$ATTEMPT_DIR/result.json"
+META="$ATTEMPT_DIR/allocation_metadata.json"
+export EVSP_MIP_CASE_KEY="$CASE_KEY"
+export EVSP_MIP_CASE_LOCK_PATH="$EVSP_FRESH_ROOT/locks/${CASE_KEY}.${EVSP_ATTEMPT_TAG}.lock"
+export EXACT_MIP_PROGRESS_DIR="$ATTEMPT_DIR/progress"
+mkdir -p "$ATTEMPT_DIR" "$EVSP_FRESH_ROOT/logs/mip_default"
+[[ ! -e "$OUT" && ! -e "$META" ]] || fatal "attempt path already exists: $ATTEMPT_DIR"
+
+job_ref="${SLURM_ARRAY_JOB_ID:-$SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+SCONTROL=/usr/local/slurm/slurm-25.05.5/bin/scontrol
+SPRIO=/usr/local/slurm/slurm-25.05.5/bin/sprio
+"$SCONTROL" show job -dd "$job_ref" > "$ATTEMPT_DIR/scontrol_before_optimize.txt"
+"$SPRIO" -l -j "${SLURM_ARRAY_JOB_ID:-$SLURM_JOB_ID}" > "$ATTEMPT_DIR/sprio_before_optimize.txt" || true
+python3 - "$META" "$ATTEMPT_DIR/scontrol_before_optimize.txt" "$ATTEMPT_DIR/sprio_before_optimize.txt" <<'PY'
+import datetime, hashlib, json, os, socket, sys
+from pathlib import Path
+
+out, scontrol_path, sprio_path = map(Path, sys.argv[1:])
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+payload = {
+    "schema": "evsp-dr-mip-allocation-attempt-v1",
+    "captured_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    "attempt_tag": os.environ["EVSP_ATTEMPT_TAG"],
+    "case_key": os.environ.get("EVSP_MIP_CASE_KEY"),
+    "job_id": os.environ.get("SLURM_JOB_ID"),
+    "array_job_id": os.environ.get("SLURM_ARRAY_JOB_ID"),
+    "array_task_id": os.environ.get("SLURM_ARRAY_TASK_ID"),
+    "restart_count": int(os.environ.get("SLURM_RESTART_COUNT", "0")),
+    "host": socket.gethostname(),
+    "partition": os.environ.get("SLURM_JOB_PARTITION"),
+    "requested_cpus_per_task": int(os.environ.get("SLURM_CPUS_PER_TASK", "0")),
+    "requested_memory_per_node": os.environ.get("SLURM_MEM_PER_NODE"),
+    "requested_memory_per_cpu": os.environ.get("SLURM_MEM_PER_CPU"),
+    "scontrol_path": str(scontrol_path),
+    "scontrol_sha256": digest(scontrol_path),
+    "sprio_path": str(sprio_path),
+    "sprio_sha256": digest(sprio_path),
+}
+tmp = out.with_suffix(out.suffix + ".tmp")
+tmp.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+tmp.replace(out)
+PY
+
+exec "$EVSP_MIP_WORKER" "$SNAPSHOT" "${EVSP_MIP_SECONDS:-3300}" "$OUT" 0.0001
