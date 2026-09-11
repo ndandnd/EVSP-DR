@@ -28,6 +28,15 @@ from utils_v2 import base_station_name
 TOL = 1e-9
 
 
+class PricingDeadlineExceeded(TimeoutError):
+    """Raised when an exact pricing pass reaches its caller's deadline."""
+
+
+def _check_pricing_deadline(deadline, clock):
+    if deadline is not None and clock() >= float(deadline):
+        raise PricingDeadlineExceeded("exact event pricing deadline reached")
+
+
 def _floor_level(grid, step, value):
     level = min(
         max(int(math.floor((value + 1e-9) / step)), 0),
@@ -256,9 +265,11 @@ class EventExpandedNetwork:
 
     def _capacity_adjusted_arc(
         self, cost, action, capacity_duals, capacity_sites, capacity_grid_min,
+        *, deadline=None, clock=time.perf_counter,
     ):
         """Choose the exact tariff/capacity-dual charging-window breakpoint."""
 
+        _check_pricing_deadline(deadline, clock)
         if action.get("kind") != "charge" or not capacity_duals:
             capacity_term = sum(
                 float(capacity_duals.get(row, 0.0))
@@ -279,6 +290,7 @@ class EventExpandedNetwork:
         )
         candidates = []
         for energy_cost, start, end in options:
+            _check_pricing_deadline(deadline, clock)
             selected = {**action, "cst": start, "cet": end}
             capacity_term = sum(
                 float(capacity_duals.get(row, 0.0))
@@ -882,6 +894,8 @@ class EventExpandedNetwork:
         capacity_duals=None,
         capacity_sites=None,
         capacity_grid_min=1,
+        deadline=None,
+        clock=time.perf_counter,
     ):
         if objective not in {
             "combined-cost", "artificial-elimination",
@@ -896,20 +910,23 @@ class EventExpandedNetwork:
             raise ValueError(
                 "capacity-dual event pricing currently requires explicit arcs"
             )
+        _check_pricing_deadline(deadline, clock)
         if self.arc_mode == "lazy":
             return self._min_reduced_cost_route_lazy(
                 dense, objective=objective, route_dual=route_dual,
+                deadline=deadline, clock=clock,
             )
         values = [float("inf")] * len(self.node_meta)
         parent = [None] * len(self.node_meta)
         values[0] = 0.0
         for source in self.topo:
+            _check_pricing_deadline(deadline, clock)
             if not math.isfinite(values[source]):
                 continue
             for target, cost, dual, action in self.out[source]:
                 adjusted_cost, selected_action = self._capacity_adjusted_arc(
                     cost, action, capacity_duals, capacity_sites,
-                    capacity_grid_min,
+                    capacity_grid_min, deadline=deadline, clock=clock,
                 )
                 if objective == "combined-cost" and route_dual == 0.0:
                     candidate = values[source] + adjusted_cost - (
@@ -933,9 +950,11 @@ class EventExpandedNetwork:
                 if candidate < values[target] - 1e-12:
                     values[target] = candidate
                     parent[target] = (source, selected_action)
+        _check_pricing_deadline(deadline, clock)
         if not math.isfinite(values[self.SINK]):
             return None
         best = self._walk(parent, self.SINK)
+        _check_pricing_deadline(deadline, clock)
         return {
             "rc": values[self.SINK],
             **best,
@@ -944,7 +963,8 @@ class EventExpandedNetwork:
         }
 
     def _min_reduced_cost_route_lazy(
-        self, dense, *, objective, route_dual
+        self, dense, *, objective, route_dual, deadline=None,
+        clock=time.perf_counter,
     ):
         values = np.full(len(self.node_meta), np.inf, dtype=np.float64)
         parent = np.full(len(self.node_meta), -1, dtype=np.int32)
@@ -955,6 +975,7 @@ class EventExpandedNetwork:
             dense, dtype=np.float64
         )[self._node_dual_np[trip_nodes]]
         for source in self.topo:
+            _check_pricing_deadline(deadline, clock)
             source_value = values[source]
             if not np.isfinite(source_value):
                 continue
@@ -990,9 +1011,11 @@ class EventExpandedNetwork:
             improved_targets = targets[improved]
             values[improved_targets] = candidates[improved]
             parent[improved_targets] = source
+        _check_pricing_deadline(deadline, clock)
         if not np.isfinite(values[self.SINK]):
             return None
         best = self._walk(parent, self.SINK)
+        _check_pricing_deadline(deadline, clock)
         return {
             "rc": float(values[self.SINK]),
             **best,

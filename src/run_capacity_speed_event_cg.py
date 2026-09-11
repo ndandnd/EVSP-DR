@@ -24,11 +24,18 @@ import gurobipy as gp
 from gurobipy import GRB
 
 from audit_giro_known_columns import HORIZON_MIN, STATIONS, build_problem
-from config import BIG_M_PENALTY, BUS_COST_KX
+from config import (
+    BIG_M_PENALTY,
+    BUS_COST_KX,
+    CHARGE_START_COST,
+    charge_cost_premium,
+)
 from event_pricer_network import (
     EventExpandedNetwork,
+    PricingDeadlineExceeded,
     conservative_capacity_rows,
 )
+from run_exact_pool_mip import validate_injected_route
 from utils_v2 import base_station_name, load_station_hourly_prices
 
 
@@ -74,15 +81,88 @@ def atomic_json(path: Path, payload) -> None:
 
 def atomic_pool(path: Path, routes: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        mode="w", dir=path.parent, prefix=f".{path.name}.", delete=False,
-    ) as handle:
-        temporary = Path(handle.name)
-        for route in routes:
-            handle.write(json.dumps(route, sort_keys=True, allow_nan=False) + "\n")
-        handle.flush()
-        os.fsync(handle.fileno())
-    os.replace(temporary, path)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", dir=path.parent, prefix=f".{path.name}.", delete=False,
+        ) as handle:
+            temporary = Path(handle.name)
+            for route in routes:
+                handle.write(
+                    json.dumps(route, sort_keys=True, allow_nan=False) + "\n"
+                )
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
+
+
+CHECKPOINT_SCHEMA = "evsp-dr-capacity-speed-cg-checkpoint-v1"
+
+
+def checkpoint_id(args, problem, prov) -> str:
+    """Identify every input and model choice that makes a CG pool reusable."""
+
+    return canonical_sha({
+        "schema": CHECKPOINT_SCHEMA,
+        "model_schema": SCHEMA,
+        "arm": args.arm,
+        "master": "set_covering",
+        "master_sense": "minimize",
+        "pricing_objective": "combined-cost",
+        "rc_eps": args.rc_eps,
+        "trips": list(problem.trips),
+        "implementation_git_commit": prov["git_commit"],
+        "instance_sha256": prov["instance_sha256"],
+        "prices_sha256": prov["prices_sha256"],
+        "reference_sha256": prov["reference_sha256"],
+        "deadhead_sha256": prov["deadhead_sha256"],
+        "battery_kwh": args.battery_kwh,
+        "reserve_kwh": args.reserve_kwh,
+        "soc_step_kwh": args.soc_step,
+        "event_block_min": args.block_min,
+        "non_parx_kw": args.non_parx_kw,
+        "parx_kw": ARMS[args.arm]["parx_kw"],
+        "capacity_enforced": ARMS[args.arm]["capacity"],
+        "charger_counts": CHARGER_COUNTS if ARMS[args.arm]["capacity"] else {},
+        "capacity_grid_min": 1,
+        "objective_constants": {
+            "bus_cost_kx": BUS_COST_KX,
+            "charge_start_cost": CHARGE_START_COST,
+            "charge_cost_premium": charge_cost_premium,
+            "artificial_cost": BIG_M_PENALTY,
+        },
+    })
+
+
+def load_resume_pool(
+    path: Path, *, expected_id: str, trips, route_validator=None,
+) -> list[dict]:
+    routes = load_pool(path)
+    if not routes:
+        raise ValueError("resume pool is empty and has no checkpoint identity")
+    allowed_trips = set(trips)
+    keys = set()
+    for index, route in enumerate(routes):
+        if route.get("cg_checkpoint_id") != expected_id:
+            raise ValueError(f"resume pool checkpoint identity mismatch at route {index}")
+        if not route.get("trips") or not set(route["trips"]).issubset(allowed_trips):
+            raise ValueError(f"resume pool has invalid trips at route {index}")
+        if not math.isfinite(float(route["cost"])):
+            raise ValueError(f"resume pool has non-finite cost at route {index}")
+        if route_validator is not None:
+            reason = route_validator(route)
+            if reason is not None:
+                raise ValueError(
+                    f"resume pool route {index} failed physical replay: {reason}"
+                )
+        key = route_key(route)
+        if key in keys:
+            raise ValueError(f"resume pool has duplicate route at index {index}")
+        keys.add(key)
+    return routes
 
 
 def route_key(route: dict) -> str:
@@ -230,44 +310,88 @@ class ExactCapacityMaster:
         }
 
 
-def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
-    if out.exists() or pool_out.exists():
-        raise FileExistsError("refusing to overwrite CG output")
-    started = time.perf_counter()
-    network_started = time.perf_counter()
+def run_cg(
+    args, problem, prices, prov, out: Path, pool_out: Path,
+    *, clock=time.perf_counter,
+):
+    resume = bool(getattr(args, "resume", False))
+    if out.exists():
+        raise FileExistsError("refusing to overwrite CG status output")
+    if pool_out.exists() != resume:
+        if resume:
+            raise FileNotFoundError("--resume requires an existing pool checkpoint")
+        raise FileExistsError("pool checkpoint exists; use --resume with a new --out")
+    started = clock()
+    deadline = started + float(args.cg_wall_s)
+    network_started = clock()
     network = build_network(args, problem, prices)
-    network_build_s = time.perf_counter() - network_started
+    network_build_s = clock() - network_started
     log_path = out.with_suffix(out.suffix + ".gurobi.log")
     master = ExactCapacityMaster(
         problem.trips, capacity=ARMS[args.arm]["capacity"], threads=args.threads,
         log_path=log_path,
     )
+    identity = checkpoint_id(args, problem, prov)
     keys = set()
-    for trip in problem.trips:
-        route = network.fixed_sequence_record((trip,))
-        if route is None:
-            continue
-        route.update({"origin": "exact_event_singleton", "found_iter": 0})
-        key = route_key(route)
-        if key not in keys:
-            keys.add(key)
+    if resume:
+        seed_routes = load_resume_pool(
+            pool_out,
+            expected_id=identity,
+            trips=problem.trips,
+            route_validator=lambda route: validate_injected_route(
+                problem, route, args.battery_kwh, args.non_parx_kw,
+                args.reserve_kwh, HORIZON_MIN, arrival_grace_min=0.0,
+                station_charge_kw=station_power(args.arm),
+            ),
+        )
+        for route in seed_routes:
+            keys.add(route_key(route))
             master.add_route(route)
+    else:
+        for trip in problem.trips:
+            route = network.fixed_sequence_record((trip,))
+            if route is None:
+                continue
+            route.update({
+                "origin": "exact_event_singleton", "found_iter": 0,
+                "cg_checkpoint_id": identity,
+            })
+            key = route_key(route)
+            if key not in keys:
+                keys.add(key)
+                master.add_route(route)
+        atomic_pool(pool_out, master.routes)
+    initial_pool_columns = len(master.routes)
+    checkpoint_writes = 0 if resume else 1
     iterations = []
     terminal_rc = None
     stop_reason = None
-    for iteration in range(1, args.max_iters + 1):
-        if time.perf_counter() - started >= args.cg_wall_s:
+    first_iteration = 1 + max(
+        (int(route.get("found_iter", 0)) for route in master.routes),
+        default=0,
+    )
+    for iteration in range(first_iteration, args.max_iters + 1):
+        if clock() >= deadline:
             stop_reason = "cg_wall_limit"
             break
         lp = master.solve()
-        pricing_started = time.perf_counter()
-        candidate = network.min_reduced_cost_route(
-            lp["trip_duals"],
-            capacity_duals=lp["capacity_duals"],
-            capacity_sites=set(CHARGER_COUNTS) if ARMS[args.arm]["capacity"] else None,
-            capacity_grid_min=1,
-        )
-        pricing_s = time.perf_counter() - pricing_started
+        pricing_started = clock()
+        try:
+            candidate = network.min_reduced_cost_route(
+                lp["trip_duals"],
+                capacity_duals=lp["capacity_duals"],
+                capacity_sites=(
+                    set(CHARGER_COUNTS) if ARMS[args.arm]["capacity"] else None
+                ),
+                capacity_grid_min=1,
+                deadline=deadline,
+                clock=clock,
+            )
+        except PricingDeadlineExceeded:
+            stop_reason = "pricing_deadline"
+            terminal_rc = None
+            break
+        pricing_s = clock() - pricing_started
         if candidate is None:
             stop_reason = "pricing_no_path"
             break
@@ -301,18 +425,29 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
         if terminal_rc >= -args.rc_eps:
             stop_reason = "exact_nonnegative_reduced_cost"
             break
-        record.update({"origin": "exact_capacity_dual_event_pricing", "found_iter": iteration})
+        record.update({
+            "origin": "exact_capacity_dual_event_pricing",
+            "found_iter": iteration,
+            "cg_checkpoint_id": identity,
+        })
         key = route_key(record)
         if key in keys:
             raise RuntimeError("negative exact priced route already exists in master")
         keys.add(key)
         master.add_route(record)
+        atomic_pool(pool_out, master.routes)
+        checkpoint_writes += 1
+    if stop_reason is None:
+        stop_reason = "max_iters"
+    if stop_reason in {"cg_wall_limit", "max_iters"}:
+        terminal_rc = None
     final_lp = master.solve()
     certified = (
         stop_reason == "exact_nonnegative_reduced_cost"
         and final_lp["artificial_total"] <= 1e-7
     )
     atomic_pool(pool_out, master.routes)
+    checkpoint_writes += 1
     payload = {
         "schema": SCHEMA,
         "mode": "cg",
@@ -350,9 +485,17 @@ def run_cg(args, problem, prices, prov, out: Path, pool_out: Path):
         "network_build_s": network_build_s,
         "gurobi_log": str(log_path),
         "iterations": iterations,
-        "runtime_s": time.perf_counter() - started,
+        "runtime_s": clock() - started,
         "pool": str(pool_out),
         "pool_sha256": sha256_file(pool_out),
+        "checkpoint": {
+            "schema": CHECKPOINT_SCHEMA,
+            "id": identity,
+            "atomic_pool_replace": True,
+            "resumed": resume,
+            "initial_pool_columns": initial_pool_columns,
+            "writes_this_attempt": checkpoint_writes,
+        },
         "provenance": prov,
     }
     atomic_json(out, payload)
@@ -696,6 +839,10 @@ def parser():
     value.add_argument("--rc-eps", type=float, default=1e-5)
     value.add_argument("--max-iters", type=int, default=10000)
     value.add_argument("--cg-wall-s", type=float, default=3600.0)
+    value.add_argument(
+        "--resume", action="store_true",
+        help="resume from a self-identifying atomic --pool-out checkpoint",
+    )
     value.add_argument("--mip-wall-s", type=float, default=1800.0)
     value.add_argument("--mip-gap", type=float, default=1e-4)
     value.add_argument("--threads", type=int, default=1)
