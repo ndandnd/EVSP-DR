@@ -31,3 +31,9 @@ Independent default-partition arrays now request concurrency 50. Increasing an a
 ## Capacity timeout reruns
 
 Six original cells saved no resumable pools: the driver kept columns in memory and published only at termination. Fresh matched reruns are now CG **811181**, dependent MIP **811182**, at `/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef`. The CG budget is extended to eight hours with nine-hour scheduler allocation. Code, inputs and arm physics remain fixed. A longer budget is an explicit experimental change; these are not resumed checkpoints. Original timeouts remain recorded.
+
+## Fresh-covering downstream dependencies — 11 September, 04:31 EDT audit
+
+Fresh CG array 810454 had 72 completed tasks and three running tasks, while 49 freeze tasks with completed predecessors still reported unfulfilled `aftercorr` dependencies. This was a scheduler gating issue, not a CG or MIP failure. The existing pending freeze and MIP jobs were repaired in place after checking per-case prerequisites; no scientific setting or solver budget changed. The repair audit preserves all passes, including an initial source-path validation error before freeze release and an intermediate array-wide update that was corrected with explicit `array_task` identifiers. Slurm can interpret the numeric array parent ID as the entire array: use the composite task identifier for every task-specific update and verify the resulting prerequisite.
+
+Completed CG prerequisites were discharged after successful accounting exit and final-status/journal checks. Unfinished CG tasks retain individual `afterok` dependencies; every MIP retains its own freeze prerequisite. See [repair and verification](../parallel_research_20260911/results_20260911T0831Z/README.md). The hourly collector retains this audit under campaign workflow evidence.

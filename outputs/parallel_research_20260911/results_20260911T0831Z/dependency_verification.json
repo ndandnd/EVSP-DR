@@ -1,0 +1,37 @@
+{
+  "timestamp_utc": "2026-09-11T08:39:14.486309+00:00",
+  "queue": "812767_74|PENDING|(Dependency)\n812767_73|PENDING|(Dependency)\n812767_72|PENDING|(Dependency)\n812767_71|PENDING|(Dependency)\n812767_70|PENDING|(Dependency)\n812767_69|PENDING|(Dependency)\n812767_68|PENDING|(Dependency)\n812767_67|PENDING|(Dependency)\n812767_66|PENDING|(Dependency)\n812767_65|PENDING|(Dependency)\n812767_64|PENDING|(Dependency)\n812767_63|PENDING|(Dependency)\n812767_62|PENDING|(Dependency)\n812767_61|PENDING|(Dependency)\n812767_60|PENDING|(Dependency)\n812767_59|PENDING|(Dependency)\n812767_58|PENDING|(Dependency)\n812767_57|PENDING|(Dependency)\n812767_56|PENDING|(Dependency)\n812767_55|PENDING|(Dependency)\n812767_54|PENDING|(Dependency)\n812767_53|PENDING|(Dependency)\n812767_52|PENDING|(Dependency)\n812767_51|PENDING|(Dependency)\n812767_50|PENDING|(Dependency)\n812767_49|PENDING|(Dependency)\n812767_48|PENDING|(Dependency)\n810587_74|PENDING|(Dependency)\n810587_73|PENDING|(Dependency)\n810587_72|PENDING|(Dependency)\n812767_45|RUNNING|cyu-cpu-01\n812767_46|RUNNING|cyu-cpu-01\n812767_47|RUNNING|lin-cpu-01\n812766_16|RUNNING|jingjie-cpu-14\n812766_17|RUNNING|jingjie-cpu-14\n812766_18|RUNNING|jingjie-cpu-14\n812766_19|RUNNING|jingjie-cpu-16\n812766_26|RUNNING|jingjie-cpu-16\n812766_28|RUNNING|jingjie-cpu-18\n812766_29|RUNNING|jingjie-cpu-18\n812766_30|RUNNING|jingjie-cpu-17\n812766_31|RUNNING|jingjie-cpu-17\n812766_32|RUNNING|jingjie-cpu-17\n812766_33|RUNNING|jingjie-cpu-19\n812766_34|RUNNING|jingjie-cpu-19\n812766_35|RUNNING|jingjie-cpu-19\n812766_36|RUNNING|jingjie-cpu-20\n812766_37|RUNNING|jingjie-cpu-20\n812766_38|RUNNING|jingjie-cpu-20\n812766_39|RUNNING|jingjie-cpu-21\n812766_40|RUNNING|jingjie-cpu-21\n812766_41|RUNNING|jingjie-cpu-21\n812766_42|RUNNING|cliprelabs-cpu-01\n812766_43|RUNNING|dean-cpu-01\n812766_44|RUNNING|cyu-cpu-01\n810587_48|RUNNING|jingjie-cpu-17\n810587_49|RUNNING|jingjie-cpu-17\n810587_50|RUNNING|jingjie-cpu-19\n810587_51|RUNNING|jingjie-cpu-21\n810587_52|RUNNING|jingjie-cpu-21\n810587_53|RUNNING|jingjie-cpu-20\n810587_54|RUNNING|jingjie-cpu-20\n810587_55|RUNNING|kim-cpu-02\n810587_56|RUNNING|cliprelabs-cpu-01\n810587_57|RUNNING|dean-cpu-01\n810587_58|RUNNING|dean-cpu-01\n810587_59|RUNNING|dean-cpu-01\n810587_60|RUNNING|dean-cpu-01\n810587_61|RUNNING|yin-cpu-01\n810587_62|RUNNING|yin-cpu-01\n810587_63|RUNNING|yin-cpu-01\n810587_64|RUNNING|yin-cpu-01\n810587_65|RUNNING|lin-cpu-02\n810587_66|RUNNING|culberg-cpu-01\n810587_67|RUNNING|culberg-cpu-01\n810587_68|RUNNING|culberg-cpu-01\n810587_69|RUNNING|sablab-cpu-01\n810587_70|RUNNING|sablab-cpu-01\n810587_71|RUNNING|sablab-cpu-01\n",
+  "counts": {
+    "810587": {
+      "PENDING (Dependency)": 3,
+      "RUNNING jingjie-cpu-17": 2,
+      "RUNNING jingjie-cpu-19": 1,
+      "RUNNING jingjie-cpu-21": 2,
+      "RUNNING jingjie-cpu-20": 2,
+      "RUNNING kim-cpu-02": 1,
+      "RUNNING cliprelabs-cpu-01": 1,
+      "RUNNING dean-cpu-01": 4,
+      "RUNNING yin-cpu-01": 4,
+      "RUNNING lin-cpu-02": 1,
+      "RUNNING culberg-cpu-01": 3,
+      "RUNNING sablab-cpu-01": 3
+    },
+    "812766": {
+      "RUNNING jingjie-cpu-14": 3,
+      "RUNNING jingjie-cpu-16": 2,
+      "RUNNING jingjie-cpu-18": 2,
+      "RUNNING jingjie-cpu-17": 3,
+      "RUNNING jingjie-cpu-19": 3,
+      "RUNNING jingjie-cpu-20": 3,
+      "RUNNING jingjie-cpu-21": 3,
+      "RUNNING cliprelabs-cpu-01": 1,
+      "RUNNING dean-cpu-01": 1,
+      "RUNNING cyu-cpu-01": 1
+    },
+    "812767": {
+      "PENDING (Dependency)": 27,
+      "RUNNING cyu-cpu-01": 2,
+      "RUNNING lin-cpu-01": 1
+    }
+  }
+}
