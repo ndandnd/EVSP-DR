@@ -1,6 +1,6 @@
 # Research experiment register
 
-Source snapshot: `20260911T201444Z.json` (`09d06e76de691317f46fb92a9104aab594f7cae1a34c0fc6d346e4b15021d0ae`), captured 2026-09-11T20:13:27.354107+00:00.
+Source snapshot: `20260911T211448Z.json` (`5028c2c2ce1ed831829a4db229b17295092a74139dae0763e25e0a5827c15f15`), captured 2026-09-11T21:13:31.498253+00:00.
 
 This build contains **1510 normalized artifact/stage rows** across **31 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
 
@@ -8,7 +8,7 @@ This build contains **1510 normalized artifact/stage rows** across **31 source g
 
 | campaign_id | family | root | row_count | workflow_job_ids | report_links |
 |---|---|---|---|---|---|
-| capacity_deadline5_retry | production_or_historical | /home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e | 1 | 872397<br>872398<br>872399<br>872400<br>872401<br>872402 | unknown |
+| capacity_deadline5_retry | production_or_historical | /home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e | 11 | 872397<br>872398<br>872399<br>872400<br>872401<br>872402<br>872403<br>872404<br>872405<br>872406 | unknown |
 | capacity_speed_pilot | controlled_physics_pilot | /home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd | 22 | 772080<br>772082<br>772111<br>772112<br>772798<br>772826<br>772985<br>773334<br>773335<br>773336<br>773337<br>773338<br>773339<br>773341<br>773343<br>773437<br>773638<br>773706<br>773708<br>773710<br>773712<br>773714<br>774569 | [parallel_research_20260911/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md>)<br>[capacity_speed/IMPLEMENTATION_REPORT.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/capacity_speed/IMPLEMENTATION_REPORT.md>) |
 | capacity_timeout6_rerun | production_or_historical | /home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef | 5 | 772080<br>811181<br>811182<br>811184<br>811192 | [parallel_research_20260911/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md>)<br>[results_20260911T1236Z/TIMEOUT_CHECKPOINT_FIX.md](</Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/results_20260911T1236Z/TIMEOUT_CHECKPOINT_FIX.md>) |
 | covering_complement75 | production_or_historical | /home/nc437/ladder-lite/covering_complement75_20260911_21fbecb | 232 | 810454<br>810588<br>810589<br>812608<br>812619<br>812766<br>812767 | [warm_multichain_p1246/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_multichain_p1246/README.md>) |
@@ -28,7 +28,7 @@ This build contains **1510 normalized artifact/stage rows** across **31 source g
 | old70 | production_or_historical | /home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17/pool_mip8h_20260908_2d7a21a07e | 38 | unknown | [meeting_20260910/ACTION_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/ACTION_PLAN.md>)<br>[meeting_20260910/HISTORY_EVIDENCE.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/HISTORY_EVIDENCE.md>) |
 | overnight_cpu04_raw_controls | production_or_historical | /home/nc437/ladder-lite/overnight_cpu04_raw_controls_20260909 | 3 | 598960<br>598961 | [snapshots/20260909T0515Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0515Z.md>)<br>[snapshots/20260909T0617Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0617Z.md>) |
 | post_meeting_log_tails | solver_progress_log | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 2 | unknown | [license_and_mip_recovery/STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md>) |
-| scheduler_snapshot | scheduler | unknown | 63 | 537227<br>810296<br>810319<br>810320<br>810332<br>810333<br>810344<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810974<br>810975<br>810976<br>810977<br>810994<br>810995<br>872397<br>872398<br>872399<br>872400<br>872401<br>872402 | unknown |
+| scheduler_snapshot | scheduler | unknown | 53 | 537227<br>810296<br>810319<br>810320<br>810332<br>810333<br>810344<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810974<br>810975<br>810976<br>810977<br>810994<br>810995 | unknown |
 | stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | [license_and_mip_recovery/STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md>) |
 | stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | [post_meeting_20260910/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/README.md>)<br>[snapshots/20260910T1829Z_heartbeat.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260910T1829Z_heartbeat.md>) |
 | targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | [april_source_replay/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/README.md>)<br>[april_source_replay/SUBMISSION.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/SUBMISSION.md>) |
@@ -44,14 +44,14 @@ This build contains **1510 normalized artifact/stage rows** across **31 source g
 
 | result_family | stage | rows |
 |---|---|---|
-| capacity_speed_exact_event | cg | 11 |
-| capacity_speed_exact_event | mip | 11 |
+| capacity_speed_exact_event | cg | 16 |
+| capacity_speed_exact_event | mip | 16 |
 | cg_phase_telemetry | telemetry | 294 |
 | column_generation | cg | 294 |
 | matched_tariff_comparison | comparison_arm | 57 |
 | pool_mip | mip | 339 |
 | rejected_mip_output | mip_rejected | 2 |
-| scheduler | queue_state | 63 |
+| scheduler | queue_state | 53 |
 | small_reference_cg | cg_arm | 32 |
 | small_same_pool_comparison | lp | 64 |
 | small_same_pool_comparison | mip | 64 |

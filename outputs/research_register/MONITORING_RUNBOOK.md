@@ -33,3 +33,5 @@ Snapshot selection: choose the previous successful collection by embedded timest
 Storage follow-up complete at12:53EDT11September:884924 COMPLETED,124/124files verified, no failed events, total savings including pilot/cache74,782,010,325bytes. Completion evidence in outputs/storage_cleanup_20260911/completion_884924.json. No further polling or re-submission of that worker.
 
 Delta comparisons: CG rows currently lack sha256. Always check path presence; when a hash is absent compare canonical row content, not null versus null. Include new completed CG even if MIP has not finished.
+
+Snapshot comparison must include each campaign’s `records` array as well as `cg`, `mip`, `phases` and rejections. Capacity retries store their CG/MIP results in `records`; comparing only production lists misses their completions. On 11 September all five deadline-repaired capacity tasks and MIPs completed with uncertified CG pools; see EXECUTION_ISSUES and capacity_deadline5_completed before treating them as active or relaunching.

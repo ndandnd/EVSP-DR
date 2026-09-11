@@ -12,14 +12,14 @@
     "non-finite numeric values normalized to null/unknown"
   ],
   "families_and_stages": {
-    "capacity_speed_exact_event:cg": 11,
-    "capacity_speed_exact_event:mip": 11,
+    "capacity_speed_exact_event:cg": 16,
+    "capacity_speed_exact_event:mip": 16,
     "cg_phase_telemetry:telemetry": 294,
     "column_generation:cg": 294,
     "matched_tariff_comparison:comparison_arm": 57,
     "pool_mip:mip": 339,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 63,
+    "scheduler:queue_state": 53,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -37,10 +37,10 @@
   },
   "rejected_rows": 2,
   "row_count": 1510,
-  "rows_with_source_sha256": 602,
-  "rows_without_source_sha256": 908,
+  "rows_with_source_sha256": 612,
+  "rows_without_source_sha256": 898,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "09d06e76de691317f46fb92a9104aab594f7cae1a34c0fc6d346e4b15021d0ae",
+  "source_snapshot_sha256": "5028c2c2ce1ed831829a4db229b17295092a74139dae0763e25e0a5827c15f15",
   "superseded_772031_rows": 1,
   "unique_row_ids": 1510
 }
