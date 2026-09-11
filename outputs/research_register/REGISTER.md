@@ -1,8 +1,8 @@
 # Research experiment register
 
-Source snapshot: `20260911T185337Z.json` (`e1dc031ad0c073bdfdde838e0da8de9ffdbc930fe23ab8463e748fcfefe1d6ee`), captured 2026-09-11T18:53:37.434838+00:00.
+Source snapshot: `20260911T201444Z.json` (`09d06e76de691317f46fb92a9104aab594f7cae1a34c0fc6d346e4b15021d0ae`), captured 2026-09-11T20:13:27.354107+00:00.
 
-This build contains **1511 normalized artifact/stage rows** across **31 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
+This build contains **1510 normalized artifact/stage rows** across **31 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
 
 ## Campaign index
 
@@ -28,7 +28,7 @@ This build contains **1511 normalized artifact/stage rows** across **31 source g
 | old70 | production_or_historical | /home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17/pool_mip8h_20260908_2d7a21a07e | 38 | unknown | [meeting_20260910/ACTION_PLAN.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/ACTION_PLAN.md>)<br>[meeting_20260910/HISTORY_EVIDENCE.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/HISTORY_EVIDENCE.md>) |
 | overnight_cpu04_raw_controls | production_or_historical | /home/nc437/ladder-lite/overnight_cpu04_raw_controls_20260909 | 3 | 598960<br>598961 | [snapshots/20260909T0515Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0515Z.md>)<br>[snapshots/20260909T0617Z.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0617Z.md>) |
 | post_meeting_log_tails | solver_progress_log | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 2 | unknown | [license_and_mip_recovery/STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md>) |
-| scheduler_snapshot | scheduler | unknown | 64 | 537227<br>810293<br>810296<br>810319<br>810320<br>810332<br>810333<br>810344<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810974<br>810975<br>810976<br>810977<br>810994<br>810995<br>872397<br>872398<br>872399<br>872400<br>872401<br>872402 | unknown |
+| scheduler_snapshot | scheduler | unknown | 63 | 537227<br>810296<br>810319<br>810320<br>810332<br>810333<br>810344<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810974<br>810975<br>810976<br>810977<br>810994<br>810995<br>872397<br>872398<br>872399<br>872400<br>872401<br>872402 | unknown |
 | stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | [license_and_mip_recovery/STATUS.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md>) |
 | stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | [post_meeting_20260910/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/README.md>)<br>[snapshots/20260910T1829Z_heartbeat.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260910T1829Z_heartbeat.md>) |
 | targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | [april_source_replay/README.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/README.md>)<br>[april_source_replay/SUBMISSION.md](</Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/SUBMISSION.md>) |
@@ -51,7 +51,7 @@ This build contains **1511 normalized artifact/stage rows** across **31 source g
 | matched_tariff_comparison | comparison_arm | 57 |
 | pool_mip | mip | 339 |
 | rejected_mip_output | mip_rejected | 2 |
-| scheduler | queue_state | 64 |
+| scheduler | queue_state | 63 |
 | small_reference_cg | cg_arm | 32 |
 | small_same_pool_comparison | lp | 64 |
 | small_same_pool_comparison | mip | 64 |

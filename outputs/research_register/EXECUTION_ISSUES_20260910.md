@@ -45,3 +45,11 @@ CG811181 tasks5/9/11/13/15 reached TIMEOUT after9h02m, without final pool/status
 The nested retry result schema was added to the collector/register; the successful retry is now visible. A Sol high subagent is implementing and testing bounded pricing deadlines and safe checkpointing; do not repeat the five timed-out jobs unchanged. See [evidence](../parallel_research_20260911/results_20260911T1236Z/README.md).
 
 Recovery implementation passed23 tests locally and on Unicorn. Fixed CG commit `253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6` adds cooperative pricing deadlines and atomic, identity-bound pool checkpoints. Five fresh retry tasks are array872397; individually dependent MIPs872398–872402 retain9bf3f75. Same8hCG/9hallocation and25minMIP/30minallocation. Successful old task7 is not repeated. These are launches, not recovered results. The collector includes `capacity_deadline5_retry`; exact job/resource/provenance records are in the linked retry evidence.
+
+## Warm chain 1, k=7 — initialization timeout, job 810293
+
+Verified 11 September at 20:14 UTC: Slurm TIMEOUT after 08:17:13 against 08:15:00 allocation. The event network loaded in 7.03 seconds (15,642 nodes, 74,597,352 arcs). The persisted status remains initializing, with zero iterations, no final LP, no pricing certificate and an empty column journal. The 7.66-second status wall time is the initial publication timestamp, not the completed runtime. The inherited-event-pool audit is null. Evidence places the timeout during initialization before the first recorded CG iteration; it does not identify a particular inherited route or establish infeasibility.
+
+No usable child pool was saved, so its MIP cannot run and chain-1 k8–10 remain blocked by their true dependencies. The predecessor k6 pool and cached network remain available; this does not resume the lost child initialization work. No blind rerun was submitted. Recovery needs bounded, checkpointed initialization or a measured justification for a larger budget, tested against the same inputs and physics. Other chains and capacity retries remain active.
+
+Evidence: outputs/parallel_research_20260911/warm_p1_k7_timeout_810293/evidence.json; collection monitor/20260911T201444Z.json.
