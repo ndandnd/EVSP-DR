@@ -25,6 +25,7 @@ roots = {
     'stage2_cap_saved_pool_reruns': home / 'stage2_cap_saved_pool_reruns_20260910_15e781a',
     'stage2_cap_license_recovery': home / 'stage2_cap_license_recovery_20260910_871d057',
     'terminal_energy_fair_mip_retry_5cdb813': home / 'terminal_energy_fair_mip_retry_5cdb813_20260910',
+    'capacity_deadline5_retry': home / 'capacity_deadline5_retry_20260911_253588e',
     'capacity_timeout6_rerun': home / 'capacity_speed_pilot_20260910_timeout6_rerun_7d38ef',
 }
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
@@ -84,18 +85,19 @@ for name, root in roots.items():
         if record_path.exists():
             out['campaigns'][name]['workflow'][record_name] = record_path.read_text()
 # Capacity retry uses the same nested results schema as the original pilot.
-retry_root = roots['capacity_timeout6_rerun']
-retry_records = []
-for phase, filename in [('cg', 'cg.json'), ('mip', 'mip_twostage.json')]:
-    for p in sorted((retry_root/'results').glob(f'*/{filename}')):
-        raw = p.read_bytes()
-        d = json.loads(raw)
-        compact = {k:v for k,v in d.items() if k not in ['routes','selected_routes','iterations','history','columns','route_values','trip_duals','capacity_duals']}
-        if isinstance(d.get('iterations'), list):
-            compact['iteration_count'] = len(d['iterations'])
-            compact['last_iteration'] = d['iterations'][-1] if d['iterations'] else None
-        retry_records.append({'phase':phase, 'path':str(p), 'sha256':hashlib.sha256(raw).hexdigest(), 'result':compact})
-out['campaigns']['capacity_timeout6_rerun']['records'] = retry_records
+for retry_name in ['capacity_timeout6_rerun', 'capacity_deadline5_retry']:
+    retry_root = roots[retry_name]
+    retry_records = []
+    for phase, filename in [('cg', 'cg.json'), ('mip', 'mip_twostage.json')]:
+        for p in sorted((retry_root/'results').glob(f'*/{filename}')):
+            raw = p.read_bytes()
+            d = json.loads(raw)
+            compact = {k:v for k,v in d.items() if k not in ['routes','selected_routes','iterations','history','columns','route_values','trip_duals','capacity_duals']}
+            if isinstance(d.get('iterations'), list):
+                compact['iteration_count'] = len(d['iterations'])
+                compact['last_iteration'] = d['iterations'][-1] if d['iterations'] else None
+            retry_records.append({'phase':phase, 'path':str(p), 'sha256':hashlib.sha256(raw).hexdigest(), 'result':compact})
+    out['campaigns'][retry_name]['records'] = retry_records
 
 # Controlled post-meeting reference CG: different schema from production CG.
 pilot_root = home / 'capacity_speed_pilot_20260910_v2_7d38efd'

@@ -1,0 +1,107 @@
+{
+  "timestamp_utc": "2026-09-11T12:50:13.224614+00:00",
+  "campaign_root": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e",
+  "cg_code_commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+  "mip_code_commit": "9bf3f752a5d2786bf5a1e9c613ff6440415569a9",
+  "indices": [
+    5,
+    9,
+    11,
+    13,
+    15
+  ],
+  "original_timeout_accounting": "811181_5|TIMEOUT|0:0\n811181_7|COMPLETED|0:0\n811181_9|TIMEOUT|0:0\n811181_11|TIMEOUT|0:0\n811181_13|TIMEOUT|0:0\n811181_15|TIMEOUT|0:0\n",
+  "source_campaign": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef",
+  "policy_sha256": "be4dcfd3d06a3d891f8f4cdccdd713f350b581b8d71c8cceb7ce7ef2a01793fb",
+  "fresh_not_resume": true,
+  "scientific_settings": "same original inputs, physics, objective, capacity arms,8hCG,25minMIP; code adds deadline/checkpoint only",
+  "wrapper_sha256": {
+    "cg_runner.py": "516f8bec6f7344448d94c708d4d3806d2b5522902f3ca304fb9d10ca704a4efc",
+    "cg_mip_runner.py": "32c0713c056d62fbf7275e452c8f783176c9f1afa26f1fcc2c5370752576eae6",
+    "cg_worker.sh": "45b521b1a3f2bcd9f96d671121cb64bc185fe1e424ff3f8187c7a6cabe92995d",
+    "mip_worker.sh": "7129d2a40f1f1895840cc2b5a60be7f13832d18becb6fbd6437981850ac63941"
+  },
+  "launch_sha256": "e6a631f234f9caf699fe91611b951191f4c1d84786ee8fce533e4b7de3088977",
+  "tests_sha256": "ab64179157a3804d389df563f55b5e78ea1cd07793bfe798d47092aa75438866",
+  "jobs": [
+    {
+      "stage": "cg",
+      "job_id": "872397",
+      "array": [
+        5,
+        9,
+        11,
+        13,
+        15
+      ],
+      "concurrency": 5,
+      "cpus": 1,
+      "mem": "24G",
+      "time": "09:00:00",
+      "dependency": null
+    },
+    {
+      "stage": "mip",
+      "job_id": "872398",
+      "array": [
+        5
+      ],
+      "cpus": 8,
+      "mem": "16G",
+      "time": "00:30:00",
+      "dependency": "afterok:872397_5"
+    },
+    {
+      "stage": "mip",
+      "job_id": "872399",
+      "array": [
+        9
+      ],
+      "cpus": 8,
+      "mem": "16G",
+      "time": "00:30:00",
+      "dependency": "afterok:872397_9"
+    },
+    {
+      "stage": "mip",
+      "job_id": "872400",
+      "array": [
+        11
+      ],
+      "cpus": 8,
+      "mem": "16G",
+      "time": "00:30:00",
+      "dependency": "afterok:872397_11"
+    },
+    {
+      "stage": "mip",
+      "job_id": "872401",
+      "array": [
+        13
+      ],
+      "cpus": 8,
+      "mem": "16G",
+      "time": "00:30:00",
+      "dependency": "afterok:872397_13"
+    },
+    {
+      "stage": "mip",
+      "job_id": "872402",
+      "array": [
+        15
+      ],
+      "cpus": 8,
+      "mem": "16G",
+      "time": "00:30:00",
+      "dependency": "afterok:872397_15"
+    }
+  ],
+  "scheduler_verification": {
+    "872397": "JobId=872397 ArrayJobId=872397 ArrayTaskId=5,9,11,13,15%5 ArrayTaskThrottle=5 JobName=cap5dCG\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15364 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=None Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=09:00:00 TimeMin=N/A\n   SubmitTime=2026-09-11T08:50:13 EligibleTime=2026-09-11T08:50:14\n   AccrueTime=2026-09-11T08:50:14\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T08:50:13 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2978637\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/cg_worker.sh\n   WorkDir=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e\n   StdErr=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/cg_872397_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/cg_872397_4294967294.out\n   TresPerTask=cpu=1\n   \n\n",
+    "872398": "JobId=872398 ArrayJobId=872398 ArrayTaskId=5 JobName=cap5dM\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15426 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:872397_5(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A\n   SubmitTime=2026-09-11T08:50:13 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T08:50:13 Scheduler=Main\n   Partition=scaglione AllocNode:Sid=en-cc-unicorn-login-01:2978637\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=16G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/mip_worker.sh\n   WorkDir=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e\n   StdErr=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872398_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872398_4294967294.out\n   TresPerTask=cpu=8\n   \n\n",
+    "872399": "JobId=872399 ArrayJobId=872399 ArrayTaskId=9 JobName=cap5dM\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15426 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:872397_9(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A\n   SubmitTime=2026-09-11T08:50:13 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T08:50:13 Scheduler=Main\n   Partition=scaglione AllocNode:Sid=en-cc-unicorn-login-01:2978637\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=16G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/mip_worker.sh\n   WorkDir=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e\n   StdErr=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872399_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872399_4294967294.out\n   TresPerTask=cpu=8\n   \n\n",
+    "872400": "JobId=872400 ArrayJobId=872400 ArrayTaskId=11 JobName=cap5dM\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15426 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:872397_11(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A\n   SubmitTime=2026-09-11T08:50:14 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T08:50:14 Scheduler=Main\n   Partition=scaglione AllocNode:Sid=en-cc-unicorn-login-01:2978637\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=16G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/mip_worker.sh\n   WorkDir=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e\n   StdErr=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872400_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872400_4294967294.out\n   TresPerTask=cpu=8\n   \n\n",
+    "872401": "JobId=872401 ArrayJobId=872401 ArrayTaskId=13 JobName=cap5dM\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15426 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=None Dependency=afterok:872397_13(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A\n   SubmitTime=2026-09-11T08:50:14 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T08:50:14 Scheduler=Main\n   Partition=scaglione AllocNode:Sid=en-cc-unicorn-login-01:2978637\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=16G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/mip_worker.sh\n   WorkDir=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e\n   StdErr=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872401_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872401_4294967294.out\n   TresPerTask=cpu=8\n   \n\n",
+    "872402": "JobId=872402 ArrayJobId=872402 ArrayTaskId=15 JobName=cap5dM\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15426 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=None Dependency=afterok:872397_15(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:30:00 TimeMin=N/A\n   SubmitTime=2026-09-11T08:50:15 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-11T08:50:15 Scheduler=Main\n   Partition=scaglione AllocNode:Sid=en-cc-unicorn-login-01:2978637\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=16G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/mip_worker.sh\n   WorkDir=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e\n   StdErr=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872402_4294967294.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/logs/mip_872402_4294967294.out\n   TresPerTask=cpu=8\n   \n\n"
+  }
+}

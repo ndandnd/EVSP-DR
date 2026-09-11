@@ -809,8 +809,9 @@ class Register:
     def build(self):
         self.standard_campaigns()
         self.capacity_speed()
-        if self.snapshot.get("campaigns", {}).get("capacity_timeout6_rerun", {}).get("records"):
-            self.capacity_speed("capacity_timeout6_rerun")
+        for retry_name in ["capacity_timeout6_rerun", "capacity_deadline5_retry"]:
+            if self.snapshot.get("campaigns", {}).get(retry_name, {}).get("records"):
+                self.capacity_speed(retry_name)
         self.terminal_energy()
         self.small_cg()
         self.targeted()
