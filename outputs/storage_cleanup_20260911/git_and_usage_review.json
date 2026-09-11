@@ -1,0 +1,27 @@
+{
+  "checked_at_utc": "2026-09-11T15:23:29.340580+00:00",
+  "weekly_remaining_percent": 33,
+  "resets_at_local": "2026-09-14T21:57:07-04:00",
+  "github_verified": {
+    "codex/parallel-research-20260911": "4c06e9bc286dc12773105ce28b62e80c5799f746",
+    "codex/capacity-timeout-checkpoint-20260911": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6"
+  },
+  "local_git": {
+    "pack_size": "1.58GiB",
+    "loose_size": "469.09MiB",
+    "temporary_pack_bytes": 46006872,
+    "temporary_pack_count": 50,
+    "action": "no deletion/history rewrite; small relative to remote home"
+  },
+  "monitoring": {
+    "schedule": "hourly, unchanged",
+    "change": "short prompt; programmatic deltas first; no background rereads/browser/rebuild on unchanged checks",
+    "full_previous_prompt": "outputs/research_register/MONITORING_RUNBOOK.md",
+    "per_automation_usage": "not available from account limit tool"
+  },
+  "agent": {
+    "model": "gpt-5.6-luna",
+    "reasoning": "xhigh",
+    "context": "bounded task only, no history fork"
+  }
+}
