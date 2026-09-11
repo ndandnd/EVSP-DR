@@ -1,0 +1,32 @@
+#!/bin/bash
+# Freeze a completed p5 event-CG pool into an immutable MIP input snapshot.
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+: "${EVSP_MIP_REPO:?}" "${EVSP_MIP_COMMIT:?}" "${EVSP_CAMPAIGN_ROOT:?}" "${EVSP_SCALE:?}" "${EVSP_WARM_SOURCE_COMMIT:?}" "${EVSP_FREEZE_WORKER_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "$(git -C "$EVSP_MIP_REPO" rev-parse HEAD)" == "$EVSP_MIP_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_MIP_REPO" status --porcelain --untracked-files=no)" ]]
+[[ "$(sha256sum "$0" | awk '{print $1}')" == "$EVSP_FREEZE_WORKER_SHA256" ]]
+K=$((10#$EVSP_SCALE)); (( K >= 2 && K <= 10 ))
+CELL=$(printf 'k%02d_p5' "$K")
+REP=event_2p5_event5
+INSTANCE=$(printf 'scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k%02d_p05_20260908.csv' "$K")
+SOURCE="$EVSP_CAMPAIGN_ROOT/cg/M__${CELL}__warm_cover__${REP}.json"
+OUT="$EVSP_CAMPAIGN_ROOT/snapshots/M__${CELL}__warm_cover__${REP}.json"
+RECORD="$EVSP_CAMPAIGN_ROOT/records/freeze__${CELL}__warm_cover__${REP}.json"
+[[ -f "$SOURCE" && -f "$SOURCE.columns.jsonl" ]]
+[[ ! -e "$OUT" && ! -e "$OUT.columns.jsonl" && ! -e "$RECORD" ]]
+INSTANCE_SHA=$(sha256sum "$EVSP_MIP_REPO/data/$INSTANCE" | awk '{print $1}')
+mkdir -p "$EVSP_CAMPAIGN_ROOT/snapshots" "$EVSP_CAMPAIGN_ROOT/records" "$EVSP_CAMPAIGN_ROOT/logs/freeze"
+exec 7>>"$OUT.freeze.lock"
+if ! flock -n 7; then
+  echo "freeze output lock is already held: $OUT.freeze.lock" >&2
+  exit 3
+fi
+cd "$EVSP_MIP_REPO"
+exec "$PYTHON_BIN" -u src/freeze_terminal_exact_cg_pool.py \
+  --base-status "$SOURCE" --resume-status "$SOURCE" --cell "$CELL" \
+  --instance-relative-to-data "$INSTANCE" --instance-sha256 "$INSTANCE_SHA" \
+  --source-solver-commit "$EVSP_WARM_SOURCE_COMMIT" --master-sense cover \
+  --out "$OUT" --record "$RECORD"

@@ -1,0 +1,122 @@
+#!/bin/bash
+# Immutable production worker for one selected nested probability chain.
+# k2 starts from real child singletons; each later scale imports every
+# predecessor column that can be replayed in the child event graph and adds
+# real child singletons.  Duals, LP bases, and certificates are never copied.
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+
+: "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}"
+: "${EVSP_CAMPAIGN_ROOT:?}" "${EVSP_SCALE:?}" "${EVSP_REPLICATE:?}" "${EVSP_WORKER_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]]
+[[ "$(sha256sum "$0" | awk '{print $1}')" == "$EVSP_WORKER_SHA256" ]]
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
+
+K=$((10#$EVSP_SCALE))
+(( K >= 2 && K <= 10 )) || { echo "invalid scale: $K" >&2; exit 2; }
+P=$((10#$EVSP_REPLICATE))
+case "$P" in 1|2|4|6) ;; *) echo "invalid replicate: $P" >&2; exit 2;; esac
+CELL=$(printf 'k%02d_p%d' "$K" "$P")
+CSV_REL=$(printf 'scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k%02d_p%02d_20260908.csv' "$K" "$P")
+CACHE="$EVSP_CAMPAIGN_ROOT/network_cache/M__${CELL}__event_2p5_event5.pkl"
+MANIFEST="$CACHE.manifest.json"
+OUT="$EVSP_CAMPAIGN_ROOT/cg/M__${CELL}__warm_cover__event_2p5_event5.json"
+[[ -f "$EVSP_EXECUTION_REPO/data/$CSV_REL" ]]
+[[ -f "$CACHE" && -f "$MANIFEST" ]]
+mkdir -p "$EVSP_CAMPAIGN_ROOT/cg" "$EVSP_CAMPAIGN_ROOT/logs/cg"
+
+# Recheck the cache pickle, manifest, CSV, and fixed physics at execution
+# time.  This keeps a hard-linked cache auditable even if a campaign is staged
+# from a different filesystem or by a second shell.
+"$PYTHON_BIN" - "$CACHE" "$MANIFEST" "$EVSP_EXECUTION_REPO/data/$CSV_REL" "$EVSP_EXPECTED_COMMIT" <<'PY'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+cache = Path(sys.argv[1])
+manifest = Path(sys.argv[2])
+instance = Path(sys.argv[3])
+expected_commit = sys.argv[4]
+payload = json.loads(manifest.read_text())
+identity = payload.get("identity", {})
+expected = {
+    "block_min": 5,
+    "charge_kw": 240.0,
+    "event_arc_mode": "lazy",
+    "g_kwh": 240.0,
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "reserve_kwh": 0.0,
+    "schema": "evsp-dr-event-network-cache-v1",
+    "soc_step": 2.5,
+    "strict_tariff_coverage": False,
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+}
+for key, value in expected.items():
+    if identity.get(key) != value:
+        raise SystemExit(f"cache identity mismatch {key}: {identity.get(key)!r}")
+
+def digest(path):
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for block in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(block)
+    return h.hexdigest()
+
+if digest(cache) != payload.get("pickle_sha256"):
+    raise SystemExit("cache pickle hash mismatch")
+if payload.get("pickle_bytes") != cache.stat().st_size:
+    raise SystemExit("cache pickle byte count mismatch")
+if digest(instance) != identity.get("instance_sha256"):
+    raise SystemExit("cache/CSV instance hash mismatch")
+if identity.get("git_commit") != expected_commit:
+    raise SystemExit("cache execution identity does not match reviewed commit")
+print(f"cache_verified=1 cache_sha256={payload['pickle_sha256']} manifest_sha256={digest(manifest)} instance_sha256={identity['instance_sha256']}")
+PY
+
+exec 7>>"$OUT.cg.lock"
+if ! flock -n 7; then
+  echo "CG output lock is already held: $OUT.cg.lock" >&2
+  exit 3
+fi
+
+INHERIT=()
+INHERIT_WORKERS=1
+if [[ -n "${EVSP_PARENT_STATUS_OVERRIDE:-}" ]]; then
+  [[ -f "$EVSP_PARENT_STATUS_OVERRIDE" && -f "$EVSP_PARENT_STATUS_OVERRIDE.columns.jsonl" ]]
+  INHERIT=(--inherit-event-pool-from "$EVSP_PARENT_STATUS_OVERRIDE")
+  INHERIT_WORKERS="${EVSP_INHERIT_WORKERS:-1}"
+elif (( K > 2 )); then
+  PARENT=$(printf '%s/cg/M__k%02d_p%d__warm_cover__event_2p5_event5.json' "$EVSP_CAMPAIGN_ROOT" "$((K-1))" "$P")
+  [[ -f "$PARENT" && -f "$PARENT.columns.jsonl" ]]
+  INHERIT=(--inherit-event-pool-from "$PARENT")
+  INHERIT_WORKERS="${EVSP_INHERIT_WORKERS:-1}"
+fi
+
+RESUME=()
+[[ -e "$OUT" || -e "$OUT.columns.jsonl" || -e "$OUT.iters.csv" ]] && RESUME=(--resume)
+printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
+  "$(date -u +%FT%TZ)" "${SLURM_JOB_ID:-}" "${SLURM_RESTART_COUNT:-0}" \
+  "$(hostname -s)" "$([[ ${#RESUME[@]} -gt 0 ]] && echo resume || echo fresh)" \
+  "$(sha256sum "$MANIFEST" | awk '{print $1}')" >> "$OUT.allocations.tsv"
+
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py \
+  --csv "$CSV_REL" --prices_csv hourly_prices_flat.csv \
+  --time-model event --event-arc-mode lazy \
+  --event-network-cache "$CACHE" --event-network-cache-mode require \
+  --soc-step 2.5 --block-min 5 --max-iters "${EVSP_MAX_ITERS:-50000}" \
+  --columns_per_iter 30 --column-selection reduced_cost \
+  --column-diversity-weight 0.0 --column-candidate-multiplier 4 \
+  --rc-eps 0.0001 --master-sense cover --master-backend gurobi \
+  --initial-pool singletons --wall-limit-s "${EVSP_WALL_LIMIT_S:-28800}" \
+  --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 \
+  --inherit-event-pool-workers "$INHERIT_WORKERS" \
+  --phase-telemetry "$OUT.phase-telemetry.jsonl" \
+  --gurobi-log "$OUT.gurobi.log" --out "$OUT" \
+  "${INHERIT[@]}" "${RESUME[@]}"

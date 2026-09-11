@@ -1,0 +1,19 @@
+{
+  "schema": "evsp-dr-collector-campaign-config-v1",
+  "campaign_id": "nested_warm_multichain_p1246_k2_10",
+  "remote_root": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1",
+  "campaign_manifest": "batch_manifest.json",
+  "job_records": ["cg_jobs.tsv", "freeze_mip_jobs.tsv"],
+  "status_glob": "status_*.json",
+  "chain_roots": ["p1", "p2", "p4", "p6"],
+  "cg_result_glob": "p*/cg/M__k*_p*__warm_cover__event_2p5_event5.json",
+  "cg_journal_glob": "p*/cg/M__k*_p*__warm_cover__event_2p5_event5.json.columns.jsonl",
+  "snapshot_glob": "p*/snapshots/M__k*_p*__warm_cover__event_2p5_event5.json",
+  "mip_result_glob": "p*/mip/M__k*_p*__warm_cover__event_2p5_event5__1h2stage.json",
+  "authority": "additional_inherited-column random chains; distinct from p3 complete and p5 active",
+  "proof_scopes": {
+    "cg": "full pricing certificate only when the source status records certified reduced-cost termination",
+    "mip": "finite frozen pool only",
+    "physical": "separate replay fields from source artifacts"
+  }
+}

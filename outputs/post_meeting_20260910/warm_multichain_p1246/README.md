@@ -1,0 +1,11 @@
+# Additional inherited-column chains P1, P2, P4 and P6
+
+This package runs four independent random nested chains at k2 through k10 with the reviewed P5 inherited-column method. Each k2 starts from real singleton routes. Within each replicate, k(n) runs only after k(n-1) succeeds and imports its full replayable event-column pool. There are no dependencies between replicates, so up to four CG jobs can run at once.
+
+The CG execution is the clean immutable commit `ecb60c154a9a5db385e3a573949ec9fd0a737af3`. The master is covering (`>=1`), with event/lazy time model, 240 kWh battery, 240 kW charging, 2.5 kWh SOC steps, five-minute blocks, real-singleton initialization and flat tariff. Each job requests `default_partition`, 8 CPUs, 96 GiB, 08:15:00, requeue with `USR1@120`, and excludes `scaglione-compute-01`. The four-way runnable count comes only from the four independent chains; the nine scales within each chain retain their actual data dependency.
+
+`prepare_chain.py` checks the selection manifest, every selected CSV, every cache pickle and cache manifest before hard-linking a source cache. It records the original and updated manifest hashes separately. `prepare_remote.sh` creates a new batch root and refuses an existing path. `submit_cg_chains.sh` defaults to dry-run, refuses an existing submission record, verifies the execution checkout and worker hash, and writes one TSV row per submitted job. `collect_status.py` records scheduler state, effective Slurm settings, result/journal presence and source hashes without treating a pending job as a result.
+
+The remote root is `/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1`. `collector_config.json` gives stable globs for the research collector. P1/P2/P4/P6 stay separate from the completed P3 and active P5 campaigns.
+
+Freeze and MIP submission is intentionally a second recorded step. Proposed MIPs use the corrected two-stage covering runner, 8 CPUs, 16 GiB, two-hour allocation, one-hour solver budget, no requeue, and `scaglione-compute-01` exclusion. Sixteen GiB retains at least 3.8x headroom over the largest observed analogous k<=10 MIP MaxRSS (about 4.11 GiB). Independent chains will not be globally serialized; the exact concurrent-MIP policy is coordinated before submission.
