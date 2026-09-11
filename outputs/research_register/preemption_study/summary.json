@@ -39,43 +39,33 @@
   "default_fresh_3600": {
     "registered_tasks": 75,
     "accounting_missing_task_ids": [
-      "812766_16",
-      "812766_17",
-      "812766_18",
-      "812766_19",
-      "812766_26",
-      "812766_28",
-      "812766_29",
-      "812766_30",
-      "812766_31",
-      "812766_32",
-      "812767_45",
-      "812767_46",
-      "812767_47",
-      "812767_48",
-      "812767_49",
-      "812767_50",
-      "812767_51",
-      "812767_52",
-      "812767_53",
-      "812767_54"
+      "812767_65",
+      "812767_66",
+      "812767_67",
+      "812767_68",
+      "812767_69",
+      "812767_70",
+      "812767_71",
+      "812767_72",
+      "812767_73"
     ],
-    "attempts": 55,
-    "started": 23,
-    "ended_started_attempts": 23,
+    "attempts": 66,
+    "started": 65,
+    "ended_started_attempts": 36,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
       0,
-      0.14311661845042686
+      0.09641862859446367
     ],
     "state_counts": {
-      "COMPLETED": 23,
-      "PENDING": 32
+      "COMPLETED": 36,
+      "RUNNING": 29,
+      "PENDING": 1
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 19741
+    "allocation_exposure_seconds": 118846
   },
   "scaglione_cancelled_before_migration": {
     "registered_tasks": 75,
@@ -118,20 +108,21 @@
     "registered_tasks": 36,
     "accounting_missing_task_ids": [],
     "attempts": 36,
-    "started": 23,
-    "ended_started_attempts": 23,
+    "started": 25,
+    "ended_started_attempts": 24,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
-      0,
-      0.14311661845042686
+      1.3877787807814457e-17,
+      0.13797620467498017
     ],
     "state_counts": {
-      "COMPLETED": 23,
-      "PENDING": 13
+      "COMPLETED": 24,
+      "PENDING": 11,
+      "RUNNING": 1
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 2161
+    "allocation_exposure_seconds": 5240
   }
 }
