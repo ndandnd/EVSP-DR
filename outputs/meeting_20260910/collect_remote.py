@@ -74,7 +74,7 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
-    for record_name in ['workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.mip.json', 'retry_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
+    for record_name in ['resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.mip.json', 'retry_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():
             out['campaigns'][name]['workflow'][record_name] = json.loads(record_path.read_bytes())

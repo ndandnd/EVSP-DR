@@ -1,0 +1,18 @@
+{
+  "register_sha256": "366ed4ed96690bec65b542a9d6feb1281b577225b5c5d067f7f9b9f217b0cdda",
+  "snapshot_sha256": "c3b26da35c13124a1df792efedaf18743f66dd3bcd8e75ef32b0766673134af6",
+  "warm_cg_status_sha256": "e5541f35de1c7f1e261684df5b2aab88d2fb49e246eb5838031917b210fe0e03",
+  "warm_mip_status_sha256": "5effce7eb36594ffca3332e8e26bb54dec2092d6c3204e4b56f14c289c4db16c",
+  "register_snapshot_time_utc": "2026-09-11T03:14:40.762264+00:00",
+  "matched_chain": 3,
+  "matched_k": [
+    5,
+    8,
+    10
+  ],
+  "same_input_hash_verified": true,
+  "source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+  "physics": "240 kWh / 240 kW / zero reserve; event 2.5 kWh SOC step / 5-minute blocks; flat tariff",
+  "figure_1_data": "fresh_fleet_matrix.csv",
+  "figure_2_data": "fresh_vs_warm_cover_chain3.csv"
+}
