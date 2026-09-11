@@ -5,14 +5,19 @@
     "README.md": "3b316d35eea587157f401db35aa65889c9ec2acfefeec51f991a1e42bbbeafcb",
     "collect_status.py": "e9ef598c3deb407af50fda30060326186020d76b1d97b11ec6ce6d7c103eae13",
     "collector_config.json": "52d042beb4f0f6cd6d7daf01f8bd63d1f093f3455369c52d77992bff865cedf3",
+    "freeze_one.sub": "472f18bf49f8a3e4dcd8ece66d87db1d41d5ccf4a3c1ead42fb24f6899449761",
+    "fresh_freeze_array.sub": "f877b6eeba009d1b46667c6f713a881bbacd89990884ec25a4bc94b52e1ff43a",
+    "fresh_mip_array.sub": "7359b6dca60022a5ea629b208475bff45761b4397dd36acbb5391fa2e0ecb3be",
     "prepare_chain.py": "6dc66d8e5bcd0506ba9ddda8135740e9aa12fed345c40fd7ba90802cfe076f89",
     "prepare_remote.sh": "5b91e5b51267f3475bc3ae9c8f2b506b20dc510b4055d31dafd65113b71ff978",
     "submit_cg_chains.sh": "1f6c8d8d140ec1136a441cc5fe653ab36fe9e0d4eec37709f3f9724d312ef9ba",
+    "submit_fresh75_downstream.sh": "3419ac3f50b0a6359cfbd36975ab41a698cc3f005c3a247af81983cb291524d9",
+    "submit_warm_downstream.sh": "adc8cdcce9fbcb3091e977fffe059bb85cd046a20460bd875e8868da99380213",
     "warm_chain_cg.sub": "ed5f81bddd419000b0a0c426ef664a9e3a60a2f46a38921d30cfa3886a350610",
     "warm_freeze.sub": "dd23f7f122db026d7d778cf5980af87b674f73cbcd566837d284137a3e83787d",
     "warm_mip.sub": "d9aa1144742f65fac2b3cd533c6ef8bc75c24c2759aaa322314a172b67f9db71"
   },
   "git_branch": "codex/warm-multichain-p1246-20260910",
-  "git_commit": "ca57973c95aaa56505d761783064f72613e6d4e7",
+  "git_commit": "10ea2dda16c2d137fb990dec86783a0a3f6d263f",
   "schema": "evsp-dr-inherited-multichain-source-package-v1"
 }
