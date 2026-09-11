@@ -31,3 +31,5 @@ Read outputs/storage_cleanup_20260911/README.md and submission/manifest files wh
 Snapshot selection: choose the previous successful collection by embedded timestamp_utc, not filename lexicographic order (some older files start with cluster_). If a job leaves the queue during collection but its result was not captured, check sacct and its known result path before diagnosing a failure; retain a timestamped supplemental collection if needed.
 
 Storage follow-up complete at12:53EDT11September:884924 COMPLETED,124/124files verified, no failed events, total savings including pilot/cache74,782,010,325bytes. Completion evidence in outputs/storage_cleanup_20260911/completion_884924.json. No further polling or re-submission of that worker.
+
+Delta comparisons: CG rows currently lack sha256. Always check path presence; when a hash is absent compare canonical row content, not null versus null. Include new completed CG even if MIP has not finished.
