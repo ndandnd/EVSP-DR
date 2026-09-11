@@ -14,12 +14,12 @@
   "families_and_stages": {
     "capacity_speed_exact_event:cg": 16,
     "capacity_speed_exact_event:mip": 16,
-    "cg_phase_telemetry:telemetry": 294,
-    "column_generation:cg": 294,
+    "cg_phase_telemetry:telemetry": 295,
+    "column_generation:cg": 295,
     "matched_tariff_comparison:comparison_arm": 57,
     "pool_mip:mip": 339,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 53,
+    "scheduler:queue_state": 51,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -40,7 +40,7 @@
   "rows_with_source_sha256": 612,
   "rows_without_source_sha256": 898,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "5028c2c2ce1ed831829a4db229b17295092a74139dae0763e25e0a5827c15f15",
+  "source_snapshot_sha256": "341c72899af58d96be0cee11b4d0cb386b32f7dfe75b576e76006402f832c9a1",
   "superseded_772031_rows": 1,
   "unique_row_ids": 1510
 }
