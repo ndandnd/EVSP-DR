@@ -1,0 +1,20 @@
+field	value
+job_id	884924
+job_name	storage-archive-v3
+state_at_audit	PENDING (Priority)
+partition	default_partition
+cpus	1
+memory	2G
+time_limit	1-00:00:00
+requeue	0
+exclude_node	scaglione-compute-01
+command	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/archive_remaining_v3.sbatch
+workdir	/home/nc437
+stdout	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/logs/storage-archive-v3_884924.out
+stderr	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/logs/storage-archive-v3_884924.err
+manifest	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/remaining_manifest.tsv
+manifest_rows	124
+manifest_bytes	74843933989
+pre_submit_reference_audit	no finetime/factfill Command, WorkDir, StdOut or StdErr references
+script_sha256	93bfd42696304ae7896cb30cfe60bd6a5fb93b20a4faa592c54ff371ba28e5fd
+fixture_tests	prepared-unlink interruption; same-size mutation refusal; restore hash and overwrite refusal all passed

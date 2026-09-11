@@ -51,3 +51,7 @@ A copy of this index, dated snapshots and workbook is stored on Unicorn at `/hom
 ## Default-partition MIP reliability
 
 [Preemption study](preemption_study/README.md) tracks per-attempt scheduler outcomes, priority samples, queue wait, runtime exposure and preemption cost for overnight default MIPs. Scientific results and scheduler outcomes are separate; pending/running jobs do not count as completed attempts. The dated collector snapshots retain accounting history.
+
+## Storage and restoration
+
+[Storage cleanup audit](../storage_cleanup_20260911/README.md) records lossless archival of cold historical column journals. Compressed pools retain original hashes and require restoration before legacy scripts expecting the original uncompressed paths are run. Current and held-job pools remain protected. GitHub stores code and selected evidence; it is not a complete backup of untracked cluster artifacts.

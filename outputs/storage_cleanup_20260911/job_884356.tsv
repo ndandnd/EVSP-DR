@@ -1,0 +1,23 @@
+field	value
+job_id	884356
+job_name	storage-archive
+state_at_audit	CANCELLED by user while PENDING (Priority), before start
+partition	default_partition
+cpus	1
+memory	2G
+time_limit	1-00:00:00
+requeue	0
+exclude_node	scaglione-compute-01
+command	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/archive_remaining.sbatch
+workdir	/home/nc437
+stdout	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/logs/storage-archive_884356.out
+stderr	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/logs/storage-archive_884356.err
+manifest	/home/nc437/ladder-lite/storage_cleanup_20260911_archive/remaining_manifest.tsv
+manifest_rows	124
+manifest_bytes	74843933989
+pre_submit_reference_audit	no finetime/factfill Command, WorkDir, StdOut or StdErr references
+superseded_reason	status record was after source unlink; no work started
+superseded_script_sha256	2aa54a450df165b4f1c3a1ae8e8983ab56d42ba1bef42029bbcbbbfb7552bf62
+replacement_script	archive_remaining_v2.sbatch
+replacement_script_sha256	1e7909cba1924398318d9bb4153e577e46c1eb7e8ce487f3b5df17a607d9239c
+fixture_test	remote tiny-file interruption test passed

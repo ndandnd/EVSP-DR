@@ -1,0 +1,19 @@
+scope	path	size_before	reason_or_status
+home	/home/nc437	960G	one bounded top-level du pass; 130T filesystem, 31% used
+home	/home/nc437/ladder-lite	913G	research root; preserved except approved archive pilot and cache cleanup
+home	/home/nc437/attic	14G	cold research/history; untouched
+home	/home/nc437/EVSP-DR	18G	research source/evidence; untouched
+home	/home/nc437/demandresponse	5.0G	research source/evidence; untouched
+home	/home/nc437/.conda	6.6G	package manager; extracted packages/envs preserved
+home	/home/nc437/evsp_env	1.2G	active runtime candidate; untouched
+home	/home/nc437/.local	599M	Python user install; untouched
+home	/home/nc437/.cache	284M	broad cache excluded from cleanup; untouched
+ladder-lite	/home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17	279G	held 537227 output/pool root; protected
+ladder-lite	/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb	157G	historical research; protected
+ladder-lite	/home/nc437/ladder-lite/cg_acceleration_20260903	108G	cold research pools/network cache; no exact duplicate deletion established
+ladder-lite	/home/nc437/ladder-lite/finetime	41G	cold column streams; three pilot files archived losslessly
+ladder-lite	/home/nc437/ladder-lite/factfill	36G	cold column streams; one pilot file archived losslessly
+cache	/home/nc437/.conda/pkgs/cache	221643886 bytes, 36 files	approved reproducible repodata cache; removed
+cache	/home/nc437/.conda/pkgs/*.{conda,tar.bz2}	0 files, 0 bytes	no downloaded package archives existed
+installer	/home/nc437/temp/gurobi11.0.2_linux64.tar.gz	65M in initial scan, absent at precheck	independently disappeared; no deletion performed
+runtime	/home/nc437/gurobi1102/linux64/bin/gurobi_cl	present	installed Gurobi runtime confirmed after installer absence
