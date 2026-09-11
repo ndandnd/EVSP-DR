@@ -518,7 +518,8 @@ class Register:
                                 campaign_id, root, "workflow",
                                 f"workflow_{workflow_stage}", record,
                                 source_path=str(Path(root) / name),
-                                case_id=f"k{int(scale):02d}",
+                                case_id=(f"k{int(scale):02d}_p{int(record['replicate'])}"
+                                         if record.get("replicate") else f"k{int(scale):02d}"),
                                 substage=f"{name}:{workflow_stage}",
                                 artifact_status="workflow_record",
                                 overrides={

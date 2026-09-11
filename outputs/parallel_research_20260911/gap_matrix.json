@@ -1,0 +1,460 @@
+{
+  "schema": "evsp-dr-gap-matrix-v1",
+  "generated_at_utc": "2026-09-11T03:08:23.416581+00:00",
+  "scope": "Bounded inventory of current and already submitted experiments relevant to the 2026-09-11 launch decision. It does not claim a complete Git history or a fresh remote status query.",
+  "launch_recommendation": {
+    "priority": "P0",
+    "campaign": "covering_complement_random6",
+    "cells": [
+      {
+        "cell": "k05_p2",
+        "target_k": 5,
+        "chain": 2,
+        "trip_count": 109,
+        "source_sha256": "286ef14718748dbeb88980e11f835ed920cb9a01f72708aec4b43a436001ec86",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p02_20260908.csv",
+        "duty_set_sha256": "ea1bb9859be40f1d51fb1d3dde5eedf8d8975e0b197bb6ceb673cecf2f774a43",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 1027,
+          "cg_wall_s": 1515.3918709228747,
+          "pool_columns": 29166,
+          "fractional_route_weight": 4.9999999999999725,
+          "mip_buses": 8,
+          "mip_fleet_bound": 8.0,
+          "mip_status": "OPTIMAL",
+          "mip_scope": "full_pool_lexicographic"
+        }
+      },
+      {
+        "cell": "k05_p4",
+        "target_k": 5,
+        "chain": 4,
+        "trip_count": 104,
+        "source_sha256": "d51b0dab0f1f20b7d9ce193b79f5ea1ac48a0d084b435ed7d0b4a26485fe3653",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p04_20260908.csv",
+        "duty_set_sha256": "19a21ac4873a38d22e339e213d7a9a933b254ad396fbef847d25ed849db611ee",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 771,
+          "cg_wall_s": 1038.1890656971373,
+          "pool_columns": 21902,
+          "fractional_route_weight": 5.0000000000000036,
+          "mip_buses": 9,
+          "mip_fleet_bound": 9.0,
+          "mip_status": "OPTIMAL",
+          "mip_scope": "full_pool_lexicographic"
+        }
+      },
+      {
+        "cell": "k05_p6",
+        "target_k": 5,
+        "chain": 6,
+        "trip_count": 79,
+        "source_sha256": "607cba23d981e3ed76448f035f89785b2d253c2f5242559ed65dee6b0dac9236",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p06_20260908.csv",
+        "duty_set_sha256": "83f1bdd05f51b4c1dcbe98fd2e529bd38e5110aca1c72f67d5339daa2ac6931b",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 573,
+          "cg_wall_s": 827.5327695808373,
+          "pool_columns": 13983,
+          "fractional_route_weight": 4.999999999999998,
+          "mip_buses": 5,
+          "mip_fleet_bound": 5.0,
+          "mip_status": "OPTIMAL",
+          "mip_scope": "full_pool_lexicographic"
+        }
+      },
+      {
+        "cell": "k08_p2",
+        "target_k": 8,
+        "chain": 2,
+        "trip_count": 173,
+        "source_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p02_20260908.csv",
+        "duty_set_sha256": "e42440494b6b0e6877c94363e8e8f96c6187b4cf322c193df6c84b2a4f067f3a",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 1104,
+          "cg_wall_s": 4057.7012722278014,
+          "pool_columns": 32493,
+          "fractional_route_weight": 7.999999999999982,
+          "mip_buses": 30,
+          "mip_fleet_bound": 8.00000000000417,
+          "mip_status": "TIME_LIMIT",
+          "mip_scope": "none"
+        }
+      },
+      {
+        "cell": "k08_p4",
+        "target_k": 8,
+        "chain": 4,
+        "trip_count": 188,
+        "source_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p04_20260908.csv",
+        "duty_set_sha256": "8fa403fbf66b9e7b89a0a6c878640a8f662a917c6302bdd534c1f194ff16a159",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 1921,
+          "cg_wall_s": 8311.901829156093,
+          "pool_columns": 55293,
+          "fractional_route_weight": 8.000000000000012,
+          "mip_buses": 31,
+          "mip_fleet_bound": 9.0,
+          "mip_status": "TIME_LIMIT",
+          "mip_scope": "none"
+        }
+      },
+      {
+        "cell": "k08_p6",
+        "target_k": 8,
+        "chain": 6,
+        "trip_count": 128,
+        "source_sha256": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p06_20260908.csv",
+        "duty_set_sha256": "a8ea3707b4b97470a8c4efee51cf66e34ceefe1c651ce91fc076ee0a09a4ab3b",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 741,
+          "cg_wall_s": 704.2936114126351,
+          "pool_columns": 20186,
+          "fractional_route_weight": 7.999999999999994,
+          "mip_buses": 12,
+          "mip_fleet_bound": 9.0,
+          "mip_status": "TIME_LIMIT",
+          "mip_scope": "none"
+        }
+      },
+      {
+        "cell": "k10_p2",
+        "target_k": 10,
+        "chain": 2,
+        "trip_count": 236,
+        "source_sha256": "969e49b79b454241e1f4116e405aebdf117dc6adac5497854cf4d7196166a6d6",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p02_20260908.csv",
+        "duty_set_sha256": "364723836866b7d2cb17ec374c36a7a6c7df69e166060354e5739f0bfa534118",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 1690,
+          "cg_wall_s": 4799.869411455467,
+          "pool_columns": 49441,
+          "fractional_route_weight": 9.999999999999996,
+          "mip_buses": 46,
+          "mip_fleet_bound": 10.000000000001624,
+          "mip_status": "TIME_LIMIT",
+          "mip_scope": "none"
+        }
+      },
+      {
+        "cell": "k10_p4",
+        "target_k": 10,
+        "chain": 4,
+        "trip_count": 220,
+        "source_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+        "duty_set_sha256": "3a0f0a9ad6b5f63d6f1ac9b60b3016dabcc4bc15fcd07daaa8eaa8f132e1acb7",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 1895,
+          "cg_wall_s": 4615.2414547172375,
+          "pool_columns": 55730,
+          "fractional_route_weight": 9.99999999999998,
+          "mip_buses": 30,
+          "mip_fleet_bound": 10.000000000006903,
+          "mip_status": "TIME_LIMIT",
+          "mip_scope": "none"
+        }
+      },
+      {
+        "cell": "k10_p6",
+        "target_k": 10,
+        "chain": 6,
+        "trip_count": 192,
+        "source_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+        "relative_path": "data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+        "duty_set_sha256": "f4aed30612c1e73e7677480ba846589e20c108a67fd39e68efbc6e9241e621ca",
+        "partition_baseline": {
+          "cg_certified": true,
+          "cg_iterations": 1371,
+          "cg_wall_s": 2446.730275493581,
+          "pool_columns": 41255,
+          "fractional_route_weight": 9.999999999999977,
+          "mip_buses": 36,
+          "mip_fleet_bound": 10.000000000005606,
+          "mip_status": "TIME_LIMIT",
+          "mip_scope": "none"
+        }
+      }
+    ],
+    "configuration": {
+      "source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "physics": "240 kWh / 240 kW / zero reserve",
+      "time_grid": "event, 2.5 kWh SOC step, 5-minute blocks",
+      "tariff": "flat hourly_prices_flat.csv",
+      "initial_pool": "singleton RAW",
+      "columns_per_iteration": 30,
+      "column_selection": "reduced_cost",
+      "rc_eps": 0.0001,
+      "cg_wall_limit_s": 28800,
+      "partition": "default_partition"
+    },
+    "question": "Does set covering improve finite-pool integer fleet compatibility across the six random nested chains when current event physics are held fixed?",
+    "execution_order": "CG nine cells in parallel -> per-cell freeze -> dependent Scaglione MIPs; record physical replay, overcoverage, pool proof scope, and stage2 status.",
+    "resource_note": "This report recommends work only; it does not submit or cancel jobs."
+  },
+  "matrix": [
+    {
+      "id": "covering_complement_random6",
+      "priority": "P0-launch",
+      "status": "missing",
+      "formulation": "set covering (>=1)",
+      "input_ids": [
+        "k05_p2",
+        "k05_p4",
+        "k05_p6",
+        "k08_p2",
+        "k08_p4",
+        "k08_p6",
+        "k10_p2",
+        "k10_p4",
+        "k10_p6"
+      ],
+      "changed_factor": "Master row sense relative to the completed partitioning campaign; because duals change, the generated route pool changes too.",
+      "question": "Across all six random nested chains, does allowing harmless overcoverage improve the route-pool integer fleet at k=5,8,10?",
+      "next_action": "Launch nine independent CG jobs; after each certified pool freezes, run its dependent physical-gate MIP. Record overcovered incidences, duplicate-removal validation, fleet proof scope, and Stage 2 status.",
+      "why_not_duplicate": "Partition CG is already complete for all six chains; covering CG currently exists only for chains 1,3,5. Warm chains 3 and 5 are a different previous-k inheritance experiment.",
+      "proof_scope": "CG certificate is for the current event-grid pricing model to rc_eps=1e-4; MIP is exact only over the frozen finite pool. A k-bus peak-overlap lower bound remains independent of the pool."
+    },
+    {
+      "id": "covering_rerun9_mip_harvest",
+      "priority": "P0-harvest",
+      "status": "in_progress",
+      "formulation": "set covering",
+      "input_ids": [
+        "k05_p1",
+        "k05_p3",
+        "k05_p5",
+        "k08_p1",
+        "k08_p3",
+        "k08_p5",
+        "k10_p1",
+        "k10_p3",
+        "k10_p5"
+      ],
+      "changed_factor": "None; this is the already-running downstream MIP/final audit for the covering CG pools.",
+      "question": "What fleet and charging objective does the existing covering pool support, and is fleet optimality proved before the Stage 2 cost solve?",
+      "next_action": "Wait for collector/final physical replay; do not resubmit. Keep p5 k5 overcoverage and all k8/k10 overcoverage visible in the table.",
+      "why_not_duplicate": "All nine covering CG pools are already generated for chains 1,3,5; only downstream MIP/provenance harvesting remains."
+    },
+    {
+      "id": "warm_previous_k_p3_p5",
+      "priority": "P0-harvest",
+      "status": "in_progress",
+      "formulation": "set covering with inherited previous-k pool",
+      "input_ids": [
+        "warm_p3_k02_to_k10",
+        "warm_p5_k02_to_k10"
+      ],
+      "changed_factor": "Previous-k columns are imported and the next k adds singleton routes; this tests pool inheritance, not a fresh independent chain.",
+      "question": "Does warm inheritance change the finite pool enough to recover the target fleet without changing the current event physics?",
+      "next_action": "Wait for k7-k10 CG/MIP outcomes and validate source pool hashes; do not launch a third warm chain until P3/P5 are complete.",
+      "why_not_duplicate": "P3 and P5 warm campaigns are already submitted. Their results are not substitutes for the six-chain fresh covering complement."
+    },
+    {
+      "id": "sampling_replication_p7_p20",
+      "priority": "P1-harvest",
+      "status": "in_progress",
+      "formulation": "current RAW partitioning replication",
+      "input_ids": [
+        "nested_replication42_p7_to_p20_k03_k05_k06"
+      ],
+      "changed_factor": "New random chain draw/replicate only; formulation remains current RAW partitioning.",
+      "question": "How variable are k=3,5,6 outcomes over more independently sampled chains?",
+      "next_action": "Harvest the already submitted 42 cells and report chain-blocked descriptive rates; do not use solver outcome to stop or select samples.",
+      "why_not_duplicate": "The campaign is already submitted as cache 599269 -> CG 599270 -> freeze 599271 -> MIP 599292."
+    },
+    {
+      "id": "equal_terminal_energy_charging",
+      "priority": "P1-harvest",
+      "status": "in_progress",
+      "formulation": "fixed-duty/joint charging comparison",
+      "input_ids": [
+        "matched_tariff_peak12_peak18_a6e5055",
+        "terminal_energy_frontier_778801_778802"
+      ],
+      "changed_factor": "Common terminal-energy accounting, to separate tariff/time shifting from unequal final SOC.",
+      "question": "How much of the apparent charging-cost reduction survives when the compared schedules deliver the same terminal energy?",
+      "next_action": "Harvest frontier and dependent MIP; report original terminal-energy caveat with the existing three-baseline bars.",
+      "why_not_duplicate": "Existing peak08/12/18 bars have unequal terminal energy; this is the required fairness control."
+    },
+    {
+      "id": "capacity_depot_speed_pilot",
+      "priority": "P1-harvest",
+      "status": "in_progress",
+      "formulation": "current covering pilot",
+      "input_ids": [
+        "capacity_speed_772080_773334_duty13406_13408"
+      ],
+      "changed_factor": "Station capacity and/or PARX depot 60 kW arm across 16 matched cells.",
+      "question": "Do explicit capacity and depot-power constraints change feasibility, fleet, or cost for duties that actually use those resources?",
+      "next_action": "Harvest all four-arm matched cells, especially duty 13406; do not relaunch the pilot.",
+      "why_not_duplicate": "The 16-cell pilot is already submitted and only 5 cells were complete at the latest snapshot."
+    },
+    {
+      "id": "easy_heavy_scaling_harvest",
+      "priority": "P1-harvest",
+      "status": "in_progress",
+      "formulation": "current RAW partitioning",
+      "input_ids": [
+        "easy_k05_k08_k10_k15_k20_k30",
+        "heavy_k02_k03_k05_k08_k10_k15"
+      ],
+      "changed_factor": "Deterministic duty ordering (fewest trips versus most trips); current physics and partition master held fixed within each ladder.",
+      "question": "Does trip count/duty ordering explain scaling and fleet difficulty better than the six random chains?",
+      "next_action": "Harvest existing cache/CG/freeze/MIP outputs; show censored time limits explicitly. Do not relaunch partition CG for cells already submitted.",
+      "why_not_duplicate": "Easy and heavy partition arrays already exist (easy 582988-583001; heavy 592465-592473)."
+    },
+    {
+      "id": "easy_covering_control",
+      "priority": "P2-after-complement",
+      "status": "not_started",
+      "formulation": "set covering",
+      "input_ids": [
+        "easy_k05",
+        "easy_k08",
+        "easy_k10"
+      ],
+      "changed_factor": "Master row sense on the deterministic easiest-trip ladder.",
+      "question": "Does the covering advantage persist on the easy nested chain, separate from random-chain variability?",
+      "next_action": "Only launch after the random-chain covering complement and current easy RAW results are harvested; otherwise this adds another cohort before the main comparison is complete.",
+      "why_not_duplicate": "Current easy RAW is partitioning. Current seeded tariff controls are fixed-fleet GIRO controls, not RAW covering discovery."
+    },
+    {
+      "id": "tariff_peak12_peak18_harvest",
+      "priority": "P2-harvest",
+      "status": "in_progress",
+      "formulation": "tariff/fixed-duty/joint comparison",
+      "input_ids": [
+        "matched_tariff8_20260908_a9a9720",
+        "matched_tariff_peak12_peak18_a6e5055"
+      ],
+      "changed_factor": "Charging-price peak location (08, 12, 18) with fixed duty set; not a fleet-scaling comparison.",
+      "question": "Does routing/charging move away from time peaks, and does joint optimization beat fixed-duty recharging under the same cost semantics?",
+      "next_action": "Harvest peak12/18 CG/MIP and equal-terminal-energy control; report the original timing uncertainty and terminal-energy difference.",
+      "why_not_duplicate": "Peak08 is already complete and peak12/18 is already submitted; no new tariff CG needed now."
+    },
+    {
+      "id": "historical_algorithm_regression_control",
+      "priority": "P2-later",
+      "status": "partial",
+      "formulation": "historical/current sensitivity",
+      "input_ids": [
+        "legacy_selected10_current2_583343_583344",
+        "April_Practice_Selected_10bus_historical"
+      ],
+      "changed_factor": "Implementation and/or battery/power semantics; the exact April code replay is still separate from the current 240/300 sensitivity.",
+      "question": "Can the April 175-trip result be attributed to algorithm changes after holding instance, physics, tariff, and master sense constant one at a time?",
+      "next_action": "First harvest current 240/300 sensitivity; only then schedule an exact old-code/grid replay if the regression remains material. Do not mix it into the covering grid.",
+      "why_not_duplicate": "The launched sensitivity uses current event 2.5/5 code at 240/240 and 300/300; it is not a full reproduction of the April algorithm/configuration."
+    }
+  ],
+  "figures": [
+    {
+      "id": "formulation_paired_fleet",
+      "priority": "now",
+      "title": "Partition versus covering versus warm: paired fleet/proof matrix",
+      "inputs": [
+        "outputs/meeting_20260910/LP_K_EQUALS_AUDIT_20260910.csv",
+        "outputs/meeting_20260910/covering_rerun9_mip_gate_staging/retry2_results.csv",
+        "outputs/post_meeting_20260910/monitor/20260911T020803Z.json",
+        "outputs/post_meeting_20260910/warm_chain_status/cg_status.csv",
+        "outputs/post_meeting_20260910/warm_chain_status/mip_status.csv"
+      ],
+      "description": "For each available p and k=5,8,10 show target, fractional route weight, pool fleet bound/incumbent, proof status, and overcoverage; leave missing covering p2/p4/p6 cells visibly blank."
+    },
+    {
+      "id": "proof_scope_waterfall",
+      "priority": "now",
+      "title": "What each bound proves",
+      "inputs": [
+        "outputs/meeting_20260910/CHAIN_DIAGNOSIS_20260909.csv",
+        "outputs/meeting_20260910/fleet_lp_peak_bounds_20260909.csv",
+        "outputs/meeting_20260910/fleet_lp_provenance_20260909.csv",
+        "outputs/meeting_20260910/covering_rerun9/README.md"
+      ],
+      "description": "A staged waterfall from independent overlap lower bound to certified fractional CG endpoint to frozen-pool MIP bound/incumbent, with separate labels for global event-model evidence and finite-pool evidence."
+    },
+    {
+      "id": "scaling_and_censoring",
+      "priority": "next",
+      "title": "Trip load versus runtime and censoring",
+      "inputs": [
+        "outputs/meeting_20260910/EASY_LADDER_PLAN.md",
+        "outputs/meeting_20260910/HEAVY_LADDER_LAUNCH_20260908.md",
+        "outputs/meeting_20260910/MIP_DECISION_RULES_20260908.md",
+        "outputs/post_meeting_20260910/monitor/20260911T020803Z.json"
+      ],
+      "description": "Plot trip count against CG wall time and MIP fleet status for easy/heavy/current random cells; use arrows or hatch marks for time limits, never treat censored rows as failures."
+    },
+    {
+      "id": "charging_fairness_decomposition",
+      "priority": "next",
+      "title": "Tariff savings with terminal-energy control",
+      "inputs": [
+        "outputs/meeting_20260910/presentation_manager/charging_audit/charging_three_baselines.csv",
+        "outputs/post_meeting_20260910/charging_shift/README.md",
+        "outputs/post_meeting_20260910/terminal_energy/README.md"
+      ],
+      "description": "Keep the existing three-way bars, then add terminal-energy delivered as a separate panel or annotation; this makes the unequal terminal-energy caveat visible and incorporates the equal-energy pilot when it completes."
+    }
+  ],
+  "sources": [
+    {
+      "path": "outputs/meeting_20260910/LP_K_EQUALS_AUDIT_20260910.csv",
+      "role": "completed partition CG/MIP baseline and exact timing/status fields"
+    },
+    {
+      "path": "outputs/nested_integer_diagnosis_20260908/launch/input_selection_manifest.csv",
+      "role": "canonical random-chain input IDs, trip counts, and SHA-256 hashes"
+    },
+    {
+      "path": "outputs/meeting_20260910/covering_rerun9/README.md",
+      "role": "covering campaign configuration, provenance, and existing chain subset"
+    },
+    {
+      "path": "outputs/post_meeting_20260910/monitor/20260911T020803Z.json",
+      "role": "latest local collector snapshot for covering, warm, tariff, capacity, and queue state"
+    },
+    {
+      "path": "outputs/meeting_20260910/SAMPLING_AND_REPLICATION_PLAN_20260909.md",
+      "role": "42-cell replication design and no-optional-stopping policy"
+    },
+    {
+      "path": "outputs/meeting_20260910/EASY_LADDER_PLAN.md",
+      "role": "easy ladder definition and launched RAW/seeded controls"
+    },
+    {
+      "path": "outputs/meeting_20260910/HEAVY_LADDER_LAUNCH_20260908.md",
+      "role": "heavy ladder definition and launched RAW pipeline"
+    },
+    {
+      "path": "outputs/post_meeting_20260910/terminal_energy/README.md",
+      "role": "equal-terminal-energy fairness control"
+    },
+    {
+      "path": "outputs/post_meeting_20260910/capacity_speed/README.md",
+      "role": "capacity/depot-power pilot"
+    },
+    {
+      "path": "outputs/meeting_20260910/presentation_manager/charging_audit/README.md",
+      "role": "existing three-peak charging comparison and caveats"
+    }
+  ],
+  "boundary_notes": [
+    "The six-chain partitioning campaign and covering p1/p3/p5 campaign do not share a frozen route pool; changing master row sense also changes duals and route discovery. The proposed complement is therefore a workflow comparison, not a same-pool MIP-only ablation.",
+    "A certified reduced-cost endpoint certifies the implemented event-grid pricing model to rc_eps; it does not prove the integer optimum over all mathematically possible routes. A frozen-pool MIP proof is exact only over that pool.",
+    "The random chains are dependent prefixes within chain. The new p7-p20 campaign is already submitted and should be harvested as descriptive replication, not used for optional stopping.",
+    "Censored, pending, or preempted jobs are not counted as algorithmic failures. Missing cells in the figure should stay missing until their saved evidence passes the collector gates."
+  ]
+}

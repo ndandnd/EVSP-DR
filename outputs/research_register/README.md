@@ -2,7 +2,7 @@
 
 This is the common index for experiment settings, execution records, results and source evidence. The [Google Doc register tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.icnyriwovxgf) explains the index; the other tabs contain interpretation and figures.
 
-Current build: **989 artifact/stage records across 26 campaign/source groups**, from the 10 September 2026, 22:08 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **1562 artifact/stage records across 29 campaign/source groups**, from the 10 September 2026, 23:14 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -43,3 +43,7 @@ python3 outputs/research_register/build_register.py \
 Replace the snapshot with the newly collected dated file. The workbook builder requires the bundled `@oai/artifact-tool` package; `node_modules` here is a local dependency symlink, not experiment data. `validation.json` checks source identity and result scopes; the workbook's `workbook_checks.json` checks record counts and formula errors. All seven workbook tabs were rendered and visually checked for this build.
 
 A copy of this index, dated snapshots and workbook is stored on Unicorn at `/home/nc437/ladder-lite/research-register/`. Local documentation paths refer to the Mac project; solver source paths refer to Unicorn. See `cluster_mirror.json` for the copied version and hashes.
+
+## Parallel expansion — 11 September 2026 UTC
+
+[Launch records](../parallel_research_20260911/README.md): 75 independent fresh covering CG cases (array 810454, concurrency 50) complete the six-chain k=2–15 grid without repeating the nine existing covering cases. Four additional inherited-column chains P1/P2/P4/P6 have 36 CG jobs with dependencies only within each chain. These are submissions, not results or certificates.

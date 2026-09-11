@@ -1,0 +1,52 @@
+#!/bin/bash
+#SBATCH --job-name=cov75cg
+#SBATCH --partition=default_partition
+#SBATCH --array=0-74%50
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=32G
+#SBATCH --time=08:15:00
+#SBATCH --exclude=scaglione-compute-01,scaglione-cpu-[01-05]
+#SBATCH --requeue
+#SBATCH --signal=B:USR1@120
+#SBATCH --output=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/logs/cg/%A_%a.out
+#SBATCH --error=/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/logs/cg/%A_%a.err
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+: "${EVSP_EXECUTION_REPO:?}" "${EVSP_EXPECTED_COMMIT:?}" "${EVSP_CAMPAIGN_ROOT:?}" "${EVSP_PLAN_SHA256:?}" "${EVSP_MATRIX_SHA256:?}" "${EVSP_WORKER_SHA256:?}" "${EVSP_SOURCE_PLAN_SHA256:?}"
+PYTHON_BIN="${EVSP_PYTHON:-$HOME/evsp_env/bin/python}"
+SOURCE_ROOT=/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb
+[[ "$(git -C "$EVSP_EXECUTION_REPO" rev-parse HEAD)" == "$EVSP_EXPECTED_COMMIT" ]]
+[[ -z "$(git -C "$EVSP_EXECUTION_REPO" status --porcelain --untracked-files=no)" ]]
+[[ "$(sha256sum "$EVSP_CAMPAIGN_ROOT/execution_plan.json"|awk '{print $1}')" == "$EVSP_PLAN_SHA256" ]]
+[[ "$(sha256sum "$EVSP_CAMPAIGN_ROOT/matrix.tsv"|awk '{print $1}')" == "$EVSP_MATRIX_SHA256" ]]
+[[ "$(sha256sum "$EVSP_CAMPAIGN_ROOT/worker.sub"|awk '{print $1}')" == "$EVSP_WORKER_SHA256" ]]
+[[ "$(sha256sum "$SOURCE_ROOT/execution_plan.json"|awk '{print $1}')" == "$EVSP_SOURCE_PLAN_SHA256" ]]
+[[ "$(sha256sum "$EVSP_EXECUTION_REPO/src/exact_pricer_expanded.py"|awk '{print $1}')" == "39e1b950d97041a9a24b285cf9f837d1268135d2b8b66b0133e28b2290a0e720" ]]
+source "$EVSP_EXECUTION_REPO/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
+LINE=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" "$EVSP_CAMPAIGN_ROOT/matrix.tsv")
+IFS=$'\t' read -r INDEX CELL SCALE REPLICATE TRIPS CSV_PATH CSV_SHA REP SOC BLOCK WALL CACHE CACHE_MANIFEST_SHA CACHE_PICKLE_SHA CACHE_PICKLE_BYTES <<< "$LINE"
+[[ "$INDEX" == "$SLURM_ARRAY_TASK_ID" ]]
+[[ "$(sha256sum "$CSV_PATH"|awk '{print $1}')" == "$CSV_SHA" ]]
+[[ "$(sha256sum "$CACHE.manifest.json"|awk '{print $1}')" == "$CACHE_MANIFEST_SHA" ]]
+"$PYTHON_BIN" - "$CACHE.manifest.json" "$EVSP_EXPECTED_COMMIT" "$CSV_SHA" "$CACHE_PICKLE_SHA" "$CACHE_PICKLE_BYTES" <<'PYCHECK'
+import json,sys
+p,commit,instance_sha,pickle_sha,pickle_bytes=sys.argv[1:]
+d=json.load(open(p)); i=d['identity']
+assert i['git_commit']==commit and i['instance_sha256']==instance_sha
+assert i['prices_sha256']=='1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200'
+assert i['reference_sha256']=='7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0'
+assert i['deadhead_sha256']=='5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c'
+assert (i['soc_step'],i['block_min'],i['g_kwh'],i['charge_kw'],i['reserve_kwh'],i['event_arc_mode'])==(2.5,5,240.0,240.0,0.0,'lazy')
+assert d['pickle_sha256']==pickle_sha and d['pickle_bytes']==int(pickle_bytes)
+PYCHECK
+OUT="$EVSP_CAMPAIGN_ROOT/cg/M__${CELL}__cover__${REP}.json"
+RESUME=()
+if [[ -e "$OUT" || -e "$OUT.columns.jsonl" || -e "$OUT.iters.csv" ]]; then
+  [[ "${SLURM_RESTART_COUNT:-0}" -gt 0 ]] || { echo "Refusing preexisting artifacts on initial allocation" >&2; exit 90; }
+  RESUME=(--resume)
+fi
+printf '%s\t%s\t%s\t%s\t%s\n' "$(date -u +%FT%TZ)" "${SLURM_JOB_ID:-}" "${SLURM_RESTART_COUNT:-0}" "$(hostname -s)" "$([[ ${#RESUME[@]} -gt 0 ]] && echo resume || echo fresh)" >> "$OUT.allocations.tsv"
+export EVSP_REQUIRE_DETACHED=1
+cd "$EVSP_EXECUTION_REPO"
+exec "$PYTHON_BIN" -u src/exact_pricer_expanded.py --csv "$CSV_PATH" --prices_csv hourly_prices_flat.csv --time-model event --event-arc-mode lazy --event-network-cache "$CACHE" --event-network-cache-mode require --soc-step "$SOC" --block-min "$BLOCK" --max-iters 50000 --columns_per_iter 30 --column-selection reduced_cost --column-diversity-weight 0.0 --column-candidate-multiplier 4 --rc-eps 0.0001 --master-sense cover --master-backend gurobi --initial-pool singletons --wall-limit-s "$WALL" --checkpoint-every 25 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 --phase-telemetry "$OUT.phase-telemetry.jsonl" --gurobi-log "$OUT.gurobi.log" --out "$OUT" "${RESUME[@]}"
