@@ -1,0 +1,1 @@
+All six pages of the native Google Docs PDF export visually inspected on 12 September 2026. Tables and text are readable without clipping. Long extension table continues onto page 4. The two permanent figure tabs were preserved; recovery evidence records nineteen embedded figures, including ten original meeting PNGs matched byte for byte.

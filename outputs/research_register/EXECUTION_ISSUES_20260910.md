@@ -126,3 +126,10 @@ Join01 job949751 reached its3-hour scheduler limit (elapsed03:02:10) during the 
 ## 12 September 08 28 EDT repeated parent startup timeouts
 
 Join02 (949753) and join03 (949755) each reached their3-hour scheduler limit, elapsed03:02:21. Both retain only session_start parent-CG telemetry and no CG result. Their existing35- and36-bus decomposed constructions remain separate usable baseline artifacts; neither is a completed parent optimization. With join01 this is three full-parent startup timeouts. No preemption or new retry. Source logs/hashes: monitor/20260912T122840Z_supplement.json; scheduler accounting:20260912T122840Z_sacct.txt.
+
+
+## 12 September 09 30 EDT final joined-parent timeouts
+
+Join08 job949766 and join09 job949768 reached scheduler time limits at03:02:28, retaining only session_start parent-CG telemetry. All five launched parent optimizations have now timed out during startup; the five preexisting decomposed constructions remain separate baseline outputs. No parent CG certificate or MIP result. No retry launched. Logs/hashes in monitor/20260912T133042Z_supplement.json.
+
+All three capacity efficiency pairs completed normally at scheduler level, but all six solver arms terminated pricing_deadline after10800s with no pricing certificate. Each pair has equal restricted-LP endpoints; this does not establish a full-model lower bound or convergence speedup. Source rows/hashes retained in overnight_extension_20260912/status_20260912T133042Z/capacity_pair_results.json.

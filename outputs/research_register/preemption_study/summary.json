@@ -70,22 +70,22 @@
       "949624_29"
     ],
     "attempts": 77,
-    "started": 59,
-    "ended_started_attempts": 56,
+    "started": 60,
+    "ended_started_attempts": 59,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
-      6.938893903907228e-18,
-      0.06419393671876342
+      0,
+      0.061129370526788386
     ],
     "state_counts": {
-      "COMPLETED": 56,
-      "RUNNING": 3,
-      "PENDING": 18
+      "COMPLETED": 59,
+      "PENDING": 17,
+      "RUNNING": 1
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 191630
+    "allocation_exposure_seconds": 198921
   },
   "scaglione_cancelled_before_migration": {
     "registered_tasks": 75,
