@@ -1,0 +1,1 @@
+Six native PDF pages inspected. Explicit page breaks added before decomposition and capacity sections to keep headings and tables together; affected pages rechecked. New CG rows and preparation-timeout note verified against snapshot and logs. Both figure tabs preserved. Workbook counts and formula checks passed.

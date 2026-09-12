@@ -70,7 +70,7 @@
       "949624_29"
     ],
     "attempts": 77,
-    "started": 60,
+    "started": 62,
     "ended_started_attempts": 60,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
@@ -80,11 +80,12 @@
     ],
     "state_counts": {
       "COMPLETED": 60,
-      "PENDING": 17
+      "RUNNING": 2,
+      "PENDING": 15
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 201109
+    "allocation_exposure_seconds": 204723
   },
   "scaglione_cancelled_before_migration": {
     "registered_tasks": 75,

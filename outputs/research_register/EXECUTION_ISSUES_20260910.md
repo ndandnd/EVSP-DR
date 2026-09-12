@@ -133,3 +133,8 @@ Join02 (949753) and join03 (949755) each reached their3-hour scheduler limit, el
 Join08 job949766 and join09 job949768 reached scheduler time limits at03:02:28, retaining only session_start parent-CG telemetry. All five launched parent optimizations have now timed out during startup; the five preexisting decomposed constructions remain separate baseline outputs. No parent CG certificate or MIP result. No retry launched. Logs/hashes in monitor/20260912T133042Z_supplement.json.
 
 All three capacity efficiency pairs completed normally at scheduler level, but all six solver arms terminated pricing_deadline after10800s with no pricing certificate. Each pair has equal restricted-LP endpoints; this does not establish a full-model lower bound or convergence speedup. Source rows/hashes retained in overnight_extension_20260912/status_20260912T133042Z/capacity_pair_results.json.
+
+
+## Chain 2 k14 preparation timeout 12 September 11 32 EDT
+
+Job949703 reached TIMEOUT after04:47:03. Network cache279,321,120 arcs loaded46.372s. Initial identity and header-only iteration CSV saved; columns journal empty. No first CG iteration, pricing certificate or integer result. MaxRSS44,051,800KiB versus96GiB request, no recorded OOM. Exact preparation stall unresolved; implementation task notified to inspect deadline coverage. No blind requeue. Evidence and hashes: `../post_meeting_20260910/monitor/20260912T153215Z_supplement.json`.
