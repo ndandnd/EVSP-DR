@@ -1,6 +1,8 @@
 # Queue recovered — 12 September 2026
 
-Checked at **16:48 EDT**. The queue was blocked by failed or obsolete prerequisites despite available CPUs. Ready work is now running. Scientific source files were preserved.
+**Latest check, 16:57 EDT:** **17 EVSP–DR jobs plus 9 V2G jobs running**, with no invalid dependencies. The first new full-pool CG jobs for chain3 k11 and chain4 k10 completed with pricing certificates; their successors are releasing automatically. [Completion evidence](first_chain_completions.json). The table below retains the earlier16:48EDT snapshot.
+
+Initial recovery checked at **16:48 EDT**. The queue was blocked by failed or obsolete prerequisites despite available CPUs. Ready work is now running. Scientific source files were preserved.
 
 | Work | Running | Waiting for required input |
 |---|---:|---:|

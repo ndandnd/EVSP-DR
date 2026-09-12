@@ -1,6 +1,6 @@
 # EVSP–DR experiment register
 
-**Queue fixed, 12 September 16:48 EDT:** [Running work, dependency explanations and launch map](../queue_recovery_20260912/README.md).
+**Queue fixed, 12 September 16:57 EDT:** [Running work, dependency explanations and launch map](../queue_recovery_20260912/README.md).
 
 **Start here:** [Plain-language catch-up for 12 September](CATCH_UP_20260912.md).
 
@@ -19,6 +19,8 @@ Current build: **1891 artifact/stage records across 44 campaign/source groups**,
 | Failed runs, precise errors and recoverability | [Execution issues](EXECUTION_ISSUES_20260910.md) |
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
+
+Latest operational follow-up:17 EVSP–DR and9 V2G jobs running; first full-pool C3k11/C4k10 CG completions are recorded in the [recovery ledger](../queue_recovery_20260912/README.md). The normalized workbook remains dated16:48EDT.
 
 Latest results: five recovered 8-duty component MIPs each found 8 buses, proved fleet optimal within their saved pools, and passed individual-route replay. The earlier bounded chain-2 k14 MIP found 16 buses with pool bound14 after one hour; fleet optimality remains unproved. The new indexed full-pool chains and shared-graph decomposition are distinct treatments, now running. [Queue and result ledger](../queue_recovery_20260912/README.md).
 
