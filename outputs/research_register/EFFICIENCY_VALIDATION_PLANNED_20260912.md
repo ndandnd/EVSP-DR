@@ -26,3 +26,16 @@ The [local smoke record](../efficiency_validation_20260912/local_smoke/validatio
 Before wiring result collection, obtain the frozen manifest, full execution commit, exact output paths/schema and job IDs. Retain source/input/pool/cache hashes; resource requests and actual arm order; switch values; cache-preparation and treatment times; completion/error markers; and pricing certificates or explicit stopping reasons. No guessed glob or fabricated submission record is added here.
 
 A computational acceleration should reduce runtime under unchanged objective/physics. Correcting station-power tariff accounting is a separate model-cost repair and can alter reconstructed costs; it is not evidence of demand-response savings. Preserve old plots as dated controls until comparable completed runs justify new figures. Keep scheduler completion, pricing certification, route validity and eventual integer proofs separate. Do not infer full-CG speedups from local component benchmarks.
+
+
+## Pre-submission staging update
+
+The implementation task reports that the cluster root and isolated code clones are staged, with no submissions yet. Baseline source is now `dd16c9f079e4e3e6e8689da2d414034feb6cc182`, subject to a final collector-related pin; capacity remains `309d98d266ebaf6b7e99543a67f8f2be5736874a`. The earlier allocation discrepancy is reported resolved:
+
+| Workload | CPUs | Memory | Allocation | Treatment budget |
+|---|---:|---:|---|---|
+| Fresh CG | 2 | 32 GB | 4 h 30 min | 2 h per arm |
+| Warm CG | 8 | 96 GB | 8 h | Up to 3 h cache preparation outside paired timing, then 2 h per arm |
+| Capacity CG | 1 | 24 GB | 6 h 30 min | 3 h per arm |
+
+Warm inputs are reported frozen from completed previous-k cases only. The implementation task reports eight whole-route reduced-cost checks passing for corrected accounting (`local_smoke/fixed_accounting.json`), 34 baseline integration tests passing, and identical status and pools in the eight-trip CG smoke comparison. These are reported validation outcomes; the research manager has not independently rerun them. The amended audit, final manifest, output schema and scheduler IDs will establish the launched configuration. No measured cluster speedup is claimed.
