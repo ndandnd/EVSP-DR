@@ -233,6 +233,7 @@ def build_network(args, problem, prices):
         strict_tariff_coverage=False,
         arc_mode="explicit",
         station_charge_kw=station_power(args.arm),
+        capacity_selector=getattr(args, "capacity_selector", "reference"),
     )
 
 
@@ -481,6 +482,7 @@ def run_cg(
             "charger_counts": CHARGER_COUNTS if ARMS[args.arm]["capacity"] else {},
             "parx_capacity": "unlimited",
         },
+        "capacity_selector": getattr(args, "capacity_selector", "reference"),
         "network": network.metrics(),
         "network_build_s": network_build_s,
         "gurobi_log": str(log_path),
@@ -836,6 +838,8 @@ def parser():
     value.add_argument("--reserve-kwh", type=float, default=0.0)
     value.add_argument("--soc-step", type=float, default=2.5)
     value.add_argument("--block-min", type=int, default=5)
+    value.add_argument("--capacity-selector", choices=("reference", "prefix-memo"),
+                       default="reference", help="opt-in exact capacity window acceleration")
     value.add_argument("--rc-eps", type=float, default=1e-5)
     value.add_argument("--max-iters", type=int, default=10000)
     value.add_argument("--cg-wall-s", type=float, default=3600.0)

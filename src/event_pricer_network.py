@@ -216,7 +216,11 @@ class EventExpandedNetwork:
         strict_tariff_coverage=False,
         arc_mode="lazy",
         station_charge_kw=None,
+        capacity_selector="reference",
     ):
+        if capacity_selector not in {"reference", "prefix-memo"}:
+            raise ValueError(f"unsupported capacity selector: {capacity_selector}")
+        self.capacity_selector = capacity_selector
         self.problem = problem
         self.soc_step = float(soc_step)
         self.block_min = int(block_min)
@@ -916,6 +920,14 @@ class EventExpandedNetwork:
                 dense, objective=objective, route_dual=route_dual,
                 deadline=deadline, clock=clock,
             )
+        selector = None
+        if getattr(self, "capacity_selector", "reference") == "prefix-memo" and capacity_duals:
+            from capacity_window_selector import CapacityWindowSelector
+            selector = CapacityWindowSelector(
+                self, capacity_duals, capacity_sites, capacity_grid_min,
+                deadline=deadline, clock=clock,
+            )
+        adjust_arc = selector.adjust if selector is not None else self._capacity_adjusted_arc
         values = [float("inf")] * len(self.node_meta)
         parent = [None] * len(self.node_meta)
         values[0] = 0.0
@@ -924,7 +936,7 @@ class EventExpandedNetwork:
             if not math.isfinite(values[source]):
                 continue
             for target, cost, dual, action in self.out[source]:
-                adjusted_cost, selected_action = self._capacity_adjusted_arc(
+                adjusted_cost, selected_action = adjust_arc(
                     cost, action, capacity_duals, capacity_sites,
                     capacity_grid_min, deadline=deadline, clock=clock,
                 )
