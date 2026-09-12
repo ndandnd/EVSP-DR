@@ -81,3 +81,10 @@ This corroborates an inherited-column initialization bottleneck independently of
 Verified at 00:17 UTC on12September (20:17EDT11September): Slurm TIMEOUT after08:17:05 against08:15:00 allocation. Cached network loaded in8.1s (19,205nodes;109,583,108arcs). Persisted status remains initializing, zero iterations, final LP absent, inherited-pool audit null, and column journal empty. The status wall_s=9.18 is the initial publication time, not the completed job runtime. No LP certificate or new integer result exists.
 
 This repeats the P1k7 initialization failure. The predecessor P4k9 pool survives but there is no usable child pool for the dependent MIP. No unchanged retry submitted; use the same bounded/checkpointed-initialization recovery requirement already recorded for P1. P2k10 remains running. Evidence: outputs/parallel_research_20260911/warm_p4_k10_timeout_810344/evidence.json.
+
+
+## Warm full-pool control and bounded-import outcomes at 02:25 EDT on 12 September
+
+Original chain 2 k10 CG job810333 completed at scheduler level after7:59:51. Its CG record has `wall_limit`, zero pricing iterations, no pricing certificate and no final iteration, but `final_lp_source=final_pool_resolve` now supplies an explicit terminal pool LP. Freeze810976 completed successfully and MIP810977 is running. This differs from the earlier k9 freeze rejection; do not mark the k10 MIP blocked or infer a pricing certificate from its final-pool solve.
+
+The separately registered512-route import treatment now has certified CG and integer outcomes for the three earlier blocked cases: chain1 k7 uses8 buses (proved minimum in that saved pool), chain2 k9 uses10 with pool bound9 (unproved), and chain4 k10 uses11 (proved minimum in that saved pool). Their charging stages reached the time limit. These results do not repair or supersede the original full-pool controls as the same treatment. See [dated evidence](../overnight_extension_20260912/RESULTS_20260912T062451Z.md). All departed jobs checked in the supplemental accounting record completed with exit0:0; no new execution failure or preemption was found.

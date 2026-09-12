@@ -4,7 +4,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1757 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T05:26:58+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **1766 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T06:24:51+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -16,7 +16,7 @@ Current build: **1757 artifact/stage records across 32 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest launch: [Overnight chains through k=15 and 32-duty decomposition](../overnight_extension_20260912/README.md). 87 CG cases and 87 dependent default-partition MIPs. At 01:27 EDT, 14 new CG cases were pricing-certified and two decomposition-group MIPs each proved eight buses within their saved pools. Warm-chain integer extensions and a combined 32-duty result are not completed in this snapshot. [Verified update](../overnight_extension_20260912/RESULTS_20260912T052658Z.md).
+Latest launch: [Overnight chains through k=15 and 32-duty decomposition](../overnight_extension_20260912/README.md). At 02:25 EDT, 30 of 87 CG cases have pricing certificates and nine of 87 dependent default MIPs have finished. The bounded-import treatment matches 11 buses at chain 6 k=11; five other completed warm cases use extra buses. Three decomposition groups each prove eight buses within their saved pools; no combined 32-duty result is available. [Verified update and source tables](../overnight_extension_20260912/RESULTS_20260912T062451Z.md).
 
 ## How to read a result
 
@@ -38,7 +38,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T052658Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T062451Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

@@ -1,0 +1,2276 @@
+{
+  "previous_snapshot": "outputs/post_meeting_20260910/monitor/20260912T052658Z.json",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260912T062451Z.json",
+  "timestamp_utc": "2026-09-12T06:24:51.268525+00:00",
+  "ssh_access": "available",
+  "result_changes": [
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g0/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7828.161243910203
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g1/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7845.992747419747
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g2/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7851.363677004818
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g3/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7863.733218205627
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g0/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 6969.479235525243
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g1/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7869.144294871017
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g2/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7821.510460565798
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g0/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 5090.753144674934
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g1/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 5509.26117921574
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g2/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "snapshot_availability",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 6836.161041089334
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g3/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7876.34610991762
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g0/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7790.1884344758
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g1/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7813.683139764704
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g3/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7865.186338014668
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g0/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "attempt_wall_s",
+        "final_lp",
+        "attempt_iterations"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7809.6245044302195
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g1/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 4740.19928171928
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g1/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7833.2961035482585
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g3/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7840.903430019505
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g0/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 7377.710377591662
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g1/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 5072.6236197166145
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g2/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7879.166995579377
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g3/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "attempt_wall_s",
+        "final_lp",
+        "attempt_iterations"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7805.547118567862
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d08_g1/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7824.145434021484
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d08_g2/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7876.0905232415535
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d08_g3/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 6459.983881445136
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d09_g0/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 4449.237860267749
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d09_g1/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "snapshot_availability",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 7607.50835542893
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d09_g2/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "peak_rss_mb",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 6709.550312440842
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d09_g3/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 7872.970492617926
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 2969.1984027191065
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k09/cg.json",
+      "new": true,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "inherited_event_pool_status_sha256",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 1624.7035018261522
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k10/cg.json",
+      "new": false,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "wall_s",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 3340.593230998609
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k11/cg.json",
+      "new": true,
+      "changed_fields": [
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "inherited_event_pool_status_sha256",
+        "block_min",
+        "column_candidate_multiplier",
+        "csv",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "initializing",
+        "certified_rc_optimal": false,
+        "wall_s": 16.741257562302053
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k13/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 3156.979365342646
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k14/cg.json",
+      "new": true,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "inherited_event_pool_status_sha256",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 939.1069954410195
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k11/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 3565.2623462551273
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k12/cg.json",
+      "new": true,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "inherited_event_pool_status_sha256",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 1560.6971064582467
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w5_k12/cg.json",
+      "new": false,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "wall_s",
+        "final",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 3450.1479707325343
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k12/cg.json",
+      "new": false,
+      "changed_fields": [
+        "wall_s",
+        "final",
+        "snapshot_availability",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "attempt_iterations",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 3876.5286284808535
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k13/cg.json",
+      "new": true,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "master_sense",
+        "column_selection",
+        "columns_per_iter",
+        "strict_tariff_coverage",
+        "charge_kw",
+        "g_kwh",
+        "provenance",
+        "column_diversity_weight",
+        "column_pool_treatment",
+        "min_soc_frac",
+        "wall_s",
+        "prices_csv",
+        "peak_rss_mb",
+        "time_model",
+        "final",
+        "initial_pool",
+        "certified_rc_optimal",
+        "attempt_wall_s",
+        "network_metrics",
+        "master_backend",
+        "path",
+        "inherited_event_pool_status_sha256",
+        "block_min",
+        "column_candidate_multiplier",
+        "final_lp_source",
+        "csv",
+        "final_lp",
+        "soc_step",
+        "attempt_iterations",
+        "stop_reason",
+        "columns_journal"
+      ],
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 1870.736677116016
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g3/mip/952033_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 8,
+        "fleet_bound": 8.0,
+        "fleet_proven": true,
+        "status_name": "OPTIMAL",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/mip/949636_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 8,
+        "fleet_bound": 8.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k09/mip/949694_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 9.000000000000004,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k11/mip/949708_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 11.000000000000066,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k12/mip/949710_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 14,
+        "fleet_bound": 12.000000000000032,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/mip/949718_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/mip/949740_r0/result.json",
+      "new": true,
+      "changed_fields": [
+        "status_name",
+        "fleet_proven",
+        "overcovered_trips",
+        "source_cg_iterations",
+        "cross_route_charger_capacity_validated",
+        "selected_physical_statuses",
+        "pool_columns",
+        "status",
+        "duplicate_trip_removal_validated",
+        "instance",
+        "runtime_s",
+        "physical_replay_validated",
+        "path",
+        "mip_start",
+        "source_cg_wall_s",
+        "physics",
+        "gurobi_optimize_wall_s",
+        "buses",
+        "charging_cost",
+        "physical_replay_scope",
+        "partitioning",
+        "column_pool_treatment",
+        "two_stage",
+        "sha256",
+        "fleet_bound",
+        "mip_gap",
+        "continuous_realized_charging_cost",
+        "physical_pool_audit",
+        "file_mtime_utc",
+        "optimal_scope"
+      ],
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true,
+        "cross_route_charger_capacity_validated": false
+      }
+    },
+    {
+      "campaign": "warm_multichain_p1246",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k10_p2__warm_cover__event_2p5_event5.json",
+      "new": false,
+      "changed_fields": [
+        "inherited_event_pool_audit",
+        "wall_s",
+        "snapshot_availability",
+        "attempt_wall_s",
+        "final_lp_source",
+        "final_lp",
+        "stop_reason"
+      ],
+      "summary": {
+        "stop_reason": "wall_limit",
+        "certified_rc_optimal": false,
+        "wall_s": 28773.43387459684
+      }
+    }
+  ],
+  "scheduler_changes": [
+    {
+      "job": "810333",
+      "before": [
+        "RUNNING",
+        "7:44:05",
+        "unicorn-cpu-73"
+      ],
+      "after": null
+    },
+    {
+      "job": "810976",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": null
+    },
+    {
+      "job": "810977",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "41:55",
+        "scaglione-cpu-04"
+      ]
+    },
+    {
+      "job": "949623_12",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "unicorn-cpu-87"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_13",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "unicorn-cpu-87"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_14",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "unicorn-cpu-76"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_21",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "unicorn-cpu-76"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_28",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "garg-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_29",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "jingjie-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_35",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "jingjie-cpu-16"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_36",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "jingjie-cpu-17"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_37",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "jingjie-cpu-17"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_38",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "jingjie-cpu-19"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_8",
+      "before": [
+        "RUNNING",
+        "1:14:08",
+        "unicorn-cpu-87"
+      ],
+      "after": null
+    },
+    {
+      "job": "949624_11",
+      "before": [
+        "RUNNING",
+        "0:05",
+        "kim-cpu-03"
+      ],
+      "after": null
+    },
+    {
+      "job": "949624_12",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "46:37",
+        "snavely-cpu-13"
+      ]
+    },
+    {
+      "job": "949624_13",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "39:35",
+        "unicorn-cpu-73"
+      ]
+    },
+    {
+      "job": "949624_14",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "18:12",
+        "luxlab-cpu-02"
+      ]
+    },
+    {
+      "job": "949624_8",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "15:30",
+        "totient-cpu-07"
+      ]
+    },
+    {
+      "job": "949636",
+      "before": [
+        "RUNNING",
+        "20:06",
+        "unicorn-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949637",
+      "before": [
+        "RUNNING",
+        "20:06",
+        "unicorn-cpu-74"
+      ],
+      "after": null
+    },
+    {
+      "job": "949638",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "28:30",
+        "sonic-cpu-01"
+      ]
+    },
+    {
+      "job": "949639",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "28:30",
+        "unicorn-cpu-74"
+      ]
+    },
+    {
+      "job": "949694",
+      "before": [
+        "RUNNING",
+        "8:05",
+        "unicorn-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949695",
+      "before": [
+        "RUNNING",
+        "8:05",
+        "unicorn-cpu-75"
+      ],
+      "after": null
+    },
+    {
+      "job": "949696",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "10:30",
+        "snavely-cpu-15"
+      ]
+    },
+    {
+      "job": "949697",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "10:30",
+        "unicorn-cpu-75"
+      ]
+    },
+    {
+      "job": "949708",
+      "before": [
+        "RUNNING",
+        "45:07",
+        "sonic-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949710",
+      "before": [
+        "RUNNING",
+        "12:06",
+        "unicorn-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949711",
+      "before": [
+        "RUNNING",
+        "12:06",
+        "jingjie-cpu-18"
+      ],
+      "after": null
+    },
+    {
+      "job": "949712",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "17:29",
+        "unicorn-cpu-01"
+      ]
+    },
+    {
+      "job": "949713",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "17:29",
+        "jingjie-cpu-21"
+      ]
+    },
+    {
+      "job": "949718",
+      "before": [
+        "RUNNING",
+        "30:06",
+        "snavely-cpu-15"
+      ],
+      "after": null
+    },
+    {
+      "job": "949719",
+      "before": [
+        "RUNNING",
+        "30:06",
+        "jingjie-cpu-21"
+      ],
+      "after": null
+    },
+    {
+      "job": "949720",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "28:30",
+        "totient-cpu-02"
+      ]
+    },
+    {
+      "job": "949721",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "28:30",
+        "jingjie-cpu-04"
+      ]
+    },
+    {
+      "job": "949740",
+      "before": [
+        "RUNNING",
+        "40:08",
+        "snavely-cpu-14"
+      ],
+      "after": null
+    },
+    {
+      "job": "949741",
+      "before": [
+        "RUNNING",
+        "40:08",
+        "jingjie-cpu-06"
+      ],
+      "after": null
+    },
+    {
+      "job": "949742",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "33:33",
+        "snavely-cpu-14"
+      ]
+    },
+    {
+      "job": "949743",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "33:33",
+        "jingjie-cpu-22"
+      ]
+    }
+  ],
+  "queue_counts": {
+    "PENDING": 144,
+    "RUNNING": 39
+  },
+  "preemption_summary": {
+    "default_cancelled_before_budget_correction": {
+      "registered_tasks": 75,
+      "accounting_missing_task_ids": [
+        "812608_0",
+        "812608_1",
+        "812608_2",
+        "812608_3",
+        "812608_4",
+        "812608_5",
+        "812608_6",
+        "812608_7",
+        "812608_8",
+        "812608_9",
+        "812619_45",
+        "812619_46",
+        "812619_47",
+        "812619_48",
+        "812619_49",
+        "812619_50",
+        "812619_51",
+        "812619_52",
+        "812619_53",
+        "812619_54"
+      ],
+      "attempts": 55,
+      "started": 0,
+      "ended_started_attempts": 0,
+      "confirmed_preemptions": 0,
+      "preemption_fraction_among_ended": null,
+      "descriptive_wilson95": null,
+      "state_counts": {
+        "CANCELLED": 55
+      },
+      "confirmed_preempted_allocation_seconds": 0,
+      "confirmed_preempted_allocated_cpu_seconds": 0,
+      "allocation_exposure_seconds": 0
+    },
+    "default_fresh_3600": {
+      "registered_tasks": 75,
+      "accounting_missing_task_ids": [],
+      "attempts": 75,
+      "started": 75,
+      "ended_started_attempts": 75,
+      "confirmed_preemptions": 0,
+      "preemption_fraction_among_ended": 0.0,
+      "descriptive_wilson95": [
+        3.469446951953614e-18,
+        0.04872384248280587
+      ],
+      "state_counts": {
+        "COMPLETED": 75
+      },
+      "confirmed_preempted_allocation_seconds": 0,
+      "confirmed_preempted_allocated_cpu_seconds": 0,
+      "allocation_exposure_seconds": 171259
+    },
+    "default_overnight_extension_3600": {
+      "registered_tasks": 87,
+      "accounting_missing_task_ids": [
+        "949624_2",
+        "949624_3",
+        "949624_4",
+        "949624_5",
+        "949624_6",
+        "949624_7",
+        "949624_9",
+        "949624_10",
+        "949624_15",
+        "949624_16"
+      ],
+      "attempts": 77,
+      "started": 19,
+      "ended_started_attempts": 9,
+      "confirmed_preemptions": 0,
+      "preemption_fraction_among_ended": 0.0,
+      "descriptive_wilson95": [
+        0,
+        0.2991450484195441
+      ],
+      "state_counts": {
+        "COMPLETED": 9,
+        "RUNNING": 10,
+        "PENDING": 58
+      },
+      "confirmed_preempted_allocation_seconds": 0,
+      "confirmed_preempted_allocated_cpu_seconds": 0,
+      "allocation_exposure_seconds": 40059
+    },
+    "scaglione_cancelled_before_migration": {
+      "registered_tasks": 75,
+      "accounting_missing_task_ids": [
+        "810588_0",
+        "810588_1",
+        "810588_2",
+        "810588_3",
+        "810588_4",
+        "810588_5",
+        "810588_6",
+        "810588_7",
+        "810588_8",
+        "810588_9",
+        "810589_45",
+        "810589_46",
+        "810589_47",
+        "810589_48",
+        "810589_49",
+        "810589_50",
+        "810589_51",
+        "810589_52",
+        "810589_53",
+        "810589_54"
+      ],
+      "attempts": 55,
+      "started": 0,
+      "ended_started_attempts": 0,
+      "confirmed_preemptions": 0,
+      "preemption_fraction_among_ended": null,
+      "descriptive_wilson95": null,
+      "state_counts": {
+        "CANCELLED": 55
+      },
+      "confirmed_preempted_allocation_seconds": 0,
+      "confirmed_preempted_allocated_cpu_seconds": 0,
+      "allocation_exposure_seconds": 0
+    },
+    "scaglione_warm_3600": {
+      "registered_tasks": 36,
+      "accounting_missing_task_ids": [],
+      "attempts": 36,
+      "started": 30,
+      "ended_started_attempts": 29,
+      "confirmed_preemptions": 0,
+      "preemption_fraction_among_ended": 0.0,
+      "descriptive_wilson95": [
+        0,
+        0.11696979849974075
+      ],
+      "state_counts": {
+        "COMPLETED": 29,
+        "PENDING": 6,
+        "RUNNING": 1
+      },
+      "confirmed_preempted_allocation_seconds": 0,
+      "confirmed_preempted_allocated_cpu_seconds": 0,
+      "allocation_exposure_seconds": 18433
+    }
+  }
+}
