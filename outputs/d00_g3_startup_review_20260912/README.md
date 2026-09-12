@@ -1,3 +1,5 @@
+**Terminal update:** diagnostic 982348 segfaulted after 366.18 s before its watchdog. Graph progress and two JSON-encoding stack samples are useful; the sampler is suspect and the exact crash cause remains unresolved. See [TERMINAL_REVIEW.md](TERMINAL_REVIEW.md). No retry has been launched.
+
 # d00_g3 startup audit and proposed recovery
 
 The initial review made no cluster changes. After coordination, diagnostic job **982348** was submitted with a 900-second external budget and 90-second termination grace (2 CPUs, 32 GB, 20-minute allocation, default partition, required node exclusion). Its startup passed and graph construction began. Instrumentation/driver/plan pin: `03d0823752e614f523ff9cbd49aaab30208cb1bf`. No original job was cancelled, retargeted or altered. Original CG array 949623_3/concrete949644 remains a timeout; dependent MIP 949624_3 remains DependencyNeverSatisfied.

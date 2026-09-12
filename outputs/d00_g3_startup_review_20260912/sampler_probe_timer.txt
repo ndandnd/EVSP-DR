@@ -1,0 +1,9 @@
+Timeout (0:00:00.002000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 200 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/sampler_probe.py", line 7 in <module>
+Timeout (0:00:00.002000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py"

@@ -1,0 +1,26 @@
+{
+  "terminal_collection_sha256": "6b971d58e7aa8c4247eeaf5a16184e0b3811f2ee6a8783a5b4d5f99a021186be",
+  "all_eight_embedded_hashes_verified": true,
+  "state": "diagnostic_error",
+  "returncode": -11,
+  "wall_seconds": 366.18116605700925,
+  "watchdog_triggered": false,
+  "last_progress": {
+    "completed_sources": 142,
+    "elapsed_s": 313.4729535889346,
+    "maxrss_native": 283088,
+    "packed_arcs_so_far": 3011382,
+    "phase": "graph_source_finalized",
+    "platform": "linux",
+    "source": 142,
+    "total_trip_soc_sources": 29396,
+    "window_cache_entries": 178765
+  },
+  "completed_trip_soc_sources_excluding_depot": 141,
+  "sample_count_complete": 2,
+  "third_sample_truncated": true,
+  "observed_hotspot": "json.dumps called by EventExpandedNetwork._add within _charge_arcs",
+  "crash_cause": "Unresolved. Asynchronous timer sampler is suspect; no attribution to original solver.",
+  "local_isolation": "Solver-free control completes1247831JSON encodings in3s;2ms sampler mode does not finish by10s. Reproduces a sampler-associated hang on localPython3.12.2, not the clusterSIGSEGV on3.12.13.",
+  "recommendation": "Retire timer sampler, test cooperative synchronous profiling/counters against unchanged graph outputs, then seek bounded diagnostic retry. Evaluate lazy JSON tie-key construction only with exact equality/ordering regression coverage. No automatic long retry/MIP."
+}

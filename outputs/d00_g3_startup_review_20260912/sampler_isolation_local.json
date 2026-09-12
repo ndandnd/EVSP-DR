@@ -1,0 +1,22 @@
+{
+  "scope": "Solver-free3s JSON loop;2ms timer,10s outer timeout; macOS Python3.12.2 differs from cluster3.12.13. A hang is not a reproduction of SIGSEGV.",
+  "results": [
+    {
+      "mode": "control",
+      "returncode": 0,
+      "stdout": "{\"calls\": 1247831, \"seconds\": 3.000009583774954, \"timer\": false, \"python\": \"3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]\"}\n",
+      "external_timeout": false,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "mode": "timer",
+      "returncode": null,
+      "stdout": "",
+      "external_timeout": true,
+      "timeout_s": 10,
+      "stderr_bytes": 715,
+      "stderr_sha256": "6518f4c586eb6942250d68f60bbfc619a997663c68c73304fdbdfa3fb38b8baf"
+    }
+  ]
+}
