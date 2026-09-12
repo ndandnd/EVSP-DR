@@ -1,0 +1,18 @@
+{
+  "states": "37534|PENDING|0:00|(DependencyNeverSatisfied)\n",
+  "logs": {
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/rec2k15CG_37533.out": "",
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/rec2k15CG_37533.err": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh: line 13: PYTHON_BIN: PYTHON_BIN must be set before Gurobi preflight\n",
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/rec2k14M_37532.out": "",
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/rec2k14M_37532.err": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh: line 13: PYTHON_BIN: PYTHON_BIN must be set before Gurobi preflight\n"
+  },
+  "preemption": {
+    "registry": "/home/nc437/ladder-lite/mip_preemption_study_20260911/registry.json",
+    "before_sha256": "85bf9f755073e9a62f5bc5aeed7564e36391e00210ddd30f642da2019957f5aa",
+    "after_sha256": "c4b7842736b242de024c6ee9c1945ca36ff41066d9ec5be43dca29c1aea42d3e",
+    "added_job_ids": [
+      "37532",
+      "37534"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+export PYTHON_BIN=/home/nc437/evsp_env/bin/python
+source /home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh
+exec /home/nc437/evsp_env/bin/python -u /home/nc437/ladder-lite/w2_chain_recovery_20260912/entry.py "$1"
