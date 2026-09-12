@@ -1,0 +1,67 @@
+{
+  "code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "required_files": [
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/inputs/parent_original.json",
+      "sha256": "f82e815f0c2e02511ab9e3dee599b05c3a1d2ffb374977d0f040a1759dc52415"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/inputs/parent_replay.json",
+      "sha256": "8400a34296e7d85e89129e7aba02d0d0d3d82d6b06c07334ee838529f3fee3ff"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/inputs/parent.columns.jsonl",
+      "sha256": "d9248ea26caa1af5e86070f9d1fb29a516bd871cdde4535819dcba8601d69013"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/cache_compatibility.json",
+      "sha256": "fe8709db13398bc793b312b9e8116eb00743b9661b326461ee1d6ad4a1564068"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p02_20260908.csv",
+      "sha256": "79c73bc74bdba12d53a76b79c4a6408bda71d2e444a1a95508800da95f5d9188"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    }
+  ],
+  "output": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cases/w2_k15/mip/onehour/result.json",
+  "argv": [
+    "/home/nc437/evsp_env/bin/python",
+    "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+    "--result",
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cases/w2_k15/cg.json",
+    "--data-dir",
+    "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/data",
+    "--reference-data-dir",
+    "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/code/data",
+    "--cover",
+    "--two-stage",
+    "--timelimit",
+    "3600",
+    "--stage1-timelimit",
+    "1800",
+    "--threads",
+    "8",
+    "--mipgap",
+    "0.0001",
+    "--gurobi-log",
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cases/w2_k15/mip/onehour/result.gurobi.log",
+    "--out",
+    "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cases/w2_k15/mip/onehour/result.json"
+  ],
+  "watchdog_seconds": 6000,
+  "source_status": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cases/w2_k15/cg.json",
+  "data_execution_commit": "68fce0093ec9768392442fe1b107a1b67ab0cb7b",
+  "scope": "3600s two-stage covering pool MIP; unchanged 1800s first stage; unique attempt"
+}

@@ -1,0 +1,54 @@
+{
+  "schema": "evsp-chain2-recovery-v1",
+  "cg_execution_commit": "68fce0093ec9768392442fe1b107a1b67ab0cb7b",
+  "mip_execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "completed_parent_job": "15687",
+  "completed_parent_status_sha256": "f82e815f0c2e02511ab9e3dee599b05c3a1d2ffb374977d0f040a1759dc52415",
+  "completed_parent_journal_sha256": "d9248ea26caa1af5e86070f9d1fb29a516bd871cdde4535819dcba8601d69013",
+  "original_blocked_jobs_preserved": [
+    "949704",
+    "949705",
+    "949706"
+  ],
+  "cases": {
+    "w2_k14": {
+      "source_status": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/cases/w2_k14/cg.json"
+    },
+    "w2_k15": {
+      "id": "w2_k15",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p02_20260908.csv",
+      "input_sha256": "79c73bc74bdba12d53a76b79c4a6408bda71d2e444a1a95508800da95f5d9188",
+      "kind": "bounded_inherited_cover",
+      "target_duties": 15,
+      "chain": 2,
+      "parent_status": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg.json",
+      "cg_seconds": 14400,
+      "source_cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k15_p2__event_2p5_event5.pkl"
+    }
+  },
+  "files": [
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cg15_manifest.json",
+      "sha256": "f00334545d0aa03e2a02c36d81a6a0004d7aabdd04a55667e784683bede89c69"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/mip14_manifest.json",
+      "sha256": "1acfa2f759749d183ca2bfefb9b8b58c8579e5652483a0185b1fb9428c12ad47"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/mip15_manifest.json",
+      "sha256": "10e675735fa05d0a4138eca893751c41455dcc160d180370b24b7f20afbf6be1"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/worker.sub",
+      "sha256": "9ceedc633e2ca19aa7627e38e757ac93dc0592feb88e0eed7ff5cda3b281003f"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/entry.py",
+      "sha256": "3d6b7b5afb1526a33edd38f7bdbdadf7d30467974cc5d36badc93b94a495bf39"
+    }
+  ],
+  "resource_policy": "default partition, exclude scaglione-compute-01; two independent successors no arbitrary throttle; k15 MIP after CG; no requeue because exclusive attempt claims require distinct retries",
+  "cache_sha256": "e93a50d9720f66f039c658bd8f1546c54324e911156b153fc634f95fdf12241b",
+  "parent_replay_descriptor_changes": "journal path only; original and frozen parent bytes retained"
+}
