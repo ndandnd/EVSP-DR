@@ -23,3 +23,7 @@ Evidence: ../post_meeting_20260910/capacity_speed/concurrency50_cluster_limits.j
 ## Overnight default-partition MIPs — 11 September 2026 UTC
 
 The user authorizes default_partition for the one-hour saved-pool MIPs, accepting preemption and lost branch-and-bound search. Pending fresh-covering MIPs may migrate there; retain exact scientific settings and true input dependencies. Keep per-attempt job IDs, scheduler states, timing/resource/priority samples and output hashes in the MIP preemption study. No automatic requeue for wrappers unable to restart safely; interrupted retries require unique attempt outputs and preserved prior records. Preemption risk is measured, not presumed zero. Existing Scaglione MIPs remain usable. scaglione-compute-01 remains excluded everywhere and held historical jobs stay untouched.
+
+## Default MIPs — user clarification 11 September evening
+
+Use default_partition for new table-filling MIPs. The user accepts preemption and requeue; preserve unique per-restart outputs and count lost attempts. Do not claim Gurobi tree resume. New overnight workers have restart-safe MIP output paths and explicit --requeue. The compute-01 exclusion and held-job protections remain.

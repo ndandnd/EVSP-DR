@@ -1,0 +1,242 @@
+{
+  "artifact_completeness": {
+    "each_timeout_result_dir_contains": [
+      "cg.json.gurobi.log",
+      "cg_allocation.json",
+      "cg_command.json"
+    ],
+    "each_timeout_result_dir_missing": [
+      "cg.json",
+      "pool.jsonl",
+      "checkpoint",
+      "resume metadata",
+      "phase telemetry"
+    ],
+    "saved_gurobi_log_is_not_resume_state": true
+  },
+  "campaign_root": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd",
+  "captured_utc": "2026-09-11T03:17:58.920395+00:00",
+  "diagnosis": {
+    "classification": "scheduler TIMEOUT before final artifact publication",
+    "memory_exhaustion": false,
+    "python_traceback": false,
+    "reason": "route pool, duals and iteration history are process memory; runner has no resume option and does not persist a checkpoint journal",
+    "safe_resume": false
+  },
+  "matched_fresh_rerun_plan": {
+    "array_indices": [
+      5,
+      7,
+      9,
+      11,
+      13,
+      15
+    ],
+    "cg_cpus": 1,
+    "cg_exclude": [
+      "scaglione-compute-01"
+    ],
+    "cg_job_id": "811181",
+    "cg_max_iters": 10000,
+    "cg_memory": "24G",
+    "cg_partition": "default_partition",
+    "cg_requeue": false,
+    "cg_slurm_wall": "09:00:00",
+    "cg_threads": 1,
+    "cg_wall_s": 28800,
+    "input_physics_preserved": "same task/arm/instance/prices/reference hashes, same source commit and algorithm settings except extended wall budget",
+    "mip_array": "5,7,9,11,13,15%6",
+    "mip_code_commit": "9bf3f752a5d2786bf5a1e9c613ff6440415569a9",
+    "mip_concurrency": 6,
+    "mip_cpus": 8,
+    "mip_dependency": "aftercorr:new_cg_array",
+    "mip_exclude": [
+      "scaglione-compute-01"
+    ],
+    "mip_job_id": "811182",
+    "mip_memory": "16G",
+    "mip_partition": "scaglione",
+    "mip_requeue": false,
+    "mip_slurm_wall": "00:30:00",
+    "mip_stage1_max_s": 750,
+    "mip_stage2": "remaining",
+    "mip_task_ids": {
+      "11": "811186",
+      "13": "811187",
+      "15": "811182_15",
+      "5": "811183",
+      "7": "811184",
+      "9": "811185"
+    },
+    "mip_total_s": 1500,
+    "new_campaign_root": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef",
+    "remote_manifest_sha256": "6eabf3f52591f46554e269e90b2d73a3edec37f90d10ae82fcfad966bb243c44",
+    "status": "submitted_pending",
+    "submission_utc": "2026-09-11T03:23:34Z",
+    "throttle_override": {
+      "from": "5,7,9,11,13,15%2",
+      "reason": "All six small 16G cells may run concurrently; scheduler memory admission remains authoritative.",
+      "scontrol": "ArrayTaskThrottle=6",
+      "to": "5,7,9,11,13,15%6"
+    }
+  },
+  "original_commit": "7d38efdd39857438c4a6e30b43b09e973ce51086",
+  "original_jobs": {
+    "cg_array": "772080",
+    "timeout_task_indices": [
+      5,
+      7,
+      9,
+      11,
+      13,
+      15
+    ],
+    "two_stage_mip_array": "773334"
+  },
+  "rerun_submission": {
+    "campaign_root": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef",
+    "captured_utc": "2026-09-11T03:27:03.199369+00:00",
+    "cg_array_job_id": "811181",
+    "cg_slurm": "default_partition,1CPU,24G,09:00:00,no-requeue",
+    "dependency": "aftercorr:811181",
+    "mip_array_job_id": "811182",
+    "mip_array_throttle": "6",
+    "mip_code_commit": "9bf3f752a5d2786bf5a1e9c613ff6440415569a9",
+    "mip_slurm": "scaglione,8CPU,16G,00:30:00,no-requeue",
+    "mip_tasks": {
+      "11": "811186",
+      "13": "811187",
+      "15": "811182_15",
+      "5": "811183",
+      "7": "811184",
+      "9": "811185"
+    },
+    "remote_manifest_sha256": "6eabf3f52591f46554e269e90b2d73a3edec37f90d10ae82fcfad966bb243c44",
+    "resource_exclusion": "scaglione-compute-01",
+    "status": "SUBMITTED_PENDING"
+  },
+  "schema": "evsp-dr-capacity-pilot-timeout-evidence-v1",
+  "source_manifests": {
+    "cg_commit": "7d38efdd39857438c4a6e30b43b09e973ce51086",
+    "cg_source_sha256": "52e6a0ba1352f8b619ae08d67c243038f1f90a60e459123a71de3331832fc3c8",
+    "launch.json_sha256": "ebd5a5f0df26d28fb980fab27d0cfe3c98726c5a4949ba0031938b6d9c305cdb",
+    "runner_sha256": "f73e190236ebfd41de11c104ba14bf1b3b6afeadf300315735c62881b1d637f6",
+    "submission.json_sha256": "63283636567468dbfe28211bc457ce669da614a04d29a2cd58ef6cc7ae2411da",
+    "submission_twostage.json_sha256": "c1fdfe72190077d1ecc464e26b6744eec3665cb3abf00877f7ab5119d41d7e1f",
+    "worker_sha256": "a9c44a1f5c02e65dba4f5eaee25e77dcf147e7d3a300315735c62881b1d637f6"
+  },
+  "task_settings": {
+    "algorithm_wall_semantics": "budget checked only at top of CG loop; final master solve and atomic publication occur after loop",
+    "cg_wall_s": 5100,
+    "max_iters": 10000,
+    "memory": "24G",
+    "partition": "default_partition",
+    "requeue": false,
+    "slurm_wall": "01:30:00",
+    "threads": 1
+  },
+  "tasks": [
+    {
+      "arm": "capacity",
+      "array_index": 5,
+      "elapsed": "01:32:12",
+      "gurobi_log_bytes": 10813,
+      "gurobi_log_sha256": "f6d05cdfbd20989a29e3ef6a078f45a25883f01f2b6bb2fdf2dbf2c153f98ed4",
+      "instance": "analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "instance_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "job_id": "773103",
+      "max_rss": "736120K",
+      "node": "snavely-cpu-11",
+      "state": "TIMEOUT",
+      "stderr_sha256": "2b595ad49d016ac80d27ae220dac87beaf90e89c2a1295560147cac3584b917b",
+      "stdout_sha256": "951ee098b198d080de6eed266f36782c656a90c656b4af944be6bfd73a4f6a1b",
+      "task_id": "k1_duty13406__capacity",
+      "timelimit": "01:30:00"
+    },
+    {
+      "arm": "combined",
+      "array_index": 7,
+      "elapsed": "01:32:29",
+      "gurobi_log_bytes": 10813,
+      "gurobi_log_sha256": "e0b34953ed42f92bde7fb6c753832603bcba25dffa28e0c54485ada15eb12dd5",
+      "instance": "analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "instance_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "job_id": "773707",
+      "max_rss": "711052K",
+      "node": "snavely-cpu-09",
+      "state": "TIMEOUT",
+      "stderr_sha256": "7bbe7f6027234bdda9f0783463828cbda98d4575f5b5fdbc9b73c5e91b7da2e0",
+      "stdout_sha256": "633817e196840dfacd0e03b0c9dd1c0a69fcfe3dc81ddbc4b290534e9e5b0034",
+      "task_id": "k1_duty13406__combined",
+      "timelimit": "01:30:00"
+    },
+    {
+      "arm": "capacity",
+      "array_index": 9,
+      "elapsed": "01:32:16",
+      "gurobi_log_bytes": 4342,
+      "gurobi_log_sha256": "e5cf2f6140b0850c0c160c79eba18f845f9a6eeea19ed261d5ce470de8a68cc3",
+      "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+      "instance_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "job_id": "773709",
+      "max_rss": "1676248K",
+      "node": "garg-cpu-02",
+      "state": "TIMEOUT",
+      "stderr_sha256": "661ddaa894ad770ea6b2f70b3e82082a19ef29c5cecfad5ef0586272e453c91c",
+      "stdout_sha256": "f4a99e2ba89f805aa1d05f04165850cd161e4ccc305c4a35aaf6418b3f1fc73a",
+      "task_id": "e1_short_k2__capacity",
+      "timelimit": "01:30:00"
+    },
+    {
+      "arm": "combined",
+      "array_index": 11,
+      "elapsed": "01:32:16",
+      "gurobi_log_bytes": 4377,
+      "gurobi_log_sha256": "2bc116a658a2a1da20d7dd8a4a4a8cdec16e81c73dd47692409b06f76223e85d",
+      "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+      "instance_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "job_id": "773711",
+      "max_rss": "1595408K",
+      "node": "garg-cpu-01",
+      "state": "TIMEOUT",
+      "stderr_sha256": "bb3658038a2c0805ac702db4f9fbedfc43e1e5774f38107f90a1fc51bfd917cf",
+      "stdout_sha256": "ec49a10fc944523d4c1f92ae012f155f278c885f08fe03b691a33509ca5d5ae3",
+      "task_id": "e1_short_k2__combined",
+      "timelimit": "01:30:00"
+    },
+    {
+      "arm": "capacity",
+      "array_index": 13,
+      "elapsed": "01:32:16",
+      "gurobi_log_bytes": 2729,
+      "gurobi_log_sha256": "d1547b9817eac22853d70a3f2c7ffcae56e1421a659fd34799f9f8acbec94979",
+      "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv",
+      "instance_sha256": "c12ad3f575f7f70fd9b58a339ef79ace69266c28c7781e415028b15a298fd3ae",
+      "job_id": "773713",
+      "max_rss": "3734720K",
+      "node": "kim-cpu-03",
+      "state": "TIMEOUT",
+      "stderr_sha256": "fbca4ca1d7e4d8f149d32d0f0cded81a272710cb3d9cabd9ade28f198bc507fc",
+      "stdout_sha256": "1dfc4334f771061629f376ed822bd14520a19656687c9064e6edb530c9359e57",
+      "task_id": "e1_short_k3__capacity",
+      "timelimit": "01:30:00"
+    },
+    {
+      "arm": "combined",
+      "array_index": 15,
+      "elapsed": "01:32:15",
+      "gurobi_log_bytes": 2708,
+      "gurobi_log_sha256": "4520882d123c66495f820d92e7781baa0fd084c5b172104fd96ddd66480431ca",
+      "instance": "analysis/giro_small_cg_20260909/cohorts/e1_short_k3.csv",
+      "instance_sha256": "c12ad3f575f7f70fd9b58a339ef79ace69266c28c7781e415028b15a298fd3ae",
+      "job_id": "772080",
+      "max_rss": "3546496K",
+      "node": "garg-cpu-02",
+      "state": "TIMEOUT",
+      "stderr_sha256": "aec2764a447a32be0fa07cda2564263f38c40b047a34f05ac5bcb72096835836",
+      "stdout_sha256": "45e26c9a6f1681437606f9be9d050495abc6905a4a621ebcba9ff683447cd7fc",
+      "task_id": "e1_short_k3__combined",
+      "timelimit": "01:30:00"
+    }
+  ]
+}

@@ -55,6 +55,33 @@
     "confirmed_preempted_allocated_cpu_seconds": 0,
     "allocation_exposure_seconds": 171259
   },
+  "default_overnight_extension_3600": {
+    "registered_tasks": 87,
+    "accounting_missing_task_ids": [
+      "949624_0",
+      "949624_1",
+      "949624_2",
+      "949624_3",
+      "949624_4",
+      "949624_5",
+      "949624_6",
+      "949624_7",
+      "949624_8",
+      "949624_9"
+    ],
+    "attempts": 77,
+    "started": 0,
+    "ended_started_attempts": 0,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": null,
+    "descriptive_wilson95": null,
+    "state_counts": {
+      "PENDING": 77
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 0
+  },
   "scaglione_cancelled_before_migration": {
     "registered_tasks": 75,
     "accounting_missing_task_ids": [

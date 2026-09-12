@@ -2,7 +2,7 @@
 
 This is the common index for experiment settings, execution records, results and source evidence. The [Google Doc register tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.icnyriwovxgf) explains the index; the other tabs contain interpretation and figures.
 
-Current build: **1511 artifact/stage records across 31 campaign/source groups**, from the 11 September 2026, 13:54 EDT cluster snapshot. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **1787 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T04:14:35.517540+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
