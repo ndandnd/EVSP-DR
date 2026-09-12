@@ -1,0 +1,246 @@
+{
+  "schema": "evsp-dr-bottleneck-figures-v1",
+  "generated_utc": "2026-09-12T05:56:59.823654+00:00",
+  "generator": {
+    "path": "outputs/document_recovery_20260912/bottleneck_generator.py",
+    "sha256": "b9158739e9d63093af3ecc0e0ef4f9935913c88fe9e62e659713ae23559d21cd",
+    "python": "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3",
+    "matplotlib": "3.8.3"
+  },
+  "figures": {
+    "bottleneck_warm_import_vs_remaining.png": {
+      "caption_path": "outputs/document_recovery_20260912/bottleneck_warm_import_vs_remaining.md",
+      "sources": [
+        {
+          "path": "outputs/post_meeting_20260910/monitor/20260912T052658Z.json",
+          "sha256": "23d9fb05744b8a6f242c46785309cc1cc004ec4ab29c89f802e6fac638667c84",
+          "note": "Seven certified warm CG records and cumulative wall_s."
+        },
+        {
+          "path": "outputs/overnight_extension_20260912/RESULTS_20260912T052658Z.md",
+          "sha256": "30b21e57efd30c981ec01506ca7bf4918bbc92cd368d702afdecb825329b4a6a",
+          "note": "Defines the seven-case certified snapshot and reports the warm import table."
+        },
+        {
+          "path": "outputs/overnight_extension_20260912/exact_pricer_bounded.py",
+          "sha256": "415084325c93ecb0398820c9bc131cfd6a2a60c1e3430a025b760ec710d2687d",
+          "note": "Run clock and cumulative wall_s semantics."
+        },
+        {
+          "path": "outputs/overnight_extension_20260912/manifest.json",
+          "sha256": "e4a08bbc128998b3a9207fe4a2e1e71c2dd581c8e353c9d3c07de3929c2d1548",
+          "note": "Campaign case and execution identity."
+        }
+      ],
+      "data": [
+        {
+          "case": "w1_k07",
+          "import_runtime_s": 447.79580424702726,
+          "import_minutes": 7.463263404117121,
+          "wall_s": 3218.982484248001,
+          "remaining_cg_s": 2771.186680000974,
+          "remaining_cg_minutes": 46.186444666682895,
+          "attempt_wall_s": 3218.9824909237213,
+          "iterations": 942,
+          "pool_columns": 26195,
+          "source_status_sha256": "bfd994b413343d221ae460f1e7fce65585e689aeb9dccbf1bce82a55ca8a2da5",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        },
+        {
+          "case": "w2_k09",
+          "import_runtime_s": 469.2612329577096,
+          "import_minutes": 7.821020549295159,
+          "wall_s": 3841.7798028653488,
+          "remaining_cg_s": 3372.518569907639,
+          "remaining_cg_minutes": 56.20864283179399,
+          "attempt_wall_s": 3841.7798073953018,
+          "iterations": 933,
+          "pool_columns": 25173,
+          "source_status_sha256": "1b41a5335fa1651103ee949099d20edd5a86b29dd627f94ee73164c093cdff80",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        },
+        {
+          "case": "w3_k11",
+          "import_runtime_s": 308.4479895470431,
+          "import_minutes": 5.140799825784052,
+          "wall_s": 1659.6857599712675,
+          "remaining_cg_s": 1351.2377704242244,
+          "remaining_cg_minutes": 22.520629507070407,
+          "attempt_wall_s": 1659.685763070709,
+          "iterations": 669,
+          "pool_columns": 20210,
+          "source_status_sha256": "3b9d794ebca3bdae5e7cd9a49ff37729d6195eb7b2cb3ef47c0addaee43af61e",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        },
+        {
+          "case": "w3_k12",
+          "import_runtime_s": 329.3248559560161,
+          "import_minutes": 5.488747599266935,
+          "wall_s": 1970.3459498751909,
+          "remaining_cg_s": 1641.0210939191747,
+          "remaining_cg_minutes": 27.350351565319578,
+          "attempt_wall_s": 1970.3459539283067,
+          "iterations": 719,
+          "pool_columns": 21542,
+          "source_status_sha256": "5d0c29e43305d970679546ee38bdf6d91b9bcdc34b3b8621e8f6d11760d1dda2",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        },
+        {
+          "case": "w4_k10",
+          "import_runtime_s": 354.25439368886873,
+          "import_minutes": 5.904239894814479,
+          "wall_s": 2521.885668700561,
+          "remaining_cg_s": 2167.631275011692,
+          "remaining_cg_minutes": 36.12718791686154,
+          "attempt_wall_s": 2521.885672515258,
+          "iterations": 909,
+          "pool_columns": 26691,
+          "source_status_sha256": "4cb8815524abb8c8bff6a6dbaf78e2ce71f585a769fe32026d7013d8dbd5123f",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        },
+        {
+          "case": "w5_k11",
+          "import_runtime_s": 428.52069629216567,
+          "import_minutes": 7.1420116048694275,
+          "wall_s": 4227.669615334133,
+          "remaining_cg_s": 3799.148919041967,
+          "remaining_cg_minutes": 63.319148650699454,
+          "attempt_wall_s": 4227.669618195156,
+          "iterations": 1304,
+          "pool_columns": 38125,
+          "source_status_sha256": "8812619897b8b60e81b048938578ca1369e463c1331afe883dda5b81500f7695",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        },
+        {
+          "case": "w6_k11",
+          "import_runtime_s": 308.7636317186989,
+          "import_minutes": 5.146060528644981,
+          "wall_s": 1947.3778180670924,
+          "remaining_cg_s": 1638.6141863483936,
+          "remaining_cg_minutes": 27.310236439139892,
+          "attempt_wall_s": 1947.3778221202083,
+          "iterations": 811,
+          "pool_columns": 23242,
+          "source_status_sha256": "e234d6a5921c163be8748503ee2ac70412e41eff7e9eaa8c4d63d2d3a831ce7e",
+          "imported_columns": 512,
+          "import_rejected_columns": 0,
+          "import_deadline_reached": false,
+          "inherited_duals": false,
+          "inherited_basis": false,
+          "inherited_lp_certificate": false
+        }
+      ],
+      "transform": "remaining_cg_minutes = (wall_s - inherited_event_pool_audit.import_runtime_s) / 60",
+      "wall_s_semantics": {
+        "includes_import_before_subtraction": true,
+        "basis": "t0 is set before inherited event-pool import; wall_s is _cumulative_elapsed_s().",
+        "residual_scope": "Residual includes network/setup and all later CG work, including route search, LP solves, and finalization."
+      },
+      "interpretation_boundary": "These are phase timings. They are not a paired speedup comparison; older full-pool cases differ in treatment and scope."
+    },
+    "bottleneck_capacity_k3_lp_vs_pricing.png": {
+      "caption_path": "outputs/document_recovery_20260912/bottleneck_capacity_k3_lp_vs_pricing.md",
+      "sources": [
+        {
+          "path": "outputs/parallel_research_20260911/capacity_deadline5_completed/records.json",
+          "sha256": "89db76df1865ab40fa8c0aeba0e21e9fdcf37df0e4fd4b8f2f75df990629df4e",
+          "note": "Exact iteration-3 LP and pricing telemetry."
+        },
+        {
+          "path": "outputs/parallel_research_20260911/capacity_deadline5_completed/README.md",
+          "sha256": "bd2beb68dbc4d515c9138f2bfa2876fe685b71021a2a7bbc95c0ad1ddf9a1f6c",
+          "note": "Rounded 7.15-hour/0.00563-second interpretation and proof boundary."
+        },
+        {
+          "path": "outputs/research_register/CAPACITY_PILOT_TIMEOUT_EVIDENCE_20260910.json",
+          "sha256": "4b2e9867903e85dfee668f3b103fc5f1308d3c128ee43ca31dae6087be3d7d42",
+          "note": "Scheduler timeout evidence; it contains no per-iteration timing fields used for the plotted values."
+        },
+        {
+          "path": "outputs/research_register/EXECUTION_ISSUES_20260910.md",
+          "sha256": "fe5733d6edb79e4e36e81d8671e6c704130068d4fe3fd9760df48cc5c1e5c5db",
+          "note": "Register wording that identifies the same third iteration."
+        },
+        {
+          "path": "git:253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6:src/run_capacity_speed_event_cg.py",
+          "sha256": "86c2b9e797d99a4321157e6ce9dd64874e285e59551748395f28599f2f4d8377",
+          "note": "Immutable pricer source showing pricing_s is timed around one network.min_reduced_cost_route call."
+        }
+      ],
+      "data": {
+        "case": "e1_short_k3__capacity",
+        "arm": "capacity",
+        "status": "incomplete",
+        "stop_reason": "pricing_deadline",
+        "certified_rc_optimal": false,
+        "record_path_on_cluster": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/results/e1_short_k3__capacity/cg.json",
+        "record_sha256": "b8f44a040bfd2fd46ac14b281e5f92c7bd86fb16d9a72389cbf259f05bd9c863",
+        "execution_commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+        "iteration": 3,
+        "lp_solve_s": 0.005633926019072533,
+        "pricing_s": 25722.64842124097,
+        "pricing_hours": 7.145180117011381,
+        "pricing_minutes": 428.71080702068286,
+        "priced_trip_count": 12,
+        "lp_columns": 72,
+        "lp_rows": 7835,
+        "lp_nonzeros": 293,
+        "pool_columns": 37,
+        "nonzero_capacity_duals": 1,
+        "route_weight": 21.0,
+        "min_reduced_cost": -1099915.2800000003,
+        "final_weighted_objective": 1600127.456,
+        "final_pool_columns": 38
+      },
+      "comparison_semantics": {
+        "same_iteration": true,
+        "iteration": 3,
+        "lp_solve_s": "The restricted-master LP solve time recorded for iteration 3.",
+        "pricing_s": "One call to network.min_reduced_cost_route(...) in iteration 3, timed around that call; not an aggregate over the run.",
+        "priced_trip_count": "The selected candidate route covers 12 trips; it is not a count of separately timed pricing calls.",
+        "aggregate_or_onecall": "onecall"
+      },
+      "interpretation_boundary": "The run stopped at pricing_deadline and has no pricing certificate; the chart explains elapsed work only."
+    }
+  },
+  "outputs": {
+    "bottleneck_warm_import_vs_remaining.png": {
+      "sha256": "996b66494af3c2338d563bd07e4756fa779d88a03b4581b26b04d00fac0af156",
+      "bytes": 129218
+    },
+    "bottleneck_capacity_k3_lp_vs_pricing.png": {
+      "sha256": "5382d748fff280e052d62db25f87bd8b1993d55790fa1fd8e12cb761bcb86c7e",
+      "bytes": 60066
+    }
+  }
+}
