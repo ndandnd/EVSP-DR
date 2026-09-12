@@ -4,7 +4,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1771 artifact/stage records across 32 campaign/source groups**, from the reconciled 07:27 EDT collection on12 September. The historical inventory covers39 evidence families. Counts are not independent experimental sample sizes.
+Current build: **1772 artifact/stage records across 32 campaign/source groups**, from the 08:28 EDT collection on 12 September. The historical inventory covers 39 evidence families. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -16,7 +16,7 @@ Current build: **1771 artifact/stage records across 32 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest results: 07:27 EDT collection: 59/87 CG certificates; 55 MIP results (25 warm, 30 component), including one late result verified after collection. All four warm timing pairs finished with matching certified LP objectives and16–22% less runtime, excluding common preparation; only three distinct warm cases. Join01 parent CG timed out after saving its35-bus construction. [Dated tables](../overnight_extension_20260912/RESULTS_20260912T112738Z.md).
+Latest results: 08:28 EDT collection: 62/87 CG certificates; 56 MIP results (26 warm, 30 component). All four warm timing pairs finished with matching certified LP objectives and 16–22% less runtime, excluding common preparation; only three distinct warm cases. Three full-parent CG attempts timed out during startup; their saved decomposed constructions remain available. [Dated tables](../overnight_extension_20260912/RESULTS_20260912T122840Z.md).
 
 ## How to read a result
 
@@ -38,7 +38,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T112738Z_reconciled.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T122840Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

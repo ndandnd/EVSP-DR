@@ -121,3 +121,8 @@ Implementation terminal review pinned at57f663eb: [review](https://github.com/nd
 ## 12 September 07 27 EDT joined parent timeout
 
 Join01 job949751 reached its3-hour scheduler limit (elapsed03:02:10) during the parent32 CG invocation. The saved35-bus decomposed construction predates this step and remains available; it is not a completed parent CG or joint improvement. No parent cg.json exists; telemetry records startup only. No pricing certificate or parent MIP result. This is a timeout, not preemption. Original artifacts retained; no retry. Logs/hashes and the late-arriving w2_k13 MIP are in monitor/20260912T112738Z_supplement.json. The explicitly reconciled snapshot retains the original collection hash and timestamp.
+
+
+## 12 September 08 28 EDT repeated parent startup timeouts
+
+Join02 (949753) and join03 (949755) each reached their3-hour scheduler limit, elapsed03:02:21. Both retain only session_start parent-CG telemetry and no CG result. Their existing35- and36-bus decomposed constructions remain separate usable baseline artifacts; neither is a completed parent optimization. With join01 this is three full-parent startup timeouts. No preemption or new retry. Source logs/hashes: monitor/20260912T122840Z_supplement.json; scheduler accounting:20260912T122840Z_sacct.txt.
