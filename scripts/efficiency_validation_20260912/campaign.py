@@ -327,7 +327,7 @@ def launch(args):
     write(jobs_path, ledger)
     print(json.dumps(ledger, indent=2))
 
-def observe(path):
+def observe(path, hash_content=True):
     """Hash an available artifact without implying that a running file is frozen."""
     path = Path(path)
     result = {'path':str(path), 'exists':path.is_file()}
@@ -335,7 +335,9 @@ def observe(path):
         return result
     try:
         before = path.stat()
-        result.update(sha256=digest(path), bytes=before.st_size, mtime_ns=before.st_mtime_ns)
+        result.update(bytes=before.st_size, mtime_ns=before.st_mtime_ns, content_hash_recomputed=hash_content)
+        if hash_content:
+            result['sha256']=digest(path)
         after = path.stat()
         result['changed_during_hash'] = (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns)
     except OSError as exc:
@@ -385,7 +387,10 @@ def collect(args):
         pair = read_available(directory/'pair_status.json')
         preparation = read_available(directory/'prepare/execution.json')
         cache_identity = read_available(directory/'cache_identity.json')
-        current_cache = [observe(p) for p in sorted(directory.glob('network.pkl*')) if p.is_file()]
+        current_cache = [observe(p,hash_content=False) for p in sorted(directory.glob('network.pkl*')) if p.is_file()]
+        recorded_cache_hashes = {f['path']:f.get('sha256') for f in cache_identity.get('files',[])}
+        for item in current_cache:
+            item['recorded_preparation_sha256']=recorded_cache_hashes.get(item['path'])
         slurm = allocation.get('slurm',{})
         attempt = dict(case=case_name, attempt=directory.name,
                        pair_status=pair.get('status','not_written'), order=pair.get('order',case.get('order')),
@@ -398,7 +403,7 @@ def collect(args):
                        code=case.get('code'), commit=case.get('commit'), kind=case.get('kind'),
                        pair_status_artifact=observe(directory/'pair_status.json'),
                        preparation=execution_summary(preparation),
-                       preparation_artifacts={k:observe(directory/'prepare'/v) for k,v in
+                       preparation_artifacts={k:observe(directory/'prepare'/v,hash_content=k not in {'stdout','stderr'}) for k,v in
                           [('execution','execution.json'),('status','cg.json'),('phases','phases.jsonl'),
                            ('stdout','stdout.log'),('stderr','stderr.log')]},
                        cache_identity=cache_identity, cache_identity_artifact=observe(directory/'cache_identity.json'),
@@ -434,7 +439,7 @@ def collect(args):
                           pair_status=pair.get('status','not_written'), process_state=state,
                           execution_source='pair_status' if saved_execution else ('execution.json' if live_execution else None),
                           execution=execution_summary(execution), flags=command_flags((execution or {}).get('command')),
-                          artifacts={k:observe(p) for k,p in [('execution',arm/'execution.json'),
+                          artifacts={k:observe(p,hash_content=k not in {'stdout','stderr'}) for k,p in [('execution',arm/'execution.json'),
                             ('status',status_file),('pool',pool_path),('phases',arm/'phases.jsonl'),
                             ('stdout',arm/'stdout.log'),('stderr',arm/'stderr.log')]},
                           certified_rc_optimal=status.get('certified_rc_optimal'),
