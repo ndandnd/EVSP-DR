@@ -1,0 +1,208 @@
+{
+  "generator": {
+    "script": "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/generate_current_figures.py",
+    "python": "/Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "matplotlib": "3.8.3",
+    "figures_have_titles": false,
+    "figures_have_embedded_captions": false,
+    "script_sha256": "3ed2793063033acfb14fe04a71782a20b63cdca438138e0724162ff1e2b019c9"
+  },
+  "inputs": {
+    "monitor": {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260912T041951Z.json",
+      "sha256": "691f1de415cd15cb7a3a7a64dfd5fdbb9db389da676f440f0c6a210d204c5ffa"
+    },
+    "cluster_snapshot": {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_extension_20260912/cluster_snapshot.json",
+      "sha256": "281cfaa38eddefc60c70397be0cd3b19b24df29d6375a98ece29b7ab42edaed3"
+    }
+  },
+  "charging": {
+    "source_records": [
+      "c5bd813c9f2c8f727150be77a95b3f80db2990a83b0fee6d6b0944bbdf87335d",
+      "d2f8ddfce55c5dfcc1680ba0c2204fd9305711f8c454667d8b0a220028fbc008",
+      "dcff1c7807b643cfad4b0642d506bc30c98162a98ddbde4a43b2e567afb47037"
+    ],
+    "tariff_peaks": [
+      "08:00",
+      "12:00",
+      "18:00"
+    ],
+    "fixed_physical_replay": [
+      275.8731824876595,
+      328.5482263665763,
+      230.78213598227012
+    ],
+    "joint_physical_replay": [
+      257.6871222688351,
+      328.358731274755,
+      215.7563434713229
+    ],
+    "original_giro_interval": [
+      [
+        490.28700962629637,
+        490.9810746873893
+      ],
+      [
+        549.5935355365639,
+        550.5965839307596
+      ],
+      [
+        483.44729058227836,
+        483.7232277426603
+      ]
+    ]
+  },
+  "charging_slide": {
+    "source_records": [
+      "c5bd813c9f2c8f727150be77a95b3f80db2990a83b0fee6d6b0944bbdf87335d",
+      "d2f8ddfce55c5dfcc1680ba0c2204fd9305711f8c454667d8b0a220028fbc008",
+      "dcff1c7807b643cfad4b0642d506bc30c98162a98ddbde4a43b2e567afb47037"
+    ],
+    "tariff_peaks": [
+      "08:00",
+      "12:00",
+      "18:00"
+    ],
+    "fixed_physical_replay": [
+      275.8731824876595,
+      328.5482263665763,
+      230.78213598227012
+    ],
+    "joint_physical_replay": [
+      257.6871222688351,
+      328.358731274755,
+      215.7563434713229
+    ],
+    "original_giro_interval": [
+      [
+        490.28700962629637,
+        490.9810746873893
+      ],
+      [
+        549.5935355365639,
+        550.5965839307596
+      ],
+      [
+        483.44729058227836,
+        483.7232277426603
+      ]
+    ]
+  },
+  "import_timing": {
+    "rows": [
+      {
+        "label": "Chain 3, k=8",
+        "import_and_validate_minutes": 133.18964385604875,
+        "other_cg_minutes": 3.874589743775626,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k08_p3__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+        "inherited_pool_status_sha256": "4dd0df15c6b93d5b2a1b9351507d970856d659b567bec4593182fa2d52d3ea91"
+      },
+      {
+        "label": "Chain 3, k=10",
+        "import_and_validate_minutes": 282.5932796545172,
+        "other_cg_minutes": 9.978580962459091,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k10_p3__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+        "inherited_pool_status_sha256": "29dd9e02cc32eddafc300f04ed787a8b19ff205aa50a12feea2de17bbbe187b0"
+      },
+      {
+        "label": "Chain 5, k=5",
+        "import_and_validate_minutes": 59.12342446681578,
+        "other_cg_minutes": 3.0096394500889194,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k05_p5__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "9b7788a554cdacca084e0cb218796da5d5e0ae076c61073b667ed288dc157a1e",
+        "inherited_pool_status_sha256": "a08133d1b8d90781eab52e1ea77b62e9bc52dfa02eee9c8300eb57bee81b19dc"
+      },
+      {
+        "label": "Chain 5, k=6",
+        "import_and_validate_minutes": 91.08097513013054,
+        "other_cg_minutes": 10.72676014478396,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k06_p5__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "b5222957640276a19c072cc4350078bcd7aa699badbdee3c25bb82599fb57a87",
+        "inherited_pool_status_sha256": "305ff055a8902573c51bfb000c27810632348ba79a46975189763b80e6b5ef52"
+      },
+      {
+        "label": "Chain 5, k=10",
+        "import_and_validate_minutes": 330.4209335029979,
+        "other_cg_minutes": 11.488736534145817,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k10_p5__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+        "inherited_pool_status_sha256": "2d827d39a28ac90be71b1d18e356701cd9eb4fbe24a5ad8520541de196455224"
+      }
+    ]
+  },
+  "import_timing_slide": {
+    "rows": [
+      {
+        "label": "Chain 3, k=8",
+        "import_and_validate_minutes": 133.18964385604875,
+        "other_cg_minutes": 3.874589743775626,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k08_p3__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+        "inherited_pool_status_sha256": "4dd0df15c6b93d5b2a1b9351507d970856d659b567bec4593182fa2d52d3ea91"
+      },
+      {
+        "label": "Chain 3, k=10",
+        "import_and_validate_minutes": 282.5932796545172,
+        "other_cg_minutes": 9.978580962459091,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k10_p3__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+        "inherited_pool_status_sha256": "29dd9e02cc32eddafc300f04ed787a8b19ff205aa50a12feea2de17bbbe187b0"
+      },
+      {
+        "label": "Chain 5, k=5",
+        "import_and_validate_minutes": 59.12342446681578,
+        "other_cg_minutes": 3.0096394500889194,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k05_p5__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "9b7788a554cdacca084e0cb218796da5d5e0ae076c61073b667ed288dc157a1e",
+        "inherited_pool_status_sha256": "a08133d1b8d90781eab52e1ea77b62e9bc52dfa02eee9c8300eb57bee81b19dc"
+      },
+      {
+        "label": "Chain 5, k=6",
+        "import_and_validate_minutes": 91.08097513013054,
+        "other_cg_minutes": 10.72676014478396,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k06_p5__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "b5222957640276a19c072cc4350078bcd7aa699badbdee3c25bb82599fb57a87",
+        "inherited_pool_status_sha256": "305ff055a8902573c51bfb000c27810632348ba79a46975189763b80e6b5ef52"
+      },
+      {
+        "label": "Chain 5, k=10",
+        "import_and_validate_minutes": 330.4209335029979,
+        "other_cg_minutes": 11.488736534145817,
+        "status": "certified",
+        "source_path": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k10_p5__warm_cover__event_2p5_event5.json",
+        "instance_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+        "inherited_pool_status_sha256": "2d827d39a28ac90be71b1d18e356701cd9eb4fbe24a5ad8520541de196455224"
+      }
+    ]
+  },
+  "outputs": {
+    "charging_current.png": {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/charging_current.png",
+      "sha256": "ebb53bf730e154fcc4919f79bb1e9fe58584becc1dc5fd740eca9a55e69e4412"
+    },
+    "charging_current_slide.png": {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/charging_current_slide.png",
+      "sha256": "fee2b32bfa3465d9a9c53b97ece1c8ddee11a225c03511c68aca71ed8f5639e1"
+    },
+    "import_time_current.png": {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/import_time_current.png",
+      "sha256": "2ad4416113086f4916da7873407a42e43f44bb97da953e58938f12a9b6a53741"
+    },
+    "import_time_current_slide.png": {
+      "path": "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/import_time_current_slide.png",
+      "sha256": "568f174200a8b2c79dc432c08c0538c342c90a8c1780c2f575e91e2a2af3818c"
+    }
+  }
+}
