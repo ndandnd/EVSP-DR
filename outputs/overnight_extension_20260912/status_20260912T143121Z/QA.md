@@ -1,0 +1,1 @@
+All six native-export PDF pages visually inspected. New Chain 6 k15 row and 10:31 EDT timestamp verified against the collected source. Tables readable and no clipping. Both figure tabs preserved without edits. Workbook count and formula checks passed.
