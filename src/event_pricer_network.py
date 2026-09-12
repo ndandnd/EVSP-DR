@@ -287,20 +287,62 @@ class EventExpandedNetwork:
         dual = self.trip_position[trip] if trip is not None else -1
         row = (target, float(cost), dual, action)
         key = (target, dual)
-        candidate = (row[1], json.dumps(action, sort_keys=True))
         retained = self._building_arcs.setdefault(source, {})
         current = retained.get(key)
-        if current is None or candidate < current[0]:
-            retained[key] = (candidate, row)
+        candidate_cost = (row[1],)
+        if current is None or candidate_cost < current[0]:
+            # Action dictionaries are freshly allocated by each candidate
+            # producer and are not mutated after yielding.  Keep their JSON
+            # tie key deferred: almost every comparison is decided by cost.
+            retained[key] = (candidate_cost, None, row)
+            return
+        if candidate_cost != current[0]:
+            return
+        candidate_action_key = json.dumps(action, sort_keys=True)
+        current_action_key = current[1]
+        if current_action_key is None:
+            current_action_key = json.dumps(current[2][3], sort_keys=True)
+        if candidate_action_key < current_action_key:
+            retained[key] = (
+                candidate_cost, candidate_action_key, row,
+            )
+        elif current[1] is None:
+            retained[key] = (
+                current[0], current_action_key, current[2],
+            )
 
     def _finalize_source(self, source):
         retained = self._building_arcs.pop(source, {})
-        rows = sorted(
-            (value[1] for value in retained.values()),
-            key=lambda row: (
-                row[0], row[1], json.dumps(row[3], sort_keys=True)
-            ),
+        entries = sorted(
+            retained.values(),
+            key=lambda value: (value[2][0], value[2][1]),
         )
+        # The old key was (target, cost, action JSON).  JSON can affect the
+        # order only inside an exact (target, cost) tie group, which does not
+        # occur in normal construction because target determines dual.  Keep
+        # the general tie behavior without serializing every retained action.
+        group_start = 0
+        while group_start < len(entries):
+            group_key = (entries[group_start][2][0], entries[group_start][2][1])
+            group_end = group_start + 1
+            while (
+                group_end < len(entries)
+                and (
+                    entries[group_end][2][0], entries[group_end][2][1]
+                ) == group_key
+            ):
+                group_end += 1
+            if group_end - group_start > 1:
+                entries[group_start:group_end] = sorted(
+                    entries[group_start:group_end],
+                    key=lambda value: (
+                        value[1]
+                        if value[1] is not None
+                        else json.dumps(value[2][3], sort_keys=True)
+                    ),
+                )
+            group_start = group_end
+        rows = [value[2] for value in entries]
         if self.arc_mode == "explicit":
             self.out[source] = rows
         else:
