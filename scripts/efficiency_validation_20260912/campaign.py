@@ -170,8 +170,11 @@ def baseline_command(case, output, cache=None, prepare_only=False):
     for key, flag in keys:
         cmd += [flag, str(a[key])]
     cmd += ['--wall-limit-s', str(case['preparation_seconds'] if prepare_only else case['arm_seconds']),
-            '--out', str(output / 'cg.json'), '--gurobi-log', str(output / 'gurobi.log'),
-            '--phase-telemetry', str(output / 'phases.jsonl')]
+            '--gurobi-log', str(output / 'gurobi.log'), '--phase-telemetry', str(output / 'phases.jsonl')]
+    # Cache-only CLI rejects --out; its durable product is the authenticated
+    # cache/manifest, with process and phase evidence kept by the wrapper.
+    if not prepare_only:
+        cmd += ['--out', str(output / 'cg.json')]
     if a.get('strict_tariff_coverage'):
         cmd += ['--strict-tariff-coverage']
     if cache:

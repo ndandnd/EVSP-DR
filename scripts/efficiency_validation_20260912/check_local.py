@@ -10,6 +10,8 @@ from pathlib import Path
 import sys
 import tempfile
 from types import SimpleNamespace
+from unittest import mock
+import signal
 
 HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('campaign', HERE/'campaign.py')
@@ -53,6 +55,54 @@ def main():
                 assert '--event-network-cache-only' in command
                 assert '--inherit-event-pool-from' not in command
                 assert all(word in baseline_options for word in command if word.startswith('--'))
+        # Exercise the real argparse validation, including cross-option rules.
+        sys.path.insert(0,str(baseline/'src'))
+        sys.path.insert(0,str(baseline/'tests'))
+        import exact_pricer_expanded as exact
+        import master_lp_gurobi
+        from test_event_pricer_network import four_trip_chain_problem, prices
+        prep_dir=root/'actual_prepare'
+        prep_dir.mkdir()
+        fixture_csv=root/'tiny_fixture.csv'
+        fixture_csv.write_text('trip_id\n0\n1\n2\n3\n')
+        fixture_case={**cases[2],'instance':str(fixture_csv),'prices':str(baseline/'data/hourly_prices_flat.csv')}
+        prep_command=c.baseline_command(fixture_case,prep_dir,root/'actual_network.pkl',True)
+        with mock.patch.object(exact,'run_cg',return_value={}) as solve:
+            assert exact.main(prep_command[1:])==0
+            parsed=solve.call_args.args[0]
+            assert parsed.event_network_cache_only and parsed.out is None
+            solve.reset_mock()
+            with contextlib.redirect_stderr(io.StringIO()):
+                try:exact.main(prep_command[1:]+['--out',str(prep_dir/'invalid.json')])
+                except SystemExit as exc:assert exc.code==2
+                else:raise AssertionError('actual parser accepted original invalid cache-only/out combination')
+            solve.assert_not_called()
+        for case in cases[:6]:
+            for mode in ['reference','optimized']:
+                arm_command=c.command(case,mode,root/mode,root/'actual_network.pkl' if case['kind']=='warm' else None)
+                with mock.patch.object(exact,'run_cg',return_value={}) as solve, \
+                     mock.patch.object(exact,'exclusive_output_lock',return_value=contextlib.nullcontext()), \
+                     mock.patch.object(exact,'atomic_write_json'):
+                    assert exact.main(arm_command[1:])==0
+                    assert solve.call_args.args[0].out==root/mode/'cg.json'
+        # Build and load a real tiny event cache through actual main/run_cg.
+        # Only fixture input loading and licensed Gurobi preflight are substituted.
+        signals=[signal.SIGUSR1,signal.SIGTERM,signal.SIGINT]
+        handlers={sig:signal.getsignal(sig) for sig in signals}
+        try:
+            with mock.patch.object(exact,'build_problem',return_value=four_trip_chain_problem()), \
+                 mock.patch.object(exact,'load_station_hourly_prices',return_value=prices()), \
+                 mock.patch.object(master_lp_gurobi,'gurobi_preflight',return_value={}), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                assert exact.main(prep_command[1:])==0
+                assert (root/'actual_network.pkl').is_file()
+                assert (root/'actual_network.pkl.manifest.json').is_file()
+                assert not (prep_dir/'cg.json').exists()
+                reload_command=prep_command[1:]
+                reload_command[reload_command.index('build-or-load')]='require'
+                assert exact.main(reload_command)==0
+        finally:
+            for sig,handler in handlers.items():signal.signal(sig,handler)
         c.write(root/'manifest.json',dict(cases=cases,python=sys.executable))
         output=io.StringIO()
         with contextlib.redirect_stdout(output):
@@ -100,6 +150,6 @@ def main():
         assert cap['certified_rc_optimal'] is True and cap['terminal_exact_min_reduced_cost']==0
         assert cap['artifacts']['pool']['sha256'] and cap['final']['objective']==77
         assert cap['pricing_seconds_completed_iterations']==3
-    print('PASS: command flags, dry launch, watchdog, preparation/live-first-arm/pending collection, both certificate schemas and pool hashes')
+    print('PASS: real parser cross-option validation, negative original-bug regression, real tiny cache build/require-load, command flags, dry launch, watchdog and collector checks')
 
 if __name__=='__main__':main()
