@@ -1,6 +1,8 @@
 """Small destructive-file fixtures in a temporary directory, never live data."""
 import gzip
 import hashlib
+import json
+import os
 import pathlib
 import subprocess
 import tempfile
@@ -19,23 +21,30 @@ def fixture(mode):
         src.write_bytes(payload)
         original = hashlib.sha256(payload).hexdigest()
         stat = src.stat()
-        status = base/'archive/status.tsv'
+        (base/'archive/manifest.json').write_text(json.dumps({'files':[{
+            'path':str(src),'size':stat.st_size,'mtime_ns':stat.st_mtime_ns,
+            'inode':stat.st_ino,'device':stat.st_dev,'nlink':stat.st_nlink,'mode':stat.st_mode}]}))
+        status = base/'archive/status.tsv' 
         status.write_text('source_path\tphase\tsource_sha256\tsource_size_bytes\tarchive_path\tarchive_sha256\tarchive_size_bytes\tevent_utc\n')
         functions = SOURCE[SOURCE.index('fsync_file()'):SOURCE.index('if [ ! -s "$STATUS"')]
         functions += SOURCE[SOURCE.index('append_event()'):SOURCE.index('\nsuccess_count=0')]
         functions = functions.replace('/home/nc437/ladder-lite/', str(base/'ladder-lite')+'/')
-        if mode in ('prepared_present','prepared_absent','changed_after_prepared','bad_mapping'):
+        if mode in ('prepared_present','prepared_absent','changed_after_prepared','bad_mapping','dangling_prepared'):
             arc.write_bytes(gzip.compress(payload,compresslevel=1))
             arc_sha=hashlib.sha256(arc.read_bytes()).hexdigest()
             recorded = str(arc) if mode!='bad_mapping' else str(arc)+'.wrong'
             with status.open('a') as f:
                 f.write(f'{src}\tprepared\t{original}\t{len(payload)}\t{recorded}\t{arc_sha}\t{arc.stat().st_size}\tfixture\n')
             if mode=='prepared_absent': src.unlink()
+            if mode=='dangling_prepared':
+                src.unlink();src.symlink_to(base/'absent')
             if mode=='changed_after_prepared': src.write_bytes(b'x'*len(payload))
+        elif mode=='same_size_replacement':
+            replacement=src.with_suffix('.replacement');replacement.write_bytes(payload)
+            os.utime(replacement,ns=(stat.st_atime_ns,stat.st_mtime_ns));os.replace(replacement,src)
         elif mode=='symlink':
             real=src.with_suffix('.real');src.rename(real);src.symlink_to(real)
         elif mode=='hardlink':
-            import os
             os.link(src,src.with_suffix('.other'))
         elif mode=='orphan_archive':
             arc.write_bytes(gzip.compress(payload))
@@ -61,11 +70,12 @@ archive_one '{src}' '{stat.st_size}' '{int(stat.st_mtime)}' '{arc}'
             assert subprocess.run(['bash',str(HERE/'restore_archive.sh'),str(arc),str(restored),original],capture_output=True).returncode!=0
         else:
             assert result.returncode!=0,(mode,result.stdout,result.stderr)
-            assert src.exists(),mode
-            if mode!='changed_after_prepared': assert src.read_bytes()==payload,mode
+            assert src.exists() or src.is_symlink(),mode
+            if mode not in ('changed_after_prepared','dangling_prepared'): assert src.read_bytes()==payload,mode
         print(mode,'PASS')
 
 if __name__=='__main__':
     for mode in ('normal','prepared_present','prepared_absent','changed_after_prepared',
-                 'bad_mapping','symlink','hardlink','orphan_archive','record_failure'):
+                 'bad_mapping','symlink','hardlink','orphan_archive','record_failure',
+                 'same_size_replacement','dangling_prepared'):
         fixture(mode)

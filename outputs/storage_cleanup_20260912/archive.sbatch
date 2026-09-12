@@ -71,6 +71,20 @@ verify_archive() {
     decomp=$(gzip -cd -- "$arc" | sha256sum | cut -d' ' -f1) || return 1
     [ "$decomp" = "$source_sha" ]
 }
+validate_identity() {
+    python3 - "$ROOT/manifest.json" "$1" <<'PY_IDENTITY'
+import json,os,sys
+rows=json.load(open(sys.argv[1]))['files']
+expected=next((r for r in rows if r['path']==sys.argv[2]),None)
+if expected is None: raise SystemExit(1)
+st=os.lstat(sys.argv[2])
+actual={'size':st.st_size,'mtime_ns':st.st_mtime_ns,'inode':st.st_ino,
+        'device':st.st_dev,'nlink':st.st_nlink,'mode':st.st_mode}
+if any(actual[k]!=expected[k] for k in actual):
+    print('manifest_identity_mismatch='+sys.argv[2],file=sys.stderr)
+    raise SystemExit(1)
+PY_IDENTITY
+}
 record_failure() {
     append_event "$1" failed "" "$2" "$3" "" "" "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 }
@@ -101,13 +115,14 @@ archive_one() {
             verify_archive "$status_arc" "$source_sha" "$archive_sha" || return 1
             if [ -e "$src" ]; then
                 [ -f "$src" ] && [ ! -L "$src" ] || return 1
+                validate_identity "$src" || return 1
                 [ "$(stat -c %h "$src")" = 1 ] || return 1
                 [ "$(stat -c '%s' "$src")" = "$source_size" ] || return 1
                 [ "$(sha256sum "$src" | cut -d' ' -f1)" = "$source_sha" ] || return 1
                 rm -- "$src" || return 1
                 fsync_dir "$(dirname "$src")" || return 1
             fi
-            [ ! -e "$src" ] || return 1
+            [ ! -e "$src" ] && [ ! -L "$src" ] || return 1
             append_event "$src" success "$source_sha" "$source_size" "$status_arc" "$archive_sha" "$archive_size" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" || return 1
             return 0
         fi
@@ -116,6 +131,7 @@ archive_one() {
     [ -e "$src" ] || { echo "source_missing_without_durable_record=$src" >&2; return 1; }
     [ -f "$src" ] && [ ! -L "$src" ] || return 1
     [ "$(stat -c %h "$src")" = 1 ] || { echo "hardlinked_source=$src" >&2; return 1; }
+    validate_identity "$src" || return 1
     [ ! -e "$arc" ] || { echo "archive_collision_without_durable_record=$arc" >&2; return 1; }
     rm -f -- "$tmp"
     before=$(stat -c '%s|%Y|%i|%d' "$src") || return 1
@@ -139,6 +155,7 @@ archive_one() {
     append_event "$src" prepared "$sha" "$(printf '%s' "$before" | cut -d'|' -f1)" "$arc" "$arcsha" "$arcstat" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" || return 1
     [ "$(sha256sum "$src" | cut -d' ' -f1)" = "$sha" ] || return 1
     [ "$(stat -c '%s|%Y|%i|%d' "$src")" = "$before" ] || return 1
+    validate_identity "$src" || return 1
     rm -- "$src" || return 1
     fsync_dir "$(dirname "$src")" || return 1
     [ ! -e "$src" ] || return 1
