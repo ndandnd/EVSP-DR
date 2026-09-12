@@ -1,10 +1,12 @@
 # EVSP–DR experiment register
 
+**Start here:** [Plain-language catch-up for 12 September](CATCH_UP_20260912.md).
+
 This is the common index for experiment settings, execution records, results and source evidence. The compact [Week of 14 September status tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow) and [Figures with explanations tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) are the live document view. The [CG curves and bus schedules library](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) restores the earlier visual evidence with dated captions. Preserve all figures when updating or simplifying text. Superseded material is also kept in the separate [Historical archive document](https://docs.google.com/document/d/1f0orWtM1-_VWAqjj6GnWP78webCOnvoc01x2VQvaA_k/edit).
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1770 artifact/stage records across 33 campaign/source groups**, from the 14:34 EDT collection on 12 September. The historical inventory covers 39 evidence families. Counts are not independent experimental sample sizes.
+Current build: **1774 artifact/stage records across 38 campaign/source groups**, from the 15:34 EDT collection on 12 September. The historical inventory covers 39 evidence families. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -16,7 +18,7 @@ Current build: **1770 artifact/stage records across 33 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest results:66/87 original CG certificates;64 extension MIPs. C1k14 CG certified; MIP16 buses/bound14, fleet unproved. C4k15 MIP18/bound15, fleet unproved and CG uncertified. Isolated retry15687 continues at1449iterations without certificate. [Dated results](../overnight_extension_20260912/RESULTS_20260912T183416Z.md).
+Latest results:66/87 original CG certificates and64 original extension MIPs. Isolated chain2k14 recovery is now CG-certified; three affected successors37583/37584/37585 submitted under corrected paths. No new integer result. [Recovery ledger](../w2_chain_recovery_retry2_20260912/README.md).
 
 ## How to read a result
 
@@ -38,7 +40,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T183416Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T193423Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

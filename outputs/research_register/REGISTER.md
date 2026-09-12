@@ -1,8 +1,8 @@
 # Research experiment register
 
-Source snapshot: `20260912T183416Z.json` (`499eb5e36d07ca661b2d249610ab3f0aab1e45b4b951d36acaaadb14db9439ec`), captured 2026-09-12T18:34:16.373475+00:00.
+Source snapshot: `20260912T193423Z.json` (`b9f6b7a250568d501ecbd86b329c8770e8e43fd029a974e9d5f13fc7a971388f`), captured 2026-09-12T19:34:23.834521+00:00.
 
-This build contains **1770 normalized artifact/stage rows** across **33 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
+This build contains **1774 normalized artifact/stage rows** across **38 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
 
 ## Campaign index
 
@@ -29,9 +29,14 @@ This build contains **1770 normalized artifact/stage rows** across **33 source g
 | overnight_cpu04_raw_controls | production_or_historical | /home/nc437/ladder-lite/overnight_cpu04_raw_controls_20260909 | 3 | 598960<br>598961 | unknown |
 | overnight_extension_20260912 | production_or_historical | /home/nc437/ladder-lite/overnight_extension_20260912 | 228 | 949572<br>949623<br>949624<br>949635<br>949636<br>949637<br>949638<br>949639<br>949680<br>949681<br>949682<br>949683<br>949684<br>949685<br>949686<br>949687<br>949688<br>949689<br>949690<br>949691<br>949692<br>949693<br>949694<br>949695<br>949696<br>949697<br>949698<br>949699<br>949700<br>949701<br>949702<br>949703<br>949704<br>949705<br>949706<br>949707<br>949708<br>949709<br>949710<br>949711<br>949712<br>949713<br>949714<br>949715<br>949716<br>949717<br>949718<br>949719<br>949720<br>949721<br>949722<br>949723<br>949724<br>949725<br>949726<br>949727<br>949728<br>949729<br>949730<br>949731<br>949732<br>949733<br>949734<br>949735<br>949736<br>949737<br>949738<br>949739<br>949740<br>949741<br>949742<br>949743<br>949744<br>949745<br>949746<br>949747<br>949748<br>949749<br>949750<br>949751<br>949752<br>949753<br>949754<br>949755<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949766<br>949767<br>949768<br>949769 | unknown |
 | post_meeting_log_tails | solver_progress_log | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 2 | unknown | unknown |
-| scheduler_snapshot | scheduler | unknown | 78 | 15687<br>537227<br>810296<br>810319<br>810320<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810975<br>810994<br>810995<br>949624<br>949691<br>949692<br>949704<br>949705<br>949706<br>949749<br>949750<br>949752<br>949754<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949767<br>949769 | unknown |
+| scheduler_snapshot | scheduler | unknown | 77 | 537227<br>810296<br>810319<br>810320<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810975<br>810994<br>810995<br>949624<br>949691<br>949692<br>949704<br>949705<br>949706<br>949749<br>949750<br>949752<br>949754<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949767<br>949769 | unknown |
 | stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | unknown |
 | stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | unknown |
+| supplemental:chain2_recovery_manifest | supplemental_audit | unknown | 1 | 15687<br>949704<br>949705<br>949706 | unknown |
+| supplemental:chain2_recovery_retry2_manifest | supplemental_audit | unknown | 1 | 15687<br>37532<br>37533<br>37534<br>949704<br>949705<br>949706 | unknown |
+| supplemental:chain2_recovery_retry2_submission | supplemental_audit | unknown | 1 | 37583<br>37584<br>37585 | unknown |
+| supplemental:chain2_recovery_submission | supplemental_audit | unknown | 1 | 37532<br>37533<br>37534 | unknown |
+| supplemental:completed_parent_validation | supplemental_audit | unknown | 1 | unknown | unknown |
 | targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | unknown |
 | targeted_audit:full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_audit_20260909_1745 | 12 | unknown | unknown |
 | targeted_audit:legacy_full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_legacy175_20260909_1755 | 4 | unknown | unknown |
@@ -54,11 +59,12 @@ This build contains **1770 normalized artifact/stage rows** across **33 source g
 | matched_tariff_comparison | comparison_arm | 57 |
 | pool_mip | mip | 404 |
 | rejected_mip_output | mip_rejected | 2 |
-| scheduler | queue_state | 78 |
+| scheduler | queue_state | 77 |
 | small_reference_cg | cg_arm | 32 |
 | small_same_pool_comparison | lp | 64 |
 | small_same_pool_comparison | mip | 64 |
 | solver_progress_log | log_tail | 2 |
+| supplemental_audit | audit_result | 5 |
 | targeted_audit | audit_result | 17 |
 | targeted_audit | workflow | 1 |
 | targeted_audit_log | log_tail | 2 |

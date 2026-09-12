@@ -155,3 +155,18 @@ Job15687 submitted12September15:56:29UTC; initial PENDING Priority. Source68fce0
 ### Import fix verified in cluster 12 September 12 32 EDT
 
 Retry15687: replay900.000092s, shutdown0.162453s, total import904.208110s. CG checkpoint224iterations, telemetry232, continuing without certificate. Confirms bounded worker shutdown, not convergence. Snapshot20260912T163244Z. C4k15 independently stopped at its CG wall_limit with min_rc=-0.199828525 and no pricing certificate; saved pool MIP running. This is a solver time limit, not an execution crash.
+
+
+### Targeted catch-up check 12 September 14 58 EDT
+
+Retry15687 now reports certified_rc_optimal=true, stop_reason=certified,1484iterations,9572.358s,weighted LP1400558.3558959858,no artificials,min_rc=-9.09e-9. No longer in running queue; wrapper terminal/accounting and source hashes still to collect before downstream repair. Evidence `../post_meeting_20260910/monitor/20260912T1858_catchup_check.json`. Google Doc note updated; original66/87 campaign count remains separate from this isolated corrected retry. No MIP result or completed physical integer validation claimed.
+
+
+### Chain 2 downstream recovery submitted
+
+Only affected jobs replaced by distinct attempts37532(k14 MIP),37533(k15 CG),37534(k15 MIP after37533). Original blocked949704/5/6 retained. Predecessor15687 final source/journal hashes, certificate, zero artificials and completed0:0 verified. Real data path corrected; no result copied over failed original. Same science, resources and budgets as planned; no output/certificate claim for these three new jobs. Details outputs/w2_chain_recovery_20260912.
+
+
+### Recovery wrapper failure and verified replacement
+
+37532/37533 stopped in Gurobi preflight before optimization: PYTHON_BIN unset in new wrapper.37534 remained DependencyNeverSatisfied. This was a manager launcher error, unrelated to the recovered CG output or solver license. Fixed wrapper exports PYTHON_BIN; exact wrapper environment/preflight successfully executed before resubmission. New jobs37583(k14 MIP),37584(k15 CG),37585(k15 MIP after37584), root w2_chain_recovery_retry2_20260912. Original attempt outputs/jobs preserved. New Gurobi logs and result paths are isolated. Source science/budgets unchanged. First recovery root must remain: new attempts depend on its frozen inputs/cache and entrypoint.

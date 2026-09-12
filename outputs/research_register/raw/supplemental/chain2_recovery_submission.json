@@ -1,0 +1,72 @@
+[
+  {
+    "job_id": "37532",
+    "name": "rec2k14M",
+    "manifest": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/mip14_manifest.json",
+    "manifest_sha256": "1acfa2f759749d183ca2bfefb9b8b58c8579e5652483a0185b1fb9428c12ad47",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--job-name=rec2k14M",
+      "--output=/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/w2_chain_recovery_20260912/worker.sub",
+      "/home/nc437/ladder-lite/w2_chain_recovery_20260912/mip14_manifest.json"
+    ],
+    "dependency": null,
+    "submitted_utc": "2026-09-12T19:39:53.567074+00:00"
+  },
+  {
+    "job_id": "37533",
+    "name": "rec2k15CG",
+    "manifest": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cg15_manifest.json",
+    "manifest_sha256": "f00334545d0aa03e2a02c36d81a6a0004d7aabdd04a55667e784683bede89c69",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=04:45:00",
+      "--no-requeue",
+      "--job-name=rec2k15CG",
+      "--output=/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/w2_chain_recovery_20260912/worker.sub",
+      "/home/nc437/ladder-lite/w2_chain_recovery_20260912/cg15_manifest.json"
+    ],
+    "dependency": null,
+    "submitted_utc": "2026-09-12T19:39:53.835712+00:00"
+  },
+  {
+    "job_id": "37534",
+    "name": "rec2k15M",
+    "manifest": "/home/nc437/ladder-lite/w2_chain_recovery_20260912/mip15_manifest.json",
+    "manifest_sha256": "10e675735fa05d0a4138eca893751c41455dcc160d180370b24b7f20afbf6be1",
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--job-name=rec2k15M",
+      "--output=/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/w2_chain_recovery_20260912/logs/%x_%j.err",
+      "--dependency=afterok:37533",
+      "/home/nc437/ladder-lite/w2_chain_recovery_20260912/worker.sub",
+      "/home/nc437/ladder-lite/w2_chain_recovery_20260912/mip15_manifest.json"
+    ],
+    "dependency": "37533",
+    "submitted_utc": "2026-09-12T19:39:54.052198+00:00"
+  }
+]

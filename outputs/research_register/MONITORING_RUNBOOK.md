@@ -66,3 +66,14 @@ Monitor campaign `w2_k14_import_fix_20260912`, job15687, source68fce009. Root `/
 ## Consolidated ownership 12 September
 
 User requested consolidation into this manager task, Assess research and plan next steps. Implementation task01a06e8e-c60a-7132-a588-d50e800d47d3 (dr ASTRA) stopped independent work and handed over all decisions; do not send routine messages or wake it. Own future diagnostics, code changes, monitoring and Doc/register updates here. Import fix checkout `/private/tmp/evsp-import-deadline-fix-20260912`, source68fce009; report `docs/reviews/inherited_import_shutdown_20260912.md`. Evidence commits7bb371f6,c364d5e8,9bfbfc8f on codex/efficiency-validation-20260912. All its delegated subtasks finished. Wait for validated retry15687 completion before repairing affected descendants. Full-size replay shutdown already verified900.000092s+0.162453s; no final convergence claim.
+
+
+Targeted14:58EDT check found retry15687 CG certified (1484iterations,159.5minutes), absent running queue. Next maintenance: collect immutable full result/journal hashes and terminal wrapper/accounting, validate parent/source identities, then repair only existing affected chain2 successors with corrected data paths and dependencies. No successor submission yet. Evidence monitor/20260912T1858_catchup_check.json; keep isolated retry separate from original66/87 count.
+
+
+## Recovered chain 2 successors submitted 12 September
+
+Validated15687 returncode0, watchdogfalse, schedulerCOMPLETED0:0, certified CG with no artificials; full status/journal hashes in completed_parent_validation.json. Only affected follow-ons submitted:37532 k14 MIP,37533 k15 CG,37534 k15 MIP afterok37533. Root `/home/nc437/ladder-lite/w2_chain_recovery_20260912`, source68fce009 CG/871d057 MIP. Actual parent paths corrected, frozen original/descriptor/journal and audited k15 cache retained. Original949704/5/6 remain blocked history, never repair or duplicate them. Both MIPs registered cohortdefault_chain2_recovery_3600. No automatic requeue because each exclusive attempt needs a new path. Inspect existing launched jobs before any further action. Ledger outputs/w2_chain_recovery_20260912/submission.json.
+
+
+Authoritative successor attempts are now37583/37584/37585 under w2_chain_recovery_retry2_20260912. Earlier37532/33 failed wrapper preflight (PYTHON_BIN missing),37534 blocked; preserve and never requeue blindly. Exact corrected preflight passed. First recovery root is still required for frozen inputs/cache and entry.py. Collector includes both roots. Same MIP cohort tracks all attempts.

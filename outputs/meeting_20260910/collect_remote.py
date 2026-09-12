@@ -5,6 +5,8 @@ import json, datetime, subprocess, hashlib
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'w2_chain_recovery_retry2_20260912': home / 'w2_chain_recovery_retry2_20260912',
+    'w2_chain_recovery_20260912': home / 'w2_chain_recovery_20260912',
     'w2_k14_import_fix_20260912': home / 'w2_k14_import_fix_20260912',
     'overnight_extension_20260912': home / 'overnight_extension_20260912',
     'covering_complement75': home / 'covering_complement75_20260911_21fbecb',

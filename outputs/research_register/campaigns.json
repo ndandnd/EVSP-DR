@@ -338,9 +338,8 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 78,
+    "row_count": 77,
     "workflow_job_ids": [
-      "15687",
       "537227",
       "810296",
       "810319",
@@ -395,6 +394,67 @@
     "report_links": [],
     "root": "/home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a",
     "row_count": 4,
+    "workflow_job_ids": []
+  },
+  {
+    "campaign_id": "supplemental:chain2_recovery_manifest",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "15687",
+      "949704",
+      "949705",
+      "949706"
+    ]
+  },
+  {
+    "campaign_id": "supplemental:chain2_recovery_retry2_manifest",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "15687",
+      "37532",
+      "37533",
+      "37534",
+      "949704",
+      "949705",
+      "949706"
+    ]
+  },
+  {
+    "campaign_id": "supplemental:chain2_recovery_retry2_submission",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "37583",
+      "37584",
+      "37585"
+    ]
+  },
+  {
+    "campaign_id": "supplemental:chain2_recovery_submission",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "37532",
+      "37533",
+      "37534"
+    ]
+  },
+  {
+    "campaign_id": "supplemental:completed_parent_validation",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
     "workflow_job_ids": []
   },
   {
