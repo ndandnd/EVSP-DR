@@ -70,6 +70,36 @@ def main():
         assert ok['returncode']==0 and not ok['watchdog_triggered']
         timed=c.run_process([sys.executable,'-c','import time;time.sleep(5)'],baseline,root/'timeout',.05,env)
         assert timed['watchdog_triggered'] and timed['returncode']!=0
-    print('PASS: all nine paired command flags, warm prep isolation, nine-job dry launch, process completion and watchdog preservation')
+        # Collector observes preparation and first arm even before pair_status exists.
+        attempt=root/'cases'/cases[2]['id']/'123_r0'
+        c.write(attempt/'allocation.json',dict(case=cases[2],host='test-host',started_utc='test-start',manifest_sha256='manifest-pin'))
+        c.write(attempt/'prepare/execution.json',dict(started_utc='prep-start',command=['python','solver','--event-network-cache-only']))
+        stream=io.StringIO()
+        with contextlib.redirect_stdout(stream):c.collect(SimpleNamespace(root=root))
+        observed=json.loads(stream.getvalue())
+        assert len(observed['attempts'])==1 and len(observed['rows'])==2
+        assert observed['attempts'][0]['preparation']['started_utc']=='prep-start'
+        assert all(r['process_state']=='not_started' for r in observed['rows'])
+        assert len(observed['pending_cases'])==8
+        c.write(attempt/'reference/execution.json',dict(started_utc='arm-start',command=['python','solver','--wall-limit-s','7200']))
+        c.write(attempt/'reference/cg.json',dict(certified_rc_optimal=False,stop_reason='wall_limit',
+                final={'lp_obj':123,'route_weight':2,'min_rc':-.2},iterations=4))
+        cap_attempt=root/'cases'/cases[6]['id']/'456_r0'
+        c.write(cap_attempt/'allocation.json',dict(case=cases[6]))
+        c.write(cap_attempt/'optimized/cg.json',dict(schema='capacity-test',certified_rc_optimal=True,
+                terminal_exact_min_reduced_cost=0,final={'objective':77,'route_weight':1,'artificial_total':0},
+                pool=str(cap_attempt/'optimized/pool.jsonl'),iterations=[{'pricing_s':3,'lp_solve_s':.1,'nonzero_capacity_duals':1}]))
+        (cap_attempt/'optimized/pool.jsonl').write_text('{}\n')
+        stream=io.StringIO()
+        with contextlib.redirect_stdout(stream):c.collect(SimpleNamespace(root=root))
+        observed=json.loads(stream.getvalue())
+        live=next(r for r in observed['rows'] if r['case']==cases[2]['id'] and r['mode']=='reference')
+        assert live['process_state']=='started_no_completion_record'
+        assert live['flags']['--wall-limit-s']=='7200' and live['certified_rc_optimal'] is False
+        cap=next(r for r in observed['rows'] if r['case']==cases[6]['id'] and r['mode']=='optimized')
+        assert cap['certified_rc_optimal'] is True and cap['terminal_exact_min_reduced_cost']==0
+        assert cap['artifacts']['pool']['sha256'] and cap['final']['objective']==77
+        assert cap['pricing_seconds_completed_iterations']==3
+    print('PASS: command flags, dry launch, watchdog, preparation/live-first-arm/pending collection, both certificate schemas and pool hashes')
 
 if __name__=='__main__':main()

@@ -327,29 +327,159 @@ def launch(args):
     write(jobs_path, ledger)
     print(json.dumps(ledger, indent=2))
 
+def observe(path):
+    """Hash an available artifact without implying that a running file is frozen."""
+    path = Path(path)
+    result = {'path':str(path), 'exists':path.is_file()}
+    if not result['exists']:
+        return result
+    try:
+        before = path.stat()
+        result.update(sha256=digest(path), bytes=before.st_size, mtime_ns=before.st_mtime_ns)
+        after = path.stat()
+        result['changed_during_hash'] = (before.st_size, before.st_mtime_ns) != (after.st_size, after.st_mtime_ns)
+    except OSError as exc:
+        result['read_error'] = repr(exc)
+    return result
+
+
+def read_available(path):
+    if not Path(path).is_file():
+        return {}
+    try:
+        return read(path)
+    except (OSError, ValueError) as exc:
+        return {'read_error':repr(exc)}
+
+
+def command_flags(command):
+    flags = {}
+    for i, value in enumerate(command or []):
+        if str(value).startswith('--'):
+            flags[value] = command[i+1] if i+1 < len(command) and not str(command[i+1]).startswith('--') else True
+    return flags
+
+
+def execution_summary(value):
+    if not value:
+        return None
+    keys = ['status','started_utc','ended_utc','wall_seconds','watchdog_seconds',
+            'watchdog_triggered','returncode','host','cwd','env','error','read_error']
+    result = {k:value[k] for k in keys if k in value}
+    result['flags'] = command_flags(value.get('command'))
+    return result
+
+
 def collect(args):
     root = args.root.resolve()
-    rows = []
-    for p in sorted((root/'cases').glob('*/*/pair_status.json')):
-        pair = read(p)
+    manifest = read_available(root/'manifest.json')
+    manifest_cases = {c['id']:c for c in manifest.get('cases',[])}
+    rows, attempts = [], []
+    seen_cases = set()
+    for allocation_path in sorted((root/'cases').glob('*/*/allocation.json')):
+        directory = allocation_path.parent
+        allocation = read_available(allocation_path)
+        case_name = directory.parent.name
+        case = allocation.get('case') or manifest_cases.get(case_name,{})
+        seen_cases.add(case_name)
+        pair = read_available(directory/'pair_status.json')
+        preparation = read_available(directory/'prepare/execution.json')
+        cache_identity = read_available(directory/'cache_identity.json')
+        current_cache = [observe(p) for p in sorted(directory.glob('network.pkl*')) if p.is_file()]
+        slurm = allocation.get('slurm',{})
+        attempt = dict(case=case_name, attempt=directory.name,
+                       pair_status=pair.get('status','not_written'), order=pair.get('order',case.get('order')),
+                       allocation=observe(allocation_path), started_utc=allocation.get('started_utc'),
+                       host=allocation.get('host'), manifest_sha256=allocation.get('manifest_sha256'),
+                       resources={k:case.get(k) for k in ['cpus','mem','slurm_time','arm_seconds','preparation_seconds']},
+                       slurm={k:v for k,v in slurm.items() if k in ['SLURM_JOB_ID','SLURM_JOB_NAME',
+                              'SLURM_JOB_NODELIST','SLURM_JOB_PARTITION','SLURM_RESTART_COUNT',
+                              'SLURM_CPUS_PER_TASK','SLURM_MEM_PER_NODE','SLURM_JOB_END_TIME']},
+                       code=case.get('code'), commit=case.get('commit'), kind=case.get('kind'),
+                       pair_status_artifact=observe(directory/'pair_status.json'),
+                       preparation=execution_summary(preparation),
+                       preparation_artifacts={k:observe(directory/'prepare'/v) for k,v in
+                          [('execution','execution.json'),('status','cg.json'),('phases','phases.jsonl'),
+                           ('stdout','stdout.log'),('stderr','stderr.log')]},
+                       cache_identity=cache_identity, cache_identity_artifact=observe(directory/'cache_identity.json'),
+                       current_cache=current_cache,
+                       input_paths={'instance':case.get('instance'),'prices':case.get('prices'),
+                                    'parent_descriptor':(case.get('parent') or {}).get('descriptor')})
+        if allocation.get('read_error'):
+            attempt['read_error']=allocation['read_error']
+        attempts.append(attempt)
         for mode in ['reference','optimized']:
-            arm = p.parent/mode
+            arm = directory/mode
+            live_execution = read_available(arm/'execution.json')
+            saved_execution = pair.get('results',{}).get(mode)
+            execution = saved_execution or live_execution
             status_file = arm/'cg.json'
-            record = dict(case=p.parent.parent.name, attempt=p.parent.name, mode=mode,
-                          pair_status=pair.get('status'), execution=pair.get('results',{}).get(mode))
-            if status_file.exists():
-                try:
-                    s = read(status_file)
-                    record.update(status_sha256=digest(status_file), certified_rc_optimal=s.get('certified_rc_optimal'),
-                                  stop_reason=s.get('stop_reason'), final=s.get('final'),
-                                  inherited_event_pool_audit=s.get('inherited_event_pool_audit'),
-                                  pricing_certificate_scope=s.get('pricing_certificate_scope',s.get('provenance',{}).get('pricing_certificate_scope')))
-                    pool = s.get('columns_journal') or str(arm/'pool.jsonl')
-                    if Path(pool).exists(): record['pool_sha256']=digest(pool)
-                except (ValueError,OSError) as exc:
-                    record['read_error']=repr(exc)
+            status = read_available(status_file)
+            prov = status.get('provenance') or {}
+            final = status.get('final') or {}
+            final_lp = status.get('final_lp') or {}
+            pool_path = status.get('columns_journal') or status.get('pool') or str(arm/('pool.jsonl' if case.get('kind')=='capacity' else 'cg.json.columns.jsonl'))
+            pool_path = Path(pool_path)
+            if not pool_path.is_absolute():
+                pool_path = arm/pool_path
+            if execution and execution.get('status'):
+                state = execution['status']
+            elif execution and 'returncode' in execution:
+                state = 'process_finished'
+            elif live_execution:
+                state = 'started_no_completion_record'
+            else:
+                state = 'not_started'
+            record = dict(case=case_name, attempt=directory.name, mode=mode,
+                          pair_status=pair.get('status','not_written'), process_state=state,
+                          execution_source='pair_status' if saved_execution else ('execution.json' if live_execution else None),
+                          execution=execution_summary(execution), flags=command_flags((execution or {}).get('command')),
+                          artifacts={k:observe(p) for k,p in [('execution',arm/'execution.json'),
+                            ('status',status_file),('pool',pool_path),('phases',arm/'phases.jsonl'),
+                            ('stdout',arm/'stdout.log'),('stderr',arm/'stderr.log')]},
+                          certified_rc_optimal=status.get('certified_rc_optimal'),
+                          stop_reason=status.get('stop_reason'), solver_status=status.get('status'),
+                          status_schema=status.get('schema'),
+                          pricing_certificate_scope=status.get('pricing_certificate_scope',prov.get('pricing_certificate_scope')),
+                          continuous_cost_pricing_certified=status.get('continuous_cost_pricing_certified',prov.get('continuous_cost_pricing_certified')),
+                          terminal_exact_min_reduced_cost=status.get('terminal_exact_min_reduced_cost'),
+                          rc_tolerance=(prov.get('rc_eps') if prov.get('rc_eps') is not None else (1e-5 if case.get('kind')=='capacity' else None)),
+                          final={k:v for k,v in final.items() if not isinstance(v,(list,dict))},
+                          final_lp={k:final_lp.get(k) for k in ['objective','route_weight','artificial_total',
+                             'source','iteration','pool_columns','max_row_violation','max_bound_violation'] if k in final_lp},
+                          inherited_event_pool_audit=status.get('inherited_event_pool_audit'),
+                          physics=status.get('physics'), capacity_selector=status.get('capacity_selector'),
+                          runtime_s=status.get('runtime_s',status.get('wall_s')),
+                          network_build_s=status.get('network_build_s'),
+                          provenance={k:prov.get(k) for k in ['git_commit','git_dirty','git_tracked_dirty',
+                             'instance_sha256','prices_sha256','reference_sha256','deadhead_sha256',
+                             'inherited_event_pool_status_sha256','pricing_cost_semantics'] if k in prov},
+                          finite_pool_mip_proof=None, physical_validation=None, giro_target_attainment=None)
+            history = status.get('iterations')
+            record['iterations'] = len(history) if isinstance(history,list) else history
+            if isinstance(history,list):
+                record['pricing_seconds_completed_iterations'] = sum(i.get('pricing_s',0) for i in history)
+                record['master_seconds_completed_iterations'] = sum(i.get('lp_solve_s',0) for i in history)
+                record['iterations_with_capacity_duals'] = sum(bool(i.get('nonzero_capacity_duals')) for i in history)
+            if status.get('read_error'):
+                record['read_error']=status['read_error']
+            if case.get('kind') in {'warm','fresh','capacity'}:
+                record['planned_flags'] = command_flags(command(case,mode,arm,directory/'network.pkl' if case['kind']=='warm' else None))
             rows.append(record)
-    print(json.dumps(dict(collected_utc=now(), rows=rows), indent=2))
+    pending = [{'case':name,'state':'no_allocation_record','kind':case.get('kind'),'order':case.get('order')}
+               for name,case in manifest_cases.items() if name not in seen_cases]
+    inputs = []
+    for item in manifest.get('frozen',[]):
+        observation = observe(item['path'])
+        observation['expected_sha256']=item['sha256']
+        observation['matches_expected']=observation.get('sha256')==item['sha256'] if observation.get('sha256') else None
+        inputs.append(observation)
+    print(json.dumps(dict(schema='evsp-efficiency-collection-v2',collected_utc=now(),
+                         manifest=observe(root/'manifest.json'), baseline_commit=manifest.get('baseline_commit'),
+                         capacity_commit=manifest.get('capacity_commit'), inputs=inputs,
+                         pending_cases=pending, attempts=attempts, rows=rows,
+                         interpretation='No scheduler query. Started without completion is not proof of current liveness. '
+                         'Missing certificate fields are unknown. Artifact hashes describe this read; changing files are flagged.'),indent=2))
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
