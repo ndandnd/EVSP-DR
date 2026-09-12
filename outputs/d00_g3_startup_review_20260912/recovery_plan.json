@@ -1,5 +1,5 @@
 {
-  "status": "PROPOSED_NOT_SUBMITTED",
+  "status": "AUTHORIZED_BOUNDED_DIAGNOSTIC",
   "original_source_commit": "a29992196acb74d02b8c7891be4061718889999f",
   "original_failed_job": "949623_3",
   "original_concrete_job": "949644",
@@ -81,5 +81,6 @@
     "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
   },
   "scientific_budget_guard": "Original14400s includes construction. Do not reset it silently after cache preparation. A longer cache+CG recovery must be separately labeled extended budget; retain original censored row.",
-  "next_gate": "Use measured progress/stack profile to decide optimization vs explicitly extended cache preparation. No automatic MIP; new source hashes and a distinct dependent job required after valid CG artifacts exist."
+  "next_gate": "Use measured progress/stack profile to decide optimization vs explicitly extended cache preparation. No automatic MIP; new source hashes and a distinct dependent job required after valid CG artifacts exist.",
+  "authorization": "Coordinating task requested this diagnostic after review; no long retry/MIP authorization inferred."
 }

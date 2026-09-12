@@ -1,0 +1,19 @@
+{
+  "schema": "evsp-graph-diagnostic-execution-v1",
+  "diagnostic_source_evidence_commit": "26f5d81a287d6117a0aec332180501cc772663f1",
+  "watchdog_source_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+  "files": [
+    {
+      "name": "diagnostic_graph.py",
+      "sha256": "b23850a296029d4830cb3ee7c78a0abceae975ef089e5fe21e4cf620473fe791"
+    },
+    {
+      "name": "run_diagnostic.py",
+      "sha256": "1b5f321202d41278da4b412f559c0738a8fe21bbf765fb2e96238799ebef52d4"
+    },
+    {
+      "name": "recovery_plan.json",
+      "sha256": "e4249e1bffc88c8d52491f4572235400f40827d664ae8f0b3c493f51a9011e42"
+    }
+  ]
+}
