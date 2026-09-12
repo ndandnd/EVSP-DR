@@ -1,0 +1,20 @@
+{
+  "observed_utc": "2026-09-12T04:25:20.599580+00:00",
+  "array_job_id": "950484",
+  "array": "0-3%4",
+  "worker_commit": "57d7ded3",
+  "git_branch": "codex/storage-cleanup-20260912",
+  "root": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive",
+  "package_sha256": "f3dabe5c9778bf7bd760bedd846dab256a76b6f6e10477c24769186b63a5231f",
+  "partition": "default_partition",
+  "cpus_per_task": 1,
+  "memory": "2G",
+  "scheduler_limit": "24:00:00",
+  "requeue": false,
+  "excluded_node": "scaglione-compute-01",
+  "counts": {
+    "files": 156,
+    "groups": 4
+  },
+  "type": "lossless_archival_not_research_run"
+}

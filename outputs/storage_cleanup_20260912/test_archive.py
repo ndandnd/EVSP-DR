@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
-SOURCE = (HERE/'archive.sbatch').read_text()
+SOURCE = (HERE/'archive_v2.sbatch').read_text()
 
 def fixture(mode):
     with tempfile.TemporaryDirectory(prefix='evsp-archive-fixture-') as tmp:
@@ -39,6 +39,9 @@ def fixture(mode):
             if mode=='dangling_prepared':
                 src.unlink();src.symlink_to(base/'absent')
             if mode=='changed_after_prepared': src.write_bytes(b'x'*len(payload))
+        elif mode=='client_device_diff':
+            mp=base/'archive/manifest.json';m=json.loads(mp.read_text())
+            m['files'][0]['device']+=1;mp.write_text(json.dumps(m))
         elif mode=='same_size_replacement':
             replacement=src.with_suffix('.replacement');replacement.write_bytes(payload)
             os.utime(replacement,ns=(stat.st_atime_ns,stat.st_mtime_ns));os.replace(replacement,src)
@@ -58,7 +61,7 @@ SLURM_JOB_ID=fixture
 archive_one '{src}' '{stat.st_size}' '{int(stat.st_mtime)}' '{arc}'
 '''
         result=subprocess.run(['bash','-c',bash],capture_output=True,text=True)
-        success=mode in ('normal','prepared_present','prepared_absent')
+        success=mode in ('normal','prepared_present','prepared_absent','client_device_diff')
         if success:
             assert result.returncode==0,(mode,result.stderr)
             assert not src.exists()
@@ -77,5 +80,5 @@ archive_one '{src}' '{stat.st_size}' '{int(stat.st_mtime)}' '{arc}'
 if __name__=='__main__':
     for mode in ('normal','prepared_present','prepared_absent','changed_after_prepared',
                  'bad_mapping','symlink','hardlink','orphan_archive','record_failure',
-                 'same_size_replacement','dangling_prepared'):
+                 'same_size_replacement','dangling_prepared','client_device_diff'):
         fixture(mode)

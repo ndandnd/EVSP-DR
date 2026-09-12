@@ -28,7 +28,8 @@ for job in ids:
                'StdErr', 'Dependency', 'ExcNodeList')}}
     cmd = pathlib.Path(fields.get('Command', '/nonexistent'))
     own_worker = (fields.get('JobName') == 'storage-archive-0912' and
-                  str(cmd) == '/home/nc437/ladder-lite/storage_cleanup_20260912_archive/archive.sbatch')
+                  str(cmd) in ('/home/nc437/ladder-lite/storage_cleanup_20260912_archive/archive.sbatch',
+                               '/home/nc437/ladder-lite/storage_cleanup_20260912_archive/archive_v2.sbatch'))
     body = ''
     if cmd.is_file():
         if cmd.stat().st_size > 2_000_000:

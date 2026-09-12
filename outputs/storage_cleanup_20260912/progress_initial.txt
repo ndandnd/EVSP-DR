@@ -1,0 +1,1581 @@
+{
+  "observed_utc": "2026-09-12T04:25:44.111737+00:00",
+  "manifest_sha256": "8f40b873804819aafb0dca66887211fd5138ce279945b8bb3c6abb854be5ae6e",
+  "status_sha256": {
+    "status_0.tsv": "c10c509d4bc984f68d1b37ff1eb84389823a384ce5bc53a2d6522c1ee84d11dd",
+    "status_1.tsv": "fbb7c94a12e268a93faa0302f5cbfff426b5ec3fafe69daebbef1924b456ddf7",
+    "status_2.tsv": "b2b92751b4641377f919257b9183560746e2c622c8b387562d4829716784f908",
+    "status_3.tsv": "14858862d397a2cd4df64a30d03a5f6ad5f24445bcee7f04950f322dbde0b34a"
+  },
+  "expected_files": 156,
+  "completed_files": 0,
+  "completed_source_bytes": 0,
+  "archive_bytes": 0,
+  "saved_bytes": 0,
+  "errors": [],
+  "failed_events": [
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k20_s4__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "8995503654",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k20_s4__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k13_s6__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "4725304153",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k13_s6__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k13_s3__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "4053385757",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k13_s3__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1238960708",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1086467563",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s1_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1043434111",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s1_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s2_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "967486635",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s2_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "932187151",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s3_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "900618139",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s3_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s1_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "881444889",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s1_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k13_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "832305832",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k13_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "825519618",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k13_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "794877617",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k13_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "745390046",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "729439714",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k13_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "719767107",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k13_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s3_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "695838574",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s3_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "688950103",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "605789483",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k20_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "594594912",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k20_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "574410651",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k20_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "537723844",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k20_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k20_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "528830265",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k20_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k13_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "521901933",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k13_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "445526327",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k20_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "441415356",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k20_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "428578567",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "419835553",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "306668979",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "293289930",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s3_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "244371431",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s3_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s3_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "226852783",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s3_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s2_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "107085075",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s2_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s2_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "101377871",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s2_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s2_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "36597701",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s2_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s3_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "30572731",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s3_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s1_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "21659385",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s1_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s2_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "5547401",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s2_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k20_s2__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "8071201792",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k20_s2__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k13_s5__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "5741221609",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k13_s5__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k13_s4__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "3434774480",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k13_s4__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s1_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1558712844",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s1_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1148625629",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s1_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1085603659",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s1_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s3_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "988007664",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s3_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "954315654",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "928773933",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s3_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "889726102",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s3_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s1_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "867146347",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s1_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s2_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "811505315",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s2_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "799632648",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "745141112",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s2_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "729168304",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s2_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "713119080",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s2_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "710769868",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s2_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s2_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "662632710",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s2_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "622397396",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k13_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "604607231",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k13_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k20_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "567422738",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k20_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k13_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "533417418",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k13_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k20_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "530616937",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k20_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "510808442",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k13_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "451974448",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k13_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "442533923",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k13_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "436229796",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "375317339",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k13_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k20_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "336877257",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k20_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "299728111",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s3_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "269799158",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s3_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s1_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "197733352",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s1_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s2_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "143959906",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s2_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s2_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "53565487",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s2_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s3_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "38741328",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s3_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s2_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "33568680",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s2_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s3_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "25475101",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s3_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s1_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "10432812",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s1_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s2_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "3516851",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s2_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s2_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "2389802",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s2_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:41Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k20_s6__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "7954705682",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k20_s6__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k20_s3__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "6828728310",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k20_s3__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k13_s2__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "2507015825",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k13_s2__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s1_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1497701953",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s1_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s1_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1192274359",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s1_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s3_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1080621322",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s3_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "984545667",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "953527516",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s3_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "914019457",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s3_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k13_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "883447947",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k13_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s2_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "867152531",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s2_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s2_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "823220828",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s2_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "773575596",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "751693091",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k13_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "738901808",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k13_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s3_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "726355131",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s3_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s2_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "692096064",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s2_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s1_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "686795355",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s1_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "607602100",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k20_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "593597883",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k20_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "573517843",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "547471402",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k20_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "528772812",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k20_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k20_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "498040354",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k20_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "471304549",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k20_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s1_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "439523415",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s1_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "427809172",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "370493184",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k13_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "343075424",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "295019583",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k20_s6__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s3_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "261409056",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s3_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s1_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "211133136",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s1_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s2_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "111715591",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s2_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s1_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "61155663",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s1_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s1_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "42618364",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s1_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s3_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "35332308",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s3_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s1_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "26103449",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s1_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s1_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "22858146",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s1_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s2_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "4560163",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s2_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:40Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k20_s5__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "7570851087",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k20_s5__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:36Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k20_s1__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "7017675751",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k20_s1__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:36Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/network_cache/M__k13_s1__event_2p5_event5.pkl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "2980442553",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/network_cache/M__k13_s1__event_2p5_event5.pkl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:36Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s3_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1329308937",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s3_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:36Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s1_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1091091705",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s1_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s1_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "1080296033",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s1_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "982919573",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s1_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "938529372",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s1_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "917533771",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k20_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "897893606",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k20_s1__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k20_s1_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "864731333",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k20_s1_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k13_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "805910096",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k13_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "802712707",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s2_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "739949649",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s2_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k20_s4__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "736389169",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k20_s4__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s3_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "711263304",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s3_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k13_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "707793368",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k13_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "663613314",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:37Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s2_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "650827096",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s2_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b200_complementary/M__k20_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "579244301",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b200_complementary/M__k20_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k13_s2_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "560411865",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k13_s2_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s3_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "553766100",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s3_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k08_s2_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "524632785",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k08_s2_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s3_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "495937645",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s3_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b120_complementary/M__k13_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "486642129",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b120_complementary/M__k13_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b060_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "436986476",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b060_reduced/M__k13_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s3_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "424248349",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s3_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "346594093",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k20_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "344694783",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k13_s5__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "305191581",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k20_s3__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/cg_acceleration_20260903/cg/b030_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "276783849",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/cg_acceleration_20260903/cg/b030_reduced/M__k13_s2__event_2p5_event5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:38Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k05_s1_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "188938785",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k05_s1_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s2_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "183195207",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s2_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k03_s3_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "44663434",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k03_s3_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s1_c1_g2.5_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "33835119",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s1_c1_g2.5_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s1_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "28241092",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s1_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s3_c1_g10.0_b5.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "11912478",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s3_c1_g10.0_b5.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s3_c1_g2.5_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "8289125",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s3_c1_g2.5_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/phys240kw/k02_s3_c1_g10.0_b10.json.columns.jsonl",
+      "phase": "failed",
+      "source_sha256": "",
+      "source_size_bytes": "7785433",
+      "archive_path": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive/phys240kw/k02_s3_c1_g10.0_b10.json.columns.jsonl.gz",
+      "archive_sha256": "",
+      "archive_size_bytes": "",
+      "event_utc": "2026-09-12T04:25:39Z"
+    }
+  ],
+  "all_complete": false,
+  "verification": "Worker verified gzip integrity and decompressed SHA before unlink; collector verifies manifest mappings, recorded hashes, archive sizes and source absence.",
+  "records": []
+}
