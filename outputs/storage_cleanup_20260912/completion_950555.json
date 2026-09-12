@@ -3138,5 +3138,29 @@
       "archive_size_bytes": "948519",
       "event_utc": "2026-09-12T05:08:46Z"
     }
-  ]
+  ],
+  "category_totals": {
+    "cg_acceleration graph caches": {
+      "files": 12,
+      "source_bytes": 69880810653,
+      "archive_bytes": 7047573815,
+      "saved_bytes": 62833236838
+    },
+    "cg_acceleration journals": {
+      "files": 72,
+      "source_bytes": 44927269098,
+      "archive_bytes": 5232972414,
+      "saved_bytes": 39694296684
+    },
+    "phys240kw journals": {
+      "files": 72,
+      "source_bytes": 34513843153,
+      "archive_bytes": 3303423311,
+      "saved_bytes": 31210419842
+    }
+  },
+  "new_failed_events": 0,
+  "superseded_initial_failed_events": 156,
+  "scheduler": "All four array950555 workers COMPLETED, exit0:0; accounting timestamps are America/New_York.",
+  "real_restore_verification": "restore_verification.json"
 }

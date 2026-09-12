@@ -1,0 +1,11 @@
+archive.sbatch: OK
+archive_v2.sbatch: OK
+audit_remote.py: OK
+restore_archive.sh: OK
+test_archive.py: OK
+manifest.json: OK
+manifest_0.tsv: OK
+manifest_1.tsv: OK
+manifest_2.tsv: OK
+manifest_3.tsv: OK
+archive_job=950558	success_count=38	failure_count=0	status=/home/nc437/ladder-lite/storage_cleanup_20260912_archive/status_0.tsv
