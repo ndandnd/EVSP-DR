@@ -1,6 +1,6 @@
 # Current chain tables
 
-Verified 11 September 2026, 23:51 EDT. Green means integer fleet matches GIRO target under the stated model; it does not mean all GIRO constraints are enforced. Orange means extra buses. Grey means no completed integer result.
+Integer tables rechecked 12 September 2026, 01:27 EDT. Green means integer fleet matches GIRO target under the stated model; it does not mean all GIRO constraints are enforced. Orange means extra buses. Grey means no completed integer result.
 
 ## Covering with inherited previous-k columns
 
@@ -16,7 +16,7 @@ Verified 11 September 2026, 23:51 EDT. Green means integer fleet matches GIRO ta
 | 9 | ⬜ — | ⬜ — | 🟩 9 | 🟩 9 | 🟩 9 | 🟩 9 |
 | 10 | ⬜ — | ⬜ — | 🟩 10 | ⬜ — | 🟩 10 | 🟩 10 |
 
-k2 starts from singletons; k3 onward inherits columns. Chain1 k7 timed out during initialization and blocks k8–10. Chain2 k9 exhausted its budget importing columns, has no final LP and its MIP export failed; k10 is still initializing. Chain4 k10 timed out during initialization. Chain3 k10 additionally includes validated routes from a fresh solver solution, not GIRO seeds. No warm k11–15 campaign has completed. All displayed warm fleets are proved within their saved pools; this does not automatically prove the unrestricted model optimum or charging optimum.
+k2 starts from singletons; k3 onward inherits columns. The earlier full-pool treatment timed out during initialization at Chain1 k7 and Chain4 k10; Chain2 k9 exhausted its import budget without a final LP. The new bounded-import treatment has now completed pricing-certified CG for all three cases; their new MIPs are not completed in this snapshot. Chain3 k10 additionally includes validated routes from a fresh solver solution, not GIRO seeds. No warm integer k11–15 result is available yet. The new bounded-import treatment has pricing-certified CG at chain3 k11–12 and chains5–6 k11; those are LP results, not integer matches. All displayed warm fleets are proved within their saved pools; this does not automatically prove the unrestricted model optimum or charging optimum.
 
 ## Fresh covering, independent initialization at each size
 
@@ -52,4 +52,6 @@ All16 cells have MIP outcomes. Capacity-constrained selected schedules pass stat
 
 This is not almost every GIRO constraint: it has 240kWh batteries, opportunity-station counts and/or PARX60kW; opportunity charging remains constant240kW, reserve is0%, and no65% return-SOC floor is imposed. The aggregate return-energy tariff experiment is a separate five-bus,350kW cohort and is not combined with capacity. Nonlinear charging and driver rules are not included.
 
-Sources: outputs/post_meeting_20260910/monitor/20260912T035212Z.json; fresh_covering_complete84.csv; capacity_deadline5_completed/records.json. Detailed provenance/proof fields remain in the experiment workbook.
+Sources: outputs/post_meeting_20260910/monitor/20260912T052658Z.json; fresh_covering_complete84.csv; capacity_deadline5_completed/records.json. Detailed provenance/proof fields remain in the experiment workbook.
+
+Latest extension and decomposition evidence: [01:27 EDT verified results](../overnight_extension_20260912/RESULTS_20260912T052658Z.md). Two component groups each proved eight buses within their pools; no combined 32-duty solution is claimed.

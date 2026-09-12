@@ -160,6 +160,45 @@ class Register:
         self.markdown_files = markdown_files
         self.rows = []
         self.campaigns = {}
+        # The overnight manifest is authoritative for case identity and
+        # target duties.  Keep this map campaign-scoped: historical and other
+        # campaign records must continue using their source payload/path
+        # semantics.
+        self.authoritative_cases = {}
+        overnight = snapshot.get("campaigns", {}).get(
+            "overnight_extension_20260912", {}
+        )
+        manifest = (overnight.get("workflow", {}) or {}).get(
+            "manifest.json", {}
+        ) or {}
+        for manifest_case, metadata in (manifest.get("cases", {}) or {}).items():
+            if isinstance(metadata, dict):
+                self.authoritative_cases[manifest_case] = {
+                    **metadata, "id": manifest_case,
+                }
+
+    def authoritative_case(self, campaign_id, source_path, input_path,
+                           fallback_case_id):
+        """Resolve only overnight cases from the embedded manifest.
+
+        Result paths can contain a scheduler run directory below the case
+        directory (for example ``.../d00_g0/mip/949625_r0/result.json``),
+        while warm input paths contain an older ``k2_15`` ancestor.  Prefer a
+        manifest case directory or CSV basename before any generic regex.
+        """
+        if campaign_id != "overnight_extension_20260912":
+            return None
+        candidates = []
+        for value in (source_path, input_path, fallback_case_id):
+            if not value:
+                continue
+            text = str(value)
+            candidates.extend(Path(text).parts)
+            candidates.append(Path(text).stem)
+        for candidate in candidates:
+            if candidate in self.authoritative_cases:
+                return self.authoritative_cases[candidate]
+        return None
 
     def campaign(self, campaign_id, root, family, reports=None):
         record = self.campaigns.setdefault(campaign_id, {
@@ -183,7 +222,17 @@ class Register:
         input_path = at(payload, "instance", "csv", "cell.instance",
                         "provenance.instance", "case.peak_relative_path",
                         "cache_manifest.identity.instance")
+        metadata = self.authoritative_case(
+            campaign_id, source_path, input_path, case_id,
+        )
+        if metadata:
+            case_id = metadata["id"]
+            input_path = metadata.get("csv") or input_path
         target_k, chain, replication = case_dimensions(case_id, input_path)
+        if metadata:
+            target_k = metadata.get("target_duties", target_k)
+            chain = metadata.get("chain", chain)
+            replication = metadata.get("replication", replication)
         provenance = at(payload, "provenance", default={}) or {}
         physics = at(payload, "physics", "vehicle_profile", default={}) or {}
         physical_audit = at(payload, "physical_pool_audit", default={}) or {}
@@ -225,7 +274,8 @@ class Register:
             "completion_marker_matches": payload.get("completion_marker_matches"),
             "job_ids": job_ids(payload),
             "input_path": input_path,
-            "input_sha256": at(provenance, "instance_sha256", default=None)
+            "input_sha256": (metadata.get("input_sha256") if metadata else None)
+                or at(provenance, "instance_sha256", default=None)
                 or at(input_hashes, "instance_sha256", default=None)
                 or at(payload, "cell.instance_sha256", "case.instance_sha256"),
             "trip_count": at(payload, "trip_count", "cell.trips"),
@@ -818,7 +868,38 @@ class Register:
         self.remaining_workflow()
         self.validate()
 
+    def validate_overnight_case_metadata(self):
+        """Validate metadata for manifest-backed overnight rows that exist."""
+        if not self.authoritative_cases:
+            return
+        overnight_rows = [
+            row for row in self.rows
+            if row["campaign_id"] == "overnight_extension_20260912"
+        ]
+        for row in overnight_rows:
+            metadata = self.authoritative_cases.get(row["case_id"])
+            if not metadata:
+                continue
+            expected_target = metadata.get("target_duties")
+            if (expected_target is not None
+                    and row["target_k"] != expected_target):
+                raise ValueError(
+                    f"overnight manifest target mismatch for {row['stage']}:"
+                    f"{row['case_id']}: expected target_k={expected_target}"
+                )
+            expected_input = metadata.get("csv")
+            if expected_input and row["input_path"] != expected_input:
+                raise ValueError(
+                    f"overnight manifest input mismatch for {row['case_id']}"
+                )
+            expected_hash = metadata.get("input_sha256")
+            if expected_hash and row["input_sha256"] != expected_hash:
+                raise ValueError(
+                    f"overnight manifest input hash mismatch for {row['case_id']}"
+                )
+
     def validate(self):
+        self.validate_overnight_case_metadata()
         ids = [row["row_id"] for row in self.rows]
         if len(ids) != len(set(ids)):
             duplicates = [key for key, count in Counter(ids).items() if count > 1]

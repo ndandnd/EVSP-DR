@@ -1,0 +1,117 @@
+{
+  "sha256": "da067a2c5a913075c01578162c0a6f9280be031126e6523dcb0ccc49b19c35d6",
+  "bytes": 579035,
+  "sheets": {
+    "Campaigns": {
+      "last_row": 37,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    },
+    "CG": {
+      "last_row": 444,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    },
+    "MIP": {
+      "last_row": 431,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    },
+    "Charging": {
+      "last_row": 65,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    },
+    "Attempts": {
+      "last_row": 837,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    },
+    "History": {
+      "last_row": 44,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    },
+    "Definitions": {
+      "last_row": 15,
+      "error_cells": 0,
+      "freeze": {
+        "xSplit": "2",
+        "ySplit": "5",
+        "topLeftCell": "C6",
+        "activePane": "bottomRight",
+        "state": "frozen"
+      }
+    }
+  },
+  "case_checks": [
+    {
+      "sheet": "CG",
+      "row": "362",
+      "case": "d00_g0",
+      "target": 8
+    },
+    {
+      "sheet": "CG",
+      "row": "363",
+      "case": "d00_g1",
+      "target": 8
+    },
+    {
+      "sheet": "CG",
+      "row": "386",
+      "case": "w3_k12",
+      "target": 12
+    },
+    {
+      "sheet": "MIP",
+      "row": "374",
+      "case": "d00_g0",
+      "target": 8
+    },
+    {
+      "sheet": "MIP",
+      "row": "375",
+      "case": "d00_g1",
+      "target": 8
+    }
+  ],
+  "source_snapshot": "20260912T052658Z.json",
+  "visual_review": "All seven rendered previews reviewed; table headers and labels readable; no formula errors."
+}

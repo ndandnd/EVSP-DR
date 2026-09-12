@@ -271,9 +271,12 @@
   {
     "campaign_id": "overnight_extension_20260912",
     "family": "production_or_historical",
-    "report_links": [],
+    "report_links": [
+      "/Users/nadan/Documents/projects/demandresponse/outputs/storage_cleanup_20260912/README.md",
+      "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/README.md"
+    ],
     "root": "/home/nc437/ladder-lite/overnight_extension_20260912",
-    "row_count": 51,
+    "row_count": 90,
     "workflow_job_ids": [
       "949572",
       "949623",
@@ -389,7 +392,7 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 277,
+    "row_count": 208,
     "workflow_job_ids": [
       "537227",
       "810296",
@@ -409,11 +412,8 @@
       "810977",
       "810994",
       "810995",
-      "949577",
-      "949578",
       "949623",
       "949624",
-      "949635",
       "949636",
       "949637",
       "949638",
@@ -431,7 +431,6 @@
       "949690",
       "949691",
       "949692",
-      "949693",
       "949694",
       "949695",
       "949696",
@@ -445,9 +444,7 @@
       "949704",
       "949705",
       "949706",
-      "949707",
       "949708",
-      "949709",
       "949710",
       "949711",
       "949712",
@@ -455,7 +452,6 @@
       "949714",
       "949715",
       "949716",
-      "949717",
       "949718",
       "949719",
       "949720",
@@ -467,7 +463,6 @@
       "949726",
       "949727",
       "949728",
-      "949729",
       "949730",
       "949731",
       "949732",
@@ -477,7 +472,6 @@
       "949736",
       "949737",
       "949738",
-      "949739",
       "949740",
       "949741",
       "949742",
@@ -579,7 +573,8 @@
     "campaign_id": "terminal_energy_fair_mip_retry_5cdb813",
     "family": "production_or_historical",
     "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md"
+      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md",
+      "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/current_content_audit.md"
     ],
     "root": "/home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910",
     "row_count": 14,
@@ -649,6 +644,7 @@
     "campaign_id": "warm_chain_p5_k2_10",
     "family": "production_or_historical",
     "report_links": [
+      "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/current_content_audit.md",
       "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_p5/resource_plan.md"
     ],
     "root": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1",
