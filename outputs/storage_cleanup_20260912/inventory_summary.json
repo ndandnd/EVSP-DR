@@ -1,0 +1,29 @@
+{
+  "audit_started_utc": "2026-09-12T04:11:33Z",
+  "home_du_h": "889G",
+  "ladder_du_h": "845G",
+  "units": "GNU du -h binary units; live totals can change",
+  "filesystem": {
+    "size": "130T",
+    "used": "40T",
+    "available": "91T",
+    "percent": "31%"
+  },
+  "prior_cleanup_bytes_not_counted_again": 74782010325,
+  "protected": [
+    "/home/nc437/evspv2g-stochastic-review-20260910",
+    "/home/nc437/evspv2g_dp",
+    "/home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17",
+    "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb",
+    "/home/nc437/ladder-lite/nested_warm*",
+    "/home/nc437/ladder-lite/overnight_extension_20260912",
+    "/home/nc437/ladder-lite/execution",
+    "/home/nc437/evsp_env"
+  ],
+  "coordination": {
+    "dr_task": "01a07ecc-9b77-79b3-9782-e4308a80ba07",
+    "v2g_task": "01a08d89-2673-7ff1-968a-714f62d1a10e",
+    "dr_reply": "No planned use of phys240kw or cg_acceleration_20260903 pools/caches in the new overnight campaign; retain restore manifests and check queued references.",
+    "v2g_reply": "Protect stochastic review root in full and runtime; no extra safe candidates."
+  }
+}
