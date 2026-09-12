@@ -1,0 +1,36 @@
+--- before
++++ after
+@@ -1,20 +1,23 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results checked 12 September 2026 at 18:00 EDT.
++Week of 14 September. Results checked 12 September 2026 at 19:13 EDT.
+ 
+-**Latest: retaining the full inherited pool improves two integer fleets.**
++**Latest: all 17 completed full-pool MIPs match their fleet targets.**
+ 
+-| Chain / target | Earlier 512-route warm start: buses | Full-pool warm start: buses | CG minutes |
+-| ----- | ----- | ----- | ----- |
+-| Chain 3 / 11 | 12 | 11 | 15.6 |
+-| Chain 4 / 10 | 11 | 10 | 18.8 |
+-| Chain 6 / 11 | 11 | 11 | 19.3 |
++| Chain | Highest target matched | Full-pool buses | Earlier bounded buses | CG minutes |
++| ----- | ----- | ----- | ----- | ----- |
++| 1 | 8 | 8 | 9 | 24.0 |
++| 2 | 11 | 11 | 12 | 12.0 |
++| 3 | 14 | 14 | 15 | 22.9 |
++| 4 | 12 | 12 | 13 | 6.5 |
++| 5 | 13 | 13 | 14 | 26.0 |
++| 6 | 12 | 12 | 13 | 55.3 |
+ 
+-All three new fleets match their targets and are proved optimal within their saved pools. CG reached pricing certificates; individual-route replay passed. Charging optimization used the remaining hour and stopped at its time limit. Shared charger capacity and duplicate-trip removal were not validated in these baseline runs.
++The table shows the highest completed integer match in each chain, not a failure threshold. All 17 completed full-pool MIPs match their targets and prove their fleets optimal within their saved pools. Their CG runs have pricing certificates, and individual-route replay passed. These are covering runs with 240 kWh batteries and 240 kW charging; shared charger capacity and return-SOC constraints are absent. Duplicate-trip removal was not validated. Higher k values remain in progress.
+ 
+-The importer retained about 34,000–41,000 routes in 2.4–3.3 minutes. Both treatments used the same saved parent pools and reached the same certified LP objectives, to within 1e-8. Chain 4 gives the clearest diagnosis: its old pool was proved to require 11 buses; the new pool provides 10\. Useful integer routes were missing from the old pool despite its optimal LP value. Chain 3’s earlier 12-bus result was unproved, so MIP search difficulty may also explain part of that improvement. The reported CG times use existing graph caches; original graph construction is excluded.
++The initial comparisons—C3 k11, C4 k10 and C6 k11—used identical saved parent pools in both treatments and reached the same certified LP objectives within 1e-8. Full inheritance retained about 34,000–41,000 routes in 2.4–3.3 minutes. C4 k10 isolates a pool limitation: the old pool was proved to require 11 buses; the new pool provides 10\. C3 k11’s old 12-bus result was unproved, so MIP search difficulty may also matter there. CG times throughout this section use existing graph caches; original graph construction is excluded.
+ 
+-Sixteen of 37 new full-pool CG cases are certified. At 18:02, 23 EVSP–DR jobs were running, with no invalid dependencies. All nine recovered component MIPs finished: five matched their 8-bus targets, four found 9\. No new execution failures or confirmed preemptions were observed. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260912T220047Z/README.md).
++Twenty-five of 37 full-pool CG cases are certified; 17 MIPs have finished, all matching their targets. At 19:15, 16 EVSP–DR jobs were running with no invalid dependencies. The smaller active count reflects completed work. Both decomposition graph preparations remain running. No new failures or confirmed preemptions were observed. Separately, the earlier bounded chain 1 k15 run finished with 18 buses and a pool bound of 15; it must not be mixed with the new full-pool results. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260912T231317Z/README.md).
+ 
+  Open [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) for timing, charging costs and geography, or [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) for the restored figure library.
+ 

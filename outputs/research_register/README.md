@@ -8,7 +8,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1897 artifact/stage records across 44 campaign/source groups**, from the 18:00 EDT collection on 12 September. Counts are not independent experimental sample sizes.
+Current build: **1904 artifact/stage records across 44 campaign/source groups**, from the 19:13 EDT collection on 12 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -20,7 +20,7 @@ Current build: **1897 artifact/stage records across 44 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest verified results: **C3 k11 = 11 buses, C4 k10 = 10, C6 k11 = 11**, each with a CG pricing certificate, fleet optimality within its saved pool and individual-route replay. Earlier bounded results were 12, 11, 11, respectively. [Comparison and proof limits](../queue_recovery_20260912/status_20260912T220047Z/README.md). Sixteen new full-pool CG cases are certified; 23 EVSP–DR jobs are running. All nine recovered component MIPs finished: five matched 8, four found 9. No new failed runs or confirmed preemptions.
+Latest verified results: **17 of 17 completed full-pool MIPs match their fleet targets**, each with a pool fleet proof, CG pricing certificate and individual-route replay. Highest completed matches for chains 1–6 are **8,11,14,12,13,12**, respectively; higher sizes remain unfinished. **25/37 CG cases are certified**. [Current six-chain table and all 17 results](../queue_recovery_20260912/status_20260912T231317Z/README.md). The earlier bounded C1 k15 result is separately 18 buses with pool bound 15, unproved. At 19:15, 16 EVSP–DR jobs were running with no invalid dependencies, new failures or confirmed preemptions.
 
 ## How to read a result
 
@@ -42,7 +42,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T220047Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T231317Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

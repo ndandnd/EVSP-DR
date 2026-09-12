@@ -1,8 +1,8 @@
 # Unicorn monitoring runbook
 
-## Verified recovery progress — 12 September 18:00 EDT
+## Verified recovery progress — 12 September 19:13 EDT
 
-Full-pool C3 k11=11, C4 k10=10 and C6 k11=11 are now integer target matches, each fleet proved within its pool and each CG certified. The overall MIP TIME_LIMIT status is the second charging stage, not a missing fleet proof. C4’s old bounded pool was proved to require11; the new pool permits10 at the same certified LP objective. C3’s old12 was unproved. See outputs/queue_recovery_20260912/status_20260912T220047Z/README.md and comparison.json. All9 recovered ready-pool MIPs completed:5 fleet8,4 fleet9; no new failures or confirmed preemptions.16 full-pool CG certificates;23 EVSP–DR allocations running at18:02. Both graph-cache preparations remain active.
+Full-pool recovery has 17 completed MIPs, all target matches with pool fleet proofs and individual-route replay; 25/37 CG cases are certified. Highest completed matches for chains 1–6 are 8, 11, 14, 12, 13, 12. Current report: outputs/queue_recovery_20260912/status_20260912T231317Z/README.md. Use summarize_full_pool.py with a new snapshot and dated output directory to refresh this compact table. Preserve its source hashes and compare only matching treatments. The earlier bounded C1 k15 result is 18 buses, pool bound 15, unproved; it is not a full-pool result. 16 EVSP–DR jobs running at 19:15; no invalid dependencies or new errors/preemptions. Both graph-cache preparations remain active. Do not fill the queue with speculative campaigns; the registered six chains are still progressing.
 
 For compact deltas, compare complete canonical CG rows on disk but print only certified_rc_optimal, stop_reason, wall_s and scalar final fields. Never print final_lp: it contains routes and all duals. Research snapshot timestamps remain explicit; do not conflate a scheduler transition with a result collected earlier in the same pass.
 
