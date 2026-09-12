@@ -25,6 +25,10 @@ def main():
  if mode=='mip':
   out=root/'mip'/attempt/'result.json';out.parent.mkdir(parents=True,exist_ok=True)
   if out.exists():raise RuntimeError('Refusing to overwrite an attempt')
+  os.environ['EVSP_EXPECTED_COMMIT']=MIP.name
+  os.environ['EVSP_REQUIRE_DETACHED']='1'
+  os.environ['EVSP_MIP_EXPECTED_RESULT_SHA256']=sha(status)
+  os.environ['EVSP_MIP_EXPECTED_JOURNAL_SHA256']=sha(json.loads(status.read_text())['columns_journal'])
   run([PY,str(MIP/'src/run_exact_pool_mip.py'),'--result',str(status),'--data-dir',str(CODE/'data'),'--reference-data-dir',str(CODE/'data'),'--cover','--two-stage','--timelimit','3600','--stage1-timelimit','1800','--threads','8','--mipgap','0.0001','--gurobi-log',str(out.with_suffix('.gurobi.log')),'--out',str(out)])
   result=json.loads(out.read_text());save(root/'mip_result.json',result);save(root/'mip_provenance.json',{'result_path':str(out),'result_sha256':sha(out),'status_sha256':sha(status),'execution_commit':'871d057e1067411f09581e37d78f7c1ca43f68bb','data_execution_commit':manifest['execution_commit']});return
  inherit=case.get('parent_status')
