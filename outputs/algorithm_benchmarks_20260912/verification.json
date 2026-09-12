@@ -1,0 +1,26 @@
+{
+  "review_scope": "Astra-only local benchmark prototypes; production source and cluster unchanged",
+  "capacity_and_replay_manifests_verified": true,
+  "local_markdown_targets_exist": true,
+  "replay_sequence_case_comparisons": 1980,
+  "master_paired_error": 0.0,
+  "capacity_readiness": "blocked by pre-existing station-power tariff-accounting mismatch; reproduction is an expected failing independent correctness gate",
+  "capacity_source_checks": [
+    {
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "path": "src/event_pricer_network.py",
+      "verified": true
+    },
+    {
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "path": "src/expanded_path_realization.py",
+      "verified": true
+    },
+    {
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "path": "src/run_capacity_speed_event_cg.py",
+      "verified": true
+    }
+  ],
+  "full_CG_speedup_measured": false
+}

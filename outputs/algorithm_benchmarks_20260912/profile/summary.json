@@ -1,0 +1,642 @@
+{
+  "kind": "measured_baseline_profile_and_conditional_arithmetic_only",
+  "source": "/Users/nadan/Documents/projects/demandresponse/outputs/algorithm_review_20260912/runtime_evidence.json",
+  "source_sha256": "d0ce5dfe323a1a6795ef302f266590df3721dc74cc0ab6a8167a26a4e272cdd0",
+  "extractor_sha256": "2a8d510e1335d14507bdbdb3bcee571e04da312d7666ca1151137586dfb1ecc4",
+  "script_sha256": "77d532c0e6c296b13477f0ebbcf7efedf9aa8f5bb52fd8cc2d4b655e44e41be0",
+  "snapshot_sha256": "23d9fb05744b8a6f242c46785309cc1cc004ec4ab29c89f802e6fac638667c84",
+  "baseline_execution_commits": [
+    "21fbecba826824c44f897feef038fcf51c532582"
+  ],
+  "validation": {
+    "records": 98,
+    "fresh_cached_records": 84,
+    "source_snapshot_matched": true,
+    "negative_exclusive_count": 0,
+    "overcount_count": 0,
+    "residual_seconds_all_98": {
+      "median": 13.485847942065448,
+      "min": 0.1729141197865829,
+      "max": 478.5028749825433,
+      "n": 98
+    }
+  },
+  "cohort": "Fresh covering; singleton initialization; cached event graphs; six certified cases per k. Pricing certificates apply to recorded conservative expanded-grid model.",
+  "aggregation": "Each share or speedup is computed per case first; summary median/min/max are over case ratios. No ratio of median phase time to median wall time.",
+  "assumptions": [
+    "Timer intervals are comparable elapsed wall times and nonoverlapping except shortest-path/enrichment within inclusive pricing. Arithmetic checks cannot prove timer placement correctness.",
+    "Incidence ceiling removes ALL measured incidence time with zero replacement cost and unchanged CG trajectory; actual redundant-removal savings can be smaller.",
+    "Pricing scenarios accelerate the ENTIRE inclusive pricing batch by 2x/5x, leave every other phase unchanged, and preserve CG trajectory. They are hypothetical, not measured improvements.",
+    "Unaccounted residual overhead remains unchanged; scheduler wait and cold graph build excluded from fresh cached cohort."
+  ],
+  "by_k": {
+    "5": {
+      "wall_minutes": {
+        "median": 17.372350741651218,
+        "min": 8.431473303939372,
+        "max": 30.560678819268166,
+        "n": 6
+      },
+      "phase_shares": {
+        "incidence": {
+          "median": 0.05430445282236518,
+          "min": 0.041171286775593036,
+          "max": 0.09006378685389341,
+          "n": 6
+        },
+        "pricing_inclusive": {
+          "median": 0.8118807953781915,
+          "min": 0.7346052455112229,
+          "max": 0.8576653123604943,
+          "n": 6
+        },
+        "enrichment_exclusive": {
+          "median": 0.3529007086390604,
+          "min": 0.22558162241522894,
+          "max": 0.4725513656709729,
+          "n": 6
+        },
+        "shortest_path": {
+          "median": 0.4404227060510108,
+          "min": 0.3775496853231957,
+          "max": 0.6205282247034908,
+          "n": 6
+        },
+        "master": {
+          "median": 0.12319439923463658,
+          "min": 0.08483399760948916,
+          "max": 0.16298236997130394,
+          "n": 6
+        },
+        "graph_load_or_build": {
+          "median": 0.0034845562200653416,
+          "min": 0.0022399110001117993,
+          "max": 0.005999564345370861,
+          "n": 6
+        },
+        "io_fsync": {
+          "median": 0.0013392887489177634,
+          "min": 0.001102514899382173,
+          "max": 0.001683962233082999,
+          "n": 6
+        },
+        "unaccounted": {
+          "median": 0.005556514338017404,
+          "min": 0.004736557243367079,
+          "max": 0.006980163385963967,
+          "n": 6
+        }
+      },
+      "incidence_zero_cost_ceiling": {
+        "median": 1.0574407180081726,
+        "min": 1.042939146698204,
+        "max": 1.098978132261049,
+        "n": 6
+      },
+      "incidence_zero_cost_saved_minutes": {
+        "median": 0.9313038828084246,
+        "min": 0.3471346053372448,
+        "max": 2.3610911550659996,
+        "n": 6
+      },
+      "pricing_2x_hypothetical_speedup": {
+        "median": 1.6833365216156122,
+        "min": 1.580534448167525,
+        "max": 1.750800375442292,
+        "n": 6
+      },
+      "pricing_5x_hypothetical_speedup": {
+        "median": 2.853151464646076,
+        "min": 2.425325421171354,
+        "max": 3.186055272147017,
+        "n": 6
+      }
+    },
+    "10": {
+      "wall_minutes": {
+        "median": 88.71544588811813,
+        "min": 48.938516747318985,
+        "max": 127.23875132616764,
+        "n": 6
+      },
+      "phase_shares": {
+        "incidence": {
+          "median": 0.052690076151496554,
+          "min": 0.046364948129886716,
+          "max": 0.07096325785027882,
+          "n": 6
+        },
+        "pricing_inclusive": {
+          "median": 0.7563010636494794,
+          "min": 0.6582204069972957,
+          "max": 0.7887756891554988,
+          "n": 6
+        },
+        "enrichment_exclusive": {
+          "median": 0.14433008058019353,
+          "min": 0.0992249327189166,
+          "max": 0.1652303396215416,
+          "n": 6
+        },
+        "shortest_path": {
+          "median": 0.6018552285031803,
+          "min": 0.5299759843709146,
+          "max": 0.6637324736935912,
+          "n": 6
+        },
+        "master": {
+          "median": 0.1826962885224232,
+          "min": 0.15677222552690487,
+          "max": 0.2648977779005577,
+          "n": 6
+        },
+        "graph_load_or_build": {
+          "median": 0.0045042723547189,
+          "min": 0.001696140763697825,
+          "max": 0.008894389348763273,
+          "n": 6
+        },
+        "io_fsync": {
+          "median": 0.0005053650258512062,
+          "min": 0.0003883913371838996,
+          "max": 0.0008917205675995336,
+          "n": 6
+        },
+        "unaccounted": {
+          "median": 0.003924292739444224,
+          "min": 0.0034200654484901616,
+          "max": 0.0051020115957836065,
+          "n": 6
+        }
+      },
+      "incidence_zero_cost_ceiling": {
+        "median": 1.055620737904737,
+        "min": 1.0486191735915782,
+        "max": 1.076383693594373,
+        "n": 6
+      },
+      "incidence_zero_cost_saved_minutes": {
+        "median": 4.675066907645669,
+        "min": 2.2690317905430373,
+        "max": 9.02927631890634,
+        "n": 6
+      },
+      "pricing_2x_hypothetical_speedup": {
+        "median": 1.6081522884107389,
+        "min": 1.4905577715072382,
+        "max": 1.6512218109340466,
+        "n": 6
+      },
+      "pricing_5x_hypothetical_speedup": {
+        "median": 2.532367754346647,
+        "min": 2.1122729049467033,
+        "max": 2.7101780426778705,
+        "n": 6
+      }
+    },
+    "15": {
+      "wall_minutes": {
+        "median": 272.0823696218567,
+        "min": 100.39906341317887,
+        "max": 397.2374426908403,
+        "n": 6
+      },
+      "phase_shares": {
+        "incidence": {
+          "median": 0.0557987258336166,
+          "min": 0.04716575680800257,
+          "max": 0.06934726476319762,
+          "n": 6
+        },
+        "pricing_inclusive": {
+          "median": 0.618892132248781,
+          "min": 0.5376593219626343,
+          "max": 0.7494893805613619,
+          "n": 6
+        },
+        "enrichment_exclusive": {
+          "median": 0.06693803604680804,
+          "min": 0.06601736713729832,
+          "max": 0.10945034896227963,
+          "n": 6
+        },
+        "shortest_path": {
+          "median": 0.5470521348065844,
+          "min": 0.47076819368863365,
+          "max": 0.6400390315990824,
+          "n": 6
+        },
+        "master": {
+          "median": 0.3211015012474337,
+          "min": 0.19500521009821473,
+          "max": 0.3832907808778311,
+          "n": 6
+        },
+        "graph_load_or_build": {
+          "median": 0.0028611414663155203,
+          "min": 0.0013538969022485173,
+          "max": 0.006557260329514887,
+          "n": 6
+        },
+        "io_fsync": {
+          "median": 0.0003045009393586085,
+          "min": 0.00019876579974875618,
+          "max": 0.0004314000230681984,
+          "n": 6
+        },
+        "unaccounted": {
+          "median": 0.0027783548182194195,
+          "min": 0.0022988481512953296,
+          "max": 0.0037509480646320537,
+          "n": 6
+        }
+      },
+      "incidence_zero_cost_ceiling": {
+        "median": 1.059100567450781,
+        "min": 1.0495004846278375,
+        "max": 1.0745146520689615,
+        "n": 6
+      },
+      "incidence_zero_cost_saved_minutes": {
+        "median": 16.984386947915965,
+        "min": 4.874230658519082,
+        "max": 21.40539482961952,
+        "n": 6
+      },
+      "pricing_2x_hypothetical_speedup": {
+        "median": 1.4481608415494458,
+        "min": 1.367670358923638,
+        "max": 1.599346673999308,
+        "n": 6
+      },
+      "pricing_5x_hypothetical_speedup": {
+        "median": 1.980958613184929,
+        "min": 1.7547783504993542,
+        "max": 2.497449507468939,
+        "n": 6
+      }
+    }
+  },
+  "cases": [
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k05_p2__cover__event_2p5_event5.json",
+      "k": 5,
+      "chain": 2,
+      "wall_s": 1284.5706363350619,
+      "phase_shares": {
+        "incidence": 0.09006378685389341,
+        "pricing_inclusive": 0.7346052455112229,
+        "enrichment_exclusive": 0.22558162241522894,
+        "shortest_path": 0.5090236230959939,
+        "master": 0.16298236997130394,
+        "graph_load_or_build": 0.0038697908890830564,
+        "io_fsync": 0.0014986433885327255,
+        "unaccounted": 0.006980163385963967
+      },
+      "incidence_zero_cost_ceiling": 1.098978132261049,
+      "incidence_zero_cost_saved_minutes": 1.9282215998275205,
+      "pricing_2x_hypothetical_speedup": 1.580534448167525,
+      "pricing_5x_hypothetical_speedup": 2.425325421171354
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k05_p4__cover__event_2p5_event5.json",
+      "k": 5,
+      "chain": 4,
+      "wall_s": 1207.3673140408937,
+      "phase_shares": {
+        "incidence": 0.0582011472741878,
+        "pricing_inclusive": 0.8101087119230739,
+        "enrichment_exclusive": 0.4173266144928694,
+        "shortest_path": 0.3927820974302045,
+        "master": 0.12113393046999224,
+        "graph_load_or_build": 0.0037414578850039613,
+        "io_fsync": 0.001242464345975541,
+        "unaccounted": 0.005572288101766576
+      },
+      "incidence_zero_cost_ceiling": 1.0617978532313332,
+      "incidence_zero_cost_saved_minutes": 1.1711693809755768,
+      "pricing_2x_hypothetical_speedup": 1.6808258200060884,
+      "pricing_5x_hypothetical_speedup": 2.8416111750351507
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k05_p6__cover__event_2p5_event5.json",
+      "k": 5,
+      "chain": 6,
+      "wall_s": 877.3147749572527,
+      "phase_shares": {
+        "incidence": 0.047287819905344426,
+        "pricing_inclusive": 0.8576653123604943,
+        "enrichment_exclusive": 0.4725513656709729,
+        "shortest_path": 0.3851139466895214,
+        "master": 0.08483399760948916,
+        "graph_load_or_build": 0.003203031046296959,
+        "io_fsync": 0.001683962233082999,
+        "unaccounted": 0.005325876845292177
+      },
+      "incidence_zero_cost_ceiling": 1.0496349484066072,
+      "incidence_zero_cost_saved_minutes": 0.6914383846412723,
+      "pricing_2x_hypothetical_speedup": 1.750800375442292,
+      "pricing_5x_hypothetical_speedup": 3.186055272147017
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb/cg/M__k05_p1__cover__event_2p5_event5.json",
+      "k": 5,
+      "chain": 1,
+      "wall_s": 1833.64072915609,
+      "phase_shares": {
+        "incidence": 0.07725912009445805,
+        "pricing_inclusive": 0.7577615384398249,
+        "enrichment_exclusive": 0.3802118531166291,
+        "shortest_path": 0.3775496853231957,
+        "master": 0.15576257673947702,
+        "graph_load_or_build": 0.0022399110001117993,
+        "io_fsync": 0.0014361131518599857,
+        "unaccounted": 0.0055407405742682325
+      },
+      "incidence_zero_cost_ceiling": 1.0837278609595868,
+      "incidence_zero_cost_saved_minutes": 2.3610911550659996,
+      "pricing_2x_hypothetical_speedup": 1.6099968419011297,
+      "pricing_5x_hypothetical_speedup": 2.5394196057700587
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb/cg/M__k05_p3__cover__event_2p5_event5.json",
+      "k": 5,
+      "chain": 3,
+      "wall_s": 505.88839823636226,
+      "phase_shares": {
+        "incidence": 0.041171286775593036,
+        "pricing_inclusive": 0.8474500082707953,
+        "enrichment_exclusive": 0.22692178356730458,
+        "shortest_path": 0.6205282247034908,
+        "master": 0.09950599938653099,
+        "graph_load_or_build": 0.005999564345370861,
+        "io_fsync": 0.0011365839783427866,
+        "unaccounted": 0.004736557243367079
+      },
+      "incidence_zero_cost_ceiling": 1.042939146698204,
+      "incidence_zero_cost_saved_minutes": 0.3471346053372448,
+      "pricing_2x_hypothetical_speedup": 1.7352826466115725,
+      "pricing_5x_hypothetical_speedup": 3.1052043862439693
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb/cg/M__k05_p5__cover__event_2p5_event5.json",
+      "k": 5,
+      "chain": 5,
+      "wall_s": 756.3219959374983,
+      "phase_shares": {
+        "incidence": 0.05040775837054255,
+        "pricing_inclusive": 0.813652878833309,
+        "enrichment_exclusive": 0.3255895641614918,
+        "shortest_path": 0.48806331467181713,
+        "master": 0.12525486799928093,
+        "graph_load_or_build": 0.0032276545551267214,
+        "io_fsync": 0.001102514899382173,
+        "unaccounted": 0.006354325342358691
+      },
+      "incidence_zero_cost_ceiling": 1.0530835827850122,
+      "incidence_zero_cost_saved_minutes": 0.635408273692398,
+      "pricing_2x_hypothetical_speedup": 1.685847223225136,
+      "pricing_5x_hypothetical_speedup": 2.8646917542570005
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k10_p2__cover__event_2p5_event5.json",
+      "k": 10,
+      "chain": 2,
+      "wall_s": 6730.924182025716,
+      "phase_shares": {
+        "incidence": 0.0527174898941763,
+        "pricing_inclusive": 0.7629574064125079,
+        "enrichment_exclusive": 0.0992249327189166,
+        "shortest_path": 0.6637324736935912,
+        "master": 0.1744997784211497,
+        "graph_load_or_build": 0.005877580321499058,
+        "io_fsync": 0.0005276795021769623,
+        "unaccounted": 0.0034200654484901616
+      },
+      "incidence_zero_cost_ceiling": 1.0556512860015614,
+      "incidence_zero_cost_saved_minutes": 5.913957125740126,
+      "pricing_2x_hypothetical_speedup": 1.6167592048709405,
+      "pricing_5x_hypothetical_speedup": 2.5665106429248072
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k10_p4__cover__event_2p5_event5.json",
+      "k": 10,
+      "chain": 4,
+      "wall_s": 7161.053330967203,
+      "phase_shares": {
+        "incidence": 0.06503486053697256,
+        "pricing_inclusive": 0.6730978889393295,
+        "enrichment_exclusive": 0.14312190456841486,
+        "shortest_path": 0.5299759843709146,
+        "master": 0.251762141721575,
+        "graph_load_or_build": 0.005108049318368055,
+        "io_fsync": 0.000676258268765993,
+        "unaccounted": 0.00432080121498879
+      },
+      "incidence_zero_cost_ceiling": 1.0695585939966956,
+      "incidence_zero_cost_saved_minutes": 7.7619684112879135,
+      "pricing_2x_hypothetical_speedup": 1.507270192223361,
+      "pricing_5x_hypothetical_speedup": 2.166745407989229
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k10_p6__cover__event_2p5_event5.json",
+      "k": 10,
+      "chain": 6,
+      "wall_s": 3914.9293245484587,
+      "phase_shares": {
+        "incidence": 0.05266266240881681,
+        "pricing_inclusive": 0.766399615301959,
+        "enrichment_exclusive": 0.1652303396215416,
+        "shortest_path": 0.6011692756804174,
+        "master": 0.1660496007770778,
+        "graph_load_or_build": 0.008894389348763273,
+        "io_fsync": 0.0008917205675995336,
+        "unaccounted": 0.0051020115957836065
+      },
+      "incidence_zero_cost_ceiling": 1.055590189807913,
+      "incidence_zero_cost_saved_minutes": 3.436176689551212,
+      "pricing_2x_hypothetical_speedup": 1.6212705709309236,
+      "pricing_5x_hypothetical_speedup": 2.5847787544265444
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb/cg/M__k10_p1__cover__event_2p5_event5.json",
+      "k": 10,
+      "chain": 1,
+      "wall_s": 7634.325079570059,
+      "phase_shares": {
+        "incidence": 0.07096325785027882,
+        "pricing_inclusive": 0.6582204069972957,
+        "enrichment_exclusive": 0.11869301552248217,
+        "shortest_path": 0.5395273914748134,
+        "master": 0.2648977779005577,
+        "graph_load_or_build": 0.001696140763697825,
+        "io_fsync": 0.0003883913371838996,
+        "unaccounted": 0.0038340251509860757
+      },
+      "incidence_zero_cost_ceiling": 1.076383693594373,
+      "incidence_zero_cost_saved_minutes": 9.02927631890634,
+      "pricing_2x_hypothetical_speedup": 1.4905577715072382,
+      "pricing_5x_hypothetical_speedup": 2.1122729049467033
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb/cg/M__k10_p3__cover__event_2p5_event5.json",
+      "k": 10,
+      "chain": 3,
+      "wall_s": 2936.311004839139,
+      "phase_shares": {
+        "incidence": 0.046364948129886716,
+        "pricing_inclusive": 0.7887756891554988,
+        "enrichment_exclusive": 0.1455382565919722,
+        "shortest_path": 0.6432374325635266,
+        "master": 0.15677222552690487,
+        "graph_load_or_build": 0.003900495391069746,
+        "io_fsync": 0.00046470393021616626,
+        "unaccounted": 0.003721937866423719
+      },
+      "incidence_zero_cost_ceiling": 1.0486191735915782,
+      "incidence_zero_cost_saved_minutes": 2.2690317905430373,
+      "pricing_2x_hypothetical_speedup": 1.6512218109340466,
+      "pricing_5x_hypothetical_speedup": 2.7101780426778705
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb/cg/M__k10_p5__cover__event_2p5_event5.json",
+      "k": 10,
+      "chain": 5,
+      "wall_s": 3864.5760810151696,
+      "phase_shares": {
+        "incidence": 0.0521737429251346,
+        "pricing_inclusive": 0.7496447208864508,
+        "enrichment_exclusive": 0.14710353956050773,
+        "shortest_path": 0.6025411813259431,
+        "master": 0.19089279862369674,
+        "graph_load_or_build": 0.002791126687289973,
+        "io_fsync": 0.00048305054952544994,
+        "unaccounted": 0.004014560327902372
+      },
+      "incidence_zero_cost_ceiling": 1.0550456821972316,
+      "incidence_zero_cost_saved_minutes": 3.3604899827584935,
+      "pricing_2x_hypothetical_speedup": 1.5995453719505375,
+      "pricing_5x_hypothetical_speedup": 2.4982248657684867
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k15_p1__cover__event_2p5_event5.json",
+      "k": 15,
+      "chain": 1,
+      "wall_s": 14308.55518752383,
+      "phase_shares": {
+        "incidence": 0.06934726476319762,
+        "pricing_inclusive": 0.5376593219626343,
+        "enrichment_exclusive": 0.06689112827400065,
+        "shortest_path": 0.47076819368863365,
+        "master": 0.3832907808778311,
+        "graph_load_or_build": 0.005641368676645715,
+        "io_fsync": 0.0003103156550591573,
+        "unaccounted": 0.0037509480646320537
+      },
+      "incidence_zero_cost_ceiling": 1.0745146520689615,
+      "incidence_zero_cost_saved_minutes": 16.53765274946733,
+      "pricing_2x_hypothetical_speedup": 1.367670358923638,
+      "pricing_5x_hypothetical_speedup": 1.7547783504993542
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k15_p2__cover__event_2p5_event5.json",
+      "k": 15,
+      "chain": 2,
+      "wall_s": 12532.011855103076,
+      "phase_shares": {
+        "incidence": 0.060074233707042284,
+        "pricing_inclusive": 0.5962359615733026,
+        "enrichment_exclusive": 0.06642698527385021,
+        "shortest_path": 0.5298089762994523,
+        "master": 0.3335856798449048,
+        "graph_load_or_build": 0.006557260329514887,
+        "io_fsync": 0.00029868622365805973,
+        "unaccounted": 0.003248178321577422
+      },
+      "incidence_zero_cost_ceiling": 1.0639138066657896,
+      "incidence_zero_cost_saved_minutes": 12.54751681671478,
+      "pricing_2x_hypothetical_speedup": 1.4247408718644399,
+      "pricing_5x_hypothetical_speedup": 1.9120048312968732
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k15_p3__cover__event_2p5_event5.json",
+      "k": 15,
+      "chain": 3,
+      "wall_s": 6023.9438047907315,
+      "phase_shares": {
+        "incidence": 0.04854856701660493,
+        "pricing_inclusive": 0.7494893805613619,
+        "enrichment_exclusive": 0.10945034896227963,
+        "shortest_path": 0.6400390315990824,
+        "master": 0.19500521009821473,
+        "graph_load_or_build": 0.0035969142733319396,
+        "io_fsync": 0.00034062941324252544,
+        "unaccounted": 0.003019298637243928
+      },
+      "incidence_zero_cost_ceiling": 1.0510257963082517,
+      "incidence_zero_cost_saved_minutes": 4.874230658519082,
+      "pricing_2x_hypothetical_speedup": 1.599346673999308,
+      "pricing_5x_hypothetical_speedup": 2.497449507468939
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k15_p4__cover__event_2p5_event5.json",
+      "k": 15,
+      "chain": 4,
+      "wall_s": 23834.246561450418,
+      "phase_shares": {
+        "incidence": 0.05388564251300648,
+        "pricing_inclusive": 0.6109384716570758,
+        "enrichment_exclusive": 0.06698494381961542,
+        "shortest_path": 0.5439535278374603,
+        "master": 0.33114154016869995,
+        "graph_load_or_build": 0.0013538969022485173,
+        "io_fsync": 0.00020958469332139952,
+        "unaccounted": 0.002470864065647782
+      },
+      "incidence_zero_cost_ceiling": 1.0569546821550557,
+      "incidence_zero_cost_saved_minutes": 21.40539482961952,
+      "pricing_2x_hypothetical_speedup": 1.4398210296601424,
+      "pricing_5x_hypothetical_speedup": 1.9559931940219109
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k15_p5__cover__event_2p5_event5.json",
+      "k": 15,
+      "chain": 5,
+      "wall_s": 18341.32916709897,
+      "phase_shares": {
+        "incidence": 0.057711809154226724,
+        "pricing_inclusive": 0.6268457928404861,
+        "enrichment_exclusive": 0.07669505106477777,
+        "shortest_path": 0.5501507417757084,
+        "master": 0.31034821832372494,
+        "graph_load_or_build": 0.0021253686592991004,
+        "io_fsync": 0.0004314000230681984,
+        "unaccounted": 0.002537410999194911
+      },
+      "incidence_zero_cost_ceiling": 1.0612464527465064,
+      "incidence_zero_cost_saved_minutes": 17.641854808774465,
+      "pricing_2x_hypothetical_speedup": 1.4565006534387495,
+      "pricing_5x_hypothetical_speedup": 2.0059240323479473
+    },
+    {
+      "source_path": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb/cg/M__k15_p6__cover__event_2p5_event5.json",
+      "k": 15,
+      "chain": 6,
+      "wall_s": 22174.29210431804,
+      "phase_shares": {
+        "incidence": 0.04716575680800257,
+        "pricing_inclusive": 0.6376280022824401,
+        "enrichment_exclusive": 0.06601736713729832,
+        "shortest_path": 0.5716106351451418,
+        "master": 0.31106146232616744,
+        "graph_load_or_build": 0.0016471646323458309,
+        "io_fsync": 0.00019876579974875618,
+        "unaccounted": 0.0022988481512953296
+      },
+      "incidence_zero_cost_ceiling": 1.0495004846278375,
+      "incidence_zero_cost_saved_minutes": 17.431121146364603,
+      "pricing_2x_hypothetical_speedup": 1.4680278245227336,
+      "pricing_5x_hypothetical_speedup": 2.041242912247808
+    }
+  ]
+}

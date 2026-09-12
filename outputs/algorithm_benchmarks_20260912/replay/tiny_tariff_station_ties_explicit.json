@@ -1,0 +1,650 @@
+{
+  "name": "tiny_tariff_station_ties",
+  "mode": "explicit",
+  "trip_count": 2,
+  "physics": {
+    "soc_step": 5,
+    "block_min": 5,
+    "g_kwh": 240.0,
+    "charge_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "strict_tariff_coverage": true
+  },
+  "initial_energy_kwh": 240,
+  "terminal_energy": "reserve only",
+  "shared_capacity": false,
+  "objective": "existing weighted bus/charge objective unchanged",
+  "master_sense": "not applicable (fixed sequence pricing)",
+  "tariff": {
+    "2190L": {
+      "0": 0.3,
+      "1": 0.05,
+      "2": 0.4,
+      "3": 0.1,
+      "4": 0.1,
+      "5": 0.1,
+      "6": 0.1,
+      "7": 0.1,
+      "8": 0.1,
+      "9": 0.1,
+      "10": 0.1,
+      "11": 0.1,
+      "12": 0.1,
+      "13": 0.1,
+      "14": 0.1,
+      "15": 0.1,
+      "16": 0.1,
+      "17": 0.1,
+      "18": 0.1,
+      "19": 0.1,
+      "20": 0.1,
+      "21": 0.1,
+      "22": 0.1,
+      "23": 0.1,
+      "24": 0.1,
+      "25": 0.1,
+      "26": 0.1
+    },
+    "4808": {
+      "0": 0.3,
+      "1": 0.05,
+      "2": 0.4,
+      "3": 0.1,
+      "4": 0.1,
+      "5": 0.1,
+      "6": 0.1,
+      "7": 0.1,
+      "8": 0.1,
+      "9": 0.1,
+      "10": 0.1,
+      "11": 0.1,
+      "12": 0.1,
+      "13": 0.1,
+      "14": 0.1,
+      "15": 0.1,
+      "16": 0.1,
+      "17": 0.1,
+      "18": 0.1,
+      "19": 0.1,
+      "20": 0.1,
+      "21": 0.1,
+      "22": 0.1,
+      "23": 0.1,
+      "24": 0.1,
+      "25": 0.1,
+      "26": 0.1
+    },
+    "PARX": {
+      "0": 0.3,
+      "1": 0.05,
+      "2": 0.4,
+      "3": 0.1,
+      "4": 0.1,
+      "5": 0.1,
+      "6": 0.1,
+      "7": 0.1,
+      "8": 0.1,
+      "9": 0.1,
+      "10": 0.1,
+      "11": 0.1,
+      "12": 0.1,
+      "13": 0.1,
+      "14": 0.1,
+      "15": 0.1,
+      "16": 0.1,
+      "17": 0.1,
+      "18": 0.1,
+      "19": 0.1,
+      "20": 0.1,
+      "21": 0.1,
+      "22": 0.1,
+      "23": 0.1,
+      "24": 0.1,
+      "25": 0.1,
+      "26": 0.1
+    },
+    "3127L": {
+      "0": 0.3,
+      "1": 0.05,
+      "2": 0.4,
+      "3": 0.1,
+      "4": 0.1,
+      "5": 0.1,
+      "6": 0.1,
+      "7": 0.1,
+      "8": 0.1,
+      "9": 0.1,
+      "10": 0.1,
+      "11": 0.1,
+      "12": 0.1,
+      "13": 0.1,
+      "14": 0.1,
+      "15": 0.1,
+      "16": 0.1,
+      "17": 0.1,
+      "18": 0.1,
+      "19": 0.1,
+      "20": 0.1,
+      "21": 0.1,
+      "22": 0.1,
+      "23": 0.1,
+      "24": 0.1,
+      "25": 0.1,
+      "26": 0.1
+    },
+    "7880C": {
+      "0": 0.3,
+      "1": 0.05,
+      "2": 0.4,
+      "3": 0.1,
+      "4": 0.1,
+      "5": 0.1,
+      "6": 0.1,
+      "7": 0.1,
+      "8": 0.1,
+      "9": 0.1,
+      "10": 0.1,
+      "11": 0.1,
+      "12": 0.1,
+      "13": 0.1,
+      "14": 0.1,
+      "15": 0.1,
+      "16": 0.1,
+      "17": 0.1,
+      "18": 0.1,
+      "19": 0.1,
+      "20": 0.1,
+      "21": 0.1,
+      "22": 0.1,
+      "23": 0.1,
+      "24": 0.1,
+      "25": 0.1,
+      "26": 0.1
+    },
+    "JON_A": {
+      "0": 0.3,
+      "1": 0.05,
+      "2": 0.4,
+      "3": 0.1,
+      "4": 0.1,
+      "5": 0.1,
+      "6": 0.1,
+      "7": 0.1,
+      "8": 0.1,
+      "9": 0.1,
+      "10": 0.1,
+      "11": 0.1,
+      "12": 0.1,
+      "13": 0.1,
+      "14": 0.1,
+      "15": 0.1,
+      "16": 0.1,
+      "17": 0.1,
+      "18": 0.1,
+      "19": 0.1,
+      "20": 0.1,
+      "21": 0.1,
+      "22": 0.1,
+      "23": 0.1,
+      "24": 0.1,
+      "25": 0.1,
+      "26": 0.1
+    }
+  },
+  "tariff_sha256": "4a8fd45c668d9f582c8a37fe99d549319069736985990a7984b6eeab03f950e6",
+  "problem_sha256": "2b8ab686bfb5dbaabd824154458ee6b7b14832d3bf49ad2c18e1c2371210a544",
+  "graph": {
+    "time_model": "event",
+    "dag_nodes": 41,
+    "dag_arcs": 330,
+    "arc_mode": "explicit",
+    "materialized_python_arc_objects": 330,
+    "packed_arc_bytes": 0,
+    "station_event_times": {
+      "2190L_0": 303,
+      "4808_0": 303,
+      "PARX_1": 27,
+      "3127L_0": 27,
+      "7880C_0": 27,
+      "JON_A_0": 27
+    },
+    "event_lattice_sha256": "45e5fbc11991d41021c0c121fc4d4211c77412955d7833b7207d070042dbe6cc"
+  },
+  "graph_build_seconds": 0.021407125052064657,
+  "index_setup_seconds": 2.5165732949972153e-05,
+  "index_storage": "O(trips) two integer node bounds; no per-arc additional storage",
+  "sequence_count": 33,
+  "sequences": [
+    [],
+    [
+      0
+    ],
+    [
+      1
+    ],
+    [
+      0,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1,
+      0
+    ],
+    [
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      1,
+      0
+    ],
+    [
+      1,
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      999999
+    ],
+    [
+      0,
+      999999
+    ]
+  ],
+  "sequence_sha256": "e84f4a0eceaf9958d14cb514e7172e7091a38f75ffd2681705485d4dd7c4da94",
+  "feasible": 2,
+  "rejected": 31,
+  "full_records_sha256": "02925349dfecee84c981055575a9d6bb689fed3f743313327ca01872ecba7719",
+  "full_actions_sha256": "214e1970465091343cec06d43fd4e9c7726258fca177c961a370c7c35303a3d8",
+  "exact_record_and_action_equality": true,
+  "counts": {
+    "baseline_arcs_scanned": 683,
+    "indexed_arcs_selected": 248,
+    "source_queries": 248
+  },
+  "raw_timing_samples": [
+    {
+      "cache": "cold_action_window",
+      "repetition": 0,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "baseline",
+      "seconds": 0.00041349977254867554
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 0,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "indexed",
+      "seconds": 0.00038283271715044975
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 1,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "indexed",
+      "seconds": 0.00036745937541127205
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 1,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "baseline",
+      "seconds": 0.0003236671909689903
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 2,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "baseline",
+      "seconds": 0.0003276248462498188
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 2,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "indexed",
+      "seconds": 0.0003960416652262211
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 3,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "indexed",
+      "seconds": 0.00036908267065882683
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 3,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "baseline",
+      "seconds": 0.0003209998831152916
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 4,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "baseline",
+      "seconds": 0.00035062525421380997
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 4,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "indexed",
+      "seconds": 0.000373166985809803
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 5,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "indexed",
+      "seconds": 0.0003874576650559902
+    },
+    {
+      "cache": "cold_action_window",
+      "repetition": 5,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "baseline",
+      "seconds": 0.0003260420635342598
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 0,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "baseline",
+      "seconds": 0.00030787475407123566
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 0,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "indexed",
+      "seconds": 0.0003616670146584511
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 1,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "indexed",
+      "seconds": 0.00035233329981565475
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 1,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "baseline",
+      "seconds": 0.00032637501135468483
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 2,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "baseline",
+      "seconds": 0.0003458326682448387
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 2,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "indexed",
+      "seconds": 0.000378292053937912
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 3,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "indexed",
+      "seconds": 0.0004415828734636307
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 3,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "baseline",
+      "seconds": 0.00037616677582263947
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 4,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "baseline",
+      "seconds": 0.0003192499279975891
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 4,
+      "order": [
+        "baseline",
+        "indexed"
+      ],
+      "kind": "indexed",
+      "seconds": 0.00038908375427126884
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 5,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "indexed",
+      "seconds": 0.00034904200583696365
+    },
+    {
+      "cache": "warm_action_window",
+      "repetition": 5,
+      "order": [
+        "indexed",
+        "baseline"
+      ],
+      "kind": "baseline",
+      "seconds": 0.00031512510031461716
+    }
+  ],
+  "median_seconds": {
+    "cold_action_window": {
+      "baseline": 0.0003268334548920393,
+      "indexed": 0.0003779998514801264
+    },
+    "warm_action_window": {
+      "baseline": 0.00032281246967613697,
+      "indexed": 0.00036997953429818153
+    }
+  },
+  "warm_speedup": 0.8725143953934741,
+  "peak_process_rss_bytes": 100712448
+}

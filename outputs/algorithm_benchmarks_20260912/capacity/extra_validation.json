@@ -1,0 +1,22 @@
+{
+  "script_sha256": "b3c644e332d5b0ef81f0322733ad7bfbd9a314c578ea2cdc4a5c846ff729db67",
+  "benchmark_sha256": "52ee4a9e262b433b49a0e8792487bdfc5ddb8133144e26f4010b22925c0e8635",
+  "results": [
+    {
+      "master_row_replay_pass": false,
+      "paths_enumerated": 10,
+      "global_rc": -99984.68,
+      "exhaustive_min": -99984.68,
+      "master_row_replay_rc": -99984.8,
+      "max_error": 0.1200000000098953
+    },
+    {
+      "master_row_replay_pass": false,
+      "paths_enumerated": 10,
+      "global_rc": -99980.0,
+      "exhaustive_min": -99980.0,
+      "master_row_replay_rc": -99984.8,
+      "max_error": 4.80000000000291
+    }
+  ]
+}
