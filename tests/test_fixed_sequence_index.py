@@ -119,9 +119,9 @@ def test_legacy_unsorted_rows_fail_closed(mode):
     assert not n.fixed_sequence_index
 
 
-@pytest.mark.parametrize("max_columns", [2, 512])
+@pytest.mark.parametrize("max_columns,time_limit_s", [(2, 900), (512, 900), (0, 0)])
 def test_bounded_import_same_selection_records_and_rejections(
-        tmp_path, monkeypatch, max_columns):
+        tmp_path, monkeypatch, max_columns, time_limit_s):
     p = four_trip_chain_problem()
     rows = [{"count_trip_id": i, "Ordered_Trip_ID": 10 + i} for i in p.trips]
     parent, child = tmp_path / "parent.csv", tmp_path / "child.csv"
@@ -141,13 +141,15 @@ def test_bounded_import_same_selection_records_and_rejections(
     real_context = multiprocessing.get_context("fork")
 
     class Context:
-        def Pool(self, workers):
-            pool = real_context.Pool(workers)
-            original = pool.imap_unordered
-            def capture(func, items, chunksize):
-                selections.append(deepcopy(items))
-                return original(func, items, chunksize)
-            pool.imap_unordered = capture
+        def Pool(self, workers, **kwargs):
+            pool = real_context.Pool(workers, **kwargs)
+            def instrument(original):
+                def capture(func, items, chunksize):
+                    selections.append(deepcopy(items))
+                    return original(func, items, chunksize)
+                return capture
+            pool.imap_unordered = instrument(pool.imap_unordered)
+            pool.imap = instrument(pool.imap)
             return pool
 
     monkeypatch.setattr(exact.multiprocessing, "get_context", lambda _: Context())
@@ -158,9 +160,15 @@ def test_bounded_import_same_selection_records_and_rejections(
         records, audit = exact.inherited_event_pool_records(
             status, child_csv_path=child, child_problem=p, child_network=n,
             g_kwh=240, charge_kw=240, reserve_kwh=0,
-            max_columns=max_columns, time_limit_s=900, workers=8,
+            max_columns=max_columns, time_limit_s=time_limit_s, workers=8,
         )
-        results.append((sorted(records, key=lambda r: r["trips"]), audit))
+        assert audit["pool_shutdown"]["shutdown_complete"]
+        assert not audit["pool_shutdown"]["alive_worker_pids"]
+        # Elapsed times and OS-assigned PIDs differ across executions. Compare
+        # every scientific audit field and the complete accepted route records.
+        operational = {"preparation_s", "replay_s", "cleanup_s", "total_import_s", "pool_shutdown"}
+        results.append((sorted(records, key=lambda r: r["trips"]),
+                        {k: v for k, v in audit.items() if k not in operational}))
     assert selections[0] == selections[1]
     assert results[0] == results[1]
     assert results[0][1]["accepted_columns"] == (1 if max_columns == 2 else 4)
