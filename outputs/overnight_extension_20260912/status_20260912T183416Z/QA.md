@@ -1,0 +1,1 @@
+Updated native PDF pages3–6 inspected and Markdown result readback verified. Removed trailing blank page; final export has6pages and final diagnostic sentence retained. First2pages preserved except timestamp. Figure tabs unchanged. Workbook counts/formula checks pass.
