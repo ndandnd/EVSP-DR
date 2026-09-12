@@ -1,0 +1,230 @@
+{
+  "source_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "cases": [
+    {
+      "station_power": 60.0,
+      "flat": false,
+      "dual_rows": 1,
+      "priced_rc": -99984.68,
+      "independent_rc": -99984.68,
+      "cost": 100015.32,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 61.0,
+          "end_min": 120.0,
+          "realized_kwh": 55.0,
+          "expanded_grid_kwh": 59.0,
+          "tariff_hour": 1,
+          "tariff_key": "2190L:1",
+          "price_per_kwh": 0.17
+        },
+        {
+          "stop_index": 0,
+          "block_index": 1,
+          "station": "2190L_0",
+          "start_min": 120.0,
+          "end_min": 121.0,
+          "realized_kwh": 0.0,
+          "expanded_grid_kwh": 1.0,
+          "tariff_hour": 2,
+          "tariff_key": "2190L:2",
+          "price_per_kwh": 0.29
+        }
+      ]
+    },
+    {
+      "station_power": 60.0,
+      "flat": false,
+      "dual_rows": 50,
+      "priced_rc": -99980.0,
+      "independent_rc": -99980.0,
+      "cost": 100020.0,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 100.0,
+          "end_min": 120.0,
+          "realized_kwh": 20.0,
+          "expanded_grid_kwh": 20.0,
+          "tariff_hour": 1,
+          "tariff_key": "2190L:1",
+          "price_per_kwh": 0.17
+        },
+        {
+          "stop_index": 0,
+          "block_index": 1,
+          "station": "2190L_0",
+          "start_min": 120.0,
+          "end_min": 160.0,
+          "realized_kwh": 35.0,
+          "expanded_grid_kwh": 40.0,
+          "tariff_hour": 2,
+          "tariff_key": "2190L:2",
+          "price_per_kwh": 0.29
+        }
+      ]
+    },
+    {
+      "station_power": 60.0,
+      "flat": true,
+      "dual_rows": 1,
+      "priced_rc": -99989.0,
+      "independent_rc": -99989.0,
+      "cost": 100011.0,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 61.0,
+          "end_min": 120.0,
+          "realized_kwh": 55.0,
+          "expanded_grid_kwh": 59.0,
+          "tariff_hour": 1,
+          "tariff_key": "2190L:1",
+          "price_per_kwh": 0.1
+        },
+        {
+          "stop_index": 0,
+          "block_index": 1,
+          "station": "2190L_0",
+          "start_min": 120.0,
+          "end_min": 121.0,
+          "realized_kwh": 0.0,
+          "expanded_grid_kwh": 1.0,
+          "tariff_hour": 2,
+          "tariff_key": "2190L:2",
+          "price_per_kwh": 0.1
+        }
+      ]
+    },
+    {
+      "station_power": 60.0,
+      "flat": true,
+      "dual_rows": 50,
+      "priced_rc": -99989.0,
+      "independent_rc": -99989.0,
+      "cost": 100011.0,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 100.0,
+          "end_min": 120.0,
+          "realized_kwh": 20.0,
+          "expanded_grid_kwh": 20.0,
+          "tariff_hour": 1,
+          "tariff_key": "2190L:1",
+          "price_per_kwh": 0.1
+        },
+        {
+          "stop_index": 0,
+          "block_index": 1,
+          "station": "2190L_0",
+          "start_min": 120.0,
+          "end_min": 160.0,
+          "realized_kwh": 35.0,
+          "expanded_grid_kwh": 40.0,
+          "tariff_hour": 2,
+          "tariff_key": "2190L:2",
+          "price_per_kwh": 0.1
+        }
+      ]
+    },
+    {
+      "station_power": 240.0,
+      "flat": false,
+      "dual_rows": 1,
+      "priced_rc": -99988.4,
+      "independent_rc": -99988.4,
+      "cost": 100011.6,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 10.0,
+          "end_min": 25.0,
+          "realized_kwh": 55.0,
+          "expanded_grid_kwh": 60.0,
+          "tariff_hour": 0,
+          "tariff_key": "2190L:0",
+          "price_per_kwh": 0.11
+        }
+      ]
+    },
+    {
+      "station_power": 240.0,
+      "flat": false,
+      "dual_rows": 50,
+      "priced_rc": -99988.4,
+      "independent_rc": -99988.4,
+      "cost": 100011.6,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 10.0,
+          "end_min": 25.0,
+          "realized_kwh": 55.0,
+          "expanded_grid_kwh": 60.0,
+          "tariff_hour": 0,
+          "tariff_key": "2190L:0",
+          "price_per_kwh": 0.11
+        }
+      ]
+    },
+    {
+      "station_power": 240.0,
+      "flat": true,
+      "dual_rows": 1,
+      "priced_rc": -99989.0,
+      "independent_rc": -99989.0,
+      "cost": 100011.0,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 10.0,
+          "end_min": 25.0,
+          "realized_kwh": 55.0,
+          "expanded_grid_kwh": 60.0,
+          "tariff_hour": 0,
+          "tariff_key": "2190L:0",
+          "price_per_kwh": 0.1
+        }
+      ]
+    },
+    {
+      "station_power": 240.0,
+      "flat": true,
+      "dual_rows": 50,
+      "priced_rc": -99989.0,
+      "independent_rc": -99989.0,
+      "cost": 100011.0,
+      "blocks": [
+        {
+          "stop_index": 0,
+          "block_index": 0,
+          "station": "2190L_0",
+          "start_min": 10.0,
+          "end_min": 25.0,
+          "realized_kwh": 55.0,
+          "expanded_grid_kwh": 60.0,
+          "tariff_hour": 0,
+          "tariff_key": "2190L:0",
+          "price_per_kwh": 0.1
+        }
+      ]
+    }
+  ],
+  "all_eight_pass": true
+}

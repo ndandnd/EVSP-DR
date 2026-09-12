@@ -1,0 +1,49 @@
+{
+  "scope": "Focused integration checks, not cluster speedup measurements",
+  "baseline_master_commit": "9a957e9a1a317988660396c5d06e4ccfc5dbd679",
+  "baseline_replay_commit": "0d3f1129d3ee306285ba22d40cb567beb5a384de",
+  "capacity_fix_commit": "550bc795b18f801dca3a07b8becc1dc4c5527abb",
+  "capacity_selector_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "checks": [
+    {
+      "owner": "root",
+      "scope": "Integrated master/replay pytest suite",
+      "result": "34 passed,32 existing fork DeprecationWarnings",
+      "command": "PYTHONPATH=/private/tmp/evsp-replay-pytest-20260912 GRB_LICENSE_FILE=/Users/nadan/gurobi.lic PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -m pytest tests/test_master_incidence_opt_in.py tests/test_master_lp_gurobi.py tests/test_master_lp_scipy.py tests/test_fixed_sequence_index.py -q"
+    },
+    {
+      "owner": "root",
+      "scope": "Actual 8-trip full CG master incidence reference vs optimized",
+      "result": "Both certified,2 iterations,23 columns,LP400000,route weight4,no artificials; journals byte-identical",
+      "artifact": "local_smoke/validation.json"
+    },
+    {
+      "owner": "astra_replay_integration_0912",
+      "scope": "Index,event network,bounded inheritance,resume tests",
+      "result": "52 passed plus6 subtests; additional real-duty event gates/resume22 passed"
+    },
+    {
+      "owner": "astra_capacity_integration_0912",
+      "scope": "Final selector differential/whole route/storage/deadline/configuration checks",
+      "result": "4320 exact selector comparisons plus memo repeats;8 whole-route controls; final5selector test methods passed;16 event/network/duty gates and12 realization checks passed"
+    },
+    {
+      "owner": "root",
+      "scope": "Whole-route corrected station-power tariff accounting independent RC calculations",
+      "result": "8 cases passed",
+      "artifact": "local_smoke/fixed_accounting.json"
+    },
+    {
+      "owner": "root",
+      "scope": "Campaign command generation,dryrun,no-submit guard,warm preparation isolation,process success/watchdog",
+      "result": "Passed",
+      "command": "python3 scripts/efficiency_validation_20260912/check_local.py /private/tmp/evsp-capacity-efficiency-20260912 /Users/nadan/Documents/projects/demandresponse/outputs/efficiency_validation_20260912/audit/source_evidence.json"
+    }
+  ],
+  "limitations": [
+    "No full-size cluster speedup established by these checks.",
+    "Parallel replay worker completion order is unchanged and may alter pool insertion order; compare hashes and accepted pool content before attributing trajectory differences.",
+    "Generic heterogeneous-power finite-pool MIP validators outside capacity CG driver still need station-power propagation; no MIPs launched in this validation.",
+    "The capacity reference and optimized arms both contain the accounting fix. Differences from historical incorrect accounting are corrections, not measured optimization savings."
+  ]
+}

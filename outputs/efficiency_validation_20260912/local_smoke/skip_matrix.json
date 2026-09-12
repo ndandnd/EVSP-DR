@@ -1,0 +1,215 @@
+{
+ "csv": "/Users/nadan/Documents/projects/demandresponse/outputs/efficiency_validation_20260912/local_smoke/eight_trip_input.csv",
+ "prices_csv": "hourly_prices_flat.csv",
+ "soc_step": 2.5,
+ "block_min": 5,
+ "strict_tariff_coverage": false,
+ "g_kwh": 240.0,
+ "charge_kw": 240.0,
+ "min_soc_frac": 0.0,
+ "master_sense": "cover",
+ "master_backend": "gurobi",
+ "initial_pool": "singletons",
+ "time_model": "event",
+ "columns_per_iter": 30,
+ "column_selection": "reduced_cost",
+ "column_diversity_weight": 0.5,
+ "column_candidate_multiplier": 4,
+ "validated_seed_routes_sha256": null,
+ "inherited_event_pool_status_sha256": null,
+ "inherited_event_pool_audit": null,
+ "column_pool_treatment": "RAW",
+ "trip_ids": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "iterations": 2,
+ "attempt_iterations": 2,
+ "certified_rc_optimal": true,
+ "final": {
+  "iter": 2,
+  "attempt_iter": 2,
+  "lp_obj": 400000.0,
+  "route_weight": 4.0,
+  "artificials": 0.0,
+  "min_rc": 0.0,
+  "max_row_violation": 0.0,
+  "max_bound_violation": 0.0
+ },
+ "columns": 23,
+ "columns_journal": "/Users/nadan/Documents/projects/demandresponse/outputs/efficiency_validation_20260912/local_smoke/skip_matrix.json.columns.jsonl",
+ "wall_s": 1.382467488758266,
+ "attempt_wall_s": 1.3824686808511615,
+ "peak_rss_mb": 116.484375,
+ "stop_reason": "certified",
+ "termination_signal": null,
+ "network_metrics": {
+  "time_model": "event",
+  "dag_nodes": 696,
+  "dag_arcs": 15238,
+  "arc_mode": "lazy",
+  "materialized_python_arc_objects": 0,
+  "packed_arc_bytes": 243808,
+  "station_event_times": {
+   "2190L_0": 258,
+   "4808_0": 256,
+   "PARX_1": 264,
+   "3127L_0": 256,
+   "7880C_0": 257,
+   "JON_A_0": 259
+  },
+  "event_lattice_sha256": "304ad79e10ec01b0b43cee24c589aa1e34ac17b86a70135b48bd2b4e58ca0209"
+ },
+ "snapshot_availability": {},
+ "history_tail": [
+  {
+   "iter": 1,
+   "attempt_iter": 1,
+   "lp_obj": 800000.0,
+   "route_weight": 8.0,
+   "artificials": 0.0,
+   "min_rc": -300000.0,
+   "max_row_violation": 0.0,
+   "max_bound_violation": 0.0
+  },
+  {
+   "iter": 2,
+   "attempt_iter": 2,
+   "lp_obj": 400000.0,
+   "route_weight": 4.0,
+   "artificials": 0.0,
+   "min_rc": 0.0,
+   "max_row_violation": 0.0,
+   "max_bound_violation": 0.0
+  }
+ ],
+ "final_lp": {
+  "objective": 400000.0,
+  "route_weight": 4.0,
+  "artificial_total": 0.0,
+  "positive_routes": [
+   {
+    "trips": [
+     4
+    ],
+    "value": 1.0,
+    "cost": 100000.0
+   },
+   {
+    "trips": [
+     7
+    ],
+    "value": 1.0,
+    "cost": 100000.0
+   },
+   {
+    "trips": [
+     1,
+     3,
+     5,
+     6
+    ],
+    "value": 1.0,
+    "cost": 100000.0
+   },
+   {
+    "trips": [
+     0,
+     2
+    ],
+    "value": 1.0,
+    "cost": 100000.0
+   }
+  ],
+  "trip_duals": {
+   "0": -0.0,
+   "1": -0.0,
+   "2": 100000.0,
+   "3": 0.0,
+   "4": 100000.0,
+   "5": 100000.0,
+   "6": -0.0,
+   "7": 100000.0
+  },
+  "source": "final_pool_resolve",
+  "iteration": 2,
+  "pool_columns": 23,
+  "max_row_violation": 0.0,
+  "max_bound_violation": 0.0,
+  "feasibility_tolerance": 1e-06,
+  "master_method": "dual_simplex_method_1",
+  "master_backend": "gurobipy/Gurobi"
+ },
+ "final_lp_source": "final_pool_resolve",
+ "provenance": {
+  "git_commit": "9a957e9a1a317988660396c5d06e4ccfc5dbd679",
+  "git_branch": "codex/baseline-efficiency-20260912",
+  "git_dirty": false,
+  "python": "3.12.2",
+  "scipy": "1.13.1",
+  "master_backend": "gurobi",
+  "gurobi_version": "12.0.1",
+  "gurobi_license_file": "/Users/nadan/gurobi.lic",
+  "instance_sha256": "318810a5eee5c29e288740c9f220dcfa72b0b3249f7ea5b36fd202475a053ffa",
+  "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+  "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+  "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+  "validated_seed_routes_sha256": null,
+  "inherited_event_pool_status_sha256": null,
+  "column_pool_treatment": "RAW",
+  "rc_eps": 0.0001,
+  "pricing_cost_semantics": "conservative_expanded_grid_cost",
+  "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+  "continuous_cost_pricing_certified": false,
+  "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+  "args": {
+   "inherit_max_columns": 0,
+   "inherit_time_limit_s": 0,
+   "csv": "/Users/nadan/Documents/projects/demandresponse/outputs/efficiency_validation_20260912/local_smoke/eight_trip_input.csv",
+   "prices_csv": "hourly_prices_flat.csv",
+   "soc_step": 2.5,
+   "block_min": 5,
+   "event_network_cache": null,
+   "event_network_cache_mode": "build-or-load",
+   "event_network_cache_only": false,
+   "skip_gurobi_incidence": true,
+   "max_iters": 100,
+   "columns_per_iter": 30,
+   "column_selection": "reduced_cost",
+   "column_diversity_weight": 0.5,
+   "column_candidate_multiplier": 4,
+   "rc_eps": 0.0001,
+   "master_sense": "cover",
+   "master_backend": "gurobi",
+   "gurobi_log": null,
+   "initial_pool": "singletons",
+   "validated_seed_routes": null,
+   "inherit_event_pool_from": null,
+   "inherit_event_pool_workers": 1,
+   "augmentation_label": null,
+   "strict_tariff_coverage": false,
+   "stall_window_min": null,
+   "stall_rc_frac": 0.05,
+   "stall_obj_frac": 1e-05,
+   "wall_limit_s": null,
+   "checkpoint_every": 25,
+   "g_kwh": 240.0,
+   "charge_kw": 240.0,
+   "min_soc_frac": 0.0,
+   "diversify_rounds": 0,
+   "diversify_delta": 0.15,
+   "snapshot_at_minutes": null,
+   "resume": false,
+   "out": "/Users/nadan/Documents/projects/demandresponse/outputs/efficiency_validation_20260912/local_smoke/skip_matrix.json",
+   "time_model": "event",
+   "event_arc_mode": "lazy"
+  }
+ },
+ "resume_parent": null
+}

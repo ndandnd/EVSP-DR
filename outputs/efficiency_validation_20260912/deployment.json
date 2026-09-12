@@ -1,0 +1,28 @@
+{
+  "recorded_utc": "2026-09-12T06:55:17.128876+00:00",
+  "root": "/home/nc437/ladder-lite/efficiency_validation_20260912",
+  "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+  "baseline_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+  "capacity_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "source_branches_pushed": [
+    "codex/baseline-efficiency-20260912",
+    "codex/capacity-efficiency-20260912"
+  ],
+  "jobs": {
+    "d00_g0": "964194",
+    "d00_g1": "964195",
+    "w1_k08": "964196",
+    "w4_k11": "964197",
+    "w6_k12": "964200",
+    "w1_k08_repeat": "964201",
+    "cap_k1": "964202",
+    "cap_k2": "964203",
+    "cap_k1_combined_peak12": "964204"
+  },
+  "all_exclusions_verified": true,
+  "initial_scheduler_state": "All9 submitted and PENDING(Priority); no completion or speedup claimed.",
+  "collector_schema": "evsp-efficiency-collection-v2",
+  "collector_script": "code-baseline/scripts/efficiency_validation_20260912/campaign.py",
+  "object_storage_note": "New clones use shared object alternates from existing source checkouts. Preserve source repositories while jobs run; execution commits are also pushed to GitHub.",
+  "scope": "Only new paired CG jobs; no cancellation, deletion, historical job modification or MIP submission."
+}

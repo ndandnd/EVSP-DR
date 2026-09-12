@@ -1,0 +1,27 @@
+{
+  "collected_utc": "2026-09-12T06:54:16.582831+00:00",
+  "squeue": "964201|eff_w1_k08_repeat|default_partition|PENDING|0:00|8:00:00|(Priority)\n964200|eff_w6_k12|default_partition|PENDING|0:00|8:00:00|(Priority)\n964197|eff_w4_k11|default_partition|PENDING|0:00|8:00:00|(Priority)\n964196|eff_w1_k08|default_partition|PENDING|0:00|8:00:00|(Priority)\n964204|eff_cap_k1_combined_peak12|default_partition|PENDING|0:00|6:30:00|(Priority)\n964203|eff_cap_k2|default_partition|PENDING|0:00|6:30:00|(Priority)\n964202|eff_cap_k1|default_partition|PENDING|0:00|6:30:00|(Priority)\n964195|eff_d00_g1|default_partition|PENDING|0:00|4:30:00|(Priority)\n964194|eff_d00_g0|default_partition|PENDING|0:00|4:30:00|(Priority)\n",
+  "job_ids": [
+    "964194",
+    "964195",
+    "964196",
+    "964197",
+    "964200",
+    "964201",
+    "964202",
+    "964203",
+    "964204"
+  ],
+  "code": {
+    "baseline": {
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "tracked_status": "",
+      "object_alternates": "/home/nc437/ladder-lite/overnight_extension_20260912/code/.git/objects\n"
+    },
+    "capacity": {
+      "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+      "tracked_status": "",
+      "object_alternates": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd/code/.git/objects\n"
+    }
+  }
+}
