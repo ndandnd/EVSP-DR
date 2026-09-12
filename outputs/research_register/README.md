@@ -4,7 +4,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1766 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T06:24:51+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **1767 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T09:25:42.923858+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -16,7 +16,7 @@ Current build: **1766 artifact/stage records across 32 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest launch: [Overnight chains through k=15 and 32-duty decomposition](../overnight_extension_20260912/README.md). At 02:25 EDT, 30 of 87 CG cases have pricing certificates and nine of 87 dependent default MIPs have finished. The bounded-import treatment matches 11 buses at chain 6 k=11; five other completed warm cases use extra buses. Three decomposition groups each prove eight buses within their saved pools; no combined 32-duty result is available. [Verified update and source tables](../overnight_extension_20260912/RESULTS_20260912T062451Z.md).
+Latest results: At 05:25 EDT on 12 September, 55 of 87 CG cases have pricing certificates and 41 MIP results are available (19 warm and 22 decomposition groups). Recombined 32-duty constructions use 35, 35 and 36 buses without shared-capacity constraints. [Verified update and source tables](../overnight_extension_20260912/RESULTS_20260912T092542Z.md).
 
 ## How to read a result
 
@@ -38,7 +38,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T062451Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T092542Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs
@@ -76,3 +76,6 @@ The review task owns the minimal reproduction, source diagnosis and fix validati
 
 
 **Paired validation launched:** [nine paired efficiency allocations](efficiency_validation_20260912/README.md) were submitted at 02:53 EDT. Four warm attempts stopped before optimization with a launcher argument error; all four replacements (966398–966401) are running as of 03:02 EDT. The five other jobs remain unchanged. Hourly collection retains both original and recovery v2 records. No completed paired speedup result is available. The [pre-launch record](EFFICIENCY_VALIDATION_PLANNED_20260912.md) is historical.
+
+
+**05:25 EDT paired efficiency update:** Two fresh pairs show 5.8% slower and essentially unchanged runtime. One reverse-order warm pair uses 22.4% less runtime excluding common cache preparation, with import checking 366.08 → 5.62 s and matching certified LP objectives but different CG iterations. These are descriptive observations, not a general speedup claim. [Dated evidence](../overnight_extension_20260912/status_20260912T092542Z/paired_results.json).

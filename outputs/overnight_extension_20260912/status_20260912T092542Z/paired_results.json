@@ -1,0 +1,550 @@
+[
+  {
+    "case": "d00_g0",
+    "mode": "reference",
+    "runtime_s": 1339.1208620050456,
+    "iterations": 239,
+    "final": {
+      "iter": 239,
+      "attempt_iter": 239,
+      "lp_obj": 800291.3712000034,
+      "route_weight": 8.000000000000036,
+      "artificials": 0.0,
+      "min_rc": -1.5220926741221774e-09,
+      "max_row_violation": 1.354472090042691e-14,
+      "max_bound_violation": 0.0
+    },
+    "certified_rc_optimal": true,
+    "inherited_event_pool_audit": null,
+    "provenance": {
+      "git_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "git_dirty": false,
+      "instance_sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "inherited_event_pool_status_sha256": null,
+      "pricing_cost_semantics": "conservative_expanded_grid_cost"
+    },
+    "artifacts": {
+      "execution": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/execution.json",
+        "exists": true,
+        "bytes": 3706,
+        "mtime_ns": 1789197423004183271,
+        "content_hash_recomputed": true,
+        "sha256": "4f544f07aa865518971f88b6034eb651645779f6a84623ea039fac643fe5eca2",
+        "changed_during_hash": false
+      },
+      "status": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json",
+        "exists": true,
+        "bytes": 18967,
+        "mtime_ns": 1789197422452166093,
+        "content_hash_recomputed": true,
+        "sha256": "a080a39ec6916cec4989617d6123f07b1cb6dd5e717d28630a3ba73a0386f19b",
+        "changed_during_hash": false
+      },
+      "pool": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json.columns.jsonl",
+        "exists": true,
+        "bytes": 22548168,
+        "mtime_ns": 1789197421326131055,
+        "content_hash_recomputed": true,
+        "sha256": "5cad5decd89038233f8504f2864de26bd9d7f9e8d319a013b3cb7fc26e1a2234",
+        "changed_during_hash": false
+      },
+      "phases": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/phases.jsonl",
+        "exists": true,
+        "bytes": 996698,
+        "mtime_ns": 1789197421974151219,
+        "content_hash_recomputed": true,
+        "sha256": "ef752c4fccb6b9cf145d3b137431efe47a2f77760f9c967e9342ea0486e6c009",
+        "changed_during_hash": false
+      },
+      "stdout": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/stdout.log",
+        "exists": true,
+        "bytes": 235143,
+        "mtime_ns": 1789197422734174869,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      },
+      "stderr": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/stderr.log",
+        "exists": true,
+        "bytes": 0,
+        "mtime_ns": 1789196078407898713,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      }
+    }
+  },
+  {
+    "case": "d00_g0",
+    "mode": "optimized",
+    "runtime_s": 1417.3691446254961,
+    "iterations": 239,
+    "final": {
+      "iter": 239,
+      "attempt_iter": 239,
+      "lp_obj": 800291.3712000034,
+      "route_weight": 8.000000000000036,
+      "artificials": 0.0,
+      "min_rc": -1.5220926741221774e-09,
+      "max_row_violation": 1.354472090042691e-14,
+      "max_bound_violation": 0.0
+    },
+    "certified_rc_optimal": true,
+    "inherited_event_pool_audit": null,
+    "provenance": {
+      "git_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "git_dirty": false,
+      "instance_sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "inherited_event_pool_status_sha256": null,
+      "pricing_cost_semantics": "conservative_expanded_grid_cost"
+    },
+    "artifacts": {
+      "execution": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/execution.json",
+        "exists": true,
+        "bytes": 3736,
+        "mtime_ns": 1789198845694406172,
+        "content_hash_recomputed": true,
+        "sha256": "b701104f0c4880bd6202dd7633dff2dc22d2c19372f71b2dae0467ec4cda51cd",
+        "changed_during_hash": false
+      },
+      "status": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/cg.json",
+        "exists": true,
+        "bytes": 18966,
+        "mtime_ns": 1789198845343395405,
+        "content_hash_recomputed": true,
+        "sha256": "7c5a80d84ff10a41c7a3e5392bf42e1f867c94beba6ad729c4cac04b5105a644",
+        "changed_during_hash": false
+      },
+      "pool": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/cg.json.columns.jsonl",
+        "exists": true,
+        "bytes": 22548168,
+        "mtime_ns": 1789198843750346544,
+        "content_hash_recomputed": true,
+        "sha256": "5cad5decd89038233f8504f2864de26bd9d7f9e8d319a013b3cb7fc26e1a2234",
+        "changed_during_hash": false
+      },
+      "phases": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/phases.jsonl",
+        "exists": true,
+        "bytes": 996906,
+        "mtime_ns": 1789198844518370100,
+        "content_hash_recomputed": true,
+        "sha256": "c7ab1e2063ffaef376ece0cf53dc759cb4e4e7b5919f1619573bd0276f133fc0",
+        "changed_during_hash": false
+      },
+      "stdout": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/stdout.log",
+        "exists": true,
+        "bytes": 235061,
+        "mtime_ns": 1789198844568371634,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      },
+      "stderr": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/stderr.log",
+        "exists": true,
+        "bytes": 0,
+        "mtime_ns": 1789197423014183582,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      }
+    }
+  },
+  {
+    "case": "d00_g1",
+    "mode": "reference",
+    "runtime_s": 3129.1686570844613,
+    "iterations": 444,
+    "final": {
+      "iter": 444,
+      "attempt_iter": 444,
+      "lp_obj": 800370.1011284214,
+      "route_weight": 8.000000000000004,
+      "artificials": 0.0,
+      "min_rc": -3.158571182382275e-10,
+      "max_row_violation": 4.440892098500626e-15,
+      "max_bound_violation": 0.0
+    },
+    "certified_rc_optimal": true,
+    "inherited_event_pool_audit": null,
+    "provenance": {
+      "git_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "git_dirty": false,
+      "instance_sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "inherited_event_pool_status_sha256": null,
+      "pricing_cost_semantics": "conservative_expanded_grid_cost"
+    },
+    "artifacts": {
+      "execution": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/execution.json",
+        "exists": true,
+        "bytes": 3707,
+        "mtime_ns": 1789202347609224729,
+        "content_hash_recomputed": true,
+        "sha256": "75540143a8c93847cd53db0d7f368ee1c4441e6ab916024922d647118916a6c7",
+        "changed_during_hash": false
+      },
+      "status": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/cg.json",
+        "exists": true,
+        "bytes": 31500,
+        "mtime_ns": 1789202347153210897,
+        "content_hash_recomputed": true,
+        "sha256": "9fb7facb144fdb4386541251509a2264cfed78507d1314d1175ca0404169150b",
+        "changed_during_hash": false
+      },
+      "pool": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/cg.json.columns.jsonl",
+        "exists": true,
+        "bytes": 50330707,
+        "mtime_ns": 1789202344976144860,
+        "content_hash_recomputed": true,
+        "sha256": "bc08e4b225419350f91d9e5cf37e221bb59e59a94c8be029961693056b158369",
+        "changed_during_hash": false
+      },
+      "phases": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/phases.jsonl",
+        "exists": true,
+        "bytes": 1857561,
+        "mtime_ns": 1789202346514191514,
+        "content_hash_recomputed": true,
+        "sha256": "ed0d64f35ba61dcab237669cd37b404988c8b47a10f3da43afbba95bfb3c9b24",
+        "changed_during_hash": false
+      },
+      "stdout": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/stdout.log",
+        "exists": true,
+        "bytes": 433670,
+        "mtime_ns": 1789202347281214780,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      },
+      "stderr": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/stderr.log",
+        "exists": true,
+        "bytes": 0,
+        "mtime_ns": 1789199212174690759,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      }
+    }
+  },
+  {
+    "case": "d00_g1",
+    "mode": "optimized",
+    "runtime_s": 3128.5161662911996,
+    "iterations": 444,
+    "final": {
+      "iter": 444,
+      "attempt_iter": 444,
+      "lp_obj": 800370.1011284214,
+      "route_weight": 8.000000000000004,
+      "artificials": 0.0,
+      "min_rc": -3.158571182382275e-10,
+      "max_row_violation": 4.440892098500626e-15,
+      "max_bound_violation": 0.0
+    },
+    "certified_rc_optimal": true,
+    "inherited_event_pool_audit": null,
+    "provenance": {
+      "git_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "git_dirty": false,
+      "instance_sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "inherited_event_pool_status_sha256": null,
+      "pricing_cost_semantics": "conservative_expanded_grid_cost"
+    },
+    "artifacts": {
+      "execution": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/execution.json",
+        "exists": true,
+        "bytes": 3737,
+        "mtime_ns": 1789199212105688533,
+        "content_hash_recomputed": true,
+        "sha256": "92220a958f6ebfce1f00502016ab8c55ddb27e3a27568c98f89a87daf45718dd",
+        "changed_during_hash": false
+      },
+      "status": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json",
+        "exists": true,
+        "bytes": 31499,
+        "mtime_ns": 1789199211615672722,
+        "content_hash_recomputed": true,
+        "sha256": "fb0831461b8bd080616661ecc8dbd4a45d8740c98679bceb41c1bd19d9163311",
+        "changed_during_hash": false
+      },
+      "pool": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json.columns.jsonl",
+        "exists": true,
+        "bytes": 50330707,
+        "mtime_ns": 1789199209639608964,
+        "content_hash_recomputed": true,
+        "sha256": "bc08e4b225419350f91d9e5cf37e221bb59e59a94c8be029961693056b158369",
+        "changed_during_hash": false
+      },
+      "phases": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/phases.jsonl",
+        "exists": true,
+        "bytes": 1858480,
+        "mtime_ns": 1789199211030653846,
+        "content_hash_recomputed": true,
+        "sha256": "c72c242b419c384afd64b1ba6d66ec2d2891699ca47467fb885fa77d1f16cf2f",
+        "changed_during_hash": false
+      },
+      "stdout": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/stdout.log",
+        "exists": true,
+        "bytes": 433588,
+        "mtime_ns": 1789199211438667011,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      },
+      "stderr": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/stderr.log",
+        "exists": true,
+        "bytes": 0,
+        "mtime_ns": 1789196077305864244,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      }
+    }
+  },
+  {
+    "case": "w1_k08_repeat",
+    "mode": "reference",
+    "runtime_s": 1866.381597538013,
+    "iterations": 799,
+    "final": {
+      "iter": 799,
+      "attempt_iter": 799,
+      "lp_obj": 800383.6879776383,
+      "route_weight": 8.00000000000001,
+      "artificials": 0.0,
+      "min_rc": -6.586367007344052e-10,
+      "max_row_violation": 1.2656542480726785e-14,
+      "max_bound_violation": 0.0
+    },
+    "certified_rc_optimal": true,
+    "inherited_event_pool_audit": {
+      "schema": "evsp-dr-inherited-event-pool-audit-v1",
+      "source_status": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+      "source_status_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "source_journal": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+      "source_journal_sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "source_raw_records": 26203,
+      "source_unique_columns": 26195,
+      "source_replayable_sequences": 26195,
+      "selected_for_replay": 512,
+      "bounded_max_columns": 512,
+      "import_time_limit_s": 900.0,
+      "import_deadline_reached": false,
+      "unprocessed_selected": 0,
+      "attempted_unique_columns": 512,
+      "accepted_columns": 512,
+      "rejected_columns": 0,
+      "rejected_reasons": {},
+      "mapping_key": "Ordered_Trip_ID",
+      "child_event_graph_reoptimization": true,
+      "replay_workers": 8,
+      "inherited_duals": false,
+      "inherited_basis": false,
+      "inherited_lp_certificate": false,
+      "added_to_child_pool": 512,
+      "replaced_child_columns": 0,
+      "already_present_or_not_cheaper": 0,
+      "import_runtime_s": 366.0800837778952
+    },
+    "provenance": {
+      "git_commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+      "git_dirty": false,
+      "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "inherited_event_pool_status_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "pricing_cost_semantics": "conservative_expanded_grid_cost"
+    },
+    "artifacts": {
+      "execution": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/reference/execution.json",
+        "exists": true,
+        "bytes": 4359,
+        "mtime_ns": 1789204045143225468,
+        "content_hash_recomputed": true,
+        "sha256": "da6de5ad7ed7e88749aadbd1f97c87567fe7dfc1c2d9cf73b6e9da24a4634b03",
+        "changed_during_hash": false
+      },
+      "status": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/reference/cg.json",
+        "exists": true,
+        "bytes": 48572,
+        "mtime_ns": 1789204044531206405,
+        "content_hash_recomputed": true,
+        "sha256": "1c235e2f25700c9f234364e9a0edaa6a985015d8c3585dab79007851e7060539",
+        "changed_during_hash": false
+      },
+      "pool": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/reference/cg.json.columns.jsonl",
+        "exists": true,
+        "bytes": 95122397,
+        "mtime_ns": 1789204042239135013,
+        "content_hash_recomputed": true,
+        "sha256": "bebda1ef5a984f2e5fac4d02be019d4e631ff5bf89195cb56d5fb373d3992739",
+        "changed_during_hash": false
+      },
+      "phases": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/reference/phases.jsonl",
+        "exists": true,
+        "bytes": 3346427,
+        "mtime_ns": 1789204044214196531,
+        "content_hash_recomputed": true,
+        "sha256": "87c4b6749e7e485670fa6e821df6c7911fb4741808d4979a068792860bc212e0",
+        "changed_during_hash": false
+      },
+      "stdout": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/reference/stdout.log",
+        "exists": true,
+        "bytes": 788993,
+        "mtime_ns": 1789204044581207962,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      },
+      "stderr": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/reference/stderr.log",
+        "exists": true,
+        "bytes": 0,
+        "mtime_ns": 1789202170423849960,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      }
+    }
+  },
+  {
+    "case": "w1_k08_repeat",
+    "mode": "optimized",
+    "runtime_s": 1447.4356535810512,
+    "iterations": 851,
+    "final": {
+      "iter": 851,
+      "attempt_iter": 851,
+      "lp_obj": 800383.687977636,
+      "route_weight": 7.999999999999988,
+      "artificials": 0.0,
+      "min_rc": -1.278006145355448e-09,
+      "max_row_violation": 1.8207657603852567e-14,
+      "max_bound_violation": 0.0
+    },
+    "certified_rc_optimal": true,
+    "inherited_event_pool_audit": {
+      "schema": "evsp-dr-inherited-event-pool-audit-v1",
+      "source_status": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+      "source_status_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "source_journal": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+      "source_journal_sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "source_raw_records": 26203,
+      "source_unique_columns": 26195,
+      "source_replayable_sequences": 26195,
+      "selected_for_replay": 512,
+      "bounded_max_columns": 512,
+      "import_time_limit_s": 900.0,
+      "import_deadline_reached": false,
+      "unprocessed_selected": 0,
+      "attempted_unique_columns": 512,
+      "accepted_columns": 512,
+      "rejected_columns": 0,
+      "rejected_reasons": {},
+      "mapping_key": "Ordered_Trip_ID",
+      "child_event_graph_reoptimization": true,
+      "replay_workers": 8,
+      "inherited_duals": false,
+      "inherited_basis": false,
+      "inherited_lp_certificate": false,
+      "added_to_child_pool": 512,
+      "replaced_child_columns": 0,
+      "already_present_or_not_cheaper": 0,
+      "import_runtime_s": 5.621887997025624
+    },
+    "provenance": {
+      "git_commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+      "git_dirty": false,
+      "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "inherited_event_pool_status_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "pricing_cost_semantics": "conservative_expanded_grid_cost"
+    },
+    "artifacts": {
+      "execution": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/optimized/execution.json",
+        "exists": true,
+        "bytes": 4421,
+        "mtime_ns": 1789202170400849262,
+        "content_hash_recomputed": true,
+        "sha256": "965fd1977bf54f0f554eb61ae4a6c73a0b646c8c8e1d2ac5179e3c811e21a2e3",
+        "changed_during_hash": false
+      },
+      "status": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/optimized/cg.json",
+        "exists": true,
+        "bytes": 48644,
+        "mtime_ns": 1789202169800831057,
+        "content_hash_recomputed": true,
+        "sha256": "0faa2f877597d747219380a867a203c49816f3fb27875a97858338e28f93914d",
+        "changed_during_hash": false
+      },
+      "pool": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/optimized/cg.json.columns.jsonl",
+        "exists": true,
+        "bytes": 96510327,
+        "mtime_ns": 1789202167654765946,
+        "content_hash_recomputed": true,
+        "sha256": "60f1de7de5d04ba90356e0499840264b517bc9a8b6987121e3a02aa261f63dda",
+        "changed_during_hash": false
+      },
+      "phases": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/optimized/phases.jsonl",
+        "exists": true,
+        "bytes": 3565652,
+        "mtime_ns": 1789202169467820954,
+        "content_hash_recomputed": true,
+        "sha256": "00b9d379cbc52d5c3ad7c81c81f0517095888bb76797236dc7e4e57b7ef8ac66",
+        "changed_during_hash": false
+      },
+      "stdout": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/optimized/stdout.log",
+        "exists": true,
+        "bytes": 840116,
+        "mtime_ns": 1789202169959835882,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      },
+      "stderr": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/cases/w1_k08_repeat/966401_r0/optimized/stderr.log",
+        "exists": true,
+        "bytes": 0,
+        "mtime_ns": 1789200714127134342,
+        "content_hash_recomputed": false,
+        "changed_during_hash": false
+      }
+    }
+  }
+]

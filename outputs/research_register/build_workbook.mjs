@@ -41,7 +41,7 @@ for (const r0 of register.rows) {
   r.recorded_lp_objective ??= r.weighted_lp_objective;
   r.lp_objective_kind ??= null;
   if (['cg','cg_arm','lp'].includes(r.stage)) groups.CG.push(r);
-  else if (r.stage==='mip' || r.stage.startsWith('mip_')) groups.MIP.push(r);
+  else if (r.stage==='mip' || r.stage.startsWith('mip_') || r.stage==='decomposition_join') groups.MIP.push(r);
   else if (['comparison','comparison_arm','frontier'].includes(r.stage)) groups.Charging.push(r);
   else groups.Attempts.push(r);
 }

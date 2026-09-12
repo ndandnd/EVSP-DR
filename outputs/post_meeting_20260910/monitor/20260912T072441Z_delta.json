@@ -1,0 +1,1084 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260912T072441Z.json",
+  "previous_snapshot": "outputs/post_meeting_20260910/monitor/20260912T062451Z.json",
+  "timestamp_utc": "2026-09-12T07:24:41.423403+00:00",
+  "ssh_access": "available",
+  "result_changes": [
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g2/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11464.327393126674
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g0/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 8567.936770821922
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g1/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 9475.001510747476
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g2/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 8916.634976279456
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d01_g3/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 9014.797675886191
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g1/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11418.91534015676
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g2/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11439.923898700625
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g3/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11362.9217056809
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g0/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11363.897201568121
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g1/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 8139.28010249557
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g3/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 11330.526692844229
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g0/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 9505.391085023526
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g2/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11462.864960429957
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g0/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11419.771224883385
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g1/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 8387.12164528668
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g3/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11453.127666395158
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g2/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11406.648598904721
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g3/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 10799.769465566147
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d08_g1/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11448.935527590103
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d08_g2/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 11046.52355236304
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d09_g3/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 11441.308972262777
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k09/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 4076.5258122007363
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k10/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 1064.4607866411097
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k11/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 3939.8557316474617
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k12/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "initializing",
+        "certified_rc_optimal": false,
+        "wall_s": 21.270726304035634
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k14/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 3475.094777431339
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k15/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 944.3072037126403
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k12/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 4091.5439913659357
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k13/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 1020.0974732572213
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w5_k12/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "certified",
+        "certified_rc_optimal": true,
+        "wall_s": 6551.722639993532
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w5_k13/cg.json",
+      "new": true,
+      "summary": {
+        "stop_reason": "initializing",
+        "certified_rc_optimal": false,
+        "wall_s": 20.24655413487926
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k13/cg.json",
+      "new": false,
+      "summary": {
+        "stop_reason": "running",
+        "certified_rc_optimal": false,
+        "wall_s": 5517.470883230213
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d02_g0/mip/949633_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g0/mip/952696_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000004,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g1/mip/953359_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d03_g2/mip/953430_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 8,
+        "fleet_bound": 8.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/mip/949638_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k10/mip/949696_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.00000000000008,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w3_k13/mip/949712_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 14,
+        "fleet_bound": 13.000000000000046,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k11/mip/949720_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 11.000000000000089,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w5_k11/mip/949730_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 11.00000000000008,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k12/mip/949742_r0/result.json",
+      "new": true,
+      "summary": {
+        "buses": 13,
+        "fleet_bound": 12.00000000000002,
+        "fleet_proven": false,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    },
+    {
+      "campaign": "warm_multichain_p1246",
+      "kind": "mip",
+      "path": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/mip/M__k10_p2__warm_cover__event_2p5_event5__1h2stage.json",
+      "new": true,
+      "summary": {
+        "buses": 71,
+        "fleet_bound": 71.0,
+        "fleet_proven": true,
+        "status_name": "TIME_LIMIT",
+        "physical_replay_validated": true
+      }
+    }
+  ],
+  "scheduler_changes": [
+    {
+      "job": "810977",
+      "before": [
+        "RUNNING",
+        "41:55",
+        "scaglione-cpu-04"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_17",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "unicorn-cpu-76"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_19",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "unicorn-cpu-76"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_20",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "unicorn-cpu-76"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_25",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "garg-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_31",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "jingjie-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_34",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "jingjie-cpu-16"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_4",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "sonic-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_5",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "sonic-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_6",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "unicorn-cpu-87"
+      ],
+      "after": null
+    },
+    {
+      "job": "949623_7",
+      "before": [
+        "RUNNING",
+        "2:12:40",
+        "unicorn-cpu-87"
+      ],
+      "after": null
+    },
+    {
+      "job": "949624_12",
+      "before": [
+        "RUNNING",
+        "46:37",
+        "snavely-cpu-13"
+      ],
+      "after": null
+    },
+    {
+      "job": "949624_13",
+      "before": [
+        "RUNNING",
+        "39:35",
+        "unicorn-cpu-73"
+      ],
+      "after": null
+    },
+    {
+      "job": "949624_14",
+      "before": [
+        "RUNNING",
+        "18:12",
+        "luxlab-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949624_19",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "2:24",
+        "sonic-cpu-01"
+      ]
+    },
+    {
+      "job": "949624_20",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "32:28",
+        "unicorn-cpu-01"
+      ]
+    },
+    {
+      "job": "949624_4",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "49:28",
+        "sonic-cpu-02"
+      ]
+    },
+    {
+      "job": "949624_5",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "33:27",
+        "snavely-cpu-13"
+      ]
+    },
+    {
+      "job": "949624_6",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "43:26",
+        "unicorn-cpu-01"
+      ]
+    },
+    {
+      "job": "949624_7",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "41:28",
+        "snavely-cpu-12"
+      ]
+    },
+    {
+      "job": "949624_8",
+      "before": [
+        "RUNNING",
+        "15:30",
+        "totient-cpu-07"
+      ],
+      "after": null
+    },
+    {
+      "job": "949638",
+      "before": [
+        "RUNNING",
+        "28:30",
+        "sonic-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949639",
+      "before": [
+        "RUNNING",
+        "28:30",
+        "unicorn-cpu-74"
+      ],
+      "after": null
+    },
+    {
+      "job": "949680",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "19:27",
+        "totient-cpu-08"
+      ]
+    },
+    {
+      "job": "949681",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "19:27",
+        "unicorn-cpu-74"
+      ]
+    },
+    {
+      "job": "949696",
+      "before": [
+        "RUNNING",
+        "10:30",
+        "snavely-cpu-15"
+      ],
+      "after": null
+    },
+    {
+      "job": "949697",
+      "before": [
+        "RUNNING",
+        "10:30",
+        "unicorn-cpu-75"
+      ],
+      "after": null
+    },
+    {
+      "job": "949698",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "4:24",
+        "snavely-cpu-15"
+      ]
+    },
+    {
+      "job": "949699",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "4:24",
+        "unicorn-cpu-75"
+      ]
+    },
+    {
+      "job": "949712",
+      "before": [
+        "RUNNING",
+        "17:29",
+        "unicorn-cpu-01"
+      ],
+      "after": null
+    },
+    {
+      "job": "949713",
+      "before": [
+        "RUNNING",
+        "17:29",
+        "jingjie-cpu-21"
+      ],
+      "after": null
+    },
+    {
+      "job": "949714",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "18:27",
+        "jingjie-cpu-04"
+      ]
+    },
+    {
+      "job": "949715",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "18:27",
+        "jingjie-cpu-09"
+      ]
+    },
+    {
+      "job": "949720",
+      "before": [
+        "RUNNING",
+        "28:30",
+        "totient-cpu-02"
+      ],
+      "after": null
+    },
+    {
+      "job": "949721",
+      "before": [
+        "RUNNING",
+        "28:30",
+        "jingjie-cpu-04"
+      ],
+      "after": null
+    },
+    {
+      "job": "949722",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "19:27",
+        "jingjie-cpu-01"
+      ]
+    },
+    {
+      "job": "949723",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "19:27",
+        "jingjie-cpu-04"
+      ]
+    },
+    {
+      "job": "949730",
+      "before": [
+        "RUNNING",
+        "1:00:37",
+        "snavely-cpu-12"
+      ],
+      "after": null
+    },
+    {
+      "job": "949731",
+      "before": [
+        "RUNNING",
+        "1:00:37",
+        "unicorn-cpu-74"
+      ],
+      "after": null
+    },
+    {
+      "job": "949732",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "10:25",
+        "unicorn-cpu-01"
+      ]
+    },
+    {
+      "job": "949733",
+      "before": [
+        "PENDING",
+        "0:00",
+        "(Dependency)"
+      ],
+      "after": [
+        "RUNNING",
+        "10:25",
+        "unicorn-cpu-73"
+      ]
+    },
+    {
+      "job": "949742",
+      "before": [
+        "RUNNING",
+        "33:33",
+        "snavely-cpu-14"
+      ],
+      "after": null
+    },
+    {
+      "job": "964194",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "31:28",
+        "unicorn-cpu-01"
+      ]
+    },
+    {
+      "job": "964195",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "31:28",
+        "unicorn-cpu-73"
+      ]
+    },
+    {
+      "job": "964202",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "31:28",
+        "snavely-cpu-14"
+      ]
+    },
+    {
+      "job": "964203",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "31:28",
+        "unicorn-cpu-73"
+      ]
+    },
+    {
+      "job": "964204",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "31:28",
+        "unicorn-cpu-73"
+      ]
+    },
+    {
+      "job": "966398",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "24:27",
+        "unicorn-cpu-87"
+      ]
+    },
+    {
+      "job": "966399",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "24:27",
+        "jingjie-cpu-18"
+      ]
+    },
+    {
+      "job": "966400",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "24:27",
+        "jingjie-cpu-06"
+      ]
+    },
+    {
+      "job": "966401",
+      "before": null,
+      "after": [
+        "RUNNING",
+        "24:27",
+        "jingjie-cpu-07"
+      ]
+    }
+  ],
+  "efficiency": {
+    "efficiency_validation": {
+      "attempts": 9,
+      "pending": 0,
+      "state_counts": {
+        "not_written": 4,
+        "running": 1,
+        "preparation_failed": 4
+      },
+      "changed_milestones": [
+        {
+          "case": "d00_g0",
+          "attempt": "964194_r0",
+          "pair_status": "running",
+          "prepare_returncode": null
+        }
+      ]
+    },
+    "efficiency_validation_warm_retry": {
+      "attempts": 4,
+      "pending": 0,
+      "state_counts": {
+        "not_written": 4
+      },
+      "changed_milestones": []
+    }
+  },
+  "preemption": {
+    "default_fresh_3600": {
+      "started": 75,
+      "ended_started_attempts": 75,
+      "confirmed_preemptions": 0,
+      "state_counts": {
+        "COMPLETED": 75
+      }
+    },
+    "default_overnight_extension_3600": {
+      "started": 30,
+      "ended_started_attempts": 19,
+      "confirmed_preemptions": 0,
+      "state_counts": {
+        "COMPLETED": 19,
+        "RUNNING": 11,
+        "PENDING": 47
+      }
+    },
+    "scaglione_warm_3600": {
+      "started": 30,
+      "ended_started_attempts": 30,
+      "confirmed_preemptions": 0,
+      "state_counts": {
+        "COMPLETED": 30,
+        "PENDING": 6
+      }
+    }
+  }
+}

@@ -93,3 +93,15 @@ The separately registered512-route import treatment now has certified CG and int
 ## Paired efficiency warm startup failures on 12 September
 
 Jobs 964196, 964197, 964200 and 964201 failed after three scheduler seconds (exit1:0). Each cache-preparation subprocess exited2 with `--event-network-cache-only does not use --out`. No paired CG optimization or network build ran in these attempts. The exact preparation stderr, allocation records and v2 collector evidence are retained in [the launch status](efficiency_validation_20260912/README.md). This is a launcher argument failure, not model infeasibility or preemption. The implementation task owns a separate immutable recovery; the five other jobs remain untouched. No automatic requeue.
+
+
+## Full-pool chain 2 k10 completed at 03:25 EDT
+
+MIP810977 completed:71 buses from42,795 saved columns, fleet bound71 and stage1 OPTIMAL in6.24s; stage2 TIME_LIMIT. The source CG performed zero pricing iterations and had no pricing certificate after spending its budget on inheritance. The terminal pool resolve was sufficient to run MIP but did not turn the result into a converged CG outcome. This supersedes the earlier running-MIP status above. The bounded512-route counterpart has11 buses with unresolved pool bound10. See [dated evidence](../overnight_extension_20260912/RESULTS_20260912T072441Z.md). No job was retried or changed in this update.
+
+
+## 12 September 05 25 EDT decomposition startup timeout
+
+CG array949623_3 (concrete job949644), case d00_g3, reached its scheduler time limit after04:47:09. Only session_start telemetry exists; no cg.json, pricing iteration, certificate or journal was written. Exact preparation phase is unresolved. Dependent MIP949624_3 is DependencyNeverSatisfied. This is not preemption. Do not blind-requeue; preserve the lock and failure evidence. Source logs and hashes: monitor/20260912T092542Z_supplement.json; accounting:20260912T092542Z_sacct.txt.
+
+Register reader fix: recombined decomposition schedules were incorrectly sent through the three-arm tariff parser, causing a manifest-input validation error. They now produce one decomposition_join record each, preserving manifest input/target and fleet sum without asserting a MIP proof. Full snapshot build passes with1767 rows.

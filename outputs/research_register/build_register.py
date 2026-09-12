@@ -459,6 +459,18 @@ class Register:
                 )
             for item in campaign.get("comparisons", []):
                 result = item.get("result") or {}
+                if "fleet_sum" in result and "components" in result:
+                    self.add(
+                        campaign_id, root, "decomposition", "decomposition_join",
+                        result, source_path=item.get("path"),
+                        source_sha256=item.get("sha256"), overrides={
+                            "mip_incumbent_fleet": result["fleet_sum"],
+                            "proof_scope": result.get("scope"),
+                            "capacity_enforced": result.get("shared_capacity_enforced"),
+                            "limitations": "Component schedules combined; no full-model integer proof or shared-capacity validation.",
+                        },
+                    )
+                    continue
                 cell = at(result, "cell.cell")
                 fixed = result.get("fixed_duties_reoptimized") or {}
                 joint = result.get("joint") or {}

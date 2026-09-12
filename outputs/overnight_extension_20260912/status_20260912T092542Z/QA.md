@@ -1,0 +1,1 @@
+Native weekly Doc exported and all five pages visually inspected. Nineteen-row table stays on one page; no blank pages or clipped tables. Both figure tabs were untouched. Register1767 rows; workbook7 sheets and count/formula checks pass. Decomposition parser assertions: exactly3 joins, targets32, fleets35/35/36, source hashes retained, no fleet proof fabricated.
