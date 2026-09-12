@@ -1,11 +1,14 @@
 {
-  "timestamp_utc": "2026-09-12T06:38:20.616156+00:00",
-  "source_snapshot": "20260912T062451Z.json",
-  "source_commit": "150a668f10432d8079a42f015cb8308de3eb770e",
+  "timestamp_utc": "2026-09-12T19:55:02.065081+00:00",
+  "source_snapshot": "20260912T193423Z.json",
+  "source_commit": "b5bc4b65af78538df1c91bd2a611cd55158d1755",
   "remote_root": "/home/nc437/ladder-lite/research-register",
-  "files": 31,
-  "register_sha256": "aa99d8b1d2675d202884f1c6c6a8532dbbe106e61e3478edb818732399be3d91",
-  "workbook_sha256": "ef6dba60d54751a5e06f801e7c762d73d567b2d4aab599fe9c9d864cd42e3603",
+  "files": 83,
+  "sha256": {
+    "outputs/research_register/register.json": "8c01fc41f8851a6cb7023087bc4f535d7d03ba76f69f1fad40985f5e38999312",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "43f937f7aa6d030f7e79bfd5f884173de13c78933a77cd254cb706b46fbe521c",
+    "outputs/research_register/CATCH_UP_20260912.md": "e5d62633619796f0022e4897d144bc3261205242d608339616e0919cac738297"
+  },
   "rsync_exit_code": 0,
   "remote_hashes_verified": true
 }
