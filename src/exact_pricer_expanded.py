@@ -1770,6 +1770,8 @@ def run_cg(args) -> dict:
             cache_manifest = _write_event_network_cache(
                 cache_path, net, cache_identity, time.time() - network_t0
             )
+    if time_model == "event":
+        net.set_fixed_sequence_index(getattr(args, "fixed_sequence_index", False))
     build_s = time.time() - network_t0
     network_metrics = (
         net.metrics() if time_model == "event"
@@ -1779,6 +1781,8 @@ def run_cg(args) -> dict:
             "dag_arcs": net.n_arcs,
         }
     )
+    if time_model == "event":
+        network_metrics["fixed_sequence_index"] = net.fixed_sequence_index
     inherited_event_pool_audit = None
     if cache_path is not None:
         network_metrics.update({
@@ -3194,6 +3198,10 @@ def main(argv=None) -> int:
              "is the small-network correctness oracle.",
     )
     parser.add_argument(
+        "--fixed-sequence-index", action="store_true",
+        help="Use indexed complete-successor event replay (baseline is default).",
+    )
+    parser.add_argument(
         "--event-network-cache", type=Path, default=None,
         help="Hash-validated pickle cache for a completed event network.",
     )
@@ -3397,6 +3405,8 @@ def main(argv=None) -> int:
         and getattr(args, "time_model", "uniform") != "event"
     ):
         parser.error("--event-arc-mode requires --time-model event")
+    if args.fixed_sequence_index and args.time_model != "event":
+        parser.error("--fixed-sequence-index requires --time-model event")
     if args.event_network_cache is not None and (
         getattr(args, "time_model", "uniform") != "event"
     ):

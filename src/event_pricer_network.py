@@ -7,6 +7,7 @@ import json
 import math
 import time
 from array import array
+from bisect import bisect_left
 from copy import deepcopy
 
 import numpy as np
@@ -158,6 +159,7 @@ class EventExpandedNetwork:
         reserve_kwh,
         strict_tariff_coverage=False,
         arc_mode="lazy",
+        fixed_sequence_index=False,
     ):
         self.problem = problem
         self.soc_step = float(soc_step)
@@ -192,11 +194,17 @@ class EventExpandedNetwork:
         self._split_arcs()
         self._build_nodes()
         self._build_arcs()
+        # _finalize_source sorts every row by target in both representations.
+        self._replay_sorted_rows_version = 1
+        self.set_fixed_sequence_index(fixed_sequence_index)
 
     def __getstate__(self):
         """Return a compact, reconstructable state for durable graph caches."""
 
         state = dict(self.__dict__)
+        # Replay mode is a runtime choice, never inherited from a graph cache.
+        state["fixed_sequence_index"] = False
+        state.pop("_replay_trip_bounds", None)
         # These dictionaries are construction/runtime accelerators, not graph
         # identity.  The window entries can dominate serialized size, and any
         # selected action is cheaply reconstructed only for paths actually
@@ -216,6 +224,8 @@ class EventExpandedNetwork:
 
     def __setstate__(self, state):
         self.__dict__.update(state)
+        self.fixed_sequence_index = False
+        self.__dict__.pop("_replay_trip_bounds", None)
         self._window_cache = {}
         self._selected_action_cache = {}
         if self.arc_mode == "lazy":
@@ -504,6 +514,69 @@ class EventExpandedNetwork:
                 int(self._arc_targets_np[offset]),
                 float(self._arc_costs_np[offset]),
             )
+
+    def set_fixed_sequence_index(self, enabled=True):
+        """Opt in to complete-successor replay; pricing traversal is unchanged.
+
+        Builder-produced rows carry a versioned sortedness invariant. Legacy
+        caches lack it and are checked once, only on opt-in. The existing cache
+        loader verifies source identity and the full pickle hash before load.
+        Graph arrays must remain immutable after construction, as for pricing.
+        """
+        if enabled and not hasattr(self, "_replay_trip_bounds"):
+            bounds = {trip: (0, 0) for trip in self.trip_position}
+            for node, (kind, trip, _level) in enumerate(self.node_meta):
+                if kind != "trip":
+                    continue
+                low, high = bounds[trip]
+                if high and high != node:
+                    raise ValueError("noncontiguous trip nodes in replay index")
+                bounds[trip] = (low if high else node, node + 1)
+            if getattr(self, "_replay_sorted_rows_version", None) != 1:
+                self._validate_replay_rows()
+                self._replay_sorted_rows_version = 1
+            self._replay_trip_bounds = bounds
+        self.fixed_sequence_index = bool(enabled)
+
+    def _validate_replay_rows(self):
+        """Legacy-only check, with bounded temporary memory for packed arcs."""
+        if self.arc_mode == "explicit":
+            for rows in self.out:
+                if any(rows[i - 1][0] > rows[i][0]
+                       for i in range(1, len(rows))):
+                    raise ValueError("unsorted arc targets in replay index")
+            return
+        targets = self._arc_targets_np
+        for start, end in self._arc_slices:
+            if not 0 <= start <= end <= len(targets):
+                raise ValueError("invalid arc slice in replay index")
+            # Include the predecessor at each chunk boundary. No Python loop
+            # per arc or graph-sized temporary boolean array (119M arcs).
+            for left in range(start + 1, end, 65536):
+                right = min(left + 65536, end)
+                if np.any(targets[left:right] < targets[left - 1:right - 1]):
+                    raise ValueError("unsorted arc targets in replay index")
+
+    def _iter_sequence_arcs(self, source, successor):
+        if not self.fixed_sequence_index:
+            yield from self._iter_arcs(source)
+            return
+        low, high = ((self.SINK, self.SINK + 1) if successor is None
+                     else self._replay_trip_bounds[successor])
+        if self.arc_mode == "explicit":
+            rows = self.out[source]
+            left = bisect_left(rows, low, key=lambda row: row[0])
+            right = bisect_left(rows, high, lo=left, key=lambda row: row[0])
+            for offset in range(left, right):
+                target, cost, _dual, _action = rows[offset]
+                yield target, cost
+            return
+        start, end = self._arc_slices[source]
+        left = bisect_left(self._arc_targets, low, start, end)
+        right = bisect_left(self._arc_targets, high, left, end)
+        for offset in range(left, right):
+            yield (int(self._arc_targets_np[offset]),
+                   float(self._arc_costs_np[offset]))
 
     def _edge_action(self, source, target):
         key = (int(source), int(target))
@@ -1023,13 +1096,13 @@ class EventExpandedNetwork:
         if not trips or any(trip not in self.trip_position for trip in trips):
             return None
         frontier = {}
-        for target, cost in self._iter_arcs(0):
+        for target, cost in self._iter_sequence_arcs(0, trips[0]):
             if self.node_meta[target][1] == trips[0]:
                 frontier[target] = (cost, [(0, target)])
         for successor in (*trips[1:], None):
             following = {}
             for source, (base_cost, edges) in frontier.items():
-                for target, cost in self._iter_arcs(source):
+                for target, cost in self._iter_sequence_arcs(source, successor):
                     matches = (
                         target == self.SINK if successor is None
                         else self.node_meta[target][0] == "trip"
