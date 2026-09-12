@@ -1,6 +1,6 @@
 # d00_g3 startup audit and proposed recovery
 
-No cluster jobs were submitted, cancelled, retargeted or altered during this review. Original CG array 949623_3/concrete949644 remains a timeout; dependent MIP 949624_3 remains DependencyNeverSatisfied.
+The initial review made no cluster changes. After coordination, diagnostic job **982348** was submitted with a 900-second external budget and 90-second termination grace (2 CPUs, 32 GB, 20-minute allocation, default partition, required node exclusion). Its startup passed and graph construction began. Instrumentation/driver/plan pin: `03d0823752e614f523ff9cbd49aaab30208cb1bf`. No original job was cancelled, retargeted or altered. Original CG array 949623_3/concrete949644 remains a timeout; dependent MIP 949624_3 remains DependencyNeverSatisfied.
 
 ## Evidence
 

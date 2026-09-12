@@ -1,0 +1,23 @@
+{
+  "command": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=2",
+    "--mem=32G",
+    "--time=00:20:00",
+    "--no-requeue",
+    "--job-name=diag_d00_g3",
+    "--output=/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/slurm_%j.out",
+    "--error=/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/slurm_%j.err",
+    "--chdir=/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912",
+    "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/run_diagnostic.py"
+  ],
+  "exclusion_verified": true,
+  "execution_artifact_commit": "03d0823752e614f523ff9cbd49aaab30208cb1bf",
+  "job_id": "982348",
+  "manifest_sha256": "1751e0d07cab8d3a452c0efaedc6bc4f258526f7640bb5f3557c0f7cde531119",
+  "scontrol": "JobId=982348 JobName=diag_d00_g3\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:20:00 TimeMin=N/A\n   SubmitTime=2026-09-12T05:44:17 EligibleTime=2026-09-12T05:44:17\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T05:44:17 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2690221\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=2,mem=32G,node=1,billing=2\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=2 MinMemoryNode=32G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=(null)\n   WorkDir=/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912\n   StdErr=/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/slurm_982348.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/slurm_982348.out\n   TresPerTask=cpu=2\n   \n\n",
+  "submitted_utc": "2026-09-12T09:44:16.870521+00:00"
+}
