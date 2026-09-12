@@ -1,0 +1,788 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260912T204810Z.json",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260912T220047Z.json",
+  "timestamp_utc": "2026-09-12T22:00:48.035651+00:00",
+  "changed_results": [
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k11/mip/41606_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.92853975296,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "43d3d0d437bcdca54d567e2c29dbdb12307fc7a0bd3e8f076b4af01b32060c9d"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/mip/41615_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.853101491928,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "60598fefe6e21f833b1afb38c434916cf86e00ef7802eb8b94c4b4ea7af1516f"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k11/mip/41635_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.859182357788,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "b21491dbd79a724e3626926e43ced0cf1f2970e4e8276449817c02a9b50451a6"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k07/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 2948.747791697271,
+        "final": {
+          "iter": 550,
+          "attempt_iter": 550,
+          "lp_obj": 700313.4570986115,
+          "route_weight": 7.000000000000063,
+          "artificials": 0.0,
+          "min_rc": -4.3533932014838683e-10,
+          "max_row_violation": 4.3298697960381105e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1438.3497030697763,
+        "final": {
+          "iter": 177,
+          "attempt_iter": 177,
+          "lp_obj": 800383.6879776382,
+          "route_weight": 8.000000000000009,
+          "artificials": 0.0,
+          "min_rc": -1.0789169557767764e-09,
+          "max_row_violation": 3.352873534367973e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k09/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "initializing",
+        "wall_s": 11.47589118918404,
+        "final": null
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k09/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1948.583448210964,
+        "final": {
+          "iter": 468,
+          "attempt_iter": 468,
+          "lp_obj": 900301.352986131,
+          "route_weight": 9.000000000000023,
+          "artificials": 0.0,
+          "min_rc": -1.7648007499815321e-09,
+          "max_row_violation": 6.983302824892235e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k10/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 983.4054638377856,
+        "final": {
+          "iter": 148,
+          "attempt_iter": 148,
+          "lp_obj": 1000371.1457444465,
+          "route_weight": 10.00000000000009,
+          "artificials": 0.0,
+          "min_rc": -9.518442034561758e-09,
+          "max_row_violation": 1.3011813848606835e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k11/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 721.2385088950396,
+        "final": {
+          "iter": 197,
+          "attempt_iter": 197,
+          "lp_obj": 1100404.2504343088,
+          "route_weight": 10.999999999999941,
+          "artificials": 0.0,
+          "min_rc": -3.442580887025315e-09,
+          "max_row_violation": 1.1657341758564144e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k12/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1097.5958148930222,
+        "final": {
+          "iter": 74,
+          "attempt_iter": 74,
+          "lp_obj": 1200446.1601918365,
+          "route_weight": 12.000000000000055,
+          "artificials": 0.0,
+          "min_rc": -4.783331834688437,
+          "max_row_violation": 4.1089354141377044e-13,
+          "max_bound_violation": 2.3650164264374094e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k11/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 935.9606467308477,
+        "final": {
+          "iter": 208,
+          "attempt_iter": 208,
+          "lp_obj": 1100375.858688106,
+          "route_weight": 11.000000000000037,
+          "artificials": 0.0,
+          "min_rc": -3.3642693075819352e-09,
+          "max_row_violation": 4.141131881851834e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k12/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 788.8096744399518,
+        "final": {
+          "iter": 145,
+          "attempt_iter": 145,
+          "lp_obj": 1200427.901093243,
+          "route_weight": 12.000000000000032,
+          "artificials": 0.0,
+          "min_rc": -9.065405759400846e-09,
+          "max_row_violation": 5.362377208939506e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k13/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1481.168237645179,
+        "final": {
+          "iter": 358,
+          "attempt_iter": 358,
+          "lp_obj": 1300474.5587871503,
+          "route_weight": 13.000000000000048,
+          "artificials": 0.0,
+          "min_rc": -1.4000589576568245e-08,
+          "max_row_violation": 8.58202398035246e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k14/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1376.7738106162287,
+        "final": {
+          "iter": 246,
+          "attempt_iter": 246,
+          "lp_obj": 1400485.5970424789,
+          "route_weight": 14.000000000000608,
+          "artificials": 0.0,
+          "min_rc": -3.301989170978459e-08,
+          "max_row_violation": 3.906874823655926e-13,
+          "max_bound_violation": 2.2685569879187666e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "initializing",
+        "wall_s": 15.559610138647258,
+        "final": null
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1130.097290577367,
+        "final": {
+          "iter": 222,
+          "attempt_iter": 222,
+          "lp_obj": 1000426.2710758079,
+          "route_weight": 10.000000000000057,
+          "artificials": 0.0,
+          "min_rc": -1.6841346095475274e-09,
+          "max_row_violation": 1.9095836023552692e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k11/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1580.3985827937722,
+        "final": {
+          "iter": 264,
+          "attempt_iter": 264,
+          "lp_obj": 1100462.8646985902,
+          "route_weight": 10.999999999999703,
+          "artificials": 0.0,
+          "min_rc": -3.912173696107857e-09,
+          "max_row_violation": 2.986499936241671e-13,
+          "max_bound_violation": 1.6753265441593612e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k12/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 388.0537971018348,
+        "final": {
+          "iter": 38,
+          "attempt_iter": 38,
+          "lp_obj": 1200505.6006986015,
+          "route_weight": 11.999999999999815,
+          "artificials": 0.0,
+          "min_rc": -3.542234061626459e-09,
+          "max_row_violation": 3.3595348725157237e-13,
+          "max_bound_violation": 1.9320656186039287e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k13/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1636.7960121228825,
+        "final": {
+          "iter": 224,
+          "attempt_iter": 224,
+          "lp_obj": 1300530.6311508059,
+          "route_weight": 12.999999999999924,
+          "artificials": 0.0,
+          "min_rc": -0.5929579832403871,
+          "max_row_violation": 4.197753256107717e-13,
+          "max_bound_violation": 2.612667027168669e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k11/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 2536.268280895427,
+        "final": {
+          "iter": 459,
+          "attempt_iter": 459,
+          "lp_obj": 1100522.2275381696,
+          "route_weight": 10.999999999999917,
+          "artificials": 0.0,
+          "min_rc": -2.0617916263176994e-09,
+          "max_row_violation": 7.494005416219807e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k12/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1299.3213985655457,
+        "final": {
+          "iter": 172,
+          "attempt_iter": 172,
+          "lp_obj": 1200576.6436902331,
+          "route_weight": 12.000000000000135,
+          "artificials": 0.0,
+          "min_rc": -7.480044731700275e-05,
+          "max_row_violation": 1.3244960683778118e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k13/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 934.7779373023659,
+        "final": {
+          "iter": 74,
+          "attempt_iter": 74,
+          "lp_obj": 1300628.538021408,
+          "route_weight": 13.000000000000012,
+          "artificials": 0.0,
+          "min_rc": -3.540325153073235,
+          "max_row_violation": 2.3070434451710753e-13,
+          "max_bound_violation": 2.5308227735720834e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k11/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1158.4435613146052,
+        "final": {
+          "iter": 319,
+          "attempt_iter": 319,
+          "lp_obj": 1100399.028786939,
+          "route_weight": 11.000000000000007,
+          "artificials": 0.0,
+          "min_rc": -1.497821866536242e-09,
+          "max_row_violation": 2.3092638912203256e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k12/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 3320.9284169804305,
+        "final": {
+          "iter": 588,
+          "attempt_iter": 588,
+          "lp_obj": 1200464.5477535322,
+          "route_weight": 12.000000000000322,
+          "artificials": 0.0,
+          "min_rc": -1.2423338802136641e-08,
+          "max_row_violation": 1.9095836023552692e-13,
+          "max_bound_violation": 1.4436368767078989e-13
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k13/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "initializing",
+        "wall_s": 21.339754941873252,
+        "final": null
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "w2_chain_recovery_retry2_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_retry2_20260912/cases/w2_k15/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 8084.829076419817,
+        "final": {
+          "iter": 999,
+          "attempt_iter": 999,
+          "lp_obj": 1500630.0356783995,
+          "route_weight": 15.000000000000046,
+          "artificials": 0.0,
+          "min_rc": -4.922898172800576,
+          "max_row_violation": 4.911626660941693e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g1/mip/39581_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000007,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.593472957611,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "5e190c116417106acb79efd49cdfe0b41e38185c38bb2c6c995d098b28ab9607"
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g1/mip/39585_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.1065616607666,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "5b371323c34c5b5eaadacfece93ee4e75ec8096f8b0219a08c49363b7e9ac2f6"
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g3/mip/39587_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000028,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.279001712799,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "63c026b080f1dd15bdef2184f3d2b7526e9184d73bedc0741dd8be13db7993cf"
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g1/mip/39577_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.014567375183,
+        "status_name": "TIME_LIMIT"
+      },
+      "sha256": "5e92ddf2c323e8a2d07d83e4ba9882aa6aa5172540e8b138dc5b879f597b4223"
+    },
+    {
+      "campaign": "overnight_extension_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k15/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14343.137433202472,
+        "final": {
+          "iter": 1558,
+          "attempt_iter": 1558,
+          "lp_obj": 1500718.8436127766,
+          "route_weight": 14.99999999999986,
+          "artificials": 0.0,
+          "min_rc": -1.0534449179946206,
+          "max_row_violation": 5.502265310042276e-13,
+          "max_bound_violation": 3.059358322232697e-13
+        }
+      },
+      "sha256": null
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "949692",
+      "case_id": "w1_k15",
+      "cohort": "default_overnight_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "39577_17",
+      "case_id": "d04_g1",
+      "cohort": "default_ready_pool_recovery_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "39577_25",
+      "case_id": "d06_g1",
+      "cohort": "default_ready_pool_recovery_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "39577_27",
+      "case_id": "d06_g3",
+      "cohort": "default_ready_pool_recovery_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "39577_29",
+      "case_id": "d07_g1",
+      "cohort": "default_ready_pool_recovery_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41576",
+      "case_id": "w1_k07",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41578",
+      "case_id": "w1_k08",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41593",
+      "case_id": "w2_k09",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41595",
+      "case_id": "w2_k10",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41597",
+      "case_id": "w2_k11",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41606",
+      "case_id": "w3_k11",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41608",
+      "case_id": "w3_k12",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41610",
+      "case_id": "w3_k13",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41612",
+      "case_id": "w3_k14",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41615",
+      "case_id": "w4_k10",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41617",
+      "case_id": "w4_k11",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41619",
+      "case_id": "w4_k12",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41626",
+      "case_id": "w5_k11",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41628",
+      "case_id": "w5_k12",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41635",
+      "case_id": "w6_k11",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    },
+    {
+      "JobID": "41637",
+      "case_id": "w6_k12",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false
+    }
+  ],
+  "squeue": {
+    "returncode": 0,
+    "stdout": "42530|PENDING|0:00|(Dependency)\n42528|PENDING|0:00|(Dependency)\n42526|PENDING|0:00|(Dependency)\n42524|PENDING|0:00|(Dependency)\n42522|PENDING|0:00|(Dependency)\n42520|PENDING|0:00|(Dependency)\n42518|PENDING|0:00|(Dependency)\n42516|PENDING|0:00|(Dependency)\n42514|PENDING|0:00|(Dependency)\n42512|PENDING|0:00|(Dependency)\n42531|PENDING|0:00|(Dependency)\n42529|PENDING|0:00|(Dependency)\n42527|PENDING|0:00|(Dependency)\n42525|PENDING|0:00|(Dependency)\n42523|PENDING|0:00|(Dependency)\n42521|PENDING|0:00|(Dependency)\n42519|PENDING|0:00|(Dependency)\n42517|PENDING|0:00|(Dependency)\n42515|PENDING|0:00|(Dependency)\n42513|PENDING|0:00|(Dependency)\n41642|PENDING|0:00|(Dependency)\n41640|PENDING|0:00|(Dependency)\n41633|PENDING|0:00|(Dependency)\n41631|PENDING|0:00|(Dependency)\n41624|PENDING|0:00|(Dependency)\n41622|PENDING|0:00|(Dependency)\n41604|PENDING|0:00|(Dependency)\n41602|PENDING|0:00|(Dependency)\n41600|PENDING|0:00|(Dependency)\n41591|PENDING|0:00|(Dependency)\n41589|PENDING|0:00|(Dependency)\n41587|PENDING|0:00|(Dependency)\n41585|PENDING|0:00|(Dependency)\n41583|PENDING|0:00|(Dependency)\n41581|PENDING|0:00|(Dependency)\n42511|PENDING|0:00|(Dependency)\n42510|PENDING|0:00|(Dependency)\n41643|PENDING|0:00|(Dependency)\n41641|PENDING|0:00|(Dependency)\n41639|PENDING|0:00|(Dependency)\n41634|PENDING|0:00|(Dependency)\n41632|PENDING|0:00|(Dependency)\n41630|PENDING|0:00|(Dependency)\n41625|PENDING|0:00|(Dependency)\n41623|PENDING|0:00|(Dependency)\n41621|PENDING|0:00|(Dependency)\n41614|PENDING|0:00|(Dependency)\n41605|PENDING|0:00|(Dependency)\n41603|PENDING|0:00|(Dependency)\n41601|PENDING|0:00|(Dependency)\n41599|PENDING|0:00|(Dependency)\n41592|PENDING|0:00|(Dependency)\n41590|PENDING|0:00|(Dependency)\n41588|PENDING|0:00|(Dependency)\n41586|PENDING|0:00|(Dependency)\n41584|PENDING|0:00|(Dependency)\n41582|PENDING|0:00|(Dependency)\n41580|PENDING|0:00|(Dependency)\n37585|PENDING|0:00|(Dependency)\n42509|RUNNING|1:20:02|unicorn-cpu-74\n41613|RUNNING|5:48|unicorn-cpu-76\n41638|RUNNING|8:02|garg-cpu-02\n41579|RUNNING|11:30|unicorn-cpu-75\n41629|RUNNING|18:52|garg-cpu-02\n41598|RUNNING|23:22|luxlab-cpu-02\n41620|RUNNING|29:53|unicorn-cpu-76\n37584|RUNNING|2:18:06|unicorn-cpu-01\n41612|RUNNING|5:48|unicorn-cpu-01\n41637|RUNNING|8:02|harpo\n41578|RUNNING|11:30|joachims-cpu-02\n41628|RUNNING|18:52|sonic-cpu-02\n41597|RUNNING|23:22|luxlab-cpu-02\n41610|RUNNING|29:53|snavely-cpu-15\n41619|RUNNING|29:53|totient-cpu-05\n41576|RUNNING|35:49|lodi-cpu-01\n41595|RUNNING|35:49|scaglione-cpu-01\n41617|RUNNING|36:53|snavely-cpu-13\n41626|RUNNING|41:54|totient-cpu-04\n949692|RUNNING|50:55|snavely-cpu-14\n41593|RUNNING|53:01|snavely-cpu-12\n41608|RUNNING|54:57|sonic-cpu-01\n42508|RUNNING|1:20:02|unicorn-cpu-74\n537227_36|PENDING|0:00|(JobHeldUser)\n537227_37|PENDING|0:00|(JobHeldUser)\n537227_38|PENDING|0:00|(JobHeldUser)\n537227_39|PENDING|0:00|(JobHeldUser)\n537227_40|PENDING|0:00|(JobHeldUser)\n537227_41|PENDING|0:00|(JobHeldUser)\n537227_42|PENDING|0:00|(JobHeldUser)\n537227_43|PENDING|0:00|(JobHeldUser)\n537227_44|PENDING|0:00|(JobHeldUser)\n537227_45|PENDING|0:00|(JobHeldUser)\n537227_46|PENDING|0:00|(JobHeldUser)\n537227_47|PENDING|0:00|(JobHeldUser)\n537227_48|PENDING|0:00|(JobHeldUser)\n537227_49|PENDING|0:00|(JobHeldUser)\n537227_50|PENDING|0:00|(JobHeldUser)\n537227_51|PENDING|0:00|(JobHeldUser)\n537227_52|PENDING|0:00|(JobHeldUser)\n537227_53|PENDING|0:00|(JobHeldUser)\n537227_54|PENDING|0:00|(JobHeldUser)\n537227_55|PENDING|0:00|(JobHeldUser)\n537227_56|PENDING|0:00|(JobHeldUser)\n537227_57|PENDING|0:00|(JobHeldUser)\n537227_58|PENDING|0:00|(JobHeldUser)\n537227_59|PENDING|0:00|(JobHeldUser)\n537227_60|PENDING|0:00|(JobHeldUser)\n537227_61|PENDING|0:00|(JobHeldUser)\n537227_62|PENDING|0:00|(JobHeldUser)\n537227_63|PENDING|0:00|(JobHeldUser)\n537227_64|PENDING|0:00|(JobHeldUser)\n537227_65|PENDING|0:00|(JobHeldUser)\n537227_66|PENDING|0:00|(JobHeldUser)\n537227_67|PENDING|0:00|(JobHeldUser)\n537227_68|PENDING|0:00|(JobHeldUser)\n",
+    "stderr": ""
+  }
+}

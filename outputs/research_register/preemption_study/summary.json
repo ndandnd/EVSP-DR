@@ -81,17 +81,22 @@
     "registered_tasks": 37,
     "accounting_missing_task_ids": [],
     "attempts": 37,
-    "started": 0,
-    "ended_started_attempts": 0,
+    "started": 16,
+    "ended_started_attempts": 3,
     "confirmed_preemptions": 0,
-    "preemption_fraction_among_ended": null,
-    "descriptive_wilson95": null,
+    "preemption_fraction_among_ended": 0.0,
+    "descriptive_wilson95": [
+      5.551115123125783e-17,
+      0.5614970317550454
+    ],
     "state_counts": {
-      "PENDING": 37
+      "RUNNING": 13,
+      "PENDING": 21,
+      "COMPLETED": 3
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 0
+    "allocation_exposure_seconds": 34099
   },
   "default_overnight_extension_3600": {
     "registered_tasks": 87,
@@ -108,7 +113,7 @@
       "949624_29"
     ],
     "attempts": 77,
-    "started": 64,
+    "started": 65,
     "ended_started_attempts": 64,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
@@ -118,32 +123,31 @@
     ],
     "state_counts": {
       "COMPLETED": 64,
-      "PENDING": 1,
+      "RUNNING": 1,
       "CANCELLED": 12
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 215923
+    "allocation_exposure_seconds": 218978
   },
   "default_ready_pool_recovery_3600": {
     "registered_tasks": 9,
     "accounting_missing_task_ids": [],
     "attempts": 9,
     "started": 9,
-    "ended_started_attempts": 5,
+    "ended_started_attempts": 9,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
       0,
-      0.43448246478317476
+      0.2991450484195441
     ],
     "state_counts": {
-      "RUNNING": 4,
-      "COMPLETED": 5
+      "COMPLETED": 9
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 10910
+    "allocation_exposure_seconds": 17361
   },
   "default_shared_graph_recovery_3600": {
     "registered_tasks": 22,

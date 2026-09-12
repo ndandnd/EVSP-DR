@@ -8,7 +8,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1891 artifact/stage records across 44 campaign/source groups**, from the 16:48 EDT collection on 12 September. The historical inventory covers 39 evidence families. Counts are not independent experimental sample sizes.
+Current build: **1897 artifact/stage records across 44 campaign/source groups**, from the 18:00 EDT collection on 12 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -20,9 +20,7 @@ Current build: **1891 artifact/stage records across 44 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest operational follow-up:17 EVSP–DR and9 V2G jobs running; first full-pool C3k11/C4k10 CG completions are recorded in the [recovery ledger](../queue_recovery_20260912/README.md). The normalized workbook remains dated16:48EDT.
-
-Latest results: five recovered 8-duty component MIPs each found 8 buses, proved fleet optimal within their saved pools, and passed individual-route replay. The earlier bounded chain-2 k14 MIP found 16 buses with pool bound14 after one hour; fleet optimality remains unproved. The new indexed full-pool chains and shared-graph decomposition are distinct treatments, now running. [Queue and result ledger](../queue_recovery_20260912/README.md).
+Latest verified results: **C3 k11 = 11 buses, C4 k10 = 10, C6 k11 = 11**, each with a CG pricing certificate, fleet optimality within its saved pool and individual-route replay. Earlier bounded results were 12, 11, 11, respectively. [Comparison and proof limits](../queue_recovery_20260912/status_20260912T220047Z/README.md). Sixteen new full-pool CG cases are certified; 23 EVSP–DR jobs are running. All nine recovered component MIPs finished: five matched 8, four found 9. No new failed runs or confirmed preemptions.
 
 ## How to read a result
 
@@ -44,7 +42,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T204810Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T220047Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

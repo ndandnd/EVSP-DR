@@ -1,5 +1,12 @@
 # Unicorn monitoring runbook
 
+## Verified recovery progress — 12 September 18:00 EDT
+
+Full-pool C3 k11=11, C4 k10=10 and C6 k11=11 are now integer target matches, each fleet proved within its pool and each CG certified. The overall MIP TIME_LIMIT status is the second charging stage, not a missing fleet proof. C4’s old bounded pool was proved to require11; the new pool permits10 at the same certified LP objective. C3’s old12 was unproved. See outputs/queue_recovery_20260912/status_20260912T220047Z/README.md and comparison.json. All9 recovered ready-pool MIPs completed:5 fleet8,4 fleet9; no new failures or confirmed preemptions.16 full-pool CG certificates;23 EVSP–DR allocations running at18:02. Both graph-cache preparations remain active.
+
+For compact deltas, compare complete canonical CG rows on disk but print only certified_rc_optimal, stop_reason, wall_s and scalar final fields. Never print final_lp: it contains routes and all duals. Research snapshot timestamps remain explicit; do not conflate a scheduler transition with a result collected earlier in the same pass.
+
+
 ## Current queue ownership — 12 September 16:48 EDT
 
 The user explicitly authorized clearing the broken queue and releasing all ready work. The new [recovery ledger](../queue_recovery_20260912/README.md) supersedes earlier instructions below to leave obsolete pending chain2/full-pool/decomposition entries in squeue; their artifacts remain preserved. Exactly 43 obsolete pending entries were cancelled. Held 537227 and V2G work remain protected.
