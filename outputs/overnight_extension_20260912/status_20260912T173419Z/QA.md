@@ -1,0 +1,1 @@
+Readback verifies new C4k15 result and explicit uncertified CG exception. Updated pages3–6 visually inspected; extra blank page removed and affected pages rechecked. First two pages preserved except timestamp. Figure tabs unchanged. Workbook checks pass.
