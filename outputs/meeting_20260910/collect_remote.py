@@ -213,22 +213,24 @@ if study_script.exists() and (study_script.parent / 'registry.json').exists():
         out['mip_preemption_study'] = json.loads(study_run.stdout) if study_run.returncode == 0 else {'collection_error': study_run.stderr, 'returncode': study_run.returncode}
     except Exception as exc:
         out['mip_preemption_study'] = {'collection_error': str(exc)}
-# Paired efficiency validation has its own pinned, lightweight collector schema.
-efficiency_root = home / 'efficiency_validation_20260912'
-efficiency_script = efficiency_root / 'code-baseline/scripts/efficiency_validation_20260912/campaign.py'
-if efficiency_script.exists() and (efficiency_root / 'manifest.json').exists():
-    try:
-        efficiency_run = subprocess.run(
-            ['/home/nc437/evsp_env/bin/python', str(efficiency_script), 'collect', '--root', str(efficiency_root)],
-            capture_output=True, text=True, timeout=60)
-        if efficiency_run.returncode:
-            out['efficiency_validation'] = {'collection_error': efficiency_run.stderr[-4000:], 'returncode': efficiency_run.returncode}
-        else:
-            efficiency_data = json.loads(efficiency_run.stdout)
-            if efficiency_data.get('schema') != 'evsp-efficiency-collection-v2':
-                raise ValueError('Unexpected efficiency collection schema')
-            out['efficiency_validation'] = efficiency_data
-    except Exception as exc:
-        out['efficiency_validation'] = {'collection_error': str(exc)}
+# Paired efficiency collections retain original failures and separate warm retries.
+for efficiency_key, efficiency_directory in [('efficiency_validation', 'efficiency_validation_20260912'), ('efficiency_validation_warm_retry', 'efficiency_validation_warm_retry_20260912')]:
+    efficiency_root = home / efficiency_directory
+    efficiency_script = efficiency_root / 'code-baseline/scripts/efficiency_validation_20260912/campaign.py'
+    if efficiency_script.exists() and (efficiency_root / 'manifest.json').exists():
+        try:
+            efficiency_run = subprocess.run(
+                ['/home/nc437/evsp_env/bin/python', str(efficiency_script), 'collect', '--root', str(efficiency_root)],
+                capture_output=True, text=True, timeout=60)
+            if efficiency_run.returncode:
+                out[efficiency_key] = {'collection_error': efficiency_run.stderr[-4000:], 'returncode': efficiency_run.returncode}
+            else:
+                efficiency_data = json.loads(efficiency_run.stdout)
+                if efficiency_data.get('schema') != 'evsp-efficiency-collection-v2':
+                    raise ValueError('Unexpected efficiency collection schema')
+                out[efficiency_key] = efficiency_data
+        except Exception as exc:
+            out[efficiency_key] = {'collection_error': str(exc)}
+
 
 print(json.dumps(out))

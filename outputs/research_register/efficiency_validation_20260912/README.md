@@ -1,6 +1,6 @@
 # Paired efficiency validation launched on 12 September
 
-Status checked at 02:56 EDT: nine jobs submitted; five running and four warm jobs failed during cache preparation. No completed paired timing result or new MIP result is available.
+Current status at 03:02 EDT: all four warm replacements are running after the original startup failures. The original five fresh/capacity jobs were left unchanged. There are nine paired cases and thirteen submitted attempts, not thirteen independent cases. No completed paired timing result or new MIP result is available. The original launch accounting below is retained as history.
 
 Execution baseline `89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a`; capacity `309d98d266ebaf6b7e99543a67f8f2be5736874a`. [Immutable launch evidence](https://github.com/ndandnd/EVSP-DR/tree/58edeb4b6274deb01023673e5f19153d555c25bf/outputs/efficiency_validation_20260912) includes manifest SHA-256 `27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9` and jobs SHA-256 `1f61a0ab24be8736a80c33801ce59fc5dc1a875bb3ed555fc17fc51198873734`.
 
@@ -27,3 +27,17 @@ The two isolated clones borrow Git objects from `/home/nc437/ladder-lite/overnig
 ## Retained manager evidence
 
 `20260912T065512Z.json`, `20260912T065615Z.json`, `launch_sacct.txt`, and `warm_preparation_stderr.json` retain collection, accounting and exact failure evidence. Existing charts and completed research results remain unchanged.
+
+
+## Warm replacement attempts
+
+| Case | Original failed job | Replacement job | Replacement status at 03:02 EDT |
+|---|---:|---:|---|
+| w1_k08 | 964196 | 966398 | Running |
+| w4_k11 | 964197 | 966399 | Running |
+| w6_k12 | 964200 | 966400 | Running |
+| w1_k08_repeat | 964201 | 966401 | Running |
+
+The recovery uses `/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912`, launcher fix `11afd8372dd14fdb2a11cd5eaddbee1d02644b1f`, and manifest SHA-256 `b28a1a01aea6d4320b18db1fa66d12fa6a5e80aa7448921dd7997fd34508978b`. [Manifest](recovery_manifest.json) and [jobs](recovery_jobs.json) retain frozen inputs, previous-k parents, arm order and superseded-attempt mapping. All four request 8 CPUs, 96 GB, eight hours on default_partition and exclude scaglione-compute-01. No original manifest or active original source was changed.
+
+The hourly collector retains the original v2 object and adds `efficiency_validation_warm_retry`. Scheduler RUNNING does not establish completion of cache preparation or any CG certificate. The original efficiency root is also a recovery Git-object/frozen-input dependency and must be protected from cleanup.

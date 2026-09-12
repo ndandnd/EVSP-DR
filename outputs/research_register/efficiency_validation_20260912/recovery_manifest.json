@@ -1,0 +1,712 @@
+{
+  "baseline_commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+  "capacity_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "cases": [
+    {
+      "arm_seconds": 7200,
+      "code": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline",
+      "commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+      "cpus": 8,
+      "id": "w1_k08",
+      "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "kind": "warm",
+      "mem": "96G",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "parent": {
+        "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+        "descriptor_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+        "journal": {
+          "bytes": 101515081,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+          "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+          "source": {
+            "bytes": 101515081,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json.columns.jsonl",
+            "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5"
+          }
+        },
+        "raw_status": {
+          "bytes": 44777,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/raw_status.json",
+          "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+          "source": {
+            "bytes": 44777,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json",
+            "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641"
+          }
+        }
+      },
+      "preparation_seconds": 10800,
+      "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "slurm_time": "08:00:00",
+      "source_args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.5,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/cg.json.gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 900.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 14400
+      },
+      "supersedes_startup_attempt": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0"
+    },
+    {
+      "arm_seconds": 7200,
+      "code": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline",
+      "commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+      "cpus": 8,
+      "id": "w4_k11",
+      "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+      "kind": "warm",
+      "mem": "96G",
+      "order": [
+        "optimized",
+        "reference"
+      ],
+      "parent": {
+        "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+        "descriptor_sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd",
+        "journal": {
+          "bytes": 105688658,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/columns.jsonl",
+          "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+          "source": {
+            "bytes": 105688658,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json.columns.jsonl",
+            "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd"
+          }
+        },
+        "raw_status": {
+          "bytes": 53076,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/raw_status.json",
+          "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+          "source": {
+            "bytes": 53076,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json",
+            "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170"
+          }
+        }
+      },
+      "preparation_seconds": 10800,
+      "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "slurm_time": "08:00:00",
+      "source_args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.5,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k11_p04_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k11/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k11/cg.json.gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 900.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k11/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 14400
+      },
+      "supersedes_startup_attempt": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0"
+    },
+    {
+      "arm_seconds": 7200,
+      "code": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline",
+      "commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+      "cpus": 8,
+      "id": "w6_k12",
+      "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+      "kind": "warm",
+      "mem": "96G",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "parent": {
+        "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+        "descriptor_sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc",
+        "journal": {
+          "bytes": 81821321,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/columns.jsonl",
+          "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+          "source": {
+            "bytes": 81821321,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json.columns.jsonl",
+            "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826"
+          }
+        },
+        "raw_status": {
+          "bytes": 50953,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/raw_status.json",
+          "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+          "source": {
+            "bytes": 50953,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json",
+            "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf"
+          }
+        }
+      },
+      "preparation_seconds": 10800,
+      "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "slurm_time": "08:00:00",
+      "source_args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.5,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k12_p06_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k12/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k12/cg.json.gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 900.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k12/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 14400
+      },
+      "supersedes_startup_attempt": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0"
+    },
+    {
+      "arm_seconds": 7200,
+      "code": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline",
+      "commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+      "cpus": 8,
+      "id": "w1_k08_repeat",
+      "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "kind": "warm",
+      "mem": "96G",
+      "order": [
+        "optimized",
+        "reference"
+      ],
+      "parent": {
+        "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+        "descriptor_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+        "journal": {
+          "bytes": 101515081,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+          "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+          "source": {
+            "bytes": 101515081,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json.columns.jsonl",
+            "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5"
+          }
+        },
+        "raw_status": {
+          "bytes": 44777,
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/raw_status.json",
+          "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+          "source": {
+            "bytes": 44777,
+            "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json",
+            "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641"
+          }
+        }
+      },
+      "preparation_seconds": 10800,
+      "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "slurm_time": "08:00:00",
+      "source_args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.5,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/cg.json.gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 900.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k08/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 14400
+      },
+      "supersedes_startup_attempt": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0"
+    }
+  ],
+  "frozen": [
+    {
+      "bytes": 3778,
+      "path": "/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md",
+      "sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+      "text": "# EVSP\u2013DR Scaglione resource policy\n\nStanding user instruction, confirmed 9 September 2026.\n\nReserve scaglione-compute-01 for GPU users. GPU jobs also need CPU resources; CPU-only jobs must not exhaust that node. Every EVSP\u2013DR Scaglione CPU/MIP submission must include `--exclude=scaglione-compute-01`. Note that scaglione-cpu-01 is a different node and is not the reserved GPU node.\n\nUse the remaining Scaglione CPU machines for MIP computations, subject to the scheduler and other users. Do not interpret the request to reduce usage as a blanket shutdown of all Scaglione work. Run column generation on default_partition where suitable; save supported checkpoints for preemption. A Gurobi incumbent checkpoint does not preserve its branch-and-bound tree.\n\nDo not release held historical campaigns automatically. Verify node exclusion in scontrol after submission. This policy remains in force until the user explicitly changes it.\n\nClarification, 10 September 2026: scaglione-compute-01 also belongs to default_partition. The exclusion is a physical-node reservation, not just a partition-specific rule. Include --exclude=scaglione-compute-01 in ALL EVSP\u2013DR CPU-only submissions, including default-partition CG, and verify the effective exclusion after submission.\n\n## Default-partition concurrency \u2014 user instruction, 10 September 2026\n\nFor independent EVSP\u2013DR column-generation cases on default_partition, use a default array concurrency of 50, or the number of cases if fewer than 50 exist. Do not impose arbitrary caps of 2, 16 or 24. A smaller cap requires a documented cluster restriction or concrete measured bottleneck (per-job RAM, aggregate node RAM, I/O, license service or other resource), with the reason recorded in the campaign manifest. More than 50 is allowed when justified by workload size and resource evidence.\n\nRequest realistic CPU and RAM per job; Slurm controls actual admission and reserves these resources. Raising the array throttle does not raise an individual job's memory limit. Preserve true data dependencies: a chain that imports the previous k's columns is sequential by design, not artificially throttled. If several independent chains exist, they may proceed in parallel.\n\nThis supersedes the earlier pilot default of 16. It does not release held historical jobs, change Scaglione MIP limits, or relax the scaglione-compute-01 exclusion. Verify actual array throttles and node exclusions after submission. At this audit, the Cornell Unicorn documentation and inspected user/QOS fields contain no explicit concurrency restriction below 50; this is not a claim that all system/parent-account limits are absent.\n\n## Overnight default-partition MIPs \u2014 11 September 2026 UTC\n\nThe user authorizes default_partition for the one-hour saved-pool MIPs, accepting preemption and lost branch-and-bound search. Pending fresh-covering MIPs may migrate there; retain exact scientific settings and true input dependencies. Keep per-attempt job IDs, scheduler states, timing/resource/priority samples and output hashes in the MIP preemption study. No automatic requeue for wrappers unable to restart safely; interrupted retries require unique attempt outputs and preserved prior records. Preemption risk is measured, not presumed zero. Existing Scaglione MIPs remain usable. scaglione-compute-01 remains excluded everywhere and held historical jobs stay untouched.\n\n## Default MIPs \u2014 user clarification 11 September evening\n\nUse default_partition for new table-filling MIPs. User accepts preemption and requeue; use restart-safe output paths and retain attempt statistics. Gurobi tree search restarts. Exclude scaglione-compute-01 and preserve held jobs. Overnight extension worker uses explicit --requeue and job/restart output directories.\n"
+    },
+    {
+      "bytes": 42068,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/audit/source_evidence.json",
+      "sha256": "0ecde623dad431ce8faa519192f4c06192cace8e7101cd285d4c6fc5ea033d6c"
+    },
+    {
+      "bytes": 42101,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/audit/capacity_evidence.json",
+      "sha256": "e82cae0f5c59375daa1b1e00596f6ba915dd8647421c3a97dabc76f991268cdb"
+    },
+    {
+      "bytes": 512,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    {
+      "bytes": 2573,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    },
+    {
+      "bytes": 512,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    {
+      "bytes": 2573,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    },
+    {
+      "bytes": 581,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "source": {
+        "bytes": 581,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/hourly_prices_flat.csv",
+        "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+      }
+    },
+    {
+      "bytes": 581,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    {
+      "bytes": 641,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+      "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+      "source": {
+        "bytes": 641,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/tariff_response/peak12_h26.csv",
+        "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+      }
+    },
+    {
+      "bytes": 44777,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/raw_status.json",
+      "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+      "source": {
+        "bytes": 44777,
+        "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json",
+        "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641"
+      }
+    },
+    {
+      "bytes": 101515081,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+      "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "source": {
+        "bytes": 101515081,
+        "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json.columns.jsonl",
+        "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5"
+      }
+    },
+    {
+      "bytes": 9723,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k07_p01_20260908.csv",
+      "sha256": "c1ddecd62cc584d309a486886062f26c4dc8adc2221fc621a47d9c30713304d6"
+    },
+    {
+      "bytes": 60088,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+      "sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b"
+    },
+    {
+      "bytes": 53076,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/raw_status.json",
+      "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+      "source": {
+        "bytes": 53076,
+        "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json",
+        "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170"
+      }
+    },
+    {
+      "bytes": 105688658,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/columns.jsonl",
+      "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+      "source": {
+        "bytes": 105688658,
+        "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json.columns.jsonl",
+        "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd"
+      }
+    },
+    {
+      "bytes": 11963,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08"
+    },
+    {
+      "bytes": 71347,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+      "sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd"
+    },
+    {
+      "bytes": 50953,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/raw_status.json",
+      "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+      "source": {
+        "bytes": 50953,
+        "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json",
+        "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf"
+      }
+    },
+    {
+      "bytes": 81821321,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/columns.jsonl",
+      "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+      "source": {
+        "bytes": 81821321,
+        "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json.columns.jsonl",
+        "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826"
+      }
+    },
+    {
+      "bytes": 11705,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k11_p06_20260908.csv",
+      "sha256": "9199478f9fc6d2771233763af0f16d780f629bb72268203b0dabc466be94661f"
+    },
+    {
+      "bytes": 67804,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+      "sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc"
+    },
+    {
+      "bytes": 5084,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+      "sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "source": {
+        "bytes": 5084,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/overnight_decomposition_20260912/d00_g0.csv",
+        "sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89"
+      }
+    },
+    {
+      "bytes": 6852,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+      "sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "source": {
+        "bytes": 6852,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/overnight_decomposition_20260912/d00_g1.csv",
+        "sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696"
+      }
+    },
+    {
+      "bytes": 10598,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "source": {
+        "bytes": 10598,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d"
+      }
+    },
+    {
+      "bytes": 13622,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+      "sha256": "837037c026cf3971309c96c719f594565fdc5521dfe2d43241e2a344b31f1a92",
+      "source": {
+        "bytes": 13622,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k11_p04_20260908.csv",
+        "sha256": "837037c026cf3971309c96c719f594565fdc5521dfe2d43241e2a344b31f1a92"
+      }
+    },
+    {
+      "bytes": 14680,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+      "sha256": "8b8ec38fc2303f2aad71358fae7583c1c4fe009efeb1a147eb9eeebd93abacc6",
+      "source": {
+        "bytes": 14680,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k12_p06_20260908.csv",
+        "sha256": "8b8ec38fc2303f2aad71358fae7583c1c4fe009efeb1a147eb9eeebd93abacc6"
+      }
+    },
+    {
+      "bytes": 10598,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "source": {
+        "bytes": 10598,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d"
+      }
+    },
+    {
+      "bytes": 776,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "source": {
+        "bytes": 776,
+        "path": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+        "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1"
+      }
+    },
+    {
+      "bytes": 1369,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+      "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "source": {
+        "bytes": 1369,
+        "path": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+        "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b"
+      }
+    },
+    {
+      "bytes": 776,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "source": {
+        "bytes": 776,
+        "path": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+        "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1"
+      }
+    },
+    {
+      "bytes": 2706,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/pair_status.json",
+      "sha256": "0467ffcf290de90beae57b72944dcb17915e47933cdc3e8ab8097524378b9c32"
+    },
+    {
+      "bytes": 2706,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/pair_status.json",
+      "sha256": "98e4232ccb7f3623c2a686b5f2e5b7728e44973631eb6efc7671655321ec0832"
+    },
+    {
+      "bytes": 2706,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/pair_status.json",
+      "sha256": "654430051ced0278e815773a615b4bfd470a7987df65dd97d5274c43f528e449"
+    },
+    {
+      "bytes": 2747,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/pair_status.json",
+      "sha256": "09f765081f083292fc53edba9d9e6ba35a081d2a75dad5647453be2b5ac474b0"
+    },
+    {
+      "bytes": 44030,
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/manifest.json",
+      "sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9"
+    }
+  ],
+  "interpretation": "Exit status is scheduler/process evidence, never a CG certificate. Both capacity selectors use corrected accounting. Warm worker completion order is not canonicalized. One cache preparation per warm allocation is outside paired timing; runtime index setup remains inside arm timing.",
+  "parents": {
+    "w1_k07": {
+      "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+      "descriptor_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "journal": {
+        "bytes": 101515081,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+        "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+        "source": {
+          "bytes": 101515081,
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json.columns.jsonl",
+          "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5"
+        }
+      },
+      "raw_status": {
+        "bytes": 44777,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/raw_status.json",
+        "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+        "source": {
+          "bytes": 44777,
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w1_k07/cg.json",
+          "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641"
+        }
+      }
+    },
+    "w4_k10": {
+      "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+      "descriptor_sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd",
+      "journal": {
+        "bytes": 105688658,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/columns.jsonl",
+        "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+        "source": {
+          "bytes": 105688658,
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json.columns.jsonl",
+          "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd"
+        }
+      },
+      "raw_status": {
+        "bytes": 53076,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/raw_status.json",
+        "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+        "source": {
+          "bytes": 53076,
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w4_k10/cg.json",
+          "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170"
+        }
+      }
+    },
+    "w6_k11": {
+      "descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+      "descriptor_sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc",
+      "journal": {
+        "bytes": 81821321,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/columns.jsonl",
+        "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+        "source": {
+          "bytes": 81821321,
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json.columns.jsonl",
+          "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826"
+        }
+      },
+      "raw_status": {
+        "bytes": 50953,
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/raw_status.json",
+        "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+        "source": {
+          "bytes": 50953,
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w6_k11/cg.json",
+          "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf"
+        }
+      }
+    }
+  },
+  "policy": {
+    "concurrency": 4,
+    "exclude": "scaglione-compute-01",
+    "independent_cases": 4,
+    "old_jobs_untouched": true,
+    "partition": "default_partition",
+    "requeue": false
+  },
+  "prepared_utc": "2026-09-12T07:00:23.193209+00:00",
+  "python": "/home/nc437/evsp_env/bin/python",
+  "recovery": {
+    "differences": [
+      "new root",
+      "new baseline execution commit and checkout",
+      "four warm cases only",
+      "cache-only command omits --out"
+    ],
+    "failed_jobs": {
+      "w1_k08": "964196",
+      "w1_k08_repeat": "964201",
+      "w4_k11": "964197",
+      "w6_k12": "964200"
+    },
+    "original_manifest": "/home/nc437/ladder-lite/efficiency_validation_20260912/manifest.json",
+    "original_manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+    "preserved": "Original manifest, jobs, failed artifacts, frozen inputs, parent journals and five active pairs remain untouched.",
+    "reason": "Cache-only preparation rejected --out before graph construction. Launcher fixed; solver code unchanged."
+  },
+  "resources_reason": "Same per-case resources as audited successful campaigns; warm parent RSS excludes worker aggregate. 7200s baseline arms cover historical 1663\u20133877s; capacity10800s includes historical8598s pricing call. All nine independent cases eligible; no artificial throttle. Recovery contains only the four warm allocations whose preparation failed before solving; resources, treatment order and physics are unchanged.",
+  "root": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912",
+  "schema": "evsp-efficiency-validation-v1"
+}

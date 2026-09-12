@@ -1,0 +1,454 @@
+{
+  "schema": "evsp-efficiency-collection-v2",
+  "collected_utc": "2026-09-12T07:01:59.633310+00:00",
+  "manifest": {
+    "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/manifest.json",
+    "exists": true,
+    "bytes": 37308,
+    "mtime_ns": 1789196424196476326,
+    "content_hash_recomputed": true,
+    "sha256": "b28a1a01aea6d4320b18db1fa66d12fa6a5e80aa7448921dd7997fd34508978b",
+    "changed_during_hash": false
+  },
+  "baseline_commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+  "capacity_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "inputs": [
+    {
+      "path": "/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md",
+      "exists": true,
+      "bytes": 3778,
+      "mtime_ns": 1789186700475435383,
+      "content_hash_recomputed": true,
+      "sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+      "changed_during_hash": false,
+      "expected_sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/audit/source_evidence.json",
+      "exists": true,
+      "bytes": 42068,
+      "mtime_ns": 1789195748459054998,
+      "content_hash_recomputed": true,
+      "sha256": "0ecde623dad431ce8faa519192f4c06192cace8e7101cd285d4c6fc5ea033d6c",
+      "changed_during_hash": false,
+      "expected_sha256": "0ecde623dad431ce8faa519192f4c06192cace8e7101cd285d4c6fc5ea033d6c",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/audit/capacity_evidence.json",
+      "exists": true,
+      "bytes": 42101,
+      "mtime_ns": 1789195748538057631,
+      "content_hash_recomputed": true,
+      "sha256": "e82cae0f5c59375daa1b1e00596f6ba915dd8647421c3a97dabc76f991268cdb",
+      "changed_during_hash": false,
+      "expected_sha256": "e82cae0f5c59375daa1b1e00596f6ba915dd8647421c3a97dabc76f991268cdb",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/Ref_dict.csv",
+      "exists": true,
+      "bytes": 512,
+      "mtime_ns": 1789196420888376376,
+      "content_hash_recomputed": true,
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "changed_during_hash": false,
+      "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/par_ref_dhd.csv",
+      "exists": true,
+      "bytes": 2573,
+      "mtime_ns": 1789196421118383326,
+      "content_hash_recomputed": true,
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "changed_during_hash": false,
+      "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/Ref_dict.csv",
+      "exists": true,
+      "bytes": 512,
+      "mtime_ns": 1789195783714240427,
+      "content_hash_recomputed": true,
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "changed_during_hash": false,
+      "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/par_ref_dhd.csv",
+      "exists": true,
+      "bytes": 2573,
+      "mtime_ns": 1789195783739241272,
+      "content_hash_recomputed": true,
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "changed_during_hash": false,
+      "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "exists": true,
+      "bytes": 581,
+      "mtime_ns": 1789195979602811184,
+      "content_hash_recomputed": true,
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "changed_during_hash": false,
+      "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/hourly_prices_flat.csv",
+      "exists": true,
+      "bytes": 581,
+      "mtime_ns": 1789195783728240900,
+      "content_hash_recomputed": true,
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "changed_during_hash": false,
+      "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+      "exists": true,
+      "bytes": 641,
+      "mtime_ns": 1789195979645812526,
+      "content_hash_recomputed": true,
+      "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+      "changed_during_hash": false,
+      "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/raw_status.json",
+      "exists": true,
+      "bytes": 44777,
+      "mtime_ns": 1789195979671813338,
+      "content_hash_recomputed": true,
+      "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+      "changed_during_hash": false,
+      "expected_sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+      "exists": true,
+      "bytes": 101515081,
+      "mtime_ns": 1789195980523839926,
+      "content_hash_recomputed": true,
+      "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "changed_during_hash": false,
+      "expected_sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k07_p01_20260908.csv",
+      "exists": true,
+      "bytes": 9723,
+      "mtime_ns": 1789196421221386438,
+      "content_hash_recomputed": true,
+      "sha256": "c1ddecd62cc584d309a486886062f26c4dc8adc2221fc621a47d9c30713304d6",
+      "changed_during_hash": false,
+      "expected_sha256": "c1ddecd62cc584d309a486886062f26c4dc8adc2221fc621a47d9c30713304d6",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+      "exists": true,
+      "bytes": 60088,
+      "mtime_ns": 1789195981315864642,
+      "content_hash_recomputed": true,
+      "sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "changed_during_hash": false,
+      "expected_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/raw_status.json",
+      "exists": true,
+      "bytes": 53076,
+      "mtime_ns": 1789195981340865422,
+      "content_hash_recomputed": true,
+      "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+      "changed_during_hash": false,
+      "expected_sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/columns.jsonl",
+      "exists": true,
+      "bytes": 105688658,
+      "mtime_ns": 1789195982436899625,
+      "content_hash_recomputed": true,
+      "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+      "changed_during_hash": false,
+      "expected_sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "exists": true,
+      "bytes": 11963,
+      "mtime_ns": 1789196421259387586,
+      "content_hash_recomputed": true,
+      "sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "changed_during_hash": false,
+      "expected_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+      "exists": true,
+      "bytes": 71347,
+      "mtime_ns": 1789195983266925526,
+      "content_hash_recomputed": true,
+      "sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd",
+      "changed_during_hash": false,
+      "expected_sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/raw_status.json",
+      "exists": true,
+      "bytes": 50953,
+      "mtime_ns": 1789195983289926244,
+      "content_hash_recomputed": true,
+      "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+      "changed_during_hash": false,
+      "expected_sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/columns.jsonl",
+      "exists": true,
+      "bytes": 81821321,
+      "mtime_ns": 1789195983861944094,
+      "content_hash_recomputed": true,
+      "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+      "changed_during_hash": false,
+      "expected_sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k11_p06_20260908.csv",
+      "exists": true,
+      "bytes": 11705,
+      "mtime_ns": 1789196421283388311,
+      "content_hash_recomputed": true,
+      "sha256": "9199478f9fc6d2771233763af0f16d780f629bb72268203b0dabc466be94661f",
+      "changed_during_hash": false,
+      "expected_sha256": "9199478f9fc6d2771233763af0f16d780f629bb72268203b0dabc466be94661f",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+      "exists": true,
+      "bytes": 67804,
+      "mtime_ns": 1789195984509964316,
+      "content_hash_recomputed": true,
+      "sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc",
+      "changed_during_hash": false,
+      "expected_sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+      "exists": true,
+      "bytes": 5084,
+      "mtime_ns": 1789195984516964535,
+      "content_hash_recomputed": true,
+      "sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "changed_during_hash": false,
+      "expected_sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+      "exists": true,
+      "bytes": 6852,
+      "mtime_ns": 1789195984542965346,
+      "content_hash_recomputed": true,
+      "sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "changed_during_hash": false,
+      "expected_sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "exists": true,
+      "bytes": 10598,
+      "mtime_ns": 1789195984547965502,
+      "content_hash_recomputed": true,
+      "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "changed_during_hash": false,
+      "expected_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+      "exists": true,
+      "bytes": 13622,
+      "mtime_ns": 1789195984560965908,
+      "content_hash_recomputed": true,
+      "sha256": "837037c026cf3971309c96c719f594565fdc5521dfe2d43241e2a344b31f1a92",
+      "changed_during_hash": false,
+      "expected_sha256": "837037c026cf3971309c96c719f594565fdc5521dfe2d43241e2a344b31f1a92",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+      "exists": true,
+      "bytes": 14680,
+      "mtime_ns": 1789195984566966095,
+      "content_hash_recomputed": true,
+      "sha256": "8b8ec38fc2303f2aad71358fae7583c1c4fe009efeb1a147eb9eeebd93abacc6",
+      "changed_during_hash": false,
+      "expected_sha256": "8b8ec38fc2303f2aad71358fae7583c1c4fe009efeb1a147eb9eeebd93abacc6",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "exists": true,
+      "bytes": 10598,
+      "mtime_ns": 1789195984547965502,
+      "content_hash_recomputed": true,
+      "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "changed_during_hash": false,
+      "expected_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+      "exists": true,
+      "bytes": 776,
+      "mtime_ns": 1789195984605967312,
+      "content_hash_recomputed": true,
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "changed_during_hash": false,
+      "expected_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+      "exists": true,
+      "bytes": 1369,
+      "mtime_ns": 1789195984646968592,
+      "content_hash_recomputed": true,
+      "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "changed_during_hash": false,
+      "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+      "exists": true,
+      "bytes": 776,
+      "mtime_ns": 1789195984605967312,
+      "content_hash_recomputed": true,
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "changed_during_hash": false,
+      "expected_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/pair_status.json",
+      "exists": true,
+      "bytes": 2706,
+      "mtime_ns": 1789196078717908409,
+      "content_hash_recomputed": true,
+      "sha256": "0467ffcf290de90beae57b72944dcb17915e47933cdc3e8ab8097524378b9c32",
+      "changed_during_hash": false,
+      "expected_sha256": "0467ffcf290de90beae57b72944dcb17915e47933cdc3e8ab8097524378b9c32",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/pair_status.json",
+      "exists": true,
+      "bytes": 2706,
+      "mtime_ns": 1789196078801911036,
+      "content_hash_recomputed": true,
+      "sha256": "98e4232ccb7f3623c2a686b5f2e5b7728e44973631eb6efc7671655321ec0832",
+      "changed_during_hash": false,
+      "expected_sha256": "98e4232ccb7f3623c2a686b5f2e5b7728e44973631eb6efc7671655321ec0832",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/pair_status.json",
+      "exists": true,
+      "bytes": 2706,
+      "mtime_ns": 1789196078852912632,
+      "content_hash_recomputed": true,
+      "sha256": "654430051ced0278e815773a615b4bfd470a7987df65dd97d5274c43f528e449",
+      "changed_during_hash": false,
+      "expected_sha256": "654430051ced0278e815773a615b4bfd470a7987df65dd97d5274c43f528e449",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/pair_status.json",
+      "exists": true,
+      "bytes": 2747,
+      "mtime_ns": 1789196078823911725,
+      "content_hash_recomputed": true,
+      "sha256": "09f765081f083292fc53edba9d9e6ba35a081d2a75dad5647453be2b5ac474b0",
+      "changed_during_hash": false,
+      "expected_sha256": "09f765081f083292fc53edba9d9e6ba35a081d2a75dad5647453be2b5ac474b0",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/manifest.json",
+      "exists": true,
+      "bytes": 44030,
+      "mtime_ns": 1789195984659968998,
+      "content_hash_recomputed": true,
+      "sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "changed_during_hash": false,
+      "expected_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "matches_expected": true
+    }
+  ],
+  "pending_cases": [
+    {
+      "case": "w1_k08",
+      "state": "no_allocation_record",
+      "kind": "warm",
+      "order": [
+        "reference",
+        "optimized"
+      ]
+    },
+    {
+      "case": "w4_k11",
+      "state": "no_allocation_record",
+      "kind": "warm",
+      "order": [
+        "optimized",
+        "reference"
+      ]
+    },
+    {
+      "case": "w6_k12",
+      "state": "no_allocation_record",
+      "kind": "warm",
+      "order": [
+        "reference",
+        "optimized"
+      ]
+    },
+    {
+      "case": "w1_k08_repeat",
+      "state": "no_allocation_record",
+      "kind": "warm",
+      "order": [
+        "optimized",
+        "reference"
+      ]
+    }
+  ],
+  "attempts": [],
+  "rows": [],
+  "interpretation": "No scheduler query. Started without completion is not proof of current liveness. Missing certificate fields are unknown. Artifact hashes describe this read; changing files are flagged."
+}
