@@ -1,0 +1,15 @@
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/selectors.py", line 415 in select
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 2113 in _communicate
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 1209 in communicate
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py", line 550 in run
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1116 in _git
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1138 in _provenance
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1543 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 61 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py"

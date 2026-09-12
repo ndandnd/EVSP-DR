@@ -1,0 +1,71 @@
+{
+  "collected_utc": "2026-09-12T09:38:07.116522+00:00",
+  "files": [
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g3/cg_949644_r0_start.json",
+      "sha256": "dcc2c9fc2e415f57b25db529f1e6481d6f12d39a4a39347325bba1ba94cf07ed",
+      "text": "{\n  \"mode\": \"cg\",\n  \"case\": {\n    \"id\": \"d00_g3\",\n    \"csv\": \"overnight_decomposition_20260912/d00_g3.csv\",\n    \"input_sha256\": \"cf3d15335300725f7d5db443be5886720c4a901a00cc348b1cc96b70ae306841\",\n    \"trip_count\": 325,\n    \"target_duties\": 8,\n    \"kind\": \"decomposition_component_fresh_cover\",\n    \"cg_seconds\": 14400,\n    \"partition_id\": 0\n  },\n  \"job\": \"949644_r0\",\n  \"started_epoch\": 1789186404.2544303,\n  \"commit\": \"a29992196acb74d02b8c7891be4061718889999f\",\n  \"partition\": \"default_partition\",\n  \"resources\": {\n    \"SLURM_CPUS_PER_TASK\": \"2\",\n    \"SLURM_MEM_PER_NODE\": \"32768\"\n  }\n}\n"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g3/cg.json.phase-telemetry.jsonl",
+      "sha256": "9f6aa7fdaccfaae168e81dbb0642a9934f8ec11ce5c46c09059922ab7a58294e",
+      "text": "{\"epoch_s\":1789186407.4539251,\"host\":\"unicorn-cpu-73.coecis.cornell.edu\",\"identity\":{\"block_min\":5,\"charge_kw\":240.0,\"column_candidate_multiplier\":4,\"column_diversity_weight\":0.5,\"column_selection\":\"reduced_cost\",\"columns_per_iter\":30,\"csv\":\"overnight_decomposition_20260912/d00_g3.csv\",\"g_kwh\":240.0,\"git_commit\":\"a29992196acb74d02b8c7891be4061718889999f\",\"initial_pool\":\"singletons\",\"instance_sha256\":\"cf3d15335300725f7d5db443be5886720c4a901a00cc348b1cc96b70ae306841\",\"master_backend\":\"gurobi\",\"master_sense\":\"cover\",\"min_soc_frac\":0.0,\"output\":\"/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g3/cg.json\",\"prices_csv\":\"hourly_prices_flat.csv\",\"prices_sha256\":\"1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200\",\"soc_step\":2.5,\"time_model\":\"event\"},\"identity_sha256\":\"4b563c0830c34768a159f6cf58737a17cba0ce835d100e106faa537f20940f20\",\"peak_rss_bytes\":153911296,\"pid\":59667,\"python\":\"3.12.13\",\"record_type\":\"session_start\",\"schema\":\"evsp-dr-exact-cg-phase-telemetry-v1\",\"session\":1}\n"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40CG_949623_3.out",
+      "sha256": "633eb63280db710838ae4aca9f5dbf3455010d133641acdddfd93e7500ffd585",
+      "text": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n[GUROBI] preflight OK 12.0.3\nRUN ['/home/nc437/evsp_env/bin/python', '/home/nc437/ladder-lite/overnight_extension_20260912/code/src/exact_pricer_expanded.py', '--csv', 'overnight_decomposition_20260912/d00_g3.csv', '--prices_csv', 'hourly_prices_flat.csv', '--time-model', 'event', '--event-arc-mode', 'lazy', '--soc-step', '2.5', '--block-min', '5', '--max-iters', '50000', '--columns_per_iter', '30', '--column-selection', 'reduced_cost', '--rc-eps', '0.0001', '--master-sense', 'cover', '--master-backend', 'gurobi', '--initial-pool', 'singletons', '--wall-limit-s', '14400', '--checkpoint-every', '25', '--g-kwh', '240', '--charge-kw', '240', '--min-soc-frac', '0', '--phase-telemetry', '/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g3/cg.json.phase-telemetry.jsonl', '--gurobi-log', '/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g3/cg.json.gurobi.log', '--out', '/home/nc437/ladder-lite/overnight_extension_20260912/cases/d00_g3/cg.json']\nSet parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40CG_949623_3.err",
+      "sha256": "7e523fe471af167e31402760fda38d62f77ce650686db55c690e19d11c7a4c1e",
+      "text": "[2026-09-12T05:00:32.544] error: *** JOB 949644 ON unicorn-cpu-73 CANCELLED AT 2026-09-12T05:00:32 DUE TO TIME LIMIT ***\n"
+    }
+  ],
+  "input_hashes": {
+    "overnight_decomposition_20260912/d00_g3.csv": "cf3d15335300725f7d5db443be5886720c4a901a00cc348b1cc96b70ae306841",
+    "hourly_prices_flat.csv": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "Ref_dict.csv": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "par_ref_dhd.csv": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+  },
+  "manifest_sha256": "e4a08bbc128998b3a9207fe4a2e1e71c2dd581c8e353c9d3c07de3929c2d1548",
+  "comparators": [
+    {
+      "case": "d00_g0",
+      "build_seconds": 1311.188388824463,
+      "nodes": 8038,
+      "arcs": 19702399,
+      "peak_rss_bytes": 737341440
+    },
+    {
+      "case": "d00_g1",
+      "build_seconds": 2335.9655730724335,
+      "nodes": 10873,
+      "arcs": 35522176,
+      "peak_rss_bytes": 1224265728
+    },
+    {
+      "case": "d00_g2",
+      "build_seconds": 8992.172037124634,
+      "nodes": 17554,
+      "arcs": 94577843,
+      "peak_rss_bytes": 3134824448
+    },
+    {
+      "case": "d02_g1",
+      "build_seconds": 7492.097978591919,
+      "nodes": 19492,
+      "arcs": 115869028,
+      "peak_rss_bytes": 3687587840
+    },
+    {
+      "case": "d03_g3",
+      "build_seconds": 6513.27907037735,
+      "nodes": 19945,
+      "arcs": 120208918,
+      "peak_rss_bytes": 3727482880
+    }
+  ],
+  "sacct": "JobID|State|Elapsed|Timelimit|AllocCPUS|ReqMem|MaxRSS|TotalCPU|NodeList\n949623_3|TIMEOUT|04:47:09|04:45:00|2|32G||00:00.231|unicorn-cpu-73\n949623_3.batch|CANCELLED|04:47:10||2||5067492K|00:00.231|unicorn-cpu-73\n949623_3.extern|COMPLETED|04:47:11||2|||00:00:00|unicorn-cpu-73\n",
+  "blocked_mip": "949624_3|PENDING|(DependencyNeverSatisfied)\n"
+}

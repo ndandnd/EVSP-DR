@@ -1,0 +1,154 @@
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 203 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 280 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 203 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line ??? in _floor_level
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 39 in finalize
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 334 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 494 in _charge_candidates
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 203 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 280 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 494 in _charge_candidates
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 200 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 283 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 203 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 33 in _floor_level
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 203 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 280 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 494 in _charge_candidates
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 283 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 200 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 234 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 280 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 494 in _charge_candidates
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 418 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:00:00.050000)!
+Thread 0x00000001f376dd80 (most recent call first):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/encoder.py", line 200 in encode
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 38 in _add
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 58 in build
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/event_pricer_network.py", line 194 in __init__
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/private/tmp/evsp-algorithm-review-source-20260912/src/exact_pricer_expanded.py", line 3416 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 71 in main
+  File "/Users/nadan/Documents/projects/demandresponse/outputs/d00_g3_startup_review_20260912/diagnostic_graph.py", line 82 in <module>

@@ -1,0 +1,24 @@
+{
+  "source_checkout_commit": "206315dddd99f44a49141c04bb786f2b38f459dd",
+  "solver_and_event_source_equal_original_a299": true,
+  "cache_sha256": {
+    "reference": "1e97ad65e28aeddd0e0bfdbbcd42192e3270fe176a84cb16f5cb142e96fbbc27",
+    "instrumented": "1e97ad65e28aeddd0e0bfdbbcd42192e3270fe176a84cb16f5cb142e96fbbc27"
+  },
+  "cache_bytes_identical": true,
+  "progress_records": 697,
+  "stack_dump_bytes": 15885,
+  "outputs": {
+    "reference": {
+      "stdout": "Set parameter Username\nSet parameter LicenseID to value 2777767\nAcademic license - for non-commercial use only - expires 2027-02-11\n[EXACT] network: 696 nodes, 15,238 arcs (soc_step=2.5, block=5min) built in 0.8s\n",
+      "stderr": "",
+      "cache_bytes": 298020
+    },
+    "instrumented": {
+      "stdout": "Set parameter Username\nSet parameter LicenseID to value 2777767\nAcademic license - for non-commercial use only - expires 2027-02-11\n[EXACT] network: 696 nodes, 15,238 arcs (soc_step=2.5, block=5min) built in 0.8s\n",
+      "stderr": "",
+      "cache_bytes": 298020
+    }
+  },
+  "initial_timer_probe": "Timer armed before preflight/provenance led to subprocess timeout; final timer scoped only to _build_arcs to avoid subprocess interaction."
+}
