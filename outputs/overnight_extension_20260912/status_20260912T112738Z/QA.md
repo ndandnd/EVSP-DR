@@ -1,0 +1,1 @@
+All5 native weekly Doc pages visually checked; tables readable, existing figure tabs untouched. Register1771 rows; workbookcount/formula checks pass. Snapshot reconciliation explicitly adds late w2k13 result with sourcehash, preserving originalsnapshot. Join01 savedconstruction distinguished from timeout during subsequentparent CG.
