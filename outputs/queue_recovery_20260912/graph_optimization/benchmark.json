@@ -1,0 +1,89 @@
+{
+  "schema": "evsp-dr-event-graph-tie-key-benchmark-v1",
+  "status": "verified_local_constructor_benchmark",
+  "baseline_commit": "a29992196acb74d02b8c7891be4061718889999f",
+  "implementation_commit": "28681fa108cd89d25abe50aa0e425dbb4fb8caf6",
+  "branch": "codex/event-graph-startup-tiekey-20260912",
+  "worktree": "/private/tmp/evsp-event-graph-tiekey-20260912",
+  "fixture": {
+    "source": "first 24 of 325 d00_g3 trips with every induced trip/station/depot arc retained",
+    "instance": "data/overnight_decomposition_20260912/d00_g3.csv",
+    "instance_sha256": "cf3d15335300725f7d5db443be5886720c4a901a00cc348b1cc96b70ae306841",
+    "prices": "data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "nodes": 2158,
+    "arcs": 492090,
+    "packed_arc_bytes": 7873440
+  },
+  "physics": {
+    "time_model": "event",
+    "event_arc_mode": "lazy",
+    "soc_step_kwh": 2.5,
+    "block_min": 5,
+    "g_kwh": 240.0,
+    "charge_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "tariff": "flat hourly_prices_flat.csv"
+  },
+  "scientific_scope": {
+    "phase": "network construction only",
+    "objective": null,
+    "master_sense": null,
+    "initialization": null,
+    "cg_certificate": null,
+    "finite_pool_mip_proof": null,
+    "physical_validation": null,
+    "giro_target_attainment": null
+  },
+  "environment": {
+    "host": "Nathans-MacBook-Pro-2.local",
+    "cpu": "Apple M3 Pro",
+    "architecture": "arm64",
+    "python": "3.12.2",
+    "cluster_job": null,
+    "job_dependencies": null,
+    "resource_request": null
+  },
+  "validation": {
+    "packed_targets_equal": true,
+    "packed_costs_equal": true,
+    "packed_action_recipes_equal": true,
+    "arc_slices_equal": true,
+    "sink_arcs_equal": true,
+    "unit_test": "python3 -m unittest tests.test_event_pricer_tie_keys tests.test_event_pricer_network tests.test_event_pricer_gates",
+    "unit_test_result": "18 tests passed in 61.329 seconds",
+    "adversarial_ties_covered": true,
+    "real_graph_fixture": "first 12 d00_g3 trips, both explicit and lazy arc modes"
+  },
+  "unprofiled_timing_seconds": {
+    "baseline_eager_samples": [
+      11.416932292282581,
+      11.465987167321146,
+      11.93692308338359
+    ],
+    "deferred_samples": [
+      4.649612458888441,
+      4.610859959386289,
+      6.544746499974281
+    ],
+    "baseline_eager_median": 11.465987167321146,
+    "deferred_median": 4.649612458888441,
+    "median_speedup": 2.466009214467362,
+    "median_time_reduction_percent": 59.44865111884865
+  },
+  "json_dumps_calls": {
+    "baseline_eager": 2201750,
+    "deferred": 368254,
+    "reduction_percent": 83.27448620415578
+  },
+  "synchronous_cprofile": {
+    "baseline_eager_total_seconds": 17.016348709,
+    "baseline_eager_json_dumps_cumulative_seconds": 9.599,
+    "deferred_total_seconds": 8.324957041069865,
+    "deferred_json_dumps_cumulative_seconds": 1.617,
+    "background_sampler_used": false
+  },
+  "interpretation": "This is a bounded local constructor result, not a full d00_g3 or cluster speedup measurement. Do not extrapolate the factor to CG or MIP runtime."
+}

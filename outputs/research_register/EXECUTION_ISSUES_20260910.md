@@ -170,3 +170,8 @@ Only affected jobs replaced by distinct attempts37532(k14 MIP),37533(k15 CG),375
 ### Recovery wrapper failure and verified replacement
 
 37532/37533 stopped in Gurobi preflight before optimization: PYTHON_BIN unset in new wrapper.37534 remained DependencyNeverSatisfied. This was a manager launcher error, unrelated to the recovered CG output or solver license. Fixed wrapper exports PYTHON_BIN; exact wrapper environment/preflight successfully executed before resubmission. New jobs37583(k14 MIP),37584(k15 CG),37585(k15 MIP after37584), root w2_chain_recovery_retry2_20260912. Original attempt outputs/jobs preserved. New Gurobi logs and result paths are isolated. Source science/budgets unchanged. First recovery root must remain: new attempts depend on its frozen inputs/cache and entrypoint.
+
+
+## Queue recovery, 12 September
+
+[Resolved queue blockers and exact replacement map](../queue_recovery_20260912/README.md): nine ready MIPs released after saved-parent validation;43 obsolete pendingentries cancelled;6 indexed full-poolstreams restored and extendedthroughk15; sharedgraphdecompositionretry2 started. Originalfailures preserved. Firstgraphcacheattempt rejected cache-only --out beforeconstruction; corrected fullcommands validated and retry2passedstartup. No invaliddependencies remain in16:48EDTsnapshot. Newjobs autoremovetheir impossible dependents; monitor must diagnoseandrecoverratherthan leavezombies.

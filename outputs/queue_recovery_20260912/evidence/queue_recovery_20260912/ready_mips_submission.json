@@ -1,0 +1,42 @@
+{
+  "job_id": "39577",
+  "argv": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--array=17,18,21,23,25,26,27,28,29%50",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=8",
+    "--mem=24G",
+    "--time=02:00:00",
+    "--requeue",
+    "--job-name=dr_readyM",
+    "--output=/home/nc437/ladder-lite/queue_recovery_20260912/logs/%x_%A_%a.out",
+    "--error=/home/nc437/ladder-lite/queue_recovery_20260912/logs/%x_%A_%a.err",
+    "/home/nc437/ladder-lite/queue_recovery_20260912/ready_mip_worker.sub"
+  ],
+  "submitted_utc": "2026-09-12T20:14:56.619828+00:00",
+  "manifest_sha256": "7303fb672b512b8fa4e016bbdda58945265d8f3cf5dcb295d709e363fc5188fc",
+  "task_ids": [
+    "39577_17",
+    "39577_18",
+    "39577_21",
+    "39577_23",
+    "39577_25",
+    "39577_26",
+    "39577_27",
+    "39577_28",
+    "39577_29"
+  ],
+  "replacement_map": {
+    "949624_17": "39577_17",
+    "949624_18": "39577_18",
+    "949624_21": "39577_21",
+    "949624_23": "39577_23",
+    "949624_25": "39577_25",
+    "949624_26": "39577_26",
+    "949624_27": "39577_27",
+    "949624_28": "39577_28",
+    "949624_29": "39577_29"
+  }
+}

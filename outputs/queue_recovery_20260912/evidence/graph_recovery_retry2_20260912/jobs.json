@@ -1,0 +1,673 @@
+[
+  {
+    "job_id": "42508",
+    "mode": "cache",
+    "case_id": "d00_g3",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=32G",
+      "--time=12:30:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_d00_g3_cache",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cache",
+      "d00_g3"
+    ],
+    "submitted_utc": "2026-09-12T20:41:36.487429+00:00",
+    "scontrol": "JobId=42508 JobName=drG_d00_g3_cache UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=12:30:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:36 EligibleTime=2026-09-12T16:41:36 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:36 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=32G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=32G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_d00_g3_cache_42508.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_d00_g3_cache_42508.out KillOInInvalidDependent=Yes TresPerTask=cpu=2 \n"
+  },
+  {
+    "job_id": "42509",
+    "mode": "cache",
+    "case_id": "parent32",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=128G",
+      "--time=12:30:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_parent32_cache",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cache",
+      "parent32"
+    ],
+    "submitted_utc": "2026-09-12T20:41:36.679444+00:00",
+    "scontrol": "JobId=42509 JobName=drG_parent32_cache UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=12:30:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:36 EligibleTime=2026-09-12T16:41:36 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:36 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=128G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_parent32_cache_42509.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_parent32_cache_42509.out KillOInInvalidDependent=Yes TresPerTask=cpu=2 \n"
+  },
+  {
+    "job_id": "42510",
+    "mode": "cg",
+    "case_id": "d00_g3",
+    "dependencies": [
+      "42508"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=32G",
+      "--time=04:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_d00_g3_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42508",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "d00_g3"
+    ],
+    "submitted_utc": "2026-09-12T20:41:36.887846+00:00",
+    "scontrol": "JobId=42510 JobName=drG_d00_g3_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42508(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:36 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:36 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=32G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=32G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_d00_g3_cg_42510.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_d00_g3_cg_42510.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42511",
+    "mode": "mip",
+    "case_id": "d00_g3",
+    "dependencies": [
+      "42510"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_d00_g3_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42510",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "d00_g3"
+    ],
+    "submitted_utc": "2026-09-12T20:41:37.102831+00:00",
+    "scontrol": "JobId=42511 JobName=drG_d00_g3_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42510(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:37 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_d00_g3_mip_42511.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_d00_g3_mip_42511.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42512",
+    "mode": "cg",
+    "case_id": "join00",
+    "dependencies": [
+      "42509",
+      "42511"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join00_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509:42511",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join00"
+    ],
+    "submitted_utc": "2026-09-12T20:41:37.719656+00:00",
+    "scontrol": "JobId=42512 JobName=drG_join00_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled),afterok:42511(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:37 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join00_cg_42512.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join00_cg_42512.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42513",
+    "mode": "mip",
+    "case_id": "join00",
+    "dependencies": [
+      "42512"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join00_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42512",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join00"
+    ],
+    "submitted_utc": "2026-09-12T20:41:37.914549+00:00",
+    "scontrol": "JobId=42513 JobName=drG_join00_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42512(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:37 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join00_mip_42513.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join00_mip_42513.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42514",
+    "mode": "cg",
+    "case_id": "join01",
+    "dependencies": [
+      "42509"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join01_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join01"
+    ],
+    "submitted_utc": "2026-09-12T20:41:38.142005+00:00",
+    "scontrol": "JobId=42514 JobName=drG_join01_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:38 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join01_cg_42514.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join01_cg_42514.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42515",
+    "mode": "mip",
+    "case_id": "join01",
+    "dependencies": [
+      "42514"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join01_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42514",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join01"
+    ],
+    "submitted_utc": "2026-09-12T20:41:38.350734+00:00",
+    "scontrol": "JobId=42515 JobName=drG_join01_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42514(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:38 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join01_mip_42515.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join01_mip_42515.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42516",
+    "mode": "cg",
+    "case_id": "join02",
+    "dependencies": [
+      "42509"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join02_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join02"
+    ],
+    "submitted_utc": "2026-09-12T20:41:38.667234+00:00",
+    "scontrol": "JobId=42516 JobName=drG_join02_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:38 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join02_cg_42516.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join02_cg_42516.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42517",
+    "mode": "mip",
+    "case_id": "join02",
+    "dependencies": [
+      "42516"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join02_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42516",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join02"
+    ],
+    "submitted_utc": "2026-09-12T20:41:39.095536+00:00",
+    "scontrol": "JobId=42517 JobName=drG_join02_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42516(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:39 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join02_mip_42517.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join02_mip_42517.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42518",
+    "mode": "cg",
+    "case_id": "join03",
+    "dependencies": [
+      "42509"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join03_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join03"
+    ],
+    "submitted_utc": "2026-09-12T20:41:39.975354+00:00",
+    "scontrol": "JobId=42518 JobName=drG_join03_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:39 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join03_cg_42518.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join03_cg_42518.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42519",
+    "mode": "mip",
+    "case_id": "join03",
+    "dependencies": [
+      "42518"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join03_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42518",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join03"
+    ],
+    "submitted_utc": "2026-09-12T20:41:40.170703+00:00",
+    "scontrol": "JobId=42519 JobName=drG_join03_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42518(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:40 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:40 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join03_mip_42519.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join03_mip_42519.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42520",
+    "mode": "cg",
+    "case_id": "join04",
+    "dependencies": [
+      "42509",
+      "39577_17"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join04_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509:39577_17",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join04"
+    ],
+    "submitted_utc": "2026-09-12T20:41:40.438000+00:00",
+    "scontrol": "JobId=42520 JobName=drG_join04_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled),afterok:39577_17(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:40 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:40 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join04_cg_42520.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join04_cg_42520.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42521",
+    "mode": "mip",
+    "case_id": "join04",
+    "dependencies": [
+      "42520"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join04_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42520",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join04"
+    ],
+    "submitted_utc": "2026-09-12T20:41:41.079784+00:00",
+    "scontrol": "JobId=42521 JobName=drG_join04_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42520(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:41 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:41 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join04_mip_42521.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join04_mip_42521.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42522",
+    "mode": "cg",
+    "case_id": "join05",
+    "dependencies": [
+      "42509"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join05_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join05"
+    ],
+    "submitted_utc": "2026-09-12T20:41:41.780060+00:00",
+    "scontrol": "JobId=42522 JobName=drG_join05_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:41 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:41 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join05_cg_42522.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join05_cg_42522.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42523",
+    "mode": "mip",
+    "case_id": "join05",
+    "dependencies": [
+      "42522"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join05_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42522",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join05"
+    ],
+    "submitted_utc": "2026-09-12T20:41:42.016167+00:00",
+    "scontrol": "JobId=42523 JobName=drG_join05_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42522(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:42 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:42 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join05_mip_42523.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join05_mip_42523.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42524",
+    "mode": "cg",
+    "case_id": "join06",
+    "dependencies": [
+      "42509",
+      "39577_25",
+      "39577_27"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join06_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509:39577_25:39577_27",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join06"
+    ],
+    "submitted_utc": "2026-09-12T20:41:42.770997+00:00",
+    "scontrol": "JobId=42524 JobName=drG_join06_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled),afterok:39577_25(unfulfilled),afterok:39577_27(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:42 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:42 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join06_cg_42524.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join06_cg_42524.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42525",
+    "mode": "mip",
+    "case_id": "join06",
+    "dependencies": [
+      "42524"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join06_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42524",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join06"
+    ],
+    "submitted_utc": "2026-09-12T20:41:42.989764+00:00",
+    "scontrol": "JobId=42525 JobName=drG_join06_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42524(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:42 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:42 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join06_mip_42525.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join06_mip_42525.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42526",
+    "mode": "cg",
+    "case_id": "join07",
+    "dependencies": [
+      "42509",
+      "39577_29"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join07_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509:39577_29",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join07"
+    ],
+    "submitted_utc": "2026-09-12T20:41:43.229439+00:00",
+    "scontrol": "JobId=42526 JobName=drG_join07_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled),afterok:39577_29(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:43 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:43 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join07_cg_42526.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join07_cg_42526.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42527",
+    "mode": "mip",
+    "case_id": "join07",
+    "dependencies": [
+      "42526"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join07_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42526",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join07"
+    ],
+    "submitted_utc": "2026-09-12T20:41:43.534724+00:00",
+    "scontrol": "JobId=42527 JobName=drG_join07_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42526(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:43 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:43 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join07_mip_42527.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join07_mip_42527.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42528",
+    "mode": "cg",
+    "case_id": "join08",
+    "dependencies": [
+      "42509"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join08_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join08"
+    ],
+    "submitted_utc": "2026-09-12T20:41:43.848283+00:00",
+    "scontrol": "JobId=42528 JobName=drG_join08_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:43 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:43 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join08_cg_42528.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join08_cg_42528.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42529",
+    "mode": "mip",
+    "case_id": "join08",
+    "dependencies": [
+      "42528"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join08_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42528",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join08"
+    ],
+    "submitted_utc": "2026-09-12T20:41:44.187141+00:00",
+    "scontrol": "JobId=42529 JobName=drG_join08_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42528(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:44 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:44 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join08_mip_42529.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join08_mip_42529.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42530",
+    "mode": "cg",
+    "case_id": "join09",
+    "dependencies": [
+      "42509"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=128G",
+      "--time=02:45:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join09_cg",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42509",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "cg",
+      "join09"
+    ],
+    "submitted_utc": "2026-09-12T20:41:44.652210+00:00",
+    "scontrol": "JobId=42530 JobName=drG_join09_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15368 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42509(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:45:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:44 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:44 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=128G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=128G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join09_cg_42530.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join09_cg_42530.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "42531",
+    "mode": "mip",
+    "case_id": "join09",
+    "dependencies": [
+      "42530"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=64G",
+      "--time=02:00:00",
+      "--no-requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drG_join09_mip",
+      "--output=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/%x_%j.err",
+      "--dependency=afterok:42530",
+      "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "mip",
+      "join09"
+    ],
+    "submitted_utc": "2026-09-12T20:41:45.563566+00:00",
+    "scontrol": "JobId=42531 JobName=drG_join09_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:42530(unfulfilled) Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T16:41:45 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:41:45 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2317753 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=64G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join09_mip_42531.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_join09_mip_42531.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  }
+]

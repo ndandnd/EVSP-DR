@@ -1,0 +1,28 @@
+JobId=39577 ArrayJobId=39577 ArrayTaskId=17-18,21,23,25-29%50 ArrayTaskThrottle=50 JobName=dr_readyM
+   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A
+   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*
+   JobState=PENDING Reason=None Dependency=(null)
+   Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-09-12T16:14:56 EligibleTime=Unknown
+   AccrueTime=Unknown
+   StartTime=Unknown EndTime=Unknown Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T16:14:56 Scheduler=Main
+   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2163568
+   ReqNodeList=(null) ExcNodeList=scaglione-compute-01
+   NodeList=
+   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=8,mem=24G,node=1,billing=8
+   AllocTRES=(null)
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/home/nc437/ladder-lite/queue_recovery_20260912/ready_mip_worker.sub
+   WorkDir=/home/nc437
+   StdErr=/home/nc437/ladder-lite/queue_recovery_20260912/logs/dr_readyM_39577_4294967294.err
+   StdIn=/dev/null
+   StdOut=/home/nc437/ladder-lite/queue_recovery_20260912/logs/dr_readyM_39577_4294967294.out
+   TresPerTask=cpu=8
+   
+

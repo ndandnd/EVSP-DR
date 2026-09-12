@@ -1,0 +1,6 @@
+{
+  "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+  "command": "PYTHONPATH=src /home/nc437/evsp_env/bin/python -m pytest -q selected replay/shutdown/master tests",
+  "result": "30 passed, 1 skipped in35.16s",
+  "log_sha256": "9d2a835297276eafc0581bd775862378d07874dffbb03f4673c6d95e27ab5c28"
+}

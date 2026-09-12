@@ -1,5 +1,16 @@
 # Unicorn monitoring runbook
 
+## Current queue ownership — 12 September 16:48 EDT
+
+The user explicitly authorized clearing the broken queue and releasing all ready work. The new [recovery ledger](../queue_recovery_20260912/README.md) supersedes earlier instructions below to leave obsolete pending chain2/full-pool/decomposition entries in squeue; their artifacts remain preserved. Exactly 43 obsolete pending entries were cancelled. Held 537227 and V2G work remain protected.
+
+Authoritative roots: queue_recovery_20260912 (ready MIP 39577, outputs under original overnight_extension), full_pool_recovery_20260912 (37 CG / 37 MIP, six streams through k15), graph_recovery_retry2_20260912 (caches 42508/42509, dependent jobs 42510–42531). The first graph_recovery_20260912 attempt failed the cache-only CLI before construction; its descendants auto-cancelled. Preserve its directory because retry2 borrows code/data. Graph source a0e0bb7; full-pool source e091a4d; MIP source 871d057. Exact job maps are in each root’s jobs.json/case_jobs.json. The collector includes all roots and recovery/cancellation records.
+
+Use ~/ladder-lite/drq --details to separate families and inspect true prerequisites. No arbitrary cap below 50; preserve previous-k data dependencies. New individual jobs use kill-on-invalid-dep=yes and exclusive attempt paths with no automatic requeue. A failure cancels descendants; monitor must diagnose it, validate surviving artifacts, and submit fresh corrected attempts with new outputpaths and dependencies. Native recovered MIP worker safely uses job/restart-specific paths and requeue. Update the preemption registry for each replacement.
+
+Protect efficiency_validation_20260912/code-baseline Git objects, first graph root, source caches and frozen parent data while checkouts/runs borrow them. Full-pool is unlimited sequence inheritance, distinct from the 512-route / 15-minute controls. Shared-graph parent CG starts from component integer incumbent sequences, distinct from the old import of 512 sequences from all columns. Report graph preparation time separately. Keep research certificates and scheduler completion separate.
+
+
 Preserved operational instructions; consult relevant sections when a change requires action. Current register and execution issue report supersede old campaign statuses below.
 
 Content destinations: update the [Week of 14 September status tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow) in place. Preserve the [Figures with explanations tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) and [CG curves and bus schedules library](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly). Do not remove or move figures to shorten the document. Keep historical plots with their dates, model settings and proof qualifications. The separate [Historical archive](https://docs.google.com/document/d/1f0orWtM1-_VWAqjj6GnWP78webCOnvoc01x2VQvaA_k/edit) preserves the earlier discussion. Avoid repeated chronological status blocks; keep captions editable beside their figures.

@@ -5,6 +5,10 @@ import json, datetime, subprocess, hashlib
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'graph_recovery_retry2_20260912': home / 'graph_recovery_retry2_20260912',
+    'full_pool_recovery_20260912': home / 'full_pool_recovery_20260912',
+    'graph_recovery_20260912': home / 'graph_recovery_20260912',
+    'queue_recovery_20260912': home / 'queue_recovery_20260912',
     'w2_chain_recovery_retry2_20260912': home / 'w2_chain_recovery_retry2_20260912',
     'w2_chain_recovery_20260912': home / 'w2_chain_recovery_20260912',
     'w2_k14_import_fix_20260912': home / 'w2_k14_import_fix_20260912',
@@ -60,7 +64,7 @@ for name, root in roots.items():
             row['path']=str(p)
             cg.append(row)
     phases=[]
-    phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/cg.json.phase-telemetry.jsonl') if 'smoke' not in p.parts}
+    phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/*.phase-telemetry.jsonl') if 'smoke' not in p.parts}
     for p in sorted(phase_paths):
         sums=defaultdict(float); counts=Counter(); last=None; partial=0
         for line in p.open():
@@ -80,7 +84,7 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
-    for record_name in ['manifest.json', 'jobs.json', 'smoke_job.json', 'downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
+    for record_name in ['ready_mips_manifest.json', 'ready_mips_submission.json', 'ready_mips_old_cancellations.json', 'obsolete_chain2_cancellations.json', 'retired_queue_entries.json', 'case_jobs.json', 'cache_jobs.json', 'cache_cli_validation.json', 'cache_compatibility.json', 'manifest.json', 'jobs.json', 'smoke_job.json', 'downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():
             out['campaigns'][name]['workflow'][record_name] = json.loads(record_path.read_bytes())

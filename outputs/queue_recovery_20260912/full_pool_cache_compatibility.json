@@ -1,0 +1,39 @@
+{
+  "reference_commit": "a29992196acb74d02b8c7891be4061718889999f",
+  "consumer_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+  "reference_network_sha256": "d939fe981cb5b3f40293996e8f3a2430da8a365b392a62d6c21959316cb03de6",
+  "consumer_network_sha256": "20533ba9654b94959e594b069c313a6320471264e4afc80f83ff31b250740403",
+  "unchanged_methods": [
+    "_action_recipe",
+    "_add",
+    "_build_arcs",
+    "_build_nodes",
+    "_charge_arcs",
+    "_charge_candidates",
+    "_direct_arcs",
+    "_direct_candidates",
+    "_edge_action",
+    "_finalize_source",
+    "_iter_arcs",
+    "_min_reduced_cost_route_lazy",
+    "_record",
+    "_source_candidates",
+    "_split_arcs",
+    "_walk",
+    "metrics",
+    "min_reduced_cost_route",
+    "sink_predecessor_route_batch"
+  ],
+  "changed_methods": [
+    "__init__",
+    "__getstate__",
+    "__setstate__",
+    "fixed_sequence_record"
+  ],
+  "added_methods": [
+    "_iter_sequence_arcs",
+    "_validate_replay_rows",
+    "set_fixed_sequence_index"
+  ],
+  "interpretation": "Graph construction and core pricing methods unchanged. Indexed fixed-sequence traversal is tested against reference complete records. Constructor adds runtime index initialization after graph construction; pickle differences reset runtime index and clear lookup cache. Consumer metadata attestation preserves original pickle producer manifest and hash. This is a compatibility audit, not a newly produced graph."
+}

@@ -1,0 +1,269 @@
+{
+  "schema": "evsp-ready-pool-dependency-recovery-v1",
+  "prepared_utc": "2026-09-12T20:14:01.437943+00:00",
+  "cases": [
+    {
+      "index": 17,
+      "case_id": "d04_g1",
+      "parent_job_id": "949623_17",
+      "replaces_pending_job": "949624_17",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g1/cg.json",
+          "sha256": "a7ed4924785c25f358412b5b0593793081ed5e4fdda57b6512c588b1483bd471"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g1/cg.json.columns.jsonl",
+          "sha256": "88dbdea4a31cad7d816b28b6b6f15ddb885ecaa6c89abd0daf4e900da2610dbb"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d04_g1.csv",
+          "sha256": "50b85abee81f44c4c27edbd8df8b25d626a4a0e6d2b8eeea9b5a9f2f1a4fa506"
+        }
+      ],
+      "accounting": "949623_17|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=963237 ArrayJobId=949624 ArrayTaskId=17 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_17.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_17.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g1/mip_result.json"
+    },
+    {
+      "index": 18,
+      "case_id": "d04_g2",
+      "parent_job_id": "949623_18",
+      "replaces_pending_job": "949624_18",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g2/cg.json",
+          "sha256": "14af9c270563dda8e864d6a410e38a243b4fdd869b7503e3a32cd81f773e75b6"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g2/cg.json.columns.jsonl",
+          "sha256": "bede6c8e8d1c3577b9dd2620cb011e6c918d3118f051f5b6430290b506808051"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d04_g2.csv",
+          "sha256": "73b50096d2c7a8768ac84e5a8f8d513d150f8c71f7673ff92c625559cf674df9"
+        }
+      ],
+      "accounting": "949623_18|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=964145 ArrayJobId=949624 ArrayTaskId=18 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_18.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_18.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d04_g2/mip_result.json"
+    },
+    {
+      "index": 21,
+      "case_id": "d05_g1",
+      "parent_job_id": "949623_21",
+      "replaces_pending_job": "949624_21",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g1/cg.json",
+          "sha256": "e7f93dd381cd0613f1ea2479dfb3bd7dc668593978855ce1cd21d3ea30f9f5e1"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g1/cg.json.columns.jsonl",
+          "sha256": "494d365813dbef3260da45f08db851288da95397a8017343d39cf40d2517eac2"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d05_g1.csv",
+          "sha256": "54c5684f43771ba1b6f48c6ee5743eb91b9ec274f6997214790836955de5233b"
+        }
+      ],
+      "accounting": "949623_21|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=964198 ArrayJobId=949624 ArrayTaskId=21 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_21.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_21.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g1/mip_result.json"
+    },
+    {
+      "index": 23,
+      "case_id": "d05_g3",
+      "parent_job_id": "949623_23",
+      "replaces_pending_job": "949624_23",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g3/cg.json",
+          "sha256": "de3e8394f2e63e2c46e4e75c0e6cf8909a1f2a3ea56617da8c48220306f16b0c"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g3/cg.json.columns.jsonl",
+          "sha256": "fd541c14380125eb93d0c7e13e383229ec07405e6db59c2e64bcf5f6ffe1c3c7"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d05_g3.csv",
+          "sha256": "1fae176ede68b555f4826f25217db4e1a894f28dbc813cd02b0f2854d1154318"
+        }
+      ],
+      "accounting": "949623_23|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=970012 ArrayJobId=949624 ArrayTaskId=23 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_23.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_23.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d05_g3/mip_result.json"
+    },
+    {
+      "index": 25,
+      "case_id": "d06_g1",
+      "parent_job_id": "949623_25",
+      "replaces_pending_job": "949624_25",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g1/cg.json",
+          "sha256": "e59b2934f0ce2a344d523eaf199ffd2dd11de34ac8721cdc3d47acda272dd5e1"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g1/cg.json.columns.jsonl",
+          "sha256": "bc7bed96752c9c32370585dc9d7f25c0ade24bfb4111450faa069b55667b2c93"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d06_g1.csv",
+          "sha256": "519249aec4d4f33db41ccd253d5518370b9e178add21574d1ba6278b1f15508c"
+        }
+      ],
+      "accounting": "949623_25|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=975187 ArrayJobId=949624 ArrayTaskId=25 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_25.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_25.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g1/mip_result.json"
+    },
+    {
+      "index": 26,
+      "case_id": "d06_g2",
+      "parent_job_id": "949623_26",
+      "replaces_pending_job": "949624_26",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g2/cg.json",
+          "sha256": "696c3fad05567ab9864f65414f1bbd4a4b4fecde15e979cd0afe6827fb16c298"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g2/cg.json.columns.jsonl",
+          "sha256": "27407666cef422f5c75c0fb4f248b390090921fc2118d8c100a52800132793aa"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d06_g2.csv",
+          "sha256": "59a26432f704fcc837800fe087a4540787cecbc719da09cd43a3ee551cdc0a5a"
+        }
+      ],
+      "accounting": "949623_26|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=975188 ArrayJobId=949624 ArrayTaskId=26 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_26.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_26.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g2/mip_result.json"
+    },
+    {
+      "index": 27,
+      "case_id": "d06_g3",
+      "parent_job_id": "949623_27",
+      "replaces_pending_job": "949624_27",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g3/cg.json",
+          "sha256": "138c6f5809c4f4dd04f954272440f77ddece20abadb191a7c3159331b03e3e0b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g3/cg.json.columns.jsonl",
+          "sha256": "22f53f7acfa806758f3136d7dffffa48bfa928c1391baebb9177e8a9f611f027"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d06_g3.csv",
+          "sha256": "db3c6de09f71028fce8e1b80ff5687f3d8ee8356f07f08bc8b53dcd25509f815"
+        }
+      ],
+      "accounting": "949623_27|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=975189 ArrayJobId=949624 ArrayTaskId=27 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_27.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_27.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d06_g3/mip_result.json"
+    },
+    {
+      "index": 28,
+      "case_id": "d07_g0",
+      "parent_job_id": "949623_28",
+      "replaces_pending_job": "949624_28",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g0/cg.json",
+          "sha256": "8574623d809402d236b962b4778dd70114457c85de4d6f2cd1d78a12e482281c"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g0/cg.json.columns.jsonl",
+          "sha256": "3c40dbe131ec526d6129131238b81ac7519cae3047917628891bd483123e157b"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d07_g0.csv",
+          "sha256": "1ad9967ed28bfb2688a53adc4d0f18e34d17254ed1760c1b08d67ab03f75ef60"
+        }
+      ],
+      "accounting": "949623_28|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=975190 ArrayJobId=949624 ArrayTaskId=28 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_28.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_28.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g0/mip_result.json"
+    },
+    {
+      "index": 29,
+      "case_id": "d07_g1",
+      "parent_job_id": "949623_29",
+      "replaces_pending_job": "949624_29",
+      "cg_stop_reason": "certified",
+      "cg_certified": null,
+      "required_files": [
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g1/cg.json",
+          "sha256": "cc6fa7c248fc8ea548de41034a30dcbffaa80b4f7bcffb3ae601e54d811a3f76"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g1/cg.json.columns.jsonl",
+          "sha256": "4175be9859cfc498e25abc319865c7c922f35163d14663860b46dd6ba8e7da73"
+        },
+        {
+          "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/d07_g1.csv",
+          "sha256": "62ca4aa05e878d591f8254f90b278db2e58a989401db872a76530423da758a9c"
+        }
+      ],
+      "accounting": "949623_29|COMPLETED|0:0\n",
+      "original_scontrol": "JobId=975191 ArrayJobId=949624 ArrayTaskId=29 ArrayTaskThrottle=50 JobName=dec40MIP UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=DependencyNeverSatisfied Dependency=aftercorr:949623_*(failed) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-12T00:13:22 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T00:13:22 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:859786 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=16G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=16G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_29.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_extension_20260912/logs/dec40MIP_949624_29.out TresPerTask=cpu=8 \n",
+      "result_path": "/home/nc437/ladder-lite/overnight_extension_20260912/cases/d07_g1/mip_result.json"
+    }
+  ],
+  "cg_execution_commit": "a29992196acb74d02b8c7891be4061718889999f",
+  "mip_execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "scientific_settings": "Unchanged original covering 240/240 event2.5/5 flat, 3600s two-stage MIP, stage1<=1800s, stage2 fleet<=validated incumbent",
+  "resources": {
+    "partition": "default_partition",
+    "cpus": 8,
+    "memory": "24G",
+    "slurm_time": "02:00:00",
+    "array_concurrency": 50,
+    "exclude": "scaglione-compute-01",
+    "requeue": true
+  },
+  "common_files": [
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/manifest.json",
+      "sha256": "e4a08bbc128998b3a9207fe4a2e1e71c2dd581c8e353c9d3c07de3929c2d1548"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/overnight_worker.py",
+      "sha256": "2714c5541c71f9b483f376b6f48b635a1c2478661323889b56cd11cfaec93b5b"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh",
+      "sha256": "6c1ca6c89caa3ed236e5a087f179f6536ebea4dcec73305f134af3ff1fad8a8f"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    }
+  ]
+}

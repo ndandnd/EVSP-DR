@@ -1,0 +1,1508 @@
+{
+  "checked_utc": "2026-09-12T20:48:12.704804+00:00",
+  "summary": {
+    "Decomposition recovery": {
+      "waiting for prerequisite": 22,
+      "running": 2
+    },
+    "Full-pool chains": {
+      "waiting for prerequisite": 68,
+      "running": 6
+    },
+    "Earlier bounded chains": {
+      "waiting for prerequisite": 2,
+      "running": 2
+    },
+    "Recovered ready MIPs": {
+      "running": 4
+    },
+    "Held historical jobs": {
+      "held": 33
+    },
+    "V2G jobs (untouched)": {
+      "running": 9
+    }
+  },
+  "jobs": [
+    {
+      "job_id": "42530",
+      "family": "Decomposition recovery",
+      "case": "join09",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42528",
+      "family": "Decomposition recovery",
+      "case": "join08",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42526",
+      "family": "Decomposition recovery",
+      "case": "join07",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled),afterok:39577_29(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42524",
+      "family": "Decomposition recovery",
+      "case": "join06",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled),afterok:39577_25(unfulfilled),afterok:39577_27(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42522",
+      "family": "Decomposition recovery",
+      "case": "join05",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42520",
+      "family": "Decomposition recovery",
+      "case": "join04",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled),afterok:39577_17(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42518",
+      "family": "Decomposition recovery",
+      "case": "join03",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42516",
+      "family": "Decomposition recovery",
+      "case": "join02",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42514",
+      "family": "Decomposition recovery",
+      "case": "join01",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42512",
+      "family": "Decomposition recovery",
+      "case": "join00",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42509(unfulfilled),afterok:42511(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42531",
+      "family": "Decomposition recovery",
+      "case": "join09",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42530(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42529",
+      "family": "Decomposition recovery",
+      "case": "join08",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42528(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42527",
+      "family": "Decomposition recovery",
+      "case": "join07",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42526(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42525",
+      "family": "Decomposition recovery",
+      "case": "join06",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42524(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42523",
+      "family": "Decomposition recovery",
+      "case": "join05",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42522(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42521",
+      "family": "Decomposition recovery",
+      "case": "join04",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42520(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42519",
+      "family": "Decomposition recovery",
+      "case": "join03",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42518(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42517",
+      "family": "Decomposition recovery",
+      "case": "join02",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42516(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42515",
+      "family": "Decomposition recovery",
+      "case": "join01",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42514(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42513",
+      "family": "Decomposition recovery",
+      "case": "join00",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42512(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41642",
+      "family": "Full-pool chains",
+      "case": "w6_k15",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41640(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41640",
+      "family": "Full-pool chains",
+      "case": "w6_k14",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41638(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41638",
+      "family": "Full-pool chains",
+      "case": "w6_k13",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41636(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41636",
+      "family": "Full-pool chains",
+      "case": "w6_k12",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41575(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41633",
+      "family": "Full-pool chains",
+      "case": "w5_k15",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41631(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41631",
+      "family": "Full-pool chains",
+      "case": "w5_k14",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41629(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41629",
+      "family": "Full-pool chains",
+      "case": "w5_k13",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41627(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41627",
+      "family": "Full-pool chains",
+      "case": "w5_k12",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41574(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41624",
+      "family": "Full-pool chains",
+      "case": "w4_k15",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41622(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41622",
+      "family": "Full-pool chains",
+      "case": "w4_k14",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41620(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41620",
+      "family": "Full-pool chains",
+      "case": "w4_k13",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41618(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41618",
+      "family": "Full-pool chains",
+      "case": "w4_k12",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41616(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41616",
+      "family": "Full-pool chains",
+      "case": "w4_k11",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41573(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41613",
+      "family": "Full-pool chains",
+      "case": "w3_k15",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41611(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41611",
+      "family": "Full-pool chains",
+      "case": "w3_k14",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41609(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41609",
+      "family": "Full-pool chains",
+      "case": "w3_k13",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41607(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41607",
+      "family": "Full-pool chains",
+      "case": "w3_k12",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41569(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41604",
+      "family": "Full-pool chains",
+      "case": "w2_k15",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41602(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41602",
+      "family": "Full-pool chains",
+      "case": "w2_k14",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41600(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41600",
+      "family": "Full-pool chains",
+      "case": "w2_k13",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41598(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41598",
+      "family": "Full-pool chains",
+      "case": "w2_k12",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41596(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41596",
+      "family": "Full-pool chains",
+      "case": "w2_k11",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41594(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41594",
+      "family": "Full-pool chains",
+      "case": "w2_k10",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41568(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41591",
+      "family": "Full-pool chains",
+      "case": "w1_k15",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41589(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41589",
+      "family": "Full-pool chains",
+      "case": "w1_k14",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41587(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41587",
+      "family": "Full-pool chains",
+      "case": "w1_k13",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41585(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41585",
+      "family": "Full-pool chains",
+      "case": "w1_k12",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41583(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41583",
+      "family": "Full-pool chains",
+      "case": "w1_k11",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41581(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41581",
+      "family": "Full-pool chains",
+      "case": "w1_k10",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41579(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41579",
+      "family": "Full-pool chains",
+      "case": "w1_k09",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41577(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41577",
+      "family": "Full-pool chains",
+      "case": "w1_k08",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41567(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42511",
+      "family": "Decomposition recovery",
+      "case": "d00_g3",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42510(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42510",
+      "family": "Decomposition recovery",
+      "case": "d00_g3",
+      "stage": "cg",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:42508(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41643",
+      "family": "Full-pool chains",
+      "case": "w6_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41642(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41641",
+      "family": "Full-pool chains",
+      "case": "w6_k14",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41640(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41639",
+      "family": "Full-pool chains",
+      "case": "w6_k13",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41638(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41637",
+      "family": "Full-pool chains",
+      "case": "w6_k12",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41636(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41635",
+      "family": "Full-pool chains",
+      "case": "w6_k11",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41575(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41634",
+      "family": "Full-pool chains",
+      "case": "w5_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41633(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41632",
+      "family": "Full-pool chains",
+      "case": "w5_k14",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41631(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41630",
+      "family": "Full-pool chains",
+      "case": "w5_k13",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41629(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41628",
+      "family": "Full-pool chains",
+      "case": "w5_k12",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41627(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41626",
+      "family": "Full-pool chains",
+      "case": "w5_k11",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41574(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41625",
+      "family": "Full-pool chains",
+      "case": "w4_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41624(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41623",
+      "family": "Full-pool chains",
+      "case": "w4_k14",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41622(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41621",
+      "family": "Full-pool chains",
+      "case": "w4_k13",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41620(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41619",
+      "family": "Full-pool chains",
+      "case": "w4_k12",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41618(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41617",
+      "family": "Full-pool chains",
+      "case": "w4_k11",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41616(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41615",
+      "family": "Full-pool chains",
+      "case": "w4_k10",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41573(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41614",
+      "family": "Full-pool chains",
+      "case": "w3_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41613(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41612",
+      "family": "Full-pool chains",
+      "case": "w3_k14",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41611(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41610",
+      "family": "Full-pool chains",
+      "case": "w3_k13",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41609(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41608",
+      "family": "Full-pool chains",
+      "case": "w3_k12",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41607(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41606",
+      "family": "Full-pool chains",
+      "case": "w3_k11",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41569(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41605",
+      "family": "Full-pool chains",
+      "case": "w2_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41604(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41603",
+      "family": "Full-pool chains",
+      "case": "w2_k14",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41602(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41601",
+      "family": "Full-pool chains",
+      "case": "w2_k13",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41600(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41599",
+      "family": "Full-pool chains",
+      "case": "w2_k12",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41598(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41597",
+      "family": "Full-pool chains",
+      "case": "w2_k11",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41596(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41595",
+      "family": "Full-pool chains",
+      "case": "w2_k10",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41594(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41593",
+      "family": "Full-pool chains",
+      "case": "w2_k09",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41568(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41592",
+      "family": "Full-pool chains",
+      "case": "w1_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41591(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41590",
+      "family": "Full-pool chains",
+      "case": "w1_k14",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41589(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41588",
+      "family": "Full-pool chains",
+      "case": "w1_k13",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41587(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41586",
+      "family": "Full-pool chains",
+      "case": "w1_k12",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41585(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41584",
+      "family": "Full-pool chains",
+      "case": "w1_k11",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41583(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41582",
+      "family": "Full-pool chains",
+      "case": "w1_k10",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41581(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41580",
+      "family": "Full-pool chains",
+      "case": "w1_k09",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41579(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41578",
+      "family": "Full-pool chains",
+      "case": "w1_k08",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41577(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "41576",
+      "family": "Full-pool chains",
+      "case": "w1_k07",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:41567(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "37585",
+      "family": "Earlier bounded chains",
+      "case": "w2_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:37584(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "949692",
+      "family": "Earlier bounded chains",
+      "case": "w1_k15",
+      "stage": "mip",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "afterok:949691(unfulfilled)",
+      "reason": "(Dependency)"
+    },
+    {
+      "job_id": "42509",
+      "family": "Decomposition recovery",
+      "case": "parent32",
+      "stage": "cache",
+      "state": "RUNNING",
+      "elapsed": "5:54",
+      "dependencies": "(null)",
+      "reason": "unicorn-cpu-74"
+    },
+    {
+      "job_id": "41567",
+      "family": "Full-pool chains",
+      "case": "w1_k07",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "11:54",
+      "dependencies": "(null)",
+      "reason": "unicorn-cpu-75"
+    },
+    {
+      "job_id": "41568",
+      "family": "Full-pool chains",
+      "case": "w2_k09",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "11:54",
+      "dependencies": "(null)",
+      "reason": "unicorn-cpu-76"
+    },
+    {
+      "job_id": "41569",
+      "family": "Full-pool chains",
+      "case": "w3_k11",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "11:54",
+      "dependencies": "(null)",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job_id": "41573",
+      "family": "Full-pool chains",
+      "case": "w4_k10",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "11:54",
+      "dependencies": "(null)",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job_id": "41574",
+      "family": "Full-pool chains",
+      "case": "w5_k11",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "11:54",
+      "dependencies": "(null)",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job_id": "41575",
+      "family": "Full-pool chains",
+      "case": "w6_k11",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "11:54",
+      "dependencies": "(null)",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job_id": "37584",
+      "family": "Earlier bounded chains",
+      "case": "w2_k15",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "1:03:58",
+      "dependencies": "(null)",
+      "reason": "unicorn-cpu-01"
+    },
+    {
+      "job_id": "949691",
+      "family": "Earlier bounded chains",
+      "case": "w1_k15",
+      "stage": "cg",
+      "state": "RUNNING",
+      "elapsed": "3:36:41",
+      "dependencies": "(null)",
+      "reason": "luxlab-cpu-02"
+    },
+    {
+      "job_id": "42508",
+      "family": "Decomposition recovery",
+      "case": "d00_g3",
+      "stage": "cache",
+      "state": "RUNNING",
+      "elapsed": "5:54",
+      "dependencies": "(null)",
+      "reason": "unicorn-cpu-74"
+    },
+    {
+      "job_id": "39577_17",
+      "family": "Recovered ready MIPs",
+      "case": "d04_g1",
+      "stage": "mip",
+      "state": "RUNNING",
+      "elapsed": "32:54",
+      "dependencies": "(null)",
+      "reason": "snavely-cpu-15"
+    },
+    {
+      "job_id": "39577_25",
+      "family": "Recovered ready MIPs",
+      "case": "d06_g1",
+      "stage": "mip",
+      "state": "RUNNING",
+      "elapsed": "32:54",
+      "dependencies": "(null)",
+      "reason": "totient-cpu-02"
+    },
+    {
+      "job_id": "39577_27",
+      "family": "Recovered ready MIPs",
+      "case": "d06_g3",
+      "stage": "mip",
+      "state": "RUNNING",
+      "elapsed": "32:54",
+      "dependencies": "(null)",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job_id": "39577_29",
+      "family": "Recovered ready MIPs",
+      "case": "d07_g1",
+      "stage": "mip",
+      "state": "RUNNING",
+      "elapsed": "32:54",
+      "dependencies": "(null)",
+      "reason": "garg-cpu-02"
+    },
+    {
+      "job_id": "537227_36",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_37",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_38",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_39",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_40",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_41",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_42",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_43",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_44",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_45",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_46",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_47",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_48",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_49",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_50",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_51",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_52",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_53",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_54",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_55",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_56",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_57",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_58",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_59",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_60",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_61",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_62",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_63",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_64",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_65",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_66",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_67",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_68",
+      "family": "Held historical jobs",
+      "case": "tpmR2d7a25b33",
+      "stage": "",
+      "state": "PENDING",
+      "elapsed": "0:00",
+      "dependencies": "(null)",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "40971_0",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_1",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_2",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_3",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_4",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_5",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_6",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_7",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    },
+    {
+      "job_id": "40971_8",
+      "family": "V2G jobs (untouched)",
+      "case": "V2G_w10_MIP",
+      "stage": "",
+      "state": "RUNNING",
+      "elapsed": "28:17",
+      "dependencies": "(null)",
+      "reason": "scaglione-cpu-05"
+    }
+  ]
+}
