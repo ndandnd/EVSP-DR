@@ -56,4 +56,6 @@ A copy of this index, dated snapshots and workbook is stored on Unicorn at `/hom
 
 ## Storage and restoration
 
+The [12 September cleanup](../storage_cleanup_20260912/README.md) archives only cold `phys240kw` and `cg_acceleration_20260903` journals/cache files. Initial array950484 stopped before removal on a cross-client metadata check; corrected array950555 is running. Savings require the completion audit. Original contents remain recoverable through hash-verified archives and committed restoration manifests.
+
 [Storage cleanup audit](../storage_cleanup_20260911/README.md) records lossless archival of cold historical column journals. Compressed pools retain original hashes and require restoration before legacy scripts expecting the original uncompressed paths are run. Current and held-job pools remain protected. GitHub stores code and selected evidence; it is not a complete backup of untracked cluster artifacts.

@@ -1,0 +1,23 @@
+{
+  "observed_utc": "2026-09-12T04:29:58.986174+00:00",
+  "array_job_id": "950555",
+  "array": "0-3%4",
+  "worker_commit": "baf2c821",
+  "git_branch": "codex/storage-cleanup-20260912",
+  "root": "/home/nc437/ladder-lite/storage_cleanup_20260912_archive",
+  "package_sha256": "0536b46f5fced887a3136b7abaa418bacd8240cde07d758bf3ca14adc932adae",
+  "partition": "default_partition",
+  "cpus_per_task": 1,
+  "memory": "2G",
+  "scheduler_limit": "24:00:00",
+  "requeue": false,
+  "excluded_node": "scaglione-compute-01",
+  "counts": {
+    "files": 156,
+    "groups": 4
+  },
+  "type": "lossless_archival_not_research_run",
+  "worker_file": "archive_v2.sbatch",
+  "supersedes_failed_array": "950484",
+  "failure_cause": "NFS client-local device ID, corrected with probe950543"
+}
