@@ -1,0 +1,65 @@
+{
+  "scope": "Read-only source/literature review; no production solver changes or cluster submissions. Review artifacts only.",
+  "pins": [
+    {
+      "role": "baseline",
+      "commit": "a29992196acb74d02b8c7891be4061718889999f",
+      "files": [
+        {
+          "path": "src/exact_pricer_expanded.py",
+          "sha256": "415084325c93ecb0398820c9bc131cfd6a2a60c1e3430a025b760ec710d2687d"
+        },
+        {
+          "path": "src/event_pricer_network.py",
+          "sha256": "d939fe981cb5b3f40293996e8f3a2430da8a365b392a62d6c21959316cb03de6"
+        },
+        {
+          "path": "src/master_lp_gurobi.py",
+          "sha256": "7a42f5ba6af7e8685297034fd5cfb1a4c92071b53f8969b93b0bc42544c60812"
+        },
+        {
+          "path": "src/certify_fleet_lp_bound.py",
+          "sha256": "5aba44811b64a1611fa1e6c1fd61037c107eb0b0b992ac9ad8e9ae261fb6a40d"
+        }
+      ]
+    },
+    {
+      "role": "pool_mip",
+      "commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "files": [
+        {
+          "path": "src/run_exact_pool_mip.py",
+          "sha256": "bcb5a6b76040ff6ddfa932433d296a1f0f72207b28cbba738b1b4dd39f1eaac7"
+        }
+      ]
+    },
+    {
+      "role": "capacity",
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "files": [
+        {
+          "path": "src/event_pricer_network.py",
+          "sha256": "968d9e40563d6881fa36cb4009430bfe7587cd43c2abe7aa0ab21f67983bc67e"
+        },
+        {
+          "path": "src/run_capacity_speed_event_cg.py",
+          "sha256": "86c2b9e797d99a4321157e6ce9dd64874e285e59551748395f28599f2f4d8377"
+        }
+      ]
+    }
+  ],
+  "source_snapshot": "outputs/post_meeting_20260910/monitor/20260912T052658Z.json",
+  "runtime_semantics": "See RUNTIME_EVIDENCE.md; inclusive pricing timers overlap.",
+  "public_reference_code": {
+    "repository": "https://github.com/axelparmentier/ElectricalVSP-ColumnGeneration",
+    "commit": "a13f33ddc3d00aa1fb52ff323a47eac5d521d8e7",
+    "verification": "git ls-remote HEAD and primary repository readme/license listing",
+    "language": "C++17",
+    "license": "MIT",
+    "dependencies": [
+      "CPLEX",
+      "Boost"
+    ],
+    "execution": "inspected; not compiled or run"
+  }
+}

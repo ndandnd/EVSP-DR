@@ -1,0 +1,70 @@
+{
+  "scope": "Read-only review checks; no implementation or end-to-end speedup validation",
+  "event_pricer_tests": [
+    {
+      "commit": "a29992196acb74d02b8c7891be4061718889999f",
+      "command": "python3 -m unittest -q tests.test_event_pricer_network",
+      "tests_passed": 12,
+      "seconds": 2.961,
+      "reported_by": "pricing_review_0912"
+    },
+    {
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "command": "python3 -m unittest -q tests.test_event_pricer_network",
+      "tests_passed": 14,
+      "seconds": 3.347,
+      "reported_by": "pricing_review_0912"
+    }
+  ],
+  "runtime_reconciliation": {
+    "verified": true,
+    "snapshot_sha256": "23d9fb05744b8a6f242c46785309cc1cc004ec4ab29c89f802e6fac638667c84",
+    "matched_case_records": 98,
+    "fresh_covering_records": 84,
+    "timing_interpretation": "pricing_batch includes shortest_path"
+  },
+  "limitations": [
+    "Existing small suites do not establish global pricing exactness for every model variant.",
+    "Proposed optimizations have not been implemented or timed.",
+    "Public reference implementation inspected, not compiled or run."
+  ],
+  "source_hash_checks": [
+    {
+      "commit": "a29992196acb74d02b8c7891be4061718889999f",
+      "path": "src/exact_pricer_expanded.py",
+      "sha256_matches": true
+    },
+    {
+      "commit": "a29992196acb74d02b8c7891be4061718889999f",
+      "path": "src/event_pricer_network.py",
+      "sha256_matches": true
+    },
+    {
+      "commit": "a29992196acb74d02b8c7891be4061718889999f",
+      "path": "src/master_lp_gurobi.py",
+      "sha256_matches": true
+    },
+    {
+      "commit": "a29992196acb74d02b8c7891be4061718889999f",
+      "path": "src/certify_fleet_lp_bound.py",
+      "sha256_matches": true
+    },
+    {
+      "commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+      "path": "src/run_exact_pool_mip.py",
+      "sha256_matches": true
+    },
+    {
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "path": "src/event_pricer_network.py",
+      "sha256_matches": true
+    },
+    {
+      "commit": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+      "path": "src/run_capacity_speed_event_cg.py",
+      "sha256_matches": true
+    }
+  ],
+  "markdown_local_links": "all targets exist",
+  "runtime_reconciliation_repeated": true
+}
