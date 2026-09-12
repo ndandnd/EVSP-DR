@@ -38,12 +38,20 @@
       "scope": "Campaign command generation,dryrun,no-submit guard,warm preparation isolation,process success/watchdog",
       "result": "Passed",
       "command": "python3 scripts/efficiency_validation_20260912/check_local.py /private/tmp/evsp-capacity-efficiency-20260912 /Users/nadan/Documents/projects/demandresponse/outputs/efficiency_validation_20260912/audit/source_evidence.json"
+    },
+    {
+      "owner": "root and astra_launch_audit_0912",
+      "scope": "Recovery of cache-only launcher parser interaction",
+      "result": "Original --out restriction reproduced; real main-parser regression and cache path pass; unmocked real8-trip cache-only build passed; four cluster replacements running in preparation beyond2min",
+      "artifact": "recovery/cache_smoke.json",
+      "source_commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f"
     }
   ],
   "limitations": [
     "No full-size cluster speedup established by these checks.",
     "Parallel replay worker completion order is unchanged and may alter pool insertion order; compare hashes and accepted pool content before attributing trajectory differences.",
     "Generic heterogeneous-power finite-pool MIP validators outside capacity CG driver still need station-power propagation; no MIPs launched in this validation.",
-    "The capacity reference and optimized arms both contain the accounting fix. Differences from historical incorrect accounting are corrections, not measured optimization savings."
+    "The capacity reference and optimized arms both contain the accounting fix. Differences from historical incorrect accounting are corrections, not measured optimization savings.",
+    "Original launch flag-name checks missed cache-only/--out incompatibility. Four failed startup attempts are retained and explicitly superseded; actual parser and cache execution checks were added."
   ]
 }

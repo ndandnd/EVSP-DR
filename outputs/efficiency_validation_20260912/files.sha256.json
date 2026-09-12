@@ -1,5 +1,5 @@
 {
-  "README.md": "5bb9e5550b9bed33253acf1eee6a8d5c2aaa4644f361600cf53a5cfd65d7b70d",
+  "README.md": "54abb6e5b14b96c699b2a47ec71b86ff1fc8aadfc4e676257e0b8d01feecf6a6",
   "audit/CODE_AUDIT.md": "c559aadd692353b2e61f9d59853ba29dc3ad7ec0005aec39c303052db5a281ce",
   "audit/RECOMMENDATION.md": "40a22334eb3196e2324ce0903c30a582cc01ea571da432775d8def4f6ce71e33",
   "audit/capacity_evidence.json": "e82cae0f5c59375daa1b1e00596f6ba915dd8647421c3a97dabc76f991268cdb",
@@ -7,7 +7,7 @@
   "audit/initial_collection.json": "b1811541302f33605b5d39aad1372da8b95bc0a7612afe4a74207b900133e6ed",
   "audit/launch_dryrun.json": "eae3b8969641f2636e3927bf388f706c893303ca28eacd2d30cf60e98fb1511c",
   "audit/source_evidence.json": "0ecde623dad431ce8faa519192f4c06192cace8e7101cd285d4c6fc5ea033d6c",
-  "deployment.json": "3311f0dd5d6b901d38135fe9a4199fa9da841c184c289a9756228c642c385077",
+  "deployment.json": "78733d2124ba48357ad9b4a5e32ed82b189c64892b5115ad7b3aa8f12a174dfb",
   "jobs.json": "1f61a0ab24be8736a80c33801ce59fc5dc1a875bb3ed555fc17fc51198873734",
   "local_smoke/eight_trip_input.csv": "318810a5eee5c29e288740c9f220dcfa72b0b3249f7ea5b36fd202475a053ffa",
   "local_smoke/fixed_accounting.json": "87fcc21ac2873ab4bc4e65e9a55dac9d64bdbbe8ecf194130756be968575fdd1",
@@ -24,6 +24,19 @@
   "local_smoke/skip_matrix.json.phases.jsonl": "e9683c33a076bacf42693208d16e05e58def37d507a21cb0ea4f472beb934a6f",
   "local_smoke/skip_matrix.log": "e1884cd34a86cf7fb42a5d107f3d0b0a143bcb7657dfafa8cc7c7718551279ea",
   "local_smoke/validation.json": "4ee42a546d0751baf02eed69891167cba1aec04ef4fc5f65a6cfca7e3f15a450",
-  "local_validation.json": "582e1b2ce7913d3cf07d334de89d2e3b32f121cabc046d93bef534708157deec",
-  "manifest.json": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9"
+  "local_validation.json": "146237dabd29a51cba230edef0b9686f56bddeee7f567e6e558f39c525f8facd",
+  "manifest.json": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+  "recovery/README.md": "38c0ee8e14cfcbc076943bfefd7da3119e9adf2744130c325874dde4e6da2d72",
+  "recovery/cache_smoke/execution.json": "0012753fdf54cfbeaa8a680f28d22f8bc6cba65d8a5c7942c817bb55c6e3a583",
+  "recovery/cache_smoke/phases.jsonl": "919219910c6c882d27eef2e41215ddeaea3e8fee3669b55d5383e284d340609a",
+  "recovery/cache_smoke/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "recovery/cache_smoke/stdout.log": "3b71241925467497ef915bd038458a66e0bb8dfafa27c86bdedfdc7da6ce324b",
+  "recovery/cache_smoke.json": "242946adf26b78ee5112132394ca507c6d777b8d66d8efc2b81820f7159307b9",
+  "recovery/jobs.json": "9edafb0b11c79bb9ee1124483f9ab24a5bcca4ea9534988ab8f49dabdc0bbc24",
+  "recovery/manifest.json": "b28a1a01aea6d4320b18db1fa66d12fa6a5e80aa7448921dd7997fd34508978b",
+  "recovery/post_start_collection.json": "b8fbd77d5cba8efff79fd383a6a75ab51911cd81525f5f79a8cd1479837f2e33",
+  "recovery/prepare_recovery.py": "55328cb27b5420900cc195d9b3d944a93d10a0ba83f2a532e7577ff44aaabaed",
+  "recovery/startup_collection.json": "9e7318eab5affa7555470b86fd719feaf284120ce21b94e2e32f72d33d8ce1c9",
+  "recovery/startup_verified.json": "cec980f159be19b5a00a0b5d972352c17af079b2aaf121f1e9b4c31e9e29bf67",
+  "recovery/warm_startup_failure.json": "194940115e27b8992fe9eb0dfc38520f695a6b6d80f803873c1b5fa85e4c4ed0"
 }

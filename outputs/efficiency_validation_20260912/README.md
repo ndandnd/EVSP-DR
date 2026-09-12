@@ -4,7 +4,7 @@ This campaign evaluates three opt-in implementation changes after correctness ch
 
 ## Launch status
 
-All nine allocations were submitted and their partition/node exclusions verified. At the initial observation they were pending scheduler priority; no production timing result was available. Baseline execution commit: `89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a`. Capacity execution commit: `309d98d266ebaf6b7e99543a67f8f2be5736874a`. Both source branches are pushed to GitHub.
+All nine comparisons were submitted with verified partition/node exclusions. Four warm allocations then failed during cache-only argument validation, before solving. The launcher was corrected, tested on real input, and four replacements were submitted in a separate campaign; the five fresh/capacity pairs continue unchanged. See `recovery/README.md` for the preserved failures and replacement jobs. No completed cluster speedup is claimed. The table below preserves the original submission ledger. Baseline execution commit: `89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a`. Capacity execution commit: `309d98d266ebaf6b7e99543a67f8f2be5736874a`. Both source branches are pushed to GitHub.
 
 | Pair | Slurm job |
 |---|---|

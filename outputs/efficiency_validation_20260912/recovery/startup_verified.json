@@ -1,0 +1,42 @@
+{
+  "collected_utc": "2026-09-12T07:03:41.843398+00:00",
+  "squeue": "966398|eff_w1_k08|default_partition|RUNNING|2:05|8:00:00|unicorn-cpu-87\n966399|eff_w4_k11|default_partition|RUNNING|2:05|8:00:00|jingjie-cpu-18\n966400|eff_w6_k12|default_partition|RUNNING|2:05|8:00:00|jingjie-cpu-06\n966401|eff_w1_k08_repeat|default_partition|RUNNING|2:05|8:00:00|jingjie-cpu-07\n",
+  "attempts": [
+    {
+      "case": "w1_k08",
+      "attempt": "966398_r0",
+      "execution_exists": true,
+      "out_flag_in_preparation": false,
+      "returncode": null,
+      "stdout_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n",
+      "stderr_tail": ""
+    },
+    {
+      "case": "w1_k08_repeat",
+      "attempt": "966401_r0",
+      "execution_exists": true,
+      "out_flag_in_preparation": false,
+      "returncode": null,
+      "stdout_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n",
+      "stderr_tail": ""
+    },
+    {
+      "case": "w4_k11",
+      "attempt": "966399_r0",
+      "execution_exists": true,
+      "out_flag_in_preparation": false,
+      "returncode": null,
+      "stdout_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n",
+      "stderr_tail": ""
+    },
+    {
+      "case": "w6_k12",
+      "attempt": "966400_r0",
+      "execution_exists": true,
+      "out_flag_in_preparation": false,
+      "returncode": null,
+      "stdout_tail": "Set parameter LicenseID to value 2674428\nSet parameter GURO_PAR_SPECIAL\nSet parameter TokenServer to value \"en-cc-unicorn-data-dirs.coecis.cornell.edu\"\n",
+      "stderr_tail": ""
+    }
+  ]
+}

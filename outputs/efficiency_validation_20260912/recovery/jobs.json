@@ -1,0 +1,111 @@
+{
+  "finished_utc": "2026-09-12T07:00:58.507772+00:00",
+  "jobs": [
+    {
+      "case": "w1_k08",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=08:00:00",
+        "--no-requeue",
+        "--job-name=eff_w1_k08",
+        "--output=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912",
+        "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/scripts/efficiency_validation_20260912/campaign.py worker --root /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912 --index 0"
+      ],
+      "exclusion_verified": true,
+      "job_id": "966398",
+      "partition_verified": true,
+      "scontrol": "JobId=966398 JobName=eff_w1_k08\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=08:00:00 TimeMin=N/A\n   SubmitTime=2026-09-12T03:00:54 EligibleTime=2026-09-12T03:00:54\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T03:00:54 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1790111\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=96G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=(null)\n   WorkDir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912\n   StdErr=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w1_k08_966398.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w1_k08_966398.out\n   TresPerTask=cpu=8\n   \n\n",
+      "submission_started_utc": "2026-09-12T07:00:53.724441+00:00",
+      "submit_stderr": "",
+      "submit_stdout": "966398\n",
+      "submitted_utc": "2026-09-12T07:00:54.296237+00:00"
+    },
+    {
+      "case": "w4_k11",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=08:00:00",
+        "--no-requeue",
+        "--job-name=eff_w4_k11",
+        "--output=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912",
+        "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/scripts/efficiency_validation_20260912/campaign.py worker --root /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912 --index 1"
+      ],
+      "exclusion_verified": true,
+      "job_id": "966399",
+      "partition_verified": true,
+      "scontrol": "JobId=966399 JobName=eff_w4_k11\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=08:00:00 TimeMin=N/A\n   SubmitTime=2026-09-12T03:00:54 EligibleTime=2026-09-12T03:00:54\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T03:00:54 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1790111\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=96G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=(null)\n   WorkDir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912\n   StdErr=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w4_k11_966399.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w4_k11_966399.out\n   TresPerTask=cpu=8\n   \n\n",
+      "submission_started_utc": "2026-09-12T07:00:54.399646+00:00",
+      "submit_stderr": "",
+      "submit_stdout": "966399\n",
+      "submitted_utc": "2026-09-12T07:00:54.965781+00:00"
+    },
+    {
+      "case": "w6_k12",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=08:00:00",
+        "--no-requeue",
+        "--job-name=eff_w6_k12",
+        "--output=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912",
+        "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/scripts/efficiency_validation_20260912/campaign.py worker --root /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912 --index 2"
+      ],
+      "exclusion_verified": true,
+      "job_id": "966400",
+      "partition_verified": true,
+      "scontrol": "JobId=966400 JobName=eff_w6_k12\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=08:00:00 TimeMin=N/A\n   SubmitTime=2026-09-12T03:00:56 EligibleTime=2026-09-12T03:00:56\n   AccrueTime=2026-09-12T03:00:56\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T03:00:56 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1790111\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=96G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=(null)\n   WorkDir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912\n   StdErr=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w6_k12_966400.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w6_k12_966400.out\n   TresPerTask=cpu=8\n   \n\n",
+      "submission_started_utc": "2026-09-12T07:00:55.077807+00:00",
+      "submit_stderr": "",
+      "submit_stdout": "966400\n",
+      "submitted_utc": "2026-09-12T07:00:56.951424+00:00"
+    },
+    {
+      "case": "w1_k08_repeat",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=96G",
+        "--time=08:00:00",
+        "--no-requeue",
+        "--job-name=eff_w1_k08_repeat",
+        "--output=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912",
+        "--wrap=/home/nc437/evsp_env/bin/python /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/code-baseline/scripts/efficiency_validation_20260912/campaign.py worker --root /home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912 --index 3"
+      ],
+      "exclusion_verified": true,
+      "job_id": "966401",
+      "partition_verified": true,
+      "scontrol": "JobId=966401 JobName=eff_w1_k08_repeat\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=08:00:00 TimeMin=N/A\n   SubmitTime=2026-09-12T03:00:58 EligibleTime=2026-09-12T03:00:58\n   AccrueTime=2026-09-12T03:00:58\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-12T03:00:58 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1790111\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=96G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=(null)\n   WorkDir=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912\n   StdErr=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w1_k08_repeat_966401.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912/logs/eff_w1_k08_repeat_966401.out\n   TresPerTask=cpu=8\n   \n\n",
+      "submission_started_utc": "2026-09-12T07:00:57.187067+00:00",
+      "submit_stderr": "",
+      "submit_stdout": "966401\n",
+      "submitted_utc": "2026-09-12T07:00:58.260151+00:00"
+    }
+  ],
+  "manifest_sha256": "b28a1a01aea6d4320b18db1fa66d12fa6a5e80aa7448921dd7997fd34508978b",
+  "started_utc": "2026-09-12T07:00:53.721813+00:00"
+}

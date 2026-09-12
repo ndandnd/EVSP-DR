@@ -24,5 +24,14 @@
   "collector_schema": "evsp-efficiency-collection-v2",
   "collector_script": "code-baseline/scripts/efficiency_validation_20260912/campaign.py",
   "object_storage_note": "New clones use shared object alternates from existing source checkouts. Preserve source repositories while jobs run; execution commits are also pushed to GitHub.",
-  "scope": "Only new paired CG jobs; no cancellation, deletion, historical job modification or MIP submission."
+  "scope": "Only new paired CG jobs; no cancellation, deletion, historical job modification or MIP submission.",
+  "recovery_manifest": "recovery/manifest.json",
+  "recovery_execution_commit": "11afd8372dd14fdb2a11cd5eaddbee1d02644b1f",
+  "recovery_jobs": {
+    "w1_k08": "966398",
+    "w4_k11": "966399",
+    "w6_k12": "966400",
+    "w1_k08_repeat": "966401"
+  },
+  "current_status_note": "Four original warm startup failures retained; four corrected replacements submitted, five original fresh/capacity pairs continue."
 }
