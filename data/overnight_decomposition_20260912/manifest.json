@@ -1,0 +1,810 @@
+{
+  "schema": "evsp-dr-decomposition-poc-v1",
+  "selection_seed": 20260912,
+  "parent": {
+    "id": "parent32",
+    "csv": "overnight_decomposition_20260912/parent32.csv",
+    "sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+    "duties": [
+      "13302",
+      "13303",
+      "13304",
+      "13306",
+      "13308",
+      "13311",
+      "13312",
+      "13313",
+      "13314",
+      "13315",
+      "13316m",
+      "13317",
+      "13318",
+      "13319",
+      "13320",
+      "13321",
+      "13322",
+      "13323",
+      "13324muw",
+      "13326",
+      "13401",
+      "13402",
+      "13403",
+      "13404",
+      "13405",
+      "13407",
+      "13408",
+      "13409",
+      "13410",
+      "13411",
+      "13413",
+      "13414"
+    ],
+    "trip_count": 750,
+    "peak_overlap": 29
+  },
+  "partitions": [
+    {
+      "partition": 0,
+      "method": "trip_count_contiguous",
+      "seed": null,
+      "groups": [
+        {
+          "id": "d00_g0",
+          "csv": "overnight_decomposition_20260912/d00_g0.csv",
+          "sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+          "duties": [
+            "13323",
+            "13408",
+            "13401",
+            "13414",
+            "13405",
+            "13311",
+            "13403",
+            "13411"
+          ],
+          "trip_count": 98,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d00_g1",
+          "csv": "overnight_decomposition_20260912/d00_g1.csv",
+          "sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+          "duties": [
+            "13410",
+            "13413",
+            "13314",
+            "13320",
+            "13324muw",
+            "13402",
+            "13404",
+            "13407"
+          ],
+          "trip_count": 130,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d00_g2",
+          "csv": "overnight_decomposition_20260912/d00_g2.csv",
+          "sha256": "295e8206dd04e8a18cf5dba85d24daf4ea69814f9ee645427da64d047a50ab21",
+          "duties": [
+            "13409",
+            "13326",
+            "13321",
+            "13316m",
+            "13322",
+            "13319",
+            "13306",
+            "13308"
+          ],
+          "trip_count": 197,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d00_g3",
+          "csv": "overnight_decomposition_20260912/d00_g3.csv",
+          "sha256": "cf3d15335300725f7d5db443be5886720c4a901a00cc348b1cc96b70ae306841",
+          "duties": [
+            "13315",
+            "13318",
+            "13304",
+            "13313",
+            "13317",
+            "13312",
+            "13302",
+            "13303"
+          ],
+          "trip_count": 325,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 1,
+      "method": "trip_count_balanced",
+      "seed": null,
+      "groups": [
+        {
+          "id": "d01_g0",
+          "csv": "overnight_decomposition_20260912/d01_g0.csv",
+          "sha256": "01977ca4c87817a4ce937bf42368135a7a5c2f9069a76066448c5f2df64b11ee",
+          "duties": [
+            "13303",
+            "13308",
+            "13322",
+            "13326",
+            "13407",
+            "13410",
+            "13411",
+            "13323"
+          ],
+          "trip_count": 186,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d01_g1",
+          "csv": "overnight_decomposition_20260912/d01_g1.csv",
+          "sha256": "fc5eb2225b5065495bfb4ed263ddba755fa9d7048658b1546b8704d38213e2f9",
+          "duties": [
+            "13302",
+            "13318",
+            "13306",
+            "13324muw",
+            "13404",
+            "13320",
+            "13403",
+            "13414"
+          ],
+          "trip_count": 189,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d01_g2",
+          "csv": "overnight_decomposition_20260912/d01_g2.csv",
+          "sha256": "2fe43f3889f6ac522b85e1d7f649856999d8ed3e6d78563b06e7f4b90b849bff",
+          "duties": [
+            "13312",
+            "13317",
+            "13319",
+            "13321",
+            "13409",
+            "13413",
+            "13405",
+            "13408"
+          ],
+          "trip_count": 188,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d01_g3",
+          "csv": "overnight_decomposition_20260912/d01_g3.csv",
+          "sha256": "627b146766e3e96133896d5562094e8f258e7f7905af7c2ca41486eb2a77329a",
+          "duties": [
+            "13304",
+            "13313",
+            "13315",
+            "13316m",
+            "13402",
+            "13314",
+            "13311",
+            "13401"
+          ],
+          "trip_count": 187,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 2,
+      "method": "seeded_random",
+      "seed": 20260914,
+      "groups": [
+        {
+          "id": "d02_g0",
+          "csv": "overnight_decomposition_20260912/d02_g0.csv",
+          "sha256": "ee2fe18cfc566c6831384bfc22cf07906799cc50158bf669383899442b30532c",
+          "duties": [
+            "13407",
+            "13405",
+            "13313",
+            "13411",
+            "13316m",
+            "13319",
+            "13308",
+            "13314"
+          ],
+          "trip_count": 178,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d02_g1",
+          "csv": "overnight_decomposition_20260912/d02_g1.csv",
+          "sha256": "1d84714d467fadd9b58b3e63027da664eef62eebffa85aeb2dcda388cc23bf1f",
+          "duties": [
+            "13321",
+            "13306",
+            "13410",
+            "13304",
+            "13318",
+            "13403",
+            "13311",
+            "13303"
+          ],
+          "trip_count": 219,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d02_g2",
+          "csv": "overnight_decomposition_20260912/d02_g2.csv",
+          "sha256": "199670526d793f57411d07942a9e2e61044959d8d9d5efefbcb402ce7945f2e0",
+          "duties": [
+            "13409",
+            "13323",
+            "13312",
+            "13322",
+            "13315",
+            "13401",
+            "13414",
+            "13302"
+          ],
+          "trip_count": 202,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d02_g3",
+          "csv": "overnight_decomposition_20260912/d02_g3.csv",
+          "sha256": "31d01d3cb20cf7bded81427307361a36da72ad3d3db7695af5e5c75c6e1edf9a",
+          "duties": [
+            "13413",
+            "13324muw",
+            "13317",
+            "13402",
+            "13320",
+            "13326",
+            "13404",
+            "13408"
+          ],
+          "trip_count": 151,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 3,
+      "method": "seeded_random",
+      "seed": 20260915,
+      "groups": [
+        {
+          "id": "d03_g0",
+          "csv": "overnight_decomposition_20260912/d03_g0.csv",
+          "sha256": "af3fe734949ae655894da2c7c5606be8805e02011e47b42078c1bcddea5e7d8a",
+          "duties": [
+            "13405",
+            "13402",
+            "13326",
+            "13314",
+            "13411",
+            "13317",
+            "13401",
+            "13304"
+          ],
+          "trip_count": 167,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d03_g1",
+          "csv": "overnight_decomposition_20260912/d03_g1.csv",
+          "sha256": "133bdaeb52aab6707e2b9be412d1cfa25d4e51f096fc3ecd54db0d79a3f779e7",
+          "duties": [
+            "13408",
+            "13313",
+            "13319",
+            "13407",
+            "13409",
+            "13321",
+            "13322",
+            "13403"
+          ],
+          "trip_count": 171,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d03_g2",
+          "csv": "overnight_decomposition_20260912/d03_g2.csv",
+          "sha256": "c6c5534343731e024036f9933fa559379e9d978355c763232b1c7d87ec4d2b89",
+          "duties": [
+            "13410",
+            "13324muw",
+            "13303",
+            "13311",
+            "13320",
+            "13323",
+            "13308",
+            "13315"
+          ],
+          "trip_count": 186,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d03_g3",
+          "csv": "overnight_decomposition_20260912/d03_g3.csv",
+          "sha256": "2bb8c0626025b1851bf3b52fcc3e6bed4398e015d6fba63a99b41303da60c32f",
+          "duties": [
+            "13318",
+            "13302",
+            "13413",
+            "13316m",
+            "13306",
+            "13414",
+            "13404",
+            "13312"
+          ],
+          "trip_count": 226,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 4,
+      "method": "seeded_random",
+      "seed": 20260916,
+      "groups": [
+        {
+          "id": "d04_g0",
+          "csv": "overnight_decomposition_20260912/d04_g0.csv",
+          "sha256": "2805fd70d0c77074c97b09e34b30620726e6fd25a24afabc6873eb14934a9899",
+          "duties": [
+            "13315",
+            "13408",
+            "13302",
+            "13410",
+            "13303",
+            "13407",
+            "13411",
+            "13405"
+          ],
+          "trip_count": 205,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d04_g1",
+          "csv": "overnight_decomposition_20260912/d04_g1.csv",
+          "sha256": "50b85abee81f44c4c27edbd8df8b25d626a4a0e6d2b8eeea9b5a9f2f1a4fa506",
+          "duties": [
+            "13319",
+            "13321",
+            "13316m",
+            "13314",
+            "13308",
+            "13312",
+            "13414",
+            "13326"
+          ],
+          "trip_count": 198,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d04_g2",
+          "csv": "overnight_decomposition_20260912/d04_g2.csv",
+          "sha256": "73b50096d2c7a8768ac84e5a8f8d513d150f8c71f7673ff92c625559cf674df9",
+          "duties": [
+            "13403",
+            "13323",
+            "13404",
+            "13413",
+            "13320",
+            "13324muw",
+            "13313",
+            "13322"
+          ],
+          "trip_count": 150,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d04_g3",
+          "csv": "overnight_decomposition_20260912/d04_g3.csv",
+          "sha256": "657d685174bc30cbe44af93af8c2f7b640ac499afdaff6d4dc374d5435e0a8bc",
+          "duties": [
+            "13317",
+            "13306",
+            "13401",
+            "13409",
+            "13311",
+            "13318",
+            "13402",
+            "13304"
+          ],
+          "trip_count": 197,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 5,
+      "method": "seeded_random",
+      "seed": 20260917,
+      "groups": [
+        {
+          "id": "d05_g0",
+          "csv": "overnight_decomposition_20260912/d05_g0.csv",
+          "sha256": "d1012a584273b5c1fb9d9ebf997d8e77bbdc0b24fc5aa66283bc7ddaee27f2be",
+          "duties": [
+            "13306",
+            "13402",
+            "13408",
+            "13304",
+            "13320",
+            "13403",
+            "13303",
+            "13409"
+          ],
+          "trip_count": 196,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d05_g1",
+          "csv": "overnight_decomposition_20260912/d05_g1.csv",
+          "sha256": "54c5684f43771ba1b6f48c6ee5743eb91b9ec274f6997214790836955de5233b",
+          "duties": [
+            "13311",
+            "13404",
+            "13321",
+            "13326",
+            "13411",
+            "13319",
+            "13318",
+            "13324muw"
+          ],
+          "trip_count": 165,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d05_g2",
+          "csv": "overnight_decomposition_20260912/d05_g2.csv",
+          "sha256": "a9a1b20b9e54a0a73abbc7ef77cadefba3e77a95932d05de5045013571e4c03a",
+          "duties": [
+            "13312",
+            "13322",
+            "13413",
+            "13316m",
+            "13407",
+            "13317",
+            "13308",
+            "13302"
+          ],
+          "trip_count": 245,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d05_g3",
+          "csv": "overnight_decomposition_20260912/d05_g3.csv",
+          "sha256": "1fae176ede68b555f4826f25217db4e1a894f28dbc813cd02b0f2854d1154318",
+          "duties": [
+            "13313",
+            "13323",
+            "13414",
+            "13315",
+            "13410",
+            "13405",
+            "13401",
+            "13314"
+          ],
+          "trip_count": 144,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 6,
+      "method": "seeded_random",
+      "seed": 20260918,
+      "groups": [
+        {
+          "id": "d06_g0",
+          "csv": "overnight_decomposition_20260912/d06_g0.csv",
+          "sha256": "0d70a4f97313d49421dbd52c6b2b848024a969f94b9b5bb66beda9247c0dd09e",
+          "duties": [
+            "13320",
+            "13322",
+            "13312",
+            "13315",
+            "13313",
+            "13403",
+            "13314",
+            "13318"
+          ],
+          "trip_count": 219,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d06_g1",
+          "csv": "overnight_decomposition_20260912/d06_g1.csv",
+          "sha256": "519249aec4d4f33db41ccd253d5518370b9e178add21574d1ba6278b1f15508c",
+          "duties": [
+            "13411",
+            "13304",
+            "13404",
+            "13302",
+            "13407",
+            "13321",
+            "13413",
+            "13324muw"
+          ],
+          "trip_count": 189,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d06_g2",
+          "csv": "overnight_decomposition_20260912/d06_g2.csv",
+          "sha256": "59a26432f704fcc837800fe087a4540787cecbc719da09cd43a3ee551cdc0a5a",
+          "duties": [
+            "13408",
+            "13323",
+            "13306",
+            "13405",
+            "13311",
+            "13402",
+            "13316m",
+            "13401"
+          ],
+          "trip_count": 128,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d06_g3",
+          "csv": "overnight_decomposition_20260912/d06_g3.csv",
+          "sha256": "db3c6de09f71028fce8e1b80ff5687f3d8ee8356f07f08bc8b53dcd25509f815",
+          "duties": [
+            "13317",
+            "13319",
+            "13410",
+            "13303",
+            "13414",
+            "13308",
+            "13409",
+            "13326"
+          ],
+          "trip_count": 214,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 7,
+      "method": "seeded_random",
+      "seed": 20260919,
+      "groups": [
+        {
+          "id": "d07_g0",
+          "csv": "overnight_decomposition_20260912/d07_g0.csv",
+          "sha256": "1ad9967ed28bfb2688a53adc4d0f18e34d17254ed1760c1b08d67ab03f75ef60",
+          "duties": [
+            "13322",
+            "13306",
+            "13320",
+            "13408",
+            "13326",
+            "13410",
+            "13403",
+            "13313"
+          ],
+          "trip_count": 170,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d07_g1",
+          "csv": "overnight_decomposition_20260912/d07_g1.csv",
+          "sha256": "62ca4aa05e878d591f8254f90b278db2e58a989401db872a76530423da758a9c",
+          "duties": [
+            "13402",
+            "13411",
+            "13414",
+            "13321",
+            "13409",
+            "13315",
+            "13311",
+            "13302"
+          ],
+          "trip_count": 177,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d07_g2",
+          "csv": "overnight_decomposition_20260912/d07_g2.csv",
+          "sha256": "dd737ca5d97eb2851711cfa9234d51e8f8466d81a884ddd48c5396f2dd3c8f0c",
+          "duties": [
+            "13324muw",
+            "13319",
+            "13304",
+            "13303",
+            "13314",
+            "13323",
+            "13318",
+            "13316m"
+          ],
+          "trip_count": 215,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d07_g3",
+          "csv": "overnight_decomposition_20260912/d07_g3.csv",
+          "sha256": "124103e1b3ec406746866cb594a32064926723c2fc41c974c3a78b1a2206a75e",
+          "duties": [
+            "13405",
+            "13404",
+            "13401",
+            "13413",
+            "13308",
+            "13317",
+            "13407",
+            "13312"
+          ],
+          "trip_count": 188,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 8,
+      "method": "seeded_random",
+      "seed": 20260920,
+      "groups": [
+        {
+          "id": "d08_g0",
+          "csv": "overnight_decomposition_20260912/d08_g0.csv",
+          "sha256": "1d5665f380375eedb85217d9a20d235ca9aa4feb8939291a91ca8abf72b796a0",
+          "duties": [
+            "13402",
+            "13326",
+            "13311",
+            "13409",
+            "13316m",
+            "13404",
+            "13324muw",
+            "13314"
+          ],
+          "trip_count": 142,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d08_g1",
+          "csv": "overnight_decomposition_20260912/d08_g1.csv",
+          "sha256": "13c35ddf95ffa640bf17c7690fcefdb3aebb983141d546b1cf1247ac4c5a9ec5",
+          "duties": [
+            "13405",
+            "13403",
+            "13304",
+            "13312",
+            "13401",
+            "13414",
+            "13303",
+            "13306"
+          ],
+          "trip_count": 218,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d08_g2",
+          "csv": "overnight_decomposition_20260912/d08_g2.csv",
+          "sha256": "42b1c80ba319f77e01f954411085e454b90b3a5ebbbf3248a6c1955e235b8bc7",
+          "duties": [
+            "13318",
+            "13321",
+            "13322",
+            "13315",
+            "13413",
+            "13302",
+            "13407",
+            "13411"
+          ],
+          "trip_count": 208,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d08_g3",
+          "csv": "overnight_decomposition_20260912/d08_g3.csv",
+          "sha256": "4a5d12de1eff0216516da341eede23992a95e5255c27c1e40cf2078334a79a90",
+          "duties": [
+            "13313",
+            "13317",
+            "13319",
+            "13408",
+            "13410",
+            "13320",
+            "13308",
+            "13323"
+          ],
+          "trip_count": 182,
+          "peak_overlap": 8
+        }
+      ]
+    },
+    {
+      "partition": 9,
+      "method": "seeded_random",
+      "seed": 20260921,
+      "groups": [
+        {
+          "id": "d09_g0",
+          "csv": "overnight_decomposition_20260912/d09_g0.csv",
+          "sha256": "b763752c2b2f3f726298533c74b3dee8487356189c3924e44cd4e23207e57fc9",
+          "duties": [
+            "13405",
+            "13308",
+            "13323",
+            "13409",
+            "13319",
+            "13414",
+            "13313",
+            "13320"
+          ],
+          "trip_count": 161,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d09_g1",
+          "csv": "overnight_decomposition_20260912/d09_g1.csv",
+          "sha256": "f45f77989359645fa4f72022b2571a447282198cadad8f2e0555707177acb243",
+          "duties": [
+            "13404",
+            "13326",
+            "13314",
+            "13302",
+            "13306",
+            "13322",
+            "13402",
+            "13324muw"
+          ],
+          "trip_count": 194,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d09_g2",
+          "csv": "overnight_decomposition_20260912/d09_g2.csv",
+          "sha256": "47337f4aafdffec3fc107c89c5d6102e1a68023d623ba78c53966c43fc5bfdd9",
+          "duties": [
+            "13315",
+            "13407",
+            "13410",
+            "13401",
+            "13316m",
+            "13411",
+            "13317",
+            "13318"
+          ],
+          "trip_count": 182,
+          "peak_overlap": 8
+        },
+        {
+          "id": "d09_g3",
+          "csv": "overnight_decomposition_20260912/d09_g3.csv",
+          "sha256": "70befa3cc802edde8895fe3d31188fcc01b513c0d3304760dae29a6dde6f6875",
+          "duties": [
+            "13311",
+            "13403",
+            "13413",
+            "13408",
+            "13304",
+            "13312",
+            "13303",
+            "13321"
+          ],
+          "trip_count": 213,
+          "peak_overlap": 8
+        }
+      ]
+    }
+  ],
+  "source_sha256": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f",
+  "knowledge_used": "GIRO duty membership selects disjoint trip subsets; no GIRO route columns injected",
+  "physics": {
+    "battery_kwh": 240,
+    "charge_kw": 240,
+    "reserve_fraction": 0,
+    "shared_capacity": false,
+    "terminal_soc_floor": 0,
+    "master_sense": "cover",
+    "tariff": "flat",
+    "soc_step_kwh": 2.5,
+    "event_block_min": 5
+  }
+}

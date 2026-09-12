@@ -438,6 +438,8 @@ def inherited_event_pool_records(
     charge_kw: float,
     reserve_kwh: float,
     workers: int = 1,
+    max_columns: int = 0,
+    time_limit_s: float = 0,
 ) -> tuple[list[dict], dict]:
     """Replay a predecessor event-CG pool in a nested child event graph.
 
@@ -508,11 +510,19 @@ def inherited_event_pool_records(
             (child_sequence, stable_sequence, source_record.get("cost"))
         )
 
+    # Explicitly labeled bounded-pool treatment: deterministic long/cheap routes.
+    source_replay_count = len(replay_items)
+    if max_columns:
+        replay_items = sorted(replay_items, key=lambda x: (
+            -len(x[0]), float(x[2] or 0) / max(1, len(x[0])), tuple(x[1])
+        ))[:max_columns]
+    deadline = time.monotonic() + time_limit_s if time_limit_s else None
+    import_deadline_reached = False
     global _INHERITED_EVENT_REPLAY_CONTEXT
     _INHERITED_EVENT_REPLAY_CONTEXT = (
         child_network, child_problem, g_kwh, charge_kw, reserve_kwh
     )
-    if workers == 1:
+    if workers == 1 and deadline is None:
         replay_results = map(_replay_inherited_event_sequence, replay_items)
         pool_context = None
     else:
@@ -521,11 +531,26 @@ def inherited_event_pool_records(
                 "parallel inherited event replay requires fork support"
             )
         pool_context = multiprocessing.get_context("fork").Pool(workers)
-        replay_results = pool_context.imap(
+        replay_results = (pool_context.imap_unordered(
+            _replay_inherited_event_sequence, replay_items, chunksize=1
+        ) if deadline is not None else pool_context.imap(
             _replay_inherited_event_sequence, replay_items, chunksize=8
-        )
+        ))
     try:
-        for replayed, reason in replay_results:
+        while True:
+            try:
+                if deadline is None:
+                    replayed, reason = next(replay_results)
+                else:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise multiprocessing.TimeoutError
+                    replayed, reason = replay_results.next(timeout=remaining)
+            except StopIteration:
+                break
+            except multiprocessing.TimeoutError:
+                import_deadline_reached = True
+                break
             if reason is not None:
                 rejected[reason] += 1
                 continue
@@ -542,7 +567,10 @@ def inherited_event_pool_records(
             accepted.append(record)
     finally:
         if pool_context is not None:
-            pool_context.close()
+            if import_deadline_reached:
+                pool_context.terminate()
+            else:
+                pool_context.close()
             pool_context.join()
         _INHERITED_EVENT_REPLAY_CONTEXT = None
 
@@ -554,7 +582,13 @@ def inherited_event_pool_records(
         "source_journal_sha256": journal_raw_sha256,
         "source_raw_records": len(journal_records),
         "source_unique_columns": len(source_pool),
-        "attempted_unique_columns": len(source_pool),
+        "source_replayable_sequences": source_replay_count,
+        "selected_for_replay": len(replay_items),
+        "bounded_max_columns": max_columns,
+        "import_time_limit_s": time_limit_s,
+        "import_deadline_reached": import_deadline_reached,
+        "unprocessed_selected": len(replay_items) - len(accepted) - sum(rejected.values()),
+        "attempted_unique_columns": len(replay_items),
         "accepted_columns": len(accepted),
         "rejected_columns": sum(rejected.values()),
         "rejected_reasons": dict(sorted(rejected.items())),
@@ -2148,6 +2182,8 @@ def run_cg(args) -> dict:
                 charge_kw=args.charge_kw,
                 reserve_kwh=args.min_soc_frac * args.g_kwh,
                 workers=args.inherit_event_pool_workers,
+                max_columns=args.inherit_max_columns,
+                time_limit_s=args.inherit_time_limit_s,
             )
         )
         inherited_added = 0
@@ -3125,6 +3161,8 @@ def run_cg(args) -> dict:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--inherit-max-columns", type=int, default=0)
+    parser.add_argument("--inherit-time-limit-s", type=float, default=0)
     parser.add_argument("--csv", required=True)
     parser.add_argument("--prices_csv", default="hourly_prices_flat.csv")
     parser.add_argument("--soc-step", type=float, default=15.0)
@@ -3301,6 +3339,8 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     if args.columns_per_iter < 1:
         parser.error("--columns_per_iter must be positive")
+    if args.inherit_max_columns < 0 or args.inherit_time_limit_s < 0:
+        parser.error("inheritance bounds must be nonnegative")
     if args.inherit_event_pool_workers < 1:
         parser.error("--inherit-event-pool-workers must be positive")
     if (
