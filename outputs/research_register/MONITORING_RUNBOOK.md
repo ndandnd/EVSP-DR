@@ -41,3 +41,8 @@ Snapshot comparison must include each campaign’s `records` array as well as `c
 ## Overnight extension — 12 September UTC
 
 Read outputs/overnight_extension_20260912/README.md, manifest.json and jobs.json. Track the 87 CG cases and87 default-partition MIPs, including cases/*/cg.json and cases/*/mip/*/result.json. Preserve bounded-inheritance treatment labels and actual dependencies. MIP retries have unique Slurm job/restart directories. Check dependencies blocked by execution errors; diagnose before retrying. These are baseline physics, not station-capacity runs. Decomposition uses GIRO duty membership; no GIRO route seeds. Do not count smoke integration results as research.
+
+
+## Planned paired efficiency validation
+
+See EFFICIENCY_VALIDATION_PLANNED_20260912.md. The implementation task owns launch into `/home/nc437/ladder-lite/efficiency_validation_20260912`; no duplicate submissions. The exact frozen manifest, job IDs and output schema are pending. Once supplied, wire collection to those observed paths, retain arm order and separate cache preparation from treatment time, and compare corrected-accounting control against accelerated code. Do not claim this campaign is already covered by the collector or has completed results until verified. Preserve existing controls and figures.
