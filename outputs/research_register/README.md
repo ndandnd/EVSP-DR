@@ -4,7 +4,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1767 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T09:25:42.923858+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
+Current build: **1771 artifact/stage records across 32 campaign/source groups**, from snapshot 2026-09-12T10:26:51.701726+00:00. The historical inventory covers **39 evidence families**. These counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -16,7 +16,7 @@ Current build: **1767 artifact/stage records across 32 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest results: At 05:25 EDT on 12 September, 55 of 87 CG cases have pricing certificates and 41 MIP results are available (19 warm and 22 decomposition groups). Recombined 32-duty constructions use 35, 35 and 36 buses without shared-capacity constraints. [Verified update and source tables](../overnight_extension_20260912/RESULTS_20260912T092542Z.md).
+Latest results at 06:26 EDT: **58/87 CG certificates and 52 MIP results** (22 warm, 30 components). Five recombined 32-duty constructions use 35, 35, 36, 37, 35 buses without shared-capacity constraints. Two completed warm timing pairs use 16.2% and22.4% less time excluding common preparation; fresh speed tests are unchanged/slower. Capacity pairs remain incomplete. Diagnostic 982348 crashed before its limit; original d00_g3 stays blocked. [Dated results](../overnight_extension_20260912/RESULTS_20260912T102651Z.md).
 
 ## How to read a result
 
@@ -38,7 +38,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260912T092542Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260912T102651Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

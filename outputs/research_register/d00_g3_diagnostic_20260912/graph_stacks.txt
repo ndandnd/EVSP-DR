@@ -1,0 +1,31 @@
+Timeout (0:02:00)!
+Thread 0x000074990892f740 (most recent call first):
+  File "/home/nc437/evsp_env/lib/python3.12/json/encoder.py", line 200 in encode
+  File "/home/nc437/evsp_env/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 283 in _add
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py", line 58 in build
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 194 in __init__
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/exact_pricer_expanded.py", line 3416 in main
+  File "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py", line 71 in main
+  File "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:02:00)!
+Thread 0x000074990892f740 (most recent call first):
+  File "/home/nc437/evsp_env/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File "/home/nc437/evsp_env/lib/python3.12/json/encoder.py", line 203 in encode
+  File "/home/nc437/evsp_env/lib/python3.12/json/__init__.py", line 238 in dumps
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 38 in _add
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 421 in _charge_arcs
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 333 in _build_arcs
+  File "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py", line 58 in build
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/event_pricer_network.py", line 194 in __init__
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/exact_pricer_expanded.py", line 1742 in run_cg
+  File "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/exact_pricer_expanded.py", line 3416 in main
+  File "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py", line 71 in main
+  File "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py", line 82 in <module>
+Timeout (0:02:00)!
+Thread 0x000074990892f740 (most recent call first):
+  File "/home/nc437/evsp_env/lib/python3.12/json/encoder.py", line 258 in iterencode
+  File 

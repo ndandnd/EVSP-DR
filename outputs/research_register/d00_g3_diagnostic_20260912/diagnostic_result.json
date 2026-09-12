@@ -1,0 +1,126 @@
+{
+  "CG_certificate": null,
+  "MIP_proof": null,
+  "execution": {
+    "artifacts": [
+      {
+        "bytes": 152,
+        "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/run/stdout.log",
+        "sha256": "4d6f5fb03c58ea40fc56b696dedb61dc744dbe9c824576c069c2fb20b8cc6932"
+      },
+      {
+        "bytes": 0,
+        "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/run/stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "command": [
+      "/home/nc437/evsp_env/bin/python",
+      "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/diagnostic_graph.py",
+      "--solver",
+      "/home/nc437/ladder-lite/overnight_extension_20260912/code/src/exact_pricer_expanded.py",
+      "--progress",
+      "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/graph_progress.jsonl",
+      "--stacks",
+      "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/graph_stacks.txt",
+      "--progress-seconds",
+      "60",
+      "--dump-seconds",
+      "120",
+      "--",
+      "--csv",
+      "overnight_decomposition_20260912/d00_g3.csv",
+      "--prices_csv",
+      "hourly_prices_flat.csv",
+      "--time-model",
+      "event",
+      "--event-arc-mode",
+      "lazy",
+      "--soc-step",
+      "2.5",
+      "--block-min",
+      "5",
+      "--max-iters",
+      "50000",
+      "--columns_per_iter",
+      "30",
+      "--column-selection",
+      "reduced_cost",
+      "--rc-eps",
+      "0.0001",
+      "--master-sense",
+      "cover",
+      "--master-backend",
+      "gurobi",
+      "--initial-pool",
+      "singletons",
+      "--wall-limit-s",
+      "14400",
+      "--checkpoint-every",
+      "25",
+      "--g-kwh",
+      "240",
+      "--charge-kw",
+      "240",
+      "--min-soc-frac",
+      "0",
+      "--event-network-cache",
+      "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/network.pkl",
+      "--event-network-cache-only",
+      "--phase-telemetry",
+      "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/graph_phases.jsonl"
+    ],
+    "cwd": "/home/nc437/ladder-lite/overnight_extension_20260912/code",
+    "ended_utc": "2026-09-12T09:50:40.030701+00:00",
+    "env": {
+      "MKL_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "PYTHONHASHSEED": "0"
+    },
+    "host": "en-cc-unicorn-cpu-39.coecis.cornell.edu",
+    "returncode": -11,
+    "started_utc": "2026-09-12T09:44:33.794714+00:00",
+    "wall_seconds": 366.18116605700925,
+    "watchdog_seconds": 900,
+    "watchdog_triggered": false
+  },
+  "files": [
+    {
+      "bytes": 1449,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/identity.json",
+      "sha256": "ba05c34c52056243707ed41cdaf42e624354ae1af84ee443bb72d3a9ec55485e"
+    },
+    {
+      "bytes": 2416,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/graph_progress.jsonl",
+      "sha256": "d9615f4cf69213b84361c696c9caf4e96f1571346fe340ee28bb5896f3b92468"
+    },
+    {
+      "bytes": 2747,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/graph_stacks.txt",
+      "sha256": "5d301b1258d73e9e7fedc399d6c731e263ae847aeb576ba20f3e677c7a033fcb"
+    },
+    {
+      "bytes": 943,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/graph_phases.jsonl",
+      "sha256": "0adaf678d717f4b78c825cf6bb8321c5af777678aed9c262ab2b1597b1a9580e"
+    },
+    {
+      "bytes": 2454,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/run/execution.json",
+      "sha256": "7e53b842dc032657b11023119bd0b4f301905cc5d2087fbec41a1a138c2d20d3"
+    },
+    {
+      "bytes": 152,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/run/stdout.log",
+      "sha256": "4d6f5fb03c58ea40fc56b696dedb61dc744dbe9c824576c069c2fb20b8cc6932"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/nc437/ladder-lite/d00_g3_graph_diagnostic_20260912/attempts/982348_r0/run/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "state": "diagnostic_error"
+}
