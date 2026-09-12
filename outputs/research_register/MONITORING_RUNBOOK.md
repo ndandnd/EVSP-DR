@@ -46,3 +46,10 @@ Read outputs/overnight_extension_20260912/README.md, manifest.json and jobs.json
 ## Planned paired efficiency validation
 
 See EFFICIENCY_VALIDATION_PLANNED_20260912.md. The implementation task owns launch into `/home/nc437/ladder-lite/efficiency_validation_20260912`; no duplicate submissions. The exact frozen manifest, job IDs and output schema are pending. Once supplied, wire collection to those observed paths, retain arm order and separate cache preparation from treatment time, and compare corrected-accounting control against accelerated code. Do not claim this campaign is already covered by the collector or has completed results until verified. Preserve existing controls and figures.
+
+
+## Paired efficiency campaign launched at 02:53 EDT on 12 September
+
+Nine submissions are recorded in `outputs/efficiency_validation_20260912/jobs.json`, with immutable manifest hash `27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9`. The main collector now embeds `efficiency_validation` from the campaign's `evsp-efficiency-collection-v2` collector. Compare `rows`, `attempts`, `pending_cases` and their hashes/content, not only the old campaign list. Read `allocation.json` and preparation/execution state before calling a case pending: `no_allocation_record` can race scheduler start. Keep scheduler states separate; use known job IDs for sacct. Failed warm allocations 964196/964197/964200/964201 were detected immediately, before the first paired result. The implementation task owns diagnosis and any uniquely recorded recovery; do not automatically requeue these paired jobs.
+
+Protect both borrowed Git object stores while the campaign exists: `/home/nc437/ladder-lite/overnight_extension_20260912/code/.git/objects` and `/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd/code/.git/objects`. The isolated efficiency clones use these as Git alternates. Do not delete or garbage-collect their source repositories until the implementation task has removed the dependency and verified the clones. Preserve all historical figures; compare corrected-accounting reference and optimized arms before claiming speedup.

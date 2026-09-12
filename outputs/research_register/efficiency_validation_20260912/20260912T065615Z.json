@@ -1,0 +1,3165 @@
+{
+  "schema": "evsp-efficiency-collection-v2",
+  "collected_utc": "2026-09-12T06:56:15.815057+00:00",
+  "manifest": {
+    "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/manifest.json",
+    "exists": true,
+    "bytes": 44030,
+    "mtime_ns": 1789195984659968998,
+    "content_hash_recomputed": true,
+    "sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+    "changed_during_hash": false
+  },
+  "baseline_commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+  "capacity_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "inputs": [
+    {
+      "path": "/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md",
+      "exists": true,
+      "bytes": 3778,
+      "mtime_ns": 1789186700475435383,
+      "content_hash_recomputed": true,
+      "sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+      "changed_during_hash": false,
+      "expected_sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/audit/source_evidence.json",
+      "exists": true,
+      "bytes": 42068,
+      "mtime_ns": 1789195748459054998,
+      "content_hash_recomputed": true,
+      "sha256": "0ecde623dad431ce8faa519192f4c06192cace8e7101cd285d4c6fc5ea033d6c",
+      "changed_during_hash": false,
+      "expected_sha256": "0ecde623dad431ce8faa519192f4c06192cace8e7101cd285d4c6fc5ea033d6c",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/audit/capacity_evidence.json",
+      "exists": true,
+      "bytes": 42101,
+      "mtime_ns": 1789195748538057631,
+      "content_hash_recomputed": true,
+      "sha256": "e82cae0f5c59375daa1b1e00596f6ba915dd8647421c3a97dabc76f991268cdb",
+      "changed_during_hash": false,
+      "expected_sha256": "e82cae0f5c59375daa1b1e00596f6ba915dd8647421c3a97dabc76f991268cdb",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/Ref_dict.csv",
+      "exists": true,
+      "bytes": 512,
+      "mtime_ns": 1789195976085701430,
+      "content_hash_recomputed": true,
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "changed_during_hash": false,
+      "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/par_ref_dhd.csv",
+      "exists": true,
+      "bytes": 2573,
+      "mtime_ns": 1789195976581716908,
+      "content_hash_recomputed": true,
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "changed_during_hash": false,
+      "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/Ref_dict.csv",
+      "exists": true,
+      "bytes": 512,
+      "mtime_ns": 1789195783714240427,
+      "content_hash_recomputed": true,
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "changed_during_hash": false,
+      "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/par_ref_dhd.csv",
+      "exists": true,
+      "bytes": 2573,
+      "mtime_ns": 1789195783739241272,
+      "content_hash_recomputed": true,
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "changed_during_hash": false,
+      "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+      "exists": true,
+      "bytes": 581,
+      "mtime_ns": 1789195979602811184,
+      "content_hash_recomputed": true,
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "changed_during_hash": false,
+      "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data/hourly_prices_flat.csv",
+      "exists": true,
+      "bytes": 581,
+      "mtime_ns": 1789195783728240900,
+      "content_hash_recomputed": true,
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "changed_during_hash": false,
+      "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+      "exists": true,
+      "bytes": 641,
+      "mtime_ns": 1789195979645812526,
+      "content_hash_recomputed": true,
+      "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+      "changed_during_hash": false,
+      "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/raw_status.json",
+      "exists": true,
+      "bytes": 44777,
+      "mtime_ns": 1789195979671813338,
+      "content_hash_recomputed": true,
+      "sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+      "changed_during_hash": false,
+      "expected_sha256": "851553ece66ddb9b55b1cddb6cceb55c3af660d32d3df6a491347f5b239aa641",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/columns.jsonl",
+      "exists": true,
+      "bytes": 101515081,
+      "mtime_ns": 1789195980523839926,
+      "content_hash_recomputed": true,
+      "sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "changed_during_hash": false,
+      "expected_sha256": "00839ab01f8b3f8cff51a26289942e81f8b19a6cc2169ca5d9ba6dbf4c9fa3d5",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k07_p01_20260908.csv",
+      "exists": true,
+      "bytes": 9723,
+      "mtime_ns": 1789195976783723212,
+      "content_hash_recomputed": true,
+      "sha256": "c1ddecd62cc584d309a486886062f26c4dc8adc2221fc621a47d9c30713304d6",
+      "changed_during_hash": false,
+      "expected_sha256": "c1ddecd62cc584d309a486886062f26c4dc8adc2221fc621a47d9c30713304d6",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+      "exists": true,
+      "bytes": 60088,
+      "mtime_ns": 1789195981315864642,
+      "content_hash_recomputed": true,
+      "sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "changed_during_hash": false,
+      "expected_sha256": "6265e56613b2ffc79d2326a03eec0186db0567ac21a9ca272692904bf25b6f8b",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/raw_status.json",
+      "exists": true,
+      "bytes": 53076,
+      "mtime_ns": 1789195981340865422,
+      "content_hash_recomputed": true,
+      "sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+      "changed_during_hash": false,
+      "expected_sha256": "afad352b6510b5bd83d0e6d9d7bd3964ede47298feaa7892742d67b689e5a170",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/columns.jsonl",
+      "exists": true,
+      "bytes": 105688658,
+      "mtime_ns": 1789195982436899625,
+      "content_hash_recomputed": true,
+      "sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+      "changed_during_hash": false,
+      "expected_sha256": "651f9710aa82b04e099c71f0c604baa708a3ea1f0329b6a10dda57db6f3ca7fd",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "exists": true,
+      "bytes": 11963,
+      "mtime_ns": 1789195976829724648,
+      "content_hash_recomputed": true,
+      "sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "changed_during_hash": false,
+      "expected_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+      "exists": true,
+      "bytes": 71347,
+      "mtime_ns": 1789195983266925526,
+      "content_hash_recomputed": true,
+      "sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd",
+      "changed_during_hash": false,
+      "expected_sha256": "b39c65cfa952a0bbb71107acd364ec5dc815b137b0ca8128ad4f523273c1a2cd",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/raw_status.json",
+      "exists": true,
+      "bytes": 50953,
+      "mtime_ns": 1789195983289926244,
+      "content_hash_recomputed": true,
+      "sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+      "changed_during_hash": false,
+      "expected_sha256": "9e107f40a43346f372e8bec5a351f24b3c25252a612cec465ee93d98af9068cf",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/columns.jsonl",
+      "exists": true,
+      "bytes": 81821321,
+      "mtime_ns": 1789195983861944094,
+      "content_hash_recomputed": true,
+      "sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+      "changed_during_hash": false,
+      "expected_sha256": "52eca27e1ba5313f85fe030c64ab810c3a564957002a4dea04078c23cc30b826",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline/data/scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k11_p06_20260908.csv",
+      "exists": true,
+      "bytes": 11705,
+      "mtime_ns": 1789195976859725584,
+      "content_hash_recomputed": true,
+      "sha256": "9199478f9fc6d2771233763af0f16d780f629bb72268203b0dabc466be94661f",
+      "changed_during_hash": false,
+      "expected_sha256": "9199478f9fc6d2771233763af0f16d780f629bb72268203b0dabc466be94661f",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+      "exists": true,
+      "bytes": 67804,
+      "mtime_ns": 1789195984509964316,
+      "content_hash_recomputed": true,
+      "sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc",
+      "changed_during_hash": false,
+      "expected_sha256": "dec1dfa724439051333d0e1dd1cde0f2fb3fbb188076575eaf0d4be34bec7bdc",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+      "exists": true,
+      "bytes": 5084,
+      "mtime_ns": 1789195984516964535,
+      "content_hash_recomputed": true,
+      "sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "changed_during_hash": false,
+      "expected_sha256": "0ee1ff2b04d5ab75e40dfc841dbf91f4383a6b612e2a7db017e4b5d80f099f89",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+      "exists": true,
+      "bytes": 6852,
+      "mtime_ns": 1789195984542965346,
+      "content_hash_recomputed": true,
+      "sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "changed_during_hash": false,
+      "expected_sha256": "0c8cec257e17dec782f82fc3d078bf489ff09eedaa27ee03f6e80c36dbe91696",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "exists": true,
+      "bytes": 10598,
+      "mtime_ns": 1789195984547965502,
+      "content_hash_recomputed": true,
+      "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "changed_during_hash": false,
+      "expected_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+      "exists": true,
+      "bytes": 13622,
+      "mtime_ns": 1789195984560965908,
+      "content_hash_recomputed": true,
+      "sha256": "837037c026cf3971309c96c719f594565fdc5521dfe2d43241e2a344b31f1a92",
+      "changed_during_hash": false,
+      "expected_sha256": "837037c026cf3971309c96c719f594565fdc5521dfe2d43241e2a344b31f1a92",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+      "exists": true,
+      "bytes": 14680,
+      "mtime_ns": 1789195984566966095,
+      "content_hash_recomputed": true,
+      "sha256": "8b8ec38fc2303f2aad71358fae7583c1c4fe009efeb1a147eb9eeebd93abacc6",
+      "changed_during_hash": false,
+      "expected_sha256": "8b8ec38fc2303f2aad71358fae7583c1c4fe009efeb1a147eb9eeebd93abacc6",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+      "exists": true,
+      "bytes": 10598,
+      "mtime_ns": 1789195984547965502,
+      "content_hash_recomputed": true,
+      "sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "changed_during_hash": false,
+      "expected_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+      "exists": true,
+      "bytes": 776,
+      "mtime_ns": 1789195984605967312,
+      "content_hash_recomputed": true,
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "changed_during_hash": false,
+      "expected_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+      "exists": true,
+      "bytes": 1369,
+      "mtime_ns": 1789195984646968592,
+      "content_hash_recomputed": true,
+      "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "changed_during_hash": false,
+      "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+      "matches_expected": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+      "exists": true,
+      "bytes": 776,
+      "mtime_ns": 1789195984605967312,
+      "content_hash_recomputed": true,
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "changed_during_hash": false,
+      "expected_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "matches_expected": true
+    }
+  ],
+  "pending_cases": [],
+  "attempts": [
+    {
+      "case": "cap_k1",
+      "attempt": "964202_r0",
+      "pair_status": "not_written",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/allocation.json",
+        "exists": true,
+        "bytes": 3037,
+        "mtime_ns": 1789196080214955232,
+        "content_hash_recomputed": true,
+        "sha256": "083a61d6ad12aa41c19e3d9def88312309bd9731aa1467daa0974cbed971e028",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:40.206997+00:00",
+      "host": "en-cc-unicorn-cpu-34.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 1,
+        "mem": "24G",
+        "slurm_time": "06:30:00",
+        "arm_seconds": 10800,
+        "preparation_seconds": 0
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "1",
+        "SLURM_JOB_END_TIME": "1789219475",
+        "SLURM_JOB_ID": "964202",
+        "SLURM_JOB_NAME": "eff_cap_k1",
+        "SLURM_JOB_NODELIST": "snavely-cpu-14",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "24576"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity",
+      "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+      "kind": "capacity",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/pair_status.json",
+        "exists": false
+      },
+      "preparation": null,
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/prepare/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/prepare/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/prepare/stderr.log",
+          "exists": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": null
+      }
+    },
+    {
+      "case": "cap_k1_combined_peak12",
+      "attempt": "964204_r0",
+      "pair_status": "not_written",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/allocation.json",
+        "exists": true,
+        "bytes": 3070,
+        "mtime_ns": 1789196077280863462,
+        "content_hash_recomputed": true,
+        "sha256": "9706e78679250330905dde6ef9a93e5a4b98993319f93b0100727ae261f04252",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.244073+00:00",
+      "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 1,
+        "mem": "24G",
+        "slurm_time": "06:30:00",
+        "arm_seconds": 10800,
+        "preparation_seconds": 0
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "1",
+        "SLURM_JOB_END_TIME": "1789219475",
+        "SLURM_JOB_ID": "964204",
+        "SLURM_JOB_NAME": "eff_cap_k1_combined_peak12",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-73",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "24576"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity",
+      "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+      "kind": "capacity",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/pair_status.json",
+        "exists": false
+      },
+      "preparation": null,
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/prepare/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/prepare/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/prepare/stderr.log",
+          "exists": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+        "parent_descriptor": null
+      }
+    },
+    {
+      "case": "cap_k2",
+      "attempt": "964203_r0",
+      "pair_status": "not_written",
+      "order": [
+        "optimized",
+        "reference"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/allocation.json",
+        "exists": true,
+        "bytes": 3034,
+        "mtime_ns": 1789196077280863462,
+        "content_hash_recomputed": true,
+        "sha256": "6fd163ac5803602c02d22d28dbd1e30067c75044e4425e1695807214dd08e091",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.244624+00:00",
+      "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 1,
+        "mem": "24G",
+        "slurm_time": "06:30:00",
+        "arm_seconds": 10800,
+        "preparation_seconds": 0
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "1",
+        "SLURM_JOB_END_TIME": "1789219475",
+        "SLURM_JOB_ID": "964203",
+        "SLURM_JOB_NAME": "eff_cap_k2",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-73",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "24576"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity",
+      "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+      "kind": "capacity",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/pair_status.json",
+        "exists": false
+      },
+      "preparation": null,
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/prepare/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/prepare/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/prepare/stderr.log",
+          "exists": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": null
+      }
+    },
+    {
+      "case": "d00_g0",
+      "attempt": "964194_r0",
+      "pair_status": "not_written",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/allocation.json",
+        "exists": true,
+        "bytes": 3452,
+        "mtime_ns": 1789196078364897368,
+        "content_hash_recomputed": true,
+        "sha256": "56d9cce3e4f08f5d3ad942256057c69e51fa6028396d8d6243a13de8db132bff",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:38.359793+00:00",
+      "host": "en-cc-unicorn-cpu-01.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 2,
+        "mem": "32G",
+        "slurm_time": "04:30:00",
+        "arm_seconds": 7200,
+        "preparation_seconds": 0
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "2",
+        "SLURM_JOB_END_TIME": "1789212275",
+        "SLURM_JOB_ID": "964194",
+        "SLURM_JOB_NAME": "eff_d00_g0",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-01",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "32768"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "kind": "fresh",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/pair_status.json",
+        "exists": false
+      },
+      "preparation": null,
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/prepare/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/prepare/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/prepare/stderr.log",
+          "exists": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": null
+      }
+    },
+    {
+      "case": "d00_g1",
+      "attempt": "964195_r0",
+      "pair_status": "not_written",
+      "order": [
+        "optimized",
+        "reference"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/allocation.json",
+        "exists": true,
+        "bytes": 3451,
+        "mtime_ns": 1789196077280863462,
+        "content_hash_recomputed": true,
+        "sha256": "15a747cfd81604e83a304e935c359be4928b4e6f63f2b1cf7f9ce765ea7e81c3",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.244893+00:00",
+      "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 2,
+        "mem": "32G",
+        "slurm_time": "04:30:00",
+        "arm_seconds": 7200,
+        "preparation_seconds": 0
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "2",
+        "SLURM_JOB_END_TIME": "1789212275",
+        "SLURM_JOB_ID": "964195",
+        "SLURM_JOB_NAME": "eff_d00_g1",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-73",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "32768"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "kind": "fresh",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/pair_status.json",
+        "exists": false
+      },
+      "preparation": null,
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/prepare/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/prepare/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/prepare/stderr.log",
+          "exists": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": null
+      }
+    },
+    {
+      "case": "w1_k08",
+      "attempt": "964196_r0",
+      "pair_status": "preparation_failed",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/allocation.json",
+        "exists": true,
+        "bytes": 4848,
+        "mtime_ns": 1789196077433868248,
+        "content_hash_recomputed": true,
+        "sha256": "623d0ccf706017eda1b039605cdfe2d72804e1426e896179a736b19b6e49f278",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.432748+00:00",
+      "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "slurm_time": "08:00:00",
+        "arm_seconds": 7200,
+        "preparation_seconds": 10800
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "8",
+        "SLURM_JOB_END_TIME": "1789224875",
+        "SLURM_JOB_ID": "964196",
+        "SLURM_JOB_NAME": "eff_w1_k08",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-73",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "98304"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "kind": "warm",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/pair_status.json",
+        "exists": true,
+        "bytes": 2706,
+        "mtime_ns": 1789196078717908409,
+        "content_hash_recomputed": true,
+        "sha256": "0467ffcf290de90beae57b72944dcb17915e47933cdc3e8ab8097524378b9c32",
+        "changed_during_hash": false
+      },
+      "preparation": {
+        "started_utc": "2026-09-12T06:54:37.440817+00:00",
+        "ended_utc": "2026-09-12T06:54:38.712733+00:00",
+        "wall_seconds": 1.2685858667828143,
+        "watchdog_seconds": 10800,
+        "watchdog_triggered": false,
+        "returncode": 2,
+        "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+          "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--g-kwh": "240.0",
+          "--charge-kw": "240.0",
+          "--min-soc-frac": "0.0",
+          "--max-iters": "50000",
+          "--columns_per_iter": "30",
+          "--column-selection": "reduced_cost",
+          "--column-diversity-weight": "0.5",
+          "--column-candidate-multiplier": "4",
+          "--rc-eps": "0.0001",
+          "--master-sense": "cover",
+          "--master-backend": "gurobi",
+          "--initial-pool": "singletons",
+          "--time-model": "event",
+          "--event-arc-mode": "lazy",
+          "--checkpoint-every": "25",
+          "--wall-limit-s": "10800",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/cg.json",
+          "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/gurobi.log",
+          "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/phases.jsonl",
+          "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/network.pkl",
+          "--event-network-cache-mode": "build-or-load",
+          "--event-network-cache-only": true
+        }
+      },
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/execution.json",
+          "exists": true,
+          "bytes": 2485,
+          "mtime_ns": 1789196078714908315,
+          "content_hash_recomputed": true,
+          "sha256": "456f404574ecda136f6ff10cd6d599b0c72c86431495de93c3d5340eac11f95c",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/stdout.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077439868436,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/prepare/stderr.log",
+          "exists": true,
+          "bytes": 2786,
+          "mtime_ns": 1789196078660906626,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json"
+      }
+    },
+    {
+      "case": "w1_k08_repeat",
+      "attempt": "964201_r0",
+      "pair_status": "preparation_failed",
+      "order": [
+        "optimized",
+        "reference"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/allocation.json",
+        "exists": true,
+        "bytes": 4863,
+        "mtime_ns": 1789196077351865683,
+        "content_hash_recomputed": true,
+        "sha256": "dfd359e113cd5ed836b0fb68299ecc5cbfed238efb7db226dce6bbacdade21f0",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.346818+00:00",
+      "host": "en-cc-unicorn-cpu-76.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "slurm_time": "08:00:00",
+        "arm_seconds": 7200,
+        "preparation_seconds": 10800
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "8",
+        "SLURM_JOB_END_TIME": "1789224875",
+        "SLURM_JOB_ID": "964201",
+        "SLURM_JOB_NAME": "eff_w1_k08_repeat",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-76",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "98304"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "kind": "warm",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/pair_status.json",
+        "exists": true,
+        "bytes": 2747,
+        "mtime_ns": 1789196078823911725,
+        "content_hash_recomputed": true,
+        "sha256": "09f765081f083292fc53edba9d9e6ba35a081d2a75dad5647453be2b5ac474b0",
+        "changed_during_hash": false
+      },
+      "preparation": {
+        "started_utc": "2026-09-12T06:54:37.396247+00:00",
+        "ended_utc": "2026-09-12T06:54:38.818547+00:00",
+        "wall_seconds": 1.419346682028845,
+        "watchdog_seconds": 10800,
+        "watchdog_triggered": false,
+        "returncode": 2,
+        "host": "en-cc-unicorn-cpu-76.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+          "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--g-kwh": "240.0",
+          "--charge-kw": "240.0",
+          "--min-soc-frac": "0.0",
+          "--max-iters": "50000",
+          "--columns_per_iter": "30",
+          "--column-selection": "reduced_cost",
+          "--column-diversity-weight": "0.5",
+          "--column-candidate-multiplier": "4",
+          "--rc-eps": "0.0001",
+          "--master-sense": "cover",
+          "--master-backend": "gurobi",
+          "--initial-pool": "singletons",
+          "--time-model": "event",
+          "--event-arc-mode": "lazy",
+          "--checkpoint-every": "25",
+          "--wall-limit-s": "10800",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/cg.json",
+          "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/gurobi.log",
+          "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/phases.jsonl",
+          "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/network.pkl",
+          "--event-network-cache-mode": "build-or-load",
+          "--event-network-cache-only": true
+        }
+      },
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/execution.json",
+          "exists": true,
+          "bytes": 2526,
+          "mtime_ns": 1789196078820911631,
+          "content_hash_recomputed": true,
+          "sha256": "cac357b83fe54a1d65a572536c5c82ecabd39a6d49b38ecf6e5f38ce6b6213fa",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/stdout.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077396867091,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/prepare/stderr.log",
+          "exists": true,
+          "bytes": 2786,
+          "mtime_ns": 1789196078765909910,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json"
+      }
+    },
+    {
+      "case": "w4_k11",
+      "attempt": "964197_r0",
+      "pair_status": "preparation_failed",
+      "order": [
+        "optimized",
+        "reference"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/allocation.json",
+        "exists": true,
+        "bytes": 4843,
+        "mtime_ns": 1789196077520870969,
+        "content_hash_recomputed": true,
+        "sha256": "615d7085d9fa5ab0e6872421d5e1f7dbe0d93f1df7ec9b9dd15db86086bd2e49",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.517319+00:00",
+      "host": "en-cc-unicorn-cpu-30.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "slurm_time": "08:00:00",
+        "arm_seconds": 7200,
+        "preparation_seconds": 10800
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "8",
+        "SLURM_JOB_END_TIME": "1789224875",
+        "SLURM_JOB_ID": "964197",
+        "SLURM_JOB_NAME": "eff_w4_k11",
+        "SLURM_JOB_NODELIST": "sonic-cpu-02",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "98304"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "kind": "warm",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/pair_status.json",
+        "exists": true,
+        "bytes": 2706,
+        "mtime_ns": 1789196078801911036,
+        "content_hash_recomputed": true,
+        "sha256": "98e4232ccb7f3623c2a686b5f2e5b7728e44973631eb6efc7671655321ec0832",
+        "changed_during_hash": false
+      },
+      "preparation": {
+        "started_utc": "2026-09-12T06:54:37.526592+00:00",
+        "ended_utc": "2026-09-12T06:54:38.798933+00:00",
+        "wall_seconds": 1.2686062660068274,
+        "watchdog_seconds": 10800,
+        "watchdog_triggered": false,
+        "returncode": 2,
+        "host": "en-cc-unicorn-cpu-30.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+          "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--g-kwh": "240.0",
+          "--charge-kw": "240.0",
+          "--min-soc-frac": "0.0",
+          "--max-iters": "50000",
+          "--columns_per_iter": "30",
+          "--column-selection": "reduced_cost",
+          "--column-diversity-weight": "0.5",
+          "--column-candidate-multiplier": "4",
+          "--rc-eps": "0.0001",
+          "--master-sense": "cover",
+          "--master-backend": "gurobi",
+          "--initial-pool": "singletons",
+          "--time-model": "event",
+          "--event-arc-mode": "lazy",
+          "--checkpoint-every": "25",
+          "--wall-limit-s": "10800",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/cg.json",
+          "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/gurobi.log",
+          "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/phases.jsonl",
+          "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/network.pkl",
+          "--event-network-cache-mode": "build-or-load",
+          "--event-network-cache-only": true
+        }
+      },
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/execution.json",
+          "exists": true,
+          "bytes": 2485,
+          "mtime_ns": 1789196078799910974,
+          "content_hash_recomputed": true,
+          "sha256": "b7064a7b061d8bebeaf057fafd1e3c2afae984d5b92f3a1ebe4ce9118b45a2b7",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/stdout.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077526871157,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/prepare/stderr.log",
+          "exists": true,
+          "bytes": 2786,
+          "mtime_ns": 1789196078771910098,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json"
+      }
+    },
+    {
+      "case": "w6_k12",
+      "attempt": "964200_r0",
+      "pair_status": "preparation_failed",
+      "order": [
+        "reference",
+        "optimized"
+      ],
+      "allocation": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/allocation.json",
+        "exists": true,
+        "bytes": 4847,
+        "mtime_ns": 1789196077473869499,
+        "content_hash_recomputed": true,
+        "sha256": "04cbc8d0e8f4430ca0cd7792e7632104e68f95b66373db25e5cec0051b22a4c6",
+        "changed_during_hash": false
+      },
+      "started_utc": "2026-09-12T06:54:37.470244+00:00",
+      "host": "en-cc-unicorn-cpu-87.coecis.cornell.edu",
+      "manifest_sha256": "27edc998921806c35889cb9e51ca2989e9544e5aa339c62395b848e8d622bbc9",
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "slurm_time": "08:00:00",
+        "arm_seconds": 7200,
+        "preparation_seconds": 10800
+      },
+      "slurm": {
+        "SLURM_CPUS_PER_TASK": "8",
+        "SLURM_JOB_END_TIME": "1789224875",
+        "SLURM_JOB_ID": "964200",
+        "SLURM_JOB_NAME": "eff_w6_k12",
+        "SLURM_JOB_NODELIST": "unicorn-cpu-87",
+        "SLURM_JOB_PARTITION": "default_partition",
+        "SLURM_MEM_PER_NODE": "98304"
+      },
+      "code": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+      "commit": "89c5ba3e8a66fd77ad8397e5ce63eae647a0a49a",
+      "kind": "warm",
+      "pair_status_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/pair_status.json",
+        "exists": true,
+        "bytes": 2706,
+        "mtime_ns": 1789196078852912632,
+        "content_hash_recomputed": true,
+        "sha256": "654430051ced0278e815773a615b4bfd470a7987df65dd97d5274c43f528e449",
+        "changed_during_hash": false
+      },
+      "preparation": {
+        "started_utc": "2026-09-12T06:54:37.479400+00:00",
+        "ended_utc": "2026-09-12T06:54:38.851005+00:00",
+        "wall_seconds": 1.3679255219176412,
+        "watchdog_seconds": 10800,
+        "watchdog_triggered": false,
+        "returncode": 2,
+        "host": "en-cc-unicorn-cpu-87.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+          "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--g-kwh": "240.0",
+          "--charge-kw": "240.0",
+          "--min-soc-frac": "0.0",
+          "--max-iters": "50000",
+          "--columns_per_iter": "30",
+          "--column-selection": "reduced_cost",
+          "--column-diversity-weight": "0.5",
+          "--column-candidate-multiplier": "4",
+          "--rc-eps": "0.0001",
+          "--master-sense": "cover",
+          "--master-backend": "gurobi",
+          "--initial-pool": "singletons",
+          "--time-model": "event",
+          "--event-arc-mode": "lazy",
+          "--checkpoint-every": "25",
+          "--wall-limit-s": "10800",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/cg.json",
+          "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/gurobi.log",
+          "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/phases.jsonl",
+          "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/network.pkl",
+          "--event-network-cache-mode": "build-or-load",
+          "--event-network-cache-only": true
+        }
+      },
+      "preparation_artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/execution.json",
+          "exists": true,
+          "bytes": 2485,
+          "mtime_ns": 1789196078850912569,
+          "content_hash_recomputed": true,
+          "sha256": "60c6e924c3b283eb0e7b83be407a5c901590ea9745c0411fe1590399e2485409",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/cg.json",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/stdout.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077478869656,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/prepare/stderr.log",
+          "exists": true,
+          "bytes": 2786,
+          "mtime_ns": 1789196078798910943,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "cache_identity": {},
+      "cache_identity_artifact": {
+        "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/cache_identity.json",
+        "exists": false
+      },
+      "current_cache": [],
+      "input_paths": {
+        "instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+        "prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "parent_descriptor": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json"
+      }
+    }
+  ],
+  "rows": [
+    {
+      "case": "cap_k1",
+      "attempt": "964202_r0",
+      "mode": "reference",
+      "pair_status": "not_written",
+      "process_state": "started_no_completion_record",
+      "execution_source": "execution.json",
+      "execution": {
+        "started_utc": "2026-09-12T06:54:40.221441+00:00",
+        "watchdog_seconds": 10860,
+        "host": "en-cc-unicorn-cpu-34.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--mode": "cg",
+          "--arm": "capacity",
+          "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+          "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/cg.json",
+          "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/pool.jsonl",
+          "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "--require-clean": true,
+          "--battery-kwh": "240",
+          "--non-parx-kw": "240",
+          "--reserve-kwh": "0",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--rc-eps": "1e-5",
+          "--max-iters": "10000",
+          "--threads": "1",
+          "--cg-wall-s": "10800",
+          "--capacity-selector": "reference"
+        }
+      },
+      "flags": {
+        "--mode": "cg",
+        "--arm": "capacity",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "reference"
+      },
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/execution.json",
+          "exists": true,
+          "bytes": 1479,
+          "mtime_ns": 1789196080220955420,
+          "content_hash_recomputed": true,
+          "sha256": "aa0ddffd4e090a07203c6da3e443e54abb5a79e28473c318dcc98c52c0fbfc8f",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/pool.jsonl",
+          "exists": true,
+          "bytes": 41070,
+          "mtime_ns": 1789196174364905632,
+          "content_hash_recomputed": true,
+          "sha256": "3185131c041b3ee4fa089927861bcb89d928897100086d8844140ae354f07298",
+          "changed_during_hash": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/stdout.log",
+          "exists": true,
+          "bytes": 2842,
+          "mtime_ns": 1789196167842702876,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/stderr.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196080223955514,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": 1e-05,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--mode": "cg",
+        "--arm": "capacity",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/reference/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "reference"
+      }
+    },
+    {
+      "case": "cap_k1",
+      "attempt": "964202_r0",
+      "mode": "optimized",
+      "pair_status": "not_written",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/pool.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": 1e-05,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--mode": "cg",
+        "--arm": "capacity",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1/964202_r0/optimized/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "prefix-memo"
+      }
+    },
+    {
+      "case": "cap_k1_combined_peak12",
+      "attempt": "964204_r0",
+      "mode": "reference",
+      "pair_status": "not_written",
+      "process_state": "started_no_completion_record",
+      "execution_source": "execution.json",
+      "execution": {
+        "started_utc": "2026-09-12T06:54:37.287658+00:00",
+        "watchdog_seconds": 10860,
+        "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--mode": "cg",
+          "--arm": "combined",
+          "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+          "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+          "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/cg.json",
+          "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/pool.jsonl",
+          "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "--require-clean": true,
+          "--battery-kwh": "240",
+          "--non-parx-kw": "240",
+          "--reserve-kwh": "0",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--rc-eps": "1e-5",
+          "--max-iters": "10000",
+          "--threads": "1",
+          "--cg-wall-s": "10800",
+          "--capacity-selector": "reference"
+        }
+      },
+      "flags": {
+        "--mode": "cg",
+        "--arm": "combined",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "reference"
+      },
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/execution.json",
+          "exists": true,
+          "bytes": 1513,
+          "mtime_ns": 1789196077303864182,
+          "content_hash_recomputed": true,
+          "sha256": "99a84f511b681530352fc314aa1862e7d3c5f166573a16714db2e9ef8b8580fb",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/pool.jsonl",
+          "exists": true,
+          "bytes": 46384,
+          "mtime_ns": 1789196170592788369,
+          "content_hash_recomputed": true,
+          "sha256": "ca1bde3f1095bc1365a9453c37b833ad9078a5424ced5239b217539412ea02e4",
+          "changed_during_hash": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/stdout.log",
+          "exists": true,
+          "bytes": 4474,
+          "mtime_ns": 1789196165039615738,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/stderr.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077305864244,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": 1e-05,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--mode": "cg",
+        "--arm": "combined",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/reference/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "reference"
+      }
+    },
+    {
+      "case": "cap_k1_combined_peak12",
+      "attempt": "964204_r0",
+      "mode": "optimized",
+      "pair_status": "not_written",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/pool.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": 1e-05,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--mode": "cg",
+        "--arm": "combined",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/k1_duty13406__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/peak12.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k1_combined_peak12/964204_r0/optimized/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "prefix-memo"
+      }
+    },
+    {
+      "case": "cap_k2",
+      "attempt": "964203_r0",
+      "mode": "reference",
+      "pair_status": "not_written",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/pool.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": 1e-05,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--mode": "cg",
+        "--arm": "capacity",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/reference/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "reference"
+      }
+    },
+    {
+      "case": "cap_k2",
+      "attempt": "964203_r0",
+      "mode": "optimized",
+      "pair_status": "not_written",
+      "process_state": "started_no_completion_record",
+      "execution_source": "execution.json",
+      "execution": {
+        "started_utc": "2026-09-12T06:54:37.287808+00:00",
+        "watchdog_seconds": 10860,
+        "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--mode": "cg",
+          "--arm": "capacity",
+          "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+          "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/cg.json",
+          "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/pool.jsonl",
+          "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "--require-clean": true,
+          "--battery-kwh": "240",
+          "--non-parx-kw": "240",
+          "--reserve-kwh": "0",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--rc-eps": "1e-5",
+          "--max-iters": "10000",
+          "--threads": "1",
+          "--cg-wall-s": "10800",
+          "--capacity-selector": "prefix-memo"
+        }
+      },
+      "flags": {
+        "--mode": "cg",
+        "--arm": "capacity",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "prefix-memo"
+      },
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/execution.json",
+          "exists": true,
+          "bytes": 1480,
+          "mtime_ns": 1789196077303864182,
+          "content_hash_recomputed": true,
+          "sha256": "85a0e0531d4fae0f423c8b85de20b619327e7b3a8ce50dbef7ddf462d836e23e",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/pool.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/stdout.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077304864213,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/stderr.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077305864244,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": 1e-05,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--mode": "cg",
+        "--arm": "capacity",
+        "--instance": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/e1_short_k2__capacity.csv",
+        "--prices": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--reference-data-dir": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-capacity/data",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/cg.json",
+        "--pool-out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/cap_k2/964203_r0/optimized/pool.jsonl",
+        "--expected-commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+        "--require-clean": true,
+        "--battery-kwh": "240",
+        "--non-parx-kw": "240",
+        "--reserve-kwh": "0",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--rc-eps": "1e-5",
+        "--max-iters": "10000",
+        "--threads": "1",
+        "--cg-wall-s": "10800",
+        "--capacity-selector": "prefix-memo"
+      }
+    },
+    {
+      "case": "d00_g0",
+      "attempt": "964194_r0",
+      "mode": "reference",
+      "pair_status": "not_written",
+      "process_state": "started_no_completion_record",
+      "execution_source": "execution.json",
+      "execution": {
+        "started_utc": "2026-09-12T06:54:38.407060+00:00",
+        "watchdog_seconds": 7260,
+        "host": "en-cc-unicorn-cpu-01.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+          "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--g-kwh": "240.0",
+          "--charge-kw": "240.0",
+          "--min-soc-frac": "0.0",
+          "--max-iters": "50000",
+          "--columns_per_iter": "30",
+          "--column-selection": "reduced_cost",
+          "--column-diversity-weight": "0.5",
+          "--column-candidate-multiplier": "4",
+          "--rc-eps": "0.0001",
+          "--master-sense": "cover",
+          "--master-backend": "gurobi",
+          "--initial-pool": "singletons",
+          "--time-model": "event",
+          "--event-arc-mode": "lazy",
+          "--checkpoint-every": "25",
+          "--wall-limit-s": "7200",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json",
+          "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/gurobi.log",
+          "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/phases.jsonl"
+        }
+      },
+      "flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/phases.jsonl"
+      },
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/execution.json",
+          "exists": true,
+          "bytes": 1655,
+          "mtime_ns": 1789196078405898650,
+          "content_hash_recomputed": true,
+          "sha256": "cb9d52497ff447233bb05147616f85e4b6b39a64d231f38a86e21194f7431354",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/phases.jsonl",
+          "exists": true,
+          "bytes": 1114,
+          "mtime_ns": 1789196080590966993,
+          "content_hash_recomputed": true,
+          "sha256": "c39fd1f94951569a7d0acbe1eaa0381ae6f6101ded5b20e1d63d32a0770a7df8",
+          "changed_during_hash": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/stdout.log",
+          "exists": true,
+          "bytes": 152,
+          "mtime_ns": 1789196080372960174,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/stderr.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196078407898713,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/reference/phases.jsonl"
+      }
+    },
+    {
+      "case": "d00_g0",
+      "attempt": "964194_r0",
+      "mode": "optimized",
+      "pair_status": "not_written",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g0.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g0/964194_r0/optimized/phases.jsonl",
+        "--skip-gurobi-incidence": true
+      }
+    },
+    {
+      "case": "d00_g1",
+      "attempt": "964195_r0",
+      "mode": "reference",
+      "pair_status": "not_written",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/reference/phases.jsonl"
+      }
+    },
+    {
+      "case": "d00_g1",
+      "attempt": "964195_r0",
+      "mode": "optimized",
+      "pair_status": "not_written",
+      "process_state": "started_no_completion_record",
+      "execution_source": "execution.json",
+      "execution": {
+        "started_utc": "2026-09-12T06:54:37.288104+00:00",
+        "watchdog_seconds": 7260,
+        "host": "en-cc-unicorn-cpu-73.coecis.cornell.edu",
+        "cwd": "/home/nc437/ladder-lite/efficiency_validation_20260912/code-baseline",
+        "env": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PYTHONHASHSEED": "0"
+        },
+        "flags": {
+          "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+          "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+          "--soc-step": "2.5",
+          "--block-min": "5",
+          "--g-kwh": "240.0",
+          "--charge-kw": "240.0",
+          "--min-soc-frac": "0.0",
+          "--max-iters": "50000",
+          "--columns_per_iter": "30",
+          "--column-selection": "reduced_cost",
+          "--column-diversity-weight": "0.5",
+          "--column-candidate-multiplier": "4",
+          "--rc-eps": "0.0001",
+          "--master-sense": "cover",
+          "--master-backend": "gurobi",
+          "--initial-pool": "singletons",
+          "--time-model": "event",
+          "--event-arc-mode": "lazy",
+          "--checkpoint-every": "25",
+          "--wall-limit-s": "7200",
+          "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json",
+          "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/gurobi.log",
+          "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/phases.jsonl",
+          "--skip-gurobi-incidence": true
+        }
+      },
+      "flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/phases.jsonl",
+        "--skip-gurobi-incidence": true
+      },
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/execution.json",
+          "exists": true,
+          "bytes": 1686,
+          "mtime_ns": 1789196077303864182,
+          "content_hash_recomputed": true,
+          "sha256": "2617fc332aa1f8cdf64a8072d65820fc0a9e7c130ffc41b0487e1521af7d6bf1",
+          "changed_during_hash": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/phases.jsonl",
+          "exists": true,
+          "bytes": 1113,
+          "mtime_ns": 1789196078910914446,
+          "content_hash_recomputed": true,
+          "sha256": "5d2f8a537571b32e4915691c0980079b4e05ca4904983a65a8e0d1aa46bd03c1",
+          "changed_during_hash": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/stdout.log",
+          "exists": true,
+          "bytes": 152,
+          "mtime_ns": 1789196078735908972,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/stderr.log",
+          "exists": true,
+          "bytes": 0,
+          "mtime_ns": 1789196077305864244,
+          "content_hash_recomputed": false,
+          "changed_during_hash": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/d00_g1.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/d00_g1/964195_r0/optimized/phases.jsonl",
+        "--skip-gurobi-incidence": true
+      }
+    },
+    {
+      "case": "w1_k08",
+      "attempt": "964196_r0",
+      "mode": "reference",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/reference/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8"
+      }
+    },
+    {
+      "case": "w1_k08",
+      "attempt": "964196_r0",
+      "mode": "optimized",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/optimized/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08/964196_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8",
+        "--skip-gurobi-incidence": true,
+        "--fixed-sequence-index": true
+      }
+    },
+    {
+      "case": "w1_k08_repeat",
+      "attempt": "964201_r0",
+      "mode": "reference",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/reference/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8"
+      }
+    },
+    {
+      "case": "w1_k08_repeat",
+      "attempt": "964201_r0",
+      "mode": "optimized",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k08.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/optimized/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w1_k08_repeat/964201_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w1_k07/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8",
+        "--skip-gurobi-incidence": true,
+        "--fixed-sequence-index": true
+      }
+    },
+    {
+      "case": "w4_k11",
+      "attempt": "964197_r0",
+      "mode": "reference",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/reference/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8"
+      }
+    },
+    {
+      "case": "w4_k11",
+      "attempt": "964197_r0",
+      "mode": "optimized",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k11.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/optimized/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w4_k11/964197_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w4_k10/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8",
+        "--skip-gurobi-incidence": true,
+        "--fixed-sequence-index": true
+      }
+    },
+    {
+      "case": "w6_k12",
+      "attempt": "964200_r0",
+      "mode": "reference",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/reference/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8"
+      }
+    },
+    {
+      "case": "w6_k12",
+      "attempt": "964200_r0",
+      "mode": "optimized",
+      "pair_status": "preparation_failed",
+      "process_state": "not_started",
+      "execution_source": null,
+      "execution": null,
+      "flags": {},
+      "artifacts": {
+        "execution": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/execution.json",
+          "exists": false
+        },
+        "status": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/cg.json",
+          "exists": false
+        },
+        "pool": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/cg.json.columns.jsonl",
+          "exists": false
+        },
+        "phases": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/phases.jsonl",
+          "exists": false
+        },
+        "stdout": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/stdout.log",
+          "exists": false
+        },
+        "stderr": {
+          "path": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/stderr.log",
+          "exists": false
+        }
+      },
+      "certified_rc_optimal": null,
+      "stop_reason": null,
+      "solver_status": null,
+      "status_schema": null,
+      "pricing_certificate_scope": null,
+      "continuous_cost_pricing_certified": null,
+      "terminal_exact_min_reduced_cost": null,
+      "rc_tolerance": null,
+      "final": {},
+      "final_lp": {},
+      "inherited_event_pool_audit": null,
+      "physics": null,
+      "capacity_selector": null,
+      "runtime_s": null,
+      "network_build_s": null,
+      "provenance": {},
+      "finite_pool_mip_proof": null,
+      "physical_validation": null,
+      "giro_target_attainment": null,
+      "iterations": null,
+      "planned_flags": {
+        "--csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k12.csv",
+        "--prices_csv": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/flat.csv",
+        "--soc-step": "2.5",
+        "--block-min": "5",
+        "--g-kwh": "240.0",
+        "--charge-kw": "240.0",
+        "--min-soc-frac": "0.0",
+        "--max-iters": "50000",
+        "--columns_per_iter": "30",
+        "--column-selection": "reduced_cost",
+        "--column-diversity-weight": "0.5",
+        "--column-candidate-multiplier": "4",
+        "--rc-eps": "0.0001",
+        "--master-sense": "cover",
+        "--master-backend": "gurobi",
+        "--initial-pool": "singletons",
+        "--time-model": "event",
+        "--event-arc-mode": "lazy",
+        "--checkpoint-every": "25",
+        "--wall-limit-s": "7200",
+        "--out": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/cg.json",
+        "--gurobi-log": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/gurobi.log",
+        "--phase-telemetry": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/optimized/phases.jsonl",
+        "--event-network-cache": "/home/nc437/ladder-lite/efficiency_validation_20260912/cases/w6_k12/964200_r0/network.pkl",
+        "--event-network-cache-mode": "require",
+        "--inherit-event-pool-from": "/home/nc437/ladder-lite/efficiency_validation_20260912/inputs/w6_k11/descriptor.json",
+        "--inherit-max-columns": "512",
+        "--inherit-time-limit-s": "900",
+        "--inherit-event-pool-workers": "8",
+        "--skip-gurobi-incidence": true,
+        "--fixed-sequence-index": true
+      }
+    }
+  ],
+  "interpretation": "No scheduler query. Started without completion is not proof of current liveness. Missing certificate fields are unknown. Artifact hashes describe this read; changing files are flagged."
+}

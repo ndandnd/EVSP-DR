@@ -1,6 +1,8 @@
 # Planned paired efficiency validation on 12 September
 
-Status: registered before launch. No submission IDs or completed campaign results have been supplied to this register. The algorithm implementation task owns source integration, validation and submission. The research manager owns result collection and document updates. This entry is provisional until the frozen manifest arrives.
+Historical planning record. See [launched status and initial failure evidence](efficiency_validation_20260912/README.md) for the current state.
+
+Status at creation: registered before launch. No submission IDs or completed campaign results have been supplied to this register. The algorithm implementation task owns source integration, validation and submission. The research manager owns result collection and document updates. This entry is provisional until the frozen manifest arrives.
 
 Proposed cluster root: `/home/nc437/ladder-lite/efficiency_validation_20260912`.
 
