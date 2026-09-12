@@ -75,3 +75,9 @@ Snapshot 20260911T221530Z: job810332 completed at scheduler level after08:09:19,
 Freeze810974 failed after3s; its exact error is `no usable terminal source for k09_p2: continuation: source retains artificials for k09_p2; baseline: source retains artificials for k09_p2`. This rejection is not evidence of actual positive artificials: the source final LP fields are absent. MIP810975 is pending DependencyNeverSatisfied and has not optimized. Do not bypass validation or relabel absent LP fields as zero. Recovery needs an explicit validated terminal-RMP/pool export from the saved journal, or a tested continuation, with no fabricated pricing certificate. No blind retry was submitted.
 
 This corroborates an inherited-column initialization bottleneck independently of the capacity-pricing issue. The mathematical feasibility of the full k9 model has not been disproved. Source path, input/provenance and predecessor hashes are in cg_record.json.
+
+## Warm chain 4, k=10 — initialization timeout, job810344
+
+Verified at 00:17 UTC on12September (20:17EDT11September): Slurm TIMEOUT after08:17:05 against08:15:00 allocation. Cached network loaded in8.1s (19,205nodes;109,583,108arcs). Persisted status remains initializing, zero iterations, final LP absent, inherited-pool audit null, and column journal empty. The status wall_s=9.18 is the initial publication time, not the completed job runtime. No LP certificate or new integer result exists.
+
+This repeats the P1k7 initialization failure. The predecessor P4k9 pool survives but there is no usable child pool for the dependent MIP. No unchanged retry submitted; use the same bounded/checkpointed-initialization recovery requirement already recorded for P1. P2k10 remains running. Evidence: outputs/parallel_research_20260911/warm_p4_k10_timeout_810344/evidence.json.
