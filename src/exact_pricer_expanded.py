@@ -37,6 +37,7 @@ import multiprocessing
 import os
 import pickle
 import signal
+import threading
 import time
 from collections import Counter
 from copy import deepcopy
@@ -83,10 +84,12 @@ def _peak_rss_mb() -> float:
 G_KWH = 300.0
 
 
-def _file_sha256(path: Path) -> str:
+def _file_sha256(path: Path, *, checkpoint=None) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            if checkpoint is not None:
+                checkpoint()
             digest.update(chunk)
     return digest.hexdigest()
 
@@ -428,176 +431,256 @@ def _replay_inherited_event_sequence(item):
     return (record, stable_sequence, source_cost), None
 
 
+def _init_inherited_replay_worker():
+    # run_cg's cooperative handlers belong to the parent, not fork workers.
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+    signal.signal(signal.SIGUSR1, signal.SIG_IGN)
+
+
+def _shutdown_inherited_replay_pool(pool, *, abort, grace_s=2.0, kill_grace_s=2.0):
+    """Bound Pool's *entire* finalizer, including its internal joins."""
+    workers = list(pool._pool)
+    errors = []
+    def finish():
+        try:
+            if abort:
+                pool.terminate()
+            else:
+                pool.close()
+                pool.join()
+        except BaseException as exc:
+            errors.append(repr(exc))
+    closer = threading.Thread(target=finish, daemon=True,
+                              name="inherited-pool-cleanup")
+    closer.start()
+    closer.join(max(0.0, grace_s))
+    forced = []
+    if closer.is_alive():
+        # Pool termination has already stopped replacement handling. Include
+        # any workers that appeared between the initial snapshot and shutdown.
+        workers = list({w.pid: w for w in workers + list(pool._pool)}.values())
+        for worker in workers:
+            if worker.is_alive():
+                try:
+                    worker.kill()
+                    forced.append(worker.pid)
+                except ProcessLookupError:
+                    pass
+        until = time.monotonic() + max(0.0, kill_grace_s)
+        for worker in workers:
+            worker.join(max(0.0, until-time.monotonic()))
+        closer.join(max(0.0, until-time.monotonic()))
+    alive = [w.pid for w in workers if w.is_alive()]
+    return {"worker_pids": [w.pid for w in workers],
+            "forced_kill_pids": forced, "alive_worker_pids": alive,
+            "shutdown_complete": not closer.is_alive() and not alive and not errors,
+            "errors": errors}
+
+
+class _InheritanceCancelled(Exception):
+    pass
+
+
 def inherited_event_pool_records(
-    status_path: Path,
-    *,
-    child_csv_path: Path,
-    child_problem,
-    child_network,
-    g_kwh: float,
-    charge_kw: float,
-    reserve_kwh: float,
-    workers: int = 1,
-    max_columns: int = 0,
-    time_limit_s: float = 0,
+    status_path: Path, *, child_csv_path: Path, child_problem, child_network,
+    g_kwh: float, charge_kw: float, reserve_kwh: float,
+    workers: int = 1, max_columns: int = 0, time_limit_s: float = 0,
+    cancel_requested=None, phase_callback=None,
 ) -> tuple[list[dict], dict]:
-    """Replay a predecessor event-CG pool in a nested child event graph.
+    """Replay selected parent columns; keep the historical replay-only budget.
 
-    Trip ids in generated instances are local row numbers and can change when
-    another duty is added.  We therefore translate through Ordered_Trip_ID,
-    then ask the *child* event network for the cheapest path for each inherited
-    trip sequence.  This transfers columns only; no duals, basis, lower bound,
-    or pricing certificate is inherited.
+    Preparation cooperatively observes parent cancellation/application deadline.
+    The 900-second replay treatment still starts after deterministic selection.
+    Blocking OS I/O/process creation additionally needs an external watchdog.
     """
-
+    total_started = time.monotonic()
     source = status_path.expanduser().resolve()
-    status_raw = source.read_bytes()
-    status = json.loads(status_raw)
-    journal_value = status.get("columns_journal")
-    if not journal_value:
-        raise ValueError("inherited event-pool status has no columns_journal")
-    journal_path = Path(journal_value).expanduser()
-    if not journal_path.is_absolute():
-        journal_path = source.parent / journal_path
-    journal_path = journal_path.resolve()
-    journal_raw_sha256 = _file_sha256(journal_path)
-    journal_records = read_jsonl_records(
-        journal_path, repair_trailing=False
-    )
-    source_trips = status.get("trip_ids")
-    if not isinstance(source_trips, list):
-        raise ValueError("inherited event-pool status has no trip_ids list")
-    source_pool = load_column_pool(journal_records, source_trips)
-
-    parent_csv_value = status.get("csv")
-    if not parent_csv_value:
-        raise ValueError("inherited event-pool status has no csv identity")
-    parent_csv_path = (DATA_DIR / parent_csv_value).resolve()
-    expected_instance_sha = (status.get("provenance") or {}).get(
-        "instance_sha256"
-    )
-    observed_instance_sha = _file_sha256(parent_csv_path)
-    if expected_instance_sha != observed_instance_sha:
-        raise ValueError(
-            "inherited event-pool parent instance hash differs from status"
-        )
-    parent_local_to_stable, _ = _trip_id_maps(parent_csv_path)
-    _, child_stable_to_local = _trip_id_maps(child_csv_path.resolve())
-    if set(child_problem.trips) != set(child_stable_to_local.values()):
-        raise ValueError("child CSV trip mapping differs from built problem")
-
-    if int(workers) < 1:
-        raise ValueError("inherited event-pool workers must be positive")
+    status_raw = b""
+    journal_path = None
+    journal_raw_sha256 = None
+    journal_records = []
+    source_pool = {}
+    source_replay_count = 0
+    replay_items = []
     accepted = []
     rejected = Counter()
-    replay_items = []
-    for source_record in source_pool.values():
-        try:
-            stable_sequence = [
-                parent_local_to_stable[int(trip)]
-                for trip in source_record["trips"]
-            ]
-        except (KeyError, TypeError, ValueError):
-            rejected["invalid_parent_trip_sequence"] += 1
-            continue
-        if any(stable not in child_stable_to_local for stable in stable_sequence):
-            rejected["parent_trip_absent_from_child"] += 1
-            continue
-        child_sequence = [
-            child_stable_to_local[stable] for stable in stable_sequence
-        ]
-        replay_items.append(
-            (child_sequence, stable_sequence, source_record.get("cost"))
-        )
-
-    # Explicitly labeled bounded-pool treatment: deterministic long/cheap routes.
-    source_replay_count = len(replay_items)
-    if max_columns:
-        replay_items = sorted(replay_items, key=lambda x: (
-            -len(x[0]), float(x[2] or 0) / max(1, len(x[0])), tuple(x[1])
-        ))[:max_columns]
-    deadline = time.monotonic() + time_limit_s if time_limit_s else None
+    replay_completed = 0
+    cancelled = False
     import_deadline_reached = False
-    global _INHERITED_EVENT_REPLAY_CONTEXT
-    _INHERITED_EVENT_REPLAY_CONTEXT = (
-        child_network, child_problem, g_kwh, charge_kw, reserve_kwh
-    )
-    if workers == 1 and deadline is None:
-        replay_results = map(_replay_inherited_event_sequence, replay_items)
-        pool_context = None
-    else:
-        if "fork" not in multiprocessing.get_all_start_methods():
-            raise ValueError(
-                "parallel inherited event replay requires fork support"
-            )
-        pool_context = multiprocessing.get_context("fork").Pool(workers)
-        replay_results = (pool_context.imap_unordered(
-            _replay_inherited_event_sequence, replay_items, chunksize=1
-        ) if deadline is not None else pool_context.imap(
-            _replay_inherited_event_sequence, replay_items, chunksize=8
-        ))
-    try:
-        while True:
+    pool_context = None
+    preparation_s = replay_s = cleanup_s = 0.0
+    replay_started = None
+    shutdown = None
+    telemetry_errors = []
+    abort = True
+
+    def check():
+        if cancel_requested is not None and cancel_requested():
+            raise _InheritanceCancelled()
+
+    def emit(name, duration, outcome="ok", details=None):
+        if phase_callback is not None:
             try:
-                if deadline is None:
+                phase_callback(name, duration, outcome, details or {})
+            except Exception as exc:
+                if len(telemetry_errors) < 10:
+                    telemetry_errors.append({"phase": name, "error": repr(exc)})
+
+    def stage(name, operation):
+        check()
+        emit(name, 0.0, "started")
+        began = time.monotonic()
+        try:
+            result = operation()
+            check()
+        except BaseException as exc:
+            emit(name, time.monotonic()-began, "cancelled" if isinstance(exc, _InheritanceCancelled) else "error")
+            raise
+        emit(name, time.monotonic()-began)
+        return result
+
+    checkpoint_kwargs = {"checkpoint": check} if cancel_requested is not None else {}
+    global _INHERITED_EVENT_REPLAY_CONTEXT
+    try:
+        status_raw = stage("status_read", source.read_bytes)
+        status = json.loads(status_raw)
+        journal_value = status.get("columns_journal")
+        if not journal_value:
+            raise ValueError("inherited event-pool status has no columns_journal")
+        journal_path = Path(journal_value).expanduser()
+        if not journal_path.is_absolute():
+            journal_path = source.parent / journal_path
+        journal_path = journal_path.resolve()
+        journal_raw_sha256 = stage("journal_hash", lambda: _file_sha256(journal_path, **checkpoint_kwargs))
+        journal_records = stage("journal_parse", lambda: read_jsonl_records(
+            journal_path, repair_trailing=False, **checkpoint_kwargs))
+        source_trips = status.get("trip_ids")
+        if not isinstance(source_trips, list):
+            raise ValueError("inherited event-pool status has no trip_ids list")
+        source_pool = stage("pool_validation", lambda: load_column_pool(journal_records, source_trips, **checkpoint_kwargs))
+        parent_csv_value = status.get("csv")
+        if not parent_csv_value:
+            raise ValueError("inherited event-pool status has no csv identity")
+        parent_csv_path = (DATA_DIR / parent_csv_value).resolve()
+        observed_instance_sha = stage("parent_csv_hash", lambda: _file_sha256(parent_csv_path, **checkpoint_kwargs))
+        if (status.get("provenance") or {}).get("instance_sha256") != observed_instance_sha:
+            raise ValueError("inherited event-pool parent instance hash differs from status")
+        parent_local_to_stable, _ = stage("parent_mapping", lambda: _trip_id_maps(parent_csv_path))
+        _, child_stable_to_local = stage("child_mapping", lambda: _trip_id_maps(child_csv_path.resolve()))
+        if set(child_problem.trips) != set(child_stable_to_local.values()):
+            raise ValueError("child CSV trip mapping differs from built problem")
+        if int(workers) < 1:
+            raise ValueError("inherited event-pool workers must be positive")
+        def select():
+            items = []
+            for source_record in source_pool.values():
+                check()
+                try:
+                    stable_sequence = [parent_local_to_stable[int(t)] for t in source_record["trips"]]
+                except (KeyError, TypeError, ValueError):
+                    rejected["invalid_parent_trip_sequence"] += 1
+                    continue
+                if any(t not in child_stable_to_local for t in stable_sequence):
+                    rejected["parent_trip_absent_from_child"] += 1
+                    continue
+                items.append(([child_stable_to_local[t] for t in stable_sequence],
+                              stable_sequence, source_record.get("cost")))
+            count = len(items)
+            if max_columns:
+                def key(item):
+                    check()
+                    return (-len(item[0]), float(item[2] or 0)/max(1,len(item[0])), tuple(item[1]))
+                items = sorted(items, key=key)[:max_columns]
+            return items, count
+        replay_items, source_replay_count = stage("selection", select)
+        preparation_s = time.monotonic()-total_started
+        deadline = time.monotonic()+time_limit_s if time_limit_s else None
+        replay_started = time.monotonic()
+        _INHERITED_EVENT_REPLAY_CONTEXT = (child_network, child_problem, g_kwh, charge_kw, reserve_kwh)
+        if workers == 1 and deadline is None and cancel_requested is None:
+            replay_results = map(_replay_inherited_event_sequence, replay_items)
+        else:
+            if "fork" not in multiprocessing.get_all_start_methods():
+                raise ValueError("parallel inherited event replay requires fork support")
+            # Assign immediately so cancellation after creation still cleans up.
+            check(); emit("pool_start", 0.0, "started")
+            began = time.monotonic()
+            pool_context = multiprocessing.get_context("fork").Pool(workers, initializer=_init_inherited_replay_worker)
+            emit("pool_start", time.monotonic()-began); check()
+            replay_results = (pool_context.imap_unordered(_replay_inherited_event_sequence, replay_items, chunksize=1)
+                              if deadline is not None else pool_context.imap(_replay_inherited_event_sequence, replay_items, chunksize=1 if cancel_requested is not None else 8))
+        emit("replay", 0.0, "started")
+        while True:
+            check()
+            try:
+                if pool_context is None or (deadline is None and cancel_requested is None):
                     replayed, reason = next(replay_results)
                 else:
-                    remaining = deadline - time.monotonic()
+                    remaining = deadline-time.monotonic() if deadline is not None else float("inf")
                     if remaining <= 0:
-                        raise multiprocessing.TimeoutError
-                    replayed, reason = replay_results.next(timeout=remaining)
+                        import_deadline_reached = True
+                        break
+                    try:
+                        replayed, reason = replay_results.next(timeout=min(0.1, remaining))
+                    except multiprocessing.TimeoutError:
+                        continue
             except StopIteration:
+                abort = False
                 break
-            except multiprocessing.TimeoutError:
-                import_deadline_reached = True
-                break
+            replay_completed += 1
             if reason is not None:
                 rejected[reason] += 1
                 continue
             record, stable_sequence, source_cost = replayed
-            record.update({
-                "origin": "inherited_event_pool_replayed_in_child_graph",
-                "inherited_source_status_sha256": hashlib.sha256(
-                    status_raw
-                ).hexdigest(),
-                "inherited_source_journal_sha256": journal_raw_sha256,
-                "inherited_source_ordered_trip_ids": stable_sequence,
-                "inherited_source_cost": source_cost,
-            })
+            record.update({"origin":"inherited_event_pool_replayed_in_child_graph",
+                           "inherited_source_status_sha256":hashlib.sha256(status_raw).hexdigest(),
+                           "inherited_source_journal_sha256":journal_raw_sha256,
+                           "inherited_source_ordered_trip_ids":stable_sequence,
+                           "inherited_source_cost":source_cost})
             accepted.append(record)
+    except _InheritanceCancelled:
+        cancelled = True
     finally:
-        if pool_context is not None:
-            if import_deadline_reached:
-                pool_context.terminate()
+        # Telemetry must never bypass worker cleanup, including interrupts.
+        try:
+            now = time.monotonic()
+            if replay_started is None:
+                preparation_s = now-total_started
             else:
-                pool_context.close()
-            pool_context.join()
-        _INHERITED_EVENT_REPLAY_CONTEXT = None
-
+                replay_s = now-replay_started
+                emit("replay", replay_s, "cancelled" if cancelled else "deadline" if import_deadline_reached else "ok" if not abort else "error",
+                     {"accepted_columns":len(accepted)})
+        finally:
+            try:
+                if pool_context is not None:
+                    began = time.monotonic()
+                    shutdown = _shutdown_inherited_replay_pool(pool_context, abort=abort)
+                    cleanup_s = time.monotonic()-began
+                    emit("pool_shutdown", cleanup_s, "ok" if shutdown["shutdown_complete"] else "error", shutdown)
+            finally:
+                _INHERITED_EVENT_REPLAY_CONTEXT = None
+    if shutdown is not None and not shutdown["shutdown_complete"]:
+        raise RuntimeError("inherited replay workers could not be stopped within cleanup deadline")
     audit = {
-        "schema": "evsp-dr-inherited-event-pool-audit-v1",
-        "source_status": str(source),
-        "source_status_sha256": hashlib.sha256(status_raw).hexdigest(),
-        "source_journal": str(journal_path),
-        "source_journal_sha256": journal_raw_sha256,
-        "source_raw_records": len(journal_records),
-        "source_unique_columns": len(source_pool),
-        "source_replayable_sequences": source_replay_count,
-        "selected_for_replay": len(replay_items),
-        "bounded_max_columns": max_columns,
-        "import_time_limit_s": time_limit_s,
-        "import_deadline_reached": import_deadline_reached,
-        "unprocessed_selected": len(replay_items) - len(accepted) - sum(rejected.values()),
-        "attempted_unique_columns": len(replay_items),
-        "accepted_columns": len(accepted),
-        "rejected_columns": sum(rejected.values()),
-        "rejected_reasons": dict(sorted(rejected.items())),
-        "mapping_key": "Ordered_Trip_ID",
-        "child_event_graph_reoptimization": True,
-        "replay_workers": int(workers),
-        "inherited_duals": False,
-        "inherited_basis": False,
-        "inherited_lp_certificate": False,
+        "schema":"evsp-dr-inherited-event-pool-audit-v1",
+        "source_status":str(source), "source_status_sha256":hashlib.sha256(status_raw).hexdigest() if status_raw else None,
+        "source_journal":str(journal_path) if journal_path is not None else None,
+        "source_journal_sha256":journal_raw_sha256, "source_raw_records":len(journal_records),
+        "source_unique_columns":len(source_pool), "source_replayable_sequences":source_replay_count,
+        "selected_for_replay":len(replay_items), "bounded_max_columns":max_columns,
+        "import_time_limit_s":time_limit_s, "import_deadline_reached":import_deadline_reached,
+        "import_cancelled":cancelled, "deadline_scope":"replay_result_wait_after_selection",
+        "preparation_s":preparation_s,"replay_s":replay_s,"cleanup_s":cleanup_s,
+        "total_import_s":time.monotonic()-total_started,"pool_shutdown":shutdown,
+        "telemetry_errors":telemetry_errors,
+        "replay_completed":replay_completed,
+        "unprocessed_selected":len(replay_items)-replay_completed,
+        "attempted_unique_columns":len(replay_items), "accepted_columns":len(accepted),
+        "rejected_columns":sum(rejected.values()), "rejected_reasons":dict(sorted(rejected.items())),
+        "mapping_key":"Ordered_Trip_ID", "child_event_graph_reoptimization":True,
+        "replay_workers":int(workers), "inherited_duals":False,
+        "inherited_basis":False, "inherited_lp_certificate":False,
     }
     return accepted, audit
 
@@ -1415,12 +1498,14 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
     return mismatches
 
 
-def load_column_pool(records: list[dict], trip_ids: list[int]) -> dict:
+def load_column_pool(records: list[dict], trip_ids: list[int], *, checkpoint=None) -> dict:
     """Validate journal records and retain the cheapest realization per set."""
 
     pool: dict[frozenset, dict] = {}
     allowed = set(trip_ids)
     for index, record in enumerate(records, start=1):
+        if checkpoint is not None:
+            checkpoint()
         record_trips = record.get("trips")
         raw_cost = record.get("cost")
         if not isinstance(record_trips, list):
@@ -2184,6 +2269,11 @@ def run_cg(args) -> dict:
                 workers=args.inherit_event_pool_workers,
                 max_columns=args.inherit_max_columns,
                 time_limit_s=args.inherit_time_limit_s,
+                cancel_requested=lambda: termination["requested"] or (
+                    bool(args.wall_limit_s) and _cumulative_elapsed_s() >= args.wall_limit_s),
+                phase_callback=lambda name, duration, outcome, details: _record_phase(
+                    "inherited_"+name, duration, iteration=iteration_offset,
+                    outcome=outcome, details=details),
             )
         )
         inherited_added = 0
