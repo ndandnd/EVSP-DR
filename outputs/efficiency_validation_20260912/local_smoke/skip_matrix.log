@@ -1,0 +1,8 @@
+Set parameter Username
+Set parameter LicenseID to value 2777767
+Academic license - for non-commercial use only - expires 2027-02-11
+[EXACT] network: 696 nodes, 15,238 arcs (soc_step=2.5, block=5min) built in 1.2s
+[EXACT] published initial identity before first journal append
+[EXACT] direct-singleton seed: 8/8 trips feasible (8 added to pool)
+[EXACT] it   2: obj=400,000.00 weight=4.0000 art=0.00 min_rc=0.000
+[EXACT] DONE: {"iter": 2, "attempt_iter": 2, "lp_obj": 400000.0, "route_weight": 4.0, "artificials": 0.0, "min_rc": 0.0, "max_row_violation": 0.0, "max_bound_violation": 0.0} certified=True columns=23 wall=1s
