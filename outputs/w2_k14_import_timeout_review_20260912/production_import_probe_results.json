@@ -1,0 +1,23 @@
+[
+  {
+    "mode": "default",
+    "outer_timeout": false,
+    "returncode": 0,
+    "stdout": "{\"worker_started\": true, \"term_handler_inherited\": false}\n{\"returned\": true, \"elapsed\": 0.20846154121682048, \"audit\": {\"schema\": \"evsp-dr-inherited-event-pool-audit-v1\", \"source_status\": \"/private/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/evsp-import-probe-51dhjv8s/status.json\", \"source_status_sha256\": \"531e8bcf6af28d8a936207f167ae3f2b8d6b72d3fe0ff67f0704355310736167\", \"source_journal\": \"/private/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/evsp-import-probe-51dhjv8s/pool.jsonl\", \"source_journal_sha256\": \"4e8602891df03e22395d69bc31e3df1edb821f0a95c508646b657df2037835fd\", \"source_raw_records\": 1, \"source_unique_columns\": 1, \"source_replayable_sequences\": 1, \"selected_for_replay\": 1, \"bounded_max_columns\": 1, \"import_time_limit_s\": 0.2, \"import_deadline_reached\": true, \"unprocessed_selected\": 1, \"attempted_unique_columns\": 1, \"accepted_columns\": 0, \"rejected_columns\": 0, \"rejected_reasons\": {}, \"mapping_key\": \"Ordered_Trip_ID\", \"child_event_graph_reoptimization\": true, \"replay_workers\": 1, \"inherited_duals\": false, \"inherited_basis\": false, \"inherited_lp_certificate\": false}}\n",
+    "stderr": ""
+  },
+  {
+    "mode": "inherited",
+    "outer_timeout": true,
+    "returncode": -9,
+    "stdout": "{\"worker_started\": true, \"term_handler_inherited\": true}\n",
+    "stderr": ""
+  },
+  {
+    "mode": "initializer_reset",
+    "outer_timeout": false,
+    "returncode": 0,
+    "stdout": "{\"worker_started\": true, \"term_handler_inherited\": false}\n{\"returned\": true, \"elapsed\": 0.20686420798301697, \"audit\": {\"schema\": \"evsp-dr-inherited-event-pool-audit-v1\", \"source_status\": \"/private/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/evsp-import-probe-bcypssvx/status.json\", \"source_status_sha256\": \"fa0c92dbc0d8e51e5daed2e714721caf852a0704357d9cddd92318949934d5be\", \"source_journal\": \"/private/var/folders/hk/6g28n39j5_s33j2kn2w4xmp40000gn/T/evsp-import-probe-bcypssvx/pool.jsonl\", \"source_journal_sha256\": \"4e8602891df03e22395d69bc31e3df1edb821f0a95c508646b657df2037835fd\", \"source_raw_records\": 1, \"source_unique_columns\": 1, \"source_replayable_sequences\": 1, \"selected_for_replay\": 1, \"bounded_max_columns\": 1, \"import_time_limit_s\": 0.2, \"import_deadline_reached\": true, \"unprocessed_selected\": 1, \"attempted_unique_columns\": 1, \"accepted_columns\": 0, \"rejected_columns\": 0, \"rejected_reasons\": {}, \"mapping_key\": \"Ordered_Trip_ID\", \"child_event_graph_reoptimization\": true, \"replay_workers\": 1, \"inherited_duals\": false, \"inherited_basis\": false, \"inherited_lp_certificate\": false}}\n",
+    "stderr": ""
+  }
+]

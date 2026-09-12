@@ -1,0 +1,45 @@
+{
+  "source_commit": "a29992196acb74d02b8c7891be4061718889999f",
+  "job": "949703",
+  "case": "w2_k14",
+  "source_supplement_sha256": "bdd9f3c57e9b46588bee5fed3388a805e401b78dba1f7e98ff9235668f63abff",
+  "full_text_hash_verified": [
+    "/home/nc437/ladder-lite/overnight_extension_20260912/logs/w2_k14_949703_4294967294.out",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/logs/w2_k14_949703_4294967294.err",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg_949703_r0_start.json",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/source_network_manifest.json",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/network.pkl.manifest.json",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg.json.lock",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg.json.phase-telemetry.jsonl",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg.json.columns.jsonl",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg.json.iters.csv"
+  ],
+  "metadata_or_truncated_text_only": [
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/network.pkl",
+    "/home/nc437/ladder-lite/overnight_extension_20260912/cases/w2_k14/cg.json"
+  ],
+  "parent_status_sha256": "9d4487510dd56ec09edfb646584530ba4795bfb0db1994ffb3bafda3164486d1",
+  "parent_columns": 29008,
+  "parent_journal_bytes": 103937837,
+  "parent_certified": true,
+  "observed_stage": "Cache loaded46.372s; initial status published; iteration headerfsynced; inherited import audit absent,journalempty,zeroCGiterations",
+  "defect": "Fork replay workers inherit run_cg SIGTERM handler. Pool termination cannot rely on SIGTERM to stop workers, and terminate/join are unbounded.",
+  "scope": "Reproduced actual production importer cleanup failure under inherited handler on localPython3.12.2 with controlled slowreplay; no exact historical stack; not fullclusterreproduction.",
+  "timer_coverage": {
+    "before_deadline": [
+      "status read",
+      "parentjournalhash",
+      "JSONLparse",
+      "pool validation/deduplication",
+      "CSVhash/mapping",
+      "sequence mapping",
+      "bounded selection sort"
+    ],
+    "after_deadline_but_unbounded": [
+      "Pool constructor",
+      "Pool terminate/close/join"
+    ],
+    "bounded": "Waiting for replay results uses remainingdeadline. GlobalCGwallbudget has no effective interruption in this synchronous import path."
+  },
+  "cluster_mutations": "None; no requeue,newjob,cancellation orsourcechange"
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "mode": "default_handler",
+    "outer_timeout": false,
+    "returncode": 0,
+    "stdout": "{\"worker_started\": true, \"handler_inherited\": false}\n{\"phase\": \"terminate_begin\"}\n{\"phase\": \"terminate_end\", \"seconds\": 0.0015278751961886883}\n",
+    "stderr": ""
+  },
+  {
+    "mode": "inherited_handler",
+    "outer_timeout": true,
+    "returncode": -9,
+    "stdout": "{\"worker_started\": true, \"handler_inherited\": true}\n{\"phase\": \"terminate_begin\"}\n",
+    "stderr": ""
+  }
+]
