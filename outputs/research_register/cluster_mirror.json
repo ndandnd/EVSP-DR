@@ -1,9 +1,11 @@
 {
-  "timestamp_utc": "2026-09-11T02:12:44.770102+00:00",
-  "source_snapshot": "20260911T020803Z.json",
+  "timestamp_utc": "2026-09-12T06:38:20.616156+00:00",
+  "source_snapshot": "20260912T062451Z.json",
+  "source_commit": "150a668f10432d8079a42f015cb8308de3eb770e",
   "remote_root": "/home/nc437/ladder-lite/research-register",
-  "files": 30,
-  "register_sha256": "3801e76b111b2a793ed16db57f4836f206d76737bfe921b51cea915e033fd036",
-  "workbook_sha256": "b9bcd1fb8bfce2d834f06da19cd56835ce301085d82a8dc99444437a2522fc99",
-  "rsync_exit_code": 0
+  "files": 31,
+  "register_sha256": "aa99d8b1d2675d202884f1c6c6a8532dbbe106e61e3478edb818732399be3d91",
+  "workbook_sha256": "ef6dba60d54751a5e06f801e7c762d73d567b2d4aab599fe9c9d864cd42e3603",
+  "rsync_exit_code": 0,
+  "remote_hashes_verified": true
 }
