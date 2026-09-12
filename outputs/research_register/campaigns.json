@@ -224,7 +224,7 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/overnight_extension_20260912",
-    "row_count": 222,
+    "row_count": 224,
     "workflow_job_ids": [
       "949572",
       "949623",
@@ -338,8 +338,9 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 83,
+    "row_count": 81,
     "workflow_job_ids": [
+      "15687",
       "537227",
       "810296",
       "810319",
@@ -356,7 +357,6 @@
       "810994",
       "810995",
       "949624",
-      "949688",
       "949689",
       "949690",
       "949691",
@@ -364,9 +364,7 @@
       "949704",
       "949705",
       "949706",
-      "949727",
       "949728",
-      "949738",
       "949749",
       "949750",
       "949752",
@@ -401,40 +399,6 @@
     "root": "/home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a",
     "row_count": 4,
     "workflow_job_ids": []
-  },
-  {
-    "campaign_id": "supplemental:import_deadline_diagnostic_status_20260912",
-    "family": "supplemental_audit",
-    "report_links": [],
-    "root": null,
-    "row_count": 1,
-    "workflow_job_ids": [
-      "15687"
-    ]
-  },
-  {
-    "campaign_id": "supplemental:manifest",
-    "family": "supplemental_audit",
-    "report_links": [],
-    "root": null,
-    "row_count": 1,
-    "workflow_job_ids": [
-      "949701",
-      "949703",
-      "949704",
-      "949705",
-      "949706"
-    ]
-  },
-  {
-    "campaign_id": "supplemental:submission",
-    "family": "supplemental_audit",
-    "report_links": [],
-    "root": null,
-    "row_count": 1,
-    "workflow_job_ids": [
-      "15687"
-    ]
   },
   {
     "campaign_id": "targeted_audit:april_source_replay",
@@ -482,6 +446,21 @@
     "workflow_job_ids": [
       "778802",
       "810459"
+    ]
+  },
+  {
+    "campaign_id": "w2_k14_import_fix_20260912",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912",
+    "row_count": 4,
+    "workflow_job_ids": [
+      "15687",
+      "949701",
+      "949703",
+      "949704",
+      "949705",
+      "949706"
     ]
   },
   {

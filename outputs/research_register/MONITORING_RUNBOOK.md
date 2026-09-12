@@ -61,3 +61,8 @@ Warm recovery submitted: jobs 966398/966399/966400/966401 at `/home/nc437/ladder
 ## Import shutdown retry 12 September
 
 Monitor campaign `w2_k14_import_fix_20260912`, job15687, source68fce009. Root `/home/nc437/ladder-lite/w2_k14_import_fix_20260912`; standard cases/w2_k14 CG path and telemetry. Same512-route/900-second replay treatment. First afterok submission rejected because completed parent949701 purged; exact verified completed-parent artifacts frozen. Preserve original949703 failure and blocked949704/5/6. Repair downstream only after new parent validated; both paths and scheduler dependencies must change. See retry ledger under outputs/w2_k14_import_timeout_review_20260912/retry. Reproduced SIGTERM inheritance bug is a strong historical explanation, not failed-job stack proof.
+
+
+## Consolidated ownership 12 September
+
+User requested consolidation into this manager task, Assess research and plan next steps. Implementation task01a06e8e-c60a-7132-a588-d50e800d47d3 (dr ASTRA) stopped independent work and handed over all decisions; do not send routine messages or wake it. Own future diagnostics, code changes, monitoring and Doc/register updates here. Import fix checkout `/private/tmp/evsp-import-deadline-fix-20260912`, source68fce009; report `docs/reviews/inherited_import_shutdown_20260912.md`. Evidence commits7bb371f6,c364d5e8,9bfbfc8f on codex/efficiency-validation-20260912. All its delegated subtasks finished. Wait for validated retry15687 completion before repairing affected descendants. Full-size replay shutdown already verified900.000092s+0.162453s; no final convergence claim.

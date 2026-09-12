@@ -1,8 +1,8 @@
 # Research experiment register
 
-Source snapshot: `20260912T153215Z.json` (`773d766c07929784838dea32b18004340e0f0cd4ceb3360bbdded9982d5e350f`), captured 2026-09-12T15:32:16.111555+00:00.
+Source snapshot: `20260912T163244Z.json` (`05eabddc2c1655a7d5a8d0e7c6d30e7c9605ce17afec316f24096b76c05c6784`), captured 2026-09-12T16:32:44.998832+00:00.
 
-This build contains **1768 normalized artifact/stage rows** across **35 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
+This build contains **1769 normalized artifact/stage rows** across **33 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
 
 ## Campaign index
 
@@ -27,19 +27,17 @@ This build contains **1768 normalized artifact/stage rows** across **35 source g
 | nested_replication42 | production_or_historical | /home/nc437/ladder-lite/nested_replication_p7_20_fresh42_20260909_0209d3e | 127 | unknown | unknown |
 | old70 | production_or_historical | /home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17/pool_mip8h_20260908_2d7a21a07e | 38 | unknown | unknown |
 | overnight_cpu04_raw_controls | production_or_historical | /home/nc437/ladder-lite/overnight_cpu04_raw_controls_20260909 | 3 | 598960<br>598961 | unknown |
-| overnight_extension_20260912 | production_or_historical | /home/nc437/ladder-lite/overnight_extension_20260912 | 222 | 949572<br>949623<br>949624<br>949635<br>949636<br>949637<br>949638<br>949639<br>949680<br>949681<br>949682<br>949683<br>949684<br>949685<br>949686<br>949687<br>949688<br>949689<br>949690<br>949691<br>949692<br>949693<br>949694<br>949695<br>949696<br>949697<br>949698<br>949699<br>949700<br>949701<br>949702<br>949703<br>949704<br>949705<br>949706<br>949707<br>949708<br>949709<br>949710<br>949711<br>949712<br>949713<br>949714<br>949715<br>949716<br>949717<br>949718<br>949719<br>949720<br>949721<br>949722<br>949723<br>949724<br>949725<br>949726<br>949727<br>949728<br>949729<br>949730<br>949731<br>949732<br>949733<br>949734<br>949735<br>949736<br>949737<br>949738<br>949739<br>949740<br>949741<br>949742<br>949743<br>949744<br>949745<br>949746<br>949747<br>949748<br>949749<br>949750<br>949751<br>949752<br>949753<br>949754<br>949755<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949766<br>949767<br>949768<br>949769 | unknown |
+| overnight_extension_20260912 | production_or_historical | /home/nc437/ladder-lite/overnight_extension_20260912 | 224 | 949572<br>949623<br>949624<br>949635<br>949636<br>949637<br>949638<br>949639<br>949680<br>949681<br>949682<br>949683<br>949684<br>949685<br>949686<br>949687<br>949688<br>949689<br>949690<br>949691<br>949692<br>949693<br>949694<br>949695<br>949696<br>949697<br>949698<br>949699<br>949700<br>949701<br>949702<br>949703<br>949704<br>949705<br>949706<br>949707<br>949708<br>949709<br>949710<br>949711<br>949712<br>949713<br>949714<br>949715<br>949716<br>949717<br>949718<br>949719<br>949720<br>949721<br>949722<br>949723<br>949724<br>949725<br>949726<br>949727<br>949728<br>949729<br>949730<br>949731<br>949732<br>949733<br>949734<br>949735<br>949736<br>949737<br>949738<br>949739<br>949740<br>949741<br>949742<br>949743<br>949744<br>949745<br>949746<br>949747<br>949748<br>949749<br>949750<br>949751<br>949752<br>949753<br>949754<br>949755<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949766<br>949767<br>949768<br>949769 | unknown |
 | post_meeting_log_tails | solver_progress_log | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 2 | unknown | unknown |
-| scheduler_snapshot | scheduler | unknown | 83 | 537227<br>810296<br>810319<br>810320<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810975<br>810994<br>810995<br>949624<br>949688<br>949689<br>949690<br>949691<br>949692<br>949704<br>949705<br>949706<br>949727<br>949728<br>949738<br>949749<br>949750<br>949752<br>949754<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949767<br>949769 | unknown |
+| scheduler_snapshot | scheduler | unknown | 81 | 15687<br>537227<br>810296<br>810319<br>810320<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810975<br>810994<br>810995<br>949624<br>949689<br>949690<br>949691<br>949692<br>949704<br>949705<br>949706<br>949728<br>949749<br>949750<br>949752<br>949754<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949767<br>949769 | unknown |
 | stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | unknown |
 | stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | unknown |
-| supplemental:import_deadline_diagnostic_status_20260912 | supplemental_audit | unknown | 1 | 15687 | unknown |
-| supplemental:manifest | supplemental_audit | unknown | 1 | 949701<br>949703<br>949704<br>949705<br>949706 | unknown |
-| supplemental:submission | supplemental_audit | unknown | 1 | 15687 | unknown |
 | targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | unknown |
 | targeted_audit:full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_audit_20260909_1745 | 12 | unknown | unknown |
 | targeted_audit:legacy_full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_legacy175_20260909_1755 | 4 | unknown | unknown |
 | terminal_energy_fair | matched_terminal_energy | /home/nc437/ladder-lite/terminal_energy_fair_20260910_2424369 | 9 | 778801<br>778802 | unknown |
 | terminal_energy_fair_mip_retry_5cdb813 | production_or_historical | /home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910 | 14 | 778802<br>810459 | unknown |
+| w2_k14_import_fix_20260912 | production_or_historical | /home/nc437/ladder-lite/w2_k14_import_fix_20260912 | 4 | 15687<br>949701<br>949703<br>949704<br>949705<br>949706 | unknown |
 | warm_chain_p3_k2_10 | production_or_historical | /home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34 | 56 | 676119<br>679879<br>679893<br>679894<br>679895<br>679896<br>679897<br>679898<br>679899<br>679900<br>679901<br>679933<br>679934<br>679935<br>679936<br>679937<br>679938<br>679939<br>679940<br>679941<br>679942<br>679943<br>679944<br>679945<br>679946<br>679947<br>679948<br>679949<br>679950<br>679993<br>687063<br>687297<br>687298<br>687299<br>687300<br>687301<br>687302<br>687303<br>687304<br>687305<br>687306<br>687307<br>687308<br>687309<br>687310 | unknown |
 | warm_chain_p5_k2_10 | production_or_historical | /home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1 | 64 | 779026<br>779027<br>779028<br>779030<br>779031<br>779032<br>779033<br>779034<br>779035<br>779056<br>779057<br>779058<br>779059<br>779060<br>779061<br>779062<br>779063<br>779064<br>779065<br>779066<br>779067<br>779068<br>779069<br>779070<br>779071<br>779072<br>779073 | unknown |
 | warm_multichain_p1246 | production_or_historical | /home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1 | 240 | 810283<br>810285<br>810287<br>810289<br>810291<br>810293<br>810296<br>810319<br>810320<br>810323<br>810324<br>810325<br>810328<br>810329<br>810330<br>810331<br>810332<br>810333<br>810335<br>810336<br>810337<br>810338<br>810339<br>810340<br>810341<br>810342<br>810344<br>810345<br>810346<br>810347<br>810348<br>810349<br>810350<br>810351<br>810353<br>810354<br>810931<br>810933<br>810944<br>810945<br>810946<br>810947<br>810948<br>810949<br>810950<br>810951<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810960<br>810961<br>810962<br>810963<br>810964<br>810965<br>810966<br>810967<br>810968<br>810969<br>810970<br>810971<br>810972<br>810973<br>810974<br>810975<br>810976<br>810977<br>810978<br>810979<br>810980<br>810981<br>810982<br>810983<br>810984<br>810985<br>810986<br>810987<br>810988<br>810989<br>810990<br>810991<br>810992<br>810993<br>810994<br>810995<br>810996<br>810997<br>810998<br>810999<br>811001<br>811002<br>811003<br>811004<br>811005<br>811006<br>811007<br>811008<br>811009<br>811010<br>811011<br>811012<br>811013<br>811014 | unknown |
@@ -50,24 +48,23 @@ This build contains **1768 normalized artifact/stage rows** across **35 source g
 |---|---|---|
 | capacity_speed_exact_event | cg | 16 |
 | capacity_speed_exact_event | mip | 16 |
-| cg_phase_telemetry | telemetry | 375 |
-| column_generation | cg | 369 |
+| cg_phase_telemetry | telemetry | 376 |
+| column_generation | cg | 370 |
 | decomposition | decomposition_join | 5 |
 | matched_tariff_comparison | comparison_arm | 57 |
-| pool_mip | mip | 400 |
+| pool_mip | mip | 402 |
 | rejected_mip_output | mip_rejected | 2 |
-| scheduler | queue_state | 83 |
+| scheduler | queue_state | 81 |
 | small_reference_cg | cg_arm | 32 |
 | small_same_pool_comparison | lp | 64 |
 | small_same_pool_comparison | mip | 64 |
 | solver_progress_log | log_tail | 2 |
-| supplemental_audit | audit_result | 3 |
 | targeted_audit | audit_result | 17 |
 | targeted_audit | workflow | 1 |
 | targeted_audit_log | log_tail | 2 |
 | terminal_energy | frontier | 3 |
 | terminal_energy | mip_failed_preoptimization | 3 |
-| workflow | workflow | 47 |
+| workflow | workflow | 49 |
 | workflow | workflow_cg | 45 |
 | workflow | workflow_cg_reference | 54 |
 | workflow | workflow_freeze | 54 |

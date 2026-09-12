@@ -150,3 +150,8 @@ A bounded worker-shutdown/deadline fix and regressions are authorized. Retry onl
 ### Corrected w2k14 retry submitted 11 56 EDT
 
 Job15687 submitted12September15:56:29UTC; initial PENDING Priority. Source68fce0093ec9768392442fe1b107a1b67ab0cb7b. Remote root `/home/nc437/ladder-lite/w2_k14_import_fix_20260912`; separate output `cases/w2_k14/cg.json`. Same8CPU96GiB default4h45, exclude scaglione-compute-01,14400s global budget,900s replay-only budget,512 routes,8 import workers. Parent949701 completed successfully but was purged from controller, so afterok submission was rejected without creating a job. Retry freezes verified exact parent artifacts and records fulfilled data dependency. Original failed artifacts and successors949704/949705/949706 unchanged. Future successors require new input paths as well as corrected dependencies, only after validated retry output. Ledger: `../w2_k14_import_timeout_review_20260912/retry/submission.json`; manifestSHA6a7fd77a5c6f779e0c32d19319f55262afa31c8fa1b8e37888bd69d512c56559. Collector root added. No result/certificate claimed.
+
+
+### Import fix verified in cluster 12 September 12 32 EDT
+
+Retry15687: replay900.000092s, shutdown0.162453s, total import904.208110s. CG checkpoint224iterations, telemetry232, continuing without certificate. Confirms bounded worker shutdown, not convergence. Snapshot20260912T163244Z. C4k15 independently stopped at its CG wall_limit with min_rc=-0.199828525 and no pricing certificate; saved pool MIP running. This is a solver time limit, not an execution crash.

@@ -1,0 +1,1 @@
+Native Markdown readback confirms timestamp, two new MIP rows and retry shutdown note. Updated pages3–6 visually inspected, with page breaks before decomposition/capacity. Original first two pages preserved except timestamp. Figure tabs unchanged. Workbook validation passed.
