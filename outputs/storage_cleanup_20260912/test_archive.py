@@ -24,7 +24,7 @@ def fixture(mode):
         (base/'archive/manifest.json').write_text(json.dumps({'files':[{
             'path':str(src),'size':stat.st_size,'mtime_ns':stat.st_mtime_ns,
             'inode':stat.st_ino,'device':stat.st_dev,'nlink':stat.st_nlink,'mode':stat.st_mode}]}))
-        status = base/'archive/status.tsv' 
+        status = base/'archive/status.tsv'
         status.write_text('source_path\tphase\tsource_sha256\tsource_size_bytes\tarchive_path\tarchive_sha256\tarchive_size_bytes\tevent_utc\n')
         functions = SOURCE[SOURCE.index('fsync_file()'):SOURCE.index('if [ ! -s "$STATUS"')]
         functions += SOURCE[SOURCE.index('append_event()'):SOURCE.index('\nsuccess_count=0')]
