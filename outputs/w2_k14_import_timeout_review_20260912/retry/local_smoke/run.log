@@ -1,0 +1,8 @@
+Set parameter Username
+Set parameter LicenseID to value 2777767
+Academic license - for non-commercial use only - expires 2027-02-11
+[EXACT] network: 46 nodes, 347 arcs (soc_step=15.0, block=5min) built in 0.0s
+[EXACT] published initial identity before first journal append
+[EXACT] inherited event pool: 1/1 source columns replayed in child graph; 1 added, 0 replaced, 0 rejected
+[EXACT] direct-singleton seed: 3/3 trips feasible (3 added to pool)
+[EXACT] DONE: {"iter": 1, "attempt_iter": 1, "lp_obj": 200006.488, "route_weight": 2.0, "artificials": 0.0, "min_rc": -99993.512, "max_row_violation": 0.0, "max_bound_violation": 0.0} certified=False columns=6 wall=0s
