@@ -35,3 +35,7 @@ Storage follow-up complete at12:53EDT11September:884924 COMPLETED,124/124files v
 Delta comparisons: CG rows currently lack sha256. Always check path presence; when a hash is absent compare canonical row content, not null versus null. Include new completed CG even if MIP has not finished.
 
 Snapshot comparison must include each campaign’s `records` array as well as `cg`, `mip`, `phases` and rejections. Capacity retries store their CG/MIP results in `records`; comparing only production lists misses their completions. On 11 September all five deadline-repaired capacity tasks and MIPs completed with uncertified CG pools; see EXECUTION_ISSUES and capacity_deadline5_completed before treating them as active or relaunching.
+
+## Overnight extension — 12 September UTC
+
+Read outputs/overnight_extension_20260912/README.md, manifest.json and jobs.json. Track the 87 CG cases and87 default-partition MIPs, including cases/*/cg.json and cases/*/mip/*/result.json. Preserve bounded-inheritance treatment labels and actual dependencies. MIP retries have unique Slurm job/restart directories. Check dependencies blocked by execution errors; diagnose before retrying. These are baseline physics, not station-capacity runs. Decomposition uses GIRO duty membership; no GIRO route seeds. Do not count smoke integration results as research.

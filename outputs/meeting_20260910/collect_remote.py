@@ -5,6 +5,7 @@ import json, datetime, subprocess, hashlib
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'overnight_extension_20260912': home / 'overnight_extension_20260912',
     'covering_complement75': home / 'covering_complement75_20260911_21fbecb',
     'warm_multichain_p1246': home / 'nested_warm_multichain_p1246_k2_10_20260910_ecb60c1',
     'warm_chain_p3_k2_10': home / 'nested_warm_chain_p3_k2_10_20260909_8830a34',
@@ -31,7 +32,7 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json'))):
+    for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts}):
         raw = p.read_bytes()
         d = json.loads(raw)
         row = {k: d.get(k) for k in ['buses','fleet_bound','fleet_proven','status','status_name','mip_gap','optimal_scope','pool_columns','source_cg_iterations','source_cg_wall_s','runtime_s','gurobi_optimize_wall_s','partitioning','overcovered_trips','charging_cost','continuous_realized_charging_cost','two_stage','physical_pool_audit','physical_replay_validated','physical_replay_scope','duplicate_trip_removal_validated','cross_route_charger_capacity_validated']}
@@ -46,7 +47,7 @@ for name, root in roots.items():
         row.update(physics=d.get('physics'), mip_start=d.get('mip_start'), column_pool_treatment=(d.get('pricer_provenance') or {}).get('column_pool_treatment'))
         rows.append(row)
     cg = []
-    cg_paths=set((root/'cg').glob('*.json')) | set(root.glob('p*/cg/M__*.json')) | set(root.glob('*/cg.json'))
+    cg_paths=set((root/'cg').glob('*.json')) | set(root.glob('p*/cg/M__*.json')) | set(root.glob('*/cg.json')) | {p for p in root.glob('cases/*/cg.json') if 'smoke' not in p.parts}
     if cg_paths:
         for p in sorted(cg_paths):
             if p.stat().st_size > 100_000_000: continue
@@ -56,7 +57,7 @@ for name, root in roots.items():
             row['path']=str(p)
             cg.append(row)
     phases=[]
-    phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl'))
+    phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/cg.json.phase-telemetry.jsonl') if 'smoke' not in p.parts}
     for p in sorted(phase_paths):
         sums=defaultdict(float); counts=Counter(); last=None; partial=0
         for line in p.open():
@@ -67,7 +68,7 @@ for name, root in roots.items():
             last=d
         phases.append({'path':str(p),'duration_s_by_phase':dict(sums),'count_by_phase':dict(counts),'last_record':last,'partial_lines':partial})
     comparisons=[]
-    for p in sorted(root.glob('*/comparison.json')):
+    for p in sorted(set(root.glob('*/comparison.json')) | set(root.glob('cases/*/decomposed_solution.json'))):
         raw=p.read_bytes()
         comparisons.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     rejected=[]
@@ -76,7 +77,7 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
-    for record_name in ['downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
+    for record_name in ['manifest.json', 'jobs.json', 'smoke_job.json', 'downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():
             out['campaigns'][name]['workflow'][record_name] = json.loads(record_path.read_bytes())

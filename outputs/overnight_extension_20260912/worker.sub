@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+BASE=/home/nc437/ladder-lite/overnight_extension_20260912
+PYTHON_BIN=/home/nc437/evsp_env/bin/python
+source "$BASE/code/scripts/event_uniform_envelope/gurobi_worker_preflight.sh"
+MODE=$1
+CASE=${2:-}
+if [[ "$MODE" == group ]]; then
+ CASE=$(/home/nc437/evsp_env/bin/python -c 'import json,os;print(json.load(open("/home/nc437/ladder-lite/overnight_extension_20260912/manifest.json"))["group_cases"][int(os.environ["SLURM_ARRAY_TASK_ID"])])')
+ MODE=cg
+fi
+if [[ "$MODE" == group_mip ]]; then
+ CASE=$(/home/nc437/evsp_env/bin/python -c 'import json,os;print(json.load(open("/home/nc437/ladder-lite/overnight_extension_20260912/manifest.json"))["group_cases"][int(os.environ["SLURM_ARRAY_TASK_ID"])])')
+ MODE=mip
+fi
+exec /home/nc437/evsp_env/bin/python -u "$BASE/code/scripts/overnight_worker.py" "$MODE" "$CASE"

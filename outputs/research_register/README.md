@@ -14,6 +14,8 @@ Current build: **1511 artifact/stage records across 31 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
+Latest launch: [Overnight chains through k=15 and 32-duty decomposition](../overnight_extension_20260912/README.md). 87 CG cases and 87 dependent default-partition MIPs; launch counts are not completed results.
+
 ## How to read a result
 
 A case is identified by its input and settings, not just by k. Keep trip selection, battery and charging power, SOC/time grid, tariff, master sense, initialization, objective and code revision together. A restart or repeated snapshot is not a new independent sample.
