@@ -1504,6 +1504,21 @@ def resume_pool_mismatches(status, pool: dict) -> list[str]:
     return mismatches
 
 
+def prepare_master_incidence(trip_ids, routes, *, backend, skip_gurobi=False):
+    """Prepare backend input and truthful shape/nnz telemetry.
+
+    Gurobi sync_routes performs its own complete route validation and owns
+    the model columns. Its opt-in path needs only telemetry, not a second
+    sparse matrix. SciPy always receives the validated matrix.
+    """
+    if backend == "gurobi" and skip_gurobi:
+        return None, sum(len(route["trips"]) for route in routes), (len(trip_ids), len(routes))
+    incidence = build_route_incidence(
+        trip_ids=trip_ids, route_trip_ids=[route["trips"] for route in routes],
+    )
+    return incidence, int(incidence.nnz), incidence.shape
+
+
 def run_cg(args) -> dict:
     t0 = time.time()
     time_model = getattr(args, "time_model", "uniform")
@@ -2457,13 +2472,9 @@ def run_cg(args) -> dict:
         incidence_nnz = 0
         if routes:
             started = time.perf_counter()
-            incidence = build_route_incidence(
-                trip_ids=trips,
-                route_trip_ids=[r["trips"] for r in routes],
-            )
-            incidence_nnz = int(getattr(incidence, "nnz", 0))
-            incidence_shape = getattr(
-                incidence, "shape", (len(trips), len(routes))
+            incidence, incidence_nnz, incidence_shape = prepare_master_incidence(
+                trips, routes, backend=master_backend,
+                skip_gurobi=getattr(args, "skip_gurobi_incidence", False),
             )
             _record_phase(
                 "incidence_construction",
@@ -2474,6 +2485,7 @@ def run_cg(args) -> dict:
                 details=lambda: {
                     "rows": incidence_shape[0],
                     "columns": incidence_shape[1],
+                    "matrix_materialized": incidence is not None,
                 },
             )
             lp = None
@@ -2807,18 +2819,17 @@ def run_cg(args) -> dict:
                 if method_limit is not None and method_limit <= 0.0:
                     raise TimeoutError("no application time remains")
                 started = time.perf_counter()
-                diversify_incidence = build_route_incidence(
-                    trip_ids=trips,
-                    route_trip_ids=[r["trips"] for r in routes_now],
+                diversify_incidence, diversify_nnz, _ = prepare_master_incidence(
+                    trips, routes_now, backend=master_backend,
+                    skip_gurobi=getattr(args, "skip_gurobi_incidence", False),
                 )
-                diversify_nnz = int(getattr(diversify_incidence, "nnz", 0))
                 _record_phase(
                     "incidence_construction",
                     time.perf_counter() - started,
                     iteration=iteration_offset + len(history),
                     pool_columns=len(routes_now),
                     incidence_nnz=diversify_nnz,
-                    details=lambda: {"purpose": "diversify"},
+                    details=lambda: {"purpose": "diversify", "matrix_materialized": diversify_incidence is not None},
                 )
                 diversify_attempt += 1
                 started = time.perf_counter()
@@ -2991,11 +3002,10 @@ def run_cg(args) -> dict:
                     final_errors.append("no application time remains")
                     break
                 started = time.perf_counter()
-                final_incidence = build_route_incidence(
-                    trip_ids=trips,
-                    route_trip_ids=[r["trips"] for r in routes],
+                final_incidence, final_nnz, _ = prepare_master_incidence(
+                    trips, routes, backend=master_backend,
+                    skip_gurobi=getattr(args, "skip_gurobi_incidence", False),
                 )
-                final_nnz = int(getattr(final_incidence, "nnz", 0))
                 _record_phase(
                     "incidence_construction",
                     time.perf_counter() - started,
@@ -3004,6 +3014,7 @@ def run_cg(args) -> dict:
                     incidence_nnz=final_nnz,
                     details=lambda: {
                         "purpose": "final_resolve", "method": method,
+                        "matrix_materialized": final_incidence is not None,
                     },
                 )
                 final_attempt += 1
@@ -3195,6 +3206,11 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--event-network-cache-only", action="store_true",
         help="Build or validate the event-network cache, then exit before CG.",
+    )
+    parser.add_argument(
+        "--skip-gurobi-incidence", action="store_true",
+        help="Opt in to omit the unused SciPy incidence matrix for Gurobi; "
+             "retain master validation and shape/nonzero telemetry. SciPy is unchanged.",
     )
     parser.add_argument("--max-iters", type=int, default=2000)
     parser.add_argument(
