@@ -1,0 +1,23 @@
+{
+  "job_id": "15687",
+  "argv": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=8",
+    "--mem=96G",
+    "--time=04:45:00",
+    "--no-requeue",
+    "--job-name=w2k14_importfix",
+    "--output=/home/nc437/ladder-lite/w2_k14_import_fix_20260912/logs/%x_%j.out",
+    "--error=/home/nc437/ladder-lite/w2_k14_import_fix_20260912/logs/%x_%j.err",
+    "/home/nc437/ladder-lite/w2_k14_import_fix_20260912/worker.sub"
+  ],
+  "submitted_utc": "2026-09-12T15:56:29.914639+00:00",
+  "manifest_sha256": "6a7fd77a5c6f779e0c32d19319f55262afa31c8fa1b8e37888bd69d512c56559",
+  "worker_sub_sha256": "0bb988e834f1d1f25d6a63fc0cb58d4567c527b6aeaad02f30977a0ea507cb09",
+  "prepare_script_sha256": "17d0a5918fb544b179c387bd32a8db2022e9bd644c389008948751fd087abd2a",
+  "sbatch_stdout": "15687\n",
+  "sbatch_stderr": ""
+}

@@ -1,0 +1,18 @@
+{
+  "reported_at_utc": "2026-09-12T15:40:05.909699+00:00",
+  "source_thread": "01a06e8e-c60a-7132-a588-d50e800d47d3",
+  "evidence_status": "implementation task report; pinned evidence pending",
+  "bug": "fork worker inherits non-exiting SIGTERM handler; terminate/join can hang",
+  "historical_cause": "strong inference, no failed-job stack",
+  "fix_and_retry_status": "submitted; initial PENDING Priority; no result claimed",
+  "updated_at_utc": "2026-09-12T15:58:23.288456+00:00",
+  "fix_commit": "68fce0093ec9768392442fe1b107a1b67ab0cb7b",
+  "reported_tests": "47 tests plus 2 subtests passed",
+  "budget_scope": "900s replay-only budget retained; preparation cancellation coverage improved",
+  "downstream_recovery": "requires both new artifact paths and scheduler dependencies; original failed artifacts preserved",
+  "job_id": "15687",
+  "submitted_at_utc": "2026-09-12T15:56:29Z",
+  "remote_root": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912",
+  "manifest_sha256": "6a7fd77a5c6f779e0c32d19319f55262afa31c8fa1b8e37888bd69d512c56559",
+  "dependency": "completed parent purged from scheduler controller; verified completed accounting and frozen exact parent artifacts; no scheduler edge"
+}

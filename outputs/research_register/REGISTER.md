@@ -2,7 +2,7 @@
 
 Source snapshot: `20260912T153215Z.json` (`773d766c07929784838dea32b18004340e0f0cd4ceb3360bbdded9982d5e350f`), captured 2026-09-12T15:32:16.111555+00:00.
 
-This build contains **1765 normalized artifact/stage rows** across **32 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
+This build contains **1768 normalized artifact/stage rows** across **35 source groups/campaigns**. These groups include scheduler and log-only collections and are not 26 independent experiments. `unknown` means the compact source snapshot did not retain that field; no value is inferred from another metric.
 
 ## Campaign index
 
@@ -32,6 +32,9 @@ This build contains **1765 normalized artifact/stage rows** across **32 source g
 | scheduler_snapshot | scheduler | unknown | 83 | 537227<br>810296<br>810319<br>810320<br>810952<br>810953<br>810954<br>810955<br>810956<br>810957<br>810958<br>810959<br>810975<br>810994<br>810995<br>949624<br>949688<br>949689<br>949690<br>949691<br>949692<br>949704<br>949705<br>949706<br>949727<br>949728<br>949738<br>949749<br>949750<br>949752<br>949754<br>949756<br>949757<br>949758<br>949759<br>949760<br>949761<br>949763<br>949764<br>949765<br>949767<br>949769 | unknown |
 | stage2_cap_license_recovery | production_or_historical | /home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057 | 3 | 772009 | unknown |
 | stage2_cap_saved_pool_reruns | production_or_historical | /home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a | 4 | unknown | unknown |
+| supplemental:import_deadline_diagnostic_status_20260912 | supplemental_audit | unknown | 1 | 15687 | unknown |
+| supplemental:manifest | supplemental_audit | unknown | 1 | 949701<br>949703<br>949704<br>949705<br>949706 | unknown |
+| supplemental:submission | supplemental_audit | unknown | 1 | 15687 | unknown |
 | targeted_audit:april_source_replay | targeted_audit | /home/nc437/ladder-lite/april175_replay_20260909 | 4 | 653567 | unknown |
 | targeted_audit:full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_audit_20260909_1745 | 12 | unknown | unknown |
 | targeted_audit:legacy_full_cache_witness | targeted_audit | /home/nc437/ladder-lite/full_cache_witness_legacy175_20260909_1755 | 4 | unknown | unknown |
@@ -58,6 +61,7 @@ This build contains **1765 normalized artifact/stage rows** across **32 source g
 | small_same_pool_comparison | lp | 64 |
 | small_same_pool_comparison | mip | 64 |
 | solver_progress_log | log_tail | 2 |
+| supplemental_audit | audit_result | 3 |
 | targeted_audit | audit_result | 17 |
 | targeted_audit | workflow | 1 |
 | targeted_audit_log | log_tail | 2 |

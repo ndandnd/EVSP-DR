@@ -4,7 +4,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1765 artifact/stage records across 32 campaign/source groups**, from the 11:32 EDT collection on 12 September. The historical inventory covers 39 evidence families. Counts are not independent experimental sample sizes.
+Current build: **1768 artifact/stage records across 35 campaign/source groups**, from the 11:32 EDT collection on 12 September. The historical inventory covers 39 evidence families. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -16,7 +16,7 @@ Current build: **1765 artifact/stage records across 32 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest results: 11:32 EDT collection: 65/87 CG certificates; 60 MIP results (30 warm, 30 component). New certificates C1k13 and C5k15; MIPs running. C2k14 timed out before its first CG iteration; preparation stall under investigation. All four warm timing pairs finished with matching certified LP objectives and 16–22% less runtime, excluding common preparation; only three distinct warm cases. All five parent CG attempts timed out during startup; saved decomposed constructions remain available. Capacity timing pairs all reached their limits without certificates. [Dated tables](../overnight_extension_20260912/RESULTS_20260912T153215Z.md).
+Latest results: 11:32 EDT collection: 65/87 CG certificates; 60 MIP results (30 warm, 30 component). New certificates C1k13 and C5k15; MIPs running. C2k14 timed out before its first CG iteration; importer shutdown bug reproduced, fixed source68fce009, unique retry15687 submitted11:56EDT. See [retry ledger](../w2_k14_import_timeout_review_20260912/retry/README.md). All four warm timing pairs finished with matching certified LP objectives and 16–22% less runtime, excluding common preparation; only three distinct warm cases. All five parent CG attempts timed out during startup; saved decomposed constructions remain available. Capacity timing pairs all reached their limits without certificates. [Dated tables](../overnight_extension_20260912/RESULTS_20260912T153215Z.md).
 
 ## How to read a result
 

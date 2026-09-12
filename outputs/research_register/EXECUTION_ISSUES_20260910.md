@@ -138,3 +138,15 @@ All three capacity efficiency pairs completed normally at scheduler level, but a
 ## Chain 2 k14 preparation timeout 12 September 11 32 EDT
 
 Job949703 reached TIMEOUT after04:47:03. Network cache279,321,120 arcs loaded46.372s. Initial identity and header-only iteration CSV saved; columns journal empty. No first CG iteration, pricing certificate or integer result. MaxRSS44,051,800KiB versus96GiB request, no recorded OOM. Exact preparation stall unresolved; implementation task notified to inspect deadline coverage. No blind requeue. Evidence and hashes: `../post_meeting_20260910/monitor/20260912T153215Z_supplement.json`.
+
+
+### Import deadline hang reproduced by implementation task
+
+Implementation task `01a06e8e-c60a-7132-a588-d50e800d47d3` reports an isolated production-importer reproduction: parent run_cg installs a SIGTERM handler that only sets a flag, then fork workers inherit it. After the import deadline, pool.terminate()/join can wait indefinitely because workers do not exit or check the flag. With a 0.2-second deadline, default handling returned in0.208s, inherited handling exceeded the4s outer watchdog, and worker initializer reset returned in0.207s. This reproduces a control-flow bug; it is a strong explanation for w2_k14 but not an exact historical stack-trace proof. Pre-selection preparation is also outside the timer. Pinned evidence is pending; this paragraph records the task report, not an independently rerun test.
+
+A bounded worker-shutdown/deadline fix and regressions are authorized. Retry only w2_k14 after tests and immutable provenance, preserving original artifacts and scientific parameters. No submission is claimed yet.
+
+
+### Corrected w2k14 retry submitted 11 56 EDT
+
+Job15687 submitted12September15:56:29UTC; initial PENDING Priority. Source68fce0093ec9768392442fe1b107a1b67ab0cb7b. Remote root `/home/nc437/ladder-lite/w2_k14_import_fix_20260912`; separate output `cases/w2_k14/cg.json`. Same8CPU96GiB default4h45, exclude scaglione-compute-01,14400s global budget,900s replay-only budget,512 routes,8 import workers. Parent949701 completed successfully but was purged from controller, so afterok submission was rejected without creating a job. Retry freezes verified exact parent artifacts and records fulfilled data dependency. Original failed artifacts and successors949704/949705/949706 unchanged. Future successors require new input paths as well as corrected dependencies, only after validated retry output. Ledger: `../w2_k14_import_timeout_review_20260912/retry/submission.json`; manifestSHA6a7fd77a5c6f779e0c32d19319f55262afa31c8fa1b8e37888bd69d512c56559. Collector root added. No result/certificate claimed.

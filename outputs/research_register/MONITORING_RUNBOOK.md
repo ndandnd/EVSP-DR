@@ -56,3 +56,8 @@ Protect both borrowed Git object stores while the campaign exists: `/home/nc437/
 
 
 Warm recovery submitted: jobs 966398/966399/966400/966401 at `/home/nc437/ladder-lite/efficiency_validation_warm_retry_20260912`, pin `11afd8372dd14fdb2a11cd5eaddbee1d02644b1f`, manifest `b28a1a01aea6d4320b18db1fa66d12fa6a5e80aa7448921dd7997fd34508978b`. The collector now retains both `efficiency_validation` and `efficiency_validation_warm_retry` v2 objects. Show the replacement status for warm cases, but keep original startup failures as separate attempts. Do not count them as independent test cases. The recovery depends on the original efficiency root's Git object store and frozen inputs; protect the original root as well as both borrowed source repositories. No automatic retries for these paired jobs.
+
+
+## Import shutdown retry 12 September
+
+Monitor campaign `w2_k14_import_fix_20260912`, job15687, source68fce009. Root `/home/nc437/ladder-lite/w2_k14_import_fix_20260912`; standard cases/w2_k14 CG path and telemetry. Same512-route/900-second replay treatment. First afterok submission rejected because completed parent949701 purged; exact verified completed-parent artifacts frozen. Preserve original949703 failure and blocked949704/5/6. Repair downstream only after new parent validated; both paths and scheduler dependencies must change. See retry ledger under outputs/w2_k14_import_timeout_review_20260912/retry. Reproduced SIGTERM inheritance bug is a strong historical explanation, not failed-job stack proof.

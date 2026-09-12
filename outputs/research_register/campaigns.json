@@ -403,6 +403,40 @@
     "workflow_job_ids": []
   },
   {
+    "campaign_id": "supplemental:import_deadline_diagnostic_status_20260912",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "15687"
+    ]
+  },
+  {
+    "campaign_id": "supplemental:manifest",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "949701",
+      "949703",
+      "949704",
+      "949705",
+      "949706"
+    ]
+  },
+  {
+    "campaign_id": "supplemental:submission",
+    "family": "supplemental_audit",
+    "report_links": [],
+    "root": null,
+    "row_count": 1,
+    "workflow_job_ids": [
+      "15687"
+    ]
+  },
+  {
     "campaign_id": "targeted_audit:april_source_replay",
     "family": "targeted_audit",
     "report_links": [],

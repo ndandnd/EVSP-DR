@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 32,
+  "campaign_count": 35,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -25,6 +25,7 @@
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
     "solver_progress_log:log_tail": 2,
+    "supplemental_audit:audit_result": 3,
     "targeted_audit:audit_result": 17,
     "targeted_audit:workflow": 1,
     "targeted_audit_log:log_tail": 2,
@@ -37,11 +38,11 @@
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 1765,
-  "rows_with_source_sha256": 678,
+  "row_count": 1768,
+  "rows_with_source_sha256": 681,
   "rows_without_source_sha256": 1087,
   "schema": "evsp-dr-research-register-validation-v1",
   "source_snapshot_sha256": "773d766c07929784838dea32b18004340e0f0cd4ceb3360bbdded9982d5e350f",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 1765
+  "unique_row_ids": 1768
 }
