@@ -210,6 +210,7 @@ def read_jsonl_records(
     repair_trailing: bool = False,
     collect: bool = True,
     allow_unparseable_trailing: bool = False,
+    checkpoint=None,
 ) -> list[dict]:
     """Read a JSONL file, optionally repairing one interrupted final record.
 
@@ -230,6 +231,8 @@ def read_jsonl_records(
     repair_bytes = b""
     with open(path, "rb") as fh:
         while True:
+            if checkpoint is not None:
+                checkpoint()
             offset = fh.tell()
             line = fh.readline()
             if not line:
