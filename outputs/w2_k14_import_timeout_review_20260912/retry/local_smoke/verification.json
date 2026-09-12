@@ -1,0 +1,68 @@
+{
+  "command": "GRB_LICENSE_FILE=/Users/nadan/gurobi.lic OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 src/exact_pricer_expanded.py --csv /private/tmp/evsp-inherit-e2e-f35sn_6o/tiny.csv --prices_csv hourly_prices_flat.csv --time-model event --event-arc-mode lazy --soc-step 15 --block-min 5 --max-iters 1 --columns_per_iter 3 --master-sense cover --master-backend gurobi --initial-pool singletons --wall-limit-s 90 --g-kwh 240 --charge-kw 240 --min-soc-frac 0 --inherit-event-pool-from /private/tmp/evsp-inherit-e2e-f35sn_6o/parent.json --inherit-event-pool-workers 2 --inherit-max-columns 512 --inherit-time-limit-s 10 --phase-telemetry /private/tmp/evsp-inherit-e2e-f35sn_6o/telemetry.jsonl --out /private/tmp/evsp-inherit-e2e-f35sn_6o/cg.json > /private/tmp/evsp-inherit-e2e-f35sn_6o/run.log 2>&1",
+  "cwd": "/private/tmp/evsp-import-deadline-fix-20260912",
+  "verification": "all assertions passed",
+  "scope": "local integration smoke, three induced real trips; uncommitted fix on base a299, not a campaign result",
+  "base_commit": "68fce0093ec9768392442fe1b107a1b67ab0cb7b",
+  "worktree_status_after_run": "",
+  "source_hashes_observed_after_run": {
+    "src/exact_pricer_expanded.py": "03c27cb921aac496c34b5d3dd2ad3ac3e9145e959ebfe0f05450f07e0419696a",
+    "src/durable_io.py": "182afa650d3ff17866eff0ecf86e32e6ad11a486130c70d1b7b0e637901a669b",
+    "src/run_exact_pool_mip.py": "81ec981bce8080ed8ad5feecb08d29002eda62918dc2646bfd21485ed5fd2100"
+  },
+  "stop_reason": "max_iters",
+  "wall_s": 0.20309808710590005,
+  "audit": {
+    "schema": "evsp-dr-inherited-event-pool-audit-v1",
+    "source_status": "/private/tmp/evsp-inherit-e2e-f35sn_6o/parent.json",
+    "source_status_sha256": "502aa944e1954f623ac3a04542b189f5323b4cf0dcb0eec0cf8da3855b3ca5fd",
+    "source_journal": "/private/tmp/evsp-inherit-e2e-f35sn_6o/parent.columns.jsonl",
+    "source_journal_sha256": "49aa8451b0f5764111c1630731c4db5fc9c70368f58ac3f60c28aa342ea4a29a",
+    "source_raw_records": 1,
+    "source_unique_columns": 1,
+    "source_replayable_sequences": 1,
+    "selected_for_replay": 1,
+    "bounded_max_columns": 512,
+    "import_time_limit_s": 10.0,
+    "import_deadline_reached": false,
+    "import_cancelled": false,
+    "deadline_scope": "replay_result_wait_after_selection",
+    "preparation_s": 0.002090875059366226,
+    "replay_s": 0.020390540827065706,
+    "cleanup_s": 0.0016768332570791245,
+    "total_import_s": 0.024614041205495596,
+    "pool_shutdown": {
+      "worker_pids": [
+        13412,
+        13413
+      ],
+      "forced_kill_pids": [],
+      "alive_worker_pids": [],
+      "shutdown_complete": true,
+      "errors": []
+    },
+    "telemetry_errors": [],
+    "replay_completed": 1,
+    "unprocessed_selected": 0,
+    "attempted_unique_columns": 1,
+    "accepted_columns": 1,
+    "rejected_columns": 0,
+    "rejected_reasons": {},
+    "mapping_key": "Ordered_Trip_ID",
+    "child_event_graph_reoptimization": true,
+    "replay_workers": 2,
+    "inherited_duals": false,
+    "inherited_basis": false,
+    "inherited_lp_certificate": false,
+    "added_to_child_pool": 1,
+    "replaced_child_columns": 0,
+    "already_present_or_not_cheaper": 0,
+    "import_runtime_s": 0.025019375141710043
+  },
+  "artifacts_sha256": {
+    "cg.json": "2059379fd3400ae4b9c9a3291fe0c89720a39e872f589245d4e0533084136717",
+    "cg.json.columns.jsonl": "2c2d040dda912f0987ae046ebbb83f44f0ad96f2fd52621047d9f0002668710e",
+    "telemetry.jsonl": "dad6c0368e88131ed696e43fef6aa680a5fcda859a0e635fe56e1cba22863838",
+    "tiny.csv": "a0f691eb41b35ee4be1c536e1dfd30e60b9435633ff48ee3d82861ac280206da"
+  }
+}

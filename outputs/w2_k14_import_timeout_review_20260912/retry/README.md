@@ -1,0 +1,13 @@
+# Targeted importer shutdown retry — 12 September 2026
+
+Submitted job15687 at15:56:29UTC /11:56:29EDT, initially pending priority. Only failed w2_k14 is retried. Source68fce0093ec9768392442fe1b107a1b67ab0cb7b, branch codex/import-deadline-fix-20260912, pushed. Remote root `/home/nc437/ladder-lite/w2_k14_import_fix_20260912`; output `cases/w2_k14/cg.json`, journal/phase telemetry adjacent. No CG certificate or new fleet result yet.
+
+Original949703 and all artifacts remain unchanged. Existing blocked949704/949705/949706 remain unchanged. Any later recovery must change actual input paths as well as scheduler dependencies and avoid duplicate active jobs. Parent949701 completed0:0; its controller record expired. Initial afterok submission was rejected without creating a job. Frozen verified parent artifacts preserve the true previous-k data dependency. Full details in initial_submission_rejected.json and manifest.json.
+
+Same scientific settings: 343trips,14-duty target, flat tariff, cover, event2.5kWh/5min,lazy,240kWh/240kW,reserve0,singletons,30columns/iteration,rc1e-4,max50000iterations,14400s CG wall; selected512 inherited sequences,900s replay-only,8workers. Preparation now cooperatively observes the existing global budget and cancellation. External watchdog14520s plus60s graceful stop; Slurm4h45m,8CPU/96GiB,default_partition,exclude scaglione-compute-01,no automatic requeue. No new tariff, model, exactness or fleet claim.
+
+Graph reuse is independently audited against actual producer21fbecb and retry source. Original source manifest and original build identity preserved; consumer manifest contains explicit compatibility attestation and producer identity. Actual4471034154byte pickle verifiedSHA273fb5a6c2c9331200bc652a72f0504021623a0a33757af61d65300c3d7c2385. Loader's normal identity/hash/metrics checks remain enabled. The original9129.93s graph construction is not retry startup time. See ../cache_compatibility/.
+
+47 tests plus2 subtests pass (shutdown, mapping/bounds, durable I/O, resume). Real local run_cg smoke: inherited route physically validated and durably saved; phase/cancellation callbacks integrated; worker cleanup completed. Application wall0.2031s, max_iters1, no certificate. local_smoke/ preserves exact command, sources and artifacts; its original temporary paths remain recorded. Smoke source checksums can be compared with pinned source; do not confuse its small test with a research observation.
+
+Fix evidence proves the inherited-handler shutdown defect under a controlled slow replay. It supports, but does not prove, the exact historical cause of949703's stall because no historical process stack was captured. This is a reliability correction, not an established runtime speedup or improved solution quality.

@@ -1,0 +1,8 @@
+{
+  "job_created": false,
+  "attempted_dependency": "afterok:949701",
+  "test_only_error": "allocation failure: Job dependency problem",
+  "parent_sacct": "JobID|State|ExitCode\n949701|COMPLETED|0:0\n949701.batch|COMPLETED|0:0\n949701.extern|COMPLETED|0:0\n",
+  "scontrol_error": "Invalid job id specified",
+  "squeue_matching_jobs": []
+}

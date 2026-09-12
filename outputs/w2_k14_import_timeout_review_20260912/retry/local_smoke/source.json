@@ -1,0 +1,39 @@
+{
+  "source_csv": "/private/tmp/evsp-import-deadline-fix-20260912/data/tariff_response/frozen_instances/Practice_Custom_DutyUnion_k05_r2.csv",
+  "source_sha256": "6ffea0b8cd3a9d15846946f6828705dd3431b7bafc69bd572ca30ed4530d5cb8",
+  "chosen_rows": [
+    {
+      "Identifier": "Regular",
+      "From1": "4808",
+      "Start1": "4:30",
+      "End1": "5:21",
+      "To1": "2190",
+      "Distance1": "21.25",
+      "Usage kWh": "42.5",
+      "count_trip_id": "0",
+      "Ordered_Trip_ID": "1"
+    },
+    {
+      "Identifier": "Regular",
+      "From1": "GMV_H",
+      "Start1": "6:03",
+      "End1": "6:27",
+      "To1": "PC_7",
+      "Distance1": "9.153",
+      "Usage kWh": "18.3059998",
+      "count_trip_id": "1",
+      "Ordered_Trip_ID": "575"
+    },
+    {
+      "Identifier": "Regular",
+      "From1": "\u00d6S_H",
+      "Start1": "7:34",
+      "End1": "7:57",
+      "To1": "PC_6",
+      "Distance1": "8.205",
+      "Usage kWh": "16.4099998",
+      "count_trip_id": "2",
+      "Ordered_Trip_ID": "498"
+    }
+  ]
+}
