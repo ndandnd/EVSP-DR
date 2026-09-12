@@ -524,12 +524,21 @@ def _tariff_identity(station, minute, station_prices):
     }
 
 
+def _station_power(station, charge_kw, station_charge_kw=None):
+    powers = station_charge_kw or {}
+    power = float(powers.get(str(station), powers.get(base_station_name(station), charge_kw)))
+    if not math.isfinite(power) or power <= 0:
+        raise ValueError("invalid station charging power")
+    return power
+
+
 def blocks_from_continuous_stops(
     record: dict,
     *,
     station_prices: dict,
     charge_kw: float,
     earliest_start_by_stop: list[float] | None = None,
+    station_charge_kw: dict | None = None,
 ) -> list[dict]:
     """Split continuous stop kWh into tariff-hour, power-bounded blocks."""
 
@@ -542,6 +551,7 @@ def blocks_from_continuous_stops(
         raise ValueError("charging stop fields have different lengths")
     blocks = []
     for stop_index, station in enumerate(fields["stations"]):
+        power = _station_power(station, charge_kw, station_charge_kw)
         start = float(fields["cst"][stop_index])
         end = float(fields["cet"][stop_index])
         remaining = float(fields["kwh"][stop_index])
@@ -565,11 +575,11 @@ def blocks_from_continuous_stops(
         while remaining > TOLERANCE:
             hour_end = (int(cursor // 60) + 1) * 60.0
             segment_end = min(end, hour_end)
-            capacity = max(0.0, segment_end - cursor) * charge_kw / 60.0
+            capacity = max(0.0, segment_end - cursor) * power / 60.0
             if capacity <= TOLERANCE:
                 raise ValueError("charging stop lacks time for recorded kWh")
             energy = min(remaining, capacity)
-            actual_end = cursor + energy * 60.0 / charge_kw
+            actual_end = cursor + energy * 60.0 / power
             blocks.append({
                 "stop_index": stop_index,
                 "block_index": block_index,
@@ -590,6 +600,7 @@ def blocks_from_continuous_stops(
         blocks,
         station_prices=station_prices,
         charge_kw=charge_kw,
+        station_charge_kw=station_charge_kw,
     )
     return blocks
 
@@ -601,6 +612,7 @@ def validate_continuous_charging_blocks(
     station_prices: dict,
     charge_kw: float,
     expected_continuous_cost: float | None = None,
+    station_charge_kw: dict | None = None,
 ) -> dict:
     """Validate compact block provenance and recompute continuous route cost."""
 
@@ -657,7 +669,7 @@ def validate_continuous_charging_blocks(
         ):
             raise ValueError("continuous charging blocks overlap across stops")
         global_previous_end = end
-        capacity = (end - start) * float(charge_kw) / 60.0
+        capacity = (end - start) * _station_power(station, charge_kw, station_charge_kw) / 60.0
         if (
             realized < -TOLERANCE
             or expanded < -TOLERANCE
@@ -761,6 +773,7 @@ def realized_costs(
             expanded_record,
             station_prices=station_prices,
             charge_kw=float(mapping["charge_kw"]),
+            station_charge_kw=mapping.get("station_charge_kw"),
         )
         remaining_by_stop = list(
             (record.get("charging_stops") or {}).get("kwh", [])
@@ -770,7 +783,8 @@ def realized_costs(
             realized = min(
                 remaining_by_stop[stop_index],
                 (float(block["end_min"]) - float(block["start_min"]))
-                * float(mapping["charge_kw"]) / 60.0,
+                * _station_power(block["station"], mapping["charge_kw"],
+                                 mapping.get("station_charge_kw")) / 60.0,
             )
             block["realized_kwh"] = realized
             remaining_by_stop[stop_index] -= realized
@@ -804,6 +818,7 @@ def realized_costs(
         blocks,
         station_prices=station_prices,
         charge_kw=float(mapping["charge_kw"]),
+        station_charge_kw=mapping.get("station_charge_kw"),
     )
     return {
         "stored_expanded_grid_cost": float(record["cost"]),
