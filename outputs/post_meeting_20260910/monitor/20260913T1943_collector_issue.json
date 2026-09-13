@@ -1,0 +1,16 @@
+{
+  "recorded_utc": "2026-09-13T19:50:05.761836+00:00",
+  "event": "collector_timeout",
+  "collector_timeout_s": 300,
+  "ssh_access": "available",
+  "remote_collector_pid": 3130540,
+  "process_state": "Ds",
+  "kernel_wait": "rpc_wait_bit_killable",
+  "scope": "monitoring evidence collection; not a solver result or execution failure",
+  "stop_own_collector_returncode": 0,
+  "last_verified_snapshot": "outputs/post_meeting_20260910/monitor/20260913T184244Z.json",
+  "status": "recovered",
+  "recovery_snapshot": "outputs/post_meeting_20260910/monitor/20260913T195049Z.json",
+  "recovery_logic": "unchanged collector with faulthandler diagnostic",
+  "access_lost": false
+}

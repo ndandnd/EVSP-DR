@@ -1,0 +1,90 @@
+{
+  "schema": "evsp-cumulative-register-workbook-check-v1",
+  "source_snapshot": {
+    "path": "raw/20260913T195049Z.json",
+    "sha256": "716b2d3455fa209e25706aff6bc700f9ea677765bbce09fa59dc7b0ecc6feba3",
+    "timestamp_utc": "2026-09-13T19:50:49.601773+00:00"
+  },
+  "supplements_preserved": [
+    {
+      "path": "raw/supplemental/chain2_recovery_submission.json",
+      "sha256": "e1ae0463bb240e6e2ec9ba39d29915aa6de960ce85dfe88ee2cb60562d9537a7"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_manifest.json",
+      "sha256": "4aec50885519130e4a8ef0059e1172a23406de5045f0644f41e688ab0fb2eeab"
+    },
+    {
+      "path": "raw/supplemental/completed_parent_validation.json",
+      "sha256": "eb3292bcb158c2ac1472ef485ed9ea00a6600c4cf5cb6b999aa56bbbf5c6f76c"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_submission.json",
+      "sha256": "e3e94f0aab45b7c6291eecddb5e8fde77434094391fed5b6bdd17785bb74c010"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_manifest.json",
+      "sha256": "1bec90faf73a24c06b60ad736ce95038272f8915e4180dc65a5bcbac3114ac7b"
+    },
+    {
+      "path": "raw/supplemental/graph_parent32_timeout_20260913.json",
+      "sha256": "e381dad5fafc755c2505104bb167864537315e1abf2c395bdef024960cd26bb0"
+    }
+  ],
+  "row_count": 2358,
+  "campaign_count": 50,
+  "cumulative_counts": {
+    "audit_result": 24,
+    "cg": 19,
+    "mip": 36
+  },
+  "extension_counts": {
+    "cg": 7,
+    "mip": 4
+  },
+  "extension_metadata_verified": 11,
+  "source_endpoint_exact_match": true,
+  "alias_independent_solve_count": 0,
+  "workbook_formula_errors": 0,
+  "rendered_changed_views": [
+    {
+      "sheet": "Campaigns",
+      "range": "A1:G14"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A12:H13"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A8:H9"
+    },
+    {
+      "sheet": "CG",
+      "range": "A160:N179"
+    },
+    {
+      "sheet": "CG",
+      "range": "A21:N28"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A151:L187"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A21:L25"
+    },
+    {
+      "sheet": "Attempts",
+      "range": "A127:H151"
+    }
+  ],
+  "visual_review": "Seven sheets preserved. C5k8 fresh9/proved9 versus warm8 is visible; C2k8/C3k8/C3k10/C6k10 fresh excess1 remains proof=no/TIME_LIMIT. All four extension MIPs use explicit chain/target case labels and zero target excess.",
+  "artifact_hashes": {
+    "outputs/research_register/register.json": "6ffbd6afbac585ca246c7aec6fcdfd3e62ad6eb442a80ec152748ee0538df8a6",
+    "outputs/research_register/register.csv": "4f79ed4abe9f797eca86af6b7673976953aaead06096ebac8147a17003539933",
+    "outputs/research_register/build_register.py": "6a8e7348ba2116505de4824c9b2072e621361cd445208be6e42d2748a07b6e85",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "550865895a499218a478127def3b108bcd94b07f7767a49cd1ad5249e724063b"
+  }
+}

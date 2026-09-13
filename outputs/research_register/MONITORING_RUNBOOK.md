@@ -1,5 +1,11 @@
 # Unicorn monitoring runbook
 
+## 13 September, 15:51 EDT — integer reach17 and fresh-pool distinctions
+
+Snapshot195049Z: extension MIPs C1k16,C2k16,C3k16,C3k17 match targets with fleet-only pool proofs/replay; chargingstage timecapped. CG7certificates includesC3k18, which is not yet an integer result. Cumulative19CGcertified/36MIPs =24warm alltarget+12fresh (6target,2proved poolmisses,4openfleetgaps). C5k8 proves9 versuswarm8; C5k5 proves6 versuswarm5. C2k8/C3k8 remain9/bound8; C3k10/C6k10 remain11/bound10. Do not conflate overall TIME_LIMIT at chargingstage with missingfleetproof; do not blindlyrerun these comparisons. Report: outputs/cumulative_budget_20260913/status_20260913T195049Z/README.md.
+
+Initialcollector timedout300s in rpc_wait_bit_killable, SSH remained available; terminated only its PID3130540. Diagnosticretry with identical collectionlogic+faulthandler completed. Stack showed phase-telemetry JSON decoding; no rootcause claim about wholeclusterstorage. Keep failed-monitor record and completedretry separate. On futuretimeout alwayswrite failuremeta and probeSSH, rather than letting TimeoutExpired leave /tmp/evsp-monitor-current.json pointing at oldsuccess. Latest recovery is not an access-restoration event. No new executionfailure/preemption/invaliddependency in this successful check.
+
 ## 13 September, 14:44 EDT — first complete fresh k=5 panel
 
 Snapshot184244Z: cumulative campaign9 certified fresh CG endpoints and17MIPs (7fresh,10matchedwarm). All six freshk5MIPs finished: five recover5; C5 proves6 in its14175-column fresh pool despite pricing convergence, while its16870-column warm pool proves5. Fresh C6k8 recovers8. This is a finite-pool composition limitation; do not blindly give the completed CG/MIP more time or claim global integer infeasibility. Larger cases continue. Current report: outputs/cumulative_budget_20260913/status_20260913T184244Z/README.md. Published shared_primary_certificate/shared_primary_mip completion records override the wrapper’s older preflight operational state; aliases are not extra solves. No new execution errors, preemptions or invalid dependencies. Extension CG now has four certified endpoints (C1k16,C2k16,C3k16,C3k17), with no new MIP endpoint; highest verified integer target stays15.

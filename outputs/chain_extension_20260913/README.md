@@ -1,5 +1,7 @@
 # Continuing the six chains beyond 15 buses
 
+**Results through 13 September 15:51 EDT:** chain3 matches17 buses; chains1/2 match16. Four completed extension MIPs have finite-pool fleet proofs and individual-route replay; charging-stage optimality remains open. Seven CG endpoints are certified, including C3k18, whose integer solve is not yet complete. [Current table and source records](../cumulative_budget_20260913/status_20260913T195049Z/README.md).
+
 The six baseline chains have each found 15-bus integer solutions at target k=15. This campaign tests how much farther the same method scales. **k=16–25 are the next 60 cases.** Inputs through k=40 are frozen for later continuation; they are not all submitted now. **Submitted 13 September, verified 10:25 EDT:** graph array **133908**, 60 CG jobs and 60 MIPs. Fifty graph tasks were running and ten waited for an array slot; all CG/MIP dependencies passed validation. The 33 held historical tasks were untouched. See [job map](case_jobs.json), [launch verification](launch_verification.json) and [native validation](validation.json). Submission and live status are recorded separately from scientific results.
 
 | What changes | What stays fixed |

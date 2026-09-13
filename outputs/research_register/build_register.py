@@ -206,17 +206,28 @@ class Register:
                 self.authoritative_cases[manifest_case] = {
                     **metadata, "id": manifest_case,
                 }
+        extension = snapshot.get("campaigns", {}).get("chain_extension_20260913", {})
+        extension_workflow = extension.get("workflow", {}) or {}
+        self.extension_cases = {
+            cid: {**metadata, "id": cid}
+            for cid, metadata in (extension_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
+        }
+        self.extension_jobs = extension_workflow.get("case_jobs.json", {}) or {}
 
     def authoritative_case(self, campaign_id, source_path, input_path,
                            fallback_case_id):
-        """Resolve only overnight cases from the embedded manifest.
+        """Resolve explicitly registered cases from their campaign manifest.
 
         Result paths can contain a scheduler run directory below the case
         directory (for example ``.../d00_g0/mip/949625_r0/result.json``),
         while warm input paths contain an older ``k2_15`` ancestor.  Prefer a
         manifest case directory or CSV basename before any generic regex.
         """
-        if campaign_id != "overnight_extension_20260912":
+        if campaign_id == "chain_extension_20260913":
+            cases = self.extension_cases
+        elif campaign_id == "overnight_extension_20260912":
+            cases = self.authoritative_cases
+        else:
             return None
         candidates = []
         for value in (source_path, input_path, fallback_case_id):
@@ -226,8 +237,8 @@ class Register:
             candidates.extend(Path(text).parts)
             candidates.append(Path(text).stem)
         for candidate in candidates:
-            if candidate in self.authoritative_cases:
-                return self.authoritative_cases[candidate]
+            if candidate in cases:
+                return cases[candidate]
         return None
 
     def campaign(self, campaign_id, root, family, reports=None):
@@ -255,6 +266,15 @@ class Register:
         metadata = self.authoritative_case(
             campaign_id, source_path, input_path, case_id,
         )
+        if campaign_id == "chain_extension_20260913" and stage in ("cg", "mip"):
+            if not metadata or input_path != metadata.get("csv"):
+                raise ValueError(f"extension endpoint input/case differs from manifest: {source_path}")
+            observed_hash = at(payload, "provenance.instance_sha256",
+                               "physical_pool_audit.input_hashes.instance_sha256")
+            if observed_hash != metadata.get("input_sha256"):
+                raise ValueError(f"extension endpoint input hash differs from manifest: {source_path}")
+            expected_job = self.extension_jobs.get(metadata["id"], {}).get(stage)
+            overrides = {"job_ids": [str(expected_job)] if expected_job else [], **(overrides or {})}
         if metadata:
             case_id = metadata["id"]
             input_path = metadata.get("csv") or input_path
