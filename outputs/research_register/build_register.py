@@ -117,14 +117,19 @@ def path_case(path, fallback):
 
 
 def case_dimensions(case_id, input_path=None):
-    text = " ".join(str(value or "") for value in (case_id, input_path))
-    target = re.search(r"(?:^|[_-])k(\d{1,2})(?:[_-]|$)", text, re.I)
-    chain = re.search(r"(?:^|[_-])p(\d{1,2})(?:[_-]|$)", text, re.I)
-    replication = re.search(r"(?:rep|fresh)(\d+)", text, re.I)
+    # Case identity has priority. A parent folder such as nested_k2_15 is a
+    # campaign range, never the target of the individual CSV below it.
+    candidates = [str(case_id or ""), Path(str(input_path or "")).stem]
+    def first(pattern):
+        for value in candidates:
+            found = re.search(pattern, value, re.I)
+            if found:
+                return int(found.group(1))
+        return None
     return (
-        int(target.group(1)) if target else None,
-        int(chain.group(1)) if chain else None,
-        int(replication.group(1)) if replication else None,
+        first(r"(?:^|[_-])k(\d{1,2})(?:[_-]|$)"),
+        first(r"(?:^|[_-])p(\d{1,2})(?:[_-]|$)"),
+        first(r"(?:rep|fresh)(\d+)"),
     )
 
 
@@ -1132,6 +1137,10 @@ class Register:
             duplicates = [key for key, count in Counter(ids).items() if count > 1]
             raise ValueError(f"duplicate stable row IDs: {duplicates[:5]}")
         for row in self.rows:
+            explicit_target = case_dimensions(row["case_id"])[0]
+            if (explicit_target is not None and row["target_k"] is not None
+                    and explicit_target != row["target_k"]):
+                raise ValueError(f"case target mismatch: {row['case_id']}")
             for key in ("source_sha256", "snapshot_payload_sha256"):
                 if row[key] is not None and not SHA_RE.match(str(row[key])):
                     raise ValueError(f"invalid {key} in {row['row_id']}")

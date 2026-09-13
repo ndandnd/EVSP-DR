@@ -1,8 +1,10 @@
 {
-  "xlsx_sha256": "cd607fbc8bcdbf3cc54fddae1ae5bd775ce2e45298814f8b4da2b4b7aa06ea8e",
+  "xlsx_sha256": "cec56e6fafb627c8bd8d648395977be1ed1a4fe9569b95918fde2e853806ae23",
   "fee_mip_rows_checked": 13,
   "giro_comparison_rows_checked": 18,
   "target_and_fee_labels_match": true,
   "giro_returning_energy_checks_match": true,
-  "scientific_source": "20260913T054150Z_reconciled.json"
+  "scientific_source": "20260913T054150Z_reconciled.json",
+  "all_mip_target_cells_match_register": true,
+  "all_mip_rows_checked": 596
 }

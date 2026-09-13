@@ -106,3 +106,6 @@ Use repeatable `--supplement /absolute/path/to/audit.json` arguments to preserve
 ## Charging-start fee comparisons
 
 `charge_start_cost` is the explicitly recorded objective coefficient per charging activity; zero is retained as zero. Missing values remain unknown, not a default of5. `electricity_cost_grid` / `electricity_cost_continuous` exclude the start penalty. `charging_starts_grid` / `charging_starts_continuous` count activities, not tariff blocks. `charged_energy_grid_kwh` / `charged_energy_continuous_kwh` report charged energy. `charging_metrics_reconcile` checks electricity plus fee×starts against the saved charging total; it does not establish route or station-capacity feasibility.
+
+
+Case dimensions use explicit campaign metadata first. Where only names exist, parse the case ID first and then the input CSV basename; enclosing directory names such as `nested_k2_15` are experiment ranges and must never supply an individual target. A conflicting explicit case target fails validation. The 13 September reporting correction leaves all solver artifacts and their hashes unchanged; its row-level audit is `outputs/zero_charge_start_fee_20260913/status_20260913T053436Z/register_label_correction.json`.
