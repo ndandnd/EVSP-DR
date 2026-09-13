@@ -21,6 +21,12 @@ def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 old = {case(r): r for r in s['campaigns']['overnight_extension_20260912']['mip']}
+old_sources = {key: 'overnight_extension_20260912' for key in old}
+for r in s['campaigns'].get('w2_chain_recovery_retry2_20260912', {}).get('mip', []):
+    key = case(r)
+    if key in {'w2_k14', 'w2_k15'} and key not in old:
+        old[key] = r
+        old_sources[key] = 'w2_chain_recovery_retry2_20260912'
 cg = {case(r): r for r in c['cg']}
 rows = []
 for m in c['mip']:
@@ -29,6 +35,7 @@ for m in c['mip']:
     f, audit = g.get('final') or {}, g.get('inherited_event_pool_audit') or {}
     row = dict(case=key, chain=int(key[1]), target_k=int(key[-2:]),
                new_buses=m.get('buses'), old_bounded_buses=o.get('buses'),
+               old_comparison_source=old_sources.get(key),
                old_fleet_proven=o.get('fleet_proven'), old_fleet_bound=o.get('fleet_bound'),
                cg_certified=g.get('certified_rc_optimal'), cg_minutes=(g.get('wall_s') or 0) / 60,
                cg_iterations=f.get('iter'), weighted_lp_objective=f.get('lp_obj'),
@@ -70,6 +77,9 @@ for r in highest:
     lines.append(f"| {r['chain']} | {r['target_k']} | {r['new_buses']} | {r['old_bounded_buses']} | {r['cg_minutes']:.1f} |")
 lines += ['', 'The table shows the highest completed match per chain, not a computational threshold or independent statistical replications. '
           '[All results and source hashes](results.json), [editable CSV](integer_results.csv).', '',
+          'Earlier bounded results for chain 2 k14–15 come from the recorded shutdown-repaired retry, '
+          'with the same 512-route / 900-second inheritance treatment. Its source revision differs from the original bounded campaign. '
+          'These chain-level outcomes are not single-change timing comparisons; the new controlled campaign provides those.', '',
           '## Settings and proof limits', '',
           'Set covering; unlimited inherited sequences checked by the fixed-sequence index; 240 kWh batteries; 240 kW charging; '
           '2.5 kWh / 5-minute event graph; flat prices; no shared-station capacity or return-SOC floor. No GIRO solution columns are injected. '

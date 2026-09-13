@@ -1,6 +1,6 @@
 # Queue recovered — 12 September 2026
 
-**New integer results, 21:14 EDT:** [Chains 3 and 5 reach k=15; all 29 completed full-pool MIPs match](status_20260913T011425Z/README.md).
+**New integer results, 22:21 EDT:** [Chains 3, 4 and 5 reach k=15; all 33 completed full-pool MIPs match](status_20260913T022120Z/README.md).
 
 **Latest check, 16:57 EDT:** **17 EVSP–DR jobs plus 9 V2G jobs running**, with no invalid dependencies. The first new full-pool CG jobs for chain3 k11 and chain4 k10 completed with pricing certificates; their successors are releasing automatically. [Completion evidence](first_chain_completions.json). The table below retains the earlier16:48EDT snapshot.
 

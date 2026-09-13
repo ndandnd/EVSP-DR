@@ -1,6 +1,6 @@
 {
   "authoritative_772009_rows": 1,
-  "campaign_count": 44,
+  "campaign_count": 45,
   "checks": [
     "all stable row IDs unique",
     "all retained SHA-256 fields are 64 lowercase hexadecimal characters",
@@ -14,13 +14,13 @@
   "families_and_stages": {
     "capacity_speed_exact_event:cg": 16,
     "capacity_speed_exact_event:mip": 16,
-    "cg_phase_telemetry:telemetry": 417,
-    "column_generation:cg": 409,
+    "cg_phase_telemetry:telemetry": 418,
+    "column_generation:cg": 434,
     "decomposition:decomposition_join": 6,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 445,
+    "pool_mip:mip": 449,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 68,
+    "scheduler:queue_state": 86,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -31,18 +31,18 @@
     "targeted_audit_log:log_tail": 2,
     "terminal_energy:frontier": 3,
     "terminal_energy:mip_failed_preoptimization": 3,
-    "workflow:workflow": 72,
+    "workflow:workflow": 75,
     "workflow:workflow_cg": 45,
     "workflow:workflow_cg_reference": 54,
     "workflow:workflow_freeze": 54,
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 1908,
-  "rows_with_source_sha256": 729,
-  "rows_without_source_sha256": 1179,
+  "row_count": 1959,
+  "rows_with_source_sha256": 759,
+  "rows_without_source_sha256": 1200,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "0c6c133098d4792811258f8d244d77bb82faf6358da339f85b9f32aeb583e074",
+  "source_snapshot_sha256": "415732d6db17f33e6e150e2ea400b39bf5ba12874daabae06666f7a0fafda03d",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 1908
+  "unique_row_ids": 1959
 }

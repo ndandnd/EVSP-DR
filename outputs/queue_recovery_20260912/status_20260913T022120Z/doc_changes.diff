@@ -1,0 +1,38 @@
+--- before
++++ after
+@@ -1,25 +1,25 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results checked 12 September 2026 at 21:14 EDT.
++Week of 14 September. Results checked 12 September 2026 at 22:21 EDT.
+ 
+-**New comparisons launched 12 September at 22:11 EDT.** All 24 paired jobs are running: k=8, 10 and 15, comparing indexed replay on/off, 512 versus full inheritance, and the LP-setup optimization on/off. Both arms of each pair use the same node; a second pair reverses their order. Each arm gets two hours of CG and one hour of MIP. Results are pending. [Comparison plan, settings and job IDs](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/controlled_comparison_20260913/README.md).
++**New comparisons launched 12 September at 22:11 EDT.** All 24 paired jobs are running: k=8, 10 and 15, comparing indexed replay on/off, 512 versus full inheritance, and the LP-setup optimization on/off. Both arms of each pair use the same node; a second pair reverses their order. Each arm gets two hours of CG and one hour of MIP. At 22:21, one first arm had certified CG after 9.1 minutes; its paired arm was unfinished. No new comparative speedup is established yet. [Comparison plan, settings and job IDs](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/controlled_comparison_20260913/README.md).
+ 
+-**Latest: all 29 completed full-pool MIPs match their fleet targets; chains 3 and 5 reach k=15.**
++**Latest: all 33 completed full-pool MIPs match their fleet targets; chains 3, 4 and 5 reach k=15.**
+ 
+-| Chain | Highest target matched | Full-pool buses | Earlier bounded buses | CG minutes |
++| Chain | Highest target matched | Full-pool buses | Earlier 512-route buses | CG minutes |
+ | ----- | ----- | ----- | ----- | ----- |
+-| 1 | 12 | 12 | 13 | 26.8 |
+-| 2 | 13 | 13 | 15 | 34.2 |
++| 1 | 13 | 13 | 15 | 70.6 |
++| 2 | 14 | 14 | 16 | 89.4 |
+ | 3 | 15 | 15 | 17 | 33.1 |
+-| 4 | 14 | 14 | 18 | 59.2 |
++| 4 | 15 | 15 | 18 | 64.4 |
+ | 5 | 15 | 15 | 17 | 52.3 |
+-| 6 | 13 | 13 | 15 | 75.0 |
++| 6 | 14 | 14 | 16 | 65.1 |
+ 
+-The table shows the highest completed integer match in each chain, not a failure threshold. All 29 completed full-pool MIPs match their targets and prove their fleets optimal within their saved pools. Their CG runs have pricing certificates, and individual-route replay passed. These are covering runs with 240 kWh batteries and 240 kW charging; shared charger capacity and return-SOC constraints are absent. Duplicate-trip removal was not validated. Higher k values remain in progress.
++The table shows the highest completed integer match in each chain, not a failure threshold. All 33 completed full-pool MIPs match their targets and prove their fleets optimal within their saved pools. Their CG runs have pricing certificates, and individual-route replay passed. These are covering runs with 240 kWh batteries and 240 kW charging; shared charger capacity and return-SOC constraints are absent. Duplicate-trip removal was not validated. Higher k values remain in progress. “Earlier 512-route buses” is the earlier result when at most 512 saved routes were inherited. Chain 2 k14 uses its recorded shutdown-repaired retry. Later chain pools differ, so this table does not isolate a single code change.
+ 
+ The initial comparisons—C3 k11, C4 k10 and C6 k11—used identical saved parent pools in both treatments and reached the same certified LP objectives within 1e-8. Full inheritance retained about 34,000–41,000 routes in 2.4–3.3 minutes. C4 k10 isolates a pool limitation: the old pool was proved to require 11 buses; the new pool provides 10\. C3 k11’s old 12-bus result was unproved, so MIP search difficulty may also matter there. CG times throughout this section use existing graph caches; original graph construction is excluded.
+ 
+-Thirty-three of 37 full-pool CG cases are certified; 29 MIPs have finished, all matching their targets. At 21:18, nine EVSP–DR jobs were running with no invalid dependencies. The shared 32-duty graph is still being built; completing it releases nine parent CG runs together. A tenth also needs the last component MIP, whose CG is running. No new execution failures or confirmed preemptions were observed. The separate bounded chain 2 k15 run finished with 17 buses, a pool fleet lower bound of 15 and no fleet proof; its CG had stopped at four hours without certification. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T011425Z/README.md).
++Thirty-five of 37 full-pool CG cases are certified; 33 MIPs have finished, all matching their targets. At 22:22, 30 EVSP–DR jobs were running: 24 controlled comparisons, four full-pool chain jobs and two decomposition jobs. No invalid dependencies, new execution failures or confirmed preemptions were observed. The shared 32-duty graph is still being built; completing it releases nine parent CG runs together. A tenth also needs the last component MIP, whose CG is running. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T022120Z/README.md).
+ 
+  Open [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) for timing, charging costs and geography, or [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) for the restored figure library.
+ 
