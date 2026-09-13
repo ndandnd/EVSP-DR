@@ -19,6 +19,7 @@ def sbatch_frontier(plan: dict, cell: dict, worker: Path) -> list[str]:
         str(SLURM / "sbatch"), "--parsable", "--partition=default_partition",
         "--exclude=scaglione-compute-01", "--cpus-per-task=1", "--mem=24G",
         "--time=02:00:00", "--no-requeue", "--job-name=gt_" + cell["id"],
+        "--export=EVSP_CAMPAIGN_ROOT=" + str(root),
         "--output=" + str(root / "logs/%x_%j.out"),
         "--error=" + str(root / "logs/%x_%j.err"), "--chdir=" + str(root),
         str(worker), cell["id"], "frontier",
@@ -33,6 +34,7 @@ def sbatch_mip(plan: dict, cell: dict, worker: Path,
         "--exclude=scaglione-compute-01",
         "--cpus-per-task=8", "--mem=48G", "--time=02:00:00", "--no-requeue",
         "--job-name=gm_" + cell["id"],
+        "--export=EVSP_CAMPAIGN_ROOT=" + str(root),
         "--output=" + str(root / "logs/%x_%j.out"),
         "--error=" + str(root / "logs/%x_%j.err"), "--chdir=" + str(root),
     ]
@@ -49,7 +51,7 @@ def main() -> None:
     args = parser.parse_args()
     root = args.root.expanduser().resolve()
     plan = read_plan(root)
-    worker = root / "worker.sh"
+    worker = Path(__file__).resolve().parents[2] / "worker.sh"
     if not worker.is_file():
         raise FileNotFoundError(worker)
     cells = {cell["id"]: cell for cell in plan["cells"]}

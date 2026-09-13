@@ -275,7 +275,7 @@ def prepare(args: argparse.Namespace) -> None:
             })
     plan = {
         "schema": "evsp-dr-terminal-energy-fee-comparison-v1",
-        "root": str(root), "commit": args.commit,
+        "root": str(root), "execution_repo": str(ROOT), "commit": args.commit,
         "python": "/home/nc437/evsp_env/bin/python",
         "cells": cells,
         "target_physical_terminal_energy_kwh": TARGET_KWH,
