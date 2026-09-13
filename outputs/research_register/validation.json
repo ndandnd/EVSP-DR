@@ -18,9 +18,9 @@
     "column_generation:cg": 434,
     "decomposition:decomposition_join": 6,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 449,
+    "pool_mip:mip": 451,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 86,
+    "scheduler:queue_state": 83,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -38,11 +38,11 @@
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 1959,
-  "rows_with_source_sha256": 759,
-  "rows_without_source_sha256": 1200,
+  "row_count": 1958,
+  "rows_with_source_sha256": 761,
+  "rows_without_source_sha256": 1197,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "415732d6db17f33e6e150e2ea400b39bf5ba12874daabae06666f7a0fafda03d",
+  "source_snapshot_sha256": "41b2a02d5102088d593ab7531940a58ed704b1429d162f369503aa0519b22435",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 1959
+  "unique_row_ids": 1958
 }
