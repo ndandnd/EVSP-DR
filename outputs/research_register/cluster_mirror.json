@@ -1,8 +1,8 @@
 {
-  "verified_at_utc": "2026-09-13T09:48:30.988402+00:00",
+  "verified_at_utc": "2026-09-13T13:54:27.639046+00:00",
   "cluster_directory": "/home/nc437/ladder-lite/research-register",
-  "source_commit": "fd9932d8308891c68bfa9355d24effa1d357088c",
-  "files_checked": 374,
+  "source_commit": "ff2fe4b9f0b644d8c1018c3003cb7a12df79b778",
+  "files_checked": 385,
   "all_hashes_matched": true,
   "errors": [],
   "files_sha256": {
@@ -249,7 +249,7 @@
     "outputs/research_register/DATA_DICTIONARY.md": "324e52b9b95a4a4bd50a919cf04995da2e84f292f2e650cdf66ccfde642cf586",
     "outputs/research_register/EXECUTION_ISSUES_20260910.md": "32944de946657880ef68a739346fcb21ac1ecd56a84813ef9a0185500731a2f6",
     "outputs/research_register/MONITORING_RUNBOOK.md": "6acd811a58e010bbf4526d6b9e66e915d0fafbcc1b01cd0642dd9b2fbf52a7ad",
-    "outputs/research_register/README.md": "a4fe2bd8077c3c9400942f496471a6e37fb831c1363ba1a16ddeda6aab9f944e",
+    "outputs/research_register/README.md": "8efc63749f3f2b129fa7c46380583e0154e501004ff1aaba77bd633ac8b28b8c",
     "outputs/research_register/REGISTER.md": "e8cd780621cab7150804711ee28f36f690a363c8d2df65d8269cfcd74c7c39dd",
     "outputs/research_register/RESULTS.md": "a6feeb2992580fb55cac9b7536df4c2662aa4c71aad34152867be4b7d0fc002a",
     "outputs/research_register/build_register.py": "d2c256778808c65291880190c3395bb96795eb76a1b2f9e1fcd25f390180169c",
@@ -379,6 +379,17 @@
     "outputs/zero_charge_start_fee_20260913/validation_mip_worker.sh": "b094cd9ab8372e04928c17d293c7e3cf46aa884409866058d7a46d6c689ff892",
     "outputs/zero_charge_start_fee_20260913/validation_submission.json": "b413807b6609fd53823e595caee8aea60e9f8e9b3a6d324810772a8f772b93bb",
     "outputs/zero_charge_start_fee_20260913/validation_worker.sh": "a9ba4760bce5f2ac22774b174b26a1d8422fddf6dfdd6d000439a78b2fe4f982",
-    "outputs/zero_charge_start_fee_20260913/worker.sh": "5f72a58bd62eb6c1ce5fa7e1be7889617d98970513fe827f68daffab3bbd2d6f"
+    "outputs/zero_charge_start_fee_20260913/worker.sh": "5f72a58bd62eb6c1ce5fa7e1be7889617d98970513fe827f68daffab3bbd2d6f",
+    "outputs/model_fairness_audit_20260913/README.md": "f1fd1feccd0b3e7e0e9b65edb617a43f73fc84ea9a5b3732a32bfe00949db625",
+    "outputs/model_fairness_audit_20260913/constraint_results_audit.md": "069381c1de06341ab479d60e5353886fc570a74eb47a8f5ca3f0e1bb5c05cb6e",
+    "outputs/model_fairness_audit_20260913/doc_after.md": "eda2d18e6a6c317d0ddc22bdadacc24979f746f7f632a3014d674d705e8c27bc",
+    "outputs/model_fairness_audit_20260913/doc_before.md": "c1ef11fa06d729cf09114815416c8926b29a5c7f3e9d63608bd57e7828815bb9",
+    "outputs/model_fairness_audit_20260913/doc_labels_checked.md": "b1e99268f4225ea3e0f124314196c1e81d83dbf277204b222d60a63809d49328",
+    "outputs/model_fairness_audit_20260913/doc_update.diff": "15d0c5a60fb80d05fe66dc42bad4bc5ad9d44e24f6afb4f01215c7e2d111a95e",
+    "outputs/model_fairness_audit_20260913/doc_verification.json": "d45281aa242dadc3fdb7090f924bf7839613aef2bc85716b908ae31eb6d7090a",
+    "outputs/model_fairness_audit_20260913/giro_requirements_audit.md": "60bf8a7a4a9edaf2cd6f4ae52725763f9260261328d827cfc2dd046351c555d5",
+    "outputs/model_fairness_audit_20260913/selected_register_evidence.json": "4c2ac94f687b10a51f2326ded26d5ae15d38866d46667e56169c1c4e3665ab6e",
+    "outputs/model_fairness_audit_20260913/source_inventory.json": "a4bc71a9334c6902b104f70f6b2db8db5529aa7ea1339d2f9c71771fc021271b",
+    "outputs/model_fairness_audit_20260913/strict_constraint_results.csv": "144397d04ba7c84be980e9a1880133649a70b5cf91516da2562010dbc613a086"
   }
 }
