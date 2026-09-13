@@ -1,0 +1,75 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T053436Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T054150Z_reconciled.json",
+  "timestamp_utc": "2026-09-13T05:41:50.033494+00:00",
+  "changed_results": [
+    {
+      "campaign": "giro_zero_start_fee_20260913",
+      "stage": "comparisons",
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0/joint/comparison.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "0e00ce0faf3c54846247b0f5d313222663b45ba3833478d9b3e13ca4e251a674",
+      "payload_sha256": "0e00ce0faf3c54846247b0f5d313222663b45ba3833478d9b3e13ca4e251a674"
+    },
+    {
+      "campaign": "giro_zero_start_fee_20260913",
+      "stage": "comparisons",
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee5/joint/comparison.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "d3f25841de026f4eb9de6cd17b8496946b1962465206b8adb61ce7197be9c590",
+      "payload_sha256": "d3f25841de026f4eb9de6cd17b8496946b1962465206b8adb61ce7197be9c590"
+    },
+    {
+      "campaign": "giro_zero_start_fee_20260913",
+      "stage": "comparisons",
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0/joint/comparison.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "bb79b68365df06e3193128a9a6c6f4b23aa103038945313561158dbdd082a027",
+      "payload_sha256": "bb79b68365df06e3193128a9a6c6f4b23aa103038945313561158dbdd082a027"
+    },
+    {
+      "campaign": "giro_zero_start_fee_20260913",
+      "stage": "comparisons",
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee5/joint/comparison.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "2444b0edb55351b8298c4b55b357e59c72f728a03e1ab8d7833bfecfbc8201d1",
+      "payload_sha256": "2444b0edb55351b8298c4b55b357e59c72f728a03e1ab8d7833bfecfbc8201d1"
+    },
+    {
+      "campaign": "giro_zero_start_fee_20260913",
+      "stage": "comparisons",
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0/joint/comparison.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "edd4ae5d98ede2de0f5c3344edcafb35ada72c975be29bb40581844d138bf571",
+      "payload_sha256": "edd4ae5d98ede2de0f5c3344edcafb35ada72c975be29bb40581844d138bf571"
+    },
+    {
+      "campaign": "giro_zero_start_fee_20260913",
+      "stage": "comparisons",
+      "path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee5/joint/comparison.json",
+      "new_path": true,
+      "summary": {
+        "final": {}
+      },
+      "sha256": "4f6bdcaf6d6dc3bc55b81e23b4aec5ac9a2f2abd0052a65f75ffa2638796c397",
+      "payload_sha256": "4f6bdcaf6d6dc3bc55b81e23b4aec5ac9a2f2abd0052a65f75ffa2638796c397"
+    }
+  ],
+  "mip_scheduler_transitions": [],
+  "queue_transitions": []
+}

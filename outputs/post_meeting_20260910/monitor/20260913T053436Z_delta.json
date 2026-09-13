@@ -1,0 +1,1034 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T051251Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T053436Z.json",
+  "timestamp_utc": "2026-09-13T05:34:36.009910+00:00",
+  "changed_results": [
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/C/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 8,
+        "fleet_bound": 8.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.7295456200372,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "8e5897d4ef99c8bad159f4403d09bcab2d8b90c339f8f6552f815daa9ae11263",
+      "payload_sha256": "8e5897d4ef99c8bad159f4403d09bcab2d8b90c339f8f6552f815daa9ae11263"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/B/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.930581605062,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "4147969168b4ca007a56a1400dc3194d1b8f91a2af9119ec46ac7719f98cbe1b",
+      "payload_sha256": "4147969168b4ca007a56a1400dc3194d1b8f91a2af9119ec46ac7719f98cbe1b"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r1/88607_r0/C/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.345729582943,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "1cfbf8853ebe344c389532ce67d308a33a52ef121dd287de7407a638f3d269ce",
+      "payload_sha256": "1cfbf8853ebe344c389532ce67d308a33a52ef121dd287de7407a638f3d269ce"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r1/88601_r0/C/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.6165338200517,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "026635d9884fb658789bc48c6dd3980bafbb6a6211e7e5329a92e3a2cdf73fb4",
+      "payload_sha256": "026635d9884fb658789bc48c6dd3980bafbb6a6211e7e5329a92e3a2cdf73fb4"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r1/88609_r0/C/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.7537701469846,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "33c616f9e7253965f5c4ac883d8ebeadd33f7f46e2fefbba6f35fbfdf4708618",
+      "payload_sha256": "33c616f9e7253965f5c4ac883d8ebeadd33f7f46e2fefbba6f35fbfdf4708618"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r1/88593_r0/B/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.1940550508443,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "cac9edd35535e668bcacfedfa53058d7d550f45c2467fe15c2a74734a0a99bae",
+      "payload_sha256": "cac9edd35535e668bcacfedfa53058d7d550f45c2467fe15c2a74734a0a99bae"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r2/88594_r0/A/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.511020964943,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "ed163662f7043b821b53e5c426537f916c1bef850dd841c45c612e8fbc527ceb",
+      "payload_sha256": "ed163662f7043b821b53e5c426537f916c1bef850dd841c45c612e8fbc527ceb"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/E/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 7201.615603847895,
+        "runtime_s": 7201.615603847895,
+        "final": {}
+      },
+      "sha256": "f2f264b5bfa6cb9f00b0bea209d4b795ddb6de97f168bd1041f5b59993956e1f",
+      "payload_sha256": "f2f264b5bfa6cb9f00b0bea209d4b795ddb6de97f168bd1041f5b59993956e1f"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r2/88608_r0/E/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 7201.006574131083,
+        "runtime_s": 7201.006574131083,
+        "final": {}
+      },
+      "sha256": "7879cd8bda60939f50284a33ab378940ca8b5aba011af53790571330e425751f",
+      "payload_sha256": "7879cd8bda60939f50284a33ab378940ca8b5aba011af53790571330e425751f"
+    },
+    {
+      "campaign": "controlled_comparison_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/E/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 7201.275369252311,
+        "runtime_s": 7201.275369252311,
+        "final": {}
+      },
+      "sha256": "4b9c4d2af4b7d56396d981a031bdbca14f0613d28b2d468bbc78396853c75e87",
+      "payload_sha256": "4b9c4d2af4b7d56396d981a031bdbca14f0613d28b2d468bbc78396853c75e87"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k05_fee0/114034_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 5,
+        "fleet_bound": 5.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 7.228304039919749,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "5eccc4ce6255fed66998336650a050cc5cefec7a2205d4bd4e7fe68986397d22",
+      "payload_sha256": "5eccc4ce6255fed66998336650a050cc5cefec7a2205d4bd4e7fe68986397d22"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k05_fee0/114039_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 5,
+        "fleet_bound": 5.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 15.623856529593468,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "3a042a1f1ea69960688fd54ea95a5fc767c320e89dfce36e60aa9bfa59d63597",
+      "payload_sha256": "3a042a1f1ea69960688fd54ea95a5fc767c320e89dfce36e60aa9bfa59d63597"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k05_fee0/114051_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 5,
+        "fleet_bound": 5.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 9.434185579884797,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "eae43ff67246111f69db86990bf036df977550f2912af681c2ff39eb0ca3e9bb",
+      "payload_sha256": "eae43ff67246111f69db86990bf036df977550f2912af681c2ff39eb0ca3e9bb"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k05_fee0/114058_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 5,
+        "fleet_bound": 5.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 4.1318670539185405,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "6aeb6e76462de7973c95c9d66215aca0d01f23e051df4edb0da4a6cd120d4c4c",
+      "payload_sha256": "6aeb6e76462de7973c95c9d66215aca0d01f23e051df4edb0da4a6cd120d4c4c"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k10_fee0/114066_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 277.31609260104597,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "69cd669e3d7d4229f8b12b46e55ed8dea9786f03019a13297611f84548a1b623",
+      "payload_sha256": "69cd669e3d7d4229f8b12b46e55ed8dea9786f03019a13297611f84548a1b623"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k05_fee0/114034_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 836.879963587271,
+        "runtime_s": 836.879963587271,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 486,
+          "iter": 486,
+          "lp_obj": 500153.51200000144,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 7.549516567451064e-15,
+          "min_rc": -1.4142260695848563e-09,
+          "route_weight": 5.000000000000014
+        }
+      },
+      "sha256": "72079ddba1afd979a5283777958d7e013537be82ba89e582f636651f80a4b72f",
+      "payload_sha256": "72079ddba1afd979a5283777958d7e013537be82ba89e582f636651f80a4b72f"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k10_fee0/114035_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1546.7118871062994,
+        "runtime_s": 1546.7118871062994,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 174,
+          "iter": 174,
+          "lp_obj": 1000384.3134970904,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 2.313704783318826e-13,
+          "min_rc": -1.9724784862242268,
+          "route_weight": 10.000000000000007
+        }
+      },
+      "sha256": "d859607b5051c000e6d21d3637d595aa93ed254a2008d8564cc768b4a4000939",
+      "payload_sha256": "d859607b5051c000e6d21d3637d595aa93ed254a2008d8564cc768b4a4000939"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k10_fee5/114036_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 488.75731091666967,
+        "runtime_s": 488.75731091666967,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 11,
+          "iter": 11,
+          "lp_obj": 1000511.2045748357,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 4.0523140398818214e-14,
+          "min_rc": -1.2212444389092525e-09,
+          "route_weight": 10.00000000000005
+        }
+      },
+      "sha256": "547006e77ab30cf6bb7e32bdb6074437ecb0ea3cc1eee83b14aa38fc0f8d493d",
+      "payload_sha256": "547006e77ab30cf6bb7e32bdb6074437ecb0ea3cc1eee83b14aa38fc0f8d493d"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k15_fee0/114038_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1501.6061141947284,
+        "runtime_s": 1501.6061141947284,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 49,
+          "iter": 49,
+          "lp_obj": 1500561.3732994485,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 9.103828801926284e-14,
+          "min_rc": -40.60298368741497,
+          "route_weight": 15.000000000000089
+        }
+      },
+      "sha256": "cf80d58f6db146744fdcbc5a406f4fdbbfa1b7648cf8a0ef71c2bb33b9548c12",
+      "payload_sha256": "cf80d58f6db146744fdcbc5a406f4fdbbfa1b7648cf8a0ef71c2bb33b9548c12"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k15_fee5/114037_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1461.7319262735546,
+        "runtime_s": 1461.7319262735546,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 49,
+          "iter": 49,
+          "lp_obj": 1500757.6434819538,
+          "max_bound_violation": 2.925715225643444e-13,
+          "max_row_violation": 2.395861287141088e-13,
+          "min_rc": -93.92267795590953,
+          "route_weight": 15.000000000000155
+        }
+      },
+      "sha256": "a4dee7b58f96cdd99f17faee7cc5f1488d6c9a7da28f495c6fa4ffb5607109b1",
+      "payload_sha256": "a4dee7b58f96cdd99f17faee7cc5f1488d6c9a7da28f495c6fa4ffb5607109b1"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k05_fee0/114039_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 363.8901928467676,
+        "runtime_s": 363.8901928467676,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 161,
+          "iter": 161,
+          "lp_obj": 500122.5120000001,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 8.770761894538737e-15,
+          "min_rc": -2.5752204257933897e-09,
+          "route_weight": 5.000000000000001
+        }
+      },
+      "sha256": "6048bbdaac4a1883d7fec4de03d907c61f6dcec325a00dfb1e18b0ed6ed5be29",
+      "payload_sha256": "6048bbdaac4a1883d7fec4de03d907c61f6dcec325a00dfb1e18b0ed6ed5be29"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k10_fee0/114042_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 601.818479782436,
+        "runtime_s": 601.818479782436,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 87,
+          "iter": 87,
+          "lp_obj": 1000288.4239999941,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 2.1549428907974288e-13,
+          "min_rc": -3.94368502298903e-08,
+          "route_weight": 9.99999999999994
+        }
+      },
+      "sha256": "9dc66098719273cb0356108121763361fc4f19a3d6b22ad73eab5eb1bed975ab",
+      "payload_sha256": "9dc66098719273cb0356108121763361fc4f19a3d6b22ad73eab5eb1bed975ab"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k15_fee0/114043_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1580.1581325833686,
+        "runtime_s": 1580.1581325833686,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 99,
+          "iter": 99,
+          "lp_obj": 1500488.8667466517,
+          "max_bound_violation": 2.0663469609803818e-13,
+          "max_row_violation": 4.672928710647284e-13,
+          "min_rc": -0.2552170089199164,
+          "route_weight": 15.000000000000043
+        }
+      },
+      "sha256": "bb9a6e3d22c629723a0afc2b4f6a30162a5275c0ad29086707d245b7a77ab41f",
+      "payload_sha256": "bb9a6e3d22c629723a0afc2b4f6a30162a5275c0ad29086707d245b7a77ab41f"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k15_fee5/114044_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 744.6911251312122,
+        "runtime_s": 744.6911251312122,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 18,
+          "iter": 18,
+          "lp_obj": 1500618.9515436732,
+          "max_bound_violation": 4.407307852005715e-13,
+          "max_row_violation": 3.9390712913700554e-13,
+          "min_rc": -8.127774628974294e-05,
+          "route_weight": 15.000000000000288
+        }
+      },
+      "sha256": "7cdcffa231f986a3721e45c2ad7473cb4aa7b1889496fce5bc7b00bc992e8ef6",
+      "payload_sha256": "7cdcffa231f986a3721e45c2ad7473cb4aa7b1889496fce5bc7b00bc992e8ef6"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k10_fee0/114047_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 458.31343163130805,
+        "runtime_s": 458.31343163130805,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 127,
+          "iter": 127,
+          "lp_obj": 1000237.3359999997,
+          "max_bound_violation": 2.1475876632592872e-13,
+          "max_row_violation": 1.3378187446733136e-13,
+          "min_rc": -5.142107184497036e-09,
+          "route_weight": 9.999999999999996
+        }
+      },
+      "sha256": "de4865a7a2c3c7e5f1d8d8c186238984002cc7b11cab992bba9d22f6ff9bcece",
+      "payload_sha256": "de4865a7a2c3c7e5f1d8d8c186238984002cc7b11cab992bba9d22f6ff9bcece"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k15_fee0/114050_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1044.3792623956688,
+        "runtime_s": 1044.3792623956688,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 131,
+          "iter": 131,
+          "lp_obj": 1500383.6559999797,
+          "max_bound_violation": 1.9413637364351644e-13,
+          "max_row_violation": 4.051203816857196e-13,
+          "min_rc": -2.8132716378692635e-08,
+          "route_weight": 14.9999999999998
+        }
+      },
+      "sha256": "b951bfa11e0f5276be76ec2191bdb380ab25dc9f7d7c8b5a6f2e95052efbc744",
+      "payload_sha256": "b951bfa11e0f5276be76ec2191bdb380ab25dc9f7d7c8b5a6f2e95052efbc744"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k15_fee5/114049_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 398.2583745121956,
+        "runtime_s": 398.2583745121956,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 26,
+          "iter": 26,
+          "lp_obj": 1500507.4203245118,
+          "max_bound_violation": 1.7784385075714226e-13,
+          "max_row_violation": 3.212985433265203e-13,
+          "min_rc": -2.869963822149657e-09,
+          "route_weight": 15.000000000000078
+        }
+      },
+      "sha256": "753293f8db19ba1ae0765b517c971776d4e569b354204af250a531231159f2d1",
+      "payload_sha256": "753293f8db19ba1ae0765b517c971776d4e569b354204af250a531231159f2d1"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k05_fee0/114051_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 744.8973065288737,
+        "runtime_s": 744.8973065288737,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 684,
+          "iter": 684,
+          "lp_obj": 500160.7039999994,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 3.3639757646142243e-14,
+          "min_rc": -1.5823731769337712e-09,
+          "route_weight": 4.999999999999994
+        }
+      },
+      "sha256": "7c19e7d71acff44a5b2cb4d375bb5a09d45bd176373a04a421780571be244860",
+      "payload_sha256": "7c19e7d71acff44a5b2cb4d375bb5a09d45bd176373a04a421780571be244860"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k10_fee0/114054_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 889.9915314773098,
+        "runtime_s": 889.9915314773098,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 221,
+          "iter": 221,
+          "lp_obj": 1000328.5999999997,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 2.731148640577885e-14,
+          "min_rc": -9.30385413155932e-09,
+          "route_weight": 9.999999999999998
+        }
+      },
+      "sha256": "f6a7b59760e564c334b5f43a61e13a71183aaf2f12395f0db6da0a46df198d9f",
+      "payload_sha256": "f6a7b59760e564c334b5f43a61e13a71183aaf2f12395f0db6da0a46df198d9f"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k15_fee0/114055_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1564.7862040170003,
+        "runtime_s": 1564.7862040170003,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 149,
+          "iter": 149,
+          "lp_obj": 1500502.7907791561,
+          "max_bound_violation": 3.587747383133117e-13,
+          "max_row_violation": 4.192202140984591e-13,
+          "min_rc": -0.4614618996588704,
+          "route_weight": 15.000000000000199
+        }
+      },
+      "sha256": "cc74ce609b0d51207d8489c554685ba226d094d4ca3ea2341fe7b4640e51f11e",
+      "payload_sha256": "cc74ce609b0d51207d8489c554685ba226d094d4ca3ea2341fe7b4640e51f11e"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k15_fee5/114056_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 528.0328785795718,
+        "runtime_s": 528.0328785795718,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 16,
+          "iter": 16,
+          "lp_obj": 1500637.9289838339,
+          "max_bound_violation": 2.5940360970366783e-13,
+          "max_row_violation": 3.0475622025960547e-13,
+          "min_rc": -8.034688026015147e-09,
+          "route_weight": 15.000000000000071
+        }
+      },
+      "sha256": "6b50814dbb495dc414ab03205dc42236860e7c868778000ff50f6a411ff22f53",
+      "payload_sha256": "6b50814dbb495dc414ab03205dc42236860e7c868778000ff50f6a411ff22f53"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k05_fee0/114058_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 533.87676515989,
+        "runtime_s": 533.87676515989,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 442,
+          "iter": 442,
+          "lp_obj": 500199.392,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 2.220446049250313e-16,
+          "min_rc": -5.551346049514905e-10,
+          "route_weight": 5.0
+        }
+      },
+      "sha256": "0409baecc07178022d6ba37a68b1a5baaa7a58047dc1b2bc00a122d01cdade49",
+      "payload_sha256": "0409baecc07178022d6ba37a68b1a5baaa7a58047dc1b2bc00a122d01cdade49"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k10_fee0/114059_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1580.5673438224476,
+        "runtime_s": 1580.5673438224476,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 499,
+          "iter": 499,
+          "lp_obj": 1000343.2823515151,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 1.8762769116165146e-14,
+          "min_rc": -0.23797979876154507,
+          "route_weight": 10.0
+        }
+      },
+      "sha256": "3591aeb79efc4cff5b0b9ef27543dc35183b8e71660f74447e55d6cee67014cd",
+      "payload_sha256": "3591aeb79efc4cff5b0b9ef27543dc35183b8e71660f74447e55d6cee67014cd"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k15_fee0/114062_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 1602.4090769258328,
+        "runtime_s": 1602.4090769258328,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 249,
+          "iter": 249,
+          "lp_obj": 1500516.956826539,
+          "max_bound_violation": 5.749845044533686e-13,
+          "max_row_violation": 4.169997680492088e-13,
+          "min_rc": -1.3153032737539392,
+          "route_weight": 15.000000000000034
+        }
+      },
+      "sha256": "2f31db7a9320e4ed2d3db25e7e6547bde75fe3844315938ff139ceab214c90b7",
+      "payload_sha256": "2f31db7a9320e4ed2d3db25e7e6547bde75fe3844315938ff139ceab214c90b7"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k15_fee5/114061_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 380.19069876894355,
+        "runtime_s": 380.19069876894355,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 18,
+          "iter": 18,
+          "lp_obj": 1500669.1594587201,
+          "max_bound_violation": 0.0,
+          "max_row_violation": 2.324807013565078e-13,
+          "min_rc": -1.0544054962480232e-08,
+          "route_weight": 15.000000000000167
+        }
+      },
+      "sha256": "fb8be63ec136745122973bd44706a3c42f6bc2d85083dc722732c2e3af161921",
+      "payload_sha256": "fb8be63ec136745122973bd44706a3c42f6bc2d85083dc722732c2e3af161921"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k15_fee0/114067_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 1192.3021222143434,
+        "runtime_s": 1192.3021222143434,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 71,
+          "iter": 71,
+          "lp_obj": 1500480.375999987,
+          "max_bound_violation": 2.0131636878046036e-12,
+          "max_row_violation": 5.350164755668629e-13,
+          "min_rc": -6.593310297731136e-08,
+          "route_weight": 14.999999999999869
+        }
+      },
+      "sha256": "511f63320a01a82f9762a1e9bd8db6a1bc89e16bf1aa1e1761705e258924f987",
+      "payload_sha256": "511f63320a01a82f9762a1e9bd8db6a1bc89e16bf1aa1e1761705e258924f987"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k15_fee5/114068_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 662.0083098346367,
+        "runtime_s": 662.0083098346367,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 22,
+          "iter": 22,
+          "lp_obj": 1500606.3379640586,
+          "max_bound_violation": 3.5926817076870066e-13,
+          "max_row_violation": 3.929079284148429e-13,
+          "min_rc": -2.568405577108024e-08,
+          "route_weight": 14.999999999999824
+        }
+      },
+      "sha256": "effb9836ab821dfa4017941522afe95b337f056bd206c3a2c3d751779638fb06",
+      "payload_sha256": "effb9836ab821dfa4017941522afe95b337f056bd206c3a2c3d751779638fb06"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "88586",
+      "case_id": "w1_k08_index_r1",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88594",
+      "case_id": "w4_k10_index_r2",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88601",
+      "case_id": "w3_k15_pool_r1",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88605",
+      "case_id": "w1_k08_full_index_r1",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88606",
+      "case_id": "w1_k08_full_index_r2",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88607",
+      "case_id": "w3_k15_full_index_r1",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88608",
+      "case_id": "w3_k15_full_index_r2",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88609",
+      "case_id": "w4_k10_full_index_r1",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "88610",
+      "case_id": "w4_k10_full_index_r2",
+      "cohort": "default_controlled_pairs_7h",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "114034",
+      "case_id": "w1_k05_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114039",
+      "case_id": "w2_k05_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114051",
+      "case_id": "w4_k05_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114058",
+      "case_id": "w5_k05_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114066",
+      "case_id": "w6_k10_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "114034",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "114039",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "114051",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "114058",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-10"
+      },
+      "after": null
+    },
+    {
+      "job": "114066",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-04"
+      },
+      "after": null
+    },
+    {
+      "job": "114109",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "88586",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "88594",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-14"
+      },
+      "after": null
+    },
+    {
+      "job": "88601",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-04"
+      },
+      "after": null
+    },
+    {
+      "job": "88605",
+      "before": {
+        "state": "RUNNING",
+        "reason": "scaglione-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "88606",
+      "before": {
+        "state": "RUNNING",
+        "reason": "scaglione-cpu-05"
+      },
+      "after": null
+    },
+    {
+      "job": "88607",
+      "before": {
+        "state": "RUNNING",
+        "reason": "scaglione-cpu-04"
+      },
+      "after": null
+    },
+    {
+      "job": "88608",
+      "before": {
+        "state": "RUNNING",
+        "reason": "cliprelabs-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "88609",
+      "before": {
+        "state": "RUNNING",
+        "reason": "cliprelabs-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "88610",
+      "before": {
+        "state": "RUNNING",
+        "reason": "dean-cpu-01"
+      },
+      "after": null
+    }
+  ]
+}

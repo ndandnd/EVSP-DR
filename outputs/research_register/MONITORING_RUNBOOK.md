@@ -1,5 +1,10 @@
 # Unicorn monitoring runbook
 
+## Fee experiment update — 13 September 01:41 EDT
+
+Source snapshots: 20260913T053436Z.json is the complete 01:34 collection; 20260913T054150Z_reconciled.json incorporates only the timestamped GIRO follow-up after jobs released during collection. Provenance includes both source hashes. Never relaunch the 12 completed GIRO jobs 114100–114111: all exited COMPLETED0:0. All six comparisons have matching completion hashes, five buses, and validated 62-trip coverage/aggregate return energy. Report: outputs/zero_charge_start_fee_20260913/status_20260913T053436Z/README.md. Fee-zero electricity costs are128.293/164.231/95.285 at peaks08/12/18; fixed and joint agree. The separate baseline fee chains have13completedMIPs, six complete k5pairs and C6k10fee0;29/36CGcertified. Preserve paired pool initialization and physical scope. Controlled comparison has20/24finished at01:34, no new speedup analysis yet. The register now uses explicit source case/pair/arm metadata for both campaigns rather than incorrectly parsing the enclosing k2_15 directory. Scientific outputs were unchanged.
+
+
 ## Controlled comparisons launched — 13 September UTC
 
 Root /home/nc437/ladder-lite/controlled_comparison_20260913; 24 paired allocations listed in jobs.json, IDs 88586–88610 excluding 88589. CG e091a4d, MIP871d057, comparison tooling115c14253eeed9473cbf61f741acd93c1268beaa. Each pair runs two CG7200s/MIP3600s arms on8CPU96G/default, seven-hour allocation, no requeue, scaglione-compute-01 excluded. All24 were running at startup; all native licenses passed and three first-arm CGs had positive iterations. Preserve held history/V2G and existing recovery work.

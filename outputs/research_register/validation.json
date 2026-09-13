@@ -17,10 +17,11 @@
     "cg_phase_telemetry:telemetry": 418,
     "column_generation:cg": 494,
     "decomposition:decomposition_join": 6,
+    "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 493,
+    "pool_mip:mip": 505,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 108,
+    "scheduler:queue_state": 93,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -38,11 +39,11 @@
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 2090,
-  "rows_with_source_sha256": 865,
-  "rows_without_source_sha256": 1225,
+  "row_count": 2105,
+  "rows_with_source_sha256": 895,
+  "rows_without_source_sha256": 1210,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "21264ea023cc543f665a189516703c8e30a0e1ba960c9653f89d0f22b056cd71",
+  "source_snapshot_sha256": "2aab7fee4c8a2acb1378c696a396410723fe1087f0cab463c91995e8b3c46ea6",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 2090
+  "unique_row_ids": 2105
 }

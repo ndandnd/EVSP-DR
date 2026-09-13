@@ -581,28 +581,31 @@ class Register:
 
     @staticmethod
     def fee_case_fields(campaign_id, campaign, item):
-        if campaign_id != "zero_charge_start_fee_20260913":
+        if campaign_id not in {"zero_charge_start_fee_20260913", "controlled_comparison_20260913"}:
             return {}
+        is_fee = campaign_id == "zero_charge_start_fee_20260913"
         case = item.get("source_case_id")
         match = re.fullmatch(r"w(\d+)_k(\d+)", str(case))
         arm = item.get("arm")
-        if not match or arm not in {"fee0", "fee5"}:
+        allowed_arms = {"fee0", "fee5"} if is_fee else {"A", "B", "C", "D", "E"}
+        if not match or arm not in allowed_arms:
             raise ValueError("fee result lacks explicit chain/target/arm identity")
         declared_pairs = {(p["id"], p["case_id"]) for p in campaign.get("pairs", [])}
         if (item.get("pair_id"), case) not in declared_pairs:
             raise ValueError("fee result differs from frozen campaign pair")
         cg = next((r for r in campaign.get("cg", [])
-                   if r.get("source_case_id") == case and r.get("arm") == arm), {})
+                   if r.get("pair_id") == item.get("pair_id") and r.get("arm") == arm), {})
         input_path = item.get("csv") or item.get("instance") or cg.get("csv")
         # Read the actual CSV basename, never the enclosing k2_15 directory.
         csv_match = re.search(r"_k(\d+)_p(\d+)_", Path(input_path or "").name)
         if not csv_match or tuple(map(int, csv_match.groups())) != (int(match[2]), int(match[1])):
             raise ValueError("fee result CSV differs from explicit chain/target")
-        fee = float(item["charge_start_cost"])
-        if fee != {"fee0": 0.0, "fee5": 5.0}[arm]:
-            raise ValueError("fee arm and recorded charge-start cost differ")
+        if is_fee:
+            fee = float(item["charge_start_cost"])
+            if fee != {"fee0": 0.0, "fee5": 5.0}[arm]:
+                raise ValueError("fee arm and recorded charge-start cost differ")
         metrics = item.get("charging_comparison_metrics") or {}
-        return {"case_id": case, "substage": arm, "overrides": {
+        return {"case_id": case if is_fee else item["pair_id"], "substage": arm, "overrides": {
             "target_k": int(match[2]), "chain": int(match[1]),
             "input_path": input_path,
             "input_sha256": at(cg, "provenance.instance_sha256"),

@@ -1,5 +1,7 @@
 # Charging-start fee: zero versus five
 
+**Current results, 13 September 01:41 EDT:** [All six k=5 pairs match; GIRO electricity savings survive fee removal at all three peaks](status_20260913T053436Z/README.md). Thirteen chain MIPs and all six GIRO comparisons are verified.
+
 **Launched 13 September at 01:08 EDT: 36 baseline CG→MIP jobs and 12 GIRO comparison jobs, all on default.** The user requested an isolated branch and new runs removing the five-unit cost per charging activity. Existing running experiments remain unchanged. The current submission ledgers are the authority for launched jobs.
 
 The earlier five-duty charging comparison counted **52 GIRO charging starts**, versus **15–23 in the joint optimized schedules** across the three tariffs. Charging-start penalties therefore contributed 260 to the GIRO total and 75–115 to the joint totals. Those were modeled penalties, not documented operator invoices. That earlier comparison also returned different amounts of battery energy, so it does not establish savings at equal terminal inventory. [Original audited table](../meeting_20260910/presentation_manager/charging_audit/charging_three_baselines.csv).

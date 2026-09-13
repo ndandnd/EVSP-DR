@@ -1,0 +1,106 @@
+{
+  "cohort": "five duties / 62 trips; 240 kWh / 350 kW",
+  "minimum_returning_energy_kwh": 280.7833253,
+  "checks": [
+    {
+      "pair_id": "peak08_fee0",
+      "arm": "fixed_duties_optimized",
+      "cost_reconciliation_error": 1.1198153515579179e-11,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "0e00ce0faf3c54846247b0f5d313222663b45ba3833478d9b3e13ca4e251a674"
+    },
+    {
+      "pair_id": "peak08_fee0",
+      "arm": "joint_pool_optimized",
+      "cost_reconciliation_error": 1.1198153515579179e-11,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "0e00ce0faf3c54846247b0f5d313222663b45ba3833478d9b3e13ca4e251a674"
+    },
+    {
+      "pair_id": "peak08_fee5",
+      "arm": "fixed_duties_optimized",
+      "cost_reconciliation_error": 1.864464138634503e-11,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "d3f25841de026f4eb9de6cd17b8496946b1962465206b8adb61ce7197be9c590"
+    },
+    {
+      "pair_id": "peak08_fee5",
+      "arm": "joint_pool_optimized",
+      "cost_reconciliation_error": 1.1141310096718371e-11,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "d3f25841de026f4eb9de6cd17b8496946b1962465206b8adb61ce7197be9c590"
+    },
+    {
+      "pair_id": "peak12_fee0",
+      "arm": "fixed_duties_optimized",
+      "cost_reconciliation_error": 7.16227077646181e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "bb79b68365df06e3193128a9a6c6f4b23aa103038945313561158dbdd082a027"
+    },
+    {
+      "pair_id": "peak12_fee0",
+      "arm": "joint_pool_optimized",
+      "cost_reconciliation_error": 7.16227077646181e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "bb79b68365df06e3193128a9a6c6f4b23aa103038945313561158dbdd082a027"
+    },
+    {
+      "pair_id": "peak12_fee5",
+      "arm": "fixed_duties_optimized",
+      "cost_reconciliation_error": 1.7053025658242404e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "2444b0edb55351b8298c4b55b357e59c72f728a03e1ab8d7833bfecfbc8201d1"
+    },
+    {
+      "pair_id": "peak12_fee5",
+      "arm": "joint_pool_optimized",
+      "cost_reconciliation_error": 1.4210854715202004e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "2444b0edb55351b8298c4b55b357e59c72f728a03e1ab8d7833bfecfbc8201d1"
+    },
+    {
+      "pair_id": "peak18_fee0",
+      "arm": "fixed_duties_optimized",
+      "cost_reconciliation_error": 8.029132914089132e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "edd4ae5d98ede2de0f5c3344edcafb35ada72c975be29bb40581844d138bf571"
+    },
+    {
+      "pair_id": "peak18_fee0",
+      "arm": "joint_pool_optimized",
+      "cost_reconciliation_error": 8.029132914089132e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "edd4ae5d98ede2de0f5c3344edcafb35ada72c975be29bb40581844d138bf571"
+    },
+    {
+      "pair_id": "peak18_fee5",
+      "arm": "fixed_duties_optimized",
+      "cost_reconciliation_error": 4.433786671143025e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "4f6bdcaf6d6dc3bc55b81e23b4aec5ac9a2f2abd0052a65f75ffa2638796c397"
+    },
+    {
+      "pair_id": "peak18_fee5",
+      "arm": "joint_pool_optimized",
+      "cost_reconciliation_error": 6.963318810448982e-12,
+      "physical_validated": true,
+      "both_terminal_checks": true,
+      "comparison_sha256": "4f6bdcaf6d6dc3bc55b81e23b4aec5ac9a2f2abd0052a65f75ffa2638796c397"
+    }
+  ],
+  "all_completion_hashes_match": true,
+  "all_12_allocation_exit_codes": "COMPLETED 0:0",
+  "original_power_trace": "unobserved; preserve electricity-cost interval",
+  "source_followup_sha256": "27be42392aedc8d1728cf8f0439a03f47502289b5634e9bbd4ddfd19204f0872"
+}
