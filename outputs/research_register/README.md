@@ -1,5 +1,8 @@
 # EVSP–DR experiment register
 
+**Current queue, 13 September 05:38 EDT:** [The shared 32-duty graph preparation timed out](../queue_recovery_20260912/status_20260913T093758Z/README.md) after12h32m, before a cache or parent CG result was saved. All20 dependent jobs auto-cancelled before start. No active EVSP–DR jobs remain; held historical work is untouched. Completed chain, algorithm-comparison and fee results below are unchanged. This was a scheduler time limit, not preemption or out-of-memory.
+
+
 **Queue fixed, 12 September 16:57 EDT:** [Running work, dependency explanations and launch map](../queue_recovery_20260912/README.md).
 
 **Start here:** [All six chains reach k=15, 13 September 02:35 EDT](../queue_recovery_20260912/status_20260913T063519Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
@@ -12,7 +15,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2093 artifact/stage records across 47 campaign/source groups**, from the 04:36 EDT collection on 13 September. Counts are not independent experimental sample sizes.
+Current build: **2073 artifact/stage records across 48 campaign/source groups**, from the 05:38 EDT collection on 13 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -48,13 +51,13 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260913T083655Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260913T093758Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs
 ```
 
-Replace the snapshot with the newly collected dated file. The workbook builder requires the bundled `@oai/artifact-tool` package; `node_modules` here is a local dependency symlink, not experiment data. `validation.json` checks source identity and result scopes; the workbook's `workbook_checks.json` checks record counts and formula errors. All seven workbook tabs were rendered; updated result and charging fields were visually checked.
+Replace the snapshot with the newly collected dated file. Preserve all supplements listed in register.json (currently six) by passing each with --supplement, including the graph timeout audit. The workbook builder requires the bundled `@oai/artifact-tool` package; `node_modules` here is a local dependency symlink, not experiment data. `validation.json` checks source identity and result scopes; the workbook's `workbook_checks.json` checks record counts and formula errors. All seven workbook tabs were rendered; updated result and charging fields were visually checked.
 
 A copy of this index, dated snapshots and workbook is stored on Unicorn at `/home/nc437/ladder-lite/research-register/`. Local documentation paths refer to the Mac project; solver source paths refer to Unicorn. See `cluster_mirror.json` for the copied version and hashes.
 

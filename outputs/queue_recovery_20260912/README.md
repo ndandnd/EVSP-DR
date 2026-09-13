@@ -1,5 +1,8 @@
 # Queue recovered — 12 September 2026
 
+**Latest queue status, 13 September 05:38 EDT:** [Parent32 graph preparation timed out](status_20260913T093758Z/README.md). The12½-hour build produced no cache;20 dependent jobs auto-cancelled before start. No active EVSP–DR jobs remain. Completed full-pool chains and component results are preserved. Earlier queue counts below are historical.
+
+
 **New integer results, 13 September 02:35 EDT:** [All six chains reach k=15; all 37completed full-pool MIPs match](status_20260913T063519Z/README.md).
 
 **Historical queue check, 12 September 16:57 EDT:** **17 EVSP–DR jobs plus 9 V2G jobs running**, with no invalid dependencies. The first new full-pool CG jobs for chain3 k11 and chain4 k10 completed with pricing certificates; their successors are releasing automatically. [Completion evidence](first_chain_completions.json). The table below retains the earlier16:48EDT snapshot.

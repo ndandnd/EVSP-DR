@@ -1,5 +1,12 @@
 # Unicorn monitoring runbook
 
+## 13 September, 05:38 EDT — shared parent graph timed out
+
+The latest report is `outputs/queue_recovery_20260912/status_20260913T093758Z/README.md`. Job42509 for parent32 (750 trips) reached its 12:30 scheduler limit at05:14:40 EDT; elapsed12:32:22, batch signal15, maxRSS25.4GiB of128GiB requested. No cache or parent CG iteration exists. All20 true dependent jobs42512–42531 auto-cancelled before start. These are not MIP preemptions or completed solver attempts. No active EVSP–DR work remains;33 held537227 tasks stay untouched. Full-pool chains, controlled pairs and fee/GIRO campaigns are complete and must not be resubmitted. No unchanged graph retry: the internal preparation step needs profiling; current telemetry only says session_start. Protect graph_recovery_retry2 and its borrowed source/input roots.
+
+The compact execution audit is `raw/supplemental/graph_parent32_timeout_20260913.json`. On future register rebuilds preserve all six existing supplements listed in register.json, including this audit, rather than using only the earlier five recovery files. Snapshot093758 plus the separately timestamped accounting/log collection establish the timeout; original raw snapshots are unchanged. The lower artifact-row count reflects queue entries disappearing, not lost scientific results. Current Doc has a dated timeout note; figures and completed science remain unchanged.
+
+
 ## 13 September, 04:36 EDT — all fee jobs complete
 
 Snapshot `20260913T083655Z`: all 36 fee MIPs finished, 35 target matches and finite-pool fleet proofs, all 36 individual-route physical replays. C1k15 fee 0 stopped with 16 buses and bound 15; both stages TIME_LIMIT. Its fee-5 counterpart proved 15. CG counts stay 34 certified, two C1k15 time caps. All four formerly running fee allocations completed successfully. Do not resubmit completed fee jobs or automatically retry the capped arms. The targeted future option of repricing/transferring the fee-5 incumbent into fee-0's pool is documented, not launched. Full-pool recovery, controlled comparisons and the separate GIRO study are also complete. Only existing decomposition work remains active here: graph42509 with20 true dependent jobs. No new execution failure, preemption or invalid dependency. Latest report: `outputs/zero_charge_start_fee_20260913/status_20260913T083655Z`. Historical status below is superseded.

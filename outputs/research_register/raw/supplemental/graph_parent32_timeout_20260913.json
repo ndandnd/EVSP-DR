@@ -1,0 +1,97 @@
+{
+  "schema": "evsp-graph-preparation-timeout-v1",
+  "case_id": "parent32",
+  "job_id": "42509",
+  "job_ids": [
+    "42509"
+  ],
+  "target_k": 32,
+  "trip_count": 750,
+  "csv": "overnight_decomposition_20260912/parent32.csv",
+  "provenance": {
+    "git_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+    "instance_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e"
+  },
+  "stop_reason": "scheduler_time_limit_before_cache_completion",
+  "runtime_s": 45142,
+  "scheduler_status": "TIMEOUT",
+  "scheduler_exit_code": "0:0",
+  "batch_status": "CANCELLED",
+  "batch_exit_code": "0:15",
+  "time_limit_s": 45000,
+  "requested_memory_gib": 128,
+  "maxrss_kib": 26603696,
+  "maxrss_gib": 25.371261596679688,
+  "requested_cpus": 2,
+  "partition": "default_partition",
+  "excluded_nodes": [
+    "scaglione-compute-01"
+  ],
+  "start_local": "2026-09-12T16:42:18-04:00",
+  "end_local": "2026-09-13T05:14:40-04:00",
+  "cache_present": false,
+  "cg_started": false,
+  "dependent_cg_cancelled_before_start": [
+    "42512",
+    "42514",
+    "42516",
+    "42518",
+    "42520",
+    "42522",
+    "42524",
+    "42526",
+    "42528",
+    "42530"
+  ],
+  "dependent_mip_cancelled_before_start": [
+    "42513",
+    "42515",
+    "42517",
+    "42519",
+    "42521",
+    "42523",
+    "42525",
+    "42527",
+    "42529",
+    "42531"
+  ],
+  "confirmed_preemption": false,
+  "out_of_memory": false,
+  "notes": "Graph/cache preparation exceeded its scheduler allocation. No cache, parent CG result or pricing certificate exists. All 20 dependent jobs auto-cancelled before start. Internal graph subphase unresolved because only session_start telemetry was recorded. Existing component results retained; no unchanged retry launched.",
+  "evidence_path": "outputs/queue_recovery_20260912/status_20260913T093758Z/graph_failure_evidence.json",
+  "evidence_sha256": "3715466a0f909c3c8e4a6c70583417f81fb7bc5fec94be0d18049243210ca96a",
+  "snapshot_path": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T093758Z.json",
+  "snapshot_sha256": "aa5e7e09845800c908584d498972c8bf566bc288339365a50d0933ec69cfc1c0",
+  "source_files": [
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_parent32_cache_42509.out",
+      "bytes": 1471,
+      "sha256": "8f350bffb96ad4361f268cbdbde2cbbcf43643ca5387469a6c662a059711f581"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/logs/drG_parent32_cache_42509.err",
+      "bytes": 120,
+      "sha256": "75d7067787244a8bb6cf29d83e6e48c3d95032fc363dc9ebdab6a26744a1adaf"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/cases/parent32/cache_42509_r0_start.json",
+      "bytes": 1526,
+      "sha256": "654d77b755e5e3365ffac640181b3ac361b605e6c33dc09783215f12e2d756a0"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/cases/parent32/cache_status.json.phase-telemetry.jsonl",
+      "bytes": 947,
+      "sha256": "be9c702bfc42011519c06426b5292b4e055c0bf7ebce49088254f1ee3c19af5c"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.py",
+      "bytes": 6898,
+      "sha256": "a3f1a7fe5e35b737fae6157755494e844ef3a034e64ad58fb0c9e7404dfc3da7"
+    },
+    {
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/worker.sub",
+      "bytes": 579,
+      "sha256": "257100949f39f5e0a8e1c7d2a81e8e989c080b9ee3111b56eae8e4215e243c92"
+    }
+  ]
+}

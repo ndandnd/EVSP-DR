@@ -1,0 +1,21 @@
+--- before
++++ after
+@@ -1,6 +1,8 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results collected 13 September 2026 at 04:36 EDT.
++Week of 14 September. Scientific results as of 13 September 2026 at 04:36 EDT; execution checked at 05:38 EDT.
++
++**Decomposition is paused.** The shared 750-trip graph build hit its 12½-hour limit before CG started. No cache was saved; all 20 dependent CG/MIP jobs cancelled before starting. This was not preemption or out-of-memory (25.4 GiB peak against 128 GiB requested). No active EVSP–DR jobs remain; held history is untouched. Graph preparation needs profiling before a retry. [Execution evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md). Completed scientific results below are unchanged.
+ 
+ ## **All six baseline chains reach 15 buses**
+ 
+@@ -86,7 +88,7 @@
+ 
+ [Both fees: electricity, starts, total cost and returning energy](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/status_20260913T053436Z/giro_costs.csv). [Experiment settings and job records](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/README.md).
+ 
+-No new execution failures or confirmed preemptions appeared. Dependencies remained valid; held historical jobs were untouched.
++The later decomposition timeout did not change the completed results above.
+ 
+ Figures remain in [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) and [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly).
+ 

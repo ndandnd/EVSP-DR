@@ -175,3 +175,10 @@ Only affected jobs replaced by distinct attempts37532(k14 MIP),37533(k15 CG),375
 ## Queue recovery, 12 September
 
 [Resolved queue blockers and exact replacement map](../queue_recovery_20260912/README.md): nine ready MIPs released after saved-parent validation;43 obsolete pendingentries cancelled;6 indexed full-poolstreams restored and extendedthroughk15; sharedgraphdecompositionretry2 started. Originalfailures preserved. Firstgraphcacheattempt rejected cache-only --out beforeconstruction; corrected fullcommands validated and retry2passedstartup. No invaliddependencies remain in16:48EDTsnapshot. Newjobs autoremovetheir impossible dependents; monitor must diagnoseandrecoverratherthan leavezombies.
+
+
+## 13 September 05:14 EDT — shared parent graph timeout
+
+Job42509 in graph_recovery_retry2_20260912 reached the12:30 scheduler allocation after12:32:22 while preparing the parent32 event-network cache (750 trips). The cache was not written; telemetry contains only session_start. No parent CG iteration, pricing certificate or MIP exists. Recorded maxRSS25.4GiB against128GiB requested; no OOM or preemption. Native Gurobi preflight passed. Slurm reports TIMEOUT at job level despite ExitCode0:0; batch status is CANCELLED0:15 and stderr explicitly identifies the time limit.
+
+All ten parent CGs42512,42514,…,42530 and their ten MIPs42513,42515,…,42531 automatically cancelled before start because their true prerequisite failed. These are cancelled pending attempts, not MIP failures or preemptions during optimization. Existing component/recombined schedules remain preserved. No identical retry launched. The internal graph/cache preparation operation is unresolved and needs progress/profiling evidence before another full-size run. [Report, exact accounting, command and hashed logs](../queue_recovery_20260912/status_20260913T093758Z/README.md).
