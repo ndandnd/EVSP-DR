@@ -334,6 +334,23 @@ def find_cell(plan: dict, pair_id: str) -> dict:
     raise KeyError(pair_id)
 
 
+def authenticate_cell(plan: dict, cell: dict) -> None:
+    for key, hash_key in (("instance", "instance_sha256"),
+                          ("tariff_path", "tariff_sha256")):
+        path = Path(cell[key])
+        if digest(path) != cell[hash_key]:
+            raise ValueError(f"{key} hash mismatch: {path}")
+    for name, expected in cell["source_hashes"].items():
+        path = Path(cell["source_root"]) / name
+        if digest(path) != expected:
+            raise ValueError(f"source hash mismatch: {path}")
+    manifest = cell.get("source_repricing_manifest")
+    expected_manifest = cell.get("source_repricing_manifest_sha256")
+    if manifest is not None:
+        if expected_manifest is None or digest(Path(manifest)) != expected_manifest:
+            raise ValueError(f"source repricing manifest hash mismatch: {manifest}")
+
+
 def allocation(path: Path, plan: dict, cell: dict, stage: str) -> None:
     atomic_json(path, {
         "schema": "evsp-dr-terminal-energy-fee-allocation-v1",
@@ -449,6 +466,7 @@ def worker(args: argparse.Namespace) -> None:
     root = Path(args.root).expanduser().resolve()
     plan = read_plan(root)
     cell = find_cell(plan, args.pair_id)
+    authenticate_cell(plan, cell)
     fee = finite(cell["fee"], "destination fee")
     if not math.isclose(fee, float(args.fee), abs_tol=1e-12, rel_tol=0):
         raise ValueError("requested fee disagrees with frozen plan")
