@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "checks": [
+    "six parents match input-generation hashes and frozen CG journals",
+    "60 case inputs match manifest",
+    "120 production CG/cache command lines pass actual parser",
+    "2001-variable native Gurobi optimization passes size-unrestricted license",
+    "instrumented/uninstrumented four-trip graphs have identical pickle SHA256",
+    "native cache-required CG and full-pool inheritance both return usable LPs",
+    "two-stage MIP with source hashes and physical replay passes"
+  ],
+  "slurm_job_id": "133898",
+  "execution_commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "tooling_sha256": {
+    "campaign.py": "4d27b07393f8e2ccafb529bd16df48387c89ab84b02f8cf6c517f46ae200c71f",
+    "graph_entry.py": "463973a0aff2dfb59979f9a5f40baeac29ee2e31d25a63a5844e9e08647c43ee",
+    "worker.sub": "a3dd6a298009f96dddacb4a5ad7225e5db2036f8dae0a7b83555a07130acb223"
+  },
+  "validator_sha256": "5a120c32883d56eb7887e181b297c45f28ec5b0932adb99ece7103a0a69c78b4",
+  "artifacts": {
+    "parser.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "cache_plain.log": "5e65d1fddfc51aa675bf9db80c467fd8a61c44b1ef8e9c658ed9acc55f0a3c7a",
+    "plain.pkl.manifest.json": "2a804cb8d17ce2855fb54d064903c695d9fa1ab086f89f898b26f9f456797600",
+    "cache_instrumented.log": "96956486dc4bffc01988d196d0e120c58a2e6176aece2b5d0f65271e1aa13725",
+    "instrumented.pkl.manifest.json": "872fed7c95cf87db31c39f9a18dc6f35492bb3a96119092ebe32e51069fa57b3",
+    "cg_parent.log": "03baa36a173005cbc7a3f13f8c942396e05189939603a0875553e4077a8ac4a9",
+    "parent.json": "436e5811637a9ed77699aa18fedb1ccc8ae6e0893854124b845c642e3803c12f",
+    "parent.json.gurobi.log": "7b1fdc15fe95390ba0a470bc98b0335a95740cab9e0521f157157c6cdc842bbe",
+    "cg_child.log": "9ff8e719dfa0a917973b0cb02105767a4ea0b86f63fa57e9acd45eec5c1d54e9",
+    "child.json": "91ae0e1682a0400477e4341fd4cd9ec73e2db3be02e30c18fc174d19648c9778",
+    "child.json.gurobi.log": "445327f7edb49dcb35db8d65cf9beac1ef5e5218e774ea35d9b34f2df656c05c",
+    "mip.log": "ff032ad2ee42ccf6f6d42b45e8d5f6989b36e1f7fe5c828c1f447bf7a13cb542",
+    "mip.gurobi.log": "985f359d6d992802e54f95b917ef0b4b83347075c5dd8ccb618f34b326cb80c6",
+    "mip.json": "28673fe1ef207cd874936694646a8c86d4a3255b0bf8298bb64a1f683bef2639"
+  }
+}

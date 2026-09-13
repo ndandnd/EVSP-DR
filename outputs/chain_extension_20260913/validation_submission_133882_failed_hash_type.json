@@ -1,0 +1,16 @@
+{
+  "job_id": "133882",
+  "argv": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=2",
+    "--mem=4G",
+    "--time=00:15:00",
+    "--job-name=drX_validate",
+    "--output=/home/nc437/ladder-lite/chain_extension_20260913/validation.out",
+    "--error=/home/nc437/ladder-lite/chain_extension_20260913/validation.err",
+    "/home/nc437/ladder-lite/chain_extension_20260913/validate.sub"
+  ]
+}

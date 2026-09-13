@@ -1,0 +1,64 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+[EXACT] network: 331 nodes, 330 arcs (soc_step=2.5, block=5min) loaded in 0.0s
+[EXACT] published initial identity before first journal append
+[EXACT] direct-singleton seed: 4/4 trips feasible (4 added to pool)
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 1
+Set parameter Method to value 1
+Set parameter BarHomogeneous to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/chain_extension_20260913/validation/parent.json.gurobi.log"
+Set parameter TimeLimit to value 5.9814221607521176e+01
+Set parameter TimeLimit to value 5.9814221607521176e+01
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5440  @ 2.83GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  5.9814221607521176e+01
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 4 rows, 8 columns and 8 nonzeros
+Model fingerprint: 0xbcd6afc1
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 4 rows and 8 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    4.0000000e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  4.000000000e+05
+[EXACT] it   1: obj=400,000.00 weight=4.0000 art=0.00 min_rc=0.000
+Set parameter TimeLimit to value 7.9805545990820974e+01
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5440  @ 2.83GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  7.9805545990820974e+01
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 4 rows, 8 columns and 8 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  4.000000000e+05
+[EXACT] DONE: {"iter": 1, "attempt_iter": 1, "lp_obj": 400000.0, "route_weight": 4.0, "artificials": 0.0, "min_rc": 0.0, "max_row_violation": 0.0, "max_bound_violation": 0.0} certified=True columns=4 wall=0s

@@ -25,10 +25,6 @@ p=B/'giro_zero_start_fee_20260913/jobs.json'
 if p.exists():
  for entry in json.loads(p.read_text()).get('jobs',[]):
   if entry.get('job_id'):known[entry['job_id']]=('GIRO fee comparison',entry['pair_id'],entry['stage'])
-p=B/'chain_extension_20260913/case_jobs.json'
-if p.exists():
- for case, stages in json.loads(p.read_text()).items():
-  for stage, job_id in stages.items():known[job_id]=('Chains k16–25',case,stage)
 r=subprocess.run([S+'squeue','--me','-r','-h','-o','%i|%j|%T|%M|%E|%R'],capture_output=True,text=True)
 if r.returncode:raise SystemExit(r.stderr)
 summary=defaultdict(Counter);rows=[]
@@ -42,7 +38,7 @@ print('EVSP–DR queue | '+datetime.datetime.now().astimezone().strftime('%Y-%m-
 print(f"{'Work':28} {'Running':>8} {'Dependencies':>13} {'Resources':>10} {'Invalid':>8} {'Held':>6}")
 for group,c in summary.items():print(f"{group:28} {c['running']:8} {c['waiting for prerequisite']:13} {c['waiting for resources']:10} {c['invalid dependency']:8} {c['held']:6}")
 print('\nDependencies mean required data are not ready; these are not CPU limits.')
-print('Chain graph preparation is independent (up to 50 tasks). CG waits for its own graph and previous-k CG; MIP waits only for its own CG. A MIP never holds up the next CG.')
+print('Full-pool CG waits for previous-k CG. MIP waits for its CG. Parent32 CG also waits for shared graph and component MIPs. GIRO fee MIPs wait for both charging frontiers at their tariff.')
 if '--details' in sys.argv:
  print('\nJob        Case       Stage   State      Elapsed    Dependency / node')
  for x in rows:

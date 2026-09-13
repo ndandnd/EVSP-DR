@@ -1,0 +1,29 @@
+--- before
++++ after
+@@ -1,10 +1,24 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results through 13 September 04:36 EDT; queue snapshot 05:38 EDT; model/source audit updated 09:50 EDT.
++Week of 14 September. Results through 13 September 04:36 EDT; chain-expansion launch verified 10:25 EDT; model/source audit updated 09:50 EDT.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+-**Decomposition is paused.** The shared 750-trip graph build hit its 12½-hour limit before CG started. No cache was saved; all 20 dependent CG/MIP jobs cancelled before starting. This was not preemption or out-of-memory (25.4 GiB peak against 128 GiB requested). No active EVSP–DR jobs remain; held history is untouched. Graph preparation needs profiling before a retry. [Execution evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md). Completed scientific results below are unchanged.
++## **Now running: six chains from k=16 to k=25**
++
++13 September, 10:25 EDT: 50 graph preparations are running, with 10 waiting for an array slot. All 60 CG jobs and 60 final MIPs are submitted on the default partition. These are new experiments; the highest completed target remains 15\.
++
++| Stage | How it starts | Time budget per case |
++| ----- | ----- | ----- |
++| **Prepare the larger trip graph** | **Independent jobs; up to 50 at once** | **12 hours** |
++| **Import saved routes, then run CG** | **Wait for its graph and the preceding k in the same chain** | **4 hours total** |
++| **Two-stage integer solve** | **Wait only for this case’s CG; does not hold up the next k** | **1 hour total** |
++
++Each step adds one randomly selected unused GIRO duty, preserves the existing trips, and checks every eligible sequence from the preceding saved pool for reuse. The random order is frozen before solving. We keep the successful baseline: covering, 240 kWh batteries, 240 kW charging, flat prices and a fee of 5 per charging start. This expansion does not add station capacity or a return-SOC floor. Inputs through k=40 are prepared for later continuation; only k=16–25 are submitted now.
++
++We will report graph time, import/pricing/LP time, CG stopping reason and certificate, and integer fleet/bound separately. Large caches go in the shared data directory. The native prelaunch check passed, including the unrestricted Gurobi license, unchanged graph bytes with progress logging, inherited CG, and physical replay of the final MIP. [Launch records and exact settings](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/chain_extension_20260913/README.md).
++
++**Decomposition is paused.** The shared 750-trip graph build hit its 12½-hour limit before CG started. No cache was saved; all 20 dependent CG/MIP jobs cancelled before starting. This was not preemption or out-of-memory (25.4 GiB peak against 128 GiB requested). That decomposition batch is inactive. The new k=16–25 chain expansion above is running; held historical jobs remain untouched. Graph preparation needs profiling before a retry. [Execution evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md). Completed scientific results below are unchanged.
+ 
+ ## **All six baseline chains reach 15 buses**
+ 

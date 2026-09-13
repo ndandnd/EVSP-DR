@@ -1,5 +1,15 @@
 # Unicorn monitoring runbook
 
+## 13 September — authorized k16–25 chain continuation
+
+This supersedes the earlier empty-queue note. The user explicitly requested further sequential random chain expansion and Astra only this usage week. Campaign `chain_extension_20260913` has 60 graph preparations (array throttle50),60CG jobs,60MIPs, all default partition with scaglione-compute-01 excluded. Read `outputs/chain_extension_20260913/README.md`, `manifest.json`, `jobs.json`, `case_jobs.json` and `validation.json`. Six chains preserve exactk15membership and append one frozen random unused duty eachstep; k26–40 inputs are prepared but not yet submitted. No new solver outcomes are implied by submission.
+
+Heavy data are at `/share/scaglione/nc437/evsp-dr/chain_extension_20260913`; launch root is `/home/nc437/ladder-lite/chain_extension_20260913`. Protect the borrowed graph-recovery Git object store and all k15 parent journals. Preserve true preceding-CG and own-cache dependencies. MIPs need only their own CG; never place next-CG behind the priorMIP. Do not resubmit completed predecessor campaigns or touch held historical/V2G jobs.
+
+Monitor compact `workflow.attempt_progress`, graph progress, nested phase telemetry and per-attempt execution records. Only the canonical published `cg.json` is a terminal CG result; copied/running checkpoint summaries remain provisional. Do not infer failure from lack of CG iterations while the graph is still preparing. Track cache time separately from import/CG, and proof/physical validation separately from scheduler completion. Automatic preemption requeues use separate restart directories; CG copies and identity-validates checkpoints, unpublished graphs restart, MIPs start new trees. No blind retry of an actual time cap or mathematical failure. Investigate the precise failure and repair under a recorded new attempt. Default MIPs are included in the existing preemption registry.
+
+Use the existing hourly heartbeat; stay quiet for unchanged, non-actionable status. Update current Doc results when verified evidence changes; preserve figures and never edit Slides. Record Astra preference from MODEL_PREFERENCE.md. The successful native prelaunch smoke and the short failed hash-type assertion check are separate validation jobs, not research samples.
+
 ## 13 September, 05:38 EDT — shared parent graph timed out
 
 The latest report is `outputs/queue_recovery_20260912/status_20260913T093758Z/README.md`. Job42509 for parent32 (750 trips) reached its 12:30 scheduler limit at05:14:40 EDT; elapsed12:32:22, batch signal15, maxRSS25.4GiB of128GiB requested. No cache or parent CG iteration exists. All20 true dependent jobs42512–42531 auto-cancelled before start. These are not MIP preemptions or completed solver attempts. No active EVSP–DR work remains;33 held537227 tasks stay untouched. Full-pool chains, controlled pairs and fee/GIRO campaigns are complete and must not be resubmitted. No unchanged graph retry: the internal preparation step needs profiling; current telemetry only says session_start. Protect graph_recovery_retry2 and its borrowed source/input roots.
