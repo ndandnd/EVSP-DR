@@ -1,0 +1,1283 @@
+{
+  "arms": {
+    "fee0": {
+      "charge_start_cost": 0.0,
+      "fixed_sequence_index": true,
+      "inherit_max_columns": 0,
+      "skip_gurobi_incidence": false
+    },
+    "fee5": {
+      "charge_start_cost": 5.0,
+      "fixed_sequence_index": true,
+      "inherit_max_columns": 0,
+      "skip_gurobi_incidence": false
+    }
+  },
+  "cg_commit": "666cd839ab3923071b1a571ef349b70f61a82fa9",
+  "code": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code",
+  "common": {
+    "battery_kwh": 240,
+    "block_minutes": 5,
+    "cg_seconds": 7200,
+    "charge_kw": 240,
+    "columns_per_iter": 30,
+    "inherit_time_limit_s": 0,
+    "inherit_workers": 8,
+    "master_sense": "cover",
+    "min_soc_frac": 0,
+    "mip_seconds": 3600,
+    "mip_stage2_fleet": "<= validated stage1 incumbent",
+    "objective": "100000 + electricity + treatment_fee * charge_starts",
+    "rc_epsilon": 0.0001,
+    "return_soc_floor": null,
+    "shared_station_capacity": false,
+    "soc_step_kwh": 2.5,
+    "stage1_seconds": 1800,
+    "tariff": "flat",
+    "threads": 8
+  },
+  "frozen_files": [
+    {
+      "bytes": 16804,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k05/parent_original.json",
+      "sha256": "3e3fbc72b91ed0996cc49c8bc0c474f96705f372a4755f281ac9d6f03999a31a"
+    },
+    {
+      "bytes": 20199,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k05/parent_descriptor.json",
+      "sha256": "a47508baeb1aa3cd9a7f2aba00cf15d55537dfef6b4118c2499887508e074479"
+    },
+    {
+      "bytes": 111800166,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k05/parent_columns.jsonl",
+      "sha256": "6dad171365dfbcd6b311c1261c88a6d8440f70a94a58cf788f3e1044d90e7001"
+    },
+    {
+      "bytes": 54355,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k10/parent_original.json",
+      "sha256": "f3a339519c8b113c35ae7e2c5910ae82b42d53332283f93ed3bf389acfc54e8e"
+    },
+    {
+      "bytes": 72890,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k10/parent_descriptor.json",
+      "sha256": "ec151c50a5c85b80f7491c78bce04e5143337f641e57f6fba6c9c2a5bda35886"
+    },
+    {
+      "bytes": 370978120,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k10/parent_columns.jsonl",
+      "sha256": "b65b793ae7bfc9d2cfc77cc817dc231e6233d8b05be3728687411fb78ce39906"
+    },
+    {
+      "bytes": 81422,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k15/parent_original.json",
+      "sha256": "a863d186f7d990f26ffba427799916c8c08f3dd4fb19d258f740908a4b1fc97d"
+    },
+    {
+      "bytes": 110534,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k15/parent_descriptor.json",
+      "sha256": "b4b1032be1669281728722c886659b403e29597ded6c7670dd83351afc23d25c"
+    },
+    {
+      "bytes": 485273808,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k15/parent_columns.jsonl",
+      "sha256": "c2dd4298e756dd611afabeb9cb50ffe8f23a20b67a941b0c1bfbf23bf709048d"
+    },
+    {
+      "bytes": 19916,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k05/parent_original.json",
+      "sha256": "e99b3549d81e8013e4d0131f51d74532dfa19d2c1f4de03d947c6f2ab04526c2"
+    },
+    {
+      "bytes": 24716,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k05/parent_descriptor.json",
+      "sha256": "bb5628ec5880b150c8a98a389ce990f44e0cf8e5ffe780209d46530d5fd5e1cf"
+    },
+    {
+      "bytes": 69446386,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k05/parent_columns.jsonl",
+      "sha256": "3853de0ebcc8d44d7dfa27f799711665489c541ceed689ae51e34988428fe684"
+    },
+    {
+      "bytes": 66436,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k10/parent_original.json",
+      "sha256": "7ec1af8340ee56dd14f4acde27c0ca463d269768fe88930dd8fe330783730d5c"
+    },
+    {
+      "bytes": 90302,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k10/parent_descriptor.json",
+      "sha256": "d2f41eec3f25e5dd427d563efd5002a529dc61fd450b572f00a2e8f9c6d9fc33"
+    },
+    {
+      "bytes": 202041125,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k10/parent_columns.jsonl",
+      "sha256": "27a61bca37ccc9928f25a0c7b1fd99af2d537bd0b849e24f5c5f9e2a0bdaadf8"
+    },
+    {
+      "bytes": 107434,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k15/parent_original.json",
+      "sha256": "e0f52be4e6ef301c3d557b84ab4d084159d3b2918be6dbdd59bee7b3f6e6b0d1"
+    },
+    {
+      "bytes": 147767,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k15/parent_descriptor.json",
+      "sha256": "886d14d840f1bb09bad24e73d3944c05dccc5758a420982f17f361a0cfb81be5"
+    },
+    {
+      "bytes": 377134734,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k15/parent_columns.jsonl",
+      "sha256": "95557481bdf4722afd5db5e9dcfb3cd186ed8f9952a73d325a231c2be466a7d8"
+    },
+    {
+      "bytes": 14717,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k05/parent_original.json",
+      "sha256": "cb67e103e5f65e3c79c0bbeed466cc8a4386206ae5ca7cf7e637f14e9a461dd1"
+    },
+    {
+      "bytes": 17176,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k05/parent_descriptor.json",
+      "sha256": "670ce073458106a8bd74c18db22a584c2b009e2a3e4e8cd31a38c066e9280585"
+    },
+    {
+      "bytes": 44047696,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k05/parent_columns.jsonl",
+      "sha256": "5dd61307f22c85ac10053ee0666d15f884a835392d0b7db4bf01e983b4c36abf"
+    },
+    {
+      "bytes": 55261,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k10/parent_original.json",
+      "sha256": "3b9d794ebca3bdae5e7cd9a49ff37729d6195eb7b2cb3ef47c0addaee43af61e"
+    },
+    {
+      "bytes": 74359,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k10/parent_descriptor.json",
+      "sha256": "155f4562c5777576f4690eeefd6780e2538a0cc5da5a72dba27857df9a073240"
+    },
+    {
+      "bytes": 121880746,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k10/parent_columns.jsonl",
+      "sha256": "b85c7df76fac33f4801f34ad600a12ccbae073a476221a77d5d83739a603d2c2"
+    },
+    {
+      "bytes": 77469,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k15/parent_original.json",
+      "sha256": "7f93b3b1ab378cbd6587028bf7337520533a78e80bb9fbef1aa3762c40701ebf"
+    },
+    {
+      "bytes": 104750,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k15/parent_descriptor.json",
+      "sha256": "7256368bcbc94039c72649e769eda1c9317ef2ceca2ecad983e2767650c829ee"
+    },
+    {
+      "bytes": 245913521,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k15/parent_columns.jsonl",
+      "sha256": "089898552c588780a7470446e36750a3c7d1188368201892f51d069bcfdbe23e"
+    },
+    {
+      "bytes": 23293,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k05/parent_original.json",
+      "sha256": "56b2414dbb4f5a1bb3b420802438ad34e3f8875737fa895dc690bbd39ca1ea8b"
+    },
+    {
+      "bytes": 29651,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k05/parent_descriptor.json",
+      "sha256": "f6c2908fd7858e5caae6168c1f8ac5d322a4189f916474477ab333b1b948a753"
+    },
+    {
+      "bytes": 55038281,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k05/parent_columns.jsonl",
+      "sha256": "d841340c8e30f293aa3075ddf637ded571c22a115601ee4ba0430b77ff4b5444"
+    },
+    {
+      "bytes": 54347,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k10/parent_original.json",
+      "sha256": "c999c6c0b189819389e40f3c22df8caf7d1284461340115b92e4784db588c12b"
+    },
+    {
+      "bytes": 72938,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k10/parent_descriptor.json",
+      "sha256": "a6bf6467b1813b9781e994b0497c9f6c3bc81d1a09033bf05ebd4c7fb2e937f1"
+    },
+    {
+      "bytes": 176486586,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k10/parent_columns.jsonl",
+      "sha256": "2806328f3e9de18098c513ef5c44f179b62cf1e6a149762ec8b68ff0c1aee9ca"
+    },
+    {
+      "bytes": 100696,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k15/parent_original.json",
+      "sha256": "a5a394c525974e4a5918b40d0006a23d4639b71a2c1725360d52713dbabc1441"
+    },
+    {
+      "bytes": 137919,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k15/parent_descriptor.json",
+      "sha256": "8eedb14214a3e615b6cf12330794b178a4533803365bd150b0e5619086dd9b1b"
+    },
+    {
+      "bytes": 329429294,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k15/parent_columns.jsonl",
+      "sha256": "206e4b40df49d98b40dc15f2094271f9b9d2ea8cbaa17340e008aa5fe39bfea8"
+    },
+    {
+      "bytes": 17916,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k05/parent_original.json",
+      "sha256": "305ff055a8902573c51bfb000c27810632348ba79a46975189763b80e6b5ef52"
+    },
+    {
+      "bytes": 21836,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k05/parent_descriptor.json",
+      "sha256": "6e02d08ccdc8e58fb646183c58179ad59c91238b6a81f972c2fe287adf6266ab"
+    },
+    {
+      "bytes": 71309025,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k05/parent_columns.jsonl",
+      "sha256": "673968d27f35ef0f885f701c7ad57b0561d847cc6e075c172705c04409ec215e"
+    },
+    {
+      "bytes": 50966,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k10/parent_original.json",
+      "sha256": "8812619897b8b60e81b048938578ca1369e463c1331afe883dda5b81500f7695"
+    },
+    {
+      "bytes": 68211,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k10/parent_descriptor.json",
+      "sha256": "651e232cb368b251359dbc7e17286a3f7ae432338238d85f5f28208e137febe7"
+    },
+    {
+      "bytes": 161924738,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k10/parent_columns.jsonl",
+      "sha256": "dc85fb05a5cc8aa42bc4bb8aa8f9db0c42712df5fa33381c52b33780b5db5567"
+    },
+    {
+      "bytes": 83214,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k15/parent_original.json",
+      "sha256": "6ef139f5c12c6abdf4b64efba2554eaad04471ad9b52000a94894a596a6c8c53"
+    },
+    {
+      "bytes": 112880,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k15/parent_descriptor.json",
+      "sha256": "448396e88c2abf1a7c8a766474940575f0ada9c8b4ba4af0a03629b3bf5b389a"
+    },
+    {
+      "bytes": 306105136,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k15/parent_columns.jsonl",
+      "sha256": "97900161cc6a2c8a44754f6ab0f287dce04078f0a6fd3fadb51881c6d1ad6307"
+    },
+    {
+      "bytes": 11385,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k05/parent_original.json",
+      "sha256": "64420a72ef98e7a2488c4b4e80119af7d505c2c700d08f6b85506e36f2a240fe"
+    },
+    {
+      "bytes": 12709,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k05/parent_descriptor.json",
+      "sha256": "ae9b81940d8c12d0353f84844e638ee620dacaa9d859ddd26c1e47ec5e5c06e3"
+    },
+    {
+      "bytes": 32715808,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k05/parent_columns.jsonl",
+      "sha256": "e762ff9368c312049acb27dd0763ac9de68aedaaa9d9d237e58d48889ac74bf9"
+    },
+    {
+      "bytes": 42420,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k10/parent_original.json",
+      "sha256": "e234d6a5921c163be8748503ee2ac70412e41eff7e9eaa8c4d63d2d3a831ce7e"
+    },
+    {
+      "bytes": 55871,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k10/parent_descriptor.json",
+      "sha256": "31046cd53c5d2c4b54c5f2094f6e665ed18aa73b4fcf8dd0321d0578a998eb57"
+    },
+    {
+      "bytes": 121417508,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k10/parent_columns.jsonl",
+      "sha256": "149925705975f80666258b9995d3f9ba1a54c8085714746f0be49a3e73a63d60"
+    },
+    {
+      "bytes": 103465,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k15/parent_original.json",
+      "sha256": "7169f6d304537981e15bbe9096e7ba955d7cfbdc7963df027e59d8ee845bc38f"
+    },
+    {
+      "bytes": 141932,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k15/parent_descriptor.json",
+      "sha256": "b6598a2aed8e77868f6e2bfa10cb671a6b6abf063f70b07143f72c701a8954da"
+    },
+    {
+      "bytes": 333408713,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k15/parent_columns.jsonl",
+      "sha256": "41712380d510476c3120d37b229ecfa9f7c33cf2c6ec4014d478e8bf2092e040"
+    }
+  ],
+  "inputs": {
+    "w1_k05": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k05_p1__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "f7813076797e8996a334963c8a09b169fa53669e50f88539909489aabee273b8",
+      "cache_sha256": "59ddcc3fb6e799eda01afbb3b311f6e734bfdf7a6035739253135a13fa01c33d",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 1,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p01_20260908.csv",
+      "input_sha256": "eba01cda70407e36244a98c5b4e423dd463df071940d568c24358dfbced512f8",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p01_20260908.csv",
+      "parent_csv_sha256": "eba01cda70407e36244a98c5b4e423dd463df071940d568c24358dfbced512f8",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k05/parent_descriptor.json",
+      "parent_descriptor_sha256": "a47508baeb1aa3cd9a7f2aba00cf15d55537dfef6b4118c2499887508e074479",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k05/parent_columns.jsonl",
+      "parent_journal_sha256": "6dad171365dfbcd6b311c1261c88a6d8440f70a94a58cf788f3e1044d90e7001",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k05_p1__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p1/cg/M__k05_p1__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "3e3fbc72b91ed0996cc49c8bc0c474f96705f372a4755f281ac9d6f03999a31a",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 5
+    },
+    "w1_k10": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k10/network.pkl",
+      "cache_manifest_sha256": "d1ef77117c2a78fb08991bb4bf2931c4a8bf8049ee5a558437f44290317a2adf",
+      "cache_sha256": "309da009b0930e2ff5cd87adadfb24e357ace455320ee1a2ad49583a3931230f",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 1,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p01_20260908.csv",
+      "input_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p01_20260908.csv",
+      "parent_csv_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "ec151c50a5c85b80f7491c78bce04e5143337f641e57f6fba6c9c2a5bda35886",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "b65b793ae7bfc9d2cfc77cc817dc231e6233d8b05be3728687411fb78ce39906",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k10/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k10/cg.json",
+      "parent_source_sha256": "f3a339519c8b113c35ae7e2c5910ae82b42d53332283f93ed3bf389acfc54e8e",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 10
+    },
+    "w1_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k15/network.pkl",
+      "cache_manifest_sha256": "2a7a3947af109d7e2a3bea7e869f7c2f6e2ac123979f7c6ca9ba4d01ab13ea8e",
+      "cache_sha256": "f2ae7a2722ddcb20947f4298aa4edca6fed4620a01ecfc0e0a971b18abc49e9a",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 1,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p01_20260908.csv",
+      "input_sha256": "00e65586e3f6732d476adb184af9ae1c55f8d160798fbb629e47ebcaf5906390",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k14_p01_20260908.csv",
+      "parent_csv_sha256": "75f5d73b49599396552df68484abb8f8a52f037e4aa4be5b882749f1634a1b7d",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "b4b1032be1669281728722c886659b403e29597ded6c7670dd83351afc23d25c",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w1_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "c2dd4298e756dd611afabeb9cb50ffe8f23a20b67a941b0c1bfbf23bf709048d",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k14/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k14/cg.json",
+      "parent_source_sha256": "a863d186f7d990f26ffba427799916c8c08f3dd4fb19d258f740908a4b1fc97d",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": false,
+      "source_parent_fee": 5.0,
+      "target_k": 15
+    },
+    "w2_k05": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k05_p2__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "2d0e75920275ccf60d4cac58661c813c01249a732274e5539402197cf0b3529c",
+      "cache_sha256": "cc6c137500216eab96e409c0f410713bb10ced4622f75bcb40149904eda0b8fa",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 2,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p02_20260908.csv",
+      "input_sha256": "286ef14718748dbeb88980e11f835ed920cb9a01f72708aec4b43a436001ec86",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p02_20260908.csv",
+      "parent_csv_sha256": "286ef14718748dbeb88980e11f835ed920cb9a01f72708aec4b43a436001ec86",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k05/parent_descriptor.json",
+      "parent_descriptor_sha256": "bb5628ec5880b150c8a98a389ce990f44e0cf8e5ffe780209d46530d5fd5e1cf",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k05/parent_columns.jsonl",
+      "parent_journal_sha256": "3853de0ebcc8d44d7dfa27f799711665489c541ceed689ae51e34988428fe684",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k05_p2__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p2/cg/M__k05_p2__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "e99b3549d81e8013e4d0131f51d74532dfa19d2c1f4de03d947c6f2ab04526c2",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 5
+    },
+    "w2_k10": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k10/network.pkl",
+      "cache_manifest_sha256": "637d31c26f86417de2ef341fe6a8e3f49be05b5755bf4695ac7f2242a037deaf",
+      "cache_sha256": "cbafa4772190fe3daa4ccdb2eeb805086b4c8ab9e131a28f31520cf28e89e468",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 2,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p02_20260908.csv",
+      "input_sha256": "969e49b79b454241e1f4116e405aebdf117dc6adac5497854cf4d7196166a6d6",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p02_20260908.csv",
+      "parent_csv_sha256": "969e49b79b454241e1f4116e405aebdf117dc6adac5497854cf4d7196166a6d6",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "d2f41eec3f25e5dd427d563efd5002a529dc61fd450b572f00a2e8f9c6d9fc33",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "27a61bca37ccc9928f25a0c7b1fd99af2d537bd0b849e24f5c5f9e2a0bdaadf8",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k10/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k10/cg.json",
+      "parent_source_sha256": "7ec1af8340ee56dd14f4acde27c0ca463d269768fe88930dd8fe330783730d5c",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 10
+    },
+    "w2_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k15/network.pkl",
+      "cache_manifest_sha256": "cfb7defc32a9fe5219273ab3d8145e630610c0a8a67d7e7ca08049afd5d8c2c2",
+      "cache_sha256": "e93a50d9720f66f039c658bd8f1546c54324e911156b153fc634f95fdf12241b",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 2,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p02_20260908.csv",
+      "input_sha256": "79c73bc74bdba12d53a76b79c4a6408bda71d2e444a1a95508800da95f5d9188",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p02_20260908.csv",
+      "parent_csv_sha256": "79c73bc74bdba12d53a76b79c4a6408bda71d2e444a1a95508800da95f5d9188",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "886d14d840f1bb09bad24e73d3944c05dccc5758a420982f17f361a0cfb81be5",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w2_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "95557481bdf4722afd5db5e9dcfb3cd186ed8f9952a73d325a231c2be466a7d8",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k15/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k15/cg.json",
+      "parent_source_sha256": "e0f52be4e6ef301c3d557b84ab4d084159d3b2918be6dbdd59bee7b3f6e6b0d1",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 15
+    },
+    "w3_k05": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k05_p3__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "bfb6b36cfb2625e0bcb1b5f08c8443261cfadf879ec0398f3e1b45990b82fccd",
+      "cache_sha256": "20ff04087e6555ccd7af26e5d1df47a8eb638a9941615903179d6ff1577466c6",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 3,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p03_20260908.csv",
+      "input_sha256": "161036b627aa969a9495ca5ff04d57c526d4f2aa6afd023d55524d5a9a809fb4",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p03_20260908.csv",
+      "parent_csv_sha256": "161036b627aa969a9495ca5ff04d57c526d4f2aa6afd023d55524d5a9a809fb4",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k05/parent_descriptor.json",
+      "parent_descriptor_sha256": "670ce073458106a8bd74c18db22a584c2b009e2a3e4e8cd31a38c066e9280585",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k05/parent_columns.jsonl",
+      "parent_journal_sha256": "5dd61307f22c85ac10053ee0666d15f884a835392d0b7db4bf01e983b4c36abf",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k05_p3__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k05_p3__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "cb67e103e5f65e3c79c0bbeed466cc8a4386206ae5ca7cf7e637f14e9a461dd1",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 5
+    },
+    "w3_k10": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k10_p3__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "ef91b2c4509f25307535d61573a55d1ad03013a4de5d530794d3883d9393398c",
+      "cache_sha256": "33db9c421709db2b5bda081c46a0d15c8430def3a8aa8f8194bc00cf619077c4",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 3,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p03_20260908.csv",
+      "input_sha256": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p03_20260908.csv",
+      "parent_csv_sha256": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "155f4562c5777576f4690eeefd6780e2538a0cc5da5a72dba27857df9a073240",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "b85c7df76fac33f4801f34ad600a12ccbae073a476221a77d5d83739a603d2c2",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k10_p3__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34/cg/M__k10_p3__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "3b9d794ebca3bdae5e7cd9a49ff37729d6195eb7b2cb3ef47c0addaee43af61e",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 10
+    },
+    "w3_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl",
+      "cache_manifest_sha256": "d36c357d83f6b3235bfae3e58e913f915b12b77914a7c93c967024049f235c4b",
+      "cache_sha256": "acdbe440e8b7bac7c6097ad572c50edcf3d336d0df5c43b1603f3781d6a0e24f",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 3,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+      "input_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+      "parent_csv_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "7256368bcbc94039c72649e769eda1c9317ef2ceca2ecad983e2767650c829ee",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w3_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "089898552c588780a7470446e36750a3c7d1188368201892f51d069bcfdbe23e",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/cg.json",
+      "parent_source_sha256": "7f93b3b1ab378cbd6587028bf7337520533a78e80bb9fbef1aa3762c40701ebf",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 15
+    },
+    "w4_k05": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k05_p4__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "bf9ece0e69578d11febd423452d8d323a75354b118dc74553440112460b0f168",
+      "cache_sha256": "7bcf31a98fc3f300d3743ca7ae83cdde399ce32255830cfd699b6fc13912c058",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 4,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p04_20260908.csv",
+      "input_sha256": "d51b0dab0f1f20b7d9ce193b79f5ea1ac48a0d084b435ed7d0b4a26485fe3653",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p04_20260908.csv",
+      "parent_csv_sha256": "d51b0dab0f1f20b7d9ce193b79f5ea1ac48a0d084b435ed7d0b4a26485fe3653",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k05/parent_descriptor.json",
+      "parent_descriptor_sha256": "f6c2908fd7858e5caae6168c1f8ac5d322a4189f916474477ab333b1b948a753",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k05/parent_columns.jsonl",
+      "parent_journal_sha256": "d841340c8e30f293aa3075ddf637ded571c22a115601ee4ba0430b77ff4b5444",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k05_p4__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k05_p4__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "56b2414dbb4f5a1bb3b420802438ad34e3f8875737fa895dc690bbd39ca1ea8b",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 5
+    },
+    "w4_k10": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+      "cache_manifest_sha256": "5c34d826b9798690d2df71fe5f811cf5affa3e8158f754f90feddb7b465fbcbf",
+      "cache_sha256": "fd1a5c3b6782bc613ded3f0e39f8082a0311d495985e84b89e0fd4df1bab164b",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 4,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "parent_csv_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "a6bf6467b1813b9781e994b0497c9f6c3bc81d1a09033bf05ebd4c7fb2e937f1",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "2806328f3e9de18098c513ef5c44f179b62cf1e6a149762ec8b68ff0c1aee9ca",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/cg.json",
+      "parent_source_sha256": "c999c6c0b189819389e40f3c22df8caf7d1284461340115b92e4784db588c12b",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 10
+    },
+    "w4_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k15/network.pkl",
+      "cache_manifest_sha256": "ffbec1aae404ae3a310fc69b427e0762b61d5b89faca987cb82ec50a21872a76",
+      "cache_sha256": "e509176659f7089149ef74ef8e5305dccfd058902b17b08f710c712d13630c46",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 4,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p04_20260908.csv",
+      "input_sha256": "16cd175ed25d1872a191a750b6586ef2fd395c587ad6323ff5895f4094d15fb2",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p04_20260908.csv",
+      "parent_csv_sha256": "16cd175ed25d1872a191a750b6586ef2fd395c587ad6323ff5895f4094d15fb2",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "8eedb14214a3e615b6cf12330794b178a4533803365bd150b0e5619086dd9b1b",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w4_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "206e4b40df49d98b40dc15f2094271f9b9d2ea8cbaa17340e008aa5fe39bfea8",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k15/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k15/cg.json",
+      "parent_source_sha256": "a5a394c525974e4a5918b40d0006a23d4639b71a2c1725360d52713dbabc1441",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 15
+    },
+    "w5_k05": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k05_p5__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "5f251790322c74e6bfa76be438c89386ea1ba03ee78d10766a290ead2e68eeb3",
+      "cache_sha256": "b91c54be1341b3ca22f24b87c4d062828d48de302db66b5c05ece0342dece2f7",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 5,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p05_20260908.csv",
+      "input_sha256": "9b7788a554cdacca084e0cb218796da5d5e0ae076c61073b667ed288dc157a1e",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p05_20260908.csv",
+      "parent_csv_sha256": "9b7788a554cdacca084e0cb218796da5d5e0ae076c61073b667ed288dc157a1e",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k05/parent_descriptor.json",
+      "parent_descriptor_sha256": "6e02d08ccdc8e58fb646183c58179ad59c91238b6a81f972c2fe287adf6266ab",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k05/parent_columns.jsonl",
+      "parent_journal_sha256": "673968d27f35ef0f885f701c7ad57b0561d847cc6e075c172705c04409ec215e",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k05_p5__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k05_p5__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "305ff055a8902573c51bfb000c27810632348ba79a46975189763b80e6b5ef52",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 5
+    },
+    "w5_k10": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k10_p5__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "72f35256c920b971e6fdc73fa4fffbaaa990049c1521483750cbf28ffa7492dc",
+      "cache_sha256": "0663af961a262c33b2f71b6aabdccaa70be2a7790f8ddef003023a30d7b78038",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 5,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p05_20260908.csv",
+      "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p05_20260908.csv",
+      "parent_csv_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "651e232cb368b251359dbc7e17286a3f7ae432338238d85f5f28208e137febe7",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "dc85fb05a5cc8aa42bc4bb8aa8f9db0c42712df5fa33381c52b33780b5db5567",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k10_p5__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1/cg/M__k10_p5__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "8812619897b8b60e81b048938578ca1369e463c1331afe883dda5b81500f7695",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 10
+    },
+    "w5_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/network.pkl",
+      "cache_manifest_sha256": "b23b647a9fbcf3063ed02595d893a400c18e1b55bfa6bc8ef40b109bfad5018b",
+      "cache_sha256": "3c509f522094d343cd59936b7545033b4ad2381bb2ba46c64703174b78479adb",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 5,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p05_20260908.csv",
+      "input_sha256": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p05_20260908.csv",
+      "parent_csv_sha256": "985760e3065f3ba1d7d62960ae77ff6d61e7d331eb3ebb6582cc774c4835e240",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "448396e88c2abf1a7c8a766474940575f0ada9c8b4ba4af0a03629b3bf5b389a",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w5_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "97900161cc6a2c8a44754f6ab0f287dce04078f0a6fd3fadb51881c6d1ad6307",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/cg.json",
+      "parent_source_sha256": "6ef139f5c12c6abdf4b64efba2554eaad04471ad9b52000a94894a596a6c8c53",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 15
+    },
+    "w6_k05": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k05_p6__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "1801dbee0081d7973c1bc499c76868dd2f253b65f6c7e0eceaa4cad6251e6146",
+      "cache_sha256": "a24d92337ea59f820e7817c342d1d6cb53753c244cb46149239b8b88295b7011",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 6,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p06_20260908.csv",
+      "input_sha256": "607cba23d981e3ed76448f035f89785b2d253c2f5242559ed65dee6b0dac9236",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k05_p06_20260908.csv",
+      "parent_csv_sha256": "607cba23d981e3ed76448f035f89785b2d253c2f5242559ed65dee6b0dac9236",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k05/parent_descriptor.json",
+      "parent_descriptor_sha256": "ae9b81940d8c12d0353f84844e638ee620dacaa9d859ddd26c1e47ec5e5c06e3",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k05/parent_columns.jsonl",
+      "parent_journal_sha256": "e762ff9368c312049acb27dd0763ac9de68aedaaa9d9d237e58d48889ac74bf9",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p6/cg/M__k05_p6__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p6/cg/M__k05_p6__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "64420a72ef98e7a2488c4b4e80119af7d505c2c700d08f6b85506e36f2a240fe",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 5
+    },
+    "w6_k10": {
+      "cache": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb/network_cache/M__k10_p6__event_2p5_event5.pkl",
+      "cache_manifest_sha256": "6bb8bf1c5e24648b430079f8708a31ec4a6a7fb6915e63be8050d60d95853f11",
+      "cache_sha256": "aad864e0c915002a771371f33327961fc071a1f222ddf999e785d8140ed9ef09",
+      "cache_source_commit": "21fbecba826824c44f897feef038fcf51c532582",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 6,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+      "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p06_20260908.csv",
+      "parent_csv_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "31046cd53c5d2c4b54c5f2094f6e665ed18aa73b4fcf8dd0321d0578a998eb57",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "149925705975f80666258b9995d3f9ba1a54c8085714746f0be49a3e73a63d60",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p6/cg/M__k10_p6__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p6/cg/M__k10_p6__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "e234d6a5921c163be8748503ee2ac70412e41eff7e9eaa8c4d63d2d3a831ce7e",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 10
+    },
+    "w6_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k15/network.pkl",
+      "cache_manifest_sha256": "d01f44d50bd1798ee1330988ae07b6c523cf183927de2d99797b6589feaa5b96",
+      "cache_sha256": "c204b32301aa54aa4c8a13c62829f4ad24c62873840204f99def0ad46fcc6949",
+      "cache_source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+      "cache_usage": "source cache immutable; active process fee applied using audited cache-cost handling",
+      "chain": 6,
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p06_20260908.csv",
+      "input_sha256": "7c28172dd2dc8b5fde8419b6600f8de3d0a587be7f538aa073cffe7696662c95",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p06_20260908.csv",
+      "parent_csv_sha256": "7c28172dd2dc8b5fde8419b6600f8de3d0a587be7f538aa073cffe7696662c95",
+      "parent_descriptor": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "b6598a2aed8e77868f6e2bfa10cb671a6b6abf063f70b07143f72c701a8954da",
+      "parent_journal": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/inputs/w6_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "41712380d510476c3120d37b229ecfa9f7c33cf2c6ec4014d478e8bf2092e040",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k15/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k15/cg.json",
+      "parent_source_sha256": "7169f6d304537981e15bbe9096e7ba955d7cfbdc7963df027e59d8ee845bc38f",
+      "parent_storage": "hardlink_to_completed_immutable_journal",
+      "parent_usage": "trip sequences replayed and costed under the destination fee; not reused route costs",
+      "same_k_initial_pool": true,
+      "source_parent_fee": 5.0,
+      "target_k": 15
+    }
+  },
+  "interpretation": [
+    "18 matched input cases,36runs,not36 independent random samples.",
+    "No restart fromk2: both fee arms replay the same frozen completed target pool; C1k15 can use k14 if its target pool is not yet certified.",
+    "Historical fee5 results are context; new fee5 controls use the same updated code as fee0.",
+    "Initial sequences come from fee5 pools; converged LPs still require destination-fee pricing certificates, and integer pools can remain biased by initialization.",
+    "Electricity cost, start fees, charging activities, energy and terminal energy are reported separately.",
+    "Baseline chains have no shared capacity or equal-return-energy constraint; GIRO fair-terminal tariff comparison is a separate cohort.",
+    "No universal runtime or target-attainment guarantee; interrupted CG remains uncertified.",
+    "Existing graph construction excluded; authentication and graph loading recorded separately."
+  ],
+  "mip_code": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code",
+  "mip_commit": "666cd839ab3923071b1a571ef349b70f61a82fa9",
+  "pairs": [
+    {
+      "case_id": "w1_k05",
+      "comparison_group": "w1_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w1_k05_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w1_k05",
+      "comparison_group": "w1_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w1_k05_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w1_k10",
+      "comparison_group": "w1_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w1_k10_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w1_k10",
+      "comparison_group": "w1_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w1_k10_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w1_k15",
+      "comparison_group": "w1_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w1_k15_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w1_k15",
+      "comparison_group": "w1_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w1_k15_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w2_k05",
+      "comparison_group": "w2_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w2_k05_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w2_k05",
+      "comparison_group": "w2_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w2_k05_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w2_k10",
+      "comparison_group": "w2_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w2_k10_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w2_k10",
+      "comparison_group": "w2_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w2_k10_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w2_k15",
+      "comparison_group": "w2_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w2_k15_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w2_k15",
+      "comparison_group": "w2_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w2_k15_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w3_k05",
+      "comparison_group": "w3_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w3_k05_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w3_k05",
+      "comparison_group": "w3_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w3_k05_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w3_k10",
+      "comparison_group": "w3_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w3_k10_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w3_k10",
+      "comparison_group": "w3_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w3_k10_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "comparison_group": "w3_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w3_k15_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "comparison_group": "w3_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w3_k15_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w4_k05",
+      "comparison_group": "w4_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w4_k05_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w4_k05",
+      "comparison_group": "w4_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w4_k05_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "comparison_group": "w4_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w4_k10_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "comparison_group": "w4_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w4_k10_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w4_k15",
+      "comparison_group": "w4_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w4_k15_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w4_k15",
+      "comparison_group": "w4_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w4_k15_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w5_k05",
+      "comparison_group": "w5_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w5_k05_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w5_k05",
+      "comparison_group": "w5_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w5_k05_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w5_k10",
+      "comparison_group": "w5_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w5_k10_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w5_k10",
+      "comparison_group": "w5_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w5_k10_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w5_k15",
+      "comparison_group": "w5_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w5_k15_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w5_k15",
+      "comparison_group": "w5_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w5_k15_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w6_k05",
+      "comparison_group": "w6_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w6_k05_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w6_k05",
+      "comparison_group": "w6_k05",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w6_k05_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w6_k10",
+      "comparison_group": "w6_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w6_k10_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w6_k10",
+      "comparison_group": "w6_k10",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w6_k10_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w6_k15",
+      "comparison_group": "w6_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w6_k15_fee0",
+      "mem": "96G",
+      "order": [
+        "fee0"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    },
+    {
+      "case_id": "w6_k15",
+      "comparison_group": "w6_k15",
+      "contrast": "charge_start_fee",
+      "cpus": 8,
+      "id": "w6_k15_fee5",
+      "mem": "96G",
+      "order": [
+        "fee5"
+      ],
+      "repetition": 1,
+      "slurm_time": "04:00:00"
+    }
+  ],
+  "prepared_utc": "2026-09-13T04:51:43.833724+00:00",
+  "python": "/home/nc437/evsp_env/bin/python",
+  "resources": {
+    "concurrency": 36,
+    "exclude": "scaglione-compute-01",
+    "independent_runs": 36,
+    "partition": "default_partition",
+    "reason": "All36 independent treatments eligible immediately; same8CPU96GiB per run as validated full-pool CG. Four-hour allocation covers2hCG+1hMIP and startup/validation.",
+    "requeue": false
+  },
+  "root": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913",
+  "schema": "evsp-zero-charge-start-fee-contract-v1",
+  "source_manifest": {
+    "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/manifest.json",
+    "sha256": "1e10471cdbe81faa367c3fb9f8acfdc8fc7da3bf98055f61cf30ed70c854048c"
+  },
+  "static_files": [
+    {
+      "bytes": 512,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code/data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    {
+      "bytes": 2573,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code/data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    },
+    {
+      "bytes": 581,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code/data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    {
+      "bytes": 3778,
+      "path": "/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md",
+      "sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867"
+    }
+  ]
+}
