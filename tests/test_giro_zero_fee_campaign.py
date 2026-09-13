@@ -99,6 +99,13 @@ class GiroZeroFeeTests(unittest.TestCase):
         self.assertEqual(audit["repriced_routes"], 1)
         self.assertEqual(union["frontiers"][0]["routes"][0]["frontier_repriced_for_fee"], 0.0)
 
+    def test_runtime_override_accepts_zero_and_restores_fee5(self):
+        MODULE.set_runtime_fee(0.0)
+        import config
+        self.assertEqual(config.CHARGE_START_COST, 0.0)
+        MODULE.set_runtime_fee(5.0)
+        self.assertEqual(config.CHARGE_START_COST, 5.0)
+
 
 if __name__ == "__main__":
     unittest.main()
