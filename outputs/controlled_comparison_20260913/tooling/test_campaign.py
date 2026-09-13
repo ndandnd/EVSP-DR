@@ -110,5 +110,16 @@ class CampaignTests(unittest.TestCase):
                                      root / "run", 5, env, {"cpus": 1})
 
 
+    def test_measured_budget_stop_is_separate_from_execution_failure(self):
+        value = {"status": "mip_skipped", "mip_skip_reason": "cg_has_no_completed_iteration",
+                 "cg_stop_reason": "wall_limit", "cg_execution": {"returncode": 0, "watchdog_triggered": False}}
+        self.assertTrue(campaign.arm_measurement_completed(value))
+        value["cg_execution"]["returncode"] = 1
+        self.assertFalse(campaign.arm_measurement_completed(value))
+        value["cg_execution"]["returncode"] = 0
+        value["mip_skip_reason"] = "cg_journal_missing"
+        self.assertFalse(campaign.arm_measurement_completed(value))
+
+
 if __name__ == "__main__":
     unittest.main()

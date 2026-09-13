@@ -323,6 +323,19 @@ def preflight_command(python):
     return [python, "-c", script]
 
 
+def arm_measurement_completed(value):
+    """A measured solver budget exhaustion is distinct from a broken worker."""
+    if value.get("status") == "finished":
+        return (value.get("mip_execution", {}).get("returncode") == 0
+                and not value.get("mip_execution", {}).get("watchdog_triggered"))
+    cg = value.get("cg_execution", {})
+    return (value.get("status") == "mip_skipped"
+            and value.get("mip_skip_reason") in {
+                "cg_has_no_completed_iteration", "cg_pool_has_artificials"}
+            and value.get("cg_stop_reason") == "wall_limit"
+            and cg.get("returncode") == 0 and not cg.get("watchdog_triggered"))
+
+
 def worker(args):
     root = args.root.resolve()
     manifest_path = root / "manifest.json"
@@ -388,6 +401,7 @@ def worker(args):
                     atomic_write(arm_root / "completion.json", completion, exclusive=True)
             gate = cg_pool_gate(cg_execution, arm_root / "cg.json", completion)
             arm_state.update(cg_execution=cg_execution, cg_gate=gate,
+                             cg_stop_reason=status.get("stop_reason"),
                              cg_certified_rc_optimal=gate.get("cg_certified_rc_optimal"))
             if not gate["allow_mip"]:
                 arm_state.update(status="mip_skipped", mip_skip_reason=gate["reason"], ended_utc=now())
@@ -407,8 +421,7 @@ def worker(args):
         except Exception as exc:
             arm_state.update(status="execution_error", error=repr(exc), ended_utc=now())
         atomic_write(attempt / "pair_status.json", state)
-    all_success = all(value.get("status") == "finished" and
-                      value.get("mip_execution", {}).get("returncode") == 0
+    all_success = all(arm_measurement_completed(value)
                       for value in state["arms"].values())
     insufficient = any(value.get("status") == "not_started_insufficient_allocation_time"
                        for value in state["arms"].values())
