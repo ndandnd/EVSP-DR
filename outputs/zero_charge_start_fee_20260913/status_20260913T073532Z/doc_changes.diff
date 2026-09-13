@@ -1,0 +1,31 @@
+--- before
++++ after
+@@ -1,6 +1,6 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results collected 13 September 2026 at 02:35 EDT.
++Week of 14 September. Results collected 13 September 2026 at 03:35 EDT.
+ 
+ ## **All six baseline chains reach 15 buses**
+ 
+@@ -45,15 +45,15 @@
+ 
+ ## **Charging-start fee: 5 versus 0**
+ 
+-**29 of 36 MIPs are complete, and all 29 match their targets.** All have finite-pool fleet proofs and individual-route replay. 32 of 36 CG runs have pricing certificates. Unfinished cases are pending, not failed.
++**32 of 36 MIPs are complete, and all 32 match their targets.** All have finite-pool fleet proofs and individual-route replay. All 36 CG runs have stopped: 34 are certified; both chain 1 k15 runs reached their two-hour budgets with negative reduced costs remaining. Four MIPs are still running.
+ 
+ | Target k | Fee 5 completed (of 6\) | Fee 0 completed (of 6\) |
+ | ----- | ----- | ----- |
+ | 5 | 6 | 6 |
+-| 10 | 6 | 4 |
+-| 15 | 5 | 2 |
+-
+-The completed zero-fee k10 cases are chains 2, 3, 4 and 6; completed zero-fee k15 cases are chains 3 and 6\. Both fees start from the same frozen trip sequences, with charging reoptimized. Chain 1 k15 uses its frozen k14 pool; the other 17 inputs use same-k pools. Each run gets two hours of CG and one hour of MIP. [All paired outcomes and stopping reasons](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/status_20260913T063519Z/paired_results.csv).
++| 10 | 6 | 6 |
++| 15 | 5 | 3 |
++
++All six chains are complete under both fees at k5 and k10. At k15, fee 5 is complete for chains 2–6; fee 0 for chains 2, 3 and 6\. Both fees start from the same frozen trip sequences, with charging reoptimized. Chain 1 k15 uses its frozen k14 pool; the other 17 inputs use same-k pools. Each run gets two hours of CG and one hour of MIP. [All paired outcomes and stopping reasons](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/status_20260913T073532Z/paired_results.csv).
+ 
+ **Completed k5 detail:** every row uses five buses under both fees. Arrows mean fee 5 → fee 0\.
+ 

@@ -1,0 +1,209 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260913T063519Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T073532Z.json",
+  "timestamp_utc": "2026-09-13T07:35:32.783661+00:00",
+  "changed_results": [
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k10_fee0/114035_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.0615359237418,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "117646c4487969dc6ab773049b0ec02eaeab83b4813d539f6bfd8de8077a0142",
+      "payload_sha256": "117646c4487969dc6ab773049b0ec02eaeab83b4813d539f6bfd8de8077a0142"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k15_fee0/114043_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.761258128099,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "6d27021368e8266b579dc0bf2a48f670a91a7374826c461aa8c7750aa7e9b0bf",
+      "payload_sha256": "6d27021368e8266b579dc0bf2a48f670a91a7374826c461aa8c7750aa7e9b0bf"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k10_fee0/114059_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 10,
+        "fleet_bound": 10.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.0395439411514,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "0f163ad1b97180ee2f4527c3c261e8d68210df3d479c588a1cde1583ae6fddd0",
+      "payload_sha256": "0f163ad1b97180ee2f4527c3c261e8d68210df3d479c588a1cde1583ae6fddd0"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k15_fee0/114038_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 7149.635777261108,
+        "runtime_s": 7149.635777261108,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 441,
+          "iter": 441,
+          "lp_obj": 1500558.5720394796,
+          "max_bound_violation": 1.8899323290066827e-12,
+          "max_row_violation": 5.885292253537955e-13,
+          "min_rc": -1.086604116161694,
+          "route_weight": 14.999999999999586
+        }
+      },
+      "sha256": "482368fc177fedee910b086b3b9ad5e398c6b216111c0bddc20e9b5c82cfd1fc",
+      "payload_sha256": "482368fc177fedee910b086b3b9ad5e398c6b216111c0bddc20e9b5c82cfd1fc"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k15_fee5/114037_r0/fee5/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 7148.698678048328,
+        "runtime_s": 7148.698678048328,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 364,
+          "iter": 364,
+          "lp_obj": 1500717.6276839313,
+          "max_bound_violation": 1.8202106488729441e-13,
+          "max_row_violation": 2.4436008771999695e-13,
+          "min_rc": -0.25056231448415045,
+          "route_weight": 14.99999999999979
+        }
+      },
+      "sha256": "e09d0bfd3933952da53d09b586ca49b0161f95e39ba0fb02705b99d983b3e14a",
+      "payload_sha256": "e09d0bfd3933952da53d09b586ca49b0161f95e39ba0fb02705b99d983b3e14a"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k15_fee0/114055_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5454.3028633838985,
+        "runtime_s": 5454.3028633838985,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 670,
+          "iter": 670,
+          "lp_obj": 1500502.4480000164,
+          "max_bound_violation": 3.8736028273866907e-13,
+          "max_row_violation": 4.4231285301066237e-13,
+          "min_rc": -2.4377329288505223e-07,
+          "route_weight": 15.000000000000165
+        }
+      },
+      "sha256": "d9dac1b9f945ee68ce67ee30fbe553885453772062193e5beaaed799cb97e5d8",
+      "payload_sha256": "d9dac1b9f945ee68ce67ee30fbe553885453772062193e5beaaed799cb97e5d8"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k15_fee0/114062_r0/fee0/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5569.266257239971,
+        "runtime_s": 5569.266257239971,
+        "final": {
+          "artificials": 0.0,
+          "attempt_iter": 966,
+          "iter": 966,
+          "lp_obj": 1500516.8319999354,
+          "max_bound_violation": 2.324251902052765e-13,
+          "max_row_violation": 4.813927034774679e-13,
+          "min_rc": -3.797588421505793e-08,
+          "route_weight": 14.999999999999355
+        }
+      },
+      "sha256": "b60e51ced40d456ae7091e7f5074fea9982803dfe3798a4287f3c229ebf32664",
+      "payload_sha256": "b60e51ced40d456ae7091e7f5074fea9982803dfe3798a4287f3c229ebf32664"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "114035",
+      "case_id": "w1_k10_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114043",
+      "case_id": "w2_k15_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114059",
+      "case_id": "w5_k10_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "114035",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "114043",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-16"
+      },
+      "after": null
+    },
+    {
+      "job": "114059",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-11"
+      },
+      "after": null
+    }
+  ]
+}

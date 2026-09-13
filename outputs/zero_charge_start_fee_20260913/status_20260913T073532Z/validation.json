@@ -1,0 +1,476 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T073532Z.json",
+  "snapshot_sha256": "4ec5da60ed0b4e77268687374bc4a07443d4dfc44d1132834956747f5e923761",
+  "collected_utc": "2026-09-13T07:36:27.899049+00:00",
+  "mip_validations": [
+    {
+      "case": "w1_k05",
+      "arm": "fee0",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k05_fee0/114034_r0/fee0/mip/result.json",
+      "sha256": "5eccc4ce6255fed66998336650a050cc5cefec7a2205d4bd4e7fe68986397d22",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w1_k05",
+      "arm": "fee5",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k05_fee5/114033_r0/fee5/mip/result.json",
+      "sha256": "6a9faa1492b8ab0c60f8ba94f114e11c37399f23f6a4f3b70e1ac19dc913fd5a",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w1_k10",
+      "arm": "fee0",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k10_fee0/114035_r0/fee0/mip/result.json",
+      "sha256": "117646c4487969dc6ab773049b0ec02eaeab83b4813d539f6bfd8de8077a0142",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w1_k10",
+      "arm": "fee5",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k10_fee5/114036_r0/fee5/mip/result.json",
+      "sha256": "52bff693c8a1855bf7dcdf4a6d0b868368273dc90e750b3548337899014450ea",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w2_k05",
+      "arm": "fee0",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k05_fee0/114039_r0/fee0/mip/result.json",
+      "sha256": "3a042a1f1ea69960688fd54ea95a5fc767c320e89dfce36e60aa9bfa59d63597",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w2_k05",
+      "arm": "fee5",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k05_fee5/114040_r0/fee5/mip/result.json",
+      "sha256": "3f9959dfa6b45c5f9a9b49a5fcb050398e13ecb81c4732e873ad141611af33a5",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w2_k10",
+      "arm": "fee0",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k10_fee0/114042_r0/fee0/mip/result.json",
+      "sha256": "8c4e7d76443d7f1fbcfa232d50d18866362158d68af76cd30e2d1b58477774bd",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w2_k10",
+      "arm": "fee5",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k10_fee5/114041_r0/fee5/mip/result.json",
+      "sha256": "eaa24c6ebcfc6289fbef583047948f413d82fd1aa7a2cf7d1f22a2d4eb2aa84f",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w2_k15",
+      "arm": "fee0",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k15_fee0/114043_r0/fee0/mip/result.json",
+      "sha256": "6d27021368e8266b579dc0bf2a48f670a91a7374826c461aa8c7750aa7e9b0bf",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w2_k15",
+      "arm": "fee5",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w2_k15_fee5/114044_r0/fee5/mip/result.json",
+      "sha256": "9a8011be03bf8329ace572ed38ed04e05789d6ff83eb49b466704d6cfe4014d9",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w3_k05",
+      "arm": "fee0",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k05_fee0/114046_r0/fee0/mip/result.json",
+      "sha256": "98f0e78697442c86fde081d78b203aba30d60e8c771b74b9a008078159062ea4",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w3_k05",
+      "arm": "fee5",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k05_fee5/114045_r0/fee5/mip/result.json",
+      "sha256": "cc4f3b26f82c1d0936211a90453d22da684fd768493339547d58e3952c940d3e",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w3_k10",
+      "arm": "fee0",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k10_fee0/114047_r0/fee0/mip/result.json",
+      "sha256": "3f0fb183787daf6616e703d433d8de22f707cf064ec9b6d4d7fa9c5dc2e2d996",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w3_k10",
+      "arm": "fee5",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k10_fee5/114048_r0/fee5/mip/result.json",
+      "sha256": "a6395d217c7c54d17d53967769384f765b115887b00dd6ac5f832e3dc5fbbd3b",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w3_k15",
+      "arm": "fee0",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k15_fee0/114050_r0/fee0/mip/result.json",
+      "sha256": "db5dd3e9f13d3ddd8015de3a20cbca30038a2f74db9311e52d953f48962e7647",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w3_k15",
+      "arm": "fee5",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w3_k15_fee5/114049_r0/fee5/mip/result.json",
+      "sha256": "d21757541ab52c95b9fa62c490518e810c6ad60fd299ef13256adb0b12b8870f",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w4_k05",
+      "arm": "fee0",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k05_fee0/114051_r0/fee0/mip/result.json",
+      "sha256": "eae43ff67246111f69db86990bf036df977550f2912af681c2ff39eb0ca3e9bb",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w4_k05",
+      "arm": "fee5",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k05_fee5/114052_r0/fee5/mip/result.json",
+      "sha256": "9d92187c33f6bba3ea31e0917c5f1bbb91fc2d0e8beaf0c5b8500f937df92f36",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w4_k10",
+      "arm": "fee0",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k10_fee0/114054_r0/fee0/mip/result.json",
+      "sha256": "40e8add698fbb91900871f02875242ebff221eeb7cb2fa52c2378cad34f47052",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w4_k10",
+      "arm": "fee5",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k10_fee5/114053_r0/fee5/mip/result.json",
+      "sha256": "687e24c1a214d0f071ed2cefe5f73d822e2ab3a81e27df927f63892aae233465",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w4_k15",
+      "arm": "fee5",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k15_fee5/114056_r0/fee5/mip/result.json",
+      "sha256": "fbc0ef8f2c7199e5097c854cf4ed52fdadc79ca94e954c1f8b679042d0eb0a2c",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w5_k05",
+      "arm": "fee0",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k05_fee0/114058_r0/fee0/mip/result.json",
+      "sha256": "6aeb6e76462de7973c95c9d66215aca0d01f23e051df4edb0da4a6cd120d4c4c",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w5_k05",
+      "arm": "fee5",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k05_fee5/114057_r0/fee5/mip/result.json",
+      "sha256": "a5c9e7d13890657e494a79ac42c59d32b1f85d95d056187f833b228a15da81f7",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w5_k10",
+      "arm": "fee0",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k10_fee0/114059_r0/fee0/mip/result.json",
+      "sha256": "0f163ad1b97180ee2f4527c3c261e8d68210df3d479c588a1cde1583ae6fddd0",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w5_k10",
+      "arm": "fee5",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k10_fee5/114060_r0/fee5/mip/result.json",
+      "sha256": "63faf3a97ed5330cdbc874db11ea97371c76435598a2177d5d387e840ac8fb67",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w5_k15",
+      "arm": "fee5",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k15_fee5/114061_r0/fee5/mip/result.json",
+      "sha256": "d8ed14b4b1bec66fa5e28d54ce8afc269616c9b57fe62e8f6b8926343dfd2017",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w6_k05",
+      "arm": "fee0",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k05_fee0/114063_r0/fee0/mip/result.json",
+      "sha256": "fc20f2bf27215b2042bf5df4fb6bd98923c8bc1d3637b5c23de5cce8517425b4",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w6_k05",
+      "arm": "fee5",
+      "target_k": 5,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k05_fee5/114064_r0/fee5/mip/result.json",
+      "sha256": "3933eac5df93145eba6928f1732856ff500b28dbdaf6160e8b8e5c7bd1ccc3b1",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w6_k10",
+      "arm": "fee0",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k10_fee0/114066_r0/fee0/mip/result.json",
+      "sha256": "69cd669e3d7d4229f8b12b46e55ed8dea9786f03019a13297611f84548a1b623",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w6_k10",
+      "arm": "fee5",
+      "target_k": 10,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k10_fee5/114065_r0/fee5/mip/result.json",
+      "sha256": "f34cf9f7b1e6689958f0feaa13e8f37edf0ae9cd76ad2c29f33101ad300ab6f5",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w6_k15",
+      "arm": "fee0",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k15_fee0/114067_r0/fee0/mip/result.json",
+      "sha256": "06b02fa3d1083990d95fed8464fa767e926d853d4ae5f432f2850e06464332d0",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    },
+    {
+      "case": "w6_k15",
+      "arm": "fee5",
+      "target_k": 15,
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w6_k15_fee5/114068_r0/fee5/mip/result.json",
+      "sha256": "6ff1a40cd6524ae6e2ccc6a3b9d0ee65e6a2d3bac5760bf3dacd38f3426e1edd",
+      "checks": {
+        "target": true,
+        "fleet_proven": true,
+        "physical_replay": true,
+        "cost_reconciliation": true,
+        "source_cg_hash": true
+      }
+    }
+  ],
+  "cg_certified": 34,
+  "cg_capped": [
+    {
+      "case": "w1_k15",
+      "arm": "fee0",
+      "stop_reason": "wall_limit",
+      "min_rc": -1.086604116161694,
+      "iterations": 441,
+      "lp_objective": 1500558.5720394796,
+      "fractional_route_weight": 14.999999999999586
+    },
+    {
+      "case": "w1_k15",
+      "arm": "fee5",
+      "stop_reason": "wall_limit",
+      "min_rc": -0.25056231448415045,
+      "iterations": 364,
+      "lp_objective": 1500717.6276839313,
+      "fractional_route_weight": 14.99999999999979
+    }
+  ]
+}

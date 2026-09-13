@@ -1,5 +1,8 @@
 # Charging-start fee: zero versus five
 
+**Latest verified progress, 13 September 03:35 EDT:** [32 of 36 MIPs finished, all target matches](status_20260913T073532Z/README.md). Both fee settings match every chain at k=5 and k=10. CG is finished: 34 certificates; both C1k15 arms reached the two-hour budget. Four MIPs remain running. Earlier dated updates below are preserved.
+
+
 **Current results, 13 September, 02:35 EDT:** [29 of 36MIPs complete, all target matches](status_20260913T063519Z/README.md). The [completed GIRO comparison](status_20260913T053436Z/README.md) still shows electricity savings with no start fee and equal-or-greater returning energy at all three peaks.
 
 **Launched 13 September at 01:08 EDT: 36 baseline CG→MIP jobs and 12 GIRO comparison jobs, all on default.** The user requested an isolated branch and new runs removing the five-unit cost per charging activity. Existing running experiments remain unchanged. The current submission ledgers are the authority for launched jobs.

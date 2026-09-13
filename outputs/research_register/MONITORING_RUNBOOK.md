@@ -1,5 +1,10 @@
 # Unicorn monitoring runbook
 
+## 13 September, 03:35 EDT — fee update
+
+Snapshot `20260913T073532Z`: fee campaign has 32/36 completed MIPs, all target matches, finite-pool fleet proofs and individual-route replay. Both fees now finish all six chains at k=5 and k=10. At k=15 fee 5 is complete for chains 2–6; fee 0 for chains 2, 3 and 6. All 36 CG arms have stopped: 34 certified; C1k15 under both fees reached the 7200-second CG budget with negative reduced cost remaining (fee 5: -0.250562; fee 0: -1.086604). These are recorded caps, not execution failures. Preserve the four running MIPs (114037, 114038, 114055, 114062). Do not relaunch capped CG automatically. Remaining decomposition work waits on its existing shared graph. No new execution failure, confirmed preemption or invalid dependency. Report and validation: `outputs/zero_charge_start_fee_20260913/status_20260913T073532Z`. Earlier status entries below are historical.
+
+
 ## Current completion — 13 September, 02:35 EDT
 
 Snapshot `20260913T063519Z`: `full_pool_recovery_20260912` is complete. All 37 CG cases have pricing certificates; all 37 MIPs attain their targets with finite-pool fleet proofs and individual-route replay. All six chains attain 15 buses. Do not resubmit these jobs.
