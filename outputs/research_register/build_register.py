@@ -159,7 +159,9 @@ def report_links(campaign_id, root, markdown_files):
 
 def giro_physical_validation(summary):
     """Return selected-route validation, separate from artifact hash status."""
-    metrics = (summary or {}).get("charging_comparison_metrics")
+    if not isinstance(summary, dict):
+        return None
+    metrics = summary.get("charging_comparison_metrics")
     validation = metrics.get("physical_validation") if isinstance(metrics, dict) else None
     if not isinstance(validation, dict):
         return None
