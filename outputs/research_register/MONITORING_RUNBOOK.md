@@ -6,6 +6,8 @@ Snapshot184244Z: cumulative campaign9 certified fresh CG endpoints and17MIPs (7f
 
 Register/workbook refreshed with all six supplements. Current register.json contains ~56MiB largely because preserved historical final_lp payloads include positive_routes/trip_duals and verbose formatting; a future bounded register compaction should preserve source provenance rather than deleting evidence. Do not redesign it during routine monitoring.
 
+Google Docs editing: after finding exact text, use HTML paste for replacement. CUA typeText inserted beside matched text in this session; do not assume it replaced the selection. Export afterwards and verify obsolete fragments are absent, while unrelated rows and figures remain.
+
 ## 13 September — authorized cumulative-budget fresh controls
 
 New user request: account for every preceding CG stage used by a warm start, then give a fresh target-instance run the same accumulated time. Campaign `cumulative_budget_20260913` uses all six chains at k5,8,10,15 (24 datasets). Read that campaign README, manifest/jobs/case_jobs and audit/targets.json. Source e091a4d; MIP871d057. Primary B=sum nativewall_s of actual k2..k CG ancestry; extra adds original graph construction for ancestors only. Target graph common, native cache loading not double-counted. Serialization/setup outside the constructor remains unmeasured. Earlier MIPs are excluded because they did not supply columns.
