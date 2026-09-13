@@ -1,0 +1,58 @@
+{
+  "xlsx_sha256": "11065a7f84325e0aa423a82fa87ecc81af423a8fed2a87e11a03224efb8297c2",
+  "records_checked": [
+    {
+      "row": "582",
+      "case": "w1_k05",
+      "arm": "fee5",
+      "buses": "5"
+    },
+    {
+      "row": "583",
+      "case": "w2_k05",
+      "arm": "fee5",
+      "buses": "5"
+    },
+    {
+      "row": "584",
+      "case": "w3_k05",
+      "arm": "fee0",
+      "buses": "5"
+    },
+    {
+      "row": "585",
+      "case": "w3_k05",
+      "arm": "fee5",
+      "buses": "5"
+    },
+    {
+      "row": "586",
+      "case": "w4_k05",
+      "arm": "fee5",
+      "buses": "5"
+    },
+    {
+      "row": "587",
+      "case": "w5_k05",
+      "arm": "fee5",
+      "buses": "5"
+    },
+    {
+      "row": "588",
+      "case": "w6_k05",
+      "arm": "fee0",
+      "buses": "5"
+    },
+    {
+      "row": "589",
+      "case": "w6_k05",
+      "arm": "fee5",
+      "buses": "5"
+    }
+  ],
+  "source_match": true,
+  "header_visual_checks": [
+    "MIP_charging_fields.png",
+    "Charging_fee_fields.png"
+  ]
+}

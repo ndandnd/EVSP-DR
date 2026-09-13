@@ -1,0 +1,89 @@
+{
+  "campaign_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+  "collector": "python -u scripts/event_uniform_envelope/giro_zero_fee_campaign.py collect --root /home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+  "design": {
+    "aggregate_terminal_row": "expanded_grid_terminal_soc_kwh; continuous replay must also meet target",
+    "candidate_set": "common union of fee0 and fee5 frontiers plus repriced saved pool",
+    "cells": 6,
+    "charge_power_kw": 350.0,
+    "fees": [
+      0.0,
+      5.0
+    ],
+    "fleet_cap": 5,
+    "frontier_tasks": 6,
+    "initial_energy_per_bus_kwh": 240.0,
+    "joint_mip_tasks": 6,
+    "proof_scope": "finite_saved_pool_plus_common_frontier_union; no full-model pricing certificate",
+    "target_terminal_energy_kwh": 280.7833253,
+    "tariffs": [
+      "peak08",
+      "peak12",
+      "peak18"
+    ]
+  },
+  "execution_commit": "f895c61a525c51d32ab09276f12074217c1788ce",
+  "initial_remote_summary": "remote_summary_initial.json",
+  "initial_remote_summary_sha256": "eae970e16c6292682b9933a517a811a89131b4489f2f0e514b2c449965d6ee86",
+  "input_hashes": {
+    "Par_Routes_For_Code": "4cc5f2dab517e8391552e6c3b86b27ffeedf609276a72c9e148d6de9d4fbbfea",
+    "Ref_dict": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "Unique_Locations": "dc5a74a84bc47ffc903f2a71e25465a0d8616f6cf667087df0da03f69e1efa58",
+    "dhd_relevant": "e68355c5cc2bafe0cd1aef9c7c99f2f4b1da99b9ead5dec391e7e20f8c46d865",
+    "instance": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+    "par_ref_dhd": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "peak08_tariff": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e",
+    "peak12_tariff": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+    "peak18_tariff": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6",
+    "vehicle_details": "6b46acce8b0870aff967c73aac372b90873ed32a6e424e55b851e4b8676ab57f"
+  },
+  "remote_code_pin": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75",
+  "remote_plan": "remote_plan.json",
+  "remote_plan_sha256": "42b7212c27773888a2e6265c0e71c564ef756adb2b515c4d0f38ee1b1ae5b928",
+  "repricing_manifest_sha256": {
+    "peak08": "2f371fc60f1daef4cdcad14d2392cd566cfbe5804174c1ebcfd89678a23280e8",
+    "peak12": "d35b40690cf44a6e18accc9f788c50aef66dd8df5a58ad5bb2d836995dcde057",
+    "peak18": "43bc69db2ea9a5f494bad0fc1dc3234931da0753cfa21af3a8c5fdb14918b565"
+  },
+  "resources": {
+    "frontier": {
+      "allocation": "02:00:00",
+      "cpus": 1,
+      "exclude": [
+        "scaglione-compute-01"
+      ],
+      "memory": "24G",
+      "partition": "default_partition"
+    },
+    "mip": {
+      "allocation": "02:00:00",
+      "cpus": 8,
+      "exclude": [
+        "scaglione-compute-01"
+      ],
+      "memory": "48G",
+      "optimization_budget_s": 3600,
+      "partition": "default_partition",
+      "stage1_budget_s": 1800
+    }
+  },
+  "schema": "evsp-dr-terminal-energy-fee-deployment-v1",
+  "slurm_commands": "slurm_commands.json",
+  "slurm_commands_sha256": "4e40dafff795d550b23844db463c77484de227fd937474d331c6c7313ba733a9",
+  "source_branch": "codex/giro-zero-start-fee-20260913",
+  "source_roots": {
+    "peak08": "/home/nc437/ladder-lite/matched_tariff8_20260908_a9a9720/original_eligible_k05_g240_p350_peak08",
+    "peak12": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059/original_eligible_k05_g240_p350_peak12",
+    "peak18": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059/original_eligible_k05_g240_p350_peak18"
+  },
+  "validation": {
+    "fixed_sequence_replay_smoke": "attempted with 90s timeout; timed out during full event-network construction; no job submitted",
+    "jobs_submitted": false,
+    "local_tests": "6/6 pass; py_compile; git diff --check",
+    "remote_collector_dry_run": "passed: collector wrote six-cell summary with all cells incomplete; selected_routes omitted",
+    "remote_fee0_import_smoke": "passed: config, event_pricer_network, expanded_path_realization all report fee 0.0",
+    "remote_launcher_dry_run": "passed: six frontier + six MIP commands; all default_partition; only scaglione-compute-01 excluded; two-hour allocations",
+    "remote_linux_tests": "6/6 pass",
+    "remote_source_assets": "passed: instance, three tariffs, vehicle details, DHD, Ref_dict, par_ref_dhd, Unique_Locations, and Par_Routes_For_Code hashes match original terminal code pin"
+  }
+}

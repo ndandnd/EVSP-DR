@@ -1,0 +1,11 @@
+EVSP–DR queue | 2026-09-13 01:30 EDT
+Work                          Running  Dependencies  Resources  Invalid   Held
+Decomposition recovery              1            20          0        0      0
+GIRO fee comparison                 6             6          0        0      0
+Charge-start fee tests             23             0          0        0      0
+Controlled comparisons              9             0          0        0      0
+Full-pool chains                    1             0          0        0      0
+Held historical jobs                0             0          0        0     33
+
+Dependencies mean required data are not ready; these are not CPU limits.
+Full-pool CG waits for previous-k CG. MIP waits for its CG. Parent32 CG also waits for shared graph and component MIPs. GIRO fee MIPs wait for both charging frontiers at their tariff.

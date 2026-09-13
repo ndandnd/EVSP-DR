@@ -13,8 +13,8 @@
       "skip_gurobi_incidence": false
     }
   },
-  "cg_commit": "666cd839ab3923071b1a571ef349b70f61a82fa9",
-  "code": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code",
+  "cg_commit": "06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0",
+  "code": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code_06b5cb8",
   "common": {
     "battery_kwh": 240,
     "block_minutes": 5,
@@ -770,8 +770,8 @@
     "No universal runtime or target-attainment guarantee; interrupted CG remains uncertified.",
     "Existing graph construction excluded; authentication and graph loading recorded separately."
   ],
-  "mip_code": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code",
-  "mip_commit": "666cd839ab3923071b1a571ef349b70f61a82fa9",
+  "mip_code": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code_06b5cb8",
+  "mip_commit": "06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0",
   "pairs": [
     {
       "case_id": "w1_k05",
@@ -1242,6 +1242,11 @@
       "slurm_time": "04:00:00"
     }
   ],
+  "prelaunch_amendment": {
+    "previous_manifest_sha256": "6b8179c8612dac6e7d9ab7aa2023f2a0dbed3df0c514ae6f7993c047e4cac402",
+    "reason": "Native MIP exposed incompatible progress observer. Restore exact871 observer; pricing/realization/MIP source blobs remain unchanged. No campaign job previously submitted. Inputs and budgets unchanged.",
+    "utc": "2026-09-13T05:06:04.166178+00:00"
+  },
   "prepared_utc": "2026-09-13T04:51:43.833724+00:00",
   "python": "/home/nc437/evsp_env/bin/python",
   "resources": {
@@ -1261,17 +1266,17 @@
   "static_files": [
     {
       "bytes": 512,
-      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code/data/Ref_dict.csv",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code_06b5cb8/data/Ref_dict.csv",
       "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
     },
     {
       "bytes": 2573,
-      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code/data/par_ref_dhd.csv",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code_06b5cb8/data/par_ref_dhd.csv",
       "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
     },
     {
       "bytes": 581,
-      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code/data/hourly_prices_flat.csv",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/code_06b5cb8/data/hourly_prices_flat.csv",
       "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
     },
     {

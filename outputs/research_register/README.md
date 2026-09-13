@@ -2,15 +2,17 @@
 
 **Queue fixed, 12 September 16:57 EDT:** [Running work, dependency explanations and launch map](../queue_recovery_20260912/README.md).
 
-**Start here:** [Latest chain results, 23:21 EDT](../queue_recovery_20260912/status_20260913T032100Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
+**Start here:** [Latest chain results, 13 September 01:12 EDT](../queue_recovery_20260912/status_20260913T051251Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
 
 **Controlled comparison campaign launched:** [24 paired allocations on three frozen cases](../controlled_comparison_20260913/README.md) isolate indexing at 512/full pools, pool size and omitted LP setup. All 24 started on default; 48 CG and up to 48 one-hour MIPs are planned. These are new comparisons, not additional verified fleet results.
+
+**Charging-start fee experiment launched, 13 September 01:08 EDT:** [36 chain runs plus 12 GIRO cost-comparison jobs](../zero_charge_start_fee_20260913/README.md) compare fees 5 and 0. Six chains at k=5,10,15 use identical frozen starting sequences within each pair. The separate GIRO study compares original charging, optimized fixed duties, and a common joint pool at all three price peaks with matched terminal energy. Native CG/MIP validation passed. Eight campaign MIPs have completed at k=5; two matched pairs show more charging starts under zero fee. Returning energy differs in these baseline chains, so use the pending matched-terminal GIRO comparison to assess savings.
 
 This is the common index for experiment settings, execution records, results and source evidence. The compact [Week of 14 September status tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow) and [Figures with explanations tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) are the live document view. The [CG curves and bus schedules library](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) restores the earlier visual evidence with dated captions. Preserve all figures when updating or simplifying text. Superseded material is also kept in the separate [Historical archive document](https://docs.google.com/document/d/1f0orWtM1-_VWAqjj6GnWP78webCOnvoc01x2VQvaA_k/edit).
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1958 artifact/stage records across 45 campaign/source groups**, from the 23:21 EDT collection on 12 September. Counts are not independent experimental sample sizes.
+Current build: **2090 artifact/stage records across 47 campaign/source groups**, from the 01:12 EDT collection on 13 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -22,7 +24,9 @@ Current build: **1958 artifact/stage records across 45 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest verified results: **35 of 35 completed full-pool MIPs match their fleet targets**, each with a pool fleet proof, CG pricing certificate and individual-route replay. **Chains 3–6 reach k=15.** Highest completed matches for chains 1–6 are **14, 14, 15, 15, 15, 15**. **36/37 CG cases are certified.** [Current six-chain table and all 35 results](../queue_recovery_20260912/status_20260913T032100Z/README.md). At the 23:21 EDT collection, 28 EVSP–DR jobs were running: 24 controlled paired comparisons, two full-pool chain jobs and two decomposition jobs. Twenty-two jobs waited for valid inputs; no invalid dependencies or new execution failures were observed. Thirty-three held historical tasks were untouched. Nine parent CG jobs wait only for shared graph job 42509; join00 also needs component MIP 42511, whose CG 42510 is running. No new confirmed preemptions were observed. All 24 controlled pairs remain active: 21 first arms have CG pricing certificates and are running MIPs; the three original-scanning/full-pool arms remain in initialization. No pair has completed both arms, so no paired speedup estimate is established. Keep these seven-hour paired allocations separate from standalone one-hour MIPs in reliability statistics.
+Latest verified baseline results: **36 of 36 completed full-pool MIPs match their fleet targets**, each with a pool fleet proof, CG pricing certificate and individual-route replay. **Chains 2–6 reach k=15; chain 1 reaches k=14**, with its k=15 MIP pending. All **37/37 CG cases are certified**. These use covering, 240 kWh / 240 kW, and no shared-station capacity or terminal-SOC floor. Duplicate-coverage removal has not been validated. [Dated six-chain table](../queue_recovery_20260912/status_20260913T051251Z/README.md).
+
+At 01:14 EDT, **50 EVSP–DR jobs were running**, including 29 fee-comparison jobs, six GIRO charging frontiers, 13 algorithm comparisons, one full-pool job and one decomposition job. Twenty-six jobs waited for valid inputs; 33 held historical tasks remained untouched. The GIRO launcher initially failed before Python started; its six dependent MIPs were cancelled and replaced with valid dependencies. Both attempts remain recorded. Eleven of 24 controlled algorithm comparisons have completed; analysis is pending, so no new paired speedup is claimed. No new confirmed preemptions were observed. Keep the four-hour CG→MIP and seven-hour paired allocations separate from standalone one-hour MIPs in reliability statistics.
 
 ## How to read a result
 
@@ -44,13 +48,13 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260913T032100Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260913T051251Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs
 ```
 
-Replace the snapshot with the newly collected dated file. The workbook builder requires the bundled `@oai/artifact-tool` package; `node_modules` here is a local dependency symlink, not experiment data. `validation.json` checks source identity and result scopes; the workbook's `workbook_checks.json` checks record counts and formula errors. All seven workbook tabs were rendered and visually checked for this build.
+Replace the snapshot with the newly collected dated file. The workbook builder requires the bundled `@oai/artifact-tool` package; `node_modules` here is a local dependency symlink, not experiment data. `validation.json` checks source identity and result scopes; the workbook's `workbook_checks.json` checks record counts and formula errors. All seven workbook tabs were rendered; updated result and charging fields were visually checked.
 
 A copy of this index, dated snapshots and workbook is stored on Unicorn at `/home/nc437/ladder-lite/research-register/`. Local documentation paths refer to the Mac project; solver source paths refer to Unicorn. See `cluster_mirror.json` for the copied version and hashes.
 

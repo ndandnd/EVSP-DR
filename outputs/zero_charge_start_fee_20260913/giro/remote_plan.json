@@ -1,0 +1,177 @@
+{
+  "aggregate_terminal_energy_required_in_both_models": true,
+  "block_minutes": 5,
+  "candidate_set": "common_union_of_fee0_and_fee5_frontiers_plus_repriced_saved_pool",
+  "cells": [
+    {
+      "fee": 0.0,
+      "frontier_dir": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0",
+      "id": "peak08_fee0",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "source_charge_start_fee": 5.0,
+      "source_hashes": {
+        "original.json": "a015a776f9103b3d6e274c60a7b3378e8c8ccfbdee7dfedc5d5ee74391175baa",
+        "snapshot.json": "82819ecd9594e4a96d8dcf070d6dfa49d3cfc9505a09aa5cf5b2db807f796f25",
+        "snapshot.json.columns.jsonl": "b576114bbe5cba18a47d09ee5ecde3599bc4e11c6253670f604111253d2f9f0f"
+      },
+      "source_repricing_manifest": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak08/fee0/fee_repricing.json",
+      "source_repricing_manifest_sha256": "2f371fc60f1daef4cdcad14d2392cd566cfbe5804174c1ebcfd89678a23280e8",
+      "source_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak08/fee0",
+      "tariff": "peak08",
+      "tariff_path": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak08_h26.csv",
+      "tariff_sha256": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e"
+    },
+    {
+      "fee": 5.0,
+      "frontier_dir": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee5",
+      "id": "peak08_fee5",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "source_charge_start_fee": 5.0,
+      "source_hashes": {
+        "original.json": "76110b3767ebd06e6427ab7b1197d966b68e2fbd2da2dc01b766a82b4f0ae5ca",
+        "snapshot.json": "24f3c9005763e96274309c67f3065b44a51346ef137a183e6304a2f1189b93e3",
+        "snapshot.json.columns.jsonl": "e1138abda00b9e67490512a20f51d234dfdbdde0d5029a7e1ebc3b55cbd726a7"
+      },
+      "source_repricing_manifest": null,
+      "source_repricing_manifest_sha256": null,
+      "source_root": "/home/nc437/ladder-lite/matched_tariff8_20260908_a9a9720/original_eligible_k05_g240_p350_peak08",
+      "tariff": "peak08",
+      "tariff_path": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak08_h26.csv",
+      "tariff_sha256": "b461f12cf8ca41ba8a89102b32d46ea16b974566ea05849dd75776a7108f341e"
+    },
+    {
+      "fee": 0.0,
+      "frontier_dir": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0",
+      "id": "peak12_fee0",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "source_charge_start_fee": 5.0,
+      "source_hashes": {
+        "original.json": "4377548bb9c550d3f8d78b6c4aabb30bbf18a88128c331ac00aa2af3d4fd4b17",
+        "snapshot.json": "bdb776bdf88382184d73711e88e8fc8aaef1d60530c0e3df076725e40cdd364a",
+        "snapshot.json.columns.jsonl": "7ac76c177bca68676960ba971a53bf80b75936a746594fca0d2709ad6b45388c"
+      },
+      "source_repricing_manifest": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak12/fee0/fee_repricing.json",
+      "source_repricing_manifest_sha256": "d35b40690cf44a6e18accc9f788c50aef66dd8df5a58ad5bb2d836995dcde057",
+      "source_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak12/fee0",
+      "tariff": "peak12",
+      "tariff_path": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak12_h26.csv",
+      "tariff_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+    },
+    {
+      "fee": 5.0,
+      "frontier_dir": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee5",
+      "id": "peak12_fee5",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "source_charge_start_fee": 5.0,
+      "source_hashes": {
+        "original.json": "7199ba8330827eaf8115af97c5cbf6a3aaada5763b7fb9699a162a4fe346647f",
+        "snapshot.json": "747c844deb74031fc80f93463e5a570c13736cb5aab0ffd396350014d3ac70a8",
+        "snapshot.json.columns.jsonl": "75f3ff916d0d953976cfad3f3558b397734203e8ea5d967ab7796a607c0bf373"
+      },
+      "source_repricing_manifest": null,
+      "source_repricing_manifest_sha256": null,
+      "source_root": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059/original_eligible_k05_g240_p350_peak12",
+      "tariff": "peak12",
+      "tariff_path": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak12_h26.csv",
+      "tariff_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+    },
+    {
+      "fee": 0.0,
+      "frontier_dir": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0",
+      "id": "peak18_fee0",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "source_charge_start_fee": 5.0,
+      "source_hashes": {
+        "original.json": "7e3ac020d6d6381500335cd36365bc8635fd7068a612241898c4aaf84e874646",
+        "snapshot.json": "57bd85aa270d13312b575cb44ee7984f5c34ff5642bc25d3a739b084e09c307b",
+        "snapshot.json.columns.jsonl": "468b05e52b7cb3b9907a1e262c9e721ec3a8b00697a7475397e7b5713de4e59d"
+      },
+      "source_repricing_manifest": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak18/fee0/fee_repricing.json",
+      "source_repricing_manifest_sha256": "43bc69db2ea9a5f494bad0fc1dc3234931da0753cfa21af3a8c5fdb14918b565",
+      "source_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak18/fee0",
+      "tariff": "peak18",
+      "tariff_path": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak18_h26.csv",
+      "tariff_sha256": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6"
+    },
+    {
+      "fee": 5.0,
+      "frontier_dir": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee5",
+      "id": "peak18_fee5",
+      "instance": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/scale_ladder/instances/original_replay_eligible_20260908/Practice_Custom_DutyUnion_original_eligible_k05_20260908.csv",
+      "instance_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "source_charge_start_fee": 5.0,
+      "source_hashes": {
+        "original.json": "c8b2937d0ed7c4b77e19a0a9a22b7836ea6c092a05b9bb7ad19fcb35f162fc40",
+        "snapshot.json": "14e1e9a3c547315e74d8946d03cba863ef9a2fbc66aedacca7a2f981ff1e9bfc",
+        "snapshot.json.columns.jsonl": "68258360a736f82f97609302132a9389451d142b2aedbe809c54566141280f29"
+      },
+      "source_repricing_manifest": null,
+      "source_repricing_manifest_sha256": null,
+      "source_root": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059/original_eligible_k05_g240_p350_peak18",
+      "tariff": "peak18",
+      "tariff_path": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/data/tariff_response/peak18_h26.csv",
+      "tariff_sha256": "d70c3c3f9c15b82f26e1262fb2067f9fcc5e41d63e9ffbe877d33b5fa16563a6"
+    }
+  ],
+  "charge_power_kw": 350.0,
+  "commit": "f895c61a525c51d32ab09276f12074217c1788ce",
+  "execution_repo": "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75",
+  "fleet_cap": 5,
+  "frontier_tasks": [
+    "peak08_fee0",
+    "peak08_fee5",
+    "peak12_fee0",
+    "peak12_fee5",
+    "peak18_fee0",
+    "peak18_fee5"
+  ],
+  "initial_energy_per_bus_kwh": 240.0,
+  "mip_tasks": [
+    "peak08_fee0",
+    "peak08_fee5",
+    "peak12_fee0",
+    "peak12_fee5",
+    "peak18_fee0",
+    "peak18_fee5"
+  ],
+  "proof_scope": "finite_saved_pool_plus_common_frontier_union; no full-model pricing certificate",
+  "python": "/home/nc437/evsp_env/bin/python",
+  "repricing": {
+    "fee0_source_copy": "repriced_sources/<tariff>/fee0",
+    "fee5_cost_metadata_preserved": true,
+    "fee5_source": "original immutable source root",
+    "source_fee": 5.0
+  },
+  "resources": {
+    "frontier": {
+      "cpus": 1,
+      "exclude": [
+        "scaglione-compute-01"
+      ],
+      "memory": "24G",
+      "partition": "default_partition",
+      "time": "02:00:00"
+    },
+    "mip": {
+      "cpus": 8,
+      "exclude": [
+        "scaglione-compute-01"
+      ],
+      "memory": "48G",
+      "optimization_budget_s": 3600,
+      "partition": "default_partition",
+      "time": "02:00:00"
+    }
+  },
+  "root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+  "schema": "evsp-dr-terminal-energy-fee-comparison-v1",
+  "soc_step_kwh": 2.5,
+  "source_pool_fee": 5.0,
+  "target_physical_terminal_energy_kwh": 280.7833253,
+  "terminal_row_coefficient": "expanded_grid_terminal_soc_kwh"
+}

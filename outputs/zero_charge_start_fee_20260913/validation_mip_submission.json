@@ -1,0 +1,18 @@
+{
+  "job_id": "114000",
+  "command": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=8",
+    "--mem=96G",
+    "--time=00:20:00",
+    "--no-requeue",
+    "--job-name=fee_MIP_check",
+    "--output=/home/nc437/ladder-lite/zero_charge_start_fee_20260913/logs/mip_validation_%j.out",
+    "--error=/home/nc437/ladder-lite/zero_charge_start_fee_20260913/logs/mip_validation_%j.err",
+    "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/validation_mip_worker.sh"
+  ],
+  "scontrol": "JobId=114000 JobName=fee_MIP_check\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15367 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=00:20:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:06:04 EligibleTime=2026-09-13T01:06:04\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:06:04 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1418999\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=96G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/zero_charge_start_fee_20260913/validation_mip_worker.sh\n   WorkDir=/home/nc437\n   StdErr=/home/nc437/ladder-lite/zero_charge_start_fee_20260913/logs/mip_validation_114000.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/zero_charge_start_fee_20260913/logs/mip_validation_114000.out\n   TresPerTask=cpu=8\n   \n\n"
+}

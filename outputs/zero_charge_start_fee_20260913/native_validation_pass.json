@@ -1,0 +1,73 @@
+{
+  "cg_pricing_code_unchanged": true,
+  "cg_smoke_commit": "666cd839ab3923071b1a571ef349b70f61a82fa9",
+  "checks": [
+    {
+      "arm": "fee5",
+      "cg_status_path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/validation/cases/native_fee_smoke/110952_r0/fee5/cg.json",
+      "cg_status_sha256": "26dbf3f40f8f88220f2935590104dbf172d45981bc62c53dc771c1d313b0ae46",
+      "metrics": {
+        "available": true,
+        "buses": 7,
+        "charge_start_cost": 5,
+        "continuous_charging_kwh": 1549.3879766799998,
+        "continuous_charging_starts": 25,
+        "continuous_charging_total": 278.69928728663945,
+        "continuous_cost_reconstruction_error": -1.6569856597925536e-11,
+        "continuous_electricity_cost": 153.69928728665602,
+        "continuous_start_fees": 125,
+        "continuous_terminal_kwh": 42.59700808000003,
+        "cost_components_reconcile": true,
+        "expanded_grid_charging_kwh": 1662.5,
+        "expanded_grid_charging_starts": 25,
+        "expanded_grid_charging_total": 289.91999999896507,
+        "expanded_grid_cost_reconstruction_error": -1.0349481271987315e-09,
+        "expanded_grid_electricity_cost": 164.92000000000002,
+        "expanded_grid_start_fees": 125,
+        "expanded_grid_terminal_kwh": 19.0550013,
+        "physical_replay_validated": true,
+        "scope": "selected_routes_before_duplicate_trip_removal; shared_capacity_not_inferred"
+      },
+      "mip_status_path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/validation/mip_retry/114000/fee5/mip/result.json",
+      "mip_status_sha256": "4fd5c9542b58f3847ea6177dbb4d0f545bc987c4fac130065d7877a31afe47f7"
+    },
+    {
+      "arm": "fee0",
+      "cg_status_path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/validation/cases/native_fee_smoke/110952_r0/fee0/cg.json",
+      "cg_status_sha256": "5fc291f0afdffa0e4d8e440f3c015d99d50ea2ded1636ee5b40f78c10210fbf9",
+      "metrics": {
+        "available": true,
+        "buses": 7,
+        "charge_start_cost": 0,
+        "continuous_charging_kwh": 1677.69397162,
+        "continuous_charging_starts": 61,
+        "continuous_charging_total": 166.42724198471115,
+        "continuous_cost_reconstruction_error": 7.16227077646181e-12,
+        "continuous_electricity_cost": 166.42724198470398,
+        "continuous_start_fees": 0,
+        "continuous_terminal_kwh": 19.854000839999994,
+        "cost_components_reconcile": true,
+        "expanded_grid_charging_kwh": 1812.5,
+        "expanded_grid_charging_starts": 61,
+        "expanded_grid_charging_total": 179.79999999779102,
+        "expanded_grid_cost_reconstruction_error": -2.2089921003498603e-09,
+        "expanded_grid_electricity_cost": 179.8,
+        "expanded_grid_start_fees": 0,
+        "expanded_grid_terminal_kwh": 11.169001200000004,
+        "physical_replay_validated": true,
+        "scope": "selected_routes_before_duplicate_trip_removal; shared_capacity_not_inferred"
+      },
+      "mip_status_path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/validation/mip_retry/114000/fee0/mip/result.json",
+      "mip_status_sha256": "cdf02813a2a5dddecfcf09e908edecbd734b910b96c20b6fca56c25460cbdb62"
+    }
+  ],
+  "commit": "06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0",
+  "large_cache_audit": {
+    "current": 0.0,
+    "previous": 5.0,
+    "repriced_arcs": 211179084
+  },
+  "prior_attempt": "110952 retained: MIP logging helper failed before optimization; CG outputs reused",
+  "source_caches_unchanged": true,
+  "validated_utc": "2026-09-13T05:07:52.235496+00:00"
+}

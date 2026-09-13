@@ -32,3 +32,7 @@ Validation on macOS Python 3.12:
 - `git diff --check`
 - 60 focused event cache, inheritance, realization, and pinned MIP tests passed, with 8 subtests.
 - 5 production fixed-duty transition/trace tests passed; 2 tracked generated-artifact determinism tests were deliberately excluded because their certificates bind the optimizer source hash and require artifact regeneration in a separate evidence update.
+
+
+## Native validation follow-up
+The unified execution pin is `06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0`. Native validation caught an incompatible progress-observer constructor before MIP optimization. Restoring the helper from the pinned MIP source resolved it without altering solver logic. Forty-four MIP/progress and 56 fee/event/replay tests passed; both native MIPs then passed physical replay and independent cost reconciliation. See `native_validation_pass.json`.

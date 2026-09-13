@@ -1,0 +1,60 @@
+--- doc_before.md
++++ doc_after.md
+@@ -1,27 +1,42 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results checked 12 September 2026 at 23:21 EDT.
+-
+-**New comparisons launched 12 September at 22:11 EDT.** All 24 paired jobs are running: k=8, 10 and 15, comparing indexed replay on/off, 512 versus full inheritance, and the LP-setup optimization on/off. Both arms of each pair use the same node; a second pair reverses their order. Each arm gets two hours of CG and one hour of MIP. At 23:21, 21 first arms had certified CG and were running their MIPs. The three original-scanning/full-pool arms were still checking inherited routes. No pair had finished both versions, so no comparative speedup is established yet. [Comparison plan, settings and job IDs](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/controlled_comparison_20260913/README.md).
+-
+-**Latest: all 35 completed full-pool MIPs match their fleet targets; chains 3–6 reach k=15.**
+-
+-| Chain | Highest target matched | Full-pool buses | Earlier 512-route buses | CG minutes |
++Week of 14 September. Results collected 13 September 2026 at 01:12 EDT; queue checked at 01:14 EDT.
++
++## **Charging-start fee: 5 versus 0**
++
++**48 new jobs launched.** Six chains at k=5, 10 and 15 give 18 matched comparisons, with two hours of CG and one hour of MIP per run. Both fees start from the same saved trip sequences, with charging optimized again. We do not restart at k=2. Chain 1 k15 uses its frozen k14 pool; the other 17 cases use same-k pools.
++
++Eight MIPs have already completed, all matching k=5 with pool fleet proofs and individual-route replay. Two comparisons have finished both fees:
++
++| Chain (k=5) | Fee per start | Integer buses | Charging starts | Electricity only | End energy (kWh) |
++| ----- | ----- | ----- | ----- | ----- | ----- |
++| 3 | 5 | 5 | 7 | 91.56 | 41.95 |
++| 3 | 0 | 5 | 27 | 89.11 | 17.17 |
++| 6 | 5 | 5 | 7 | 100.93 | 36.81 |
++| 6 | 0 | 5 | 34 | 98.14 | 10.86 |
++
++Removing the fee allows many more charging starts while retaining five buses in these two cases. These flat-price runs return less energy, so the electricity differences are not savings at equal returning energy. [Full paired table and source evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/early_pairs.csv).
++
++**GIRO cost comparison:** six fresh fixed-duty charging optimizations are running; six joint MIPs wait for both fee frontiers at their price peak (08:00, 12:00 or 18:00). We compare original charging, optimized charging on fixed duties, and the common joint route pool. All optimized schedules must return at least GIRO’s aggregate 280.7833 kWh. This separate five-duty cohort retains 240 kWh / 350 kW physics; the chains use 240 kWh / 240 kW. [Settings, job IDs and launch repairs](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/README.md).
++
++## **Baseline chains with full-pool inheritance**
++
++**All 37 CG cases have pricing certificates. All 36 completed MIPs match their fleet targets.** Chain 1 k15’s MIP remains in progress.
++
++| Chain | Highest target matched | Integer buses | Earlier 512-route buses | CG minutes |
+ | ----- | ----- | ----- | ----- | ----- |
+ | 1 | 14 | 14 | 16 | 75.0 |
+-| 2 | 14 | 14 | 16 | 89.4 |
++| 2 | 15 | 15 | 17 | 122.7 |
+ | 3 | 15 | 15 | 17 | 33.1 |
+ | 4 | 15 | 15 | 18 | 64.4 |
+ | 5 | 15 | 15 | 17 | 52.3 |
+ | 6 | 15 | 15 | 18 | 64.0 |
+ 
+-The table shows the highest completed integer match in each chain, not a failure threshold. All 35 completed full-pool MIPs match their targets and prove their fleets optimal within their saved pools. Their CG runs have pricing certificates, and individual-route replay passed. These are covering runs with 240 kWh batteries and 240 kW charging; shared charger capacity and return-SOC constraints are absent. Duplicate-trip removal was not validated. Higher k values remain in progress. “Earlier 512-route buses” is the earlier result when at most 512 saved routes were inherited. Chain 2 k14 uses its recorded shutdown-repaired retry. Later chain pools differ, so this table does not isolate a single code change.
+-
+-The initial comparisons—C3 k11, C4 k10 and C6 k11—used identical saved parent pools in both treatments and reached the same certified LP objectives within 1e-8. Full inheritance retained about 34,000–41,000 routes in 2.4–3.3 minutes. C4 k10 isolates a pool limitation: the old pool was proved to require 11 buses; the new pool provides 10\. C3 k11’s old 12-bus result was unproved, so MIP search difficulty may also matter there. CG times throughout this section use existing graph caches; original graph construction is excluded.
+-
+-Thirty-six of 37 full-pool CG cases are certified; 35 MIPs have finished, all matching their targets. The remaining recovery work is chain 1 k15 CG and MIP, plus chain 2 k15 MIP. This collection shows 28 EVSP–DR jobs running: 24 controlled comparisons, two full-pool chain jobs and two decomposition jobs. No invalid dependencies, new execution failures or confirmed preemptions were observed. The shared 32-duty graph is still being built; completing it releases nine parent CG runs together. A tenth also needs the last component MIP, whose CG is running. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T032100Z/README.md).
+-
+- Open [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) for timing, charging costs and geography, or [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) for the restored figure library.
++These are covering runs with 240 kWh batteries, 240 kW charging, no shared charger capacity and no return-SOC floor. Fleet proofs concern the saved route pools. Individual-route replay passed; duplicate-trip removal has not been validated. CG time includes importing routes but excludes original graph construction. Later chain pools differ, so this table does not isolate a single code change. [All 36 results, source hashes and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T051251Z/README.md).
++
++The separate algorithm comparison has finished 11 of its 24 paired allocations; 13 remain active. Analysis of the completed pairs is pending. At the queue check, 50 EVSP–DR jobs were running, with no invalid dependencies. Held historical jobs remain untouched.
++
++Figures remain in [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) and [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly).
+ 
+ **Earlier results, before the 12 September queue and import repairs.** With set covering and inherited columns, all six chains match the GIRO fleet at k=3–6. Chains 3, 5 and 6 also reach ten buses at k=10. The new 512-route import treatment reaches 11 buses at k=11 in chain 6; other completed extension cases need extra buses.
+ 

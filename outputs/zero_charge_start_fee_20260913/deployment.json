@@ -1,0 +1,26 @@
+{
+  "prepared_utc": "2026-09-13T04:57:53.563196+00:00",
+  "harness_commit": "38e7bbe06a818cc96fbee1e6f960e47537ac9add",
+  "cg_commit": "06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0",
+  "mip_commit": "06b5cb86d6c24df0ec0a5ca7189fa9552f527dd0",
+  "tooling_sha256": {
+    "validate_cluster.py": "e6c025bd9ba5c0e7d03a351e1b274f927e87f0821d979490f530ac699543ccb8",
+    "validation_worker.sh": "a9ba4760bce5f2ac22774b174b26a1d8422fddf6dfdd6d000439a78b2fe4f982",
+    "launch.py": "346e3010d5637bed8aadc2e1f1b43f2085c9cdc37ffd9f8c8e5dff4850876b98",
+    "worker.sh": "5f72a58bd62eb6c1ce5fa7e1be7889617d98970513fe827f68daffab3bbd2d6f",
+    "prepare.py": "8f0a0915da173581bb9f62830713118054f976ef241f1aa1835cee48dc1e300d",
+    "tooling/summarize.py": "307c020301febe8ca78b5fe7ea880a7875828b745d69296f0ff93285618bf5fc",
+    "tooling/campaign.py": "16b312a1b666d9a4c55a3ae914d5d2d69ff8f65d5d5454eb254c28db9b97dcdf",
+    "tooling/test_fee_campaign.py": "ee8846713410306ff5d356b70894c24b3847816f81b7d3777f88b4f0d44616d4"
+  },
+  "source_bundle_sha256": "4b05acdf8898b7f6402e61067e19b883cfbd00e31238838187f02198b6094779",
+  "cache_compatibility": "explicit original manifest commit; only commit identity may differ; all physical/hash checks required",
+  "validation_required": "validation/PASS.json checked by launcher; fee0 and fee5 CG/MIP costs must reconcile",
+  "git_object_storage": "code_06b5cb8 borrows code666, which borrows full_pool_recovery/code; preserve all object stores",
+  "prelaunch_amendment": {
+    "utc": "2026-09-13T05:06:04.166178+00:00",
+    "previous_manifest_sha256": "6b8179c8612dac6e7d9ab7aa2023f2a0dbed3df0c514ae6f7993c047e4cac402",
+    "reason": "Native MIP exposed incompatible progress observer. Restore exact871 observer; pricing/realization/MIP source blobs remain unchanged. No campaign job previously submitted. Inputs and budgets unchanged."
+  },
+  "observer_source_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb"
+}

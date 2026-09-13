@@ -1,0 +1,329 @@
+{
+  "schema": "evsp-dr-terminal-energy-fee-submission-v1",
+  "started_utc": "2026-09-13T05:12:14.664774+00:00",
+  "plan_sha256": "42b7212c27773888a2e6265c0e71c564ef756adb2b515c4d0f38ee1b1ae5b928",
+  "worker_sha256": "076ccbd0a56fe5f7d7d06907a8f26d0e6c8169e18127bd95b6aecce9aef504a0",
+  "supersedes_initial_jobs_sha256": "f237ba391f4cdd9205e76f2d03a60fd7a31d45b3f166c765c3d079deed5e4c00",
+  "reason": "Explicit code path survives Slurm spool copying; numerical code, data, fee, budgets and physics unchanged.",
+  "jobs": [
+    {
+      "pair_id": "peak08_fee0",
+      "stage": "frontier",
+      "job_id": "114100",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak08_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak08_fee0",
+        "frontier"
+      ],
+      "scontrol": "JobId=114100 JobName=gt_peak08_fee0\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:14 EligibleTime=2026-09-13T01:12:14\n   AccrueTime=2026-09-13T01:12:14\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:14 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak08_fee0_114100.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak08_fee0_114100.out\n   TresPerTask=cpu=1\n   \n\n"
+    },
+    {
+      "pair_id": "peak08_fee5",
+      "stage": "frontier",
+      "job_id": "114101",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak08_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak08_fee5",
+        "frontier"
+      ],
+      "scontrol": "JobId=114101 JobName=gt_peak08_fee5\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=2026-09-13T01:12:15\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak08_fee5_114101.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak08_fee5_114101.out\n   TresPerTask=cpu=1\n   \n\n"
+    },
+    {
+      "pair_id": "peak08_fee0",
+      "stage": "mip",
+      "job_id": "114102",
+      "dependency": [
+        "114100",
+        "114101"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak08_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:114100:114101",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak08_fee0",
+        "mip"
+      ],
+      "scontrol": "JobId=114102 JobName=gm_peak08_fee0\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:114100(unfulfilled),afterok:114101(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=48G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak08_fee0_114102.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak08_fee0_114102.out\n   TresPerTask=cpu=8\n   \n\n"
+    },
+    {
+      "pair_id": "peak08_fee5",
+      "stage": "mip",
+      "job_id": "114103",
+      "dependency": [
+        "114100",
+        "114101"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak08_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:114100:114101",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak08_fee5",
+        "mip"
+      ],
+      "scontrol": "JobId=114103 JobName=gm_peak08_fee5\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:114100(unfulfilled),afterok:114101(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=48G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak08_fee5_114103.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak08_fee5_114103.out\n   TresPerTask=cpu=8\n   \n\n"
+    },
+    {
+      "pair_id": "peak12_fee0",
+      "stage": "frontier",
+      "job_id": "114104",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak12_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak12_fee0",
+        "frontier"
+      ],
+      "scontrol": "JobId=114104 JobName=gt_peak12_fee0\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=2026-09-13T01:12:15\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak12_fee0_114104.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak12_fee0_114104.out\n   TresPerTask=cpu=1\n   \n\n"
+    },
+    {
+      "pair_id": "peak12_fee5",
+      "stage": "frontier",
+      "job_id": "114105",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak12_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak12_fee5",
+        "frontier"
+      ],
+      "scontrol": "JobId=114105 JobName=gt_peak12_fee5\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=2026-09-13T01:12:15\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak12_fee5_114105.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak12_fee5_114105.out\n   TresPerTask=cpu=1\n   \n\n"
+    },
+    {
+      "pair_id": "peak12_fee0",
+      "stage": "mip",
+      "job_id": "114106",
+      "dependency": [
+        "114104",
+        "114105"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak12_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:114104:114105",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak12_fee0",
+        "mip"
+      ],
+      "scontrol": "JobId=114106 JobName=gm_peak12_fee0\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:114104(unfulfilled),afterok:114105(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=48G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak12_fee0_114106.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak12_fee0_114106.out\n   TresPerTask=cpu=8\n   \n\n"
+    },
+    {
+      "pair_id": "peak12_fee5",
+      "stage": "mip",
+      "job_id": "114107",
+      "dependency": [
+        "114104",
+        "114105"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak12_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:114104:114105",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak12_fee5",
+        "mip"
+      ],
+      "scontrol": "JobId=114107 JobName=gm_peak12_fee5\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:114104(unfulfilled),afterok:114105(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=48G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak12_fee5_114107.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak12_fee5_114107.out\n   TresPerTask=cpu=8\n   \n\n"
+    },
+    {
+      "pair_id": "peak18_fee0",
+      "stage": "frontier",
+      "job_id": "114108",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak18_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak18_fee0",
+        "frontier"
+      ],
+      "scontrol": "JobId=114108 JobName=gt_peak18_fee0\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:15 EligibleTime=2026-09-13T01:12:15\n   AccrueTime=2026-09-13T01:12:15\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:15 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak18_fee0_114108.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak18_fee0_114108.out\n   TresPerTask=cpu=1\n   \n\n"
+    },
+    {
+      "pair_id": "peak18_fee5",
+      "stage": "frontier",
+      "job_id": "114109",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak18_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak18_fee5",
+        "frontier"
+      ],
+      "scontrol": "JobId=114109 JobName=gt_peak18_fee5\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Priority Dependency=(null)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:16 EligibleTime=2026-09-13T01:12:16\n   AccrueTime=2026-09-13T01:12:16\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:16 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=1 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=1,mem=24G,node=1,billing=1\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=1 MinMemoryNode=24G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak18_fee5_114109.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gt_peak18_fee5_114109.out\n   TresPerTask=cpu=1\n   \n\n"
+    },
+    {
+      "pair_id": "peak18_fee0",
+      "stage": "mip",
+      "job_id": "114110",
+      "dependency": [
+        "114108",
+        "114109"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak18_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:114108:114109",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak18_fee0",
+        "mip"
+      ],
+      "scontrol": "JobId=114110 JobName=gm_peak18_fee0\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:114108(unfulfilled),afterok:114109(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:16 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:16 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=48G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak18_fee0_114110.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak18_fee0_114110.out\n   TresPerTask=cpu=8\n   \n\n"
+    },
+    {
+      "pair_id": "peak18_fee5",
+      "stage": "mip",
+      "job_id": "114111",
+      "dependency": [
+        "114108",
+        "114109"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak18_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:114108:114109",
+        "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh",
+        "peak18_fee5",
+        "mip"
+      ],
+      "scontrol": "JobId=114111 JobName=gm_peak18_fee5\n   UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A\n   Priority=15366 Nice=0 Account=scaglione QOS=normal WCKey=*\n   JobState=PENDING Reason=Dependency Dependency=afterok:114108(unfulfilled),afterok:114109(unfulfilled)\n   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0\n   RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A\n   SubmitTime=2026-09-13T01:12:16 EligibleTime=Unknown\n   AccrueTime=Unknown\n   StartTime=Unknown EndTime=Unknown Deadline=N/A\n   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T01:12:16 Scheduler=Main\n   Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1456361\n   ReqNodeList=(null) ExcNodeList=scaglione-compute-01\n   NodeList=\n   NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:*\n   ReqTRES=cpu=8,mem=48G,node=1,billing=8\n   AllocTRES=(null)\n   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*\n   MinCPUsNode=8 MinMemoryNode=48G MinTmpDiskNode=0\n   Features=(null) DelayBoot=00:00:00\n   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)\n   Command=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/worker_recovery.sh\n   WorkDir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913\n   StdErr=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak18_fee5_114111.err\n   StdIn=/dev/null\n   StdOut=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/gm_peak18_fee5_114111.out\n   TresPerTask=cpu=8\n   \n\n"
+    }
+  ],
+  "finished_utc": "2026-09-13T05:12:17.585494+00:00"
+}

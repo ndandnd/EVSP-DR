@@ -38,7 +38,7 @@ COLUMNS = [
     "solver_version", "battery_kwh", "initial_soc_kwh", "reserve_kwh",
     "charge_kw", "parx_kw", "non_parx_kw", "soc_step_kwh",
     "block_minutes", "capacity_enforced", "charger_counts_json",
-    "terminal_energy_policy", "master_sense", "initialization",
+    "terminal_energy_policy", "charge_start_cost", "master_sense", "initialization",
     "column_pool_treatment", "pool_size", "cg_iterations", "stop_reason",
     "runtime_s", "phase_runtime_json", "weighted_lp_objective",
     "recorded_lp_objective", "lp_objective_kind",
@@ -51,6 +51,12 @@ COLUMNS = [
     "stage2_charging_cost", "stage2_charging_bound", "stage2_gap",
     "charging_cost_grid", "charging_cost_continuous",
     "charging_cost_exact", "charging_cost_lower", "charging_cost_upper",
+    "electricity_cost_grid", "electricity_cost_continuous",
+    "electricity_cost_lower", "electricity_cost_upper",
+    "charging_start_fees_grid", "charging_start_fees_continuous",
+    "charging_starts_grid", "charging_starts_continuous",
+    "charged_energy_grid_kwh", "charged_energy_continuous_kwh",
+    "charging_metrics_reconcile",
     "comparator_eligible", "beats_original_robustly",
     "terminal_energy_grid_kwh", "terminal_energy_continuous_kwh",
     "physical_pool_validated", "physical_selected_validated",
@@ -149,6 +155,25 @@ def report_links(campaign_id, root, markdown_files):
         return (0 if name == "readme.md" else 1 if "report" in name else 2,
                 len(path), path)
     return sorted(set(links), key=priority)[:2]
+
+
+def giro_physical_validation(summary):
+    """Return selected-route validation, separate from artifact hash status."""
+    if not isinstance(summary, dict):
+        return None
+    metrics = summary.get("charging_comparison_metrics")
+    validation = metrics.get("physical_validation") if isinstance(metrics, dict) else None
+    if not isinstance(validation, dict):
+        return None
+    required = (
+        "selected_route_replays_valid", "coverage_complete",
+        "grid_terminal_total_matches_summary",
+        "continuous_terminal_total_matches_summary",
+        "grid_terminal_meets_target", "continuous_terminal_meets_target",
+    )
+    if any(key not in validation for key in required):
+        return None
+    return all(validation[key] is True for key in required)
 
 
 class Register:
@@ -317,6 +342,20 @@ class Register:
                 physics, "terminal_soc_constraint", "terminal_soc_policy",
                 default=None,
             ) or at(payload, "terminal_constraint_semantics"),
+            "charge_start_cost": at(payload, "charge_start_cost",
+                                    "physics.charge_start_cost",
+                                    "provenance.args.charge_start_cost"),
+            "electricity_cost_grid": at(payload, "charging_comparison_metrics.expanded_grid_electricity_cost"),
+            "electricity_cost_continuous": at(payload, "charging_comparison_metrics.continuous_electricity_cost"),
+            "electricity_cost_lower": payload.get("energy_cost_lower"),
+            "electricity_cost_upper": payload.get("energy_cost_upper"),
+            "charging_start_fees_grid": at(payload, "charging_comparison_metrics.expanded_grid_charge_start_fees"),
+            "charging_start_fees_continuous": at(payload, "charging_comparison_metrics.continuous_charge_start_fees"),
+            "charging_starts_grid": at(payload, "charging_comparison_metrics.expanded_grid_charging_starts"),
+            "charging_starts_continuous": at(payload, "charging_comparison_metrics.continuous_charging_starts"),
+            "charged_energy_grid_kwh": at(payload, "charging_comparison_metrics.expanded_grid_charging_kwh"),
+            "charged_energy_continuous_kwh": at(payload, "charging_comparison_metrics.continuous_charging_kwh"),
+            "charging_metrics_reconcile": at(payload, "charging_comparison_metrics.cost_components_reconcile"),
             "master_sense": master_sense,
             "initialization": initialization,
             "column_pool_treatment": at(payload, "column_pool_treatment",
@@ -417,10 +456,176 @@ class Register:
         ), key=int)
         return row
 
+    def add_giro_fee_comparison(self, campaign_id, campaign, item):
+        """Expand one authenticated fee cell without treating it as CG proof."""
+        root = campaign.get("root")
+        result = item.get("result") or {}
+        cell = result.get("cell") or {}
+        pair_id = item.get("pair_id") or cell.get("id")
+        fee = item.get("destination_charge_start_fee")
+        if fee is None:
+            fee = at(result, "unchanged_conditions.charge_start_fee")
+        proof = result.get("proof_scope") or {}
+        conditions = result.get("unchanged_conditions") or {}
+        completed = (
+            item.get("completion_marker_matches") is True
+            and item.get("mip_completion_marker_matches") is True
+        )
+        common = {
+            "cell": cell,
+            "charge_start_cost": fee,
+            "physics": {
+                "charge_start_cost": fee,
+                "charge_kw": conditions.get("charge_power_kw"),
+                "initial_soc_kwh": conditions.get("initial_energy_per_bus_kwh"),
+                "capacity_enforced": conditions.get("station_capacity_modeled"),
+            },
+            "terminal_constraint_semantics": result.get(
+                "terminal_constraint_semantics"),
+            "target_terminal_energy_kwh": result.get(
+                "target_terminal_energy_kwh"),
+            "fee_provenance": result.get("fee_provenance"),
+            "commit": campaign.get("code_commit"),
+            "completion_marker_matches": completed,
+        }
+        original = result.get("original_giro")
+        fixed = result.get("fixed_duties_optimized")
+        joint = result.get("joint_pool_optimized")
+        solver = result.get("joint_solver") or {}
+        stage1 = solver.get("stage1") or {}
+        stage2 = solver.get("stage2") or {}
+        arms = []
+        if isinstance(original, dict):
+            arms.append(("original_giro", original, {
+                "mip_incumbent_fleet": original.get("fleet"),
+                "charging_cost_exact": original.get("charging_cost_exact"),
+                "charging_cost_lower": original.get("charging_cost_lower"),
+                "charging_cost_upper": original.get("charging_cost_upper"),
+                "terminal_energy_continuous_kwh": original.get(
+                    "terminal_surplus_total_kwh"),
+                "comparator_eligible": original.get(
+                    "matched_physics_comparator_eligible"),
+                "proof_scope": original.get("comparator"),
+                "limitations": "; ".join(original.get("cost_errors") or []) or None,
+            }))
+        if isinstance(fixed, dict):
+            arms.append(("fixed_duties", fixed, {
+                "mip_incumbent_fleet": fixed.get("fleet"),
+                "charging_cost_grid": fixed.get("expanded_grid_charging_cost"),
+                "charging_cost_continuous": fixed.get("physical_charging_cost"),
+                "terminal_energy_grid_kwh": fixed.get(
+                    "expanded_grid_terminal_energy_kwh"),
+                "terminal_energy_continuous_kwh": fixed.get(
+                    "continuous_terminal_energy_kwh"),
+                "overcovered_trips": fixed.get("overcovered_trip_count"),
+                "physical_selected_validated": giro_physical_validation(fixed),
+                "physical_validation_scope": proof.get("physical"),
+                "proof_scope": proof.get("fixed"),
+                "optimal_scope": "fixed ordered duties over enumerated terminal frontier",
+            }))
+        if isinstance(joint, dict):
+            stage2_executed = stage2.get("status") is not None
+            runtime_parts = [value for value in (
+                stage1.get("runtime_s"), stage2.get("runtime_s"),
+                result.get("pool_replay_s"),
+            ) if isinstance(value, (int, float))]
+            arms.append(("joint", joint, {
+                "mip_incumbent_fleet": joint.get("fleet"),
+                "mip_status": stage2.get("status") if stage2_executed else stage1.get("status"),
+                "mip_gap": stage2.get("gap") if stage2_executed else stage1.get("gap"),
+                "fleet_proven": stage1.get("proven"),
+                "optimal_scope": "finite saved pool plus common fee-frontier union",
+                "stage1_incumbent_fleet": stage1.get("buses"),
+                "stage1_bound": stage1.get("bound"),
+                "stage1_gap": stage1.get("gap"),
+                "stage1_proven": stage1.get("proven"),
+                "stage2_executed": stage2_executed,
+                "stage2_status": stage2.get("status"),
+                "stage2_charging_cost": stage2.get("objective"),
+                "stage2_charging_bound": stage2.get("bound"),
+                "stage2_gap": stage2.get("gap"),
+                "charging_cost_grid": joint.get("expanded_grid_charging_cost"),
+                "charging_cost_continuous": joint.get("physical_charging_cost"),
+                "terminal_energy_grid_kwh": joint.get(
+                    "expanded_grid_terminal_energy_kwh"),
+                "terminal_energy_continuous_kwh": joint.get(
+                    "continuous_terminal_energy_kwh"),
+                "overcovered_trips": joint.get("overcovered_trip_count"),
+                "pool_size": result.get("pareto_augmented_pool_routes"),
+                "runtime_s": sum(runtime_parts) if runtime_parts else None,
+                "physical_selected_validated": giro_physical_validation(joint),
+                "physical_validation_scope": proof.get("physical"),
+                "proof_scope": proof.get("joint"),
+            }))
+        for arm, arm_result, overrides in arms:
+            payload = {**common, **arm_result}
+            self.add(
+                campaign_id, root, "giro_zero_fee_comparison",
+                "comparison_arm", payload,
+                source_path=item.get("path"), source_sha256=item.get("sha256"),
+                case_id=pair_id, substage=arm,
+                artifact_status=("result" if completed
+                                 else "unverified_result"),
+                overrides={
+                    **overrides, "arm": arm,
+                    "input_path": cell.get("instance") or item.get("instance_path"),
+                    "input_sha256": cell.get("instance_sha256") or item.get("instance_sha256"),
+                    "tariff_path": cell.get("tariff_path") or item.get("tariff_path"),
+                    "tariff_sha256": cell.get("tariff_sha256") or item.get("tariff_sha256"),
+                    "charge_start_cost": fee,
+                    "capacity_enforced": conditions.get("station_capacity_modeled"),
+                    "full_model_lp_certified": False,
+                    "lp_bound_scope": "no full-model column-generation pricing certificate",
+                },
+            )
+
+    @staticmethod
+    def fee_case_fields(campaign_id, campaign, item):
+        if campaign_id != "zero_charge_start_fee_20260913":
+            return {}
+        case = item.get("source_case_id")
+        match = re.fullmatch(r"w(\d+)_k(\d+)", str(case))
+        arm = item.get("arm")
+        if not match or arm not in {"fee0", "fee5"}:
+            raise ValueError("fee result lacks explicit chain/target/arm identity")
+        declared_pairs = {(p["id"], p["case_id"]) for p in campaign.get("pairs", [])}
+        if (item.get("pair_id"), case) not in declared_pairs:
+            raise ValueError("fee result differs from frozen campaign pair")
+        cg = next((r for r in campaign.get("cg", [])
+                   if r.get("source_case_id") == case and r.get("arm") == arm), {})
+        input_path = item.get("csv") or item.get("instance") or cg.get("csv")
+        # Read the actual CSV basename, never the enclosing k2_15 directory.
+        csv_match = re.search(r"_k(\d+)_p(\d+)_", Path(input_path or "").name)
+        if not csv_match or tuple(map(int, csv_match.groups())) != (int(match[2]), int(match[1])):
+            raise ValueError("fee result CSV differs from explicit chain/target")
+        fee = float(item["charge_start_cost"])
+        if fee != {"fee0": 0.0, "fee5": 5.0}[arm]:
+            raise ValueError("fee arm and recorded charge-start cost differ")
+        metrics = item.get("charging_comparison_metrics") or {}
+        return {"case_id": case, "substage": arm, "overrides": {
+            "target_k": int(match[2]), "chain": int(match[1]),
+            "input_path": input_path,
+            "input_sha256": at(cg, "provenance.instance_sha256"),
+            "master_sense": cg.get("master_sense"),
+            "initialization": "saved sequences replayed under destination fee plus singletons",
+            "column_pool_treatment": "WARM-INHERITED-EVENT",
+            "charging_start_fees_grid": metrics.get("expanded_grid_start_fees"),
+            "charging_start_fees_continuous": metrics.get("continuous_start_fees"),
+            "terminal_energy_grid_kwh": metrics.get("expanded_grid_terminal_kwh"),
+            "terminal_energy_continuous_kwh": metrics.get("continuous_terminal_kwh"),
+        }}
+
     def standard_campaigns(self):
         for campaign_id, campaign in self.snapshot.get("campaigns", {}).items():
             root = campaign.get("root")
-            self.campaign(campaign_id, root, "production_or_historical")
+            family = ("giro_zero_fee_comparison"
+                      if campaign_id == "giro_zero_start_fee_20260913"
+                      else "production_or_historical")
+            self.campaign(campaign_id, root, family)
+            if (campaign_id == "giro_zero_start_fee_20260913"
+                    and campaign.get("schema")
+                    != "evsp-dr-terminal-energy-fee-comparison-collection-v1"):
+                raise ValueError("unexpected GIRO zero-fee collection schema")
             legacy = any(token in campaign_id for token in (
                 "legacy", "historical", "old70",
             ))
@@ -436,13 +641,17 @@ class Register:
                     authority_role=authority,
                     artifact_status=("superseded" if authority.startswith("superseded")
                                      else "result"),
+                    **self.fee_case_fields(campaign_id, campaign, item),
                 )
             for item in campaign.get("cg", []):
+                fee_fields = self.fee_case_fields(campaign_id, campaign, item)
+                fee_overrides = fee_fields.pop("overrides", {})
                 self.add(campaign_id, root, "column_generation", "cg", item,
                          source_path=item.get("path"),
                          source_sha256=item.get("sha256"), authority_role=(
                              "legacy_historical" if legacy else "current"
-                         ), overrides={"lp_objective_kind": "bus_plus_charging"})
+                         ), overrides={"lp_objective_kind": "bus_plus_charging", **fee_overrides},
+                         **fee_fields)
             for item in campaign.get("phases", []):
                 self.add(
                     campaign_id, root, "cg_phase_telemetry", "telemetry", item,
@@ -458,6 +667,9 @@ class Register:
                     },
                 )
             for item in campaign.get("comparisons", []):
+                if campaign_id == "giro_zero_start_fee_20260913":
+                    self.add_giro_fee_comparison(campaign_id, campaign, item)
+                    continue
                 result = item.get("result") or {}
                 if "fleet_sum" in result and "components" in result:
                     self.add(
@@ -958,6 +1170,34 @@ class Register:
             "original_giro", "fixed_duties", "joint"
         }:
             raise ValueError(f"incomplete tariff comparison arms: {comparison_arms}")
+        giro_rows = [
+            row for row in self.rows
+            if row["result_family"] == "giro_zero_fee_comparison"
+        ]
+        giro_by_case = defaultdict(list)
+        for row in giro_rows:
+            giro_by_case[row["case_id"]].append(row)
+            if row["charge_start_cost"] not in {0, 0.0, 5, 5.0}:
+                raise ValueError(
+                    f"GIRO fee arm has missing/unexpected fee: {row['case_id']}"
+                )
+            if row["full_model_lp_certified"] is not False:
+                raise ValueError(
+                    f"GIRO fee arm must not claim full-model CG proof: {row['row_id']}"
+                )
+        for case_id, rows in giro_by_case.items():
+            if {row["arm"] for row in rows} != {
+                    "original_giro", "fixed_duties", "joint"}:
+                raise ValueError(f"incomplete GIRO fee comparison: {case_id}")
+            joint = next(row for row in rows if row["arm"] == "joint")
+            if (joint["stage2_executed"] is True
+                    and joint["mip_incumbent_fleet"] is not None
+                    and joint["stage1_incumbent_fleet"] is not None
+                    and joint["mip_incumbent_fleet"]
+                    > joint["stage1_incumbent_fleet"]):
+                raise ValueError(
+                    f"GIRO stage 2 exceeds stage-1 fleet incumbent: {case_id}"
+                )
         superseded = [r for r in self.rows
                       if r["authority_role"] == "superseded_duplicate_772031"]
         authoritative = [r for r in self.rows

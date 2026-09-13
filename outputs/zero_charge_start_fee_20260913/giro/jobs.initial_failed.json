@@ -1,0 +1,312 @@
+{
+  "schema": "evsp-dr-terminal-energy-fee-submission-v1",
+  "jobs": [
+    {
+      "pair_id": "peak08_fee0",
+      "stage": "frontier",
+      "job_id": "113589",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak08_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak08_fee0",
+        "frontier"
+      ]
+    },
+    {
+      "pair_id": "peak08_fee5",
+      "stage": "frontier",
+      "job_id": "113590",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak08_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak08_fee5",
+        "frontier"
+      ]
+    },
+    {
+      "pair_id": "peak08_fee0",
+      "stage": "mip",
+      "job_id": "113591",
+      "dependency": [
+        "113589",
+        "113590"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak08_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:113589:113590",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak08_fee0",
+        "mip"
+      ]
+    },
+    {
+      "pair_id": "peak08_fee5",
+      "stage": "mip",
+      "job_id": "113592",
+      "dependency": [
+        "113589",
+        "113590"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak08_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:113589:113590",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak08_fee5",
+        "mip"
+      ]
+    },
+    {
+      "pair_id": "peak12_fee0",
+      "stage": "frontier",
+      "job_id": "113593",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak12_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak12_fee0",
+        "frontier"
+      ]
+    },
+    {
+      "pair_id": "peak12_fee5",
+      "stage": "frontier",
+      "job_id": "113594",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak12_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak12_fee5",
+        "frontier"
+      ]
+    },
+    {
+      "pair_id": "peak12_fee0",
+      "stage": "mip",
+      "job_id": "113595",
+      "dependency": [
+        "113593",
+        "113594"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak12_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:113593:113594",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak12_fee0",
+        "mip"
+      ]
+    },
+    {
+      "pair_id": "peak12_fee5",
+      "stage": "mip",
+      "job_id": "113596",
+      "dependency": [
+        "113593",
+        "113594"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak12_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:113593:113594",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak12_fee5",
+        "mip"
+      ]
+    },
+    {
+      "pair_id": "peak18_fee0",
+      "stage": "frontier",
+      "job_id": "113597",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak18_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak18_fee0",
+        "frontier"
+      ]
+    },
+    {
+      "pair_id": "peak18_fee5",
+      "stage": "frontier",
+      "job_id": "113598",
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=1",
+        "--mem=24G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gt_peak18_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak18_fee5",
+        "frontier"
+      ]
+    },
+    {
+      "pair_id": "peak18_fee0",
+      "stage": "mip",
+      "job_id": "113599",
+      "dependency": [
+        "113597",
+        "113598"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak18_fee0",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:113597:113598",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak18_fee0",
+        "mip"
+      ]
+    },
+    {
+      "pair_id": "peak18_fee5",
+      "stage": "mip",
+      "job_id": "113600",
+      "dependency": [
+        "113597",
+        "113598"
+      ],
+      "command": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
+        "--cpus-per-task=8",
+        "--mem=48G",
+        "--time=02:00:00",
+        "--no-requeue",
+        "--job-name=gm_peak18_fee5",
+        "--export=EVSP_CAMPAIGN_ROOT=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--output=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.out",
+        "--error=/home/nc437/ladder-lite/giro_zero_start_fee_20260913/logs/%x_%j.err",
+        "--chdir=/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
+        "--dependency=afterok:113597:113598",
+        "/home/nc437/ladder-lite/code_pins/giro_zero_start_fee_941ed75/worker.sh",
+        "peak18_fee5",
+        "mip"
+      ]
+    }
+  ],
+  "plan_sha256": "42b7212c27773888a2e6265c0e71c564ef756adb2b515c4d0f38ee1b1ae5b928"
+}

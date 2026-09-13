@@ -1,0 +1,10 @@
+{
+  "rows_checked": 44,
+  "mip_rows": 8,
+  "cg_rows": 36,
+  "explicit_chain_target_arm_match": true,
+  "input_hashes_present": true,
+  "returning_energy_recorded": true,
+  "incorrect_case_fee_and_csv_rejected": true,
+  "note": "Fixed report parser selecting the enclosing k2_15 directory and mip basename. Solver output and scientific conclusions unchanged."
+}

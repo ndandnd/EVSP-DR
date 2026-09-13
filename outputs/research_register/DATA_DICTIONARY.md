@@ -102,3 +102,7 @@ Use repeatable `--supplement /absolute/path/to/audit.json` arguments to preserve
 - Files named as legacy, historical controls, or `old70` remain separate rows with `legacy_historical` authority. They are not merged with newer configurations.
 - Rejected physical-replay outputs remain `rejected_observational` and cannot be used as schedules.
 - In the 22:37 UTC snapshot, the three terminal-energy fixed frontiers completed, while all three dependent joint MIPs failed before optimization because older saved-pool records lacked `expanded_grid_terminal_soc_kwh`. Frontier results and failed MIP attempts are separate rows.
+
+## Charging-start fee comparisons
+
+`charge_start_cost` is the explicitly recorded objective coefficient per charging activity; zero is retained as zero. Missing values remain unknown, not a default of5. `electricity_cost_grid` / `electricity_cost_continuous` exclude the start penalty. `charging_starts_grid` / `charging_starts_continuous` count activities, not tariff blocks. `charged_energy_grid_kwh` / `charged_energy_continuous_kwh` report charged energy. `charging_metrics_reconcile` checks electricity plus fee×starts against the saved charging total; it does not establish route or station-capacity feasibility.

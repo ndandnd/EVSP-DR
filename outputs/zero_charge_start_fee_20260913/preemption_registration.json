@@ -1,0 +1,103 @@
+{
+  "added": [
+    {
+      "job_id": "114102",
+      "case_id": "peak08_fee0",
+      "cohort": "default_GIRO_fee_MIP3600_allocation7200",
+      "solver_budget_s": 3600,
+      "allocation_budget_s": 7200,
+      "input_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "charge_start_cost": 0.0,
+      "result_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0/joint/comparison.json",
+      "attempt_tag": "fee_terminal_fair_first_attempt",
+      "dependency": [
+        "114100",
+        "114101"
+      ],
+      "interpretation": "One-hour MIP optimization, two-hour allocation includes pool replay and physical validation."
+    },
+    {
+      "job_id": "114103",
+      "case_id": "peak08_fee5",
+      "cohort": "default_GIRO_fee_MIP3600_allocation7200",
+      "solver_budget_s": 3600,
+      "allocation_budget_s": 7200,
+      "input_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "charge_start_cost": 5.0,
+      "result_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee5/joint/comparison.json",
+      "attempt_tag": "fee_terminal_fair_first_attempt",
+      "dependency": [
+        "114100",
+        "114101"
+      ],
+      "interpretation": "One-hour MIP optimization, two-hour allocation includes pool replay and physical validation."
+    },
+    {
+      "job_id": "114106",
+      "case_id": "peak12_fee0",
+      "cohort": "default_GIRO_fee_MIP3600_allocation7200",
+      "solver_budget_s": 3600,
+      "allocation_budget_s": 7200,
+      "input_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "charge_start_cost": 0.0,
+      "result_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0/joint/comparison.json",
+      "attempt_tag": "fee_terminal_fair_first_attempt",
+      "dependency": [
+        "114104",
+        "114105"
+      ],
+      "interpretation": "One-hour MIP optimization, two-hour allocation includes pool replay and physical validation."
+    },
+    {
+      "job_id": "114107",
+      "case_id": "peak12_fee5",
+      "cohort": "default_GIRO_fee_MIP3600_allocation7200",
+      "solver_budget_s": 3600,
+      "allocation_budget_s": 7200,
+      "input_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "charge_start_cost": 5.0,
+      "result_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee5/joint/comparison.json",
+      "attempt_tag": "fee_terminal_fair_first_attempt",
+      "dependency": [
+        "114104",
+        "114105"
+      ],
+      "interpretation": "One-hour MIP optimization, two-hour allocation includes pool replay and physical validation."
+    },
+    {
+      "job_id": "114110",
+      "case_id": "peak18_fee0",
+      "cohort": "default_GIRO_fee_MIP3600_allocation7200",
+      "solver_budget_s": 3600,
+      "allocation_budget_s": 7200,
+      "input_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "charge_start_cost": 0.0,
+      "result_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0/joint/comparison.json",
+      "attempt_tag": "fee_terminal_fair_first_attempt",
+      "dependency": [
+        "114108",
+        "114109"
+      ],
+      "interpretation": "One-hour MIP optimization, two-hour allocation includes pool replay and physical validation."
+    },
+    {
+      "job_id": "114111",
+      "case_id": "peak18_fee5",
+      "cohort": "default_GIRO_fee_MIP3600_allocation7200",
+      "solver_budget_s": 3600,
+      "allocation_budget_s": 7200,
+      "input_sha256": "b386f8a16958d25c857297ac4643bf6c73ae2114557c585446725cbd51c8b64d",
+      "charge_start_cost": 5.0,
+      "result_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee5/joint/comparison.json",
+      "attempt_tag": "fee_terminal_fair_first_attempt",
+      "dependency": [
+        "114108",
+        "114109"
+      ],
+      "interpretation": "One-hour MIP optimization, two-hour allocation includes pool replay and physical validation."
+    }
+  ],
+  "before_sha256": "45b9fb0408dd704ee64d461d68ebf9e5bcddbc72f9cdfa7ae5f186a510397306",
+  "after_sha256": "4a97b7d09c514e4028dfe437c6059dca339f440ec9be072c8a44d73758547209",
+  "updated_utc": "2026-09-13T05:12:50.948544+00:00"
+}

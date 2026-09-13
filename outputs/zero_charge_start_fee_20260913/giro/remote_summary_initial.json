@@ -1,0 +1,87 @@
+{
+  "cells": [
+    {
+      "comparison_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0/joint/comparison.json",
+      "destination_charge_start_fee": 0.0,
+      "frontier_complete": false,
+      "frontier_hash": null,
+      "frontier_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0/frontier.json",
+      "mip_complete": false,
+      "mip_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee0/joint/mip.json",
+      "pair_id": "peak08_fee0",
+      "source_charge_start_fee": 5.0,
+      "source_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak08/fee0",
+      "tariff": "peak08"
+    },
+    {
+      "comparison_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee5/joint/comparison.json",
+      "destination_charge_start_fee": 5.0,
+      "frontier_complete": false,
+      "frontier_hash": null,
+      "frontier_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee5/frontier.json",
+      "mip_complete": false,
+      "mip_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak08/fee5/joint/mip.json",
+      "pair_id": "peak08_fee5",
+      "source_charge_start_fee": 5.0,
+      "source_root": "/home/nc437/ladder-lite/matched_tariff8_20260908_a9a9720/original_eligible_k05_g240_p350_peak08",
+      "tariff": "peak08"
+    },
+    {
+      "comparison_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0/joint/comparison.json",
+      "destination_charge_start_fee": 0.0,
+      "frontier_complete": false,
+      "frontier_hash": null,
+      "frontier_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0/frontier.json",
+      "mip_complete": false,
+      "mip_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee0/joint/mip.json",
+      "pair_id": "peak12_fee0",
+      "source_charge_start_fee": 5.0,
+      "source_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak12/fee0",
+      "tariff": "peak12"
+    },
+    {
+      "comparison_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee5/joint/comparison.json",
+      "destination_charge_start_fee": 5.0,
+      "frontier_complete": false,
+      "frontier_hash": null,
+      "frontier_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee5/frontier.json",
+      "mip_complete": false,
+      "mip_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak12/fee5/joint/mip.json",
+      "pair_id": "peak12_fee5",
+      "source_charge_start_fee": 5.0,
+      "source_root": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059/original_eligible_k05_g240_p350_peak12",
+      "tariff": "peak12"
+    },
+    {
+      "comparison_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0/joint/comparison.json",
+      "destination_charge_start_fee": 0.0,
+      "frontier_complete": false,
+      "frontier_hash": null,
+      "frontier_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0/frontier.json",
+      "mip_complete": false,
+      "mip_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee0/joint/mip.json",
+      "pair_id": "peak18_fee0",
+      "source_charge_start_fee": 5.0,
+      "source_root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/repriced_sources/peak18/fee0",
+      "tariff": "peak18"
+    },
+    {
+      "comparison_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee5/joint/comparison.json",
+      "destination_charge_start_fee": 5.0,
+      "frontier_complete": false,
+      "frontier_hash": null,
+      "frontier_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee5/frontier.json",
+      "mip_complete": false,
+      "mip_path": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913/results/peak18/fee5/joint/mip.json",
+      "pair_id": "peak18_fee5",
+      "source_charge_start_fee": 5.0,
+      "source_root": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059/original_eligible_k05_g240_p350_peak18",
+      "tariff": "peak18"
+    }
+  ],
+  "commit": "f895c61a525c51d32ab09276f12074217c1788ce",
+  "plan_sha256": "42b7212c27773888a2e6265c0e71c564ef756adb2b515c4d0f38ee1b1ae5b928",
+  "proof_scope": "finite_saved_pool_plus_common_frontier_union; no full-model pricing certificate",
+  "schema": "evsp-dr-terminal-energy-fee-comparison-summary-v1",
+  "target_physical_terminal_energy_kwh": 280.7833253
+}
