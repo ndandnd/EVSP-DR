@@ -424,6 +424,54 @@ class MIPConvergenceTests(unittest.TestCase):
             )
             self.assertEqual(len(latest["incumbent_improvements"]), 1)
 
+    def test_cost_observer_accepts_unproven_fleet_cap(self):
+        class GRB:
+            Callback = object()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            recorder, _clock = self._recorder(
+                Path(tmp) / "progress", limit=300
+            )
+            observer = GurobiProgressObserver(
+                recorder,
+                GRB=GRB,
+                variables=[object()],
+                routes=[{"cost": 100001.0}],
+                bus_cost=100000.0,
+                stage="cost",
+                fixed_fleet=5,
+                fleet_cap_proven=False,
+            )
+            self.assertFalse(observer.fleet_cap_proven)
+            self.assertEqual(
+                observer._statistics_incumbent_fleet(12.0, route_fleet=4),
+                4,
+            )
+
+    def test_cost_observer_labels_proven_fixed_fleet(self):
+        class GRB:
+            Callback = object()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            recorder, _clock = self._recorder(
+                Path(tmp) / "progress", limit=300
+            )
+            observer = GurobiProgressObserver(
+                recorder,
+                GRB=GRB,
+                variables=[object()],
+                routes=[{"cost": 100001.0}],
+                bus_cost=100000.0,
+                stage="cost",
+                fixed_fleet=5,
+                fleet_cap_proven=True,
+            )
+            self.assertTrue(observer.fleet_cap_proven)
+            self.assertEqual(
+                observer._statistics_incumbent_fleet(12.0, route_fleet=4),
+                5,
+            )
+
     def test_gurobi_infinity_sentinel_is_not_a_finite_bound(self):
         self.assertIsNone(MIPProgressRecorder._finite(1e100))
         self.assertIsNone(MIPProgressRecorder._finite(-1e100))

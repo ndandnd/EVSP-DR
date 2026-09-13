@@ -459,6 +459,7 @@ class GurobiProgressObserver:
         bus_cost: float,
         stage: str,
         fixed_fleet: int | None = None,
+        fleet_cap_proven: bool = False,
         termination: TerminationRequest | None = None,
         statistics_throttle_s: float = 2.0,
     ):
@@ -497,6 +498,7 @@ class GurobiProgressObserver:
         self.bus_cost = float(bus_cost)
         self.stage = stage
         self.fixed_fleet = fixed_fleet
+        self.fleet_cap_proven = bool(fleet_cap_proven)
         self.termination = termination
         self.statistics_throttle_s = float(statistics_throttle_s)
         self.last_statistics_s = -math.inf
@@ -532,7 +534,10 @@ class GurobiProgressObserver:
         if self.stage == "fleet":
             return MIPProgressRecorder._finite(best)
         if self.stage == "cost":
-            return self.fixed_fleet
+            return (
+                self.fixed_fleet
+                if self.fleet_cap_proven else route_fleet
+            )
         return route_fleet
 
     @staticmethod
@@ -583,17 +588,22 @@ class GurobiProgressObserver:
                 )
                 fleet_bound = (
                     finite_bound if self.stage == "fleet"
-                    else self.fixed_fleet
+                    else (
+                        self.fixed_fleet
+                        if self.fleet_cap_proven else None
+                    )
                 )
                 objective_bound = (
                     None if self.stage == "fleet"
                     else (
                         self.bus_cost * int(self.fixed_fleet) + finite_bound
                         if (
+                            self.fleet_cap_proven
+                            and
                             finite_bound is not None
                             and self.fixed_fleet is not None
                         )
-                        else None
+                        else finite_bound
                     )
                 )
                 gap = (
@@ -652,12 +662,20 @@ class GurobiProgressObserver:
             fleet_bound = finite_bound
             objective_bound = None
         elif self.stage == "cost":
-            incumbent_fleet = self.fixed_fleet
-            fleet_bound = self.fixed_fleet
+            incumbent_fleet = (
+                self.fixed_fleet if self.fleet_cap_proven else None
+            )
+            fleet_bound = (
+                self.fixed_fleet if self.fleet_cap_proven else None
+            )
             objective_bound = (
                 self.bus_cost * int(self.fixed_fleet) + finite_bound
-                if finite_bound is not None and self.fixed_fleet is not None
-                else None
+                if (
+                    self.fleet_cap_proven
+                    and finite_bound is not None
+                    and self.fixed_fleet is not None
+                )
+                else finite_bound
             )
         else:
             incumbent_fleet = (
