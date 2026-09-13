@@ -1,5 +1,14 @@
 # Unicorn monitoring runbook
 
+## 13 September, 18:48 EDT — both chains 3 and 5 match 18
+
+Successful snapshot20260913T224607Z: extension18CGcertificates/15MIPs. New verified matches C4k17,C5k18,C6k16 have finite-pool fleet proofs and individual-route replay. New C3k20 MIP21/bound20 leaves a one-bus gap open, alongside earlier C2k17 and C3k19. Highest verified matches17,16,18,17,18,16. No target-above-k infeasibility claim. New CG certificates C2k18,C4k18,C6k17 await MIPs.
+
+Cumulative23primary fresh CG certificates/24; new C2k15 259.7min,C4k15 246.5min,C6k15 219.8min. Only C1k15 CG is unfinished. Fresh C5k15 MIP16/bound15/unproved/replay passed. Total44MIPs=20fresh (6target,4proved pool limits,10open gaps)+24warm alltarget. Larger-budget aliases remain shared endpoints, not extra solves. Existing jobs continue; no blind reruns or speculative campaigns.
+
+No new execution failure, confirmed preemption or invalid dependency.11MIP scheduler transitions,30queue transitions; preemption study549attemptrows. Operational execution statuses in both active campaigns checked separately and have no failure. Register2330rows/50campaigns preserves six supplements; shrinking queue observations explain the falling total. Both legacy latest-snapshot pointers now advance correctly. Doc updates three reach rows and current explanations only; figures and Slides preserved. No source algorithm/schema changes.
+
+
 ## 13 September, 17:48 EDT — larger warm-chain gaps remain unresolved
 
 Successful snapshot 20260913T214607Z: extension 15 CG certificates/11 MIPs. New target matches C4 k16 and C5 k17 have finite-pool fleet proofs and individual-route replay. C2 k17 found 18/bound17 and C3 k19 found20/bound19 after the one-hour MIP budget; both fleet proofs remain open. They do not establish that the target is absent from the pool. Highest matches by chain17,16,18,16,17,15. C3 k20 is newly CG-certified, not an integer result. New CG certificates also C4 k17,C5 k18,C6 k16.
