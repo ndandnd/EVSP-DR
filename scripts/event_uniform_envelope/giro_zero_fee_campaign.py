@@ -288,7 +288,7 @@ def prepare(args: argparse.Namespace) -> None:
         "proof_scope": "finite_saved_pool_plus_common_frontier_union; no full-model pricing certificate",
         "resources": {
             "frontier": {"partition": "default_partition", "cpus": 1, "memory": "24G", "time": "02:00:00", "exclude": ["scaglione-compute-01"]},
-            "mip": {"partition": "scaglione", "cpus": 8, "memory": "48G", "time": "02:00:00", "exclude": ["scaglione-compute-01", "scaglione-cpu-04"]},
+            "mip": {"partition": "default_partition", "cpus": 8, "memory": "48G", "time": "02:00:00", "exclude": ["scaglione-compute-01"], "optimization_budget_s": 3600},
         },
         "frontier_tasks": [cell["id"] for cell in cells],
         "mip_tasks": [cell["id"] for cell in cells],
@@ -538,6 +538,107 @@ def command_plan(args: argparse.Namespace) -> None:
     print(json.dumps(output, indent=2))
 
 
+def _compact_routes(summary: dict | None) -> dict | None:
+    """Keep collection output reviewable without copying selected route rows."""
+    if not isinstance(summary, dict):
+        return None
+    fields = (
+        "fleet", "expanded_grid_charging_cost", "physical_charging_cost",
+        "expanded_grid_terminal_energy_kwh", "continuous_terminal_energy_kwh",
+        "overcovered_trip_count", "maximum_trip_multiplicity",
+        "charge_start_count", "charge_start_counts_by_route",
+    )
+    return {field: summary[field] for field in fields if field in summary}
+
+
+def _complete(path: Path, marker_name: str, payload_name: str,
+              marker_hash_key: str) -> bool:
+    marker = path / marker_name
+    payload = path / payload_name
+    if not marker.is_file() or not payload.is_file():
+        return False
+    try:
+        return digest(payload) == json.loads(marker.read_text())[marker_hash_key]
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+        return False
+
+
+def collect(args: argparse.Namespace) -> None:
+    """Collect compact status/metrics while leaving solver artifacts intact."""
+    root = Path(args.root).expanduser().resolve()
+    plan = read_plan(root)
+    rows = []
+    for cell in plan["cells"]:
+        base = Path(cell["frontier_dir"])
+        frontier_path = base / "frontier.json"
+        frontier_complete = base / "FRONTIER_COMPLETE.json"
+        joint = base / "joint"
+        mip_path = joint / "mip.json"
+        comparison_path = joint / "comparison.json"
+        mip_complete = joint / "COMPLETE.json"
+        row = {
+            "pair_id": cell["id"], "tariff": cell["tariff"],
+            "destination_charge_start_fee": cell["fee"],
+            "source_charge_start_fee": cell["source_charge_start_fee"],
+            "source_root": cell["source_root"],
+            "frontier_path": str(frontier_path),
+            "frontier_complete": _complete(
+                base, "FRONTIER_COMPLETE.json", "frontier.json", "frontier_sha256"
+            ),
+            "frontier_hash": digest(frontier_path) if frontier_path.is_file() else None,
+            "mip_path": str(mip_path), "comparison_path": str(comparison_path),
+            "mip_complete": _complete(
+                joint, "COMPLETE.json", "comparison.json", "comparison_sha256"
+            ),
+        }
+        if frontier_path.is_file():
+            try:
+                frontier = json.loads(frontier_path.read_text())
+                row["frontier_fixed"] = _compact_routes(frontier.get("fixed_solution"))
+                row["frontier_master"] = {
+                    key: frontier["fixed_master"][key]
+                    for key in ("status", "objective", "bound", "gap", "runtime_s")
+                    if key in frontier.get("fixed_master", {})
+                }
+            except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+                row["frontier_read_error"] = str(exc)
+        if comparison_path.is_file():
+            try:
+                comparison = json.loads(comparison_path.read_text())
+                row["comparison_complete"] = mip_complete.is_file()
+                row["fixed_duties_optimized"] = _compact_routes(
+                    comparison.get("fixed_duties_optimized"))
+                row["joint_pool_optimized"] = _compact_routes(
+                    comparison.get("joint_pool_optimized"))
+                solver = comparison.get("joint_solver") or {}
+                row["solver"] = {
+                    "stage1_status": solver.get("stage1", {}).get("status"),
+                    "stage1_buses": solver.get("stage1", {}).get("buses"),
+                    "stage1_runtime_s": solver.get("stage1", {}).get("runtime_s"),
+                    "stage2_status": solver.get("stage2", {}).get("status"),
+                    "stage2_objective": solver.get("stage2", {}).get("objective"),
+                    "stage2_bound": solver.get("stage2", {}).get("bound"),
+                    "stage2_gap": solver.get("stage2", {}).get("gap"),
+                    "stage2_runtime_s": solver.get("stage2", {}).get("runtime_s"),
+                }
+                row["proof_scope"] = comparison.get("proof_scope")
+                row["saved_pool_records"] = comparison.get("saved_pool_records")
+                row["pool_replay_s"] = comparison.get("pool_replay_s")
+            except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+                row["comparison_read_error"] = str(exc)
+        rows.append(row)
+    summary = {
+        "schema": "evsp-dr-terminal-energy-fee-comparison-summary-v1",
+        "plan_sha256": digest(root / "plan.json"),
+        "commit": plan["commit"],
+        "target_physical_terminal_energy_kwh": plan["target_physical_terminal_energy_kwh"],
+        "proof_scope": plan["proof_scope"],
+        "cells": rows,
+    }
+    atomic_json(root / "summary.json", summary)
+    print(json.dumps({"summary": str(root / "summary.json"), "plan_sha256": summary["plan_sha256"], "cells": len(rows)}))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="mode", required=True)
@@ -553,13 +654,17 @@ def main() -> None:
     worker_parser.add_argument("--requires-frontiers", nargs="*")
     commands = sub.add_parser("commands")
     commands.add_argument("--root", required=True, type=Path)
+    collector = sub.add_parser("collect")
+    collector.add_argument("--root", required=True, type=Path)
     args = parser.parse_args()
     if args.mode == "prepare":
         prepare(args)
     elif args.mode == "worker":
         worker(args)
-    else:
+    elif args.mode == "commands":
         command_plan(args)
+    else:
+        collect(args)
 
 
 if __name__ == "__main__":

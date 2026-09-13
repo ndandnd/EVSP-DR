@@ -29,8 +29,8 @@ def sbatch_mip(plan: dict, cell: dict, worker: Path,
                frontier_job_ids: list[str] | None = None) -> list[str]:
     root = Path(plan["root"])
     command = [
-        str(SLURM / "sbatch"), "--parsable", "--partition=scaglione",
-        "--exclude=scaglione-compute-01,scaglione-cpu-04",
+        str(SLURM / "sbatch"), "--parsable", "--partition=default_partition",
+        "--exclude=scaglione-compute-01",
         "--cpus-per-task=8", "--mem=48G", "--time=02:00:00", "--no-requeue",
         "--job-name=gm_" + cell["id"],
         "--output=" + str(root / "logs/%x_%j.out"),

@@ -106,6 +106,38 @@ class GiroZeroFeeTests(unittest.TestCase):
         MODULE.set_runtime_fee(5.0)
         self.assertEqual(config.CHARGE_START_COST, 5.0)
 
+    def test_collect_writes_compact_status_without_selected_routes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            cell = {
+                "id": "peak08_fee0", "tariff": "peak08", "fee": 0.0,
+                "source_charge_start_fee": 5.0,
+                "source_root": str(root / "source"),
+                "frontier_dir": str(root / "results"),
+            }
+            (root / "results").mkdir(parents=True)
+            frontier = {
+                "fixed_solution": {
+                    "fleet": 1, "expanded_grid_terminal_energy_kwh": 281.0,
+                    "selected_routes": [{"trips": [1]}],
+                },
+                "fixed_master": {"status": 2, "objective": 1.0},
+            }
+            frontier_path = root / "results" / "frontier.json"
+            frontier_path.write_text(json.dumps(frontier))
+            marker = {"frontier_sha256": MODULE.digest(frontier_path)}
+            (root / "results" / "FRONTIER_COMPLETE.json").write_text(json.dumps(marker))
+            plan = {
+                "schema": "evsp-dr-terminal-energy-fee-comparison-v1",
+                "commit": "abc", "target_physical_terminal_energy_kwh": 280.7833253,
+                "proof_scope": "finite", "cells": [cell],
+            }
+            (root / "plan.json").write_text(json.dumps(plan))
+            MODULE.collect(type("Args", (), {"root": root})())
+            result = json.loads((root / "summary.json").read_text())
+            self.assertTrue(result["cells"][0]["frontier_complete"])
+            self.assertNotIn("selected_routes", result["cells"][0]["frontier_fixed"])
+
 
 if __name__ == "__main__":
     unittest.main()
