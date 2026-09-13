@@ -13,4 +13,5 @@ with (root/'attempts.csv').open('w') as f:
  w=csv.DictWriter(f,fieldnames=keys);w.writeheader();w.writerows(rows)
 (root/'summary.json').write_text(json.dumps(study['summary'],indent=2)+'\n')
 (root/'latest.json').write_text(json.dumps({'source_snapshot':str(source.resolve()),'source_sha256':hashlib.sha256(raw).hexdigest(),'study_snapshot':str(target),'timestamp_utc':study['timestamp_utc']},indent=2)+'\n')
+(root/'full_snapshot_path.txt').write_text(str(source.resolve())+'\n')
 print(json.dumps({'attempt_rows':len(rows),'study_snapshot':str(target)}))

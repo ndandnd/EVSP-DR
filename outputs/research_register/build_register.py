@@ -1574,6 +1574,7 @@ def main():
     payload, validation = write_outputs(
         register, snapshot_path.name, sha_bytes(raw), supplemental_sources,
     )
+    (output_dir / "latest_snapshot_path.txt").write_text(str(snapshot_path) + "\n")
     print(json.dumps({
         "output_dir": str(output_dir),
         "campaign_count": payload["campaign_count"],
