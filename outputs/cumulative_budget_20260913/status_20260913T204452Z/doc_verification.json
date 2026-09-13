@@ -1,0 +1,31 @@
+{
+  "verified_at_utc": "2026-09-13T21:04:51.939318+00:00",
+  "document_id": "1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY",
+  "tab_id": "t.lumf8xm66fow",
+  "table_rows_before": 173,
+  "table_rows_after": 173,
+  "changed_table_rows": [
+    [
+      "| 1 | 16 | 16 | 47.7 |",
+      "| 1 | 17 | 17 | 83.3 |"
+    ],
+    [
+      "| 3 | 17 | 17 | 32.0 |",
+      "| 3 | 18 | 18 | 48.2 |"
+    ],
+    [
+      "| 5 | 15 | 15 | 52.3 |",
+      "| 5 | 16 | 16 | 77.2 |"
+    ]
+  ],
+  "other_table_rows_preserved": true,
+  "figures_and_slides_untouched": true,
+  "after_sha256": "64541180e2cc4e98cf7d6f7ecf2a2142016a4f1efe2a14b40f771b4112bc2937",
+  "checks": [
+    "Current timestamp 16:47 EDT",
+    "19 fresh MIPs: 6 target,4 pool limits,9 open gaps",
+    "C3 integer18 and CG19 distinct",
+    "Three reach rows changed only",
+    "Body formatting normal; old summary removed"
+  ]
+}

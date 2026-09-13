@@ -1,0 +1,95 @@
+{
+  "schema": "evsp-cumulative-register-workbook-check-v1",
+  "source_snapshot": {
+    "path": "raw/20260913T204452Z.json",
+    "sha256": "4ab57387d1d0dbf3cdcaed6c5b59196b46f33bc4079d5e81148354f229e4680b",
+    "timestamp_utc": "2026-09-13T20:44:52.582792+00:00"
+  },
+  "supplements_preserved": [
+    {
+      "path": "raw/supplemental/chain2_recovery_submission.json",
+      "sha256": "e1ae0463bb240e6e2ec9ba39d29915aa6de960ce85dfe88ee2cb60562d9537a7"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_manifest.json",
+      "sha256": "4aec50885519130e4a8ef0059e1172a23406de5045f0644f41e688ab0fb2eeab"
+    },
+    {
+      "path": "raw/supplemental/completed_parent_validation.json",
+      "sha256": "eb3292bcb158c2ac1472ef485ed9ea00a6600c4cf5cb6b999aa56bbbf5c6f76c"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_submission.json",
+      "sha256": "e3e94f0aab45b7c6291eecddb5e8fde77434094391fed5b6bdd17785bb74c010"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_manifest.json",
+      "sha256": "1bec90faf73a24c06b60ad736ce95038272f8915e4180dc65a5bcbac3114ac7b"
+    },
+    {
+      "path": "raw/supplemental/graph_parent32_timeout_20260913.json",
+      "sha256": "e381dad5fafc755c2505104bb167864537315e1abf2c395bdef024960cd26bb0"
+    }
+  ],
+  "row_count": 2345,
+  "campaign_count": 50,
+  "cumulative_counts": {
+    "audit_result": 24,
+    "cg": 19,
+    "mip": 43
+  },
+  "extension_counts": {
+    "cg": 11,
+    "mip": 7
+  },
+  "extension_metadata_verified": 18,
+  "source_endpoint_exact_match": true,
+  "alias_independent_solve_count": 0,
+  "fresh_mip_classification": {
+    "target": 6,
+    "proved_pool_miss": 4,
+    "open_gap": 9
+  },
+  "workbook_formula_errors": 0,
+  "rendered_changed_views": [
+    {
+      "sheet": "Campaigns",
+      "range": "A1:G14"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A12:H13"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A8:H9"
+    },
+    {
+      "sheet": "CG",
+      "range": "A164:N183"
+    },
+    {
+      "sheet": "CG",
+      "range": "A21:N32"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A154:L197"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A21:L28"
+    },
+    {
+      "sheet": "Attempts",
+      "range": "A131:H155"
+    }
+  ],
+  "visual_review": "Seven sheets preserved. Fresh C1k8 and C4k8 show9/proved9 versus warm8. C2k10 shows12/bound10/unproved; C3k15 shows18/bound15/unproved. All seven extension MIPs show target fleet/proof/replay; new C1k17/C3k18/C5k16 verified. Finite-pool misses and open gaps remain distinct.",
+  "artifact_hashes": {
+    "outputs/research_register/register.json": "047ce4f5ca75b56f12012fe6d33f1c4bddf5b33ba04db3ca4727fe35238ed20f",
+    "outputs/research_register/register.csv": "51817cf2b9543f4f0ebdd8cc2545650ace11a38bc0f45348f41fc7c88d0355f5",
+    "outputs/research_register/build_register.py": "6a8e7348ba2116505de4824c9b2072e621361cd445208be6e42d2748a07b6e85",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "6b2169525774008632dadd7a88aa13b379eff9cfe95b12bc16046f267d4ccd03"
+  }
+}

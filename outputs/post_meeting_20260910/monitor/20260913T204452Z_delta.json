@@ -1,0 +1,812 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260913T195049Z.json",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260913T204452Z.json",
+  "timestamp_utc": "2026-09-13T20:44:52.582792+00:00",
+  "changed_results": [
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k17/mip/133912_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 17.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.2021868228912,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a353d66c8fbd42cf7603ea19bc0dada943a92d1d238ff31a40f96f6db4781ebd",
+      "payload_sha256": "a353d66c8fbd42cf7603ea19bc0dada943a92d1d238ff31a40f96f6db4781ebd"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k18/mip/133954_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.691627264023,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "dd60029136e34e2fc5fb4b2336b81c9bc84f9614b3d733be16afda6701140ced",
+      "payload_sha256": "dd60029136e34e2fc5fb4b2336b81c9bc84f9614b3d733be16afda6701140ced"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k16/mip/133990_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 16,
+        "fleet_bound": 16.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.074164390564,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a02f7875155df5fada8da806caa6403eefd9304f73696461f8cb42de3ff74ca2",
+      "payload_sha256": "a02f7875155df5fada8da806caa6403eefd9304f73696461f8cb42de3ff74ca2"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k17/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6144.139327573124,
+        "final": {
+          "iter": 445,
+          "attempt_iter": 445,
+          "lp_obj": 1700731.7292930596,
+          "route_weight": 16.999999999999936,
+          "artificials": 0.0,
+          "min_rc": -4.168993683606459e-08,
+          "max_row_violation": 5.164757510556228e-13,
+          "max_bound_violation": 3.367514600505217e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "4f96eb4c5c488f241f881906a165d399220da4325839c0ad90f1194613c97cb4"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k19/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4957.652903119568,
+        "final": {
+          "iter": 428,
+          "attempt_iter": 428,
+          "lp_obj": 1900714.5692811017,
+          "route_weight": 19.000000000000142,
+          "artificials": 0.0,
+          "min_rc": -5.026505112848412e-05,
+          "max_row_violation": 2.4991120284312274e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "d32ac6fa588f458a8381a10da1beb78f1412821be77d7c57124607d52b03d32c"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k16/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6153.280189800309,
+        "final": {
+          "iter": 517,
+          "attempt_iter": 517,
+          "lp_obj": 1600712.3734439802,
+          "route_weight": 16.000000000000295,
+          "artificials": 0.0,
+          "min_rc": -7.156916029726901e-05,
+          "max_row_violation": 3.5371705564557487e-13,
+          "max_bound_violation": 3.5512231015915134e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "a2a7bf63a4f73397ecaf16af1e061d214ce06e4fa03a9744326dd3b1b247b142"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k17/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4823.186912736855,
+        "final": {
+          "iter": 312,
+          "attempt_iter": 312,
+          "lp_obj": 1700742.0312144484,
+          "route_weight": 16.99999999999993,
+          "artificials": 0.0,
+          "min_rc": -8.736641632367537e-09,
+          "max_row_violation": 1.0021983243291288e-12,
+          "max_bound_violation": 3.761158051673874e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "0912613a80dc93f24f1d99129aae071282b89ada426a4185cbf89e857fe03e9b"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k08/mip_base/135595_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.4746873378754,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "c9dc2e96492adc127590ad89b0d2bfbb13394f358dc49f64438380093245a631",
+      "payload_sha256": "c9dc2e96492adc127590ad89b0d2bfbb13394f358dc49f64438380093245a631"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k10/mip_base/135600_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000027,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3605.4000010490417,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "d952a8ac9cc4006ac5ecb0797ac13890509936f80406cb590a3eebc2b864f5cc",
+      "payload_sha256": "d952a8ac9cc4006ac5ecb0797ac13890509936f80406cb590a3eebc2b864f5cc"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k10/mip_base/135620_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 10.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.4913449287415,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7b1b3844aaaade471ac6e7b731a9ee751ffb07569a1af953e7c34c1b3d25c69c",
+      "payload_sha256": "7b1b3844aaaade471ac6e7b731a9ee751ffb07569a1af953e7c34c1b3d25c69c"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/mip_base/135645_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 15.000000000000052,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.559746026993,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "484d0a9dbf511eac2aa144de6271fbdf0ca0ab1e789a1385c0712dc2f04d38f1",
+      "payload_sha256": "484d0a9dbf511eac2aa144de6271fbdf0ca0ab1e789a1385c0712dc2f04d38f1"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k08/mip_base/135655_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.158417701721,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7d5fdb4e6a73f4b6dbb6df9aace22ea50f60d30e96c25cdc518547c7df7da0be",
+      "payload_sha256": "7d5fdb4e6a73f4b6dbb6df9aace22ea50f60d30e96c25cdc518547c7df7da0be"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k10/mip_base/135660_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000712,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.3288390636444,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "d79480c0e2c528400876c257d7001d5d7b9fbc5c321270c5f75b5bc125f0ae05",
+      "payload_sha256": "d79480c0e2c528400876c257d7001d5d7b9fbc5c321270c5f75b5bc125f0ae05"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k10/mip_base/135682_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.00000000000002,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.979418992996,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "db16ef1735444a8c6cc8da16d5f8a2bd884b302a0fce13abd27e6a931547acdf",
+      "payload_sha256": "db16ef1735444a8c6cc8da16d5f8a2bd884b302a0fce13abd27e6a931547acdf"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "1",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "626e5723e9d0c0de6583ac099bfb037262817288e56a513bc2cc7a588fcbc67d"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "2",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "c0e47b17c8a660b579cbb81e49418565a823255f24cc79d5e6f44b98fe9466f4"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "6",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "c6d4bc082e6e21b258560bd34ff093d39331b177ed8ee5933d1342111f5627ed"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "11",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "19e8ac524313155a019b7a7029d915c4a4149af8ed0095027226032b2025d7fe"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "13",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "136229ec7df9c63102ea3305462c643b82d6fac336eb47aa97e6f4d42df71f26"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "14",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "1e5f118961a92a64528ade7db318c17b857db854e3e20ed5d4720c541b6556d7"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "18",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "514f04402ec44ab0743df8a8fdb702256e48a8f8f809266b5ee86938490f2aa0"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133912",
+      "case_id": "w1_k17",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133932",
+      "case_id": "w2_k17",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133954",
+      "case_id": "w3_k18",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133956",
+      "case_id": "w3_k19",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133970",
+      "case_id": "w4_k16",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133990",
+      "case_id": "w5_k16",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133992",
+      "case_id": "w5_k17",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "135595",
+      "case_id": "c1_k08_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135600",
+      "case_id": "c1_k10_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135620",
+      "case_id": "c2_k10_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135645",
+      "case_id": "c3_k15_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135655",
+      "case_id": "c4_k08_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135660",
+      "case_id": "c4_k10_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135682",
+      "case_id": "c5_k10_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133908_16",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_17",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_25",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_26",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_27",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_3",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-74"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_45",
+      "before": {
+        "state": "RUNNING",
+        "reason": "harpo"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_48",
+      "before": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_51",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_52",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-08"
+      },
+      "after": null
+    },
+    {
+      "job": "133912",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133931",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-10"
+      },
+      "after": null
+    },
+    {
+      "job": "133932",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "133933",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "133954",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133955",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "133956",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "133957",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "joachims-cpu-02"
+      }
+    },
+    {
+      "job": "133969",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-09"
+      },
+      "after": null
+    },
+    {
+      "job": "133970",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      }
+    },
+    {
+      "job": "133971",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "133990",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133991",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133992",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      }
+    },
+    {
+      "job": "133993",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "135595",
+      "before": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "135597",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135600",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "135602",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135620",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-05"
+      },
+      "after": null
+    },
+    {
+      "job": "135622",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135645",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "135647",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135655",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "135657",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135660",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "135662",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135682",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "135684",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    }
+  ]
+}

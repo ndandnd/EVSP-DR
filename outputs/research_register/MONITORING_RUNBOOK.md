@@ -1,5 +1,16 @@
 # Unicorn monitoring runbook
 
+## 13 September, 16:47 EDT — integer reach 18 and 19 fresh MIPs
+
+Snapshot 20260913T204452Z completed successfully. Extension: 11 CG certificates and 7 MIPs; newly completed C1 k17, C3 k18 and C5 k16 match their targets with finite-pool fleet proofs and individual-route replay. Highest integer matches by chain are 17,16,18,15,16,15. C3 k19 is a CG certificate, not an integer result. Charging optimality remains open. Cumulative controls: 19 certified primary fresh CG endpoints and 43 MIPs (19 fresh, 24 matched warm). Fresh outcomes: 6 target matches, 4 proved pool limits above target (C5 k5 and C1/C4/C5 k8), 9 open fleet gaps. All 24 matched warm MIPs reach their targets. Do not relaunch completed certificates or treat open MIP gaps as proved absence of the target from a pool.
+
+No new execution failure, confirmed preemption or invalid dependency in the compact delta; SSH remains available. Preemption study refreshed to 545 attempt rows. Published shared-result completion records override older wrapper preflight states. No new jobs or historical held-job changes this heartbeat.
+
+Reusable report builder: `python3 outputs/cumulative_budget_20260913/summarize_status.py --snapshot outputs/post_meeting_20260910/monitor/20260913T204452Z.json`. It creates the dated README, comparison.csv, chain_reach.csv and validation.json directly from this snapshot, carrying input/result provenance. It compares primary budgets only; the register keeps distinct larger-allowance continuations separately. It does not submit work or edit the Google Doc. Current source report: outputs/cumulative_budget_20260913/status_20260913T204452Z/README.md.
+
+Google Doc native numeric cells can be updated in place: find a unique cell value, Escape, HTML-paste replacement; Tab/Shift+Tab navigates cells. Within a cell, Super+Right then Super+Shift+Left selects its one-line text. Export may lag the last UI edit briefly; verify the settled export against the pre-edit copy. Preserve all other rows, figure tabs and Slides.
+
+
 ## 13 September, 15:51 EDT — integer reach17 and fresh-pool distinctions
 
 Snapshot195049Z: extension MIPs C1k16,C2k16,C3k16,C3k17 match targets with fleet-only pool proofs/replay; chargingstage timecapped. CG7certificates includesC3k18, which is not yet an integer result. Cumulative19CGcertified/36MIPs =24warm alltarget+12fresh (6target,2proved poolmisses,4openfleetgaps). C5k8 proves9 versuswarm8; C5k5 proves6 versuswarm5. C2k8/C3k8 remain9/bound8; C3k10/C6k10 remain11/bound10. Do not conflate overall TIME_LIMIT at chargingstage with missingfleetproof; do not blindlyrerun these comparisons. Report: outputs/cumulative_budget_20260913/status_20260913T195049Z/README.md.
