@@ -78,6 +78,7 @@ def main():
             source_sha256=r['sha256'], fleet_proven_in_pool=True,
             physical_route_replay=True, source_campaign='matched warm k15 reference')
     manifest = e['workflow']['manifest.json']['cases']
+    extension_rows = []
     for r in e['mip']:
         parts = Path(r['path']).parts
         matches = [cid for cid in manifest if cid in parts]
@@ -85,12 +86,21 @@ def main():
         cid = matches[0]
         chain = int(cid.split('_')[0][1:])
         k = int(cid.split('_')[1][1:])
+        extension_rows.append(dict(case_id=cid, chain=chain, target_k=k,
+            buses=r['buses'], pool_fleet_bound=r.get('fleet_bound'),
+            fleet_proven_in_pool=r.get('fleet_proven'),
+            physical_route_replay=r.get('physical_replay_validated'),
+            cg_minutes_at_this_k=r['source_cg_wall_s']/60,
+            source_path=r['path'], source_sha256=r.get('sha256'),
+            snapshot_path=str(source), snapshot_sha256=digest))
         if r['buses'] == k and r.get('fleet_proven') and r.get('physical_replay_validated') and k > reach[chain]['target_k']:
             reach[chain] = dict(chain=chain, target_k=k, buses=r['buses'],
                 cg_minutes_at_this_k=r['source_cg_wall_s']/60, source_path=r['path'],
                 source_sha256=r.get('sha256'), fleet_proven_in_pool=True,
                 physical_route_replay=True, source_campaign='chain extension')
     write_csv(root/'chain_reach.csv', list(reach.values()))
+    if extension_rows:
+        write_csv(root/'extension_mips.csv', extension_rows)
     counts = {name: sum(r['fresh_meaning'] == name for r in rows) for name in
         ['target matched', 'proved pool limit above target', 'fleet gap open']}
     fresh_done = sum(r['budget_arm'] == 'base' for r in c['mip'])
@@ -100,7 +110,15 @@ def main():
         '| Chain | Largest target matched | Integer buses | CG minutes at this k |',
         '|---|---:|---:|---:|']
     summary += [f"| {r['chain']} | {r['target_k']} | {r['buses']} | {r['cg_minutes_at_this_k']:.1f} |" for r in reach.values()]
-    summary += ['', 'CG minutes include this k’s route import and CG. Earlier k values, original graph construction and MIP are separate. The source of each row is in [chain_reach.csv](chain_reach.csv). A CG certificate at a larger k is not an integer result.', '',
+    summary += ['', 'CG minutes include this k’s route import and CG. Earlier k values, original graph construction and MIP are separate. The source of each row is in [chain_reach.csv](chain_reach.csv). A CG certificate at a larger k is not an integer result.']
+    misses = [r for r in extension_rows if r['buses'] > r['target_k']]
+    if misses:
+        summary += ['', 'Completed extension MIPs that have not matched the target:', '',
+            '| Case | Target | Buses found | Pool fleet bound | Fleet proved in pool? |',
+            '|---|---:|---:|---:|---|']
+        summary += [f"| C{r['chain']}, k={r['target_k']} | {r['target_k']} | {r['buses']} | {r['pool_fleet_bound']:.1f} | {'yes' if r['fleet_proven_in_pool'] else 'no'} |" for r in misses]
+        summary += ['', 'An open fleet gap leaves target attainment unresolved. It is not proof that the pool requires the extra bus. [Every completed extension MIP and its source](extension_mips.csv).']
+    summary += ['',
         '## Fresh runs given the accumulated warm-chain time', '',
         f"{cert}/24 fresh CG runs with the primary allowance have pricing certificates. {fresh_done} corresponding fresh MIPs have finished: **{counts['target matched']} target matches, {counts['proved pool limit above target']} proved pool limits above target, and {counts['fleet gap open']} unresolved fleet gaps**. All 24 matched warm-reference MIPs reach their targets with finite-pool fleet proofs. The register retains any distinct larger-allowance continuations separately; this table never mixes them with primary results.", '',
         '| Case | Fresh CG min | Fresh buses | Fresh pool fleet bound | Fleet proved? | Warm buses | Meaning |',

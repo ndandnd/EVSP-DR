@@ -1,0 +1,26 @@
+{
+  "verified_at_utc": "2026-09-13T21:55:03.558056+00:00",
+  "document_id": "1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY",
+  "tab_id": "t.lumf8xm66fow",
+  "table_rows_before": 173,
+  "table_rows_after": 173,
+  "changed_table_rows": [
+    [
+      "| 4 | 15 | 15 | 64.4 |",
+      "| 4 | 16 | 16 | 102.6 |"
+    ],
+    [
+      "| 5 | 16 | 16 | 77.2 |",
+      "| 5 | 17 | 17 | 80.4 |"
+    ]
+  ],
+  "other_table_rows_preserved": true,
+  "figures_and_slides_untouched": true,
+  "after_sha256": "b0ec7b25571397f3656699c06ca950dd45e2efc2f24d71af9ff7bb0cc71b18c8",
+  "checks": [
+    "17:48 EDT status",
+    "20 primary fresh CG certificates",
+    "C2 k17 and C3 k19 open MIP gaps",
+    "C3 k20 CG distinguished from integer result"
+  ]
+}

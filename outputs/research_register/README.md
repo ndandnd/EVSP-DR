@@ -1,6 +1,6 @@
 # EVSP–DR experiment register
 
-**Current results, 13 September 16:47 EDT:** [Chain reach and fresh-versus-warm comparison](../cumulative_budget_20260913/status_20260913T204452Z/README.md). Chain 3 matches 18 buses; chain 1 reaches 17, and chains 2 and 5 reach 16, with saved-pool fleet proofs and individual-route replay. Fresh controls: 19 CG certificates and 19 finished MIPs—6 target matches, 4 proved pool limits above target, and 9 unresolved fleet gaps. All 24 matched warm MIPs reach their targets. These use the baseline constraints, without shared station capacity or a terminal-SOC floor. The collection succeeded; no new execution failure, preemption or invalid dependency was detected.
+**Current results, 13 September 17:48 EDT:** [Chain reach and fresh-versus-warm comparison](../cumulative_budget_20260913/status_20260913T214607Z/README.md). Highest verified matches by chain are 17, 16, 18, 16, 17 and 15 buses. New C4 k16 and C5 k17 matches have saved-pool fleet proofs and individual-route replay. C2 k17 found 18 buses with bound 17; C3 k19 found 20 with bound 19. Those one-hour MIPs leave the fleet question open. Fresh controls: 20 CG certificates, 19 finished MIPs (6 matches, 4 proved pool limits above target, 9 open gaps); all 24 matched warm MIPs reach their targets. Baseline constraints apply, without shared station capacity or a terminal-SOC floor. No new execution failure, preemption or invalid dependency was detected.
 
 **Chain expansion, 13 September:** [Six chains continuing from k=16 to k=25](../chain_extension_20260913/README.md). The 60 new cases preserve the successful baseline settings, append one randomly chosen unused duty per k, and inherit the preceding saved pool. Graph preparation is independent (concurrency 50); CG dependencies stay within each chain; each final MIP waits only on its own CG. Inputs through k=40 are frozen for later continuation. Graph array **133908** had **50 running tasks** at10:25EDT; all120CG/MIP dependencies were verified. Exact job IDs and launch verification are in the campaign records. These are submissions, not new target matches. Astra only for this usage week.
 
@@ -21,7 +21,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2,345 artifact/stage records across 50 campaign/source groups**, from the collection completed at 16:47 EDT on 13 September. Counts are not independent experimental sample sizes.
+Current build: **2,338 artifact/stage records across 50 campaign/source groups**, from the collection completed at 17:48 EDT on 13 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|

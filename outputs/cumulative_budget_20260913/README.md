@@ -2,7 +2,7 @@
 
 **Launched 13 September, verified 14:20 EDT:** 120 stage jobs across 24 datasets; 45 running and 3 finished at the first check, with 72 waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.
 
-**Latest results, 13 September 16:47 EDT:** 19 fresh CG certificates and 19 completed fresh MIPs: 6 target matches, 4 proved pool limits above target, and 9 open fleet gaps. All 24 matched warm MIPs attain their targets. [Current comparisons and precise interpretation](status_20260913T204452Z/README.md). The parallel chain extension now has a verified 18-bus integer match in chain 3.
+**Latest results, 13 September 17:48 EDT:** 20 fresh CG certificates and 19 completed fresh MIPs: 6 target matches, 4 proved pool limits above target, and 9 open fleet gaps. Fresh C5 k15 is newly certified after 164.4 minutes; its MIP is pending. All 24 matched warm MIPs attain their targets. [Current comparisons and precise interpretation](status_20260913T214607Z/README.md). The parallel chain extension's largest verified match remains 18 buses.
 
 **Earlier first results, 13 September 14:30 EDT.** Three fresh k=5 runs have pricing certificates. Two have also finished MIP and recovered five buses. This is evidence that inherited columns are unnecessary for these two cases under the cumulative allowance; larger cases are still running.
 

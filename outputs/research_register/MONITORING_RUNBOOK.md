@@ -1,5 +1,14 @@
 # Unicorn monitoring runbook
 
+## 13 September, 17:48 EDT — larger warm-chain gaps remain unresolved
+
+Successful snapshot 20260913T214607Z: extension 15 CG certificates/11 MIPs. New target matches C4 k16 and C5 k17 have finite-pool fleet proofs and individual-route replay. C2 k17 found 18/bound17 and C3 k19 found20/bound19 after the one-hour MIP budget; both fleet proofs remain open. They do not establish that the target is absent from the pool. Highest matches by chain17,16,18,16,17,15. C3 k20 is newly CG-certified, not an integer result. New CG certificates also C4 k17,C5 k18,C6 k16.
+
+Cumulative primary fresh CG20/24, with new C5 k15 certificate after164.4min. MIPs unchanged:19fresh (6target,4proved pool limits,9open gaps) and24matchedwarm alltarget. No execution failures, confirmed preemptions or invalid dependencies;9MIP scheduler transitions and29queue transitions. Preemption study546attemptrows. No new submissions, retries or held-job changes. Register2338rows/50campaigns preserves six supplements; falling total reflects operational queue rows, not erased results. Doc updates only two reach rows and current paragraphs; figures and Slides preserved.
+
+The reusable summarize_status.py now also exports extension_mips.csv and displays completed above-target extension MIPs, so the best-reach table cannot hide unresolved larger cases. Use --snapshot with the current source; preserve older dated reports. Workbook refresh uses existing build_register.py with all registered supplements, then build_workbook.mjs and verify_register_workbook.mjs after <stamp>. No source algorithm/schema changes this heartbeat.
+
+
 ## 13 September, 16:47 EDT — integer reach 18 and 19 fresh MIPs
 
 Snapshot 20260913T204452Z completed successfully. Extension: 11 CG certificates and 7 MIPs; newly completed C1 k17, C3 k18 and C5 k16 match their targets with finite-pool fleet proofs and individual-route replay. Highest integer matches by chain are 17,16,18,15,16,15. C3 k19 is a CG certificate, not an integer result. Charging optimality remains open. Cumulative controls: 19 certified primary fresh CG endpoints and 43 MIPs (19 fresh, 24 matched warm). Fresh outcomes: 6 target matches, 4 proved pool limits above target (C5 k5 and C1/C4/C5 k8), 9 open fleet gaps. All 24 matched warm MIPs reach their targets. Do not relaunch completed certificates or treat open MIP gaps as proved absence of the target from a pool.

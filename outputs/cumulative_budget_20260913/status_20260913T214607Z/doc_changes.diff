@@ -1,0 +1,51 @@
+--- doc_before.md
++++ doc_after.md
+@@ -1,23 +1,25 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Chain results and cumulative-budget comparison updated 13 September 16:47 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
++Week of 14 September. Chain results and cumulative-budget comparison updated 13 September 17:48 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ ## **Now running: six chains from k=16 to k=25**
+ 
+-**13 September, 16:47 EDT: chain 3 now matches 18 buses.** Chain 1 reaches 17; chains 2 and 5 reach 16\. Each new integer result has a fleet proof within its saved pool and passes individual-route physical replay. The charging stage reached its time limit, so charging optimality remains open.
++**13 September, 17:48 EDT: chain 3 matches 18 buses.** Chains 1 and 5 reach 17; chains 2 and 4 reach 16\. These target matches have fleet proofs within their saved pools and pass individual-route physical replay. Charging optimality remains open.
+ 
+ | Chain | Largest target matched | Integer buses found | CG minutes at this k |
+ | ----- | ----- | ----- | ----- |
+ | 1 | 17 | 17 | 83.3 |
+ | 2 | 16 | 16 | 44.3 |
+ | 3 | 18 | 18 | 48.2 |
+-| 4 | 15 | 15 | 64.4 |
+-| 5 | 16 | 16 | 77.2 |
++| 4 | 16 | 16 | 102.6 |
++| 5 | 17 | 17 | 80.4 |
+ | 6 | 15 | 15 | 64.0 |
+ 
+-CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. The k=15 entries retain the previous completed baseline. Chain 3 has a CG certificate at k=19, but its integer result is not yet available. The submitted k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260913T204452Z/README.md).
++CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. Chain 6’s k=15 row retains the previous completed baseline. Chain 3 has a CG certificate at k=20; its integer result is pending.
++
++Two completed one-hour MIPs have open fleet gaps: chain 2 at target 17 found 18 buses with a pool bound of 17; chain 3 at target 19 found 20 with a bound of 19\. Neither proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260913T214607Z/README.md)
+ 
+ | Stage | How it starts | Time budget per case |
+ | ----- | ----- | ----- |
+@@ -56,7 +58,7 @@
+ 
+ ## **New comparison: count the work behind each warm start**
+ 
+-**Latest results — 13 September, 16:47 EDT.** Fresh CG has converged in 19 of 24 cases under the primary cumulative allowance. Nineteen fresh MIPs have finished: six match the target, four prove that their saved pool needs more buses, and nine leave the fleet gap open. All 24 matched warm-pool MIPs meet their targets. The table below retains selected k=5 examples; “converged” means no route below reduced cost −0.0001 in the tested graph.
++**Latest results — 13 September, 17:48 EDT.** Fresh CG has converged in 20 of 24 cases under the primary cumulative allowance. Chain 5 at k=15 is newly certified after 164.4 minutes; its MIP is pending. Nineteen fresh MIPs have finished: six match the target, four prove that their saved pool needs more buses, and nine leave the fleet gap open. All 24 matched warm-pool MIPs meet their targets. The table below retains selected k=5 examples; “converged” means no route below reduced cost −0.0001 in the tested graph.
+ 
+ | Chain / target | Cumulative CG allowance | Fresh CG time | Fresh integer fleet | Warm integer fleet |
+ | ----- | ----- | ----- | ----- | ----- |
+@@ -70,7 +72,7 @@
+ 
+ The other nine fresh MIPs remain unresolved after one hour: chains 2 and 3 at k=8 have 9 buses with a bound of 8; at k=10, chain 2 has 12 buses and the other five chains have 11, all with a bound of 10; chain 3 at k=15 has 18 buses with a bound of 15\. These open gaps do not prove that the target is absent from those pools.
+ 
+-These are baseline runs without shared station capacity or a terminal-SOC floor; individual-route replay passes. Historical code and hardware variation limits timing comparisons. [Full current comparison and source evidence, 16:47 EDT.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260913T204452Z/README.md)
++These are baseline runs without shared station capacity or a terminal-SOC floor; individual-route replay passes. Historical code and hardware variation limits timing comparisons. [Full current comparison and source evidence, 17:48 EDT.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260913T214607Z/README.md)
+ 
+ Launched 13 September, verified 14:20 EDT. A warm k=8 run uses columns built at k=2,…,7. We now give a fresh k=8 run the sum of those CG times plus the k=8 CG time. The same test covers all six chains at k=5,8,10,15. Fresh starts use single-trip routes, with no inherited solution columns.
+ 
