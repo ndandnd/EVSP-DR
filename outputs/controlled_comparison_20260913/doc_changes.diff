@@ -1,0 +1,11 @@
+--- before
++++ after
+@@ -1,6 +1,8 @@
+ # **EVSP DR Current Research**
+ 
+ Week of 14 September. Results checked 12 September 2026 at 21:14 EDT.
++
++**New comparisons launched 12 September at 22:11 EDT.** All 24 paired jobs are running: k=8, 10 and 15, comparing indexed replay on/off, 512 versus full inheritance, and the LP-setup optimization on/off. Both arms of each pair use the same node; a second pair reverses their order. Each arm gets two hours of CG and one hour of MIP. Results are pending. [Comparison plan, settings and job IDs](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/controlled_comparison_20260913/README.md).
+ 
+ **Latest: all 29 completed full-pool MIPs match their fleet targets; chains 3 and 5 reach k=15.**
+ 

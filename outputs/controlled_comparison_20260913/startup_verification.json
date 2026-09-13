@@ -1,0 +1,365 @@
+{
+  "checked_utc": "2026-09-13T02:14:36.105985+00:00",
+  "rows": [
+    {
+      "pair": "w1_k08_full_index_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "E",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_full_index_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_index_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "A",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_index_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "B",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_master_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_master_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "D",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_pool_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "B",
+          "stage": "cg_running",
+          "cg_iteration": 24,
+          "cg_stop_reason": "running",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w1_k08_pool_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_full_index_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "E",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_full_index_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_index_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "A",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_index_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "B",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_master_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_master_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "D",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_pool_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "B",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w3_k15_pool_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_full_index_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "E",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_full_index_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_index_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "A",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_index_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "B",
+          "stage": "cg_running",
+          "cg_iteration": 24,
+          "cg_stop_reason": "running",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_master_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_master_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "D",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_pool_r1",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "B",
+          "stage": "cg_running",
+          "cg_iteration": 24,
+          "cg_stop_reason": "running",
+          "error": null
+        }
+      ],
+      "error": null
+    },
+    {
+      "pair": "w4_k10_pool_r2",
+      "status": "active",
+      "license_returncode": 0,
+      "arms": [
+        {
+          "arm": "C",
+          "stage": "cg_running",
+          "cg_iteration": null,
+          "cg_stop_reason": "initializing",
+          "error": null
+        }
+      ],
+      "error": null
+    }
+  ]
+}

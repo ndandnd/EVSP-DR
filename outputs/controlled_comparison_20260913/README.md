@@ -2,6 +2,10 @@
 
 Prepared 13 September 2026 UTC (12 September evening in New York). The user requested new experiments to measure the changes separately. Submission status and exact IDs are recorded in `jobs.json`; a prepared manifest alone does not mean a job was launched.
 
+**Launched 12 September 2026, 22:11 EDT: all 24 pairs running on default.** At the first verification, all 24 licenses passed, all arms had entered their CG process, three had completed positive CG iterations, and no execution error was recorded. The total EVSP–DR queue had 29 running jobs. These are startup observations, not completed comparison results.
+
+[Exact job IDs and verified resource requests](jobs.json), [startup checks](startup_verification.json), [queue snapshot](queue_after_launch.json).
+
 ## Questions and comparisons
 
 | Comparison | First setting | Second setting | What it measures |

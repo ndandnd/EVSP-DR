@@ -1,0 +1,4065 @@
+{
+  "attempts": [
+    {
+      "allocation": {
+        "bytes": 4639,
+        "exists": true,
+        "mtime_ns": 1789265560425538287,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/allocation.json",
+        "sha256": "68b5b91482f48cb2b82db6bd17166b88bd5015bb4ce105f2cc700d51952fc84b"
+      },
+      "arms": {
+        "E": {
+          "started_utc": "2026-09-13T02:12:40.792002+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88605_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:40.767008+00:00",
+        "host": "en-cc-unicorn-cpu-20.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27808,
+          "system_seconds": 0.030606999999999995,
+          "user_seconds": 0.07105199999999999
+        },
+        "started_utc": "2026-09-13T02:12:40.447054+00:00",
+        "wall_seconds": 0.2866613620426506,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "E",
+        "C"
+      ],
+      "pair_id": "w1_k08_full_index_r1",
+      "pair_status": {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265560796549864,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/pair_status.json",
+        "sha256": "50a5e0953db2ef17d70cbc49986466aaf3140a30e2f343fc854768041da12f30"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4639,
+        "exists": true,
+        "mtime_ns": 1789265563787643192,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/allocation.json",
+        "sha256": "bdccc29010aa6c9cf5445b35516370ed61f1db185bcc2c2fefeb5b567369af13"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:44.034511+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88606_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:44.011127+00:00",
+        "host": "en-cc-unicorn-cpu-22.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27792,
+          "system_seconds": 0.013620999999999994,
+          "user_seconds": 0.057402999999999996
+        },
+        "started_utc": "2026-09-13T02:12:43.804864+00:00",
+        "wall_seconds": 0.1804559479933232,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "E"
+      ],
+      "pair_id": "w1_k08_full_index_r2",
+      "pair_status": {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265564037650993,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/pair_status.json",
+        "sha256": "dfb19c727257667b6efc537dfad91fa01735a6f38c10485fb80f895c3cb3c727"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4618,
+        "exists": true,
+        "mtime_ns": 1789265574566979532,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/allocation.json",
+        "sha256": "a99b6b5a9d61e66c3b278a7d8717571cac4a1295e1bd945e62c3e54698cfad62"
+      },
+      "arms": {
+        "A": {
+          "started_utc": "2026-09-13T02:12:54.782328+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88586_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:54.776680+00:00",
+        "host": "en-cc-unicorn-cpu-76.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27712,
+          "system_seconds": 0.028100000000000014,
+          "user_seconds": 0.08831499999999999
+        },
+        "started_utc": "2026-09-13T02:12:54.579927+00:00",
+        "wall_seconds": 0.17408743500709534,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "A",
+        "B"
+      ],
+      "pair_id": "w1_k08_index_r1",
+      "pair_status": {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265574782986272,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/pair_status.json",
+        "sha256": "cb10f4c9b81a427651c604e389c8db545ec0daf045ef5a6e3af31500fae98515"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4609,
+        "exists": true,
+        "mtime_ns": 1789265572015899933,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/allocation.json",
+        "sha256": "8867ebdeb085d467ec63ba5612235aa6ce79a301df2d86752fbfd695645feea9"
+      },
+      "arms": {
+        "B": {
+          "started_utc": "2026-09-13T02:12:52.238134+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88587_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:52.224835+00:00",
+        "host": "en-cc-unicorn-cpu-79.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27144,
+          "system_seconds": 0.036295999999999995,
+          "user_seconds": 0.086707
+        },
+        "started_utc": "2026-09-13T02:12:52.032244+00:00",
+        "wall_seconds": 0.17506334651261568,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "B",
+        "A"
+      ],
+      "pair_id": "w1_k08_index_r2",
+      "pair_status": {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265572239906922,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/pair_status.json",
+        "sha256": "be2159bcc2a1159c398b71dc4c24b8f0162044b8573f3907e8e4c6ebda04c2ac"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4621,
+        "exists": true,
+        "mtime_ns": 1789265572484914567,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/allocation.json",
+        "sha256": "5d4a8cf7e2415661bae0c3acc02477e268a6e54869e78eeb33f110449771cfdb"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:52.876913+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88591_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:52.859487+00:00",
+        "host": "en-cc-unicorn-cpu-58.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27272,
+          "system_seconds": 0.037519000000000025,
+          "user_seconds": 0.126753
+        },
+        "started_utc": "2026-09-13T02:12:52.507618+00:00",
+        "wall_seconds": 0.32888445002026856,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "D"
+      ],
+      "pair_id": "w1_k08_master_r1",
+      "pair_status": {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265572878926861,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/pair_status.json",
+        "sha256": "44f822c1f40431c3fa623f3fe0af0946cd64e61d479033d21332c5a1da1491c6"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4621,
+        "exists": true,
+        "mtime_ns": 1789265566363723572,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/allocation.json",
+        "sha256": "79fbb28274626d18aa8958d34bc262f6fc446ea9fce863eabf9756a9d6628d10"
+      },
+      "arms": {
+        "D": {
+          "started_utc": "2026-09-13T02:12:46.850622+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88592_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:46.832444+00:00",
+        "host": "en-cc-unicorn-cpu-61.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27264,
+          "system_seconds": 0.043401999999999996,
+          "user_seconds": 0.14131000000000002
+        },
+        "started_utc": "2026-09-13T02:12:46.381900+00:00",
+        "wall_seconds": 0.42794942506588995,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "D",
+        "C"
+      ],
+      "pair_id": "w1_k08_master_r2",
+      "pair_status": {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265566853738862,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/pair_status.json",
+        "sha256": "e5a26155c2d622821925494d083cc50935e6c8002e006bd70a894b8b3043b39d"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4615,
+        "exists": true,
+        "mtime_ns": 1789265568039775869,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/allocation.json",
+        "sha256": "6f68b19fdadf8b4f22abc9b1b2a1f8a967918f2b4b00a77ded3afdfc1afbbf7c"
+      },
+      "arms": {
+        "B": {
+          "started_utc": "2026-09-13T02:12:48.172991+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88588_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:48.167956+00:00",
+        "host": "en-cc-unicorn-cpu-57.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 26284,
+          "system_seconds": 0.020216000000000012,
+          "user_seconds": 0.06367999999999999
+        },
+        "started_utc": "2026-09-13T02:12:48.045922+00:00",
+        "wall_seconds": 0.11728840810246766,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "B",
+        "C"
+      ],
+      "pair_id": "w1_k08_pool_r1",
+      "pair_status": {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265568171779987,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/pair_status.json",
+        "sha256": "b5bee39ae4acfbc0a77f831ee9680957aba76c96dc963a6be93b6e10a630b213"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4614,
+        "exists": true,
+        "mtime_ns": 1789265567870770595,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/allocation.json",
+        "sha256": "d743802787ac0cd6ec7ac232a8572b63c40784c7ce87f0cdb24a420095ec75e3"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:48.004070+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88590_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:47.998523+00:00",
+        "host": "en-cc-unicorn-cpu-59.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27540,
+          "system_seconds": 0.024463000000000013,
+          "user_seconds": 0.056756
+        },
+        "started_utc": "2026-09-13T02:12:47.875679+00:00",
+        "wall_seconds": 0.11782872397452593,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "B"
+      ],
+      "pair_id": "w1_k08_pool_r2",
+      "pair_status": {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265568003774745,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/pair_status.json",
+        "sha256": "912389ad5bd593e793cd3815800faa839e1fb8f1c008ca48ca1c5972ac195914"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4640,
+        "exists": true,
+        "mtime_ns": 1789265576031025214,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r1/88607_r0/allocation.json",
+        "sha256": "86216ddba23afa6d0271ea06d570d0f50ad994441cdd804cfa0d64e039764d08"
+      },
+      "arms": {
+        "E": {
+          "started_utc": "2026-09-13T02:12:56.173890+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88607_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:56.165815+00:00",
+        "host": "en-cc-unicorn-cpu-21.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27820,
+          "system_seconds": 0.023630000000000012,
+          "user_seconds": 0.060058
+        },
+        "started_utc": "2026-09-13T02:12:56.040636+00:00",
+        "wall_seconds": 0.1178311980329454,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "E",
+        "C"
+      ],
+      "pair_id": "w3_k15_full_index_r1",
+      "pair_status": {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265576172029614,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r1/88607_r0/pair_status.json",
+        "sha256": "05630b08fd238a8f65ad9ffe2b126ccabdba695979885fe197656e9982eac20b"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4643,
+        "exists": true,
+        "mtime_ns": 1789265582343222169,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r2/88608_r0/allocation.json",
+        "sha256": "9cd9d24d7c2b09ff1c109e2b5c790697de04205eef2075aa3a9db39df7867783"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:13:02.470600+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88608_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:13:02.467541+00:00",
+        "host": "en-cc-unicorn-cpu-08.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27492,
+          "system_seconds": 0.024990000000000012,
+          "user_seconds": 0.07197
+        },
+        "started_utc": "2026-09-13T02:13:02.347474+00:00",
+        "wall_seconds": 0.11632463103160262,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "E"
+      ],
+      "pair_id": "w3_k15_full_index_r2",
+      "pair_status": {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265582469226100,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r2/88608_r0/pair_status.json",
+        "sha256": "47b8456bf0b1336f72f1da54d8838db7d569ab73c422ce860e50f26598e2aa3e"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4607,
+        "exists": true,
+        "mtime_ns": 1789265580753172556,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_index_r1/88599_r0/allocation.json",
+        "sha256": "20fa006c3f21d688a9ebd9998f69ce463e554b3972f3b3d82ebceb8932fc97fb"
+      },
+      "arms": {
+        "A": {
+          "started_utc": "2026-09-13T02:13:00.887264+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88599_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:13:00.882493+00:00",
+        "host": "en-cc-unicorn-cpu-48.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 26276,
+          "system_seconds": 0.025010000000000004,
+          "user_seconds": 0.05802099999999999
+        },
+        "started_utc": "2026-09-13T02:13:00.759805+00:00",
+        "wall_seconds": 0.11766397906467319,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "A",
+        "B"
+      ],
+      "pair_id": "w3_k15_index_r1",
+      "pair_status": {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265580886176706,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_index_r1/88599_r0/pair_status.json",
+        "sha256": "2df15f0b1192cd5ebd5a0aac9015d49cb7fe7e2f666147a691249b60a1afbe6f"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4607,
+        "exists": true,
+        "mtime_ns": 1789265580754172587,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_index_r2/88600_r0/allocation.json",
+        "sha256": "4c6a8c2db38150ab6d182929d494036a71b27c79d66f426d4df6b11098327a87"
+      },
+      "arms": {
+        "B": {
+          "started_utc": "2026-09-13T02:13:00.888124+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88600_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:13:00.883491+00:00",
+        "host": "en-cc-unicorn-cpu-48.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27256,
+          "system_seconds": 0.02727199999999999,
+          "user_seconds": 0.08282599999999998
+        },
+        "started_utc": "2026-09-13T02:13:00.759651+00:00",
+        "wall_seconds": 0.11780411005020142,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "B",
+        "A"
+      ],
+      "pair_id": "w3_k15_index_r2",
+      "pair_status": {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265580887176737,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_index_r2/88600_r0/pair_status.json",
+        "sha256": "e5aff341954b72633154c81f74529b7d5697ab866bc34e6aaeb61852b57ec140"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4629,
+        "exists": true,
+        "mtime_ns": 1789265567556760798,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/allocation.json",
+        "sha256": "385ef8213beaa910b33c97e60c40be2d73d5407f451fd9d0fb0001b117371f8e"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:47.720283+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88603_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:47.715709+00:00",
+        "host": "en-cc-unicorn-cpu-18.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27820,
+          "system_seconds": 0.014896999999999994,
+          "user_seconds": 0.05362800000000001
+        },
+        "started_utc": "2026-09-13T02:12:47.592730+00:00",
+        "wall_seconds": 0.1174885390792042,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "D"
+      ],
+      "pair_id": "w3_k15_master_r1",
+      "pair_status": {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265567717765821,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/pair_status.json",
+        "sha256": "62b3b3901098ed597268cf1adfb8a7b4c367895a567469c8719c2605d14d59ec"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4628,
+        "exists": true,
+        "mtime_ns": 1789265578528103128,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r2/88604_r0/allocation.json",
+        "sha256": "337938afca01d31c3025519957c8cc071a36f1fd4b7cc34a05fb26eee5d48496"
+      },
+      "arms": {
+        "D": {
+          "started_utc": "2026-09-13T02:12:58.804814+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88604_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:58.797696+00:00",
+        "host": "en-cc-unicorn-cpu-19.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27844,
+          "system_seconds": 0.028347999999999984,
+          "user_seconds": 0.068246
+        },
+        "started_utc": "2026-09-13T02:12:58.537824+00:00",
+        "wall_seconds": 0.25085384398698807,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "D",
+        "C"
+      ],
+      "pair_id": "w3_k15_master_r2",
+      "pair_status": {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265578804111741,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r2/88604_r0/pair_status.json",
+        "sha256": "a23d0076a9759c630a7627cc82c82d535cf9c381876bd9237c84a544395de35e"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4605,
+        "exists": true,
+        "mtime_ns": 1789265580754172587,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r1/88601_r0/allocation.json",
+        "sha256": "7c0c3d6ed91643135ac0c426d71652abd12a8b5f9c600924398ed3f660ce271d"
+      },
+      "arms": {
+        "B": {
+          "started_utc": "2026-09-13T02:13:00.887353+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88601_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:13:00.882620+00:00",
+        "host": "en-cc-unicorn-cpu-48.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 26908,
+          "system_seconds": 0.022857000000000016,
+          "user_seconds": 0.06381200000000001
+        },
+        "started_utc": "2026-09-13T02:13:00.759859+00:00",
+        "wall_seconds": 0.11719887610524893,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "B",
+        "C"
+      ],
+      "pair_id": "w3_k15_pool_r1",
+      "pair_status": {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265580886176706,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r1/88601_r0/pair_status.json",
+        "sha256": "5223c852d209ac77658828afc0480ac0afead469acbad4134367edb34436d420"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4611,
+        "exists": true,
+        "mtime_ns": 1789265579825143599,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r2/88602_r0/allocation.json",
+        "sha256": "26fd3dba26c97373cf993e12f35c43e7c6a38369c7a963839b60c11b5e9e056a"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:13:00.066070+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88602_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:13:00.060386+00:00",
+        "host": "en-cc-unicorn-cpu-82.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 28280,
+          "system_seconds": 0.032528,
+          "user_seconds": 0.097583
+        },
+        "started_utc": "2026-09-13T02:12:59.832773+00:00",
+        "wall_seconds": 0.2194730993360281,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "B"
+      ],
+      "pair_id": "w3_k15_pool_r2",
+      "pair_status": {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265580065151088,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r2/88602_r0/pair_status.json",
+        "sha256": "e0242f2d3f2c0d68048e4ec0d099bcda3ca3546e726b73056a98e62246067e49"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4642,
+        "exists": true,
+        "mtime_ns": 1789265579712140073,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r1/88609_r0/allocation.json",
+        "sha256": "189f9d1e086b62542ad4ef9825546341dedd60501ddde792a56679a50b3fbb66"
+      },
+      "arms": {
+        "E": {
+          "started_utc": "2026-09-13T02:12:59.960933+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88609_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:59.951995+00:00",
+        "host": "en-cc-unicorn-cpu-08.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27160,
+          "system_seconds": 0.030464999999999992,
+          "user_seconds": 0.09850600000000001
+        },
+        "started_utc": "2026-09-13T02:12:59.722228+00:00",
+        "wall_seconds": 0.2192104016430676,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "E",
+        "C"
+      ],
+      "pair_id": "w4_k10_full_index_r1",
+      "pair_status": {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265579962147874,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r1/88609_r0/pair_status.json",
+        "sha256": "81ea326b2c86cae8c3c9feadf3ca04503ccae897d72212f6e27e1c22290c6335"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4625,
+        "exists": true,
+        "mtime_ns": 1789265574749985242,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/allocation.json",
+        "sha256": "9554ca2bfdab1cf0b46b25931a5ba05c9e069315e71a4c7a49e54cb232f8e4e3"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:54.996007+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88610_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:54.987803+00:00",
+        "host": "en-cc-unicorn-cpu-77.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27196,
+          "system_seconds": 0.02407799999999999,
+          "user_seconds": 0.087284
+        },
+        "started_utc": "2026-09-13T02:12:54.757219+00:00",
+        "wall_seconds": 0.2204860169440508,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "E"
+      ],
+      "pair_id": "w4_k10_full_index_r2",
+      "pair_status": {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265574997992981,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/pair_status.json",
+        "sha256": "0350c9d61107151fa11b080f7fa46a72d2d7b5e43031f9c70230e18eda2dcacc"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4618,
+        "exists": true,
+        "mtime_ns": 1789265575198999253,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r1/88593_r0/allocation.json",
+        "sha256": "25a49cacccfa9650bcf9d91d3c371d9a73fc256c797a693b32ff5810bf54274a"
+      },
+      "arms": {
+        "A": {
+          "started_utc": "2026-09-13T02:12:55.358104+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88593_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:55.353298+00:00",
+        "host": "en-cc-unicorn-cpu-62.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 28220,
+          "system_seconds": 0.018196999999999963,
+          "user_seconds": 0.06208200000000001
+        },
+        "started_utc": "2026-09-13T02:12:55.204113+00:00",
+        "wall_seconds": 0.11792635708115995,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "A",
+        "B"
+      ],
+      "pair_id": "w4_k10_index_r1",
+      "pair_status": {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265575357004183,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r1/88593_r0/pair_status.json",
+        "sha256": "5158729a26fdb0e570b63af0f34a64e262f8b3f4c64d2984b42dd888a2e19c2b"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4617,
+        "exists": true,
+        "mtime_ns": 1789265574781986241,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r2/88594_r0/allocation.json",
+        "sha256": "b87874311f73e45c9fe60733feeb76ceb4ab971dbdcf68bf6b95cbb0402eefe5"
+      },
+      "arms": {
+        "B": {
+          "started_utc": "2026-09-13T02:12:55.025059+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88594_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:55.013528+00:00",
+        "host": "en-cc-unicorn-cpu-63.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 26900,
+          "system_seconds": 0.02635900000000002,
+          "user_seconds": 0.077048
+        },
+        "started_utc": "2026-09-13T02:12:54.786787+00:00",
+        "wall_seconds": 0.2192082409746945,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "B",
+        "A"
+      ],
+      "pair_id": "w4_k10_index_r2",
+      "pair_status": {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265575024993823,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r2/88594_r0/pair_status.json",
+        "sha256": "99cfea2b360dc0f9dc93b21658d8444505ed4f404253bc5e0200aeeb3ca8b638"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4613,
+        "exists": true,
+        "mtime_ns": 1789265576188030113,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r1/88597_r0/allocation.json",
+        "sha256": "3fa9d5585cfc76faa4e5cc7617cb370e87ae4c2a103c384aec79d27e7ee10996"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:56.317579+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88597_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:56.313700+00:00",
+        "host": "en-cc-unicorn-cpu-78.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 26908,
+          "system_seconds": 0.021179000000000003,
+          "user_seconds": 0.045244999999999994
+        },
+        "started_utc": "2026-09-13T02:12:56.192936+00:00",
+        "wall_seconds": 0.11692462908104062,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "D"
+      ],
+      "pair_id": "w4_k10_master_r1",
+      "pair_status": {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265576317034138,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r1/88597_r0/pair_status.json",
+        "sha256": "a1dd9e0f9bf455a484f76ca87d8c17c4e9822f42eb6290d66acfa5b3500c965f"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4610,
+        "exists": true,
+        "mtime_ns": 1789265574138966177,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/allocation.json",
+        "sha256": "ae7648363d718de468d5178aa43db5204ce4ddb0b06adf32af377cd352f04e1e"
+      },
+      "arms": {
+        "D": {
+          "started_utc": "2026-09-13T02:12:54.526602+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88598_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:54.508890+00:00",
+        "host": "en-cc-unicorn-cpu-47.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27256,
+          "system_seconds": 0.052856000000000014,
+          "user_seconds": 0.13112500000000002
+        },
+        "started_utc": "2026-09-13T02:12:54.154882+00:00",
+        "wall_seconds": 0.3284403351135552,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "D",
+        "C"
+      ],
+      "pair_id": "w4_k10_master_r2",
+      "pair_status": {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265574529978378,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/pair_status.json",
+        "sha256": "cbe0b85f8b515bd3599e1a840ed046a057d5130ff9d369e24a377c6b9eb1359a"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4606,
+        "exists": true,
+        "mtime_ns": 1789265576166029426,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_pool_r1/88595_r0/allocation.json",
+        "sha256": "c6d4a759e2e20b5f450d4042e2b7ee35b84f8f4a8e32b15a09886aeaed36e3c3"
+      },
+      "arms": {
+        "B": {
+          "started_utc": "2026-09-13T02:12:56.309006+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88595_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:56.304747+00:00",
+        "host": "en-cc-unicorn-cpu-78.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 27348,
+          "system_seconds": 0.016081999999999985,
+          "user_seconds": 0.04924899999999999
+        },
+        "started_utc": "2026-09-13T02:12:56.183647+00:00",
+        "wall_seconds": 0.11685189697891474,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "B",
+        "C"
+      ],
+      "pair_id": "w4_k10_pool_r1",
+      "pair_status": {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265576308033857,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_pool_r1/88595_r0/pair_status.json",
+        "sha256": "d62906ac5c83f8b49b873781e2ad88db91207d2d5b6390eb3d2d55a85ec7d117"
+      },
+      "status": "not_written"
+    },
+    {
+      "allocation": {
+        "bytes": 4607,
+        "exists": true,
+        "mtime_ns": 1789265576168029489,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_pool_r2/88596_r0/allocation.json",
+        "sha256": "83ad41a0eabb377dc603f966f1d1882320e6f801fede5f5a237f9f76b32aeedc"
+      },
+      "arms": {
+        "C": {
+          "started_utc": "2026-09-13T02:12:56.308878+00:00",
+          "status": "cg_running"
+        }
+      },
+      "attempt": "88596_r0",
+      "license_preflight": {
+        "args": {},
+        "ended_utc": "2026-09-13T02:12:56.304409+00:00",
+        "host": "en-cc-unicorn-cpu-78.coecis.cornell.edu",
+        "process_success": true,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "returncode": 0,
+        "rusage": {
+          "children_maxrss_kib": 26904,
+          "system_seconds": 0.019774999999999987,
+          "user_seconds": 0.04844899999999999
+        },
+        "started_utc": "2026-09-13T02:12:56.181553+00:00",
+        "wall_seconds": 0.11807488603517413,
+        "watchdog_seconds": 120,
+        "watchdog_triggered": false
+      },
+      "order": [
+        "C",
+        "B"
+      ],
+      "pair_id": "w4_k10_pool_r2",
+      "pair_status": {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265576308033857,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_pool_r2/88596_r0/pair_status.json",
+        "sha256": "a04e7651b4ff67ca6ac0c44339e1fc5e0222f8fdb76d14f22be50a60c4ba89fc"
+      },
+      "status": "not_written"
+    }
+  ],
+  "cg": [
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": false,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "E",
+      "attempt": "88605_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_full_index_r1/E",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "full_index",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "E",
+        "C"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_full_index_r1",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-20.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:40.820740+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": false,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/E/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 1,
+      "runtime_s": 4.108006323454902,
+      "scalar_final": {},
+      "sha256": "8e96417206dabe6660d35186a82e9b0c34647d544fd9a7d028fc34cd6dd80a50",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 4.108006323454902
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "C",
+      "attempt": "88606_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_full_index_r2/C",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "full_index",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "C",
+        "E"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_full_index_r2",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-22.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:44.056748+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/C/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 2,
+      "runtime_s": 5.016915670596063,
+      "scalar_final": {},
+      "sha256": "ae0c3538cc36979fdb35a3e9b3e89bbae2a886e6af41e547d1aeb89d4d312bbc",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 5.016915670596063
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": false,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "A",
+      "attempt": "88586_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_index_r1/A",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "index",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "A",
+        "B"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_index_r1",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "512",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-76.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:54.788277+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": false,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 512,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/A/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 1,
+      "runtime_s": 6.594966684933752,
+      "scalar_final": {},
+      "sha256": "df64af6acd45a654c1067d457e4b63ae3f36893f30fa5fe36aa395b1e0fd3522",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 6.594966684933752
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "B",
+      "attempt": "88587_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_index_r2/B",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "index",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "B",
+        "A"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_index_r2",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "512",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-79.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:52.253420+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 512,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/B/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 2,
+      "runtime_s": 8.053569993935525,
+      "scalar_final": {},
+      "sha256": "6c14ab46cd637e8b6915cedc3b11f4f0c3efc211c3e79cb9e133d67512bf5ca9",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 8.053569993935525
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "C",
+      "attempt": "88591_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_master_r1/C",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "master",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "C",
+        "D"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_master_r1",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-58.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:52.895409+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/C/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 1,
+      "runtime_s": 6.673012156970799,
+      "scalar_final": {},
+      "sha256": "04ba4bc7b9aec761bf47f7482937cdedd7be527e73dd9f4384ae3996f13ca094",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 6.673012156970799
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": true,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "D",
+      "attempt": "88592_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_master_r2/D",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "master",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "D",
+        "C"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_master_r2",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--skip-gurobi-incidence": true,
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-61.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:46.870103+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/D/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": true,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 2,
+      "runtime_s": 6.760155502008274,
+      "scalar_final": {},
+      "sha256": "dfdeaf6c81983303984bceff88d8d5c286077d6e02e82598d27322067125c0a1",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 6.760155502008274
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 512,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "B",
+      "attempt": "88588_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_pool_r1/B",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "pool",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "B",
+        "C"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_pool_r1",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "512",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-57.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:48.177349+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 512,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/B/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 1,
+      "runtime_s": 6.740049805259332,
+      "scalar_final": {},
+      "sha256": "8e1b0fca4b2498dc847a4948373c6695db76f8edbb86f315c647cf8d246d581e",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 6.740049805259332
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "C",
+      "attempt": "88590_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w1_k08_pool_r2/C",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "pool",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+        "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+        "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+        "target_k": 8
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "C",
+        "B"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w1_k08_pool_r2",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-59.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:48.009290+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/C/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+        "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 2,
+      "runtime_s": 7.1049408707767725,
+      "scalar_final": {},
+      "sha256": "0f1d4632632f9fb5214cfeea18b5ffba4d605ac9ef93f2bfed3a8a5246ba3a1c",
+      "soc_step": 2.5,
+      "source_case_id": "w1_k08",
+      "stop_reason": "initializing",
+      "wall_s": 7.1049408707767725
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "C",
+      "attempt": "88603_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w3_k15_master_r1/C",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "master",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "d36c357d83f6b3235bfae3e58e913f915b12b77914a7c93c967024049f235c4b",
+        "cache_sha256": "acdbe440e8b7bac7c6097ad572c50edcf3d336d0df5c43b1603f3781d6a0e24f",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+        "input_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+        "parent_descriptor_sha256": "c3e2d028f1d2c14871eca4ac88639064a032e2163da72bcc59f73adbe9c20d20",
+        "parent_journal_sha256": "7e08d8db61111a9c8bbc54be16184a87b93a09eb184e6b06bb71ca8d4c4d1ae9",
+        "target_k": 15
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "C",
+        "D"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w3_k15_master_r1",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-18.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:47.724686+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/C/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "c3e2d028f1d2c14871eca4ac88639064a032e2163da72bcc59f73adbe9c20d20",
+        "instance_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 1,
+      "runtime_s": 7.6310592032969,
+      "scalar_final": {},
+      "sha256": "c9393a0d49c40a8bce76eaaae0e7ced3b2d3c601555b3ad638eac2e389c4a072",
+      "soc_step": 2.5,
+      "source_case_id": "w3_k15",
+      "stop_reason": "initializing",
+      "wall_s": 7.6310592032969
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": false,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "C",
+      "attempt": "88610_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w4_k10_full_index_r2/C",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "full_index",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "5c34d826b9798690d2df71fe5f811cf5affa3e8158f754f90feddb7b465fbcbf",
+        "cache_sha256": "fd1a5c3b6782bc613ded3f0e39f8082a0311d495985e84b89e0fd4df1bab164b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+        "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+        "parent_descriptor_sha256": "91aa8e12a9b474ec284246a98236c1033ac3c7aac9a4e131d6614cba2757b2a9",
+        "parent_journal_sha256": "574320e61d28b57490ebcc30423757da775496c95b2c8a811fb4b549fcc172d8",
+        "target_k": 10
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "C",
+        "E"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w4_k10_full_index_r2",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-77.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:55.011470+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/C/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": false,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "91aa8e12a9b474ec284246a98236c1033ac3c7aac9a4e131d6614cba2757b2a9",
+        "instance_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 2,
+      "runtime_s": 3.940612509381026,
+      "scalar_final": {},
+      "sha256": "3d1b4155eabb25e6b7aa30dab97d59b985e301b81b18e94e8e3f8162a58b6c0b",
+      "soc_step": 2.5,
+      "source_case_id": "w4_k10",
+      "stop_reason": "initializing",
+      "wall_s": 3.940612509381026
+    },
+    {
+      "args": {
+        "augmentation_label": null,
+        "block_min": 5,
+        "charge_kw": 240.0,
+        "checkpoint_every": 25,
+        "column_candidate_multiplier": 4,
+        "column_diversity_weight": 0.0,
+        "column_selection": "reduced_cost",
+        "columns_per_iter": 30,
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+        "diversify_delta": 0.15,
+        "diversify_rounds": 0,
+        "event_arc_mode": "lazy",
+        "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+        "event_network_cache_mode": "require",
+        "event_network_cache_only": false,
+        "fixed_sequence_index": true,
+        "g_kwh": 240.0,
+        "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg/gurobi.log",
+        "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+        "inherit_event_pool_workers": 8,
+        "inherit_max_columns": 0,
+        "inherit_time_limit_s": 0.0,
+        "initial_pool": "singletons",
+        "master_backend": "gurobi",
+        "master_sense": "cover",
+        "max_iters": 50000,
+        "min_soc_frac": 0.0,
+        "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg.json",
+        "prices_csv": "hourly_prices_flat.csv",
+        "rc_eps": 0.0001,
+        "resume": false,
+        "skip_gurobi_incidence": true,
+        "snapshot_at_minutes": null,
+        "soc_step": 2.5,
+        "stall_obj_frac": 1e-05,
+        "stall_rc_frac": 0.05,
+        "stall_window_min": null,
+        "strict_tariff_coverage": false,
+        "time_model": "event",
+        "validated_seed_routes": null,
+        "wall_limit_s": 7200
+      },
+      "arm": "D",
+      "attempt": "88598_r0",
+      "attempt_iterations": 0,
+      "block_min": 5,
+      "case_id": "w4_k10_master_r2/D",
+      "certified_rc_optimal": false,
+      "charge_kw": 240.0,
+      "columns": 0,
+      "contrast": "master",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "final": {},
+      "g_kwh": 240.0,
+      "history": [],
+      "inherited_event_pool_audit": null,
+      "initial_pool": "singletons",
+      "input": {
+        "cache_manifest_sha256": "5c34d826b9798690d2df71fe5f811cf5affa3e8158f754f90feddb7b465fbcbf",
+        "cache_sha256": "fd1a5c3b6782bc613ded3f0e39f8082a0311d495985e84b89e0fd4df1bab164b",
+        "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+        "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+        "parent_descriptor_sha256": "91aa8e12a9b474ec284246a98236c1033ac3c7aac9a4e131d6614cba2757b2a9",
+        "parent_journal_sha256": "574320e61d28b57490ebcc30423757da775496c95b2c8a811fb4b549fcc172d8",
+        "target_k": 10
+      },
+      "iterations": 0,
+      "master_backend": "gurobi",
+      "master_sense": "cover",
+      "min_soc_frac": 0.0,
+      "order": [
+        "D",
+        "C"
+      ],
+      "outputs": {
+        "inherited_ordered_sequence_sha256": null,
+        "inherited_records": null,
+        "journal": null,
+        "journal_sha256": null,
+        "normalized_inherited_pool_sha256": null
+      },
+      "pair_id": "w4_k10_master_r2",
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg.json",
+      "phase_paths": {
+        "cg": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg/phases.jsonl"
+      },
+      "prices_csv": "hourly_prices_flat.csv",
+      "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+      "process": {
+        "args": {
+          "--block-min": "5",
+          "--charge-kw": "240",
+          "--checkpoint-every": "25",
+          "--column-candidate-multiplier": "4",
+          "--column-diversity-weight": "0",
+          "--column-selection": "reduced_cost",
+          "--columns_per_iter": "30",
+          "--csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+          "--event-arc-mode": "lazy",
+          "--event-network-cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+          "--event-network-cache-mode": "require",
+          "--fixed-sequence-index": true,
+          "--g-kwh": "240",
+          "--gurobi-log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg/gurobi.log",
+          "--inherit-event-pool-from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+          "--inherit-event-pool-workers": "8",
+          "--inherit-max-columns": "0",
+          "--inherit-time-limit-s": "0",
+          "--initial-pool": "singletons",
+          "--master-backend": "gurobi",
+          "--master-sense": "cover",
+          "--max-iters": "50000",
+          "--min-soc-frac": "0",
+          "--out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg.json",
+          "--phase-telemetry": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg/phases.jsonl",
+          "--prices_csv": "hourly_prices_flat.csv",
+          "--rc-eps": "0.0001",
+          "--skip-gurobi-incidence": true,
+          "--soc-step": "2.5",
+          "--time-model": "event",
+          "--wall-limit-s": "7200"
+        },
+        "host": "en-cc-unicorn-cpu-47.coecis.cornell.edu",
+        "process_success": false,
+        "resources": {
+          "cpus": 8,
+          "mem": "96G",
+          "slurm_time": "07:00:00"
+        },
+        "started_utc": "2026-09-13T02:12:54.548550+00:00",
+        "watchdog_seconds": 7380
+      },
+      "proof_scope": {
+        "finite_pool_mip": null,
+        "giro_target_attainment": null,
+        "physical_validation": null,
+        "pricing": "conservative_expanded_grid_model_only"
+      },
+      "provenance": {
+        "args": {
+          "augmentation_label": null,
+          "block_min": 5,
+          "charge_kw": 240.0,
+          "checkpoint_every": 25,
+          "column_candidate_multiplier": 4,
+          "column_diversity_weight": 0.0,
+          "column_selection": "reduced_cost",
+          "columns_per_iter": 30,
+          "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+          "diversify_delta": 0.15,
+          "diversify_rounds": 0,
+          "event_arc_mode": "lazy",
+          "event_network_cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+          "event_network_cache_mode": "require",
+          "event_network_cache_only": false,
+          "fixed_sequence_index": true,
+          "g_kwh": 240.0,
+          "gurobi_log": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg/gurobi.log",
+          "inherit_event_pool_from": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+          "inherit_event_pool_workers": 8,
+          "inherit_max_columns": 0,
+          "inherit_time_limit_s": 0.0,
+          "initial_pool": "singletons",
+          "master_backend": "gurobi",
+          "master_sense": "cover",
+          "max_iters": 50000,
+          "min_soc_frac": 0.0,
+          "out": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/D/cg.json",
+          "prices_csv": "hourly_prices_flat.csv",
+          "rc_eps": 0.0001,
+          "resume": false,
+          "skip_gurobi_incidence": true,
+          "snapshot_at_minutes": null,
+          "soc_step": 2.5,
+          "stall_obj_frac": 1e-05,
+          "stall_rc_frac": 0.05,
+          "stall_window_min": null,
+          "strict_tariff_coverage": false,
+          "time_model": "event",
+          "validated_seed_routes": null,
+          "wall_limit_s": 7200
+        },
+        "charging_realization_schema": "evsp-dr-expanded-path-continuous-realization-v1",
+        "column_pool_treatment": "WARM-INHERITED-EVENT",
+        "continuous_cost_pricing_certified": false,
+        "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+        "git_branch": "",
+        "git_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "git_dirty": false,
+        "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+        "gurobi_version": "12.0.3",
+        "inherited_event_pool_status_sha256": "91aa8e12a9b474ec284246a98236c1033ac3c7aac9a4e131d6614cba2757b2a9",
+        "instance_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+        "master_backend": "gurobi",
+        "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+        "pricing_certificate_scope": "conservative_expanded_grid_model_only",
+        "pricing_cost_semantics": "conservative_expanded_grid_cost",
+        "python": "3.12.13",
+        "rc_eps": 0.0001,
+        "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+        "scipy": "1.13.1",
+        "validated_seed_routes_sha256": null
+      },
+      "repetition": 2,
+      "runtime_s": 8.704706308431923,
+      "scalar_final": {},
+      "sha256": "160a31091f03dfb099e5f5e2196648fc25c6004b9f356e4042f8fbe8acad27c9",
+      "soc_step": 2.5,
+      "source_case_id": "w4_k10",
+      "stop_reason": "initializing",
+      "wall_s": 8.704706308431923
+    }
+  ],
+  "collected_utc": "2026-09-13T02:13:04.724579+00:00",
+  "interpretation": "Process success is execution evidence only. CG certificates, finite-pool MIP proof, physical replay, and GIRO attainment are separate.",
+  "manifest_identity": {
+    "bytes": 18403,
+    "cg_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "exists": true,
+    "mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+    "mtime_ns": 1789265023000000000,
+    "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/manifest.json",
+    "schema": "evsp-controlled-comparison-contract-v1",
+    "sha256": "feaf88e7432354cfd342bd7321bb4a0ef75c2e71f9515727a4c0c1aa6b4b8681"
+  },
+  "mip": [],
+  "pairs": [
+    {
+      "case_id": "w1_k08",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w1_k08_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w1_k08_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w1_k08_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w1_k08_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w1_k08_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w1_k08_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w4_k10_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w4_k10_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w4_k10_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w4_k10_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w4_k10_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w4_k10_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w3_k15_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w3_k15_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w3_k15_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w3_k15_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w3_k15_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w3_k15_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w1_k08_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w1_k08_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w3_k15_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w3_k15_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w4_k10_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w4_k10_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    }
+  ],
+  "pending": [],
+  "root": "/home/nc437/ladder-lite/controlled_comparison_20260913",
+  "schema": "evsp-controlled-comparison-v1",
+  "workflow": {
+    "jobs": {
+      "bytes": 65314,
+      "exists": true,
+      "mtime_ns": 1789265498657569998,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/jobs.json",
+      "sha256": "e6e9b39d08fe51f6d8e2bfc92d0f0ad0509bdf522224b8a67965628197e55eec"
+    },
+    "manifest": {
+      "bytes": 18403,
+      "exists": true,
+      "mtime_ns": 1789265023000000000,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/manifest.json",
+      "sha256": "feaf88e7432354cfd342bd7321bb4a0ef75c2e71f9515727a4c0c1aa6b4b8681"
+    },
+    "pair_status": [
+      {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265560796549864,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r1/88605_r0/pair_status.json",
+        "sha256": "50a5e0953db2ef17d70cbc49986466aaf3140a30e2f343fc854768041da12f30"
+      },
+      {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265564037650993,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_full_index_r2/88606_r0/pair_status.json",
+        "sha256": "dfb19c727257667b6efc537dfad91fa01735a6f38c10485fb80f895c3cb3c727"
+      },
+      {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265574782986272,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r1/88586_r0/pair_status.json",
+        "sha256": "cb10f4c9b81a427651c604e389c8db545ec0daf045ef5a6e3af31500fae98515"
+      },
+      {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265572239906922,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_index_r2/88587_r0/pair_status.json",
+        "sha256": "be2159bcc2a1159c398b71dc4c24b8f0162044b8573f3907e8e4c6ebda04c2ac"
+      },
+      {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265572878926861,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r1/88591_r0/pair_status.json",
+        "sha256": "44f822c1f40431c3fa623f3fe0af0946cd64e61d479033d21332c5a1da1491c6"
+      },
+      {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265566853738862,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_master_r2/88592_r0/pair_status.json",
+        "sha256": "e5a26155c2d622821925494d083cc50935e6c8002e006bd70a894b8b3043b39d"
+      },
+      {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265568171779987,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r1/88588_r0/pair_status.json",
+        "sha256": "b5bee39ae4acfbc0a77f831ee9680957aba76c96dc963a6be93b6e10a630b213"
+      },
+      {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265568003774745,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w1_k08_pool_r2/88590_r0/pair_status.json",
+        "sha256": "912389ad5bd593e793cd3815800faa839e1fb8f1c008ca48ca1c5972ac195914"
+      },
+      {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265576172029614,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r1/88607_r0/pair_status.json",
+        "sha256": "05630b08fd238a8f65ad9ffe2b126ccabdba695979885fe197656e9982eac20b"
+      },
+      {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265582469226100,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_full_index_r2/88608_r0/pair_status.json",
+        "sha256": "47b8456bf0b1336f72f1da54d8838db7d569ab73c422ce860e50f26598e2aa3e"
+      },
+      {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265580886176706,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_index_r1/88599_r0/pair_status.json",
+        "sha256": "2df15f0b1192cd5ebd5a0aac9015d49cb7fe7e2f666147a691249b60a1afbe6f"
+      },
+      {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265580887176737,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_index_r2/88600_r0/pair_status.json",
+        "sha256": "e5aff341954b72633154c81f74529b7d5697ab866bc34e6aaeb61852b57ec140"
+      },
+      {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265567717765821,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r1/88603_r0/pair_status.json",
+        "sha256": "62b3b3901098ed597268cf1adfb8a7b4c367895a567469c8719c2605d14d59ec"
+      },
+      {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265578804111741,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_master_r2/88604_r0/pair_status.json",
+        "sha256": "a23d0076a9759c630a7627cc82c82d535cf9c381876bd9237c84a544395de35e"
+      },
+      {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265580886176706,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r1/88601_r0/pair_status.json",
+        "sha256": "5223c852d209ac77658828afc0480ac0afead469acbad4134367edb34436d420"
+      },
+      {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265580065151088,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w3_k15_pool_r2/88602_r0/pair_status.json",
+        "sha256": "e0242f2d3f2c0d68048e4ec0d099bcda3ca3546e726b73056a98e62246067e49"
+      },
+      {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265579962147874,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r1/88609_r0/pair_status.json",
+        "sha256": "81ea326b2c86cae8c3c9feadf3ca04503ccae897d72212f6e27e1c22290c6335"
+      },
+      {
+        "bytes": 468,
+        "exists": true,
+        "mtime_ns": 1789265574997992981,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_full_index_r2/88610_r0/pair_status.json",
+        "sha256": "0350c9d61107151fa11b080f7fa46a72d2d7b5e43031f9c70230e18eda2dcacc"
+      },
+      {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265575357004183,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r1/88593_r0/pair_status.json",
+        "sha256": "5158729a26fdb0e570b63af0f34a64e262f8b3f4c64d2984b42dd888a2e19c2b"
+      },
+      {
+        "bytes": 458,
+        "exists": true,
+        "mtime_ns": 1789265575024993823,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_index_r2/88594_r0/pair_status.json",
+        "sha256": "99cfea2b360dc0f9dc93b21658d8444505ed4f404253bc5e0200aeeb3ca8b638"
+      },
+      {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265576317034138,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r1/88597_r0/pair_status.json",
+        "sha256": "a1dd9e0f9bf455a484f76ca87d8c17c4e9822f42eb6290d66acfa5b3500c965f"
+      },
+      {
+        "bytes": 460,
+        "exists": true,
+        "mtime_ns": 1789265574529978378,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_master_r2/88598_r0/pair_status.json",
+        "sha256": "cbe0b85f8b515bd3599e1a840ed046a057d5130ff9d369e24a377c6b9eb1359a"
+      },
+      {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265576308033857,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_pool_r1/88595_r0/pair_status.json",
+        "sha256": "d62906ac5c83f8b49b873781e2ad88db91207d2d5b6390eb3d2d55a85ec7d117"
+      },
+      {
+        "bytes": 456,
+        "exists": true,
+        "mtime_ns": 1789265576308033857,
+        "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/cases/w4_k10_pool_r2/88596_r0/pair_status.json",
+        "sha256": "a04e7651b4ff67ca6ac0c44339e1fc5e0222f8fdb76d14f22be50a60c4ba89fc"
+      }
+    ]
+  }
+}

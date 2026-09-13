@@ -1,0 +1,445 @@
+{
+  "attempts": [],
+  "cg": [],
+  "collected_utc": "2026-09-13T02:11:08.415462+00:00",
+  "interpretation": "Process success is execution evidence only. CG certificates, finite-pool MIP proof, physical replay, and GIRO attainment are separate.",
+  "manifest_identity": {
+    "bytes": 18403,
+    "cg_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+    "exists": true,
+    "mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+    "mtime_ns": 1789265023000000000,
+    "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/manifest.json",
+    "schema": "evsp-controlled-comparison-contract-v1",
+    "sha256": "feaf88e7432354cfd342bd7321bb4a0ef75c2e71f9515727a4c0c1aa6b4b8681"
+  },
+  "mip": [],
+  "pairs": [
+    {
+      "case_id": "w1_k08",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w1_k08_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w1_k08_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w1_k08_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w1_k08_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w1_k08_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w1_k08_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w4_k10_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w4_k10_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w4_k10_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w4_k10_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w4_k10_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w4_k10_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w3_k15_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w3_k15_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w3_k15_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w3_k15_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w3_k15_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w3_k15_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w1_k08_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w1_k08_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w3_k15_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w3_k15_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w4_k10_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w4_k10_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    }
+  ],
+  "pending": [
+    {
+      "pair_id": "w1_k08_index_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_index_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_pool_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_pool_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_master_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_master_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_index_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_index_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_pool_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_pool_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_master_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_master_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_index_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_index_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_pool_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_pool_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_master_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_master_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_full_index_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w1_k08_full_index_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_full_index_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w3_k15_full_index_r2",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_full_index_r1",
+      "status": "no_attempt"
+    },
+    {
+      "pair_id": "w4_k10_full_index_r2",
+      "status": "no_attempt"
+    }
+  ],
+  "root": "/home/nc437/ladder-lite/controlled_comparison_20260913",
+  "schema": "evsp-controlled-comparison-v1",
+  "workflow": {
+    "jobs": {
+      "exists": false,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/jobs.json"
+    },
+    "manifest": {
+      "bytes": 18403,
+      "exists": true,
+      "mtime_ns": 1789265023000000000,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/manifest.json",
+      "sha256": "feaf88e7432354cfd342bd7321bb4a0ef75c2e71f9515727a4c0c1aa6b4b8681"
+    },
+    "pair_status": []
+  }
+}
