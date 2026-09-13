@@ -2,17 +2,17 @@
 
 **Queue fixed, 12 September 16:57 EDT:** [Running work, dependency explanations and launch map](../queue_recovery_20260912/README.md).
 
-**Start here:** [Latest chain results, 13 September 01:12 EDT](../queue_recovery_20260912/status_20260913T051251Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
+**Start here:** [All six chains reach k=15, 13 September 02:35 EDT](../queue_recovery_20260912/status_20260913T063519Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
 
-**Controlled comparison campaign launched:** [24 paired allocations on three frozen cases](../controlled_comparison_20260913/README.md) isolate indexing at 512/full pools, pool size and omitted LP setup. All 24 started on default; 48 CG and up to 48 one-hour MIPs are planned. These are new comparisons, not additional verified fleet results.
+**Controlled comparisons complete:** [24 paired allocations on three frozen cases](../controlled_comparison_20260913/status_20260913T063519Z/README.md). Indexed replay reduced total CG time by 12.4–18.1%; omitted LP setup reduced it by 9.3–14.6%, with matched inherited pool hashes, iteration counts and certified objectives. Full inheritance reduced time by 40.6–64.5% and improved MIP fleets from 9 to 8, 11 to 10, and 17 to 15. Six original full-scan arms hit the CG budget during import; their MIPs were intentionally skipped.
 
-**Charging-start fee experiment launched, 13 September 01:08 EDT:** [36 chain runs plus 12 GIRO cost-comparison jobs](../zero_charge_start_fee_20260913/README.md) compare fees 5 and 0. Six chains at k=5,10,15 use identical frozen starting sequences within each pair. The separate GIRO study compares original charging, optimized fixed duties, and a common joint pool at all three price peaks with matched terminal energy. Native CG/MIP validation passed. All six k=5 pairs now match five buses under both fees; zero fee also matches k=10 in chain 6. The separate GIRO comparison is complete at all three peaks: electricity savings remain 43–57% without a start fee while returning at least GIRO’s aggregate energy. Joint pooling adds no gain beyond fixed-duty charging optimization in these zero-fee cases. [Current cost tables and proof limits](../zero_charge_start_fee_20260913/status_20260913T053436Z/README.md).
+**Charging-start fee experiment launched, 13 September 01:08 EDT:** [36 chain runs plus 12 GIRO cost-comparison jobs](../zero_charge_start_fee_20260913/README.md) compare fees 5 and 0. Six chains at k=5,10,15 use identical frozen starting sequences within each pair. The separate GIRO study compares original charging, optimized fixed duties, and a common joint pool at all three price peaks with matched terminal energy. Native CG/MIP validation passed. 29 of 36 fee MIPs are complete, all target matches: every k5 pair, all six fee 5 k10 cases, four fee 0 k10 cases, five fee 5 k15 cases and two fee 0 k15 cases.32/36 CG runs are certified. [Current paired table](../zero_charge_start_fee_20260913/status_20260913T063519Z/README.md). The separate GIRO comparison is complete at all three peaks: electricity savings remain 43–57% without a start fee while returning at least GIRO’s aggregate energy. Joint pooling adds no gain beyond fixed-duty charging optimization in these zero-fee cases. [Current cost tables and proof limits](../zero_charge_start_fee_20260913/status_20260913T053436Z/README.md).
 
 This is the common index for experiment settings, execution records, results and source evidence. The compact [Week of 14 September status tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow) and [Figures with explanations tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) are the live document view. The [CG curves and bus schedules library](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) restores the earlier visual evidence with dated captions. Preserve all figures when updating or simplifying text. Superseded material is also kept in the separate [Historical archive document](https://docs.google.com/document/d/1f0orWtM1-_VWAqjj6GnWP78webCOnvoc01x2VQvaA_k/edit).
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2105 artifact/stage records across 47 campaign/source groups**, from the 01:34 EDT full collection and 01:41 EDT GIRO follow-up on 13 September. Counts are not independent experimental sample sizes.
+Current build: **2093 artifact/stage records across 47 campaign/source groups**, from the 02:35 EDT collection on 13 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -24,9 +24,9 @@ Current build: **2105 artifact/stage records across 47 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest verified baseline results: **36 of 36 completed full-pool MIPs match their fleet targets**, each with a pool fleet proof, CG pricing certificate and individual-route replay. **Chains 2–6 reach k=15; chain 1 reaches k=14**, with its k=15 MIP pending. All **37/37 CG cases are certified**. These use covering, 240 kWh / 240 kW, and no shared-station capacity or terminal-SOC floor. Duplicate-coverage removal has not been validated. [Dated six-chain table](../queue_recovery_20260912/status_20260913T051251Z/README.md).
+Latest verified baseline results: **all six chains attain k=15**. All 37 full-pool CG cases are certified; all 37completed MIPs match their targets, with finite-pool fleet proofs and individual-route replay. These use covering, 240 kWh / 240 kW, no shared-station capacity or terminal-SOC floor. Duplicate-coverage removal has not been validated. [Dated six-chain table](../queue_recovery_20260912/status_20260913T063519Z/README.md).
 
-At 01:14 EDT, **50 EVSP–DR jobs were running**, including 29 fee-comparison jobs, six GIRO charging frontiers, 13 algorithm comparisons, one full-pool job and one decomposition job. Twenty-six jobs waited for valid inputs; 33 held historical tasks remained untouched. The GIRO launcher initially failed before Python started; its six dependent MIPs were cancelled and replaced with valid dependencies. Both attempts remain recorded. At 01:34 EDT, 20 of 24 controlled algorithm comparisons had completed; analysis is pending, so no new paired speedup is claimed. No new confirmed preemptions were observed. Keep the four-hour CG→MIP and seven-hour paired allocations separate from standalone one-hour MIPs in reliability statistics.
+All 24 controlled comparison allocations finished.42 CG arms certified and42 MIPs completed; six original full-scan arms were capped during import. No new execution failure, confirmed preemption or invalid dependency appeared. Scientific outcomes, time caps and scheduler completion remain distinct. Held historical tasks and V2G work were untouched.
 
 ## How to read a result
 
@@ -48,7 +48,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260913T054150Z_reconciled.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260913T063519Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

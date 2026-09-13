@@ -1,6 +1,6 @@
 # Charging-start fee: zero versus five
 
-**Current results, 13 September 01:41 EDT:** [All six k=5 pairs match; GIRO electricity savings survive fee removal at all three peaks](status_20260913T053436Z/README.md). Thirteen chain MIPs and all six GIRO comparisons are verified.
+**Current results, 13 September, 02:35 EDT:** [29 of 36MIPs complete, all target matches](status_20260913T063519Z/README.md). The [completed GIRO comparison](status_20260913T053436Z/README.md) still shows electricity savings with no start fee and equal-or-greater returning energy at all three peaks.
 
 **Launched 13 September at 01:08 EDT: 36 baseline CG→MIP jobs and 12 GIRO comparison jobs, all on default.** The user requested an isolated branch and new runs removing the five-unit cost per charging activity. Existing running experiments remain unchanged. The current submission ledgers are the authority for launched jobs.
 
@@ -21,7 +21,7 @@ This is 36 independent CG→MIP runs, all eligible together on default. Each req
 
 Both treatments use the same new code revision with explicit fee support. Other settings stay at covering, 240 kWh batteries,240 kW charging,2.5 kWh / 5-minute event graph, 30 columns per iteration, reduced-cost tolerance 1e-4, flat prices, indexed unlimited inheritance, and the existing LP setup. These baseline chains do not impose shared-station capacity or a terminal-SOC floor. They are separate from the fair-terminal GIRO cost experiment.
 
-The tests must establish that zero reaches pricing, saved-route replay, cache handling, cost reconstruction and both MIP stages. Changing only the final MIP coefficient would not test the requested algorithm. Saved fee5 costs are not treated as fee0 costs, and a certificate from fee5 is not transferred to fee0.
+The tests must establish that zero reaches pricing, saved-route replay, cache handling, cost reconstruction and both MIP stages. Changing only the final MIP coefficient would not test the requested algorithm. Saved fee 5 costs are not treated as fee 0 costs, and a certificate from fee 5 is not transferred to fee 0.
 
 ## GIRO charging comparison
 
@@ -46,7 +46,7 @@ The three reported schedules are:
 
 The GIRO electricity cost remains an interval where its within-window power trace was not observed. Fee0 means we assign no penalty to connecting to charge; it does not mean electricity is free. Removing the fee may allow more fragmented charging and more equivalent-cost paths, so runtime could improve or worsen.
 
-These are 18 selected matched chain inputs, not 36 independent random samples. Initial pools were produced with fee5; both arms deliberately share them. This measures reoptimization of existing solutions, not performance from a fresh singleton-only start. Preserve that distinction when reporting results.
+These are 18 selected matched chain inputs, not 36 independent random samples. Initial pools were produced with fee 5; both arms deliberately share them. This measures reoptimization of existing solutions, not performance from a fresh singleton-only start. Preserve that distinction when reporting results.
 
 ## Implementation and audit
 

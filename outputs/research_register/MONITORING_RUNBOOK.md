@@ -1,5 +1,13 @@
 # Unicorn monitoring runbook
 
+## Current completion — 13 September, 02:35 EDT
+
+Snapshot `20260913T063519Z`: `full_pool_recovery_20260912` is complete. All 37 CG cases have pricing certificates; all 37 MIPs attain their targets with finite-pool fleet proofs and individual-route replay. All six chains attain 15 buses. Do not resubmit these jobs.
+
+`controlled_comparison_20260913` is also complete: 24 paired allocations, 42 certified CG arms and 42 MIPs. Six original full-scan arms hit their CG budgets during import without completing an iteration; their MIPs were intentionally skipped. Report and validation: `outputs/controlled_comparison_20260913/status_20260913T063519Z`. Implementation-only comparisons preserve inherited sequence order, pool hashes, iteration counts and certified LP objectives. Indexed replay on 512 routes saves 12.4–18.1% of CG time; omitting unused LP setup saves 9.3–14.6%. Full inheritance saves 40.6–64.5% and improves integer outcomes. Do not add these percentages.
+
+The fee campaign has 29 of 36 MIPs complete, all target matches, and 32 of 36 CG runs certified. Preserve remaining jobs. The 12 GIRO jobs are already complete. No new failures, confirmed preemptions or invalid dependencies appeared. Continue monitoring existing fee and decomposition work; no speculative filler or duplicate submissions.
+
 ## Fee experiment update — 13 September 01:41 EDT
 
 Source snapshots: 20260913T053436Z.json is the complete 01:34 collection; 20260913T054150Z_reconciled.json incorporates only the timestamped GIRO follow-up after jobs released during collection. Provenance includes both source hashes. Never relaunch the 12 completed GIRO jobs 114100–114111: all exited COMPLETED0:0. All six comparisons have matching completion hashes, five buses, and validated 62-trip coverage/aggregate return energy. Report: outputs/zero_charge_start_fee_20260913/status_20260913T053436Z/README.md. Fee-zero electricity costs are128.293/164.231/95.285 at peaks08/12/18; fixed and joint agree. The separate baseline fee chains have13completedMIPs, six complete k5pairs and C6k10fee0;29/36CGcertified. Preserve paired pool initialization and physical scope. Controlled comparison has20/24finished at01:34, no new speedup analysis yet. The register now uses explicit source case/pair/arm metadata for both campaigns rather than incorrectly parsing the enclosing k2_15 directory. Scientific outputs were unchanged. A broader case-dimension audit corrected454 metadata rows (target, chain or replication), parsing case IDs before CSV basenames and ignoring enclosing k2_15 ranges. All source artifact hashes remain identical. Explicit target conflicts now fail register validation.

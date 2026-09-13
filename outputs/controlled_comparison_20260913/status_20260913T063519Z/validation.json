@@ -1,0 +1,38 @@
+{
+  "source_snapshot_sha256": "b77305fb960b6a3e0ba0afa548cfc448168451089cda22fc7aff289547e0f152",
+  "pairs": 24,
+  "completed_CG": 42,
+  "censored_CG": 6,
+  "completed_MIP": 42,
+  "implementation_only_pairs_checked": 12,
+  "same_imported_sequence_order_and_pool": true,
+  "same_iterations_and_column_count": true,
+  "weighted_objective_tolerance": 0.0001,
+  "all_selected_MIPs_physically_replayed": true,
+  "summary": {
+    "index": {
+      "pairs": 6,
+      "reduction_min_percent": 12.392633284242871,
+      "reduction_max_percent": 18.12044871496372,
+      "reduction_median_percent": 13.729686940052265
+    },
+    "pool": {
+      "pairs": 6,
+      "reduction_min_percent": 40.61969522876948,
+      "reduction_max_percent": 64.54586389463502,
+      "reduction_median_percent": 48.30823085943114
+    },
+    "master": {
+      "pairs": 6,
+      "reduction_min_percent": 9.269370419357681,
+      "reduction_max_percent": 14.603750750892075,
+      "reduction_median_percent": 10.72544328312381
+    },
+    "full_index": {
+      "pairs": 6,
+      "reduction_min_percent": null,
+      "reduction_max_percent": null,
+      "reduction_median_percent": null
+    }
+  }
+}

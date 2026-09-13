@@ -1,5 +1,7 @@
 # Controlled comparisons of the recent baseline changes
 
+**Completed, 13 September, 02:35 EDT:** [Measured speed changes and restricted-pool integer evidence](status_20260913T063519Z/README.md). All24pairs finished; six full-scan arms were budget-capped during import.
+
 Prepared 13 September 2026 UTC (12 September evening in New York). The user requested new experiments to measure the changes separately. Submission status and exact IDs are recorded in `jobs.json`; a prepared manifest alone does not mean a job was launched.
 
 **Launched 12 September 2026, 22:11 EDT: all 24 pairs running on default.** At the first verification, all 24 licenses passed, all arms had entered their CG process, three had completed positive CG iterations, and no execution error was recorded. The total EVSP–DR queue had 29 running jobs. These are startup observations, not completed comparison results.
