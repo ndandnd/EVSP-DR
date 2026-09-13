@@ -1,0 +1,622 @@
+{
+  "ecb60c154a9a5db385e3a573949ec9fd0a737af3": {
+    "path": "src/exact_pricer_expanded.py",
+    "sha256": "85d4bcd726bbf24c323a6f4ca25c1b196f45db364fcf89e71dba6d1377b67811",
+    "excerpts": [
+      {
+        "line": 169,
+        "text": "        \"pickle_bytes\": cache_path.stat().st_size,"
+      },
+      {
+        "line": 170,
+        "text": "        \"network_metrics\": network.metrics(),"
+      },
+      {
+        "line": 171,
+        "text": "        \"original_build_s\": float(build_s),"
+      },
+      {
+        "line": 172,
+        "text": "    }"
+      },
+      {
+        "line": 173,
+        "text": "    atomic_write_json("
+      },
+      {
+        "line": 174,
+        "text": "        _event_network_cache_manifest_path(cache_path), manifest"
+      },
+      {
+        "line": 175,
+        "text": "    )"
+      },
+      {
+        "line": 1472,
+        "text": ""
+      },
+      {
+        "line": 1473,
+        "text": "def run_cg(args) -> dict:"
+      },
+      {
+        "line": 1474,
+        "text": "    t0 = time.time()"
+      },
+      {
+        "line": 1475,
+        "text": "    time_model = getattr(args, \"time_model\", \"uniform\")"
+      },
+      {
+        "line": 1476,
+        "text": "    master_backend = getattr(args, \"master_backend\", \"gurobi\")"
+      },
+      {
+        "line": 1477,
+        "text": "    if master_backend not in {\"gurobi\", \"scipy\"}:"
+      },
+      {
+        "line": 1478,
+        "text": "        raise DurableFileError("
+      },
+      {
+        "line": 1665,
+        "text": "        )"
+      },
+      {
+        "line": 1666,
+        "text": ""
+      },
+      {
+        "line": 1667,
+        "text": "    def _attempt_elapsed_s():"
+      },
+      {
+        "line": 1668,
+        "text": "        return max("
+      },
+      {
+        "line": 1669,
+        "text": "            0.0, time.time() - t0 - _telemetry_overhead_s()"
+      },
+      {
+        "line": 1670,
+        "text": "        )"
+      },
+      {
+        "line": 1671,
+        "text": ""
+      },
+      {
+        "line": 1672,
+        "text": "    def _cumulative_elapsed_s():"
+      },
+      {
+        "line": 1673,
+        "text": "        return elapsed_offset + _attempt_elapsed_s()"
+      },
+      {
+        "line": 1674,
+        "text": ""
+      },
+      {
+        "line": 1675,
+        "text": "    prices = load_station_hourly_prices("
+      },
+      {
+        "line": 1676,
+        "text": "        DATA_DIR / args.prices_csv, CHARGING_STATIONS"
+      },
+      {
+        "line": 1691,
+        "text": "    cache_manifest = None"
+      },
+      {
+        "line": 1692,
+        "text": "    cache_hit = False"
+      },
+      {
+        "line": 1693,
+        "text": "    network_t0 = time.time()"
+      },
+      {
+        "line": 1694,
+        "text": "    if cache_path is not None and args.event_network_cache_mode == \"require\":"
+      },
+      {
+        "line": 1695,
+        "text": "        net, cache_manifest = _load_event_network_cache("
+      },
+      {
+        "line": 1696,
+        "text": "            cache_path, cache_identity"
+      },
+      {
+        "line": 1697,
+        "text": "        )"
+      },
+      {
+        "line": 1720,
+        "text": "        if cache_path is not None:"
+      },
+      {
+        "line": 1721,
+        "text": "            cache_manifest = _write_event_network_cache("
+      },
+      {
+        "line": 1722,
+        "text": "                cache_path, net, cache_identity, time.time() - network_t0"
+      },
+      {
+        "line": 1723,
+        "text": "            )"
+      },
+      {
+        "line": 1724,
+        "text": "    build_s = time.time() - network_t0"
+      },
+      {
+        "line": 1725,
+        "text": "    network_metrics = ("
+      },
+      {
+        "line": 1726,
+        "text": "        net.metrics() if time_model == \"event\""
+      },
+      {
+        "line": 1736,
+        "text": "            \"cache_hit\": cache_hit,"
+      },
+      {
+        "line": 1737,
+        "text": "            \"cache_path\": str(cache_path),"
+      },
+      {
+        "line": 1738,
+        "text": "            \"cache_io_s\": build_s,"
+      },
+      {
+        "line": 1739,
+        "text": "            \"cache_original_build_s\": cache_manifest.get("
+      },
+      {
+        "line": 1740,
+        "text": "                \"original_build_s\""
+      },
+      {
+        "line": 1741,
+        "text": "            ),"
+      },
+      {
+        "line": 1742,
+        "text": "            \"cache_pickle_bytes\": cache_manifest.get(\"pickle_bytes\"),"
+      },
+      {
+        "line": 1743,
+        "text": "        })"
+      },
+      {
+        "line": 1750,
+        "text": "            \"cache_path\": str(cache_path),"
+      },
+      {
+        "line": 1751,
+        "text": "            \"cache_hit\": cache_hit,"
+      },
+      {
+        "line": 1752,
+        "text": "            \"cache_io_s\": build_s,"
+      },
+      {
+        "line": 1753,
+        "text": "            \"network_metrics\": network_metrics,"
+      },
+      {
+        "line": 1754,
+        "text": "            \"provenance\": provenance,"
+      },
+      {
+        "line": 1755,
+        "text": "        }"
+      },
+      {
+        "line": 1756,
+        "text": "    def _record_phase("
+      },
+      {
+        "line": 1949,
+        "text": "            \"columns\": len(pool),"
+      },
+      {
+        "line": 1950,
+        "text": "            \"columns_journal\": str(journal_path),"
+      },
+      {
+        "line": 1951,
+        "text": "            \"wall_s\": _cumulative_elapsed_s(),"
+      },
+      {
+        "line": 1952,
+        "text": "            \"attempt_wall_s\": _attempt_elapsed_s(),"
+      },
+      {
+        "line": 1953,
+        "text": "            \"peak_rss_mb\": _peak_rss_mb(),"
+      },
+      {
+        "line": 1954,
+        "text": "            \"stop_reason\": \"resume_starting\","
+      },
+      {
+        "line": 1955,
+        "text": "            \"master_backend\": master_backend,"
+      },
+      {
+        "line": 2322,
+        "text": "            \"columns\": len(pool),"
+      },
+      {
+        "line": 2323,
+        "text": "            \"columns_journal\": str(journal_path) if journal_path else None,"
+      },
+      {
+        "line": 2324,
+        "text": "            \"wall_s\": _cumulative_elapsed_s(),"
+      },
+      {
+        "line": 2325,
+        "text": "            \"attempt_wall_s\": _attempt_elapsed_s(),"
+      },
+      {
+        "line": 2326,
+        "text": "            \"peak_rss_mb\": _peak_rss_mb(),"
+      },
+      {
+        "line": 2327,
+        "text": "            \"stop_reason\": status, \"history_tail\": history[-5:],"
+      },
+      {
+        "line": 2328,
+        "text": "            \"final_lp\": last_good_lp_detail,"
+      },
+      {
+        "line": 3103,
+        "text": "        \"columns\": len(pool),"
+      },
+      {
+        "line": 3104,
+        "text": "        \"columns_journal\": str(journal_path) if journal_path else None,"
+      },
+      {
+        "line": 3105,
+        "text": "        \"wall_s\": _cumulative_elapsed_s(),"
+      },
+      {
+        "line": 3106,
+        "text": "        \"attempt_wall_s\": _attempt_elapsed_s(),"
+      },
+      {
+        "line": 3107,
+        "text": "        \"peak_rss_mb\": _peak_rss_mb(),"
+      },
+      {
+        "line": 3108,
+        "text": "        \"stop_reason\": stop_reason,"
+      },
+      {
+        "line": 3109,
+        "text": "        \"termination_signal\": termination[\"signal\"],"
+      }
+    ]
+  },
+  "e091a4dba549510238507ef5e5367abea958bd30": {
+    "path": "src/exact_pricer_expanded.py",
+    "sha256": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831",
+    "excerpts": [
+      {
+        "line": 172,
+        "text": "        \"pickle_bytes\": cache_path.stat().st_size,"
+      },
+      {
+        "line": 173,
+        "text": "        \"network_metrics\": network.metrics(),"
+      },
+      {
+        "line": 174,
+        "text": "        \"original_build_s\": float(build_s),"
+      },
+      {
+        "line": 175,
+        "text": "    }"
+      },
+      {
+        "line": 176,
+        "text": "    atomic_write_json("
+      },
+      {
+        "line": 177,
+        "text": "        _event_network_cache_manifest_path(cache_path), manifest"
+      },
+      {
+        "line": 178,
+        "text": "    )"
+      },
+      {
+        "line": 1606,
+        "text": ""
+      },
+      {
+        "line": 1607,
+        "text": "def run_cg(args) -> dict:"
+      },
+      {
+        "line": 1608,
+        "text": "    t0 = time.time()"
+      },
+      {
+        "line": 1609,
+        "text": "    time_model = getattr(args, \"time_model\", \"uniform\")"
+      },
+      {
+        "line": 1610,
+        "text": "    master_backend = getattr(args, \"master_backend\", \"gurobi\")"
+      },
+      {
+        "line": 1611,
+        "text": "    if master_backend not in {\"gurobi\", \"scipy\"}:"
+      },
+      {
+        "line": 1612,
+        "text": "        raise DurableFileError("
+      },
+      {
+        "line": 1799,
+        "text": "        )"
+      },
+      {
+        "line": 1800,
+        "text": ""
+      },
+      {
+        "line": 1801,
+        "text": "    def _attempt_elapsed_s():"
+      },
+      {
+        "line": 1802,
+        "text": "        return max("
+      },
+      {
+        "line": 1803,
+        "text": "            0.0, time.time() - t0 - _telemetry_overhead_s()"
+      },
+      {
+        "line": 1804,
+        "text": "        )"
+      },
+      {
+        "line": 1805,
+        "text": ""
+      },
+      {
+        "line": 1806,
+        "text": "    def _cumulative_elapsed_s():"
+      },
+      {
+        "line": 1807,
+        "text": "        return elapsed_offset + _attempt_elapsed_s()"
+      },
+      {
+        "line": 1808,
+        "text": ""
+      },
+      {
+        "line": 1809,
+        "text": "    prices = load_station_hourly_prices("
+      },
+      {
+        "line": 1810,
+        "text": "        DATA_DIR / args.prices_csv, CHARGING_STATIONS"
+      },
+      {
+        "line": 1825,
+        "text": "    cache_manifest = None"
+      },
+      {
+        "line": 1826,
+        "text": "    cache_hit = False"
+      },
+      {
+        "line": 1827,
+        "text": "    network_t0 = time.time()"
+      },
+      {
+        "line": 1828,
+        "text": "    if cache_path is not None and args.event_network_cache_mode == \"require\":"
+      },
+      {
+        "line": 1829,
+        "text": "        net, cache_manifest = _load_event_network_cache("
+      },
+      {
+        "line": 1830,
+        "text": "            cache_path, cache_identity"
+      },
+      {
+        "line": 1831,
+        "text": "        )"
+      },
+      {
+        "line": 1854,
+        "text": "        if cache_path is not None:"
+      },
+      {
+        "line": 1855,
+        "text": "            cache_manifest = _write_event_network_cache("
+      },
+      {
+        "line": 1856,
+        "text": "                cache_path, net, cache_identity, time.time() - network_t0"
+      },
+      {
+        "line": 1857,
+        "text": "            )"
+      },
+      {
+        "line": 1858,
+        "text": "    if time_model == \"event\":"
+      },
+      {
+        "line": 1859,
+        "text": "        net.set_fixed_sequence_index(getattr(args, \"fixed_sequence_index\", False))"
+      },
+      {
+        "line": 1860,
+        "text": "    build_s = time.time() - network_t0"
+      },
+      {
+        "line": 1874,
+        "text": "            \"cache_hit\": cache_hit,"
+      },
+      {
+        "line": 1875,
+        "text": "            \"cache_path\": str(cache_path),"
+      },
+      {
+        "line": 1876,
+        "text": "            \"cache_io_s\": build_s,"
+      },
+      {
+        "line": 1877,
+        "text": "            \"cache_original_build_s\": cache_manifest.get("
+      },
+      {
+        "line": 1878,
+        "text": "                \"original_build_s\""
+      },
+      {
+        "line": 1879,
+        "text": "            ),"
+      },
+      {
+        "line": 1880,
+        "text": "            \"cache_pickle_bytes\": cache_manifest.get(\"pickle_bytes\"),"
+      },
+      {
+        "line": 1881,
+        "text": "        })"
+      },
+      {
+        "line": 1888,
+        "text": "            \"cache_path\": str(cache_path),"
+      },
+      {
+        "line": 1889,
+        "text": "            \"cache_hit\": cache_hit,"
+      },
+      {
+        "line": 1890,
+        "text": "            \"cache_io_s\": build_s,"
+      },
+      {
+        "line": 1891,
+        "text": "            \"network_metrics\": network_metrics,"
+      },
+      {
+        "line": 1892,
+        "text": "            \"provenance\": provenance,"
+      },
+      {
+        "line": 1893,
+        "text": "        }"
+      },
+      {
+        "line": 1894,
+        "text": "    def _record_phase("
+      },
+      {
+        "line": 2087,
+        "text": "            \"columns\": len(pool),"
+      },
+      {
+        "line": 2088,
+        "text": "            \"columns_journal\": str(journal_path),"
+      },
+      {
+        "line": 2089,
+        "text": "            \"wall_s\": _cumulative_elapsed_s(),"
+      },
+      {
+        "line": 2090,
+        "text": "            \"attempt_wall_s\": _attempt_elapsed_s(),"
+      },
+      {
+        "line": 2091,
+        "text": "            \"peak_rss_mb\": _peak_rss_mb(),"
+      },
+      {
+        "line": 2092,
+        "text": "            \"stop_reason\": \"resume_starting\","
+      },
+      {
+        "line": 2093,
+        "text": "            \"master_backend\": master_backend,"
+      },
+      {
+        "line": 2467,
+        "text": "            \"columns\": len(pool),"
+      },
+      {
+        "line": 2468,
+        "text": "            \"columns_journal\": str(journal_path) if journal_path else None,"
+      },
+      {
+        "line": 2469,
+        "text": "            \"wall_s\": _cumulative_elapsed_s(),"
+      },
+      {
+        "line": 2470,
+        "text": "            \"attempt_wall_s\": _attempt_elapsed_s(),"
+      },
+      {
+        "line": 2471,
+        "text": "            \"peak_rss_mb\": _peak_rss_mb(),"
+      },
+      {
+        "line": 2472,
+        "text": "            \"stop_reason\": status, \"history_tail\": history[-5:],"
+      },
+      {
+        "line": 2473,
+        "text": "            \"final_lp\": last_good_lp_detail,"
+      },
+      {
+        "line": 3244,
+        "text": "        \"columns\": len(pool),"
+      },
+      {
+        "line": 3245,
+        "text": "        \"columns_journal\": str(journal_path) if journal_path else None,"
+      },
+      {
+        "line": 3246,
+        "text": "        \"wall_s\": _cumulative_elapsed_s(),"
+      },
+      {
+        "line": 3247,
+        "text": "        \"attempt_wall_s\": _attempt_elapsed_s(),"
+      },
+      {
+        "line": 3248,
+        "text": "        \"peak_rss_mb\": _peak_rss_mb(),"
+      },
+      {
+        "line": 3249,
+        "text": "        \"stop_reason\": stop_reason,"
+      },
+      {
+        "line": 3250,
+        "text": "        \"termination_signal\": termination[\"signal\"],"
+      }
+    ]
+  }
+}

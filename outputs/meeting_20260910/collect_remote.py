@@ -562,6 +562,25 @@ if controlled_script.exists() and (controlled_root / 'manifest.json').exists():
         out['campaigns']['controlled_comparison_20260913'] = {
             'root': str(controlled_root), 'collection_error': str(exc), 'cg': [], 'mip': []}
 
+# Cumulative-budget controls own their publication/alias rules and never expose
+# validation fixtures as scientific results.
+cumulative_root = home / 'cumulative_budget_20260913'
+cumulative_script = cumulative_root / 'collect.py'
+if cumulative_script.exists() and (cumulative_root / 'manifest.json').exists():
+    try:
+        collected = subprocess.run(
+            ['/home/nc437/evsp_env/bin/python', str(cumulative_script), str(cumulative_root)],
+            capture_output=True, text=True, timeout=60)
+        if collected.returncode:
+            raise RuntimeError(collected.stderr[-4000:])
+        campaign = json.loads(collected.stdout)
+        if campaign.get('schema') != 'evsp-cumulative-budget-collection-v1':
+            raise ValueError('Unexpected cumulative-budget schema')
+        out['campaigns']['cumulative_budget_20260913'] = campaign
+    except Exception as exc:
+        out['campaigns']['cumulative_budget_20260913'] = {
+            'root': str(cumulative_root), 'collection_error': str(exc), 'cg': [], 'mip': []}
+
 # Charge-start-fee treatments use separately pinned code and immutable prior pools.
 controlled_root = home / 'zero_charge_start_fee_20260913'
 controlled_script = controlled_root / 'tooling/campaign.py'
