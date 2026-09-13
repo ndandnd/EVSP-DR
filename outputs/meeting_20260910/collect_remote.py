@@ -12,6 +12,71 @@ def file_sha256(path):
     return h.hexdigest()
 
 
+def chain_extension_progress(root):
+    """Operational attempt summaries; never promote checkpoints to results."""
+    def latest_json(paths):
+        for path in sorted(paths, key=lambda p: (p.stat().st_mtime_ns, str(p)), reverse=True):
+            try:
+                if path.stat().st_size > 100_000_000:
+                    continue
+                value = json.loads(path.read_bytes())
+                if isinstance(value, dict):
+                    return path, value
+            except (OSError, ValueError):
+                continue
+        return None, None
+
+    def scalars(value, keys):
+        return {k: value[k] for k in keys if k in value
+                and isinstance(value[k], (str, int, float, bool, type(None)))}
+
+    result = {}
+    for case in sorted((root/'cases').glob('w*_k*')):
+        stages = {}
+        for stage in ('cache', 'cg', 'mip'):
+            path, value = latest_json((case/stage).glob('*/execution.json'))
+            if path is not None:
+                stages[stage] = {'path': str(path), 'authority': 'operational',
+                    **scalars(value, ('case_id', 'mode', 'attempt', 'started_epoch',
+                        'ended_epoch', 'execution_commit', 'manifest_sha256', 'input_sha256',
+                        'status', 'returncode', 'watchdog_time_limit'))}
+        entry = {'stages': stages}
+        # Read only a bounded tail; tolerate a concurrent partial JSONL append.
+        for path in sorted((case/'cache').glob('*/progress.jsonl'),
+                           key=lambda p: (p.stat().st_mtime_ns, str(p)), reverse=True):
+            try:
+                with path.open('rb') as stream:
+                    stream.seek(max(0, path.stat().st_size - 65536))
+                    lines = stream.read().splitlines()
+                for line in reversed(lines):
+                    try:
+                        value = json.loads(line)
+                    except (ValueError, UnicodeDecodeError):
+                        continue
+                    if isinstance(value, dict):
+                        entry['cache_progress'] = {'path': str(path), 'attempt': path.parent.name,
+                            'authority': 'operational', **scalars(value, ('phase', 'event',
+                                'elapsed_s', 'peak_rss_kib', 'pid', 'finished_sources',
+                                'total_sources', 'source', 'stored_arcs', 'duration_s', 'error_type'))}
+                        break
+            except OSError:
+                continue
+            if 'cache_progress' in entry:
+                break
+        if not (case/'cg.json').exists():
+            path, value = latest_json((case/'cg').glob('*/cg.json'))
+            if path is not None:
+                entry['cg_checkpoint'] = {'path': str(path), 'attempt': path.parent.name,
+                    'authority': 'provisional', **scalars(value, ('csv', 'wall_s',
+                        'certified_rc_optimal', 'stop_reason', 'iterations')),
+                    'final': scalars(value.get('final') or {}, ('iter', 'artificials',
+                        'obj', 'lp_obj', 'min_rc', 'pool_size', 'columns', 'routes',
+                        'route_weight', 'route_weight_sum', 'fleet_weight', 'wall_s'))}
+        if stages or len(entry) > 1:
+            result[case.name] = entry
+    return result
+
+
 def _giro_float(value):
     try:
         result = float(value)
@@ -234,6 +299,7 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'chain_extension_20260913': home / 'chain_extension_20260913',
     'graph_recovery_retry2_20260912': home / 'graph_recovery_retry2_20260912',
     'full_pool_recovery_20260912': home / 'full_pool_recovery_20260912',
     'graph_recovery_20260912': home / 'graph_recovery_20260912',
@@ -291,9 +357,16 @@ for name, root in roots.items():
             except Exception: continue
             row={k:v for k,v in d.items() if k not in ['routes','columns','selected_routes','iterations','history','iteration_log'] and not isinstance(v,list)}
             row['path']=str(p)
+            if name == 'chain_extension_20260913':
+                for key in ('route_values', 'trip_duals', 'capacity_duals'):
+                    row.pop(key, None)
+                row['resolved_source_path'] = str(p.resolve())
+                row['authority'] = 'published'
             cg.append(row)
     phases=[]
     phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/*.phase-telemetry.jsonl') if 'smoke' not in p.parts}
+    if name == 'chain_extension_20260913':
+        phase_paths.update(root.glob('cases/*/cg/*/*.phase-telemetry.jsonl'))
     for p in sorted(phase_paths):
         sums=defaultdict(float); counts=Counter(); last=None; partial=0
         for line in p.open():
@@ -313,6 +386,8 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
+    if name == 'chain_extension_20260913':
+        out['campaigns'][name]['workflow']['attempt_progress'] = chain_extension_progress(root)
     for record_name in ['ready_mips_manifest.json', 'ready_mips_submission.json', 'ready_mips_old_cancellations.json', 'obsolete_chain2_cancellations.json', 'retired_queue_entries.json', 'case_jobs.json', 'cache_jobs.json', 'cache_cli_validation.json', 'cache_compatibility.json', 'manifest.json', 'jobs.json', 'smoke_job.json', 'downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():
