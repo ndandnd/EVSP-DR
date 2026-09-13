@@ -429,6 +429,15 @@ def patch_mip_provenance(joint_dir: Path, cell: dict, union_audit: dict) -> None
     comparison["fee_provenance"] = fee_audit
     comparison.setdefault("unchanged_conditions", {})["charge_start_fee"] = cell["fee"]
     comparison["unchanged_conditions"]["source_pool_charge_start_fee"] = SOURCE_FEE
+    for field in ("fixed_duties_optimized", "joint_pool_optimized"):
+        selected = comparison.get(field, {}).get("selected_routes", [])
+        comparison[field]["charge_start_count"] = sum(
+            route_starts(route) for route in selected
+        )
+        comparison[field]["charge_start_counts_by_route"] = [
+            {"duty_id": route.get("duty_id"), "count": route_starts(route)}
+            for route in selected
+        ]
     atomic_json(mip_path, mip)
     atomic_json(comparison_path, comparison)
     atomic_json(joint_dir / "COMPLETE.json", {
