@@ -160,6 +160,7 @@ class EventExpandedNetwork:
         strict_tariff_coverage=False,
         arc_mode="lazy",
         fixed_sequence_index=False,
+        charge_start_cost=CHARGE_START_COST,
     ):
         self.problem = problem
         self.soc_step = float(soc_step)
@@ -167,6 +168,9 @@ class EventExpandedNetwork:
         self.g = float(g_kwh)
         self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
+        self.charge_start_cost = float(charge_start_cost)
+        if not math.isfinite(self.charge_start_cost) or self.charge_start_cost < 0.0:
+            raise ValueError("charge start cost must be finite and nonnegative")
         self.strict_tariff_coverage = bool(strict_tariff_coverage)
         if arc_mode not in {"explicit", "lazy"}:
             raise ValueError(f"unsupported event arc mode: {arc_mode}")
@@ -224,6 +228,9 @@ class EventExpandedNetwork:
 
     def __setstate__(self, state):
         self.__dict__.update(state)
+        self.charge_start_cost = float(
+            getattr(self, "charge_start_cost", CHARGE_START_COST)
+        )
         self.fixed_sequence_index = False
         self.__dict__.pop("_replay_trip_bounds", None)
         self._window_cache = {}
@@ -243,6 +250,51 @@ class EventExpandedNetwork:
             )
             for (trip, _level), node in self.trip_node.items():
                 self._node_dual_np[node] = self.trip_position[trip]
+
+    def set_charge_start_cost(self, value):
+        """Reprice charge-entry arcs in memory without changing graph geometry."""
+
+        value = float(value)
+        if not math.isfinite(value) or value < 0.0:
+            raise ValueError("charge start cost must be finite and nonnegative")
+        previous = float(getattr(self, "charge_start_cost", CHARGE_START_COST))
+        delta = value - previous
+        if abs(delta) <= 1e-15:
+            self.charge_start_cost = value
+            return {"previous": previous, "current": value, "repriced_arcs": 0}
+        repriced = 0
+        if self.arc_mode == "explicit":
+            for source, rows in enumerate(self.out):
+                updated = []
+                for target, cost, dual, action in rows:
+                    is_charge = action.get("kind") == "charge"
+                    updated.append((target, cost + delta if is_charge else cost, dual, action))
+                    repriced += int(is_charge)
+                self.out[source] = updated
+        else:
+            for index, recipe in enumerate(self._arc_recipes):
+                if recipe:
+                    self._arc_costs[index] += delta
+                    repriced += 1
+            self._arc_costs_np = np.frombuffer(
+                self._arc_costs, dtype=np.float64
+            )
+        updated_sink = []
+        for source, cost, action in self.sink_arcs:
+            if action is not None:
+                is_charge = action.get("kind") == "charge"
+            else:
+                start, end = self._arc_slices[source]
+                matches = [index for index in range(start, end)
+                           if self._arc_targets[index] == self.SINK]
+                if len(matches) != 1:
+                    raise RuntimeError("cannot identify cached sink arc")
+                is_charge = bool(self._arc_recipes[matches[0]])
+            updated_sink.append((source, cost + delta if is_charge else cost, action))
+        self.sink_arcs = updated_sink
+        self.charge_start_cost = value
+        self._selected_action_cache = {}
+        return {"previous": previous, "current": value, "repriced_arcs": repriced}
 
     def _split_arcs(self):
         self.trip_trip = {}
@@ -500,7 +552,7 @@ class EventExpandedNetwork:
                         "entry_level": entry,
                         "exit_level": target_level,
                     }
-                    cost = CHARGE_START_COST + energy_cost
+                    cost = self.charge_start_cost + energy_cost
                     yield target, cost, successor, action
 
     def _iter_arcs(self, source):
@@ -761,6 +813,7 @@ class EventExpandedNetwork:
             record,
             detail["mapping"],
             station_prices=self.prices,
+            charge_start_cost=self.charge_start_cost,
         )
         blocks = costs["continuous_realized_charging_blocks"]
         cost = float(costs["recomputed_expanded_grid_cost"])
@@ -782,6 +835,23 @@ class EventExpandedNetwork:
             "cost_semantics": "expanded_grid_cost",
             "master_cost_semantics": "expanded_grid_cost",
             "continuous_cost_pricing_certified": False,
+            "charge_start_cost": self.charge_start_cost,
+            "charges_started": costs["charge_activities"],
+            "charge_start_fee_subtotal": costs[
+                "charge_start_fee_subtotal"
+            ],
+            "continuous_realized_energy_kwh": costs[
+                "continuous_realized_energy_kwh"
+            ],
+            "expanded_grid_energy_kwh": costs[
+                "expanded_grid_energy_kwh"
+            ],
+            "continuous_realized_electricity_cost": costs[
+                "realized_electricity_cost"
+            ],
+            "expanded_grid_electricity_cost": costs[
+                "expanded_grid_electricity_cost"
+            ],
             "physical_realization": {
                 "status": "valid_event_time_realized",
                 "time_model": "event",

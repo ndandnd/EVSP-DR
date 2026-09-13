@@ -344,6 +344,18 @@ class ExpandedPathRealizationTests(unittest.TestCase):
         self.assertAlmostEqual(
             costs["continuous_realized_cost"], 100024.0
         )
+        zero_fee_costs = realized_costs(
+            realized,
+            detail["mapping"],
+            station_prices=prices,
+            charge_start_cost=0.0,
+        )
+        self.assertAlmostEqual(
+            costs["continuous_realized_cost"]
+            - zero_fee_costs["continuous_realized_cost"],
+            5.0,
+        )
+        self.assertEqual(zero_fee_costs["charge_start_cost"], 0.0)
         aggregate_only = calculate_truck_route_cost_accurate(
             realized,
             100000.0,

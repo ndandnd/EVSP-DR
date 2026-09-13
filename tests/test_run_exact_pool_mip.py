@@ -131,6 +131,30 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertEqual(singleton_partition_indices(routes, [1, 2]), [1, 2])
         self.assertEqual(singleton_partition_indices(routes[:-1], [1, 2]), [])
 
+    def test_pool_fee_identity_accepts_zero_and_rejects_legacy_five(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            journal = root / "pool.columns.jsonl"
+            status = root / "pool.json"
+            status.write_text(json.dumps({
+                "trip_ids": [1],
+                "charge_start_cost": 0.0,
+                "columns_journal": str(journal),
+            }))
+            journal.write_text(json.dumps({
+                "trips": [1], "cost": 100000.0,
+                "charge_start_cost": 0.0,
+            }) + "\n")
+            loaded_status, routes, trips = load_pool(status)
+            self.assertEqual(loaded_status["charge_start_cost"], 0.0)
+            self.assertEqual(routes[0]["charge_start_cost"], 0.0)
+            self.assertEqual(trips, [1])
+            journal.write_text(json.dumps({
+                "trips": [1], "cost": 100000.0,
+            }) + "\n")
+            with self.assertRaisesRegex(SystemExit, "charge_start_cost differs"):
+                load_pool(status)
+
     def test_solver_infinity_is_serialized_as_null(self):
         self.assertIsNone(finite_solver_value(float("inf")))
         self.assertIsNone(finite_solver_value(1.7976931348623157e308))
@@ -238,6 +262,15 @@ class ExactPoolMipTests(unittest.TestCase):
                 final_status=9,
             ),
             "none",
+        )
+        self.assertEqual(
+            optimal_scope(
+                two_stage=True,
+                fleet_proven=False,
+                cost_stage_executed=True,
+                final_status=2,
+            ),
+            "charging_cost_under_fleet_cap",
         )
         self.assertEqual(
             optimal_scope(
@@ -714,6 +747,18 @@ class ExactPoolMipTests(unittest.TestCase):
                         [], [1, 2], invalid, "prices.csv", status,
                         data_dir=data_dir,
                     )
+                merged, start, detail = merge_validated_partition_start(
+                    [], [1, 2], repeated, "prices.csv", status,
+                    data_dir=data_dir, allow_covering=True,
+                )
+                self.assertEqual(len(start), 3)
+                self.assertEqual(detail["kind"], "validated_covering_start")
+                self.assertEqual(detail["repeated_trip_count"], 1)
+                self.assertTrue(detail["covering"])
+                self.assertEqual(
+                    sorted(merged[index]["trips"] for index in start),
+                    [[1], [1], [2]],
+                )
                 with self.assertRaisesRegex(
                     SystemExit, "not an exact partition"
                 ):
@@ -768,6 +813,118 @@ class ExactPoolMipTests(unittest.TestCase):
                         [], [1, 2], missing, "prices.csv", status,
                         data_dir=data_dir,
                     )
+
+    def test_saved_start_round_trip_preserves_expanded_path_and_blocks(self):
+        """A saved grid path must survive start-column reconstruction."""
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            data_dir = folder / "data"
+            data_dir.mkdir()
+            instance = data_dir / "tiny.csv"
+            prices_path = data_dir / "prices.csv"
+            instance.write_text("instance bytes\n")
+            prices_path.write_text("price bytes\n")
+            station = "2190L_0"
+            blocks = [{
+                "stop_index": 0,
+                "block_index": 0,
+                "station": station,
+                "start_min": 0.0,
+                "end_min": 2.5,
+                "realized_kwh": 10.0,
+                "expanded_grid_kwh": 12.5,
+                "tariff_hour": 0,
+                "tariff_key": "2190L:0",
+                "price_per_kwh": 1.0,
+            }]
+            route = {
+                "route": [DEPOT, 1, station, DEPOT],
+                "charging_stops": {
+                    "stations": [station],
+                    "cst": [0.0],
+                    "cet": [10.0],
+                    "kwh": [10.0],
+                },
+                "expanded_grid_charging_stops": {
+                    "stations": [station],
+                    "cst": [0.0],
+                    "cet": [10.0],
+                    "kwh": [12.5],
+                },
+                "cost": 100017.5,
+                "expanded_grid_cost": 100017.5,
+                "master_cost_semantics": "expanded_grid_cost",
+                "continuous_realized_charging_blocks": blocks,
+            }
+            path = folder / "saved_start.json"
+            path.write_text(json.dumps({"routes": [route]}))
+            problem = SimpleNamespace(
+                adjacency={
+                    DEPOT: [(1, 0.0, 0.0, "depot_trip")],
+                    1: [(station, 0.0, 0.0, "trip_station")],
+                    station: [(DEPOT, 0.0, 0.0, "station_depot")],
+                },
+                start_min={1: 0.0},
+                end_min={1: 0.0},
+                trip_energy={1: 20.0},
+                trips=[1],
+            )
+            status = {
+                "csv": "tiny.csv",
+                "prices_csv": "prices.csv",
+                "soc_step": 15.0,
+                "block_min": 10.0,
+                "g_kwh": 400.0,
+                "charge_kw": 300.0,
+                "min_soc_frac": 0.0,
+                "provenance": {
+                    "instance_sha256": hashlib.sha256(
+                        instance.read_bytes()
+                    ).hexdigest(),
+                    "prices_sha256": hashlib.sha256(
+                        prices_path.read_bytes()
+                    ).hexdigest(),
+                },
+            }
+            with (
+                patch(
+                    "audit_giro_known_columns.build_problem",
+                    return_value=problem,
+                ),
+                patch(
+                    "utils_v2.load_station_hourly_prices",
+                    return_value={"2190L": {0: 1.0}},
+                ),
+                patch(
+                    "utils_v2.calculate_truck_route_cost_accurate",
+                    return_value=100015.0,
+                ),
+            ):
+                merged, start, _detail = merge_validated_partition_start(
+                    [], [1], path, "prices.csv", status,
+                    data_dir=data_dir,
+                    preserve_expanded_grid_cost=True,
+                )
+
+            self.assertEqual(start, [0])
+            saved = merged[start[0]]
+            self.assertEqual(
+                saved["expanded_grid_charging_stops"],
+                route["expanded_grid_charging_stops"],
+            )
+            self.assertEqual(
+                saved["continuous_realized_charging_blocks"], blocks
+            )
+            self.assertAlmostEqual(saved["cost"], 100017.5)
+            self.assertEqual(
+                saved["physical_realization"]
+                ["continuous_realized_charging_blocks_sha256"],
+                hashlib.sha256(
+                    json.dumps(
+                        blocks, sort_keys=True, separators=(",", ":")
+                    ).encode()
+                ).hexdigest(),
+            )
 
     def test_final_replay_rejects_incidence_mismatch_and_nonfinite_physics(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -891,7 +1048,8 @@ class ExactPoolMipTests(unittest.TestCase):
 
     def run_fake_gurobi_mip(
         self, stages, *, explicit_start=False, mip_gap=0.0001,
-        two_stage=True,
+        two_stage=True, cover=False, return_replay_mock=False,
+        include_joint_route=False, stage1_timelimit=None,
     ):
         class FakeExpression:
             def __init__(self, items):
@@ -902,6 +1060,9 @@ class ExactPoolMipTests(unittest.TestCase):
 
             def __ge__(self, other):
                 return ("ge", self, other)
+
+            def __le__(self, other):
+                return ("le", self, other)
 
         class FakeVariable:
             def __init__(self, index):
@@ -918,6 +1079,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 self.variables = {}
                 self.optimize_calls = 0
                 self.objectives = []
+                self.constraints = []
                 self.SolCount = 0
                 self.ObjVal = 0.0
                 self.ObjBound = 0.0
@@ -929,6 +1091,7 @@ class ExactPoolMipTests(unittest.TestCase):
                 return self.variables
 
             def addConstr(self, constraint, **_kwargs):
+                self.constraints.append(constraint)
                 return constraint
 
             def setObjective(self, expression, _sense):
@@ -981,6 +1144,8 @@ class ExactPoolMipTests(unittest.TestCase):
             {"trips": [1], "cost": 100003.0},
             {"trips": [2], "cost": 100004.0},
         ]
+        if include_joint_route:
+            routes.append({"trips": [1, 2], "cost": 100005.0})
         journal.write_text("".join(json.dumps(route) + "\n" for route in routes))
         result.write_text(json.dumps({
             "csv": "tiny.csv",
@@ -1004,6 +1169,10 @@ class ExactPoolMipTests(unittest.TestCase):
         ]
         if two_stage:
             arguments.append("--two-stage")
+        if stage1_timelimit is not None:
+            arguments.extend(["--stage1-timelimit", str(stage1_timelimit)])
+        if cover:
+            arguments.append("--cover")
         explicit_patch = contextlib.nullcontext()
         if explicit_start:
             partition = folder / "partition.json"
@@ -1044,25 +1213,65 @@ class ExactPoolMipTests(unittest.TestCase):
                     },
                 ),
             ),
-            patch("run_exact_pool_mip.validate_final_selected_routes"),
+            patch(
+                "run_exact_pool_mip.validate_final_selected_routes"
+            ) as replay_mock,
         ):
             with contextlib.redirect_stdout(io.StringIO()):
                 rc = main(arguments)
         payload = json.loads(out.read_text())
-        return temporary, models[0], payload, rc
+        result = (temporary, models[0], payload, rc)
+        if return_replay_mock:
+            return result + (replay_mock,)
+        return result
+
+    def test_cover_runs_strict_pool_gate_and_cover_aware_final_replay(self):
+        temporary, _model, payload, rc, replay = self.run_fake_gurobi_mip(
+            [{
+                "status": 2,
+                "objective": 2.0,
+                "bound": 2.0,
+                "gap": 0.0,
+                "selected": [0, 1],
+            }],
+            two_stage=False,
+            cover=True,
+            return_replay_mock=True,
+        )
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(payload["physical_pool_audit"]["master_sense"],
+                         "cover")
+        self.assertTrue(payload["physical_replay_validated"])
+        self.assertEqual(
+            payload["physical_replay_scope"],
+            "selected_routes_individually_plus_at_least_once_trip_coverage",
+        )
+        self.assertTrue(payload["duplicate_trip_removal_validated"])
+        self.assertFalse(payload["cross_route_charger_capacity_validated"])
+        self.assertTrue(replay.call_args.kwargs["cover"])
 
     def test_explicit_partition_is_assigned_and_solver_acceptance_recorded(self):
-        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
-            "status": 9,
-            "objective": 1.0,
-            "bound": 0.0,
-            "gap": 1.0,
-            "selected": [2],
-            "start_messages": [
-                "Loaded user MIP start with objective 1",
-                "User MIP start did not produce a new incumbent solution",
-            ],
-        }], explicit_start=True, mip_gap=0.0125)
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([
+            {
+                "status": 9,
+                "objective": 1.0,
+                "bound": 0.0,
+                "gap": 1.0,
+                "selected": [2],
+                "start_messages": [
+                    "Loaded user MIP start with objective 1",
+                    "User MIP start did not produce a new incumbent solution",
+                ],
+            },
+            {
+                "status": 11,
+                "objective": 0.0,
+                "bound": 0.0,
+                "solutions": 0,
+                "selected": [],
+            },
+        ], explicit_start=True, mip_gap=0.0125)
         self.addCleanup(temporary.cleanup)
 
         self.assertEqual(rc, 0)
@@ -1089,21 +1298,31 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertTrue(payload["mip_start_used"])
         self.assertTrue(payload["mip_start_assigned"])
 
-    def test_unproven_fleet_uses_full_primary_stage_and_skips_cost_stage(self):
-        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
-            "status": 9,
-            "objective": 2.0,
-            "bound": 0.9,
-            "gap": 0.55,
-            "selected": [0, 1],
-        }])
+    def test_unproven_fleet_reserves_and_runs_cost_stage(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([
+            {
+                "status": 9,
+                "objective": 2.0,
+                "bound": 0.9,
+                "gap": 0.55,
+                "selected": [0, 1],
+            },
+            {
+                "status": 2,
+                "objective": 7.0,
+                "bound": 7.0,
+                "selected": [0, 1],
+            },
+        ])
         self.addCleanup(temporary.cleanup)
         self.assertEqual(rc, 0)
-        self.assertEqual(model.optimize_calls, 1)
+        self.assertEqual(model.optimize_calls, 2)
         self.assertFalse(payload["fleet_proven"])
-        self.assertFalse(payload["two_stage"]["stage2_executed"])
-        self.assertEqual(payload["status_name"], "TIME_LIMIT")
-        self.assertEqual(payload["optimal_scope"], "none")
+        self.assertTrue(payload["two_stage"]["stage2_executed"])
+        self.assertEqual(payload["optimal_scope"], "charging_cost_under_fleet_cap")
+        self.assertEqual(payload["two_stage"]["stage1_time_limit_s"], 30.0)
+        self.assertEqual(payload["two_stage"]["stage2_fleet_constraint"], "at_most")
+        self.assertEqual(model.constraints[-1][0], "le")
         self.assertGreaterEqual(
             payload["physical_pool_preparation_wall_s"], 0.0
         )
@@ -1116,6 +1335,35 @@ class ExactPoolMipTests(unittest.TestCase):
             payload["runtime_s"],
         )
         self.assertGreaterEqual(payload["gurobi_optimize_wall_s"], 0.0)
+
+    def test_unproven_stage2_cap_can_choose_fewer_fleet(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([
+            {
+                "status": 9,
+                "objective": 2.0,
+                "bound": 0.9,
+                "gap": 0.55,
+                "selected": [0, 1],
+            },
+            {
+                "status": 2,
+                "objective": 5.0,
+                "bound": 5.0,
+                "selected": [2],
+            },
+        ], include_joint_route=True)
+        self.addCleanup(temporary.cleanup)
+        self.assertEqual(rc, 0)
+        self.assertEqual(payload["buses"], 1)
+        self.assertEqual(payload["stage2_fleet_cap"], 2)
+        self.assertFalse(payload["fleet_proven"])
+        self.assertEqual(payload["optimal_scope"], "charging_cost_under_fleet_cap")
+        self.assertIsNone(payload["mip_bound"])
+        self.assertEqual(
+            payload["mip_bound_scope"],
+            "charging_related_objective_under_fleet_cap",
+        )
+        self.assertEqual(model.constraints[-1][0], "le")
 
     def test_proven_fleet_runs_cost_stage_and_reconstructs_full_objective(self):
         temporary, model, payload, rc = self.run_fake_gurobi_mip([
@@ -1139,6 +1387,8 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertEqual(model.optimize_calls, 2)
         self.assertTrue(payload["fleet_proven"])
         self.assertEqual(payload["optimal_scope"], "full_pool_lexicographic")
+        self.assertEqual(model.constraints[-1][0], "le")
+        self.assertTrue(payload["stage2_fleet_cap_proven"])
         self.assertEqual(payload["mip_obj"], 200007.0)
         self.assertEqual(payload["mip_bound"], 200007.0)
         self.assertEqual(payload["absolute_cost_gap"], 0.0)
@@ -1173,7 +1423,7 @@ class ExactPoolMipTests(unittest.TestCase):
         self.assertEqual(payload["mip_obj"], 200007.0)
         self.assertEqual(
             payload["two_stage"]["stage2_reported_incumbent_source"],
-            "stage1_fallback",
+            "stage1_solver_fallback",
         )
 
     def test_two_stage_no_incumbent_still_writes_final_result(self):
@@ -1197,18 +1447,27 @@ class ExactPoolMipTests(unittest.TestCase):
             "no_fleet_incumbent",
         )
 
-    def test_validated_start_is_preserved_when_solver_reports_no_solution(self):
-        temporary, model, payload, rc = self.run_fake_gurobi_mip([{
-            "status": 9,
-            "objective": 0.0,
-            "bound": 1.0,
-            "gap": 1.0,
-            "solutions": 0,
-            "selected": [],
-        }], explicit_start=True)
+    def test_validated_start_is_preserved_and_can_enter_cost_stage(self):
+        temporary, model, payload, rc = self.run_fake_gurobi_mip([
+            {
+                "status": 9,
+                "objective": 0.0,
+                "bound": 1.0,
+                "gap": 1.0,
+                "solutions": 0,
+                "selected": [],
+            },
+            {
+                "status": 11,
+                "objective": 0.0,
+                "bound": 0.0,
+                "solutions": 0,
+                "selected": [],
+            },
+        ], explicit_start=True)
         self.addCleanup(temporary.cleanup)
         self.assertEqual(rc, 0)
-        self.assertEqual(model.optimize_calls, 1)
+        self.assertEqual(model.optimize_calls, 2)
         self.assertTrue(payload["incumbent_found"])
         self.assertFalse(payload["solver_incumbent_found"])
         self.assertEqual(
@@ -1216,8 +1475,8 @@ class ExactPoolMipTests(unittest.TestCase):
         )
         self.assertEqual(payload["buses"], 1)
         self.assertEqual(
-            payload["two_stage"]["stage2_skip_reason"],
-            "no_fleet_incumbent",
+            payload["two_stage"]["stage2_reported_incumbent_source"],
+            "validated_start_fallback",
         )
 
     def test_single_stage_preserves_validated_start_without_solver_solution(self):

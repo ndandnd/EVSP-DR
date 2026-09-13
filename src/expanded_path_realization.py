@@ -587,6 +587,7 @@ def validate_continuous_charging_blocks(
     *,
     station_prices: dict,
     charge_kw: float,
+    charge_start_cost: float = CHARGE_START_COST,
     expected_continuous_cost: float | None = None,
 ) -> dict:
     """Validate compact block provenance and recompute continuous route cost."""
@@ -704,8 +705,11 @@ def validate_continuous_charging_blocks(
             * float(block["price_per_kwh"])
             for block in stop_blocks
         )
+    charge_start_cost = float(charge_start_cost)
+    if not math.isfinite(charge_start_cost) or charge_start_cost < 0.0:
+        raise ValueError("charge start cost must be finite and nonnegative")
     starts = len(fields["stations"])
-    fixed = BUS_COST_KX + starts * CHARGE_START_COST
+    fixed = BUS_COST_KX + starts * charge_start_cost
     continuous_cost = fixed + realized_electricity
     if (
         expected_continuous_cost is not None
@@ -724,6 +728,14 @@ def validate_continuous_charging_blocks(
         "recomputed_expanded_grid_cost": fixed + expanded_electricity,
         "realized_electricity_cost": realized_electricity,
         "expanded_grid_electricity_cost": expanded_electricity,
+        "charge_activities": starts,
+        "charge_start_fee_subtotal": starts * charge_start_cost,
+        "continuous_realized_energy_kwh": sum(
+            float(block["realized_kwh"]) for block in blocks
+        ),
+        "expanded_grid_energy_kwh": sum(
+            float(block["expanded_grid_kwh"]) for block in blocks
+        ),
         "block_schedule_sha256":
             charging_block_schedule_sha256(blocks),
     }
@@ -734,6 +746,7 @@ def realized_costs(
     mapping: dict,
     *,
     station_prices: dict,
+    charge_start_cost: float = CHARGE_START_COST,
 ) -> dict:
     """Report grid and realized charging costs without changing master cost."""
 
@@ -791,6 +804,7 @@ def realized_costs(
         blocks,
         station_prices=station_prices,
         charge_kw=float(mapping["charge_kw"]),
+        charge_start_cost=charge_start_cost,
     )
     return {
         "stored_expanded_grid_cost": float(record["cost"]),
@@ -808,4 +822,21 @@ def realized_costs(
         "master_cost_changed": False,
         "master_cost_semantics": "expanded_grid_cost",
         "continuous_cost_pricing_certified": False,
+        "charge_start_cost": float(charge_start_cost),
+        "charge_activities": validation["charge_activities"],
+        "charge_start_fee_subtotal": validation[
+            "charge_start_fee_subtotal"
+        ],
+        "continuous_realized_energy_kwh": validation[
+            "continuous_realized_energy_kwh"
+        ],
+        "expanded_grid_energy_kwh": validation[
+            "expanded_grid_energy_kwh"
+        ],
+        "realized_electricity_cost": validation[
+            "realized_electricity_cost"
+        ],
+        "expanded_grid_electricity_cost": validation[
+            "expanded_grid_electricity_cost"
+        ],
     }

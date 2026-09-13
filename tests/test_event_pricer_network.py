@@ -1,4 +1,5 @@
 import sys
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -72,6 +73,38 @@ def four_trip_chain_problem():
 
 
 class EventPricerNetworkTests(unittest.TestCase):
+    def test_cached_graph_reprices_fee_only_without_mutating_cache(self):
+        identity = {"schema": "fee-reprice-test", "instance_sha256": "a" * 64}
+        for arc_mode in ("explicit", "lazy"):
+            with self.subTest(arc_mode=arc_mode), tempfile.TemporaryDirectory() as directory:
+                baseline = EventExpandedNetwork(
+                    two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+                    g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+                    arc_mode=arc_mode, charge_start_cost=5.0,
+                )
+                cache = Path(directory) / "network.pkl"
+                _write_event_network_cache(cache, baseline, identity, 0.1)
+                cache_sha256 = hashlib.sha256(cache.read_bytes()).hexdigest()
+                cached, _ = _load_event_network_cache(cache, identity)
+                audit = cached.set_charge_start_cost(0.0)
+                fresh = EventExpandedNetwork(
+                    two_trip_problem(), prices(), soc_step=2.5, block_min=5,
+                    g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+                    arc_mode=arc_mode, charge_start_cost=0.0,
+                )
+                cached_route = cached.fixed_sequence_record([0, 1])
+                fresh_route = fresh.fixed_sequence_record([0, 1])
+                baseline_route = baseline.fixed_sequence_record([0, 1])
+                self.assertEqual(cached_route["route_nodes"], fresh_route["route_nodes"])
+                self.assertAlmostEqual(cached_route["cost"], fresh_route["cost"])
+                self.assertAlmostEqual(
+                    baseline_route["cost"] - cached_route["cost"],
+                    5.0 * cached_route["charges_started"],
+                )
+                self.assertGreater(audit["repriced_arcs"], 0)
+                self.assertEqual(cache_sha256, hashlib.sha256(cache.read_bytes()).hexdigest())
+                self.assertEqual(cached_route["charge_start_cost"], 0.0)
+
     def test_complementary_batch_keeps_exact_best_and_adds_novel_incidence(self):
         network = EventExpandedNetwork(
             four_trip_chain_problem(), prices(), soc_step=15,
@@ -121,6 +154,42 @@ class EventPricerNetworkTests(unittest.TestCase):
             self.assertTrue(loaded._window_cache)
             with self.assertRaisesRegex(ValueError, "identity mismatch"):
                 _load_event_network_cache(cache, {"schema": "wrong"})
+
+    def test_cache_commit_equivalence_is_explicit_and_commit_only(self):
+        network = EventExpandedNetwork(
+            two_trip_problem(), prices(), soc_step=15, block_min=10,
+            g_kwh=240.0, charge_kw=240.0, reserve_kwh=0.0,
+        )
+        source_commit = "1" * 40
+        target_commit = "2" * 40
+        source_identity = {
+            "schema": "test", "git_commit": source_commit,
+            "instance_sha256": "a" * 64,
+        }
+        target_identity = {**source_identity, "git_commit": target_commit}
+        with tempfile.TemporaryDirectory() as directory:
+            cache = Path(directory) / "network.pkl"
+            _write_event_network_cache(cache, network, source_identity, 0.1)
+            with self.assertRaisesRegex(ValueError, "identity mismatch"):
+                _load_event_network_cache(cache, target_identity)
+            _loaded, manifest = _load_event_network_cache(
+                cache, target_identity, source_commit,
+            )
+            self.assertEqual(
+                manifest["runtime_compatibility"]["only_identity_difference"],
+                "git_commit",
+            )
+            rewritten, rewritten_manifest = _load_event_network_cache(
+                cache, source_identity, source_commit,
+            )
+            self.assertEqual(rewritten.metrics(), network.metrics())
+            self.assertNotIn("runtime_compatibility", rewritten_manifest)
+            with self.assertRaisesRegex(ValueError, "differs beyond"):
+                _load_event_network_cache(
+                    cache,
+                    {**target_identity, "instance_sha256": "b" * 64},
+                    source_commit,
+                )
 
     def test_event_route_uses_exact_window_and_replays(self):
         network = EventExpandedNetwork(

@@ -116,7 +116,11 @@ def _event_network_cache_manifest_path(cache_path: Path) -> Path:
     return Path(str(cache_path) + ".manifest.json")
 
 
-def _load_event_network_cache(cache_path: Path, expected: dict):
+def _load_event_network_cache(
+    cache_path: Path,
+    expected: dict,
+    equivalent_source_commit: str | None = None,
+):
     from event_pricer_network import EventExpandedNetwork
 
     cache_path = cache_path.expanduser().resolve()
@@ -127,10 +131,38 @@ def _load_event_network_cache(cache_path: Path, expected: dict):
         raise DurableFileError(
             f"event-network cache manifest is unavailable: {manifest_path}"
         ) from exc
-    if manifest.get("identity") != expected:
-        raise DurableFileError(
-            f"event-network cache identity mismatch: {manifest_path}"
+    observed_identity = manifest.get("identity")
+    compatibility = None
+    if observed_identity != expected:
+        normalized = deepcopy(observed_identity)
+        observed_commit = (
+            normalized.get("git_commit")
+            if isinstance(normalized, dict) else None
         )
+        if (
+            equivalent_source_commit is None
+            or observed_commit != equivalent_source_commit
+            or len(equivalent_source_commit) != 40
+            or any(
+                character not in "0123456789abcdef"
+                for character in equivalent_source_commit.lower()
+            )
+        ):
+            raise DurableFileError(
+                f"event-network cache identity mismatch: {manifest_path}"
+            )
+        normalized["git_commit"] = expected.get("git_commit")
+        if normalized != expected:
+            raise DurableFileError(
+                "event-network cache differs beyond explicitly attested "
+                f"source commit: {manifest_path}"
+            )
+        compatibility = {
+            "mode": "explicit_source_commit_equivalence",
+            "source_commit": observed_commit,
+            "execution_commit": expected.get("git_commit"),
+            "only_identity_difference": "git_commit",
+        }
     observed_sha256 = _file_sha256(cache_path)
     if observed_sha256 != manifest.get("pickle_sha256"):
         raise DurableFileError(
@@ -146,7 +178,10 @@ def _load_event_network_cache(cache_path: Path, expected: dict):
         raise DurableFileError(
             f"event-network cache metrics mismatch: {cache_path}"
         )
-    return network, manifest
+    loaded_manifest = deepcopy(manifest)
+    if compatibility is not None:
+        loaded_manifest["runtime_compatibility"] = compatibility
+    return network, loaded_manifest
 
 
 def _write_event_network_cache(
@@ -190,6 +225,7 @@ def validated_fixed_duty_seed_records(
     reserve_kwh: float,
     soc_step: float,
     block_min: int,
+    charge_start_cost: float,
 ):
     """Load one tariff-specific exact partition as expanded-grid seed columns."""
 
@@ -213,7 +249,11 @@ def validated_fixed_duty_seed_records(
         or tariff.get("sha256") != _file_sha256(tariff_path)
         or any(
             not math.isclose(
-                float(physics.get(key, math.nan)), expected,
+                float(physics.get(
+                    key,
+                    CHARGE_START_COST
+                    if key == "charge_start_cost" else math.nan,
+                )), expected,
                 rel_tol=0.0, abs_tol=1e-9,
             )
             for key, expected in (
@@ -222,6 +262,7 @@ def validated_fixed_duty_seed_records(
                 ("reserve_kwh", reserve_kwh),
                 ("soc_step", soc_step),
                 ("block_min", block_min),
+                ("charge_start_cost", charge_start_cost),
             )
         )
     ):
@@ -283,6 +324,7 @@ def validated_fixed_duty_seed_records(
             blocks,
             station_prices=validation_prices,
             charge_kw=charge_kw,
+            charge_start_cost=charge_start_cost,
             expected_continuous_cost=route.get(
                 "continuous_realized_cost"
             ),
@@ -291,6 +333,7 @@ def validated_fixed_duty_seed_records(
             route,
             physical,
             station_prices=validation_prices,
+            charge_start_cost=charge_start_cost,
         )
         certificate = certificate_by_duty.get(route.get("duty_id"))
         certificate_payload = (
@@ -310,6 +353,7 @@ def validated_fixed_duty_seed_records(
             reserve_kwh=reserve_kwh,
             soc_step=soc_step,
             block_min=block_min,
+            charge_start_cost=charge_start_cost,
             tariff_id=tariff.get("tariff_id"),
             tariff_sha256=tariff["sha256"],
             instance_sha256=payload.get("instance_sha256"),
@@ -368,6 +412,7 @@ def validated_fixed_duty_seed_records(
             "cost": float(route["expanded_grid_cost"]),
             "origin": "tariff_specific_fixed_duty_seed",
             "seed_source_sha256": hashlib.sha256(raw).hexdigest(),
+            "charge_start_cost": float(charge_start_cost),
         })
     if (
         set(counts) != trip_set
@@ -681,6 +726,12 @@ def inherited_event_pool_records(
         "mapping_key":"Ordered_Trip_ID", "child_event_graph_reoptimization":True,
         "replay_workers":int(workers), "inherited_duals":False,
         "inherited_basis":False, "inherited_lp_certificate":False,
+        "source_charge_start_cost":status.get(
+            "charge_start_cost", CHARGE_START_COST
+        ),
+        "target_charge_start_cost":getattr(
+            child_network, "charge_start_cost", CHARGE_START_COST
+        ),
     }
     return accepted, audit
 
@@ -691,6 +742,7 @@ def direct_singleton_seed_records(
     g_kwh: float,
     soc_step: float,
     reserve_kwh: float,
+    charge_start_cost: float = CHARGE_START_COST,
 ) -> tuple[list[dict], list[int]]:
     """Build depot-trip-depot columns feasible in the expanded SOC grid.
 
@@ -774,6 +826,7 @@ def direct_singleton_seed_records(
             "charges_started": 0,
             "found_iter": 0,
             "origin": "exact_direct_singleton_seed",
+            "charge_start_cost": float(charge_start_cost),
         })
     return records, missing
 
@@ -784,7 +837,8 @@ class ExpandedNetwork:
     def __init__(self, problem, station_prices, *, soc_step: float, block_min: int,
                  g_kwh: float = G_KWH, charge_kw: float = CHARGE_RATE_KW,
                  reserve_kwh: float = 0.0,
-                 strict_tariff_coverage: bool = False):
+                 strict_tariff_coverage: bool = False,
+                 charge_start_cost: float = CHARGE_START_COST):
         self.problem = problem
         self.trip_position = {
             trip: position for position, trip in enumerate(problem.trips)
@@ -794,6 +848,9 @@ class ExpandedNetwork:
         self.g = float(g_kwh)
         self.charge_kw = float(charge_kw)
         self.reserve = float(reserve_kwh)
+        self.charge_start_cost = float(charge_start_cost)
+        if not math.isfinite(self.charge_start_cost) or self.charge_start_cost < 0.0:
+            raise ValueError("charge start cost must be finite and nonnegative")
         self.n_blocks = int(HORIZON_MIN) // self.block_min
         self.block_kwh = float(charge_kw) * self.block_min / 60.0
         self.prices = station_prices  # base station -> {hour: $/kWh}
@@ -924,7 +981,7 @@ class ExpandedNetwork:
                     continue
                 first_block = int(math.ceil(arrival / self.block_min - 1e-9))
                 for block in range(max(first_block, 0), self.n_blocks):
-                    add(u, self.charge_node[(station, block, lvl)], CHARGE_START_COST)
+                    add(u, self.charge_node[(station, block, lvl)], self.charge_start_cost)
 
         for (station, block, level), u in self.charge_node.items():
             soc_after = self._charge_result(level)
@@ -1388,6 +1445,7 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
         ),
         "g_kwh": args.g_kwh,
         "charge_kw": args.charge_kw,
+        "charge_start_cost": args.charge_start_cost,
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "master_backend": current_master_backend,
@@ -1421,6 +1479,8 @@ def resume_identity_mismatches(status, args, trips, provenance) -> list[str]:
             observed = "singletons"
         if key == "time_model" and key not in status:
             observed = "uniform"
+        if key == "charge_start_cost" and key not in status:
+            observed = CHARGE_START_COST
         if key == "columns_per_iter" and key not in status:
             # Legacy status schemas did not persist batching controls.  They
             # cannot be reconstructed from the journal, so preserve historical
@@ -1773,6 +1833,7 @@ def run_cg(args) -> dict:
                 "block_min": args.block_min,
                 "g_kwh": args.g_kwh,
                 "charge_kw": args.charge_kw,
+                "charge_start_cost": args.charge_start_cost,
                 "min_soc_frac": args.min_soc_frac,
                 "master_sense": args.master_sense,
                 "master_backend": master_backend,
@@ -1817,6 +1878,7 @@ def run_cg(args) -> dict:
         network_kwargs["arc_mode"] = getattr(
             args, "event_arc_mode", "lazy"
         )
+    network_kwargs["charge_start_cost"] = args.charge_start_cost
     cache_path = getattr(args, "event_network_cache", None)
     cache_identity = (
         _event_network_cache_identity(args, provenance)
@@ -1827,7 +1889,8 @@ def run_cg(args) -> dict:
     network_t0 = time.time()
     if cache_path is not None and args.event_network_cache_mode == "require":
         net, cache_manifest = _load_event_network_cache(
-            cache_path, cache_identity
+            cache_path, cache_identity,
+            getattr(args, "event_network_cache_source_commit", None),
         )
         cache_hit = True
     elif (
@@ -1835,7 +1898,8 @@ def run_cg(args) -> dict:
         and _event_network_cache_manifest_path(cache_path).is_file()
     ):
         net, cache_manifest = _load_event_network_cache(
-            cache_path, cache_identity
+            cache_path, cache_identity,
+            getattr(args, "event_network_cache_source_commit", None),
         )
         cache_hit = True
     else:
@@ -1856,6 +1920,7 @@ def run_cg(args) -> dict:
                 cache_path, net, cache_identity, time.time() - network_t0
             )
     if time_model == "event":
+        cache_reprice = net.set_charge_start_cost(args.charge_start_cost)
         net.set_fixed_sequence_index(getattr(args, "fixed_sequence_index", False))
     build_s = time.time() - network_t0
     network_metrics = (
@@ -1868,6 +1933,8 @@ def run_cg(args) -> dict:
     )
     if time_model == "event":
         network_metrics["fixed_sequence_index"] = net.fixed_sequence_index
+        network_metrics["charge_start_cost"] = net.charge_start_cost
+        network_metrics["cache_charge_start_reprice"] = cache_reprice
     inherited_event_pool_audit = None
     if cache_path is not None:
         network_metrics.update({
@@ -1878,6 +1945,9 @@ def run_cg(args) -> dict:
                 "original_build_s"
             ),
             "cache_pickle_bytes": cache_manifest.get("pickle_bytes"),
+            "cache_runtime_compatibility": cache_manifest.get(
+                "runtime_compatibility"
+            ),
         })
     print(f"[EXACT] network: {len(net.node_meta):,} nodes, {net.n_arcs:,} arcs "
           f"(soc_step={args.soc_step}, block={args.block_min}min) "
@@ -2110,6 +2180,7 @@ def run_cg(args) -> dict:
             ),
             "g_kwh": args.g_kwh,
             "charge_kw": args.charge_kw,
+            "charge_start_cost": args.charge_start_cost,
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "master_backend": master_backend,
@@ -2300,6 +2371,7 @@ def run_cg(args) -> dict:
         inherited_existing = 0
         for record in inherited_records:
             record["cost_tariff_sha256"] = provenance["prices_sha256"]
+            record["charge_start_cost"] = args.charge_start_cost
             key = frozenset(record["trips"])
             if key not in pool:
                 pool[key] = record
@@ -2349,6 +2421,7 @@ def run_cg(args) -> dict:
                 reserve_kwh=args.min_soc_frac * args.g_kwh,
                 soc_step=args.soc_step,
                 block_min=args.block_min,
+                charge_start_cost=args.charge_start_cost,
             )
         )
         seed_added = 0
@@ -2374,10 +2447,12 @@ def run_cg(args) -> dict:
             g_kwh=args.g_kwh,
             soc_step=args.soc_step,
             reserve_kwh=args.min_soc_frac * args.g_kwh,
+            charge_start_cost=args.charge_start_cost,
         )
         seeds_added = 0
         for record in singleton_seeds:
             record["cost_tariff_sha256"] = provenance["prices_sha256"]
+            record["charge_start_cost"] = args.charge_start_cost
             key = frozenset(record["trips"])
             if key not in pool or record["cost"] < pool[key]["cost"] - 1e-9:
                 pool[key] = record
@@ -2435,6 +2510,7 @@ def run_cg(args) -> dict:
                 args, "strict_tariff_coverage", False
             ),
             "g_kwh": args.g_kwh, "charge_kw": args.charge_kw,
+            "charge_start_cost": args.charge_start_cost,
             "min_soc_frac": args.min_soc_frac,
             "master_sense": args.master_sense,
             "master_backend": master_backend,
@@ -2801,6 +2877,7 @@ def run_cg(args) -> dict:
                         "origin": "event_time_pricing",
                         "cost_tariff_sha256":
                             provenance["prices_sha256"],
+                        "charge_start_cost": args.charge_start_cost,
                     })
                 else:
                     record = {
@@ -2815,7 +2892,8 @@ def run_cg(args) -> dict:
                     }
                     mapping = route["_continuous_mapping"]
                     costs = realized_costs(
-                        record, mapping, station_prices=prices
+                        record, mapping, station_prices=prices,
+                        charge_start_cost=args.charge_start_cost,
                     )
                     record.update({
                         "expanded_grid_cost": cost,
@@ -2834,6 +2912,22 @@ def run_cg(args) -> dict:
                         "continuous_cost_pricing_certified": False,
                         "cost_tariff_sha256":
                             provenance["prices_sha256"],
+                        "charge_start_cost": args.charge_start_cost,
+                        "charge_start_fee_subtotal": costs[
+                            "charge_start_fee_subtotal"
+                        ],
+                        "continuous_realized_energy_kwh": costs[
+                            "continuous_realized_energy_kwh"
+                        ],
+                        "expanded_grid_energy_kwh": costs[
+                            "expanded_grid_energy_kwh"
+                        ],
+                        "continuous_realized_electricity_cost": costs[
+                            "realized_electricity_cost"
+                        ],
+                        "expanded_grid_electricity_cost": costs[
+                            "expanded_grid_electricity_cost"
+                        ],
                         "physical_realization": {
                             key: value
                             for key, value in mapping.items()
@@ -3023,7 +3117,8 @@ def run_cg(args) -> dict:
                         }
                         mapping = route["_continuous_mapping"]
                         costs = realized_costs(
-                            record, mapping, station_prices=prices
+                            record, mapping, station_prices=prices,
+                            charge_start_cost=args.charge_start_cost,
                         )
                         record.update({
                             "expanded_grid_cost": cost,
@@ -3047,6 +3142,22 @@ def run_cg(args) -> dict:
                             "continuous_cost_pricing_certified": False,
                             "cost_tariff_sha256":
                                 provenance["prices_sha256"],
+                            "charge_start_cost": args.charge_start_cost,
+                            "charge_start_fee_subtotal": costs[
+                                "charge_start_fee_subtotal"
+                            ],
+                            "continuous_realized_energy_kwh": costs[
+                                "continuous_realized_energy_kwh"
+                            ],
+                            "expanded_grid_energy_kwh": costs[
+                                "expanded_grid_energy_kwh"
+                            ],
+                            "continuous_realized_electricity_cost": costs[
+                                "realized_electricity_cost"
+                            ],
+                            "expanded_grid_electricity_cost": costs[
+                                "expanded_grid_electricity_cost"
+                            ],
                             "physical_realization": {
                                 key_: value for key_, value
                                 in mapping.items() if key_ != "trace"
@@ -3213,6 +3324,7 @@ def run_cg(args) -> dict:
         ),
         "g_kwh": args.g_kwh,
         "charge_kw": args.charge_kw,
+        "charge_start_cost": args.charge_start_cost,
         "min_soc_frac": args.min_soc_frac,
         "master_sense": args.master_sense,
         "master_backend": master_backend,
@@ -3294,6 +3406,13 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--event-network-cache", type=Path, default=None,
         help="Hash-validated pickle cache for a completed event network.",
+    )
+    parser.add_argument(
+        "--event-network-cache-source-commit", default=None,
+        help=(
+            "Explicitly attested cache-construction commit. Allows reuse only "
+            "when git_commit is the sole cache-identity difference."
+        ),
     )
     parser.add_argument(
         "--event-network-cache-mode",
@@ -3424,6 +3543,10 @@ def main(argv=None) -> int:
     parser.add_argument("--charge-kw", type=float, default=CHARGE_RATE_KW,
                         help="Charger power. GIRO telemetry implies ~220 kW; "
                              "300 is the historical model convention.")
+    parser.add_argument(
+        "--charge-start-cost", type=float, default=CHARGE_START_COST,
+        help="Nonnegative fixed objective cost per charging activity.",
+    )
     parser.add_argument("--min-soc-frac", type=float, default=0.0,
                         help="SOC reserve as a fraction of capacity (FDL notes "
                              "require 0.2 for duties over 20h).")
@@ -3453,6 +3576,8 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     if args.columns_per_iter < 1:
         parser.error("--columns_per_iter must be positive")
+    if not math.isfinite(args.charge_start_cost) or args.charge_start_cost < 0:
+        parser.error("--charge-start-cost must be finite and nonnegative")
     if args.inherit_max_columns < 0 or args.inherit_time_limit_s < 0:
         parser.error("inheritance bounds must be nonnegative")
     if args.inherit_event_pool_workers < 1:
@@ -3504,6 +3629,14 @@ def main(argv=None) -> int:
     if args.event_network_cache_only and args.event_network_cache is None:
         parser.error(
             "--event-network-cache-only requires --event-network-cache"
+        )
+    if (
+        args.event_network_cache_source_commit is not None
+        and args.event_network_cache is None
+    ):
+        parser.error(
+            "--event-network-cache-source-commit requires "
+            "--event-network-cache"
         )
     if (
         args.event_network_cache_mode == "require"

@@ -106,6 +106,7 @@ def evaluate_fixed_duty_transition(
     reserve_kwh,
     station_prices,
     n_blocks,
+    charge_start_cost=CHARGE_START_COST,
     include_trace=False,
 ):
     """Pure production transition evaluator for one predecessor label.
@@ -381,7 +382,7 @@ def evaluate_fixed_duty_transition(
                     ),
                 }
                 candidate_cost = (
-                    base_cost + CHARGE_START_COST + charging_cost
+                    base_cost + charge_start_cost + charging_cost
                 )
                 if accepted:
                     candidates.append({
@@ -452,6 +453,7 @@ def optimize_fixed_duty(
     reserve_kwh=0.0,
     soc_step=15.0,
     block_min=10,
+    charge_start_cost=CHARGE_START_COST,
     tariff_id=None,
     tariff_sha256=None,
     instance_sha256=None,
@@ -486,6 +488,9 @@ def optimize_fixed_duty(
     reserve_kwh = float(reserve_kwh)
     soc_step = float(soc_step)
     block_min = int(block_min)
+    charge_start_cost = float(charge_start_cost)
+    if not math.isfinite(charge_start_cost) or charge_start_cost < 0.0:
+        raise ValueError("charge_start_cost must be finite and nonnegative")
     required_hours = set(range(int(math.ceil(HORIZON_MIN / 60.0))))
     if any(
         set(curve) != set(range(max(curve) + 1))
@@ -608,6 +613,7 @@ def optimize_fixed_duty(
                 reserve_kwh=reserve_kwh,
                 station_prices=station_prices,
                 n_blocks=n_blocks,
+                charge_start_cost=charge_start_cost,
                 include_trace=trace,
             )
             if trace:
@@ -722,6 +728,7 @@ def optimize_fixed_duty(
         {**realized, "cost": float(best_cost)},
         detail["mapping"],
         station_prices=station_prices,
+        charge_start_cost=charge_start_cost,
     )
     if not math.isclose(
         costs["recomputed_expanded_grid_cost"],
@@ -749,6 +756,23 @@ def optimize_fixed_duty(
         "continuous_realized_charging_blocks": continuous,
         "master_cost_semantics": "expanded_grid_cost",
         "cost_tariff_sha256": tariff_sha256,
+        "charge_start_cost": charge_start_cost,
+        "charges_started": costs["charge_activities"],
+        "charge_start_fee_subtotal": costs[
+            "charge_start_fee_subtotal"
+        ],
+        "continuous_realized_energy_kwh": costs[
+            "continuous_realized_energy_kwh"
+        ],
+        "expanded_grid_energy_kwh": costs[
+            "expanded_grid_energy_kwh"
+        ],
+        "continuous_realized_electricity_cost": costs[
+            "realized_electricity_cost"
+        ],
+        "expanded_grid_electricity_cost": costs[
+            "expanded_grid_electricity_cost"
+        ],
         "continuous_terminal_soc_kwh": detail["mapping"][
             "continuous_terminal_soc_kwh"
         ],
@@ -798,6 +822,7 @@ def optimize_fixed_duty(
             "reserve_kwh": reserve_kwh,
             "soc_step": soc_step,
             "block_min": block_min,
+            "charge_start_cost": charge_start_cost,
         },
         "objective": best_cost,
         "labels_accepted": labels,
