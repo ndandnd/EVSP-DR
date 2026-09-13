@@ -1,0 +1,19 @@
+{
+  "snapshot_sha256": "8fc7f7f1b411b425b109ae60325c2c4661b740e316826dfac20005145dd9f92e",
+  "cg_count": 9,
+  "mip_count": 17,
+  "fresh_mip_count": 7,
+  "warm_mip_count": 10,
+  "case_count": 24,
+  "all_cg_certified": true,
+  "all_mip_pool_fleet_proven": true,
+  "errors": [],
+  "departed_extra_jobs_reconciled_to_published_aliases": true,
+  "extension_cg_certificates": [
+    "w1_k16",
+    "w2_k16",
+    "w3_k16",
+    "w3_k17"
+  ],
+  "extension_mip_endpoints": 0
+}

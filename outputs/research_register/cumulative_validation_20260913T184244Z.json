@@ -1,0 +1,74 @@
+{
+  "schema": "evsp-cumulative-register-workbook-check-v1",
+  "source_snapshot": {
+    "path": "raw/20260913T184244Z.json",
+    "sha256": "8fc7f7f1b411b425b109ae60325c2c4661b740e316826dfac20005145dd9f92e",
+    "timestamp_utc": "2026-09-13T18:42:44.423762+00:00"
+  },
+  "supplements_preserved": [
+    {
+      "path": "raw/supplemental/chain2_recovery_submission.json",
+      "sha256": "e1ae0463bb240e6e2ec9ba39d29915aa6de960ce85dfe88ee2cb60562d9537a7"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_manifest.json",
+      "sha256": "4aec50885519130e4a8ef0059e1172a23406de5045f0644f41e688ab0fb2eeab"
+    },
+    {
+      "path": "raw/supplemental/completed_parent_validation.json",
+      "sha256": "eb3292bcb158c2ac1472ef485ed9ea00a6600c4cf5cb6b999aa56bbbf5c6f76c"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_submission.json",
+      "sha256": "e3e94f0aab45b7c6291eecddb5e8fde77434094391fed5b6bdd17785bb74c010"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_manifest.json",
+      "sha256": "1bec90faf73a24c06b60ad736ce95038272f8915e4180dc65a5bcbac3114ac7b"
+    },
+    {
+      "path": "raw/supplemental/graph_parent32_timeout_20260913.json",
+      "sha256": "e381dad5fafc755c2505104bb167864537315e1abf2c395bdef024960cd26bb0"
+    }
+  ],
+  "row_count": 2381,
+  "campaign_count": 50,
+  "cumulative_counts": {
+    "audit_result": 24,
+    "cg": 9,
+    "mip": 17
+  },
+  "source_endpoint_exact_match": true,
+  "alias_independent_solve_count": 0,
+  "workbook_formula_errors": 0,
+  "rendered_changed_views": [
+    {
+      "sheet": "Campaigns",
+      "range": "A1:G14"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A12:H13"
+    },
+    {
+      "sheet": "CG",
+      "range": "A157:N166"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A147:L164"
+    },
+    {
+      "sheet": "Attempts",
+      "range": "A122:H146"
+    }
+  ],
+  "visual_review": "Seven-sheet layout preserved. C5k5 fresh 6/proved6 vs warm5/proved5 and fresh excess formula1 visibly verified; all9 CG certificates and17 MIP rows reviewed; case metadata remains separate.",
+  "register_size_bytes": 58701065,
+  "artifact_hashes": {
+    "outputs/research_register/register.json": "4c60a296c1f7716c7c39e0be99da7007b2daf8b9d1d76e6c6f4f74d8a5019e7f",
+    "outputs/research_register/register.csv": "7a3d9d9b2998e5432810152b52d7ddeec787d0634fbe81fb95ff100602244113",
+    "outputs/research_register/build_register.py": "e5d3b2bc152eba2c5638a75ca12db6a20054e176935932a00c71c13e7ebf9fd6",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "863ecc582cb6051472c785f41ed308b285f59752ccaefc7d0936d1591369fe18"
+  }
+}
