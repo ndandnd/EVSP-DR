@@ -1,0 +1,58 @@
+{
+  "sources": [
+    {
+      "path": "outputs/meeting_20260910/GIRO_EMAIL_ATTACHMENT_AUDIT.md",
+      "sha256": "783c8117225255803e58fe43be0e825df654b10f37cc48f77172a9e114007ad9"
+    },
+    {
+      "path": "outputs/meeting_20260910/GIRO_EMAIL_CONFIRMED_ASSUMPTIONS.md",
+      "sha256": "6dab3c4cef81c95dcc65119bf10f1b6cad7927075e651acb88a0c731a1d28b70"
+    },
+    {
+      "path": "outputs/meeting_20260910/HISTORICAL_175_TRIP_REGRESSION_AUDIT.md",
+      "sha256": "e06631fd453a9c387c5f3ce821aaf975a1e2aadb18e82816abc6faf6105c0395"
+    },
+    {
+      "path": "outputs/meeting_20260910/HISTORICAL_RND002_AUDIT.md",
+      "sha256": "2d628dbc157f343f306d3ec90777c768576f98c399d9db3aab4ebff8a7d4a46e"
+    },
+    {
+      "path": "outputs/meeting_20260910/CHAIN3_NESTING_AND_DP_CHANGES.md",
+      "sha256": "9e155232730d661eb5423c55d92a169459d321ebd1c212bb16a5dd5c94a6e2ea"
+    },
+    {
+      "path": "outputs/meeting_20260910/HISTORY_EVIDENCE.md",
+      "sha256": "ef6d3350d8539e736c5b36a59f413cb4d54b6f006f7e5292310076acbe00750f"
+    },
+    {
+      "path": "outputs/queue_recovery_20260912/status_20260913T063519Z/integer_results.csv",
+      "sha256": "e36f1089cdcc0ad37ebffcd84d299ebb1f2e1974cc400b7ff683c7267315887e"
+    },
+    {
+      "path": "outputs/controlled_comparison_20260913/status_20260913T063519Z/pairs.csv",
+      "sha256": "867a98177db00952e33a46a47b651171cb3e129fe76af3497c53c9d36380f7c1"
+    },
+    {
+      "path": "outputs/efficiency_validation_20260912/audit/CODE_AUDIT.md",
+      "sha256": "c559aadd692353b2e61f9d59853ba29dc3ad7ec0005aec39c303052db5a281ce"
+    }
+  ],
+  "private_primary_attachments": "Hashes and source page/sheet references in giro_requirements_audit.md; raw attachments not newly published.",
+  "superseded_claims": [
+    {
+      "source": "outputs/meeting_20260910/GIRO_FULL_FLEET_CAPACITY_AUDIT.md",
+      "scope": "No charger counts/rates in the previously inspected limited source set",
+      "replacement": "Recovered original Notes and PDFs contain explicit counts and power curves; other overlap findings retain their stated scope."
+    },
+    {
+      "source": "outputs/research_register/README.md dated 12 September 02:12",
+      "scope": "Capacity route-cost reconstruction blocker",
+      "replacement": "Resolved for dedicated capacity event path in550bc795; generic heterogeneous-power validation still not established."
+    },
+    {
+      "source": "Google Doc historical chain table before12September",
+      "scope": "C1k7/C2k9/C4k10 and successors incomplete",
+      "replacement": "All37 recovery cases throughk15 finished with CG certificates and target/pool-fleet proofs."
+    }
+  ]
+}

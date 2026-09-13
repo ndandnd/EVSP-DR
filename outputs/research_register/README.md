@@ -1,5 +1,7 @@
 # EVSP–DR experiment register
 
+**Model and terminology audit, 13 September:** [Start with the current model comparison and table definitions](../model_fairness_audit_20260913/README.md). The repaired baseline chains all reach15; the old C1/C2/C4 gaps are historical. The stricter actual-battery/15%-reserve/PARX60/nonlinear-charging/capacity diagnostics match2/4 k2 inputs and1/4 k3 inputs, with finite-pool proofs but no full pricing certificates. No experiment combines every documented GIRO constraint. The original65% entry is a recharge target, not a documented terminal floor. The live Google Doc now explains these scopes beside the tables, preserves the figure tabs, and includes editable assumptions/history/results comparisons. [Primary-source audit](../model_fairness_audit_20260913/giro_requirements_audit.md), [implemented constraints and algorithms](../model_fairness_audit_20260913/constraint_results_audit.md).
+
 **Current queue, 13 September 05:38 EDT:** [The shared 32-duty graph preparation timed out](../queue_recovery_20260912/status_20260913T093758Z/README.md) after12h32m, before a cache or parent CG result was saved. All20 dependent jobs auto-cancelled before start. No active EVSP–DR jobs remain; held historical work is untouched. Completed chain, algorithm-comparison and fee results below are unchanged. This was a scheduler time limit, not preemption or out-of-memory.
 
 
@@ -76,6 +78,8 @@ The [12 September cleanup](https://github.com/ndandnd/EVSP-DR/tree/b1129bf4/outp
 [Storage cleanup audit](../storage_cleanup_20260911/README.md) records lossless archival of cold historical column journals. Compressed pools retain original hashes and require restoration before legacy scripts expecting the original uncompressed paths are run. Current and held-job pools remain protected. GitHub stores code and selected evidence; it is not a complete backup of untracked cluster artifacts.
 
 ## Proposed algorithm improvements
+
+**13 September correction to the historical notes below:** the dedicated capacity event path's station-specific tariff reconstruction issue was fixed in `550bc795` and independently regression-tested before the `309d98d2` capacity comparison. That accounting blocker is resolved for this path. Generic pool-MIP/seed readers do not yet establish heterogeneous-power support. Capacity acceleration is implemented and locally tested, but three real-data comparison pairs still hit their three-hour limits without pricing certificates. Indexed inheritance, omitted LP setup and full inheritance have since completed controlled cluster benchmarks. Use the [current status audit](../model_fairness_audit_20260913/constraint_results_audit.md); the dated preliminary claims below are preserved as history.
 
 The [independent code and literature review](https://github.com/ndandnd/EVSP-DR/blob/206315dddd99f44a49141c04bb786f2b38f459dd/outputs/algorithm_review_20260912/REVIEW.md) and its work orders describe proposed optimizations. That review did not implement accelerations or claim measured solver speedups. Coordinate any subsequent benchmarks with that task and preserve existing runs as controls.
 

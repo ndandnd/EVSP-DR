@@ -1,0 +1,11 @@
+family,case,trips,vehicle_profile,battery_usable_kwh,min_soc_percent,parx_kw,shared_capacity,full_cg_certificate,cover_lp_fleet,cover_mip_fleet,cover_mip_bound,finite_pool_fleet_proven,physical_scope,source_commit
+capacity_speed_pilot,k1_duty13408__combined,11,baseline,240,0,60,yes,yes,1,1,1,yes,route_replay_and_continuous_capacity_sweep,7d38efdd/9bf3f752
+capacity_deadline5_retry,e1_short_k2__combined,23,baseline,240,0,60,yes,no,,3,3,yes,route_replay_and_continuous_capacity_sweep,253588e9/9bf3f752
+giro_small_cg_capacity_duals,e1_long_k2,34,18E1,236.44,15,60,yes,no,2,2,2,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e1_long_k3,51,18E1,236.44,15,60,yes,no,3.0409975,5,5,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e1_short_k2,23,18E1,236.44,15,60,yes,no,2,3,3,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e1_short_k3,35,18E1,236.44,15,60,yes,no,3,3,3,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e2_long_k2,104,18E2,239.01,15,60,yes,no,2.6314498,4,4,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e2_long_k3,150,18E2,239.01,15,60,yes,no,4.1237168,18,18,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e2_short_k2,22,18E2,239.01,15,60,yes,no,2,2,2,yes,single_route_physics_and_conservative_capacity_master,ed3f1538
+giro_small_cg_capacity_duals,e2_short_k3,37,18E2,239.01,15,60,yes,no,3,4,4,yes,single_route_physics_and_conservative_capacity_master,ed3f1538

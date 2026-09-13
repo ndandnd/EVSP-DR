@@ -1,0 +1,170 @@
+--- doc_before.md
++++ doc_after.md
+@@ -1,14 +1,22 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Scientific results as of 13 September 2026 at 04:36 EDT; execution checked at 05:38 EDT.
++Week of 14 September. Results through 13 September 04:36 EDT; queue snapshot 05:38 EDT; model/source audit updated 09:50 EDT.
++
++**Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ **Decomposition is paused.** The shared 750-trip graph build hit its 12½-hour limit before CG started. No cache was saved; all 20 dependent CG/MIP jobs cancelled before starting. This was not preemption or out-of-memory (25.4 GiB peak against 128 GiB requested). No active EVSP–DR jobs remain; held history is untouched. Graph preparation needs profiling before a retry. [Execution evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md). Completed scientific results below are unchanged.
+ 
+ ## **All six baseline chains reach 15 buses**
+ 
+-**All 37 CG cases are certified; all 37 completed MIPs match their targets.** Chain 1 k15 is now complete. Every fleet below has a finite-pool proof and individual-route replay.
+-
+-| Chain | Full-pool buses (target 15\) | Earlier 512-route buses | CG minutes |
++**All six chains now reach k=15. The 37 repaired CG runs have pricing certificates; their 37 MIPs match the target, with fleet proofs within each saved pool and individual-route replay.**
++
++**How to read this table.** Each chain is a different nested selection of GIRO duties. Every row here has target k=15: the trips originally assigned to 15 GIRO buses. The two fleet columns give the integer buses actually found by our MIP, using either all eligible saved sequences or the earlier 512 limit. CG minutes measure this k=15 run only, including import and CG; they exclude earlier k values, original graph construction and the final MIP.
++
++**What “512” means.** It was a temporary limit on saved trip sequences checked for reuse, with a separate 15-minute replay budget. The importer first keeps the cheapest saved route for each trip set, then prioritizes sequences with more trips, breaking ties by lower cost per trip and stable trip IDs. Thus 512 was an engineering cutoff, not a bus count, trip count or limit on columns CG could later generate.
++
++**What full inheritance does.** At the next k, we take every eligible representative from the previous run’s saved pool, rebuild a feasible charging schedule for its ordered trips on the new graph, and retain the routes that pass validation. New trips get single-trip initializers; ordinary CG then adds more routes. We do not inherit the LP basis, dual values or proof. “Full” means the saved pool, not every mathematically possible route, and it does not inject GIRO solution routes.
++
++| Chain | Buses found: all saved sequences | Buses found: earlier 512 limit | CG minutes |
+ | ----- | ----- | ----- | ----- |
+ | 1 | 15 | 18 | 156.3 |
+ | 2 | 15 | 17 | 122.7 |
+@@ -23,13 +31,17 @@
+ 
+ ## **Controlled tests: which changes help?**
+ 
+-**All 24 paired allocations are complete.** Three selected inputs were tested in both execution orders, changing one setting per comparison. Timings below are for CG, including loading and import, excluding the final MIP. The percentage reductions must not be added together.
++**These three changes are already implemented and tested on the cluster.** Indexed replay builds a lookup for graph connections, so checking each saved sequence avoids repeated full scans. The LP change skips constructing a matrix that the Gurobi path did not use. Full inheritance supplies more previous-run routes to CG and the final MIP.
++
++All 24 paired allocations are complete: three frozen inputs, both execution orders, one change per comparison. Timings include loading, import and CG, excluding the final MIP. Do not add the percentage reductions.
++
++**Capacity pricing is a separate workstream.** Its faster charging-window lookup and station-specific tariff accounting fix are implemented and tested locally. Three real-data comparison pairs still hit their three-hour limits without a pricing certificate, so we have not demonstrated faster convergence there. The next step is to retain distinct charging schedules when inheriting capacity-constrained routes, then test the combined settings. Updating only changed LP entries and improving stalled route generation remain proposals.
+ 
+ | Change tested | Reduction in total CG time | What else changed? |
+ | ----- | ----- | ----- |
+ | Indexed replay, same 512 routes | 12.4–18.1% | Same imported pool and certified LP endpoint |
+ | Remove unused LP setup, same full pool | 9.3–14.6% | Same imported pool and certified LP endpoint |
+-| Inherit full pool instead of 512 routes | 40.6–64.5% | More columns; better integer fleets |
++| Reuse all eligible saved trip sequences, removing the 512-sequence limit | 40.6–64.5% | More columns; better integer fleets |
+ 
+ For the implementation-only comparisons, imported sequence order and pool hashes, iteration counts, final column counts and certified weighted LP objectives agree. These are descriptive results on three inputs, not a population-wide speed guarantee.
+ 
+@@ -88,15 +100,76 @@
+ 
+ [Both fees: electricity, starts, total cost and returning energy](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/status_20260913T053436Z/giro_costs.csv). [Experiment settings and job records](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/README.md).
+ 
+-The later decomposition timeout did not change the completed results above.
++## **GIRO comparison: which constraints are included?**
++
++**We have not yet matched all documented GIRO rules in one experiment.** The six-chain k=15 result uses simplified physics. The original Notes, schedule PDFs and workbooks support the distinctions below; the source audit covers all eight recovered attachments.
++
++| Partille requirement | Six-chain baseline | Stricter tests completed |
++| ----- | ----- | ----- |
++| Usable battery: 236.44 kWh for 18E1; about 239.01 for 18E2. Separate compatible work by group. | 240 kWh, homogeneous fleet | Actual group profiles in small diagnostics |
++| SOC always at least 15%; original tasks start full | Full start, zero reserve | 15% reserve in new-physics k1–3 diagnostics |
++| PARX depot 60 kW; remote power varies with SOC, roughly 120–371.5 kW | 240 kW everywhere | Depot60 and nonlinear curves in separate pilots |
++| Charger counts: 2190L=1, 4808=1, 3127L=2, 7880C=1, JON\_A=1; PARX unlimited | No shared limits | Capacity pilots; original GIRO overlaps fit these counts |
++| 65% is a recharge target; no documented 65% end-of-duty floor | No terminal floor | k5 cost test matches observed aggregate return energy |
++| Charging setup/minimum duration, idle draw, route-specific layovers | Not all enforced | Some physics/setup included; full operational checks remain |
++| Departure-platform blocking, FIFO and time-dependent directional deadheads | Not established | Still need implementation or explicit exclusion from the academic model |
++
++**The reserve matters more than the small battery approximation.** With a 15% floor, approximately 201–203 kWh is available above reserve, versus 240 kWh in the baseline. A shifted zero-SOC convention is equivalent only if we also transform the starting energy and charging-curve thresholds.
++
++**Return SOC correction:** all 42 literal Partille tasks finish below 65% in the original workbook (15.096–61.692%). The 65% entry applies to Recharge, not the end of a duty. Our k5 aggregate-energy constraint is a research comparison condition; it permits energy to be redistributed between buses. A per-duty return-energy comparison is a useful next sensitivity.
++
++Further source details matter: route21 needs at least four minutes and 10% of trip duration as layover; 2190L/JON\_A charging can block departures, and 4808 requires FIFO. Opportunity charging has a minimum-duration convention and 18E2 setup of 45 seconds. Frölunda is a separate family, including 358.68-kWh vehicles, KEX60, a 60% recharge target and a 20% SOC floor for duties longer than 20 hours. Full crew rules, feeder limits and exact power/interpolation conventions are not supplied. [Source matrix, page/sheet references and remaining unknowns](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/model_fairness_audit_20260913/giro_requirements_audit.md).
++
++## **What the stricter small tests actually achieved**
++
++These eight diagnostics combine actual Partille battery profiles, 15% reserve, nonlinear remote charging, PARX60 and shared charger counts. “Fewer/more trips” identifies the duty-selection subsets within each vehicle group. Green matches the target; red uses extra buses.
++
++| Group and subset | Target buses | Trips | Buses found |
++| ----- | ----- | ----- | ----- |
++| 18E1, fewer trips | 2 | 23 | 3 |
++| 18E1, fewer trips | 3 | 35 | 3 |
++| 18E1, more trips | 2 | 34 | 2 |
++| 18E1, more trips | 3 | 51 | 5 |
++| 18E2, fewer trips | 2 | 22 | 2 |
++| 18E2, fewer trips | 3 | 37 | 4 |
++| 18E2, more trips | 2 | 104 | 4 |
++| 18E2, more trips | 3 | 150 | 18 |
++
++**All eight fleets are proved only within their generated pools. None has a full-model pricing certificate.** Charging is restricted to full windows and pricing has search guards. The 18-bus result therefore does not prove that the operation needs 18 buses. Duplicate-service repair and full operational replay remain incomplete. These are not the six baseline chains.
++
++A separate exact-event test of duty13408 uses one bus with PARX60 and charger counts: CG certified in 2.8 minutes, fleet proved in pool, and route/capacity replay passed. It still uses the baseline battery and zero reserve. [Completed constraint combinations and algorithm status](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/model_fairness_audit_20260913/constraint_results_audit.md).
++
++## **How to interpret progress over time**
++
++| Period or comparison | What changed | What the evidence shows |
++| ----- | ----- | ----- |
++| April–May | Heuristic DP, covering, older 300-kWh/300-kW assumptions; different seeds and inputs | April175 trips: 12 buses. May193 trips: 11–12 without GIRO seeds, 10 with them. Different datasets; incomplete proof/validation. |
++| July–August | Safer SOC handling, exact expanded/event pricing, delayed charging, replay and saved certificates | Stronger correctness and LP proof support; more than a memory optimization. June work is not documented by the available git history. |
++| 9 September: same175-trip pool, 240/240, same one-hour MIP budget | Only final trip rows change: covering versus partitioning | Cover: 10 buses, bound10. Partition: 34 buses, bound10, unproved. Cover has31 overcovered trips; operational removal still needs validation. |
++| 12–13 September | Indexed import, less LP setup, full inheritance | All six baseline chains reach15. Controlled richer-pool results improve9→8,11→10,17→15. |
++| Stricter GIRO studies | Reserve, depot speed, curves and counts tested separately and in small combinations | The k1–3 results above; no completed chain ladder with every documented constraint. |
++
++These are different experiments, not a controlled curve of performance as constraints accumulate. Reserve, capacity and depot limits tighten feasibility; the real remote charging curve can be faster at low SOC and slower near full SOC. We should not attribute the whole history to battery size or an algorithm regression.
++
++## **Next implementation and experiments**
++
++1. **Verify the model first:** replay all original Partille duty variants under a frozen specification, testing each added rule separately. Compare observed return energy per duty as a declared sensitivity; do not impose an invented 65% terminal rule.  
++2. **Bring full inheritance to capacity pricing:** retain different charging times for routes serving the same trips. The dedicated capacity drivers already distinguish occupancy; the generic baseline loader does not. Validate pricing, MIP accounting and shared-capacity replay together, then repeat the same k2/k3 inputs with one changed condition per arm.  
++3. **Measure the remaining bottlenecks:** use the certified k1 capacity case for a controlled charging-window speed comparison; profile pricing and the large graph constructor. Updating only changed LP entries and alternate-dual route generation remain proposals.
++
++This audit submits no new jobs. The launch plan will retain independent default-partition parallelism and genuine previous-k dependencies. [Full audit, definitions, experiment sources and next-test design](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/model_fairness_audit_20260913/README.md).
+ 
+ Figures remain in [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) and [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly).
+ 
+-**Earlier results, before the 12 September queue and import repairs.** With set covering and inherited columns, all six chains match the GIRO fleet at k=3–6. Chains 3, 5 and 6 also reach ten buses at k=10. The new 512-route import treatment reaches 11 buses at k=11 in chain 6; other completed extension cases need extra buses.
+-
+-## **Integer fleet with full-pool inheritance**
+-
+-Each cell is the number of integer bus routes found. Green matches the target. Red requires extra buses. Dashes denote interrupted CG; see the C2 k10 note below.
++## **Historical appendix — earlier runs and queue snapshots**
++
++These tables preserve earlier experiments for comparison. Their missing cells and queued-job descriptions are dated history; current completed results and the GIRO assumptions audit are above.
++
++## **Historical chain table — before the 12 September repairs**
++
++**The dashes below are old interruptions, not unfinished jobs today.** The repaired runs now match every target from k=7–15 in chain 1, k=9–15 in chain 2, and k=10–15 in chain 4\. In particular, all three now use 10 buses at k=10, with CG times of 17.6, 16.4 and 18.8 minutes respectively. Each has a CG certificate and a fleet proof within its saved pool.
++
++The table below preserves the earlier snapshot: each cell is the integer fleet found then; green matched the target, red used extra buses, and a dash meant interrupted CG. Use the current k=15 table above for today’s result.
+ 
+ | Target buses | Chain 1 | Chain 2 | Chain 3 | Chain 4 | Chain 5 | Chain 6 |
+ | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+@@ -145,13 +218,17 @@
+ 
+ ## 
+ 
+-## **Overnight extension results**
++## **Historical extension: at most 512 inherited sequences**
+ 
+ 16:48 EDT collection: 66/87 original CG certificates, plus the certified chain 2 k14 retry. There are now 69 MIP results under the original extension campaign (34 warm, 35 component), plus the recovered chain 2 k14 result described below. The table below retains the earlier 34 warm results; the new k14 result is 16 buses, pool bound 14, fleet unproved, CG 159.5 minutes, weighted LP 1,400,558.356.
+ 
+-Warm starts check ≤512 saved routes. All CG results below except chain 4 k=15 are pricing-certified. Times include preparation. Chain 4 k=15 has only a restricted LP objective, not a certified full-model bound.
+-
+-| Chain and target | Buses | Pool fleet bound | Fleet proved in pool | CG minutes | Weighted LP objective |
++**Historical 512-limit runs.** At most 512 saved sequences were selected for replay before CG. All CG results below except chain 4 k=15 have pricing certificates. Times include preparation. Chain 4 k=15 has only a restricted LP objective, not a certified full-model lower bound.
++
++**Buses:** the integer fleet actually found. **Proved fleet lower bound (pool):** Gurobi’s lower bound when restricted to that run’s saved routes. **Smallest fleet in pool proved?** Yes means the integer search established that no smaller fleet can be built from those routes; No means that question remained open when the search stopped.
++
++**Example:** 16 buses found with lower bound 14 leaves 14, 15 or 16 possible as the pool optimum. Eight buses found with lower bound eight proves the pool optimum is eight. A different pool may allow fewer buses. This MIP bound is separate from the CG LP objective, which includes bus, electricity and charging-start costs.
++
++| Chain and target | Buses | Proved fleet lower bound (pool) | Smallest fleet in pool proved? | CG minutes | Weighted LP objective |
+ | ----- | ----- | ----- | ----- | ----- | ----- |
+ | Chain 1, k=07 | 8 | 8 | Yes | 53.6 | 700313.457 |
+ | Chain 1, k=08 | 9 | 9 | Yes | 49.5 | 800383.688 |
+@@ -190,13 +267,13 @@
+ 
+ Pool fleet bounds concern saved columns only. A proved fleet above target requires different columns to reach target. An unproved gap does not distinguish incomplete integer search from missing useful columns.
+ 
+-### **New results and remaining uncertainty**
++### **Historical outcomes under the 512 limit**
+ 
+ **Chain 1 at k=14:** CG finished with a pricing certificate after 147.9 minutes and 1,301 iterations. Its weighted LP objective is 1,400,650.097. The completed MIP found 16 buses, with a saved-pool fleet bound of 14; the fleet is unproved. Individual routes passed replay; duplicate removal and shared capacity remain unverified.
+ 
+ **Chain 4 at k=15:** the MIP found 18 buses with a saved-pool fleet bound of 15; neither fleet optimality nor full-model LP optimality is proved. CG had stopped at its time limit after 239.1 minutes, with last reduced cost −0.1998 against tolerance 0.0001. Individual routes passed replay; duplicate removal and shared capacity remain unverified.
+ 
+-**Chain 2 at k=14, updated 12 September:** CG reached a pricing certificate after 159.5 minutes and 1,484 iterations, with weighted LP objective 1,400,558.356. The subsequent one-hour MIP found **16 buses** and a **pool fleet bound of 14**; it did not prove the best fleet. Individual-route replay passed, but duplicate-trip removal and shared-station capacity were not validated. This is the earlier bounded512 warm start. The new full-pool chain is a separate experiment. The k15 CG continues from the recovered k14 routes, with its MIP queued afterward.
++**Chain 2 at k=14, updated 12 September:** CG reached a pricing certificate after 159.5 minutes and 1,484 iterations, with weighted LP objective 1,400,558.356. The subsequent one-hour MIP found **16 buses** and a **pool fleet bound of 14**; it did not prove the best fleet. Individual-route replay passed, but duplicate-trip removal and shared-station capacity were not validated. This is the earlier bounded512 warm start. The new full-pool chain is a separate experiment. That bounded k15 follow-up has since finished: 17 buses, pool lower bound 15, fleet unproved. The separate repaired full-pool run found 15 and proved the pool fleet optimum; neither job is still queued.
+ 
+ ## **Decomposition of 32 duties**
+ 
