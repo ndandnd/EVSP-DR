@@ -1,0 +1,28 @@
+--- before
++++ after
+@@ -42,6 +42,25 @@
+ These are covering runs with 240 kWh batteries, 240 kW charging, no shared charger capacity and no return-SOC floor. Duplicate-trip removal has not been validated. CG time includes inherited-route import but excludes original graph construction. Earlier 512-route entries are timed incumbents; later inherited pools differ, so this table alone does not isolate a single code change. [All 37 results and exact proof scopes](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T063519Z/README.md).
+ 
+ ## 
++
++## **New comparison: count the work behind each warm start**
++
++## Launched 13 September, verified 14:20 EDT. A warm k=8 run uses columns built at k=2,…,7. We now give a fresh k=8 run the sum of those CG times plus the k=8 CG time. The same test covers all six chains at k=5,8,10,15. Fresh starts use single-trip routes, with no inherited solution columns.
++
++## **Fresh CG budget in hours**—measured accumulated warm-chain time, not a prediction of how long the fresh run will need:
++
++| Chain | Target 5 | Target 8 | Target 10 | Target 15 |
++| ----- | ----- | ----- | ----- | ----- |
++| 1 | 3.39 | 8.94 | 9.68 | 15.87 |
++| 2 | 0.57 | 10.16 | 10.97 | 16.09 |
++| 3 | 0.85 | 6.30 | 14.77 | 16.59 |
++| 4 | 0.34 | 6.45 | 11.94 | 15.26 |
++| 5 | 1.83 | 10.51 | 20.16 | 23.14 |
++| 6 | 0.25 | 1.74 | 5.89 | 10.54 |
++
++## The first allowance includes graph loading, import and CG. A second allowance also credits construction of the smaller graphs; the target graph is common to both methods. Unrecorded historical serialization/setup costs remain a limitation. If fresh CG certifies early, it stops; if it hits the first time limit, it resumes its own checkpoint for the larger allowance.
++
++## Every distinct fresh pool and each original warm target pool get the same one-hour, two-stage MIP. Intermediate warm-chain MIPs are excluded from the budget because they supplied no inherited columns. We will compare LP certificates, actual buses, finite-pool proof gaps, elapsed time and measured CPU use. Historical code and hardware varied, so this tests accumulated-budget performance rather than isolating a pure code speedup. [Exact method, inputs, jobs and results](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/README.md).
+ 
+ ## **Controlled tests: which changes help?**
+ 

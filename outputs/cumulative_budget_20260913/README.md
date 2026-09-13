@@ -1,5 +1,9 @@
 # Is sequential warm starting better use of the same computation budget?
 
+**Launched 13 September, verified14:20EDT:** 120stage jobs across24datasets;45running and3finished at the first check, with72waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.
+
+**First result collection:** seven matched warm-reference MIPs finished—all six k5 cases and C6k8 attain their targets with finite-pool fleet proofs and physical replay. No fresh CG endpoint had finished in this collection; there is no warm-versus-fresh conclusion yet. [Collected source records](launch_collection.json).
+
 **Question.** The k=8 warm run benefits from columns produced while solving k=2,…,7. Its marginal k=8 time therefore understates the work needed to obtain that pool. This experiment gives a fresh k=8 run the accumulated time used by that chain, then compares the final integer solutions. The fixed panel contains all six chains at k=5,8,10,15: **24 datasets**, chosen by size and chain, without filtering on outcomes.
 
 ## The two budgets

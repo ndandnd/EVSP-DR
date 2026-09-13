@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "checked_utc": "2026-09-13T18:14:19.370673+00:00",
+  "job_id": "135551",
+  "checks": [
+    "48 budget command lines parse as fresh singleton starts without inherited/seed columns",
+    "native unrestricted Gurobi license",
+    "actual old-source k5 pickle hash, consumer identity and metrics pass the native loader",
+    "fresh CG, physical two-stage MIP, and both certificate-sharing branches pass",
+    "warm-reference MIP uses authenticated external status and the same one-hour setup",
+    "copied same-instance checkpoint resumes natively with a larger cumulative wall budget",
+    "requeue after MIP completion does not repeat optimization"
+  ],
+  "tooling_sha256": {
+    "campaign.py": "7a9b5ac7e077e767aaf7f06d79127422d4026e500025e57b6c3797242692cc54",
+    "worker.sub": "d53366431567cdfbdbbde34902187639b01545bda6d7e9a5a24a024ae256d2eb"
+  },
+  "validator_sha256": "212e55707b36843d36905c18f8d288cc17d6c568f79bb41b41b45c9399824f2b"
+}
