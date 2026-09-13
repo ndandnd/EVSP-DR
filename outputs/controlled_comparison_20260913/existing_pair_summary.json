@@ -1,0 +1,117 @@
+{
+  "source": "outputs/post_meeting_20260910/monitor/20260913T011425Z.json",
+  "rows": [
+    {
+      "case": "cap_k1",
+      "collection": "efficiency_validation",
+      "reference_seconds": 10800.036110813962,
+      "optimized_seconds": 10800.08772205608,
+      "runtime_change_percent": null,
+      "both_certified": false,
+      "reference_import_seconds": null,
+      "optimized_import_seconds": null,
+      "absolute_final_objective_difference": 0.0,
+      "objectives_match_within_1e_4": true,
+      "interpretation": "Both arms reached the time budget without a pricing certificate; no time-to-convergence comparison."
+    },
+    {
+      "case": "cap_k1_combined_peak12",
+      "collection": "efficiency_validation",
+      "reference_seconds": 10800.03031881433,
+      "optimized_seconds": 10800.049352989066,
+      "runtime_change_percent": null,
+      "both_certified": false,
+      "reference_import_seconds": null,
+      "optimized_import_seconds": null,
+      "absolute_final_objective_difference": 0.0,
+      "objectives_match_within_1e_4": true,
+      "interpretation": "Both arms reached the time budget without a pricing certificate; no time-to-convergence comparison."
+    },
+    {
+      "case": "cap_k2",
+      "collection": "efficiency_validation",
+      "reference_seconds": 10800.052527577616,
+      "optimized_seconds": 10800.106186582241,
+      "runtime_change_percent": null,
+      "both_certified": false,
+      "reference_import_seconds": null,
+      "optimized_import_seconds": null,
+      "absolute_final_objective_difference": 0.0,
+      "objectives_match_within_1e_4": true,
+      "interpretation": "Both arms reached the time budget without a pricing certificate; no time-to-convergence comparison."
+    },
+    {
+      "case": "d00_g0",
+      "collection": "efficiency_validation",
+      "reference_seconds": 1339.1208620050456,
+      "optimized_seconds": 1417.3691446254961,
+      "runtime_change_percent": 5.8432576805121705,
+      "both_certified": true,
+      "reference_import_seconds": null,
+      "optimized_import_seconds": null,
+      "absolute_final_objective_difference": 0.0,
+      "objectives_match_within_1e_4": true
+    },
+    {
+      "case": "d00_g1",
+      "collection": "efficiency_validation",
+      "reference_seconds": 3129.1686570844613,
+      "optimized_seconds": 3128.5161662911996,
+      "runtime_change_percent": -0.020851889583661798,
+      "both_certified": true,
+      "reference_import_seconds": null,
+      "optimized_import_seconds": null,
+      "absolute_final_objective_difference": 0.0,
+      "objectives_match_within_1e_4": true
+    },
+    {
+      "case": "w1_k08",
+      "collection": "efficiency_validation_warm_retry",
+      "reference_seconds": 2465.1900004874915,
+      "optimized_seconds": 2066.0070731742308,
+      "runtime_change_percent": -16.192785433752466,
+      "both_certified": true,
+      "reference_import_seconds": 446.8923645261675,
+      "optimized_import_seconds": 6.789184766821563,
+      "absolute_final_objective_difference": 2.561137080192566e-09,
+      "objectives_match_within_1e_4": true
+    },
+    {
+      "case": "w1_k08_repeat",
+      "collection": "efficiency_validation_warm_retry",
+      "reference_seconds": 1866.381597538013,
+      "optimized_seconds": 1447.4356535810512,
+      "runtime_change_percent": -22.446960713157647,
+      "both_certified": true,
+      "reference_import_seconds": 366.0800837778952,
+      "optimized_import_seconds": 5.621887997025624,
+      "absolute_final_objective_difference": 2.3283064365386963e-09,
+      "objectives_match_within_1e_4": true
+    },
+    {
+      "case": "w4_k11",
+      "collection": "efficiency_validation_warm_retry",
+      "reference_seconds": 3529.4834816319635,
+      "optimized_seconds": 2947.254880926921,
+      "runtime_change_percent": -16.49614182174417,
+      "both_certified": true,
+      "reference_import_seconds": 391.9711390529992,
+      "optimized_import_seconds": 5.899512519012205,
+      "absolute_final_objective_difference": 4.656612873077393e-10,
+      "objectives_match_within_1e_4": true
+    },
+    {
+      "case": "w6_k12",
+      "collection": "efficiency_validation_warm_retry",
+      "reference_seconds": 4029.1910643470474,
+      "optimized_seconds": 3278.560977772111,
+      "runtime_change_percent": -18.629796268958522,
+      "both_certified": true,
+      "reference_import_seconds": 415.6368989490438,
+      "optimized_import_seconds": 5.365339722018689,
+      "absolute_final_objective_difference": 2.491287887096405e-08,
+      "objectives_match_within_1e_4": true
+    }
+  ],
+  "note": "Historical warm comparisons combined replay and incidence changes and used a 900-second import cap. They are evidence of combined behavior, not isolated effect estimates."
+}

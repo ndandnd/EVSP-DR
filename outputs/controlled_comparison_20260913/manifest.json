@@ -1,0 +1,553 @@
+{
+  "arms": {
+    "A": {
+      "fixed_sequence_index": false,
+      "inherit_max_columns": 512,
+      "skip_gurobi_incidence": false
+    },
+    "B": {
+      "fixed_sequence_index": true,
+      "inherit_max_columns": 512,
+      "skip_gurobi_incidence": false
+    },
+    "C": {
+      "fixed_sequence_index": true,
+      "inherit_max_columns": 0,
+      "skip_gurobi_incidence": false
+    },
+    "D": {
+      "fixed_sequence_index": true,
+      "inherit_max_columns": 0,
+      "skip_gurobi_incidence": true
+    },
+    "E": {
+      "fixed_sequence_index": false,
+      "inherit_max_columns": 0,
+      "skip_gurobi_incidence": false
+    }
+  },
+  "cg_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+  "code": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code",
+  "common": {
+    "battery_kwh": 240,
+    "block_minutes": 5,
+    "cg_seconds": 7200,
+    "charge_kw": 240,
+    "columns_per_iter": 30,
+    "inherit_time_limit_s": 0,
+    "inherit_workers": 8,
+    "master_sense": "cover",
+    "mip_seconds": 3600,
+    "mip_stage2_fleet": "<= validated stage1 incumbent",
+    "objective": "100000 + electricity + 5 * charge_starts",
+    "rc_epsilon": 0.0001,
+    "reserve_kwh": 0,
+    "return_soc_floor": null,
+    "shared_station_capacity": false,
+    "soc_step_kwh": 2.5,
+    "stage1_seconds": 1800,
+    "tariff": "flat",
+    "threads": 8
+  },
+  "contrasts": {
+    "full_index": [
+      "E",
+      "C"
+    ],
+    "index": [
+      "A",
+      "B"
+    ],
+    "master": [
+      "C",
+      "D"
+    ],
+    "pool": [
+      "B",
+      "C"
+    ]
+  },
+  "frozen_files": [
+    {
+      "bytes": 45140,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_original.json",
+      "sha256": "1e5d47126933cbf3119e95fbccd105746c3ddd676ba03491523977ac7b222801"
+    },
+    {
+      "bytes": 60367,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+      "sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812"
+    },
+    {
+      "bytes": 323398618,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_columns.jsonl",
+      "sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb"
+    },
+    {
+      "bytes": 50853,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_original.json",
+      "sha256": "4cb8815524abb8c8bff6a6dbaf78e2ce71f585a769fe32026d7013d8dbd5123f"
+    },
+    {
+      "bytes": 68328,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+      "sha256": "91aa8e12a9b474ec284246a98236c1033ac3c7aac9a4e131d6614cba2757b2a9"
+    },
+    {
+      "bytes": 156598981,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_columns.jsonl",
+      "sha256": "574320e61d28b57490ebcc30423757da775496c95b2c8a811fb4b549fcc172d8"
+    },
+    {
+      "bytes": 75709,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_original.json",
+      "sha256": "babede1b4325368db1a44e7c6eee2ced0dab249fec4f0a5b2b3cb4644a3464a1"
+    },
+    {
+      "bytes": 102661,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_descriptor.json",
+      "sha256": "c3e2d028f1d2c14871eca4ac88639064a032e2163da72bcc59f73adbe9c20d20"
+    },
+    {
+      "bytes": 217792254,
+      "path": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_columns.jsonl",
+      "sha256": "7e08d8db61111a9c8bbc54be16184a87b93a09eb184e6b06bb71ca8d4c4d1ae9"
+    }
+  ],
+  "inputs": {
+    "w1_k08": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k08/network.pkl",
+      "cache_manifest_sha256": "de54ee547d745987ed39ed2158024ccadee54b050035a0059cba7137490ee646",
+      "cache_sha256": "cc08d612d5f0403c19ea70e4daa5fcd7e6741a475587fccc599d6c5a0d914e6b",
+      "cache_storage": "reuse authenticated existing graph; construction excluded from timed arms",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+      "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k07_p01_20260908.csv",
+      "parent_csv_sha256": "c1ddecd62cc584d309a486886062f26c4dc8adc2221fc621a47d9c30713304d6",
+      "parent_descriptor": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_descriptor.json",
+      "parent_descriptor_sha256": "2c77f8aacf61a5803c66b1fa9d777ddaa31ed4b94e3e0ed7bdfb443304388812",
+      "parent_journal": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w1_k08/parent_columns.jsonl",
+      "parent_journal_sha256": "174efab838ec27d8d90d0f58d602f5af71e8ef77ef282ccce0818b32891a67cb",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k07/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k07/cg.json",
+      "parent_source_sha256": "1e5d47126933cbf3119e95fbccd105746c3ddd676ba03491523977ac7b222801",
+      "parent_storage": "hard link to completed immutable source journal; do not mutate either path",
+      "target_k": 8
+    },
+    "w3_k15": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k15/network.pkl",
+      "cache_manifest_sha256": "d36c357d83f6b3235bfae3e58e913f915b12b77914a7c93c967024049f235c4b",
+      "cache_sha256": "acdbe440e8b7bac7c6097ad572c50edcf3d336d0df5c43b1603f3781d6a0e24f",
+      "cache_storage": "reuse authenticated existing graph; construction excluded from timed arms",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k15_p03_20260908.csv",
+      "input_sha256": "44d91ad2cd6604441b3ea36dfb77cda9f89901d14755ec30d502887f0efb3490",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k14_p03_20260908.csv",
+      "parent_csv_sha256": "e2674adb1bdaa6c27aaab5a3aa12ab701f92000de2ef6ffeee8cf4aea3452e4a",
+      "parent_descriptor": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_descriptor.json",
+      "parent_descriptor_sha256": "c3e2d028f1d2c14871eca4ac88639064a032e2163da72bcc59f73adbe9c20d20",
+      "parent_journal": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w3_k15/parent_columns.jsonl",
+      "parent_journal_sha256": "7e08d8db61111a9c8bbc54be16184a87b93a09eb184e6b06bb71ca8d4c4d1ae9",
+      "parent_journal_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k14/cg.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w3_k14/cg.json",
+      "parent_source_sha256": "babede1b4325368db1a44e7c6eee2ced0dab249fec4f0a5b2b3cb4644a3464a1",
+      "parent_storage": "hard link to completed immutable source journal; do not mutate either path",
+      "target_k": 15
+    },
+    "w4_k10": {
+      "cache": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k10/network.pkl",
+      "cache_manifest_sha256": "5c34d826b9798690d2df71fe5f811cf5affa3e8158f754f90feddb7b465fbcbf",
+      "cache_sha256": "fd1a5c3b6782bc613ded3f0e39f8082a0311d495985e84b89e0fd4df1bab164b",
+      "cache_storage": "reuse authenticated existing graph; construction excluded from timed arms",
+      "csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k10_p04_20260908.csv",
+      "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "parent_certificate": true,
+      "parent_csv": "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k09_p04_20260908.csv",
+      "parent_csv_sha256": "ae3b84074c0564367fbdf95a6b45e19f6d1c8a3e8e51c22bc9eb8bbec7966cc0",
+      "parent_descriptor": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_descriptor.json",
+      "parent_descriptor_sha256": "91aa8e12a9b474ec284246a98236c1033ac3c7aac9a4e131d6614cba2757b2a9",
+      "parent_journal": "/home/nc437/ladder-lite/controlled_comparison_20260913/inputs/w4_k10/parent_columns.jsonl",
+      "parent_journal_sha256": "574320e61d28b57490ebcc30423757da775496c95b2c8a811fb4b549fcc172d8",
+      "parent_journal_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k09_p4__warm_cover__event_2p5_event5.json.columns.jsonl",
+      "parent_source": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1/p4/cg/M__k09_p4__warm_cover__event_2p5_event5.json",
+      "parent_source_sha256": "4cb8815524abb8c8bff6a6dbaf78e2ce71f585a769fe32026d7013d8dbd5123f",
+      "parent_storage": "hard link to completed immutable source journal; do not mutate either path",
+      "target_k": 10
+    }
+  },
+  "interpretation": [
+    "Primary units are three deliberately selected cases, not 18 independent datasets.",
+    "Reverse-order repetition controls order effects partially; two repetitions do not establish population significance.",
+    "All arms share the repaired e091 execution code. Only the listed contrast flag changes.",
+    "No import-specific deadline: both 512 arms attempt every selected sequence. This differs from historical 512/900-second runs.",
+    "e091 uses ordered imap when import_time_limit_s=0, even with eight workers; verify imported order and content hashes.",
+    "CG uses a shared frozen parent and cache, never another comparison arm as its parent.",
+    "A timeout is censored; equal time limits alone do not establish a speedup.",
+    "Preserve weighted LP, route weight, pricing certificate, pool fleet proof and physical replay as separate outputs.",
+    "Input authentication precedes paired process timings; graph loading and runtime index setup remain inside CG time.",
+    "Final MIP may improve the charging objective after fleet proof; report both stages separately.",
+    "No new graph-builder or capacity-pricing benchmark is included in this baseline campaign.",
+    "Full-pool old-scan versus indexed contrast E/C added before any submission. Old scan may be censored during initialization; do not claim a finite speedup from a timeout."
+  ],
+  "mip_code": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "mip_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+  "pairs": [
+    {
+      "case_id": "w1_k08",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w1_k08_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w1_k08_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w1_k08_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w1_k08_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w1_k08_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w1_k08_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w4_k10_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w4_k10_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w4_k10_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w4_k10_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w4_k10_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w4_k10_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w3_k15_index_r1",
+      "mem": "96G",
+      "order": [
+        "A",
+        "B"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "index",
+      "cpus": 8,
+      "id": "w3_k15_index_r2",
+      "mem": "96G",
+      "order": [
+        "B",
+        "A"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w3_k15_pool_r1",
+      "mem": "96G",
+      "order": [
+        "B",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "pool",
+      "cpus": 8,
+      "id": "w3_k15_pool_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "B"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w3_k15_master_r1",
+      "mem": "96G",
+      "order": [
+        "C",
+        "D"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "master",
+      "cpus": 8,
+      "id": "w3_k15_master_r2",
+      "mem": "96G",
+      "order": [
+        "D",
+        "C"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w1_k08_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w1_k08",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w1_k08_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w3_k15_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w3_k15",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w3_k15_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w4_k10_full_index_r1",
+      "mem": "96G",
+      "order": [
+        "E",
+        "C"
+      ],
+      "repetition": 1,
+      "slurm_time": "07:00:00"
+    },
+    {
+      "case_id": "w4_k10",
+      "contrast": "full_index",
+      "cpus": 8,
+      "id": "w4_k10_full_index_r2",
+      "mem": "96G",
+      "order": [
+        "C",
+        "E"
+      ],
+      "repetition": 2,
+      "slurm_time": "07:00:00"
+    }
+  ],
+  "prelaunch_revision": {
+    "previous_manifest_sha256": "f4b7e734690d9ce5020fb5e32dcc70a934008ef1b339b71fae748d9098c5cef7",
+    "reason": "Add full-pool index comparison following independent design audit; no job submitted under v1.",
+    "revised_utc": "2026-09-13T02:03:32.857687+00:00",
+    "revision": 2
+  },
+  "prepared_utc": "2026-09-13T01:58:14.494718+00:00",
+  "python": "/home/nc437/evsp_env/bin/python",
+  "resources": {
+    "concurrency": 24,
+    "exclude": "scaglione-compute-01",
+    "independent_allocations": 24,
+    "partition": "default_partition",
+    "reason": "All 24 independent comparisons eligible immediately. Each arm receives the same 8 CPU/96 GiB allocation used by successful full-pool chains. Sequential arms share a node. Seven hours covers two 2-hour CG and 1-hour MIP budgets plus startup and validation.",
+    "requeue": false
+  },
+  "root": "/home/nc437/ladder-lite/controlled_comparison_20260913",
+  "schema": "evsp-controlled-comparison-contract-v1",
+  "source_manifest": {
+    "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/manifest.json",
+    "sha256": "1e10471cdbe81faa367c3fb9f8acfdc8fc7da3bf98055f61cf30ed70c854048c"
+  },
+  "static_files": [
+    {
+      "bytes": 512,
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    {
+      "bytes": 2573,
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    },
+    {
+      "bytes": 581,
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    {
+      "bytes": 3778,
+      "path": "/home/nc437/ladder-lite/SCAGLIONE_RESOURCE_POLICY.md",
+      "sha256": "49954b0300305f108e5e0c47bbbde43f0c5159140a95c839c4c3fad30f158867"
+    }
+  ]
+}

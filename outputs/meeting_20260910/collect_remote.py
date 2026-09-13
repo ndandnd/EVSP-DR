@@ -238,6 +238,22 @@ for efficiency_key, efficiency_directory in [('efficiency_validation', 'efficien
                 out[efficiency_key] = efficiency_data
         except Exception as exc:
             out[efficiency_key] = {'collection_error': str(exc)}
-
+# Controlled baseline comparisons use frozen parents and one-factor pairs.
+controlled_root = home / 'controlled_comparison_20260913'
+controlled_script = controlled_root / 'tooling/campaign.py'
+if controlled_script.exists() and (controlled_root / 'manifest.json').exists():
+    try:
+        collected = subprocess.run(
+            ['/home/nc437/evsp_env/bin/python', str(controlled_script), 'collect', '--root', str(controlled_root)],
+            capture_output=True, text=True, timeout=60)
+        if collected.returncode:
+            raise RuntimeError(collected.stderr[-4000:])
+        campaign = json.loads(collected.stdout)
+        if campaign.get('schema') != 'evsp-controlled-comparison-v1':
+            raise ValueError('Unexpected controlled-comparison schema')
+        out['campaigns']['controlled_comparison_20260913'] = campaign
+    except Exception as exc:
+        out['campaigns']['controlled_comparison_20260913'] = {
+            'root': str(controlled_root), 'collection_error': str(exc), 'cg': [], 'mip': []}
 
 print(json.dumps(out))

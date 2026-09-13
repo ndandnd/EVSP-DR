@@ -13,6 +13,10 @@ if p.exists():
  x=json.loads(p.read_text());manifest=json.loads((p.parent/'ready_mips_manifest.json').read_text())
  for c in manifest['cases']:known[f"{x['job_id']}_{c['index']}"]=('Recovered ready MIPs',c['case_id'],'mip')
 for j,c,m in [('949691','w1_k15','cg'),('949692','w1_k15','mip'),('37583','w2_k14','mip'),('37584','w2_k15','cg'),('37585','w2_k15','mip')]:known[j]=('Earlier bounded chains',c,m)
+p=B/'controlled_comparison_20260913/jobs.json'
+if p.exists():
+ for entry in json.loads(p.read_text()).get('jobs',[]):
+  if entry.get('job_id'):known[entry['job_id']]=('Controlled comparisons',entry['pair_id'],'paired CG/MIP')
 r=subprocess.run([S+'squeue','--me','-r','-h','-o','%i|%j|%T|%M|%E|%R'],capture_output=True,text=True)
 if r.returncode:raise SystemExit(r.stderr)
 summary=defaultdict(Counter);rows=[]
