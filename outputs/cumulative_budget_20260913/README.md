@@ -1,8 +1,16 @@
 # Is sequential warm starting better use of the same computation budget?
 
-**Launched 13 September, verified14:20EDT:** 120stage jobs across24datasets;45running and3finished at the first check, with72waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.
+**Launched 13 September, verified 14:20 EDT:** 120 stage jobs across 24 datasets; 45 running and 3 finished at the first check, with 72 waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.
 
-**First result collection:** seven matched warm-reference MIPs finished—all six k5 cases and C6k8 attain their targets with finite-pool fleet proofs and physical replay. No fresh CG endpoint had finished in this collection; there is no warm-versus-fresh conclusion yet. [Collected source records](launch_collection.json).
+**First results, 13 September 14:30 EDT.** Three fresh k=5 runs have pricing certificates. Two have also finished MIP and recovered five buses. This is evidence that inherited columns are unnecessary for these two cases under the cumulative allowance; larger cases are still running.
+
+| Chain / target | Cumulative CG allowance | Fresh CG time | Fresh integer fleet | Warm-pool integer fleet |
+|---|---:|---:|---|---|
+| C3 / k=5 | 51.0 min | 5.1 min; certified | 5; proved in pool | 5; proved in pool |
+| C5 / k=5 | 110.0 min | 8.0 min; certified | MIP pending | 5; proved in pool |
+| C6 / k=5 | 15.0 min | 6.1 min; certified | 5; proved in pool | 5; proved in pool |
+
+The two fresh integer solutions passed individual-route physical replay. Pricing certificates concern the tested event graph and reduced-cost tolerance 0.0001; fleet proofs concern each finite pool. The baseline has no shared-station capacity or terminal-SOC floor. These are the first completed cases, not a representative sample of all outcomes. The original first collection contained seven completed warm-reference MIPs and no fresh endpoint; retain it as launch history. [All 24 comparison rows](first_results.csv), [new source records](first_results_collection.json), [launch collection](launch_collection.json).
 
 **Question.** The k=8 warm run benefits from columns produced while solving k=2,…,7. Its marginal k=8 time therefore understates the work needed to obtain that pool. This experiment gives a fresh k=8 run the accumulated time used by that chain, then compares the final integer solutions. The fixed panel contains all six chains at k=5,8,10,15: **24 datasets**, chosen by size and chain, without filtering on outcomes.
 

@@ -27,7 +27,7 @@ SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 
 COLUMNS = [
     "row_id", "campaign_id", "campaign_root", "case_id", "result_family",
-    "stage", "substage", "arm", "artifact_status", "authority_role",
+    "stage", "substage", "arm", "budget_arm", "artifact_status", "authority_role",
     "source_path", "source_sha256", "snapshot_payload_sha256",
     "snapshot_time_utc", "file_mtime_utc", "completion_marker_matches",
     "job_ids", "workflow_state", "dependency",
@@ -623,8 +623,76 @@ class Register:
             "terminal_energy_continuous_kwh": metrics.get("continuous_terminal_kwh"),
         }}
 
+    def cumulative_budget_campaign(self, campaign_id, campaign):
+        """Keep endpoint solves distinct from case summaries and shared aliases."""
+        if campaign.get("schema") != "evsp-cumulative-budget-collection-v1":
+            raise ValueError("unexpected cumulative-budget collection schema")
+        root = campaign.get("root")
+        settings = campaign.get("physics") or {}
+        self.campaign(campaign_id, root, "cumulative_budget_controls")
+        cases = {item["case_id"]: item for item in campaign.get("records", [])}
+        seen = set()
+        for stage in ("cg", "mip"):
+            for item in campaign.get(stage, []):
+                cid = item["case_id"]
+                arm = item["budget_arm"]
+                if arm not in ("base", "extra", "warm"):
+                    raise ValueError(f"unknown cumulative budget arm: {arm}")
+                if item.get("authority") != "published":
+                    raise ValueError("unpublished endpoint in cumulative solve arrays")
+                key = (stage, item.get("resolved_source_path") or item["path"], item["sha256"])
+                if key in seen:
+                    raise ValueError("duplicate shared endpoint in cumulative solve arrays")
+                seen.add(key)
+                case = cases[cid]
+                if (item["chain"], item["target_k"], item["input_sha256"]) != (
+                        case["chain"], case["target_k"], case["input_sha256"]):
+                    raise ValueError(f"cumulative case metadata mismatch: {cid}")
+                final = item.get("final") or {}
+                fresh = arm != "warm"
+                payload = {**item, "physics": settings}
+                self.add(campaign_id, root, "cumulative_budget_endpoint", stage, payload,
+                    source_path=item["path"], source_sha256=item["sha256"],
+                    case_id=cid, substage=arm, authority_role="current",
+                    overrides={
+                        "arm": arm, "budget_arm": arm,
+                        "job_ids": ([case["stages"][arm if stage == "cg" else "mip_" + arm]["job_id"]]
+                                    if at(case, "stages." + (arm if stage == "cg" else "mip_" + arm) + ".job_id") else []),
+                        "chain": item["chain"], "target_k": item["target_k"],
+                        "input_path": item.get("csv"), "input_sha256": item["input_sha256"],
+                        "code_commit": item.get("execution_commit"),
+                        "master_sense": settings.get("master_sense"),
+                        "capacity_enforced": settings.get("shared_station_capacity"),
+                        "charge_start_cost": settings.get("charge_start_fee"),
+                        "tariff_path": "hourly_prices_flat.csv" if settings.get("tariff") == "flat" else settings.get("tariff"),
+                        "prices_sha256": ((campaign.get("source_hashes") or {}).get("static_sha256") or {}).get("hourly_prices_flat.csv") or at(item, "provenance.prices_sha256"),
+                        "terminal_energy_policy": "no terminal SOC floor" if settings.get("terminal_floor") is None else str(settings["terminal_floor"]),
+                        "initialization": ("same-instance fresh checkpoint" if arm == "extra" else "singletons") if fresh else "native sequential CG pool",
+                        "column_pool_treatment": "RAW" if fresh else "WARM-INHERITED-EVENT",
+                        "cg_iterations": item.get("iterations") if stage == "cg" else item.get("source_cg_iterations"),
+                        "min_reduced_cost": final.get("min_rc") if stage == "cg" else None,
+                        "lp_objective_kind": "bus_plus_charging" if stage == "cg" else None,
+                        "phase_runtime_json": {"process": item.get("process"), "stage_process_totals": item.get("stage_process_totals")},
+                        "notes": f"Budget arm {arm}; allowance {item.get('budget_s')} s. " + (f"Source CG cumulative allowance {item.get('cg_budget_s')} s. " if stage == "mip" else "") + "Case budget/alias metadata is recorded separately; shared endpoints are not duplicate solves.",
+                        "limitations": "Retrospective comparison against mixed historical source revisions; elapsed-time allowance is not measured CPU usage. No shared-station capacity or terminal-SOC floor.",
+                    })
+        for cid, item in cases.items():
+            states = {name: value.get("status") for name, value in item.get("stages", {}).items()}
+            self.add(campaign_id, root, "cumulative_budget_case_metadata", "audit_result", item,
+                source_path=f"snapshot:{campaign_id}:records:{cid}", case_id=cid,
+                substage="case_budget_and_aliases", artifact_status="comparison_metadata",
+                authority_role="observational_metadata", overrides={
+                    "chain": item["chain"], "target_k": item["target_k"],
+                    "input_path": item.get("csv"), "input_sha256": item["input_sha256"],
+                    "workflow_state": json.dumps(states, sort_keys=True),
+                    "notes": "One case-level budget and alias record, not an additional CG or MIP solve. Historical warm references and matched warm MIP are retained separately in details.",
+                })
+
     def standard_campaigns(self):
         for campaign_id, campaign in self.snapshot.get("campaigns", {}).items():
+            if campaign_id == "cumulative_budget_20260913":
+                self.cumulative_budget_campaign(campaign_id, campaign)
+                continue
             root = campaign.get("root")
             family = ("giro_zero_fee_comparison"
                       if campaign_id == "giro_zero_start_fee_20260913"

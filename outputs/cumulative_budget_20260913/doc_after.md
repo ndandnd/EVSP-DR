@@ -1,6 +1,6 @@
 # **EVSP DR Current Research**
 
-Week of 14 September. Results through 13 September 04:36 EDT; chain-expansion launch verified 10:25 EDT; model/source audit updated 09:50 EDT.
+Week of 14 September. Cumulative-budget comparison updated 13 September 14:30 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.Week of 14 September. Results through 13 September 04:36 EDT; chain-expansion launch verified 10:25 EDT; model/source audit updated 09:50 EDT.
 
 **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
 
@@ -45,7 +45,17 @@ These are covering runs with 240 kWh batteries, 240 kW charging, no shared charg
 
 ## **New comparison: count the work behind each warm start**
 
-## Launched 13 September, verified 14:20 EDT. A warm k=8 run uses columns built at k=2,…,7. We now give a fresh k=8 run the sum of those CG times plus the k=8 CG time. The same test covers all six chains at k=5,8,10,15. Fresh starts use single-trip routes, with no inherited solution columns.
+**First results — 13 September, 14:30 EDT.** These fresh runs received no inherited columns. “Converged” means pricing certified no route below reduced cost −0.0001 in the tested graph.
+
+| Chain / target | Cumulative CG allowance | Fresh CG time | Fresh integer fleet | Warm integer fleet |
+| ----- | ----- | ----- | ----- | ----- |
+| Chain 3 / 5 | 51.0 min | 5.1 min; converged | 5; proved in pool | 5; proved in pool |
+| Chain 5 / 5 | 110.0 min | 8.0 min; converged | MIP pending | 5; proved in pool |
+| Chain 6 / 5 | 15.0 min | 6.1 min; converged | 5; proved in pool | 5; proved in pool |
+
+Chains 3 and 6 at k=5 recovered the integer target without inherited columns. Larger cases are still running. Both solutions passed individual-route physical replay; this baseline excludes shared station capacity and a terminal-SOC floor. Source: snapshot 20260913T182856Z, collected through 14:30 EDT.
+
+Launched 13 September, verified 14:20 EDT. A warm k=8 run uses columns built at k=2,…,7. We now give a fresh k=8 run the sum of those CG times plus the k=8 CG time. The same test covers all six chains at k=5,8,10,15. Fresh starts use single-trip routes, with no inherited solution columns.
 
 ## **Fresh CG budget in hours**—measured accumulated warm-chain time, not a prediction of how long the fresh run will need:
 
