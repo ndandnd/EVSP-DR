@@ -1,0 +1,147 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260913T073532Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260913T083655Z.json",
+  "timestamp_utc": "2026-09-13T08:36:55.787964+00:00",
+  "changed_results": [
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k15_fee0/114038_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 16,
+        "fleet_bound": 15.000000000000005,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3613.7910996861756,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "216a9050e019741b529f72d2be442ba56858bb9a6c0011b37ad97c83dc873d10",
+      "payload_sha256": "216a9050e019741b529f72d2be442ba56858bb9a6c0011b37ad97c83dc873d10"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w1_k15_fee5/114037_r0/fee5/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3605.1670170817524,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "66738993d6df0fb2fb21dbf07e2e0062d342716cf752770364ede42c146a0f2b",
+      "payload_sha256": "66738993d6df0fb2fb21dbf07e2e0062d342716cf752770364ede42c146a0f2b"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w4_k15_fee0/114055_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.8042042329907,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "97be9e30187e7e38ec6e6a8ed87123447eb8076c99093cd3cc6c93b7e59feaa1",
+      "payload_sha256": "97be9e30187e7e38ec6e6a8ed87123447eb8076c99093cd3cc6c93b7e59feaa1"
+    },
+    {
+      "campaign": "zero_charge_start_fee_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913/cases/w5_k15_fee0/114062_r0/fee0/mip/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.204346081242,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "5f114f2a8a399b96557f2f34ad754072310d7fd133f7a25c7cd33c2ac68bdf6f",
+      "payload_sha256": "5f114f2a8a399b96557f2f34ad754072310d7fd133f7a25c7cd33c2ac68bdf6f"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "114037",
+      "case_id": "w1_k15_fee5",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114038",
+      "case_id": "w1_k15_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114055",
+      "case_id": "w4_k15_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "114062",
+      "case_id": "w5_k15_fee0",
+      "cohort": "default_fee_CG7200_MIP3600_allocation14400",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "114037",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "114038",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "114055",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-07"
+      },
+      "after": null
+    },
+    {
+      "job": "114062",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-01"
+      },
+      "after": null
+    }
+  ]
+}

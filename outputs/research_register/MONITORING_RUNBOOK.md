@@ -1,5 +1,10 @@
 # Unicorn monitoring runbook
 
+## 13 September, 04:36 EDT — all fee jobs complete
+
+Snapshot `20260913T083655Z`: all 36 fee MIPs finished, 35 target matches and finite-pool fleet proofs, all 36 individual-route physical replays. C1k15 fee 0 stopped with 16 buses and bound 15; both stages TIME_LIMIT. Its fee-5 counterpart proved 15. CG counts stay 34 certified, two C1k15 time caps. All four formerly running fee allocations completed successfully. Do not resubmit completed fee jobs or automatically retry the capped arms. The targeted future option of repricing/transferring the fee-5 incumbent into fee-0's pool is documented, not launched. Full-pool recovery, controlled comparisons and the separate GIRO study are also complete. Only existing decomposition work remains active here: graph42509 with20 true dependent jobs. No new execution failure, preemption or invalid dependency. Latest report: `outputs/zero_charge_start_fee_20260913/status_20260913T083655Z`. Historical status below is superseded.
+
+
 ## 13 September, 03:35 EDT — fee update
 
 Snapshot `20260913T073532Z`: fee campaign has 32/36 completed MIPs, all target matches, finite-pool fleet proofs and individual-route replay. Both fees now finish all six chains at k=5 and k=10. At k=15 fee 5 is complete for chains 2–6; fee 0 for chains 2, 3 and 6. All 36 CG arms have stopped: 34 certified; C1k15 under both fees reached the 7200-second CG budget with negative reduced cost remaining (fee 5: -0.250562; fee 0: -1.086604). These are recorded caps, not execution failures. Preserve the four running MIPs (114037, 114038, 114055, 114062). Do not relaunch capped CG automatically. Remaining decomposition work waits on its existing shared graph. No new execution failure, confirmed preemption or invalid dependency. Report and validation: `outputs/zero_charge_start_fee_20260913/status_20260913T073532Z`. Earlier status entries below are historical.

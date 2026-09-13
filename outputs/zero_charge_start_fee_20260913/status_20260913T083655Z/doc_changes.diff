@@ -1,0 +1,41 @@
+--- before
++++ after
+@@ -1,6 +1,6 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results collected 13 September 2026 at 03:35 EDT.
++Week of 14 September. Results collected 13 September 2026 at 04:36 EDT.
+ 
+ ## **All six baseline chains reach 15 buses**
+ 
+@@ -45,15 +45,15 @@
+ 
+ ## **Charging-start fee: 5 versus 0**
+ 
+-**32 of 36 MIPs are complete, and all 32 match their targets.** All have finite-pool fleet proofs and individual-route replay. All 36 CG runs have stopped: 34 are certified; both chain 1 k15 runs reached their two-hour budgets with negative reduced costs remaining. Four MIPs are still running.
+-
+-| Target k | Fee 5 completed (of 6\) | Fee 0 completed (of 6\) |
++**All 36 MIPs finished; 35 match their target fleet.** All 36 selected solutions pass individual-route physical replay; 35 have finite-pool fleet proofs. Chain 1 k15 with fee 0 found 16 buses with a pool bound of 15\. CG has 34 certificates; both chain 1 k15 arms reached their two-hour budgets with negative reduced costs remaining.
++
++| Target k | Fee 5 matches (of 6\) | Fee 0 matches (of 6\) |
+ | ----- | ----- | ----- |
+ | 5 | 6 | 6 |
+ | 10 | 6 | 6 |
+-| 15 | 5 | 3 |
+-
+-All six chains are complete under both fees at k5 and k10. At k15, fee 5 is complete for chains 2–6; fee 0 for chains 2, 3 and 6\. Both fees start from the same frozen trip sequences, with charging reoptimized. Chain 1 k15 uses its frozen k14 pool; the other 17 inputs use same-k pools. Each run gets two hours of CG and one hour of MIP. [All paired outcomes and stopping reasons](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/status_20260913T073532Z/paired_results.csv).
++| 15 | 6 | 5 |
++
++The 16-bus result does not establish a physical need for another bus: the fee-5 schedule uses 15 buses and remains feasible with its start fee set to zero. Its routes may be absent from the fee-0 pool. The fee-0 MIP reached its time limits without closing the 15–16 fleet gap. Both fees start from the same frozen trip sequences, with charging reoptimized. Chain 1 k15 uses its frozen k14 pool; the other 17 inputs use same-k pools. Each run gets two hours of CG and one hour of MIP. [All paired outcomes and stopping reasons](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/zero_charge_start_fee_20260913/status_20260913T083655Z/README.md).
+ 
+ **Completed k5 detail:** every row uses five buses under both fees. Arrows mean fee 5 → fee 0\.
+ 
+@@ -66,7 +66,7 @@
+ | 5 | 17 → 60 | 213.90 → 191.17 | 33.80 → 7.45 |
+ | 6 | 7 → 34 | 100.93 → 98.14 | 36.81 → 10.86 |
+ 
+-Removing the fee increases charging starts in all six cases. Returning energy also changes, so these baseline electricity differences are not savings at equal returning energy. Cost components independently reconcile.
++Across all 18 pairs, charging starts increased 2.0–4.9 times (median 3.0). Fee-0 CG took a median 2.9 times as long across 17 certified pairs (range 1.2–15.0); concurrent host load also affects timing. Return energy differs, so electricity differences are not savings at equal energy.
+ 
+ ## 
+ 

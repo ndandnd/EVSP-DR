@@ -6,13 +6,13 @@
 
 **Controlled comparisons complete:** [24 paired allocations on three frozen cases](../controlled_comparison_20260913/status_20260913T063519Z/README.md). Indexed replay reduced total CG time by 12.4–18.1%; omitted LP setup reduced it by 9.3–14.6%, with matched inherited pool hashes, iteration counts and certified objectives. Full inheritance reduced time by 40.6–64.5% and improved MIP fleets from 9 to 8, 11 to 10, and 17 to 15. Six original full-scan arms hit the CG budget during import; their MIPs were intentionally skipped.
 
-**Charging-start fee experiment launched, 13 September 01:08 EDT:** [36 chain runs plus 12 GIRO cost-comparison jobs](../zero_charge_start_fee_20260913/README.md) compare fees 5 and 0. Six chains at k=5,10,15 use identical frozen starting sequences within each pair. The separate GIRO study compares original charging, optimized fixed duties, and a common joint pool at all three price peaks with matched terminal energy. Native CG/MIP validation passed. 32 of 36 fee MIPs are complete, all target matches: all six chains under both fees at k=5 and k=10, five fee 5 k=15 cases and three fee 0 k=15 cases. All 36 CG runs have stopped: 34 are certified; both chain 1 k=15 arms reached their two-hour budgets with negative reduced costs remaining. Four MIPs continue. [Current paired table and CG limits](../zero_charge_start_fee_20260913/status_20260913T073532Z/README.md). The separate GIRO comparison is complete at all three peaks: electricity savings remain 43–57% without a start fee while returning at least GIRO’s aggregate energy. Joint pooling adds no gain beyond fixed-duty charging optimization in these zero-fee cases. [Current cost tables and proof limits](../zero_charge_start_fee_20260913/status_20260913T053436Z/README.md).
+**Charging-start fee experiment complete, 13 September 04:36 EDT:** [36 chain runs plus 12 GIRO jobs](../zero_charge_start_fee_20260913/README.md) compare fees 5 and 0. All 36 chain MIPs finished; 35 match their target with finite-pool fleet proofs. The exception is C1k15 fee 0: 16 buses, bound 15, unproved. All 36 selected solutions pass individual-route replay. CG has 34 certificates; both C1k15 arms hit the two-hour budget. Across 17 certified pairs, fee-0 CG took a median 2.91 times as long. Charging starts increased in all 18 pairs. [Completed tables, costs and proof limits](../zero_charge_start_fee_20260913/status_20260913T083655Z/README.md). The physically feasible fee-5 15-bus schedule remains feasible when its fee is repriced to zero, but its inclusion in the fee-0 saved pool is not established. The separate GIRO study is complete: electricity savings remain 43–57% without a start fee while returning at least GIRO’s aggregate energy. Joint pooling adds no gain beyond fixed-duty charging optimization in those zero-fee cases. [GIRO cost tables](../zero_charge_start_fee_20260913/status_20260913T053436Z/README.md).
 
 This is the common index for experiment settings, execution records, results and source evidence. The compact [Week of 14 September status tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow) and [Figures with explanations tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) are the live document view. The [CG curves and bus schedules library](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) restores the earlier visual evidence with dated captions. Preserve all figures when updating or simplifying text. Superseded material is also kept in the separate [Historical archive document](https://docs.google.com/document/d/1f0orWtM1-_VWAqjj6GnWP78webCOnvoc01x2VQvaA_k/edit).
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2093 artifact/stage records across 47 campaign/source groups**, from the 03:35 EDT collection on 13 September. Counts are not independent experimental sample sizes.
+Current build: **2093 artifact/stage records across 47 campaign/source groups**, from the 04:36 EDT collection on 13 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -48,7 +48,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260913T073532Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260913T083655Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs

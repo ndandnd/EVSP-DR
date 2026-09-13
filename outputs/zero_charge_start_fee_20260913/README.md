@@ -1,5 +1,8 @@
 # Charging-start fee: zero versus five
 
+**Experiment complete, 13 September 04:36 EDT:** [All 36 MIPs finished; 35 target matches](status_20260913T083655Z/README.md). C1k15 fee 0 has 16 buses with bound 15; optimality is unproved. Both fees match all six chains at k=5 and k=10. Fee 5 also matches all six at k=15. All 36 route sets pass individual-route replay. CG has 34 certificates and two C1k15 time caps. Fee 0 took a median 2.91 times as much CG time on the 17 certified pairs and increased charging starts in every pair. Earlier progress below is preserved as history.
+
+
 **Latest verified progress, 13 September 03:35 EDT:** [32 of 36 MIPs finished, all target matches](status_20260913T073532Z/README.md). Both fee settings match every chain at k=5 and k=10. CG is finished: 34 certificates; both C1k15 arms reached the two-hour budget. Four MIPs remain running. Earlier dated updates below are preserved.
 
 
