@@ -1,0 +1,501 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260913T001419Z.json",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260913T011425Z.json",
+  "timestamp_utc": "2026-09-13T01:14:26.124426+00:00",
+  "changed_results": [
+    {
+      "campaign": "graph_recovery_retry2_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912/cases/d00_g3/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 3875.5211063446477,
+        "final": {
+          "iter": 749,
+          "attempt_iter": 749,
+          "lp_obj": 813600.5073432707,
+          "route_weight": 8.126840940768393,
+          "artificials": 0.0,
+          "min_rc": -24581.13602793334,
+          "max_row_violation": 7.993605777301127e-15,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "365005e5624dd56a2193ce33000d48f9c0bed0932ab1472c69a163a336f7922e"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k11/mip/41584_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.7319548130035,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "903e9dee8e45d7126b45e8b63d95213370c3be1b393af301e667f5ffb9994469",
+      "payload_sha256": "903e9dee8e45d7126b45e8b63d95213370c3be1b393af301e667f5ffb9994469"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k12/mip/41586_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 12.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.8065509796143,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3dace868c578ab26a26066ea0142b186b95ec65024f2e30a27d950acada9ae76",
+      "payload_sha256": "3dace868c578ab26a26066ea0142b186b95ec65024f2e30a27d950acada9ae76"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k14/mip/41623_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 14,
+        "fleet_bound": 14.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.8455600738525,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "cdbef86b249947b6fb5f15b338322415ea4fcaef264d31fdc835ba853c03aef4",
+      "payload_sha256": "cdbef86b249947b6fb5f15b338322415ea4fcaef264d31fdc835ba853c03aef4"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w5_k15/mip/41634_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 15,
+        "fleet_bound": 15.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.275160551071,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a1b7d6f06e51c32e151e74d36f24ec940c16dcb3ede5b48f73956e8e7c99d066",
+      "payload_sha256": "a1b7d6f06e51c32e151e74d36f24ec940c16dcb3ede5b48f73956e8e7c99d066"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k13/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4233.990130100399,
+        "final": {
+          "iter": 366,
+          "attempt_iter": 366,
+          "lp_obj": 1300648.3686726105,
+          "route_weight": 12.999999999999858,
+          "artificials": 0.0,
+          "min_rc": -3.372892187769594e-09,
+          "max_row_violation": 2.616795669041494e-13,
+          "max_bound_violation": 1.4586942764793775e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "49e9d51611be4515a2f414720ea591eb5de2af198d4547e7cb74b38d1ec47a27"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w1_k14/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "initializing",
+        "wall_s": 22.821640624199063,
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "5254f62b8c0e7e742fd14ac9c320dd6c08b07f9c720e84ea0691506ec4cd331e"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k14/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5364.730133648962,
+        "final": {
+          "iter": 454,
+          "attempt_iter": 454,
+          "lp_obj": 1400558.3558959817,
+          "route_weight": 14.000000000000156,
+          "artificials": 0.0,
+          "min_rc": -6.685221265456676e-09,
+          "max_row_violation": 5.260236690673992e-13,
+          "max_bound_violation": 3.756439603819217e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "574099a00101d0fd4a0a687485d9bd9ab56fc2c218d3ef889fe92479ed2c8c36"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w2_k15/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 2066.901767199859,
+        "final": {
+          "iter": 99,
+          "attempt_iter": 99,
+          "lp_obj": 1500621.7562649585,
+          "route_weight": 14.999999999999972,
+          "artificials": 0.0,
+          "min_rc": -2.757631108458646,
+          "max_row_violation": 2.602362769721367e-13,
+          "max_bound_violation": 1.2232576063198053e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "0259eabfaf99374395be4f8722e1016b6d1dbc273044a4c02f00819eb149e382"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w4_k15/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 3865.508409834467,
+        "final": {
+          "iter": 340,
+          "attempt_iter": 340,
+          "lp_obj": 1500637.9289837887,
+          "route_weight": 14.99999999999962,
+          "artificials": 0.0,
+          "min_rc": -1.2179083963559378e-08,
+          "max_row_violation": 4.728439861878542e-13,
+          "max_bound_violation": 3.614331056667197e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "d5ba923d05ed3fa1ba509e5ee5d083befddd913efdcea174ae4bab5c1b90161c"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k14/cg.json",
+      "new_path": false,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 3906.3001513751224,
+        "final": {
+          "iter": 351,
+          "attempt_iter": 351,
+          "lp_obj": 1400578.3995497057,
+          "route_weight": 13.999999999999805,
+          "artificials": 0.0,
+          "min_rc": -5.834277017058298e-08,
+          "max_row_violation": 3.3995029014022293e-13,
+          "max_bound_violation": 2.932594607430106e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "ab1522a1bd8455f7715dc23c2f99080aec82b919a32971e97c90ba96323e7ed0"
+    },
+    {
+      "campaign": "full_pool_recovery_20260912",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/full_pool_recovery_20260912/cases/w6_k15/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "running",
+        "wall_s": 3352.830492542358,
+        "final": {
+          "iter": 274,
+          "attempt_iter": 274,
+          "lp_obj": 1500606.3518365806,
+          "route_weight": 15.000000000000153,
+          "artificials": 0.0,
+          "min_rc": -0.040721603765653924,
+          "max_row_violation": 3.893552147360424e-13,
+          "max_bound_violation": 2.3187007869296394e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "37ad5cb68b12c4244ea09ab4cc3300e6ad28fc03f17f5640658b385913c6cbf9"
+    },
+    {
+      "campaign": "w2_chain_recovery_retry2_20260912",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/w2_chain_recovery_retry2_20260912/cases/w2_k15/mip/onehour/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 15.000000000000044,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.0837590694427,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "cb97362b0fa22bb616a4ac32878d9d0f470432016f9ef58d70f98be3b5e86f88",
+      "payload_sha256": "cb97362b0fa22bb616a4ac32878d9d0f470432016f9ef58d70f98be3b5e86f88"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "37585",
+      "case_id": "w2_k15_recovery",
+      "cohort": "default_chain2_recovery_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "41584",
+      "case_id": "w1_k11",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "41586",
+      "case_id": "w1_k12",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "41588",
+      "case_id": "w1_k13",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "41603",
+      "case_id": "w2_k14",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "41623",
+      "case_id": "w4_k14",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "41625",
+      "case_id": "w4_k15",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "41634",
+      "case_id": "w5_k15",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "41641",
+      "case_id": "w6_k14",
+      "cohort": "default_full_pool_indexed_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "37585",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "41584",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "41586",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "41587",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      },
+      "after": null
+    },
+    {
+      "job": "41588",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      }
+    },
+    {
+      "job": "41589",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      }
+    },
+    {
+      "job": "41602",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "41603",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      }
+    },
+    {
+      "job": "41604",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "41623",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "41624",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "41625",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      }
+    },
+    {
+      "job": "41634",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "41640",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "41641",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      }
+    },
+    {
+      "job": "41642",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    }
+  ]
+}

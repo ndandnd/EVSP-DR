@@ -1,0 +1,59 @@
+--- before
++++ after
+@@ -1,27 +1,27 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results checked 12 September 2026 at 20:14 EDT.
++Week of 14 September. Results checked 12 September 2026 at 21:14 EDT.
+ 
+-**Latest: all 25 completed full-pool MIPs match their fleet targets; chain 3 reaches k=15.**
++**Latest: all 29 completed full-pool MIPs match their fleet targets; chains 3 and 5 reach k=15.**
+ 
+ | Chain | Highest target matched | Full-pool buses | Earlier bounded buses | CG minutes |
+ | ----- | ----- | ----- | ----- | ----- |
+-| 1 | 10 | 10 | 11 | 17.6 |
++| 1 | 12 | 12 | 13 | 26.8 |
+ | 2 | 13 | 13 | 15 | 34.2 |
+ | 3 | 15 | 15 | 17 | 33.1 |
+-| 4 | 13 | 13 | 15 | 42.7 |
+-| 5 | 14 | 14 | 16 | 36.6 |
++| 4 | 14 | 14 | 18 | 59.2 |
++| 5 | 15 | 15 | 17 | 52.3 |
+ | 6 | 13 | 13 | 15 | 75.0 |
+ 
+-The table shows the highest completed integer match in each chain, not a failure threshold. All 25 completed full-pool MIPs match their targets and prove their fleets optimal within their saved pools. Their CG runs have pricing certificates, and individual-route replay passed. These are covering runs with 240 kWh batteries and 240 kW charging; shared charger capacity and return-SOC constraints are absent. Duplicate-trip removal was not validated. Higher k values remain in progress.
++The table shows the highest completed integer match in each chain, not a failure threshold. All 29 completed full-pool MIPs match their targets and prove their fleets optimal within their saved pools. Their CG runs have pricing certificates, and individual-route replay passed. These are covering runs with 240 kWh batteries and 240 kW charging; shared charger capacity and return-SOC constraints are absent. Duplicate-trip removal was not validated. Higher k values remain in progress.
+ 
+ The initial comparisons—C3 k11, C4 k10 and C6 k11—used identical saved parent pools in both treatments and reached the same certified LP objectives within 1e-8. Full inheritance retained about 34,000–41,000 routes in 2.4–3.3 minutes. C4 k10 isolates a pool limitation: the old pool was proved to require 11 buses; the new pool provides 10\. C3 k11’s old 12-bus result was unproved, so MIP search difficulty may also matter there. CG times throughout this section use existing graph caches; original graph construction is excluded.
+ 
+-Twenty-nine of 37 full-pool CG cases are certified; 25 MIPs have finished, all matching their targets. At 20:16, 11 EVSP–DR jobs were running with no invalid dependencies. The missing decomposition component’s graph is ready and its CG has started; the shared 32-duty graph is still being built. No new execution failures or confirmed preemptions were observed. The separate bounded chain 2 k15 CG stopped at its four-hour limit without a pricing certificate; its MIP is running. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T001419Z/README.md).
++Thirty-three of 37 full-pool CG cases are certified; 29 MIPs have finished, all matching their targets. At 21:18, nine EVSP–DR jobs were running with no invalid dependencies. The shared 32-duty graph is still being built; completing it releases nine parent CG runs together. A tenth also needs the last component MIP, whose CG is running. No new execution failures or confirmed preemptions were observed. The separate bounded chain 2 k15 run finished with 17 buses, a pool fleet lower bound of 15 and no fleet proof; its CG had stopped at four hours without certification. [Exact comparisons and proof limits](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T011425Z/README.md).
+ 
+  Open [Figures with explanations](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) for timing, charging costs and geography, or [CG curves and bus schedules](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) for the restored figure library.
+ 
+-**Current finding.** With set covering and inherited columns, all six chains match the GIRO fleet at k=3–6. Chains 3, 5 and 6 also reach ten buses at k=10. The new 512-route import treatment reaches 11 buses at k=11 in chain 6; other completed extension cases need extra buses.
++**Earlier results, before the 12 September queue and import repairs.** With set covering and inherited columns, all six chains match the GIRO fleet at k=3–6. Chains 3, 5 and 6 also reach ten buses at k=10. The new 512-route import treatment reaches 11 buses at k=11 in chain 6; other completed extension cases need extra buses.
+ 
+ ## **Integer fleet with full-pool inheritance**
+ 
+@@ -39,7 +39,7 @@
+ | 9 | — | — | 9 | 9 | 9 | 9 |
+ | 10 | — | — | 10 | — | 10 | 10 |
+ 
+-**The table above retains the earlier full-pool treatment. The extension checks at most 512 inherited routes before CG; its new integer results are shown separately below. Runs continue through k=15 for all six chains.**
++**This table preserves the earlier full-pool runs. The separate 512-route extension is shown below as a comparison. For the repaired full-pool runs through k=15, use the latest table at the top; an old dash here does not mean the case is still blocked.**
+ 
+ k=2 starts from single-trip routes; later sizes reuse validated previous-k columns. Chain 3 k=10 also includes routes from a fresh solver solution. These are pool proofs. Chain 2 k10 (71 buses) had zero pricing iterations and no CG certificate. Individual route replay passed; duplicate-trip removal and shared charger capacity are not established by this table.
+ 
+@@ -58,9 +58,9 @@
+ 
+ Inherited columns improve the available integer pool: chain 3 at k=8 improves from a proved nine-bus pool optimum to eight; chain 5 at k=5 improves from a proved six-bus pool optimum to five.
+ 
+-## **What is limiting progress**
++## **Earlier bottlenecks and what changed**
+ 
+-**Checking saved routes took too long.** Before starting CG on a larger trip set, we check that routes saved from the previous size are still valid. In chain 1 at k=7, chain 2 at k=9 and chain 4 at k=10, this checking used up the available time. We now check at most 512 saved routes, for at most 15 minutes, then let CG search for new routes. All three cases have now finished CG. Their integer solves found 8, 10 and 11 buses, respectively; only the first and third are proved minimums within their saved pools. Using fewer saved routes may affect the final integer solution, so this is a separate experiment.
++**Saved-route checking: the earlier workaround, now superseded by indexed full inheritance.** Before starting CG on a larger trip set, we check that routes saved from the previous size are still valid. In chain 1 at k=7, chain 2 at k=9 and chain 4 at k=10, this checking used up the available time. The first workaround checked at most 512 saved routes for 15 minutes, then started CG. The current recovery instead uses an index to check all inherited sequences efficiently; its results are at the top. That earlier bounded experiment found 8, 10 and 11 buses, respectively; only the first and third were proved minimums within those saved pools. Using fewer saved routes may affect the final integer solution, so this is a separate experiment.
+ 
+ **Charger limits made the search for new routes very slow.** In one three-bus test, the LP solved in 0.006 seconds, but one search for a new route took 7.15 hours. The run ran out of time before it could prove that no improving route remained. Its 16-bus integer solution uses only the routes found so far; it does not show that 16 buses are necessary. The timing figures explain these two different delays.
+ 

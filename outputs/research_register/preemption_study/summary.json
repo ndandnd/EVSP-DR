@@ -41,22 +41,21 @@
     "accounting_missing_task_ids": [],
     "attempts": 4,
     "started": 3,
-    "ended_started_attempts": 2,
+    "ended_started_attempts": 3,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
-      0,
-      0.6576197724933469
+      5.551115123125783e-17,
+      0.5614970317550454
     ],
     "state_counts": {
       "FAILED": 1,
       "CANCELLED": 1,
-      "COMPLETED": 1,
-      "RUNNING": 1
+      "COMPLETED": 2
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 5565
+    "allocation_exposure_seconds": 7374
   },
   "default_fresh_3600": {
     "registered_tasks": 75,
@@ -81,22 +80,22 @@
     "registered_tasks": 37,
     "accounting_missing_task_ids": [],
     "attempts": 37,
-    "started": 29,
-    "ended_started_attempts": 25,
+    "started": 33,
+    "ended_started_attempts": 29,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
-      1.3877787807814457e-17,
-      0.13319225093904846
+      0,
+      0.11696979849974075
     ],
     "state_counts": {
-      "COMPLETED": 25,
+      "COMPLETED": 29,
       "RUNNING": 4,
-      "PENDING": 8
+      "PENDING": 4
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 103006
+    "allocation_exposure_seconds": 117580
   },
   "default_overnight_extension_3600": {
     "registered_tasks": 87,

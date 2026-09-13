@@ -2,13 +2,13 @@
 
 **Queue fixed, 12 September 16:57 EDT:** [Running work, dependency explanations and launch map](../queue_recovery_20260912/README.md).
 
-**Start here:** [Latest chain results, 20:14 EDT](../queue_recovery_20260912/status_20260913T001419Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
+**Start here:** [Latest chain results, 21:14 EDT](../queue_recovery_20260912/status_20260913T011425Z/README.md). The [earlier catch-up](CATCH_UP_20260912.md) preserves the state before the queue recovery.
 
 This is the common index for experiment settings, execution records, results and source evidence. The compact [Week of 14 September status tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow) and [Figures with explanations tab](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i) are the live document view. The [CG curves and bus schedules library](https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly) restores the earlier visual evidence with dated captions. Preserve all figures when updating or simplifying text. Superseded material is also kept in the separate [Historical archive document](https://docs.google.com/document/d/1f0orWtM1-_VWAqjj6GnWP78webCOnvoc01x2VQvaA_k/edit).
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **1906 artifact/stage records across 44 campaign/source groups**, from the 20:14 EDT collection on 12 September. Counts are not independent experimental sample sizes.
+Current build: **1908 artifact/stage records across 44 campaign/source groups**, from the 21:14 EDT collection on 12 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
@@ -20,7 +20,7 @@ Current build: **1906 artifact/stage records across 44 campaign/source groups**,
 | Field meanings and proof limits | [Data dictionary](DATA_DICTIONARY.md) |
 | Concurrency, memory and reserved-node policy | [Resource policy](RESOURCE_POLICY.md) |
 
-Latest verified results: **25 of 25 completed full-pool MIPs match their fleet targets**, each with a pool fleet proof, CG pricing certificate and individual-route replay. **Chain 3 reaches k=15.** Highest completed matches for chains 1–6 are **10, 13, 15, 13, 14, 13**. **29/37 CG cases are certified.** [Current six-chain table and all 25 results](../queue_recovery_20260912/status_20260913T001419Z/README.md). The missing decomposition component’s graph is ready and its CG is running; shared parent32 preparation continues. At 20:16, 11 EVSP–DR jobs were running, with no invalid dependencies or new failures/preemptions. The separate bounded chain 2 k15 CG stopped at its four-hour limit without certification; its MIP is running.
+Latest verified results: **29 of 29 completed full-pool MIPs match their fleet targets**, each with a pool fleet proof, CG pricing certificate and individual-route replay. **Chains 3 and 5 reach k=15.** Highest completed matches for chains 1–6 are **12, 13, 15, 14, 15, 13**. **33/37 CG cases are certified.** [Current six-chain table and all 29 results](../queue_recovery_20260912/status_20260913T011425Z/README.md). At 21:18 EDT, nine EVSP–DR jobs were running: seven full-pool chain CG/MIP jobs and two decomposition jobs. Twenty-six jobs waited for valid inputs; none waited on an impossible dependency. Thirty-three held historical tasks were untouched. Nine parent CG jobs wait only for shared graph job 42509; join00 also needs component MIP 42511, whose CG 42510 is running. Next-k CG depends on previous-k CG, while each MIP depends on its own CG. The separate bounded chain 2 k15 MIP finished with 17 buses and a pool fleet lower bound of 15, without a fleet proof. Its CG stopped at four hours without certification. No new execution errors or confirmed preemptions were observed.
 
 ## How to read a result
 
@@ -42,7 +42,7 @@ From the project root:
 
 ```sh
 python3 outputs/research_register/build_register.py \
-  --snapshot outputs/post_meeting_20260910/monitor/20260913T001419Z.json \
+  --snapshot outputs/post_meeting_20260910/monitor/20260913T011425Z.json \
   --out-dir outputs/research_register --reports-root outputs
 /Users/nadan/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node \
   outputs/research_register/build_workbook.mjs
