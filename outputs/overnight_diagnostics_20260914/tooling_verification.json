@@ -1,0 +1,16 @@
+{
+  "verified_utc": "2026-09-14T04:17:13.097378+00:00",
+  "worker_tests_passed": 10,
+  "collector_scope": "new campaign only;59running attempts;zero published scientific endpoints",
+  "collector_and_register_compile_passed": true,
+  "files": {
+    "worker.py": "83cec3969cee73b142155c468636d4df53635dca9969a085a854759da305e301",
+    "worker.sub": "208ec644f65e67c83f6211f4ea8d427a73f0fc8dbc78ec806bbf5cfd73c43cc2",
+    "campaign.py": "c0c5210a0acd4dfa87c93f53ed13bdcf1ed7f9cdbaeddb2e000784c038b5889f",
+    "validate.py": "90b6db7d89ec9a466c46bdef82ac57d5c36450e0b45dc156516e76b7c43e75de",
+    "validate.sub": "7806f658b22dfeb9c2bc06ce922116bb25c837e311c82dd0a92ed1298910d8e0",
+    "verify_launch.py": "987e9ee02aeef9e9e1fe817d4903feeae08c74991e74e499bf42687c8785ba56",
+    "manifest.json": "a8c37cc553a0c38484de3671ac5421db7fd331b3b43715b9784ae57299b46aca",
+    "selection.json": "157d69ee967fce927ce6ccd2642602b7b9eba8f4cc9295182a59572a26ff27a3"
+  }
+}

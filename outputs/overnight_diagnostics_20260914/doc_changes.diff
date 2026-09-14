@@ -1,0 +1,22 @@
+--- before
++++ after
+@@ -3,6 +3,19 @@
+ Week of 14 September. Chain results updated 13 September 22:51 EDT; cumulative-budget comparison completed 20:49 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
++
++## **Overnight diagnostics: 14 September**
++
++At 00:09 EDT, all 59 independent jobs in the new batch were running. Another 36 MIPs wait only for their own CG. These 95 jobs supplement the six existing warm chains, whose previous-k dependencies are necessary.
++
++| New comparison | Jobs | What it tests |
++| ----- | ----- | ----- |
++| Longer search on unchanged pools | 23 MIPs; up to 3 hours for fleet search, 3½ hours total | Is the target already in the saved columns but harder for Gurobi to find? |
++| Add up to 200 columns per CG iteration | 18 independent CGs, then 18 one-hour MIPs | Can a larger batch of improving routes produce a better integer pool? |
++| Select 30 less-overlapping columns per iteration | 18 independent CGs, then 18 one-hour MIPs | Can a more complementary mix of routes improve the integer pool? |
++| Continue chains 4 and 5 at k=19 | 2 CGs and 2 MIPs will submit automatically after a successful checkpoint check | Does increasing cumulative CG time from four to eight hours reach convergence? |
++
++The CG comparisons use the same inputs, physics, objective, code and cumulative time allowances as their fresh controls. Only the column-selection treatment changes. Four fresh pools already proved to require an extra bus receive new CG treatments, not longer searches on unchanged pools. All jobs use the default partition and exclude the reserved GPU computer. These are selected difficult cases, not a random sample for estimating overall success rates. [Overnight plan, exact cases and job records.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_diagnostics_20260914/README.md)
+ 
+ ## **Now running: six chains from k=16 to k=25**
+ 

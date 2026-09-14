@@ -1,0 +1,36 @@
+{
+  "status": "partially_passed",
+  "manifest_sha256": "a8c37cc553a0c38484de3671ac5421db7fd331b3b43715b9784ae57299b46aca",
+  "validated_treatments": [
+    "c200",
+    "complementary",
+    "longer_fleet_search"
+  ],
+  "validated_utc": "2026-09-14T04:05:31.453475+00:00",
+  "job_id": "155072",
+  "resume_probe_pending": "157899",
+  "completion_files": {
+    "c200": {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/cases/c200/completion.json",
+      "sha256": "9b0c931e1ae17188901d7061e04d772913ce4b280d021ee7a930ab8f05cf413d"
+    },
+    "complementary": {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/cases/complementary/completion.json",
+      "sha256": "e59991fd7295bd7e3a8b4a02f6a0a5f3955e18a803a34bb1c91d7321c879f89c"
+    },
+    "c200_mip": {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/cases/c200_mip/completion.json",
+      "sha256": "c3f0f95e0c0bfa02badef7488ec256177bdf03271c03256b00ee05ca82df9159"
+    },
+    "complementary_mip": {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/cases/complementary_mip/completion.json",
+      "sha256": "9b75dcd76b87eb28745dc798ed21f389ba611d65ce8f3624bd6e309ca2340c85"
+    }
+  },
+  "note": "Both fresh CG configurations and native dependent two-stage MIPs passed; submit these95jobs while large same-k checkpoint probe finishes. No production resume submissions yet.",
+  "resume_probe_previous_jobs": [
+    "155072",
+    "155894"
+  ],
+  "resume_probe_issue": "Short added allowances expired during inherited-route replay, before a new CG iteration. Third check allows2400s and one new iteration; on pass it automatically submits the remaining4cases."
+}

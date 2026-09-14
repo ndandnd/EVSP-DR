@@ -1,0 +1,261 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T024847Z.json",
+  "snapshot_sha256": "16e21b239989c4277f13c3220a3f3ab3ad9f24c32e50b5daa5194c007d59d44e",
+  "selection": "All18fresh misses, all23unresolved fresh/extension MIP gaps in this frozen snapshot; two uncertified k19CGs. Deliberately selected diagnostic cases, not a representative random sample.",
+  "fresh_misses": [
+    "c1_k08",
+    "c1_k10",
+    "c1_k15",
+    "c2_k08",
+    "c2_k10",
+    "c2_k15",
+    "c3_k08",
+    "c3_k10",
+    "c3_k15",
+    "c4_k08",
+    "c4_k10",
+    "c4_k15",
+    "c5_k05",
+    "c5_k08",
+    "c5_k10",
+    "c5_k15",
+    "c6_k10",
+    "c6_k15"
+  ],
+  "long_mips": [
+    {
+      "origin": "fresh",
+      "case_id": "c1_k10",
+      "chain": 1,
+      "target_k": 10,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k10/mip_base/135600_r0/result.json",
+      "prior_sha256": "d952a8ac9cc4006ac5ecb0797ac13890509936f80406cb590a3eebc2b864f5cc",
+      "prior_buses": 11,
+      "prior_bound": 10.000000000000027
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c1_k15",
+      "chain": 1,
+      "target_k": 15,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/mip_base/135605_r0/result.json",
+      "prior_sha256": "0a553d6ae5b87fe448c13cc62ed7de7ab7682509f556bf9dc75168a2c6eda20b",
+      "prior_buses": 18,
+      "prior_bound": 15.000000000000046
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c2_k08",
+      "chain": 2,
+      "target_k": 8,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k08/mip_base/135615_r0/result.json",
+      "prior_sha256": "f82b4e049c973036cb00a53c5bd5a3925206c6d8333fc32b2b4a704dfe00c3e4",
+      "prior_buses": 9,
+      "prior_bound": 8.000000000000005
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c2_k10",
+      "chain": 2,
+      "target_k": 10,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k10/mip_base/135620_r0/result.json",
+      "prior_sha256": "7b1b3844aaaade471ac6e7b731a9ee751ffb07569a1af953e7c34c1b3d25c69c",
+      "prior_buses": 12,
+      "prior_bound": 10.000000000000068
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c2_k15",
+      "chain": 2,
+      "target_k": 15,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k15/mip_base/135625_r0/result.json",
+      "prior_sha256": "1087425363e02e1d2f5054c37131e176cf315bf2a3470ea834466bf4bec16d35",
+      "prior_buses": 17,
+      "prior_bound": 15.000000000000021
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c3_k08",
+      "chain": 3,
+      "target_k": 8,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k08/mip_base/135635_r0/result.json",
+      "prior_sha256": "1d4936bec7def830d91a25a20f8f460fdb8f66ffd383e6a68463bd8a6f584ffc",
+      "prior_buses": 9,
+      "prior_bound": 8.000000000000004
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c3_k10",
+      "chain": 3,
+      "target_k": 10,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k10/mip_base/135640_r0/result.json",
+      "prior_sha256": "ee6121c87d6b4686a28961f383e6dd14ca5636c90c254c186e1ab9be4d40d235",
+      "prior_buses": 11,
+      "prior_bound": 10.000000000000009
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c3_k15",
+      "chain": 3,
+      "target_k": 15,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c3_k15/mip_base/135645_r0/result.json",
+      "prior_sha256": "484d0a9dbf511eac2aa144de6271fbdf0ca0ab1e789a1385c0712dc2f04d38f1",
+      "prior_buses": 18,
+      "prior_bound": 15.000000000000052
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c4_k10",
+      "chain": 4,
+      "target_k": 10,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k10/mip_base/135660_r0/result.json",
+      "prior_sha256": "d79480c0e2c528400876c257d7001d5d7b9fbc5c321270c5f75b5bc125f0ae05",
+      "prior_buses": 11,
+      "prior_bound": 10.000000000000712
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c4_k15",
+      "chain": 4,
+      "target_k": 15,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k15/mip_base/135665_r0/result.json",
+      "prior_sha256": "f77709fc8398f3376db753c3028fdef8f5dae6c7ca6aa71af89a3601de0c2ba7",
+      "prior_buses": 19,
+      "prior_bound": 15.000000000000068
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c5_k10",
+      "chain": 5,
+      "target_k": 10,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k10/mip_base/135682_r0/result.json",
+      "prior_sha256": "db16ef1735444a8c6cc8da16d5f8a2bd884b302a0fce13abd27e6a931547acdf",
+      "prior_buses": 11,
+      "prior_bound": 10.00000000000002
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c5_k15",
+      "chain": 5,
+      "target_k": 15,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c5_k15/mip_base/135687_r0/result.json",
+      "prior_sha256": "5d205a87cbc701a70b282578f901adb299315a0d1fed0c9cb973755ec6474d20",
+      "prior_buses": 16,
+      "prior_bound": 15.0000000000001
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c6_k10",
+      "chain": 6,
+      "target_k": 10,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c6_k10/mip_base/135703_r0/result.json",
+      "prior_sha256": "8a312f1c7c75342a84de16915c731e92496c9e796b7155779219cfb39cc9fe9d",
+      "prior_buses": 11,
+      "prior_bound": 10.000000000000018
+    },
+    {
+      "origin": "fresh",
+      "case_id": "c6_k15",
+      "chain": 6,
+      "target_k": 15,
+      "prior_result": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c6_k15/mip_base/135708_r0/result.json",
+      "prior_sha256": "86680de39a5ec353b7bb45b3b47fbfc71a375ff2aa7b51212e29f8786cf657cf",
+      "prior_buses": 20,
+      "prior_bound": 15.00000000000002
+    },
+    {
+      "origin": "extension",
+      "case_id": "w2_k17",
+      "chain": 2,
+      "target_k": 17,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k17/mip/133932_r0/result.json",
+      "prior_sha256": "a7c7ed6c28a326906884ef15a884f5bdd516f74c78d328b4ad4c385921ae05bc",
+      "prior_buses": 18,
+      "prior_bound": 17.0
+    },
+    {
+      "origin": "extension",
+      "case_id": "w2_k18",
+      "chain": 2,
+      "target_k": 18,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k18/mip/133934_r0/result.json",
+      "prior_sha256": "d3f5a54e4af58d4b4847915097578f9c0b79efeb535a9930e64e3e5428326c0b",
+      "prior_buses": 19,
+      "prior_bound": 18.0
+    },
+    {
+      "origin": "extension",
+      "case_id": "w2_k19",
+      "chain": 2,
+      "target_k": 19,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k19/mip/133936_r0/result.json",
+      "prior_sha256": "fc1f2a0831a059414e6e6cf5277397aa895c2254275c9fb487758aaf7295318f",
+      "prior_buses": 20,
+      "prior_bound": 19.00000000000001
+    },
+    {
+      "origin": "extension",
+      "case_id": "w2_k20",
+      "chain": 2,
+      "target_k": 20,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k20/mip/133938_r0/result.json",
+      "prior_sha256": "51aec9eaf9299a4d76cfeab92a069596da463fe3215d6bff56f478588dce4b01",
+      "prior_buses": 21,
+      "prior_bound": 20.000000000000007
+    },
+    {
+      "origin": "extension",
+      "case_id": "w3_k19",
+      "chain": 3,
+      "target_k": 19,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k19/mip/133956_r0/result.json",
+      "prior_sha256": "829d04d22bdb86125ba5b6a2bf732952f11044c45b2fc297657e2ce522842258",
+      "prior_buses": 20,
+      "prior_bound": 19.000000000000004
+    },
+    {
+      "origin": "extension",
+      "case_id": "w3_k20",
+      "chain": 3,
+      "target_k": 20,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k20/mip/133958_r0/result.json",
+      "prior_sha256": "e8dc643be57ef66022fcfeb86559c9ef54fac80c2a3f9a4ee70ea4873d3aacd2",
+      "prior_buses": 21,
+      "prior_bound": 20.0
+    },
+    {
+      "origin": "extension",
+      "case_id": "w3_k21",
+      "chain": 3,
+      "target_k": 21,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k21/mip/133960_r0/result.json",
+      "prior_sha256": "b461301141ab5f3b5ae0779ee8784b502de66a6225135744fd2c4a6874a33898",
+      "prior_buses": 22,
+      "prior_bound": 21.000000000000068
+    },
+    {
+      "origin": "extension",
+      "case_id": "w5_k19",
+      "chain": 5,
+      "target_k": 19,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k19/mip/133996_r0/result.json",
+      "prior_sha256": "519471dff75168b47d7f91a62bcf76f7d0c1174148c81ceac0114b1eb0104ae7",
+      "prior_buses": 20,
+      "prior_bound": 19.0
+    },
+    {
+      "origin": "extension",
+      "case_id": "w6_k18",
+      "chain": 6,
+      "target_k": 18,
+      "prior_result": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k18/mip/134066_r0/result.json",
+      "prior_sha256": "fd996be14dc52e9801f002c2af01c2974a931bb430f7eb135784334ca7ed3958",
+      "prior_buses": 19,
+      "prior_bound": 18.00000000000004
+    }
+  ],
+  "resume_cases": [
+    "w4_k19",
+    "w5_k19"
+  ]
+}

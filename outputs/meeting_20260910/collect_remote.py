@@ -299,6 +299,7 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'overnight_diagnostics_20260914': home / 'overnight_diagnostics_20260914',
     'chain_extension_20260913': home / 'chain_extension_20260913',
     'graph_recovery_retry2_20260912': home / 'graph_recovery_retry2_20260912',
     'full_pool_recovery_20260912': home / 'full_pool_recovery_20260912',
@@ -334,13 +335,33 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts}):
+    diagnostic = name == 'overnight_diagnostics_20260914'
+    diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
+    published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
+    for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
         if name == 'chain_extension_20260913' and 'validation' in p.relative_to(root).parts:
             continue
         raw = p.read_bytes()
         d = json.loads(raw)
         row = {k: d.get(k) for k in ['buses','fleet_bound','fleet_proven','status','status_name','mip_gap','optimal_scope','pool_columns','source_cg_iterations','source_cg_wall_s','runtime_s','gurobi_optimize_wall_s','partitioning','overcovered_trips','charging_cost','continuous_realized_charging_cost','two_stage','physical_pool_audit','physical_replay_validated','physical_replay_scope','duplicate_trip_removal_validated','cross_route_charger_capacity_validated']}
         row.update(path=str(p), sha256=hashlib.sha256(raw).hexdigest(), file_mtime_utc=datetime.datetime.fromtimestamp(p.stat().st_mtime, datetime.timezone.utc).isoformat(), instance=d.get('instance'), selected_physical_statuses=dict(Counter(r.get('physical_realization',{}).get('status','missing') for r in d.get('selected_routes',[]))))
+        if diagnostic:
+            marker = json.loads((p.parent/'completion.json').read_bytes())
+            if not (marker.get('usable') is True and marker.get('kind') == 'mip'
+                    and marker.get('case_id') == p.parent.name
+                    and marker.get('manifest_sha256') == diagnostic_manifest_sha
+                    and Path(marker['result_path']).resolve() == p.resolve()
+                    and d.get('source_result_sha256') == marker.get('source_status_sha256')
+                    and d.get('source_journal_sha256') == marker.get('source_journal_sha256')
+                    and marker['result_sha256'] == row['sha256']):
+                raise ValueError(f'unverified diagnostic MIP publication: {p}')
+            row.update(completion_marker_matches=True, authority='published',
+                       resolved_source_path=str(p.resolve()),
+                       publication_manifest_sha256=diagnostic_manifest_sha,
+                       source_status_sha256=marker.get('source_status_sha256'),
+                       source_journal_sha256=marker.get('source_journal_sha256'))
+            for key in ('source_result_sha256', 'mip_provenance'):
+                row[key] = d.get(key)
         if name == 'stage2_cap_license_recovery' and row['sha256'] == 'fa05bf422221abecfa37f3eb6eeebf07f586bfde643057fb073fe97be5cadf3a':
             row['authoritative_772009_completion'] = False
             row['provenance_warning'] = 'Shared path contains the 57-second INTERRUPTED artifact from canceled duplicate772031. It is not the authoritative772009 result. The validated772009 pending result was later recovered under a unique job-specific filename; see post-meeting license report.'
@@ -355,20 +376,46 @@ for name, root in roots.items():
     if cg_paths:
         for p in sorted(cg_paths):
             if p.stat().st_size > 100_000_000: continue
-            try: d=json.loads(p.read_bytes())
+            try:
+                raw = p.read_bytes()
+                d=json.loads(raw)
             except Exception: continue
             row={k:v for k,v in d.items() if k not in ['routes','columns','selected_routes','iterations','history','iteration_log'] and not isinstance(v,list)}
             row['path']=str(p)
-            if name == 'chain_extension_20260913':
+            if name == 'chain_extension_20260913' or diagnostic:
                 for key in ('route_values', 'trip_duals', 'capacity_duals'):
                     row.pop(key, None)
                 row['resolved_source_path'] = str(p.resolve())
                 row['authority'] = 'published'
+            if diagnostic:
+                row['sha256'] = hashlib.sha256(raw).hexdigest()
+                marker = json.loads((p.parent/'completion.json').read_bytes())
+                if not (marker.get('usable') is True and marker.get('kind') == 'cg'
+                        and marker.get('case_id') == p.parent.name
+                        and marker.get('manifest_sha256') == diagnostic_manifest_sha
+                        and Path(marker['result_path']).resolve() == p.resolve()
+                        and marker['result_sha256'] == row['sha256']):
+                    raise ValueError(f'unverified diagnostic CG publication: {p}')
+                journal = Path(marker['journal_path'])
+                journal_hasher = hashlib.sha256()
+                with journal.open('rb') as stream:
+                    for block in iter(lambda: stream.read(1048576), b''):
+                        journal_hasher.update(block)
+                if journal_hasher.hexdigest() != marker['journal_sha256']:
+                    raise ValueError(f'diagnostic CG journal changed after publication: {p}')
+                row['completion_marker_matches'] = True
+                row['publication_manifest_sha256'] = diagnostic_manifest_sha
+                row['columns_journal_sha256'] = marker['journal_sha256']
+                if isinstance(row.get('final_lp'), dict):
+                    row['final_lp'] = {k:v for k,v in row['final_lp'].items()
+                                       if not isinstance(v, (list, dict))}
             cg.append(row)
     phases=[]
     phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/*.phase-telemetry.jsonl') if 'smoke' not in p.parts}
     if name == 'chain_extension_20260913':
         phase_paths.update(root.glob('cases/*/cg/*/*.phase-telemetry.jsonl'))
+    if diagnostic:
+        phase_paths.update(root.glob('cases/*/attempts/*/*.phase*.jsonl'))
     for p in sorted(phase_paths):
         sums=defaultdict(float); counts=Counter(); last=None; partial=0
         for line in p.open():
@@ -390,6 +437,17 @@ for name, root in roots.items():
     out['campaigns'][name]['workflow'] = {}
     if name == 'chain_extension_20260913':
         out['campaigns'][name]['workflow']['attempt_progress'] = chain_extension_progress(root)
+    if diagnostic:
+        progress = []
+        for p in sorted(root.glob('cases/*/attempts/*/state.json')):
+            record = json.loads(p.read_bytes())
+            progress.append({'case_id': p.parents[2].name, 'attempt': p.parent.name,
+                             'path': str(p), 'state': record})
+        out['campaigns'][name]['workflow']['attempt_progress'] = progress
+        for record_name in ['validation.json', 'scheduler_verification.json', 'selection.json']:
+            p = root/record_name
+            if p.exists():
+                out['campaigns'][name]['workflow'][record_name] = json.loads(p.read_bytes())
     for record_name in ['ready_mips_manifest.json', 'ready_mips_submission.json', 'ready_mips_old_cancellations.json', 'obsolete_chain2_cancellations.json', 'retired_queue_entries.json', 'case_jobs.json', 'cache_jobs.json', 'cache_cli_validation.json', 'cache_compatibility.json', 'manifest.json', 'jobs.json', 'smoke_job.json', 'downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():
