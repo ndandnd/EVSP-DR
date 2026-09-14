@@ -1,0 +1,68 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter OutputFlag to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.json.gurobi.log"
+Set parameter Threads to value 1
+Set parameter MIPGap to value 0.0001
+Set parameter TimeLimit to value 7.5
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  7.5
+Threads  1
+
+Optimize a model with 13 rows, 13 columns and 13 nonzeros
+Model fingerprint: 0xdaf49eca
+Variable types: 0 continuous, 13 integer (13 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 13.0000000
+Presolve removed 13 rows and 13 columns
+Presolve time: 0.01s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.02 seconds (0.00 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 13 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.300000000000e+01, best bound 1.300000000000e+01, gap 0.0000%
+Set parameter TimeLimit to value 1.4976870613172650e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  1.4976870613172650e+01
+Threads  1
+
+Optimize a model with 14 rows, 13 columns and 26 nonzeros
+Model fingerprint: 0x8e1ecd57
+Variable types: 0 continuous, 13 integer (13 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [0e+00, 0e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+01]
+
+Loaded user MIP start with objective 0
+MIP start from previous solve did not produce a new incumbent solution
+
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 0 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap 0.0000%
+{"arm": "capacity", "mode": "mip", "out": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.json", "status": "OPTIMAL"}

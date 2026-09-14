@@ -311,6 +311,7 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'overnight_parallel_20260914': home / 'overnight_parallel_20260914',
     'parallel_pool_unions_20260914': home / 'parallel_pool_unions_20260914',
     'chain_extension_20260914': home / 'chain_extension_20260914',
     'parallel_pool_followup_20260914': home / 'parallel_pool_followup_20260914',
@@ -351,7 +352,7 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914')
+    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
@@ -634,7 +635,8 @@ if study_script.exists() and (study_script.parent / 'registry.json').exists():
 # Paired efficiency collections retain original failures and separate warm retries.
 for strict_name, strict_kind in (
         ('strict_capacity_parallel_20260914', 'pilot'),
-        ('strict_capacity_mip1h_20260914', 'matched_mip1h')):
+        ('strict_capacity_mip1h_20260914', 'matched_mip1h'),
+        ('capacity_pricing_boundary_20260914', 'pilot')):
     strict_root = home / strict_name
     if (strict_root/'collect.py').exists() and (strict_root/'manifest.json').exists():
         try:

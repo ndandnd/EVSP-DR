@@ -218,7 +218,7 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -991,7 +991,8 @@ class Register:
                 }
             metadata = item.get("case_metadata") or {}
             if campaign_id in {"strict_capacity_parallel_20260914",
-                               "strict_capacity_mip1h_20260914"}:
+                               "strict_capacity_mip1h_20260914",
+                               "capacity_pricing_boundary_20260914"}:
                 if item.get("stage_completion_verified") is not True:
                     raise ValueError("strict-capacity endpoint lacks completion verification")
                 matched_mip = campaign_id == "strict_capacity_mip1h_20260914"
@@ -1022,6 +1023,9 @@ class Register:
                         "source CG status and pool are hash-bound and no new CG or pricing proof is claimed. "
                         "The uniform MIP allowance equalizes integer search only."
                         if matched_mip else
+                        "Matched k1 pricing-boundary diagnostic: flat prices, capacity arm, 240 kWh initial energy, "
+                        "zero reserve, 13200 s CG, and 600 s finite-pool MIP for both reference and prefix-memo selectors."
+                        if campaign_id == "capacity_pricing_boundary_20260914" else
                         f"Pilot CG allowance {metadata['cg_wall_s']} s; short MIP allowance {metadata['mip_wall_s']} s. "
                         "Reference-versus-prefix pairs have matched CG settings. Capacity and non-capacity pilot MIP budgets differ; use matched one-hour follow-ups for the integer comparison."
                     ),
@@ -1037,6 +1041,13 @@ class Register:
                             "source pools received 6600 s; these physics cells are feasibility pilots, "
                             "not isolated runtime-causal estimates."
                         ),
+                    )
+                elif campaign_id == "capacity_pricing_boundary_20260914":
+                    overrides["limitations"] = (
+                        "A pricing deadline is an uncertified CG endpoint; a completed MIP proves only its saved "
+                        "finite pool. Selector equivalence requires matching exact terminal status and normalized "
+                        "routes. Since k=1 selects one route, this diagnoses pricing behavior rather than "
+                        "multi-route charger contention."
                     )
                 else:
                     overrides["limitations"] = (
@@ -1273,7 +1284,8 @@ class Register:
         self.capacity_speed()
         for retry_name in ["capacity_timeout6_rerun", "capacity_deadline5_retry",
                            "strict_capacity_parallel_20260914",
-                           "strict_capacity_mip1h_20260914"]:
+                           "strict_capacity_mip1h_20260914",
+                           "capacity_pricing_boundary_20260914"]:
             if self.snapshot.get("campaigns", {}).get(retry_name, {}).get("records"):
                 self.capacity_speed(retry_name)
         self.terminal_energy()

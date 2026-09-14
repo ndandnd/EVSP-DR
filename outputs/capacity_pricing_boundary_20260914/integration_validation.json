@@ -1,0 +1,27 @@
+{
+  "collector_registration": {
+    "campaign_kind": "pilot",
+    "path": "outputs/meeting_20260910/collect_remote.py",
+    "remote_adapter_validation": "boundary_results_20260914T1707Z.json",
+    "sha256": "68e1d48e01ad6e20da1e52011e4e31a5e74676ab8b9934c1c562368884350a66",
+    "syntax_valid": true
+  },
+  "full_global_collector_run": false,
+  "full_register_rebuild": false,
+  "normalizer_registration": {
+    "campaign_id": "capacity_pricing_boundary_20260914",
+    "focused_production_endpoints": {
+      "actual_campaign_id_branch": true,
+      "k1_matched_selector_metadata": true,
+      "pricing_specific_limitations": true,
+      "proof_scopes_separate": true,
+      "two_certified_cg_rows_preserved": true,
+      "two_finite_pool_mip_rows_preserved": true
+    },
+    "path": "outputs/research_register/build_register.py",
+    "sha256": "56c981742c81af0fccb410cea45ff8e7e6eeb6a6ee12b999fb019e3de188683f",
+    "syntax_valid": true
+  },
+  "schema": "evsp-dr-capacity-pricing-boundary-integration-validation-v1",
+  "validated_utc": "2026-09-14T17:08:52.824137+00:00"
+}

@@ -1,0 +1,30 @@
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter OutputFlag to value 1
+Set parameter Threads to value 1
+Set parameter LogFile to value "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.json.gurobi.log"
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5520  @ 2.27GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+Threads  1
+
+Optimize a model with 7813 rows, 26 columns and 26 nonzeros
+Model fingerprint: 0xdd80164c
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 2e+00]
+Presolve removed 7813 rows and 26 columns
+Presolve time: 0.02s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    1.3000000e+06   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.03 seconds (0.00 work units)
+Optimal objective  1.300000000e+06
+{"arm": "capacity", "mode": "cg", "out": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.json", "status": "incomplete"}

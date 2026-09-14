@@ -1,0 +1,634 @@
+{
+  "status": "passed",
+  "manifest_sha256": "e56250b8405cc5e8576b305bd548d0953be878c5a8e62b2ea50b2efc0c2066c9",
+  "native_smoke": [
+    {
+      "case_id": "c1_k08_integer",
+      "cg_completion": {
+        "case_id": "c1_k08_integer",
+        "kind": "cg",
+        "attempt": "189152_r0",
+        "started_utc": "2026-09-14T16:59:32.341713+00:00",
+        "manifest_sha256": "52e6f048df74f52e96128fe530724ac9adc70ade1e352485cffc0ece4d0be5d1",
+        "status": "finished",
+        "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "optimization_run": true,
+        "source_status_sha256": null,
+        "source_journal_sha256": null,
+        "ended_utc": "2026-09-14T16:59:58.816039+00:00",
+        "usable": true,
+        "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer/attempts/189152_r0/cg.json",
+        "result_sha256": "8bc8903949c0d9eaa38bc8e0c348dd7e78526973320e52a6cc3e71f318700bf2",
+        "execution": {
+          "argv": [
+            "/home/nc437/evsp_env/bin/python",
+            "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/exact_pricer_expanded.py",
+            "--csv",
+            "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+            "--prices_csv",
+            "hourly_prices_flat.csv",
+            "--time-model",
+            "event",
+            "--event-arc-mode",
+            "lazy",
+            "--event-network-cache",
+            "/home/nc437/ladder-lite/cumulative_budget_20260913/inputs/c1_k08/network.pkl",
+            "--event-network-cache-mode",
+            "require",
+            "--fixed-sequence-index",
+            "--soc-step",
+            "2.5",
+            "--block-min",
+            "5",
+            "--max-iters",
+            "1",
+            "--columns_per_iter",
+            "30",
+            "--column-selection",
+            "reduced_cost",
+            "--column-diversity-weight",
+            "0",
+            "--column-candidate-multiplier",
+            "4",
+            "--rc-eps",
+            "0.0001",
+            "--master-sense",
+            "cover",
+            "--master-backend",
+            "gurobi",
+            "--initial-pool",
+            "singletons",
+            "--wall-limit-s",
+            "1800",
+            "--checkpoint-every",
+            "25",
+            "--g-kwh",
+            "240",
+            "--charge-kw",
+            "240",
+            "--min-soc-frac",
+            "0",
+            "--phase-telemetry",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer/attempts/189152_r0/cg.json.phases.jsonl",
+            "--gurobi-log",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer/attempts/189152_r0/cg.json.gurobi.log",
+            "--out",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer/attempts/189152_r0/cg.json",
+            "--inherit-event-pool-from",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914/seeds/c1_k08_integer/seed.json",
+            "--inherit-event-pool-workers",
+            "1",
+            "--inherit-max-columns",
+            "0",
+            "--inherit-time-limit-s",
+            "0"
+          ],
+          "cwd": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code",
+          "started_utc": "2026-09-14T16:59:32.618876+00:00",
+          "host": "en-cc-unicorn-cpu-39.coecis.cornell.edu",
+          "watchdog_s": 2100.0,
+          "status": "finished",
+          "returncode": 0,
+          "ended_utc": "2026-09-14T16:59:58.811008+00:00",
+          "wall_s": 26.181876505725086,
+          "user_cpu_s": 15.96115,
+          "system_cpu_s": 3.294402,
+          "children_maxrss_native": 2840516,
+          "signals": [],
+          "watchdog": false,
+          "forced_kill": false,
+          "error": null
+        },
+        "solver_budget_s": 1800,
+        "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer/attempts/189152_r0/cg.json.columns.jsonl",
+        "journal_sha256": "b1ba9c4bbd779c7423dcbc5100c7e03a00ee8911920131f96b00f3f4244d8616",
+        "certified": false,
+        "stop_reason": "max_iters",
+        "native_wall_s": 24.08292823890224
+      },
+      "inheritance": {
+        "schema": "evsp-dr-inherited-event-pool-audit-v1",
+        "source_status": "/home/nc437/ladder-lite/overnight_parallel_20260914/seeds/c1_k08_integer/seed.json",
+        "source_status_sha256": "0f8bfe2342db6804c6821af818021eb548d13b01b9cce6343a1db1d3fd726b8b",
+        "source_journal": "/home/nc437/ladder-lite/overnight_parallel_20260914/seeds/c1_k08_integer/sequences.jsonl",
+        "source_journal_sha256": "fdf8385c4b9da072674c2ea6e29ff28a1bfcffa1f09c690b3bd497085d9568e4",
+        "source_raw_records": 7,
+        "source_unique_columns": 7,
+        "source_replayable_sequences": 7,
+        "selected_for_replay": 7,
+        "bounded_max_columns": 0,
+        "import_time_limit_s": 0.0,
+        "import_deadline_reached": false,
+        "import_cancelled": false,
+        "deadline_scope": "replay_result_wait_after_selection",
+        "preparation_s": 0.023072795011103153,
+        "replay_s": 0.6988107180222869,
+        "cleanup_s": 0.03408290119841695,
+        "total_import_s": 0.7597490409389138,
+        "pool_shutdown": {
+          "worker_pids": [
+            315961
+          ],
+          "forced_kill_pids": [],
+          "alive_worker_pids": [],
+          "shutdown_complete": true,
+          "errors": []
+        },
+        "telemetry_errors": [],
+        "replay_completed": 7,
+        "unprocessed_selected": 0,
+        "attempted_unique_columns": 7,
+        "accepted_columns": 7,
+        "rejected_columns": 0,
+        "rejected_reasons": {},
+        "mapping_key": "Ordered_Trip_ID",
+        "child_event_graph_reoptimization": true,
+        "replay_workers": 1,
+        "inherited_duals": false,
+        "inherited_basis": false,
+        "inherited_lp_certificate": false,
+        "added_to_child_pool": 7,
+        "replaced_child_columns": 0,
+        "already_present_or_not_cheaper": 0,
+        "import_runtime_s": 0.794354340992868
+      },
+      "mip_completion": {
+        "case_id": "c1_k08_integer_mip",
+        "kind": "mip",
+        "attempt": "189154_r0",
+        "started_utc": "2026-09-14T17:00:02.604905+00:00",
+        "manifest_sha256": "52e6f048df74f52e96128fe530724ac9adc70ade1e352485cffc0ece4d0be5d1",
+        "status": "finished",
+        "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+        "optimization_run": true,
+        "source_status_sha256": "8bc8903949c0d9eaa38bc8e0c348dd7e78526973320e52a6cc3e71f318700bf2",
+        "source_journal_sha256": "b1ba9c4bbd779c7423dcbc5100c7e03a00ee8911920131f96b00f3f4244d8616",
+        "ended_utc": "2026-09-14T17:00:06.402848+00:00",
+        "usable": true,
+        "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer_mip/attempts/189154_r0/result.json",
+        "result_sha256": "741f0901008aeef1e0f77847621c487989636f83671627f7bf3b78a4154e0773",
+        "execution": {
+          "argv": [
+            "/home/nc437/evsp_env/bin/python",
+            "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+            "--result",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer/attempts/189152_r0/cg.json",
+            "--data-dir",
+            "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+            "--reference-data-dir",
+            "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+            "--cover",
+            "--two-stage",
+            "--timelimit",
+            "30",
+            "--stage1-timelimit",
+            "15",
+            "--threads",
+            "8",
+            "--mipgap",
+            "0.0001",
+            "--gurobi-log",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer_mip/attempts/189154_r0/gurobi.log",
+            "--out",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer_mip/attempts/189154_r0/result.json"
+          ],
+          "cwd": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+          "started_utc": "2026-09-14T17:00:02.882468+00:00",
+          "host": "en-cc-unicorn-cpu-32.coecis.cornell.edu",
+          "watchdog_s": 600.0,
+          "status": "finished",
+          "returncode": 0,
+          "ended_utc": "2026-09-14T17:00:06.396704+00:00",
+          "wall_s": 3.5055372398346663,
+          "user_cpu_s": 2.57314,
+          "system_cpu_s": 0.359641,
+          "children_maxrss_native": 125976,
+          "signals": [],
+          "watchdog": false,
+          "forced_kill": false,
+          "error": null
+        },
+        "solver_budget_s": 30,
+        "physical_replay_validated": true,
+        "fleet_proven": true,
+        "fleet_bound": 10.0,
+        "buses": 10,
+        "target_matched": false,
+        "target_k": 8
+      },
+      "physical_pool_audit": {
+        "accepted_columns": 231,
+        "added_giro_route_count": 0,
+        "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "assigned_mip_start_route_count": 98,
+        "augmented_pool_column_count": 231,
+        "augmented_pool_ordered_sha256": "6017fb426536c370eccab6593c7086cd78f8c12c527aad2aeb9d77e67ecec1bd",
+        "base_pool_column_count": 231,
+        "base_pool_ordered_sha256": "6017fb426536c370eccab6593c7086cd78f8c12c527aad2aeb9d77e67ecec1bd",
+        "continuous_cost_pricing_certified": false,
+        "deterministically_repaired": 0,
+        "input_hashes": {
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+          "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+        },
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "master_sense": "cover",
+        "mip_ordered_pool_sha256": "6017fb426536c370eccab6593c7086cd78f8c12c527aad2aeb9d77e67ecec1bd",
+        "mip_unique_accepted_columns": 231,
+        "persisted_charging_block_count": 415,
+        "persisted_charging_block_payload_bytes": 83509,
+        "post_augmentation_columns": 231,
+        "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+        "preparation_wall_s": 2.223225378897041,
+        "pricing_certificate_scope": "not_certified",
+        "rejected_columns": 0,
+        "rejected_samples": [],
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "source_pricing_certified": false,
+        "source_reference_hashes_bound": true,
+        "total_columns": 231,
+        "valid_as_recorded": 231,
+        "valid_set_sha256": "6aad2cb193d48cab3bf4da5713b7513f7e2f2c06a7c2b174c37b97855872b36f"
+      }
+    },
+    {
+      "case_id": "c1_k08_lpweight",
+      "cg_completion": {
+        "case_id": "c1_k08_lpweight",
+        "kind": "cg",
+        "attempt": "189153_r0",
+        "started_utc": "2026-09-14T16:59:31.945154+00:00",
+        "manifest_sha256": "52e6f048df74f52e96128fe530724ac9adc70ade1e352485cffc0ece4d0be5d1",
+        "status": "finished",
+        "execution_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+        "optimization_run": true,
+        "source_status_sha256": null,
+        "source_journal_sha256": null,
+        "ended_utc": "2026-09-14T16:59:52.400629+00:00",
+        "usable": true,
+        "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight/attempts/189153_r0/cg.json",
+        "result_sha256": "520de1f812f83897ad19c029f09d2aaa95da9f703777b198ac29314159a3996f",
+        "execution": {
+          "argv": [
+            "/home/nc437/evsp_env/bin/python",
+            "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/src/exact_pricer_expanded.py",
+            "--csv",
+            "scale_ladder/instances/nested_probability_k2_15_20260908/Practice_Custom_DutyUnion_k08_p01_20260908.csv",
+            "--prices_csv",
+            "hourly_prices_flat.csv",
+            "--time-model",
+            "event",
+            "--event-arc-mode",
+            "lazy",
+            "--event-network-cache",
+            "/home/nc437/ladder-lite/cumulative_budget_20260913/inputs/c1_k08/network.pkl",
+            "--event-network-cache-mode",
+            "require",
+            "--fixed-sequence-index",
+            "--soc-step",
+            "2.5",
+            "--block-min",
+            "5",
+            "--max-iters",
+            "1",
+            "--columns_per_iter",
+            "30",
+            "--column-selection",
+            "reduced_cost",
+            "--column-diversity-weight",
+            "0",
+            "--column-candidate-multiplier",
+            "4",
+            "--rc-eps",
+            "0.0001",
+            "--master-sense",
+            "cover",
+            "--master-backend",
+            "gurobi",
+            "--initial-pool",
+            "singletons",
+            "--wall-limit-s",
+            "1800",
+            "--checkpoint-every",
+            "25",
+            "--g-kwh",
+            "240",
+            "--charge-kw",
+            "240",
+            "--min-soc-frac",
+            "0",
+            "--phase-telemetry",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight/attempts/189153_r0/cg.json.phases.jsonl",
+            "--gurobi-log",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight/attempts/189153_r0/cg.json.gurobi.log",
+            "--out",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight/attempts/189153_r0/cg.json",
+            "--inherit-event-pool-from",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914/seeds/c1_k08_lpweight/seed.json",
+            "--inherit-event-pool-workers",
+            "1",
+            "--inherit-max-columns",
+            "0",
+            "--inherit-time-limit-s",
+            "0"
+          ],
+          "cwd": "/home/nc437/ladder-lite/full_pool_recovery_20260912/code",
+          "started_utc": "2026-09-14T16:59:32.137484+00:00",
+          "host": "en-cc-unicorn-cpu-75.coecis.cornell.edu",
+          "watchdog_s": 2100.0,
+          "status": "finished",
+          "returncode": 0,
+          "ended_utc": "2026-09-14T16:59:52.396628+00:00",
+          "wall_s": 20.22797244368121,
+          "user_cpu_s": 14.980984,
+          "system_cpu_s": 3.741825,
+          "children_maxrss_native": 2840196,
+          "signals": [],
+          "watchdog": false,
+          "forced_kill": false,
+          "error": null
+        },
+        "solver_budget_s": 1800,
+        "journal_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight/attempts/189153_r0/cg.json.columns.jsonl",
+        "journal_sha256": "ec1b6fa2b1d1e1fe53ca6b14dbcabf7494bfde386da57501ca23f700ac139367",
+        "certified": false,
+        "stop_reason": "max_iters",
+        "native_wall_s": 18.02550133690238
+      },
+      "inheritance": {
+        "schema": "evsp-dr-inherited-event-pool-audit-v1",
+        "source_status": "/home/nc437/ladder-lite/overnight_parallel_20260914/seeds/c1_k08_lpweight/seed.json",
+        "source_status_sha256": "e234dcc741939d172f4bbf6ebe728dcc98df1d94f8c603364a3fbd721636de4e",
+        "source_journal": "/home/nc437/ladder-lite/overnight_parallel_20260914/seeds/c1_k08_lpweight/sequences.jsonl",
+        "source_journal_sha256": "de29051270d167a0d09a59453749e4a1867e811dd1ec4db9641d69de6dd93372",
+        "source_raw_records": 7,
+        "source_unique_columns": 7,
+        "source_replayable_sequences": 7,
+        "selected_for_replay": 7,
+        "bounded_max_columns": 0,
+        "import_time_limit_s": 0.0,
+        "import_deadline_reached": false,
+        "import_cancelled": false,
+        "deadline_scope": "replay_result_wait_after_selection",
+        "preparation_s": 0.022156530059874058,
+        "replay_s": 0.2964453902095556,
+        "cleanup_s": 0.028420404065400362,
+        "total_import_s": 0.35052243573591113,
+        "pool_shutdown": {
+          "worker_pids": [
+            1472463
+          ],
+          "forced_kill_pids": [],
+          "alive_worker_pids": [],
+          "shutdown_complete": true,
+          "errors": []
+        },
+        "telemetry_errors": [],
+        "replay_completed": 7,
+        "unprocessed_selected": 0,
+        "attempted_unique_columns": 7,
+        "accepted_columns": 7,
+        "rejected_columns": 0,
+        "rejected_reasons": {},
+        "mapping_key": "Ordered_Trip_ID",
+        "child_event_graph_reoptimization": true,
+        "replay_workers": 1,
+        "inherited_duals": false,
+        "inherited_basis": false,
+        "inherited_lp_certificate": false,
+        "added_to_child_pool": 7,
+        "replaced_child_columns": 0,
+        "already_present_or_not_cheaper": 0,
+        "import_runtime_s": 0.3533618771471083
+      },
+      "mip_completion": {
+        "case_id": "c1_k08_lpweight_mip",
+        "kind": "mip",
+        "attempt": "189155_r0",
+        "started_utc": "2026-09-14T17:00:02.863791+00:00",
+        "manifest_sha256": "52e6f048df74f52e96128fe530724ac9adc70ade1e352485cffc0ece4d0be5d1",
+        "status": "finished",
+        "execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+        "optimization_run": true,
+        "source_status_sha256": "520de1f812f83897ad19c029f09d2aaa95da9f703777b198ac29314159a3996f",
+        "source_journal_sha256": "ec1b6fa2b1d1e1fe53ca6b14dbcabf7494bfde386da57501ca23f700ac139367",
+        "ended_utc": "2026-09-14T17:00:06.570502+00:00",
+        "usable": true,
+        "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight_mip/attempts/189155_r0/result.json",
+        "result_sha256": "aec03cc374455f44f0f66c93c5af3ad4a8400638d94cab2e3675a929245072aa",
+        "execution": {
+          "argv": [
+            "/home/nc437/evsp_env/bin/python",
+            "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+            "--result",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight/attempts/189153_r0/cg.json",
+            "--data-dir",
+            "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+            "--reference-data-dir",
+            "/home/nc437/ladder-lite/full_pool_recovery_20260912/code/data",
+            "--cover",
+            "--two-stage",
+            "--timelimit",
+            "30",
+            "--stage1-timelimit",
+            "15",
+            "--threads",
+            "8",
+            "--mipgap",
+            "0.0001",
+            "--gurobi-log",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight_mip/attempts/189155_r0/gurobi.log",
+            "--out",
+            "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight_mip/attempts/189155_r0/result.json"
+          ],
+          "cwd": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb",
+          "started_utc": "2026-09-14T17:00:03.184013+00:00",
+          "host": "en-cc-unicorn-cpu-33.coecis.cornell.edu",
+          "watchdog_s": 600.0,
+          "status": "finished",
+          "returncode": 0,
+          "ended_utc": "2026-09-14T17:00:06.562488+00:00",
+          "wall_s": 3.3704578089527786,
+          "user_cpu_s": 2.3473289999999998,
+          "system_cpu_s": 0.326233,
+          "children_maxrss_native": 130020,
+          "signals": [],
+          "watchdog": false,
+          "forced_kill": false,
+          "error": null
+        },
+        "solver_budget_s": 30,
+        "physical_replay_validated": true,
+        "fleet_proven": true,
+        "fleet_bound": 51.0,
+        "buses": 51,
+        "target_matched": false,
+        "target_k": 8
+      },
+      "physical_pool_audit": {
+        "accepted_columns": 231,
+        "added_giro_route_count": 0,
+        "added_giro_route_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "assigned_mip_start_route_count": 109,
+        "augmented_pool_column_count": 231,
+        "augmented_pool_ordered_sha256": "e12871b0980eeec469ee9a841dfb07f0306eaf1c96dda73370ff6e7b2be8950f",
+        "base_pool_column_count": 231,
+        "base_pool_ordered_sha256": "e12871b0980eeec469ee9a841dfb07f0306eaf1c96dda73370ff6e7b2be8950f",
+        "continuous_cost_pricing_certified": false,
+        "deterministically_repaired": 0,
+        "input_hashes": {
+          "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+          "instance_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+          "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+          "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+        },
+        "master_cost_semantics": "expanded_grid_cost_unchanged",
+        "master_sense": "cover",
+        "mip_ordered_pool_sha256": "e12871b0980eeec469ee9a841dfb07f0306eaf1c96dda73370ff6e7b2be8950f",
+        "mip_unique_accepted_columns": 231,
+        "persisted_charging_block_count": 483,
+        "persisted_charging_block_payload_bytes": 98595,
+        "post_augmentation_columns": 231,
+        "post_augmentation_master_cost_semantics": "expanded_grid_cost",
+        "preparation_wall_s": 2.2212813710793853,
+        "pricing_certificate_scope": "not_certified",
+        "rejected_columns": 0,
+        "rejected_samples": [],
+        "rejected_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "repaired_set_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "schema": "evsp-dr-strict-pool-physical-gate-v1",
+        "source_pricing_certified": false,
+        "source_reference_hashes_bound": true,
+        "total_columns": 231,
+        "valid_as_recorded": 231,
+        "valid_set_sha256": "3084874c9079c6ae7c011bf995327dde4012f38b496ddd55188fd5a98777b831"
+      }
+    }
+  ],
+  "smoke_scope": "One CG iteration followed by30secondMIP for eachdistinctseedarm; verifies native replay/counts/hash-gated dependentMIP and finalphysicalvalidation, not target efficacy.",
+  "preflight": {
+    "status": "passed",
+    "manifest_sha256": "e56250b8405cc5e8576b305bd548d0953be878c5a8e62b2ea50b2efc0c2066c9",
+    "cg_cases": 36,
+    "mip_static_checks": 36,
+    "dependent_source_checks": "deferred until own CG completion",
+    "rerun_after_amendment": true
+  },
+  "nesting": [
+    {
+      "pair": "c1_k08",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c1_k10",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c1_k15",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c2_k08",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c2_k10",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c2_k15",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c3_k08",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c3_k10",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c3_k15",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c4_k08",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c4_k10",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c4_k15",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c5_k08",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c5_k10",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c5_k15",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c6_k08",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c6_k10",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    },
+    {
+      "pair": "c6_k15",
+      "changed_columns": [
+        "count_trip_id"
+      ]
+    }
+  ],
+  "local_design_normalizer_tests": "3 passed including negative input/commit/publication/case fixtures",
+  "review": "Independent Astra review passed, all36pairs and launch guards; native evidence pending final reviewer acknowledgement",
+  "utc": "2026-09-14T17:01:12.633314+00:00"
+}

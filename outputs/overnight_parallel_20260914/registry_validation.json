@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "utc": "2026-09-14T17:03:43.647993+00:00",
+  "production_entries": 0,
+  "mip_attempts_started": 0,
+  "registration": "Frozen worker registers each MIP attempt under existing registry lock when it starts; no pre-registration or duplicate cohort entries.",
+  "entries": [
+    {
+      "job_id": "189154",
+      "case_id": "c1_k08_integer_mip",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "is_validation": true,
+      "solver_budget_s": 30,
+      "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer_mip/attempts/189154_r0/result.json",
+      "attempt_tag": "189154_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T17:00:02.619095+00:00"
+    },
+    {
+      "job_id": "189155",
+      "case_id": "c1_k08_lpweight_mip",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "is_validation": true,
+      "solver_budget_s": 30,
+      "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight_mip/attempts/189155_r0/result.json",
+      "attempt_tag": "189155_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T17:00:02.913750+00:00"
+    }
+  ],
+  "validation_entries": 2,
+  "root_prefix_entries": 2,
+  "production_rows": [],
+  "validation_rows": [
+    {
+      "job_id": "189154",
+      "case_id": "c1_k08_integer_mip",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "is_validation": true,
+      "solver_budget_s": 30,
+      "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_integer_mip/attempts/189154_r0/result.json",
+      "attempt_tag": "189154_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T17:00:02.619095+00:00"
+    },
+    {
+      "job_id": "189155",
+      "case_id": "c1_k08_lpweight_mip",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "is_validation": true,
+      "solver_budget_s": 30,
+      "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914_smoke/cases/c1_k08_lpweight_mip/attempts/189155_r0/result.json",
+      "attempt_tag": "189155_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T17:00:02.913750+00:00"
+    }
+  ],
+  "cohort_scope": "Copied frozen worker retains generic original diagnostic cohort; scientific campaign identified by exact root/case IDs. Validation smoke uses validation cohort."
+}

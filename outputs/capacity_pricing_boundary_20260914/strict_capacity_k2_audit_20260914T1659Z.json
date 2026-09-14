@@ -1,0 +1,1000 @@
+{
+  "cases": [
+    {
+      "case": {
+        "arm": "baseline",
+        "battery_kwh": 240.0,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_240r0_baseline",
+        "cg_wall_s": 6600,
+        "index": 4,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 300,
+        "prices": "flat",
+        "priority": 3,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 0.0,
+        "slurm_time_s": 7200
+      },
+      "case_id": "k2_flat_240r0_baseline",
+      "cg": {
+        "artifact_sha256": "672034e6795c43cac370b92f12957ce7483c161267294ae4e6578f9ff1349ab4",
+        "certified_rc_optimal": true,
+        "completed_iterations": 121,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 200079.272,
+          "pool_columns": 143,
+          "route_weight": 2.0
+        },
+        "pool_sha256": "b2e27efaaa85eeffae67e2b283ad7ddd9a75ac06a6953206610f395ad97bb27c",
+        "runtime_s": 3857.841553615872,
+        "status": "complete",
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "terminal_exact_min_reduced_cost": -8.15916223473323e-11
+      },
+      "job_id": "188127",
+      "mip": {
+        "artifact_sha256": "5a18e2a689fe10b288b5db34e6e11dba1f3299877b30eedad87653b63ab87dd3",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 2,
+              "peak_time_min": 532.0,
+              "valid": false
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": false
+        },
+        "charging_related_cost": 79.2719999999972,
+        "fleet": 2,
+        "pool_acceptance": {
+          "cg_pricing_certified": true,
+          "cg_status": "complete",
+          "cg_stop_reason": "exact_nonnegative_reduced_cost",
+          "classification": "certified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 143,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 2.0,
+          "fleet_integer_lower_bound": 2,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 1.0,
+          "runtime_s": 0.10140750417485833,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 150.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 79.2719999999972,
+          "charging_cost_bound": 79.2719999999972,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 2,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "node_count": 1.0,
+          "runtime_s": 0.005150983110070229,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 299.8981035128236
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "capacity",
+        "battery_kwh": 240.0,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_240r0_capacity",
+        "cg_wall_s": 13200,
+        "index": 5,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 600,
+        "prices": "flat",
+        "priority": 3,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 0.0,
+        "slurm_time_s": 14400
+      },
+      "case_id": "k2_flat_240r0_capacity",
+      "cg": {
+        "artifact_sha256": "d97b00d6442e2e282c10304535499a69744fa5e8016be5d751e0101f79dc3e98",
+        "certified_rc_optimal": false,
+        "completed_iterations": 4,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 300094.976,
+          "pool_columns": 27,
+          "route_weight": 3.0
+        },
+        "pool_sha256": "2a649b1f9b059f36c44a73143a242f704dc3800f1e30505c1cccce1c810496ea",
+        "runtime_s": 13200.050663884962,
+        "status": "incomplete",
+        "stop_reason": "pricing_deadline",
+        "terminal_exact_min_reduced_cost": null
+      },
+      "job_id": "188128",
+      "mip": {
+        "artifact_sha256": "83b0bda10c657976fc5a08e9240a9a8101a336bca7af821d8b08ef83be2c529f",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 387.0,
+              "valid": true
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 597.0,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": true
+        },
+        "charging_related_cost": 94.97600000000966,
+        "fleet": 3,
+        "pool_acceptance": {
+          "cg_pricing_certified": false,
+          "cg_status": "incomplete",
+          "cg_stop_reason": "pricing_deadline",
+          "classification": "timed_uncertified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 27,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 3.0,
+          "fleet_integer_lower_bound": 3,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 3,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 0.0,
+          "runtime_s": 0.0012364580761641264,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 300.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 94.97600000000966,
+          "charging_cost_bound": 94.97600000000966,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 3,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 3,
+          "node_count": 0.0,
+          "runtime_s": 0.0008675369899719954,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 599.9985920458566
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "parx60",
+        "battery_kwh": 240.0,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_240r0_parx60",
+        "cg_wall_s": 6600,
+        "index": 6,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 300,
+        "prices": "flat",
+        "priority": 3,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 0.0,
+        "slurm_time_s": 7200
+      },
+      "case_id": "k2_flat_240r0_parx60",
+      "cg": {
+        "artifact_sha256": "cd0c69e57a5c1ed7455b63d0946975ac1f9769a55004c85fb58c7354d8a71bb3",
+        "certified_rc_optimal": true,
+        "completed_iterations": 120,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 200079.272,
+          "pool_columns": 142,
+          "route_weight": 2.0
+        },
+        "pool_sha256": "a73110d4bd4b3cdb0566c9e01f0cb4e136c80f1a3f9fecf25a442a372ec3ba08",
+        "runtime_s": 3956.3935552090406,
+        "status": "complete",
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "terminal_exact_min_reduced_cost": -2.9103830456733704e-11
+      },
+      "job_id": "188129",
+      "mip": {
+        "artifact_sha256": "071c73d4ad8010a1de6f17c5e837fcbca37ac7ef2a119e8601f64c16bd728298",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 2,
+              "peak_time_min": 532.0,
+              "valid": false
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": false
+        },
+        "charging_related_cost": 79.2719999999972,
+        "fleet": 2,
+        "pool_acceptance": {
+          "cg_pricing_certified": true,
+          "cg_status": "complete",
+          "cg_stop_reason": "exact_nonnegative_reduced_cost",
+          "classification": "certified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 142,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 2.0,
+          "fleet_integer_lower_bound": 2,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 1.0,
+          "runtime_s": 0.0042501220013946295,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 150.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 79.2719999999972,
+          "charging_cost_bound": 79.2719999999972,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 2,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "node_count": 1.0,
+          "runtime_s": 0.003698619082570076,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 299.99540803791024
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "combined",
+        "battery_kwh": 240.0,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_240r0_combined",
+        "cg_wall_s": 13200,
+        "index": 7,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 600,
+        "prices": "flat",
+        "priority": 3,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 0.0,
+        "slurm_time_s": 14400
+      },
+      "case_id": "k2_flat_240r0_combined",
+      "cg": {
+        "artifact_sha256": "b1273824a608742db6fefb82f9df23499288e52e8cf829edeffcd9b94c5f9602",
+        "certified_rc_optimal": false,
+        "completed_iterations": 4,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 300094.976,
+          "pool_columns": 27,
+          "route_weight": 3.0
+        },
+        "pool_sha256": "91273956a096331181f808c114515e257e73d9d975059884cad7ba59502f67f7",
+        "runtime_s": 13200.040609909687,
+        "status": "incomplete",
+        "stop_reason": "pricing_deadline",
+        "terminal_exact_min_reduced_cost": null
+      },
+      "job_id": "188130",
+      "mip": {
+        "artifact_sha256": "6b7d387c31b18b9401c8493f266552bee8f5562dcb5096e688717c0e248052a6",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 387.0,
+              "valid": true
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 597.0,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": true
+        },
+        "charging_related_cost": 94.97600000000966,
+        "fleet": 3,
+        "pool_acceptance": {
+          "cg_pricing_certified": false,
+          "cg_status": "incomplete",
+          "cg_stop_reason": "pricing_deadline",
+          "classification": "timed_uncertified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 27,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 3.0,
+          "fleet_integer_lower_bound": 3,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 3,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 0.0,
+          "runtime_s": 0.015521289315074682,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 300.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 94.97600000000966,
+          "charging_cost_bound": 94.97600000000966,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 3,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 3,
+          "node_count": 0.0,
+          "runtime_s": 0.001108808908611536,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 599.9842468746938
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "baseline",
+        "battery_kwh": 236.44,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_236p44r15_baseline",
+        "cg_wall_s": 6600,
+        "index": 8,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 300,
+        "prices": "flat",
+        "priority": 4,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 35.466,
+        "slurm_time_s": 7200
+      },
+      "case_id": "k2_flat_236p44r15_baseline",
+      "cg": {
+        "artifact_sha256": "7f4294e0d1add038e8cf56b69942d45c6207bae222e38b315da26a8eb460b957",
+        "certified_rc_optimal": true,
+        "completed_iterations": 115,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 200091.712,
+          "pool_columns": 137,
+          "route_weight": 2.0
+        },
+        "pool_sha256": "5b32f85387e65d2b465ff42004c66a0313bfc9c1cfb4b04d2e3b94d08ff70904",
+        "runtime_s": 1835.48708815407,
+        "status": "complete",
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "terminal_exact_min_reduced_cost": -6.612488334667432e-11
+      },
+      "job_id": "188131",
+      "mip": {
+        "artifact_sha256": "95c461c050f31724585914661b8c9ef8a18b2301eb93e27e09e151fcc900d9ae",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 2,
+              "peak_time_min": 532.0,
+              "valid": false
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": false
+        },
+        "charging_related_cost": 91.71199999999953,
+        "fleet": 2,
+        "pool_acceptance": {
+          "cg_pricing_certified": true,
+          "cg_status": "complete",
+          "cg_stop_reason": "exact_nonnegative_reduced_cost",
+          "classification": "certified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 137,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 2.0,
+          "fleet_integer_lower_bound": 2,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 1.0,
+          "runtime_s": 0.11615395499393344,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 150.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 91.71199999999953,
+          "charging_cost_bound": 91.71199999999953,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 2,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "node_count": 1.0,
+          "runtime_s": 0.008293001912534237,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 299.8831103281118
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "capacity",
+        "battery_kwh": 236.44,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_236p44r15_capacity",
+        "cg_wall_s": 13200,
+        "index": 9,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 600,
+        "prices": "flat",
+        "priority": 4,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 35.466,
+        "slurm_time_s": 14400
+      },
+      "case_id": "k2_flat_236p44r15_capacity",
+      "cg": {
+        "artifact_sha256": "ba995c0bb8d911327bedba492bbc3981bf06e891f22455860cc72d4f178c901c",
+        "certified_rc_optimal": false,
+        "completed_iterations": 3,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 700076.584,
+          "pool_columns": 26,
+          "route_weight": 7.0
+        },
+        "pool_sha256": "68472fa74cd951b7d160df894d68f054ea41f39344cec95c9b67bcd6aa7061ad",
+        "runtime_s": 13200.039531576913,
+        "status": "incomplete",
+        "stop_reason": "pricing_deadline",
+        "terminal_exact_min_reduced_cost": null
+      },
+      "job_id": "188132",
+      "mip": {
+        "artifact_sha256": "8f67da298e6fdb74670ed8e511c68b69fe18a76190c56dad2db8dd0e347aa60c",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 522.0,
+              "valid": true
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": true
+        },
+        "charging_related_cost": 46.45600000000559,
+        "fleet": 12,
+        "pool_acceptance": {
+          "cg_pricing_certified": false,
+          "cg_status": "incomplete",
+          "cg_stop_reason": "pricing_deadline",
+          "classification": "timed_uncertified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 26,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 12.0,
+          "fleet_integer_lower_bound": 12,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 12,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 0.0,
+          "runtime_s": 0.012803651858121157,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 300.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 46.45600000000559,
+          "charging_cost_bound": 46.45600000000559,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 12,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 12,
+          "node_count": 0.0,
+          "runtime_s": 0.001192358322441578,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 599.987001015339
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "parx60",
+        "battery_kwh": 236.44,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_236p44r15_parx60",
+        "cg_wall_s": 6600,
+        "index": 10,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 300,
+        "prices": "flat",
+        "priority": 4,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 35.466,
+        "slurm_time_s": 7200
+      },
+      "case_id": "k2_flat_236p44r15_parx60",
+      "cg": {
+        "artifact_sha256": "a1a97a1361ba3ce59f9377a38ce1bf3563a1b5c4688c7d923d14c5780f97b0f1",
+        "certified_rc_optimal": true,
+        "completed_iterations": 130,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 200091.712,
+          "pool_columns": 152,
+          "route_weight": 2.0
+        },
+        "pool_sha256": "f38b79ae1dc1f6b82b6284e5e04bd492eb8f79f8bc74796b86b585226d890253",
+        "runtime_s": 2570.1515149599873,
+        "status": "complete",
+        "stop_reason": "exact_nonnegative_reduced_cost",
+        "terminal_exact_min_reduced_cost": -3.225153477615095e-11
+      },
+      "job_id": "188133",
+      "mip": {
+        "artifact_sha256": "7ff7316283e5f2315f4e7d25d9cd0f29a72600c66d906400da4c2efd1db8aec9",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 2,
+              "peak_time_min": 532.0,
+              "valid": false
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": false
+        },
+        "charging_related_cost": 91.71199999999953,
+        "fleet": 2,
+        "pool_acceptance": {
+          "cg_pricing_certified": true,
+          "cg_status": "complete",
+          "cg_stop_reason": "exact_nonnegative_reduced_cost",
+          "classification": "certified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 152,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 2.0,
+          "fleet_integer_lower_bound": 2,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 1.0,
+          "runtime_s": 0.04617974511347711,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 150.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 91.71199999999953,
+          "charging_cost_bound": 91.71199999999953,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 2,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 2,
+          "node_count": 1.0,
+          "runtime_s": 0.014151416020467877,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 299.9529602760449
+        },
+        "status": "OPTIMAL"
+      }
+    },
+    {
+      "case": {
+        "arm": "combined",
+        "battery_kwh": 236.44,
+        "capacity_selector": "prefix-memo",
+        "case_id": "k2_flat_236p44r15_combined",
+        "cg_wall_s": 13200,
+        "index": 11,
+        "instance": "e1_short_k2",
+        "mip_wall_s": 600,
+        "prices": "flat",
+        "priority": 4,
+        "question_ids": [
+          "Q3"
+        ],
+        "reserve_kwh": 35.466,
+        "slurm_time_s": 14400
+      },
+      "case_id": "k2_flat_236p44r15_combined",
+      "cg": {
+        "artifact_sha256": "86188948e24075c932fc4678da61c84f4de56556cf8217e453ba2ff9627a29a3",
+        "certified_rc_optimal": false,
+        "completed_iterations": 3,
+        "final": {
+          "artificial_total": 0.0,
+          "objective": 700076.584,
+          "pool_columns": 26,
+          "route_weight": 7.0
+        },
+        "pool_sha256": "e041e30156196e26ee60dbe6443a17ebcdfea6ef845ecfb08b52e874cb16fcfa",
+        "runtime_s": 13200.068043402163,
+        "status": "incomplete",
+        "stop_reason": "pricing_deadline",
+        "terminal_exact_min_reduced_cost": null
+      },
+      "job_id": "188134",
+      "mip": {
+        "artifact_sha256": "7902ee041a819a24fc2d2721dc108c452333ef781fde1c47912c611f94adcbe2",
+        "capacity_audit": {
+          "half_open_intervals": true,
+          "stations": {
+            "2190L": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 1,
+              "peak_time_min": 522.0,
+              "valid": true
+            },
+            "3127L": {
+              "documented_chargers": 2,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "4808": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "7880C": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            },
+            "JON_A": {
+              "documented_chargers": 1,
+              "peak_simultaneous_connections": 0,
+              "peak_time_min": null,
+              "valid": true
+            }
+          },
+          "valid": true
+        },
+        "charging_related_cost": 46.45600000000559,
+        "fleet": 12,
+        "pool_acceptance": {
+          "cg_pricing_certified": false,
+          "cg_status": "incomplete",
+          "cg_stop_reason": "pricing_deadline",
+          "classification": "timed_uncertified_exact_event_cg_pool",
+          "covered_trip_count": 23,
+          "route_count": 26,
+          "usable": true
+        },
+        "stage1": {
+          "fleet_bound_raw": 12.0,
+          "fleet_integer_lower_bound": 12,
+          "fleet_proven": true,
+          "has_solution": true,
+          "incumbent_fleet": 12,
+          "incumbent_validation_scope": "covering rows plus cross-route station-capacity sweep; individual exact-event route feasibility is by construction",
+          "mip_gap": 0.0,
+          "node_count": 0.0,
+          "runtime_s": 0.0014827640261501074,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 300.0,
+          "validated_incumbent": true
+        },
+        "stage2": {
+          "charging_cost": 46.45600000000559,
+          "charging_cost_bound": 46.45600000000559,
+          "charging_cost_gap": 0.0,
+          "executed": true,
+          "fleet_cap": {
+            "rhs": 12,
+            "sense": "<=",
+            "source": "best_validated_stage1_incumbent",
+            "source_fleet_proven": true
+          },
+          "has_solution": true,
+          "incumbent_fleet": 12,
+          "node_count": 0.0,
+          "runtime_s": 0.001030928222462535,
+          "skip_reason": null,
+          "status": "OPTIMAL",
+          "status_code": 2,
+          "time_limit_s": 599.9983263909817
+        },
+        "status": "OPTIMAL"
+      }
+    }
+  ],
+  "collected_utc": "2026-09-14T16:59:45.713227+00:00",
+  "interpretation": {
+    "budget_caveat": "The pilot is not a runtime factorial: capacity/combined CG limits are 13,200 s while baseline/parx60 limits are 6,600 s; its MIP limits are also 600 s versus 300 s. Treat physics cells as feasibility pilots.",
+    "capacity_deadline": "All four capacity-enforced k2 cells returned completed CG stage artifacts with stop_reason=pricing_deadline, certified_rc_optimal=false, and terminal_exact_min_reduced_cost=null.",
+    "pool_scope": "Their finite-pool MIPs can be valid and optimal for the saved pool without supplying a full-CG pricing certificate."
+  },
+  "schema": "evsp-dr-strict-capacity-k2-fresh-audit-v1",
+  "source_collection_path": "/Users/nadan/Documents/projects/demandresponse/outputs/capacity_pricing_boundary_20260914/strict_capacity_fresh_collection_20260914T1659Z.json",
+  "source_collection_sha256": "edd2038d2e6bd546aa1c4092119fbc95eb8c0fe52bee87993c7ca678f506762d",
+  "source_manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+  "source_root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914",
+  "verification": "shared strict_capacity_adapter kind=pilot; worker stage rc0 plus manifest, allocation, command, input, and artifact hashes"
+}

@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "local_matches_frozen_tooling": {
+    "worker.py": true,
+    "worker.sub": true,
+    "seed_logic.py": true,
+    "prepare.py": true,
+    "submit.py": true
+  },
+  "native_and_parent_source_checks": "validation.json and preflight.json; original source hashes retained in manifest pairs"
+}

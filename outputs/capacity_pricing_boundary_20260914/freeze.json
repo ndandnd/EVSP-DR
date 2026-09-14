@@ -1,0 +1,71 @@
+{
+  "campaign_id": "capacity_pricing_boundary_20260914",
+  "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "frozen_utc": "2026-09-14T17:01:44.067745+00:00",
+  "native_validation": {
+    "actual_cli_license_smoke_job_id": "189147",
+    "cg_master_columns": 26,
+    "cg_master_rows": 7813,
+    "cg_smoke_certified": false,
+    "cg_smoke_stop_reason": "cg_wall_limit",
+    "exit_code": "0:0",
+    "gurobi_version": "12.0.3",
+    "mip_status": "OPTIMAL",
+    "node": "snavely-cpu-02",
+    "parser_validation_path": "native_parse_validation.json",
+    "parser_validation_sha256": "f019acdf159a6e5964becbd0ecb99ad12ff9ea5c3c80412136f959490fe2d4a9",
+    "state": "COMPLETED",
+    "threads": 1
+  },
+  "schema": "evsp-dr-capacity-pricing-boundary-freeze-v1",
+  "source_checkout": {
+    "checkout_realpath": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code",
+    "config.py": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/code/src/config.py",
+      "sha256": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+    },
+    "run_capacity_speed_event_cg.py": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/code/src/run_capacity_speed_event_cg.py",
+      "sha256": "b87f194cb7e1cc9b95bddcec7c49733cc0f31a4d8befcd7aabb9b0fe536a4ddb"
+    }
+  },
+  "source_inputs": {
+    "deadhead_reference": {
+      "path": "data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    },
+    "flat": {
+      "path": "data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "k1_duty13405": {
+      "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13405.csv",
+      "sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454"
+    },
+    "k1_duty13406": {
+      "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1"
+    },
+    "k1_duty13407": {
+      "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13407.csv",
+      "sha256": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9"
+    },
+    "k1_duty13408": {
+      "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+      "sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792"
+    },
+    "reference_dictionary": {
+      "path": "data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    }
+  },
+  "tooling_sha256": {
+    "campaign.py": "c94cc1ebbb742b7ee5766bc7c2df3080a10b6dbb6f7f2aad85f781354beee630",
+    "collect.py": "9c35d139db1a9597f6103911a8484c74c009210d4bd6eb79368de0d6acbf4085",
+    "collect_verified.py": "90f67e318a1169b5a6543a03d107ef3ba2b5c39bdb8f789a7487b3fed5b710a6",
+    "manifest.json": "05f726731d98dc7763d33d0ad78394a45ada1bbf1c838783f0503291a9c17ead",
+    "submission_commands.json": "48e9d9dc887c6897ca551cca848fe0aaec8f0ee162be27d6fb3cb8f39d7e3820",
+    "test_campaign.py": "0be18809a6e2788cc23c03922b3c49b85768da6ec29924852492fc911176d7cf",
+    "worker.sh": "21a44fdf021c8a638c7ce1182fe0ec9ba82e9aa76f5f95d5e445ee1c5270fbd2"
+  }
+}

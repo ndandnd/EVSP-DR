@@ -1,0 +1,85 @@
+{
+  "arm": "capacity",
+  "capacity_selector": "reference",
+  "certified_rc_optimal": false,
+  "checkpoint": {
+    "atomic_pool_replace": true,
+    "id": "4ffdd02a2592758b668642bdf19171f5bd04f023220c9e26592e66b85cb45f22",
+    "initial_pool_columns": 13,
+    "resumed": false,
+    "schema": "evsp-dr-capacity-speed-cg-checkpoint-v1",
+    "writes_this_attempt": 2
+  },
+  "final": {
+    "artificial_total": 0.0,
+    "objective": 1300000.0,
+    "pool_columns": 13,
+    "route_weight": 13.0
+  },
+  "gurobi_log": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.json.gurobi.log",
+  "iterations": [],
+  "mode": "cg",
+  "network": {
+    "arc_mode": "explicit",
+    "dag_arcs": 804130,
+    "dag_nodes": 1042,
+    "event_lattice_sha256": "36bf5e58d1a6fe32b4b94b92bd2f65082ea9302a7892e9b34c1ea54efef0cf77",
+    "materialized_python_arc_objects": 804130,
+    "packed_arc_bytes": 0,
+    "station_charge_kw": {
+      "PARX": 240.0
+    },
+    "station_event_times": {
+      "2190L_0": 262,
+      "3127L_0": 28,
+      "4808_0": 270,
+      "7880C_0": 28,
+      "JON_A_0": 28,
+      "PARX_1": 269
+    },
+    "time_model": "event"
+  },
+  "network_build_s": 67.54747689887881,
+  "physics": {
+    "battery_kwh": 240.0,
+    "capacity_enforced": true,
+    "charger_counts": {
+      "2190L": 1,
+      "3127L": 2,
+      "4808": 1,
+      "7880C": 1,
+      "JON_A": 1
+    },
+    "event_block_min": 5,
+    "initial_soc_kwh": 240.0,
+    "non_parx_kw": 240.0,
+    "parx_capacity": "unlimited",
+    "parx_kw": 240.0,
+    "reserve_kwh": 0.0,
+    "soc_step_kwh": 2.5,
+    "terminal_soc_constraint": "reserve_only"
+  },
+  "pool": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/pool.jsonl",
+  "pool_sha256": "d2dc643d6ca6781c005a0f9b5e865206c8281fad404731265059ad36ebdbd92b",
+  "pricing_certificate_scope": "full conservative event-time/SOC covering LP with documented one-minute station-capacity rows",
+  "provenance": {
+    "deadhead_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "git_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+    "git_tracked_dirty": false,
+    "gurobi_version": "12.0.3",
+    "host": "snavely-cpu-02.cs.cornell.edu",
+    "instance": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13405.csv",
+    "instance_sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+    "prices": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference_data_dir": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data",
+    "reference_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+    "slurm_array_task_id": null,
+    "slurm_job_id": "189147"
+  },
+  "runtime_s": 68.11791124287993,
+  "schema": "evsp-dr-capacity-speed-exact-event-pilot-v1",
+  "status": "incomplete",
+  "stop_reason": "cg_wall_limit",
+  "terminal_exact_min_reduced_cost": null
+}

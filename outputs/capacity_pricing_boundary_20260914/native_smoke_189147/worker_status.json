@@ -1,0 +1,111 @@
+{
+  "artifacts": [
+    {
+      "bytes": 2601,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/commands.json",
+      "sha256": "0a1509b2db0bd925b5b78fdcfc72fa46e58aa145882121adaf08c63609686b83"
+    },
+    {
+      "bytes": 4165,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/allocation.json",
+      "sha256": "f4ec8fa5c85783bb26442f3c014d46c0b2b83af47ba0529e45f3a9e7d73c4791"
+    },
+    {
+      "bytes": 3183,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.json",
+      "sha256": "f6e1da059607457159cb15a1f1bf9449680e83fc6fe2f3b4175463a44baf78f7"
+    },
+    {
+      "bytes": 30314,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/pool.jsonl",
+      "sha256": "d2dc643d6ca6781c005a0f9b5e865206c8281fad404731265059ad36ebdbd92b"
+    },
+    {
+      "bytes": 4742,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.json",
+      "sha256": "ee7af11a9aebece27c54a22a19e4cec3cdae3705fe4b81c30fef08f1541aa96f"
+    },
+    {
+      "bytes": 1448,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.stdout.log",
+      "sha256": "c0d689a34fb6c7693b7dcde5dddd8aaad0e2667814d778795e35f9c59230f497"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2728,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.stdout.log",
+      "sha256": "8c8bc7671cb98f164fe3cd83c61f2789a7a4a447e3d697dcc24c8911492f05b9"
+    },
+    {
+      "bytes": 0,
+      "exists": true,
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "attempt_id": "189147_r0",
+  "case_id": "k1_13405_flat_capacity_reference",
+  "commands_sha256": "0a1509b2db0bd925b5b78fdcfc72fa46e58aa145882121adaf08c63609686b83",
+  "interpretation": {
+    "cg_certificate": "Only certified_rc_optimal=true with exact_nonnegative_reduced_cost and zero artificial weight certifies the full conservative event-time/SOC covering LP for that case.",
+    "integer_proof": "The 600-second dedicated two-stage MIP is diagnostic and proves only its saved finite capacity-aware pool; fleet and charging-cost stages remain separate.",
+    "interrupted_pricing": "pricing_deadline has null terminal exact reduced cost and is never a pricing certificate; the last atomically accepted pool remains usable evidence.",
+    "physical_validation": "The dedicated driver reports route feasibility by construction and audits selected charging against the continuous half-open shared-capacity sweep; this campaign does not add an independent route replay.",
+    "physics_scope": "All cells use identical simplified constant-rate 240 kWh, reserve-zero, flat-price capacity physics. k1 does not expose multi-route simultaneous charger contention.",
+    "selector_equivalence": "Claim selector equivalence only for matched cases with equal exact terminal status and normalized capacity-aware routes; time-censored progress is descriptive.",
+    "terminal_target": "No 65% terminal floor or target is imposed or inferred."
+  },
+  "manifest_sha256": "f40f1229b772aa287eaa5131827476ed03becb5b33856cedef8edda5f7a32882",
+  "returncode": 0,
+  "stages": {
+    "cg": {
+      "outer_watchdog_expired": false,
+      "outer_watchdog_s": 135,
+      "requested_solver_wall_s": 15,
+      "returncode": 0,
+      "stderr": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 1448,
+        "exists": true,
+        "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/cg.stdout.log",
+        "sha256": "c0d689a34fb6c7693b7dcde5dddd8aaad0e2667814d778795e35f9c59230f497"
+      }
+    },
+    "mip": {
+      "outer_watchdog_expired": false,
+      "outer_watchdog_s": 135,
+      "requested_solver_wall_s": 15,
+      "returncode": 0,
+      "stderr": {
+        "bytes": 0,
+        "exists": true,
+        "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 2728,
+        "exists": true,
+        "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/native_smoke/results/k1_13405_flat_capacity_reference/189147_r0/mip.stdout.log",
+        "sha256": "8c8bc7671cb98f164fe3cd83c61f2789a7a4a447e3d697dcc24c8911492f05b9"
+      }
+    }
+  },
+  "status": "complete"
+}

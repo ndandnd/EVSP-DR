@@ -1,0 +1,147 @@
+{
+  "campaign_root_remote": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914",
+  "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "collector_integration": {
+    "adapter": "strict_capacity_adapter.collect_strict_capacity(root, kind=\"pilot\")",
+    "explanation": "Running attempts are progress rows only. CG/MIP records remain absent until matching worker stage returncode is zero and artifact bindings verify.",
+    "postlaunch_admitted_native_records": 0,
+    "postlaunch_observed_attempts": 8,
+    "prelaunch_observed_attempts": 0
+  },
+  "freeze_sha256": "3064f22abff20ab97adf567da07a2a0f22d376471c3490f26150733a4e1ed3f7",
+  "input_hashes": {
+    "deadhead_reference": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "flat": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "k1_duty13405": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+    "k1_duty13406": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+    "k1_duty13407": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+    "k1_duty13408": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+    "reference_dictionary": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+  },
+  "jobs_sha256": "e070bc4002c5e487dda46ee22c5fb86b1472d4b11f615f2a9a38d0777ca6c0c9",
+  "local_tests": {
+    "actual_driver_parser_commands": 16,
+    "count": 5,
+    "status": "passed"
+  },
+  "manifest_sha256": "05f726731d98dc7763d33d0ad78394a45ada1bbf1c838783f0503291a9c17ead",
+  "native_smoke": {
+    "artifact_hashes": {
+      "allocation.json": "f4ec8fa5c85783bb26442f3c014d46c0b2b83af47ba0529e45f3a9e7d73c4791",
+      "cg.json": "f6e1da059607457159cb15a1f1bf9449680e83fc6fe2f3b4175463a44baf78f7",
+      "cg.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cg.stdout.log": "c0d689a34fb6c7693b7dcde5dddd8aaad0e2667814d778795e35f9c59230f497",
+      "commands.json": "0a1509b2db0bd925b5b78fdcfc72fa46e58aa145882121adaf08c63609686b83",
+      "mip.json": "ee7af11a9aebece27c54a22a19e4cec3cdae3705fe4b81c30fef08f1541aa96f",
+      "mip.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mip.stdout.log": "8c8bc7671cb98f164fe3cd83c61f2789a7a4a447e3d697dcc24c8911492f05b9",
+      "pool.jsonl": "d2dc643d6ca6781c005a0f9b5e865206c8281fad404731265059ad36ebdbd92b",
+      "worker_status.json": "b230889be6382b05d8a21651b531009b912891394ca6f56aef509c600d819941"
+    },
+    "cg_certified_rc_optimal": false,
+    "cg_stage_returncode": 0,
+    "cg_status": "incomplete",
+    "cg_stop_reason": "cg_wall_limit",
+    "exit_code": "0:0",
+    "gurobi_version": "12.0.3",
+    "job_id": "189147",
+    "master_columns": 26,
+    "master_rows": 7813,
+    "mip_fleet": 13,
+    "mip_stage_returncode": 0,
+    "mip_status": "OPTIMAL",
+    "node": "snavely-cpu-02",
+    "scheduler_state": "COMPLETED",
+    "threads": 1,
+    "worker_complete": true
+  },
+  "normalizer_integration": {
+    "builder": "Register.capacity_speed(capacity_pricing_boundary_20260914)",
+    "family": "capacity_speed_exact_event",
+    "shared_files_modified": true,
+    "status": "registered; focused four-endpoint duty-13408 production normalization passed",
+    "validation_path": "normalizer_validation.json"
+  },
+  "results_root_remote": "/share/scaglione/nc437/evsp-dr/capacity_pricing_boundary_20260914/results",
+  "scheduler_postlaunch": "all eight RUNNING at the recorded snapshot; no ambiguous scheduler responses",
+  "schema": "evsp-dr-capacity-pricing-boundary-launch-verification-v1",
+  "source_checkout": {
+    "checkout_realpath": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code",
+    "config.py": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/code/src/config.py",
+      "sha256": "afda984ccfc503f51dfc042f68d28716947ff9f78bf835038f9c20b9c2e62b06"
+    },
+    "run_capacity_speed_event_cg.py": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/code/src/run_capacity_speed_event_cg.py",
+      "sha256": "b87f194cb7e1cc9b95bddcec7c49733cc0f31a4d8befcd7aabb9b0fe536a4ddb"
+    }
+  },
+  "submissions": [
+    {
+      "case_id": "k1_13405_flat_capacity_reference",
+      "index": 0,
+      "job_id": "189164",
+      "job_name": "cpb_0_reference",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13405_flat_capacity_prefix_memo",
+      "index": 1,
+      "job_id": "189165",
+      "job_name": "cpb_1_prefixp",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13406_flat_capacity_reference",
+      "index": 2,
+      "job_id": "189166",
+      "job_name": "cpb_2_reference",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13406_flat_capacity_prefix_memo",
+      "index": 3,
+      "job_id": "189167",
+      "job_name": "cpb_3_prefixp",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13407_flat_capacity_reference",
+      "index": 4,
+      "job_id": "189168",
+      "job_name": "cpb_4_reference",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13407_flat_capacity_prefix_memo",
+      "index": 5,
+      "job_id": "189169",
+      "job_name": "cpb_5_prefixp",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13408_flat_capacity_reference",
+      "index": 6,
+      "job_id": "189170",
+      "job_name": "cpb_6_reference",
+      "submission_state": "accepted_numeric_id"
+    },
+    {
+      "case_id": "k1_13408_flat_capacity_prefix_memo",
+      "index": 7,
+      "job_id": "189171",
+      "job_name": "cpb_7_prefixp",
+      "submission_state": "accepted_numeric_id"
+    }
+  ],
+  "tooling_hashes": {
+    "campaign.py": "c94cc1ebbb742b7ee5766bc7c2df3080a10b6dbb6f7f2aad85f781354beee630",
+    "collect.py": "9c35d139db1a9597f6103911a8484c74c009210d4bd6eb79368de0d6acbf4085",
+    "collect_verified.py": "90f67e318a1169b5a6543a03d107ef3ba2b5c39bdb8f789a7487b3fed5b710a6",
+    "manifest.json": "05f726731d98dc7763d33d0ad78394a45ada1bbf1c838783f0503291a9c17ead",
+    "submission_commands.json": "48e9d9dc887c6897ca551cca848fe0aaec8f0ee162be27d6fb3cb8f39d7e3820",
+    "test_campaign.py": "0be18809a6e2788cc23c03922b3c49b85768da6ec29924852492fc911176d7cf",
+    "worker.sh": "21a44fdf021c8a638c7ce1182fe0ec9ba82e9aa76f5f95d5e445ee1c5270fbd2"
+  },
+  "verified_utc": "2026-09-14T17:04:11.367362+00:00"
+}

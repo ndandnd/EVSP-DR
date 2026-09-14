@@ -1,0 +1,74 @@
+{
+  "assertions": {
+    "actual_campaign_id_branch": true,
+    "k1_matched_selector_metadata": true,
+    "pricing_specific_limitations": true,
+    "proof_scopes_separate": true,
+    "two_certified_cg_rows_preserved": true,
+    "two_finite_pool_mip_rows_preserved": true
+  },
+  "builder": "/Users/nadan/Documents/projects/demandresponse/outputs/research_register/build_register.py",
+  "campaign_id": "capacity_pricing_boundary_20260914",
+  "method": "Register.capacity_speed",
+  "record_count": 4,
+  "rows": [
+    {
+      "arm": "capacity:reference",
+      "artifact_status": "result",
+      "capacity_enforced": true,
+      "case_id": "k1_13408_flat_capacity_reference",
+      "fleet_proven": null,
+      "full_model_lp_certified": true,
+      "limitations": "A pricing deadline is an uncertified CG endpoint; a completed MIP proves only its saved finite pool. Selector equivalence requires matching exact terminal status and normalized routes. Since k=1 selects one route, this diagnoses pricing behavior rather than multi-route charger contention.",
+      "mip_status": "complete",
+      "notes": "Matched k1 pricing-boundary diagnostic: flat prices, capacity arm, 240 kWh initial energy, zero reserve, 13200 s CG, and 600 s finite-pool MIP for both reference and prefix-memo selectors.",
+      "source_sha256": "04eea33b278fa262f93e450f02e54b478b8681c611db6eb0c5f9e80b63ffe469",
+      "stage": "cg",
+      "target_k": 1
+    },
+    {
+      "arm": "capacity:prefix-memo",
+      "artifact_status": "result",
+      "capacity_enforced": true,
+      "case_id": "k1_13408_flat_capacity_prefix_memo",
+      "fleet_proven": null,
+      "full_model_lp_certified": true,
+      "limitations": "A pricing deadline is an uncertified CG endpoint; a completed MIP proves only its saved finite pool. Selector equivalence requires matching exact terminal status and normalized routes. Since k=1 selects one route, this diagnoses pricing behavior rather than multi-route charger contention.",
+      "mip_status": "complete",
+      "notes": "Matched k1 pricing-boundary diagnostic: flat prices, capacity arm, 240 kWh initial energy, zero reserve, 13200 s CG, and 600 s finite-pool MIP for both reference and prefix-memo selectors.",
+      "source_sha256": "5ef1fd4e79c2aeeebd01cae6845e04dd4f3afc9e5ed904abf34c1d39a341c07d",
+      "stage": "cg",
+      "target_k": 1
+    },
+    {
+      "arm": "capacity:reference",
+      "artifact_status": "result",
+      "capacity_enforced": true,
+      "case_id": "k1_13408_flat_capacity_reference",
+      "fleet_proven": true,
+      "full_model_lp_certified": null,
+      "limitations": "A pricing deadline is an uncertified CG endpoint; a completed MIP proves only its saved finite pool. Selector equivalence requires matching exact terminal status and normalized routes. Since k=1 selects one route, this diagnoses pricing behavior rather than multi-route charger contention.",
+      "mip_status": "OPTIMAL",
+      "notes": "Matched k1 pricing-boundary diagnostic: flat prices, capacity arm, 240 kWh initial energy, zero reserve, 13200 s CG, and 600 s finite-pool MIP for both reference and prefix-memo selectors.",
+      "source_sha256": "8e559d5f8a2e603eb147fc713fa3d9af14b96a19b63ff0b5ecf71b6aee2fd886",
+      "stage": "mip",
+      "target_k": 1
+    },
+    {
+      "arm": "capacity:prefix-memo",
+      "artifact_status": "result",
+      "capacity_enforced": true,
+      "case_id": "k1_13408_flat_capacity_prefix_memo",
+      "fleet_proven": true,
+      "full_model_lp_certified": null,
+      "limitations": "A pricing deadline is an uncertified CG endpoint; a completed MIP proves only its saved finite pool. Selector equivalence requires matching exact terminal status and normalized routes. Since k=1 selects one route, this diagnoses pricing behavior rather than multi-route charger contention.",
+      "mip_status": "OPTIMAL",
+      "notes": "Matched k1 pricing-boundary diagnostic: flat prices, capacity arm, 240 kWh initial energy, zero reserve, 13200 s CG, and 600 s finite-pool MIP for both reference and prefix-memo selectors.",
+      "source_sha256": "735b8a03e84533b515257086fc66410b2b1f4de84ff19eca9f52d35b3a812bca",
+      "stage": "mip",
+      "target_k": 1
+    }
+  ],
+  "schema": "evsp-dr-capacity-pricing-boundary-normalizer-validation-v1",
+  "source": "outputs/capacity_pricing_boundary_20260914/boundary_results_20260914T1707Z.json"
+}

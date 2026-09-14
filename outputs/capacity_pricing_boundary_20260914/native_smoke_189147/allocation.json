@@ -1,0 +1,97 @@
+{
+  "attempt_id": "189147_r0",
+  "case": {
+    "arm": "capacity",
+    "battery_kwh": 240.0,
+    "capacity_selector": "reference",
+    "case_id": "k1_13405_flat_capacity_reference",
+    "cg_wall_s": 15,
+    "index": 0,
+    "instance": "k1_duty13405",
+    "mip_wall_s": 15,
+    "prices": "flat",
+    "reserve_kwh": 0.0,
+    "slurm_time_s": 3600
+  },
+  "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "input_validation": {
+    "deadhead_reference": {
+      "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+      "valid": true
+    },
+    "flat": {
+      "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+      "valid": true
+    },
+    "k1_duty13405": {
+      "expected_sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+      "observed_sha256": "2b37f26d202e6fc3ae37155720a5bed4eef9abd84dce4d09aa3d3a46ccd42454",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13405.csv",
+      "valid": true
+    },
+    "k1_duty13406": {
+      "expected_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "observed_sha256": "b6739c46f2fa8ace26940e5b4cd2a7010119c4d58b1cfa25b1fe04f464d941c1",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13406.csv",
+      "valid": true
+    },
+    "k1_duty13407": {
+      "expected_sha256": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+      "observed_sha256": "f3c1fac0d6b94fc66de4e424118ab9d6af086dfbd82e447280d1b43fd5a28ae9",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13407.csv",
+      "valid": true
+    },
+    "k1_duty13408": {
+      "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+      "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+      "valid": true
+    },
+    "reference_dictionary": {
+      "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+      "valid": true
+    }
+  },
+  "slurm": {
+    "SLURM_CLUSTER_NAME": "unicorn",
+    "SLURM_CONF": "/var/spool/slurmd/conf-cache/slurm.conf",
+    "SLURM_CPUS_ON_NODE": "1",
+    "SLURM_CPUS_PER_TASK": "1",
+    "SLURM_GTIDS": "0",
+    "SLURM_JOBID": "189147",
+    "SLURM_JOB_ACCOUNT": "scaglione",
+    "SLURM_JOB_CPUS_PER_NODE": "1",
+    "SLURM_JOB_END_TIME": "1789405437",
+    "SLURM_JOB_GID": "1677017",
+    "SLURM_JOB_ID": "189147",
+    "SLURM_JOB_NAME": "cpb_native_smoke",
+    "SLURM_JOB_NODELIST": "snavely-cpu-02",
+    "SLURM_JOB_NUM_NODES": "1",
+    "SLURM_JOB_PARTITION": "default_partition",
+    "SLURM_JOB_QOS": "normal",
+    "SLURM_JOB_START_TIME": "1789405137",
+    "SLURM_JOB_UID": "1646707",
+    "SLURM_JOB_USER": "nc437",
+    "SLURM_LOCALID": "0",
+    "SLURM_MEM_PER_NODE": "8192",
+    "SLURM_NNODES": "1",
+    "SLURM_NODEID": "0",
+    "SLURM_NODELIST": "snavely-cpu-02",
+    "SLURM_OOM_KILL_STEP": "0",
+    "SLURM_PRIO_PROCESS": "0",
+    "SLURM_PROCID": "0",
+    "SLURM_SUBMIT_DIR": "/home/nc437",
+    "SLURM_SUBMIT_HOST": "unicorn-login-01",
+    "SLURM_TASKS_PER_NODE": "1",
+    "SLURM_TASK_PID": "2522295",
+    "SLURM_TOPOLOGY_ADDR": "snavely-cpu-02",
+    "SLURM_TOPOLOGY_ADDR_PATTERN": "node",
+    "SLURM_TRES_PER_TASK": "cpu=1"
+  }
+}

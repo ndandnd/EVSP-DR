@@ -1,0 +1,1546 @@
+{
+  "recorded_utc": "2026-09-14T17:07:08.021209+00:00",
+  "collection_scope": "Single squeue --me call immediately before this record; raw tool response transcribed verbatim without requery.",
+  "command": "squeue --me -h -o %i|%j|%T|%r|%P|%N|%E",
+  "raw_sha256": "a06d98f371cb125307ae8726f45b142687b914882ddbbbc081d6b944b686c6a4",
+  "evsp_counts": {
+    "PENDING": 84,
+    "RUNNING": 66
+  },
+  "groups": {
+    "capacity_boundary": {
+      "RUNNING": 7
+    },
+    "extension_graph": {
+      "RUNNING": 18
+    },
+    "extension_solver": {
+      "PENDING": 48,
+      "RUNNING": 4
+    },
+    "held_historical": {
+      "PENDING": 1
+    },
+    "prior_diagnostic": {
+      "RUNNING": 1
+    },
+    "seed_content": {
+      "PENDING": 36,
+      "RUNNING": 36
+    }
+  },
+  "held_scope": "One compressed historical array row537227_[36-68%8],33heldtasks; excludedfromEVSPcounts.",
+  "other_project_rows": 0,
+  "rows": [
+    {
+      "job_id": "188002",
+      "name": "drX_w6_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_17(unfulfilled),afterok:188000(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "188000",
+      "name": "drX_w6_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_16(unfulfilled),afterok:187998(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187998",
+      "name": "drX_w6_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_15(unfulfilled),afterok:134079(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187996",
+      "name": "drX_w5_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_14(unfulfilled),afterok:187994(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187994",
+      "name": "drX_w5_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_13(unfulfilled),afterok:187992(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187992",
+      "name": "drX_w5_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_12(unfulfilled),afterok:134059(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187990",
+      "name": "drX_w4_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_11(unfulfilled),afterok:187988(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187988",
+      "name": "drX_w4_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_10(unfulfilled),afterok:187986(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187986",
+      "name": "drX_w4_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_9(unfulfilled),afterok:133987(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187984",
+      "name": "drX_w3_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_8(unfulfilled),afterok:187982(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187982",
+      "name": "drX_w3_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_7(unfulfilled),afterok:187980(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187980",
+      "name": "drX_w3_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_6(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187978",
+      "name": "drX_w2_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_5(unfulfilled),afterok:187976(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187976",
+      "name": "drX_w2_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_4(unfulfilled),afterok:187974(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187974",
+      "name": "drX_w2_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_3(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187972",
+      "name": "drX_w1_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_2(unfulfilled),afterok:187970(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187970",
+      "name": "drX_w1_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_1(unfulfilled),afterok:187968(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187968",
+      "name": "drX_w1_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187967_0(unfulfilled),afterok:133927(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "134059",
+      "name": "drX_w5_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:134057(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133987",
+      "name": "drX_w4_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133985(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133927",
+      "name": "drX_w1_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133925(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133925",
+      "name": "drX_w1_k24_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133923(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "189248",
+      "name": "drSeed_c6_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189207(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189247",
+      "name": "drSeed_c6_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189206(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189246",
+      "name": "drSeed_c6_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189205(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189245",
+      "name": "drSeed_c6_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189204(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189244",
+      "name": "drSeed_c6_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189203(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189243",
+      "name": "drSeed_c6_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189202(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189242",
+      "name": "drSeed_c5_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189201(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189241",
+      "name": "drSeed_c5_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189200(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189240",
+      "name": "drSeed_c5_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189199(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189239",
+      "name": "drSeed_c5_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189198(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189238",
+      "name": "drSeed_c5_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189197(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189237",
+      "name": "drSeed_c5_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189196(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189236",
+      "name": "drSeed_c4_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189195(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189235",
+      "name": "drSeed_c4_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189194(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189234",
+      "name": "drSeed_c4_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189193(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189233",
+      "name": "drSeed_c4_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189192(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189232",
+      "name": "drSeed_c4_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189191(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189231",
+      "name": "drSeed_c4_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189190(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189230",
+      "name": "drSeed_c3_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189189(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189229",
+      "name": "drSeed_c3_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189188(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189226",
+      "name": "drSeed_c3_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189187(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189224",
+      "name": "drSeed_c3_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189186(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189221",
+      "name": "drSeed_c3_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189185(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189220",
+      "name": "drSeed_c3_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189184(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189219",
+      "name": "drSeed_c2_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189183(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189218",
+      "name": "drSeed_c2_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189182(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189217",
+      "name": "drSeed_c2_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189181(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189216",
+      "name": "drSeed_c2_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189180(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189215",
+      "name": "drSeed_c2_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189179(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189214",
+      "name": "drSeed_c2_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189178(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189213",
+      "name": "drSeed_c1_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189177(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189212",
+      "name": "drSeed_c1_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189176(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189211",
+      "name": "drSeed_c1_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189175(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189210",
+      "name": "drSeed_c1_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189174(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189209",
+      "name": "drSeed_c1_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189173(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189208",
+      "name": "drSeed_c1_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:189172(unfulfilled)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "188004",
+      "name": "drX_w6_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:188002(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "188001",
+      "name": "drX_w6_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:188000(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187999",
+      "name": "drX_w6_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187998(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187997",
+      "name": "drX_w5_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187996(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187995",
+      "name": "drX_w5_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187994(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187993",
+      "name": "drX_w5_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187992(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187991",
+      "name": "drX_w4_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187990(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187989",
+      "name": "drX_w4_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187988(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187987",
+      "name": "drX_w4_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187986(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187985",
+      "name": "drX_w3_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187984(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187983",
+      "name": "drX_w3_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187982(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187981",
+      "name": "drX_w3_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187980(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187979",
+      "name": "drX_w2_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187978(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187977",
+      "name": "drX_w2_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187976(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187975",
+      "name": "drX_w2_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187974(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187973",
+      "name": "drX_w1_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187972(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187971",
+      "name": "drX_w1_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187970(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187969",
+      "name": "drX_w1_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:187968(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "134080",
+      "name": "drX_w6_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:134079(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "134060",
+      "name": "drX_w5_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:134059(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "134058",
+      "name": "drX_w5_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:134057(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133988",
+      "name": "drX_w4_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133987(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133986",
+      "name": "drX_w4_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133985(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133928",
+      "name": "drX_w1_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133927(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133926",
+      "name": "drX_w1_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133925(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133924",
+      "name": "drX_w1_k23_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "node": "",
+      "dependency": "afterok:133923(unfulfilled)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "134057",
+      "name": "drX_w5_k24_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-02",
+      "dependency": "(null)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "189182",
+      "name": "drSeed_c2_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-06",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189183",
+      "name": "drSeed_c2_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-02",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189184",
+      "name": "drSeed_c3_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-03",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189185",
+      "name": "drSeed_c3_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-04",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189186",
+      "name": "drSeed_c3_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-05",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189187",
+      "name": "drSeed_c3_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-07",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189188",
+      "name": "drSeed_c3_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-08",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189189",
+      "name": "drSeed_c3_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-09",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189190",
+      "name": "drSeed_c4_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-10",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189191",
+      "name": "drSeed_c4_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-11",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189192",
+      "name": "drSeed_c4_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-12",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189193",
+      "name": "drSeed_c4_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-13",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189194",
+      "name": "drSeed_c4_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-14",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189195",
+      "name": "drSeed_c4_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-15",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189196",
+      "name": "drSeed_c5_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-16",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189197",
+      "name": "drSeed_c5_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-17",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189198",
+      "name": "drSeed_c5_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-18",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189199",
+      "name": "drSeed_c5_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-19",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189200",
+      "name": "drSeed_c5_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-20",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189201",
+      "name": "drSeed_c5_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-21",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189202",
+      "name": "drSeed_c6_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-22",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189203",
+      "name": "drSeed_c6_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-01",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189204",
+      "name": "drSeed_c6_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-01",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189205",
+      "name": "drSeed_c6_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-01",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189206",
+      "name": "drSeed_c6_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "kim-cpu-05",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189207",
+      "name": "drSeed_c6_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "kim-cpu-05",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189172",
+      "name": "drSeed_c1_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "luxlab-cpu-03",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189173",
+      "name": "drSeed_c1_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-75",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189174",
+      "name": "drSeed_c1_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "joachims-cpu-02",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189175",
+      "name": "drSeed_c1_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-02",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189176",
+      "name": "drSeed_c1_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-02",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189177",
+      "name": "drSeed_c1_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "harpo",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189178",
+      "name": "drSeed_c2_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "harpo",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189179",
+      "name": "drSeed_c2_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "luxlab-cpu-01",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189180",
+      "name": "drSeed_c2_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "luxlab-cpu-01",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189181",
+      "name": "drSeed_c2_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "jingjie-cpu-01",
+      "dependency": "(null)",
+      "group": "seed_content"
+    },
+    {
+      "job_id": "189164",
+      "name": "cpb_0_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-11",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189165",
+      "name": "cpb_1_prefixp",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-12",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189166",
+      "name": "cpb_2_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-13",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189167",
+      "name": "cpb_3_prefixp",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-14",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189168",
+      "name": "cpb_4_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-16",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189169",
+      "name": "cpb_5_prefixp",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-15",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189170",
+      "name": "cpb_6_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-15",
+      "dependency": "(null)",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "156700",
+      "name": "drD_c1_k15_c200_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "snavely-cpu-09",
+      "dependency": "(null)",
+      "group": "prior_diagnostic"
+    },
+    {
+      "job_id": "133985",
+      "name": "drX_w4_k24_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "garg-cpu-02",
+      "dependency": "(null)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "133923",
+      "name": "drX_w1_k23_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-87",
+      "dependency": "(null)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "134079",
+      "name": "drX_w6_k25_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-75",
+      "dependency": "(null)",
+      "group": "extension_solver"
+    },
+    {
+      "job_id": "187967_0",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-01",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_1",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_2",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_3",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_4",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_5",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_6",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_7",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_8",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_9",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_10",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_11",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "sonic-cpu-01",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_12",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "sonic-cpu-02",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_13",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-87",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_14",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-87",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_15",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-76",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_16",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-76",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_17",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "node": "unicorn-cpu-76",
+      "dependency": "(null)",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "537227_[36-68%8]",
+      "name": "tpmR2d7a25b33",
+      "state": "PENDING",
+      "reason": "JobHeldUser",
+      "partition": "scaglione",
+      "node": "",
+      "dependency": "(null)",
+      "group": "held_historical"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+--- before
++++ after
+@@ -1,21 +1,36 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Chain and diagnostic results updated 14 September 12:33 EDT; cumulative-budget comparison completed 13 September 20:49 EDT; model/source audit 13 September 09:50 EDT. Dates beside each result identify its evidence.
++Week of 14 September. Chain results updated 14 September 12:33 EDT; capacity pricing endpoints checked at 12:59 EDT; additional overnight launches listed below. Cumulative-budget comparison completed 13 September 20:49 EDT; model/source audit 13 September 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ ## **Overnight diagnostics: 14 September**
+ 
+-Queue at the 12:33 EDT collection: 34 EVSP–DR jobs running; 53 wait on predecessor data. The initial check had only six. The new work adds independent graph builds, integer searches and charging-constraint tests; remaining dependencies require actual predecessor outputs. The reserved GPU computer and held historical jobs remain untouched.
+-
+-**New parallel work, 14 September:**
++Queue checked at 13:07 EDT: 66 EVSP–DR jobs running; 84 wait on actual predecessor data. This excludes 33 held historical tasks. The initial check had only six. The new work adds independent graph builds, integer searches and charging-constraint tests; remaining dependencies require actual predecessor outputs. The reserved GPU computer and held historical jobs remain untouched.
++
++### **Additional overnight work submitted, 14 September**
++
++| Experiment | CG jobs | Later MIPs | What it tests |
++| ----- | ----- | ----- | ----- |
++| **Previous-k integer routes versus same-count routes chosen by LP weight** | **36 running** | **36, each waits only on its own CG** | **Which inherited routes help produce a good integer pool? Six chains at k=8, 10 and 15\.** |
++| **Capacity pricing on four one-bus duties: reference versus cached version** | **8 launched; 2 completed and 6 running at the 13:07 EDT result check** | **Short diagnostic within each allocation** | **Which duty structures make pricing slow?** |
++
++**The 36 warm-start tests use already-built graphs. Both methods start with singleton routes and replay a small subset from the previous k. Each pair has the same inputs, code, model and time limits. Prior CG and MIP costs are retained, so the inherited information is not treated as free. The selected sequence counts match; actual imported columns and trip coverage may differ and are recorded separately.**
++
++**CG allows four hours; its later MIP allows three hours for fleet search within 3½ hours total. The eight pricing diagnostics allow 220 minutes of CG plus a ten-minute MIP. All independent cases are eligible together on the default partition; Slurm determines resource admission. [Overnight plan, reasons and exact launch records.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/research_register/OVERNIGHT_PLAN_20260914.md)**
++
++### **First pricing result: both versions certify on duty 13408 after 33 iterations and produce exactly the same 43-column pool. Each final MIP finds one bus and proves charging-related cost 36.536 within that pool, with the shared-capacity audit passed. This establishes agreement on this duty; the other six runs remain in progress. [Verified first pair.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/capacity_pricing_boundary_20260914/boundary_results_20260914T1707Z.md)**
++
++### **Earlier parallel work, 14 September**
++
++### 
+ 
+ | Experiment | Independent work | What we learn |
+ | ----- | ----- | ----- |
+ | Extend six chains to k=26–28 | 18 graph builds submitted; then 18 CGs and 18 MIPs | How far the unchanged baseline scales. Only each chain’s CG remains sequential. |
+ | Search unresolved saved pools | All 14 complete: four target recoveries, three proved pool limits, seven open gaps | Whether the existing columns already support better integer solutions. |
+ | Combine independently generated columns | 6 combinations built; MIP results awaiting verified collection (188099–188104) | Whether different CG runs found routes that work better together. |
+-| Stricter charging tests | 12 CG tests launched; 12 matched one-hour MIP follow-ups queued. Eight pairs complete; four capacity-enforced k=2 CG tests remain active. | Separate charger capacity, depot power and energy reserve; compare reference pricing with cached pricing. |
++| Stricter charging tests | All 12 CG tests now have endpoints. The four capacity-enforced k=2 tests hit their pricing deadline. Separate one-hour MIP follow-ups remain the matched integer-search comparison. | Separate charger capacity, depot power and energy reserve; compare reference pricing with cached pricing. |
+ 
+ The graph array has 18 tasks and allows all 18 to run together. Larger independent CG arrays retain the default limit of 50\. More CPUs cannot remove a genuine previous-k dependency; independent experiments provide the parallel work. The strict tests first save short preliminary MIPs; their separate one-hour MIPs provide equal integer-search budgets. Capacity cases receive more CG time, so this is a feasibility pilot, not a controlled comparison of total running time. The batches below are earlier completed or finishing diagnostics. [Current launch plan and job maps.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/parallel_followup_20260914/README.md)
+ 
+@@ -51,9 +66,22 @@
+ | 236.44 kWh / 15% | 240 kW | 30.6 | 2 | 91.712 |
+ | 236.44 kWh / 15% | 60 kW | 42.8 | 2 | 91.712 |
+ 
+-**All four schedules use two charging connections simultaneously at station 2190L, which has one documented charger.** They meet their tested model, but fail this shared-capacity check. The four k=2 runs that enforce capacity are still running. Slower depot charging and the battery/reserve treatment alone do not prevent two buses on this input.
+-
+-Charging-related cost includes electricity and the fee per charging start. The 236.44-kWh treatment changes battery size and reserve together. There is no 65% terminal target. Individual route feasibility in this dedicated solver is by construction, not a separate continuous replay audit. All four k=1 capacity tests now recover one bus and pass their shared-capacity checks. The two flat-price runs have CG certificates. Under the noon-peak price, both CGs stopped at the 110-minute pricing deadline without a certificate. The reference version completed 24 iterations and the cached version 32; both ended at the same restricted LP objective and found charging-related cost 61.715. Their matched MIPs prove that cost within the respective saved pools, not across every possible route. [All twelve settings, current results and source hashes.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/strict_capacity_parallel_20260914/status_20260914T152928Z/README.md)
++**All four schedules use two charging connections simultaneously at station 2190L, which has one documented charger.** They meet their tested model, but fail this shared-capacity check. The four capacity-enforced k=2 runs have now stopped at their 220-minute pricing limit without a certificate; details are below. Slower depot charging and the battery/reserve treatment alone do not prevent two buses on this input.
++
++Charging-related cost includes electricity and the fee per charging start. The 236.44-kWh treatment changes battery size and reserve together. There is no 65% terminal target. Individual route feasibility in this dedicated solver is by construction, not a separate continuous replay audit. All four k=1 capacity tests now recover one bus and pass their shared-capacity checks. The two flat-price runs have CG certificates. Under the noon-peak price, both CGs stopped at the 110-minute pricing deadline without a certificate. The reference version completed 24 iterations and the cached version 32; both ended at the same restricted LP objective and found charging-related cost 61.715. Their matched MIPs prove that cost within the respective saved pools, not across every possible route. [Earlier twelve-setting comparison and source hashes.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/strict_capacity_parallel_20260914/status_20260914T152928Z/README.md)
++
++### **Capacity-enforced k=2 results, collected 12:59 EDT**
++
++| Battery / reserve | PARX power | Completed CG iterations | Columns saved | Buses in short pool MIP |
++| ----- | ----- | ----- | ----- | ----- |
++| 240 kWh / 0% | 240 kW | 4 | 27 | 3 |
++| 240 kWh / 0% | 60 kW | 4 | 27 | 3 |
++| 236.44 kWh / 15% | 240 kW | 3 | 26 | 12 |
++| 236.44 kWh / 15% | 60 kW | 3 | 26 | 12 |
++
++All four CG runs reached the 220-minute pricing deadline. None proved that no improving route remains. Their small saved pools are proved to require the fleets shown, and the selected schedules pass the shared-charger check. These are pool limits after unfinished pricing, not proof that the full model needs 3 or 12 buses. Route feasibility is by construction, not independent continuous replay.
++
++This points to pricing as the immediate bottleneck: only three or four iterations finished. The no-capacity controls completed 115–130 iterations and certified. Budgets differ, so treat this as a feasibility diagnostic; the short pilot MIPs are separate from the matched one-hour follow-ups. Tonight’s small pricing tests will locate which duty structures trigger the slowdown. [Verified endpoint audit and source records.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/capacity_pricing_boundary_20260914/strict_capacity_k2_audit_20260914T1659Z.md)
+ 
+ | New independent work | Jobs | Question |
+ | ----- | ----- | ----- |
