@@ -1,5 +1,7 @@
 # Is sequential warm starting better use of the same computation budget?
 
+**14 September, 01:26 EDT:** [Current chains and unchanged completed comparison](status_20260914T052404Z/README.md). Fresh controls remain 6/24 target matches versus 24/24 warm-reference matches. The separate [column-selection treatment](../overnight_diagnostics_20260914/status_20260914T052404Z/README.md) now recovers C5 k5 with 30 complementary columns; do not mix it into the fresh control.
+
 **Launched 13 September, verified 14:20 EDT:** 120 stage jobs across 24 datasets; 45 running and 3 finished at the first check, with 72 waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.
 
 **Comparison complete, 13 September 20:49 EDT:** all 24 fresh CG runs converged before their primary allowances expired. All 24 fresh MIPs finished: 6 target matches, 4 proved pool limits above target, and 14 open fleet gaps. All 24 matched warm MIPs attain their targets. Fresh k15 fleets for chains 1–6 are 18, 17, 18, 19, 16 and 20 respectively, all with bound 15 and no fleet proof. The CG time limit did not cause the fresh runs to stop; four completed fleet proofs establish a limitation of the fresh column pools, while the other gaps remain unresolved. Historical code/hardware variation remains a limitation of this retrospective comparison. [Complete results, budgets and source evidence](status_20260914T004739Z/README.md).

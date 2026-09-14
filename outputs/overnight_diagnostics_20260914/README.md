@@ -1,5 +1,7 @@
 # Overnight experiments: distinguish missing columns from insufficient MIP time
 
+**Results, 14 September 01:26 EDT:** [First C5 k5 comparison and C4 k19 continuation](status_20260914T052404Z/README.md). Fifteen CG endpoints are certified; two final MIPs are available. Complementary selection recovers five buses where original and 200-column pools require six. **Live queue at 01:35 EDT:** 57 diagnostic jobs plus nine chain-extension jobs running; no arbitrary array throttle. All 99 diagnostic jobs remain submitted.
+
 Prepared on the night of 13–14 September. This is a separately registered diagnostic batch; it does not replace the six ongoing k=16–25 chains or the completed cumulative-budget comparison.
 
 **All99 jobs submitted, verified00:33EDT.** The first59 independent jobs were all running at00:09EDT. Native checkpoint validation job157899 passed and automatically submitted the final two CG continuations (160347/160348) and their MIPs (160349/160350). The complete batch has61 independent jobs and38 MIPs that depend only on their own CG. See [scheduler verification](scheduler_verification.json) and [job map](case_jobs.json). Submission status is separate from scientific results.

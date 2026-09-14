@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "reference_and_later_unchanged": true,
+    "c2_row": true,
+    "c4_row": true,
+    "new_comparison": true,
+    "new_gap_count": true,
+    "new_timestamp": true,
+    "live_count": true
+  },
+  "all_passed": true,
+  "before_sha256": "394f254b350f2bbb3e5bc36b3b58bb5e549af7c8448d5a5fb36bd78f677b09e5",
+  "after_sha256": "ccd90fea8800df64b795c85dfc3c115739597fea1b1302164c0581b989a19972",
+  "slides_edited": false,
+  "other_tabs_edited": false
+}

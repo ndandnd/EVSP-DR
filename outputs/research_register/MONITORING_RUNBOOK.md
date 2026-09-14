@@ -1,5 +1,13 @@
 # Unicorn monitoring runbook
 
+## 14 September, 01:26 EDT — first column-selection result; target reaches 22
+
+Snapshot 20260914T052404Z, SHA 03d1f29511e724a3770c807c7cba3a8efc1f08fca59faf58d28e1532bbe33a57. Extension 34 CG endpoints (31 certificates, three original k19 time limits), 33 MIPs (21 target matches, 12 open one-bus gaps). New C2k22 and C4k20 matches have pool-fleet proofs and individual replay. C1k19=20/bound19 and C3k23=24/bound23 remain open. C5k20 CG certifies at217.7min. Highest individual targets18,22,18,20,18,20. Cumulative comparison unchanged24 certified fresh CG, 6/24 fresh versus24/24 warm targets.
+
+Diagnostics:15certified CG endpoints and2MIPs. C5k5 original/c200/complementary have matching certified weighted LP objective500276.192 and fractional weight5; pools14175/45105/12029 yield fleet6/6/5, each proved in its own pool and replay-valid. Pools are not nested. One selected case, no global-optimality or general-success-rate claim. C4k19 separate continuation certifies at267.0 cumulative minutes,27.9 extra; weighted objective improvement about0.00033. Preserve original uncertified endpoint and production successors. Its MIP was pending in the scientific collection; live check later shows it running.
+
+No new production failure, confirmed preemption or invalid dependency. Workflow execution states checked separately in all three active campaigns. Preemption study589attempt rows. Register2477rows/51campaigns retains all six supplements;156scientific endpoints verified against raw source. Workbook and Doc refreshed; figures and Slides preserved. Separate live check01:35EDT:66running jobs (57diagnostic,9extension),65true dependency waits, held537227 unchanged. All99diagnostic cases already submitted; do not duplicate. Frozen workers/manifests and solver code unchanged. Next monitor should collect results as these existing jobs finish, not launch speculative follow-ons.
+
 ## 14 September,00:25EDT — new targets21,19,20; overnight batch completed submission
 
 Snapshot20260914T042303Z:33extension CGendpoints (30certified,3time-limited),29MIPs (19target matches,10open one-bus gaps). New C2k21=21,C4k19=19,C6k20=20 with pool-fleet proofs and individual-route replay; C3k22=23/bound22/unproved. Largest individual targets18,21,18,19,18,20; preserve earlier gaps, especially C2k17–20 and C6k18. C1k19 newly stopped at239.3min/456iterations/minRC−0.06574063 without a pricing certificate. C4/C5k19 remain uncertified; C4 nevertheless matches the integer target. Fresh comparison remains24certified CGs,6/24fresh versus24/24warm target matches.
