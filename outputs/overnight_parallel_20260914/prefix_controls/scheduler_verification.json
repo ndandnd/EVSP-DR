@@ -1,0 +1,54 @@
+{
+  "verified_utc": "2026-09-14T18:06:27.450112+00:00",
+  "all_exclusions_resources_dependencies_verified": true,
+  "rows": [
+    {
+      "case_id": "c1_k15_prefix_build",
+      "job_id": "189905",
+      "kind": "pool_construction",
+      "state": "RUNNING",
+      "reason": "None",
+      "raw": "JobId=189905 JobName=drPrefix_c1_k15_prefix_build UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14998 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:13 TimeLimit=01:00:00 TimeMin=N/A SubmitTime=2026-09-14T14:05:44 EligibleTime=2026-09-14T14:05:44 AccrueTime=2026-09-14T14:05:44 StartTime=2026-09-14T14:06:13 EndTime=2026-09-14T15:06:13 Deadline=N/A PreemptEligibleTime=2026-09-14T14:06:13 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T14:06:13 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:130020 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=snavely-cpu-01 BatchHost=snavely-cpu-01 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=8G,node=1,billing=2 AllocTRES=cpu=2,mem=8G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=8G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c1_k15_prefix_build_189905.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c1_k15_prefix_build_189905.out TresPerTask=cpu=2 \n"
+    },
+    {
+      "case_id": "c2_k15_prefix_build",
+      "job_id": "189906",
+      "kind": "pool_construction",
+      "state": "RUNNING",
+      "reason": "None",
+      "raw": "JobId=189906 JobName=drPrefix_c2_k15_prefix_build UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14998 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:14 TimeLimit=01:00:00 TimeMin=N/A SubmitTime=2026-09-14T14:05:44 EligibleTime=2026-09-14T14:05:44 AccrueTime=2026-09-14T14:05:44 StartTime=2026-09-14T14:06:13 EndTime=2026-09-14T15:06:13 Deadline=N/A PreemptEligibleTime=2026-09-14T14:06:13 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T14:06:13 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:130020 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=snavely-cpu-02 BatchHost=snavely-cpu-02 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=8G,node=1,billing=2 AllocTRES=cpu=2,mem=8G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=8G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c2_k15_prefix_build_189906.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c2_k15_prefix_build_189906.out TresPerTask=cpu=2 \n"
+    },
+    {
+      "case_id": "c4_k15_prefix_build",
+      "job_id": "189907",
+      "kind": "pool_construction",
+      "state": "RUNNING",
+      "reason": "None",
+      "raw": "JobId=189907 JobName=drPrefix_c4_k15_prefix_build UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14998 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=RUNNING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:14 TimeLimit=01:00:00 TimeMin=N/A SubmitTime=2026-09-14T14:05:44 EligibleTime=2026-09-14T14:05:44 AccrueTime=2026-09-14T14:05:44 StartTime=2026-09-14T14:06:13 EndTime=2026-09-14T15:06:13 Deadline=N/A PreemptEligibleTime=2026-09-14T14:06:13 PreemptTime=None SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T14:06:13 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:130020 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList=snavely-cpu-09 BatchHost=snavely-cpu-09 NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=8G,node=1,billing=2 AllocTRES=cpu=2,mem=8G,node=1,billing=2 Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=8G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c4_k15_prefix_build_189907.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c4_k15_prefix_build_189907.out TresPerTask=cpu=2 \n"
+    },
+    {
+      "case_id": "c1_k15_prefix_mip",
+      "job_id": "189908",
+      "kind": "mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "raw": "JobId=189908 JobName=drPrefix_c1_k15_prefix_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14998 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:189905(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T14:05:45 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T14:05:45 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:130020 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c1_k15_prefix_mip_189908.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c1_k15_prefix_mip_189908.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c2_k15_prefix_mip",
+      "job_id": "189909",
+      "kind": "mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "raw": "JobId=189909 JobName=drPrefix_c2_k15_prefix_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14998 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:189906(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T14:05:45 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T14:05:45 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:130020 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c2_k15_prefix_mip_189909.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c2_k15_prefix_mip_189909.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c4_k15_prefix_mip",
+      "job_id": "189910",
+      "kind": "mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "raw": "JobId=189910 JobName=drPrefix_c4_k15_prefix_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14998 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:189907(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T14:05:45 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T14:05:45 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:130020 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c4_k15_prefix_mip_189910.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/logs/drPrefix_c4_k15_prefix_mip_189910.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+    }
+  ]
+}

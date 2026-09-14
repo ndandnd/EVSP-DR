@@ -1,0 +1,12 @@
+#!/bin/bash
+#SBATCH --partition=default_partition
+#SBATCH --exclude=scaglione-compute-01
+#SBATCH --no-requeue
+#SBATCH --signal=B:USR1@90
+set -euo pipefail
+exec env -i PATH=/usr/local/bin:/usr/bin:/bin \
+  GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic \
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 \
+  SLURM_JOB_ID="$SLURM_JOB_ID" SLURM_RESTART_COUNT="${SLURM_RESTART_COUNT:-0}" \
+  CAMPAIGN_ROOT="$CAMPAIGN_ROOT" CASE_ID="$CASE_ID" \
+  /home/nc437/evsp_env/bin/python "$CAMPAIGN_ROOT/worker.py" --root "$CAMPAIGN_ROOT" --case "$CASE_ID"

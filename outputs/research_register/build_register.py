@@ -218,14 +218,25 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
                 cid: {**metadata, "id": cid}
                 for cid, metadata in (diagnostic_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
             }
+            metadata_extension = diagnostic_workflow.get("case_metadata.json", {}).get("case_metadata", {})
+            if metadata_extension:
+                if not diagnostic_workflow.get("case_metadata_verification", {}).get("verified"):
+                    raise ValueError(f"unverified case metadata extension: {campaign_id}")
+                for cid, values in metadata_extension.items():
+                    self.diagnostic_cases[campaign_id][cid].update(values)
             self.diagnostic_jobs[campaign_id] = diagnostic_workflow.get("case_jobs.json", {}) or {}
+            if not self.diagnostic_jobs[campaign_id]:
+                self.diagnostic_jobs[campaign_id] = {
+                    cid: item["job_id"] for cid, item in
+                    diagnostic_workflow.get("jobs.json", {}).get("jobs", {}).items()
+                }
 
     def authoritative_case(self, campaign_id, source_path, input_path,
                            fallback_case_id):
@@ -307,10 +318,20 @@ class Register:
                          "arm": metadata.get("treatment"),
                          "code_commit": metadata.get("execution_commit"),
                          "notes": metadata.get("interpretation"), **(overrides or {})}
-            if campaign_id == "parallel_pool_unions_20260914":
+            constructed_pool_notes = {
+                "parallel_pool_unions_20260914": "MIP on a constructed union of existing baseline pools",
+                "retrospective_prefix_controls_20260914": "MIP on a reconstructed historical iteration-prefix pool, not an exact wall-time CG endpoint",
+                "decomposition_pool_union_20260914": "MIP on remapped columns from partitions of one parent instance; target metadata comes from the verified benchmark sidecar",
+                "decomposition_lp_support_union_20260914": "MIP on remapped partition columns retaining source LP support and integer witnesses; target metadata comes from the verified benchmark sidecar",
+            }
+            if campaign_id in constructed_pool_notes:
                 overrides.update(cg_iterations=None,
                     full_model_lp_certified=None,
-                    notes="MIP on a constructed union of existing baseline pools; no new CG run or pricing certificate. " + (metadata.get("interpretation") or ""))
+                    notes=constructed_pool_notes[campaign_id] + "; no new CG run or pricing certificate. " + (metadata.get("interpretation") or ""))
+            if campaign_id.startswith("decomposition_"):
+                # p01/p02 are alternative partitions of one parent, not chain IDs.
+                parent = self.snapshot["campaigns"][campaign_id]["workflow"]["case_metadata.json"]["parent"]
+                overrides.update(chain=None, replication=None, trip_count=parent["trip_count"])
         if metadata:
             case_id = metadata["id"]
             input_path = metadata.get("csv") or input_path

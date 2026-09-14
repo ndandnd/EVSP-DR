@@ -1,0 +1,20 @@
+{
+  "schema": "evsp-decomposition-lp-support-current-report-v1",
+  "reported_utc": "2026-09-14T18:48:29.235319+00:00",
+  "manifest_sha256": "dd154f49757657e9d1a309f38a31177bf052a46c9d4363a78da1992fe2cd8630",
+  "verified_constructions": 9,
+  "verified_production_mips": 1,
+  "production_total": 46,
+  "scheduler_states_at_admission": {
+    "COMPLETED": 1,
+    "RUNNING": 45
+  },
+  "fleet_counts": {
+    "35": 1
+  },
+  "physical_replay_all_completed_verified": true,
+  "collector_errors": [],
+  "scientific_question": "At the same 512-column component cap and identical finite-pool MIP settings, does preserving every positive final child-RMP trip set improve the 32-duty parent solution versus the first longest-route selector?",
+  "interpretation": "This campaign isolates pool selection while preserving each child integer witness and fractional RMP witness. It does not produce a parent pricing certificate or full-model LP bound. All 46 MIPs are treatment comparisons on one parent instance.",
+  "status_note": "Production was released after source construction and native full-parent validation; this snapshot is for launch verification, not the final result table."
+}

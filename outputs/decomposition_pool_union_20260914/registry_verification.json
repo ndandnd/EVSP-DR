@@ -1,0 +1,20 @@
+{
+  "schema": "evsp-decomposition-pool-union-registry-verification-v1",
+  "verified_utc": "2026-09-14T18:27:15.984721+00:00",
+  "manifest_sha256": "69cf4c1f7c3795ce17ce62adb4bef2dd7d34194a5b95a86684e4920ec27af4c0",
+  "registered_attempts": 47,
+  "production_attempts": 46,
+  "native_fixture_attempts": 1,
+  "cohorts": {
+    "same_partition_2h": 9,
+    "pair_union_2h": 36,
+    "all_nine_4h": 1,
+    "native_fixture": 1
+  },
+  "job_range": [
+    "190160",
+    "190227"
+  ],
+  "all_requeue": false,
+  "note": "Registry entries are stage-aware and use unique Slurm job/restart result paths."
+}

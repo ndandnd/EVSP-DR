@@ -1,0 +1,124 @@
+{
+  "audited_utc": "2026-09-14T17:59:38.726976+00:00",
+  "defer": "New geographic or random component CG partitions should wait for this complementarity matrix; existing work already includes one trip-contiguous, one trip-balanced, and eight seeded-random partitions.",
+  "implementation_sources": {
+    "exact_mip": "/home/nc437/ladder-lite/execution/871d057e1067411f09581e37d78f7c1ca43f68bb/src/run_exact_pool_mip.py",
+    "mapping": "outputs/queue_recovery_20260912/graph_worker.py: mapping() and make_seed()",
+    "streaming_union": "outputs/parallel_followup_20260914/union_design/union_logic.py",
+    "worker_gates": "outputs/parallel_followup_20260914/union_design/union_worker.py"
+  },
+  "matrix": {
+    "all_partition_mip_jobs": 1,
+    "construction_jobs": 9,
+    "pair_mip_jobs": 36,
+    "pair_set": "all unordered pairs from partitions 1..9",
+    "peak_mip_wave": 37,
+    "total_allocations": 46
+  },
+  "partition_controls": [
+    {
+      "component_fleet_sum": 35,
+      "partition": 1,
+      "source_columns": 164905,
+      "source_journal_bytes": 660573693
+    },
+    {
+      "component_fleet_sum": 35,
+      "partition": 2,
+      "source_columns": 181824,
+      "source_journal_bytes": 755435571
+    },
+    {
+      "component_fleet_sum": 36,
+      "partition": 3,
+      "source_columns": 140157,
+      "source_journal_bytes": 611416174
+    },
+    {
+      "component_fleet_sum": 35,
+      "partition": 4,
+      "source_columns": 189949,
+      "source_journal_bytes": 865908866
+    },
+    {
+      "component_fleet_sum": 35,
+      "partition": 5,
+      "source_columns": 144867,
+      "source_journal_bytes": 635159206
+    },
+    {
+      "component_fleet_sum": 36,
+      "partition": 6,
+      "source_columns": 146653,
+      "source_journal_bytes": 600803942
+    },
+    {
+      "component_fleet_sum": 34,
+      "partition": 7,
+      "source_columns": 200175,
+      "source_journal_bytes": 846150007
+    },
+    {
+      "component_fleet_sum": 37,
+      "partition": 8,
+      "source_columns": 166488,
+      "source_journal_bytes": 723067857
+    },
+    {
+      "component_fleet_sum": 35,
+      "partition": 9,
+      "source_columns": 177167,
+      "source_journal_bytes": 719020118
+    }
+  ],
+  "proof_scope": {
+    "above_32_interpretation": "Does not prove 32 impossible because parent pricing and omitted component columns remain open.",
+    "cg_certificate": false,
+    "feasible_32_interpretation": "A physically admitted 32-bus incumbent is a baseline-model feasibility result.",
+    "finite_pool_mip_only": true,
+    "physics": "covering master; 240 kWh; 240 kW; reserve 0; event time; 2.5 kWh SOC; 5 min blocks; flat tariff; bus coefficient 100000; charge-start fee 5; no shared station capacity; no terminal floor",
+    "required_gate": "Parent-input replay of every union route, zero rejected or repaired columns, at-least-once parent coverage, hash-bound source journals/status/MIPs and mappings."
+  },
+  "recommendation": "Nine parent-index pool constructions from completed partitions 1-9, followed by all 36 unordered two-partition finite-pool MIPs and one all-nine finite-pool MIP. No new CG and no parent graph build.",
+  "resources": {
+    "all_nine_mip": "1 job after all constructions; default partition; 4 CPU; 24 GB; 4 h; stage1 2 h; no requeue",
+    "construction": "9 independent jobs; default partition; 2 CPU; 8 GB; 1 h; no requeue",
+    "exclude": "scaglione-compute-01",
+    "pair_mip": "36 independent jobs after their two construction jobs; default partition; 4 CPU; 24 GB; 2 h; stage1 1 h; no requeue"
+  },
+  "schema": "evsp-dr-decomposition-union-audit-v1",
+  "scientific_question": "Can route diversity across independently optimized eight-duty partitions recover a feasible 32-bus parent schedule, and which partition pairs are complementary?",
+  "selection": {
+    "fill_order": "longest trip sequence, then cheapest cost per trip, then stable parent trip IDs",
+    "mandatory": "all routes selected by the source component MIP",
+    "max_all_nine_pool": 18432,
+    "max_pair_pool": 4096,
+    "max_partition_pool": 2048,
+    "per_component_cap": 512
+  },
+  "source": {
+    "campaign_manifest_sha256": "e4a08bbc128998b3a9207fe4a2e1e71c2dd581c8e353c9d3c07de3929c2d1548",
+    "campaign_root": "/home/nc437/ladder-lite/overnight_extension_20260912",
+    "certified_component_cg": 33,
+    "component_mips_available": 39,
+    "decomposition_input_manifest_sha256": "3a459d20d7614ccacafabd497ee44146c3b74c00e294105fe28b6cb100dcc50c",
+    "group_count_planned": 40,
+    "group_journals_available": 39,
+    "journal_bytes": 6579311311,
+    "mip_execution_commit": "871d057e1067411f09581e37d78f7c1ca43f68bb",
+    "missing_group": "d00_g3",
+    "parent_graph_evidence": {
+      "cache_present": false,
+      "cg_started": false,
+      "evidence": "outputs/queue_recovery_20260912/status_20260913T093758Z/graph_parent32_timeout_20260913.json",
+      "job_id": "42509",
+      "peak_rss_gib": 25.371261596679688,
+      "requested_memory_gib": 128,
+      "runtime_s": 45142,
+      "state": "TIMEOUT"
+    },
+    "parent_input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+    "replay_clean_component_pools": 39,
+    "source_execution_commit": "a29992196acb74d02b8c7891be4061718889999f"
+  }
+}

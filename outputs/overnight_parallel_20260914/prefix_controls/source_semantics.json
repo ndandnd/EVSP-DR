@@ -1,0 +1,13 @@
+{
+  "source_commit": "e091a4dba549510238507ef5e5367abea958bd30",
+  "source_file": "src/exact_pricer_expanded.py",
+  "iteration_csv_write_line": 2728,
+  "before_current_batch_insertion": true,
+  "found_iter_assignment_line": 2800,
+  "ordering": "Iteration CSV follows RMP/pricing; _freeze_crossed_snapshots follows log; batch insertion assigns found_iter=global_iteration afterward. Prefix found_iter<i matches rowi preinsertion pool.",
+  "scope": "Observed historical row boundary rounded to0.01s; not exact14400s terminalCG state.",
+  "new_CG_runs": 0,
+  "constructed_status_final_lp": "omitted",
+  "constructed_status_certified_rc_optimal": false,
+  "constructed_status_final_artificials": null
+}

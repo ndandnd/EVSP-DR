@@ -1,14 +1,17 @@
 {
   "checks": {
     "reference_and_later_unchanged": true,
-    "updated_chain5": true,
-    "new_union_table": true,
-    "old_union_pending_removed": true,
-    "matched_mip_label": true,
-    "queue_audit": true
+    "both_decomposition_treatments_submitted": true,
+    "first_decomposition_results": true,
+    "selection_followup_explained": true,
+    "second_wave_jobs_recorded": true,
+    "live_queue_updated": true,
+    "operational_waits_distinguished": true,
+    "old_launch_pending_removed": true
   },
+  "figure_tabs_and_slides_untouched": true,
   "files_sha256": {
     "doc_before.md": "bd8f50c2ca6623fc8ef1dc9fb24ff337e242eef48184ba986217347c982d4740",
-    "doc_after.md": "d69f485c474cf161e11bdbe10567ab54c4dff4ddd7c578fbd1c8dc57fb9ff451"
+    "doc_after.md": "0697d68aac917976d2e59394745933a2c85b533905c6e04064d9985e680781b7"
   }
 }

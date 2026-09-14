@@ -1,0 +1,31 @@
+{
+  "schema": "evsp-decomposition-pool-union-current-report-v1",
+  "reported_utc": "2026-09-14T18:28:39.689550+00:00",
+  "manifest_sha256": "69cf4c1f7c3795ce17ce62adb4bef2dd7d34194a5b95a86684e4920ec27af4c0",
+  "verified_constructions": 9,
+  "verified_production_mips": 45,
+  "production_total": 46,
+  "remaining_case": "m_all09",
+  "fleet_counts": {
+    "34": 9,
+    "35": 30,
+    "36": 5,
+    "37": 1
+  },
+  "best_fleet": 34,
+  "cases_at_best": [
+    "m_p07",
+    "m_p01_p07",
+    "m_p02_p07",
+    "m_p03_p07",
+    "m_p04_p07",
+    "m_p05_p07",
+    "m_p06_p07",
+    "m_p07_p08",
+    "m_p07_p09"
+  ],
+  "physical_replay_all_verified": true,
+  "collector_errors": [],
+  "interpretation": "Completed finite-pool treatments have not improved on the 34-bus source upper bound. This does not prove 33 or 32 impossible; no parent pricing certificate or full-model LP bound exists.",
+  "independence": "All cases use one parent instance and are treatment comparisons."
+}

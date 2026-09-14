@@ -1,0 +1,22 @@
+{
+  "schema": "evsp-decomposition-lp-support-validation-v1",
+  "verified_utc": "2026-09-14T18:48:29.235319+00:00",
+  "manifest_sha256": "dd154f49757657e9d1a309f38a31177bf052a46c9d4363a78da1992fe2cd8630",
+  "local_unit_tests": {
+    "command": "PYTHONPATH=. python3 test_campaign.py",
+    "tests": 2,
+    "status": "passed",
+    "resource_warnings": "unclosed CSV handles in test paths; non-failing"
+  },
+  "lp_support_over_cap_regression": {
+    "command": "PYTHONPATH=. python3 postlaunch_test_lp_support.py",
+    "local": "passed",
+    "remote": "passed",
+    "selected_columns": 24,
+    "integer_warm_routes": 12,
+    "support_only_routes_retained": 12,
+    "forced_union_over_cap_exercised": true
+  },
+  "independent_review": "passed; no remaining code blocker",
+  "native_fixture": "native_fixture/summary.json"
+}

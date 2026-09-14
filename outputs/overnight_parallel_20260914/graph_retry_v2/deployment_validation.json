@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "manifest_sha256": "4c6d3578612d238156fad1cebe535bce87f1ee486da13fb5fcbda6441f480585",
+  "gate_count": 18,
+  "retargeted_cg_count": 18,
+  "all_other_dependency_edges_preserved": true,
+  "held_jobs_untouched": true,
+  "original_running_jobs_untouched": true,
+  "ledger_sha256": "3ed6f815a99c854905f4498dd2d8f841e3a50dd942a5407bc1a4430b6e04c773",
+  "utc": "2026-09-14T18:06:43.298536+00:00",
+  "remaining_cg_mip_edges_before": 51,
+  "remaining_cg_mip_edges_after": 51,
+  "original52_edges_accounted": 52,
+  "satisfied_before_v2": [
+    {
+      "child": "187998",
+      "case_id": "w6_k26",
+      "parent": "134079",
+      "scheduler": "134079|COMPLETED|0:0\n",
+      "source_cg_provenance": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k25/cg_provenance.json",
+      "source_cg_provenance_sha256": "bf02e27f0f14ef5dc71da4b7ac554774eed470760c92540305ff27209a9d0c5c",
+      "result_sha256": "338142c85f87bfaf1c9988f2e530c92634a208b797a98215d27bf4357a65d33c"
+    }
+  ],
+  "gate_states": {
+    "PENDING": 18
+  },
+  "v1_gate_states": {
+    "CANCELLED": 18
+  },
+  "authoritative_root": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914",
+  "v1_superseded": true,
+  "v1_artifacts_unchanged": true,
+  "original_graph_and_cg_jobs_not_cancelled": true,
+  "storage_binding": {
+    "logical_cases": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914/cases",
+    "storage_cases": "/share/scaglione/nc437/evsp-dr/graph_timeout_gates_v2_20260914/cases",
+    "scope": "Private recovery attempts and graph pickles reside in shared research storage; created before any gate execution.",
+    "manifest_sha256": "4c6d3578612d238156fad1cebe535bce87f1ee486da13fb5fcbda6441f480585"
+  }
+}

@@ -1,0 +1,840 @@
+{
+  "schema": "evsp-decomposition-pool-union-case-metadata-v1",
+  "campaign": "decomposition_lp_support_union_20260914",
+  "campaign_manifest_sha256": "dd154f49757657e9d1a309f38a31177bf052a46c9d4363a78da1992fe2cd8630",
+  "parent": {
+    "target_duties": 32,
+    "trip_count": 750,
+    "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+    "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+    "benchmark_source_manifest": "/home/nc437/ladder-lite/overnight_extension_20260912/manifest.json",
+    "benchmark_source_manifest_sha256": "e4a08bbc128998b3a9207fe4a2e1e71c2dd581c8e353c9d3c07de3929c2d1548",
+    "benchmark_case_prefix": "join01..join09",
+    "verification": "source decomposition manifest declares each join target_duties=32 and parent32.csv"
+  },
+  "case_metadata": {
+    "p01": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p02": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p03": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p04": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p05": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p06": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p07": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p08": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "p09": {
+      "kind": "pool_construction",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": null,
+      "solver_budget_s": null,
+      "stage1_s": null,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p04": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p04"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p05": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p05"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p06": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p06"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p02": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p02"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p03": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p03"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p04": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p04"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p05": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p05"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p06": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p06"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p01_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p03": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p03"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p04": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p04"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p05": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p05"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p06": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p06"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p02_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p02",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03_p04": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03",
+        "p04"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03_p05": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03",
+        "p05"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03_p06": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03",
+        "p06"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03",
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p03_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p03",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p04_p05": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p04",
+        "p05"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p04_p06": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p04",
+        "p06"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p04_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p04",
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p04_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p04",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p04_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p04",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p05_p06": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p05",
+        "p06"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p05_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p05",
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p05_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p05",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p05_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p05",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p06_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p06",
+        "p07"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p06_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p06",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p06_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p06",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p07_p08": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p07",
+        "p08"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p07_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p07",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_p08_p09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p08",
+        "p09"
+      ],
+      "solver_budget_s": 7200,
+      "stage1_s": 3600,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "m_all09": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p01",
+        "p02",
+        "p03",
+        "p04",
+        "p05",
+        "p06",
+        "p07",
+        "p08",
+        "p09"
+      ],
+      "solver_budget_s": 14400,
+      "stage1_s": 7200,
+      "is_validation": false,
+      "treatment": "lp_support_preserving_same_cap512"
+    },
+    "native_fixture_p07": {
+      "kind": "mip",
+      "target_duties": 32,
+      "csv": "overnight_decomposition_20260912/parent32.csv",
+      "input_path": "/home/nc437/ladder-lite/overnight_extension_20260912/code/data/overnight_decomposition_20260912/parent32.csv",
+      "input_sha256": "4367335166098c6c50fb283b1cd3307a72720ea0b70fff4567b085af9a37e66e",
+      "source_partitions": [
+        "p07"
+      ],
+      "solver_budget_s": 120,
+      "stage1_s": 60,
+      "is_validation": true,
+      "treatment": "lp_support_preserving_same_cap512"
+    }
+  },
+  "comparators": {
+    "matched_first_campaign_manifest_sha256": "69cf4c1f7c3795ce17ce62adb4bef2dd7d34194a5b95a86684e4920ec27af4c0",
+    "matched_dimensions": [
+      "parent input and physics",
+      "source journals and MIPs",
+      "512 routes per component",
+      "46-case matrix",
+      "MIP and stage-1 budgets",
+      "resources"
+    ],
+    "changed_dimension": "positive final child-RMP routes are forced before filling the same cap"
+  },
+  "retry_policy": "No automatic requeue. A preempted job keeps its unique attempt; any manual retry creates a new job/attempt."
+}

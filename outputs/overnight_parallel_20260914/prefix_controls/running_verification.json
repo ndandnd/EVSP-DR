@@ -1,0 +1,61 @@
+{
+  "sampled_utc": "2026-09-14T18:08:55.709673+00:00",
+  "mips": [
+    {
+      "case_id": "c1_k15_prefix_mip",
+      "state_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c1_k15_prefix_mip/attempts/189908_r0/state.json",
+      "status": "running",
+      "attempt": "189908_r0"
+    },
+    {
+      "case_id": "c2_k15_prefix_mip",
+      "state_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c2_k15_prefix_mip/attempts/189909_r0/state.json",
+      "status": "running",
+      "attempt": "189909_r0"
+    },
+    {
+      "case_id": "c4_k15_prefix_mip",
+      "state_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c4_k15_prefix_mip/attempts/189910_r0/state.json",
+      "status": "running",
+      "attempt": "189910_r0"
+    }
+  ],
+  "actual_registry_entries": [
+    {
+      "job_id": "189910",
+      "case_id": "c4_k15_prefix_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c4_k15_prefix_mip/attempts/189910_r0/result.json",
+      "attempt_tag": "189910_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T18:07:18.313967+00:00"
+    },
+    {
+      "job_id": "189909",
+      "case_id": "c2_k15_prefix_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c2_k15_prefix_mip/attempts/189909_r0/result.json",
+      "attempt_tag": "189909_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T18:07:19.555596+00:00"
+    },
+    {
+      "job_id": "189908",
+      "case_id": "c1_k15_prefix_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c1_k15_prefix_mip/attempts/189908_r0/result.json",
+      "attempt_tag": "189908_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T18:07:50.053019+00:00"
+    }
+  ]
+}

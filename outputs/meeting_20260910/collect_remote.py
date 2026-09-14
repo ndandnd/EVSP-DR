@@ -1,4 +1,4 @@
-"""Run on Unicorn with Python; emits compact raw evidence, never reads column journals."""
+"""Run on Unicorn; emit compact evidence and hash journals without decoding columns."""
 from pathlib import Path
 from collections import Counter, defaultdict
 import csv, json, datetime, subprocess, hashlib, math
@@ -311,6 +311,10 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'decomposition_lp_support_union_20260914': home / 'decomposition_lp_support_union_20260914',
+    'decomposition_pool_union_20260914': home / 'decomposition_pool_union_20260914',
+    'graph_timeout_gates_v2_20260914': home / 'graph_timeout_gates_v2_20260914',
+    'retrospective_prefix_controls_20260914': home / 'retrospective_prefix_controls_20260914',
     'overnight_parallel_20260914': home / 'overnight_parallel_20260914',
     'parallel_pool_unions_20260914': home / 'parallel_pool_unions_20260914',
     'chain_extension_20260914': home / 'chain_extension_20260914',
@@ -352,7 +356,7 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914')
+    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914', 'retrospective_prefix_controls_20260914', 'decomposition_pool_union_20260914', 'decomposition_lp_support_union_20260914')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
@@ -452,6 +456,13 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
+    if name == 'graph_timeout_gates_v2_20260914' and (root/'manifest.json').exists():
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('graph_gate_metadata', root/'collect_adapter.py')
+        adapter = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(adapter)
+        # Metadata only: graph construction is not a CG or integer-solve result.
+        out['campaigns'][name]['workflow']['operational_graph_recovery'] = adapter.collect_graph_timeout_gates(root)
     if name in ('chain_extension_20260913', 'chain_extension_20260914'):
         out['campaigns'][name]['workflow']['attempt_progress'] = chain_extension_progress(root)
     if diagnostic:
@@ -461,7 +472,13 @@ for name, root in roots.items():
             progress.append({'case_id': p.parents[2].name, 'attempt': p.parent.name,
                              'path': str(p), 'state': record})
         out['campaigns'][name]['workflow']['attempt_progress'] = progress
-        if name == 'parallel_pool_unions_20260914':
+        construction_kinds = {
+            'parallel_pool_unions_20260914': 'finite_pool_union',
+            'retrospective_prefix_controls_20260914': 'retrospective_iteration_prefix',
+            'decomposition_pool_union_20260914': 'parent_mapped_partition_pool',
+            'decomposition_lp_support_union_20260914': 'parent_mapped_partition_pool',
+        }
+        if name in construction_kinds:
             constructions = {}
             for marker_path in sorted(root.glob('cases/*/completion.json')):
                 marker = json.loads(marker_path.read_bytes())
@@ -478,7 +495,7 @@ for name, root in roots.items():
                         or file_sha256(detail) != marker['construction_sha256']):
                     raise ValueError(f'changed pool construction: {marker_path}')
                 value = json.loads(artifact.read_bytes())
-                if not (value.get('artifact_kind') == 'finite_pool_union'
+                if not (value.get('artifact_kind') == construction_kinds[name]
                         and value.get('certified_rc_optimal') is False):
                     raise ValueError(f'pool construction claims CG: {artifact}')
                 audit = json.loads(detail.read_bytes())
@@ -489,13 +506,55 @@ for name, root in roots.items():
                         'manifest_sha256')},
                     'optimization_run': False, 'full_model_lp_certified': False,
                     'construction_summary': {key: audit.get(key) for key in
-                        ('sources', 'source_order', 'union_columns')},
+                        ('sources', 'source_order', 'union_columns', 'source',
+                         'cutoff_found_iter_exclusive', 'historical_log_elapsed_s',
+                         'unique_pool_columns', 'semantics', 'columns',
+                         'component_audits', 'source_audits', 'parent_graph_constructed')},
                     'journal_hash_scope': 'Verified by construction worker; not rehashed by this collector.'}
             out['campaigns'][name]['workflow']['pool_constructions'] = constructions
         for record_name in ['validation.json', 'scheduler_verification.json', 'selection.json']:
             p = root/record_name
             if p.exists():
                 out['campaigns'][name]['workflow'][record_name] = json.loads(p.read_bytes())
+        metadata_path = root/'case_metadata.json'
+        if metadata_path.exists():
+            metadata = json.loads(metadata_path.read_bytes())
+            if metadata.get('campaign_manifest_sha256') != diagnostic_manifest_sha:
+                raise ValueError(f'case metadata differs from frozen campaign: {metadata_path}')
+            manifest_cases = json.loads((root/'manifest.json').read_bytes())['cases']
+            parent = metadata['parent']
+            benchmark_path = Path(parent['benchmark_source_manifest'])
+            if file_sha256(benchmark_path) != parent['benchmark_source_manifest_sha256']:
+                raise ValueError(f'parent benchmark manifest changed: {benchmark_path}')
+            benchmarks = [case for case in json.loads(benchmark_path.read_bytes())['cases'].values()
+                          if case.get('kind') == 'decomposition_recombine_and_cross_group_cg'
+                          and case.get('input_sha256') == parent['input_sha256']]
+            if (not benchmarks or {case['target_duties'] for case in benchmarks} != {parent['target_duties']}
+                    or {case['trip_count'] for case in benchmarks} != {parent['trip_count']}
+                    or file_sha256(Path(parent['input_path'])) != parent['input_sha256']):
+                raise ValueError(f'parent benchmark target or input differs: {metadata_path}')
+            for cid, values in metadata['case_metadata'].items():
+                case = manifest_cases[cid]
+                if (values['input_sha256'] != case.get('parent_input_sha256', case.get('input_sha256'))
+                        or values['kind'] != case['kind']
+                        or values['input_sha256'] != parent['input_sha256']
+                        or values['input_path'] != parent['input_path']
+                        or values['target_duties'] != parent['target_duties']
+                        or {values['csv']} != {item['csv'] for item in benchmarks}
+                        or values.get('is_validation', False) != case.get('is_validation', False)):
+                    raise ValueError(f'case metadata changes input or stage: {cid}')
+            out['campaigns'][name]['workflow']['case_metadata.json'] = metadata
+            out['campaigns'][name]['workflow']['case_metadata_verification'] = {
+                'path': str(metadata_path), 'sha256': file_sha256(metadata_path),
+                'manifest_sha256': diagnostic_manifest_sha,
+                'benchmark_manifest_sha256': parent['benchmark_source_manifest_sha256'], 'verified': True}
+        if diagnostic_manifest_sha:
+            manifest_cases = json.loads((root/'manifest.json').read_bytes())['cases']
+            validation_ids = {cid for cid, case in manifest_cases.items() if case.get('is_validation')}
+            validation_mips = [row for row in rows if Path(row['path']).parent.name in validation_ids]
+            if validation_mips:
+                out['campaigns'][name]['workflow']['validation_mip_artifacts'] = validation_mips
+                out['campaigns'][name]['mip'] = [row for row in rows if Path(row['path']).parent.name not in validation_ids]
     for record_name in ['ready_mips_manifest.json', 'ready_mips_submission.json', 'ready_mips_old_cancellations.json', 'obsolete_chain2_cancellations.json', 'retired_queue_entries.json', 'case_jobs.json', 'cache_jobs.json', 'cache_cli_validation.json', 'cache_compatibility.json', 'manifest.json', 'jobs.json', 'smoke_job.json', 'downstream/mip_concurrency_rebalance_20260911T0932Z.json', 'downstream/dependency_repair_20260911T0831Z.json', 'downstream/default_mip_migration_a01.json', 'downstream/default_mip_migration_a02.json', 'resource_override.json', 'workflow_submission.json', 'mip_submission.json', 'mip_retry2_submission.json', 'submission.json', 'submission.cg.json', 'submission.mip.json', 'retry_manifest.json', 'rerun_manifest.json', 'repair_submission.json', 'publication_recovery_772009.json', 'manifests/submission_initial.json', 'manifests/submission_final.json', 'execution_plan.json']:
         record_path = root / record_name
         if record_path.exists():

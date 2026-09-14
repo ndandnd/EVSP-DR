@@ -1,0 +1,186 @@
+{
+  "mapping": "Frozen parent count_trip_id to Ordered_Trip_ID; exact ordered stable sequences compared; unordered tripset overlap also reported.",
+  "identical_pairs": 0,
+  "pairs": [
+    {
+      "pair_id": "c1_k08",
+      "selected_each": 7,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 177,
+      "lpweight_unique_parent_trips": 107
+    },
+    {
+      "pair_id": "c1_k10",
+      "selected_each": 9,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 211,
+      "lpweight_unique_parent_trips": 153
+    },
+    {
+      "pair_id": "c1_k15",
+      "selected_each": 14,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 310,
+      "lpweight_unique_parent_trips": 220
+    },
+    {
+      "pair_id": "c2_k08",
+      "selected_each": 7,
+      "exact_stable_sequence_overlap": 1,
+      "stable_tripset_overlap": 1,
+      "identical": false,
+      "jaccard_exact": 0.07692307692307693,
+      "integer_unique_parent_trips": 151,
+      "lpweight_unique_parent_trips": 73
+    },
+    {
+      "pair_id": "c2_k10",
+      "selected_each": 9,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 219,
+      "lpweight_unique_parent_trips": 142
+    },
+    {
+      "pair_id": "c2_k15",
+      "selected_each": 14,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 343,
+      "lpweight_unique_parent_trips": 200
+    },
+    {
+      "pair_id": "c3_k08",
+      "selected_each": 7,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 142,
+      "lpweight_unique_parent_trips": 113
+    },
+    {
+      "pair_id": "c3_k10",
+      "selected_each": 9,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 191,
+      "lpweight_unique_parent_trips": 158
+    },
+    {
+      "pair_id": "c3_k15",
+      "selected_each": 14,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 281,
+      "lpweight_unique_parent_trips": 146
+    },
+    {
+      "pair_id": "c4_k08",
+      "selected_each": 7,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 142,
+      "lpweight_unique_parent_trips": 94
+    },
+    {
+      "pair_id": "c4_k10",
+      "selected_each": 9,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 203,
+      "lpweight_unique_parent_trips": 123
+    },
+    {
+      "pair_id": "c4_k15",
+      "selected_each": 14,
+      "exact_stable_sequence_overlap": 1,
+      "stable_tripset_overlap": 1,
+      "identical": false,
+      "jaccard_exact": 0.037037037037037035,
+      "integer_unique_parent_trips": 326,
+      "lpweight_unique_parent_trips": 193
+    },
+    {
+      "pair_id": "c5_k08",
+      "selected_each": 7,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 156,
+      "lpweight_unique_parent_trips": 100
+    },
+    {
+      "pair_id": "c5_k10",
+      "selected_each": 9,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 183,
+      "lpweight_unique_parent_trips": 113
+    },
+    {
+      "pair_id": "c5_k15",
+      "selected_each": 14,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 295,
+      "lpweight_unique_parent_trips": 221
+    },
+    {
+      "pair_id": "c6_k08",
+      "selected_each": 7,
+      "exact_stable_sequence_overlap": 4,
+      "stable_tripset_overlap": 4,
+      "identical": false,
+      "jaccard_exact": 0.4,
+      "integer_unique_parent_trips": 113,
+      "lpweight_unique_parent_trips": 91
+    },
+    {
+      "pair_id": "c6_k10",
+      "selected_each": 9,
+      "exact_stable_sequence_overlap": 0,
+      "stable_tripset_overlap": 0,
+      "identical": false,
+      "jaccard_exact": 0.0,
+      "integer_unique_parent_trips": 178,
+      "lpweight_unique_parent_trips": 118
+    },
+    {
+      "pair_id": "c6_k15",
+      "selected_each": 14,
+      "exact_stable_sequence_overlap": 1,
+      "stable_tripset_overlap": 1,
+      "identical": false,
+      "jaccard_exact": 0.037037037037037035,
+      "integer_unique_parent_trips": 347,
+      "lpweight_unique_parent_trips": 199
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "status": "prepared_not_applied",
+  "original_manifest_sha256": "1ac2cfa69dc7fced141f1214e0787b35d8ea161910de8ed7fe15fc5b9d0de082",
+  "recovery_manifest_sha256": "2e253d2a6d1e390106761de76c04edd0621ae6ba28d5c37cae8bc1d57d8d0ae1",
+  "edges": [
+    {
+      "case_id": "w1_k26",
+      "cg_job_id": "187968",
+      "original_graph_job": "187967_0",
+      "original_dependency_at_audit": "afterok:187967_0(unfulfilled),afterok:133927(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_0"
+    },
+    {
+      "case_id": "w1_k27",
+      "cg_job_id": "187970",
+      "original_graph_job": "187967_1",
+      "original_dependency_at_audit": "afterok:187967_1(unfulfilled),afterok:187968(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_1"
+    },
+    {
+      "case_id": "w1_k28",
+      "cg_job_id": "187972",
+      "original_graph_job": "187967_2",
+      "original_dependency_at_audit": "afterok:187967_2(unfulfilled),afterok:187970(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_2"
+    },
+    {
+      "case_id": "w2_k26",
+      "cg_job_id": "187974",
+      "original_graph_job": "187967_3",
+      "original_dependency_at_audit": "afterok:187967_3(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_3"
+    },
+    {
+      "case_id": "w2_k27",
+      "cg_job_id": "187976",
+      "original_graph_job": "187967_4",
+      "original_dependency_at_audit": "afterok:187967_4(unfulfilled),afterok:187974(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_4"
+    },
+    {
+      "case_id": "w2_k28",
+      "cg_job_id": "187978",
+      "original_graph_job": "187967_5",
+      "original_dependency_at_audit": "afterok:187967_5(unfulfilled),afterok:187976(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_5"
+    },
+    {
+      "case_id": "w3_k26",
+      "cg_job_id": "187980",
+      "original_graph_job": "187967_6",
+      "original_dependency_at_audit": "afterok:187967_6(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_6"
+    },
+    {
+      "case_id": "w3_k27",
+      "cg_job_id": "187982",
+      "original_graph_job": "187967_7",
+      "original_dependency_at_audit": "afterok:187967_7(unfulfilled),afterok:187980(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_7"
+    },
+    {
+      "case_id": "w3_k28",
+      "cg_job_id": "187984",
+      "original_graph_job": "187967_8",
+      "original_dependency_at_audit": "afterok:187967_8(unfulfilled),afterok:187982(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_8"
+    },
+    {
+      "case_id": "w4_k26",
+      "cg_job_id": "187986",
+      "original_graph_job": "187967_9",
+      "original_dependency_at_audit": "afterok:187967_9(unfulfilled),afterok:133987(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_9"
+    },
+    {
+      "case_id": "w4_k27",
+      "cg_job_id": "187988",
+      "original_graph_job": "187967_10",
+      "original_dependency_at_audit": "afterok:187967_10(unfulfilled),afterok:187986(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_10"
+    },
+    {
+      "case_id": "w4_k28",
+      "cg_job_id": "187990",
+      "original_graph_job": "187967_11",
+      "original_dependency_at_audit": "afterok:187967_11(unfulfilled),afterok:187988(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_11"
+    },
+    {
+      "case_id": "w5_k26",
+      "cg_job_id": "187992",
+      "original_graph_job": "187967_12",
+      "original_dependency_at_audit": "afterok:187967_12(unfulfilled),afterok:134059(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_12"
+    },
+    {
+      "case_id": "w5_k27",
+      "cg_job_id": "187994",
+      "original_graph_job": "187967_13",
+      "original_dependency_at_audit": "afterok:187967_13(unfulfilled),afterok:187992(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_13"
+    },
+    {
+      "case_id": "w5_k28",
+      "cg_job_id": "187996",
+      "original_graph_job": "187967_14",
+      "original_dependency_at_audit": "afterok:187967_14(unfulfilled),afterok:187994(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_14"
+    },
+    {
+      "case_id": "w6_k26",
+      "cg_job_id": "187998",
+      "original_graph_job": "187967_15",
+      "original_dependency_at_audit": "afterok:187967_15(unfulfilled),afterok:134079(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_15"
+    },
+    {
+      "case_id": "w6_k27",
+      "cg_job_id": "188000",
+      "original_graph_job": "187967_16",
+      "original_dependency_at_audit": "afterok:187967_16(unfulfilled),afterok:187998(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_16"
+    },
+    {
+      "case_id": "w6_k28",
+      "cg_job_id": "188002",
+      "original_graph_job": "187967_17",
+      "original_dependency_at_audit": "afterok:187967_17(unfulfilled),afterok:188000(unfulfilled)",
+      "proposed_graph_parent": "afterok:{gate_job_id}",
+      "preserve_every_other_dependency": true,
+      "apply_only_if_cg_still_pending": true,
+      "graph_gate_dependency": "afterany:187967_17"
+    }
+  ],
+  "record_required": "Before any update, freeze actual gatejobIDs and actual current dependency strings in an append-only ledger; replace only each graph edge. No original manifest changes."
+}

@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "manifest_sha256": "4c6d3578612d238156fad1cebe535bce87f1ee486da13fb5fcbda6441f480585",
+  "focused_tests": 9,
+  "change": "Only bounded scheduler accounting convergence; maximum120seconds, exacttask identity, ambiguousrowsfail immediately.",
+  "v1_manifest_sha256": "2e253d2a6d1e390106761de76c04edd0621ae6ba28d5c37cae8bc1d57d8d0ae1",
+  "v1_native_validation_path": "/home/nc437/ladder-lite/graph_timeout_gates_20260914/native_smoke/validation.json",
+  "v1_native_validation_sha256": "53441b90cf57d15cf3ab6e8dfd72216793a5f29e165b3b518d3a50eb6baa61de",
+  "native_graph_publication_and_noop_code_unchanged": true,
+  "process_wrapper_unchanged": true,
+  "native_fixture_scope": "Reuse authenticated existing-cache no-op and tiny same-source native graph fixture because native build/publication code is unchanged; new scheduler-lag behavior covered by5additionaltests."
+}

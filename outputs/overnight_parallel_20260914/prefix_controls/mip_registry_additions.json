@@ -1,0 +1,32 @@
+[
+  {
+    "job_id": "189908",
+    "case_id": "c1_k15_prefix_mip",
+    "cohort": "default_overnight_diagnostics_20260914",
+    "solver_budget_s": 12600,
+    "result_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c1_k15_prefix_mip/mip_result.json",
+    "attempt_tag": "retrospective_prefix_controls_20260914",
+    "requeue": true,
+    "registration_note": "Do not append canonical duplicate: unchanged worker helper registers private attempt paths at runtime."
+  },
+  {
+    "job_id": "189909",
+    "case_id": "c2_k15_prefix_mip",
+    "cohort": "default_overnight_diagnostics_20260914",
+    "solver_budget_s": 12600,
+    "result_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c2_k15_prefix_mip/mip_result.json",
+    "attempt_tag": "retrospective_prefix_controls_20260914",
+    "requeue": true,
+    "registration_note": "Do not append canonical duplicate: unchanged worker helper registers private attempt paths at runtime."
+  },
+  {
+    "job_id": "189910",
+    "case_id": "c4_k15_prefix_mip",
+    "cohort": "default_overnight_diagnostics_20260914",
+    "solver_budget_s": 12600,
+    "result_path": "/home/nc437/ladder-lite/retrospective_prefix_controls_20260914/cases/c4_k15_prefix_mip/mip_result.json",
+    "attempt_tag": "retrospective_prefix_controls_20260914",
+    "requeue": true,
+    "registration_note": "Do not append canonical duplicate: unchanged worker helper registers private attempt paths at runtime."
+  }
+]
