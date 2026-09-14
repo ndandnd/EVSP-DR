@@ -1,3 +1,13 @@
+## 14 September,14:59 EDT — first seed-method difference
+
+Snapshot20260914T185520Z completed after264 seconds, SHA167a7198a772d21580b9384d290741bd6d343f2649399c9a61c70ff60d314757. SeedCG25/36 certified;6 MIPs published,5 targets. C5k8 integer-seed8 versus LP-weight-seed9, both fleet minima proved in their pools; identical certified weighted objective800431.772270. Selected7 sequences cover156 versus100 parent trips: do not attribute the difference solely to integrality. C5/C6k10 integer-seed MIPs match10/proved/replayed; their LP arms pending. C6k8 both8/proved remains unchanged.
+
+Original extension55CG=45 certified+10 caps;53 one-hour MIPs=31 targets+22 misses. Longer searches recover15, leaving7 unresolved. New C1k23/C6k25 four-hour caps lack certificates (lastRC−0.073378/−0.063090). C4k24 has25 buses/bound24/open. Fresh C1k15 c200 CG765min certified, one-hour MIP18/bound15/open. Largest original matches unchanged21,22,24,23,23,24; separate C2k25 longer-MIP match retained.
+
+First decomposition45 production results unchanged. Second LP-support campaign3 published controls: p01=35,p04=35,p07=34; all pool fleet proofs/replay, no parentCGcertificate. Second p02/190403 completed during collection with reported35; preserve as late scheduler-only arrival until a later verified publication collection. Both validation fixtures excluded. Prefix3MIPs remain without published results. No new failure, confirmed preemption or invalid dependency;105 running/72 actual dependency waits (18 are operational graph gates),33 held untouched. Preemptionstudy804 attempts; short decomposition jobs and fixtures remain separate cohorts. No new submissions, retries, solver edits or scheduler mutations.
+
+Register2935 rows/63groups retains6 supplements. 309 original-active endpoints plus85 seed/union/decomposition endpoints verified exactly. Saved workbook formula scan clean;22 views rendered, seedMIP/decompositioncontrols/extensionCG inspected. Doc updates existing status and table content; all reference/later material and figure tabs preserved. Source labels distinguish historical full-parent CG pause from active pool-MIP treatments. No Slides edits.
+
 Final queue at 18:44:44 UTC: 109 EVSP jobs running (21 CGs, 70 MIPs, 18 graphs); 55 solver dependencies and 18 operational gates. All 46 second-treatment MIPs were running; the reserved node was unused. This is the final queue census, not a later full scientific collection. Every unresolved parent appears in the fresh queue; avoid old/recycled Slurm-ID accounting records. Requested allocations of 536 CPUs and 4,416 GiB are not measured utilization. [Audit](../overnight_parallel_20260914/final_queue_20260914T184444Z/FINDINGS.md).
 
 ## 14 September, 14:45 EDT — LP-preserving pool comparison submitted

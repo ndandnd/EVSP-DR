@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "reference_and_later_unchanged": true,
+    "new_seed_certified_count": true,
+    "paired_seed_table": true,
+    "matched_objective_and_coverage": true,
+    "extension_counts": true,
+    "c200_result": true,
+    "decomposition_controls": true,
+    "queue_current": true,
+    "historical_decomp_scope": true
+  },
+  "figure_tabs_and_slides_untouched": true,
+  "files_sha256": {
+    "doc_before.md": "0697d68aac917976d2e59394745933a2c85b533905c6e04064d9985e680781b7",
+    "doc_after.md": "78c1d6f46ed02838dc1ee9c547193561903776b9adb1e1aa607b1fd45f80fa9d"
+  }
+}

@@ -1,0 +1,95 @@
+--- doc_before.md
++++ doc_after.md
+@@ -1,12 +1,12 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Results collected 14 September at 13:34 EDT; current overnight work and dependencies are listed below. Cumulative-budget comparison completed 13 September 20:49 EDT; model/source audit 13 September 09:50 EDT. Dates beside each result identify its evidence.
++Week of 14 September. Latest full collection: 14 September, 14:55–14:59 EDT. Current results and overnight work are listed below. The cumulative-budget comparison completed 13 September at 20:49 EDT; the model/source audit is dated 13 September at 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ ## **Overnight diagnostics: 14 September**
+ 
+-**Queue checked at 14:44 EDT: 109 EVSP–DR jobs running** — 21 CG jobs, 70 MIPs and 18 graph builds. Another 55 solver jobs await required predecessor outputs; 18 conditional graph-recovery checks also wait for their original builds. No invalid dependency or resource wait was found. All 46 MIPs in the second decomposition batch are running.
++**Latest collection, 14:55–14:59 EDT: 105 EVSP–DR jobs running.** Another 54 solver jobs await required predecessor outputs; 18 conditional graph-recovery checks wait separately. No invalid dependency, new execution failure or confirmed preemption appeared. The decomposition, warm-start, capacity and larger-chain campaigns remain active.
+ 
+ These counts exclude 33 held historical tasks. The reserved GPU computer and held jobs remain untouched. All 18 active graph builds are advancing.
+ 
+@@ -14,7 +14,7 @@
+ 
+ | Experiment | CG jobs | Later MIPs | What it tests |
+ | ----- | ----- | ----- | ----- |
+-| **Previous-k integer routes versus same-count routes chosen by LP weight** | **36 submitted; 8 CG endpoints certified at this collection** | **36, each waits only on its own CG** | **Which inherited routes help produce a good integer pool? Six chains at k=8, 10 and 15\.** |
++| **Previous-k integer routes versus same-count routes chosen by LP weight** | **36 submitted; 25 CG endpoints certified in the latest collection** | **36, each waits only on its own CG** | **Which inherited routes help produce a good integer pool? Six chains at k=8, 10 and 15\.** |
+ | **Capacity pricing on four one-bus duties: reference versus cached version** | **8 launched; 2 completed and 6 running at the 13:07 EDT result check** | **Short diagnostic within each allocation** | **Which duty structures make pricing slow?** |
+ 
+ **The 36 warm-start tests use already-built graphs. Both methods start with singleton routes and replay a small subset from the previous k. Each pair has the same inputs, code, model and time limits. Prior CG and MIP costs are retained, so the inherited information is not treated as free. The selected sequence counts match, but their coverage differs: the integer-selected routes cover more of the previous instance’s trips in all 18 pairs. None of the two selections is identical. This compares two practical seeding strategies; it does not isolate integrality from trip coverage.**
+@@ -33,7 +33,9 @@
+ 
+ The decomposition experiment uses one 750-trip, 32-duty input. We already solved nine different ways of dividing it into four groups of eight duties. Now we combine their saved routes: nine individual pools, all 36 pairs, and one pool containing all nine. Individual and pair MIPs have equal two-hour limits; the all-nine case has four hours. These are alternative treatments of one instance.
+ 
+-**First result, 14:35 EDT:** 45 of 46 MIPs finished, using 34–37 buses. All 45 proved their fleet minimum within the selected pool and passed physical replay. None of the completed pairs beat its best contributing partition. This does not rule out a 32-bus schedule using other routes.
++**First selection, confirmed in the 14:55–14:59 collection:** 45 of 46 MIPs finished, using 34–37 buses. All 45 proved their fleet minimum within the selected pool and passed physical replay. None of the completed pairs beat its best contributing partition. This does not rule out a 32-bus schedule using other routes.
++
++**LP-preserving selection:** the first three published individual-pool controls use 35 buses for partition 1, 35 for partition 4, and 34 for partition 7\. All three have fleet proofs within their selected pools and pass route replay. Pair-union results are still pending in this collection. These early controls do not yet improve the fleet.
+ 
+ **What we are testing next:** the first selector kept 512 routes per group, including its integer solution, but omitted 3,187 of the 3,413 routes with positive weight in the source LP solutions. The second matched batch is now submitted: 46 independent MIPs, jobs 190402–190447. Its nine constructed pools retain all source LP routes as well as the integer routes, then fill to the same 512 per group. Every group fits; native validation accepted all 2,048 columns in the test partition with no rejected or repaired columns. This tests route selection while keeping pool size and MIP allowances fixed.
+ 
+@@ -69,7 +71,18 @@
+ 
+ ### **Small warm starts: first completed results**
+ 
+-Eight of the 36 CG runs have certified endpoints. On chain 6 at target 8, both seed methods select and successfully replay seven previous-k sequences, converge in 9.1 and 10.2 minutes, and produce an eight-bus solution proved best in its pool. Both also prove the charging objective within their own pools. The remaining integer results are pending in this collection; there is no overall winner yet. [Complete source tables and proof scopes.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_parallel_20260914/status_20260914T172907Z/README.md)
++**25 of 36 CG runs now have pricing certificates. Six MIPs have finished; five match the target.** The first two completed method pairs are:
++
++| Chain and target | Previous integer routes: buses | Largest LP weights: buses | CG minutes: integer / LP seeds |
++| ----- | ----- | ----- | ----- |
++| Chain 5, target 8 | 8 — proved in pool | 9 — proved in pool | 26.4 / 26.3 |
++| Chain 6, target 8 | 8 — proved in pool | 8 — proved in pool | 9.1 / 10.2 |
++
++For chain 5 at target 8, both CG runs certify the same weighted objective, 800,431.772270. Yet their generated pools have different integer optima: 8 and 9 buses. This shows that matching the LP objective does not ensure equally useful integer columns. Both methods imported seven previous-k sequences, but those sequences covered 156 versus 100 parent trips. The comparison tests the two selection methods; it does not isolate integrality from trip coverage.
++
++Integer-route seeds also produce proved target matches of 10 buses for chains 5 and 6\. Their LP-weight counterparts are still pending. There is no overall winner yet.
++
++ [Complete source tables and proof scopes.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_parallel_20260914/status_20260914T185520Z/README.md)
+ 
+ ### **Completed longer searches: 12:33 EDT**
+ 
+@@ -210,13 +223,13 @@
+ | 6 / 10 | 11 | 11 | 12 |
+ | 6 / 15 | 20 | 19 | 19 |
+ 
+-The latest 200-column MIPs at k=15 find 19, 20, 17 and 19 buses for chains 2, 4, 5 and 6\. All have a fleet bound of 15 and no fleet proof. Their selected routes pass individual replay. More columns per iteration therefore show no consistent integer improvement. The C1 k15 200-column CG now has a pricing certificate after 765.0 minutes; its MIP result is pending in this collection. These fresh-run treatments are separate from the inherited chains that already match k=15.
++The latest 200-column MIPs at k=15 find 19, 20, 17 and 19 buses for chains 2, 4, 5 and 6\. All have a fleet bound of 15 and no fleet proof. Their selected routes pass individual replay. More columns per iteration therefore show no consistent integer improvement. The C1 k15 200-column CG certified after 765.0 minutes. Its one-hour MIP finished with 18 buses and a pool fleet bound of 15, leaving the fleet gap open. These fresh-run treatments are separate from the inherited chains that already match k=15.
+ 
+ Both new treatments recover eight buses on chain 3 at target eight, with fleet proofs within their saved pools and individual-route replay. Other cases still miss. Chain 6 at target ten has a worse complementary incumbent, twelve versus eleven; its pool bound is ten, so the extra buses are not proved necessary. Chain 5 at target eight is different: the complementary pool is proved to require nine. New results also reduce chain 2 at target ten from twelve to eleven buses with the 200-column treatment, and chain 3 at target fifteen from eighteen to seventeen with either treatment. Their pool bounds remain ten and fifteen, so neither target is recovered yet. Chain 1 at target eight is now proved to need nine in the complementary pool. New chain 1 k10 complementary and chain 4 k10 200-column results each use twelve buses versus eleven originally. Those are timed incumbents; they do not prove twelve necessary. At k=15, complementary selection now finds 19, 17 and 19 buses on chains 4, 5 and 6, versus 19, 16 and 20 originally. All three bounds are 15 and none proves its fleet optimal. The treatment still shows no consistent improvement. The early completions are selected cases, not an unbiased success-rate sample. [Original one-hour results, bounds and timing.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_diagnostics_20260914/status_20260914T124947Z/README.md)
+ 
+ ## **Now running: six chains from k=16 to k=25**
+ 
+-**14 September, 13:34 EDT: the original one-hour MIPs have largest individual matches of 21, 22, 24, 23, 23 and 24 across chains 1–6. Each has a fleet proof within its saved pool and individual-route replay. A separate longer MIP now matches C2 k25 with 25 buses; longer searches also close the earlier C4 k22 and C6 k23 gaps.** Largest-target matches do not imply uninterrupted recovery at every smaller k. Charging optimality remains separate. Original one-hour results at 13:34 EDT:
++**14 September, 14:59 EDT: the original one-hour MIPs have largest individual matches of 21, 22, 24, 23, 23 and 24 across chains 1–6. Each has a fleet proof within its saved pool and individual-route replay. A separate longer MIP now matches C2 k25 with 25 buses; longer searches also close the earlier C4 k22 and C6 k23 gaps.** Largest-target matches do not imply uninterrupted recovery at every smaller k. Charging optimality remains separate. Original one-hour results at 14:59 EDT:
+ 
+ | Chain | Largest target matched | Integer buses | CG minutes at this target |
+ | ----- | ----- | ----- | ----- |
+@@ -227,7 +240,11 @@
+ | 5 | 23 | 23 | 185.9 |
+ | 6 | 24 | 24 | 171.6 |
+ 
+-CG minutes count this k’s route import and CG; earlier k values, graph construction and MIP are separate. At 13:34 EDT, 53 extension CG endpoints are available: 45 have pricing certificates and eight stopped at the time limit. Chain 5 k23 now also has 23 integer buses, a fleet proof in its pool and successful individual-route replay. Chain 4 k24 newly certifies CG in 177.5 minutes; its integer result is pending. The original 52 one-hour MIPs give 31 target matches and 21 misses. New C4 k23 and C6 k24 MIPs match their targets and prove those fleets within their pools. C1 k22 finds 23 buses with a pool bound of 22, leaving the integer gap open despite its CG certificate. C5 k22 still matches 22 with a pool proof but no CG certificate. Separate longer-search reruns now recover 15 of the original misses, leaving six targets unresolved. These budgets remain separate. The original one-hour MIPs used 26 buses at C2 k25, 23 at C4 k22 and 24 at C6 k23. Those results remain as controls; their new longer searches now match and prove 25, 22 and 23 buses within the unchanged pools. C1 k21 CG also reached its four-hour limit, with minimum reduced cost −0.000737, and has no pricing certificate.
++CG minutes count this k’s route import and CG; earlier k values, graph construction and MIP are separate. At 14:59 EDT, 55 extension CG endpoints are available: 45 have pricing certificates and ten stopped at the time limit. The newest capped runs are chain 1 at k=23 and chain 6 at k=25. Their last minimum reduced costs are −0.073378 and −0.063090, so neither has proved convergence.
++
++The 53 original one-hour MIPs give 31 target matches and 22 misses. Chain 4 at k=24 now has 25 buses, a pool bound of 24, and an open fleet gap. Separate longer searches recover 15 of the original misses, leaving seven targets unresolved across collected outcomes. Those longer-budget results remain separate from the original controls.
++
++[Latest chain table, every CG stopping reason and unresolved integer gaps.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T185520Z/README.md)
+ 
+ **The original chains 1, 4 and 5 k=19 runs stopped before CG convergence**, after about 239 minutes. Their last minimum reduced costs were −0.065741, −0.003185 and −0.088463, below the −0.0001 threshold. These restricted-master objectives lack a pricing certificate. Chain 4 nevertheless found 19 integer buses and proved that fleet within its saved pool. Chains 1 and 5 each found 20, with pool fleet bound 19 and an open gap. The separate longer continuations for chains 4 and 5 now have pricing certificates; neither changes the original endpoint. Two more CG runs reached their four-hour limits: chain 1 k=20 and chain 4 k=21. Their last reduced costs were −0.008585 and −0.007782, so neither has a pricing certificate. Their saved pools still feed the scheduled MIPs. Chain 5 k=21 also reached its four-hour CG limit: 239.6 minutes, 496 iterations, last reduced cost −0.058611. It has no pricing certificate. Its MIP now finds 21 buses, proves that fleet within its saved pool and passes individual-route replay. This integer result does not create a CG pricing certificate.
+ 
+@@ -243,7 +260,7 @@
+ 
+ We will report graph time, import/pricing/LP time, CG stopping reason and certificate, and integer fleet/bound separately. Large caches go in the shared data directory. The native prelaunch check passed, including the unrestricted Gurobi license, unchanged graph bytes with progress logging, inherited CG, and physical replay of the final MIP. [Launch records and exact settings](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/chain_extension_20260913/README.md).
+ 
+-**Decomposition is paused.** The shared 750-trip graph build hit its 12½-hour limit before CG started. No cache was saved; all 20 dependent CG/MIP jobs cancelled before starting. This was not preemption or out-of-memory (25.4 GiB peak against 128 GiB requested). That decomposition batch is inactive. The new k=16–25 chain expansion above is running; held historical jobs remain untouched. Graph preparation needs profiling before a retry. [Execution evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md). Completed scientific results below are unchanged.
++**Earlier full-parent CG attempt is paused; the new pool-combination MIPs above are separate.** The shared 750-trip graph build hit its 12½-hour limit before CG started. No cache was saved; all 20 dependent CG/MIP jobs cancelled before starting. This was not preemption or out-of-memory (25.4 GiB peak against 128 GiB requested). That decomposition batch is inactive. The new k=16–25 chain expansion above is running; held historical jobs remain untouched. Graph preparation needs profiling before a retry. [Execution evidence](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md). Completed scientific results below are unchanged.
+ 
+ ## **Reference comparison at k=15**
+ 

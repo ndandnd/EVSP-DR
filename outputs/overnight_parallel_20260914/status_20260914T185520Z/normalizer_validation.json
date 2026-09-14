@@ -1,0 +1,517 @@
+{
+  "source_sha256": "167a7198a772d21580b9384d290741bd6d343f2649399c9a61c70ff60d314757",
+  "checks": [
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c1_k08_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c1_k08_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c1_k10_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c2_k08_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c2_k08_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c2_k10_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c2_k10_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c3_k08_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c3_k08_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c3_k10_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c3_k10_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c3_k15_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c3_k15_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c4_k08_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c4_k08_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c4_k10_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c4_k10_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c5_k08_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c5_k08_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c5_k10_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c5_k10_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c6_k08_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c6_k08_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c6_k10_integer",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "case_id": "c6_k10_lpweight",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "case_id": "c5_k08_integer_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "case_id": "c5_k08_lpweight_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "case_id": "c5_k10_integer_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "case_id": "c6_k08_integer_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "case_id": "c6_k08_lpweight_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "case_id": "c6_k10_integer_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "case_id": "c1_k08_union_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "case_id": "c2_k08_union_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "case_id": "c4_k08_union_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "case_id": "c5_k08_union_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "case_id": "c5_k10_union_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "case_id": "c6_k10_union_mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p02",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p03",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p04",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p05",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p06",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p03",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p04",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p05",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p06",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p02_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03_p04",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03_p05",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03_p06",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p03_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04_p05",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04_p06",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p05",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p05_p06",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p05_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p05_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p05_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p06",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p06_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p06_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p06_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p07",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p07_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p07_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p08",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p08_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_pool_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p09",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_lp_support_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p01",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_lp_support_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p04",
+      "exact_match": true
+    },
+    {
+      "campaign": "decomposition_lp_support_union_20260914",
+      "stage": "mip",
+      "case_id": "m_p07",
+      "exact_match": true
+    }
+  ],
+  "scientific_endpoints_checked": 85,
+  "errors": []
+}
