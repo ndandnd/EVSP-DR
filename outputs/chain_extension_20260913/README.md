@@ -1,5 +1,7 @@
 # Continuing the six chains beyond 15 buses
 
+**14 September, 02:28 EDT:** C5 k20 matches20 with pool-fleet proof/replay. Largest individual matches18,22,18,20,20,20. There are33 certificates among36 CGendpoints;34MIPs include22target matches and12open one-bus gaps. [Dated evidence](../cumulative_budget_20260913/status_20260914T062515Z/README.md).
+
 **14 September, 01:26 EDT:** New C2 k22=22 and C4 k20=20 matches; largest matches by chain: 18,22,18,20,18,20. There are 31 certificates among 34 CG endpoints and 21 target matches among 33 MIPs; 12 one-bus fleet gaps remain open. [Dated table](../cumulative_budget_20260913/status_20260914T052404Z/README.md).
 
 **Results through14September00:25EDT:** new integer matches C2k21=21,C4k19=19,C6k20=20 have fleet proofs within their saved pools and pass individual-route replay. Highest individual targets by chain are18,21,18,19,18,20; earlier gaps remain open.29MIPs are verified:19target matches and10open one-bus gaps. CG has30certificates among33endpoints; C1/C4/C5k19 hit their time limits with negative reduced costs below tolerance. C4k19 nevertheless matches the integer target. Charging optimality is separate. [Current tables, every MIP and CG stopping reason](../cumulative_budget_20260913/status_20260914T042303Z/README.md).

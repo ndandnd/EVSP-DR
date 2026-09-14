@@ -80,14 +80,66 @@ def main():
         'This is one selected difficult case. It demonstrates that an LP pricing certificate and a large column count do not guarantee an integer target solution in the saved pool. It does not establish a general success rate or full-model integer optimality. Both new treatments took longer CG time than the original in this case; hardware variation limits direct timing attribution.', '',
         'The input, baseline physics, objective, execution code, cumulative CG allowance and final one-hour MIP allowance are held fixed for these treatment comparisons. The methods use covering, 240 kWh / 240 kW, flat prices and a charging-start fee of five. Shared charger capacity and a terminal-SOC floor are absent. Individual-route replay passes; other physical checks remain separate.', '',
         '[Exact results and source hashes](chain5_k5_comparison.csv).']
+    # Report every observed comparison, including misses and worse incumbents.
+    paired = []
+    for base_id in sorted({cid.rsplit('_', 1)[0] for cid in cases
+                           if cid.endswith(('_c200', '_complementary'))}):
+        treatment_mips = {arm: endpoints.get(base_id+'_'+arm+'_mip')
+                          for arm in ('c200', 'complementary')}
+        if not any(treatment_mips.values()):
+            continue
+        control = next(r for r in reference['mip']
+                       if r['case_id'] == base_id and r['budget_arm'] == 'base')
+        control_cg = next(r for r in reference['cg']
+                          if r['case_id'] == base_id and r['budget_arm'] == 'base')
+        for arm, mip in [('original', control), *treatment_mips.items()]:
+            cg = control_cg if arm == 'original' else endpoints.get(base_id+'_'+arm)
+            case = cases[base_id+'_c200']
+            paired.append(dict(case_id=base_id, chain=case['chain'], target_k=case['target_k'],
+                treatment=arm, integer_buses=mip['buses'] if mip else None,
+                pool_fleet_bound=mip['fleet_bound'] if mip else None,
+                fleet_proven_in_pool=mip['fleet_proven'] if mip else None,
+                individual_route_replay=mip.get('physical_replay_validated') if mip else None,
+                mip_source_path=mip['path'] if mip else None,
+                mip_sha256=mip.get('sha256') if mip else None,
+                cg_minutes=cg['wall_s']/60 if cg else None,
+                cg_certified=cg.get('certified_rc_optimal') if cg else None,
+                weighted_lp_objective=(cg.get('final_lp') or {}).get('objective',
+                    (cg.get('final') or {}).get('lp_obj')) if cg else None,
+                cg_source_path=cg['path'] if cg else None,
+                cg_sha256=cg.get('sha256') if cg else None,
+                snapshot_sha256=snapshot_sha))
+    if paired:
+        write_csv(root/'column_selection_comparison.csv', paired)
+        text += ['', '## All cases with a completed treatment MIP', '',
+            '| Chain / target | Original buses | 200-column buses | Complementary buses |',
+            '|---|---:|---:|---:|']
+        for cid in sorted({r['case_id'] for r in paired}):
+            group = [r for r in paired if r['case_id'] == cid]
+            vals = [str(r['integer_buses']) if r['integer_buses'] is not None else 'pending'
+                    for r in group]
+            text.append(f"| C{group[0]['chain']} / {group[0]['target_k']} | {' | '.join(vals)} |")
+        text += ['', 'Numbers are integer incumbents, not all optimal fleets. Pending means no published MIP result in this collection. See the CSV for each fleet bound, proof, timing and source hash. Results arriving early are not a random sample of the batch. A worse incumbent does not prove that the new pool lacks the earlier fleet.', '',
+            '[Complete comparison with proof scopes](column_selection_comparison.csv).']
     continuation = endpoints.get('w4_k19_resume8h')
     extra_min = None
     if continuation:
         old = next(r for r in source['campaigns']['chain_extension_20260913']['cg'] if '/w4_k19/' in r['path'])
         extra_min = (continuation['wall_s']-old['wall_s'])/60
-        drop = old['final']['lp_obj']-continuation['final']['lp_obj']
+        drop = (old.get('final_lp') or {}).get('objective', old['final']['lp_obj'])-continuation['final_lp']['objective']
         text += ['', '## Chain 4 k=19 continuation', '',
             f"The separate continuation reached its pricing certificate after {continuation['wall_s']/60:.1f} cumulative CG minutes: {extra_min:.1f} beyond the original run. Its weighted LP objective improved by only {drop:.6f}. The original four-hour endpoint remains uncertified; this later certificate belongs to a distinct longer-budget treatment. Its final MIP is {'collected separately' if 'w4_k19_resume8h_mip' in endpoints else 'pending'}. This is a certificate at the stated reduced-cost tolerance within the tested graph."]
+        mip = endpoints.get('w4_k19_resume8h_mip')
+        if mip:
+            start = mip.get('mip_start') or {}
+            text += ['', f"The continuation MIP found {mip['buses']} buses with pool fleet bound {mip['fleet_bound']:.0f}; fleet proved: {mip['fleet_proven']}. The original pool's separate MIP found 19 and proved it. The new MIP used its ordinary {start.get('kind')} initializer with {start.get('validated_bus_count')} buses, accepted by Gurobi; it did not inherit the previous 19-bus integer incumbent. This new timed incumbent is not evidence that the continued pool cannot support 19. Membership of the earlier selected routes in the continued pool has not been audited. No full-model integer conclusion follows."]
+    c5 = endpoints.get('w5_k19_resume8h')
+    if c5:
+        old = next(r for r in source['campaigns']['chain_extension_20260913']['cg'] if '/w5_k19/' in r['path'])
+        extra = (c5['wall_s']-old['wall_s'])/60
+        drop = (old.get('final_lp') or {}).get('objective', old['final']['lp_obj'])-c5['final_lp']['objective']
+        text += ['', '## Chain 5 k=19 continuation', '',
+            f"Certified after {c5['wall_s']/60:.1f} cumulative CG minutes, {extra:.1f} additional minutes. The weighted LP objective improved by {drop:.6f}. Its final MIP is {'collected separately' if 'w5_k19_resume8h_mip' in endpoints else 'pending'}. The original four-hour endpoint remains uncertified."]
     summary = dict(snapshot=str(args.snapshot), snapshot_sha256=snapshot_sha,
         diagnostic_cg=len(campaign['cg']), diagnostic_cg_certified=sum(bool(r.get('certified_rc_optimal')) for r in campaign['cg']),
         diagnostic_mip=len(campaign['mip']), comparison_rows=len(rows),

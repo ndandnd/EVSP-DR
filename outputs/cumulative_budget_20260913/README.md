@@ -1,5 +1,7 @@
 # Is sequential warm starting better use of the same computation budget?
 
+**14 September, 02:28 EDT:** [Current chain table and unchanged cumulative-budget comparison](status_20260914T062515Z/README.md). Fresh versus warm remains6/24 versus24/24 target matches. New diagnostic treatments are separate; see their [full comparison](../overnight_diagnostics_20260914/status_20260914T062515Z/README.md).
+
 **14 September, 01:26 EDT:** [Current chains and unchanged completed comparison](status_20260914T052404Z/README.md). Fresh controls remain 6/24 target matches versus 24/24 warm-reference matches. The separate [column-selection treatment](../overnight_diagnostics_20260914/status_20260914T052404Z/README.md) now recovers C5 k5 with 30 complementary columns; do not mix it into the fresh control.
 
 **Launched 13 September, verified 14:20 EDT:** 120 stage jobs across 24 datasets; 45 running and 3 finished at the first check, with 72 waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.

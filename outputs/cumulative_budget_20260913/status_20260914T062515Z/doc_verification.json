@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "reference_and_later_unchanged": true,
+    "new_reach_row": true,
+    "new_comparison": true,
+    "new_time": true,
+    "new_counts": true,
+    "no_duplicate_old_sentence": true,
+    "continuation_start_explained": true
+  },
+  "all_passed": true,
+  "table_rows_before": 184,
+  "table_rows_after": 194,
+  "before_sha256": "ccd90fea8800df64b795c85dfc3c115739597fea1b1302164c0581b989a19972",
+  "after_sha256": "06cf0853af0c1c64d41c093b5f0cc13e4d344b6401c4ceaf8972c304dff0f627",
+  "slides_edited": false,
+  "other_tabs_edited": false
+}

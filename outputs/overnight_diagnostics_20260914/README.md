@@ -1,5 +1,7 @@
 # Overnight experiments: distinguish missing columns from insufficient MIP time
 
+**Results, 14 September 02:28 EDT:** [All completed comparisons and continuations](status_20260914T062515Z/README.md).23certified CGendpoints and15MIPs. Both treatments recover C3k8; other cases show unchanged misses or worse incumbents. C5k19 now certifies after314.0 cumulative minutes. C4k19 continuation MIP20/bound19 used the ordinary181-bus greedy initializer, not the earlier19-bus solution; membership of those earlier selected routes remains unaudited. No new jobs or algorithm changes.
+
 **Results, 14 September 01:26 EDT:** [First C5 k5 comparison and C4 k19 continuation](status_20260914T052404Z/README.md). Fifteen CG endpoints are certified; two final MIPs are available. Complementary selection recovers five buses where original and 200-column pools require six. **Live queue at 01:35 EDT:** 57 diagnostic jobs plus nine chain-extension jobs running; no arbitrary array throttle. All 99 diagnostic jobs remain submitted.
 
 Prepared on the night of 13–14 September. This is a separately registered diagnostic batch; it does not replace the six ongoing k=16–25 chains or the completed cumulative-budget comparison.

@@ -1,0 +1,1019 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T052404Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T062515Z.json",
+  "timestamp_utc": "2026-09-14T06:25:15.539966+00:00",
+  "changed_results": [
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000009,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.602763414383,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "5d176b26b47eb7f5ced24604bd18f13959c54fcb8d3c14ea8ad2a87a7145da2b",
+      "payload_sha256": "5d176b26b47eb7f5ced24604bd18f13959c54fcb8d3c14ea8ad2a87a7145da2b"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000002,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.758576154709,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "81a25d1bf330dce7c32cc0e04a6bc888d000c1bb54d26daae4c97d4390fcd978",
+      "payload_sha256": "81a25d1bf330dce7c32cc0e04a6bc888d000c1bb54d26daae4c97d4390fcd978"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k10_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 10.000000000000014,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.685293197632,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "5c63c6f9bff1b44be0ef3ec4a06c3a5a0ef8fbbc9a10d8c2ad5980dfe75f7828",
+      "payload_sha256": "5c63c6f9bff1b44be0ef3ec4a06c3a5a0ef8fbbc9a10d8c2ad5980dfe75f7828"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k08_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 8,
+        "fleet_bound": 8.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.908486843109,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "b2a8c2668d0947d809783607ea62f01a27679e4b1de1bdacb7dd3689aef7e030",
+      "payload_sha256": "b2a8c2668d0947d809783607ea62f01a27679e4b1de1bdacb7dd3689aef7e030"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k08_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 8,
+        "fleet_bound": 8.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3437.7144405841827,
+        "status_name": "OPTIMAL",
+        "final": {}
+      },
+      "sha256": "e6dbfe6a7b080fae0d139bd1a8c85d27d545e09aadae59d68f30ccc8d39ff4cb",
+      "payload_sha256": "e6dbfe6a7b080fae0d139bd1a8c85d27d545e09aadae59d68f30ccc8d39ff4cb"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k10_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.00000000000004,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3608.983898639679,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7e3fc684b69b1aff6a61c76efb1765c8b2acb6c17c7fba6fe642c0ca2a4245de",
+      "payload_sha256": "7e3fc684b69b1aff6a61c76efb1765c8b2acb6c17c7fba6fe642c0ca2a4245de"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k10_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000005,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.8664813041687,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "2e70b56fdbe21e51554fb0530d511d3850ce0938c3ebf72a041e400dd495f988",
+      "payload_sha256": "2e70b56fdbe21e51554fb0530d511d3850ce0938c3ebf72a041e400dd495f988"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k08_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000021,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3607.102125644684,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "bd0de29637ea83ffa866d8b9b74cc3d80a1fed32446a9c5e69fa2a2f9a6468c7",
+      "payload_sha256": "bd0de29637ea83ffa866d8b9b74cc3d80a1fed32446a9c5e69fa2a2f9a6468c7"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k08_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.551087617874,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "b7d7e4b129cd13ef5576e62ac20067632c4d19da53d6fed1e4a1e15973377d93",
+      "payload_sha256": "b7d7e4b129cd13ef5576e62ac20067632c4d19da53d6fed1e4a1e15973377d93"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000012,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3600.8942630290985,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3896d6b57b230292e23939def889f19fe0092ae71735865f160682f4c5bb8c93",
+      "payload_sha256": "3896d6b57b230292e23939def889f19fe0092ae71735865f160682f4c5bb8c93"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000004,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.3385519981384,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3c544f48e2a465e5be80137c39d5442fce1abbfcf93705d17ec77553e4e7aed1",
+      "payload_sha256": "3c544f48e2a465e5be80137c39d5442fce1abbfcf93705d17ec77553e4e7aed1"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 10.000000000000023,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.399498462677,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "b94153c8f45d6b9a6c34cf93f789c9f16c7fdba0c1ab73f1a5598e68e8f849af",
+      "payload_sha256": "b94153c8f45d6b9a6c34cf93f789c9f16c7fdba0c1ab73f1a5598e68e8f849af"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w4_k19_resume8h_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 19.00000000000012,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3606.922152519226,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "9137a74573be707917e80031b161a62e4777d3786f7e36bf16ec4ad790134256",
+      "payload_sha256": "9137a74573be707917e80031b161a62e4777d3786f7e36bf16ec4ad790134256"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k08_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6143.758871763945,
+        "final": {
+          "iter": 1203,
+          "attempt_iter": 1203,
+          "lp_obj": 800383.687977642,
+          "route_weight": 8.000000000000048,
+          "artificials": 0.0,
+          "min_rc": -6.348246373022448e-10,
+          "max_row_violation": 2.312594560294201e-13,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": "f43685c6095da2aaed183554e501f897af26cda2ff1a6830572429d4cb048378",
+      "payload_sha256": "f43685c6095da2aaed183554e501f897af26cda2ff1a6830572429d4cb048378"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k10_c200/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6446.376370139886,
+        "final": {
+          "iter": 916,
+          "attempt_iter": 916,
+          "lp_obj": 1000371.1457444391,
+          "route_weight": 10.000000000000016,
+          "artificials": 0.0,
+          "min_rc": -2.8428175369299424e-09,
+          "max_row_violation": 2.4980018054066022e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": "4664393d91e9456025bef0a44faf8a91c0e38752461df410f211ebb4bfcba53e",
+      "payload_sha256": "4664393d91e9456025bef0a44faf8a91c0e38752461df410f211ebb4bfcba53e"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k15_c200/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 7927.630348276114,
+        "final": {
+          "iter": 873,
+          "attempt_iter": 873,
+          "lp_obj": 1500507.4203255128,
+          "route_weight": 15.000000000000016,
+          "artificials": 0.0,
+          "min_rc": -1.5558969605145023e-05,
+          "max_row_violation": 2.8421709430404007e-13,
+          "max_bound_violation": 1.7156459955748229e-13
+        }
+      },
+      "sha256": "3f6b70568cb58dbe87c54053b1ff7aa457c7f08a80d41b3b82d1d19a052310b6",
+      "payload_sha256": "3f6b70568cb58dbe87c54053b1ff7aa457c7f08a80d41b3b82d1d19a052310b6"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k15_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6125.2900308817625,
+        "final": {
+          "iter": 1074,
+          "attempt_iter": 1074,
+          "lp_obj": 1500507.420324497,
+          "route_weight": 14.999999999999929,
+          "artificials": 0.0,
+          "min_rc": -6.652015827057767e-09,
+          "max_row_violation": 2.0228263508670352e-13,
+          "max_bound_violation": 2.7218882846761464e-13
+        }
+      },
+      "sha256": "104d400e4e463a609c030ea584dbd0678a4729762b1ed54a1e75c0e29f48b427",
+      "payload_sha256": "104d400e4e463a609c030ea584dbd0678a4729762b1ed54a1e75c0e29f48b427"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k08_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5468.250825514784,
+        "final": {
+          "iter": 1298,
+          "attempt_iter": 1298,
+          "lp_obj": 800359.8182244834,
+          "route_weight": 7.999999999999986,
+          "artificials": 0.0,
+          "min_rc": -1.4634684575298706e-09,
+          "max_row_violation": 3.4861002973229915e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": "446dfb2cb4d6554fbf238bbfe8937d89cef126e1b532b0b45d90c9831191d9ab",
+      "payload_sha256": "446dfb2cb4d6554fbf238bbfe8937d89cef126e1b532b0b45d90c9831191d9ab"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k10_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6273.726196391741,
+        "final": {
+          "iter": 1245,
+          "attempt_iter": 1245,
+          "lp_obj": 1000426.2710757913,
+          "route_weight": 9.99999999999989,
+          "artificials": 0.0,
+          "min_rc": -1.007846250900002e-09,
+          "max_row_violation": 2.0838886172214188e-13,
+          "max_bound_violation": 1.1357581541915351e-13
+        }
+      },
+      "sha256": "4262babbc7e22ed2e01d2dbd5e32112c9f7eca11422356df2bd2765930a722c9",
+      "payload_sha256": "4262babbc7e22ed2e01d2dbd5e32112c9f7eca11422356df2bd2765930a722c9"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_c200/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5406.208916465286,
+        "final": {
+          "iter": 817,
+          "attempt_iter": 817,
+          "lp_obj": 1000456.3339241381,
+          "route_weight": 10.000000000000002,
+          "artificials": 0.0,
+          "min_rc": -4.677430887056744e-09,
+          "max_row_violation": 1.1324274851176597e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": "8e44f44c95c409d1f6173630f5b07fd9bfe29ae6ed11d07be79ebb8f38c5a718",
+      "payload_sha256": "8e44f44c95c409d1f6173630f5b07fd9bfe29ae6ed11d07be79ebb8f38c5a718"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w5_k19_resume8h/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 18842.024904308142,
+        "final": {
+          "iter": 945,
+          "attempt_iter": 297,
+          "lp_obj": 1900861.5179806347,
+          "route_weight": 19.00000000000007,
+          "artificials": 0.0,
+          "min_rc": -5.367588328031303e-06,
+          "max_row_violation": 2.7252644585473718e-12,
+          "max_bound_violation": 3.541498326040074e-13
+        }
+      },
+      "sha256": "6e60afc23fb9d4e2b62b555c24b4f0b95779bbe590b11ede80d5f16a3476e67b",
+      "payload_sha256": "6e60afc23fb9d4e2b62b555c24b4f0b95779bbe590b11ede80d5f16a3476e67b"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k20/mip/134050_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.902218580246,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "b9deb9fddd1fa5af54f6628c8973b129c906d5194106c838e4f5fba4a8b1538c",
+      "payload_sha256": "b9deb9fddd1fa5af54f6628c8973b129c906d5194106c838e4f5fba4a8b1538c"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k24/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5552.299732785672,
+        "final": {
+          "iter": 192,
+          "attempt_iter": 192,
+          "lp_obj": 2400984.3039614363,
+          "route_weight": 24.000000000000398,
+          "artificials": 0.0,
+          "min_rc": -9.109958009778651e-05,
+          "max_row_violation": 4.780620344035924e-13,
+          "max_bound_violation": 3.6751157672654244e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "e328feb7a74df44391d2185083f3a1b8414260274c063a9424518ab12fe4ab33"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k21/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 9105.98073627823,
+        "final": {
+          "iter": 531,
+          "attempt_iter": 531,
+          "lp_obj": 2100851.1302987584,
+          "route_weight": 20.99999999999962,
+          "artificials": 0.0,
+          "min_rc": -3.98368933396398e-08,
+          "max_row_violation": 7.827072323607354e-13,
+          "max_bound_violation": 5.007660952571769e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "12d3841a16cd2be1a108b6887c43af97c600536c8703d59464e2b7c69f26e924"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133966",
+      "case_id": "w3_k24",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "134050",
+      "case_id": "w5_k20",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "134072",
+      "case_id": "w6_k21",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156697",
+      "case_id": "c1_k08_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156702",
+      "case_id": "c2_k08_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156703",
+      "case_id": "c2_k08_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156704",
+      "case_id": "c2_k10_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156705",
+      "case_id": "c2_k10_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156708",
+      "case_id": "c3_k08_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156709",
+      "case_id": "c3_k08_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156710",
+      "case_id": "c3_k10_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156711",
+      "case_id": "c3_k10_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156712",
+      "case_id": "c3_k15_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156713",
+      "case_id": "c3_k15_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156715",
+      "case_id": "c4_k08_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156717",
+      "case_id": "c4_k10_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156723",
+      "case_id": "c5_k08_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156724",
+      "case_id": "c5_k08_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156725",
+      "case_id": "c5_k10_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156726",
+      "case_id": "c5_k10_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156729",
+      "case_id": "c6_k10_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156730",
+      "case_id": "c6_k10_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "160349",
+      "case_id": "w4_k19_resume8h_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "160350",
+      "case_id": "w5_k19_resume8h_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133965",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133966",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-16"
+      }
+    },
+    {
+      "job": "133967",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "134050",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      },
+      "after": null
+    },
+    {
+      "job": "134071",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "134072",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-02"
+      }
+    },
+    {
+      "job": "134073",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "156635",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156645",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156657",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-13"
+      },
+      "after": null
+    },
+    {
+      "job": "156658",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-14"
+      },
+      "after": null
+    },
+    {
+      "job": "156661",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-16"
+      },
+      "after": null
+    },
+    {
+      "job": "156663",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-18"
+      },
+      "after": null
+    },
+    {
+      "job": "156672",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156697",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      }
+    },
+    {
+      "job": "156702",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156703",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156704",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      }
+    },
+    {
+      "job": "156705",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156708",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156709",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156710",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156711",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "156712",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-13"
+      }
+    },
+    {
+      "job": "156713",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156715",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "156717",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "156723",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156724",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "156725",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "156726",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156729",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156730",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "160348",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-09"
+      },
+      "after": null
+    },
+    {
+      "job": "160349",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      },
+      "after": null
+    },
+    {
+      "job": "160350",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-11"
+      }
+    }
+  ]
+}

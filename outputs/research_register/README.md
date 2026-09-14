@@ -1,6 +1,10 @@
 # EVSP–DR experiment register
 
-**Current results, 14 September 01:26 EDT:** [Chain table and cumulative-time comparison](../cumulative_budget_20260913/status_20260914T052404Z/README.md). Largest individual integer matches across chains 1–6: **18, 22, 18, 20, 18, 20**. New C2 k22 and C4 k20 matches have finite-pool fleet proofs and individual-route replay. Extension totals: 34 CG endpoints (31 certified), 33 MIPs (21 target matches, 12 open one-bus gaps). Original C1/C4/C5 k19 CG endpoints remain time-limited. A separate C4 k19 continuation now certifies after 267.0 cumulative minutes; it does not overwrite the original result.
+**Current results, 14 September 02:28 EDT:** [Chain table](../cumulative_budget_20260913/status_20260914T062515Z/README.md) and [all completed column-selection comparisons](../overnight_diagnostics_20260914/status_20260914T062515Z/README.md). Chain 5 now matches k=20 with a finite-pool fleet proof and individual-route replay. Largest individual matches by chain: **18,22,18,20,20,20**; earlier gaps remain. Extension totals: 36 CG endpoints (33 certified), 34 MIPs (22 target matches, 12 open one-bus gaps).
+
+Both column-selection treatments recover C3 k8 with 8 buses, versus 9 in the original fresh control. Other completed cases still miss: C5 k8 complementary proves its pool needs 9; C6 k10 complementary finds 12/bound10, versus the original11. Results are case dependent; no general improvement claim. Diagnostic totals23 certified CG endpoints and15 MIPs. C5 k19 continuation now certifies at314.0 cumulative minutes. C4 k19 continuation MIP finds20/bound19 after starting from the ordinary181-bus greedy initializer, not the earlier19-bus integer incumbent; selected-route membership in the continued pool is unaudited. Original four-hour endpoints remain separate. No new execution failure, confirmed preemption or invalid dependency;54 jobs running in the dated collection. No new jobs submitted.
+
+**Earlier results, 14 September 01:26 EDT (superseded):** [Chain table and cumulative-time comparison](../cumulative_budget_20260913/status_20260914T052404Z/README.md). Largest individual integer matches across chains 1–6: **18, 22, 18, 20, 18, 20**. New C2 k22 and C4 k20 matches have finite-pool fleet proofs and individual-route replay. Extension totals: 34 CG endpoints (31 certified), 33 MIPs (21 target matches, 12 open one-bus gaps). Original C1/C4/C5 k19 CG endpoints remain time-limited. A separate C4 k19 continuation now certifies after 267.0 cumulative minutes; it does not overwrite the original result.
 
 **First column-selection comparison:** [C5 k5 results](../overnight_diagnostics_20260914/status_20260914T052404Z/README.md). Original 30-column selection and 200-column selection both yield pools proved to require 6 buses; selecting 30 complementary columns produces a pool supporting 5. All three have the same certified weighted LP objective to numerical precision. This selected case establishes that column composition matters; it does not establish a general success rate. These remain baseline models without shared charger capacity or a terminal-SOC floor.
 
@@ -29,7 +33,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2,477 artifact/stage records across 51 campaign/source groups**, from the collection completed at 01:26 EDT on 14 September. Counts are not independent experimental sample sizes.
+Current build: **2,479 artifact/stage records across 51 campaign/source groups**, from the collection completed at 02:28 EDT on 14 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|

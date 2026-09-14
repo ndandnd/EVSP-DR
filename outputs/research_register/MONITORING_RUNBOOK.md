@@ -1,5 +1,15 @@
 # Unicorn monitoring runbook
 
+## 14 September, 02:28 EDT — case-dependent selection effects; C5 reaches20
+
+Successful snapshot20260914T062515Z, SHA2cff5e7039d7c3de562d81289cde391b246e5b6f8770641a7c2a10a100289a25, collection completed06:28:02UTC. New C5k20=20/proved in pool/replay. Extension36CG=33certificates+three originalk19time limits;34MIPs=22targets+12open one-bus gaps. Highest individual matches18,22,18,20,20,20. C3k24 andC6k21 newly certified; MIPs pending in snapshot. No late scheduler-only result detected. Cumulative comparison unchanged.
+
+Diagnostics23certified CG/15MIPs. Both c200 andcomplementary recoverC3k8=8/proved/replay versus original9. Other arms do not consistently improve: C5k8complementary9/bound9/proved, C6k10complementary12/bound10/unproved versus original11. Full eight-case comparison, including pending arms, in dated diagnostic report. It is an early selected subset, not an unbiased success sample. No broad winner claim.
+
+C5k19continuation certifies314.0 cumulative minutes,74.7extra, weighted LP improvement0.032497. C4k19continuation MIP20/bound19/unproved: observed mip_start kindgreedy_pool_partition,181buses,accepted,source null. It did not import the original19-bus incumbent. Original MIP19/proved remains valid. Both physical pool gates rejectzero columns, but membership of the earlier selected19routes in the continued pool is not audited. Preserve this precise open question; no blind rerun or change to frozen workers. Full raw source/start evidence in c4_k19_mip_start_audit.json. These are fresh finite-pool integer searches on separate continuation outputs, not resumed branch-and-bound trees.
+
+No production execution failure, confirmed preemption or invalid dependency; workflow states checked in allthree activecampaigns.24MIP scheduler transitions,36queue transitions;597attemptrows. Queue54running and57dependency waits;33held historical arraytasks unchanged. Register2479rows/51campaigns, allsix supplements retained;180scientific endpoints exactly matched. Workbook formula scan clean,12views rendered; diagnostic CG/MIP visually checked. Doc adds allfinished treatment comparison rows, updatesC5reach and continuations; reference andlater content, figures andSlides preserved. Solver/source settings unchanged; report-only generator extended to include allobserved treatmentMIPs. No new submissions.
+
 ## 14 September, 01:26 EDT — first column-selection result; target reaches 22
 
 Snapshot 20260914T052404Z, SHA 03d1f29511e724a3770c807c7cba3a8efc1f08fca59faf58d28e1532bbe33a57. Extension 34 CG endpoints (31 certificates, three original k19 time limits), 33 MIPs (21 target matches, 12 open one-bus gaps). New C2k22 and C4k20 matches have pool-fleet proofs and individual replay. C1k19=20/bound19 and C3k23=24/bound23 remain open. C5k20 CG certifies at217.7min. Highest individual targets18,22,18,20,18,20. Cumulative comparison unchanged24 certified fresh CG, 6/24 fresh versus24/24 warm targets.
