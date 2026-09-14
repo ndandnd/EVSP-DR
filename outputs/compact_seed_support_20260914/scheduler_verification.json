@@ -1,0 +1,1090 @@
+{
+  "status": "passed",
+  "utc": "2026-09-14T23:23:50.952739+00:00",
+  "manifest_sha256": "333ce3f646f4ac39897daebdfbec2e4d54c47de835bf98d4e42f5684ff6f6a62",
+  "jobs": [
+    {
+      "case_id": "c1_k08_core",
+      "job_id": "201438",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k08_core512",
+      "job_id": "201439",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k10_core",
+      "job_id": "201440",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k10_core512",
+      "job_id": "201441",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k15_core",
+      "job_id": "201442",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k15_core512",
+      "job_id": "201443",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k08_core",
+      "job_id": "201444",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k08_core512",
+      "job_id": "201445",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k10_core",
+      "job_id": "201446",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k10_core512",
+      "job_id": "201447",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k15_core",
+      "job_id": "201448",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k15_core512",
+      "job_id": "201449",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k08_core",
+      "job_id": "201450",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k08_core512",
+      "job_id": "201451",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k10_core",
+      "job_id": "201452",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k10_core512",
+      "job_id": "201453",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k15_core",
+      "job_id": "201454",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k15_core512",
+      "job_id": "201455",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k08_core",
+      "job_id": "201456",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k08_core512",
+      "job_id": "201457",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k10_core",
+      "job_id": "201458",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k10_core512",
+      "job_id": "201459",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k15_core",
+      "job_id": "201460",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k15_core512",
+      "job_id": "201461",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k08_core",
+      "job_id": "201462",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k08_core512",
+      "job_id": "201463",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k10_core",
+      "job_id": "201464",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k10_core512",
+      "job_id": "201465",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k15_core",
+      "job_id": "201466",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k15_core512",
+      "job_id": "201467",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k08_core",
+      "job_id": "201468",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k08_core512",
+      "job_id": "201469",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k10_core",
+      "job_id": "201470",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k10_core512",
+      "job_id": "201471",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k15_core",
+      "job_id": "201472",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k15_core512",
+      "job_id": "201473",
+      "state": "PENDING",
+      "dependencies": [],
+      "resources": {
+        "cpus": 8,
+        "mem": "96G",
+        "allocation_s": 18000
+      },
+      "excluded": true,
+      "reason": "Priority",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k08_core512_mip",
+      "job_id": "201474",
+      "state": "PENDING",
+      "dependencies": [
+        "201439"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k08_core_mip",
+      "job_id": "201475",
+      "state": "PENDING",
+      "dependencies": [
+        "201438"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k10_core512_mip",
+      "job_id": "201476",
+      "state": "PENDING",
+      "dependencies": [
+        "201441"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k10_core_mip",
+      "job_id": "201477",
+      "state": "PENDING",
+      "dependencies": [
+        "201440"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k15_core512_mip",
+      "job_id": "201478",
+      "state": "PENDING",
+      "dependencies": [
+        "201443"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c1_k15_core_mip",
+      "job_id": "201479",
+      "state": "PENDING",
+      "dependencies": [
+        "201442"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k08_core512_mip",
+      "job_id": "201480",
+      "state": "PENDING",
+      "dependencies": [
+        "201445"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k08_core_mip",
+      "job_id": "201481",
+      "state": "PENDING",
+      "dependencies": [
+        "201444"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k10_core512_mip",
+      "job_id": "201482",
+      "state": "PENDING",
+      "dependencies": [
+        "201447"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k10_core_mip",
+      "job_id": "201483",
+      "state": "PENDING",
+      "dependencies": [
+        "201446"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k15_core512_mip",
+      "job_id": "201484",
+      "state": "PENDING",
+      "dependencies": [
+        "201449"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c2_k15_core_mip",
+      "job_id": "201485",
+      "state": "PENDING",
+      "dependencies": [
+        "201448"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k08_core512_mip",
+      "job_id": "201486",
+      "state": "PENDING",
+      "dependencies": [
+        "201451"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k08_core_mip",
+      "job_id": "201487",
+      "state": "PENDING",
+      "dependencies": [
+        "201450"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k10_core512_mip",
+      "job_id": "201488",
+      "state": "PENDING",
+      "dependencies": [
+        "201453"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k10_core_mip",
+      "job_id": "201489",
+      "state": "PENDING",
+      "dependencies": [
+        "201452"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k15_core512_mip",
+      "job_id": "201490",
+      "state": "PENDING",
+      "dependencies": [
+        "201455"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c3_k15_core_mip",
+      "job_id": "201491",
+      "state": "PENDING",
+      "dependencies": [
+        "201454"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k08_core512_mip",
+      "job_id": "201492",
+      "state": "PENDING",
+      "dependencies": [
+        "201457"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k08_core_mip",
+      "job_id": "201493",
+      "state": "PENDING",
+      "dependencies": [
+        "201456"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k10_core512_mip",
+      "job_id": "201494",
+      "state": "PENDING",
+      "dependencies": [
+        "201459"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k10_core_mip",
+      "job_id": "201495",
+      "state": "PENDING",
+      "dependencies": [
+        "201458"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k15_core512_mip",
+      "job_id": "201496",
+      "state": "PENDING",
+      "dependencies": [
+        "201461"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c4_k15_core_mip",
+      "job_id": "201497",
+      "state": "PENDING",
+      "dependencies": [
+        "201460"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k08_core512_mip",
+      "job_id": "201498",
+      "state": "PENDING",
+      "dependencies": [
+        "201463"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k08_core_mip",
+      "job_id": "201499",
+      "state": "PENDING",
+      "dependencies": [
+        "201462"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k10_core512_mip",
+      "job_id": "201500",
+      "state": "PENDING",
+      "dependencies": [
+        "201465"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k10_core_mip",
+      "job_id": "201501",
+      "state": "PENDING",
+      "dependencies": [
+        "201464"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k15_core512_mip",
+      "job_id": "201502",
+      "state": "PENDING",
+      "dependencies": [
+        "201467"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c5_k15_core_mip",
+      "job_id": "201503",
+      "state": "PENDING",
+      "dependencies": [
+        "201466"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k08_core512_mip",
+      "job_id": "201504",
+      "state": "PENDING",
+      "dependencies": [
+        "201469"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k08_core_mip",
+      "job_id": "201505",
+      "state": "PENDING",
+      "dependencies": [
+        "201468"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k10_core512_mip",
+      "job_id": "201506",
+      "state": "PENDING",
+      "dependencies": [
+        "201471"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k10_core_mip",
+      "job_id": "201507",
+      "state": "PENDING",
+      "dependencies": [
+        "201470"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k15_core512_mip",
+      "job_id": "201508",
+      "state": "PENDING",
+      "dependencies": [
+        "201473"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    },
+    {
+      "case_id": "c6_k15_core_mip",
+      "job_id": "201509",
+      "state": "PENDING",
+      "dependencies": [
+        "201472"
+      ],
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 16200
+      },
+      "excluded": true,
+      "reason": "Dependency",
+      "memory_time_requeue_verified": true
+    }
+  ],
+  "independent_cg": 36,
+  "dependent_mip": 36,
+  "all_requested_resources_verified": true
+}

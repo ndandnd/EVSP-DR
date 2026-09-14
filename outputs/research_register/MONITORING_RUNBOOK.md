@@ -1,3 +1,19 @@
+## 14 September evening — explicitly authorized independent work
+
+The user requested useful independent overnight experiments because the queue was thinning. The authorized batch is recorded in [the evening plan](../overnight_evening_20260914/README.md):
+
+- `compact_seed_support_20260914`: 36 CGs (201438–201473) and 36 own-CG MIPs (201474–201509). Compare all previous integer/positive-LP support with the same core filled to 512 distinct trip sets. CG 14,400 s; MIP 12,600 s total / 10,800 s fleet. Preserve the frozen budgets and input bindings.
+- `remaining_chain_gaps_20260914`: nine independent MIPs (201512–201520), 12,600 / 10,800 s, using unchanged original pools. Gaps and duplicate treatments were checked. Use campaign root and case ID, not only the generic registry cohort.
+- `capacity_fixed_dual_20260914`: four single-call diagnostics. Prefix attempts 202361/202363 failed because the wrapper removed the source directory before a lazy import. Reference calls 202362/202364 continue. Corrected prefix attempts 202450/202451 live under `capacity_fixed_dual_retry_20260914`; native gate 202418 exercised the real selector with a nonzero capacity dual. Preserve both failed attempts. This is a wrapper fix, not a pricing-algorithm change.
+
+For capacity diagnostics, collect both roots and join by pair ID. Verify actual raw dual hashes, source pools and module hashes. Treat a deadline as censored timing evidence. A single call is never automatically a complete CG or MIP result. Check scheduler accounting when a worker flag says running but its allocation has disappeared. Do not blindly resubmit failures or preemptions.
+
+The 18:58–19:04 scientific snapshot is `20260914T225805Z`: collection 407.8 s, SHA `45fcc45515507d942983916e339b29e4ca0e358fc32a0045afd7d452bcb85c09`. The register has 2,930 rows in 63 groups and retains all six supplements. Source checks covered 316 core endpoints and 157 additional seed/prefix/decomposition endpoints; the workbook has 17 checked views and no formula errors. Later targeted launch and early-result records have separate timestamps.
+
+Both all-nine decomposition MIPs ended at 34 buses, with pool bounds 33 and 32. Chain 3 k26 has a CG certificate after 113.2 minutes; its integer outcome is separate. Small-seed totals at this cut: 36 CG endpoints (35 certified, one capped), 26 MIPs (eight target matches, thirteen pool-proved misses, five open gaps). Twelve seed pairs are complete. Original extension totals: 58 CG endpoints (45 certified), 57 MIPs (33 target matches); selected longer searches recover fifteen earlier gaps, leaving nine unresolved.
+
+Do not repeat completed decomposition unions or certified fresh CG merely to fill occupancy. Preserve graph gates, previous-k dependencies, held historical 537227, V2G and the reserved-node exclusion. The current Doc retains the k15 reference section and later content; figure tabs and Slides are untouched. Collect meaningful new results hourly, stay quiet on unchanged status, and do not start speculative campaigns from the monitor.
+
 ## 14 September, 18:02 EDT — small-seed limits and completed fresh-pool controls
 
 Full collection215636 completed22:02:52UTC after376s, SHA1d33ef956bb17f9af5556fa05e3b17ca4df47104b09c0f101bce89d01c80e402; previous205702. Preemptionstudy816attempts, no new failures/preemptions/invalid dependencies. Queue34running (4CG16MIP14graph),38solver dependencies14conditional checks33held. No new campaign or scheduler/solver mutation. Capacity13407cached remains the documented interrupted job189169; staleworkerflag does not mean running. Both all-nine decompMIPs remain active.

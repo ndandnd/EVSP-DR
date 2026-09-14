@@ -1,0 +1,24 @@
+{
+  "case_ids": [
+    "k1_13407_i16_prefix_memo",
+    "k2_240r0_i5_prefix_memo"
+  ],
+  "execution_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "frozen_utc": "2026-09-14T23:51:43.135665+00:00",
+  "manifest_sha256": "a3f45135a50f502f40fa3ccd0797658a60fc74e85bdee4f0e8c1e86c10a0fa68",
+  "parent_manifest_sha256": "fe3eea1b18720f0b6507b632b73bc8640e4e4b5f3690549ce35b2402109c62e9",
+  "preflight_job_id": "202418",
+  "preflight_result_sha256": "2b97386732642f90ab71ef31ff1c420af2faf7a6e4b7c128732755b9232cc5dc",
+  "schema": "evsp-dr-capacity-fixed-dual-retry-freeze-v1",
+  "selector_module_sha256": "9743c2c53967f09bbfeb2e62ba971761a6b1d30ab6e3b36f3feaca7ede5f0131",
+  "tooling_sha256": {
+    "README.md": "4b0d396ea32d4ae55e8fc410c8d647b4349e0d24f7ef25fd14998e62c53390bb",
+    "campaign.py": "1ba256ec1522807ee39235f29728bdbfab1d630985b0e2d631831b01f5c68f20",
+    "collect.py": "98710d565f5ad40910edf0500226c29a09c43fca73127342f9424035717fcbd1",
+    "preflight_retry.py": "a6ef29dab88b1045093cc2eb73043bcc28a340c8838d05c6fc1c75021f09643f",
+    "preflight_retry.sh": "6b30531e1f761390684e305e6bb4052959fe65fb49f8fbdefa9974f75ccdaf11",
+    "submit.py": "8caa3524c84db2b02a9b089535e23f273983cfb9e028f41d35b376daa6bd20b1",
+    "test_campaign.py": "77f7cc1f757eba1b4e7a252fdb1c0ed3d2f1a792ba00f8cd677c3203dec61d37",
+    "worker.sh": "b34da0ffd0ed1a5b504f943983d313e34171eddd1c08f5e3b63fa3dc57b23b29"
+  }
+}

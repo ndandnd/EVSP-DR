@@ -311,6 +311,8 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'remaining_chain_gaps_20260914': home / 'remaining_chain_gaps_20260914',
+    'compact_seed_support_20260914': home / 'compact_seed_support_20260914',
     'decomposition_lp_support_union_20260914': home / 'decomposition_lp_support_union_20260914',
     'decomposition_pool_union_20260914': home / 'decomposition_pool_union_20260914',
     'graph_timeout_gates_v2_20260914': home / 'graph_timeout_gates_v2_20260914',
@@ -356,7 +358,7 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914', 'retrospective_prefix_controls_20260914', 'decomposition_pool_union_20260914', 'decomposition_lp_support_union_20260914')
+    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914', 'overnight_parallel_20260914', 'compact_seed_support_20260914', 'remaining_chain_gaps_20260914', 'retrospective_prefix_controls_20260914', 'decomposition_pool_union_20260914', 'decomposition_lp_support_union_20260914')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
@@ -563,6 +565,26 @@ for name, root in roots.items():
         record_path = root / record_name
         if record_path.exists():
             out['campaigns'][name]['workflow'][record_name] = record_path.read_text()
+# A single fixed-dual pricing call is a diagnostic, not a completed CG or MIP.
+for fixed_dual_name in ('capacity_fixed_dual_20260914', 'capacity_fixed_dual_retry_20260914'):
+    fixed_dual_root = home / fixed_dual_name
+    if (fixed_dual_root / 'manifest.json').is_file():
+        fixed_dual_run = subprocess.run(
+            ['python3', str(fixed_dual_root / 'collect.py'), '--root', str(fixed_dual_root)],
+            text=True, capture_output=True, timeout=60, check=True)
+        fixed_dual = json.loads(fixed_dual_run.stdout)
+        fixed_workflow = {
+            'manifest.json': json.loads((fixed_dual_root / 'manifest.json').read_text()),
+            'diagnostic_collection': {key: value for key, value in fixed_dual.items()
+                                      if key != 'records'},
+        }
+        if (fixed_dual_root / 'jobs.json').is_file():
+            fixed_workflow['jobs.json'] = json.loads((fixed_dual_root / 'jobs.json').read_text())
+        out['campaigns'][fixed_dual_name] = {
+            'root': str(fixed_dual_root), 'pricing_calls': fixed_dual['records'],
+            'workflow': fixed_workflow,
+        }
+
 # Capacity retry uses the same nested results schema as the original pilot.
 for retry_name in ['capacity_timeout6_rerun', 'capacity_deadline5_retry']:
     retry_root = roots[retry_name]

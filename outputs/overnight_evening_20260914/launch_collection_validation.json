@@ -1,0 +1,14 @@
+{
+  "scope": "Registration validation only: new campaign metadata over previous full snapshot; not a new complete scientific collection.",
+  "base_snapshot": "outputs/post_meeting_20260910/monitor/20260914T225805Z.json",
+  "base_sha256": "45fcc45515507d942983916e339b29e4ca0e358fc32a0045afd7d452bcb85c09",
+  "targeted_snapshot_sha256": "4c342d3b730acaaa0614080cefa5c58f74e6baeac30e8b2efe25c3d0bef33bbe",
+  "registered_cases": {
+    "compact_seed_support_20260914": 72,
+    "remaining_chain_gaps_20260914": 9
+  },
+  "normalized_new_rows": 48,
+  "published_cg": 0,
+  "published_mip": 0,
+  "errors": []
+}

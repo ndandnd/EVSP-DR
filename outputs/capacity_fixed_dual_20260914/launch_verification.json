@@ -1,0 +1,63 @@
+{
+  "entries": {
+    "k1_13407_i16_prefix_memo": {
+      "actual_normalized_9dp_dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+      "actual_raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+      "attempted_calls": 1,
+      "failure": "ModuleNotFoundError(\"No module named 'capacity_window_selector'\")",
+      "job_id": "202361",
+      "nonzero_capacity_dual_count": 1,
+      "pricing_call_sha256": "3ec63c8dff7c6dc16b1e0c61c6b981c230b433fd56bd9a2e84746e5dc6b291d5",
+      "pricing_call_status": "running",
+      "worker_status": "failed"
+    },
+    "k1_13407_i16_reference": {
+      "actual_normalized_9dp_dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+      "actual_raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+      "attempted_calls": 1,
+      "failure": null,
+      "job_id": "202362",
+      "nonzero_capacity_dual_count": 1,
+      "pricing_call_sha256": "c50ffd993a2fa98ff345afa200429285086a77b4e8e593266830883e19b497ad",
+      "pricing_call_status": "running",
+      "worker_status": "pricing"
+    },
+    "k2_240r0_i5_prefix_memo": {
+      "actual_normalized_9dp_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+      "actual_raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+      "attempted_calls": 1,
+      "failure": "ModuleNotFoundError(\"No module named 'capacity_window_selector'\")",
+      "job_id": "202363",
+      "nonzero_capacity_dual_count": 2,
+      "pricing_call_sha256": "373332a86a934a40bdfe6c577eadd686b053b545788aa46846c4147a4d23492c",
+      "pricing_call_status": "running",
+      "worker_status": "failed"
+    },
+    "k2_240r0_i5_reference": {
+      "actual_normalized_9dp_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+      "actual_raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+      "attempted_calls": 1,
+      "failure": null,
+      "job_id": "202364",
+      "nonzero_capacity_dual_count": 2,
+      "pricing_call_sha256": "efd895a6e5f99b8e971c8e89795712ff5c66354ada192b95b2942d20de532a34",
+      "pricing_call_status": "running",
+      "worker_status": "pricing"
+    }
+  },
+  "manifest_sha256": "fe3eea1b18720f0b6507b632b73bc8640e4e4b5f3690549ce35b2402109c62e9",
+  "pair_checks": {
+    "k1_13407_i16": {
+      "actual_normalized_duals_identical": true,
+      "actual_raw_duals_identical": true
+    },
+    "k2_240r0_i5": {
+      "actual_normalized_duals_identical": true,
+      "actual_raw_duals_identical": true
+    }
+  },
+  "proof_scope": "All four attempts entered the observation boundary with pair-identical actual duals. Prefix attempts failed before pricing due wrapper lazy-import resolution and are superseded by linked retries; references remain pricing. No result or certificate is claimed.",
+  "recorded_utc": "2026-09-14T23:59:18.245210+00:00",
+  "retry_root": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914",
+  "schema": "evsp-dr-fixed-capacity-launch-verification-v1"
+}

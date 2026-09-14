@@ -7,8 +7,13 @@ new=json.loads(Path(meta['snapshot']).read_text());old=json.loads(Path(meta['pre
 def flatten(d):
  out={}
  for campaign,c in d.get('campaigns',{}).items():
-  for stage in ['mip','cg','records','comparisons','rejected_mip_outputs']:
-   for i,r in enumerate(c.get(stage,[])):out[campaign,stage,r.get('path',str(i))]=r
+  for stage in ['mip','cg','records','comparisons','rejected_mip_outputs','pricing_calls']:
+   for i,r in enumerate(c.get(stage,[])):
+    path=r.get('path') or (r.get('artifact_hashes',{}).get('diagnostic.json',{}).get('path') if stage=='pricing_calls' else None) or str(i)
+    out[campaign,stage,path]=r
+  diagnostic=c.get('workflow',{}).get('diagnostic_collection',{})
+  for i,r in enumerate(diagnostic.get('errors',[])):
+   out[campaign,'diagnostic_collection_error',r.get('case_id',str(i))]=r
  return out
 def digest(v):return v.get('sha256') or hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 a,b=flatten(old),flatten(new);changed=[]
@@ -17,6 +22,8 @@ for key,r in b.items():
  if prior is None or digest(r)!=digest(prior):
   d=r.get('result',r);s={k:d.get(k) for k in ['buses','fleet_bound','fleet_proven','physical_replay_validated','certified_rc_optimal','stop_reason','wall_s','runtime_s','status_name'] if k in d}
   s['final']={k:v for k,v in (d.get('final')or{}).items() if not isinstance(v,(list,dict))}
+  if key[1]=='pricing_calls':
+   s.update(case_id=d.get('case_id'),selector=d.get('selector'),pricing_call=d.get('pricing_call'),proof_scope=d.get('proof_scope'))
   changed.append({'campaign':key[0],'stage':key[1],'path':key[2],'new_path':prior is None,'summary':s,'sha256':r.get('sha256'),'payload_sha256':digest(r)})
 prev={r['attempt_key']:r for r in old.get('mip_preemption_study',{}).get('attempts',[])};states=[]
 for r in new.get('mip_preemption_study',{}).get('attempts',[]):

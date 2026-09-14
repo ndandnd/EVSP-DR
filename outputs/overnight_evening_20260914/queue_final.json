@@ -1,0 +1,800 @@
+{
+  "captured_utc": "2026-09-14T23:52:32.741958+00:00",
+  "running": 55,
+  "pending": 55,
+  "new_campaign_states": {
+    "compact_seed_support_20260914": {
+      "PENDING": 21,
+      "RUNNING": 25
+    },
+    "remaining_chain_gaps_20260914": {
+      "RUNNING": 9
+    },
+    "capacity_fixed_dual_logical_calls": {
+      "RUNNING": 4
+    }
+  },
+  "invalid_dependencies": [],
+  "reserved_node_rows": [],
+  "held_historical_untouched": [
+    {
+      "job_id": "537227_[36-68%8]",
+      "state": "PENDING",
+      "name": "tpmR2d7a25b33",
+      "node_or_reason": "(JobHeldUser)",
+      "dependencies": "(null)"
+    }
+  ],
+  "rows": [
+    {
+      "job_id": "188002",
+      "state": "PENDING",
+      "name": "drX_w6_k28_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:188000(unfulfilled)"
+    },
+    {
+      "job_id": "187996",
+      "state": "PENDING",
+      "name": "drX_w5_k28_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187994(unfulfilled)"
+    },
+    {
+      "job_id": "187994",
+      "state": "PENDING",
+      "name": "drX_w5_k27_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187992(unfulfilled)"
+    },
+    {
+      "job_id": "187992",
+      "state": "PENDING",
+      "name": "drX_w5_k26_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:134059(unfulfilled)"
+    },
+    {
+      "job_id": "187990",
+      "state": "PENDING",
+      "name": "drX_w4_k28_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187988(unfulfilled)"
+    },
+    {
+      "job_id": "187988",
+      "state": "PENDING",
+      "name": "drX_w4_k27_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:189929(unfulfilled),afterok:187986(unfulfilled)"
+    },
+    {
+      "job_id": "187986",
+      "state": "PENDING",
+      "name": "drX_w4_k26_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:189928(unfulfilled)"
+    },
+    {
+      "job_id": "187984",
+      "state": "PENDING",
+      "name": "drX_w3_k28_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187982(unfulfilled)"
+    },
+    {
+      "job_id": "187978",
+      "state": "PENDING",
+      "name": "drX_w2_k28_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187976(unfulfilled)"
+    },
+    {
+      "job_id": "187976",
+      "state": "PENDING",
+      "name": "drX_w2_k27_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187974(unfulfilled)"
+    },
+    {
+      "job_id": "187972",
+      "state": "PENDING",
+      "name": "drX_w1_k28_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:189917(unfulfilled),afterok:187970(unfulfilled)"
+    },
+    {
+      "job_id": "187970",
+      "state": "PENDING",
+      "name": "drX_w1_k27_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187968(unfulfilled)"
+    },
+    {
+      "job_id": "187968",
+      "state": "PENDING",
+      "name": "drX_w1_k26_cg",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:133927(unfulfilled)"
+    },
+    {
+      "job_id": "189929",
+      "state": "PENDING",
+      "name": "drGraphGate_w4_k27",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterany:187967_10(unfulfilled)"
+    },
+    {
+      "job_id": "189928",
+      "state": "PENDING",
+      "name": "drGraphGate_w4_k26",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterany:187967_9(unfulfilled)"
+    },
+    {
+      "job_id": "189917",
+      "state": "PENDING",
+      "name": "drGraphGate_w1_k28",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterany:187967_2(unfulfilled)"
+    },
+    {
+      "job_id": "201509",
+      "state": "PENDING",
+      "name": "drCompact_c6_k15_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201472(unfulfilled)"
+    },
+    {
+      "job_id": "201508",
+      "state": "PENDING",
+      "name": "drCompact_c6_k15_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201473(unfulfilled)"
+    },
+    {
+      "job_id": "201503",
+      "state": "PENDING",
+      "name": "drCompact_c5_k15_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201466(unfulfilled)"
+    },
+    {
+      "job_id": "201502",
+      "state": "PENDING",
+      "name": "drCompact_c5_k15_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201467(unfulfilled)"
+    },
+    {
+      "job_id": "201497",
+      "state": "PENDING",
+      "name": "drCompact_c4_k15_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201460(unfulfilled)"
+    },
+    {
+      "job_id": "201496",
+      "state": "PENDING",
+      "name": "drCompact_c4_k15_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201461(unfulfilled)"
+    },
+    {
+      "job_id": "201495",
+      "state": "PENDING",
+      "name": "drCompact_c4_k10_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201458(unfulfilled)"
+    },
+    {
+      "job_id": "201493",
+      "state": "PENDING",
+      "name": "drCompact_c4_k08_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201456(unfulfilled)"
+    },
+    {
+      "job_id": "201492",
+      "state": "PENDING",
+      "name": "drCompact_c4_k08_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201457(unfulfilled)"
+    },
+    {
+      "job_id": "201491",
+      "state": "PENDING",
+      "name": "drCompact_c3_k15_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201454(unfulfilled)"
+    },
+    {
+      "job_id": "201490",
+      "state": "PENDING",
+      "name": "drCompact_c3_k15_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201455(unfulfilled)"
+    },
+    {
+      "job_id": "201485",
+      "state": "PENDING",
+      "name": "drCompact_c2_k15_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201448(unfulfilled)"
+    },
+    {
+      "job_id": "201484",
+      "state": "PENDING",
+      "name": "drCompact_c2_k15_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201449(unfulfilled)"
+    },
+    {
+      "job_id": "201483",
+      "state": "PENDING",
+      "name": "drCompact_c2_k10_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201446(unfulfilled)"
+    },
+    {
+      "job_id": "201482",
+      "state": "PENDING",
+      "name": "drCompact_c2_k10_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201447(unfulfilled)"
+    },
+    {
+      "job_id": "201479",
+      "state": "PENDING",
+      "name": "drCompact_c1_k15_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201442(unfulfilled)"
+    },
+    {
+      "job_id": "201478",
+      "state": "PENDING",
+      "name": "drCompact_c1_k15_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201443(unfulfilled)"
+    },
+    {
+      "job_id": "201477",
+      "state": "PENDING",
+      "name": "drCompact_c1_k10_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201440(unfulfilled)"
+    },
+    {
+      "job_id": "201476",
+      "state": "PENDING",
+      "name": "drCompact_c1_k10_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201441(unfulfilled)"
+    },
+    {
+      "job_id": "201475",
+      "state": "PENDING",
+      "name": "drCompact_c1_k08_core_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201438(unfulfilled)"
+    },
+    {
+      "job_id": "201474",
+      "state": "PENDING",
+      "name": "drCompact_c1_k08_core512_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:201439(unfulfilled)"
+    },
+    {
+      "job_id": "188004",
+      "state": "PENDING",
+      "name": "drX_w6_k28_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:188002(unfulfilled)"
+    },
+    {
+      "job_id": "188001",
+      "state": "PENDING",
+      "name": "drX_w6_k27_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:188000(unfulfilled)"
+    },
+    {
+      "job_id": "187997",
+      "state": "PENDING",
+      "name": "drX_w5_k28_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187996(unfulfilled)"
+    },
+    {
+      "job_id": "187995",
+      "state": "PENDING",
+      "name": "drX_w5_k27_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187994(unfulfilled)"
+    },
+    {
+      "job_id": "187993",
+      "state": "PENDING",
+      "name": "drX_w5_k26_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187992(unfulfilled)"
+    },
+    {
+      "job_id": "187991",
+      "state": "PENDING",
+      "name": "drX_w4_k28_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187990(unfulfilled)"
+    },
+    {
+      "job_id": "187989",
+      "state": "PENDING",
+      "name": "drX_w4_k27_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187988(unfulfilled)"
+    },
+    {
+      "job_id": "187987",
+      "state": "PENDING",
+      "name": "drX_w4_k26_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187986(unfulfilled)"
+    },
+    {
+      "job_id": "187985",
+      "state": "PENDING",
+      "name": "drX_w3_k28_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187984(unfulfilled)"
+    },
+    {
+      "job_id": "187983",
+      "state": "PENDING",
+      "name": "drX_w3_k27_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187982(unfulfilled)"
+    },
+    {
+      "job_id": "187979",
+      "state": "PENDING",
+      "name": "drX_w2_k28_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187978(unfulfilled)"
+    },
+    {
+      "job_id": "187977",
+      "state": "PENDING",
+      "name": "drX_w2_k27_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187976(unfulfilled)"
+    },
+    {
+      "job_id": "187975",
+      "state": "PENDING",
+      "name": "drX_w2_k26_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187974(unfulfilled)"
+    },
+    {
+      "job_id": "187973",
+      "state": "PENDING",
+      "name": "drX_w1_k28_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187972(unfulfilled)"
+    },
+    {
+      "job_id": "187971",
+      "state": "PENDING",
+      "name": "drX_w1_k27_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187970(unfulfilled)"
+    },
+    {
+      "job_id": "187969",
+      "state": "PENDING",
+      "name": "drX_w1_k26_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:187968(unfulfilled)"
+    },
+    {
+      "job_id": "134060",
+      "state": "PENDING",
+      "name": "drX_w5_k25_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:134059(unfulfilled)"
+    },
+    {
+      "job_id": "133928",
+      "state": "PENDING",
+      "name": "drX_w1_k25_mip",
+      "node_or_reason": "(Dependency)",
+      "dependencies": "afterok:133927(unfulfilled)"
+    },
+    {
+      "job_id": "201438",
+      "state": "RUNNING",
+      "name": "drCompact_c1_k08_core",
+      "node_or_reason": "unicorn-cpu-76",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201439",
+      "state": "RUNNING",
+      "name": "drCompact_c1_k08_core512",
+      "node_or_reason": "unicorn-cpu-76",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201440",
+      "state": "RUNNING",
+      "name": "drCompact_c1_k10_core",
+      "node_or_reason": "garg-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201441",
+      "state": "RUNNING",
+      "name": "drCompact_c1_k10_core512",
+      "node_or_reason": "jingjie-cpu-19",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201442",
+      "state": "RUNNING",
+      "name": "drCompact_c1_k15_core",
+      "node_or_reason": "jingjie-cpu-21",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201443",
+      "state": "RUNNING",
+      "name": "drCompact_c1_k15_core512",
+      "node_or_reason": "jingjie-cpu-20",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201446",
+      "state": "RUNNING",
+      "name": "drCompact_c2_k10_core",
+      "node_or_reason": "jingjie-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201447",
+      "state": "RUNNING",
+      "name": "drCompact_c2_k10_core512",
+      "node_or_reason": "jingjie-cpu-03",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201448",
+      "state": "RUNNING",
+      "name": "drCompact_c2_k15_core",
+      "node_or_reason": "jingjie-cpu-04",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201449",
+      "state": "RUNNING",
+      "name": "drCompact_c2_k15_core512",
+      "node_or_reason": "jingjie-cpu-05",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201454",
+      "state": "RUNNING",
+      "name": "drCompact_c3_k15_core",
+      "node_or_reason": "jingjie-cpu-11",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201455",
+      "state": "RUNNING",
+      "name": "drCompact_c3_k15_core512",
+      "node_or_reason": "jingjie-cpu-12",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201456",
+      "state": "RUNNING",
+      "name": "drCompact_c4_k08_core",
+      "node_or_reason": "jingjie-cpu-13",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201457",
+      "state": "RUNNING",
+      "name": "drCompact_c4_k08_core512",
+      "node_or_reason": "jingjie-cpu-14",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201458",
+      "state": "RUNNING",
+      "name": "drCompact_c4_k10_core",
+      "node_or_reason": "jingjie-cpu-15",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201460",
+      "state": "RUNNING",
+      "name": "drCompact_c4_k15_core",
+      "node_or_reason": "garg-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201461",
+      "state": "RUNNING",
+      "name": "drCompact_c4_k15_core512",
+      "node_or_reason": "kim-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201466",
+      "state": "RUNNING",
+      "name": "drCompact_c5_k15_core",
+      "node_or_reason": "kim-cpu-03",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201467",
+      "state": "RUNNING",
+      "name": "drCompact_c5_k15_core512",
+      "node_or_reason": "kim-cpu-03",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201472",
+      "state": "RUNNING",
+      "name": "drCompact_c6_k15_core",
+      "node_or_reason": "scaglione-cpu-03",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201473",
+      "state": "RUNNING",
+      "name": "drCompact_c6_k15_core512",
+      "node_or_reason": "scaglione-cpu-04",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "188000",
+      "state": "RUNNING",
+      "name": "drX_w6_k27_cg",
+      "node_or_reason": "unicorn-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187982",
+      "state": "RUNNING",
+      "name": "drX_w3_k27_cg",
+      "node_or_reason": "sonic-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187974",
+      "state": "RUNNING",
+      "name": "drX_w2_k26_cg",
+      "node_or_reason": "unicorn-cpu-73",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "133927",
+      "state": "RUNNING",
+      "name": "drX_w1_k25_cg",
+      "node_or_reason": "unicorn-cpu-87",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "202450",
+      "state": "RUNNING",
+      "name": "cfd_k1_13407_i16_prefix_memo",
+      "node_or_reason": "snavely-cpu-09",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "202451",
+      "state": "RUNNING",
+      "name": "cfd_k2_240r0_i5_prefix_memo",
+      "node_or_reason": "snavely-cpu-12",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201494",
+      "state": "RUNNING",
+      "name": "drCompact_c4_k10_core512_mip",
+      "node_or_reason": "snavely-cpu-11",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201489",
+      "state": "RUNNING",
+      "name": "drCompact_c3_k10_core_mip",
+      "node_or_reason": "snavely-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "202362",
+      "state": "RUNNING",
+      "name": "cfd_k1_13407_i16_reference",
+      "node_or_reason": "unicorn-cpu-73",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "202364",
+      "state": "RUNNING",
+      "name": "cfd_k2_240r0_i5_reference",
+      "node_or_reason": "sonic-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201481",
+      "state": "RUNNING",
+      "name": "drCompact_c2_k08_core_mip",
+      "node_or_reason": "unicorn-cpu-87",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201480",
+      "state": "RUNNING",
+      "name": "drCompact_c2_k08_core512_mip",
+      "node_or_reason": "jingjie-cpu-20",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201512",
+      "state": "RUNNING",
+      "name": "drP_w1_k20_longmip",
+      "node_or_reason": "sonic-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201513",
+      "state": "RUNNING",
+      "name": "drP_w1_k22_longmip",
+      "node_or_reason": "sonic-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201514",
+      "state": "RUNNING",
+      "name": "drP_w2_k23_longmip",
+      "node_or_reason": "totient-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201515",
+      "state": "RUNNING",
+      "name": "drP_w2_k24_longmip",
+      "node_or_reason": "totient-cpu-03",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201516",
+      "state": "RUNNING",
+      "name": "drP_w3_k25_longmip",
+      "node_or_reason": "totient-cpu-04",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201517",
+      "state": "RUNNING",
+      "name": "drP_w4_k21_longmip",
+      "node_or_reason": "totient-cpu-05",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201518",
+      "state": "RUNNING",
+      "name": "drP_w4_k24_longmip",
+      "node_or_reason": "totient-cpu-06",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201519",
+      "state": "RUNNING",
+      "name": "drP_w4_k25_longmip",
+      "node_or_reason": "totient-cpu-07",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "201520",
+      "state": "RUNNING",
+      "name": "drP_w6_k25_longmip",
+      "node_or_reason": "totient-cpu-08",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187999",
+      "state": "RUNNING",
+      "name": "drX_w6_k26_mip",
+      "node_or_reason": "unicorn-cpu-75",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187981",
+      "state": "RUNNING",
+      "name": "drX_w3_k26_mip",
+      "node_or_reason": "garg-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189212",
+      "state": "RUNNING",
+      "name": "drSeed_c1_k15_integer_mip",
+      "node_or_reason": "unicorn-cpu-74",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189213",
+      "state": "RUNNING",
+      "name": "drSeed_c1_k15_lpweight_mip",
+      "node_or_reason": "totient-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189219",
+      "state": "RUNNING",
+      "name": "drSeed_c2_k15_lpweight_mip",
+      "node_or_reason": "jingjie-cpu-20",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189235",
+      "state": "RUNNING",
+      "name": "drSeed_c4_k15_integer_mip",
+      "node_or_reason": "garg-cpu-02",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189236",
+      "state": "RUNNING",
+      "name": "drSeed_c4_k15_lpweight_mip",
+      "node_or_reason": "sonic-cpu-01",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189218",
+      "state": "RUNNING",
+      "name": "drSeed_c2_k15_integer_mip",
+      "node_or_reason": "jingjie-cpu-06",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "134059",
+      "state": "RUNNING",
+      "name": "drX_w5_k25_cg",
+      "node_or_reason": "unicorn-cpu-75",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "189247",
+      "state": "RUNNING",
+      "name": "drSeed_c6_k15_integer_mip",
+      "node_or_reason": "jingjie-cpu-20",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187967_2",
+      "state": "RUNNING",
+      "name": "drX_graphs",
+      "node_or_reason": "unicorn-cpu-73",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187967_9",
+      "state": "RUNNING",
+      "name": "drX_graphs",
+      "node_or_reason": "unicorn-cpu-74",
+      "dependencies": "(null)"
+    },
+    {
+      "job_id": "187967_10",
+      "state": "RUNNING",
+      "name": "drX_graphs",
+      "node_or_reason": "unicorn-cpu-74",
+      "dependencies": "(null)"
+    }
+  ]
+}

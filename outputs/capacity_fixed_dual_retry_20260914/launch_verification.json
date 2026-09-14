@@ -1,0 +1,53 @@
+{
+  "campaign_root": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914",
+  "entries": {
+    "k1_13407_i16_prefix_memo": {
+      "actual_normalized_9dp_dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+      "actual_raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+      "attempted_calls": 1,
+      "job_id": "202450",
+      "nonzero_capacity_dual_count": 1,
+      "pricing_call_path": "outputs/capacity_fixed_dual_retry_20260914/postlaunch/results/k1_13407_i16_prefix_memo/202450_r0/pricing_call.json",
+      "pricing_call_sha256": "644e5be2c699674666778ce419168a40f23ec472d6dd012e2b5089417af3d41b",
+      "pricing_call_status": "running",
+      "selector_module_sha256": "9743c2c53967f09bbfeb2e62ba971761a6b1d30ab6e3b36f3feaca7ede5f0131",
+      "source_pool_sha256": "8a37d8084e42ed7afbb24126336debef7e12a66bcf42755ee7313ee7da06934a",
+      "starting_state_path": "outputs/capacity_fixed_dual_retry_20260914/postlaunch/results/k1_13407_i16_prefix_memo/202450_r0/starting_state.json",
+      "starting_state_sha256": "ab2456300765b8de084f7b27824a40facf196821a024b1e45ba1653df33466ee",
+      "worker_status": "pricing"
+    },
+    "k2_240r0_i5_prefix_memo": {
+      "actual_normalized_9dp_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+      "actual_raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+      "attempted_calls": 1,
+      "job_id": "202451",
+      "nonzero_capacity_dual_count": 2,
+      "pricing_call_path": "outputs/capacity_fixed_dual_retry_20260914/postlaunch/results/k2_240r0_i5_prefix_memo/202451_r0/pricing_call.json",
+      "pricing_call_sha256": "22eba07fc653d9f7f499f9e35027d8c09fac990c48b5e0d24ec1379e3f321272",
+      "pricing_call_status": "running",
+      "selector_module_sha256": "9743c2c53967f09bbfeb2e62ba971761a6b1d30ab6e3b36f3feaca7ede5f0131",
+      "source_pool_sha256": "2a649b1f9b059f36c44a73143a242f704dc3800f1e30505c1cccce1c810496ea",
+      "starting_state_path": "outputs/capacity_fixed_dual_retry_20260914/postlaunch/results/k2_240r0_i5_prefix_memo/202451_r0/starting_state.json",
+      "starting_state_sha256": "dd19199137f56a8d2a250d1ffb78f6b76c70714a11ce050e78ac59e5d092e047",
+      "worker_status": "pricing"
+    }
+  },
+  "manifest_sha256": "a3f45135a50f502f40fa3ccd0797658a60fc74e85bdee4f0e8c1e86c10a0fa68",
+  "native_preflight_job_id": "202418",
+  "native_preflight_result_sha256": "2b97386732642f90ab71ef31ff1c420af2faf7a6e4b7c128732755b9232cc5dc",
+  "parent_manifest_sha256": "fe3eea1b18720f0b6507b632b73bc8640e4e4b5f3690549ce35b2402109c62e9",
+  "proof_scope": "Each retry has entered exactly one fixed-master pricing call with the frozen nonzero-capacity dual vector. Calls are still running; this is no pricing result, CG endpoint, or certificate.",
+  "recorded_utc": "2026-09-14T23:58:54.396644+00:00",
+  "scheduler_contract": {
+    "cpus_per_task": 1,
+    "dependencies": null,
+    "exclude": [
+      "scaglione-compute-01"
+    ],
+    "memory": "24G",
+    "partition": "default_partition",
+    "requeue": false,
+    "wall": "04:15:00"
+  },
+  "schema": "evsp-dr-fixed-capacity-retry-launch-verification-v1"
+}

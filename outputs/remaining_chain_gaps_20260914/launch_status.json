@@ -1,0 +1,221 @@
+{
+  "utc": "2026-09-14T23:24:37.091672+00:00",
+  "rows": [
+    {
+      "case_id": "w1_k20_longmip",
+      "job_id": "201512",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sonic-cpu-01",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w1_k20_longmip/attempts/201512_r0"
+      ]
+    },
+    {
+      "case_id": "w1_k22_longmip",
+      "job_id": "201513",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "sonic-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w1_k22_longmip/attempts/201513_r0"
+      ]
+    },
+    {
+      "case_id": "w2_k23_longmip",
+      "job_id": "201514",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-02",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w2_k23_longmip/attempts/201514_r0"
+      ]
+    },
+    {
+      "case_id": "w2_k24_longmip",
+      "job_id": "201515",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-03",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w2_k24_longmip/attempts/201515_r0"
+      ]
+    },
+    {
+      "case_id": "w3_k25_longmip",
+      "job_id": "201516",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-04",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w3_k25_longmip/attempts/201516_r0"
+      ]
+    },
+    {
+      "case_id": "w4_k21_longmip",
+      "job_id": "201517",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-05",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k21_longmip/attempts/201517_r0"
+      ]
+    },
+    {
+      "case_id": "w4_k24_longmip",
+      "job_id": "201518",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-06",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k24_longmip/attempts/201518_r0"
+      ]
+    },
+    {
+      "case_id": "w4_k25_longmip",
+      "job_id": "201519",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-07",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k25_longmip/attempts/201519_r0"
+      ]
+    },
+    {
+      "case_id": "w6_k25_longmip",
+      "job_id": "201520",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "totient-cpu-08",
+      "cpus": "8",
+      "memory": "24G",
+      "exclusion": "scaglione-compute-01",
+      "dependency": "(null)",
+      "license_marker_lines": [
+        "Set parameter LicenseID to value 2674428",
+        "Native Gurobi license check passed"
+      ],
+      "attempts": [
+        "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w6_k25_longmip/attempts/201520_r0"
+      ]
+    }
+  ],
+  "registry_entries": [
+    {
+      "job_id": "201512",
+      "case_id": "w1_k20_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w1_k20_longmip/attempts/201512_r0/result.json",
+      "attempt_tag": "201512_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T23:24:07.119787+00:00"
+    },
+    {
+      "job_id": "201519",
+      "case_id": "w4_k25_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k25_longmip/attempts/201519_r0/result.json",
+      "attempt_tag": "201519_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T23:24:08.126928+00:00"
+    },
+    {
+      "job_id": "201517",
+      "case_id": "w4_k21_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w4_k21_longmip/attempts/201517_r0/result.json",
+      "attempt_tag": "201517_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T23:24:08.258161+00:00"
+    },
+    {
+      "job_id": "201516",
+      "case_id": "w3_k25_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "is_validation": false,
+      "solver_budget_s": 12600,
+      "result_path": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914/cases/w3_k25_longmip/attempts/201516_r0/result.json",
+      "attempt_tag": "201516_r0",
+      "restart_count": "0",
+      "requeue": true,
+      "registered_utc": "2026-09-14T23:24:08.324327+00:00"
+    }
+  ],
+  "registry_unique": true,
+  "counts": {
+    "RUNNING": 9
+  }
+}

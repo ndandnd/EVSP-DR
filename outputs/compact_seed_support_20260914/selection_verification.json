@@ -1,0 +1,102 @@
+{
+  "status": "passed",
+  "manifest_sha256": "333ce3f646f4ac39897daebdfbec2e4d54c47de835bf98d4e42f5684ff6f6a62",
+  "rows": [
+    {
+      "pair": "c1_k08",
+      "core": 95,
+      "filled": 512
+    },
+    {
+      "pair": "c1_k10",
+      "core": 119,
+      "filled": 512
+    },
+    {
+      "pair": "c1_k15",
+      "core": 208,
+      "filled": 512
+    },
+    {
+      "pair": "c2_k08",
+      "core": 83,
+      "filled": 512
+    },
+    {
+      "pair": "c2_k10",
+      "core": 132,
+      "filled": 512
+    },
+    {
+      "pair": "c2_k15",
+      "core": 216,
+      "filled": 512
+    },
+    {
+      "pair": "c3_k08",
+      "core": 82,
+      "filled": 512
+    },
+    {
+      "pair": "c3_k10",
+      "core": 126,
+      "filled": 512
+    },
+    {
+      "pair": "c3_k15",
+      "core": 198,
+      "filled": 512
+    },
+    {
+      "pair": "c4_k08",
+      "core": 74,
+      "filled": 512
+    },
+    {
+      "pair": "c4_k10",
+      "core": 116,
+      "filled": 512
+    },
+    {
+      "pair": "c4_k15",
+      "core": 213,
+      "filled": 512
+    },
+    {
+      "pair": "c5_k08",
+      "core": 102,
+      "filled": 512
+    },
+    {
+      "pair": "c5_k10",
+      "core": 112,
+      "filled": 512
+    },
+    {
+      "pair": "c5_k15",
+      "core": 192,
+      "filled": 512
+    },
+    {
+      "pair": "c6_k08",
+      "core": 39,
+      "filled": 512
+    },
+    {
+      "pair": "c6_k10",
+      "core": 99,
+      "filled": 512
+    },
+    {
+      "pair": "c6_k15",
+      "core": 234,
+      "filled": 512
+    }
+  ],
+  "checks": [
+    "All local seed hashes",
+    "Core ordered-sequence strict containment",
+    "Unique native trip sets",
+    "All frozen tooling hashes"
+  ]
+}

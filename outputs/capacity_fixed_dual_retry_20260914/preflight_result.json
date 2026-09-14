@@ -1,0 +1,14 @@
+{
+  "actual_normalized_9dp_dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+  "actual_raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+  "case_id": "k1_13407_i16_prefix_memo",
+  "job_id": "202418",
+  "nonzero_capacity_dual_count": 1,
+  "pricing_entry_bound_s": 10.0,
+  "pricing_entry_elapsed_s": 9.999795778654516,
+  "pricing_entry_status": "censored",
+  "schema": "evsp-dr-fixed-capacity-retry-native-preflight-v1",
+  "selector_module_path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/src/capacity_window_selector.py",
+  "selector_module_sha256": "9743c2c53967f09bbfeb2e62ba971761a6b1d30ab6e3b36f3feaca7ede5f0131",
+  "status": "passed"
+}

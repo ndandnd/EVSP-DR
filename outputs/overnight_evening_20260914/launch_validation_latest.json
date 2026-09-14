@@ -1,0 +1,21 @@
+{
+  "scope": "New-campaign validation against retained baseline; not a new full results snapshot",
+  "captured_utc": "2026-09-14T23:35:20.946124+00:00",
+  "registered_cases": {
+    "compact_seed_support_20260914": 72,
+    "remaining_chain_gaps_20260914": 9
+  },
+  "counts": {
+    "remaining_chain_gaps_20260914": {
+      "cg": 0,
+      "mip": 0,
+      "pricing_calls": 0
+    },
+    "compact_seed_support_20260914": {
+      "cg": 6,
+      "mip": 5,
+      "pricing_calls": 0
+    }
+  },
+  "errors": []
+}

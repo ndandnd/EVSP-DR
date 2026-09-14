@@ -218,7 +218,7 @@ class Register:
             self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914", "overnight_parallel_20260914", "compact_seed_support_20260914", "remaining_chain_gaps_20260914", "retrospective_prefix_controls_20260914", "decomposition_pool_union_20260914", "decomposition_lp_support_union_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -922,6 +922,34 @@ class Register:
                         "physical_selected_validated": False,
                         "physical_validation_scope": at(result, "failure.reason"),
                         "limitations": "Rejected output is observational only and is not a usable physical schedule.",
+                    },
+                )
+            for item in campaign.get("pricing_calls", []):
+                # Preserve exact call evidence without promoting a one-call
+                # experiment into a CG endpoint or integer result.
+                artifact = item["artifact_hashes"]["diagnostic.json"]
+                case = campaign["workflow"]["manifest.json"]["cases"][item["case_id"]]
+                if (item["selector"] != case["capacity_selector"]
+                        or item["source_pool_sha256"] != case["source_pool_sha256"]
+                        or item["starting_dual_vector_sha256"] != case["starting_dual_vector_sha256"]
+                        or item["pricing_call"]["raw_dual_vector_sha256"] != case["starting_raw_dual_vector_sha256"]):
+                    raise ValueError(f"fixed-dual pricing identity differs from manifest: {item['case_id']}")
+                self.add(
+                    campaign_id, root, "fixed_dual_pricing_diagnostic", "pricing_call",
+                    item, source_path=artifact["path"], source_sha256=artifact["sha256"],
+                    case_id=item["case_id"], artifact_status="single_pricing_call",
+                    overrides={
+                        "arm": item["selector"], "job_ids": [str(item["job_id"])],
+                        "input_path": case["instance_path"],
+                        "input_sha256": case["instance_sha256"],
+                        "code_commit": case["execution_commit"],
+                        "tariff_path": case["prices_path"],
+                        "tariff_sha256": case["prices_sha256"],
+                        "capacity_enforced": True,
+                        "full_model_lp_certified": False,
+                        "weighted_lp_objective": None, "fleet_proven": None,
+                        "proof_scope": "One pricing call at the recorded frozen dual vector; no CG or MIP endpoint inferred.",
+                        "notes": "Call timing, reduced cost, censoring and exact source bindings are retained in details.",
                     },
                 )
             for name, value in campaign.get("workflow", {}).items():

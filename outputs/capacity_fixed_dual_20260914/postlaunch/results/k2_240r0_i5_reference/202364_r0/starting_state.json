@@ -1,0 +1,167 @@
+{
+  "audit_wall_s": 115.49601080594584,
+  "capacity_dual_l1": 1399911.016,
+  "capacity_dual_max": -599947.76,
+  "capacity_dual_min": -799963.256,
+  "capacity_selector": "reference",
+  "case_id": "k2_240r0_i5_reference",
+  "checkpoint_id": "13aafbb93291ecbc965da677e8271bc99e756682572ac355eaf2f3628369e21a",
+  "dual_vector": {
+    "nonzero_capacity_duals": [
+      [
+        "2190L",
+        387,
+        -599947.76
+      ],
+      [
+        "2190L",
+        522,
+        -799963.256
+      ]
+    ],
+    "trip_duals": [
+      [
+        "0",
+        0.0
+      ],
+      [
+        "1",
+        0.0
+      ],
+      [
+        "2",
+        0.0
+      ],
+      [
+        "3",
+        5.992
+      ],
+      [
+        "4",
+        0.0
+      ],
+      [
+        "5",
+        100000.0
+      ],
+      [
+        "6",
+        0.0
+      ],
+      [
+        "7",
+        100000.0
+      ],
+      [
+        "8",
+        100000.0
+      ],
+      [
+        "9",
+        100000.0
+      ],
+      [
+        "10",
+        100000.0
+      ],
+      [
+        "11",
+        100000.0
+      ],
+      [
+        "12",
+        100000.0
+      ],
+      [
+        "13",
+        100000.0
+      ],
+      [
+        "14",
+        100000.0
+      ],
+      [
+        "15",
+        100000.0
+      ],
+      [
+        "16",
+        100000.0
+      ],
+      [
+        "17",
+        100000.0
+      ],
+      [
+        "18",
+        100000.0
+      ],
+      [
+        "19",
+        100000.0
+      ],
+      [
+        "20",
+        100000.0
+      ],
+      [
+        "21",
+        100000.0
+      ],
+      [
+        "22",
+        100000.0
+      ]
+    ]
+  },
+  "dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+  "input_sha256": {
+    "deadhead": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+    "instance": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+    "prices": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "reference": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+  },
+  "manifest_sha256": "fe3eea1b18720f0b6507b632b73bc8640e4e4b5f3690549ce35b2402109c62e9",
+  "network": {
+    "arc_mode": "explicit",
+    "dag_arcs": 2490983,
+    "dag_nodes": 1842,
+    "event_lattice_sha256": "85008ac740544f794cf22823cc0bbb0513011cf098e41c77d6249b0d025565d3",
+    "materialized_python_arc_objects": 2490983,
+    "packed_arc_bytes": 0,
+    "station_charge_kw": {
+      "PARX": 240.0
+    },
+    "station_event_times": {
+      "2190L_0": 282,
+      "3127L_0": 28,
+      "4808_0": 296,
+      "7880C_0": 28,
+      "JON_A_0": 28,
+      "PARX_1": 288
+    },
+    "time_model": "event"
+  },
+  "network_build_wall_s": 114.79507182305679,
+  "next_iteration": 5,
+  "nonzero_capacity_dual_count": 2,
+  "normalized_9dp_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+  "pair_id": "k2_240r0_i5",
+  "raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+  "recorded_utc": "2026-09-14T23:44:14.659903+00:00",
+  "rmp": {
+    "artificial_total": 0.0,
+    "columns": 50,
+    "nonzeros": 249,
+    "objective": 300094.976,
+    "observed_solve_wall_s": 0.024078194983303547,
+    "reported_solve_s": 0.0050536650232970715,
+    "route_weight": 3.0,
+    "rows": 7823
+  },
+  "route_count": 27,
+  "schema": "evsp-dr-fixed-capacity-dual-start-v1",
+  "source_max_found_iter": 4,
+  "source_pool_sha256": "2a649b1f9b059f36c44a73143a242f704dc3800f1e30505c1cccce1c810496ea",
+  "trip_dual_count": 23
+}

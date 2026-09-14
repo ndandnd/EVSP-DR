@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "reviewer": "/root/overnight_design_audit",
+  "manifest_sha256": "333ce3f646f4ac39897daebdfbec2e4d54c47de835bf98d4e42f5684ff6f6a62",
+  "scope": [
+    "Selection and source identity",
+    "Pair scientific settings and budgets",
+    "All four local tests independently passed",
+    "Both native arms and own MIP physical replay",
+    "Submission lock, health gate and dependencies"
+  ],
+  "reviewer_agreement": "Proceed parent-authorized production after scheduler health gate.",
+  "utc": "2026-09-14T23:23:31.781668+00:00"
+}

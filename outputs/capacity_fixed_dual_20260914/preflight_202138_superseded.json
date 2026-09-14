@@ -1,0 +1,298 @@
+{
+  "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "job_id": "202138",
+  "schema": "evsp-dr-fixed-capacity-native-preflight-v1",
+  "smoke": {
+    "candidate_route_key_sha256": "5967bf8d1179a105f0653d8d257818dd1d5dd5c36cdb7b8d01250d5f8ae726a7",
+    "min_reduced_cost": -13.927999999969849,
+    "prefix_memo_call_s": 3.6558778267353773,
+    "reference_call_s": 3.770125555805862,
+    "starting_dual_vector_sha256": "2a6627da1fc02f4b4788dc02028fb906a5158443edc53877e9a68915ed136847"
+  },
+  "starts": {
+    "k1_13407_i16": {
+      "audit_wall_s": 87.20495197502896,
+      "capacity_dual_l1": 599918.416,
+      "capacity_dual_max": -599918.416,
+      "capacity_dual_min": -599918.416,
+      "checkpoint_id": "4d2b20a3d88e7a99e78dde04d9a955a619c373e0774e5016f14ea73378471c1c",
+      "dual_vector": {
+        "nonzero_capacity_duals": [
+          [
+            "2190L",
+            732,
+            -599918.416
+          ]
+        ],
+        "trip_duals": [
+          [
+            "0",
+            0.0
+          ],
+          [
+            "1",
+            0.0
+          ],
+          [
+            "2",
+            0.0
+          ],
+          [
+            "3",
+            0.0
+          ],
+          [
+            "4",
+            0.0
+          ],
+          [
+            "5",
+            0.0
+          ],
+          [
+            "6",
+            0.0
+          ],
+          [
+            "7",
+            0.0
+          ],
+          [
+            "8",
+            0.0
+          ],
+          [
+            "9",
+            0.0
+          ],
+          [
+            "10",
+            100000.0
+          ],
+          [
+            "11",
+            100000.0
+          ],
+          [
+            "12",
+            100000.0
+          ],
+          [
+            "13",
+            100000.0
+          ],
+          [
+            "14",
+            100000.0
+          ],
+          [
+            "15",
+            100000.0
+          ],
+          [
+            "16",
+            100000.0
+          ]
+        ]
+      },
+      "dual_vector_sha256": "fa89cc42f601262b92158fc20274a48acfaae7594b9044541e20b8da96e55a39",
+      "network": {
+        "arc_mode": "explicit",
+        "dag_arcs": 1472126,
+        "dag_nodes": 1362,
+        "event_lattice_sha256": "feb848a0d15dc8286e29fb2adfc9f7cdde3b185ca0ba0bdcec56f27b258d0baa",
+        "materialized_python_arc_objects": 1472126,
+        "packed_arc_bytes": 0,
+        "station_charge_kw": {
+          "PARX": 240.0
+        },
+        "station_event_times": {
+          "2190L_0": 260,
+          "3127L_0": 28,
+          "4808_0": 272,
+          "7880C_0": 28,
+          "JON_A_0": 28,
+          "PARX_1": 264
+        },
+        "time_model": "event"
+      },
+      "network_build_wall_s": 86.16555990418419,
+      "next_iteration": 16,
+      "nonzero_capacity_dual_count": 1,
+      "raw_dual_vector_sha256": "814db9bda08f43dc65c48bf13084b79c4813abd5141de253af15e9d46caf9f84",
+      "recorded_utc": "2026-09-14T23:28:43.580214+00:00",
+      "rmp": {
+        "artificial_total": 0.0,
+        "columns": 49,
+        "nonzeros": 344,
+        "objective": 100081.584,
+        "observed_solve_wall_s": 0.03113102028146386,
+        "reported_solve_s": 0.006405675783753395,
+        "route_weight": 1.0,
+        "rows": 7817
+      },
+      "route_count": 32,
+      "schema": "evsp-dr-fixed-capacity-dual-start-v1",
+      "source_max_found_iter": 15,
+      "source_pool_sha256": "8a37d8084e42ed7afbb24126336debef7e12a66bcf42755ee7313ee7da06934a",
+      "trip_dual_count": 17
+    },
+    "k2_240r0_i5": {
+      "audit_wall_s": 142.90964212315157,
+      "capacity_dual_l1": 1399911.016,
+      "capacity_dual_max": -599947.76,
+      "capacity_dual_min": -799963.256,
+      "checkpoint_id": "13aafbb93291ecbc965da677e8271bc99e756682572ac355eaf2f3628369e21a",
+      "dual_vector": {
+        "nonzero_capacity_duals": [
+          [
+            "2190L",
+            387,
+            -599947.76
+          ],
+          [
+            "2190L",
+            522,
+            -799963.256
+          ]
+        ],
+        "trip_duals": [
+          [
+            "0",
+            0.0
+          ],
+          [
+            "1",
+            0.0
+          ],
+          [
+            "2",
+            0.0
+          ],
+          [
+            "3",
+            5.992
+          ],
+          [
+            "4",
+            0.0
+          ],
+          [
+            "5",
+            100000.0
+          ],
+          [
+            "6",
+            0.0
+          ],
+          [
+            "7",
+            100000.0
+          ],
+          [
+            "8",
+            100000.0
+          ],
+          [
+            "9",
+            100000.0
+          ],
+          [
+            "10",
+            100000.0
+          ],
+          [
+            "11",
+            100000.0
+          ],
+          [
+            "12",
+            100000.0
+          ],
+          [
+            "13",
+            100000.0
+          ],
+          [
+            "14",
+            100000.0
+          ],
+          [
+            "15",
+            100000.0
+          ],
+          [
+            "16",
+            100000.0
+          ],
+          [
+            "17",
+            100000.0
+          ],
+          [
+            "18",
+            100000.0
+          ],
+          [
+            "19",
+            100000.0
+          ],
+          [
+            "20",
+            100000.0
+          ],
+          [
+            "21",
+            100000.0
+          ],
+          [
+            "22",
+            100000.0
+          ]
+        ]
+      },
+      "dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+      "network": {
+        "arc_mode": "explicit",
+        "dag_arcs": 2490983,
+        "dag_nodes": 1842,
+        "event_lattice_sha256": "85008ac740544f794cf22823cc0bbb0513011cf098e41c77d6249b0d025565d3",
+        "materialized_python_arc_objects": 2490983,
+        "packed_arc_bytes": 0,
+        "station_charge_kw": {
+          "PARX": 240.0
+        },
+        "station_event_times": {
+          "2190L_0": 282,
+          "3127L_0": 28,
+          "4808_0": 296,
+          "7880C_0": 28,
+          "JON_A_0": 28,
+          "PARX_1": 288
+        },
+        "time_model": "event"
+      },
+      "network_build_wall_s": 141.754672922194,
+      "next_iteration": 5,
+      "nonzero_capacity_dual_count": 2,
+      "raw_dual_vector_sha256": "209385fcd0d3140bfe67a98b3183bd7fb6ae5833218e2ab91bb895fbec180736",
+      "recorded_utc": "2026-09-14T23:31:07.196773+00:00",
+      "rmp": {
+        "artificial_total": 0.0,
+        "columns": 50,
+        "nonzeros": 249,
+        "objective": 300094.976,
+        "observed_solve_wall_s": 0.026930523104965687,
+        "reported_solve_s": 0.005882779136300087,
+        "route_weight": 3.0,
+        "rows": 7823
+      },
+      "route_count": 27,
+      "schema": "evsp-dr-fixed-capacity-dual-start-v1",
+      "source_max_found_iter": 4,
+      "source_pool_sha256": "2a649b1f9b059f36c44a73143a242f704dc3800f1e30505c1cccce1c810496ea",
+      "trip_dual_count": 23
+    }
+  },
+  "status": "passed"
+}

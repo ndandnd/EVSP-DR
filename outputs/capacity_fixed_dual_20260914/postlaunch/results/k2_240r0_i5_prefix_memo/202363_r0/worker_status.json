@@ -1,0 +1,11 @@
+{
+  "attempt_id": "202363_r0",
+  "case_id": "k2_240r0_i5_prefix_memo",
+  "ended_utc": "2026-09-14T23:46:10.907442+00:00",
+  "error": "ModuleNotFoundError(\"No module named 'capacity_window_selector'\")",
+  "manifest_sha256": "fe3eea1b18720f0b6507b632b73bc8640e4e4b5f3690549ce35b2402109c62e9",
+  "schema": "evsp-dr-fixed-capacity-worker-v1",
+  "started_utc": "2026-09-14T23:42:16.722962+00:00",
+  "starting_dual_vector_sha256": "a2a01bd3b46feb20aa61a3c3c5a7fe5a34353fdde8548a8e96be373182a8bc29",
+  "status": "failed"
+}

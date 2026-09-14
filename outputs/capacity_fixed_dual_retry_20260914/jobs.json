@@ -1,0 +1,62 @@
+{
+  "jobs": {
+    "k1_13407_i16_prefix_memo": {
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--no-requeue",
+        "--partition",
+        "default_partition",
+        "--exclude",
+        "scaglione-compute-01",
+        "--cpus-per-task",
+        "1",
+        "--mem",
+        "24G",
+        "--time",
+        "04:15:00",
+        "--job-name",
+        "cfd_k1_13407_i16_prefix_memo",
+        "--output",
+        "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/logs/k1_13407_i16_prefix_memo_%j.out",
+        "--error",
+        "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/logs/k1_13407_i16_prefix_memo_%j.err",
+        "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/worker.sh",
+        "k1_13407_i16_prefix_memo"
+      ],
+      "job_id": "202450",
+      "stdout": "202450",
+      "submitted_utc": "2026-09-14T23:51:58.078417+00:00"
+    },
+    "k2_240r0_i5_prefix_memo": {
+      "argv": [
+        "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+        "--parsable",
+        "--no-requeue",
+        "--partition",
+        "default_partition",
+        "--exclude",
+        "scaglione-compute-01",
+        "--cpus-per-task",
+        "1",
+        "--mem",
+        "24G",
+        "--time",
+        "04:15:00",
+        "--job-name",
+        "cfd_k2_240r0_i5_prefix_memo",
+        "--output",
+        "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/logs/k2_240r0_i5_prefix_memo_%j.out",
+        "--error",
+        "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/logs/k2_240r0_i5_prefix_memo_%j.err",
+        "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914/worker.sh",
+        "k2_240r0_i5_prefix_memo"
+      ],
+      "job_id": "202451",
+      "stdout": "202451",
+      "submitted_utc": "2026-09-14T23:51:58.185318+00:00"
+    }
+  },
+  "manifest_sha256": "a3f45135a50f502f40fa3ccd0797658a60fc74e85bdee4f0e8c1e86c10a0fa68",
+  "schema": "evsp-dr-fixed-capacity-jobs-v1"
+}
