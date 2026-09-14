@@ -1,0 +1,2239 @@
+{
+  "sampled_utc": "2026-09-14T17:46:29.345256+00:00",
+  "directory_timestamp_is_parent_snapshot_not_live_sample": true,
+  "evsp_counts": {
+    "PENDING": 67,
+    "RUNNING": 61
+  },
+  "groups": {
+    "capacity_boundary": {
+      "RUNNING": 6
+    },
+    "extension_cg": {
+      "PENDING": 21,
+      "RUNNING": 4
+    },
+    "extension_graph": {
+      "RUNNING": 18
+    },
+    "extension_mip": {
+      "PENDING": 25,
+      "RUNNING": 1
+    },
+    "held_historical": {
+      "PENDING": 1
+    },
+    "prior_mip": {
+      "RUNNING": 1
+    },
+    "seed_cg": {
+      "RUNNING": 21
+    },
+    "seed_mip": {
+      "PENDING": 21,
+      "RUNNING": 10
+    }
+  },
+  "allocated_running_cpus": 340,
+  "allocated_running_memory_gib": 3984.0,
+  "memory_scope": "Slurm minimum requested memory for running allocations (per-node suffix absent), not measured RSS.",
+  "dependency_edges": 83,
+  "unfulfilled_parent_absent": [],
+  "invalid_dependency_reasons": [],
+  "dependency_edges_detail": [
+    {
+      "child": "188002",
+      "parent": "187967_17",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "188002",
+      "parent": "188000",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "188000",
+      "parent": "187967_16",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "188000",
+      "parent": "187998",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187998",
+      "parent": "187967_15",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187998",
+      "parent": "134079",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187996",
+      "parent": "187967_14",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187996",
+      "parent": "187994",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187994",
+      "parent": "187967_13",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187994",
+      "parent": "187992",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187992",
+      "parent": "187967_12",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187992",
+      "parent": "134059",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187990",
+      "parent": "187967_11",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187990",
+      "parent": "187988",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187988",
+      "parent": "187967_10",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187988",
+      "parent": "187986",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187986",
+      "parent": "187967_9",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187986",
+      "parent": "133987",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187984",
+      "parent": "187967_8",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187984",
+      "parent": "187982",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187982",
+      "parent": "187967_7",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187982",
+      "parent": "187980",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187980",
+      "parent": "187967_6",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187978",
+      "parent": "187967_5",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187978",
+      "parent": "187976",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187976",
+      "parent": "187967_4",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187976",
+      "parent": "187974",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187974",
+      "parent": "187967_3",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187972",
+      "parent": "187967_2",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187972",
+      "parent": "187970",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187970",
+      "parent": "187967_1",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187970",
+      "parent": "187968",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187968",
+      "parent": "187967_0",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "187968",
+      "parent": "133927",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "134059",
+      "parent": "134057",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "133927",
+      "parent": "133925",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "133925",
+      "parent": "133923",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189248",
+      "parent": "189207",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189247",
+      "parent": "189206",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189242",
+      "parent": "189201",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189241",
+      "parent": "189200",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189236",
+      "parent": "189195",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189235",
+      "parent": "189194",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189234",
+      "parent": "189193",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189233",
+      "parent": "189192",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189232",
+      "parent": "189191",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189231",
+      "parent": "189190",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189230",
+      "parent": "189189",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189229",
+      "parent": "189188",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189219",
+      "parent": "189183",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189218",
+      "parent": "189182",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189217",
+      "parent": "189181",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189213",
+      "parent": "189177",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189212",
+      "parent": "189176",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189211",
+      "parent": "189175",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189210",
+      "parent": "189174",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189209",
+      "parent": "189173",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "189208",
+      "parent": "189172",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "188004",
+      "parent": "188002",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "188001",
+      "parent": "188000",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187999",
+      "parent": "187998",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187997",
+      "parent": "187996",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187995",
+      "parent": "187994",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187993",
+      "parent": "187992",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187991",
+      "parent": "187990",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187989",
+      "parent": "187988",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187987",
+      "parent": "187986",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187985",
+      "parent": "187984",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187983",
+      "parent": "187982",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187981",
+      "parent": "187980",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187979",
+      "parent": "187978",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187977",
+      "parent": "187976",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187975",
+      "parent": "187974",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187973",
+      "parent": "187972",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187971",
+      "parent": "187970",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "187969",
+      "parent": "187968",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "134080",
+      "parent": "134079",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "134060",
+      "parent": "134059",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "134058",
+      "parent": "134057",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "133988",
+      "parent": "133987",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    },
+    {
+      "child": "133928",
+      "parent": "133927",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "133926",
+      "parent": "133925",
+      "condition": "unfulfilled",
+      "parent_state": "PENDING"
+    },
+    {
+      "child": "133924",
+      "parent": "133923",
+      "condition": "unfulfilled",
+      "parent_state": "RUNNING"
+    }
+  ],
+  "graphs": [
+    {
+      "case_id": "w1_k26",
+      "fraction": 0.4273392052811058,
+      "elapsed_h": 5.088397123981979,
+      "linear_total_h": 11.907161947930348,
+      "progress_age_s": 53.76777505874634,
+      "peak_rss_gib": 14.822063446044922
+    },
+    {
+      "case_id": "w1_k27",
+      "fraction": 0.30373322372536055,
+      "elapsed_h": 5.091873609861618,
+      "linear_total_h": 16.764295810015682,
+      "progress_age_s": 33.79099106788635,
+      "peak_rss_gib": 11.94485855102539
+    },
+    {
+      "case_id": "w1_k28",
+      "fraction": 0.2700712508096683,
+      "elapsed_h": 5.088541398073107,
+      "linear_total_h": 18.841477509426714,
+      "progress_age_s": 45.788259983062744,
+      "peak_rss_gib": 11.811016082763672
+    },
+    {
+      "case_id": "w2_k26",
+      "fraction": 0.33549862587204277,
+      "elapsed_h": 5.088455978451917,
+      "linear_total_h": 15.166845960175781,
+      "progress_age_s": 46.0903844833374,
+      "peak_rss_gib": 11.492713928222656
+    },
+    {
+      "case_id": "w2_k27",
+      "fraction": 0.31133533315153167,
+      "elapsed_h": 5.092855615653874,
+      "linear_total_h": 16.358103540965917,
+      "progress_age_s": 30.27275538444519,
+      "peak_rss_gib": 11.940135955810547
+    },
+    {
+      "case_id": "w2_k28",
+      "fraction": 0.2978259714027534,
+      "elapsed_h": 5.094800516496826,
+      "linear_total_h": 17.106636108665857,
+      "progress_age_s": 23.28200125694275,
+      "peak_rss_gib": 12.120044708251953
+    },
+    {
+      "case_id": "w3_k26",
+      "fraction": 0.42296502756698473,
+      "elapsed_h": 5.094064453900274,
+      "linear_total_h": 12.043701303634448,
+      "progress_age_s": 26.68484354019165,
+      "peak_rss_gib": 12.364173889160156
+    },
+    {
+      "case_id": "w3_k27",
+      "fraction": 0.39458754225393877,
+      "elapsed_h": 5.0869488645041,
+      "linear_total_h": 12.891813146068278,
+      "progress_age_s": 52.30174517631531,
+      "peak_rss_gib": 12.410900115966797
+    },
+    {
+      "case_id": "w3_k28",
+      "fraction": 0.34605867130093126,
+      "elapsed_h": 5.092919962167507,
+      "linear_total_h": 14.716926303339827,
+      "progress_age_s": 30.815406799316406,
+      "peak_rss_gib": 12.210941314697266
+    },
+    {
+      "case_id": "w4_k26",
+      "fraction": 0.28814585336324466,
+      "elapsed_h": 5.087727852922269,
+      "linear_total_h": 17.656779695207128,
+      "progress_age_s": 49.511289834976196,
+      "peak_rss_gib": 11.710105895996094
+    },
+    {
+      "case_id": "w4_k27",
+      "fraction": 0.27946606570165555,
+      "elapsed_h": 5.093789395413025,
+      "linear_total_h": 18.226861936257077,
+      "progress_age_s": 27.652681350708008,
+      "peak_rss_gib": 11.953243255615234
+    },
+    {
+      "case_id": "w4_k28",
+      "fraction": 0.3059215533717842,
+      "elapsed_h": 5.088625219308305,
+      "linear_total_h": 16.633758436510476,
+      "progress_age_s": 51.205052614212036,
+      "peak_rss_gib": 13.407001495361328
+    },
+    {
+      "case_id": "w5_k26",
+      "fraction": 0.3320896188520932,
+      "elapsed_h": 5.087446113013883,
+      "linear_total_h": 15.31949758200584,
+      "progress_age_s": 55.61898446083069,
+      "peak_rss_gib": 13.237922668457031
+    },
+    {
+      "case_id": "w5_k27",
+      "fraction": 0.31650966100529465,
+      "elapsed_h": 5.0906328481147325,
+      "linear_total_h": 16.083657073676417,
+      "progress_age_s": 46.52233028411865,
+      "peak_rss_gib": 13.576099395751953
+    },
+    {
+      "case_id": "w5_k28",
+      "fraction": 0.30314376307090335,
+      "elapsed_h": 5.100195211577747,
+      "linear_total_h": 16.82434485839923,
+      "progress_age_s": 12.104289054870605,
+      "peak_rss_gib": 13.498416900634766
+    },
+    {
+      "case_id": "w6_k26",
+      "fraction": 0.41623011532631016,
+      "elapsed_h": 5.088740201398614,
+      "linear_total_h": 12.225785722902861,
+      "progress_age_s": 47.02686333656311,
+      "peak_rss_gib": 13.309593200683594
+    },
+    {
+      "case_id": "w6_k27",
+      "fraction": 0.3402740510178527,
+      "elapsed_h": 5.091392430617772,
+      "linear_total_h": 14.96262326024575,
+      "progress_age_s": 37.48114800453186,
+      "peak_rss_gib": 13.117568969726562
+    },
+    {
+      "case_id": "w6_k28",
+      "fraction": 0.30742903846481295,
+      "elapsed_h": 5.10159827637111,
+      "linear_total_h": 16.594392975519188,
+      "progress_age_s": 0.7585296630859375,
+      "peak_rss_gib": 13.103546142578125
+    }
+  ],
+  "rows": [
+    {
+      "job_id": "188002",
+      "name": "drX_w6_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_17(unfulfilled),afterok:188000(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "188000",
+      "name": "drX_w6_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_16(unfulfilled),afterok:187998(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187998",
+      "name": "drX_w6_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_15(unfulfilled),afterok:134079(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187996",
+      "name": "drX_w5_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_14(unfulfilled),afterok:187994(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187994",
+      "name": "drX_w5_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_13(unfulfilled),afterok:187992(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187992",
+      "name": "drX_w5_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_12(unfulfilled),afterok:134059(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187990",
+      "name": "drX_w4_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_11(unfulfilled),afterok:187988(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187988",
+      "name": "drX_w4_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_10(unfulfilled),afterok:187986(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187986",
+      "name": "drX_w4_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_9(unfulfilled),afterok:133987(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187984",
+      "name": "drX_w3_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_8(unfulfilled),afterok:187982(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187982",
+      "name": "drX_w3_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_7(unfulfilled),afterok:187980(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187980",
+      "name": "drX_w3_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_6(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187978",
+      "name": "drX_w2_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_5(unfulfilled),afterok:187976(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187976",
+      "name": "drX_w2_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_4(unfulfilled),afterok:187974(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187974",
+      "name": "drX_w2_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_3(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187972",
+      "name": "drX_w1_k28_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_2(unfulfilled),afterok:187970(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187970",
+      "name": "drX_w1_k27_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_1(unfulfilled),afterok:187968(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187968",
+      "name": "drX_w1_k26_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187967_0(unfulfilled),afterok:133927(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "134059",
+      "name": "drX_w5_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:134057(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "133927",
+      "name": "drX_w1_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:133925(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "133925",
+      "name": "drX_w1_k24_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:133923(unfulfilled)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "189248",
+      "name": "drSeed_c6_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189207(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189247",
+      "name": "drSeed_c6_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189206(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189242",
+      "name": "drSeed_c5_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189201(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189241",
+      "name": "drSeed_c5_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189200(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189236",
+      "name": "drSeed_c4_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189195(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189235",
+      "name": "drSeed_c4_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189194(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189234",
+      "name": "drSeed_c4_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189193(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189233",
+      "name": "drSeed_c4_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189192(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189232",
+      "name": "drSeed_c4_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189191(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189231",
+      "name": "drSeed_c4_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189190(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189230",
+      "name": "drSeed_c3_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189189(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189229",
+      "name": "drSeed_c3_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189188(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189219",
+      "name": "drSeed_c2_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189183(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189218",
+      "name": "drSeed_c2_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189182(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189217",
+      "name": "drSeed_c2_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189181(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189213",
+      "name": "drSeed_c1_k15_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189177(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189212",
+      "name": "drSeed_c1_k15_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189176(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189211",
+      "name": "drSeed_c1_k10_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189175(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189210",
+      "name": "drSeed_c1_k10_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189174(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189209",
+      "name": "drSeed_c1_k08_lpweight_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189173(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189208",
+      "name": "drSeed_c1_k08_integer_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:189172(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "188004",
+      "name": "drX_w6_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:188002(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "188001",
+      "name": "drX_w6_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:188000(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187999",
+      "name": "drX_w6_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187998(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187997",
+      "name": "drX_w5_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187996(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187995",
+      "name": "drX_w5_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187994(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187993",
+      "name": "drX_w5_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187992(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187991",
+      "name": "drX_w4_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187990(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187989",
+      "name": "drX_w4_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187988(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187987",
+      "name": "drX_w4_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187986(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187985",
+      "name": "drX_w3_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187984(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187983",
+      "name": "drX_w3_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187982(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187981",
+      "name": "drX_w3_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187980(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187979",
+      "name": "drX_w2_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187978(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187977",
+      "name": "drX_w2_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187976(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187975",
+      "name": "drX_w2_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187974(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187973",
+      "name": "drX_w1_k28_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187972(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187971",
+      "name": "drX_w1_k27_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187970(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "187969",
+      "name": "drX_w1_k26_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:187968(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "134080",
+      "name": "drX_w6_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:134079(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "134060",
+      "name": "drX_w5_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:134059(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "134058",
+      "name": "drX_w5_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:134057(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "133988",
+      "name": "drX_w4_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:133987(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "133928",
+      "name": "drX_w1_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:133927(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "133926",
+      "name": "drX_w1_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:133925(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "133924",
+      "name": "drX_w1_k23_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "partition": "default_partition",
+      "nodes": "",
+      "dependency": "afterok:133923(unfulfilled)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "134057",
+      "name": "drX_w5_k24_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "garg-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "133987",
+      "name": "drX_w4_k25_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "garg-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "189182",
+      "name": "drSeed_c2_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-06",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189183",
+      "name": "drSeed_c2_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189188",
+      "name": "drSeed_c3_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-08",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189189",
+      "name": "drSeed_c3_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-09",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189190",
+      "name": "drSeed_c4_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-10",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189191",
+      "name": "drSeed_c4_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-11",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189192",
+      "name": "drSeed_c4_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-12",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189193",
+      "name": "drSeed_c4_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-13",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189194",
+      "name": "drSeed_c4_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-14",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189195",
+      "name": "drSeed_c4_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-15",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189200",
+      "name": "drSeed_c5_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-20",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189201",
+      "name": "drSeed_c5_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-21",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189206",
+      "name": "drSeed_c6_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "kim-cpu-05",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189207",
+      "name": "drSeed_c6_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "kim-cpu-05",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189172",
+      "name": "drSeed_c1_k08_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "luxlab-cpu-03",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189173",
+      "name": "drSeed_c1_k08_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-75",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189174",
+      "name": "drSeed_c1_k10_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "joachims-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189175",
+      "name": "drSeed_c1_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "garg-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189176",
+      "name": "drSeed_c1_k15_integer",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "garg-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189177",
+      "name": "drSeed_c1_k15_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "harpo",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189181",
+      "name": "drSeed_c2_k10_lpweight",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-01",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "seed_cg"
+    },
+    {
+      "job_id": "189240",
+      "name": "drSeed_c5_k10_lpweight_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-20",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189216",
+      "name": "drSeed_c2_k10_integer_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "jingjie-cpu-20",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189224",
+      "name": "drSeed_c3_k10_integer_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "totient-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189226",
+      "name": "drSeed_c3_k10_lpweight_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "totient-cpu-01",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189238",
+      "name": "drSeed_c5_k08_lpweight_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "sonic-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189246",
+      "name": "drSeed_c6_k10_lpweight_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "sonic-cpu-02",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189214",
+      "name": "drSeed_c2_k08_integer_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "sonic-cpu-01",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189220",
+      "name": "drSeed_c3_k08_integer_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-15",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189215",
+      "name": "drSeed_c2_k08_lpweight_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "sonic-cpu-01",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "133986",
+      "name": "drX_w4_k24_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-01",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "extension_mip"
+    },
+    {
+      "job_id": "189221",
+      "name": "drSeed_c3_k08_lpweight_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-01",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "seed_mip"
+    },
+    {
+      "job_id": "189164",
+      "name": "cpb_0_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-11",
+      "dependency": "(null)",
+      "cpus": "1",
+      "memory": "24G",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189165",
+      "name": "cpb_1_prefixp",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-12",
+      "dependency": "(null)",
+      "cpus": "1",
+      "memory": "24G",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189166",
+      "name": "cpb_2_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-13",
+      "dependency": "(null)",
+      "cpus": "1",
+      "memory": "24G",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189167",
+      "name": "cpb_3_prefixp",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-14",
+      "dependency": "(null)",
+      "cpus": "1",
+      "memory": "24G",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189168",
+      "name": "cpb_4_reference",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-16",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "24G",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "189169",
+      "name": "cpb_5_prefixp",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-15",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "24G",
+      "group": "capacity_boundary"
+    },
+    {
+      "job_id": "156700",
+      "name": "drD_c1_k15_c200_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "snavely-cpu-09",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "24G",
+      "group": "prior_mip"
+    },
+    {
+      "job_id": "133923",
+      "name": "drX_w1_k23_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-87",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "134079",
+      "name": "drX_w6_k25_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-75",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "96G",
+      "group": "extension_cg"
+    },
+    {
+      "job_id": "187967_0",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-01",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_1",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_2",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_3",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_4",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_5",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-73",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_6",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_7",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_8",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_9",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_10",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-74",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_11",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "sonic-cpu-01",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_12",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "sonic-cpu-02",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_13",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-87",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_14",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-87",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_15",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-76",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_16",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-76",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "187967_17",
+      "name": "drX_graphs",
+      "state": "RUNNING",
+      "reason": "None",
+      "partition": "default_partition",
+      "nodes": "unicorn-cpu-76",
+      "dependency": "(null)",
+      "cpus": "2",
+      "memory": "64G",
+      "group": "extension_graph"
+    },
+    {
+      "job_id": "537227_[36-68%8]",
+      "name": "tpmR2d7a25b33",
+      "state": "PENDING",
+      "reason": "JobHeldUser",
+      "partition": "scaglione",
+      "nodes": "",
+      "dependency": "(null)",
+      "cpus": "8",
+      "memory": "48G",
+      "group": "held_historical"
+    }
+  ]
+}

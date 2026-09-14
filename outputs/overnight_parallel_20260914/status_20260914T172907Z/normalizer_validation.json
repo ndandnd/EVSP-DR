@@ -1,0 +1,342 @@
+{
+  "endpoints": 56,
+  "errors": [],
+  "checks": [
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_integer/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_lpweight/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_lpweight/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_integer/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_lpweight/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_integer/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_lpweight/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_integer_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_lpweight_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/cases/c1_k08_union_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/cases/c2_k08_union_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/cases/c4_k08_union_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/cases/c5_k08_union_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/cases/c5_k10_union_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "parallel_pool_unions_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/parallel_pool_unions_20260914/cases/c6_k10_union_mip/mip_result.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_flat_combined_reference/188143_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_flat_combined_prefix_memo/188144_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_peak12_combined_reference/188145_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_peak12_combined_prefix_memo/188146_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_240r0_baseline/188147_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_240r0_capacity/188148_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_240r0_parx60/188149_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_240r0_combined/188150_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_236p44r15_baseline/188151_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_236p44r15_capacity/188152_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_236p44r15_parx60/188153_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_236p44r15_combined/188154_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "capacity_pricing_boundary_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13408_flat_capacity_reference/189170_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "capacity_pricing_boundary_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13408_flat_capacity_prefix_memo/189171_r0/cg.json",
+      "errors": {}
+    },
+    {
+      "campaign": "capacity_pricing_boundary_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13408_flat_capacity_reference/189170_r0/mip.json",
+      "errors": {}
+    },
+    {
+      "campaign": "capacity_pricing_boundary_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13408_flat_capacity_prefix_memo/189171_r0/mip.json",
+      "errors": {}
+    }
+  ]
+}

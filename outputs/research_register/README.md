@@ -1,5 +1,13 @@
 # EVSP–DR experiment register
 
+**Current results, 14 September 13:34 EDT:** [Updated chain and cumulative-time tables](../cumulative_budget_20260913/status_20260914T172907Z/README.md). Chain 5 now matches 23 buses in its original one-hour MIP. Largest individual original matches across chains 1–6 are **21, 22, 24, 23, 23, 24**; a separate longer MIP reaches 25 on chain 2. Earlier gaps remain. Extension totals: 53 CG endpoints (45 pricing certificates, 8 time limits), and 52 original MIPs (31 target matches, 21 misses). Baseline physics omit shared charging capacity and a terminal SOC floor.
+
+**New evidence about the columns:** combining three saved pools recovers C2 k8, C5 k8 and C5 k10; three other union searches retain open gaps. Eight small-seed CGs have certified endpoints. Both seed methods already match C6 k8 with pool fleet and charging-cost proofs. [Tables, source hashes and limits](../overnight_parallel_20260914/status_20260914T172907Z/README.md). These findings do not yet establish an overall seed-method winner. All twelve matched strict MIPs are complete; capacity-enforced k2 cases remain at 3 or 12 buses in small pools after unfinished pricing. [Strict results](../strict_capacity_parallel_20260914/status_20260914T172907Z/README.md).
+
+**Live queue audit, 13:46 EDT:** 61 EVSP jobs running, 67 waiting for real inputs, zero invalid dependencies; 33 held historical tasks excluded. The 80-job independent expansion is already submitted. [What is running and what should run next](../overnight_parallel_20260914/status_20260914T172907Z/FINDINGS.md). Do not duplicate that batch. All 18 graph builds are active; their 12-hour internal limit is an identified risk requiring a separate timeout-recovery plan.
+
+The register contains **2,788 artifact/stage records across 59 campaigns/source groups**, from the collection completed at 13:34 EDT. The weekly Google Doc preserves its figures and now includes the combined-pool table, seed results and updated chain reach. The dated notices below are historical snapshots; use this current block and its linked tables first.
+
 **Additional overnight work, 14 September:** [Current plan and dependency explanation](OVERNIGHT_PLAN_20260914.md). Thirty-six independent CGs compare small previous-k integer-route seeds against the same number of sequences selected by LP weight, with thirty-six MIPs waiting only on their own CG. Eight separate one-bus pricing diagnostics compare reference and cached capacity pricing. Exact launch receipts and state checks are in the linked campaign records. The existing graph builds and six larger chains continue unchanged.
 
 **Later capacity endpoints, checked at 12:59 EDT:** all four capacity-enforced k=2 CGs stopped at their 220-minute pricing deadline without certificates. Their short diagnostic MIPs prove fleets of 3 or 12 only within their small saved pools and pass shared-capacity checks. This isolates unfinished pricing, not a proof that the full model needs those fleets. [Verified source audit](../capacity_pricing_boundary_20260914/strict_capacity_k2_audit_20260914T1659Z.md). This targeted audit is newer than the normalized 12:33 workbook snapshot below.
@@ -61,7 +69,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2,661 artifact/stage records across 57 campaign/source groups**, from the collection completed at 12:33 EDT on 14 September. Counts are not independent experimental sample sizes.
+Current build: **2,788 artifact/stage records across 59 campaign/source groups**, from the collection completed at 13:34 EDT on 14 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
