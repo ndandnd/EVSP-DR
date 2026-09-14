@@ -1,0 +1,1052 @@
+[
+  {
+    "job_id": "187967",
+    "mode": "cache",
+    "case_id": "array",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=64G",
+      "--time=12:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_graphs",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--array=0-17%18",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cache",
+      "array"
+    ],
+    "submitted_utc": "2026-09-14T12:39:14.232215+00:00",
+    "scontrol": "JobId=187967 ArrayJobId=187967 ArrayTaskId=0-17%18 ArrayTaskThrottle=18 JobName=drX_graphs UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=None Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=12:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:14 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:14 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=2 NumTasks=1 CPUs/Task=2 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=2,mem=64G,node=1,billing=2 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=2 MinMemoryNode=64G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_graphs_187967_4294967294_187967.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_graphs_187967_4294967294_187967.out KillOInInvalidDependent=Yes TresPerTask=cpu=2 \n"
+  },
+  {
+    "job_id": "187968",
+    "mode": "cg",
+    "case_id": "w1_k26",
+    "dependencies": [
+      "187967_0",
+      "133927"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w1_k26_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_0:133927",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w1_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:15.120874+00:00",
+    "scontrol": "JobId=187968 JobName=drX_w1_k26_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_0(unfulfilled),afterok:133927(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:15 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:15 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k26_cg_187968_4294967294_187968.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k26_cg_187968_4294967294_187968.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187969",
+    "mode": "mip",
+    "case_id": "w1_k26",
+    "dependencies": [
+      "187968"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w1_k26_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187968",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w1_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:15.358165+00:00",
+    "scontrol": "JobId=187969 JobName=drX_w1_k26_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187968(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:15 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:15 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k26_mip_187969_4294967294_187969.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k26_mip_187969_4294967294_187969.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187970",
+    "mode": "cg",
+    "case_id": "w1_k27",
+    "dependencies": [
+      "187967_1",
+      "187968"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w1_k27_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_1:187968",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w1_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:15.585369+00:00",
+    "scontrol": "JobId=187970 JobName=drX_w1_k27_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_1(unfulfilled),afterok:187968(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:15 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:15 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k27_cg_187970_4294967294_187970.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k27_cg_187970_4294967294_187970.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187971",
+    "mode": "mip",
+    "case_id": "w1_k27",
+    "dependencies": [
+      "187970"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w1_k27_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187970",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w1_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:16.006031+00:00",
+    "scontrol": "JobId=187971 JobName=drX_w1_k27_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187970(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:16 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:16 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k27_mip_187971_4294967294_187971.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k27_mip_187971_4294967294_187971.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187972",
+    "mode": "cg",
+    "case_id": "w1_k28",
+    "dependencies": [
+      "187967_2",
+      "187970"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w1_k28_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_2:187970",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w1_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:16.240593+00:00",
+    "scontrol": "JobId=187972 JobName=drX_w1_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_2(unfulfilled),afterok:187970(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:16 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:16 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k28_cg_187972_4294967294_187972.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k28_cg_187972_4294967294_187972.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187973",
+    "mode": "mip",
+    "case_id": "w1_k28",
+    "dependencies": [
+      "187972"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w1_k28_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187972",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w1_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:17.045479+00:00",
+    "scontrol": "JobId=187973 JobName=drX_w1_k28_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187972(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:17 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:17 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k28_mip_187973_4294967294_187973.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w1_k28_mip_187973_4294967294_187973.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187974",
+    "mode": "cg",
+    "case_id": "w2_k26",
+    "dependencies": [
+      "187967_3"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w2_k26_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_3",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w2_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:20.593242+00:00",
+    "scontrol": "JobId=187974 JobName=drX_w2_k26_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_3(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:20 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:20 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k26_cg_187974_4294967294_187974.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k26_cg_187974_4294967294_187974.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187975",
+    "mode": "mip",
+    "case_id": "w2_k26",
+    "dependencies": [
+      "187974"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w2_k26_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187974",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w2_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:20.860312+00:00",
+    "scontrol": "JobId=187975 JobName=drX_w2_k26_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187974(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:20 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:20 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k26_mip_187975_4294967294_187975.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k26_mip_187975_4294967294_187975.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187976",
+    "mode": "cg",
+    "case_id": "w2_k27",
+    "dependencies": [
+      "187967_4",
+      "187974"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w2_k27_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_4:187974",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w2_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:21.090020+00:00",
+    "scontrol": "JobId=187976 JobName=drX_w2_k27_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_4(unfulfilled),afterok:187974(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:21 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:21 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k27_cg_187976_4294967294_187976.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k27_cg_187976_4294967294_187976.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187977",
+    "mode": "mip",
+    "case_id": "w2_k27",
+    "dependencies": [
+      "187976"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w2_k27_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187976",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w2_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:21.354789+00:00",
+    "scontrol": "JobId=187977 JobName=drX_w2_k27_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187976(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:21 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:21 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k27_mip_187977_4294967294_187977.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k27_mip_187977_4294967294_187977.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187978",
+    "mode": "cg",
+    "case_id": "w2_k28",
+    "dependencies": [
+      "187967_5",
+      "187976"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w2_k28_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_5:187976",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w2_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:21.578431+00:00",
+    "scontrol": "JobId=187978 JobName=drX_w2_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_5(unfulfilled),afterok:187976(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:21 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:21 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k28_cg_187978_4294967294_187978.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k28_cg_187978_4294967294_187978.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187979",
+    "mode": "mip",
+    "case_id": "w2_k28",
+    "dependencies": [
+      "187978"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w2_k28_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187978",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w2_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:21.880992+00:00",
+    "scontrol": "JobId=187979 JobName=drX_w2_k28_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187978(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:21 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:21 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k28_mip_187979_4294967294_187979.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w2_k28_mip_187979_4294967294_187979.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187980",
+    "mode": "cg",
+    "case_id": "w3_k26",
+    "dependencies": [
+      "187967_6"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w3_k26_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_6",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w3_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:24.252350+00:00",
+    "scontrol": "JobId=187980 JobName=drX_w3_k26_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_6(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:24 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:24 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k26_cg_187980_4294967294_187980.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k26_cg_187980_4294967294_187980.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187981",
+    "mode": "mip",
+    "case_id": "w3_k26",
+    "dependencies": [
+      "187980"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w3_k26_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187980",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w3_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:24.464578+00:00",
+    "scontrol": "JobId=187981 JobName=drX_w3_k26_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187980(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:24 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:24 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k26_mip_187981_4294967294_187981.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k26_mip_187981_4294967294_187981.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187982",
+    "mode": "cg",
+    "case_id": "w3_k27",
+    "dependencies": [
+      "187967_7",
+      "187980"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w3_k27_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_7:187980",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w3_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:24.675000+00:00",
+    "scontrol": "JobId=187982 JobName=drX_w3_k27_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_7(unfulfilled),afterok:187980(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:24 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:24 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k27_cg_187982_4294967294_187982.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k27_cg_187982_4294967294_187982.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187983",
+    "mode": "mip",
+    "case_id": "w3_k27",
+    "dependencies": [
+      "187982"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w3_k27_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187982",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w3_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:24.990629+00:00",
+    "scontrol": "JobId=187983 JobName=drX_w3_k27_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187982(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:24 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:24 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k27_mip_187983_4294967294_187983.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k27_mip_187983_4294967294_187983.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187984",
+    "mode": "cg",
+    "case_id": "w3_k28",
+    "dependencies": [
+      "187967_8",
+      "187982"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w3_k28_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_8:187982",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w3_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:25.223370+00:00",
+    "scontrol": "JobId=187984 JobName=drX_w3_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_8(unfulfilled),afterok:187982(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k28_cg_187984_4294967294_187984.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k28_cg_187984_4294967294_187984.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187985",
+    "mode": "mip",
+    "case_id": "w3_k28",
+    "dependencies": [
+      "187984"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w3_k28_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187984",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w3_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:25.448534+00:00",
+    "scontrol": "JobId=187985 JobName=drX_w3_k28_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187984(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k28_mip_187985_4294967294_187985.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w3_k28_mip_187985_4294967294_187985.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187986",
+    "mode": "cg",
+    "case_id": "w4_k26",
+    "dependencies": [
+      "187967_9",
+      "133987"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w4_k26_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_9:133987",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w4_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:25.662997+00:00",
+    "scontrol": "JobId=187986 JobName=drX_w4_k26_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_9(unfulfilled),afterok:133987(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k26_cg_187986_4294967294_187986.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k26_cg_187986_4294967294_187986.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187987",
+    "mode": "mip",
+    "case_id": "w4_k26",
+    "dependencies": [
+      "187986"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w4_k26_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187986",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w4_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:25.859438+00:00",
+    "scontrol": "JobId=187987 JobName=drX_w4_k26_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187986(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:25 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:25 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k26_mip_187987_4294967294_187987.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k26_mip_187987_4294967294_187987.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187988",
+    "mode": "cg",
+    "case_id": "w4_k27",
+    "dependencies": [
+      "187967_10",
+      "187986"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w4_k27_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_10:187986",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w4_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:26.061698+00:00",
+    "scontrol": "JobId=187988 JobName=drX_w4_k27_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_10(unfulfilled),afterok:187986(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:26 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:26 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k27_cg_187988_4294967294_187988.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k27_cg_187988_4294967294_187988.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187989",
+    "mode": "mip",
+    "case_id": "w4_k27",
+    "dependencies": [
+      "187988"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w4_k27_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187988",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w4_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:26.267389+00:00",
+    "scontrol": "JobId=187989 JobName=drX_w4_k27_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187988(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:26 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:26 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k27_mip_187989_4294967294_187989.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k27_mip_187989_4294967294_187989.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187990",
+    "mode": "cg",
+    "case_id": "w4_k28",
+    "dependencies": [
+      "187967_11",
+      "187988"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w4_k28_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_11:187988",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w4_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:26.532770+00:00",
+    "scontrol": "JobId=187990 JobName=drX_w4_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_11(unfulfilled),afterok:187988(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:26 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:26 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k28_cg_187990_4294967294_187990.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k28_cg_187990_4294967294_187990.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187991",
+    "mode": "mip",
+    "case_id": "w4_k28",
+    "dependencies": [
+      "187990"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w4_k28_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187990",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w4_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:26.749986+00:00",
+    "scontrol": "JobId=187991 JobName=drX_w4_k28_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187990(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:26 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:26 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k28_mip_187991_4294967294_187991.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w4_k28_mip_187991_4294967294_187991.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187992",
+    "mode": "cg",
+    "case_id": "w5_k26",
+    "dependencies": [
+      "187967_12",
+      "134059"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w5_k26_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_12:134059",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w5_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:26.972485+00:00",
+    "scontrol": "JobId=187992 JobName=drX_w5_k26_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_12(unfulfilled),afterok:134059(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:26 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:26 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k26_cg_187992_4294967294_187992.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k26_cg_187992_4294967294_187992.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187993",
+    "mode": "mip",
+    "case_id": "w5_k26",
+    "dependencies": [
+      "187992"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w5_k26_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187992",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w5_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:27.167458+00:00",
+    "scontrol": "JobId=187993 JobName=drX_w5_k26_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187992(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:27 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:27 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k26_mip_187993_4294967294_187993.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k26_mip_187993_4294967294_187993.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187994",
+    "mode": "cg",
+    "case_id": "w5_k27",
+    "dependencies": [
+      "187967_13",
+      "187992"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w5_k27_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_13:187992",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w5_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:27.374118+00:00",
+    "scontrol": "JobId=187994 JobName=drX_w5_k27_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_13(unfulfilled),afterok:187992(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:27 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:27 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k27_cg_187994_4294967294_187994.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k27_cg_187994_4294967294_187994.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187995",
+    "mode": "mip",
+    "case_id": "w5_k27",
+    "dependencies": [
+      "187994"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w5_k27_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187994",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w5_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:27.575698+00:00",
+    "scontrol": "JobId=187995 JobName=drX_w5_k27_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187994(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:27 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:27 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k27_mip_187995_4294967294_187995.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k27_mip_187995_4294967294_187995.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187996",
+    "mode": "cg",
+    "case_id": "w5_k28",
+    "dependencies": [
+      "187967_14",
+      "187994"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w5_k28_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_14:187994",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w5_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:27.792817+00:00",
+    "scontrol": "JobId=187996 JobName=drX_w5_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_14(unfulfilled),afterok:187994(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:27 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:27 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k28_cg_187996_4294967294_187996.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k28_cg_187996_4294967294_187996.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187997",
+    "mode": "mip",
+    "case_id": "w5_k28",
+    "dependencies": [
+      "187996"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w5_k28_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187996",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w5_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:28.085221+00:00",
+    "scontrol": "JobId=187997 JobName=drX_w5_k28_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187996(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:28 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:28 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k28_mip_187997_4294967294_187997.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w5_k28_mip_187997_4294967294_187997.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187998",
+    "mode": "cg",
+    "case_id": "w6_k26",
+    "dependencies": [
+      "187967_15",
+      "134079"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w6_k26_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_15:134079",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w6_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:28.299934+00:00",
+    "scontrol": "JobId=187998 JobName=drX_w6_k26_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_15(unfulfilled),afterok:134079(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:28 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:28 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k26_cg_187998_4294967294_187998.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k26_cg_187998_4294967294_187998.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "187999",
+    "mode": "mip",
+    "case_id": "w6_k26",
+    "dependencies": [
+      "187998"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w6_k26_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187998",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w6_k26"
+    ],
+    "submitted_utc": "2026-09-14T12:39:28.500630+00:00",
+    "scontrol": "JobId=187999 JobName=drX_w6_k26_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187998(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:28 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:28 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k26_mip_187999_4294967294_187999.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k26_mip_187999_4294967294_187999.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "188000",
+    "mode": "cg",
+    "case_id": "w6_k27",
+    "dependencies": [
+      "187967_16",
+      "187998"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w6_k27_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_16:187998",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w6_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:28.724328+00:00",
+    "scontrol": "JobId=188000 JobName=drX_w6_k27_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_16(unfulfilled),afterok:187998(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:28 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:28 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k27_cg_188000_4294967294_188000.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k27_cg_188000_4294967294_188000.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "188001",
+    "mode": "mip",
+    "case_id": "w6_k27",
+    "dependencies": [
+      "188000"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w6_k27_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:188000",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w6_k27"
+    ],
+    "submitted_utc": "2026-09-14T12:39:28.935650+00:00",
+    "scontrol": "JobId=188001 JobName=drX_w6_k27_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:188000(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:28 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:28 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k27_mip_188001_4294967294_188001.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k27_mip_188001_4294967294_188001.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "188002",
+    "mode": "cg",
+    "case_id": "w6_k28",
+    "dependencies": [
+      "187967_17",
+      "188000"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=05:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w6_k28_cg",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:187967_17:188000",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "cg",
+      "w6_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:30.091583+00:00",
+    "scontrol": "JobId=188002 JobName=drX_w6_k28_cg UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14997 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:187967_17(unfulfilled),afterok:188000(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:30 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:30 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k28_cg_188002_4294967294_188002.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k28_cg_188002_4294967294_188002.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "188004",
+    "mode": "mip",
+    "case_id": "w6_k28",
+    "dependencies": [
+      "188002"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=02:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drX_w6_k28_mip",
+      "--output=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.out",
+      "--error=/home/nc437/ladder-lite/chain_extension_20260914/logs/%x_%A_%a_%j.err",
+      "--dependency=afterok:188002",
+      "/home/nc437/ladder-lite/chain_extension_20260914/worker.sub",
+      "mip",
+      "w6_k28"
+    ],
+    "submitted_utc": "2026-09-14T12:39:30.431977+00:00",
+    "scontrol": "JobId=188004 JobName=drX_w6_k28_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:188002(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T08:39:30 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:39:30 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1735620 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/chain_extension_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k28_mip_188004_4294967294_188004.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/chain_extension_20260914/logs/drX_w6_k28_mip_188004_4294967294_188004.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  }
+]

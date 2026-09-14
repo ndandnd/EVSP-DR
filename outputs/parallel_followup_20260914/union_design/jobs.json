@@ -1,0 +1,320 @@
+[
+  {
+    "case_id": "c1_k08_union_build",
+    "job_id": "188093",
+    "kind": "pool_construction",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c1_k08_union_build",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c1_k08_union_build",
+      "pool_construction"
+    ],
+    "submitted_utc": "2026-09-14T12:59:17.807112+00:00"
+  },
+  {
+    "case_id": "c2_k08_union_build",
+    "job_id": "188094",
+    "kind": "pool_construction",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c2_k08_union_build",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c2_k08_union_build",
+      "pool_construction"
+    ],
+    "submitted_utc": "2026-09-14T12:59:17.919783+00:00"
+  },
+  {
+    "case_id": "c4_k08_union_build",
+    "job_id": "188095",
+    "kind": "pool_construction",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c4_k08_union_build",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c4_k08_union_build",
+      "pool_construction"
+    ],
+    "submitted_utc": "2026-09-14T12:59:18.042779+00:00"
+  },
+  {
+    "case_id": "c5_k08_union_build",
+    "job_id": "188096",
+    "kind": "pool_construction",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c5_k08_union_build",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c5_k08_union_build",
+      "pool_construction"
+    ],
+    "submitted_utc": "2026-09-14T12:59:18.168453+00:00"
+  },
+  {
+    "case_id": "c5_k10_union_build",
+    "job_id": "188097",
+    "kind": "pool_construction",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c5_k10_union_build",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c5_k10_union_build",
+      "pool_construction"
+    ],
+    "submitted_utc": "2026-09-14T12:59:18.289448+00:00"
+  },
+  {
+    "case_id": "c6_k10_union_build",
+    "job_id": "188098",
+    "kind": "pool_construction",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=2",
+      "--mem=8G",
+      "--time=1:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c6_k10_union_build",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c6_k10_union_build",
+      "pool_construction"
+    ],
+    "submitted_utc": "2026-09-14T12:59:18.515273+00:00"
+  },
+  {
+    "case_id": "c1_k08_union_mip",
+    "job_id": "188099",
+    "kind": "mip",
+    "dependencies": [
+      "188093"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c1_k08_union_mip",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "--dependency=afterok:188093",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c1_k08_union_mip",
+      "mip"
+    ],
+    "submitted_utc": "2026-09-14T12:59:18.728934+00:00"
+  },
+  {
+    "case_id": "c2_k08_union_mip",
+    "job_id": "188100",
+    "kind": "mip",
+    "dependencies": [
+      "188094"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c2_k08_union_mip",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "--dependency=afterok:188094",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c2_k08_union_mip",
+      "mip"
+    ],
+    "submitted_utc": "2026-09-14T12:59:18.957149+00:00"
+  },
+  {
+    "case_id": "c4_k08_union_mip",
+    "job_id": "188101",
+    "kind": "mip",
+    "dependencies": [
+      "188095"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c4_k08_union_mip",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "--dependency=afterok:188095",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c4_k08_union_mip",
+      "mip"
+    ],
+    "submitted_utc": "2026-09-14T12:59:19.181812+00:00"
+  },
+  {
+    "case_id": "c5_k08_union_mip",
+    "job_id": "188102",
+    "kind": "mip",
+    "dependencies": [
+      "188096"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c5_k08_union_mip",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "--dependency=afterok:188096",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c5_k08_union_mip",
+      "mip"
+    ],
+    "submitted_utc": "2026-09-14T12:59:19.293832+00:00"
+  },
+  {
+    "case_id": "c5_k10_union_mip",
+    "job_id": "188103",
+    "kind": "mip",
+    "dependencies": [
+      "188097"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c5_k10_union_mip",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "--dependency=afterok:188097",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c5_k10_union_mip",
+      "mip"
+    ],
+    "submitted_utc": "2026-09-14T12:59:19.416237+00:00"
+  },
+  {
+    "case_id": "c6_k10_union_mip",
+    "job_id": "188104",
+    "kind": "mip",
+    "dependencies": [
+      "188098"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=4:30:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drU_c6_k10_union_mip",
+      "--output=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/parallel_pool_unions_20260914/logs/%x_%j.err",
+      "--dependency=afterok:188098",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914/worker.sub",
+      "/home/nc437/ladder-lite/parallel_pool_unions_20260914",
+      "c6_k10_union_mip",
+      "mip"
+    ],
+    "submitted_utc": "2026-09-14T12:59:19.541554+00:00"
+  }
+]

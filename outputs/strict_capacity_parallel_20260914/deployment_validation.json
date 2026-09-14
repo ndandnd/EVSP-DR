@@ -1,0 +1,39 @@
+{
+  "cluster_license_gate": {
+    "alloc_cpus": 1,
+    "columns": 2101,
+    "elapsed": "00:00:05",
+    "excluded_node": "scaglione-compute-01",
+    "executing_node": "snavely-cpu-02",
+    "exit_code": "0:0",
+    "gurobi_version": "12.0.3",
+    "job_id": "188087",
+    "partition": "default_partition-interactive",
+    "requested_memory": "2G",
+    "rows": 2101,
+    "solver_status": 2,
+    "state": "COMPLETED",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "61155df05b0e2e38551736a81f05ac125dad0423574215a792f3c8a001f33e58",
+    "threads": 1
+  },
+  "driver_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "production_submission": {
+    "authorized_by_this_record": false,
+    "job_ids": []
+  },
+  "remote_manifest_validation": {
+    "actual_driver_commands_parsed": 24,
+    "case_count": 12,
+    "valid": true
+  },
+  "remote_root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914",
+  "remote_unit_tests": {
+    "count": 8,
+    "status": "passed"
+  },
+  "schema": "evsp-dr-strict-capacity-parallel-deployment-validation-v1",
+  "shared_results_root": "/share/scaglione/nc437/evsp-dr/strict_capacity_parallel_20260914/results",
+  "status": "validated_not_submitted",
+  "tooling_commit": "f9925f6672934318b9c88a171cafe2202c57aba3"
+}\n

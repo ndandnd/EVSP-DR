@@ -1,0 +1,3710 @@
+{
+  "campaigns": {
+    "strict_capacity_parallel_20260914": {
+      "artifact_hash_note": "Hashes are observations at collection time; only completed attempt artifacts are immutable result evidence.",
+      "campaign_root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914",
+      "cg": [],
+      "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+      "collected_utc": "2026-09-14T13:07:38.343387+00:00",
+      "expected_case_count": 12,
+      "interpretation": {
+        "cg_certificate": "Only certified_rc_optimal=true with exact_nonnegative_reduced_cost and zero artificial weight certifies the full conservative event-time/SOC covering LP for that case.",
+        "integer_proof": "The dedicated two-stage MIP proves only its saved finite capacity-aware pool; fleet and charging-cost stages are reported separately.",
+        "interrupted_pricing": "pricing_deadline has null terminal exact reduced cost and is never a pricing certificate; the last atomically accepted pool remains usable evidence.",
+        "physical_validation": "Selected routes require individual replay plus the continuous half-open shared-capacity sweep for capacity arms.",
+        "physics_scope": "The 236.44/35.466 cells test confirmed usable energy and 15% reserve in the constant-rate event model. They do not implement or claim the nonlinear 18E1 charging curve.",
+        "selector_equivalence": "Claim selector equivalence only for matched cases with equal exact terminal status and normalized capacity-aware routes; time-censored progress is descriptive.",
+        "terminal_target": "No 65% terminal floor or target is imposed or inferred."
+      },
+      "manifest": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/manifest.json",
+      "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+      "mip": [],
+      "observed_attempt_count": 12,
+      "records": [],
+      "root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914",
+      "rows": [
+        {
+          "artifacts": [
+            {
+              "bytes": 2534,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/commands.json",
+              "sha256": "b5d85b2009741fd5c8a10a44f10e5a5493b06d3d489e5031187abe55158794fd"
+            },
+            {
+              "bytes": 3892,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/allocation.json",
+              "sha256": "b913a8da73962417ab9c84bb0fd76d7118f73645adaaea5194a54a2c7f2cb09e"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 82203,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/pool.jsonl",
+              "sha256": "d579f062dd61e041acf35033b8c470491dc8b1659069458e43bf5d92e4485ad0"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3577,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/worker_status.json",
+              "sha256": "1578f60ca0c2d1c0b52e06db77af4f070f2b6e31a61484e013029ec8e30e4440"
+            }
+          ],
+          "attempt_id": "188123_r0",
+          "case_id": "k1_13408_flat_combined_reference",
+          "case_index": 0,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "combined",
+            "battery_kwh": 240.0,
+            "capacity_selector": "reference",
+            "case_id": "k1_13408_flat_combined_reference",
+            "cg_wall_s": 3000,
+            "index": 0,
+            "instance": "k1_duty13408",
+            "mip_wall_s": 300,
+            "prices": "flat",
+            "priority": 1,
+            "question_ids": [
+              "Q1",
+              "Q2"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 3600
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2546,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/commands.json",
+              "sha256": "93f680d1e8b64171d7c7e5d20abd21805cfb9d319b6cbfab71b6b4492fa13e01"
+            },
+            {
+              "bytes": 3896,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/allocation.json",
+              "sha256": "b95aaec9abbb49202a0aef4775d5d894c8777e0a2311d00ad7eec8e960cc354d"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 101854,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/pool.jsonl",
+              "sha256": "ee95a0f74896dbe4dbf92e3c7c199e71a5f9e4937b0a2fe85eedc428f9a952b1"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3597,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/worker_status.json",
+              "sha256": "7f8c45715c38d30711f716714157ee296d1ea0f6161532e1b0e7aec1361de26e"
+            }
+          ],
+          "attempt_id": "188124_r0",
+          "case_id": "k1_13408_flat_combined_prefix_memo",
+          "case_index": 1,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "combined",
+            "battery_kwh": 240.0,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k1_13408_flat_combined_prefix_memo",
+            "cg_wall_s": 3000,
+            "index": 1,
+            "instance": "k1_duty13408",
+            "mip_wall_s": 300,
+            "prices": "flat",
+            "priority": 1,
+            "question_ids": [
+              "Q1",
+              "Q2"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 3600
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2560,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/commands.json",
+              "sha256": "c5eec33a8f288a9d3400b6634df5a2b46c44cc544b3cc4341f2b2fa86280abe0"
+            },
+            {
+              "bytes": 3884,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/allocation.json",
+              "sha256": "66e80e44c1b9c0a6b794635ebd061ee4d53d12909f43b786d2a60039d01d5b1f"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 58247,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/pool.jsonl",
+              "sha256": "d07d90ee63db6b5d39def81526f792d35ded0e830d3c968b87e69adb9a7c4a4d"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3597,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/worker_status.json",
+              "sha256": "e418ae55bede4279b1cfaff4263fbb8fe984d6187457a153da65f9f82189200b"
+            }
+          ],
+          "attempt_id": "188125_r0",
+          "case_id": "k1_13408_peak12_combined_reference",
+          "case_index": 2,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "combined",
+            "battery_kwh": 240.0,
+            "capacity_selector": "reference",
+            "case_id": "k1_13408_peak12_combined_reference",
+            "cg_wall_s": 6600,
+            "index": 2,
+            "instance": "k1_duty13408",
+            "mip_wall_s": 300,
+            "prices": "peak12",
+            "priority": 2,
+            "question_ids": [
+              "Q2"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 7200
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2572,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/commands.json",
+              "sha256": "8ac1f4c2431914888ae25f583a514b230153f3885a61c6d7a2cc002399c50a7d"
+            },
+            {
+              "bytes": 3888,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/allocation.json",
+              "sha256": "7e66ba1be403dd25453b6722dc70e13948016e4c1334323bec852cb603deebe0"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 58247,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/pool.jsonl",
+              "sha256": "d07d90ee63db6b5d39def81526f792d35ded0e830d3c968b87e69adb9a7c4a4d"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3617,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/worker_status.json",
+              "sha256": "e82ccb34ebe918c4baccd25b3fe7a7c7ccca2ce49bb4be9d2e058f1299385084"
+            }
+          ],
+          "attempt_id": "188126_r0",
+          "case_id": "k1_13408_peak12_combined_prefix_memo",
+          "case_index": 3,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "combined",
+            "battery_kwh": 240.0,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k1_13408_peak12_combined_prefix_memo",
+            "cg_wall_s": 6600,
+            "index": 3,
+            "instance": "k1_duty13408",
+            "mip_wall_s": 300,
+            "prices": "peak12",
+            "priority": 2,
+            "question_ids": [
+              "Q2"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 7200
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2484,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/commands.json",
+              "sha256": "e478712f30bc350ea8d78c66e4a627c907cf196a203c792730d9437f2e02c55d"
+            },
+            {
+              "bytes": 3871,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/allocation.json",
+              "sha256": "b93b62f28e751015aa04b012c049ac643abba55581514064093d8098341edfd3"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/pool.jsonl",
+              "sha256": null
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3477,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/worker_status.json",
+              "sha256": "f9edc66c40e4975eb0471421aea9a1572f14b6e8c59b74667717ee60abbc3bf1"
+            }
+          ],
+          "attempt_id": "188127_r0",
+          "case_id": "k2_flat_240r0_baseline",
+          "case_index": 4,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "baseline",
+            "battery_kwh": 240.0,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_240r0_baseline",
+            "cg_wall_s": 6600,
+            "index": 4,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 300,
+            "prices": "flat",
+            "priority": 3,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 7200
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2485,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/commands.json",
+              "sha256": "efdbfd70e31fc894decebcf90528a19cc8c6678087bb62fe198a97e531aec795"
+            },
+            {
+              "bytes": 3873,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/allocation.json",
+              "sha256": "a9fbc77f17ee445a4c9b0132d55d8032c34650057618616c2397a525aa458dcf"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 61004,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/pool.jsonl",
+              "sha256": "53e32f4b16ffe666768c30be673de89f9347da5041bb1f5124bddda3563e9853"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3477,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/worker_status.json",
+              "sha256": "b9194b94feca9619546f06f9a68e23a5453c5fea291911021888e249491e16c0"
+            }
+          ],
+          "attempt_id": "188128_r0",
+          "case_id": "k2_flat_240r0_capacity",
+          "case_index": 5,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "capacity",
+            "battery_kwh": 240.0,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_240r0_capacity",
+            "cg_wall_s": 13200,
+            "index": 5,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 600,
+            "prices": "flat",
+            "priority": 3,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 14400
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2470,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/commands.json",
+              "sha256": "e86682ed1072664f0c7144af4894d4618b1253c46e536a85ec61903dfe3bd276"
+            },
+            {
+              "bytes": 3867,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/allocation.json",
+              "sha256": "8341dc513878686808c0b3e2c6f8d8b4bb322537b6e94f8cc6fb5332aa4ca4cb"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 56912,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/pool.jsonl",
+              "sha256": "d7da2b5ffc5093ea73bfa0eabfec4110bb71dc3a9f61959c8f75b0ac63d8d544"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3457,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/worker_status.json",
+              "sha256": "8638148aab3cdfe1a60d93b9bd15d097dd740705b93ad6adb0f38fbd75a76a06"
+            }
+          ],
+          "attempt_id": "188129_r0",
+          "case_id": "k2_flat_240r0_parx60",
+          "case_index": 6,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "parx60",
+            "battery_kwh": 240.0,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_240r0_parx60",
+            "cg_wall_s": 6600,
+            "index": 6,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 300,
+            "prices": "flat",
+            "priority": 3,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 7200
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2485,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/commands.json",
+              "sha256": "5a10af8c16b4fd07472e89e5fed5e995c49b351f7c65c3a7a10c86bb7d17b667"
+            },
+            {
+              "bytes": 3872,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/allocation.json",
+              "sha256": "4441d9a20420231cf6870a139b1f132d8df38a352ebc648393445fa4fd60eb81"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 60979,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/pool.jsonl",
+              "sha256": "e4dd4dc0e76d34f3e8204cb58128956ccdca6546e5f575401fed924211e613e8"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3477,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/worker_status.json",
+              "sha256": "1fe24c2b2bfaae3f390c67b5a8d49d56a6e3a70d148fb6828fe887fc22645f11"
+            }
+          ],
+          "attempt_id": "188130_r0",
+          "case_id": "k2_flat_240r0_combined",
+          "case_index": 7,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "combined",
+            "battery_kwh": 240.0,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_240r0_combined",
+            "cg_wall_s": 13200,
+            "index": 7,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 600,
+            "prices": "flat",
+            "priority": 3,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 0.0,
+            "slurm_time_s": 14400
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2512,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/commands.json",
+              "sha256": "b98665b503fe52965f88d5a3db967708698e46b789f5605175ce52060b4f2036"
+            },
+            {
+              "bytes": 3878,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/allocation.json",
+              "sha256": "b2504d79043b3da450b7ed4886bd04ffd7569a3a6df4b570c3fe5d4af924336d"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 67027,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/pool.jsonl",
+              "sha256": "0ba9d3f58f29de363171332d0ce469e34b04cc553d0c190dc801c6398058aee3"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3517,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/worker_status.json",
+              "sha256": "ac310793c5c6173489bd7ec1bcb250c339909abcf028deb9950e9de45500626a"
+            }
+          ],
+          "attempt_id": "188131_r0",
+          "case_id": "k2_flat_236p44r15_baseline",
+          "case_index": 8,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "baseline",
+            "battery_kwh": 236.44,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_236p44r15_baseline",
+            "cg_wall_s": 6600,
+            "index": 8,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 300,
+            "prices": "flat",
+            "priority": 4,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 35.466,
+            "slurm_time_s": 7200
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2513,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/commands.json",
+              "sha256": "84b51788cbdd32a5f99d044939002edc38043cc9d8d51b4321b8e22ff43778f9"
+            },
+            {
+              "bytes": 3880,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/allocation.json",
+              "sha256": "ccf61a09642b3c9d424dbc6008d57c46cdc1179f9c4b640b4e0ba180a0772190"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 61683,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/pool.jsonl",
+              "sha256": "e121021ac4f68a0049ca085d78ff0d0c853f38424baf14b1f5f3122145a9beda"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3517,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/worker_status.json",
+              "sha256": "633361f50382787935e3c60cb8e44b93b8d6f9d8b6d7c0df2a036bd81786aa16"
+            }
+          ],
+          "attempt_id": "188132_r0",
+          "case_id": "k2_flat_236p44r15_capacity",
+          "case_index": 9,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "capacity",
+            "battery_kwh": 236.44,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_236p44r15_capacity",
+            "cg_wall_s": 13200,
+            "index": 9,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 600,
+            "prices": "flat",
+            "priority": 4,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 35.466,
+            "slurm_time_s": 14400
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2498,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/commands.json",
+              "sha256": "d2ad61627b645426b1edd04a254b420b3c054dff5b1a75986b196ba5a97ae86b"
+            },
+            {
+              "bytes": 3877,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/allocation.json",
+              "sha256": "c0ce2381fecf8d9e6f4b3e57818e9327e3ee501ba1a2d2720782c150d97484f1"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 64323,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/pool.jsonl",
+              "sha256": "4d18d01b02be596f1d77e438a61c44e874cad35364d0d058f12c15813c716303"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3497,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/worker_status.json",
+              "sha256": "b423f6339bbcb4947a69c9b536a01e59d8a7a1486770ea4254425d01f0fe3c85"
+            }
+          ],
+          "attempt_id": "188133_r0",
+          "case_id": "k2_flat_236p44r15_parx60",
+          "case_index": 10,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "parx60",
+            "battery_kwh": 236.44,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_236p44r15_parx60",
+            "cg_wall_s": 6600,
+            "index": 10,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 300,
+            "prices": "flat",
+            "priority": 4,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 35.466,
+            "slurm_time_s": 7200
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        },
+        {
+          "artifacts": [
+            {
+              "bytes": 2513,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/commands.json",
+              "sha256": "f4ca00d1bef6505652c36300918f131e4ebcde99348c65d12c571542fbf7b6a3"
+            },
+            {
+              "bytes": 3883,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/allocation.json",
+              "sha256": "8ebd7eccd47bc8af4c13597cbe12eaeb3c6e564b1ac71296ab59626622ac9dd2"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/cg.json",
+              "sha256": null
+            },
+            {
+              "bytes": 61658,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/pool.jsonl",
+              "sha256": "fbd7765273a6dc1165032049edbf3ee9b796075ecb72eba5a2bbc967d3b6024c"
+            },
+            {
+              "bytes": null,
+              "exists": false,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/mip.json",
+              "sha256": null
+            },
+            {
+              "bytes": 3517,
+              "exists": true,
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/worker_status.json",
+              "sha256": "d3983ee6e0ff18843de4506bae1b65343f42d47c089e261c45e8c0c9fdebc550"
+            }
+          ],
+          "attempt_id": "188134_r0",
+          "case_id": "k2_flat_236p44r15_combined",
+          "case_index": 11,
+          "cg": {
+            "artifact_complete": false,
+            "certified_rc_optimal": null,
+            "checkpoint": null,
+            "completed_iterations": 0,
+            "final": null,
+            "pool_sha256": null,
+            "pricing_certificate_scope": null,
+            "runtime_s": null,
+            "status": null,
+            "stop_reason": null,
+            "terminal_exact_min_reduced_cost": null
+          },
+          "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "expected": {
+            "arm": "combined",
+            "battery_kwh": 236.44,
+            "capacity_selector": "prefix-memo",
+            "case_id": "k2_flat_236p44r15_combined",
+            "cg_wall_s": 13200,
+            "index": 11,
+            "instance": "e1_short_k2",
+            "mip_wall_s": 600,
+            "prices": "flat",
+            "priority": 4,
+            "question_ids": [
+              "Q3"
+            ],
+            "reserve_kwh": 35.466,
+            "slurm_time_s": 14400
+          },
+          "finite_pool_mip": {
+            "artifact_complete": false,
+            "charging_related_cost": null,
+            "duplicate_service_audit": null,
+            "fleet": null,
+            "has_solution": null,
+            "physical_station_capacity_audit": null,
+            "pool_acceptance": null,
+            "stage1_fleet_integer_lower_bound": null,
+            "stage1_fleet_proven": null,
+            "stage2_status": null,
+            "status": null
+          },
+          "input_validation": {
+            "deadhead_reference": {
+              "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+              "valid": true
+            },
+            "e1_short_k2": {
+              "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "valid": true
+            },
+            "flat": {
+              "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+              "valid": true
+            },
+            "k1_duty13408": {
+              "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "valid": true
+            },
+            "peak12": {
+              "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+              "valid": true
+            },
+            "reference_dictionary": {
+              "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+              "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+              "valid": true
+            }
+          },
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "native_record_eligibility": {
+            "cg": false,
+            "mip": false
+          },
+          "stage_status": {},
+          "worker_returncode": 0
+        }
+      ],
+      "schema": "evsp-dr-strict-capacity-parallel-collection-v1",
+      "workflow": {
+        "attempt_progress": [
+          {
+            "artifacts": [
+              {
+                "bytes": 2534,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/commands.json",
+                "sha256": "b5d85b2009741fd5c8a10a44f10e5a5493b06d3d489e5031187abe55158794fd"
+              },
+              {
+                "bytes": 3892,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/allocation.json",
+                "sha256": "b913a8da73962417ab9c84bb0fd76d7118f73645adaaea5194a54a2c7f2cb09e"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 82203,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/pool.jsonl",
+                "sha256": "d579f062dd61e041acf35033b8c470491dc8b1659069458e43bf5d92e4485ad0"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3577,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/worker_status.json",
+                "sha256": "1578f60ca0c2d1c0b52e06db77af4f070f2b6e31a61484e013029ec8e30e4440"
+              }
+            ],
+            "attempt_id": "188123_r0",
+            "case_id": "k1_13408_flat_combined_reference",
+            "case_index": 0,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "combined",
+              "battery_kwh": 240.0,
+              "capacity_selector": "reference",
+              "case_id": "k1_13408_flat_combined_reference",
+              "cg_wall_s": 3000,
+              "index": 0,
+              "instance": "k1_duty13408",
+              "mip_wall_s": 300,
+              "prices": "flat",
+              "priority": 1,
+              "question_ids": [
+                "Q1",
+                "Q2"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 3600
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2546,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/commands.json",
+                "sha256": "93f680d1e8b64171d7c7e5d20abd21805cfb9d319b6cbfab71b6b4492fa13e01"
+              },
+              {
+                "bytes": 3896,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/allocation.json",
+                "sha256": "b95aaec9abbb49202a0aef4775d5d894c8777e0a2311d00ad7eec8e960cc354d"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 101854,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/pool.jsonl",
+                "sha256": "ee95a0f74896dbe4dbf92e3c7c199e71a5f9e4937b0a2fe85eedc428f9a952b1"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3597,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/worker_status.json",
+                "sha256": "7f8c45715c38d30711f716714157ee296d1ea0f6161532e1b0e7aec1361de26e"
+              }
+            ],
+            "attempt_id": "188124_r0",
+            "case_id": "k1_13408_flat_combined_prefix_memo",
+            "case_index": 1,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "combined",
+              "battery_kwh": 240.0,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k1_13408_flat_combined_prefix_memo",
+              "cg_wall_s": 3000,
+              "index": 1,
+              "instance": "k1_duty13408",
+              "mip_wall_s": 300,
+              "prices": "flat",
+              "priority": 1,
+              "question_ids": [
+                "Q1",
+                "Q2"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 3600
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2560,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/commands.json",
+                "sha256": "c5eec33a8f288a9d3400b6634df5a2b46c44cc544b3cc4341f2b2fa86280abe0"
+              },
+              {
+                "bytes": 3884,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/allocation.json",
+                "sha256": "66e80e44c1b9c0a6b794635ebd061ee4d53d12909f43b786d2a60039d01d5b1f"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 58247,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/pool.jsonl",
+                "sha256": "d07d90ee63db6b5d39def81526f792d35ded0e830d3c968b87e69adb9a7c4a4d"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3597,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/worker_status.json",
+                "sha256": "e418ae55bede4279b1cfaff4263fbb8fe984d6187457a153da65f9f82189200b"
+              }
+            ],
+            "attempt_id": "188125_r0",
+            "case_id": "k1_13408_peak12_combined_reference",
+            "case_index": 2,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "combined",
+              "battery_kwh": 240.0,
+              "capacity_selector": "reference",
+              "case_id": "k1_13408_peak12_combined_reference",
+              "cg_wall_s": 6600,
+              "index": 2,
+              "instance": "k1_duty13408",
+              "mip_wall_s": 300,
+              "prices": "peak12",
+              "priority": 2,
+              "question_ids": [
+                "Q2"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 7200
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2572,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/commands.json",
+                "sha256": "8ac1f4c2431914888ae25f583a514b230153f3885a61c6d7a2cc002399c50a7d"
+              },
+              {
+                "bytes": 3888,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/allocation.json",
+                "sha256": "7e66ba1be403dd25453b6722dc70e13948016e4c1334323bec852cb603deebe0"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 58247,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/pool.jsonl",
+                "sha256": "d07d90ee63db6b5d39def81526f792d35ded0e830d3c968b87e69adb9a7c4a4d"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3617,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/worker_status.json",
+                "sha256": "e82ccb34ebe918c4baccd25b3fe7a7c7ccca2ce49bb4be9d2e058f1299385084"
+              }
+            ],
+            "attempt_id": "188126_r0",
+            "case_id": "k1_13408_peak12_combined_prefix_memo",
+            "case_index": 3,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "combined",
+              "battery_kwh": 240.0,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k1_13408_peak12_combined_prefix_memo",
+              "cg_wall_s": 6600,
+              "index": 3,
+              "instance": "k1_duty13408",
+              "mip_wall_s": 300,
+              "prices": "peak12",
+              "priority": 2,
+              "question_ids": [
+                "Q2"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 7200
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2484,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/commands.json",
+                "sha256": "e478712f30bc350ea8d78c66e4a627c907cf196a203c792730d9437f2e02c55d"
+              },
+              {
+                "bytes": 3871,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/allocation.json",
+                "sha256": "b93b62f28e751015aa04b012c049ac643abba55581514064093d8098341edfd3"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/pool.jsonl",
+                "sha256": null
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3477,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/worker_status.json",
+                "sha256": "f9edc66c40e4975eb0471421aea9a1572f14b6e8c59b74667717ee60abbc3bf1"
+              }
+            ],
+            "attempt_id": "188127_r0",
+            "case_id": "k2_flat_240r0_baseline",
+            "case_index": 4,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "baseline",
+              "battery_kwh": 240.0,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_240r0_baseline",
+              "cg_wall_s": 6600,
+              "index": 4,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 300,
+              "prices": "flat",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 7200
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2485,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/commands.json",
+                "sha256": "efdbfd70e31fc894decebcf90528a19cc8c6678087bb62fe198a97e531aec795"
+              },
+              {
+                "bytes": 3873,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/allocation.json",
+                "sha256": "a9fbc77f17ee445a4c9b0132d55d8032c34650057618616c2397a525aa458dcf"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 61004,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/pool.jsonl",
+                "sha256": "53e32f4b16ffe666768c30be673de89f9347da5041bb1f5124bddda3563e9853"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3477,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_capacity/188128_r0/worker_status.json",
+                "sha256": "b9194b94feca9619546f06f9a68e23a5453c5fea291911021888e249491e16c0"
+              }
+            ],
+            "attempt_id": "188128_r0",
+            "case_id": "k2_flat_240r0_capacity",
+            "case_index": 5,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "capacity",
+              "battery_kwh": 240.0,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_240r0_capacity",
+              "cg_wall_s": 13200,
+              "index": 5,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 600,
+              "prices": "flat",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 14400
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2470,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/commands.json",
+                "sha256": "e86682ed1072664f0c7144af4894d4618b1253c46e536a85ec61903dfe3bd276"
+              },
+              {
+                "bytes": 3867,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/allocation.json",
+                "sha256": "8341dc513878686808c0b3e2c6f8d8b4bb322537b6e94f8cc6fb5332aa4ca4cb"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 56912,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/pool.jsonl",
+                "sha256": "d7da2b5ffc5093ea73bfa0eabfec4110bb71dc3a9f61959c8f75b0ac63d8d544"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3457,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/worker_status.json",
+                "sha256": "8638148aab3cdfe1a60d93b9bd15d097dd740705b93ad6adb0f38fbd75a76a06"
+              }
+            ],
+            "attempt_id": "188129_r0",
+            "case_id": "k2_flat_240r0_parx60",
+            "case_index": 6,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "parx60",
+              "battery_kwh": 240.0,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_240r0_parx60",
+              "cg_wall_s": 6600,
+              "index": 6,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 300,
+              "prices": "flat",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 7200
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2485,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/commands.json",
+                "sha256": "5a10af8c16b4fd07472e89e5fed5e995c49b351f7c65c3a7a10c86bb7d17b667"
+              },
+              {
+                "bytes": 3872,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/allocation.json",
+                "sha256": "4441d9a20420231cf6870a139b1f132d8df38a352ebc648393445fa4fd60eb81"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 60979,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/pool.jsonl",
+                "sha256": "e4dd4dc0e76d34f3e8204cb58128956ccdca6546e5f575401fed924211e613e8"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3477,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_combined/188130_r0/worker_status.json",
+                "sha256": "1fe24c2b2bfaae3f390c67b5a8d49d56a6e3a70d148fb6828fe887fc22645f11"
+              }
+            ],
+            "attempt_id": "188130_r0",
+            "case_id": "k2_flat_240r0_combined",
+            "case_index": 7,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "combined",
+              "battery_kwh": 240.0,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_240r0_combined",
+              "cg_wall_s": 13200,
+              "index": 7,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 600,
+              "prices": "flat",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 0.0,
+              "slurm_time_s": 14400
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2512,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/commands.json",
+                "sha256": "b98665b503fe52965f88d5a3db967708698e46b789f5605175ce52060b4f2036"
+              },
+              {
+                "bytes": 3878,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/allocation.json",
+                "sha256": "b2504d79043b3da450b7ed4886bd04ffd7569a3a6df4b570c3fe5d4af924336d"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 67027,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/pool.jsonl",
+                "sha256": "0ba9d3f58f29de363171332d0ce469e34b04cc553d0c190dc801c6398058aee3"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3517,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/worker_status.json",
+                "sha256": "ac310793c5c6173489bd7ec1bcb250c339909abcf028deb9950e9de45500626a"
+              }
+            ],
+            "attempt_id": "188131_r0",
+            "case_id": "k2_flat_236p44r15_baseline",
+            "case_index": 8,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "baseline",
+              "battery_kwh": 236.44,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_236p44r15_baseline",
+              "cg_wall_s": 6600,
+              "index": 8,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 300,
+              "prices": "flat",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 35.466,
+              "slurm_time_s": 7200
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2513,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/commands.json",
+                "sha256": "84b51788cbdd32a5f99d044939002edc38043cc9d8d51b4321b8e22ff43778f9"
+              },
+              {
+                "bytes": 3880,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/allocation.json",
+                "sha256": "ccf61a09642b3c9d424dbc6008d57c46cdc1179f9c4b640b4e0ba180a0772190"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 61683,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/pool.jsonl",
+                "sha256": "e121021ac4f68a0049ca085d78ff0d0c853f38424baf14b1f5f3122145a9beda"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3517,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_capacity/188132_r0/worker_status.json",
+                "sha256": "633361f50382787935e3c60cb8e44b93b8d6f9d8b6d7c0df2a036bd81786aa16"
+              }
+            ],
+            "attempt_id": "188132_r0",
+            "case_id": "k2_flat_236p44r15_capacity",
+            "case_index": 9,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "capacity",
+              "battery_kwh": 236.44,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_236p44r15_capacity",
+              "cg_wall_s": 13200,
+              "index": 9,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 600,
+              "prices": "flat",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 35.466,
+              "slurm_time_s": 14400
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2498,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/commands.json",
+                "sha256": "d2ad61627b645426b1edd04a254b420b3c054dff5b1a75986b196ba5a97ae86b"
+              },
+              {
+                "bytes": 3877,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/allocation.json",
+                "sha256": "c0ce2381fecf8d9e6f4b3e57818e9327e3ee501ba1a2d2720782c150d97484f1"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 64323,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/pool.jsonl",
+                "sha256": "4d18d01b02be596f1d77e438a61c44e874cad35364d0d058f12c15813c716303"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3497,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/worker_status.json",
+                "sha256": "b423f6339bbcb4947a69c9b536a01e59d8a7a1486770ea4254425d01f0fe3c85"
+              }
+            ],
+            "attempt_id": "188133_r0",
+            "case_id": "k2_flat_236p44r15_parx60",
+            "case_index": 10,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "parx60",
+              "battery_kwh": 236.44,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_236p44r15_parx60",
+              "cg_wall_s": 6600,
+              "index": 10,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 300,
+              "prices": "flat",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 35.466,
+              "slurm_time_s": 7200
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          },
+          {
+            "artifacts": [
+              {
+                "bytes": 2513,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/commands.json",
+                "sha256": "f4ca00d1bef6505652c36300918f131e4ebcde99348c65d12c571542fbf7b6a3"
+              },
+              {
+                "bytes": 3883,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/allocation.json",
+                "sha256": "8ebd7eccd47bc8af4c13597cbe12eaeb3c6e564b1ac71296ab59626622ac9dd2"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/cg.json",
+                "sha256": null
+              },
+              {
+                "bytes": 61658,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/pool.jsonl",
+                "sha256": "fbd7765273a6dc1165032049edbf3ee9b796075ecb72eba5a2bbc967d3b6024c"
+              },
+              {
+                "bytes": null,
+                "exists": false,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/mip.json",
+                "sha256": null
+              },
+              {
+                "bytes": 3517,
+                "exists": true,
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_combined/188134_r0/worker_status.json",
+                "sha256": "d3983ee6e0ff18843de4506bae1b65343f42d47c089e261c45e8c0c9fdebc550"
+              }
+            ],
+            "attempt_id": "188134_r0",
+            "case_id": "k2_flat_236p44r15_combined",
+            "case_index": 11,
+            "cg": {
+              "artifact_complete": false,
+              "certified_rc_optimal": null,
+              "checkpoint": null,
+              "completed_iterations": 0,
+              "final": null,
+              "pool_sha256": null,
+              "pricing_certificate_scope": null,
+              "runtime_s": null,
+              "status": null,
+              "stop_reason": null,
+              "terminal_exact_min_reduced_cost": null
+            },
+            "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "expected": {
+              "arm": "combined",
+              "battery_kwh": 236.44,
+              "capacity_selector": "prefix-memo",
+              "case_id": "k2_flat_236p44r15_combined",
+              "cg_wall_s": 13200,
+              "index": 11,
+              "instance": "e1_short_k2",
+              "mip_wall_s": 600,
+              "prices": "flat",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "reserve_kwh": 35.466,
+              "slurm_time_s": 14400
+            },
+            "finite_pool_mip": {
+              "artifact_complete": false,
+              "charging_related_cost": null,
+              "duplicate_service_audit": null,
+              "fleet": null,
+              "has_solution": null,
+              "physical_station_capacity_audit": null,
+              "pool_acceptance": null,
+              "stage1_fleet_integer_lower_bound": null,
+              "stage1_fleet_proven": null,
+              "stage2_status": null,
+              "status": null
+            },
+            "input_validation": {
+              "deadhead_reference": {
+                "expected_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "observed_sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/par_ref_dhd.csv",
+                "valid": true
+              },
+              "e1_short_k2": {
+                "expected_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "observed_sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+                "valid": true
+              },
+              "flat": {
+                "expected_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "observed_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+                "valid": true
+              },
+              "k1_duty13408": {
+                "expected_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "observed_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+                "valid": true
+              },
+              "peak12": {
+                "expected_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "observed_sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/tariff_response/peak12_h26.csv",
+                "valid": true
+              },
+              "reference_dictionary": {
+                "expected_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "observed_sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0",
+                "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/Ref_dict.csv",
+                "valid": true
+              }
+            },
+            "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+            "native_record_eligibility": {
+              "cg": false,
+              "mip": false
+            },
+            "stage_status": {},
+            "worker_returncode": 0
+          }
+        ],
+        "jobs.json": {
+          "allocation_count": 12,
+          "allocation_shape": "one independent allocation per case; CG then dedicated two-stage MIP",
+          "allocations": [
+            {
+              "case_id": "k1_13408_flat_combined_reference",
+              "case_index": 0,
+              "cg_wall_s": 3000,
+              "job_id": "188123",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "01:00:00",
+              "slurm_time_s": 3600
+            },
+            {
+              "case_id": "k1_13408_flat_combined_prefix_memo",
+              "case_index": 1,
+              "cg_wall_s": 3000,
+              "job_id": "188124",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "01:00:00",
+              "slurm_time_s": 3600
+            },
+            {
+              "case_id": "k1_13408_peak12_combined_reference",
+              "case_index": 2,
+              "cg_wall_s": 6600,
+              "job_id": "188125",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "02:00:00",
+              "slurm_time_s": 7200
+            },
+            {
+              "case_id": "k1_13408_peak12_combined_prefix_memo",
+              "case_index": 3,
+              "cg_wall_s": 6600,
+              "job_id": "188126",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "02:00:00",
+              "slurm_time_s": 7200
+            },
+            {
+              "case_id": "k2_flat_240r0_baseline",
+              "case_index": 4,
+              "cg_wall_s": 6600,
+              "job_id": "188127",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "02:00:00",
+              "slurm_time_s": 7200
+            },
+            {
+              "case_id": "k2_flat_240r0_capacity",
+              "case_index": 5,
+              "cg_wall_s": 13200,
+              "job_id": "188128",
+              "mip_wall_s": 600,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "04:00:00",
+              "slurm_time_s": 14400
+            },
+            {
+              "case_id": "k2_flat_240r0_parx60",
+              "case_index": 6,
+              "cg_wall_s": 6600,
+              "job_id": "188129",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "02:00:00",
+              "slurm_time_s": 7200
+            },
+            {
+              "case_id": "k2_flat_240r0_combined",
+              "case_index": 7,
+              "cg_wall_s": 13200,
+              "job_id": "188130",
+              "mip_wall_s": 600,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "04:00:00",
+              "slurm_time_s": 14400
+            },
+            {
+              "case_id": "k2_flat_236p44r15_baseline",
+              "case_index": 8,
+              "cg_wall_s": 6600,
+              "job_id": "188131",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "02:00:00",
+              "slurm_time_s": 7200
+            },
+            {
+              "case_id": "k2_flat_236p44r15_capacity",
+              "case_index": 9,
+              "cg_wall_s": 13200,
+              "job_id": "188132",
+              "mip_wall_s": 600,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "04:00:00",
+              "slurm_time_s": 14400
+            },
+            {
+              "case_id": "k2_flat_236p44r15_parx60",
+              "case_index": 10,
+              "cg_wall_s": 6600,
+              "job_id": "188133",
+              "mip_wall_s": 300,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "02:00:00",
+              "slurm_time_s": 7200
+            },
+            {
+              "case_id": "k2_flat_236p44r15_combined",
+              "case_index": 11,
+              "cg_wall_s": 13200,
+              "job_id": "188134",
+              "mip_wall_s": 600,
+              "phase_tag": "cg_plus_dedicated_mip",
+              "slurm_time": "04:00:00",
+              "slurm_time_s": 14400
+            }
+          ],
+          "authorization_scope": "Root campaign owner authorized exactly one initial allocation for each of the twelve frozen cases after cluster-native license validation; no retries.",
+          "automatic_retry": false,
+          "campaign_id": "strict_capacity_parallel_20260914",
+          "campaign_sha256": "7a030a8c2737955378529d47a174809fa2a59da6f76b5295672cebbb140bd76e",
+          "cluster_license_gate_job_id": "188087",
+          "collector_sha256": "9c35d139db1a9597f6103911a8484c74c009210d4bd6eb79368de0d6acbf4085",
+          "collector_tooling_commit": "d58474fa7fde75fe7fe837cfb801d68d3478266e",
+          "cpus_per_task": 1,
+          "driver_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "exclude": [
+            "scaglione-compute-01"
+          ],
+          "job_ids": [
+            "188123",
+            "188124",
+            "188125",
+            "188126",
+            "188127",
+            "188128",
+            "188129",
+            "188130",
+            "188131",
+            "188132",
+            "188133",
+            "188134"
+          ],
+          "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+          "memory_gb": 24,
+          "mip_budget_fairness_note": "Frozen pilot uses 300 s MIP for no-capacity arms and 600 s for capacity arms. Do not use those MIP outcomes as a one-factor runtime comparison; use a later matched one-hour saved-pool solve if needed.",
+          "partition": "default_partition",
+          "preemption_registry_contract": "Register each allocation as cg_plus_dedicated_mip and retain worker_status stage outcomes separately from allocation state.",
+          "requeue": false,
+          "reserved_jobs_untouched": [
+            "537227",
+            "V2G"
+          ],
+          "schema": "evsp-dr-strict-capacity-parallel-jobs-v1",
+          "status": "submitted",
+          "submission_authorized": true,
+          "submitted_utc": "2026-09-14T13:05:46.620864+00:00",
+          "worker_sha256": "bb9e7a9e6be5cc34348abf975223ae3e22df577e4385a3ca26ffc06d94578183",
+          "worker_tooling_commit": "6a2f654ea090b7e2ce91fdd0da2624726bdd6a7e"
+        },
+        "manifest.json": {
+          "schema": "evsp-dr-strict-capacity-parallel-followup-v1",
+          "status": "approved_for_deployment_and_native_validation_not_submitted",
+          "created_date": "2026-09-14",
+          "code": {
+            "driver": "src/run_capacity_speed_event_cg.py",
+            "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+            "tariff_fix_ancestor": "550bc795b18f801dca3a07b8becc1dc4c5527abb",
+            "deadline_checkpoint_ancestor": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+            "generic_trip_set_mip_forbidden": true
+          },
+          "scientific_questions": [
+            {
+              "id": "Q1",
+              "question": "On the already certified duty-13408 combined model, does prefix-memo reproduce the reference selector's exact CG endpoint and finite-pool integer result under a short independent allocation?",
+              "cases": [
+                0,
+                1
+              ]
+            },
+            {
+              "id": "Q2",
+              "question": "With every non-tariff setting fixed, do flat and peak12 prices change the certified duty-13408 pool, charging cost, or capacity schedule after the station-specific 60 kW accounting fix?",
+              "cases": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "id": "Q3",
+              "question": "For E1-short k2, what changes are attributable separately to shared charger counts, PARX 60 kW, and the confirmed 236.44 kWh usable-capacity/15% floor sensitivity?",
+              "cases": [
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11
+              ]
+            }
+          ],
+          "common_model": {
+            "master_sense": "minimize",
+            "trip_rows": "covering_greater_equal_one",
+            "initial_soc": "battery_kwh",
+            "terminal_soc_constraint": "reserve_only",
+            "soc_step_kwh": 2.5,
+            "event_block_min": 5,
+            "non_parx_kw": 240.0,
+            "capacity_grid_min": 1,
+            "charger_counts": {
+              "2190L": 1,
+              "4808": 1,
+              "3127L": 2,
+              "7880C": 1,
+              "JON_A": 1
+            },
+            "rc_eps": 1e-05,
+            "max_iters": 10000,
+            "threads": 1,
+            "mip_gap": 0.0001,
+            "charge_model": "constant station-specific power on the conservative event-time/SOC graph",
+            "terminal_65_percent_floor": false
+          },
+          "source_inputs": {
+            "k1_duty13408": {
+              "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+              "sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792"
+            },
+            "e1_short_k2": {
+              "path": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+              "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b"
+            },
+            "flat": {
+              "path": "data/hourly_prices_flat.csv",
+              "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+            },
+            "peak12": {
+              "path": "data/tariff_response/peak12_h26.csv",
+              "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+            },
+            "reference_dictionary": {
+              "path": "data/Ref_dict.csv",
+              "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+            },
+            "deadhead_reference": {
+              "path": "data/par_ref_dhd.csv",
+              "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+            }
+          },
+          "resource_policy": {
+            "partition": "default_partition",
+            "exclude": [
+              "scaglione-compute-01"
+            ],
+            "cpus_per_task": 1,
+            "memory_gb": 24,
+            "requeue": false,
+            "independent_case_count": 12,
+            "array_concurrency": 12,
+            "held_job_537227_untouched": true,
+            "v2g_jobs_untouched": true,
+            "submission_authorized": false
+          },
+          "execution_contract": {
+            "authorization_scope": "Prepare, deploy, and run native validation only. The root campaign owner separately controls all Slurm submissions.",
+            "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+            "outer_watchdog_grace_s": 120,
+            "unique_attempt_directories": true,
+            "automatic_retry": false,
+            "allocation_accounting": "Each job allocation contains one CG attempt followed by at most one dedicated two-stage finite-pool MIP attempt. Registry records must remain stage-aware.",
+            "native_record_gate": "A cg.json or mip.json artifact enters the native record arrays only after the matching worker_status stage returncode is zero.",
+            "incomplete_native_outputs_provisional": true
+          },
+          "reporting_contract": {
+            "cg_certificate": "Only certified_rc_optimal=true with exact_nonnegative_reduced_cost and zero artificial weight certifies the full conservative event-time/SOC covering LP for that case.",
+            "interrupted_pricing": "pricing_deadline has null terminal exact reduced cost and is never a pricing certificate; the last atomically accepted pool remains usable evidence.",
+            "integer_proof": "The dedicated two-stage MIP proves only its saved finite capacity-aware pool; fleet and charging-cost stages are reported separately.",
+            "physical_validation": "Selected routes require individual replay plus the continuous half-open shared-capacity sweep for capacity arms.",
+            "selector_equivalence": "Claim selector equivalence only for matched cases with equal exact terminal status and normalized capacity-aware routes; time-censored progress is descriptive.",
+            "physics_scope": "The 236.44/35.466 cells test confirmed usable energy and 15% reserve in the constant-rate event model. They do not implement or claim the nonlinear 18E1 charging curve.",
+            "terminal_target": "No 65% terminal floor or target is imposed or inferred."
+          },
+          "cases": [
+            {
+              "index": 0,
+              "case_id": "k1_13408_flat_combined_reference",
+              "priority": 1,
+              "question_ids": [
+                "Q1",
+                "Q2"
+              ],
+              "instance": "k1_duty13408",
+              "prices": "flat",
+              "arm": "combined",
+              "capacity_selector": "reference",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 3000,
+              "mip_wall_s": 300,
+              "slurm_time_s": 3600
+            },
+            {
+              "index": 1,
+              "case_id": "k1_13408_flat_combined_prefix_memo",
+              "priority": 1,
+              "question_ids": [
+                "Q1",
+                "Q2"
+              ],
+              "instance": "k1_duty13408",
+              "prices": "flat",
+              "arm": "combined",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 3000,
+              "mip_wall_s": 300,
+              "slurm_time_s": 3600
+            },
+            {
+              "index": 2,
+              "case_id": "k1_13408_peak12_combined_reference",
+              "priority": 2,
+              "question_ids": [
+                "Q2"
+              ],
+              "instance": "k1_duty13408",
+              "prices": "peak12",
+              "arm": "combined",
+              "capacity_selector": "reference",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 6600,
+              "mip_wall_s": 300,
+              "slurm_time_s": 7200
+            },
+            {
+              "index": 3,
+              "case_id": "k1_13408_peak12_combined_prefix_memo",
+              "priority": 2,
+              "question_ids": [
+                "Q2"
+              ],
+              "instance": "k1_duty13408",
+              "prices": "peak12",
+              "arm": "combined",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 6600,
+              "mip_wall_s": 300,
+              "slurm_time_s": 7200
+            },
+            {
+              "index": 4,
+              "case_id": "k2_flat_240r0_baseline",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "baseline",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 6600,
+              "mip_wall_s": 300,
+              "slurm_time_s": 7200
+            },
+            {
+              "index": 5,
+              "case_id": "k2_flat_240r0_capacity",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "capacity",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 13200,
+              "mip_wall_s": 600,
+              "slurm_time_s": 14400
+            },
+            {
+              "index": 6,
+              "case_id": "k2_flat_240r0_parx60",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "parx60",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 6600,
+              "mip_wall_s": 300,
+              "slurm_time_s": 7200
+            },
+            {
+              "index": 7,
+              "case_id": "k2_flat_240r0_combined",
+              "priority": 3,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "combined",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 240.0,
+              "reserve_kwh": 0.0,
+              "cg_wall_s": 13200,
+              "mip_wall_s": 600,
+              "slurm_time_s": 14400
+            },
+            {
+              "index": 8,
+              "case_id": "k2_flat_236p44r15_baseline",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "baseline",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 236.44,
+              "reserve_kwh": 35.466,
+              "cg_wall_s": 6600,
+              "mip_wall_s": 300,
+              "slurm_time_s": 7200
+            },
+            {
+              "index": 9,
+              "case_id": "k2_flat_236p44r15_capacity",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "capacity",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 236.44,
+              "reserve_kwh": 35.466,
+              "cg_wall_s": 13200,
+              "mip_wall_s": 600,
+              "slurm_time_s": 14400
+            },
+            {
+              "index": 10,
+              "case_id": "k2_flat_236p44r15_parx60",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "parx60",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 236.44,
+              "reserve_kwh": 35.466,
+              "cg_wall_s": 6600,
+              "mip_wall_s": 300,
+              "slurm_time_s": 7200
+            },
+            {
+              "index": 11,
+              "case_id": "k2_flat_236p44r15_combined",
+              "priority": 4,
+              "question_ids": [
+                "Q3"
+              ],
+              "instance": "e1_short_k2",
+              "prices": "flat",
+              "arm": "combined",
+              "capacity_selector": "prefix-memo",
+              "battery_kwh": 236.44,
+              "reserve_kwh": 35.466,
+              "cg_wall_s": 13200,
+              "mip_wall_s": 600,
+              "slurm_time_s": 14400
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "evsp-dr-strict-capacity-integration-validation-v1",
+  "status": "passed",
+  "standalone_remote_adapter": {
+    "pilot_completed_records": 4,
+    "pilot_phases": ["cg", "mip"],
+    "matched_mip_completed_records": 2,
+    "matched_mip_phases": ["mip"],
+    "all_artifacts_complete": true,
+    "all_stage_completions_verified": true,
+    "matched_mip_source_cg_bindings_verified": 2,
+    "matched_mip_no_new_cg_records": 2
+  },
+  "normalizer_fixture": {
+    "valid_completed_pilot_rows": 4,
+    "valid_completed_followup_rows": 2,
+    "followup_stage_values": ["mip"],
+    "followup_cg_iterations_all_null": true,
+    "followup_full_model_lp_certified_all_null": true,
+    "followup_column_pool_treatment": ["WARM-INHERITED-EVENT"],
+    "negative_fixture_checks": {
+      "stage_completion_verified_false": "rejected",
+      "source_cg_binding_verified_false": "rejected",
+      "no_new_cg_false": "rejected"
+    }
+  },
+  "scope": "Targeted adapter and Register.capacity_speed normalization only; the global collector and full register build were not run.",
+  "reporting_caveat": "The matched 3600 s MIP follow-up equalizes integer search only. E1-short k2 capacity/combined parents received 13200 s CG and baseline/PARX-only parents received 6600 s; cross-physics cells are feasibility pilots, while reference-versus-prefix pairs have matched CG settings."
+}

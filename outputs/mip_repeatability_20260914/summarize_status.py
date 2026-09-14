@@ -15,8 +15,18 @@ def main():
     digest = hashlib.sha256(args.snapshot.read_bytes()).hexdigest()
     root = Path(__file__).parent
     manifest = json.loads((root / 'manifest.json').read_text())
+    alias_audit = json.loads((root / 'audit/comparator_serialization.json').read_text())
+    aliases = {row['canonical_path']: row for row in alias_audit['rows']}
     campaign = source['campaigns']['mip_repeatability_20260914']
     previous = {r['path']: r for r in source['campaigns']['chain_extension_20260913']['mip']}
+    # New follow-ups bind the stable publication link; earlier records used its
+    # resolved job-specific file. Both identify the same hash-checked result.
+    for row in list(previous.values()):
+        parts = Path(row['path']).parts
+        if 'cases' in parts:
+            pos = parts.index('cases')
+            alias = Path(*parts[:pos + 2]) / 'mip_result.json'
+            previous[str(alias)] = row
     longer = {Path(r['path']).parts[-2]: r for r in source['campaigns']['overnight_diagnostics_20260914']['mip']}
     attempts = {r['case_id']: r['state'] for r in campaign['workflow']['attempt_progress']}
     rows = []
@@ -24,7 +34,12 @@ def main():
         cid = Path(current['path']).parts[-2]
         case = manifest['cases'][cid]
         prior = previous[case['comparator']['prior_result']]
-        assert prior['sha256'] == case['comparator']['prior_sha256']
+        if prior['sha256'] != case['comparator']['prior_sha256']:
+            audit = aliases[case['comparator']['prior_result']]
+            assert audit['full_json_values_equal'] is True
+            assert audit['raw_path'] == prior['path']
+            assert audit['raw_sha256'] == prior['sha256']
+            assert audit['canonical_sha256'] == case['comparator']['prior_sha256']
         old_pool, new_pool = prior['physical_pool_audit'], current['physical_pool_audit']
         assert old_pool['mip_ordered_pool_sha256'] == new_pool['mip_ordered_pool_sha256']
         assert old_pool['input_hashes'] == new_pool['input_hashes']
@@ -98,6 +113,14 @@ def main():
         values = [str(by_rep[i]['buses']) if i in by_rep else 'pending' for i in (1, 2, 3)]
         text.append(f"| C{r['chain']} k{r['target_k']} | {r['target_k']} | {r['original_buses']} | " +
                     ' | '.join(values) + f" | {min(times):.1f}–{max(times):.1f} | {r['longer_buses']} |")
+    new_long = [r for r in rows if r['treatment'] != 'original_budget_repeatability']
+    if new_long:
+        text += ['', '## Additional unresolved targets', '',
+            '| Case | Target | Original buses | Longer-search buses | Fleet bound | Fleet proved in saved pool | Fleet-stage minutes |',
+            '|---|---:|---:|---:|---:|---|---:|']
+        for row in new_long:
+            text.append(f"| C{row['chain']} k{row['target_k']} | {row['target_k']} | {row['original_buses']} | {row['buses']} | {row['pool_fleet_bound']:.6g} | {'Yes' if row['fleet_proven'] else 'No'} | {row['fleet_stage_minutes']:.1f} |")
+        text += ['', 'These searches use the original saved columns and up to three hours for fleet minimization, within a three-and-a-half-hour total budget. Fleet proof and charging-cost optimality are separate.']
     text += ['',
         'Each repeat has a one-hour total solver allowance, with up to 30 minutes for fleet minimization. '
         'The second stage minimizes charging costs with fleet no greater than the first-stage incumbent. '

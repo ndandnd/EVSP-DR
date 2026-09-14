@@ -1,0 +1,122 @@
+{
+  "status": "passed",
+  "collected_utc": "2026-09-14T12:46:40.822238+00:00",
+  "counts": {
+    "PENDING": 14
+  },
+  "rows": [
+    {
+      "case_id": "c1_k08_c200_longmip",
+      "job_id": "188041",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188041 JobName=drP_c1_k08_c200_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:37 EligibleTime=2026-09-14T08:46:37 AccrueTime=2026-09-14T08:46:37 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c1_k08_c200_longmip_188041.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c1_k08_c200_longmip_188041.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c2_k08_c200_longmip",
+      "job_id": "188042",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188042 JobName=drP_c2_k08_c200_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:37 EligibleTime=2026-09-14T08:46:37 AccrueTime=2026-09-14T08:46:37 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c2_k08_c200_longmip_188042.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c2_k08_c200_longmip_188042.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c2_k08_complementary_longmip",
+      "job_id": "188043",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188043 JobName=drP_c2_k08_complementary_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:37 EligibleTime=2026-09-14T08:46:37 AccrueTime=2026-09-14T08:46:37 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c2_k08_complementary_longmip_188043.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c2_k08_complementary_longmip_188043.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c4_k08_c200_longmip",
+      "job_id": "188044",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188044 JobName=drP_c4_k08_c200_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:37 EligibleTime=2026-09-14T08:46:37 AccrueTime=2026-09-14T08:46:37 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c4_k08_c200_longmip_188044.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c4_k08_c200_longmip_188044.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c4_k08_complementary_longmip",
+      "job_id": "188045",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188045 JobName=drP_c4_k08_complementary_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:37 EligibleTime=2026-09-14T08:46:37 AccrueTime=2026-09-14T08:46:37 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:37 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c4_k08_complementary_longmip_188045.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c4_k08_complementary_longmip_188045.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c5_k08_c200_longmip",
+      "job_id": "188046",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188046 JobName=drP_c5_k08_c200_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:38 EligibleTime=2026-09-14T08:46:38 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c5_k08_c200_longmip_188046.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c5_k08_c200_longmip_188046.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c5_k10_c200_longmip",
+      "job_id": "188047",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188047 JobName=drP_c5_k10_c200_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:38 EligibleTime=2026-09-14T08:46:38 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c5_k10_c200_longmip_188047.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c5_k10_c200_longmip_188047.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c5_k10_complementary_longmip",
+      "job_id": "188048",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188048 JobName=drP_c5_k10_complementary_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:38 EligibleTime=2026-09-14T08:46:38 AccrueTime=2026-09-14T08:46:38 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c5_k10_complementary_longmip_188048.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c5_k10_complementary_longmip_188048.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c6_k10_c200_longmip",
+      "job_id": "188049",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188049 JobName=drP_c6_k10_c200_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:38 EligibleTime=2026-09-14T08:46:38 AccrueTime=2026-09-14T08:46:38 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c6_k10_c200_longmip_188049.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c6_k10_c200_longmip_188049.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "c6_k10_complementary_longmip",
+      "job_id": "188050",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188050 JobName=drP_c6_k10_complementary_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:38 EligibleTime=2026-09-14T08:46:38 AccrueTime=2026-09-14T08:46:38 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:38 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c6_k10_complementary_longmip_188050.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_c6_k10_complementary_longmip_188050.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "w2_k25_longmip",
+      "job_id": "188051",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188051 JobName=drP_w2_k25_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:39 EligibleTime=2026-09-14T08:46:39 AccrueTime=2026-09-14T08:46:39 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w2_k25_longmip_188051.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w2_k25_longmip_188051.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "w4_k19_resumed_pool_longmip",
+      "job_id": "188052",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188052 JobName=drP_w4_k19_resumed_pool_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:39 EligibleTime=2026-09-14T08:46:39 AccrueTime=2026-09-14T08:46:39 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w4_k19_resumed_pool_longmip_188052.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w4_k19_resumed_pool_longmip_188052.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "w4_k22_longmip",
+      "job_id": "188053",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188053 JobName=drP_w4_k22_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:39 EligibleTime=2026-09-14T08:46:39 AccrueTime=2026-09-14T08:46:39 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w4_k22_longmip_188053.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w4_k22_longmip_188053.out TresPerTask=cpu=8 \n"
+    },
+    {
+      "case_id": "w6_k23_longmip",
+      "job_id": "188054",
+      "state": "PENDING",
+      "reason": "Priority",
+      "nodes": "",
+      "raw": "JobId=188054 JobName=drP_w6_k23_longmip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=14996 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=04:30:00 TimeMin=N/A SubmitTime=2026-09-14T08:46:39 EligibleTime=2026-09-14T08:46:39 AccrueTime=2026-09-14T08:46:39 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T08:46:39 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:1793148 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/parallel_pool_followup_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w6_k23_longmip_188054.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/parallel_pool_followup_20260914/logs/drP_w6_k23_longmip_188054.out TresPerTask=cpu=8 \n"
+    }
+  ],
+  "all_independent": true
+}

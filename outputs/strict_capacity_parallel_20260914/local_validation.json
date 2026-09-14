@@ -1,0 +1,63 @@
+{
+  "schema": "evsp-dr-strict-capacity-parallel-local-validation-v1",
+  "date": "2026-09-14",
+  "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "static_validation": {
+    "unit_tests": 8,
+    "unit_test_status": "passed",
+    "manifest_case_count": 12,
+    "actual_driver_commands_parsed": 24,
+    "input_hashes_valid": 6,
+    "python_compile": "passed",
+    "git_diff_check": "passed"
+  },
+  "native_smoke": {
+    "purpose": "Exercise the confirmed 236.44 kWh usable-energy and 35.466 kWh reserve path, bounded interrupted pricing, atomic usable pool, dedicated two-stage MIP, and one-thread enforcement.",
+    "platform": "macOS arm64 native Python/Gurobi 12.0.1 academic license",
+    "instance": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+    "instance_sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792",
+    "prices": "data/hourly_prices_flat.csv",
+    "prices_sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200",
+    "arm": "combined",
+    "capacity_selector": "prefix-memo",
+    "battery_kwh": 236.44,
+    "reserve_kwh": 35.466,
+    "cg_wall_s": 8,
+    "mip_wall_s": 8,
+    "threads": 1,
+    "largest_observed_master_rows": 7811,
+    "license_threshold_check": "The native solve optimized models with 7811 rows without a restricted-license error.",
+    "cg": {
+      "returncode": 0,
+      "status": "incomplete",
+      "stop_reason": "pricing_deadline",
+      "certified_rc_optimal": false,
+      "terminal_exact_min_reduced_cost": null,
+      "runtime_s": 8.00556525029242,
+      "completed_iterations": 6,
+      "pool_columns": 17,
+      "pool_sha256": "e419124ea84caeb222ec7f1de55c88ee2243dab0bfacdf1496d0d7e4266fb186",
+      "checkpoint_writes": 8,
+      "atomic_pool_replace": true,
+      "cg_json_sha256": "89ce6d7f1f08c06fc2b5b0d7d6eaad79a6045bc5a46f358df8c859e0ba42ec06"
+    },
+    "mip": {
+      "returncode": 0,
+      "pool_classification": "timed_uncertified_exact_event_cg_pool",
+      "status": "OPTIMAL",
+      "has_solution": true,
+      "stage1_status": "OPTIMAL",
+      "stage1_fleet_proven": true,
+      "stage2_status": "OPTIMAL",
+      "physical_station_capacity_audit_valid": true,
+      "mip_json_sha256": "f9af3a8c5444488c9bee3aec76b02c3bbb4b7414437b0357850d305005d3bd8b"
+    },
+    "claim_scope": "Execution-contract smoke only. The interrupted CG has no pricing certificate, and its small finite-pool MIP is not a campaign result."
+  },
+  "collector_validation": {
+    "schema": "evsp-dr-strict-capacity-parallel-collection-v1",
+    "successful_stage_gate_tested": true,
+    "cg_and_mip_proof_scopes_separate": true,
+    "incomplete_cg_marked_provisional": true
+  }
+}

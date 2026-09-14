@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+unset PYTHONPATH PYTHONHOME LD_LIBRARY_PATH LM_LICENSE_FILE
+export PYTHONNOUSERSITE=1 PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONHASHSEED=0
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+export GRB_LICENSE_FILE=/share/apps/software/gurobi/gurobi.lic
+ROOT=${1:?root}; CASE=${2:?case}; KIND=${3:?kind}
+if [[ $KIND == mip ]]; then
+ /home/nc437/evsp_env/bin/python - <<'PY'
+import gurobipy as gp
+m=gp.Model('union_mip_license');m.Params.OutputFlag=0;m.Params.Threads=1
+x=m.addVars(2001,lb=0,ub=1,obj=1);m.addConstr(x.sum()>=1);m.optimize()
+assert m.Status==gp.GRB.OPTIMAL;m.dispose()
+print('Native Gurobi license check passed',flush=True)
+PY
+fi
+exec /home/nc437/evsp_env/bin/python -u "$ROOT/union_worker.py" --root "$ROOT" --case "$CASE"

@@ -1,0 +1,12 @@
+{
+  "native_preflight_job": "187907",
+  "native_preflight": "passed",
+  "python_compile": "passed",
+  "bash_syntax": "passed",
+  "parent_gate_uses_frozen_previous_input_hash": true,
+  "effective_scheduler_dependency_check": "all recorded edges present in scontrol",
+  "manifest_sha256": "1ac2cfa69dc7fced141f1214e0787b35d8ea161910de8ed7fe15fc5b9d0de082",
+  "job_map_sha256": "6e8dae58cd3f64f0388d10c422b595edd047ebd397b617172817de9b90b69185",
+  "graph_array": "187967",
+  "production_tasks": 54
+}

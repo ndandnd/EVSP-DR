@@ -1,0 +1,55 @@
+
+Gurobi 12.0.3 (linux64) logging started Mon Sep 14 08:38:50 2026
+
+Set parameter LogFile to value "/home/nc437/ladder-lite/chain_extension_20260914/validation/parent.json.gurobi.log"
+Set parameter TimeLimit to value 5.9650950674898922e+01
+Set parameter TimeLimit to value 5.9650950674898922e+01
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5440  @ 2.83GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  5.9650950674898922e+01
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 4 rows, 8 columns and 8 nonzeros
+Model fingerprint: 0xbcd6afc1
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 4 rows and 8 columns
+Presolve time: 0.00s
+Presolve: All rows and columns removed
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    4.0000000e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  4.000000000e+05
+Set parameter TimeLimit to value 7.9641846425831318e+01
+Set parameter Method to value 1
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5440  @ 2.83GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 1 threads
+
+Non-default parameters:
+TimeLimit  7.9641846425831318e+01
+Method  1
+BarHomogeneous  1
+Threads  1
+
+Optimize a model with 4 rows, 8 columns and 8 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+05, 5e+05]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+00]
+
+Solved in 0 iterations and 0.00 seconds (0.00 work units)
+Optimal objective  4.000000000e+05

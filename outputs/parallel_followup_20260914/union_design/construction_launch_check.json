@@ -1,0 +1,70 @@
+{
+  "collected_utc": "2026-09-14T13:02:04.673631+00:00",
+  "completed_constructions": [
+    {
+      "case_id": "c5_k10_union_build",
+      "result_sha256": "da366e3871ff892a1c0a4ca5cba7e0deabd9435ee227aae28356f111c8faed84",
+      "journal_sha256": "fba72ab2cc7370dd61d187b34eaa383d5e4288ef409f831a505f1c847bb0cbcd",
+      "union_columns": 182706,
+      "wall_s": 59.28921323013492,
+      "peak_rss_kib": 60144,
+      "source_record_counts": [
+        32209,
+        124819,
+        27290
+      ],
+      "constructor_code_sha256": "e3a5941aff946ad8b0d5503c83c7e9f41a3e9480f4fe7075a5f6039af2b94bea"
+    },
+    {
+      "case_id": "c6_k10_union_build",
+      "result_sha256": "b2aac40fd11723c2aabf629ec53f5cb54838dcafd201c6001317c8d79352de5b",
+      "journal_sha256": "1e096cfd577528ad3921eedef05b829cc05cdc833a64aa3c94cdc265e0a69e67",
+      "union_columns": 142577,
+      "wall_s": 36.75195572711527,
+      "peak_rss_kib": 60992,
+      "source_record_counts": [
+        28742,
+        94263,
+        20379
+      ],
+      "constructor_code_sha256": "e3a5941aff946ad8b0d5503c83c7e9f41a3e9480f4fe7075a5f6039af2b94bea"
+    },
+    {
+      "case_id": "c2_k08_union_build",
+      "result_sha256": "a174cfd3a88259b339b8e4ec28d494bc7304f7cabe2c77afaf7bc07f98eb9fc9",
+      "journal_sha256": "b8bdcbcafa66a8ec2f2c17cb4f2cdbfba67df8ab43b3daa07f555af3017b463f",
+      "union_columns": 118068,
+      "wall_s": 41.05850794212893,
+      "peak_rss_kib": 63244,
+      "source_record_counts": [
+        20801,
+        81375,
+        16876
+      ],
+      "constructor_code_sha256": "e3a5941aff946ad8b0d5503c83c7e9f41a3e9480f4fe7075a5f6039af2b94bea"
+    },
+    {
+      "case_id": "c5_k08_union_build",
+      "result_sha256": "dae7f45e5035f77e649195d014122806fe60ce97f426a1e28135924facabcf36",
+      "journal_sha256": "b5b6fc011e4b72ac8161d587fdb455e33c52cd0c46e1d058809c46661fe513ea",
+      "union_columns": 148840,
+      "wall_s": 72.71527508390136,
+      "peak_rss_kib": 59180,
+      "source_record_counts": [
+        26944,
+        102108,
+        21225
+      ],
+      "constructor_code_sha256": "e3a5941aff946ad8b0d5503c83c7e9f41a3e9480f4fe7075a5f6039af2b94bea"
+    }
+  ],
+  "attempt_states": {
+    "finished": 4,
+    "constructing_pool": 2,
+    "running": 3
+  },
+  "native_license_pass": 3,
+  "registry_mip_attempts": 3,
+  "duplicate_registry_paths": 0,
+  "failures": []
+}

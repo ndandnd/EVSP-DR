@@ -1,0 +1,25 @@
+{
+  "collected_utc": "2026-09-14T13:03:50.240020+00:00",
+  "scheduler_counts": {
+    "RUNNING": 6
+  },
+  "rows": [
+    "188099|RUNNING|totient-cpu-05",
+    "188101|RUNNING|totient-cpu-06",
+    "188102|RUNNING|totient-cpu-04",
+    "188103|RUNNING|luxlab-cpu-03",
+    "188100|RUNNING|totient-cpu-02",
+    "188104|RUNNING|totient-cpu-03"
+  ],
+  "completion_counts": {
+    "pool_construction": 6
+  },
+  "attempt_counts": {
+    "finished": 6,
+    "running": 6
+  },
+  "native_license_pass": 6,
+  "registry_attempts": 6,
+  "duplicate_registry_paths": 0,
+  "failures": []
+}

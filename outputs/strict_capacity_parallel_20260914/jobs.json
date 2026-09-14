@@ -1,0 +1,168 @@
+{
+  "allocation_count": 12,
+  "allocation_shape": "one independent allocation per case; CG then dedicated two-stage MIP",
+  "allocations": [
+    {
+      "case_id": "k1_13408_flat_combined_reference",
+      "case_index": 0,
+      "cg_wall_s": 3000,
+      "job_id": "188123",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "01:00:00",
+      "slurm_time_s": 3600
+    },
+    {
+      "case_id": "k1_13408_flat_combined_prefix_memo",
+      "case_index": 1,
+      "cg_wall_s": 3000,
+      "job_id": "188124",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "01:00:00",
+      "slurm_time_s": 3600
+    },
+    {
+      "case_id": "k1_13408_peak12_combined_reference",
+      "case_index": 2,
+      "cg_wall_s": 6600,
+      "job_id": "188125",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "02:00:00",
+      "slurm_time_s": 7200
+    },
+    {
+      "case_id": "k1_13408_peak12_combined_prefix_memo",
+      "case_index": 3,
+      "cg_wall_s": 6600,
+      "job_id": "188126",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "02:00:00",
+      "slurm_time_s": 7200
+    },
+    {
+      "case_id": "k2_flat_240r0_baseline",
+      "case_index": 4,
+      "cg_wall_s": 6600,
+      "job_id": "188127",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "02:00:00",
+      "slurm_time_s": 7200
+    },
+    {
+      "case_id": "k2_flat_240r0_capacity",
+      "case_index": 5,
+      "cg_wall_s": 13200,
+      "job_id": "188128",
+      "mip_wall_s": 600,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "04:00:00",
+      "slurm_time_s": 14400
+    },
+    {
+      "case_id": "k2_flat_240r0_parx60",
+      "case_index": 6,
+      "cg_wall_s": 6600,
+      "job_id": "188129",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "02:00:00",
+      "slurm_time_s": 7200
+    },
+    {
+      "case_id": "k2_flat_240r0_combined",
+      "case_index": 7,
+      "cg_wall_s": 13200,
+      "job_id": "188130",
+      "mip_wall_s": 600,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "04:00:00",
+      "slurm_time_s": 14400
+    },
+    {
+      "case_id": "k2_flat_236p44r15_baseline",
+      "case_index": 8,
+      "cg_wall_s": 6600,
+      "job_id": "188131",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "02:00:00",
+      "slurm_time_s": 7200
+    },
+    {
+      "case_id": "k2_flat_236p44r15_capacity",
+      "case_index": 9,
+      "cg_wall_s": 13200,
+      "job_id": "188132",
+      "mip_wall_s": 600,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "04:00:00",
+      "slurm_time_s": 14400
+    },
+    {
+      "case_id": "k2_flat_236p44r15_parx60",
+      "case_index": 10,
+      "cg_wall_s": 6600,
+      "job_id": "188133",
+      "mip_wall_s": 300,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "02:00:00",
+      "slurm_time_s": 7200
+    },
+    {
+      "case_id": "k2_flat_236p44r15_combined",
+      "case_index": 11,
+      "cg_wall_s": 13200,
+      "job_id": "188134",
+      "mip_wall_s": 600,
+      "phase_tag": "cg_plus_dedicated_mip",
+      "slurm_time": "04:00:00",
+      "slurm_time_s": 14400
+    }
+  ],
+  "authorization_scope": "Root campaign owner authorized exactly one initial allocation for each of the twelve frozen cases after cluster-native license validation; no retries.",
+  "automatic_retry": false,
+  "campaign_id": "strict_capacity_parallel_20260914",
+  "campaign_sha256": "7a030a8c2737955378529d47a174809fa2a59da6f76b5295672cebbb140bd76e",
+  "cluster_license_gate_job_id": "188087",
+  "collector_sha256": "9c35d139db1a9597f6103911a8484c74c009210d4bd6eb79368de0d6acbf4085",
+  "collector_tooling_commit": "d58474fa7fde75fe7fe837cfb801d68d3478266e",
+  "cpus_per_task": 1,
+  "driver_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "exclude": [
+    "scaglione-compute-01"
+  ],
+  "job_ids": [
+    "188123",
+    "188124",
+    "188125",
+    "188126",
+    "188127",
+    "188128",
+    "188129",
+    "188130",
+    "188131",
+    "188132",
+    "188133",
+    "188134"
+  ],
+  "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+  "memory_gb": 24,
+  "mip_budget_fairness_note": "Frozen pilot uses 300 s MIP for no-capacity arms and 600 s for capacity arms. Do not use those MIP outcomes as a one-factor runtime comparison; use a later matched one-hour saved-pool solve if needed.",
+  "partition": "default_partition",
+  "preemption_registry_contract": "Register each allocation as cg_plus_dedicated_mip and retain worker_status stage outcomes separately from allocation state.",
+  "requeue": false,
+  "reserved_jobs_untouched": [
+    "537227",
+    "V2G"
+  ],
+  "schema": "evsp-dr-strict-capacity-parallel-jobs-v1",
+  "status": "submitted",
+  "submission_authorized": true,
+  "submitted_utc": "2026-09-14T13:05:46.620864+00:00",
+  "worker_sha256": "bb9e7a9e6be5cc34348abf975223ae3e22df577e4385a3ca26ffc06d94578183",
+  "worker_tooling_commit": "6a2f654ea090b7e2ce91fdd0da2624726bdd6a7e"
+}

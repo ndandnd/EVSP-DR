@@ -3,6 +3,18 @@ from pathlib import Path
 from collections import Counter, defaultdict
 import csv, json, datetime, subprocess, hashlib, math
 
+def collect_strict_capacity(root, kind):
+    """Also support the usual SSH stdin invocation of this collector."""
+    import importlib.util
+    adapter = Path(__file__).resolve().with_name('strict_capacity_adapter.py')
+    if not adapter.is_file():
+        adapter = (Path.home() / 'ladder-lite/research-register/outputs'
+                   / 'meeting_20260910/strict_capacity_adapter.py')
+    spec = importlib.util.spec_from_file_location('strict_capacity_adapter', adapter)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.collect_strict_capacity(root, kind)
+
 
 def file_sha256(path):
     h = hashlib.sha256()
@@ -299,6 +311,9 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'parallel_pool_unions_20260914': home / 'parallel_pool_unions_20260914',
+    'chain_extension_20260914': home / 'chain_extension_20260914',
+    'parallel_pool_followup_20260914': home / 'parallel_pool_followup_20260914',
     'mip_repeatability_20260914': home / 'mip_repeatability_20260914',
     'overnight_diagnostics_20260914': home / 'overnight_diagnostics_20260914',
     'chain_extension_20260913': home / 'chain_extension_20260913',
@@ -336,11 +351,11 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914')
+    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914', 'parallel_pool_followup_20260914', 'parallel_pool_unions_20260914')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):
-        if name == 'chain_extension_20260913' and 'validation' in p.relative_to(root).parts:
+        if name in ('chain_extension_20260913', 'chain_extension_20260914') and 'validation' in p.relative_to(root).parts:
             continue
         raw = p.read_bytes()
         d = json.loads(raw)
@@ -383,7 +398,7 @@ for name, root in roots.items():
             except Exception: continue
             row={k:v for k,v in d.items() if k not in ['routes','columns','selected_routes','iterations','history','iteration_log'] and not isinstance(v,list)}
             row['path']=str(p)
-            if name == 'chain_extension_20260913' or diagnostic:
+            if name in ('chain_extension_20260913', 'chain_extension_20260914') or diagnostic:
                 for key in ('route_values', 'trip_duals', 'capacity_duals'):
                     row.pop(key, None)
                 row['resolved_source_path'] = str(p.resolve())
@@ -413,7 +428,7 @@ for name, root in roots.items():
             cg.append(row)
     phases=[]
     phase_paths=set((root/'cg').glob('*.phase-telemetry.jsonl')) | set(root.glob('p*/cg/*.phase-telemetry.jsonl')) | set(root.glob('*/cg.phase-telemetry.jsonl')) | {p for p in root.glob('cases/*/*.phase-telemetry.jsonl') if 'smoke' not in p.parts}
-    if name == 'chain_extension_20260913':
+    if name in ('chain_extension_20260913', 'chain_extension_20260914'):
         phase_paths.update(root.glob('cases/*/cg/*/*.phase-telemetry.jsonl'))
     if diagnostic:
         phase_paths.update(root.glob('cases/*/attempts/*/*.phase*.jsonl'))
@@ -436,7 +451,7 @@ for name, root in roots.items():
         rejected.append({'path':str(p),'sha256':hashlib.sha256(raw).hexdigest(),'result':json.loads(raw)})
     out['campaigns'][name]={'root':str(root),'mip':rows,'cg':cg,'phases':phases,'comparisons':comparisons,'rejected_mip_outputs':rejected}
     out['campaigns'][name]['workflow'] = {}
-    if name == 'chain_extension_20260913':
+    if name in ('chain_extension_20260913', 'chain_extension_20260914'):
         out['campaigns'][name]['workflow']['attempt_progress'] = chain_extension_progress(root)
     if diagnostic:
         progress = []
@@ -445,6 +460,37 @@ for name, root in roots.items():
             progress.append({'case_id': p.parents[2].name, 'attempt': p.parent.name,
                              'path': str(p), 'state': record})
         out['campaigns'][name]['workflow']['attempt_progress'] = progress
+        if name == 'parallel_pool_unions_20260914':
+            constructions = {}
+            for marker_path in sorted(root.glob('cases/*/completion.json')):
+                marker = json.loads(marker_path.read_bytes())
+                if marker.get('kind') != 'pool_construction':
+                    continue
+                if not (marker.get('manifest_sha256') == diagnostic_manifest_sha
+                        and marker.get('case_id') == marker_path.parent.name
+                        and marker.get('usable') is True
+                        and marker.get('optimization_run') is False):
+                    raise ValueError(f'unverified pool construction: {marker_path}')
+                artifact = Path(marker['result_path'])
+                detail = Path(marker['construction_path'])
+                if (file_sha256(artifact) != marker['result_sha256']
+                        or file_sha256(detail) != marker['construction_sha256']):
+                    raise ValueError(f'changed pool construction: {marker_path}')
+                value = json.loads(artifact.read_bytes())
+                if not (value.get('artifact_kind') == 'finite_pool_union'
+                        and value.get('certified_rc_optimal') is False):
+                    raise ValueError(f'pool construction claims CG: {artifact}')
+                audit = json.loads(detail.read_bytes())
+                constructions[marker['case_id']] = {
+                    **{key: marker.get(key) for key in ('kind', 'result_path',
+                        'result_sha256', 'journal_path', 'journal_sha256',
+                        'construction_path', 'construction_sha256', 'execution',
+                        'manifest_sha256')},
+                    'optimization_run': False, 'full_model_lp_certified': False,
+                    'construction_summary': {key: audit.get(key) for key in
+                        ('sources', 'source_order', 'union_columns')},
+                    'journal_hash_scope': 'Verified by construction worker; not rehashed by this collector.'}
+            out['campaigns'][name]['workflow']['pool_constructions'] = constructions
         for record_name in ['validation.json', 'scheduler_verification.json', 'selection.json']:
             p = root/record_name
             if p.exists():
@@ -586,6 +632,18 @@ if study_script.exists() and (study_script.parent / 'registry.json').exists():
     except Exception as exc:
         out['mip_preemption_study'] = {'collection_error': str(exc)}
 # Paired efficiency collections retain original failures and separate warm retries.
+for strict_name, strict_kind in (
+        ('strict_capacity_parallel_20260914', 'pilot'),
+        ('strict_capacity_mip1h_20260914', 'matched_mip1h')):
+    strict_root = home / strict_name
+    if (strict_root/'collect.py').exists() and (strict_root/'manifest.json').exists():
+        try:
+            out['campaigns'][strict_name] = collect_strict_capacity(
+                strict_root, strict_kind)
+        except Exception as exc:
+            out['campaigns'][strict_name] = {'root':str(strict_root),
+                'collection_error':str(exc), 'cg':[], 'mip':[], 'records':[]}
+
 for efficiency_key, efficiency_directory in [('efficiency_validation', 'efficiency_validation_20260912'), ('efficiency_validation_warm_retry', 'efficiency_validation_warm_retry_20260912')]:
     efficiency_root = home / efficiency_directory
     efficiency_script = efficiency_root / 'code-baseline/scripts/efficiency_validation_20260912/campaign.py'

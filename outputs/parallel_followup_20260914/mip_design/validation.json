@@ -1,0 +1,94 @@
+{
+  "status": "passed",
+  "manifest_sha256": "27946cc4335d1379e7575e3414227689b9c6439a26ce916f59807dcb5da07f53",
+  "checks": [
+    {
+      "case_id": "c1_k08_c200_longmip",
+      "status": "passed",
+      "source_status_sha256": "8432842da2ab9b641f4a38c02d64cadcb103a2a5c02f9328f0c852b9d93e427a",
+      "source_journal_sha256": "66c12dc4c86f2f97984bd0e15fb24d554bed61b908d7efe20e177da11b475382"
+    },
+    {
+      "case_id": "c2_k08_c200_longmip",
+      "status": "passed",
+      "source_status_sha256": "facde2be1fc30948ab804e4b22e781dee6a1c0e67eafd87dfb65a971844a9139",
+      "source_journal_sha256": "ec7e7a1703a39685011dd7bd0b05ab8761cf92351647b0a8a85a7ecbe6afb4e1"
+    },
+    {
+      "case_id": "c2_k08_complementary_longmip",
+      "status": "passed",
+      "source_status_sha256": "c71af03e0bc8ca7abd2954032e2f31a9cbfcd680028f75fa0c45264efec36c04",
+      "source_journal_sha256": "8397fe9ea39bea9ffc5ee46b847e53b7abb4cb054ff5e8aacf15058b1992b3c2"
+    },
+    {
+      "case_id": "c4_k08_c200_longmip",
+      "status": "passed",
+      "source_status_sha256": "a2f729dc2111a1c1538e8bec5eba8d24b7d6e0a36b3f5c410b82b9f221544cec",
+      "source_journal_sha256": "8b27d8a1c48b4caca522fe7be72fa1add650f1d43c4a240ba93e72c84c97e92c"
+    },
+    {
+      "case_id": "c4_k08_complementary_longmip",
+      "status": "passed",
+      "source_status_sha256": "446dfb2cb4d6554fbf238bbfe8937d89cef126e1b532b0b45d90c9831191d9ab",
+      "source_journal_sha256": "5ff9393793039f029c99de7e6d25d1c1efb15d258e759a9643fa980dfc92b01a"
+    },
+    {
+      "case_id": "c5_k08_c200_longmip",
+      "status": "passed",
+      "source_status_sha256": "86217aaefc523a92e98c56be7c0c421f33a592e09871d007c41a556e490e33fd",
+      "source_journal_sha256": "a9fd6c342789dc82e05d2701249511644a495e63b8ed9dbacc31f9ed4cc1c0b6"
+    },
+    {
+      "case_id": "c5_k10_c200_longmip",
+      "status": "passed",
+      "source_status_sha256": "8e44f44c95c409d1f6173630f5b07fd9bfe29ae6ed11d07be79ebb8f38c5a718",
+      "source_journal_sha256": "a355e2868c68b58244a9d0c5d76fa90c47d9154540e627e4d1cab7f36d968f5c"
+    },
+    {
+      "case_id": "c5_k10_complementary_longmip",
+      "status": "passed",
+      "source_status_sha256": "22f1eb659b1369da2dca07805b8c48b74c46ff6e0c6f13ee8aca06c1ece27e9b",
+      "source_journal_sha256": "8463ffa7f922ce7cdeb8e75c3c4db57101a3952107d21daa700c1b052936b00a"
+    },
+    {
+      "case_id": "c6_k10_c200_longmip",
+      "status": "passed",
+      "source_status_sha256": "b3717e129b6a491d7d2cec062ae9ddf13e738a608d1855d9bdaf101da7cef4b5",
+      "source_journal_sha256": "c519a0f6e8d08ded470743611ec746d01c115f4ea39f5635be600202c8009955"
+    },
+    {
+      "case_id": "c6_k10_complementary_longmip",
+      "status": "passed",
+      "source_status_sha256": "c4b34479a5720b99150a0f786f391be68da4b8bde7b7caf810fa8f3a05356bb8",
+      "source_journal_sha256": "5f6b28a4318cb91e9200288684539866207f4f733a47046d3059658d459136af"
+    },
+    {
+      "case_id": "w2_k25_longmip",
+      "status": "passed",
+      "source_status_sha256": "2fb4b0ec2a10b741559e6633f25d2152c2f63d70423c923ca56177fdff35c819",
+      "source_journal_sha256": "91fa77c8532c4529e1e44d5e0aedbae2ab30e6d265dedc76b431116b9542f2cc"
+    },
+    {
+      "case_id": "w4_k22_longmip",
+      "status": "passed",
+      "source_status_sha256": "f5513d389753472fb95b9dd18a0972dcce597d53268368f74e6cfe15656320b9",
+      "source_journal_sha256": "a1077ddef285b440464fd999ae97160aaf91b22a0c81c39b5aad9ccc59801b74"
+    },
+    {
+      "case_id": "w6_k23_longmip",
+      "status": "passed",
+      "source_status_sha256": "4be33bf53f5988a969b28809113eeab7814283d8c5f2f07ab30bcf15d1471735",
+      "source_journal_sha256": "5c4939c77c5acfff6e868acd5965924ece5e0dc85b9ed250f362e4d8bd39bc78"
+    },
+    {
+      "case_id": "w4_k19_resumed_pool_longmip",
+      "status": "passed",
+      "source_status_sha256": "b908448b2aa2e87445ba56841e67b0be03bc23e78f51dc58459fed4a51e10c36",
+      "source_journal_sha256": "aa750f09aabc2ecfcc6edb23d2611a7faa34f26b66c262d1c8037717afc94d88"
+    }
+  ],
+  "prepared_only": true,
+  "submitted_jobs": 0,
+  "physical_gate": "Existing tested native MIP runner performs full pool replay before optimization; no new pool route generation or cost reconstruction in preparer.",
+  "revalidated_utc": "2026-09-14T12:45:12.856417+00:00"
+}

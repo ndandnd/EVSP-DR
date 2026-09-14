@@ -1,0 +1,331 @@
+{
+  "cases": [
+    {
+      "arm": "combined",
+      "battery_kwh": 240.0,
+      "capacity_selector": "reference",
+      "case_id": "k1_13408_flat_combined_reference",
+      "cg_wall_s": 3000,
+      "index": 0,
+      "instance": "k1_duty13408",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188123",
+      "prices": "flat",
+      "priority": 1,
+      "question_ids": [
+        "Q1",
+        "Q2"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188123_r0"
+    },
+    {
+      "arm": "combined",
+      "battery_kwh": 240.0,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k1_13408_flat_combined_prefix_memo",
+      "cg_wall_s": 3000,
+      "index": 1,
+      "instance": "k1_duty13408",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188124",
+      "prices": "flat",
+      "priority": 1,
+      "question_ids": [
+        "Q1",
+        "Q2"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188124_r0"
+    },
+    {
+      "arm": "combined",
+      "battery_kwh": 240.0,
+      "capacity_selector": "reference",
+      "case_id": "k1_13408_peak12_combined_reference",
+      "cg_wall_s": 6600,
+      "index": 2,
+      "instance": "k1_duty13408",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188125",
+      "prices": "peak12",
+      "priority": 2,
+      "question_ids": [
+        "Q2"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188125_r0"
+    },
+    {
+      "arm": "combined",
+      "battery_kwh": 240.0,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k1_13408_peak12_combined_prefix_memo",
+      "cg_wall_s": 6600,
+      "index": 3,
+      "instance": "k1_duty13408",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188126",
+      "prices": "peak12",
+      "priority": 2,
+      "question_ids": [
+        "Q2"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188126_r0"
+    },
+    {
+      "arm": "baseline",
+      "battery_kwh": 240.0,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_240r0_baseline",
+      "cg_wall_s": 6600,
+      "index": 4,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188127",
+      "prices": "flat",
+      "priority": 3,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188127_r0"
+    },
+    {
+      "arm": "capacity",
+      "battery_kwh": 240.0,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_240r0_capacity",
+      "cg_wall_s": 13200,
+      "index": 5,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188128",
+      "prices": "flat",
+      "priority": 3,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188128_r0"
+    },
+    {
+      "arm": "parx60",
+      "battery_kwh": 240.0,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_240r0_parx60",
+      "cg_wall_s": 6600,
+      "index": 6,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188129",
+      "prices": "flat",
+      "priority": 3,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188129_r0"
+    },
+    {
+      "arm": "combined",
+      "battery_kwh": 240.0,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_240r0_combined",
+      "cg_wall_s": 13200,
+      "index": 7,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188130",
+      "prices": "flat",
+      "priority": 3,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 0.0,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188130_r0"
+    },
+    {
+      "arm": "baseline",
+      "battery_kwh": 236.44,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_236p44r15_baseline",
+      "cg_wall_s": 6600,
+      "index": 8,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188131",
+      "prices": "flat",
+      "priority": 4,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 35.466,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188131_r0"
+    },
+    {
+      "arm": "capacity",
+      "battery_kwh": 236.44,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_236p44r15_capacity",
+      "cg_wall_s": 13200,
+      "index": 9,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188132",
+      "prices": "flat",
+      "priority": 4,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 35.466,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188132_r0"
+    },
+    {
+      "arm": "parx60",
+      "battery_kwh": 236.44,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_236p44r15_parx60",
+      "cg_wall_s": 6600,
+      "index": 10,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188133",
+      "prices": "flat",
+      "priority": 4,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 35.466,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188133_r0"
+    },
+    {
+      "arm": "combined",
+      "battery_kwh": 236.44,
+      "capacity_selector": "prefix-memo",
+      "case_id": "k2_flat_236p44r15_combined",
+      "cg_wall_s": 13200,
+      "index": 11,
+      "instance": "e1_short_k2",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188134",
+      "prices": "flat",
+      "priority": 4,
+      "question_ids": [
+        "Q3"
+      ],
+      "reserve_kwh": 35.466,
+      "slurm_time_s": 5400,
+      "source_attempt_id": "188134_r0"
+    }
+  ],
+  "code": {
+    "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+    "deadline_checkpoint_ancestor": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+    "driver": "src/run_capacity_speed_event_cg.py",
+    "generic_trip_set_mip_forbidden": true,
+    "tariff_fix_ancestor": "550bc795b18f801dca3a07b8becc1dc4c5527abb"
+  },
+  "common_model": {
+    "capacity_grid_min": 1,
+    "charge_model": "constant station-specific power on the conservative event-time/SOC graph",
+    "charger_counts": {
+      "2190L": 1,
+      "3127L": 2,
+      "4808": 1,
+      "7880C": 1,
+      "JON_A": 1
+    },
+    "event_block_min": 5,
+    "initial_soc": "battery_kwh",
+    "master_sense": "minimize",
+    "max_iters": 10000,
+    "mip_gap": 0.0001,
+    "non_parx_kw": 240.0,
+    "rc_eps": 1e-05,
+    "soc_step_kwh": 2.5,
+    "terminal_65_percent_floor": false,
+    "terminal_soc_constraint": "reserve_only",
+    "threads": 1,
+    "trip_rows": "covering_greater_equal_one"
+  },
+  "created_date": "2026-09-14",
+  "proof_scope": {
+    "cg": "Inherited exactly from each hash-bound parent cg.json; no new pricing.",
+    "comparison": "This matched one-hour table is primary for cross-arm finite-pool MIP comparison. Frozen parent 300/600 s MIPs are preliminary unequal-budget results.",
+    "mip": "Dedicated two-stage capacity-aware MIP proves only the inherited finite pool; stage-one fleet and stage-two charging proofs remain separate."
+  },
+  "resource_policy": {
+    "automatic_retry": false,
+    "cpus_per_task": 1,
+    "dependency": "afterok each matching parent allocation",
+    "exclude": [
+      "scaglione-compute-01"
+    ],
+    "memory_gb": 24,
+    "mip_wall_s": 3600,
+    "partition": "default_partition",
+    "requeue": false,
+    "slurm_time_s": 5400,
+    "submission_authorized": true
+  },
+  "schema": "evsp-dr-strict-capacity-mip1h-followup-v1",
+  "scientific_question": "With the exact frozen parent CG pools and physics, what finite-pool proof and solve behavior is obtained under a matched 3600 s two-stage MIP budget for all twelve cases?",
+  "source_campaign": {
+    "manifest_sha256": "bce15219e18ec2b3e2cb9fac6ff47223b1cded4d9eb8934510cc91cd14811b62",
+    "parent_job_ids": [
+      "188123",
+      "188124",
+      "188125",
+      "188126",
+      "188127",
+      "188128",
+      "188129",
+      "188130",
+      "188131",
+      "188132",
+      "188133",
+      "188134"
+    ],
+    "root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914"
+  },
+  "source_inputs": {
+    "deadhead_reference": {
+      "path": "data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    },
+    "e1_short_k2": {
+      "path": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+      "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b"
+    },
+    "flat": {
+      "path": "data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "k1_duty13408": {
+      "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+      "sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792"
+    },
+    "peak12": {
+      "path": "data/tariff_response/peak12_h26.csv",
+      "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+    },
+    "reference_dictionary": {
+      "path": "data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    }
+  },
+  "status": "authorized_for_submission"
+}

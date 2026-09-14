@@ -1,5 +1,11 @@
 # EVSP–DR experiment register
 
+**New parallel work, 14 September:** [Experiment plan, questions and launch records](../parallel_followup_20260914/README.md). **54 jobs running at 09:14 EDT**, up from six. All 104 production tasks are submitted: chain extensions to k=26–28, fourteen unresolved-pool MIPs, six combined-pool MIPs, twelve charging-constraint CG tests and twelve matched one-hour MIP follow-ups. Genuine previous-k and own-CG dependencies remain intact; all independent cases are eligible concurrently.
+
+**Verified results collected at 08:53 EDT:** C1 k21 now matches 21 buses in its original one-hour MIP, with a fleet proof in the saved pool and individual-route replay; its CG remains time-limited. Largest individual original matches by chain are 21, 22, 24, 20, 21 and 22. Separate reruns recovered C1 k19, C3 k22 and C3 k23, with fleet proofs in 22.3, 16.1 and 24.1 minutes. Extra allocated time alone does not explain their earlier misses. [Results and provenance](../mip_repeatability_20260914/status_20260914T124947Z/README.md). The 47 original extension MIPs give 27 target matches; longer-search reruns recover twelve other gaps, leaving eight unresolved targets. CG has 40 certificates among 48 endpoints. These baseline results omit shared charger capacity and terminal SOC requirements.
+
+The dated 07:31 status below is superseded by the 08:53 collection and new launch records.
+
 **Current results, 14 September 07:31 EDT:** [Chain table and accumulated-time comparison](../cumulative_budget_20260913/status_20260914T112740Z/README.md); [column-selection comparisons](../overnight_diagnostics_20260914/status_20260914T112740Z/README.md); [completed one-hour MIP repeats](../mip_repeatability_20260914/status_20260914T112740Z/README.md).
 
 **All 27 one-hour repeats finished: 21 target matches, with agreement across all three repetitions of each case.** Seven selected inherited pools reach their target every time. C3 k19 and k21 use one extra bus in all three repeats, with open bounds at target; the earlier longer MIPs recovered both from the same pools. These are incomplete integer searches, not evidence of missing target routes. Ordered pools, inputs and initializer summaries match. Hardware and parallel-search timing remain uncontrolled; the repeats do not explain the original-versus-rerun difference for the seven successes.
@@ -39,7 +45,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2,524 artifact/stage records across 52 campaign/source groups**, from the collection completed at 07:31 EDT on 14 September. Counts are not independent experimental sample sizes.
+Current build: **2,606 artifact/stage records across 55 campaign/source groups**, from the collection completed at 08:53 EDT on 14 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|

@@ -206,16 +206,19 @@ class Register:
                 self.authoritative_cases[manifest_case] = {
                     **metadata, "id": manifest_case,
                 }
-        extension = snapshot.get("campaigns", {}).get("chain_extension_20260913", {})
-        extension_workflow = extension.get("workflow", {}) or {}
-        self.extension_cases = {
-            cid: {**metadata, "id": cid}
-            for cid, metadata in (extension_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
-        }
-        self.extension_jobs = extension_workflow.get("case_jobs.json", {}) or {}
+        self.extension_cases = {}
+        self.extension_jobs = {}
+        for campaign_id in ("chain_extension_20260913", "chain_extension_20260914"):
+            extension = snapshot.get("campaigns", {}).get(campaign_id, {})
+            extension_workflow = extension.get("workflow", {}) or {}
+            self.extension_cases[campaign_id] = {
+                cid: {**metadata, "id": cid}
+                for cid, metadata in (extension_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
+            }
+            self.extension_jobs[campaign_id] = extension_workflow.get("case_jobs.json", {}) or {}
         self.diagnostic_cases = {}
         self.diagnostic_jobs = {}
-        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914"):
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914", "parallel_pool_followup_20260914", "parallel_pool_unions_20260914"):
             diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
             diagnostic_workflow = diagnostic.get("workflow", {}) or {}
             self.diagnostic_cases[campaign_id] = {
@@ -235,8 +238,8 @@ class Register:
         """
         if campaign_id in self.diagnostic_cases:
             cases = self.diagnostic_cases[campaign_id]
-        elif campaign_id == "chain_extension_20260913":
-            cases = self.extension_cases
+        elif campaign_id in self.extension_cases:
+            cases = self.extension_cases[campaign_id]
         elif campaign_id == "overnight_extension_20260912":
             cases = self.authoritative_cases
         else:
@@ -278,14 +281,14 @@ class Register:
         metadata = self.authoritative_case(
             campaign_id, source_path, input_path, case_id,
         )
-        if campaign_id == "chain_extension_20260913" and stage in ("cg", "mip"):
+        if campaign_id in self.extension_cases and stage in ("cg", "mip"):
             if not metadata or input_path != metadata.get("csv"):
                 raise ValueError(f"extension endpoint input/case differs from manifest: {source_path}")
             observed_hash = at(payload, "provenance.instance_sha256",
                                "physical_pool_audit.input_hashes.instance_sha256")
             if observed_hash != metadata.get("input_sha256"):
                 raise ValueError(f"extension endpoint input hash differs from manifest: {source_path}")
-            expected_job = self.extension_jobs.get(metadata["id"], {}).get(stage)
+            expected_job = self.extension_jobs[campaign_id].get(metadata["id"], {}).get(stage)
             overrides = {"job_ids": [str(expected_job)] if expected_job else [], **(overrides or {})}
         if campaign_id in self.diagnostic_cases and stage in ("cg", "mip"):
             if not metadata or input_path != metadata.get("csv"):
@@ -304,6 +307,10 @@ class Register:
                          "arm": metadata.get("treatment"),
                          "code_commit": metadata.get("execution_commit"),
                          "notes": metadata.get("interpretation"), **(overrides or {})}
+            if campaign_id == "parallel_pool_unions_20260914":
+                overrides.update(cg_iterations=None,
+                    full_model_lp_certified=None,
+                    notes="MIP on a constructed union of existing baseline pools; no new CG run or pricing certificate. " + (metadata.get("interpretation") or ""))
         if metadata:
             case_id = metadata["id"]
             input_path = metadata.get("csv") or input_path
@@ -982,11 +989,67 @@ class Register:
                     "pool_size": at(result, "pool_acceptance.route_count"),
                     "proof_scope": at(result, "pool_acceptance.classification"),
                 }
+            metadata = item.get("case_metadata") or {}
+            if campaign_id in {"strict_capacity_parallel_20260914",
+                               "strict_capacity_mip1h_20260914"}:
+                if item.get("stage_completion_verified") is not True:
+                    raise ValueError("strict-capacity endpoint lacks completion verification")
+                matched_mip = campaign_id == "strict_capacity_mip1h_20260914"
+                if matched_mip and not (item.get("source_cg_binding_verified") is True
+                                        and item.get("no_new_cg") is True
+                                        and item.get("phase") == "mip"):
+                    raise ValueError("matched capacity MIP lacks verified source-CG binding")
+                inputs = value["workflow"]["manifest.json"]["source_inputs"]
+                overrides = {**(overrides or {}),
+                    "target_k": 1 if metadata["instance"].startswith("k1") else 2,
+                    "arm": metadata["arm"] + ":" + metadata["capacity_selector"],
+                    "job_ids": [str(item["job_id"])] if item.get("job_id") else [],
+                    "master_sense": "cover", "battery_kwh": metadata["battery_kwh"],
+                    "initial_soc_kwh": metadata["battery_kwh"], "reserve_kwh": metadata["reserve_kwh"],
+                    "code_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+                    "terminal_energy_policy": "Reserve floor only; no 65% terminal target",
+                    "input_path": inputs[metadata["instance"]]["path"],
+                    "input_sha256": inputs[metadata["instance"]]["sha256"],
+                    "tariff_path": inputs[metadata["prices"]]["path"],
+                    "prices_sha256": inputs[metadata["prices"]]["sha256"],
+                    "capacity_enforced": metadata["arm"] in ("capacity", "combined"),
+                    "initialization": ("hash-bound completed parent CG pool"
+                                       if matched_mip else "singletons with native atomic CG checkpoints"),
+                    "column_pool_treatment": ("WARM-INHERITED-EVENT"
+                                              if matched_mip else "RAW"),
+                    "notes": (
+                        f"Matched 3600 s dedicated two-stage MIP on parent job {item.get('source_parent_job_id')}; "
+                        "source CG status and pool are hash-bound and no new CG or pricing proof is claimed. "
+                        "The uniform MIP allowance equalizes integer search only."
+                        if matched_mip else
+                        f"Pilot CG allowance {metadata['cg_wall_s']} s; short MIP allowance {metadata['mip_wall_s']} s. "
+                        "Reference-versus-prefix pairs have matched CG settings. Capacity and non-capacity pilot MIP budgets differ; use matched one-hour follow-ups for the integer comparison."
+                    ),
+                }
+                if matched_mip:
+                    overrides.update(
+                        cg_iterations=None,
+                        full_model_lp_certified=None,
+                        limitations=(
+                            "Finite-pool MIP proof only. CG certification, if any, "
+                            "belongs to the separately recorded parent endpoint. E1-short k2 "
+                            "capacity/combined source pools received 13200 s CG while baseline/PARX-only "
+                            "source pools received 6600 s; these physics cells are feasibility pilots, "
+                            "not isolated runtime-causal estimates."
+                        ),
+                    )
+                else:
+                    overrides["limitations"] = (
+                        "E1-short k2 capacity/combined cells receive 13200 s CG while baseline/PARX-only "
+                        "cells receive 6600 s. Treat cross-physics results as feasibility pilots rather "
+                        "than isolated runtime-causal estimates; reference-versus-prefix pairs remain "
+                        "matched within tariff."
+                    )
             self.add(
                 campaign_id, root, "capacity_speed_exact_event", item.get("phase"),
                 result, source_path=item.get("path"),
                 source_sha256=item.get("sha256"),
-                case_id=path_case(item.get("path"), item.get("phase")),
+                case_id=item.get("case_id") or path_case(item.get("path"), item.get("phase")),
                 overrides={**(overrides or {}), **({
                     "lp_objective_kind": "bus_plus_charging",
                 } if item.get("phase") == "cg" else {})},
@@ -1208,7 +1271,9 @@ class Register:
     def build(self):
         self.standard_campaigns()
         self.capacity_speed()
-        for retry_name in ["capacity_timeout6_rerun", "capacity_deadline5_retry"]:
+        for retry_name in ["capacity_timeout6_rerun", "capacity_deadline5_retry",
+                           "strict_capacity_parallel_20260914",
+                           "strict_capacity_mip1h_20260914"]:
             if self.snapshot.get("campaigns", {}).get(retry_name, {}).get("records"):
                 self.capacity_speed(retry_name)
         self.terminal_energy()

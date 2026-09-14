@@ -1,0 +1,29 @@
+{
+  "collected_utc": "2026-09-14T12:56:05.836477+00:00",
+  "scheduler_counts": {
+    "RUNNING": 14
+  },
+  "squeue_rows": [
+    "188041|RUNNING|snavely-cpu-09",
+    "188042|RUNNING|snavely-cpu-12",
+    "188043|RUNNING|snavely-cpu-13",
+    "188044|RUNNING|snavely-cpu-14",
+    "188045|RUNNING|snavely-cpu-15",
+    "188046|RUNNING|snavely-cpu-15",
+    "188047|RUNNING|snavely-cpu-16",
+    "188048|RUNNING|unicorn-cpu-01",
+    "188049|RUNNING|unicorn-cpu-01",
+    "188050|RUNNING|luxlab-cpu-02",
+    "188051|RUNNING|sonic-cpu-01",
+    "188052|RUNNING|sonic-cpu-01",
+    "188053|RUNNING|sonic-cpu-02",
+    "188054|RUNNING|sonic-cpu-02"
+  ],
+  "attempt_counts": {
+    "running": 14
+  },
+  "native_license_pass": 14,
+  "registry_attempt_entries": 14,
+  "duplicate_registry_paths": 0,
+  "failures": []
+}

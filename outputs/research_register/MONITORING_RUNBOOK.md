@@ -1,3 +1,15 @@
+## Additional matched MIPs, 14 September
+
+Collect both `strict_capacity_parallel_20260914` and `strict_capacity_mip1h_20260914`. The former has unequal preliminary 300/600-second MIPs; the latter is the primary integer comparison with 3600 seconds per unchanged source pool. Keep completed-stage status separate from proof status; a time-limited completed artifact is not provisional simply because its bound is open. The two k1 controls and their follow-up MIPs completed at launch; ten other pairs remained active/dependent. No 65% terminal target is inferred.
+
+## Parallel follow-up campaigns — 14 September
+
+New roots: `chain_extension_20260914`, `parallel_pool_followup_20260914`, `parallel_pool_unions_20260914`, and `strict_capacity_parallel_20260914`. Start from `outputs/parallel_followup_20260914/README.md` and each immutable manifest/job map. The first three use the baseline schema with campaign-scoped identities; pool constructions are not CG endpoints and have no pricing certificate. The strict campaign uses the dedicated capacity-aware driver and collector, keeping provisional checkpoints separate from completed stage outputs.
+
+Preserve original chains and true previous-k edges. No arbitrary lower array limit: all independent cases in these batches can run together. Do not repeat completed diagnostics merely to keep the queue busy. Report scientific improvement, execution errors and blocked dependencies separately. The three new long-search recoveries are C1 k19 and C3 k22–23; their fleet proof times are below 30 minutes despite larger allowances.
+
+A canonical publisher reserialized three original MIP JSONs: their byte hashes differ from the job-specific raw files, but every parsed value is equal. `outputs/mip_repeatability_20260914/audit/comparator_serialization.json` binds both hashes; keep the original manifests unchanged.
+
 # Unicorn monitoring runbook
 
 ## 14 September, 07:31 EDT — six new pricing certificates

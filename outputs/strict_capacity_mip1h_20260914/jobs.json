@@ -1,0 +1,159 @@
+{
+  "allocations": [
+    {
+      "case_id": "k1_13408_flat_combined_reference",
+      "case_index": 0,
+      "dependency": "afterok:188123",
+      "job_id": "188143",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188123",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k1_13408_flat_combined_prefix_memo",
+      "case_index": 1,
+      "dependency": "afterok:188124",
+      "job_id": "188144",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188124",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k1_13408_peak12_combined_reference",
+      "case_index": 2,
+      "dependency": "afterok:188125",
+      "job_id": "188145",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188125",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k1_13408_peak12_combined_prefix_memo",
+      "case_index": 3,
+      "dependency": "afterok:188126",
+      "job_id": "188146",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188126",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_240r0_baseline",
+      "case_index": 4,
+      "dependency": "afterok:188127",
+      "job_id": "188147",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188127",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_240r0_capacity",
+      "case_index": 5,
+      "dependency": "afterok:188128",
+      "job_id": "188148",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188128",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_240r0_parx60",
+      "case_index": 6,
+      "dependency": "afterok:188129",
+      "job_id": "188149",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188129",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_240r0_combined",
+      "case_index": 7,
+      "dependency": "afterok:188130",
+      "job_id": "188150",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188130",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_236p44r15_baseline",
+      "case_index": 8,
+      "dependency": "afterok:188131",
+      "job_id": "188151",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188131",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_236p44r15_capacity",
+      "case_index": 9,
+      "dependency": "afterok:188132",
+      "job_id": "188152",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188132",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_236p44r15_parx60",
+      "case_index": 10,
+      "dependency": "afterok:188133",
+      "job_id": "188153",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188133",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    },
+    {
+      "case_id": "k2_flat_236p44r15_combined",
+      "case_index": 11,
+      "dependency": "afterok:188134",
+      "job_id": "188154",
+      "mip_wall_s": 3600,
+      "parent_job_id": "188134",
+      "phase_tag": "matched_1h_dedicated_mip",
+      "slurm_time_s": 5400
+    }
+  ],
+  "authorization_scope": "One matched one-hour MIP per hash-bound parent CG pool; no retries.",
+  "automatic_retry": false,
+  "campaign_id": "strict_capacity_mip1h_20260914",
+  "cpus_per_task": 1,
+  "driver_commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+  "exclude": [
+    "scaglione-compute-01"
+  ],
+  "job_ids": [
+    "188143",
+    "188144",
+    "188145",
+    "188146",
+    "188147",
+    "188148",
+    "188149",
+    "188150",
+    "188151",
+    "188152",
+    "188153",
+    "188154"
+  ],
+  "manifest_sha256": "1c02bde637bcbc5f57810829b4a5b7576d981986b7f5a3ecab80149daeaa682d",
+  "memory_gb": 24,
+  "mip_wall_s": 3600,
+  "partition": "default_partition",
+  "requeue": false,
+  "schema": "evsp-dr-strict-capacity-mip1h-jobs-v1",
+  "slurm_time_s": 5400,
+  "status": "submitted_dependency_queued",
+  "submission_authorized": true,
+  "submitted_utc": "2026-09-14T13:08:39.183518+00:00",
+  "tooling_commit": "a98a48b049088713b1c9246a1fd281fc8e9304c6",
+  "worker_py_sha256": "25c8183bc30578e4445bd9dffb92bc6b228bd2a159b65f78879930d6ba402611",
+  "worker_sh_sha256": "a87998e8c16dec1bd1074134d9e1a907d7376706084ffddcc462fa4eca9b806e"
+}

@@ -1,0 +1,81 @@
+[MIP] physical pool preparation: 4 valid recorded, 0 repaired, 0 rejected, 0.799s
+[MIP] pool: 4 columns over 4 trips (instance scale_ladder/instances/chain_extension_20260914/validation_four_trips.csv, soc_step=2.5, certified=True)
+[MIP] coverage: min 1 / median 1 / max 1 columns per trip
+[MIP] strict-feasibility seed: 4 exact singleton columns (one per trip)
+[MIP] greedy feasible MIP start: 4 buses
+Set parameter LicenseID to value 2674428
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "en-cc-unicorn-data-dirs.coecis.cornell.edu"
+Set parameter LogFile to value "/home/nc437/ladder-lite/chain_extension_20260914/validation/mip.gurobi.log"
+Set parameter OutputFlag to value 1
+Set parameter TimeLimit to value 30
+Set parameter MIPGap to value 0.0001
+Set parameter Threads to value 2
+Set parameter TimeLimit to value 15
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5440  @ 2.83GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 2 threads
+
+Non-default parameters:
+TimeLimit  15
+Threads  2
+
+Optimize a model with 4 rows, 4 columns and 4 nonzeros
+Model fingerprint: 0xbf9f4dd8
+Variable types: 0 continuous, 4 integer (4 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+
+Loaded user MIP start with objective 4
+
+Presolve removed 4 rows and 4 columns
+Presolve time: 0.01s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.02 seconds (0.00 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 4 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 4.000000000000e+00, best bound 4.000000000000e+00, gap 0.0000%
+
+User-callback calls 143, time in user-callback 0.00 sec
+[MIP] stage 1: fleet=4 (bound 4.0, gap 0.0, proven=True, limit=15.0s, remaining=30.0s)
+Set parameter TimeLimit to value 2.9962640523910522e+01
+Gurobi Optimizer version 12.0.3 build v12.0.3rc0 (linux64 - "Ubuntu 24.04.4 LTS")
+
+CPU model: Intel(R) Xeon(R) CPU           E5440  @ 2.83GHz, instruction set [SSE2]
+Thread count: 8 physical cores, 8 logical processors, using up to 2 threads
+
+Non-default parameters:
+TimeLimit  2.9962640523910522e+01
+Threads  2
+
+Optimize a model with 5 rows, 4 columns and 8 nonzeros
+Model fingerprint: 0x2a698ed4
+Variable types: 0 continuous, 4 integer (4 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [0e+00, 0e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 4e+00]
+
+Loaded user MIP start with objective 0
+MIP start from previous solve did not produce a new incumbent solution
+
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds (0.00 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 0 
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap 0.0000%
+
+User-callback calls 31, time in user-callback 0.00 sec
+[MIP] status=OPTIMAL(2) buses=4 obj=400000.0 gap=0.0 -> /home/nc437/ladder-lite/chain_extension_20260914/validation/mip.json

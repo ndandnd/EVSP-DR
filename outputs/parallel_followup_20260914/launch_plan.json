@@ -1,0 +1,117 @@
+{
+  "prepared_utc": "2026-09-14T12:46:41.647553+00:00",
+  "queue_before": {
+    "running": 6,
+    "real_dependency_waits": 23,
+    "held_historical_tasks": 33,
+    "idle_default_cpus": 10227
+  },
+  "campaigns": [
+    {
+      "id": "chain_extension_20260914",
+      "ready_stage": "18 graph builds",
+      "cg_cases": 18,
+      "mip_cases": 18,
+      "status": "submitted",
+      "graph_array": "187967"
+    },
+    {
+      "id": "parallel_pool_followup_20260914",
+      "independent_mips": 14,
+      "fleet_budget_s": 10800,
+      "total_budget_s": 12600,
+      "status": "submitted",
+      "job_ids": [
+        "188041",
+        "188042",
+        "188043",
+        "188044",
+        "188045",
+        "188046",
+        "188047",
+        "188048",
+        "188049",
+        "188050",
+        "188051",
+        "188052",
+        "188053",
+        "188054"
+      ]
+    },
+    {
+      "id": "parallel_pool_unions_20260914",
+      "independent_pool_constructions": 6,
+      "dependent_mips": 6,
+      "status": "submitted_builds_completed_mips_running",
+      "build_job_ids": [
+        "188093",
+        "188094",
+        "188095",
+        "188096",
+        "188097",
+        "188098"
+      ],
+      "mip_job_ids": [
+        "188099",
+        "188100",
+        "188101",
+        "188102",
+        "188103",
+        "188104"
+      ]
+    },
+    {
+      "id": "strict_capacity_parallel_20260914",
+      "independent_cg_then_mip_allocations": 12,
+      "status": "submitted_two_completed_ten_running",
+      "job_ids": [
+        "188123",
+        "188124",
+        "188125",
+        "188126",
+        "188127",
+        "188128",
+        "188129",
+        "188130",
+        "188131",
+        "188132",
+        "188133",
+        "188134"
+      ],
+      "preliminary_mip_budget_s": [
+        300,
+        600
+      ]
+    },
+    {
+      "id": "strict_capacity_mip1h_20260914",
+      "mip_cases": 12,
+      "total_budget_s": 3600,
+      "status": "submitted_two_completed_ten_true_dependencies",
+      "job_ids": [
+        "188143",
+        "188144",
+        "188145",
+        "188146",
+        "188147",
+        "188148",
+        "188149",
+        "188150",
+        "188151",
+        "188152",
+        "188153",
+        "188154"
+      ]
+    }
+  ],
+  "objective": "Resolve missing-column versus integer-search causes while measuring larger baseline cases and controlled charging constraints.",
+  "resource_policy": "default_partition; all independent cases eligible concurrently (50, or all cases if fewer); exclude scaglione-compute-01; preserve previous-k data dependencies.",
+  "limitations": "Selected diagnostic cases do not estimate a general success probability. Baseline extensions omit charger capacity and terminalSOC; strict sensitivity is not completeGIROphysics.",
+  "last_verified_queue": "2026-09-14T13:13:49.310673+00:00",
+  "queue_after": {
+    "running": 54,
+    "real_dependency_waits": 67,
+    "held_historical_tasks": 33
+  },
+  "production_tasks_submitted": 104
+}

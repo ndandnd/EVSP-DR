@@ -1,0 +1,291 @@
+{
+  "schema": "evsp-dr-strict-capacity-parallel-followup-v1",
+  "status": "approved_for_deployment_and_native_validation_not_submitted",
+  "created_date": "2026-09-14",
+  "code": {
+    "driver": "src/run_capacity_speed_event_cg.py",
+    "commit": "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+    "tariff_fix_ancestor": "550bc795b18f801dca3a07b8becc1dc4c5527abb",
+    "deadline_checkpoint_ancestor": "253588e9b22d68fcbc67cb56bc3eb30cbb0e16b6",
+    "generic_trip_set_mip_forbidden": true
+  },
+  "scientific_questions": [
+    {
+      "id": "Q1",
+      "question": "On the already certified duty-13408 combined model, does prefix-memo reproduce the reference selector's exact CG endpoint and finite-pool integer result under a short independent allocation?",
+      "cases": [0, 1]
+    },
+    {
+      "id": "Q2",
+      "question": "With every non-tariff setting fixed, do flat and peak12 prices change the certified duty-13408 pool, charging cost, or capacity schedule after the station-specific 60 kW accounting fix?",
+      "cases": [0, 1, 2, 3]
+    },
+    {
+      "id": "Q3",
+      "question": "For E1-short k2, what changes are attributable separately to shared charger counts, PARX 60 kW, and the confirmed 236.44 kWh usable-capacity/15% floor sensitivity?",
+      "cases": [4, 5, 6, 7, 8, 9, 10, 11]
+    }
+  ],
+  "common_model": {
+    "master_sense": "minimize",
+    "trip_rows": "covering_greater_equal_one",
+    "initial_soc": "battery_kwh",
+    "terminal_soc_constraint": "reserve_only",
+    "soc_step_kwh": 2.5,
+    "event_block_min": 5,
+    "non_parx_kw": 240.0,
+    "capacity_grid_min": 1,
+    "charger_counts": {
+      "2190L": 1,
+      "4808": 1,
+      "3127L": 2,
+      "7880C": 1,
+      "JON_A": 1
+    },
+    "rc_eps": 0.00001,
+    "max_iters": 10000,
+    "threads": 1,
+    "mip_gap": 0.0001,
+    "charge_model": "constant station-specific power on the conservative event-time/SOC graph",
+    "terminal_65_percent_floor": false
+  },
+  "source_inputs": {
+    "k1_duty13408": {
+      "path": "analysis/giro_recovery_20260909/inputs/k1/duty_13408.csv",
+      "sha256": "4533577f0739906ccd41a921c14fe6095a7bebdeea8ffa4ee9ec2b954bed9792"
+    },
+    "e1_short_k2": {
+      "path": "analysis/giro_small_cg_20260909/cohorts/e1_short_k2.csv",
+      "sha256": "bf6fecee151c770812254e2b448080b48fdf7eb01ae462e88138372fa9cd0e4b"
+    },
+    "flat": {
+      "path": "data/hourly_prices_flat.csv",
+      "sha256": "1f51f2e1f6ca303838ebaaf6272a28ff2d6bbee97146cb04d330e10f191f8200"
+    },
+    "peak12": {
+      "path": "data/tariff_response/peak12_h26.csv",
+      "sha256": "8b231a2574fd4e3b4dc94873ad2d6515bfaba09e07afefbb1df43d5f775a8381"
+    },
+    "reference_dictionary": {
+      "path": "data/Ref_dict.csv",
+      "sha256": "7bda0e1f439dc8bf5081499566eb2c6a0314190ef27294707f1403fd2c13e3a0"
+    },
+    "deadhead_reference": {
+      "path": "data/par_ref_dhd.csv",
+      "sha256": "5993e922c671f053611635578b32a1be13bab87b3b5fd8c02b699b81fe0eb66c"
+    }
+  },
+  "resource_policy": {
+    "partition": "default_partition",
+    "exclude": ["scaglione-compute-01"],
+    "cpus_per_task": 1,
+    "memory_gb": 24,
+    "requeue": false,
+    "independent_case_count": 12,
+    "array_concurrency": 12,
+    "held_job_537227_untouched": true,
+    "v2g_jobs_untouched": true,
+    "submission_authorized": false
+  },
+  "execution_contract": {
+    "authorization_scope": "Prepare, deploy, and run native validation only. The root campaign owner separately controls all Slurm submissions.",
+    "gurobi_license_file": "/share/apps/software/gurobi/gurobi.lic",
+    "outer_watchdog_grace_s": 120,
+    "unique_attempt_directories": true,
+    "automatic_retry": false,
+    "allocation_accounting": "Each job allocation contains one CG attempt followed by at most one dedicated two-stage finite-pool MIP attempt. Registry records must remain stage-aware.",
+    "native_record_gate": "A cg.json or mip.json artifact enters the native record arrays only after the matching worker_status stage returncode is zero.",
+    "incomplete_native_outputs_provisional": true
+  },
+  "reporting_contract": {
+    "cg_certificate": "Only certified_rc_optimal=true with exact_nonnegative_reduced_cost and zero artificial weight certifies the full conservative event-time/SOC covering LP for that case.",
+    "interrupted_pricing": "pricing_deadline has null terminal exact reduced cost and is never a pricing certificate; the last atomically accepted pool remains usable evidence.",
+    "integer_proof": "The dedicated two-stage MIP proves only its saved finite capacity-aware pool; fleet and charging-cost stages are reported separately.",
+    "physical_validation": "Selected routes require individual replay plus the continuous half-open shared-capacity sweep for capacity arms.",
+    "selector_equivalence": "Claim selector equivalence only for matched cases with equal exact terminal status and normalized capacity-aware routes; time-censored progress is descriptive.",
+    "physics_scope": "The 236.44/35.466 cells test confirmed usable energy and 15% reserve in the constant-rate event model. They do not implement or claim the nonlinear 18E1 charging curve.",
+    "terminal_target": "No 65% terminal floor or target is imposed or inferred."
+  },
+  "cases": [
+    {
+      "index": 0,
+      "case_id": "k1_13408_flat_combined_reference",
+      "priority": 1,
+      "question_ids": ["Q1", "Q2"],
+      "instance": "k1_duty13408",
+      "prices": "flat",
+      "arm": "combined",
+      "capacity_selector": "reference",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 3000,
+      "mip_wall_s": 300,
+      "slurm_time_s": 3600
+    },
+    {
+      "index": 1,
+      "case_id": "k1_13408_flat_combined_prefix_memo",
+      "priority": 1,
+      "question_ids": ["Q1", "Q2"],
+      "instance": "k1_duty13408",
+      "prices": "flat",
+      "arm": "combined",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 3000,
+      "mip_wall_s": 300,
+      "slurm_time_s": 3600
+    },
+    {
+      "index": 2,
+      "case_id": "k1_13408_peak12_combined_reference",
+      "priority": 2,
+      "question_ids": ["Q2"],
+      "instance": "k1_duty13408",
+      "prices": "peak12",
+      "arm": "combined",
+      "capacity_selector": "reference",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 6600,
+      "mip_wall_s": 300,
+      "slurm_time_s": 7200
+    },
+    {
+      "index": 3,
+      "case_id": "k1_13408_peak12_combined_prefix_memo",
+      "priority": 2,
+      "question_ids": ["Q2"],
+      "instance": "k1_duty13408",
+      "prices": "peak12",
+      "arm": "combined",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 6600,
+      "mip_wall_s": 300,
+      "slurm_time_s": 7200
+    },
+    {
+      "index": 4,
+      "case_id": "k2_flat_240r0_baseline",
+      "priority": 3,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "baseline",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 6600,
+      "mip_wall_s": 300,
+      "slurm_time_s": 7200
+    },
+    {
+      "index": 5,
+      "case_id": "k2_flat_240r0_capacity",
+      "priority": 3,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "capacity",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 13200,
+      "mip_wall_s": 600,
+      "slurm_time_s": 14400
+    },
+    {
+      "index": 6,
+      "case_id": "k2_flat_240r0_parx60",
+      "priority": 3,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "parx60",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 6600,
+      "mip_wall_s": 300,
+      "slurm_time_s": 7200
+    },
+    {
+      "index": 7,
+      "case_id": "k2_flat_240r0_combined",
+      "priority": 3,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "combined",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 240.0,
+      "reserve_kwh": 0.0,
+      "cg_wall_s": 13200,
+      "mip_wall_s": 600,
+      "slurm_time_s": 14400
+    },
+    {
+      "index": 8,
+      "case_id": "k2_flat_236p44r15_baseline",
+      "priority": 4,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "baseline",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 236.44,
+      "reserve_kwh": 35.466,
+      "cg_wall_s": 6600,
+      "mip_wall_s": 300,
+      "slurm_time_s": 7200
+    },
+    {
+      "index": 9,
+      "case_id": "k2_flat_236p44r15_capacity",
+      "priority": 4,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "capacity",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 236.44,
+      "reserve_kwh": 35.466,
+      "cg_wall_s": 13200,
+      "mip_wall_s": 600,
+      "slurm_time_s": 14400
+    },
+    {
+      "index": 10,
+      "case_id": "k2_flat_236p44r15_parx60",
+      "priority": 4,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "parx60",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 236.44,
+      "reserve_kwh": 35.466,
+      "cg_wall_s": 6600,
+      "mip_wall_s": 300,
+      "slurm_time_s": 7200
+    },
+    {
+      "index": 11,
+      "case_id": "k2_flat_236p44r15_combined",
+      "priority": 4,
+      "question_ids": ["Q3"],
+      "instance": "e1_short_k2",
+      "prices": "flat",
+      "arm": "combined",
+      "capacity_selector": "prefix-memo",
+      "battery_kwh": 236.44,
+      "reserve_kwh": 35.466,
+      "cg_wall_s": 13200,
+      "mip_wall_s": 600,
+      "slurm_time_s": 14400
+    }
+  ]
+}

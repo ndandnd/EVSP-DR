@@ -1,0 +1,27 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T122906Z.json",
+  "snapshot_sha256": "194368c9c5b3d0daecfb58ea1e6d74f6acc0e0bbed820e68c833e3464288280a",
+  "diagnostic_cg": 37,
+  "diagnostic_cg_certified": 37,
+  "diagnostic_mip": 57,
+  "comparison_rows": 3,
+  "c4_k19_additional_cg_minutes": 27.886361698829568,
+  "source_hashes_verified_by_collector": true,
+  "full_model_integer_proof_claimed": false,
+  "longer_mip_comparison": {
+    "fresh": {
+      "cases": 14,
+      "targets": 0,
+      "proved_pool_limits": 3,
+      "open_gaps": 11,
+      "target_fleet_proved_within_30_minutes": 0
+    },
+    "extension": {
+      "cases": 9,
+      "targets": 9,
+      "proved_pool_limits": 0,
+      "open_gaps": 0,
+      "target_fleet_proved_within_30_minutes": 7
+    }
+  }
+}

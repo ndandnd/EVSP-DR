@@ -1,0 +1,191 @@
+diff --git a/outputs/chain_extension_20260913/campaign.py b/outputs/chain_extension_20260914/campaign.py
+index a9e0752f..0945db31 100644
+--- a/outputs/chain_extension_20260913/campaign.py
++++ b/outputs/chain_extension_20260914/campaign.py
+@@ -1,4 +1,4 @@
+-"""Frozen k16–25 continuation: independent graphs, sequential CG, per-case MIPs."""
++"""Frozen k26–28 continuation: independent graphs, sequential CG, per-case MIPs."""
+ from pathlib import Path
+ import argparse
+ import datetime
+@@ -12,9 +12,9 @@ import subprocess
+ import sys
+ import time
+ 
+-B = Path('/home/nc437/ladder-lite/chain_extension_20260913')
+-D = Path('/share/scaglione/nc437/evsp-dr/chain_extension_20260913')
+-PARENT = Path('/home/nc437/ladder-lite/full_pool_recovery_20260912')
++B = Path('/home/nc437/ladder-lite/chain_extension_20260914')
++D = Path('/share/scaglione/nc437/evsp-dr/chain_extension_20260914')
++PARENT = Path('/home/nc437/ladder-lite/chain_extension_20260913')
+ SOURCE = Path('/home/nc437/ladder-lite/graph_recovery_20260912/code')
+ COMMIT = 'a0e0bb7681c8451e3cbbbfa06aef390026d9af4b'
+ MIP_COMMIT = '871d057e1067411f09581e37d78f7c1ca43f68bb'
+@@ -55,6 +55,16 @@ def historical_cg_payload_sha(path):
+     return hashlib.sha256(json.dumps(row, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+ 
+ 
++def authenticate_parent(status, input_sha):
++    status = Path(status); value = read(status); gate = read(status.parent/'cg_provenance.json')
++    assert usable(value) and value['provenance']['git_commit'] == COMMIT
++    assert value['provenance']['instance_sha256'] == input_sha
++    assert status.resolve() == Path(gate['result_path']).resolve()
++    assert sha(status) == gate['result_sha256']
++    assert sha(value['columns_journal']) == gate['journal_sha256']
++    return value
++
++
+ def prepare():
+     assert not (B/'manifest.json').exists(), 'Already prepared; do not overwrite'
+     D.mkdir(parents=True, exist_ok=True); (D/'cases').mkdir(exist_ok=True)
+@@ -70,32 +80,29 @@ def prepare():
+         shutil.copy2(PARENT/'code/data'/name, data/name)
+         dependencies[name] = sha(data/name)
+     source = read(B/'inputs/manifest.json')
+-    parents = {}
++    old = read(PARENT/'manifest.json'); old_jobs = read(PARENT/'case_jobs.json')
++    parents = {}; cases = {}; chains = {}
++    assert old['execution_commit'] == COMMIT
+     for chain in range(1, 7):
+-        status = PARENT/'cases'/f'w{chain}_k15'/'cg.json'
+-        value = read(status)
+-        assert value['certified_rc_optimal'] and value['final']['artificials'] == 0
+-        previous = PARENT/'code/data'/value['csv']; target = data/value['csv']
+-        frozen_parent = source['chains'][str(chain)]
+-        assert str(previous) == frozen_parent['parent_remote_csv']
+-        assert str(status) == frozen_parent['parent_status']
+-        assert sha(previous) == frozen_parent['parent_sha256']
+-        assert historical_cg_payload_sha(status) == frozen_parent['parent_cg_payload_sha256']
++        key = str(chain); pid = f'w{chain}_k25'; pc = old['cases'][pid]
++        previous = PARENT/'code/data'/pc['csv']; target = data/pc['csv']
++        assert sha(previous) == pc['input_sha256'] == source['cases'][pid]['input_sha256']
+         target.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(previous, target)
+-        assert sha(target) == value['provenance']['instance_sha256']
+-        parents[str(chain)] = {'status': str(status), 'status_sha256': sha(status),
+-            'journal': value['columns_journal'], 'journal_sha256': sha(value['columns_journal']),
+-            'csv': value['csv'], 'csv_sha256': sha(target)}
+-    cases = {}
+-    for chain, ids in source['warm_chains'].items():
+-        for pos, cid in enumerate(ids):
++        status = PARENT/'cases'/pid/'cg.json'
++        parents[key] = {'status': str(status), 'csv': pc['csv'], 'csv_sha256': sha(target),
++            'parent_manifest_sha256': sha(PARENT/'manifest.json'), 'parent_job_id': old_jobs[pid]['cg'],
++            'parent_case_id': pid, 'published_at_prepare': status.exists()}
++        if status.exists():
++            authenticate_parent(status, pc['input_sha256'])
++            parents[key].update(status_sha256=sha(status), journal_sha256=sha(read(status)['columns_journal']))
++        chains[key] = [f'w{chain}_k{k}' for k in range(26,29)]
++        for pos,cid in enumerate(chains[key]):
+             spec = source['cases'][cid]
+-            rel = 'scale_ladder/instances/chain_extension_20260913/'+spec['csv']
++            rel = 'scale_ladder/instances/chain_extension_20260914/'+spec['csv']
+             target = data/rel; target.parent.mkdir(parents=True, exist_ok=True)
+-            shutil.copy2(B/'inputs'/spec['csv'], target)
+-            assert sha(target) == spec['input_sha256']
+-            cases[cid] = {**spec, 'id': cid, 'csv': rel,
+-                'parent_status': parents[chain]['status'] if pos == 0 else str(B/'cases'/ids[pos-1]/'cg.json'),
++            shutil.copy2(B/'inputs'/spec['csv'], target); assert sha(target) == spec['input_sha256']
++            cases[cid] = {**spec, 'stage_enabled': True, 'id': cid, 'csv': rel,
++                'parent_status': str(status) if pos == 0 else str(B/'cases'/chains[key][pos-1]/'cg.json'),
+                 'cg_seconds': 14400, 'cache': str(B/'cases'/cid/'network.pkl')}
+     settings = {'battery_kwh': 240, 'initial_soc_kwh': 240, 'charge_kw': 240,
+         'reserve_kwh': 0, 'terminal_floor': None, 'shared_station_capacity': False,
+@@ -107,15 +114,17 @@ def prepare():
+     v = {'schema': 'evsp-chain-extension-launch-v1', 'prepared_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+         'execution_commit': COMMIT, 'mip_execution_commit': MIP_COMMIT,
+         'input_manifest_sha256': sha(B/'inputs/manifest.json'), 'input_generation': source,
+-        'initial_parents': parents, 'cases': cases, 'warm_chains': source['warm_chains'],
++        'initial_parents': parents, 'cases': cases, 'warm_chains': chains,
+         'scientific_settings': settings, 'data_sha256': dependencies,
++        'source_sha256': {str(p.relative_to(B/'code')): sha(p) for p in (B/'code/src').glob('*.py')},
++        'parent_manifest_sha256': sha(PARENT/'manifest.json'), 'parent_case_jobs_sha256': sha(PARENT/'case_jobs.json'),
+         'tooling_sha256': {p: sha(B/p) for p in ['campaign.py', 'graph_entry.py', 'worker.sub']},
+         'graph_seconds': 43200, 'resources': {
+             'cache': {'cpus': 2, 'mem': '64G', 'wall': '12:30:00'},
+             'cg': {'cpus': 8, 'mem': '96G', 'wall': '05:00:00'},
+             'mip': {'cpus': 8, 'mem': '24G', 'wall': '02:00:00'}},
+-        'cache_array_concurrency': 50, 'storage_root': str(D),
+-        'resource_basis': 'Parent750-trip graph used25.4GiB peak; graphs throughk25 have551–624 trips.64GiB requests allow headroom. CG96GiB and MIP24GiB retain successful k15 requests. Slurm admits jobs by real resources; six CG chains are true data dependencies.',
++        'cache_array_concurrency': 18, 'storage_root': str(D),
++        'resource_basis': 'Parent750-trip graph used25.4GiB peak; frozen k26–28 graphs have564–674 trips; previous750-trip graph hit12.5h wallcap, so completion is uncertain.64GiB requests allow headroom. CG96GiB and MIP24GiB retain successful k15 requests. Slurm admits jobs by real resources; six CG chains are true data dependencies.',
+         'graph_change': 'Only source diff from baseline e091a4d is validated deferred JSON tie-key evaluation; original graph winner/order rule unchanged. Coarse synchronous progress wrapper is separate tooling.',
+         'requeue_policy': 'Automatic scheduler preemption requeue uses unique stage/job/restart directories. CG resumes a copied identity-validated checkpoint; graph starts fresh if unpublished; MIP starts a fresh tree. No blind retry of algorithmic/time-limit failure.',
+         'borrowed_object_store': str(SOURCE/'.git/objects')}
+@@ -166,12 +175,21 @@ def worker(mode, cid):
+     assert not git('status', '--porcelain', '--untracked-files=no')
+     for name, digest in v['tooling_sha256'].items():
+         assert sha(B/name) == digest
++    for name,digest in v['source_sha256'].items(): assert sha(B/'code'/name) == digest
+     assert sha(B/'code/data'/c['csv']) == c['input_sha256']
+     for name, digest in v['data_sha256'].items():
+         assert sha(B/'code/data'/name) == digest
+     record = {'case_id': cid, 'mode': mode, 'attempt': attempt, 'started_epoch': time.time(),
+         'execution_commit': v['execution_commit'], 'manifest_sha256': sha(B/'manifest.json'),
+         'input_sha256': c['input_sha256'], 'resource_request': v['resources'][mode]}
++    if mode == 'cg' and (root/'cg_provenance.json').exists():
++        authenticate_parent(root/'cg.json', c['input_sha256'])
++        save(a/'execution.json', {**record, 'status': 'already_complete'}); return
++    if mode == 'mip' and (root/'mip_provenance.json').exists():
++        done = read(root/'mip_provenance.json')
++        assert sha(done['result_path']) == done['result_sha256']
++        assert read(done['result_path']).get('physical_replay_validated') is True
++        save(a/'execution.json', {**record, 'status': 'already_complete'}); return
+     if mode == 'cache':
+         if (root/'cache_result.json').exists():
+             done = read(root/'cache_result.json'); assert sha(c['cache']) == done['cache_sha256']
+@@ -185,8 +203,13 @@ def worker(mode, cid):
+                       parent_journal_sha256=sha(value['columns_journal']))
+         initial = v['initial_parents'][str(c['chain'])]
+         if str(parent) == initial['status']:
+-            assert record['parent_status_sha256'] == initial['status_sha256']
+-            assert record['parent_journal_sha256'] == initial['journal_sha256']
++            assert sha(PARENT/'manifest.json') == initial['parent_manifest_sha256']
++            authenticate_parent(parent, initial['csv_sha256'])
++            if initial['published_at_prepare']:
++                assert record['parent_status_sha256'] == initial['status_sha256']
++                assert record['parent_journal_sha256'] == initial['journal_sha256']
++        else:
++            authenticate_parent(parent, c['previous_input_sha256'])
+         assert sha(B/'code/data'/value['csv']) == value['provenance']['instance_sha256']
+         cache = read(root/'cache_result.json'); assert sha(c['cache']) == cache['cache_sha256']
+         out = a/'cg.json'; args = [PY, str(B/'code/src/exact_pricer_expanded.py'), *cg_argv(v, c, out)]
+@@ -282,30 +305,25 @@ def submit():
+         jobs.append(row); save(B/'jobs.json', jobs)
+         state = subprocess.check_output([SLURM+'scontrol', 'show', 'job', job, '-o'], text=True)
+         assert 'ExcNodeList=scaglione-compute-01' in state and 'Partition=default_partition' in state
+-        if array: assert 'ArrayTaskThrottle=50' in state
++        if array: assert 'ArrayTaskThrottle=18' in state
+         row['scontrol'] = state; save(B/'jobs.json', jobs)
+         return job
+-    graph = launch('cache', 'array', array=f'0-{len(ids)-1}%50')
++    graph = launch('cache', 'array', array=f'0-{len(ids)-1}%18')
+     index = {cid: str(i) for i, cid in enumerate(ids)}
+     # Each k depends only on its graph and the previous CG, never the previous MIP.
+     for chain, chain_ids in v['warm_chains'].items():
+-        previous = None
++        p = v['initial_parents'][chain]
++        assert sha(PARENT/'manifest.json') == p['parent_manifest_sha256']
++        if Path(p['status']).exists():
++            authenticate_parent(p['status'], p['csv_sha256']); previous = None
++        else:
++            previous = p['parent_job_id']
+         for cid in chain_ids:
+             deps = [graph+'_'+index[cid]]+([previous] if previous else [])
+             cg = launch('cg', cid, deps); mip = launch('mip', cid, [cg])
+             mapping[cid] = {'cache': graph+'_'+index[cid], 'cg': cg, 'mip': mip}
+             previous = cg; save(B/'case_jobs.json', mapping)
+-    registry = Path('/home/nc437/ladder-lite/mip_preemption_study_20260911/registry.json')
+-    with registry.with_suffix('.lock').open('a') as lock:
+-        fcntl.flock(lock, fcntl.LOCK_EX); r = read(registry)
+-        existing = {x['job_id'] for x in r['cases']}
+-        for cid, row in mapping.items():
+-            if row['mip'] not in existing:
+-                r['cases'].append({'job_id': row['mip'], 'case_id': cid, 'cohort': 'default_chain_extension_3600',
+-                    'solver_budget_s': 3600, 'result_path': str(B/'cases'/cid/'mip_result.json'),
+-                    'attempt_tag': 'chain_extension_20260913', 'requeue': True})
+-        save(registry, r)
+-    print(json.dumps({'graph_array': graph, 'independent_graph_tasks': len(ids), 'graph_concurrency': 50,
++    print(json.dumps({'graph_array': graph, 'independent_graph_tasks': len(ids), 'graph_concurrency': 18,
+         'cg_jobs': len(mapping), 'mip_jobs': len(mapping), 'sequential_chains': len(v['warm_chains'])}))
+ 
+ 

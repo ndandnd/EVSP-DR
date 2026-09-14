@@ -1,0 +1,21 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T122906Z.json",
+  "snapshot_sha256": "194368c9c5b3d0daecfb58ea1e6d74f6acc0e0bbed820e68c833e3464288280a",
+  "collected_utc": "2026-09-14T12:32:25.999677+00:00",
+  "cumulative_cg": 24,
+  "cumulative_mip": 48,
+  "fresh_mip": 24,
+  "fresh_outcomes": {
+    "target matched": 6,
+    "proved pool limit above target": 4,
+    "fleet gap open": 14
+  },
+  "extension_cg": 47,
+  "extension_mip": 46,
+  "cases": 24,
+  "extension_cg_certified": 40,
+  "extension_cg_uncertified": 7,
+  "late_scheduler_results": 0,
+  "errors": [],
+  "source_builder_sha256": "5210a83f53cfc9f012268c2a68f56450bec9d8f114330f909eecb6eb0c634cc9"
+}

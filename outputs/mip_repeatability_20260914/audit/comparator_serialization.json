@@ -1,0 +1,30 @@
+{
+  "checked_utc": "2026-09-14T12:36:34.610670+00:00",
+  "rows": [
+    {
+      "case": "w1_k19",
+      "canonical_path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k19/mip_result.json",
+      "canonical_sha256": "20b29e1f9b4781265dc68ae7c4092835cf80ed0fb24f83a3e02fd22ab6b03339",
+      "raw_path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k19/mip/133916_r0/result.json",
+      "raw_sha256": "7c6e3520a96ef871dcd65c6c32f1db7cd713c43b9a62f0efcf3dfa00f40b1fff",
+      "full_json_values_equal": true
+    },
+    {
+      "case": "w3_k22",
+      "canonical_path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k22/mip_result.json",
+      "canonical_sha256": "fa242b5e47974e0d350e7d4cd9a2dc970855ae8242c2e00bbe2999c404dc17d6",
+      "raw_path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k22/mip/133962_r0/result.json",
+      "raw_sha256": "356ece4bbf3cd1f62621e8ddf4613bddb1c40cbfa6b44d0abbf9425f561677d0",
+      "full_json_values_equal": true
+    },
+    {
+      "case": "w3_k23",
+      "canonical_path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k23/mip_result.json",
+      "canonical_sha256": "e62eebcb27fbc1b170201a916d10d2118598767b60c5c68cce9adbcee2a8a397",
+      "raw_path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k23/mip/133964_r0/result.json",
+      "raw_sha256": "62c116cd2d6884f4f6a89ad4afaece5d4c595fa5706a397d9b1c914f4b7092bf",
+      "full_json_values_equal": true
+    }
+  ],
+  "interpretation": "The publisher reserialized the entire JSON; bytes differ but every parsed value is identical."
+}
