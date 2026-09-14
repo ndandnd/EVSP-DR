@@ -132,7 +132,7 @@ def main():
     fresh_done = sum(r['budget_arm'] == 'base' for r in c['mip'])
     cert = sum(bool(r.get('certified_rc_optimal')) for r in cg.values())
     summary = [f'# Research status — {label}', '',
-        f"Largest verified integer match: **{max(r['target_k'] for r in reach.values())} buses**. These are baseline covering runs with inherited columns, 240 kWh batteries, 240 kW charging and a fee of 5 per charging start. Shared station capacity and a terminal-SOC floor are absent. Fleet proofs apply to the saved pools; physical replay checks individual routes. Charging optimality is a separate question.", '',
+        f"Largest verified match in the original one-hour chain MIPs: **{max(r['target_k'] for r in reach.values())} buses**. Separate longer-MIP results are reported independently. These are baseline covering runs with inherited columns, 240 kWh batteries, 240 kW charging and a fee of 5 per charging start. Shared station capacity and a terminal-SOC floor are absent. Fleet proofs apply to the saved pools; physical replay checks individual routes. Charging optimality is a separate question.", '',
         '| Chain | Largest target matched | Integer buses | CG minutes at this k |',
         '|---|---:|---:|---:|']
     summary += [f"| {r['chain']} | {r['target_k']} | {r['buses']} | {r['cg_minutes_at_this_k']:.1f} |" for r in reach.values()]

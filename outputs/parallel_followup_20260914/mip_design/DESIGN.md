@@ -1,4 +1,6 @@
-# Independent saved-pool follow-up —14 prepared, not submitted
+# Independent saved-pool follow-up — frozen preparation note
+
+**Status update, 14 September12:33EDT:** all14MIPs were submitted as188041–188054 and have completed. [Verified results](../status_20260914T162902Z/README.md). The text below preserves the preparation-stage decisions; it is not the current queue status. The final six-pool construction design and launch are recorded separately in `../union_design/`.
 
 Frozen selection: `20260914T122906Z`. Campaign root on Unicorn:
 `/home/nc437/ladder-lite/parallel_pool_followup_20260914`; storage root:

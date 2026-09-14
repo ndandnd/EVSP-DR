@@ -1,0 +1,161 @@
+{
+  "snapshot_sha256": "bcfe1121c32233624d9b82b1b661b7ce6af13800ded8ab764022c3b022e9a099",
+  "verified_mips": 14,
+  "checks": [
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c1_k08_c200_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 9,
+        "mip_bound_fleet": 8.000000000000005,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "7702f9c0486e16208bdc528df413a193ff6beac32328b99ef64857c1005d5de1"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c2_k08_c200_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 9,
+        "mip_bound_fleet": 8.000000000000009,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "65f7ec55c21f0e802d82722737df43e19cea9a549fdc955b96f2d33c56a8b176"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c2_k08_complementary_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 9,
+        "mip_bound_fleet": 8.000000000000002,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "29a36e4d29b451faf487c01cb1238e74a8af9115140d426a5edd7ecca0419c7c"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c4_k08_c200_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 9,
+        "mip_bound_fleet": 9.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "1ea6de48c9382c6656a070957672cd670d906e36e7cf9073deec973b5563d8d8"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c4_k08_complementary_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 9,
+        "mip_bound_fleet": 9.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "c34b2609fa61fd0b1b2bcd00f4156fa3a85a8a10b8db68c1df2438abcef08af9"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c5_k08_c200_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 9,
+        "mip_bound_fleet": 8.000000000000021,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "bb1b3fd57d75f2dc9188272e8565da3251348638befb1eacdedf4596065e23d3"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c5_k10_c200_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 11,
+        "mip_bound_fleet": 10.000000000000036,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "522dcf534426031b136f8c920a17ebb43b17f832816f72c77fb845ec788e3105"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c5_k10_complementary_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 11,
+        "mip_bound_fleet": 10.000000000000012,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "b574b33565c35fc0b4af4c40fd377b315bc35f6bfda6e3191663620ed3c174ab"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c6_k10_c200_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 11,
+        "mip_bound_fleet": 10.000000000000004,
+        "fleet_proven": false,
+        "physical_selected_validated": true,
+        "source_sha256": "fb9df62226fedfac0c369ec578c57a88d6a2f38950ba94ed0bc68695959d2e66"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/c6_k10_complementary_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 11,
+        "mip_bound_fleet": 11.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "f069132ed2498c6d063909d98ebbe966da12977ac959c71ae6d01e9436ca0c03"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/w2_k25_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 25,
+        "mip_bound_fleet": 25.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "87c52d4a7855a94650a481f19af8a6bf445bcd4ea800ae98555a0601a849d175"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/w4_k19_resumed_pool_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 19,
+        "mip_bound_fleet": 19.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "493883ebc6cf58eb1e6a64a77fb020fbaa19d06aa3bddb31d97208494f8505fe"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/w4_k22_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 22,
+        "mip_bound_fleet": 22.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "715cda9c3503a588051c7fa7e35e88755c83b7bd1298b3d67ff6932cae71e383"
+      },
+      "exact_match": true
+    },
+    {
+      "path": "/home/nc437/ladder-lite/parallel_pool_followup_20260914/cases/w6_k23_longmip/mip_result.json",
+      "values": {
+        "mip_incumbent_fleet": 23,
+        "mip_bound_fleet": 23.0,
+        "fleet_proven": true,
+        "physical_selected_validated": true,
+        "source_sha256": "2d9c1bde5f2c0b7a2f678924f14945c93e0501df6f11e20525746bebbad4096d"
+      },
+      "exact_match": true
+    }
+  ],
+  "errors": []
+}
