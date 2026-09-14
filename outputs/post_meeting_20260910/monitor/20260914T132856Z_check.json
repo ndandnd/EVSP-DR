@@ -1,0 +1,54 @@
+{
+  "checked_at_utc": "2026-09-14T13:35:12.417764+00:00",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T132856Z.json",
+  "snapshot_sha256": "56339be88b46536e91cb1bbfcfcbaf6063beaea0805873be0ee08298c36cbe1e",
+  "previous_full_snapshot": "outputs/post_meeting_20260910/monitor/20260914T124947Z.json",
+  "collection_errors": {},
+  "new_execution_failures_or_preemptions": [],
+  "completed_results_already_recorded": [
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "phase": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/cg.json",
+      "sha256": "4887808ec6615b5337ca1fdc1004c67b07cdddbe17254981e9dc688f1d112465",
+      "already_published_evidence": "outputs/strict_capacity_parallel_20260914/adapter_collection_current.json"
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "phase": "cg",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/cg.json",
+      "sha256": "455a9417656eeb6030e87cdff21702db2ce000f78233982bda8df2004ac9e3a2",
+      "already_published_evidence": "outputs/strict_capacity_parallel_20260914/adapter_collection_current.json"
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "phase": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/mip.json",
+      "sha256": "b788880c9bf4b523d8ec531b46d6c9d266ef9d258d133f5b00044748b4f78498",
+      "already_published_evidence": "outputs/strict_capacity_parallel_20260914/adapter_collection_current.json"
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "phase": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/mip.json",
+      "sha256": "46b48958cf87752b859f23235ebbfca9c52755c5c9dfa00349a382696b8867d8",
+      "already_published_evidence": "outputs/strict_capacity_parallel_20260914/adapter_collection_current.json"
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "phase": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_flat_combined_reference/188143_r0/mip.json",
+      "sha256": "40a9f3e0001eea307c4eae5968a62da8e627e54419d729bd0fb3616bbd9dbde1",
+      "already_published_evidence": "outputs/strict_capacity_mip1h_20260914/adapter_collection_current.json"
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "phase": "mip",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_flat_combined_prefix_memo/188144_r0/mip.json",
+      "sha256": "96c010552e8c24132e4b9c57978832c6a2348638b4bf44a068929c5d02f88084",
+      "already_published_evidence": "outputs/strict_capacity_mip1h_20260914/adapter_collection_current.json"
+    }
+  ],
+  "material_change_since_published_launch_update": false,
+  "action": "Saved full snapshot and refreshed preemption study. No duplicate document edit, workbook rebuild, submission or notification."
+}

@@ -1,5 +1,11 @@
 # EVSP–DR experiment register
 
+**Current results, 14 September 10:35 EDT:** Chain 5 now matches **k=22 with 22 buses**, with a fleet proof in its saved pool and individual-route replay; its CG remains time-limited. Largest individual original matches across chains 1–6: **21, 22, 24, 20, 22, 22**. New pricing certificates: C1 k22 (149.7 minutes), C4 k23 (219.6), C6 k24 (171.6). [Current chain table and source records](../cumulative_budget_20260913/status_20260914T142853Z/README.md). Extension totals: 51 CG endpoints, 43 certificates and eight time limits; 48 original one-hour MIPs, 28 target matches and 20 misses. Twelve misses are recovered by separate longer searches, leaving eight unresolved targets.
+
+**Charging controls:** Four settings on the same E1-short k2 input all recover two buses, including the 236.44-kWh/15% reserve and PARX-60-kW treatment. All four have CG certificates and matched-MIP fleet/charging proofs in their saved pools. **All four exceed the documented one-charger capacity at 2190L**, using two simultaneous connections; shared capacity was deliberately disabled in these controls. Capacity-enforced k2 tests remain running. [Editable settings/results and proof limits](../strict_capacity_parallel_20260914/status_20260914T142853Z/README.md). The k1 flat-price capacity controls both match one bus and pass shared-capacity checks. Dedicated-solver route feasibility is by construction, not independent continuous replay.
+
+**Queue at collection: 52 running, 57 genuine dependency waits; 33 held historical tasks unchanged.** No new execution failure, confirmed preemption or invalid dependency. Six strict CG/MIP pairs are complete and six CGs remain active. All 104 previously authorized production tasks remain submitted; no new jobs were added in this check. Earlier launch/result notices below retain their original dates.
+
 **New parallel work, 14 September:** [Experiment plan, questions and launch records](../parallel_followup_20260914/README.md). **54 jobs running at 09:14 EDT**, up from six. All 104 production tasks are submitted: chain extensions to k=26–28, fourteen unresolved-pool MIPs, six combined-pool MIPs, twelve charging-constraint CG tests and twelve matched one-hour MIP follow-ups. Genuine previous-k and own-CG dependencies remain intact; all independent cases are eligible concurrently.
 
 **Verified results collected at 08:53 EDT:** C1 k21 now matches 21 buses in its original one-hour MIP, with a fleet proof in the saved pool and individual-route replay; its CG remains time-limited. Largest individual original matches by chain are 21, 22, 24, 20, 21 and 22. Separate reruns recovered C1 k19, C3 k22 and C3 k23, with fleet proofs in 22.3, 16.1 and 24.1 minutes. Extra allocated time alone does not explain their earlier misses. [Results and provenance](../mip_repeatability_20260914/status_20260914T124947Z/README.md). The 47 original extension MIPs give 27 target matches; longer-search reruns recover twelve other gaps, leaving eight unresolved targets. CG has 40 certificates among 48 endpoints. These baseline results omit shared charger capacity and terminal SOC requirements.
@@ -45,7 +51,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2,606 artifact/stage records across 55 campaign/source groups**, from the collection completed at 08:53 EDT on 14 September. Counts are not independent experimental sample sizes.
+Current build: **2,658 artifact/stage records across 57 campaign/source groups**, from the collection completed at 10:35 EDT on 14 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|

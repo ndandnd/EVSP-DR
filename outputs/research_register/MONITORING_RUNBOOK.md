@@ -1,3 +1,11 @@
+## 14 September, 10:35 EDT — C5 reaches22; capacity violation isolated in k2 controls
+
+Snapshot20260914T142853Z, SHA306f5a2d0d802e54a070fd4ce3e9c1cbffc6b01e3a51ca75975d4bb2cf2f0442. New C5k22=22/bound22/proved-in-pool/individual-replay; CGstilluncertified. New CGcertificates C1k22=149.7min,C4k23=219.6,C6k24=171.6. Extension51CG43certificates8caps,48originalMIPs28matches20misses;12separatelongrecoveriesleave8unmatched. Largest original matches21,22,24,20,22,22. No late scheduler-only result.
+
+Strict pilot now6CG+6preliminaryMIPs; matchedfollowup6MIPs. All four new k2 controls (same E1-short input; 240r0/236.44r15, PARX240/60, capacityoff) certify and match2 with fleet and charging proofs in respective pools. Shared-capacity audits FAIL at2190L (2connections,1charger). This is expected for disabled-capacity controls, not an execution error or a fully constrained success. Dedicated routes are feasible by construction, not independently replayed. Four capacity-enforced k2 and two peak12k1 CGs still run. Preserve separate unequalCGbudget caveat. New reusable strict summarize_status.py exports all12cases with source hashes.
+
+52running/57trueDependency/33held. No newfailure,preemption,invaliddependency. Register2658rows/57campaigns retains all6supplements. 298original-active plus18strict endpoints exactly checked. Workbook changed views verified, formula scan clean; current Doc updates one reach row and adds editable k2control table with explicit violation; reference and later content byte-identical, figures/Slides untouched. No source solver edits or submissions. Verifier now accepts an optional comma-separated campaign list to avoid rerendering unrelated campaigns.
+
 ## Additional matched MIPs, 14 September
 
 Collect both `strict_capacity_parallel_20260914` and `strict_capacity_mip1h_20260914`. The former has unequal preliminary 300/600-second MIPs; the latter is the primary integer comparison with 3600 seconds per unchanged source pool. Keep completed-stage status separate from proof status; a time-limited completed artifact is not provisional simply because its bound is open. The two k1 controls and their follow-up MIPs completed at launch; ten other pairs remained active/dependent. No 65% terminal target is inferred.
