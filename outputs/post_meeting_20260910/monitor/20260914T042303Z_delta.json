@@ -1,0 +1,1444 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T024847Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T042303Z.json",
+  "timestamp_utc": "2026-09-14T04:23:03.777372+00:00",
+  "changed_results": [
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k21/mip/133940_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 21,
+        "fleet_bound": 21.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.2919039726257,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "6e9a4532459f87c518188998368e5c3d242ec029c250bf74ef71f121672eedb0",
+      "payload_sha256": "6e9a4532459f87c518188998368e5c3d242ec029c250bf74ef71f121672eedb0"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k22/mip/133962_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 23,
+        "fleet_bound": 22.000000000000025,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3607.3419189453125,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "356ece4bbf3cd1f62621e8ddf4613bddb1c40cbfa6b44d0abbf9425f561677d0",
+      "payload_sha256": "356ece4bbf3cd1f62621e8ddf4613bddb1c40cbfa6b44d0abbf9425f561677d0"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k19/mip/133976_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.6818091869354,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "eadbb989fdfc692067bc20370c0dc8fa8ae268ebe2c200a54b8b4792adad29a0",
+      "payload_sha256": "eadbb989fdfc692067bc20370c0dc8fa8ae268ebe2c200a54b8b4792adad29a0"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k20/mip/134070_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3608.0424423217773,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "46d39909f8039564204c013a22601d442d77ebbdc05c89acf1a2dbd284b19934",
+      "payload_sha256": "46d39909f8039564204c013a22601d442d77ebbdc05c89acf1a2dbd284b19934"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k19/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14359.0095194499,
+        "final": {
+          "iter": 456,
+          "attempt_iter": 456,
+          "lp_obj": 1900937.3998528144,
+          "route_weight": 18.99999999999961,
+          "artificials": 0.0,
+          "min_rc": -0.06574062970129102,
+          "max_row_violation": 1.2581047315052274e-12,
+          "max_bound_violation": 2.930919396071374e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "299041db7e8c209af9713dfa6f4d65e64fe6b73b163add666b9af4a86b9ba587"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k21/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4782.7803541277535,
+        "final": {
+          "iter": 136,
+          "attempt_iter": 136,
+          "lp_obj": 2100861.3026837367,
+          "route_weight": 20.999999999999943,
+          "artificials": 0.0,
+          "min_rc": -1.4717325136359705e-07,
+          "max_row_violation": 6.912248551316225e-13,
+          "max_bound_violation": 5.026812299746553e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "9c2c128e4e91604359798e66aebcdd6ff703f6b0a9c9aa84bfcd6d90b8b4badb"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k22/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 5175.758605009876,
+        "final": {
+          "iter": 118,
+          "attempt_iter": 118,
+          "lp_obj": 2200928.1186187225,
+          "route_weight": 22.000000000000234,
+          "artificials": 0.0,
+          "min_rc": -3.529080760955594e-08,
+          "max_row_violation": 6.576961197879427e-13,
+          "max_bound_violation": 6.328144706418551e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "97ba9a4b65e10f90e01d990dcaf4c358e7916bed146bb380c71b7f0050fc0cfb"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k23/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4671.329109236598,
+        "final": {
+          "iter": 130,
+          "attempt_iter": 130,
+          "lp_obj": 2300945.26694009,
+          "route_weight": 23.000000000000416,
+          "artificials": 0.0,
+          "min_rc": -1.8309063776200674e-07,
+          "max_row_violation": 1.1354250872841476e-12,
+          "max_bound_violation": 6.406819519355622e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "5213f5ce2b21fb534da5bcf0f352d6c78fe33299f98f41c1f5d43f1b2d577648"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k20/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4761.9516559005715,
+        "final": {
+          "iter": 157,
+          "attempt_iter": 157,
+          "lp_obj": 2000918.6508342363,
+          "route_weight": 19.999999999999904,
+          "artificials": 0.0,
+          "min_rc": -1.0063964328566044e-08,
+          "max_row_violation": 5.10480546722647e-13,
+          "max_bound_violation": 3.60515436947928e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "53244a403261aaab514ef7b57338c4feab170b7c70f633fea9ffc680b5b7ed09"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k20/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 4777.40429300745,
+        "final": {
+          "iter": 254,
+          "attempt_iter": 254,
+          "lp_obj": 2000830.867084454,
+          "route_weight": 19.999999999999712,
+          "artificials": 0.0,
+          "min_rc": -2.504604168507285e-08,
+          "max_row_violation": 4.747313653297169e-13,
+          "max_bound_violation": 3.8191672047105385e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "b8dfdd5907ac5070d6958e93e4b97f3e579060fb7f655210e19bdcfe62ea6b81"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133916",
+      "case_id": "w1_k19",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133940",
+      "case_id": "w2_k21",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133942",
+      "case_id": "w2_k22",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133962",
+      "case_id": "w3_k22",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133964",
+      "case_id": "w3_k23",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133976",
+      "case_id": "w4_k19",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133978",
+      "case_id": "w4_k20",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "134070",
+      "case_id": "w6_k20",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "155072",
+      "case_id": "complementary_mip",
+      "cohort": "validation_overnight_diagnostics_20260914",
+      "State": "FAILED",
+      "ExitCode": "1:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156638",
+      "case_id": "c1_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156641",
+      "case_id": "c1_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156644",
+      "case_id": "c2_k08_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156647",
+      "case_id": "c2_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156650",
+      "case_id": "c2_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156653",
+      "case_id": "c3_k08_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156656",
+      "case_id": "c3_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156659",
+      "case_id": "c3_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156664",
+      "case_id": "c4_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156667",
+      "case_id": "c4_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156674",
+      "case_id": "c5_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156677",
+      "case_id": "c5_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156681",
+      "case_id": "c6_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156686",
+      "case_id": "c6_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156687",
+      "case_id": "w2_k17_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156688",
+      "case_id": "w2_k18_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156689",
+      "case_id": "w2_k19_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156690",
+      "case_id": "w2_k20_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156691",
+      "case_id": "w3_k19_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156692",
+      "case_id": "w3_k20_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156693",
+      "case_id": "w3_k21_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156694",
+      "case_id": "w5_k19_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156695",
+      "case_id": "w6_k18_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133915",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      },
+      "after": null
+    },
+    {
+      "job": "133916",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      }
+    },
+    {
+      "job": "133917",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "133940",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": null
+    },
+    {
+      "job": "133941",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": null
+    },
+    {
+      "job": "133942",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "133943",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      }
+    },
+    {
+      "job": "133962",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      },
+      "after": null
+    },
+    {
+      "job": "133963",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133964",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      }
+    },
+    {
+      "job": "133965",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "133976",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      },
+      "after": null
+    },
+    {
+      "job": "133977",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133978",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "133979",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "134069",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "134070",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "134071",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "156634",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156635",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156636",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156637",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156638",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      }
+    },
+    {
+      "job": "156639",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156640",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "156641",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      }
+    },
+    {
+      "job": "156642",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      }
+    },
+    {
+      "job": "156643",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "156644",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      }
+    },
+    {
+      "job": "156645",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      }
+    },
+    {
+      "job": "156646",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      }
+    },
+    {
+      "job": "156647",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      }
+    },
+    {
+      "job": "156648",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      }
+    },
+    {
+      "job": "156649",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-05"
+      }
+    },
+    {
+      "job": "156650",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-16"
+      }
+    },
+    {
+      "job": "156651",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-09"
+      }
+    },
+    {
+      "job": "156652",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-10"
+      }
+    },
+    {
+      "job": "156653",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      }
+    },
+    {
+      "job": "156654",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-11"
+      }
+    },
+    {
+      "job": "156655",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-12"
+      }
+    },
+    {
+      "job": "156656",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      }
+    },
+    {
+      "job": "156657",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-13"
+      }
+    },
+    {
+      "job": "156658",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-14"
+      }
+    },
+    {
+      "job": "156659",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "156660",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-15"
+      }
+    },
+    {
+      "job": "156661",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-16"
+      }
+    },
+    {
+      "job": "156662",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-17"
+      }
+    },
+    {
+      "job": "156663",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-18"
+      }
+    },
+    {
+      "job": "156664",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "156665",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-19"
+      }
+    },
+    {
+      "job": "156666",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      }
+    },
+    {
+      "job": "156667",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      }
+    },
+    {
+      "job": "156668",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-21"
+      }
+    },
+    {
+      "job": "156669",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-22"
+      }
+    },
+    {
+      "job": "156670",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-01"
+      }
+    },
+    {
+      "job": "156671",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-01"
+      }
+    },
+    {
+      "job": "156672",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-01"
+      }
+    },
+    {
+      "job": "156673",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-01"
+      }
+    },
+    {
+      "job": "156674",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-02"
+      }
+    },
+    {
+      "job": "156675",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-01"
+      }
+    },
+    {
+      "job": "156676",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-04"
+      }
+    },
+    {
+      "job": "156677",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      }
+    },
+    {
+      "job": "156678",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-04"
+      }
+    },
+    {
+      "job": "156680",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-05"
+      }
+    },
+    {
+      "job": "156681",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-02"
+      }
+    },
+    {
+      "job": "156684",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-05"
+      }
+    },
+    {
+      "job": "156685",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-05"
+      }
+    },
+    {
+      "job": "156686",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-03"
+      }
+    },
+    {
+      "job": "156687",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-04"
+      }
+    },
+    {
+      "job": "156688",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-05"
+      }
+    },
+    {
+      "job": "156689",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-06"
+      }
+    },
+    {
+      "job": "156690",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-07"
+      }
+    },
+    {
+      "job": "156691",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-08"
+      }
+    },
+    {
+      "job": "156692",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      }
+    },
+    {
+      "job": "156693",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      }
+    },
+    {
+      "job": "156694",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      }
+    },
+    {
+      "job": "156695",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    },
+    {
+      "job": "156696",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156697",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156698",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156699",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156700",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156701",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156702",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156703",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156704",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156705",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156706",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156707",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156708",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156709",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156710",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156711",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156712",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156713",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156714",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156715",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156716",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156717",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156718",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156720",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156721",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156722",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156723",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156724",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156725",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156726",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156727",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156728",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156729",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156730",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156731",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "156732",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "157899",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-02"
+      }
+    }
+  ]
+}

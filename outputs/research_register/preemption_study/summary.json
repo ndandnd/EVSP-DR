@@ -81,22 +81,22 @@
     "registered_tasks": 60,
     "accounting_missing_task_ids": [],
     "attempts": 60,
-    "started": 27,
-    "ended_started_attempts": 25,
+    "started": 33,
+    "ended_started_attempts": 29,
     "confirmed_preemptions": 0,
     "preemption_fraction_among_ended": 0.0,
     "descriptive_wilson95": [
-      1.3877787807814457e-17,
-      0.13319225093904846
+      0,
+      0.11696979849974075
     ],
     "state_counts": {
-      "COMPLETED": 25,
-      "PENDING": 33,
-      "RUNNING": 2
+      "COMPLETED": 29,
+      "RUNNING": 4,
+      "PENDING": 27
     },
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
-    "allocation_exposure_seconds": 95885
+    "allocation_exposure_seconds": 116155
   },
   "default_controlled_pairs_7h": {
     "registered_tasks": 24,
@@ -192,6 +192,22 @@
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
     "allocation_exposure_seconds": 137482
+  },
+  "default_overnight_diagnostics_20260914": {
+    "registered_tasks": 23,
+    "accounting_missing_task_ids": [],
+    "attempts": 23,
+    "started": 23,
+    "ended_started_attempts": 0,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": null,
+    "descriptive_wilson95": null,
+    "state_counts": {
+      "RUNNING": 23
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 24449
   },
   "default_overnight_extension_3600": {
     "registered_tasks": 87,
@@ -319,5 +335,24 @@
     "confirmed_preempted_allocation_seconds": 0,
     "confirmed_preempted_allocated_cpu_seconds": 0,
     "allocation_exposure_seconds": 19583
+  },
+  "validation_overnight_diagnostics_20260914": {
+    "registered_tasks": 2,
+    "accounting_missing_task_ids": [],
+    "attempts": 1,
+    "started": 1,
+    "ended_started_attempts": 1,
+    "confirmed_preemptions": 0,
+    "preemption_fraction_among_ended": 0.0,
+    "descriptive_wilson95": [
+      0,
+      0.7934506856227626
+    ],
+    "state_counts": {
+      "FAILED": 1
+    },
+    "confirmed_preempted_allocation_seconds": 0,
+    "confirmed_preempted_allocated_cpu_seconds": 0,
+    "allocation_exposure_seconds": 147
   }
 }

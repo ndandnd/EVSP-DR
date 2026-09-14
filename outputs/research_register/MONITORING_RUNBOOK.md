@@ -1,5 +1,13 @@
 # Unicorn monitoring runbook
 
+## 14 September,00:25EDT — new targets21,19,20; overnight batch completed submission
+
+Snapshot20260914T042303Z:33extension CGendpoints (30certified,3time-limited),29MIPs (19target matches,10open one-bus gaps). New C2k21=21,C4k19=19,C6k20=20 with pool-fleet proofs and individual-route replay; C3k22=23/bound22/unproved. Largest individual targets18,21,18,19,18,20; preserve earlier gaps, especially C2k17–20 and C6k18. C1k19 newly stopped at239.3min/456iterations/minRC−0.06574063 without a pricing certificate. C4/C5k19 remain uncertified; C4 nevertheless matches the integer target. Fresh comparison remains24certified CGs,6/24fresh versus24/24warm target matches.
+
+No new production execution failure, confirmed preemption or invalid dependency. The preemption study has574attempt rows, including new longer-MIP attempts and validation155072. That validation allocation FAILED after its two MIPs had finished, because a later short resume check exhausted its allowance before a new CGiteration. It is not a production MIP failure or preemption. Existing case workflow statuses checked separately; no execution errors. Scientific endpoints checked134. Register2471rows/51campaigns preserves all six supplements; workbook formula scan clean. Doc updates three reach rows and current explanations, preserving the overnight plan, all other tables/figures and Slides.
+
+Later workflow check00:33EDT: validation157899 PASSED and auto-submitted CG160347/160348 plus MIPs160349/160350. All99 overnight diagnostic cases now have jobs. Updated launch files and `status_20260914T042303Z/late_resume_submission.json` preserve the later evidence separately from the earlier scientific snapshot. Do not submit those four again; do not promote smoke outcomes. Native validation is complete. The next collector will ingest any diagnostic scientific results that finish later. No solver/schema changes this heartbeat.
+
 ## 14 September overnight — user-authorized independent diagnostics
 
 Read `outputs/overnight_diagnostics_20260914/README.md` for the frozen design. The user asked for useful independent overnight work in addition to the cumulative-budget experiment and sequential expansion.95jobs are submitted:59independent jobs all running at00:09EDT plus36own-CG-dependent MIPs. The full manifest has99cases; four k19continuation/MIP cases remain gated by native checkpoint check157899. That validation script automatically invokes the locked, idempotent `campaign.py submit` and `verify_launch.py` after completing a new resumed iteration. If it passes but those four records remain absent, finish that registered submission; do not duplicate recorded jobs or bypass a failed check.

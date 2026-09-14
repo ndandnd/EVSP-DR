@@ -2,7 +2,7 @@
 
 Prepared on the night of 13–14 September. This is a separately registered diagnostic batch; it does not replace the six ongoing k=16–25 chains or the completed cumulative-budget comparison.
 
-**Launched:** 95 jobs. At 00:09 EDT, all 59 independent jobs were running and 36 MIPs waited only for their own CG. The remaining two k=19 continuations and their two MIPs await native checkpoint validation job **157899**. On a successful new resumed iteration, that job automatically submits the remaining four registered cases; the submission lock and recorded IDs prevent duplicates. See [scheduler verification](scheduler_verification.json) and [job map](case_jobs.json). This launch entry is separate from the latest scientific-results snapshot.
+**All99 jobs submitted, verified00:33EDT.** The first59 independent jobs were all running at00:09EDT. Native checkpoint validation job157899 passed and automatically submitted the final two CG continuations (160347/160348) and their MIPs (160349/160350). The complete batch has61 independent jobs and38 MIPs that depend only on their own CG. See [scheduler verification](scheduler_verification.json) and [job map](case_jobs.json). Submission status is separate from scientific results.
 
 ## What we will learn
 

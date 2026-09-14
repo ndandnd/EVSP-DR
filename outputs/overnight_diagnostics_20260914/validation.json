@@ -1,14 +1,21 @@
 {
-  "status": "partially_passed",
+  "status": "passed",
   "manifest_sha256": "a8c37cc553a0c38484de3671ac5421db7fd331b3b43715b9784ae57299b46aca",
-  "validated_treatments": [
-    "c200",
-    "complementary",
-    "longer_fleet_search"
+  "smoke_root": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke_resume_v3",
+  "smoke_manifest_sha256": "5000aa56321c23f536fcd0403a737edaf5db88cc33863980f1d8816dc1057d29",
+  "job_id": "157899",
+  "prior_job_id": "155072",
+  "prior_probe_jobs": [
+    "155072",
+    "155894"
   ],
-  "validated_utc": "2026-09-14T04:05:31.453475+00:00",
-  "job_id": "155072",
-  "resume_probe_pending": "157899",
+  "prior_probe_issue": "The30s and600s added allowances expired during parent-pool replay, before a new CG iteration. Compatible prior final_lp was retained but final remained null and the worker correctly rejected publication. Native max-iters counts new iterations; the earlier zero-iteration explanation was incorrect. This check allows one new iteration and2400s for replay/setup/CG. Production commands remain unchanged.",
+  "tests": [
+    "200-column event CG",
+    "complementary event CG",
+    "both dependent two-stage MIPs with replay",
+    "copied native same-k checkpoint"
+  ],
   "completion_files": {
     "c200": {
       "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/cases/c200/completion.json",
@@ -25,12 +32,10 @@
     "complementary_mip": {
       "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke/cases/complementary_mip/completion.json",
       "sha256": "9b75dcd76b87eb28745dc798ed21f389ba611d65ce8f3624bd6e309ca2340c85"
+    },
+    "resume_probe": {
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914_smoke_resume_v3/cases/resume_probe/completion.json",
+      "sha256": "dc9975998293d1e25d1a9bbc289642c63a10242dd11d4e8471ade5ed98b45e96"
     }
-  },
-  "note": "Both fresh CG configurations and native dependent two-stage MIPs passed; submit these95jobs while large same-k checkpoint probe finishes. No production resume submissions yet.",
-  "resume_probe_previous_jobs": [
-    "155072",
-    "155894"
-  ],
-  "resume_probe_issue": "Short added allowances expired during inherited-route replay, before a new CG iteration. Third check allows2400s and one new iteration; on pass it automatically submits the remaining4cases."
+  }
 }

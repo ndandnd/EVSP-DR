@@ -1,0 +1,38 @@
+{
+  "verified_at_utc": "2026-09-14T04:40:26.070378+00:00",
+  "document_id": "1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY",
+  "tab_id": "t.lumf8xm66fow",
+  "table_rows_before": 179,
+  "table_rows_after": 179,
+  "changed_table_rows": [
+    [
+      "| Continue chains 4 and 5 at k=19 | 2 CGs and 2 MIPs will submit automatically after a successful checkpoint check | Does increasing cumulative CG time from four to eight hours reach convergence? |",
+      "| Continue chains 4 and 5 at k=19 | 2 CGs and 2 MIPs submitted; checkpoint check passed | Does increasing cumulative CG time from four to eight hours reach convergence? |"
+    ],
+    [
+      "| 2 | 16 | 16 | 44.3 |",
+      "| 2 | 21 | 21 | 79.7 |"
+    ],
+    [
+      "| 4 | 18 | 18 | 68.9 |",
+      "| 4 | 19 | 19 | 239.1 |"
+    ],
+    [
+      "| 6 | 19 | 19 | 61.2 |",
+      "| 6 | 20 | 20 | 79.6 |"
+    ]
+  ],
+  "other_table_rows_preserved": true,
+  "overnight_plan_preserved": false,
+  "reference_and_later_sections_unchanged": true,
+  "figures_and_slides_untouched": true,
+  "after_sha256": "394f254b350f2bbb3e5bc36b3b58bb5e549af7c8448d5a5fb36bd78f677b09e5",
+  "checks": [
+    "Largest matches18,21,18,19,18,20",
+    "CG30certificates among33endpoints",
+    "C1/C4/C5k19 time limits explicit",
+    "Ten open extension MIP gaps",
+    "Cumulative comparison unchanged"
+  ],
+  "overnight_plan_updated_only_for_verified_submission": true
+}

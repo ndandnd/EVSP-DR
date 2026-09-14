@@ -1,24 +1,49 @@
 {
-  "verified_utc": "2026-09-14T04:09:16.095463+00:00",
+  "verified_utc": "2026-09-14T04:33:15.258226+00:00",
   "manifest_sha256": "a8c37cc553a0c38484de3671ac5421db7fd331b3b43715b9784ae57299b46aca",
-  "submitted": 95,
-  "independent": 59,
-  "dependent": 36,
-  "unsubmitted_cases": [
-    "w4_k19_resume8h",
-    "w4_k19_resume8h_mip",
-    "w5_k19_resume8h",
-    "w5_k19_resume8h_mip"
-  ],
+  "submitted": 99,
+  "independent": 61,
+  "dependent": 38,
+  "unsubmitted_cases": [],
   "resources_and_dependencies_verified": true,
   "live_states": {
-    "PENDING": 36,
-    "RUNNING": 59
+    "PENDING": 38,
+    "RUNNING": 57
   },
   "pending_reasons": {
-    "(Dependency)": 36
+    "(Priority)": 2,
+    "(Dependency)": 35,
+    "(None)": 1
   },
   "jobs": [
+    {
+      "job_id": "160348",
+      "name": "drD_w5_k19_resume8h",
+      "state": "PENDING",
+      "reason_or_node": "(Priority)",
+      "dependency": "(null)"
+    },
+    {
+      "job_id": "160347",
+      "name": "drD_w4_k19_resume8h",
+      "state": "PENDING",
+      "reason_or_node": "(Priority)",
+      "dependency": "(null)"
+    },
+    {
+      "job_id": "160350",
+      "name": "drD_w5_k19_resume8h_mip",
+      "state": "PENDING",
+      "reason_or_node": "(Dependency)",
+      "dependency": "afterok:160348(unfulfilled)"
+    },
+    {
+      "job_id": "160349",
+      "name": "drD_w4_k19_resume8h_mip",
+      "state": "PENDING",
+      "reason_or_node": "(Dependency)",
+      "dependency": "afterok:160347(unfulfilled)"
+    },
     {
       "job_id": "156732",
       "name": "drD_c6_k15_complementary_mip",
@@ -88,13 +113,6 @@
       "state": "PENDING",
       "reason_or_node": "(Dependency)",
       "dependency": "afterok:156670(unfulfilled)"
-    },
-    {
-      "job_id": "156722",
-      "name": "drD_c5_k05_complementary_mip",
-      "state": "PENDING",
-      "reason_or_node": "(Dependency)",
-      "dependency": "afterok:156669(unfulfilled)"
     },
     {
       "job_id": "156721",
@@ -174,18 +192,11 @@
       "dependency": "afterok:156654(unfulfilled)"
     },
     {
-      "job_id": "156709",
-      "name": "drD_c3_k08_complementary_mip",
-      "state": "PENDING",
-      "reason_or_node": "(Dependency)",
-      "dependency": "afterok:156652(unfulfilled)"
-    },
-    {
       "job_id": "156708",
       "name": "drD_c3_k08_c200_mip",
       "state": "PENDING",
-      "reason_or_node": "(Dependency)",
-      "dependency": "afterok:156651(unfulfilled)"
+      "reason_or_node": "(None)",
+      "dependency": "(null)"
     },
     {
       "job_id": "156707",
@@ -356,20 +367,6 @@
       "dependency": "(null)"
     },
     {
-      "job_id": "156651",
-      "name": "drD_c3_k08_c200",
-      "state": "RUNNING",
-      "reason_or_node": "jingjie-cpu-09",
-      "dependency": "(null)"
-    },
-    {
-      "job_id": "156652",
-      "name": "drD_c3_k08_complementary",
-      "state": "RUNNING",
-      "reason_or_node": "jingjie-cpu-10",
-      "dependency": "(null)"
-    },
-    {
       "job_id": "156654",
       "name": "drD_c3_k10_c200",
       "state": "RUNNING",
@@ -447,13 +444,6 @@
       "dependency": "(null)"
     },
     {
-      "job_id": "156669",
-      "name": "drD_c5_k05_complementary",
-      "state": "RUNNING",
-      "reason_or_node": "jingjie-cpu-22",
-      "dependency": "(null)"
-    },
-    {
       "job_id": "156670",
       "name": "drD_c5_k08_c200",
       "state": "RUNNING",
@@ -521,6 +511,13 @@
       "name": "drD_c6_k15_complementary",
       "state": "RUNNING",
       "reason_or_node": "kim-cpu-05",
+      "dependency": "(null)"
+    },
+    {
+      "job_id": "156709",
+      "name": "drD_c3_k08_complementary_mip",
+      "state": "RUNNING",
+      "reason_or_node": "sablab-cpu-02",
       "dependency": "(null)"
     },
     {

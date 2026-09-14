@@ -2576,5 +2576,115 @@
     ],
     "submitted_utc": "2026-09-14T04:06:16.846525+00:00",
     "scontrol": "JobId=156732 JobName=drD_c6_k15_complementary_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15130 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:156685(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T00:06:16 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T00:06:16 Scheduler=Main Partition=default_partition AllocNode:Sid=en-cc-unicorn-login-01:2376986 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_c6_k15_complementary_mip_156732.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_c6_k15_complementary_mip_156732.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "160347",
+    "case_id": "w4_k19_resume8h",
+    "kind": "cg",
+    "treatment": "same_k_resume_to8h",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=5:01:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drD_w4_k19_resume8h",
+      "--output=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914",
+      "w4_k19_resume8h"
+    ],
+    "submitted_utc": "2026-09-14T04:33:13.067414+00:00",
+    "scontrol": "JobId=160347 JobName=drD_w4_k19_resume8h UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15131 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:01:00 TimeMin=N/A SubmitTime=2026-09-14T00:33:13 EligibleTime=2026-09-14T00:33:13 AccrueTime=2026-09-14T00:33:13 StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T00:33:13 Scheduler=Main Partition=default_partition AllocNode:Sid=luxlab-cpu-02:3736954 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w4_k19_resume8h_160347.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w4_k19_resume8h_160347.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "160348",
+    "case_id": "w5_k19_resume8h",
+    "kind": "cg",
+    "treatment": "same_k_resume_to8h",
+    "dependencies": [],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=96G",
+      "--time=5:01:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drD_w5_k19_resume8h",
+      "--output=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.err",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914",
+      "w5_k19_resume8h"
+    ],
+    "submitted_utc": "2026-09-14T04:33:13.407657+00:00",
+    "scontrol": "JobId=160348 JobName=drD_w5_k19_resume8h UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15131 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Priority Dependency=(null) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=05:01:00 TimeMin=N/A SubmitTime=2026-09-14T00:33:13 EligibleTime=2026-09-14T00:33:13 AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T00:33:13 Scheduler=Main Partition=default_partition AllocNode:Sid=luxlab-cpu-02:3736954 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=96G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=96G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w5_k19_resume8h_160348.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w5_k19_resume8h_160348.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "160349",
+    "case_id": "w4_k19_resume8h_mip",
+    "kind": "mip",
+    "treatment": "same_k_resume_to8h",
+    "dependencies": [
+      "160347"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=2:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drD_w4_k19_resume8h_mip",
+      "--output=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.err",
+      "--dependency=afterok:160347",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914",
+      "w4_k19_resume8h_mip"
+    ],
+    "submitted_utc": "2026-09-14T04:33:13.736861+00:00",
+    "scontrol": "JobId=160349 JobName=drD_w4_k19_resume8h_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15130 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:160347(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T00:33:13 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T00:33:13 Scheduler=Main Partition=default_partition AllocNode:Sid=luxlab-cpu-02:3736954 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w4_k19_resume8h_mip_160349.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w4_k19_resume8h_mip_160349.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
+  },
+  {
+    "job_id": "160350",
+    "case_id": "w5_k19_resume8h_mip",
+    "kind": "mip",
+    "treatment": "same_k_resume_to8h",
+    "dependencies": [
+      "160348"
+    ],
+    "argv": [
+      "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+      "--parsable",
+      "--partition=default_partition",
+      "--exclude=scaglione-compute-01",
+      "--cpus-per-task=8",
+      "--mem=24G",
+      "--time=2:00:00",
+      "--requeue",
+      "--kill-on-invalid-dep=yes",
+      "--job-name=drD_w5_k19_resume8h_mip",
+      "--output=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.out",
+      "--error=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/%x_%j.err",
+      "--dependency=afterok:160348",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub",
+      "/home/nc437/ladder-lite/overnight_diagnostics_20260914",
+      "w5_k19_resume8h_mip"
+    ],
+    "submitted_utc": "2026-09-14T04:33:13.972499+00:00",
+    "scontrol": "JobId=160350 JobName=drD_w5_k19_resume8h_mip UserId=nc437(1646707) GroupId=pug-nc437(1677017) MCS_label=N/A Priority=15130 Nice=0 Account=scaglione QOS=normal WCKey=* JobState=PENDING Reason=Dependency Dependency=afterok:160348(unfulfilled) Requeue=1 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0 RunTime=00:00:00 TimeLimit=02:00:00 TimeMin=N/A SubmitTime=2026-09-14T00:33:13 EligibleTime=Unknown AccrueTime=Unknown StartTime=Unknown EndTime=Unknown Deadline=N/A SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-14T00:33:13 Scheduler=Main Partition=default_partition AllocNode:Sid=luxlab-cpu-02:3736954 ReqNodeList=(null) ExcNodeList=scaglione-compute-01 NodeList= NumNodes=1 NumCPUs=8 NumTasks=1 CPUs/Task=8 ReqB:S:C:T=0:0:*:* ReqTRES=cpu=8,mem=24G,node=1,billing=8 AllocTRES=(null) Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=* MinCPUsNode=8 MinMemoryNode=24G MinTmpDiskNode=0 Features=(null) DelayBoot=00:00:00 OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null) Command=/home/nc437/ladder-lite/overnight_diagnostics_20260914/worker.sub WorkDir=/home/nc437 StdErr=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w5_k19_resume8h_mip_160350.err StdIn=/dev/null StdOut=/home/nc437/ladder-lite/overnight_diagnostics_20260914/logs/drD_w5_k19_resume8h_mip_160350.out KillOInInvalidDependent=Yes TresPerTask=cpu=8 \n"
   }
 ]
