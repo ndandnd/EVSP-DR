@@ -140,6 +140,9 @@ def main():
         drop = (old.get('final_lp') or {}).get('objective', old['final']['lp_obj'])-c5['final_lp']['objective']
         text += ['', '## Chain 5 k=19 continuation', '',
             f"Certified after {c5['wall_s']/60:.1f} cumulative CG minutes, {extra:.1f} additional minutes. The weighted LP objective improved by {drop:.6f}. Its final MIP is {'collected separately' if 'w5_k19_resume8h_mip' in endpoints else 'pending'}. The original four-hour endpoint remains uncertified."]
+        mip = endpoints.get('w5_k19_resume8h_mip')
+        if mip:
+            text += ['', f"The continuation MIP found {mip['buses']} buses with pool fleet bound {mip['fleet_bound']:.0f}; fleet proved within this pool: {mip['fleet_proven']}; individual-route replay: {mip.get('physical_replay_validated')}. The original four-hour treatment had found 20/bound19. This is a result for the separate longer-CG treatment, not a revision of the original attempt."]
     summary = dict(snapshot=str(args.snapshot), snapshot_sha256=snapshot_sha,
         diagnostic_cg=len(campaign['cg']), diagnostic_cg_certified=sum(bool(r.get('certified_rc_optimal')) for r in campaign['cg']),
         diagnostic_mip=len(campaign['mip']), comparison_rows=len(rows),

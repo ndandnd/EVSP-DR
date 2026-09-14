@@ -1,6 +1,6 @@
 # Is sequential warm starting better use of the same computation budget?
 
-**14 September, 02:28 EDT:** [Current chain table and unchanged cumulative-budget comparison](status_20260914T062515Z/README.md). Fresh versus warm remains6/24 versus24/24 target matches. New diagnostic treatments are separate; see their [full comparison](../overnight_diagnostics_20260914/status_20260914T062515Z/README.md).
+**14 September, 03:26 EDT:** [Current chains and unchanged cumulative-budget comparison](status_20260914T072439Z/README.md). Fresh versus warm remains6/24 versus24/24 target matches. New column-selection and longer-CG treatments remain separate; [diagnostic comparison](../overnight_diagnostics_20260914/status_20260914T072439Z/README.md).
 
 **14 September, 01:26 EDT:** [Current chains and unchanged completed comparison](status_20260914T052404Z/README.md). Fresh controls remain 6/24 target matches versus 24/24 warm-reference matches. The separate [column-selection treatment](../overnight_diagnostics_20260914/status_20260914T052404Z/README.md) now recovers C5 k5 with 30 complementary columns; do not mix it into the fresh control.
 

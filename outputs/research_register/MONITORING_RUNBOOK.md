@@ -1,5 +1,13 @@
 # Unicorn monitoring runbook
 
+## 14 September, 03:26 EDT — C3 reaches24; C5k19 continuation recovers target
+
+Successful snapshot20260914T072439Z, SHA905751a78c4c7ca598ece741ed1ba8bcea4da8546dce20cbccb519913ef8cc2d; collection completed07:26:12UTC. New production C3k24=24 andC6k21=21 with pool-fleet proofs and individual replay. Largest individual matches18,22,24,20,20,21; preserve C3k19–23 andother earlier gaps.36extension CGendpoints/33certificates;36MIPs/24targetmatches/12open one-bus gaps. Three originalk19CG time limits remain. No late scheduler-only result. Cumulative comparison unchanged.
+
+Diagnostics27certified CG/23MIPs. C5k19resume8h MIP19/bound19/proved/replay recovers target after314.0cumulative CGminutes; original four-hour20/bound19 remains separate. C2k10c20011/bound10 vsoriginal12; C3k15both17/bound15 vsoriginal18; gaps stillopen. C1k8complementary9/bound9/proved. Other new incumbent results are in twelve-case comparison; no general winner claim or full-model integer proof. Longer unchanged-pool MIPs have no collected endpoints yet. Frozen workers andsolver settings unchanged.
+
+No new execution failure, confirmed preemption or invalid dependency; workflow states checked in allthree active campaigns.14MIP scheduler transitions,18queue transitions;601attemptrows. Queue44running,53dependency waits;33heldhistorical arraytasks untouched. Register2479rows/51campaigns retains sixsupplements;194scientific endpoints exactly matched. Workbook formula scan clean,12views rendered; extension/diagnosticMIPcells visuallychecked. Doc replaces existing comparison and reach tables in place, updates continuation/queue/captions; referenceandlater content byte-identical, figures/Slides untouched. Tables were backed up before replacement and allrows verified after. Report-only generator now explicitly reports C5continuationMIP. No new submissions.
+
 ## 14 September, 02:28 EDT — case-dependent selection effects; C5 reaches20
 
 Successful snapshot20260914T062515Z, SHA2cff5e7039d7c3de562d81289cde391b246e5b6f8770641a7c2a10a100289a25, collection completed06:28:02UTC. New C5k20=20/proved in pool/replay. Extension36CG=33certificates+three originalk19time limits;34MIPs=22targets+12open one-bus gaps. Highest individual matches18,22,18,20,20,20. C3k24 andC6k21 newly certified; MIPs pending in snapshot. No late scheduler-only result detected. Cumulative comparison unchanged.

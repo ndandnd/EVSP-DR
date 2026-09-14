@@ -1,0 +1,76 @@
+--- before
++++ after
+@@ -1,12 +1,12 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Chain and diagnostic results updated 14 September 02:28 EDT; cumulative-budget comparison completed 13 September 20:49 EDT; model/source audit 13 September 09:50 EDT. Dates beside each result identify its evidence.
++Week of 14 September. Chain and diagnostic results updated 14 September 03:26 EDT; cumulative-budget comparison completed 13 September 20:49 EDT; model/source audit 13 September 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ ## **Overnight diagnostics: 14 September**
+ 
+-**Queue in the 02:25–02:28 EDT collection: 54 EVSP–DR jobs running.** Another 57 wait on real data dependencies; no array concurrency limit or broken dependency appeared. All 99 diagnostic jobs were submitted by 00:33 EDT: 61 independent jobs and 38 MIPs waiting only for their own CG. Each warm-chain CG waits for the preceding k to produce its columns. No new execution failure or confirmed preemption appeared.
++**Queue in the 03:24–03:26 EDT collection: 44 EVSP–DR jobs running. Another 53 wait on real data dependencies; no array concurrency limit or broken dependency appeared. All 99 diagnostic jobs were submitted by 00:33 EDT: 61 independent jobs and 38 MIPs waiting only for their own CG. Each warm-chain CG waits for the preceding k to produce its columns. No new execution failure or confirmed preemption appeared.**
+ 
+ | New comparison | Jobs | What it tests |
+ | ----- | ----- | ----- |
+@@ -31,43 +31,47 @@
+ 
+ **Longer CG at k=19:** chain 4 certified after 267.0 cumulative minutes, 27.9 extra, improving the weighted LP objective by about 0.00033. Chain 5 now also certified after 314.0 cumulative minutes, 74.7 extra, improving its objective by 0.03250. Both original four-hour endpoints remain uncertified; these are separate continuation treatments.
+ 
+-Chain 4’s continuation MIP found 20 buses with a pool fleet bound of 19; the earlier MIP had found and proved 19\. The new solve started from its ordinary greedy initializer (181 buses, accepted by Gurobi), rather than importing the earlier 19-bus integer solution. Its timed result does not prove that the continued pool lacks a 19-bus solution. Whether all earlier selected routes survive in that pool remains unaudited. Chain 5’s continuation MIP is pending. [Results and source hashes.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_diagnostics_20260914/status_20260914T062515Z/README.md)
++Chain 4’s continuation MIP found 20 buses with a pool fleet bound of 19; the earlier MIP had found and proved 19\. The new solve started from its ordinary greedy initializer (181 buses, accepted by Gurobi), rather than importing the earlier 19-bus integer solution. Its timed result does not prove that the continued pool lacks a 19-bus solution. Whether all earlier selected routes survive in that pool remains unaudited. Chain 5’s continuation MIP now finds 19 buses and proves that fleet within its saved pool, with individual-route replay. Its original four-hour treatment found 20 with a bound of 19\. This recovery belongs to the separate longer-CG treatment. [Results and source hashes.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_diagnostics_20260914/status_20260914T072439Z/README.md)
+ 
+ ## **Column-selection results so far: improvements are case dependent**
+ 
+-Results at 02:28 EDT. The table includes every case with at least one completed treatment MIP. Numbers are buses actually found; pending means no published integer result yet.
++Results at 03:26 EDT. The table includes every case with at least one completed treatment MIP. Numbers are buses actually found; pending means no published integer result yet.
+ 
+ | Chain / target buses | Original selection: buses found | 200 columns: buses found | Complementary: buses found |
+ | ----- | ----- | ----- | ----- |
++| 1 / 8 | 9 | pending | 9 |
+ | 2 / 8 | 9 | 9 | 9 |
+-| 2 / 10 | 12 | pending | 12 |
++| 2 / 10 | 12 | 11 | 12 |
+ | 3 / 8 | 9 | 8 | 8 |
+ | 3 / 10 | 11 | 11 | 11 |
++| 3 / 15 | 18 | 17 | 17 |
++| 4 / 8 | 9 | pending | 9 |
++| 4 / 10 | 11 | pending | 11 |
+ | 5 / 5 | 6 | 6 | 5 |
+ | 5 / 8 | 9 | 9 | 9 |
+-| 5 / 10 | 11 | pending | 11 |
++| 5 / 10 | 11 | 11 | 11 |
+ | 6 / 10 | 11 | 11 | 12 |
+ 
+-Both new treatments recover eight buses on chain 3 at target eight, with fleet proofs within their saved pools and individual-route replay. Other cases still miss. Chain 6 at target ten has a worse complementary incumbent, twelve versus eleven; its pool bound is ten, so the extra buses are not proved necessary. Chain 5 at target eight is different: the complementary pool is proved to require nine. We cannot yet call either treatment a consistent improvement. The early completions are selected cases, not an unbiased success-rate sample. [Full results, bounds and timing.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_diagnostics_20260914/status_20260914T062515Z/README.md)
++Both new treatments recover eight buses on chain 3 at target eight, with fleet proofs within their saved pools and individual-route replay. Other cases still miss. Chain 6 at target ten has a worse complementary incumbent, twelve versus eleven; its pool bound is ten, so the extra buses are not proved necessary. Chain 5 at target eight is different: the complementary pool is proved to require nine. New results also reduce chain 2 at target ten from twelve to eleven buses with the 200-column treatment, and chain 3 at target fifteen from eighteen to seventeen with either treatment. Their pool bounds remain ten and fifteen, so neither target is recovered yet. Chain 1 at target eight is now proved to need nine in the complementary pool. We cannot yet call either treatment a consistent improvement. The early completions are selected cases, not an unbiased success-rate sample. [Full results, bounds and timing.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/overnight_diagnostics_20260914/status_20260914T072439Z/README.md)
+ 
+ ## **Now running: six chains from k=16 to k=25**
+ 
+-**14 September, 02:28 EDT: chain 5 now matches 20 buses at k=20.** Its fleet is proved within the saved pool and passes individual-route replay. The largest individual matches across chains 1–6 are 18, 22, 18, 20, 20 and 20\. Earlier gaps remain listed below; these are not uninterrupted matches through every smaller target. Charging optimality remains separate.
++**14 September, 03:26 EDT: chain 3 matches 24 buses at k=24; chain 6 matches 21 at k=21.** Both have fleet proofs within their saved pools and pass individual-route replay. The largest individual matches across chains 1–6 are 18, 22, 24, 20, 20 and 21\. Earlier gaps remain below, including chain 3 at k=19–23. These are individual matches, not uninterrupted recovery through every smaller target. Charging optimality remains separate.
+ 
+ | Chain | Largest target matched | Integer buses found | CG minutes at this k |
+ | ----- | ----- | ----- | ----- |
+ | 1 | 18 | 18 | 234.3 |
+ | 2 | 22 | 22 | 86.3 |
+-| 3 | 18 | 18 | 48.2 |
++| 3 | 24 | 24 | 92.5 |
+ | 4 | 20 | 20 | 79.4 |
+ | 5 | 20 | 20 | 217.7 |
+-| 6 | 20 | 20 | 79.6 |
+-
+-CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. There are now 33 pricing certificates among 36 completed extension CG runs. Newly certified cases are chain 3 k=24 (92.5 minutes) and chain 6 k=21 (151.8 minutes); their integer results are pending in this collection.
++| 6 | 21 | 21 | 151.8 |
++
++CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. The extension has 36 completed CG endpoints, including 33 pricing certificates, and 36 completed MIPs: 24 target matches and 12 open one-bus gaps. Larger-k jobs continue with their existing dependencies.
+ 
+ **The original chains 1, 4 and 5 k=19 runs stopped before CG convergence**, after about 239 minutes. Their last minimum reduced costs were −0.065741, −0.003185 and −0.088463, below the −0.0001 threshold. These restricted-master objectives lack a pricing certificate. Chain 4 nevertheless found 19 integer buses and proved that fleet within its saved pool. Chains 1 and 5 each found 20, with pool fleet bound 19 and an open gap. The separate longer continuations for chains 4 and 5 now have pricing certificates; neither changes the original endpoint.
+ 
+-Twelve completed one-hour MIPs have unresolved one-bus gaps: chain 1 at target 19; chain 2 at 17–20; chain 3 at 19–23; chain 5 at 19; and chain 6 at 18\. Each found target \+ 1 buses, while its fleet bound within the saved pool equals the target. None proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T062515Z/README.md)
++Twelve completed one-hour MIPs have unresolved one-bus gaps: chain 1 at target 19; chain 2 at 17–20; chain 3 at 19–23; chain 5 at 19; and chain 6 at 18\. Each found target \+ 1 buses, while its fleet bound within the saved pool equals the target. None proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T072439Z/README.md)
+ 
+ | Stage | How it starts | Time budget per case |
+ | ----- | ----- | ----- |
