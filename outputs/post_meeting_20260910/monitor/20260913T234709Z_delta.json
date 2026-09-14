@@ -1,0 +1,411 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260913T224607Z.json",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260913T234709Z.json",
+  "timestamp_utc": "2026-09-13T23:47:12.359954+00:00",
+  "changed_results": [
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k18/mip/133934_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 18.0,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3607.908595561981,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "d3f5a54e4af58d4b4847915097578f9c0b79efeb535a9930e64e3e5428326c0b",
+      "payload_sha256": "d3f5a54e4af58d4b4847915097578f9c0b79efeb535a9930e64e3e5428326c0b"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k17/mip/134064_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 17.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3611.6596109867096,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "741dda3b3b4a95bb305796a05c175781752f3bfd1d10387d4c8176e24882543b",
+      "payload_sha256": "741dda3b3b4a95bb305796a05c175781752f3bfd1d10387d4c8176e24882543b"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k18/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 14059.400760543998,
+        "final": {
+          "iter": 595,
+          "attempt_iter": 595,
+          "lp_obj": 1800875.6489314782,
+          "route_weight": 18.000000000000234,
+          "artificials": 0.0,
+          "min_rc": -7.278865066240314e-09,
+          "max_row_violation": 9.325873406851315e-13,
+          "max_bound_violation": 2.2930268794851827e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "55ebf8a9a477030a2852c2980ef7a53bf1b72bae062e8f70b9c1b43c4a7b1805"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c2_k15/mip_base/135625_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 15.000000000000021,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3606.870959997177,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "1087425363e02e1d2f5054c37131e176cf315bf2a3470ea834466bf4bec16d35",
+      "payload_sha256": "1087425363e02e1d2f5054c37131e176cf315bf2a3470ea834466bf4bec16d35"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c4_k15/mip_base/135665_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 15.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.133422613144,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "f77709fc8398f3376db753c3028fdef8f5dae6c7ca6aa71af89a3601de0c2ba7",
+      "payload_sha256": "f77709fc8398f3376db753c3028fdef8f5dae6c7ca6aa71af89a3601de0c2ba7"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c6_k15/mip_base/135708_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 15.00000000000002,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3606.6705961227417,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "86680de39a5ec353b7bb45b3b47fbfc71a375ff2aa7b51212e29f8786cf657cf",
+      "payload_sha256": "86680de39a5ec353b7bb45b3b47fbfc71a375ff2aa7b51212e29f8786cf657cf"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/cumulative_budget_20260913/cases/c1_k15/base/135603_r0/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 17443.299382355763,
+        "final": {
+          "iter": 2675,
+          "attempt_iter": 2675,
+          "lp_obj": 1500717.3733261158,
+          "route_weight": 15.000000000000115,
+          "artificials": 0.0,
+          "min_rc": -2.890915951070383e-09,
+          "max_row_violation": 2.9282132274488504e-12,
+          "max_bound_violation": 3.572142581731441e-13
+        }
+      },
+      "sha256": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d",
+      "payload_sha256": "4bd5821a72b96ac83b81f2474514aa3eceb8fcdd24106f80050e58bcfc91db7d"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "3",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "1b81693e52f07aa48bc2f284fc9ffa48501fb9f4efcb4da33c11ae791925c81e"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "7",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "bf95fcf92c2ea131edb182729c907bcfde63bb41cab61c81e25ea429c5f9a1dd"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "15",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "8ee10334d52800d2042f0e1c6263eff4fb5d81da5ea985e5e4b1427779207ef2"
+    },
+    {
+      "campaign": "cumulative_budget_20260913",
+      "stage": "records",
+      "path": "23",
+      "new_path": false,
+      "summary": {
+        "final": {}
+      },
+      "sha256": null,
+      "payload_sha256": "658fa9452aafc5e95156f703051670648ec85a4e1e7f61470ec071b890f4422d"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133914",
+      "case_id": "w1_k18",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133934",
+      "case_id": "w2_k18",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "133974",
+      "case_id": "w4_k18",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "134064",
+      "case_id": "w6_k17",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135605",
+      "case_id": "c1_k15_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "135625",
+      "case_id": "c2_k15_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135665",
+      "case_id": "c4_k15_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "135708",
+      "case_id": "c6_k15_base",
+      "cohort": "default_cumulative_fresh_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133908_36",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_37",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_38",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133908_55",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      },
+      "after": null
+    },
+    {
+      "job": "133913",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      },
+      "after": null
+    },
+    {
+      "job": "133914",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      }
+    },
+    {
+      "job": "133915",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "133934",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "134064",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "135603",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-07"
+      },
+      "after": null
+    },
+    {
+      "job": "135605",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "135606",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135625",
+      "before": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "135627",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135665",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "135668",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    },
+    {
+      "job": "135708",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "135710",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": null
+    }
+  ]
+}

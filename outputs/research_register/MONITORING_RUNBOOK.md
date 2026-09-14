@@ -1,5 +1,14 @@
 # Unicorn monitoring runbook
 
+## 13 September, 19:49 EDT — every fresh CG run certified before its allowance
+
+Successful snapshot20260913T234709Z: cumulative24primary fresh CG certificates/24. C1k15 newly certified after290.7min. All actual CG times are below their primary allowances (minimum unused allowance8.84min), so time-limit termination does not explain the integer deficits. There are47MIPs=23fresh (6target,4proved pool limits,13open gaps)+24matchedwarm alltarget. New fresh C2k15=17,C4k15=19,C6k15=20, allbound15/unproved/replay passed. Only C1k15 MIP is pending. Do not infer absent integer solutions in pools with open gaps, or manufacture more columns after a certificate without a separately authorized treatment.
+
+Extension19CGcertificates/17MIPs. New C6k17 matches17 with finite-pool fleet proof/replay; new C2k18=19/bound18 leaves a gap open. Four extension gaps total: C2k17/k18,C3k19/k20. Highest verified matches17,16,18,17,18,17. New C1k18 CG234.3min certified, MIP pending. No new execution failures, confirmed preemptions or invalid dependencies;8MIP scheduler transitions,18queue transitions; preemption study550attemptrows. Both active campaigns' operational statuses checked without failure. No new jobs/retries/held-job changes.
+
+Register2324rows/50campaigns preserves six supplements and prior scientific records; operational queue rows shrink as stages finish. Doc changes one reach row and current explanations, preserving all figures and Slides. Report/checks under status_20260913T234709Z. After HTML-pasting a paragraph ending in a link, Google Docs can inherit blue/underlined styling for its preceding plain text even when the export retains only the intended hyperlink. Select the plain prefix and Super+Backslash to clear its formatting; preserve the source link. Late arrival: scheduler job133974/C4k18 completed19:49:22 with result_exists=true after the earlier extension campaign read. Its reported18-bus outcome is not promoted to a scientific endpoint or fleet proof here. Original output path/hash is in status_20260913T234709Z/late_scheduler_results.json; the next collection should ingest it normally. summarize_status.py now exposes such scheduler/campaign timing differences automatically. No source algorithm/schema changes this heartbeat.
+
+
 ## 13 September, 18:48 EDT — both chains 3 and 5 match 18
 
 Successful snapshot20260913T224607Z: extension18CGcertificates/15MIPs. New verified matches C4k17,C5k18,C6k16 have finite-pool fleet proofs and individual-route replay. New C3k20 MIP21/bound20 leaves a one-bus gap open, alongside earlier C2k17 and C3k19. Highest verified matches17,16,18,17,18,16. No target-above-k infeasibility claim. New CG certificates C2k18,C4k18,C6k17 await MIPs.

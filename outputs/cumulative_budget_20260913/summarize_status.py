@@ -101,6 +101,15 @@ def main():
     write_csv(root/'chain_reach.csv', list(reach.values()))
     if extension_rows:
         write_csv(root/'extension_mips.csv', extension_rows)
+    collected_cases = {r['case_id'] for r in extension_rows}
+    late_results = [r for r in snapshot.get('mip_preemption_study', {}).get('attempts', [])
+        if r.get('cohort') == 'default_chain_extension_3600'
+        and r.get('State') == 'COMPLETED' and r.get('result_exists')
+        and r.get('case_id') not in collected_cases]
+    if late_results:
+        (root/'late_scheduler_results.json').write_text(json.dumps(dict(
+            authority='scheduler observation; detailed scientific endpoint not yet collected',
+            snapshot_path=str(source), snapshot_sha256=digest, attempts=late_results), indent=2)+'\n')
     counts = {name: sum(r['fresh_meaning'] == name for r in rows) for name in
         ['target matched', 'proved pool limit above target', 'fleet gap open']}
     fresh_done = sum(r['budget_arm'] == 'base' for r in c['mip'])
@@ -111,6 +120,9 @@ def main():
         '|---|---:|---:|---:|']
     summary += [f"| {r['chain']} | {r['target_k']} | {r['buses']} | {r['cg_minutes_at_this_k']:.1f} |" for r in reach.values()]
     summary += ['', 'CG minutes include this k’s route import and CG. Earlier k values, original graph construction and MIP are separate. The source of each row is in [chain_reach.csv](chain_reach.csv). A CG certificate at a larger k is not an integer result.']
+    if late_results:
+        names = ', '.join(sorted({r['case_id'] for r in late_results}))
+        summary += ['', f'Scheduler accounting later in this same collection recorded completed output for {names}. The detailed result was absent when the campaign section was read, so it is awaiting scientific verification and is not promoted into the table above. [Recorded completion and output hashes](late_scheduler_results.json).']
     misses = [r for r in extension_rows if r['buses'] > r['target_k']]
     if misses:
         summary += ['', 'Completed extension MIPs that have not matched the target:', '',
@@ -139,6 +151,7 @@ def main():
         collected_utc=c['collected_utc'], cumulative_cg=len(c['cg']),
         cumulative_mip=len(c['mip']), fresh_mip=fresh_done, fresh_outcomes=counts,
         extension_cg=len(e['cg']), extension_mip=len(e['mip']), cases=len(rows),
+        late_scheduler_results=len(late_results),
         errors=c['errors'], source_builder_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     (root/'validation.json').write_text(json.dumps(validation, indent=2)+'\n')
     print(json.dumps({'report': str(root), **validation}))
