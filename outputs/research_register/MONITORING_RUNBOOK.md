@@ -1,3 +1,11 @@
+## 14 September, 11:33 EDT — C4 reaches23 and C6 reaches24
+
+Snapshot `20260914T152928Z`, SHA `f37ef2ec02fc7e683b14586dbe14921202eab75046448751e5b275a7fc53470b`. New C4 k23=23 and C6 k24=24 have finite-pool fleet proofs and individual replay. C1 k22=23/bound22 remains unproved despite certified CG. Largest individual original matches:21,22,24,23,22,24. Original extension totals:51CG/43certificates/8caps,51MIPs/30matches/21misses;12separate long recoveries leave9unmatched. Cumulative-budget and column-selection comparisons unchanged; no late scheduler-only endpoint.
+
+New k1 noon-peak CGs both stop at6600seconds/pricing_deadline with no certificate. Reference24iterations/35columns, cached32iterations/43columns; final restricted objective100061.71506782544 in both. Both dedicated matched MIPs find1bus and prove fleet/charging cost61.7150678254402 within their own pools, with shared-capacity checks true. No full-model charging proof. These deliberate solver deadlines are not execution failures. Strict campaigns now8CG/8preliminaryMIP/8matchedMIP;6CGcertificates,2CGdeadlines. The four k2 capacity-enforced CGs remain active; prior four capacity-disabled controls still violate2190L.
+
+47running/55trueDependency/33held. No new execution failure, preemption or invalid dependency. Register2660records/57campaigns; all6supplements preserved. 301 original-active plus24 strict scientific endpoints checked exactly. Workbook formula scan clean; updated chain/strict views inspected. Doc replaces reach rows, gap count and peak-pricing explanation; k2 table, all reference/later content and figure tabs preserved; Slides untouched. No submissions or solver changes. The strict report builder now prints a dynamic noon-peak comparison.
+
 ## 14 September, 10:35 EDT — C5 reaches22; capacity violation isolated in k2 controls
 
 Snapshot20260914T142853Z, SHA306f5a2d0d802e54a070fd4ce3e9c1cbffc6b01e3a51ca75975d4bb2cf2f0442. New C5k22=22/bound22/proved-in-pool/individual-replay; CGstilluncertified. New CGcertificates C1k22=149.7min,C4k23=219.6,C6k24=171.6. Extension51CG43certificates8caps,48originalMIPs28matches20misses;12separatelongrecoveriesleave8unmatched. Largest original matches21,22,24,20,22,22. No late scheduler-only result.

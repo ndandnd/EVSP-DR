@@ -1,6 +1,6 @@
 # Parallel experiments — 14 September 2026
 
-**Latest check, 10:35 EDT:** 52 jobs running, 57 true dependency waits. C5 now matches k22. Four k2 controls recover two buses but exceed shared capacity at2190L; capacity-enforced treatments are still active. [Current chain table](../cumulative_budget_20260913/status_20260914T142853Z/README.md), [charging-control results](../strict_capacity_parallel_20260914/status_20260914T142853Z/README.md). The launch snapshot below remains dated09:14.
+**Latest check, 11:33 EDT:** 47 jobs running, 55 true dependency waits. C4 now matches k23 and C6 matches k24; C1 k22 still needs 23 with an open bound 22. Noon-peak k1 tests recover one bus but both reach the 110-minute CG limit without certification. Four capacity-enforced k2 CGs remain active. [Current chain table](../cumulative_budget_20260913/status_20260914T152928Z/README.md), [charging results](../strict_capacity_parallel_20260914/status_20260914T152928Z/README.md). The launch snapshot below remains dated 09:14.
 
 **54 EVSP–DR jobs were running at 09:14 EDT**, up from six at the initial check. Another 67 wait for actual predecessor data; 33 held historical tasks are unchanged. The initial default-partition reading showed more than 10,000 idle CPUs. [Live queue record](live_queue_check.json). All work below is submitted.
 

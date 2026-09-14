@@ -1,0 +1,151 @@
+{
+  "checked_at_utc": "2026-09-14T15:39:07.642495+00:00",
+  "endpoints_verified": 24,
+  "checks": [
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/cg.json",
+      "phase": "cg",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_reference/188123_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_flat_combined_prefix_memo/188124_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_reference/188125_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k1_13408_peak12_combined_prefix_memo/188126_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_baseline/188127_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_240r0_parx60/188129_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_baseline/188131_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_parallel_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/results/k2_flat_236p44r15_parx60/188133_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_flat_combined_reference/188143_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_flat_combined_prefix_memo/188144_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_peak12_combined_reference/188145_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k1_13408_peak12_combined_prefix_memo/188146_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_240r0_baseline/188147_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_240r0_parx60/188149_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_236p44r15_baseline/188151_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    },
+    {
+      "campaign": "strict_capacity_mip1h_20260914",
+      "path": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914/results/k2_flat_236p44r15_parx60/188153_r0/mip.json",
+      "phase": "mip",
+      "exact_match": true
+    }
+  ],
+  "errors": []
+}

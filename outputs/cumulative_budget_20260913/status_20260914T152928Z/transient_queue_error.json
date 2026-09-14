@@ -1,0 +1,17 @@
+{
+  "initial_queue_query_exit_code": 1,
+  "initial_stderr": "Not retained by the failed local wrapper; cause unconfirmed",
+  "followup_connection_check": {
+    "time_utc": "2026-09-14T15:41:27.456107+00:00",
+    "returncode": 0,
+    "stderr": ""
+  },
+  "followup_squeue_check": {
+    "time_utc": "2026-09-14T15:41:28.042823+00:00",
+    "returncode": 0,
+    "stderr": "",
+    "queue_rows": 135
+  },
+  "confirmed_ssh_outage": false,
+  "research_result_collection_successful": true
+}

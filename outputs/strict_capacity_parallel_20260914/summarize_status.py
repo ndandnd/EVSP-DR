@@ -77,6 +77,18 @@ def main():
         lines.append('| ' + ' | '.join(show(v) for v in [row['case_id'], minutes,
             row['cg_pricing_certificate'], row['integer_buses'], row['fleet_proved_in_pool'],
             cost, row['shared_capacity_check']]) + ' |')
+    peaks = [r for r in rows if r['target_buses'] == 1 and r['tariff'] == 'peak12']
+    if len(peaks) == 2 and all(r['matched_mip_path'] for r in peaks):
+        lines += ['', '## Noon-peak one-bus comparison', '']
+        for row in peaks:
+            lines.append(
+                f"- {row['pricing_selector']}: {row['cg_minutes']:.1f} CG minutes, "
+                f"{row['cg_iterations']} iterations; stop `{row['cg_stop_reason']}`; "
+                f"pricing certified: {show(row['cg_pricing_certificate'])}. "
+                f"MIP fleet {row['integer_buses']}, charging-related cost "
+                f"{row['charging_related_cost']:.6f}, shared-capacity check "
+                f"{show(row['shared_capacity_check'])}.")
+        lines += ['', 'A completed MIP can prove its saved-pool charging cost while CG still lacks a pricing certificate. More completed CG iterations alone do not establish better final objective or full-model optimality.']
     lines += ['',
         'All four completed k2 controls match two buses and have pricing certificates. Their matched one-hour MIPs prove fleet and charging objectives within their respective saved pools. Shared capacity was disabled: each selected solution has two simultaneous connections at station 2190L, where the documented limit is one. These results do not establish feasibility with station capacity enforced. Those four k2 treatments remain separate.', '',
         'The 236.44-kWh treatment also applies a 35.466-kWh (15%) reserve. It changes battery and reserve together. All cases use constant charging power and no 65% terminal target. Individual route feasibility in this dedicated solver is by construction; it is not a separate continuous replay audit.', '',
@@ -87,6 +99,7 @@ def main():
     (out / 'README.md').write_text('\n'.join(lines) + '\n')
     (out / 'validation.json').write_text(json.dumps({
         'snapshot': str(args.snapshot), 'snapshot_sha256': hashlib.sha256(raw).hexdigest(),
+        'source_builder_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'expected_cases': len(rows), 'verified_cg_endpoints': sum(r['cg_path'] is not None for r in rows),
         'verified_matched_mips': sum(r['matched_mip_path'] is not None for r in rows),
         'source_completion_and_parent_bindings_checked': True,
