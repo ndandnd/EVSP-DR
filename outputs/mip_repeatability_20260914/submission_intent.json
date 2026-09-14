@@ -1,0 +1,22 @@
+{
+  "case_id": "w6_k18_original_budget_repeat3",
+  "argv": [
+    "/usr/local/slurm/slurm-25.05.5/bin/sbatch",
+    "--parsable",
+    "--partition=default_partition",
+    "--exclude=scaglione-compute-01",
+    "--cpus-per-task=8",
+    "--mem=24G",
+    "--time=2:00:00",
+    "--requeue",
+    "--job-name=drR_w6_k18_original_budget_repeat3",
+    "--output=/home/nc437/ladder-lite/mip_repeatability_20260914/logs/%x_%j.out",
+    "--error=/home/nc437/ladder-lite/mip_repeatability_20260914/logs/%x_%j.err",
+    "/home/nc437/ladder-lite/mip_repeatability_20260914/worker.sub",
+    "/home/nc437/ladder-lite/mip_repeatability_20260914",
+    "w6_k18_original_budget_repeat3"
+  ],
+  "status": "recorded",
+  "created_utc": "2026-09-14T08:41:42.174720+00:00",
+  "job_id": "186701"
+}

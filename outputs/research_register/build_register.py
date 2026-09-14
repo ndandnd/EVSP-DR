@@ -213,13 +213,16 @@ class Register:
             for cid, metadata in (extension_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
         }
         self.extension_jobs = extension_workflow.get("case_jobs.json", {}) or {}
-        diagnostic = snapshot.get("campaigns", {}).get("overnight_diagnostics_20260914", {})
-        diagnostic_workflow = diagnostic.get("workflow", {}) or {}
-        self.diagnostic_cases = {
-            cid: {**metadata, "id": cid}
-            for cid, metadata in (diagnostic_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
-        }
-        self.diagnostic_jobs = diagnostic_workflow.get("case_jobs.json", {}) or {}
+        self.diagnostic_cases = {}
+        self.diagnostic_jobs = {}
+        for campaign_id in ("overnight_diagnostics_20260914", "mip_repeatability_20260914"):
+            diagnostic = snapshot.get("campaigns", {}).get(campaign_id, {})
+            diagnostic_workflow = diagnostic.get("workflow", {}) or {}
+            self.diagnostic_cases[campaign_id] = {
+                cid: {**metadata, "id": cid}
+                for cid, metadata in (diagnostic_workflow.get("manifest.json", {}).get("cases", {}) or {}).items()
+            }
+            self.diagnostic_jobs[campaign_id] = diagnostic_workflow.get("case_jobs.json", {}) or {}
 
     def authoritative_case(self, campaign_id, source_path, input_path,
                            fallback_case_id):
@@ -230,8 +233,8 @@ class Register:
         while warm input paths contain an older ``k2_15`` ancestor.  Prefer a
         manifest case directory or CSV basename before any generic regex.
         """
-        if campaign_id == "overnight_diagnostics_20260914":
-            cases = self.diagnostic_cases
+        if campaign_id in self.diagnostic_cases:
+            cases = self.diagnostic_cases[campaign_id]
         elif campaign_id == "chain_extension_20260913":
             cases = self.extension_cases
         elif campaign_id == "overnight_extension_20260912":
@@ -284,7 +287,7 @@ class Register:
                 raise ValueError(f"extension endpoint input hash differs from manifest: {source_path}")
             expected_job = self.extension_jobs.get(metadata["id"], {}).get(stage)
             overrides = {"job_ids": [str(expected_job)] if expected_job else [], **(overrides or {})}
-        if campaign_id == "overnight_diagnostics_20260914" and stage in ("cg", "mip"):
+        if campaign_id in self.diagnostic_cases and stage in ("cg", "mip"):
             if not metadata or input_path != metadata.get("csv"):
                 raise ValueError(f"diagnostic input/case differs from manifest: {source_path}")
             observed_hash = at(payload, "provenance.instance_sha256",
@@ -296,7 +299,7 @@ class Register:
             observed_commit = at(payload, "provenance.git_commit") if stage == "cg" else at(payload, "mip_provenance.git_commit")
             if observed_commit != metadata.get("execution_commit"):
                 raise ValueError(f"diagnostic execution commit differs from manifest: {source_path}")
-            expected_job = self.diagnostic_jobs.get(metadata["id"])
+            expected_job = self.diagnostic_jobs[campaign_id].get(metadata["id"])
             overrides = {"job_ids": [str(expected_job)] if expected_job else [],
                          "arm": metadata.get("treatment"),
                          "code_commit": metadata.get("execution_commit"),

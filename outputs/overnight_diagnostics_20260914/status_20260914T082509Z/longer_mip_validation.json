@@ -1,0 +1,24 @@
+{
+  "cases": 23,
+  "grouped": {
+    "fresh": {
+      "cases": 14,
+      "targets": 0,
+      "proved_pool_limits": 3,
+      "open_gaps": 11,
+      "target_fleet_proved_within_30_minutes": 0
+    },
+    "extension": {
+      "cases": 9,
+      "targets": 9,
+      "proved_pool_limits": 0,
+      "open_gaps": 0,
+      "target_fleet_proved_within_30_minutes": 7
+    }
+  },
+  "all_ordered_pools_and_inputs_identical": true,
+  "original_fresh_audit_path": "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_diagnostics_20260914/status_20260914T082509Z/original_fresh_pool_audit.json",
+  "original_fresh_audit_sha256": "ddd72829dd0620cad2438691b43cc0ebf2f40ececb7a24a00915ae551b3a970d",
+  "snapshot_sha256": "2d0b7ebefd99754978a6fd9e7d1c006aa2e9dd2b333e35a07d382b6a72c27d7d",
+  "full_model_integer_proof_claimed": false
+}

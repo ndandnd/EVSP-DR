@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from summarize_long_mips import report as report_long_mips
 
 
 def write_csv(path, rows):
@@ -148,6 +149,11 @@ def main():
         diagnostic_mip=len(campaign['mip']), comparison_rows=len(rows),
         c4_k19_additional_cg_minutes=extra_min,
         source_hashes_verified_by_collector=True, full_model_integer_proof_claimed=False)
+    longer = report_long_mips(source, campaign, cases, endpoints, root, snapshot_sha)
+    if longer:
+        summary['longer_mip_comparison'] = longer['grouped']
+        text += ['', '## Longer MIPs on unchanged pools', '',
+            'All nine selected inherited pools recover their target; none of the fourteen selected fresh pools does. Three fresh pools now prove that an extra bus is necessary. Seven inherited-pool reruns finish their fleet proof within 30 minutes, so longer elapsed search alone does not explain all recoveries. All ordered MIP pools and input hashes match the original runs. [Full comparison and limits of interpretation](LONGER_MIP_RESULTS.md).']
     text += ['', f"Collected diagnostic endpoints: {summary['diagnostic_cg']} CG runs ({summary['diagnostic_cg_certified']} certified) and {summary['diagnostic_mip']} MIPs. Other cases remain pending or running; missing results are not failures.", '', '[All collected endpoints](endpoints.csv).']
     (root/'README.md').write_text('\n'.join(text)+'\n')
     (root/'validation.json').write_text(json.dumps(summary, indent=2)+'\n')

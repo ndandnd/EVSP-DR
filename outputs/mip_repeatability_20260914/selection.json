@@ -1,0 +1,21 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T082509Z.json",
+  "snapshot_sha256": "2d0b7ebefd99754978a6fd9e7d1c006aa2e9dd2b333e35a07d382b6a72c27d7d",
+  "recovered_inherited": [
+    "w2_k17_extension_longmip",
+    "w2_k18_extension_longmip",
+    "w2_k19_extension_longmip",
+    "w2_k20_extension_longmip",
+    "w3_k19_extension_longmip",
+    "w3_k20_extension_longmip",
+    "w3_k21_extension_longmip",
+    "w5_k19_extension_longmip",
+    "w6_k18_extension_longmip"
+  ],
+  "extension_gaps": [
+    "w1_k19",
+    "w3_k22",
+    "w3_k23"
+  ],
+  "interpretation": "27operational repeats on9known-target-feasible pools,3newlyselected snapshot gaps; no independent-instance or seed-effect interpretation."
+}

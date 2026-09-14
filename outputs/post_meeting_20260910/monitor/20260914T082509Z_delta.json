@@ -1,0 +1,1432 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T072439Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T082509Z.json",
+  "timestamp_utc": "2026-09-14T08:25:10.371899+00:00",
+  "changed_results": [
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k08_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000005,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3608.908549308777,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7bc3d11199ab2a38066b5979d9a5fde91a5161ba87ed61c93bdb12290052c499",
+      "payload_sha256": "7bc3d11199ab2a38066b5979d9a5fde91a5161ba87ed61c93bdb12290052c499"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k10_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 10.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3601.629338979721,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7dbdfc28e599e2e5b8695658e89773f8a1f17c87611683196de2a5afa49ccc55",
+      "payload_sha256": "7dbdfc28e599e2e5b8695658e89773f8a1f17c87611683196de2a5afa49ccc55"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k10_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000027,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12601.88876748085,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "0b547cc7c9e2a31628dec53a24903fde92556c728bd5790b45281056b3352636",
+      "payload_sha256": "0b547cc7c9e2a31628dec53a24903fde92556c728bd5790b45281056b3352636"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k15_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 15.000000000000048,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.17346405983,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "216d9140f32988207b495b17e380999a17949f252bbb57c76410e921a88f4386",
+      "payload_sha256": "216d9140f32988207b495b17e380999a17949f252bbb57c76410e921a88f4386"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k08_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.000000000000005,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12601.502408266068,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "6a607777af44ab687f04f8163bbb0461eb7783ff0d7cab76b4a40a31d5557549",
+      "payload_sha256": "6a607777af44ab687f04f8163bbb0461eb7783ff0d7cab76b4a40a31d5557549"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k10_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12602.116813898087,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "89313984d5819e2d2c3be35876186334d5678977690bde8643dbc37e5e1d2326",
+      "payload_sha256": "89313984d5819e2d2c3be35876186334d5678977690bde8643dbc37e5e1d2326"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k15_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 15.000000000000057,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.55504989624,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "b6387414b380277f0524245eacbbe39e7161fedbc443a376d9da1ec338e838e0",
+      "payload_sha256": "b6387414b380277f0524245eacbbe39e7161fedbc443a376d9da1ec338e838e0"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k08_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 9.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12600.828325510025,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "953f628d9be40601dbff47bf38036cbf47653d137c075711d7bb291b52c313c5",
+      "payload_sha256": "953f628d9be40601dbff47bf38036cbf47653d137c075711d7bb291b52c313c5"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k10_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000009,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.909546375275,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "bee6832d0962b0a1b4be3f997181124029f587b0661d9f4c5115c78e74cf501f",
+      "payload_sha256": "bee6832d0962b0a1b4be3f997181124029f587b0661d9f4c5115c78e74cf501f"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c3_k15_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 15.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12601.582368850708,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "26994c0f17043b0b8fccd1feccd8c184d3ccfde5fcc2c66efa4f3212e8a97610",
+      "payload_sha256": "26994c0f17043b0b8fccd1feccd8c184d3ccfde5fcc2c66efa4f3212e8a97610"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k08_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 9,
+        "fleet_bound": 8.00000000000002,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.837790250778,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "5d6bdc56b0cf6120e06f527e58415b435fce7f996f44de1413735845e21d19ba",
+      "payload_sha256": "5d6bdc56b0cf6120e06f527e58415b435fce7f996f44de1413735845e21d19ba"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k10_c200_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 12,
+        "fleet_bound": 10.000000000000032,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.1266388893127,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "20aca59ebfd25a0557456de45a829b3f3dacd483164bab888878fc0e05694e48",
+      "payload_sha256": "20aca59ebfd25a0557456de45a829b3f3dacd483164bab888878fc0e05694e48"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k10_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 10.000000000000712,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12601.180433273315,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7f246327ec372a34c6835cfb273fbd077390338c3b3d72682c58d0fb7e1d3019",
+      "payload_sha256": "7f246327ec372a34c6835cfb273fbd077390338c3b3d72682c58d0fb7e1d3019"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k15_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 15.000000000000558,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12602.451355218887,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "4af9b99e123646a41c2f8e5b56515457b002aef9c78eefdfe395c795d4ed7a2a",
+      "payload_sha256": "4af9b99e123646a41c2f8e5b56515457b002aef9c78eefdfe395c795d4ed7a2a"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k10_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12600.985845565796,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "bd94e7c8e96fc74eb3500171083163e9839bc0969b4c8efdf48286e0a39d77c8",
+      "payload_sha256": "bd94e7c8e96fc74eb3500171083163e9839bc0969b4c8efdf48286e0a39d77c8"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k15_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 16,
+        "fleet_bound": 15.0000000000001,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12602.577619075775,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "09c336fc8cffe30df19289fb86ee9cb6c48c51b19fe58c331f8d9e048a8f7ad8",
+      "payload_sha256": "09c336fc8cffe30df19289fb86ee9cb6c48c51b19fe58c331f8d9e048a8f7ad8"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k10_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 11,
+        "fleet_bound": 11.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12600.968824625015,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "446434bd0088deb26360230688e6934f79ecb89193ee9d7c6698ff445c7f8008",
+      "payload_sha256": "446434bd0088deb26360230688e6934f79ecb89193ee9d7c6698ff445c7f8008"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k15_fresh_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 15.000000000000023,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12602.511052131653,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "4eb66f4b0326c6313d4cb4648dd8746ebb80b04f85d24ab51517569a748bf6dc",
+      "payload_sha256": "4eb66f4b0326c6313d4cb4648dd8746ebb80b04f85d24ab51517569a748bf6dc"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w2_k17_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 17.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12605.116257429123,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "0d86fa947d93ffbe13f94d30cf17740e1f1544caa21d3b8910c59cd4264b0dfb",
+      "payload_sha256": "0d86fa947d93ffbe13f94d30cf17740e1f1544caa21d3b8910c59cd4264b0dfb"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w2_k18_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.032681703568,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "0f3e01203725e4b92a3b50d178e7ff6c894c54938b9b08eca09bb10421cf84fb",
+      "payload_sha256": "0f3e01203725e4b92a3b50d178e7ff6c894c54938b9b08eca09bb10421cf84fb"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w2_k19_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.07047343254,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "83b1fd882bb48813d281018756467a87133722ef765225853b12ad5336e84ae8",
+      "payload_sha256": "83b1fd882bb48813d281018756467a87133722ef765225853b12ad5336e84ae8"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w2_k20_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.431825637817,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "5acb9ae6875ab4d8639acd9bec754091aa6005803a5492f71b4344daa5fce994",
+      "payload_sha256": "5acb9ae6875ab4d8639acd9bec754091aa6005803a5492f71b4344daa5fce994"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w3_k19_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12603.650478124619,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a3720faaaa6fb222da21222ff89cf96dd7df546a1e4e4ed1a2a6eaae729871f7",
+      "payload_sha256": "a3720faaaa6fb222da21222ff89cf96dd7df546a1e4e4ed1a2a6eaae729871f7"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w3_k20_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12603.023364305496,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "1de3846dc659acf862e1d645b5336d37b4dab298290532418562df7d1d48ca3a",
+      "payload_sha256": "1de3846dc659acf862e1d645b5336d37b4dab298290532418562df7d1d48ca3a"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w3_k21_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 21,
+        "fleet_bound": 21.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12605.127650260925,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "e600b8de2257159e54488907fc5f12d21a0408cdaf879e8d46caa49c409d52fd",
+      "payload_sha256": "e600b8de2257159e54488907fc5f12d21a0408cdaf879e8d46caa49c409d52fd"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w5_k19_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12602.998944282532,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "5cc8f290cf4dca4578f017ab7d1fe3dbf162ef4e42aab0f4a1ddf37594f2e247",
+      "payload_sha256": "5cc8f290cf4dca4578f017ab7d1fe3dbf162ef4e42aab0f4a1ddf37594f2e247"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/w6_k18_extension_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12604.369551897049,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3be13c9a982bb3b1a6a4d3b43f1549ec68bbeed718222de88340290aeda98d49",
+      "payload_sha256": "3be13c9a982bb3b1a6a4d3b43f1549ec68bbeed718222de88340290aeda98d49"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k10_c200/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 13663.942863281816,
+        "final": {
+          "iter": 1100,
+          "attempt_iter": 1100,
+          "lp_obj": 1000511.2045748332,
+          "route_weight": 10.000000000000025,
+          "artificials": 0.0,
+          "min_rc": -5.1034438897090695e-09,
+          "max_row_violation": 7.183142969324763e-14,
+          "max_bound_violation": 0.0
+        }
+      },
+      "sha256": "975aee3bb0022b26fafa33f95223ac230c05faa42fb7d3a13a0dc8c3f094a847",
+      "payload_sha256": "975aee3bb0022b26fafa33f95223ac230c05faa42fb7d3a13a0dc8c3f094a847"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c4_k15_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 15221.298683081288,
+        "final": {
+          "iter": 1934,
+          "attempt_iter": 1934,
+          "lp_obj": 1500637.9289838227,
+          "route_weight": 14.99999999999996,
+          "artificials": 0.0,
+          "min_rc": -1.4082605304110984e-08,
+          "max_row_violation": 2.0405899192610377e-13,
+          "max_bound_violation": 1.040105501726174e-13
+        }
+      },
+      "sha256": "537ca479a7f78b2a3974d1bf452a764a00b02a455053502a0a12cfa403b203bf",
+      "payload_sha256": "537ca479a7f78b2a3974d1bf452a764a00b02a455053502a0a12cfa403b203bf"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k15_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 13339.575359644834,
+        "final": {
+          "iter": 1889,
+          "attempt_iter": 1889,
+          "lp_obj": 1500669.15945867,
+          "route_weight": 14.999999999999666,
+          "artificials": 0.0,
+          "min_rc": -1.2791876891071752e-08,
+          "max_row_violation": 4.4997339188057595e-13,
+          "max_bound_violation": 2.0392021404802563e-13
+        }
+      },
+      "sha256": "fa2aacba1dffaca8d40e296b60cdfee14d9f60226112d7018db707d3c49cd54a",
+      "payload_sha256": "fa2aacba1dffaca8d40e296b60cdfee14d9f60226112d7018db707d3c49cd54a"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c6_k15_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 14005.696952991653,
+        "final": {
+          "iter": 1827,
+          "attempt_iter": 1827,
+          "lp_obj": 1500606.3379641003,
+          "route_weight": 15.00000000000024,
+          "artificials": 0.0,
+          "min_rc": -1.73541250259035e-08,
+          "max_row_violation": 3.838040996129166e-13,
+          "max_bound_violation": 2.6235647484061853e-13
+        }
+      },
+      "sha256": "8470ec5c681f668cb65ddf7f28246f8c9417ca0ba8b87d3516ebe9f6a5ed90ae",
+      "payload_sha256": "8470ec5c681f668cb65ddf7f28246f8c9417ca0ba8b87d3516ebe9f6a5ed90ae"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w1_k20/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14378.18441425031,
+        "final": {
+          "iter": 451,
+          "attempt_iter": 451,
+          "lp_obj": 2000940.007769795,
+          "route_weight": 19.99999999999989,
+          "artificials": 0.0,
+          "min_rc": -0.00858500596105749,
+          "max_row_violation": 6.784572903484332e-13,
+          "max_bound_violation": 4.592819180526675e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "fe1fa44a1496930d4092e98f164e7418b8a8b71c2baf1deeb25f5318e37bdf33"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k23/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 12756.482811107766,
+        "final": {
+          "iter": 338,
+          "attempt_iter": 338,
+          "lp_obj": 2300978.020775146,
+          "route_weight": 23.000000000000437,
+          "artificials": 0.0,
+          "min_rc": -1.8325368023042188e-07,
+          "max_row_violation": 7.042144645197368e-13,
+          "max_bound_violation": 5.018116998323219e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "5437f06bc797cb9118af79a34d4288a28876aa3364f2d04acaf7f662a1029fc9"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w3_k25/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 7051.860926921479,
+        "final": {
+          "iter": 137,
+          "attempt_iter": 137,
+          "lp_obj": 2501050.534125112,
+          "route_weight": 24.999999999999968,
+          "artificials": 0.0,
+          "min_rc": -9.408558510060061e-08,
+          "max_row_violation": 5.232481115058363e-13,
+          "max_bound_violation": 4.139466547314896e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "a3ae55ba08863f777d9dd974f83c76d3bd80cd5b527811051f7244a3148bafc8"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w4_k21/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14362.18474602187,
+        "final": {
+          "iter": 567,
+          "attempt_iter": 567,
+          "lp_obj": 2100964.86399247,
+          "route_weight": 21.000000000000092,
+          "artificials": 0.0,
+          "min_rc": -0.007781781632115292,
+          "max_row_violation": 3.934630399271555e-13,
+          "max_bound_violation": 3.5657457889137767e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "a6028d20983214666d601c3a89f8f48f563c035a0c6c69bbfe2c09182f681bad"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w6_k22/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 6904.725605876418,
+        "final": {
+          "iter": 313,
+          "attempt_iter": 313,
+          "lp_obj": 2200904.526972498,
+          "route_weight": 22.00000000000021,
+          "artificials": 0.0,
+          "min_rc": -1.9268228790281228e-08,
+          "max_row_violation": 1.41797684705125e-12,
+          "max_bound_violation": 1.1696199564426024e-12
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "316e09fada00eb4b90c70ab3b16a39b4eab0c6354f650a9e97c0187d158a4b9d"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133918",
+      "case_id": "w1_k20",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133944",
+      "case_id": "w2_k23",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133968",
+      "case_id": "w3_k25",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "133980",
+      "case_id": "w4_k21",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "134074",
+      "case_id": "w6_k22",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156638",
+      "case_id": "c1_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156641",
+      "case_id": "c1_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156644",
+      "case_id": "c2_k08_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156647",
+      "case_id": "c2_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156650",
+      "case_id": "c2_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156653",
+      "case_id": "c3_k08_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156656",
+      "case_id": "c3_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156659",
+      "case_id": "c3_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156664",
+      "case_id": "c4_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156667",
+      "case_id": "c4_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156674",
+      "case_id": "c5_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156677",
+      "case_id": "c5_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156681",
+      "case_id": "c6_k10_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156686",
+      "case_id": "c6_k15_fresh_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156687",
+      "case_id": "w2_k17_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156688",
+      "case_id": "w2_k18_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156689",
+      "case_id": "w2_k19_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156690",
+      "case_id": "w2_k20_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156691",
+      "case_id": "w3_k19_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156692",
+      "case_id": "w3_k20_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156693",
+      "case_id": "w3_k21_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156694",
+      "case_id": "w5_k19_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156695",
+      "case_id": "w6_k18_extension_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156696",
+      "case_id": "c1_k08_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156698",
+      "case_id": "c1_k10_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156699",
+      "case_id": "c1_k10_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156714",
+      "case_id": "c4_k08_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156716",
+      "case_id": "c4_k10_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156720",
+      "case_id": "c4_k15_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156728",
+      "case_id": "c5_k15_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156732",
+      "case_id": "c6_k15_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133917",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      },
+      "after": null
+    },
+    {
+      "job": "133918",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "133919",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "133943",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      },
+      "after": null
+    },
+    {
+      "job": "133944",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      }
+    },
+    {
+      "job": "133945",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      }
+    },
+    {
+      "job": "133967",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "133968",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "133979",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "133980",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      }
+    },
+    {
+      "job": "133981",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "134073",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      },
+      "after": null
+    },
+    {
+      "job": "134074",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "134075",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-76"
+      }
+    },
+    {
+      "job": "156636",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156638",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "156641",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      },
+      "after": null
+    },
+    {
+      "job": "156644",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      },
+      "after": null
+    },
+    {
+      "job": "156647",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      },
+      "after": null
+    },
+    {
+      "job": "156650",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-16"
+      },
+      "after": null
+    },
+    {
+      "job": "156653",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      },
+      "after": null
+    },
+    {
+      "job": "156656",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-17"
+      },
+      "after": null
+    },
+    {
+      "job": "156659",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156664",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156666",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "156667",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156674",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156676",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-04"
+      },
+      "after": null
+    },
+    {
+      "job": "156677",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156681",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156685",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-05"
+      },
+      "after": null
+    },
+    {
+      "job": "156686",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "156687",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-04"
+      },
+      "after": null
+    },
+    {
+      "job": "156688",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-05"
+      },
+      "after": null
+    },
+    {
+      "job": "156689",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "156690",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-07"
+      },
+      "after": null
+    },
+    {
+      "job": "156691",
+      "before": {
+        "state": "RUNNING",
+        "reason": "totient-cpu-08"
+      },
+      "after": null
+    },
+    {
+      "job": "156692",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "156693",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "156694",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "156695",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156696",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      },
+      "after": null
+    },
+    {
+      "job": "156698",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-13"
+      }
+    },
+    {
+      "job": "156699",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-11"
+      },
+      "after": null
+    },
+    {
+      "job": "156714",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156716",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-09"
+      },
+      "after": null
+    },
+    {
+      "job": "156720",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      }
+    },
+    {
+      "job": "156728",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-09"
+      }
+    },
+    {
+      "job": "156732",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-11"
+      }
+    }
+  ]
+}

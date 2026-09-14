@@ -299,6 +299,7 @@ def giro_original_metrics(original, fee):
 
 home = Path.home() / 'ladder-lite'
 roots = {
+    'mip_repeatability_20260914': home / 'mip_repeatability_20260914',
     'overnight_diagnostics_20260914': home / 'overnight_diagnostics_20260914',
     'chain_extension_20260913': home / 'chain_extension_20260913',
     'graph_recovery_retry2_20260912': home / 'graph_recovery_retry2_20260912',
@@ -335,7 +336,7 @@ roots = {
 out = {'timestamp_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'campaigns': {}}
 for name, root in roots.items():
     rows = []
-    diagnostic = name == 'overnight_diagnostics_20260914'
+    diagnostic = name in ('overnight_diagnostics_20260914', 'mip_repeatability_20260914')
     diagnostic_manifest_sha = hashlib.sha256((root/'manifest.json').read_bytes()).hexdigest() if diagnostic and (root/'manifest.json').exists() else None
     published_mips = set(root.glob('cases/*/mip_result.json')) if diagnostic else set()
     for p in sorted(set(root.rglob('*mip8h.json')) | set(root.rglob('*mip_budgeted.json')) | set(root.glob('*/mip.json')) | set((root/'results').glob('*60m.json')) | set((root/'mip').glob('*1h2stage.json')) | set(root.glob('p*/mip/*__1h2stage.json')) | set((root/'mip_attempts').glob('**/result.json')) | {p for p in root.glob('cases/*/mip/*/result.json') if 'smoke' not in p.parts} | published_mips):

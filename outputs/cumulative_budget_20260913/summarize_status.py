@@ -150,11 +150,11 @@ def main():
         summary += ['', f'Scheduler accounting later in this same collection recorded completed output for {names}. The detailed result was absent when the campaign section was read, so it is awaiting scientific verification and is not promoted into the table above. [Recorded completion and output hashes](late_scheduler_results.json).']
     misses = [r for r in extension_rows if r['buses'] > r['target_k']]
     if misses:
-        summary += ['', 'Completed extension MIPs that have not matched the target:', '',
+        summary += ['', 'Original one-hour extension MIPs that missed the target (fixed-budget control):', '',
             '| Case | Target | Buses found | Pool fleet bound | Fleet proved in pool? |',
             '|---|---:|---:|---:|---|']
         summary += [f"| C{r['chain']}, k={r['target_k']} | {r['target_k']} | {r['buses']} | {r['pool_fleet_bound']:.1f} | {'yes' if r['fleet_proven_in_pool'] else 'no'} |" for r in misses]
-        summary += ['', 'An open fleet gap leaves target attainment unresolved. It is not proof that the pool requires the extra bus. [Every completed extension MIP and its source](extension_mips.csv).']
+        summary += ['', 'These rows preserve the original one-hour searches; separate longer-MIP treatments may subsequently recover their targets. An open fleet gap is not proof that the pool requires the extra bus. [Every original extension MIP and its source](extension_mips.csv).']
     summary += ['',
         '## Fresh runs given the accumulated warm-chain time', '',
         f"{cert}/24 fresh CG runs with the primary allowance have pricing certificates. {fresh_done} corresponding fresh MIPs have finished: **{counts['target matched']} target matches, {counts['proved pool limit above target']} proved pool limits above target, and {counts['fleet gap open']} unresolved fleet gaps**. All 24 matched warm-reference MIPs reach their targets with finite-pool fleet proofs. The register retains any distinct larger-allowance continuations separately; this table never mixes them with primary results.", '',
