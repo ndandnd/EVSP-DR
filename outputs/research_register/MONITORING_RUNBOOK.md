@@ -1,5 +1,14 @@
 # Unicorn monitoring runbook
 
+## 13 September, 21:50 EDT — larger-case gaps and first extension CG time limit
+
+Successful snapshot20260914T014827Z. Extension25CGendpoints=24certificates+1time-limited;21verifiedMIPs=15targetmatches+6openone-busgaps. New C2k19=20/bound19 and C6k18=19/bound18, unproved with individual-route replay. Highest verified targets remain18,16,18,18,18,17. New certificates C2k20(67.8min),C3k21(208.5min),C6k19(61.2min) await MIPs.
+
+C5k19 stopped on its CG wall budget after239.3min/648iterations; last minimum reduced cost−0.0884631291 remains below−0.0001. No pricing certificate; weighted RMP1900861.55125 and routeweight19 are not certified fleet/full-model lower bounds. This is a scientific time limit, not an execution failure or preemption. Saved pool usable by the already queued MIP and successor; dependencies continue unchanged. Do not blindly requeue.
+
+Cumulative comparison unchanged:24freshCGcertificates,24freshMIPs(6target/4provedpoollimits/14opengaps),24warmMIPsalltarget. No new execution failure, preemption or invalid dependency;6MIP scheduler transitions,16queue transitions;550attemptrows. Operational statuses checked separately. Register2325rows/50campaigns with six supplements;118scientific endpoints checked. No late scheduler-only results. Report builder now adds extension_cg.csv and separates CG endpoint count from certificate count so time-limited cases remain visible. Solver code unchanged. Weekly Doc keeps all tables and figures, updating only status and gap/CG explanations. Slides untouched.
+
+
 ## 13 September, 20:49 EDT — primary cumulative-budget comparison complete
 
 Successful snapshot20260914T004739Z. All24primary fresh CG runs have certificates and stopped before their allowances. All48scientific MIPs are present:24fresh (6target,4proved pool limits,14open gaps) and24matchedwarm alltarget. Last fresh C1k15=18/bound15/unproved/replay passed. Fresh k15 fleets C1–C6=18,17,18,19,16,20, allbound15/unproved. Larger allowance stages share certified endpoints; operational alias completion is not another solve. No new campaigns, diversification, repeated MIPs or blind requeues authorized by this completion. Retrospective code/hardware variation remains an interpretation limit.

@@ -14,17 +14,17 @@
   "families_and_stages": {
     "capacity_speed_exact_event:cg": 16,
     "capacity_speed_exact_event:mip": 16,
-    "cg_phase_telemetry:telemetry": 445,
-    "column_generation:cg": 515,
+    "cg_phase_telemetry:telemetry": 449,
+    "column_generation:cg": 519,
     "cumulative_budget_case_metadata:audit_result": 24,
     "cumulative_budget_endpoint:cg": 24,
     "cumulative_budget_endpoint:mip": 48,
     "decomposition:decomposition_join": 6,
     "giro_zero_fee_comparison:comparison_arm": 18,
     "matched_tariff_comparison:comparison_arm": 57,
-    "pool_mip:mip": 551,
+    "pool_mip:mip": 553,
     "rejected_mip_output:mip_rejected": 2,
-    "scheduler:queue_state": 116,
+    "scheduler:queue_state": 108,
     "small_reference_cg:cg_arm": 32,
     "small_same_pool_comparison:lp": 64,
     "small_same_pool_comparison:mip": 64,
@@ -42,11 +42,11 @@
     "workflow:workflow_mip": 54
   },
   "rejected_rows": 2,
-  "row_count": 2323,
-  "rows_with_source_sha256": 1014,
+  "row_count": 2325,
+  "rows_with_source_sha256": 1016,
   "rows_without_source_sha256": 1309,
   "schema": "evsp-dr-research-register-validation-v1",
-  "source_snapshot_sha256": "d026c479f3b8f3d273d261c9ef4e1605c3fd42dd1ad68917d1a7786b373d655a",
+  "source_snapshot_sha256": "1ba8aca4d5a354f9f3823bcdb8a17bd1f59c1e833e5c5b709824d9c72faec0a5",
   "superseded_772031_rows": 1,
-  "unique_row_ids": 2323
+  "unique_row_ids": 2325
 }

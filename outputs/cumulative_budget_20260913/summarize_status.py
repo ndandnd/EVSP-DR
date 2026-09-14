@@ -78,6 +78,23 @@ def main():
             source_sha256=r['sha256'], fleet_proven_in_pool=True,
             physical_route_replay=True, source_campaign='matched warm k15 reference')
     manifest = e['workflow']['manifest.json']['cases']
+    extension_cg_rows = []
+    for r in e['cg']:
+        cid = next(cid for cid in manifest if cid in Path(r['path']).parts)
+        final = r.get('final') or {}
+        extension_cg_rows.append(dict(case_id=cid,
+            chain=int(cid.split('_')[0][1:]), target_k=int(cid.split('_')[1][1:]),
+            cg_minutes_at_this_k=r['wall_s']/60,
+            pricing_certified=bool(r.get('certified_rc_optimal')),
+            stop_reason=r.get('stop_reason'), iterations=final.get('iter'),
+            weighted_rmp_objective=final.get('lp_obj'),
+            fractional_route_weight=final.get('route_weight'),
+            last_min_reduced_cost=final.get('min_rc'),
+            source_path=r['path'], source_sha256=r.get('sha256'),
+            snapshot_path=str(source), snapshot_sha256=digest))
+    if extension_cg_rows:
+        write_csv(root/'extension_cg.csv', extension_cg_rows)
+    extension_certificates = sum(r['pricing_certified'] for r in extension_cg_rows)
     extension_rows = []
     for r in e['mip']:
         parts = Path(r['path']).parts
@@ -120,6 +137,14 @@ def main():
         '|---|---:|---:|---:|']
     summary += [f"| {r['chain']} | {r['target_k']} | {r['buses']} | {r['cg_minutes_at_this_k']:.1f} |" for r in reach.values()]
     summary += ['', 'CG minutes include this k’s route import and CG. Earlier k values, original graph construction and MIP are separate. The source of each row is in [chain_reach.csv](chain_reach.csv). A CG certificate at a larger k is not an integer result.']
+    summary += ['', f"Extension CG has {extension_certificates} pricing certificates among {len(extension_cg_rows)} collected endpoints. [Every CG endpoint, stopping reason and last reduced cost](extension_cg.csv)."]
+    uncertified = [r for r in extension_cg_rows if not r['pricing_certified']]
+    if uncertified:
+        summary += ['', 'CG stopped before convergence:', '',
+            '| Case | CG minutes | Stopping reason | Last minimum reduced cost |',
+            '|---|---:|---|---:|']
+        summary += [f"| C{r['chain']}, k={r['target_k']} | {r['cg_minutes_at_this_k']:.1f} | {r['stop_reason']} | {r['last_min_reduced_cost']:.6f} |" for r in uncertified]
+        summary += ['', 'These runs have no pricing certificate. Their restricted-master objectives are not certified full-model lower bounds. A saved pool can still be used by the already scheduled MIP and next chain step.']
     if late_results:
         names = ', '.join(sorted({r['case_id'] for r in late_results}))
         summary += ['', f'Scheduler accounting later in this same collection recorded completed output for {names}. The detailed result was absent when the campaign section was read, so it is awaiting scientific verification and is not promoted into the table above. [Recorded completion and output hashes](late_scheduler_results.json).']
@@ -151,6 +176,8 @@ def main():
         collected_utc=c['collected_utc'], cumulative_cg=len(c['cg']),
         cumulative_mip=len(c['mip']), fresh_mip=fresh_done, fresh_outcomes=counts,
         extension_cg=len(e['cg']), extension_mip=len(e['mip']), cases=len(rows),
+        extension_cg_certified=extension_certificates,
+        extension_cg_uncertified=len(uncertified),
         late_scheduler_results=len(late_results),
         errors=c['errors'], source_builder_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     (root/'validation.json').write_text(json.dumps(validation, indent=2)+'\n')

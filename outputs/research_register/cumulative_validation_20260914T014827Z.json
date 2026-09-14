@@ -1,0 +1,96 @@
+{
+  "schema": "evsp-cumulative-register-workbook-check-v1",
+  "source_snapshot": {
+    "path": "raw/20260914T014827Z.json",
+    "sha256": "1ba8aca4d5a354f9f3823bcdb8a17bd1f59c1e833e5c5b709824d9c72faec0a5",
+    "timestamp_utc": "2026-09-14T01:48:28.867934+00:00"
+  },
+  "row_count": 2325,
+  "campaign_count": 50,
+  "supplements_preserved": [
+    {
+      "path": "raw/supplemental/chain2_recovery_submission.json",
+      "sha256": "e1ae0463bb240e6e2ec9ba39d29915aa6de960ce85dfe88ee2cb60562d9537a7"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_manifest.json",
+      "sha256": "4aec50885519130e4a8ef0059e1172a23406de5045f0644f41e688ab0fb2eeab"
+    },
+    {
+      "path": "raw/supplemental/completed_parent_validation.json",
+      "sha256": "eb3292bcb158c2ac1472ef485ed9ea00a6600c4cf5cb6b999aa56bbbf5c6f76c"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_submission.json",
+      "sha256": "e3e94f0aab45b7c6291eecddb5e8fde77434094391fed5b6bdd17785bb74c010"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_manifest.json",
+      "sha256": "1bec90faf73a24c06b60ad736ce95038272f8915e4180dc65a5bcbac3114ac7b"
+    },
+    {
+      "path": "raw/supplemental/graph_parent32_timeout_20260913.json",
+      "sha256": "e381dad5fafc755c2505104bb167864537315e1abf2c395bdef024960cd26bb0"
+    }
+  ],
+  "scientific_endpoints_verified": 118,
+  "source_endpoint_exact_match": true,
+  "extension_counts": {
+    "cg": 25,
+    "cg_certified": 24,
+    "cg_uncertified": 1,
+    "mip": 21
+  },
+  "cumulative_counts": {
+    "cg": 24,
+    "mip": 48
+  },
+  "fresh_mip_classification": {
+    "target matched": 6,
+    "proved pool limit above target": 4,
+    "fleet gap open": 14
+  },
+  "all_primary_cg_certified_before_allowance": true,
+  "minimum_unused_primary_allowance_min": 8.840307383479862,
+  "workbook_formula_errors": 0,
+  "rendered_changed_views": [
+    {
+      "sheet": "Campaigns",
+      "range": "A1:G14"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A12:H13"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A8:H9"
+    },
+    {
+      "sheet": "CG",
+      "range": "A178:N202"
+    },
+    {
+      "sheet": "CG",
+      "range": "A21:N46"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A168:L216"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A21:L42"
+    },
+    {
+      "sheet": "Attempts",
+      "range": "A145:H169"
+    }
+  ],
+  "visual_review": "Reviewed campaign overview, extension CG and MIP renders. C5k19 has certificate=no and wall_limit. New C2k19/C6k18 one-bus MIP gaps remain unproved. All173 Doc table rows and reference/later content preserved.",
+  "artifact_hashes": {
+    "outputs/research_register/register.json": "0a416e4043a1b6180d839d80d09bc6b230cadde7ee173e630adb5db5dd516c15",
+    "outputs/research_register/register.csv": "846b750d0c19c398f8ce83d4914a18240386a7aebe49991a9a1c39cf0a30dcbd",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "cbb90eb49422868a2ae24d9469c2d1239e276a19ba9b7ebc315b609696172204"
+  }
+}
