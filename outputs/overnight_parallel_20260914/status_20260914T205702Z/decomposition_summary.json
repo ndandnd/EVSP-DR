@@ -1,0 +1,36 @@
+{
+  "decomposition_pool_union_20260914": {
+    "endpoints": 45,
+    "individuals": 9,
+    "pairs": 36,
+    "pair_fleet_range": [
+      34,
+      36
+    ],
+    "pair_bounds_range": [
+      34,
+      36
+    ],
+    "individual_proofs": 9,
+    "pair_proofs": 36,
+    "pair_improvements": 0,
+    "pairs_excluding32": 36
+  },
+  "decomposition_lp_support_union_20260914": {
+    "endpoints": 45,
+    "individuals": 9,
+    "pairs": 36,
+    "pair_fleet_range": [
+      34,
+      36
+    ],
+    "pair_bounds_range": [
+      33,
+      34
+    ],
+    "individual_proofs": 9,
+    "pair_proofs": 1,
+    "pair_improvements": 0,
+    "pairs_excluding32": 36
+  }
+}

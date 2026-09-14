@@ -1,0 +1,9 @@
+case_id,attempt,cg_published,cg_minutes,cg_iterations,cg_certified,cg_stop,pool_columns,mip_published,buses,fleet_proved,charging_cost,charging_proved,shared_capacity_passed,trip_duplicates,scheduler_override,worker_status_stale
+k1_13405_flat_capacity_reference,189164_r0,True,220.00055860441643,18,False,pricing_deadline,31,True,1,True,94.72000000000116,True,True,0,,
+k1_13405_flat_capacity_prefix_memo,189165_r0,True,220.00077447022002,16,False,pricing_deadline,29,True,1,True,94.72000000000116,True,True,0,,
+k1_13406_flat_capacity_reference,189166_r0,True,220.00085544081716,13,False,pricing_deadline,27,True,1,True,56.95200000000477,True,True,0,,
+k1_13406_flat_capacity_prefix_memo,189167_r0,True,220.00120507909838,13,False,pricing_deadline,27,True,1,True,56.95200000000477,True,True,0,,
+k1_13407_flat_capacity_reference,189168_r0,True,220.00079857760187,15,False,pricing_deadline,32,True,1,True,81.58400000000256,True,True,0,,
+k1_13407_flat_capacity_prefix_memo,189169_r0,False,,,,,,False,,,,,,,PREEMPTED,True
+k1_13408_flat_capacity_reference,189170_r0,True,2.9328456914168783,33,True,exact_nonnegative_reduced_cost,43,True,1,True,36.53599999999278,True,True,0,,
+k1_13408_flat_capacity_prefix_memo,189171_r0,True,1.7476126423183207,33,True,exact_nonnegative_reduced_cost,43,True,1,True,36.53599999999278,True,True,0,,

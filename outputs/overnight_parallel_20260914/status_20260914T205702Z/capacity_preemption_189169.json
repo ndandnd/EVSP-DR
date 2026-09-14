@@ -1,0 +1,227 @@
+{
+  "observed_utc": "2026-09-14T21:07:29.723477+00:00",
+  "case": "k1_13407_flat_capacity_prefix_memo",
+  "job_id": "189169",
+  "sacct": "189169|PREEMPTED|2026-09-14T13:02:08|2026-09-14T15:22:18|8410|0:0|None|0\n",
+  "files": {
+    "worker_status.json": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/worker_status.json",
+      "exists": true,
+      "bytes": 3714,
+      "sha256": "0341da70bbf6dd5d3c57bef9155820e505f388051292163be3ca0a41d34cbc88",
+      "contents": {
+        "artifacts": [
+          {
+            "bytes": 2552,
+            "exists": true,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/commands.json",
+            "sha256": "7f255ad9070774abe239c889dbbed4e4fc618ced3e23cc717f45b089aef369be"
+          },
+          {
+            "bytes": 4234,
+            "exists": true,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/allocation.json",
+            "sha256": "1db6a900abefde095c4297f0e6af43d852de926839a6d3fd7980cbbec927e04c"
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.json",
+            "sha256": null
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/pool.jsonl",
+            "sha256": null
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/mip.json",
+            "sha256": null
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.stdout.log",
+            "sha256": null
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.stderr.log",
+            "sha256": null
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/mip.stdout.log",
+            "sha256": null
+          },
+          {
+            "bytes": null,
+            "exists": false,
+            "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/mip.stderr.log",
+            "sha256": null
+          }
+        ],
+        "attempt_id": "189169_r0",
+        "case_id": "k1_13407_flat_capacity_prefix_memo",
+        "commands_sha256": "7f255ad9070774abe239c889dbbed4e4fc618ced3e23cc717f45b089aef369be",
+        "interpretation": {
+          "cg_certificate": "Only certified_rc_optimal=true with exact_nonnegative_reduced_cost and zero artificial weight certifies the full conservative event-time/SOC covering LP for that case.",
+          "integer_proof": "The 600-second dedicated two-stage MIP is diagnostic and proves only its saved finite capacity-aware pool; fleet and charging-cost stages remain separate.",
+          "interrupted_pricing": "pricing_deadline has null terminal exact reduced cost and is never a pricing certificate; the last atomically accepted pool remains usable evidence.",
+          "physical_validation": "The dedicated driver reports route feasibility by construction and audits selected charging against the continuous half-open shared-capacity sweep; this campaign does not add an independent route replay.",
+          "physics_scope": "All cells use identical simplified constant-rate 240 kWh, reserve-zero, flat-price capacity physics. k1 does not expose multi-route simultaneous charger contention.",
+          "selector_equivalence": "Claim selector equivalence only for matched cases with equal exact terminal status and normalized capacity-aware routes; time-censored progress is descriptive.",
+          "terminal_target": "No 65% terminal floor or target is imposed or inferred."
+        },
+        "manifest_sha256": "05f726731d98dc7763d33d0ad78394a45ada1bbf1c838783f0503291a9c17ead",
+        "returncode": 0,
+        "stages": {},
+        "status": "running"
+      }
+    },
+    "commands.json": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/commands.json",
+      "exists": true,
+      "bytes": 2552,
+      "sha256": "7f255ad9070774abe239c889dbbed4e4fc618ced3e23cc717f45b089aef369be",
+      "contents": {
+        "cg": [
+          "/home/nc437/evsp_env/bin/python",
+          "-u",
+          "src/run_capacity_speed_event_cg.py",
+          "--arm",
+          "capacity",
+          "--instance",
+          "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13407.csv",
+          "--prices",
+          "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+          "--reference-data-dir",
+          "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data",
+          "--expected-commit",
+          "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "--require-clean",
+          "--battery-kwh",
+          "240.0",
+          "--non-parx-kw",
+          "240.0",
+          "--reserve-kwh",
+          "0.0",
+          "--soc-step",
+          "2.5",
+          "--block-min",
+          "5",
+          "--rc-eps",
+          "1e-05",
+          "--threads",
+          "1",
+          "--mode",
+          "cg",
+          "--capacity-selector",
+          "prefix-memo",
+          "--max-iters",
+          "10000",
+          "--cg-wall-s",
+          "13200",
+          "--out",
+          "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.json",
+          "--pool-out",
+          "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/pool.jsonl"
+        ],
+        "mip": [
+          "/home/nc437/evsp_env/bin/python",
+          "-u",
+          "src/run_capacity_speed_event_cg.py",
+          "--arm",
+          "capacity",
+          "--instance",
+          "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/analysis/giro_recovery_20260909/inputs/k1/duty_13407.csv",
+          "--prices",
+          "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data/hourly_prices_flat.csv",
+          "--reference-data-dir",
+          "/home/nc437/ladder-lite/strict_capacity_parallel_20260914/code/data",
+          "--expected-commit",
+          "309d98d266ebaf6b7e99543a67f8f2be5736874a",
+          "--require-clean",
+          "--battery-kwh",
+          "240.0",
+          "--non-parx-kw",
+          "240.0",
+          "--reserve-kwh",
+          "0.0",
+          "--soc-step",
+          "2.5",
+          "--block-min",
+          "5",
+          "--rc-eps",
+          "1e-05",
+          "--threads",
+          "1",
+          "--mode",
+          "mip",
+          "--mip-gap",
+          "0.0001",
+          "--mip-wall-s",
+          "600",
+          "--out",
+          "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/mip.json",
+          "--pool",
+          "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/pool.jsonl",
+          "--cg-status",
+          "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.json"
+        ]
+      }
+    },
+    "allocation.json": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/allocation.json",
+      "exists": true,
+      "bytes": 4234,
+      "sha256": "1db6a900abefde095c4297f0e6af43d852de926839a6d3fd7980cbbec927e04c"
+    },
+    "pool.jsonl": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/pool.jsonl",
+      "exists": true,
+      "bytes": 84208,
+      "sha256": "8a37d8084e42ed7afbb24126336debef7e12a66bcf42755ee7313ee7da06934a"
+    },
+    "cg.json": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.json",
+      "exists": false
+    },
+    "mip.json": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/mip.json",
+      "exists": false
+    },
+    "cg.stdout.log": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.stdout.log",
+      "exists": true,
+      "bytes": 13458,
+      "sha256": "25717f9852e949b7678a46611fdfb29da407c9c378fe2a11cd747541c18bbad5",
+      "last_lines": [
+        "  Matrix range     [1e+00, 1e+00]",
+        "  Objective range  [1e+05, 5e+05]",
+        "  Bounds range     [0e+00, 0e+00]",
+        "  RHS range        [1e+00, 2e+00]",
+        "LP warm-start: use basis",
+        "",
+        "Iteration    Objective       Primal Inf.    Dual Inf.      Time",
+        "       0   -4.8370667e+31   5.233333e+31   4.837067e+01      0s",
+        "       2    1.0008158e+05   0.000000e+00   0.000000e+00      0s",
+        "",
+        "Solved in 2 iterations and 0.01 seconds (0.00 work units)",
+        "Optimal objective  1.000815840e+05"
+      ]
+    },
+    "cg.stderr.log": {
+      "path": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914/results/k1_13407_flat_capacity_prefix_memo/189169_r0/cg.stderr.log",
+      "exists": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "last_lines": []
+    }
+  }
+}

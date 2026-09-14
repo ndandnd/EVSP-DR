@@ -1,3 +1,11 @@
+## Newly identified 14 September, 17:02 EDT — capacity CG preemption with stale worker flag
+
+**Case:** capacity_pricing_boundary_20260914 / k1_13407_flat_capacity_prefix_memo, job189169, attempt189169_r0. Slurm records PREEMPTED from13:02:08 to15:22:18EDT (8,410s), Restarts0. The initial worker_status.json still says running, returncode0 and empty stages; it was never finalized. Those fields do not establish success or a currently active job.
+
+No cg.json or mip.json exists. The84,208-byte partial pool is preserved, SHA8a37d8084e42ed7afbb24126336debef7e12a66bcf42755ee7313ee7da06934a. It is not a pricing certificate or final selected schedule. No retry was launched by this monitor. The frozen wrapper has no resume argument, so a recovery must be a separately recorded treatment/attempt with its interrupted computation included; do not blindly requeue or overwrite this directory. This is a CG interruption, not an additional MIP-preemption sample.
+
+[Exact scheduler output, worker state, commands and file hashes](../overnight_parallel_20260914/status_20260914T205702Z/capacity_preemption_189169.json). The other seven campaign cases have published one-bus MIPs; five CGs ended at their intentional pricing deadlines, distinct from this scheduler interruption. This entry supersedes earlier statements that six capacity cases remained running.
+
 # Execution issues — 10 September 2026
 
 This page distinguishes execution errors from optimization results. Read the register README for its current snapshot timestamp; original failures and later recoveries are retained separately.

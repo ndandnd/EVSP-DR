@@ -1,0 +1,1207 @@
+{
+  "snapshot_sha256": "ca8f69e173d71679cb553881af165b0c758af572f79b038856b171d050ca57c2",
+  "classification_roster": "outputs/overnight_parallel_20260914/queue_20260914T201351Z/snapshot.json",
+  "running": 52,
+  "solver_dependencies": 43,
+  "conditional_checks": 16,
+  "held": 33,
+  "rows": [
+    {
+      "job_id": "188002",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k28",
+      "kind": "cg"
+    },
+    {
+      "job_id": "188000",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k27",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187998",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k26",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187996",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k28",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187994",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k27",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187992",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k26",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187990",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k28",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187988",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k27",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187986",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k26",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187984",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k28",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187982",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k27",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187978",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k28",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187976",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k27",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187974",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k26",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187972",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k28",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187970",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k27",
+      "kind": "cg"
+    },
+    {
+      "job_id": "187968",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k26",
+      "kind": "cg"
+    },
+    {
+      "job_id": "133927",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260913",
+      "case_id": "w1_k25",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189936",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w6_k28",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189935",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w6_k27",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189934",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w6_k26",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189933",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w5_k28",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189932",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w5_k27",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189931",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w5_k26",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189930",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w4_k28",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189929",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w4_k27",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189928",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w4_k26",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189927",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w3_k28",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189926",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w3_k27",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189924",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w2_k28",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189923",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w2_k27",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189918",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w2_k26",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189917",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w1_k28",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189916",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "graph_gates_v2",
+      "case_id": "w1_k27",
+      "kind": "graph_recovery_gate"
+    },
+    {
+      "job_id": "189219",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "seed",
+      "case_id": "c2_k15_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189213",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "seed",
+      "case_id": "c1_k15_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189212",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "seed",
+      "case_id": "c1_k15_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "188004",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k28",
+      "kind": "mip"
+    },
+    {
+      "job_id": "188001",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k27",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187999",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k26",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187997",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k28",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187995",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k27",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187993",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k26",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187991",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k28",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187989",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k27",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187987",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k26",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187985",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k28",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187983",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k27",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187981",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k26",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187979",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k28",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187977",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k27",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187975",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k26",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187973",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k28",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187971",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k27",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187969",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k26",
+      "kind": "mip"
+    },
+    {
+      "job_id": "134060",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260913",
+      "case_id": "w5_k25",
+      "kind": "mip"
+    },
+    {
+      "job_id": "133988",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260913",
+      "case_id": "w4_k25",
+      "kind": "mip"
+    },
+    {
+      "job_id": "133928",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260913",
+      "case_id": "w1_k25",
+      "kind": "mip"
+    },
+    {
+      "job_id": "133926",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(Dependency)",
+      "family": "chain_extension_20260913",
+      "case_id": "w1_k24",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187980",
+      "state": "RUNNING",
+      "time": "1:45",
+      "reason": "garg-cpu-02",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k26",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189235",
+      "state": "RUNNING",
+      "time": "7:46",
+      "reason": "garg-cpu-02",
+      "family": "seed",
+      "case_id": "c4_k15_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189236",
+      "state": "RUNNING",
+      "time": "13:47",
+      "reason": "sonic-cpu-01",
+      "family": "seed",
+      "case_id": "c4_k15_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189218",
+      "state": "RUNNING",
+      "time": "18:46",
+      "reason": "jingjie-cpu-06",
+      "family": "seed",
+      "case_id": "c2_k15_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "134059",
+      "state": "RUNNING",
+      "time": "59:08",
+      "reason": "unicorn-cpu-75",
+      "family": "chain_extension_20260913",
+      "case_id": "w5_k25",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189247",
+      "state": "RUNNING",
+      "time": "28:07",
+      "reason": "jingjie-cpu-20",
+      "family": "seed",
+      "case_id": "c6_k15_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189248",
+      "state": "RUNNING",
+      "time": "49:17",
+      "reason": "luxlab-cpu-03",
+      "family": "seed",
+      "case_id": "c6_k15_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189242",
+      "state": "RUNNING",
+      "time": "56:08",
+      "reason": "jingjie-cpu-01",
+      "family": "seed",
+      "case_id": "c5_k15_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "134058",
+      "state": "RUNNING",
+      "time": "59:08",
+      "reason": "sonic-cpu-01",
+      "family": "chain_extension_20260913",
+      "case_id": "w5_k24",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189211",
+      "state": "RUNNING",
+      "time": "1:19:41",
+      "reason": "luxlab-cpu-03",
+      "family": "seed",
+      "case_id": "c1_k10_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "133925",
+      "state": "RUNNING",
+      "time": "2:53:17",
+      "reason": "unicorn-cpu-87",
+      "family": "chain_extension_20260913",
+      "case_id": "w1_k24",
+      "kind": "cg"
+    },
+    {
+      "job_id": "133987",
+      "state": "RUNNING",
+      "time": "2:57:20",
+      "reason": "jingjie-cpu-19",
+      "family": "chain_extension_20260913",
+      "case_id": "w4_k25",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189176",
+      "state": "RUNNING",
+      "time": "2:57:20",
+      "reason": "luxlab-cpu-01",
+      "family": "seed",
+      "case_id": "c1_k15_integer",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189183",
+      "state": "RUNNING",
+      "time": "3:58:50",
+      "reason": "jingjie-cpu-02",
+      "family": "seed",
+      "case_id": "c2_k15_lpweight",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189177",
+      "state": "RUNNING",
+      "time": "3:58:51",
+      "reason": "harpo",
+      "family": "seed",
+      "case_id": "c1_k15_lpweight",
+      "kind": "cg"
+    },
+    {
+      "job_id": "189241",
+      "state": "RUNNING",
+      "time": "1:35:40",
+      "reason": "unicorn-cpu-01",
+      "family": "seed",
+      "case_id": "c5_k15_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189220",
+      "state": "RUNNING",
+      "time": "1:36:12",
+      "reason": "snavely-cpu-15",
+      "family": "seed",
+      "case_id": "c3_k08_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189210",
+      "state": "RUNNING",
+      "time": "2:16:13",
+      "reason": "jingjie-cpu-07",
+      "family": "seed",
+      "case_id": "c1_k10_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "190447",
+      "state": "RUNNING",
+      "time": "2:17:13",
+      "reason": "jingjie-cpu-15",
+      "family": "decomposition_second",
+      "case_id": "m_all09",
+      "kind": "mip"
+    },
+    {
+      "job_id": "190227",
+      "state": "RUNNING",
+      "time": "2:36:15",
+      "reason": "jingjie-cpu-14",
+      "family": "decomposition_first",
+      "case_id": "m_all09",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189209",
+      "state": "RUNNING",
+      "time": "2:43:15",
+      "reason": "unicorn-cpu-75",
+      "family": "seed",
+      "case_id": "c1_k08_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189208",
+      "state": "RUNNING",
+      "time": "2:44:15",
+      "reason": "garg-cpu-02",
+      "family": "seed",
+      "case_id": "c1_k08_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189230",
+      "state": "RUNNING",
+      "time": "2:47:16",
+      "reason": "sonic-cpu-02",
+      "family": "seed",
+      "case_id": "c3_k15_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189234",
+      "state": "RUNNING",
+      "time": "2:50:17",
+      "reason": "jingjie-cpu-01",
+      "family": "seed",
+      "case_id": "c4_k10_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189229",
+      "state": "RUNNING",
+      "time": "2:51:17",
+      "reason": "sablab-cpu-02",
+      "family": "seed",
+      "case_id": "c3_k15_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189908",
+      "state": "RUNNING",
+      "time": "2:54:16",
+      "reason": "snavely-cpu-09",
+      "family": "prefix",
+      "case_id": "c1_k15_prefix_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189909",
+      "state": "RUNNING",
+      "time": "2:54:16",
+      "reason": "totient-cpu-07",
+      "family": "prefix",
+      "case_id": "c2_k15_prefix_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189910",
+      "state": "RUNNING",
+      "time": "2:54:16",
+      "reason": "totient-cpu-08",
+      "family": "prefix",
+      "case_id": "c4_k15_prefix_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189233",
+      "state": "RUNNING",
+      "time": "3:01:16",
+      "reason": "totient-cpu-06",
+      "family": "seed",
+      "case_id": "c4_k10_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189231",
+      "state": "RUNNING",
+      "time": "3:05:17",
+      "reason": "totient-cpu-05",
+      "family": "seed",
+      "case_id": "c4_k08_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189217",
+      "state": "RUNNING",
+      "time": "3:06:16",
+      "reason": "totient-cpu-04",
+      "family": "seed",
+      "case_id": "c2_k10_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189232",
+      "state": "RUNNING",
+      "time": "3:08:17",
+      "reason": "totient-cpu-03",
+      "family": "seed",
+      "case_id": "c4_k08_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189240",
+      "state": "RUNNING",
+      "time": "3:18:17",
+      "reason": "jingjie-cpu-20",
+      "family": "seed",
+      "case_id": "c5_k10_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189216",
+      "state": "RUNNING",
+      "time": "3:19:17",
+      "reason": "jingjie-cpu-20",
+      "family": "seed",
+      "case_id": "c2_k10_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189224",
+      "state": "RUNNING",
+      "time": "3:29:17",
+      "reason": "totient-cpu-02",
+      "family": "seed",
+      "case_id": "c3_k10_integer_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "189226",
+      "state": "RUNNING",
+      "time": "3:30:20",
+      "reason": "totient-cpu-01",
+      "family": "seed",
+      "case_id": "c3_k10_lpweight_mip",
+      "kind": "mip"
+    },
+    {
+      "job_id": "187967_1",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-73",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k27",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_2",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-73",
+      "family": "chain_extension_20260914",
+      "case_id": "w1_k28",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_3",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-73",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k26",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_4",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-73",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k27",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_5",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-73",
+      "family": "chain_extension_20260914",
+      "case_id": "w2_k28",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_7",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-74",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k27",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_8",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-74",
+      "family": "chain_extension_20260914",
+      "case_id": "w3_k28",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_9",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-74",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k26",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_10",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-74",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k27",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_11",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "sonic-cpu-01",
+      "family": "chain_extension_20260914",
+      "case_id": "w4_k28",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_12",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "sonic-cpu-02",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k26",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_13",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-87",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k27",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_14",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-87",
+      "family": "chain_extension_20260914",
+      "case_id": "w5_k28",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_15",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-76",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k26",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_16",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-76",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k27",
+      "kind": "graph"
+    },
+    {
+      "job_id": "187967_17",
+      "state": "RUNNING",
+      "time": "8:21:15",
+      "reason": "unicorn-cpu-76",
+      "family": "chain_extension_20260914",
+      "case_id": "w6_k28",
+      "kind": "graph"
+    },
+    {
+      "job_id": "537227_36",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_37",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_38",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_39",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_40",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_41",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_42",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_43",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_44",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_45",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_46",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_47",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_48",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_49",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_50",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_51",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_52",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_53",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_54",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_55",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_56",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_57",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_58",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_59",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_60",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_61",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_62",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_63",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_64",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_65",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_66",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_67",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    },
+    {
+      "job_id": "537227_68",
+      "state": "PENDING",
+      "time": "0:00",
+      "reason": "(JobHeldUser)"
+    }
+  ]
+}
