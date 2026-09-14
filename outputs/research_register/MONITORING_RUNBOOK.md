@@ -1,3 +1,13 @@
+## 14 September, 18:02 EDT — small-seed limits and completed fresh-pool controls
+
+Full collection215636 completed22:02:52UTC after376s, SHA1d33ef956bb17f9af5556fa05e3b17ca4df47104b09c0f101bce89d01c80e402; previous205702. Preemptionstudy816attempts, no new failures/preemptions/invalid dependencies. Queue34running (4CG16MIP14graph),38solver dependencies14conditional checks33held. No new campaign or scheduler/solver mutation. Capacity13407cached remains the documented interrupted job189169; staleworkerflag does not mean running. Both all-nine decompMIPs remain active.
+
+SeedCG36endpoints=35cert+1cap(C1k15LP,239.0355min,lastRC−1.060160).23MIPs=7targets+11pool-proved misses+5open. Eleven completepairs=5integerseedlowerfleets/6ties; sevenpairs unfinished. NewC3k15integer15/proved vsLP17/bound15/open. C1k8both9/proved, C4k8both9/proved, C4k10both11/proved; smallseeds do not consistently reproduce fullpoolinheritance. C2/C3k10both11/bound10/open. C5k10LP11/proved versusinteger10/proved. Coverage and upstream costs remain confounders/accounting requirements.
+
+PrefixMIPs189908–189910 complete:19/17/19buses at target15, allbound15/open/replayed. Construction/journal/input/marker bindings checked; no rejected/repairedcolumns.12600total/10800fleet budgets matchedseedMIPs. Prefixes are reconstructed pre-insertion pools atapprox240min, never CGcertificates. C1/C2/C4k15seedMIPs stillpending, so matchedprefixcomparison awaits them.
+
+OriginalC5k24MIP24/proved/replayed,CGcapped. NewC4k25CGcap239.3min,lastRC−0.155227.57extensionCG45cert12caps;56MIPs33targets23misses;15longerrecoveries8remaininggaps. Largestoriginal23,22,24,23,24,24; separateC2k25longer25 retained. Register2935rows63groups/sixsupplements; core+62seed/prefix endpoints verified. CurrentDoc paired/prefix/queue/chain tables updated, reference/later content byte-preserved. Figures andSlides untouched. Continue hourly; do not resubmit finished controls.
+
 ## 14 September, 17:02 EDT — paired seed evidence, decomposition endpoints, missing capacity arm
 
 Full collection205702 completed21:02:39UTC after337s, SHA ca8f69e173d71679cb553881af165b0c758af572f79b038856b171d050ca57c2; previous200527. Standardpreemptionrefresh813 attempts; no new MIP preemption/failure. Queue52running (7CG29MIP16graph),43solver dependencies16operational checks,33held; no invalid. C3k26CG187980 running. All previous source and model boundaries retained.

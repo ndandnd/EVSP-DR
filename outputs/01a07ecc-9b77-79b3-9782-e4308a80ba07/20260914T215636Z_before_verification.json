@@ -1,0 +1,11 @@
+{
+  "mode": "before",
+  "records": 2937,
+  "views": [
+    {
+      "name": "Campaigns",
+      "range": "A1:G14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A1:G14\",\"rows\":14,\"cols\":7,\"values\":[[null,null,null,null,null,null,null],[\"EVSP–DR experiment register\",null,null,null,null,null,null],[\"Evidence captured 2026-09-14T20:57:02.333690+00:00. Counts below are records, not independent experimental samples.\",null,null,null,null,null,null],[null,null,null,null,null,null,null],[\"Campaign / source group\",\"Family\",\"LP / CG records\",\"MIP records\",\"Charging records\",\"Execution / audit records\",\"Total records\"],[\"capacity_deadline5_retry\",\"production_or_historical\",5,5,0,1,11],[\"capacity_pricing_boundary_20260914\",\"production_or_historical\",7,7,0,3,17],[\"capacity_speed_pilot\",\"controlled_physics_pilot\",10,10,0,2,22],[\"capacity_timeout6_rerun\",\"production_or_historical\",1,1,0,3,5],[\"chain_extension_20260913\",\"production_or_historical\",56,55,0,65,176],[\"chain_extension_20260914\",\"production_or_historical\",0,0,0,4,4],[\"controlled_comparison_20260913\",\"production_or_historical\",48,42,0,3,93],[\"covering_complement75\",\"production_or_historical\",75,75,0,82,232],[\"covering_rerun9\",\"production_or_historical\",9,9,0,14,32]]}"
+    }
+  ]
+}
