@@ -1,5 +1,7 @@
 # Is sequential warm starting better use of the same computation budget?
 
+**14 September, 05:29 EDT:** [Current results](status_20260914T092543Z/README.md). C6k22 now matches; C1k20/C2k23/C3k25/C4k21 retain new integer gaps. Original extension totals43CG endpoints/37certificates,41MIPs/25targets. Cumulative-budget comparison unchanged. No new submissions.
+
 **14 September, 04:28 EDT:** [Latest chain and unchanged cumulative-budget tables](status_20260914T082509Z/README.md). Fresh versus warm remains6/24 versus24/24 at the matched one-hour MIP allowance. [Separate longer-MIP evidence](../overnight_diagnostics_20260914/status_20260914T082509Z/LONGER_MIP_RESULTS.md) must not be mixed into that comparison.
 
 **14 September, 03:26 EDT:** [Current chains and unchanged cumulative-budget comparison](status_20260914T072439Z/README.md). Fresh versus warm remains6/24 versus24/24 target matches. New column-selection and longer-CG treatments remain separate; [diagnostic comparison](../overnight_diagnostics_20260914/status_20260914T072439Z/README.md).

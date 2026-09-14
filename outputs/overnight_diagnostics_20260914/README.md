@@ -1,5 +1,7 @@
 # Overnight experiments: distinguish missing columns from insufficient MIP time
 
+**Latest results, 14 September 05:29 EDT:** [Sixteen completed-case comparisons](status_20260914T092543Z/README.md). Complementary C4/C5/C6k15 find19/17/19, all bounds15/unproved, versus original19/16/20. C1k10c200 finds11/bound10. Diagnostic32CGcertificates/54MIPs. All23longer-MIP results unchanged. No new jobs or source changes.
+
 **Latest results, 14 September 04:28 EDT:** All 23 longer MIPs are complete: inherited pools 9/9 target matches; fresh pools 0/14, with three proved pool limits and eleven open gaps. All pool/input hashes agree with originals. Seven inherited reruns prove the fleet within 30 minutes, so additional elapsed time alone is not the explanation. [Detailed evidence](status_20260914T082509Z/LONGER_MIP_RESULTS.md). There are 31 certified diagnostic CG endpoints and 50 MIPs overall. [All treatments](status_20260914T082509Z/README.md). A separate [30-job repeatability/gap batch](../mip_repeatability_20260914/README.md) is now running; this frozen 99-case campaign is unchanged.
 
 **Results, 14 September 03:26 EDT:** [All completed comparisons and continuations](status_20260914T072439Z/README.md).27certified CGendpoints and23MIPs. C5k19continuation recovers19/proved in pool/replay after314.0cumulative CGminutes. C2k10c200 improves12→11/bound10; C3k15both17/bound15 versusoriginal18. C1k8complementary proves9, so improvements remain case dependent. No longer unchanged-pool MIP endpoints yet. No new jobs or algorithm changes.

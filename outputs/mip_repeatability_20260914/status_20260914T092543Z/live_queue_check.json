@@ -1,0 +1,738 @@
+{
+  "observed_utc": "2026-09-14T09:42:55.700431+00:00",
+  "rows": [
+    {
+      "job_id": "134079",
+      "name": "drX_w6_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134077",
+      "name": "drX_w6_k24_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134059",
+      "name": "drX_w5_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134057",
+      "name": "drX_w5_k24_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134055",
+      "name": "drX_w5_k23_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133987",
+      "name": "drX_w4_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133985",
+      "name": "drX_w4_k24_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133983",
+      "name": "drX_w4_k23_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133927",
+      "name": "drX_w1_k25_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133925",
+      "name": "drX_w1_k24_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133923",
+      "name": "drX_w1_k23_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133921",
+      "name": "drX_w1_k22_cg",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156731",
+      "name": "drD_c6_k15_c200_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156727",
+      "name": "drD_c5_k15_c200_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156718",
+      "name": "drD_c4_k15_c200_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156706",
+      "name": "drD_c2_k15_c200_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156701",
+      "name": "drD_c1_k15_complementary_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156700",
+      "name": "drD_c1_k15_c200_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134080",
+      "name": "drX_w6_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134078",
+      "name": "drX_w6_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134076",
+      "name": "drX_w6_k23_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134060",
+      "name": "drX_w5_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134058",
+      "name": "drX_w5_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134056",
+      "name": "drX_w5_k23_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134054",
+      "name": "drX_w5_k22_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133988",
+      "name": "drX_w4_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133986",
+      "name": "drX_w4_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133984",
+      "name": "drX_w4_k23_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133982",
+      "name": "drX_w4_k22_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133948",
+      "name": "drX_w2_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133928",
+      "name": "drX_w1_k25_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133926",
+      "name": "drX_w1_k24_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133924",
+      "name": "drX_w1_k23_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133922",
+      "name": "drX_w1_k22_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133920",
+      "name": "drX_w1_k21_mip",
+      "state": "PENDING",
+      "reason": "Dependency",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133981",
+      "name": "drX_w4_k22_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133919",
+      "name": "drX_w1_k21_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134075",
+      "name": "drX_w6_k23_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156639",
+      "name": "drD_c1_k15_c200",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156640",
+      "name": "drD_c1_k15_complementary",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156648",
+      "name": "drD_c2_k15_c200",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156665",
+      "name": "drD_c4_k15_c200",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156675",
+      "name": "drD_c5_k15_c200",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156684",
+      "name": "drD_c6_k15_c200",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133947",
+      "name": "drX_w2_k25_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134053",
+      "name": "drX_w5_k22_cg",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "133946",
+      "name": "drX_w2_k24_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "156707",
+      "name": "drD_c2_k15_complementary_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "134052",
+      "name": "drX_w5_k21_mip",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186672",
+      "name": "drR_w1_k19_newgap_longmip",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186673",
+      "name": "drR_w2_k17_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186674",
+      "name": "drR_w2_k17_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186675",
+      "name": "drR_w2_k17_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186676",
+      "name": "drR_w2_k18_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186677",
+      "name": "drR_w2_k18_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186678",
+      "name": "drR_w2_k18_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186679",
+      "name": "drR_w2_k19_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186680",
+      "name": "drR_w2_k19_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186681",
+      "name": "drR_w2_k19_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186682",
+      "name": "drR_w2_k20_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186683",
+      "name": "drR_w2_k20_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186684",
+      "name": "drR_w2_k20_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186685",
+      "name": "drR_w3_k19_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186686",
+      "name": "drR_w3_k19_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186687",
+      "name": "drR_w3_k19_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186688",
+      "name": "drR_w3_k20_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186689",
+      "name": "drR_w3_k20_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186690",
+      "name": "drR_w3_k20_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186691",
+      "name": "drR_w3_k21_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186692",
+      "name": "drR_w3_k21_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186693",
+      "name": "drR_w3_k21_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186694",
+      "name": "drR_w3_k22_newgap_longmip",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186695",
+      "name": "drR_w3_k23_newgap_longmip",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186696",
+      "name": "drR_w5_k19_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186697",
+      "name": "drR_w5_k19_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186698",
+      "name": "drR_w5_k19_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186699",
+      "name": "drR_w6_k18_original_budget_repeat1",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186700",
+      "name": "drR_w6_k18_original_budget_repeat2",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "186701",
+      "name": "drR_w6_k18_original_budget_repeat3",
+      "state": "RUNNING",
+      "reason": "None",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "default_partition"
+    },
+    {
+      "job_id": "537227_[36-68%8]",
+      "name": "tpmR2d7a25b33",
+      "state": "PENDING",
+      "reason": "JobHeldUser",
+      "nodes": "1",
+      "cpus": "8",
+      "partition": "scaglione"
+    }
+  ],
+  "active_ev_sp_states": {
+    "PENDING": 35,
+    "RUNNING": 44
+  },
+  "running_groups": {
+    "drX": 7,
+    "drD": 7,
+    "drR": 30
+  },
+  "pending_reasons": {
+    "Dependency": 35
+  },
+  "scope": "Live scheduler observation only; scientific results retain the 09:25 snapshot. Historical held jobs untouched."
+}

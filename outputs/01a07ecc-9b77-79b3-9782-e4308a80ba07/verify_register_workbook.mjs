@@ -12,7 +12,7 @@ const views=[['Campaigns','A1:G14']];
 if(mode==='after') {
  for(const name of ['Campaigns','CG','MIP','Attempts']) {
   const sheet=wb.worksheets.getItem(name);const values=sheet.getRange('A1:A3000').values;
-  for(const campaign of ['cumulative_budget_20260913','chain_extension_20260913','overnight_diagnostics_20260914']) {
+  for(const campaign of ['cumulative_budget_20260913','chain_extension_20260913','overnight_diagnostics_20260914','mip_repeatability_20260914']) {
    if(campaign==='chain_extension_20260913' && name==='Attempts') continue;
    const indices=values.flatMap((row,i)=>row[0]===campaign?[i+1]:[]);
    if(indices.length)views.push([name,`A${Math.max(1,indices[0]-1)}:${name==='CG'?'N':name==='MIP'?'L':'H'}${Math.max(...indices)}`]);

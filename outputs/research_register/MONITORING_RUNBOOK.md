@@ -1,5 +1,15 @@
 # Unicorn monitoring runbook
 
+## 14 September, 05:29 EDT — chain 6 reaches 22; independent MIPs remain active
+
+Snapshot `20260914T092543Z`, SHA-256 `9bac86d9c028ef2a2ca9d6f362495aa418e5fc59fa21777c4b0ce103c325a03e`. All 242 collected scientific endpoints match the normalized register; 2,522 records across 52 campaigns preserve all six supplements. Workbook views checked and formula scan clean. The weekly Google Doc has the new reach and selection results; reference sections, figure tabs and Slides are preserved.
+
+New C6 k22 finds 22 buses, bound 22, proved within its saved pool and individually replayed. Four new original one-hour MIPs miss: C1 k20 = 21/bound20; C2 k23 = 25/bound23; C3 k25 = 26/bound25; C4 k21 = 22/bound21. None proves its excess necessary. Extension totals: 43 CG endpoints (37 certified, six time-limited), 41 original MIPs (25 matches, 16 gaps). Separate longer MIPs recovered nine gaps; seven targets remain unmatched across collected outcomes. C5 k21 CG stopped after 239.6 minutes, minimum reduced cost −0.058611, without a pricing certificate. C2 k24 newly certified in 67.2 minutes; MIP was running.
+
+Column-selection diagnostics: 32 CG certificates, 54 MIPs. New complementary C4/C5/C6 k15 results are 19/17/19 buses versus original 19/16/20, all with bound 15 and no fleet proof. The updated 16-case table has no consistent treatment winner. All 23 longer-MIP outcomes remain as previously reported; seven inherited recoveries proved inside the original 30-minute fleet allowance, so do not attribute the change solely to extra elapsed time.
+
+Queue snapshot: 44 running, including all 30 repeatability/gap MIPs, and 35 genuine dependency waits. No new execution failure, confirmed preemption or invalid dependency. Preemption study contains 636 attempt records. Subsequent scheduler-only observation is saved in `mip_repeatability_20260914/status_20260914T092543Z/live_queue_check.json`; do not promote it to scientific results. These 30 jobs are already submitted: do not duplicate them. Existing previous-k dependencies, held 537227 and V2G stay untouched. No new experiments submitted during this collection. Frozen workers and solver settings unchanged.
+
 ## 14 September, 04:28 results and 04:42 independent launch
 
 Snapshot20260914T082509Z, SHA2d0b7ebefd99754978a6fd9e7d1c006aa2e9dd2b333e35a07d382b6a72c27d7d. 230 scientific endpoints checked; register2483rows/51campaigns and six supplements preserved. Diagnostic31CGcertificates/50MIPs includes all23longer-MIP endpoints. Nine inherited targets recovered; zero/fourteen fresh targets, three fresh pool proofs above target, eleven open gaps. All23pool/input identities verified. Seven inherited reruns prove within30min: do not attribute all improvements solely to elapsed-time allowance. Original36extensionMIPs retain24matches/12gaps; separate longer MIPs recover9of12. New original CG time limits C1k20/C4k21; extension41CG=36certified+5capped. Read dated longer-MIP report and immutable original_fresh_pool_audit.json. No failure or preemption in the04:28collection.
