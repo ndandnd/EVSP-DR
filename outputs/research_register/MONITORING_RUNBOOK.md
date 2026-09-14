@@ -1,5 +1,17 @@
 # Unicorn monitoring runbook
 
+## 14 September, 07:31 EDT — six new pricing certificates
+
+Snapshot `20260914T112740Z`, SHA-256 `7e6b1e25fa4aa01cd25e510e752b2ce099f71a425c9c85a0b91f0b77b9eeb140`. Collection completed 11:31:27 UTC. New extension certificates: C2 k25 (102.8 minutes), C4 k22 (140.0), C6 k23 (213.8). All three MIPs are running; no new integer match is claimed. Extension totals: 46 CG endpoints, 40 certificates, six original time limits; 43 MIPs with 26 matches and 17 original gaps. Separate longer MIPs recovered nine gaps, leaving eight unmatched targets. Cumulative comparison unchanged.
+
+New C1 k15 complementary MIP: 18 buses, bound 15, unproved, individual replay passed, same fleet as original. Selection table now covers all 18 selected inputs. New C2/C4/C6 k15 200-column CG certificates: 435.0/434.3/431.1 minutes, with their MIPs running. Diagnostic totals: 37 CG certificates and 56 MIPs. The 27 original-budget repeats and all 23 prior longer-MIP outcomes are unchanged. Three new longer MIPs remain running; do not duplicate or reset their budgets.
+
+Queue: 15 running, 25 genuine dependencies, 33 held historical tasks. No execution failure, confirmed preemption or invalid dependency. Seven MIP scheduler transitions and 15 queue transitions; 641 attempt records. Operational attempt states checked separately. No late scheduler-only endpoint detected. No new submissions, source/solver changes, held-job changes or V2G interaction. Register has 2,524 records across 52 campaigns and retains six supplements. Weekly Doc updates the new row, CG counts, captions and queue in place; previous reach/repeat tables and all reference sections/figures remain intact. Slides untouched.
+
+UI replacement note: deleting a Find match before typeText can also remove surrounding whitespace. The export/diff caught three joined sentences; HTML span replacements restored those spaces. Prefer HTML paste for a selected replacement and verify both old-text absence and surrounding spacing. Doc backup and final diff are retained.
+
+Verification completed: all 281 scientific endpoints exactly match normalized source values. Workbook formula scan is clean; 15 views rendered and changed extension/diagnostic CG and diagnostic MIP views visually checked. A reusable report-only checker now lives at `outputs/research_register/verify_active_snapshot.py`. After workbook verification and actual visual review, run it with `--snapshot <dated snapshot> --visual-review <concise description of inspected views>` to retain dated checks and workbook hashes. This does not change solver code or experiments.
+
 ## 14 September, 06:27 EDT — all short repeats complete
 
 Snapshot20260914T102539Z, SHAcdd914db454efd80030f1a9c1fc4b3a437c9054cd592e46ec7d1d052b40a1b54. Collectioncompleted10:27:33UTC.27original-budget repeats:21targets/provedinpool/replay;3/3fleetsagreeforeachof9selectedpools. C3k19all20/bound19;C3k21all22/bound21;bothpriorlongMIPsalreadymatch.27orderedpool/input/sourceCGhashes andinitializerkind/count/costmatch. No claimofexactinitializerroute-indexidentity. Gurobi12.0.3/8threads/defaultseed0;hardware/timingnotisolated. New report-onlysummarize_status.pyinmip_repeatabilityhandlescompletedresults. Preserveoriginal andlongoutcomesseparately;do not launchinfinite repeats.

@@ -1,5 +1,7 @@
 # Is sequential warm starting better use of the same computation budget?
 
+**Latest results, 14 September 07:31 EDT:** [Current results](status_20260914T112740Z/README.md). New CG certificates: C2 k25, C4 k22 and C6 k23 after 102.8, 140.0 and 213.8 minutes. Their MIPs are running. Extension CG totals: 46 endpoints, 40 certificates, six time limits. Integer outcomes and the completed accumulated-time comparison are unchanged.
+
 **Latest results, 14 September 06:27 EDT:** [Current chain table](status_20260914T102539Z/README.md). C5 k21 now matches 21 buses, with a pool fleet proof and individual replay, despite its original CG time limit and absent pricing certificate. C2 k24 finds 25 buses with bound 24, unproved. The 43 original extension MIPs give 26 matches and 17 gaps. Of 43 CG endpoints, 37 are certified and six reached the time limit. The primary cumulative-budget comparison is unchanged.
 
 **14 September, 05:29 EDT:** [Current results](status_20260914T092543Z/README.md). C6k22 now matches; C1k20/C2k23/C3k25/C4k21 retain new integer gaps. Original extension totals43CG endpoints/37certificates,41MIPs/25targets. Cumulative-budget comparison unchanged. No new submissions.
