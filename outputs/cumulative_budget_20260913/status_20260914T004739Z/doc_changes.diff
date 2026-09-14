@@ -1,0 +1,70 @@
+--- doc_before.md
++++ doc_after.md
+@@ -1,25 +1,25 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Chain results and cumulative-budget comparison updated 13 September 19:49 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
++Week of 14 September. Chain results and completed cumulative-budget comparison updated 13 September 20:49 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ ## **Now running: six chains from k=16 to k=25**
+ 
+-**13 September, 19:49 EDT: chains 3 and 5 match 18 buses.** Chains 1, 4 and 6 reach 17; chain 2 reaches 16\. These target matches have fleet proofs within their saved pools and pass individual-route physical replay. Charging optimality remains open.
++**13 September, 20:49 EDT: chains 1, 3, 4 and 5 match 18 buses.** Chain 6 reaches 17; chain 2 reaches 16\. These target matches have fleet proofs within their saved pools and pass individual-route physical replay. Charging optimality remains open.
+ 
+ | Chain | Largest target matched | Integer buses found | CG minutes at this k |
+ | ----- | ----- | ----- | ----- |
+-| 1 | 17 | 17 | 83.3 |
++| 1 | 18 | 18 | 234.3 |
+ | 2 | 16 | 16 | 44.3 |
+ | 3 | 18 | 18 | 48.2 |
+-| 4 | 17 | 17 | 77.7 |
++| 4 | 18 | 18 | 68.9 |
+ | 5 | 18 | 18 | 50.5 |
+ | 6 | 17 | 17 | 55.7 |
+ 
+-CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. All six rows use verified extension MIPs. Chain 1 at k=18 is newly CG-certified after 234.3 minutes; its MIP is pending. Chain 4’s k=18 job finished during this collection, after its campaign results were read. Its detailed result awaits verification and is not yet included above.
+-
+-Four completed one-hour MIPs have one-bus gaps: chain 2 found 18 buses at target 17 and 19 at target 18; chain 3 found 20 at target 19 and 21 at target 20\. Each pool bound equals the target, so none proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260913T234709Z/README.md)
++CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. All six rows use verified extension MIPs, including the chain 4 result that arrived during the previous collection. New CG certificates at chain 2 k=19 and chain 6 k=18 await integer results.
++
++Four completed one-hour MIPs have one-bus gaps: chain 2 found 18 buses at target 17 and 19 at target 18; chain 3 found 20 at target 19 and 21 at target 20\. Each pool bound equals the target, so none proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T004739Z/README.md)
+ 
+ | Stage | How it starts | Time budget per case |
+ | ----- | ----- | ----- |
+@@ -56,9 +56,9 @@
+ 
+ ## 
+ 
+-## **New comparison: count the work behind each warm start**
+-
+-**Latest results — 13 September, 19:49 EDT.** All 24 fresh CG runs converged before their cumulative allowance expired. Twenty-three fresh MIPs have finished: six match the target, four prove that their saved pool needs more buses, and thirteen leave the fleet gap open. Only chain 1 at k=15 still awaits its MIP result. All 24 matched warm-pool MIPs meet their targets. The table below retains selected k=5 examples; “converged” means no route below reduced cost −0.0001 in the tested graph.
++## **Completed comparison: count the work behind each warm start**
++
++**Completed results — 13 September, 20:49 EDT.** All 24 fresh CG runs converged before their cumulative allowance expired. All 24 fresh MIPs are complete: six match the target, four prove that their saved pool needs more buses, and fourteen leave the fleet gap open. All 24 matched warm-pool MIPs meet their targets. The table below retains selected k=5 examples; “converged” means no route below reduced cost −0.0001 in the tested graph. More CG allowance alone did not reproduce the warm pools’ integer results.
+ 
+ | Chain / target | Cumulative CG allowance | Fresh CG time | Fresh integer fleet | Warm integer fleet |
+ | ----- | ----- | ----- | ----- | ----- |
+@@ -70,9 +70,9 @@
+ 
+ At k=8, fresh chains 1, 4 and 5 prove that their pools require 9 buses; their warm pools use 8\. Fresh chain 6 matches 8\. These completed proofs identify a limitation of the fresh column pools.
+ 
+-Thirteen fresh MIPs remain unresolved after one hour. At k=8, chains 2 and 3 have 9 buses with a bound of 8\. At k=10, chain 2 has 12 buses and the other five chains have 11, all with a bound of 10\. At k=15, chains 2, 3, 4, 5 and 6 have 17, 18, 19, 16 and 20 buses respectively, all with a bound of 15\. These gaps do not prove that the target is absent from those pools.
+-
+-These are baseline runs without shared station capacity or a terminal-SOC floor; individual-route replay passes. Historical code and hardware variation limits timing comparisons. [Full current comparison and source evidence, 19:49 EDT.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260913T234709Z/README.md)
++Fourteen fresh MIPs retain an open fleet gap after one hour. At k=8, chains 2 and 3 have 9 buses with a bound of 8\. At k=10, chain 2 has 12 buses and the other five chains have 11, all with a bound of 10\. At k=15, chains 1–6 have 18, 17, 18, 19, 16 and 20 buses respectively, all with a bound of 15\. These gaps do not prove that the target is absent from those pools.
++
++These are baseline runs without shared station capacity or a terminal-SOC floor; individual-route replay passes. Historical code and hardware variation limits timing comparisons. [Completed comparison and source evidence, 20:49 EDT.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T004739Z/README.md)
+ 
+ Launched 13 September, verified 14:20 EDT. A warm k=8 run uses columns built at k=2,…,7. We now give a fresh k=8 run the sum of those CG times plus the k=8 CG time. The same test covers all six chains at k=5,8,10,15. Fresh starts use single-trip routes, with no inherited solution columns.
+ 
+@@ -89,7 +89,7 @@
+ 
+ ## The first allowance includes graph loading, import and CG. A second allowance also credits construction of the smaller graphs; the target graph is common to both methods. Unrecorded historical serialization/setup costs remain a limitation. If fresh CG certifies early, it stops; if it hits the first time limit, it resumes its own checkpoint for the larger allowance.
+ 
+-## Every distinct fresh pool and each original warm target pool get the same one-hour, two-stage MIP. Intermediate warm-chain MIPs are excluded from the budget because they supplied no inherited columns. We will compare LP certificates, actual buses, finite-pool proof gaps, elapsed time and measured CPU use. Historical code and hardware varied, so this tests accumulated-budget performance rather than isolating a pure code speedup. [Exact method, inputs, jobs and results](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/README.md).
++## Every distinct fresh pool and each original warm target pool get the same one-hour, two-stage MIP. Intermediate warm-chain MIPs are excluded from the budget because they supplied no inherited columns. The comparison separates LP certificates, actual buses, finite-pool proof gaps, elapsed time and measured CPU use. Historical code and hardware varied, so this tests accumulated-budget performance rather than isolating a pure code speedup. [Exact method, inputs, jobs and results](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/README.md).
+ 
+ ## **Controlled tests: which changes help?**
+ 

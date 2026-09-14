@@ -1,0 +1,94 @@
+{
+  "schema": "evsp-cumulative-register-workbook-check-v1",
+  "source_snapshot": {
+    "path": "raw/20260914T004739Z.json",
+    "sha256": "d026c479f3b8f3d273d261c9ef4e1605c3fd42dd1ad68917d1a7786b373d655a",
+    "timestamp_utc": "2026-09-14T00:47:39.481749+00:00"
+  },
+  "row_count": 2323,
+  "campaign_count": 50,
+  "supplements_preserved": [
+    {
+      "path": "raw/supplemental/chain2_recovery_submission.json",
+      "sha256": "e1ae0463bb240e6e2ec9ba39d29915aa6de960ce85dfe88ee2cb60562d9537a7"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_manifest.json",
+      "sha256": "4aec50885519130e4a8ef0059e1172a23406de5045f0644f41e688ab0fb2eeab"
+    },
+    {
+      "path": "raw/supplemental/completed_parent_validation.json",
+      "sha256": "eb3292bcb158c2ac1472ef485ed9ea00a6600c4cf5cb6b999aa56bbbf5c6f76c"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_submission.json",
+      "sha256": "e3e94f0aab45b7c6291eecddb5e8fde77434094391fed5b6bdd17785bb74c010"
+    },
+    {
+      "path": "raw/supplemental/chain2_recovery_retry2_manifest.json",
+      "sha256": "1bec90faf73a24c06b60ad736ce95038272f8915e4180dc65a5bcbac3114ac7b"
+    },
+    {
+      "path": "raw/supplemental/graph_parent32_timeout_20260913.json",
+      "sha256": "e381dad5fafc755c2505104bb167864537315e1abf2c395bdef024960cd26bb0"
+    }
+  ],
+  "scientific_endpoints_verified": 112,
+  "source_endpoint_exact_match": true,
+  "extension_counts": {
+    "cg": 21,
+    "mip": 19
+  },
+  "cumulative_counts": {
+    "cg": 24,
+    "mip": 48
+  },
+  "fresh_mip_classification": {
+    "target matched": 6,
+    "proved pool limit above target": 4,
+    "fleet gap open": 14
+  },
+  "all_primary_cg_certified_before_allowance": true,
+  "minimum_unused_primary_allowance_min": 8.840307383479862,
+  "workbook_formula_errors": 0,
+  "rendered_changed_views": [
+    {
+      "sheet": "Campaigns",
+      "range": "A1:G14"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A12:H13"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A8:H9"
+    },
+    {
+      "sheet": "CG",
+      "range": "A174:N198"
+    },
+    {
+      "sheet": "CG",
+      "range": "A21:N42"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A166:L214"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A21:L40"
+    },
+    {
+      "sheet": "Attempts",
+      "range": "A141:H165"
+    }
+  ],
+  "visual_review": "Reviewed campaign overview, fresh MIP and extension MIP renders. C1k15 fresh18/bound15 remains unproved; C1/C4k18 warm18/bound18 are proved in pool. Workbook structure unchanged. Source values and certificates checked independently.",
+  "artifact_hashes": {
+    "outputs/research_register/register.json": "f390797ed1b723996385b9fb7c65c5b935bd7bb38e2f04d481a43d2fe8c87954",
+    "outputs/research_register/register.csv": "8f76b2b245fda4552d544b611ff48ecbdde56500da629b840019f8e10d2e05f8",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "2fa73ab519c1c4bc44207fa05db1b1b85d351f5193501051be0618261ccf27bd"
+  }
+}

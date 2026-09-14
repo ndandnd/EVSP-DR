@@ -2,7 +2,7 @@
 
 **Launched 13 September, verified 14:20 EDT:** 120 stage jobs across 24 datasets; 45 running and 3 finished at the first check, with 72 waiting for true prerequisites. No execution errors. [Exact job map](case_jobs.json), [launch checks](launch_verification.json), [native validation](validation.json). These are launch observations, not conclusions from the comparison.
 
-**Latest results, 13 September 19:49 EDT:** all 24 fresh CG runs converged before their primary cumulative allowances expired. There are 23 completed fresh MIPs: 6 target matches, 4 proved pool limits above target, and 13 open fleet gaps. Only C1 k15 MIP is pending; its CG certified after 290.7 minutes. Fresh k15 fleets for C2–C6 are 17, 18, 19, 16 and 20 respectively, all with bound 15 and no fleet proof. All 24 matched warm MIPs attain their targets. The CG time limit therefore did not cause these fresh runs to stop; four completed fleet proofs establish a pool-composition limit, while the other gaps remain unresolved. [Current comparisons and precise interpretation](status_20260913T234709Z/README.md).
+**Comparison complete, 13 September 20:49 EDT:** all 24 fresh CG runs converged before their primary allowances expired. All 24 fresh MIPs finished: 6 target matches, 4 proved pool limits above target, and 14 open fleet gaps. All 24 matched warm MIPs attain their targets. Fresh k15 fleets for chains 1–6 are 18, 17, 18, 19, 16 and 20 respectively, all with bound 15 and no fleet proof. The CG time limit did not cause the fresh runs to stop; four completed fleet proofs establish a limitation of the fresh column pools, while the other gaps remain unresolved. Historical code/hardware variation remains a limitation of this retrospective comparison. [Complete results, budgets and source evidence](status_20260914T004739Z/README.md).
 
 **Earlier first results, 13 September 14:30 EDT.** Three fresh k=5 runs have pricing certificates. Two have also finished MIP and recovered five buses. This is evidence that inherited columns are unnecessary for these two cases under the cumulative allowance; larger cases are still running.
 
@@ -45,7 +45,7 @@ For each of the 24 datasets:
 4. Run a one-hour MIP on the larger-budget pool. If the CG endpoint is shared, reuse the first MIP result too.
 5. Independently rerun the saved warm target pool through the identical one-hour MIP setup. This makes the integer-search budget comparable and fills the missing original C3k10 MIP artifact.
 
-The first MIP has no influence on fresh CG continuation. Additional budget is not spent manufacturing columns after CG certifies: if it stops early with a small pool, that is an experimental outcome. If longer fresh CG reaches the same certificate but still gives a worse integer solution, the evidence points to pool composition rather than a simple lack of CG time. That remains a hypothesis until the new results arrive.
+The first MIP has no influence on fresh CG continuation. Additional budget is not spent manufacturing columns after CG certifies: if it stops early with a small pool, that is an experimental outcome. If longer fresh CG reaches the same certificate but still gives a worse integer solution, the evidence points to pool composition rather than a simple lack of CG time. This was the planned interpretation before launch; the completed results above establish four such pool limits and retain the other MIP gaps as unresolved.
 
 ## Fixed solver and resource settings
 

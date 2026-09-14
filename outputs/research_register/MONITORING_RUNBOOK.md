@@ -1,5 +1,14 @@
 # Unicorn monitoring runbook
 
+## 13 September, 20:49 EDT — primary cumulative-budget comparison complete
+
+Successful snapshot20260914T004739Z. All24primary fresh CG runs have certificates and stopped before their allowances. All48scientific MIPs are present:24fresh (6target,4proved pool limits,14open gaps) and24matchedwarm alltarget. Last fresh C1k15=18/bound15/unproved/replay passed. Fresh k15 fleets C1–C6=18,17,18,19,16,20, allbound15/unproved. Larger allowance stages share certified endpoints; operational alias completion is not another solve. No new campaigns, diversification, repeated MIPs or blind requeues authorized by this completion. Retrospective code/hardware variation remains an interpretation limit.
+
+Extension21CGcertificates/19verifiedMIPs. New C1k18 and C4k18 match18 with finite-pool fleet proof/replay. Highest matches18,16,18,18,18,17. New C2k19 and C6k18 certificates await MIPs. Earlier C4k18 late scheduler observation is now resolved by the detailed result from job133974. Prior canonical output and current raw attempt output are different paths with separate hashes; do not require their hashes to match. No late scheduler-only result remains in this snapshot.
+
+No execution failures, confirmed preemptions or invalid dependencies.4MIP scheduler transitions,12queue transitions; study550attemptrows. Both active campaigns' operational execution statuses checked separately. Register2323rows/50campaigns preserves six supplements; scientific endpoint checks112. Weekly Doc marks the comparison complete, updates two reach rows and removes pending-result statements. Figures and Slides remain intact. Existing chain dependencies continue unchanged. No source algorithm/schema changes.
+
+
 ## 13 September, 19:49 EDT — every fresh CG run certified before its allowance
 
 Successful snapshot20260913T234709Z: cumulative24primary fresh CG certificates/24. C1k15 newly certified after290.7min. All actual CG times are below their primary allowances (minimum unused allowance8.84min), so time-limit termination does not explain the integer deficits. There are47MIPs=23fresh (6target,4proved pool limits,13open gaps)+24matchedwarm alltarget. New fresh C2k15=17,C4k15=19,C6k15=20, allbound15/unproved/replay passed. Only C1k15 MIP is pending. Do not infer absent integer solutions in pools with open gaps, or manufacture more columns after a certificate without a separately authorized treatment.

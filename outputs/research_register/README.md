@@ -1,6 +1,6 @@
 # EVSP–DR experiment register
 
-**Current results, 13 September 19:49 EDT:** [Chain reach and fresh-versus-warm comparison](../cumulative_budget_20260913/status_20260913T234709Z/README.md). All 24 fresh CG runs converged before exhausting their accumulated warm-chain allowance. Of 23 completed fresh MIPs, 6 match the target, 4 prove a larger fleet necessary within their saved pool, and 13 have open fleet gaps; only C1 k15 MIP remains. All 24 matched warm MIPs meet their targets. Highest verified extension matches by chain are 17, 16, 18, 17, 18 and 17. New C6 k17 is proved within its pool; new C2 k18 has 19 buses with bound 18, unproved. Baseline constraints and individual-route replay apply; no shared capacity or terminal-SOC floor. No new execution failure, preemption or invalid dependency was detected.
+**Current results, 13 September 20:49 EDT:** [Completed cumulative-budget comparison and current chain reach](../cumulative_budget_20260913/status_20260914T004739Z/README.md). All 24 fresh CG runs converged within their allowances. All 24 fresh MIPs are complete: 6 match the target, 4 prove a larger fleet necessary within their saved pool, and 14 retain open fleet gaps. All 24 matched warm MIPs meet their targets. Fresh k15 fleets by chain are 18, 17, 18, 19, 16 and 20, all with bound 15 and no fleet proof. Highest verified extension matches are 18, 16, 18, 18, 18 and 17; new C1/C4 k18 matches have finite-pool proofs and individual-route replay. Baseline constraints apply, without shared capacity or terminal-SOC floor. No new execution failure, preemption or invalid dependency was detected.
 
 **Chain expansion, 13 September:** [Six chains continuing from k=16 to k=25](../chain_extension_20260913/README.md). The 60 new cases preserve the successful baseline settings, append one randomly chosen unused duty per k, and inherit the preceding saved pool. Graph preparation is independent (concurrency 50); CG dependencies stay within each chain; each final MIP waits only on its own CG. Inputs through k=40 are frozen for later continuation. Graph array **133908** had **50 running tasks** at10:25EDT; all120CG/MIP dependencies were verified. Exact job IDs and launch verification are in the campaign records. These are submissions, not new target matches. Astra only for this usage week.
 
@@ -21,7 +21,7 @@ This is the common index for experiment settings, execution records, results and
 
 The [current Slides deck](https://docs.google.com/presentation/d/11bJ-4B5khXtSPwv1sNlvGgme8JCB65jVIT-RSWu3x9E/edit) is the nine-slide editable presentation view; the [historical Slides copy](https://docs.google.com/presentation/d/1RAzaiZSh7DRf_By32mQXPCcwT1PvPDsk0S2xzxMOnDQ/edit) is kept separate.
 
-Current build: **2,324 artifact/stage records across 50 campaign/source groups**, from the collection completed at 19:49 EDT on 13 September. Counts are not independent experimental sample sizes.
+Current build: **2,323 artifact/stage records across 50 campaign/source groups**, from the collection completed at 20:49 EDT on 13 September. Counts are not independent experimental sample sizes.
 
 | To find | Open |
 |---|---|
