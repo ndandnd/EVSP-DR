@@ -1,0 +1,38 @@
+--- before
++++ after
+@@ -1,12 +1,12 @@
+ # **EVSP DR Current Research**
+ 
+-Week of 14 September. Chain results updated 13 September 21:50 EDT; cumulative-budget comparison completed 20:49 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
++Week of 14 September. Chain results updated 13 September 22:51 EDT; cumulative-budget comparison completed 20:49 EDT; model/source audit 09:50 EDT. Dates beside each result identify its evidence.
+ 
+ **Reading order:** current chain results and definitions → measured algorithm improvements → charging comparisons → GIRO assumptions, stricter results and next tests. Older tables are under Historical appendix. Figures remain in the two figure tabs.
+ 
+ ## **Now running: six chains from k=16 to k=25**
+ 
+-**13 September, 21:50 EDT: chains 1, 3, 4 and 5 match 18 buses.** Chain 6 reaches 17; chain 2 reaches 16\. These target matches have fleet proofs within their saved pools and pass individual-route physical replay. Charging optimality remains open.
++**13 September, 22:51 EDT: chain 6 matches 19 buses at k=19.** Chains 1, 3, 4 and 5 reach 18; chain 2 reaches 16\. These target matches have fleet proofs within their saved pools and pass individual-route physical replay. Charging optimality remains open. These are the largest individual cases matched; chain 6 k=18 still has a one-bus gap.
+ 
+ | Chain | Largest target matched | Integer buses found | CG minutes at this k |
+ | ----- | ----- | ----- | ----- |
+@@ -15,13 +15,13 @@
+ | 3 | 18 | 18 | 48.2 |
+ | 4 | 18 | 18 | 68.9 |
+ | 5 | 18 | 18 | 50.5 |
+-| 6 | 17 | 17 | 55.7 |
+-
+-CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. There are now 24 pricing certificates among 25 completed extension CG runs. New certificates at chain 2 k=20, chain 3 k=21 and chain 6 k=19 await integer results.
+-
+-**Chain 5, k=19 did not converge.** It stopped after 239.3 minutes at its time limit, after 648 iterations. Its last minimum reduced cost was −0.08846, below the stopping threshold of −0.0001. Improving columns remained available; its restricted-master objective is not a certified full-model lower bound. Its saved pool is still usable by the already scheduled MIP and next chain step.
+-
+-Six completed one-hour MIPs have unresolved one-bus gaps: chain 2 found 18, 19 and 20 buses at targets 17, 18 and 19; chain 3 found 20 and 21 at targets 19 and 20; chain 6 found 19 at target 18\. Each fleet bound within the saved pool equals the target, so none proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T014827Z/README.md)
++| 6 | 19 | 19 | 61.2 |
++
++CG minutes count this k’s route import and CG; earlier k values, original graph construction and MIP are separate. There are now 25 pricing certificates among 27 completed extension CG runs. Chain 3 k=22 newly converged in 76.1 minutes and awaits its integer result.
++
++**Chains 4 and 5 at k=19 did not converge.** Both reached their CG time limit: chain 4 after 239.1 minutes and 565 iterations; chain 5 after 239.3 minutes and 648 iterations. Their last minimum reduced costs were −0.003185 and −0.088463, respectively, below the stopping threshold of −0.0001. Improving columns remained available, so their restricted-master objectives are not certified full-model lower bounds. Chain 5’s MIP has now found 20 buses with a pool fleet bound of 19; chain 4’s MIP is running. Their saved pools remain usable by the next chain steps.
++
++Nine completed one-hour MIPs have unresolved one-bus gaps: chain 2 at targets 17–20, chain 3 at targets 19–21, chain 5 at target 19, and chain 6 at target 18\. Each found target \+ 1 buses, while its fleet bound within the saved pool equals the target. None proves that the extra bus is necessary. The k=16–25 jobs continue with their existing dependencies. [Current source results and comparison table.](https://github.com/ndandnd/EVSP-DR/blob/codex/parallel-research-20260911/outputs/cumulative_budget_20260913/status_20260914T024847Z/README.md)
+ 
+ | Stage | How it starts | Time budget per case |
+ | ----- | ----- | ----- |

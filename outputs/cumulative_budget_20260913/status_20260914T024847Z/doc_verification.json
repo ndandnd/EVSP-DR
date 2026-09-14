@@ -1,0 +1,24 @@
+{
+  "verified_at_utc": "2026-09-14T02:57:17.043772+00:00",
+  "document_id": "1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY",
+  "tab_id": "t.lumf8xm66fow",
+  "table_rows_before": 173,
+  "table_rows_after": 173,
+  "changed_table_rows": [
+    [
+      "| 6 | 17 | 17 | 55.7 |",
+      "| 6 | 19 | 19 | 61.2 |"
+    ]
+  ],
+  "other_table_rows_preserved": true,
+  "reference_and_later_sections_unchanged": true,
+  "figures_and_slides_untouched": true,
+  "after_sha256": "7a8356fabad072929f55ae851d28533f013516b8f8efc3d3a209c6180dbbba55",
+  "checks": [
+    "C6k19 target match; k18 gap retained",
+    "C4/C5k19 CG time limits and missing certificates",
+    "25 extension CG certificates out of27",
+    "Nine extension MIP gaps",
+    "Cumulative comparison unchanged"
+  ]
+}

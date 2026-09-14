@@ -1,5 +1,14 @@
 # Unicorn monitoring runbook
 
+## 13 September, 22:51 EDT — chain 6 matches 19; two CG time limits
+
+Successful snapshot20260914T024847Z. Extension27CGendpoints=25certificates+2time-limited;25verifiedMIPs=16targetmatches+9openone-busgaps. New C6k19=19/bound19/proved in pool/replay passed. Highest individual targets18,16,18,18,18,19; do not call this contiguous recovery through19 because C6k18 remains open. New open gaps C2k20=21/bound20,C3k21=22/bound21,C5k19=20/bound19, all replay passed. Charging optimality remains separate.
+
+C4k19 newly stops on CG wall budget after239.1min/565iterations; last minRC−0.003185266591 remains below−0.0001. C5k19 prior wall limit remains239.3min/648iter/minRC−0.0884631291. Neither has a pricing certificate; their RMP objectives are not certified full-model bounds. These are scientific time limits, not execution failures or preemptions. Saved pools feed their existing MIPs/successors unchanged. C3k22 newly certifies in76.1min; its MIP and C4k19 MIP running at collection. No blind requeues or new campaigns.
+
+Cumulative comparison unchanged24freshCGcertificates,24freshMIPs(6target/4provedpoollimits/14opengaps),24warmMIPsalltarget. No new execution failure, preemption or invalid dependency;6MIP scheduler transitions,14queue transitions;550attemptrows. Operational statuses checked separately. Register2324rows/50campaigns with six supplements;124scientific endpoints checked. No late scheduler-only results. Doc updates one C6 table row plus current explanations, preserves all other table rows/figures/reference sections. Slides untouched. No solver or reporting-schema change.
+
+
 ## 13 September, 21:50 EDT — larger-case gaps and first extension CG time limit
 
 Successful snapshot20260914T014827Z. Extension25CGendpoints=24certificates+1time-limited;21verifiedMIPs=15targetmatches+6openone-busgaps. New C2k19=20/bound19 and C6k18=19/bound18, unproved with individual-route replay. Highest verified targets remain18,16,18,18,18,17. New certificates C2k20(67.8min),C3k21(208.5min),C6k19(61.2min) await MIPs.
