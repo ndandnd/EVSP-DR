@@ -1,5 +1,7 @@
 # MIP repeatability and three remaining chain gaps
 
+**Results, 14 September 06:27 EDT:** [All 27 one-hour repeats completed](status_20260914T102539Z/README.md): 21 target matches. All three repeats agree within each of the nine selected pools. C3 k19 and k21 remain one bus above target in every short repeat, although earlier longer searches recover both. All replay checks pass. Three longer MIPs remain running. No new submissions.
+
 **Launched 14 September, 04:42 EDT: all 30 jobs running, 48 EVSP–DR jobs running overall.** Jobs **186672–186701** have no dependencies. All native unrestricted-license checks passed. [Scheduler evidence](scheduler_verification.json), [startup checks](launch_status.json), [case/job map](case_jobs.json).
 
 | Experiment | Jobs | Solver allowance | Purpose |

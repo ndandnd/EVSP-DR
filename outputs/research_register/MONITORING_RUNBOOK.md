@@ -1,5 +1,15 @@
 # Unicorn monitoring runbook
 
+## 14 September, 06:27 EDT — all short repeats complete
+
+Snapshot20260914T102539Z, SHAcdd914db454efd80030f1a9c1fc4b3a437c9054cd592e46ec7d1d052b40a1b54. Collectioncompleted10:27:33UTC.27original-budget repeats:21targets/provedinpool/replay;3/3fleetsagreeforeachof9selectedpools. C3k19all20/bound19;C3k21all22/bound21;bothpriorlongMIPsalreadymatch.27orderedpool/input/sourceCGhashes andinitializerkind/count/costmatch. No claimofexactinitializerroute-indexidentity. Gurobi12.0.3/8threads/defaultseed0;hardware/timingnotisolated. New report-onlysummarize_status.pyinmip_repeatabilityhandlescompletedresults. Preserveoriginal andlongoutcomesseparately;do not launchinfinite repeats.
+
+New C5k21=21/provedinpool/replay;CGuncertifiedremains. C2k24=25/bound24/unproved. Largest individual matches18,22,24,20,21,22. Extension43CG=37certified+6caps;43MIPs=26matches+17gaps.9separatelongrecoveriesleave8unmatchedtargets. Diagnostic34certifiedCG/55MIPs;C2k15complementary19/bound15versusoriginal17. C1k15complementary/C5k15c200newcertificates375.3/375.8minutes,theirMIPsrunning. No late scheduler-only endpoint. Cumulative comparison unchanged.
+
+Queue14running,33trueDependencywaits,33heldhistoricaltasks.27repeatscompleted;3longMIPsstillrunning. No execution failure, confirmedpreemption orinvaliddependency;32MIPschedulertransitions/34queuetransitions;638attemptrecords. Operationalstatescheckedseparately. No newsubmissions, sourcealgorithm changes, held-jobchanges orV2Ginteraction. All 274 scientific endpoints exactly match normalized values. Workbook/register: 2,522 rows, 52 campaigns, six supplements; 15 views rendered and the three changed MIP views visually checked. No formula errors. Docrepeat/chain/selectiontablesupdated;referenceandlatercontentbyteidentical;figuresandSlidesuntouched.
+
+UI lesson: in this session, Find→Escape→typeText inserted before highlighted text rather than replacing it. Export/diff detected the duplicated old text; Find→Escape→BackSpace removed only the old match. Use Find→Escape→paste(format:html) for replacements, or delete selected text before typing. Verify absence of old text, not only presence of new text. Use a fresh AX Find field and setValue; do not type a search query into an unverified editor. The final export has no duplicate old status. Export backups and diff are retained.
+
 ## 14 September, 05:29 EDT — chain 6 reaches 22; independent MIPs remain active
 
 Snapshot `20260914T092543Z`, SHA-256 `9bac86d9c028ef2a2ca9d6f362495aa418e5fc59fa21777c4b0ce103c325a03e`. All 242 collected scientific endpoints match the normalized register; 2,522 records across 52 campaigns preserve all six supplements. Workbook views checked and formula scan clean. The weekly Google Doc has the new reach and selection results; reference sections, figure tabs and Slides are preserved.

@@ -1,0 +1,1133 @@
+{
+  "previous": "outputs/post_meeting_20260910/monitor/20260914T092543Z.json",
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T102539Z.json",
+  "timestamp_utc": "2026-09-14T10:25:49.733133+00:00",
+  "changed_results": [
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k17_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 17.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.455048561096,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3da7fcef1cc30bf615be2da3ee215bc2c8029cb96151964ad170da4c9a6ab3eb",
+      "payload_sha256": "3da7fcef1cc30bf615be2da3ee215bc2c8029cb96151964ad170da4c9a6ab3eb"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k17_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 17.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.4321854114532,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "be7d9612a58eee7005026cb5fd16cc04bbe9c126d4c9f7e569830501ce8db859",
+      "payload_sha256": "be7d9612a58eee7005026cb5fd16cc04bbe9c126d4c9f7e569830501ce8db859"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k17_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 17,
+        "fleet_bound": 17.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.6059103012085,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "6ac1279cbeb242f2ecc719b355c9c0bf247e3713c32289cd67001a3bfb055b34",
+      "payload_sha256": "6ac1279cbeb242f2ecc719b355c9c0bf247e3713c32289cd67001a3bfb055b34"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k18_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.0807921886444,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "e8fd49fce7ca13bcb862c05b76f00f261e48f8fa6128d59f0ac0f1d1d69000f8",
+      "payload_sha256": "e8fd49fce7ca13bcb862c05b76f00f261e48f8fa6128d59f0ac0f1d1d69000f8"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k18_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.2834780216217,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "87afce41338a3d9d253f7b0cf1a39c041f6113354b948b45333b13ba33e869a0",
+      "payload_sha256": "87afce41338a3d9d253f7b0cf1a39c041f6113354b948b45333b13ba33e869a0"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k18_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.136364221573,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "58ce3f96e9d0e5fa84c56e810f427e5b78be94462fda699b8745c4fd3ebd7e6f",
+      "payload_sha256": "58ce3f96e9d0e5fa84c56e810f427e5b78be94462fda699b8745c4fd3ebd7e6f"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k19_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.395477294922,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "75016e9472eedde14b7163dfe18169af14664d7bae61caf5d6d0ff54fe651eaa",
+      "payload_sha256": "75016e9472eedde14b7163dfe18169af14664d7bae61caf5d6d0ff54fe651eaa"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k19_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.4521024227142,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "155f1bf8f0e27f5922fc3e944a1e8e5921bab32e9017f0973cbc28f4592c6b86",
+      "payload_sha256": "155f1bf8f0e27f5922fc3e944a1e8e5921bab32e9017f0973cbc28f4592c6b86"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k19_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.9835729599,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "ec89d3542c2f86c86c1d8fef3a28cfdc6081544e70560474e8ce56d334c51bbc",
+      "payload_sha256": "ec89d3542c2f86c86c1d8fef3a28cfdc6081544e70560474e8ce56d334c51bbc"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k20_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.7742006778717,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "c28b02d8e08b6f57f1821d7ec9b9db305bf0531406ab6dd8ac876c10c407aefe",
+      "payload_sha256": "c28b02d8e08b6f57f1821d7ec9b9db305bf0531406ab6dd8ac876c10c407aefe"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k20_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.6468031406403,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "db39a19c18318fb7f47eac1b0a592b20b9ea6b02de3e3024882d7f110ac77d65",
+      "payload_sha256": "db39a19c18318fb7f47eac1b0a592b20b9ea6b02de3e3024882d7f110ac77d65"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w2_k20_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.5410232543945,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "f3a27f521a768ffa444671123ede586c0d1cfe10ae3b3133e1ba5d608e3de15c",
+      "payload_sha256": "f3a27f521a768ffa444671123ede586c0d1cfe10ae3b3133e1ba5d608e3de15c"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k19_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 19.000000000000004,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.8338112831116,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "e3a2b0bd69753c1241b1fd4d3847162156118a1528a2ad3a91cbe38db7ec7484",
+      "payload_sha256": "e3a2b0bd69753c1241b1fd4d3847162156118a1528a2ad3a91cbe38db7ec7484"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k19_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 19.000000000000004,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.818867444992,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "f3e15a8a6b936630bc341d028f047be5279f61a897f691143b6cd72537a0c9b1",
+      "payload_sha256": "f3e15a8a6b936630bc341d028f047be5279f61a897f691143b6cd72537a0c9b1"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k19_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 19.000000000000004,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.212640285492,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a63a1f8faa4ed7ab1d8018b8d403b292e21348a89645951802da51692cdfa006",
+      "payload_sha256": "a63a1f8faa4ed7ab1d8018b8d403b292e21348a89645951802da51692cdfa006"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k20_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3602.9618871212006,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "f8ef36771d9e4e9639454a2a888d5a601b2635ae729aab0f73fd4bcd96b9a923",
+      "payload_sha256": "f8ef36771d9e4e9639454a2a888d5a601b2635ae729aab0f73fd4bcd96b9a923"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k20_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.0392682552338,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a4f4cf97949ecb1db2d50cc11df1e21b6b03cc254b47e63a2effdec18c9e687f",
+      "payload_sha256": "a4f4cf97949ecb1db2d50cc11df1e21b6b03cc254b47e63a2effdec18c9e687f"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k20_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 20,
+        "fleet_bound": 20.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.8825097084045,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "6a46887c7caa04727071bc502886de6ab88fb59d5f998428d0b9a4a34bb6d28f",
+      "payload_sha256": "6a46887c7caa04727071bc502886de6ab88fb59d5f998428d0b9a4a34bb6d28f"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k21_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 22,
+        "fleet_bound": 21.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3615.8404309749603,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "8bb2663be0e8546c78237081fea767a0fb017729d9622fdea34c15e5b458d74f",
+      "payload_sha256": "8bb2663be0e8546c78237081fea767a0fb017729d9622fdea34c15e5b458d74f"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k21_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 22,
+        "fleet_bound": 21.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3614.264729976654,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "ab6417c16d48fd327ba9fb5e007f0d8e7976e1fd14a7fcf58ce059e3e3e2ba95",
+      "payload_sha256": "ab6417c16d48fd327ba9fb5e007f0d8e7976e1fd14a7fcf58ce059e3e3e2ba95"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w3_k21_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 22,
+        "fleet_bound": 21.000000000000068,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3613.3599092960358,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "96824b24f1694a2dca44f5dda11241bf1b823fcbbb895989734066589715f4e1",
+      "payload_sha256": "96824b24f1694a2dca44f5dda11241bf1b823fcbbb895989734066589715f4e1"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w5_k19_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.143784761429,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "68699f9ed09e2fa8de8c7f410eb073a052931aa33128ef6889354a4521f9cc74",
+      "payload_sha256": "68699f9ed09e2fa8de8c7f410eb073a052931aa33128ef6889354a4521f9cc74"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w5_k19_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.1574664115906,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "1d53ab61150ec7fed854698bf088437d78e0dce5a2b4dd38cdfaea23ea590043",
+      "payload_sha256": "1d53ab61150ec7fed854698bf088437d78e0dce5a2b4dd38cdfaea23ea590043"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w5_k19_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 19.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.3429577350616,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "ffc8bdce756a66dfb275cf6edc2b47071755609707e685be3219b162346346cf",
+      "payload_sha256": "ffc8bdce756a66dfb275cf6edc2b47071755609707e685be3219b162346346cf"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w6_k18_original_budget_repeat1/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3606.226756811142,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "4ae650120be85d1face9b075eba5a70b4b7cfb698586082200cb3e7f5d2b4ef8",
+      "payload_sha256": "4ae650120be85d1face9b075eba5a70b4b7cfb698586082200cb3e7f5d2b4ef8"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w6_k18_original_budget_repeat2/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.4086718559265,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "3dcc0028eaedefa33b80a2a4f340860bb8802084b9c57a2df47c8330d6fd8262",
+      "payload_sha256": "3dcc0028eaedefa33b80a2a4f340860bb8802084b9c57a2df47c8330d6fd8262"
+    },
+    {
+      "campaign": "mip_repeatability_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/mip_repeatability_20260914/cases/w6_k18_original_budget_repeat3/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 18,
+        "fleet_bound": 18.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.192033290863,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "7b067ff75696affdc3bad5675b23b82402775b31b1bc957ba9e3fab88503aa0b",
+      "payload_sha256": "7b067ff75696affdc3bad5675b23b82402775b31b1bc957ba9e3fab88503aa0b"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c2_k15_complementary_mip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 19,
+        "fleet_bound": 15.000000000000016,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3604.895161151886,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "fd3071a8781dff3e7f575fa7ab4f1850d56f8e12de4c232864dc29a925a83eeb",
+      "payload_sha256": "fd3071a8781dff3e7f575fa7ab4f1850d56f8e12de4c232864dc29a925a83eeb"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c1_k15_complementary/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 22520.03622140363,
+        "final": {
+          "iter": 2089,
+          "attempt_iter": 2089,
+          "lp_obj": 1500717.373326386,
+          "route_weight": 14.999999999999943,
+          "artificials": 0.0,
+          "min_rc": -8.841071067156037e-05,
+          "max_row_violation": 3.89910326248355e-13,
+          "max_bound_violation": 4.071036556836193e-13
+        }
+      },
+      "sha256": "036a7113ac400c6b28a4333e725898d5db720c672dc29b3fa537521aa155c2eb",
+      "payload_sha256": "036a7113ac400c6b28a4333e725898d5db720c672dc29b3fa537521aa155c2eb"
+    },
+    {
+      "campaign": "overnight_diagnostics_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_diagnostics_20260914/cases/c5_k15_c200/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 22546.3627178343,
+        "final": {
+          "iter": 1458,
+          "attempt_iter": 1458,
+          "lp_obj": 1500669.1594587285,
+          "route_weight": 15.00000000000025,
+          "artificials": 0.0,
+          "min_rc": -1.6816690262544398e-09,
+          "max_row_violation": 2.2315482794965646e-13,
+          "max_bound_violation": 3.7933545193880036e-13
+        }
+      },
+      "sha256": "52c2b2b3ea6332cf81e023cd4dd7ffc1dfac82e0fd094bd21aef45626dac53c0",
+      "payload_sha256": "52c2b2b3ea6332cf81e023cd4dd7ffc1dfac82e0fd094bd21aef45626dac53c0"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w2_k24/mip/133946_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 25,
+        "fleet_bound": 24.000000000000025,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 3608.08784866333,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "c10622daeaee98931e61b37337f259552474a5a5c6ea44f670049fdbe24917ad",
+      "payload_sha256": "c10622daeaee98931e61b37337f259552474a5a5c6ea44f670049fdbe24917ad"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k21/mip/134052_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 21,
+        "fleet_bound": 21.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 3603.6965985298157,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "eebe76c8dc7eab0306126af152587214b2b92ea1174b37d293193299838ec107",
+      "payload_sha256": "eebe76c8dc7eab0306126af152587214b2b92ea1174b37d293193299838ec107"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "133946",
+      "case_id": "w2_k24",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "134052",
+      "case_id": "w5_k21",
+      "cohort": "default_chain_extension_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156701",
+      "case_id": "c1_k15_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "156707",
+      "case_id": "c2_k15_complementary_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "156727",
+      "case_id": "c5_k15_c200_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "186673",
+      "case_id": "w2_k17_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186674",
+      "case_id": "w2_k17_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186675",
+      "case_id": "w2_k17_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186676",
+      "case_id": "w2_k18_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186677",
+      "case_id": "w2_k18_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186678",
+      "case_id": "w2_k18_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186679",
+      "case_id": "w2_k19_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186680",
+      "case_id": "w2_k19_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186681",
+      "case_id": "w2_k19_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186682",
+      "case_id": "w2_k20_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186683",
+      "case_id": "w2_k20_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186684",
+      "case_id": "w2_k20_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186685",
+      "case_id": "w3_k19_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186686",
+      "case_id": "w3_k19_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186687",
+      "case_id": "w3_k19_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186688",
+      "case_id": "w3_k20_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186689",
+      "case_id": "w3_k20_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186690",
+      "case_id": "w3_k20_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186691",
+      "case_id": "w3_k21_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186692",
+      "case_id": "w3_k21_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186693",
+      "case_id": "w3_k21_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186696",
+      "case_id": "w5_k19_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186697",
+      "case_id": "w5_k19_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186698",
+      "case_id": "w5_k19_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186699",
+      "case_id": "w6_k18_original_budget_repeat1",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186700",
+      "case_id": "w6_k18_original_budget_repeat2",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "186701",
+      "case_id": "w6_k18_original_budget_repeat3",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "133946",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-09"
+      },
+      "after": null
+    },
+    {
+      "job": "134052",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-09"
+      },
+      "after": null
+    },
+    {
+      "job": "156640",
+      "before": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "156675",
+      "before": {
+        "state": "RUNNING",
+        "reason": "kim-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "156701",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-09"
+      }
+    },
+    {
+      "job": "156707",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      },
+      "after": null
+    },
+    {
+      "job": "156727",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-11"
+      }
+    },
+    {
+      "job": "186673",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "186674",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "186675",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "186676",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-06"
+      },
+      "after": null
+    },
+    {
+      "job": "186677",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "186678",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "186679",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "186680",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "186681",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "186682",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "186683",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "186684",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "186685",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "186686",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-02"
+      },
+      "after": null
+    },
+    {
+      "job": "186687",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "186688",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "186689",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "186690",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "186691",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-03"
+      },
+      "after": null
+    },
+    {
+      "job": "186692",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-19"
+      },
+      "after": null
+    },
+    {
+      "job": "186693",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-19"
+      },
+      "after": null
+    },
+    {
+      "job": "186696",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "186697",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "186698",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "186699",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-20"
+      },
+      "after": null
+    },
+    {
+      "job": "186700",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-21"
+      },
+      "after": null
+    },
+    {
+      "job": "186701",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-21"
+      },
+      "after": null
+    }
+  ]
+}
