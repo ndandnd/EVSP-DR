@@ -1,0 +1,19 @@
+{
+  "checks_passed": 6,
+  "source_sha256": "4c98cc16f6e24ccc42624a408ad230850a7fe56d231c8e3630b90887b7e9fd35",
+  "matched_real_attempts": [
+    {
+      "restart": "0",
+      "selected": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/attempts/189220_r0/result.json",
+      "scope": "explicit_restart"
+    },
+    {
+      "restart": "1",
+      "selected": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/attempts/189220_r1/result.json",
+      "scope": "explicit_restart"
+    }
+  ],
+  "unregistered_restarts_fail_closed": true,
+  "legacy_single_initial_preserved": true,
+  "validation_multiple_results_flagged": true
+}

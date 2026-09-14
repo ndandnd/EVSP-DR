@@ -6,18 +6,40 @@ BIN='/usr/local/slurm/slurm-25.05.5/bin/'
 def call(args):
  p=subprocess.run(args,capture_output=True,text=True,timeout=30)
  return {'returncode':p.returncode,'stdout':p.stdout,'stderr':p.stderr}
+
+def registration_for_attempt(row, candidates):
+ """Bind result evidence to this restart, never to a later retry of the job."""
+ restart=str(row.get('Restarts') or '0')
+ exact=[case for case in candidates
+        if case.get('restart_count') is not None
+        and str(case['restart_count']) == restart]
+ if exact:
+  # Some validation allocations deliberately run multiple diagnostic MIPs.
+  # Preserve their legacy last-result summary, with the ambiguity explicit.
+  scope='explicit_restart' if len(exact)==1 else 'explicit_restart_multiple_results'
+  return exact[-1], scope
+ if len(candidates)==1 and candidates[0].get('restart_count') is None and restart=='0':
+  return candidates[0], 'legacy_single_initial_attempt'
+ return candidates[-1], 'unresolved_restart_no_result_binding'
 registry=json.loads((ROOT/'registry.json').read_text())
 jobids=sorted(set(str(x['job_id']).split('_')[0] for x in registry['cases']))
 fields='JobID,JobIDRaw,DBIndex,SLUID,JobName,Partition,QOS,Submit,Eligible,Start,End,ElapsedRaw,CPUTimeRAW,TotalCPU,AllocCPUS,ReqMem,NodeList,State,ExitCode,Reason,Restarts,Priority,TimelimitRaw'
 r=call([BIN+'sacct','--array','-D','-X','-P','-u','nc437','--starttime=2026-09-10T23:00:00','-j',','.join(jobids),'--format='+fields]) if jobids else {'returncode':0,'stdout':'','stderr':''}
 rows=list(csv.DictReader(io.StringIO(r['stdout']),delimiter='|')) if r['returncode']==0 else []
-lookup={x['job_id']:x for x in registry['cases']}
+lookup=collections.defaultdict(list)
+for case in registry['cases']:
+ lookup[str(case['job_id'])].append(case)
 accepted=[]
 for row in rows:
- job=row['JobID']; case=lookup.get(job)
+ job=row['JobID']; candidates=lookup.get(job)
  if row['Submit'] < '2026-09-10T23:00:00': continue
- if case is None: continue # exclude array parent aggregates and other jobs
- result_path=Path(case['result_path']) if case.get('result_path') else None
+ if not candidates: continue # exclude array parent aggregates and other jobs
+ case,binding=registration_for_attempt(row,candidates)
+ row['registry_result_binding']=binding
+ row['registered_restart_count']=case.get('restart_count')
+ row['registered_attempt_tag']=case.get('attempt_tag')
+ result_path=(Path(case['result_path']) if case.get('result_path')
+              and binding != 'unresolved_restart_no_result_binding' else None)
  row['result_exists']=bool(result_path and result_path.exists())
  row['result_path']=str(result_path) if result_path else None
  if row['result_exists']:

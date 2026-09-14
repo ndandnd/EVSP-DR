@@ -1,3 +1,5 @@
+## Current queue and priorities — 16:13 EDT [One current table of overnight work and verified findings](../overnight_parallel_20260914/status_20260914T200527Z/CURRENT_STATUS.md). **99 jobs running**, 48 solver dependencies and 18 conditional recovery checks; none broken. Scientific collection through 16:09: 28 small-seed CG certificates, seven seed MIPs with six target matches; original chain 1 now matches 23. One MIP auto-restarted after preemption. The dated notices below preserve earlier states.
+
 # Overnight experiments — 14 September
 
 ## Additional independent comparisons and queue protection, 14:45 EDT

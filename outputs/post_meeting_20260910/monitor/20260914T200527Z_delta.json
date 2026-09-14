@@ -1,0 +1,124 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T195635Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260914T200527Z.json",
+  "timestamp_utc": "2026-09-14T20:05:27.728055+00:00",
+  "changed_results": [
+    {
+      "campaign": "overnight_parallel_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k15_lpweight/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": true,
+        "stop_reason": "certified",
+        "wall_s": 10907.916574705392,
+        "final": {
+          "iter": 2226,
+          "attempt_iter": 2226,
+          "lp_obj": 1500669.1594587006,
+          "route_weight": 14.999999999999972,
+          "artificials": 0.0,
+          "min_rc": -4.435658951251753e-09,
+          "max_row_violation": 1.602051824534101e-13,
+          "max_bound_violation": 1.366962099069724e-13
+        }
+      },
+      "sha256": "1066ed4cbb76cbfee6adfe5bc551a515994b95d79aac4047056813b3bf026c49",
+      "payload_sha256": "1066ed4cbb76cbfee6adfe5bc551a515994b95d79aac4047056813b3bf026c49"
+    },
+    {
+      "campaign": "chain_extension_20260913",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260913/cases/w5_k24/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14374.546621265821,
+        "final": {
+          "iter": 445,
+          "attempt_iter": 315,
+          "lp_obj": 2401023.982261833,
+          "route_weight": 24.000000000000174,
+          "artificials": 0.0,
+          "min_rc": -0.04720626692481478,
+          "max_row_violation": 3.1153968294006518e-12,
+          "max_bound_violation": 2.9130170497992935e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "8a2a3d8cbfe576ffdf973884bbb3726213ebd6fd3a7acc6ead064bc1e2571991"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "134058",
+      "case_id": "w5_k24",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "189242",
+      "case_id": "c5_k15_lpweight_mip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "134057",
+      "before": {
+        "state": "RUNNING",
+        "reason": "luxlab-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "134058",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      }
+    },
+    {
+      "job": "134059",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-75"
+      }
+    },
+    {
+      "job": "189201",
+      "before": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-21"
+      },
+      "after": null
+    },
+    {
+      "job": "189242",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-01"
+      }
+    }
+  ]
+}

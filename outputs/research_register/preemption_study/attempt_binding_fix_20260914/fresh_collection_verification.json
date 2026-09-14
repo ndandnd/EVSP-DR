@@ -1,0 +1,33 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260914T200527Z.json",
+  "sha256": "e509487b5e89cbc211d4ec83fdc462b896d4f15424c8e28a4f017c8ad69c8d7f",
+  "source_sha256": "4c98cc16f6e24ccc42624a408ad230850a7fe56d231c8e3630b90887b7e9fd35",
+  "attempts": [
+    {
+      "attempt_key": "s311M2GDY89800|3496625661941161984|189220|2026-09-14T13:02:15|2026-09-14T13:18:07|0",
+      "JobID": "189220",
+      "Restarts": "0",
+      "State": "PREEMPTED",
+      "Start": "2026-09-14T13:18:07",
+      "End": "2026-09-14T15:22:18",
+      "ElapsedRaw": "7451",
+      "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/attempts/189220_r0/result.json",
+      "result_exists": false,
+      "registry_result_binding": "explicit_restart"
+    },
+    {
+      "attempt_key": "s311M2GNYT8K00|3496625670549949440|189220|2026-09-14T15:22:22|2026-09-14T15:25:18|1",
+      "JobID": "189220",
+      "Restarts": "1",
+      "State": "RUNNING",
+      "Start": "2026-09-14T15:25:18",
+      "End": "Unknown",
+      "ElapsedRaw": "2631",
+      "result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/attempts/189220_r1/result.json",
+      "result_exists": false,
+      "registry_result_binding": "explicit_restart"
+    }
+  ],
+  "checks_passed": true,
+  "solver_or_registry_changes": false
+}

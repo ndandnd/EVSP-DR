@@ -1,0 +1,11 @@
+{
+  "original_snapshot": "outputs/post_meeting_20260910/monitor/20260914T195635Z.json",
+  "original_sha256": "87443fa772a29df2f4ee458ac6117fe4939f8b4b226defbe649df0b6019e0999",
+  "affected_job": "189220",
+  "observed_preemption_preserved": true,
+  "incorrect_field": "mip_preemption_study.attempts[Restarts=0].result_path points to r1",
+  "correct_r0_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/attempts/189220_r0/result.json",
+  "scheduler_times_and_state_unchanged": true,
+  "original_snapshot_preserved": true,
+  "correction_method": "Patch reporting collector to match explicit registry restart_count to Slurm Restarts; collect fresh snapshot. No solver/job/registry changes."
+}
