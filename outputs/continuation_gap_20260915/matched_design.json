@@ -1,0 +1,48 @@
+{
+  "schema": "evsp-longer-gap-monitor-checks-v1",
+  "native_preflight": {
+    "status": "passed",
+    "manifest_sha256": "b2a165b86fa23636a8b7edecaa32565241de298020b061882cb543554ed53ace",
+    "checks": [
+      {
+        "case_id": "w3_k28_longmip",
+        "status": "passed",
+        "source_status_sha256": "2945438839ca8f108f82656cf57214e360f04e54171fce6a59448c8ea73d0f89",
+        "source_journal_sha256": "eb16dd14e049263c8d233ba1a78c90dfe55e38b02215d6cff0a45750e21becc9"
+      }
+    ],
+    "native_runner": "Exact previously native-validated worker and871 runner unchanged; every attempt performs large-license check and source pool physical replay."
+  },
+  "normalizer_registration": {
+    "target": 28,
+    "total_s": 12600,
+    "job_id": "222757",
+    "passed": true
+  },
+  "summarizer_tests": {
+    "nine_completed_control_pools_pass": true,
+    "altered_ordered_pool_hash_rejected": true
+  },
+  "original_ordered_pool_sha256": "97dfeaa8eb47d470ee907b3403bc0ea03f9952571298971480e71dfc61ba0c9a",
+  "original_mip_start_count": 168,
+  "original_mip_start": {
+    "assigned_variable_count": 166052,
+    "assignment_complete": true,
+    "expected_full_objective": 16801188.168,
+    "kind": "greedy_pool_partition",
+    "selected_variable_count": 168,
+    "solver_acceptance": {
+      "accepted": true,
+      "messages": [
+        "Loaded user MIP start with objective 168"
+      ],
+      "rejection_observed": false,
+      "status": "accepted"
+    },
+    "source": null,
+    "source_sha256": null,
+    "validated": true,
+    "validated_bus_count": 168
+  },
+  "same_frozen_worker": true
+}
