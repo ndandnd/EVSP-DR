@@ -1,0 +1,17 @@
+{
+  "snapshot_sha256": "12f9d7a6b6cd974cafaa57c9f0ba84f4e7075d324e378fe07e80e48e6b30facc",
+  "checks": [
+    {
+      "campaign": "final_chain_gap_20260915",
+      "case_id": "w5_k25_longmip",
+      "passed": true
+    },
+    {
+      "campaign": "continuation_gap_20260915",
+      "case_id": "w3_k28_longmip",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "note": "Source and recorded pool bindings checked; no new physical replay performed."
+}
