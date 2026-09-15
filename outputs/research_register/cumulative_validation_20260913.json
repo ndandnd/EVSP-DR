@@ -1,9 +1,9 @@
 {
   "schema": "evsp-cumulative-register-workbook-check-v1",
   "source_snapshot": {
-    "path": "raw/20260913T182856Z.json",
-    "sha256": "ac53713f530c096b5eb943160fdc98f10b0da3a4c8a15e3d29e7bc92cecbefb0",
-    "timestamp_utc": "2026-09-13T18:28:56.673720+00:00"
+    "path": "raw/20260913T204452Z.json",
+    "sha256": "4ab57387d1d0dbf3cdcaed6c5b59196b46f33bc4079d5e81148354f229e4680b",
+    "timestamp_utc": "2026-09-13T20:44:52.582792+00:00"
   },
   "supplements_preserved": [
     {
@@ -31,15 +31,25 @@
       "sha256": "e381dad5fafc755c2505104bb167864537315e1abf2c395bdef024960cd26bb0"
     }
   ],
-  "row_count": 2394,
+  "row_count": 2345,
   "campaign_count": 50,
   "cumulative_counts": {
     "audit_result": 24,
-    "mip": 9,
-    "cg": 3
+    "cg": 19,
+    "mip": 43
   },
+  "extension_counts": {
+    "cg": 11,
+    "mip": 7
+  },
+  "extension_metadata_verified": 18,
   "source_endpoint_exact_match": true,
   "alias_independent_solve_count": 0,
+  "fresh_mip_classification": {
+    "target": 6,
+    "proved_pool_miss": 4,
+    "open_gap": 9
+  },
   "workbook_formula_errors": 0,
   "rendered_changed_views": [
     {
@@ -48,26 +58,38 @@
     },
     {
       "sheet": "Campaigns",
-      "range": "A11:H21"
+      "range": "A12:H13"
+    },
+    {
+      "sheet": "Campaigns",
+      "range": "A8:H9"
     },
     {
       "sheet": "CG",
-      "range": "A155:N165"
+      "range": "A164:N183"
+    },
+    {
+      "sheet": "CG",
+      "range": "A21:N32"
     },
     {
       "sheet": "MIP",
-      "range": "A146:L156"
+      "range": "A154:L197"
+    },
+    {
+      "sheet": "MIP",
+      "range": "A21:L28"
     },
     {
       "sheet": "Attempts",
-      "range": "A120:H130"
+      "range": "A131:H155"
     }
   ],
-  "visual_review": "Campaign count, explicit arms, CG runtimes/certificates, MIP fleets/formulas, and metadata separation verified; existing seven-sheet layout preserved",
+  "visual_review": "Seven sheets preserved. Fresh C1k8 and C4k8 show9/proved9 versus warm8. C2k10 shows12/bound10/unproved; C3k15 shows18/bound15/unproved. All seven extension MIPs show target fleet/proof/replay; new C1k17/C3k18/C5k16 verified. Finite-pool misses and open gaps remain distinct.",
   "artifact_hashes": {
-    "outputs/research_register/register.json": "c7604e576390a93bce753f099cdd8997f80c459a028404f1825eff0db7d911d1",
-    "outputs/research_register/register.csv": "81eb490835a91458c3fdf0d84099a9fd2092d48a6fa459b1c17828854e077d7d",
-    "outputs/research_register/build_register.py": "e5d3b2bc152eba2c5638a75ca12db6a20054e176935932a00c71c13e7ebf9fd6",
-    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "3cf385e9f96799d0c43ef5827f04aacbf8897c53257c03efef651ba0ee486102"
+    "outputs/research_register/register.json": "047ce4f5ca75b56f12012fe6d33f1c4bddf5b33ba04db3ca4727fe35238ed20f",
+    "outputs/research_register/register.csv": "51817cf2b9543f4f0ebdd8cc2545650ace11a38bc0f45348f41fc7c88d0355f5",
+    "outputs/research_register/build_register.py": "6a8e7348ba2116505de4824c9b2072e621361cd445208be6e42d2748a07b6e85",
+    "outputs/01a07ecc-9b77-79b3-9782-e4308a80ba07/EVSP_DR_Experiment_Register.xlsx": "6b2169525774008632dadd7a88aa13b379eff9cfe95b12bc16046f267d4ccd03"
   }
 }

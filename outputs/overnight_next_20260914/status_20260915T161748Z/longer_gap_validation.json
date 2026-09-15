@@ -1,0 +1,27 @@
+{
+  "snapshot_sha256": "6c9bf0b1c1fa8a006c38ae65f655c60c15cebfd60889904647c720bde93baa57",
+  "checks": [
+    {
+      "campaign": "final_chain_gap_20260915",
+      "case_id": "w5_k25_longmip",
+      "passed": true
+    },
+    {
+      "campaign": "continuation_gap_20260915",
+      "case_id": "w3_k28_longmip",
+      "passed": true
+    },
+    {
+      "campaign": "continuation_gaps2_20260915",
+      "case_id": "w1_k27_longmip",
+      "passed": true
+    },
+    {
+      "campaign": "continuation_gaps2_20260915",
+      "case_id": "w5_k27_longmip",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "note": "Source and recorded pool bindings checked; no new physical replay performed."
+}

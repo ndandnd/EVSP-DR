@@ -1,0 +1,80 @@
+{
+  "snapshot_sha256": "6c9bf0b1c1fa8a006c38ae65f655c60c15cebfd60889904647c720bde93baa57",
+  "checks": [
+    {
+      "case_id": "c1_k15_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c1_k20_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c2_k20_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c2_k20_control",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c2_k25_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c2_k25_control",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c3_k20_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c3_k20_control",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c4_k25_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c5_k20_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c5_k20_control",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    },
+    {
+      "case_id": "c5_k25_union",
+      "publication_and_model_match": true,
+      "zero_augmentation": true,
+      "validation_only": false
+    }
+  ],
+  "errors": [],
+  "include_validation": false,
+  "note": "Donor upper bound is separate from the new solver incumbent. Construction creates no CG certificate."
+}

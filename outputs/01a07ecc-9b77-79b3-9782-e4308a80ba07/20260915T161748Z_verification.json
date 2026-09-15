@@ -1,0 +1,47 @@
+{
+  "mode": "after",
+  "records": 3348,
+  "views": [
+    {
+      "name": "Campaigns",
+      "range": "A1:G14",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A1:G14\",\"rows\":14,\"cols\":7,\"values\":[[null,null,null,null,null,null,null],[\"EVSP–DR experiment register\",null,null,null,null,null,null],[\"Evidence captured 2026-09-15T16:17:48.513881+00:00. Counts below are records, not independent experimental samples.\",null,null,null,null,null,null],[null,null,null,null,null,null,null],[\"Campaign / source group\",\"Family\",\"LP / CG records\",\"MIP records\",\"Charging records\",\"Execution / audit records\",\"Total records\"],[\"capacity_deadline5_retry\",\"production_or_historical\",5,5,0,1,11],[\"capacity_fixed_dual_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_fixed_dual_retry_20260914\",\"production_or_historical\",0,0,0,5,5],[\"capacity_pricing_boundary_20260914\",\"production_or_historical\",7,7,0,3,17],[\"capacity_speed_pilot\",\"controlled_physics_pilot\",10,10,0,2,22],[\"capacity_timeout6_rerun\",\"production_or_historical\",1,1,0,3,5],[\"chain_extension_20260913\",\"production_or_historical\",60,60,0,66,186],[\"chain_extension_20260914\",\"production_or_historical\",17,17,0,22,56],[\"chain_extension_20260915\",\"production_or_historical\",0,0,0,4,4]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A19:H20",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A19:H20\",\"rows\":2,\"cols\":8,\"values\":[[\"continuation_gap_20260915\",\"production_or_historical\",0,1,0,6,7,\"/home/nc437/ladder-lite/continuation_gap_20260915\"],[\"continuation_gaps2_20260915\",\"production_or_historical\",0,2,0,6,8,\"/home/nc437/ladder-lite/continuation_gaps2_20260915\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A75:H76",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A75:H76\",\"rows\":2,\"cols\":8,\"values\":[[\"terminal_energy_fair_mip_retry_5cdb813\",\"production_or_historical\",0,3,9,2,14,\"/home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910\"],[\"union_target_feasibility_20260915\",\"production_or_historical\",0,0,0,11,11,\"/home/nc437/ladder-lite/union_target_feasibility_20260915\"]]}"
+    },
+    {
+      "name": "Campaigns",
+      "range": "A14:H15",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Campaigns\",\"address\":\"A14:H15\",\"rows\":2,\"cols\":8,\"values\":[[\"chain_extension_20260915\",\"production_or_historical\",0,0,0,4,4,\"/home/nc437/ladder-lite/chain_extension_20260915\"],[\"chain_extension_31_32_20260915\",\"production_or_historical\",0,0,0,4,4,\"/home/nc437/ladder-lite/chain_extension_31_32_20260915\"]]}"
+    },
+    {
+      "name": "MIP",
+      "range": "A178:L180",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"MIP\",\"address\":\"A178:L180\",\"rows\":3,\"cols\":12,\"values\":[[\"continuation_gap_20260915\",\"w3_k28_longmip\",\"mip\",null,28,null,28,28,\"yes\",0,\"TIME_LIMIT\",166052],[\"continuation_gaps2_20260915\",\"w1_k27_longmip\",\"mip\",null,27,null,27,27,\"yes\",0,\"TIME_LIMIT\",252540],[\"continuation_gaps2_20260915\",\"w5_k27_longmip\",\"mip\",null,27,null,29,26.00000000000019,\"no\",2,\"TIME_LIMIT\",221493]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A208:H214",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A208:H214\",\"rows\":7,\"cols\":8,\"values\":[[\"continuation_gap_20260915\",\"validation.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps2_20260915\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps2_20260915\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps2_20260915\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps2_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps2_20260915\",\"scheduler_verification.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"continuation_gaps2_20260915\",\"validation.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A969:H980",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A969:H980\",\"rows\":12,\"cols\":8,\"values\":[[\"terminal_energy_fair_mip_retry_5cdb813\",\"submission.mip.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"union_target_feasibility_20260915\",\"c1_k15_target\",\"target_feasibility\",\"228654_r0\",15,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"c2_k20_target\",\"target_feasibility\",\"228655_r0\",20,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"c2_k25_target\",\"target_feasibility\",\"228656_r0\",25,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"c3_k20_target\",\"target_feasibility\",\"228657_r0\",20,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"c4_k25_target\",\"target_feasibility\",\"228658_r0\",25,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"c5_k20_target\",\"target_feasibility\",\"228659_r0\",20,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"c5_k25_target\",\"target_feasibility\",\"228660_r0\",25,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"union_target_feasibility_20260915\",\"production_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"union_target_feasibility_20260915\",\"validation_feasible\",\"target_feasibility\",\"228618_r0\",119,null,\"target_feasibility\",\"result\"],[\"union_target_feasibility_20260915\",\"validation_infeasible\",\"target_feasibility\",\"228619_r0\",1,null,\"target_feasibility\",\"result\"]]}"
+    },
+    {
+      "name": "Attempts",
+      "range": "A116:H120",
+      "inspection": "{\"kind\":\"table\",\"sheet\":\"Attempts\",\"address\":\"A116:H120\",\"rows\":5,\"cols\":8,\"values\":[[\"chain_extension_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"attempt_progress\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"case_jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"jobs.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"],[\"chain_extension_31_32_20260915\",\"manifest.json\",\"workflow\",null,null,null,\"workflow\",\"workflow_record\"]]}"
+    }
+  ],
+  "formulaScan": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}"
+}

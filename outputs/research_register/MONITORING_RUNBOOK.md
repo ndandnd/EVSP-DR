@@ -1,3 +1,9 @@
+## 15 September12:27EDT — Chain1 reaches27; directtarget tests unresolved
+
+Snapshot161748 completed564.206s;9new scientific endpoints verified. C1k27same252540columnpool now27/proved after83.97fleetmin; C5k27remains29/bound26 after180.30fleetmin. Both210mintotal, replaypassed, chargingopen. All7targetcaptests TIME_LIMIT/no incumbent/no infeasibility proof; do not infer pool deficiency or repeat unchangedtests. Combinedobservedchainmax27/28/28/27/26/28. Originalonehourmaxunchanged.
+
+Register3348/78groups;27running49realdependencies;981attemptrecords,no newfailure/preemption/invaliddependency. Remaininggraphs29–32,C1k28CG,C4/C5k28longMIPscontinue. Nojobmutations. CurrentDoc onlydate/C1cell/diagnosisupdated; preservetwo-tablequestionstructure,figures/history/noSlides. Durablewrapper and publicationworktree unchanged. See status_20260915T161748Z for details. Fullzero-feeCG remainsdesign-only pending validatedenergydual/dominancechanges.
+
 ## 15 September11:26EDT — no new scientific result
 
 Snapshot151636 completed in592.467s; no changed science, no new execution failure/preemption/invalid dependency. Queue36running49true dependencies;981preemption records. Seven direct target tests stillrunning. New roots and9target attempts pass normalization; fixtures remain validation-only. Current workbook and concise two-table question-led Doc remain unchanged. Do not recreate the older seven-table dashboard. See status_20260915T151636Z for source checks.

@@ -333,6 +333,46 @@
     ]
   },
   {
+    "campaign_id": "chain_extension_31_32_20260915",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/chain_extension_31_32_20260915",
+    "row_count": 4,
+    "workflow_job_ids": [
+      "224631",
+      "224635",
+      "224639",
+      "224643",
+      "224647",
+      "224651",
+      "228593",
+      "228594",
+      "228595",
+      "228596",
+      "228597",
+      "228598",
+      "228599",
+      "228600",
+      "228601",
+      "228602",
+      "228603",
+      "228604",
+      "228605",
+      "228606",
+      "228607",
+      "228608",
+      "228609",
+      "228610",
+      "228611",
+      "228612",
+      "228613",
+      "228614",
+      "228615",
+      "228616",
+      "228617"
+    ]
+  },
+  {
     "campaign_id": "compact_large_seed_20260914",
     "family": "production_or_historical",
     "report_links": [],
@@ -612,10 +652,21 @@
     "family": "production_or_historical",
     "report_links": [],
     "root": "/home/nc437/ladder-lite/continuation_gaps2_20260915",
-    "row_count": 6,
+    "row_count": 8,
     "workflow_job_ids": [
       "227897",
       "227898"
+    ]
+  },
+  {
+    "campaign_id": "continuation_gaps3_20260915",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/continuation_gaps3_20260915",
+    "row_count": 6,
+    "workflow_job_ids": [
+      "228579",
+      "228580"
     ]
   },
   {
@@ -1968,7 +2019,7 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 92,
+    "row_count": 109,
     "workflow_job_ids": [
       "187972",
       "187973",
@@ -1997,8 +2048,6 @@
       "224650",
       "224651",
       "224652",
-      "227897",
-      "227898",
       "228579",
       "228580",
       "228593",
@@ -2007,6 +2056,25 @@
       "228596",
       "228597",
       "228598",
+      "228599",
+      "228600",
+      "228601",
+      "228602",
+      "228603",
+      "228604",
+      "228605",
+      "228606",
+      "228607",
+      "228608",
+      "228609",
+      "228610",
+      "228611",
+      "228612",
+      "228613",
+      "228614",
+      "228615",
+      "228616",
+      "228617",
       "537227"
     ]
   },
@@ -2201,6 +2269,24 @@
     "workflow_job_ids": [
       "778802",
       "810459"
+    ]
+  },
+  {
+    "campaign_id": "union_target_feasibility_20260915",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/union_target_feasibility_20260915",
+    "row_count": 11,
+    "workflow_job_ids": [
+      "228618",
+      "228619",
+      "228654",
+      "228655",
+      "228656",
+      "228657",
+      "228658",
+      "228659",
+      "228660"
     ]
   },
   {

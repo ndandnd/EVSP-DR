@@ -1,4 +1,4 @@
-**Latest:** [15September10:34EDT—completedpoolunions, chain32 and directtargettests](status_20260915T141509Z/README.md).
+**Latest:** [15 September12:27EDT — Chain1 reaches27; target tests inconclusive](status_20260915T161748Z/README.md).
 
 **Current verified update:** [15 September 09:24 EDT morning summary](status_20260915T131517Z/README.md) · [All original chain counts](status_20260915T131517Z/CHAIN_TABLES.md). Earlier dated summaries below are historical.
 

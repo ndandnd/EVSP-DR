@@ -1,0 +1,965 @@
+{
+  "schema": "union-target-feasibility-collection-v1",
+  "utc": "2026-09-15T16:18:07.125585+00:00",
+  "manifest": {
+    "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/manifest.json",
+    "exists": true,
+    "sha256": "b85fa3b0e801a455fc4313dfd22263c089f21dae4d87aa61a6498ef0c8bb9b82",
+    "bytes": 45257
+  },
+  "helper_sha256": "b4bbbc6d3a91b61909a69afc55b721ae90a31ff9af7c6ef8a35f82e80991bb2b",
+  "production": [
+    {
+      "case_id": "c1_k15_target",
+      "job_id": "228654",
+      "is_validation": false,
+      "target_cap": 15,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c1_k15_build/attempts/227315_r0/pool.json",
+      "source_result_sha256": "cf2ffc64e9ae2ccce6cc62a29609dba7c6d2ef48a962e7de051331ad97dff2e7",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c1_k15_build/attempts/227315_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "74eba68adf28cb552fd98d1021b16fa6c0309c5889a1b8e4031e9d0b8c4bf33a",
+      "native_pool_ordered_sha256": "38660b56f6ffa3a0a64d0da9f887f406de09234d665de6e686e483b0daa751b6",
+      "source_union_pool_set": {
+        "native_unique_columns": 100861,
+        "incidence_set_sha256": "47c1def1ee95d5d9f365728d1a5f3f0c040aa03800ae9eaf37e9461dfa1406d8",
+        "incidence_cost_set_sha256": "42827519bd4343fc594b62f84d640d1e8fbcb8db5b815d8972ed6e9c699e90e0",
+        "recorded_route_set_sha256": "cc44ef311e2b5472a21e794a45fd52cbbf38f20d03374172d462604966ac6bc0"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/completion.json",
+        "exists": true,
+        "sha256": "975a7f72f45cc673cc6a518416a0802f4df0cd96a2c4eb1a7bb1a645145070f6",
+        "bytes": 2176
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c1_k15_target_228654.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228654_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/state.json",
+            "exists": true,
+            "sha256": "975a7f72f45cc673cc6a518416a0802f4df0cd96a2c4eb1a7bb1a645145070f6",
+            "bytes": 2176
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/result.json",
+            "exists": true,
+            "sha256": "e1237693521c0f8b2f4012d1884d17136de8eed5767fcb101e88b273207fd4db",
+            "bytes": 5093
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/execution.json",
+            "exists": true,
+            "sha256": "b1f4a41d3bf3670fa4ad0528acd892f5cf86d836121f2d81d6a3066c9cb2ac05",
+            "bytes": 1379
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/stdout.log",
+            "exists": true,
+            "sha256": "67325b9aed2b59c08bc55bba7b7e1106f045bfb4078d6802968e8678b25e8c2c",
+            "bytes": 8441
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/gurobi.log",
+            "exists": true,
+            "sha256": "a5d68626848d3d8e491d49b9339a39ca4574ea68bc0dd57e916de61860299f57",
+            "bytes": 7895
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3600.1645741462708,
+          "end_to_end_wall_s": 3863.5655434720684
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/result.json",
+      "published_result_sha256": "e1237693521c0f8b2f4012d1884d17136de8eed5767fcb101e88b273207fd4db"
+    },
+    {
+      "case_id": "c2_k20_target",
+      "job_id": "228655",
+      "is_validation": false,
+      "target_cap": 20,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c2_k20_build/attempts/227317_r0/pool.json",
+      "source_result_sha256": "307b8b34a16b489a2a3fd4abbced322699075f92ef2d6f86d5ad32f5f82b1507",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c2_k20_build/attempts/227317_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "c6c0e7c399dbe565452cafc67e2f803f5f3682f5d1b273ec27ea6baa8c7cc032",
+      "native_pool_ordered_sha256": "77ffaa20a8ba298d754d8219f16d25aebb189daa2cc58caa3e3981c8a08e45c7",
+      "source_union_pool_set": {
+        "native_unique_columns": 105042,
+        "incidence_set_sha256": "5821b7c98c155a7137941538c6be59b44f38fb480aee691f367e58ce03b50ed8",
+        "incidence_cost_set_sha256": "17e29c09f7217805c19bc595f23c4e851576158b417bf11e574d193818c33648",
+        "recorded_route_set_sha256": "af69f81de0beb10f2aba90781340de7a6182c4de013a648d43030b3dedff430f"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/completion.json",
+        "exists": true,
+        "sha256": "fded0be7520c00e4c7b23d6c0d4a62b13510e1efb66ec41dc4f0370558e65c17",
+        "bytes": 2170
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c2_k20_target_228655.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228655_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/state.json",
+            "exists": true,
+            "sha256": "fded0be7520c00e4c7b23d6c0d4a62b13510e1efb66ec41dc4f0370558e65c17",
+            "bytes": 2170
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/result.json",
+            "exists": true,
+            "sha256": "fd8ac5596fe9edeb8131c27189607cf48ceb71babd12eb2ae82e643879aa4dd0",
+            "bytes": 5088
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/execution.json",
+            "exists": true,
+            "sha256": "901be76a48cc590b103df13349428670f68bccd59e5e576dae77cde4bba69c93",
+            "bytes": 1373
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/stdout.log",
+            "exists": true,
+            "sha256": "163568af95388c6135f8e0e3778f4651a4cad2a9fb3217d20d213efabbad8725",
+            "bytes": 7555
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/gurobi.log",
+            "exists": true,
+            "sha256": "479f9ce3848e285e162983a159917d0a54ee3e7c29907cf0261246a4188589c0",
+            "bytes": 7054
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3600.1390171051025,
+          "end_to_end_wall_s": 3802.7265770118684
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/result.json",
+      "published_result_sha256": "fd8ac5596fe9edeb8131c27189607cf48ceb71babd12eb2ae82e643879aa4dd0"
+    },
+    {
+      "case_id": "c2_k25_target",
+      "job_id": "228656",
+      "is_validation": false,
+      "target_cap": 25,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c2_k25_build/attempts/227318_r0/pool.json",
+      "source_result_sha256": "4d8cf69d3929878f099a261665f2ae016dfb5aee0cbf5179bb5bb496cf065923",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c2_k25_build/attempts/227318_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "7b87743efd94d45d35468b4ee2956e219da32089fe69fc62483d990d8bf5566d",
+      "native_pool_ordered_sha256": "9704b0aa93fe3769196ede8816800c750296d9b91c556b850246f87be5f8dd53",
+      "source_union_pool_set": {
+        "native_unique_columns": 116470,
+        "incidence_set_sha256": "c996b96d2525bcdad62958be6af6daeb80927cb535d7d8e6db9b039061ad5f8f",
+        "incidence_cost_set_sha256": "6ba47524f313f01a2ce679cd9440a9482ceae584db51715894a5b90648ead4d1",
+        "recorded_route_set_sha256": "87302422610d008cb6989fd0c02567939c85766431029b525496c958b5e7650b"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/completion.json",
+        "exists": true,
+        "sha256": "2b903ff3ea3153f7480807e03391162ed8b95fb90318d1f05d297151d7f99898",
+        "bytes": 2167
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c2_k25_target_228656.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228656_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/state.json",
+            "exists": true,
+            "sha256": "2b903ff3ea3153f7480807e03391162ed8b95fb90318d1f05d297151d7f99898",
+            "bytes": 2167
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/result.json",
+            "exists": true,
+            "sha256": "a87093a3f80d05e42cb93e2728db9ab33fdb165980a4dc0bdf7014d0aa605773",
+            "bytes": 5087
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/execution.json",
+            "exists": true,
+            "sha256": "c1160fadd9d17d8f80cf97649892a6278967f6a699014b9dabc2b7c1d3c938a7",
+            "bytes": 1370
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/stdout.log",
+            "exists": true,
+            "sha256": "006113ca428e41d615f25d0f9564cf4d83fff84e879246dfc05df03ac9700856",
+            "bytes": 4744
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/gurobi.log",
+            "exists": true,
+            "sha256": "26345e2a563644553cf2bcada3359e992ddaf59a8a4a1fb7e03b6f99870e8c76",
+            "bytes": 4243
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3600.3703989982605,
+          "end_to_end_wall_s": 3836.6832442209125
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/result.json",
+      "published_result_sha256": "a87093a3f80d05e42cb93e2728db9ab33fdb165980a4dc0bdf7014d0aa605773"
+    },
+    {
+      "case_id": "c3_k20_target",
+      "job_id": "228657",
+      "is_validation": false,
+      "target_cap": 20,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c3_k20_build/attempts/227321_r0/pool.json",
+      "source_result_sha256": "826acebcb57a03bd697ea3192ba95708d90b6b61efe38a08a8c8da0327f84b78",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c3_k20_build/attempts/227321_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "3e17c4293bf90312419d04d41ab6ceb2945c10dc9375a12fe0ac04b5fb7d7259",
+      "native_pool_ordered_sha256": "8155339389edad1d4054158c89130748c06d918bd7c313c21a99daa17d8fcc36",
+      "source_union_pool_set": {
+        "native_unique_columns": 86980,
+        "incidence_set_sha256": "f325bab8470f99ab886df46ec2df37aa13d6ff82279735f67c93b26ca084f995",
+        "incidence_cost_set_sha256": "b7313df84905c600771b621e709b30a0110bd67777bbdeef1fd827ca955c3411",
+        "recorded_route_set_sha256": "e2888877ad29808f52b5ac8db3bcc7ea9c320f65d7431bfc6de2107e7a0ebf14"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/completion.json",
+        "exists": true,
+        "sha256": "237a42df924618d33fdd4abf4ffe065939d9dee75b3c92b11ca1a516068e91bc",
+        "bytes": 2174
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c3_k20_target_228657.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228657_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/state.json",
+            "exists": true,
+            "sha256": "237a42df924618d33fdd4abf4ffe065939d9dee75b3c92b11ca1a516068e91bc",
+            "bytes": 2174
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/result.json",
+            "exists": true,
+            "sha256": "69558ab2db824b4fb62bb7658b3ddad5427e5e8b3ff882bb8d137ae3b0dfbd5f",
+            "bytes": 5075
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/execution.json",
+            "exists": true,
+            "sha256": "6a6ed33925ae45bd78e70074dd0a8532c2d3780aaeb69ea065a4161b0dc6c4ba",
+            "bytes": 1377
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/stdout.log",
+            "exists": true,
+            "sha256": "68011cbca5ee57f128a8df7816394addb267549d8fa1e38d82cace019b5737d6",
+            "bytes": 5677
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/gurobi.log",
+            "exists": true,
+            "sha256": "29756ca7a3335fc06aa6ecc07ed68a0ebf1697128a610ccf41c90544d1c709ee",
+            "bytes": 5178
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3600.058511018753,
+          "end_to_end_wall_s": 3769.2112540311646
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/result.json",
+      "published_result_sha256": "69558ab2db824b4fb62bb7658b3ddad5427e5e8b3ff882bb8d137ae3b0dfbd5f"
+    },
+    {
+      "case_id": "c4_k25_target",
+      "job_id": "228658",
+      "is_validation": false,
+      "target_cap": 25,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c4_k25_build/attempts/227322_r0/pool.json",
+      "source_result_sha256": "eb89babc16c88c8b0efacaa57e3ef6ddef27ebacbb6285b0b50dde28b19c84d2",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c4_k25_build/attempts/227322_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "db66a8825fcf76f5463d56a4243f4037a3c66a5c755b244025a19265021f2c5c",
+      "native_pool_ordered_sha256": "1372e0ccc8ce68332ed064689100ddef32fed564b140d0e01291fd3ecf3f9c43",
+      "source_union_pool_set": {
+        "native_unique_columns": 100510,
+        "incidence_set_sha256": "71cb3ae2dc7582243a2398bdf41b5abec6b98a4e43f3a1ae3575b5a1ef2999f9",
+        "incidence_cost_set_sha256": "71f4e046c7d4bc4fa5dfac26c9aa552812a64f4a684c3829d9d1c1a530205d28",
+        "recorded_route_set_sha256": "63903cd8620870b437fde725e3c02f34a1a41d297ed80e676de5f8aec7e9741d"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/completion.json",
+        "exists": true,
+        "sha256": "6900fb3884f5f4de88ae7e9b1ac54de388e34bb9737243b7a685c108701be501",
+        "bytes": 2168
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c4_k25_target_228658.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228658_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/state.json",
+            "exists": true,
+            "sha256": "6900fb3884f5f4de88ae7e9b1ac54de388e34bb9737243b7a685c108701be501",
+            "bytes": 2168
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/result.json",
+            "exists": true,
+            "sha256": "521fb3657ba0ecc72df9705146b467ac7bd8ac01164b41ad9aa890fd917ad0dd",
+            "bytes": 5087
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/execution.json",
+            "exists": true,
+            "sha256": "6644dd2d2005f2e635dfd1f7dd871d361ff096003cd019acd6801f33d2c120fb",
+            "bytes": 1371
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/stdout.log",
+            "exists": true,
+            "sha256": "4ae3a99d65017ea50c64750c65e3cbbd9728156c1e6e4a75f7f574575d8c1a14",
+            "bytes": 5000
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/gurobi.log",
+            "exists": true,
+            "sha256": "62389943eeeb98c8de9f8bed2a6835b36d6a3405702f5333f548ae80744421e3",
+            "bytes": 4499
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3600.031075000763,
+          "end_to_end_wall_s": 3750.2046216172166
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/result.json",
+      "published_result_sha256": "521fb3657ba0ecc72df9705146b467ac7bd8ac01164b41ad9aa890fd917ad0dd"
+    },
+    {
+      "case_id": "c5_k20_target",
+      "job_id": "228659",
+      "is_validation": false,
+      "target_cap": 20,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c5_k20_build/attempts/227323_r0/pool.json",
+      "source_result_sha256": "5f1509323e5d049cd6c900ddfd10d3fbe94fade6bc3cde90e88721258b4786a6",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c5_k20_build/attempts/227323_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "80acbd277ed046ea1221af211eea60cc8d4e604c4e8ba08300c12a45395e2e3b",
+      "native_pool_ordered_sha256": "39a37369751c7a1870fe1cceddf49f5a0a7b9e19dc131ca94e881e780653e964",
+      "source_union_pool_set": {
+        "native_unique_columns": 144659,
+        "incidence_set_sha256": "a2bad7afdea1acbda5f6cbcd87b00af3d58204e4982d3cd6b2acb42553937a29",
+        "incidence_cost_set_sha256": "1e1811fda6a812f9b0f5ca79ad5df8aca3a831d520a730ea9adea7ee5903c33e",
+        "recorded_route_set_sha256": "231c6a81c268af703e945f777ae2991ee0b9c91603382fbbe5b50b6cd1fca750"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/completion.json",
+        "exists": true,
+        "sha256": "6d08eac35343f604d3909a879426ebf9f86a7823bdea7bed826a834765ab19d4",
+        "bytes": 2166
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c5_k20_target_228659.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228659_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/state.json",
+            "exists": true,
+            "sha256": "6d08eac35343f604d3909a879426ebf9f86a7823bdea7bed826a834765ab19d4",
+            "bytes": 2166
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/result.json",
+            "exists": true,
+            "sha256": "4637bdef9052a253ee039629a5d3fd54baaef29f40edd9de40defa3b6b75d297",
+            "bytes": 5084
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/execution.json",
+            "exists": true,
+            "sha256": "ccc4614800ad51b65b775ae455782bd3691997e95868bbc659f66c2789623aac",
+            "bytes": 1369
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/stdout.log",
+            "exists": true,
+            "sha256": "0b8e3156f0cc097f317ba7b39d920b5fa5eeb5b397590b53f19f40b7963de7bf",
+            "bytes": 4173
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/gurobi.log",
+            "exists": true,
+            "sha256": "b82567f98a4d8c27e83ab44ec969da9172ffe4c1b75be033129369fc415d7911",
+            "bytes": 3672
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3607.945611000061,
+          "end_to_end_wall_s": 3799.591271094978
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/result.json",
+      "published_result_sha256": "4637bdef9052a253ee039629a5d3fd54baaef29f40edd9de40defa3b6b75d297"
+    },
+    {
+      "case_id": "c5_k25_target",
+      "job_id": "228660",
+      "is_validation": false,
+      "target_cap": 25,
+      "solver_budget_s": 3600,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 7200
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c5_k25_build/attempts/227324_r0/pool.json",
+      "source_result_sha256": "47b488e817dc0a971507076f4ad2a43c5dd1210d677059c4e13a047502acbede",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c5_k25_build/attempts/227324_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "44181c29003ba07793606855e103f2f310752c3ff98690e8e88701485b7fc715",
+      "native_pool_ordered_sha256": "876f4fc2a355625752a9cad872e1e954158172fa47e4944767e42d88c56a4c14",
+      "source_union_pool_set": {
+        "native_unique_columns": 97881,
+        "incidence_set_sha256": "1093c95ea8764dc5ec62956d4677122d98dc48093b7662de1bca342f37c8e2d4",
+        "incidence_cost_set_sha256": "e1eb4c2bd2f8fab33e3dff2de59ab2f48767db328b0fcedd64c713b97afaaa43",
+        "recorded_route_set_sha256": "0d1dffa8ee438e288e49bbe391668b7ea3ae1af7c1e1f23e746e492f6ce15f10"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/completion.json",
+        "exists": true,
+        "sha256": "e5060ba64e451a78ee29f219c922c45a8f441e62aeb4e0df72de670190fbb618",
+        "bytes": 2167
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_c5_k25_target_228660.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228660_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/state.json",
+            "exists": true,
+            "sha256": "e5060ba64e451a78ee29f219c922c45a8f441e62aeb4e0df72de670190fbb618",
+            "bytes": 2167
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/result.json",
+            "exists": true,
+            "sha256": "84f52e572b0fbf08fa450c2234d79291631c5140f96f11f5fea241e7807acc2c",
+            "bytes": 5075
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/execution.json",
+            "exists": true,
+            "sha256": "2fc0806bc5d1e2f78cb089c1e01c3fca9259047ba37266da2927194f90145fd0",
+            "bytes": 1370
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/stdout.log",
+            "exists": true,
+            "sha256": "4f2a35e4c3e62a0fa44af7777f097901d1ce4deaf947704fa758fc01f742725f",
+            "bytes": 4405
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/gurobi.log",
+            "exists": true,
+            "sha256": "aa39d6a74d885aabb12eb3846f9c778c214758c990397c2500b81650c88b1b4a",
+            "bytes": 3906
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "unresolved",
+          "result_identity_verified": true,
+          "solver_status": "TIME_LIMIT",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3600.023684024811,
+          "end_to_end_wall_s": 3741.502865670016
+        }
+      ],
+      "proof_classification": "unresolved",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/result.json",
+      "published_result_sha256": "84f52e572b0fbf08fa450c2234d79291631c5140f96f11f5fea241e7807acc2c"
+    }
+  ],
+  "validation": [
+    {
+      "case_id": "validation_feasible",
+      "job_id": "228618",
+      "is_validation": true,
+      "target_cap": 119,
+      "solver_budget_s": 60,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 1800
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c1_k15_build/attempts/227315_r0/pool.json",
+      "source_result_sha256": "cf2ffc64e9ae2ccce6cc62a29609dba7c6d2ef48a962e7de051331ad97dff2e7",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c1_k15_build/attempts/227315_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "74eba68adf28cb552fd98d1021b16fa6c0309c5889a1b8e4031e9d0b8c4bf33a",
+      "native_pool_ordered_sha256": "38660b56f6ffa3a0a64d0da9f887f406de09234d665de6e686e483b0daa751b6",
+      "source_union_pool_set": {
+        "native_unique_columns": 100861,
+        "incidence_set_sha256": "47c1def1ee95d5d9f365728d1a5f3f0c040aa03800ae9eaf37e9461dfa1406d8",
+        "incidence_cost_set_sha256": "42827519bd4343fc594b62f84d640d1e8fbcb8db5b815d8972ed6e9c699e90e0",
+        "recorded_route_set_sha256": "cc44ef311e2b5472a21e794a45fd52cbbf38f20d03374172d462604966ac6bc0"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/completion.json",
+        "exists": true,
+        "sha256": "1418c76d0511d7cf1c83e0cc8af901eafc3925dce44b522ae38ff64a5fbac8ef",
+        "bytes": 2222
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_validation_feasible_228618.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228618_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/state.json",
+            "exists": true,
+            "sha256": "1418c76d0511d7cf1c83e0cc8af901eafc3925dce44b522ae38ff64a5fbac8ef",
+            "bytes": 2222
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/result.json",
+            "exists": true,
+            "sha256": "5e6c736d0a52e99036c81004b295a1fbacc1f11c83817c965bf84f70174362d6",
+            "bytes": 371322
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/execution.json",
+            "exists": true,
+            "sha256": "79fbff229743fa641b262a6e9f8493429aa2ae997c49e845812514527c2e7ee4",
+            "bytes": 1385
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/stdout.log",
+            "exists": true,
+            "sha256": "4e8c9bc17385a5c73e91d6c470209554ebcfa7b030aabd588d0793970fc6438b",
+            "bytes": 1887
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/gurobi.log",
+            "exists": true,
+            "sha256": "d061b50af92c15c2bd4ad35af675127c3d649ecf2759283d3442a0297a559513",
+            "bytes": 1341
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "target_feasible_in_validated_finite_pool",
+          "result_identity_verified": true,
+          "solver_status": "OPTIMAL",
+          "solution_count": 1,
+          "buses": 119,
+          "physical_replay_validated": true,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 0.14431381225585938,
+          "end_to_end_wall_s": 284.78488331404515
+        }
+      ],
+      "proof_classification": "target_feasible_in_validated_finite_pool",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_feasible/attempts/228618_r0/result.json",
+      "published_result_sha256": "5e6c736d0a52e99036c81004b295a1fbacc1f11c83817c965bf84f70174362d6"
+    },
+    {
+      "case_id": "validation_infeasible",
+      "job_id": "228619",
+      "is_validation": true,
+      "target_cap": 1,
+      "solver_budget_s": 60,
+      "resources": {
+        "cpus": 8,
+        "mem": "24G",
+        "allocation_s": 1800
+      },
+      "source_result_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c1_k20_build/attempts/227316_r0/pool.json",
+      "source_result_sha256": "672f71c87793748bd7d1e2549bbf8dd4ac9e923d3c41c64e3c58d3f6f5284726",
+      "source_journal_path": "/home/nc437/ladder-lite/compact_pool_union_20260915/cases/c1_k20_build/attempts/227316_r0/pool.json.columns.jsonl",
+      "source_journal_sha256": "73c9ae895cbe9df21afbe1fd677d9d0f631cc41fbb767eed10c4263073b629b5",
+      "native_pool_ordered_sha256": "22dcaac9f0038f5ca23d1c6063f3ab7fadd0da0d197d76f99d19376f55556a69",
+      "source_union_pool_set": {
+        "native_unique_columns": 62122,
+        "incidence_set_sha256": "96242ff8f30913d6fb936819ea50acf39053de0d701f3b534975ff86a095d2ae",
+        "incidence_cost_set_sha256": "870b465fcf6b01f6d129ce4b11babf7cb8d6877c83cddb8451d3e577bcbe7118",
+        "recorded_route_set_sha256": "120c69338c5e4e62cc0f4657ecbebe63e3e62f9785fd161473ac48e5df8c10ef"
+      },
+      "completion": {
+        "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/completion.json",
+        "exists": true,
+        "sha256": "841a1dd1289822e4eeb95ea8414b561a4b9979008fc2962cf76eb8ce6f67a5ef",
+        "bytes": 2236
+      },
+      "startup": {
+        "full_size_license_probe_pass_marker": true,
+        "full_size_probe_pass_count_job_log": 1,
+        "restricted_license_message_observed": false,
+        "license_error_observed": false,
+        "log": {
+          "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/logs/utf_validation_infeasible_228619.out",
+          "exists": true,
+          "sha256": "3167d08b355f120aa570bff0d42636c8c4b2000aaa3cbdf64fc2a264a13aac6f",
+          "bytes": 187
+        },
+        "job_log_can_span_restarts": true
+      },
+      "attempts": [
+        {
+          "attempt_tag": "228619_r0",
+          "restart_count": 0,
+          "attempt_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0",
+          "attempt_exists": true,
+          "state": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/state.json",
+            "exists": true,
+            "sha256": "841a1dd1289822e4eeb95ea8414b561a4b9979008fc2962cf76eb8ce6f67a5ef",
+            "bytes": 2236
+          },
+          "worker_status": "finished",
+          "result": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/result.json",
+            "exists": true,
+            "sha256": "108dbb09f5c59e27a3f0ea1406a266ce6ed3d17bcd079a24c8539608a8729bc5",
+            "bytes": 5080
+          },
+          "execution": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/execution.json",
+            "exists": true,
+            "sha256": "63e32b43dc0ced73df0001a3f3d58fcbf4ad039c913e561ffc8bffc9b39493b7",
+            "bytes": 1392
+          },
+          "stdout": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/stdout.log",
+            "exists": true,
+            "sha256": "f552ebb48b2c2803fd4e1639e4538925497f6e0086aba3cdc64606990a0bd4bd",
+            "bytes": 1922
+          },
+          "stderr": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/stderr.log",
+            "exists": true,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "bytes": 0
+          },
+          "gurobi_log": {
+            "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/gurobi.log",
+            "exists": true,
+            "sha256": "4b13defc595a0bd10452f6ca3243d9a6afe3e8d90b9f435153853e8d945fc612",
+            "bytes": 1423
+          },
+          "full_size_license_probe_pass_inferred_from_worker_entry": true,
+          "license_inference_basis": "worker.sub is set -e and runs worker only after full-size 2001-variable probe succeeds",
+          "proof_classification": "target_infeasible_in_validated_finite_pool",
+          "result_identity_verified": true,
+          "solver_status": "INFEASIBLE",
+          "solution_count": 0,
+          "buses": null,
+          "physical_replay_validated": false,
+          "numerically_rejected_covers": 0,
+          "solver_runtime_s": 3.2016518115997314,
+          "end_to_end_wall_s": 126.83896227180958
+        }
+      ],
+      "proof_classification": "target_infeasible_in_validated_finite_pool",
+      "proof_scope": "Only target-cap feasibility/infeasibility in the exact validated finite pool; no fleet-minimum or charging-optimality claim",
+      "scheduler_status_is_proof": false,
+      "completion_identity_verified": true,
+      "published_result_path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/validation_infeasible/attempts/228619_r0/result.json",
+      "published_result_sha256": "108dbb09f5c59e27a3f0ea1406a266ce6ed3d17bcd079a24c8539608a8729bc5"
+    }
+  ],
+  "scheduler": {
+    "accounting": {
+      "returncode": 0,
+      "stdout": "228618|COMPLETED|0:0|300|8|04:51.098||snavely-cpu-14\n228618.batch|COMPLETED|0:0|300|8|04:51.098|2287920K|snavely-cpu-14\n228618.extern|COMPLETED|0:0|300|8|00:00:00||snavely-cpu-14\n228619|COMPLETED|0:0|138|8|02:06.988||snavely-cpu-16\n228619.batch|COMPLETED|0:0|138|8|02:06.988|1358920K|snavely-cpu-16\n228619.extern|COMPLETED|0:0|139|8|00:00:00||snavely-cpu-16\n228654|COMPLETED|0:0|3874|8|04:50:27||snavely-cpu-14\n228654.batch|COMPLETED|0:0|3874|8|04:50:27|5484652K|snavely-cpu-14\n228654.extern|COMPLETED|0:0|3874|8|00:00:00||snavely-cpu-14\n228655|COMPLETED|0:0|3815|8|05:35:38||snavely-cpu-16\n228655.batch|COMPLETED|0:0|3815|8|05:35:38|6253400K|snavely-cpu-16\n228655.extern|COMPLETED|0:0|3815|8|00:00:00||snavely-cpu-16\n228656|COMPLETED|0:0|3860|8|02:15:57||snavely-cpu-15\n228656.batch|COMPLETED|0:0|3860|8|02:15:57|6080292K|snavely-cpu-15\n228656.extern|COMPLETED|0:0|3860|8|00:00:00||snavely-cpu-15\n228657|COMPLETED|0:0|3791|8|06:54:34||snavely-cpu-15\n228657.batch|COMPLETED|0:0|3791|8|06:54:34|5847524K|snavely-cpu-15\n228657.extern|COMPLETED|0:0|3791|8|00:00:00||snavely-cpu-15\n228658|COMPLETED|0:0|3765|8|04:15:21||unicorn-cpu-01\n228658.batch|COMPLETED|0:0|3765|8|04:15:21|5161688K|unicorn-cpu-01\n228658.extern|COMPLETED|0:0|3765|8|00:00:00||unicorn-cpu-01\n228659|COMPLETED|0:0|3814|8|01:03:28||unicorn-cpu-01\n228659.batch|COMPLETED|0:0|3814|8|01:03:28|4502936K|unicorn-cpu-01\n228659.extern|COMPLETED|0:0|3814|8|00:00:00||unicorn-cpu-01\n228660|COMPLETED|0:0|3748|8|02:10:05||sonic-cpu-01\n228660.batch|COMPLETED|0:0|3748|8|02:10:05|5142040K|sonic-cpu-01\n228660.extern|COMPLETED|0:0|3749|8|00:00:00||sonic-cpu-01\n",
+      "stderr": ""
+    },
+    "queue": {
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "mutable_log_hashes_scope": "point-in-time bytes only; active logs may grow",
+  "no_job_mutations": true
+}

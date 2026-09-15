@@ -1,0 +1,28 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T161748Z.json",
+  "snapshot_sha256": "6c9bf0b1c1fa8a006c38ae65f655c60c15cebfd60889904647c720bde93baa57",
+  "collection": {
+    "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T161748Z.json",
+    "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T151636Z.json",
+    "started_utc": "2026-09-15T16:17:48.385605+00:00",
+    "returncode": 0,
+    "elapsed_s": 564.2062981128693,
+    "stderr_path": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T161748Z_stderr.txt",
+    "finished_utc": "2026-09-15T16:27:12.596442+00:00"
+  },
+  "new_mip_results": 2,
+  "new_target_tests": 7,
+  "all_target_tests_unresolved": true,
+  "queue_running": 27,
+  "queue_pending_true_dependencies": 49,
+  "preemption_attempt_records": 981,
+  "job_mutations": 0,
+  "register_records": 3348,
+  "register_groups": 78,
+  "doc_update": "outputs/research_questions_20260915/update_20260915T1624Z",
+  "source_validation": [
+    "longer_gap_validation.json",
+    "chain_extension_table_validation.json",
+    "compact_union_validation.json"
+  ]
+}

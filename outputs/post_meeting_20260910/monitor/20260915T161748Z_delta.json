@@ -1,0 +1,310 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T151636Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T161748Z.json",
+  "timestamp_utc": "2026-09-15T16:17:48.513881+00:00",
+  "changed_results": [
+    {
+      "campaign": "continuation_gaps2_20260915",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/continuation_gaps2_20260915/cases/w1_k27_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 27,
+        "fleet_bound": 27.0,
+        "fleet_proven": true,
+        "physical_replay_validated": true,
+        "runtime_s": 12611.36743593216,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "a826cbf5df9077b511e0dbf94e2b9c16b0b45553dec38cd171bd5ca7216e24a4",
+      "payload_sha256": "a826cbf5df9077b511e0dbf94e2b9c16b0b45553dec38cd171bd5ca7216e24a4"
+    },
+    {
+      "campaign": "continuation_gaps2_20260915",
+      "stage": "mip",
+      "path": "/home/nc437/ladder-lite/continuation_gaps2_20260915/cases/w5_k27_longmip/mip_result.json",
+      "new_path": true,
+      "summary": {
+        "buses": 29,
+        "fleet_bound": 26.00000000000019,
+        "fleet_proven": false,
+        "physical_replay_validated": true,
+        "runtime_s": 12613.389798879623,
+        "status_name": "TIME_LIMIT",
+        "final": {}
+      },
+      "sha256": "887375ff9aebdc5e2035479f7d93dbd22a210334d62769011e15a4bfbea4091b",
+      "payload_sha256": "887375ff9aebdc5e2035479f7d93dbd22a210334d62769011e15a4bfbea4091b"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c1_k15_target/attempts/228654_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3600.1645741462708
+      },
+      "sha256": "e1237693521c0f8b2f4012d1884d17136de8eed5767fcb101e88b273207fd4db",
+      "payload_sha256": "e1237693521c0f8b2f4012d1884d17136de8eed5767fcb101e88b273207fd4db"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k20_target/attempts/228655_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3600.1390171051025
+      },
+      "sha256": "fd8ac5596fe9edeb8131c27189607cf48ceb71babd12eb2ae82e643879aa4dd0",
+      "payload_sha256": "fd8ac5596fe9edeb8131c27189607cf48ceb71babd12eb2ae82e643879aa4dd0"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c2_k25_target/attempts/228656_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3600.3703989982605
+      },
+      "sha256": "a87093a3f80d05e42cb93e2728db9ab33fdb165980a4dc0bdf7014d0aa605773",
+      "payload_sha256": "a87093a3f80d05e42cb93e2728db9ab33fdb165980a4dc0bdf7014d0aa605773"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c3_k20_target/attempts/228657_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3600.058511018753
+      },
+      "sha256": "69558ab2db824b4fb62bb7658b3ddad5427e5e8b3ff882bb8d137ae3b0dfbd5f",
+      "payload_sha256": "69558ab2db824b4fb62bb7658b3ddad5427e5e8b3ff882bb8d137ae3b0dfbd5f"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c4_k25_target/attempts/228658_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3600.031075000763
+      },
+      "sha256": "521fb3657ba0ecc72df9705146b467ac7bd8ac01164b41ad9aa890fd917ad0dd",
+      "payload_sha256": "521fb3657ba0ecc72df9705146b467ac7bd8ac01164b41ad9aa890fd917ad0dd"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k20_target/attempts/228659_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3607.945611000061
+      },
+      "sha256": "4637bdef9052a253ee039629a5d3fd54baaef29f40edd9de40defa3b6b75d297",
+      "payload_sha256": "4637bdef9052a253ee039629a5d3fd54baaef29f40edd9de40defa3b6b75d297"
+    },
+    {
+      "campaign": "union_target_feasibility_20260915",
+      "stage": "target_feasibility",
+      "path": "/home/nc437/ladder-lite/union_target_feasibility_20260915/cases/c5_k25_target/attempts/228660_r0/result.json",
+      "new_path": true,
+      "summary": {
+        "buses": null,
+        "physical_replay_validated": false,
+        "final": {},
+        "solver_status": "TIME_LIMIT",
+        "proof_classification": "unresolved",
+        "solver_runtime_s": 3600.023684024811
+      },
+      "sha256": "84f52e572b0fbf08fa450c2234d79291631c5140f96f11f5fea241e7807acc2c",
+      "payload_sha256": "84f52e572b0fbf08fa450c2234d79291631c5140f96f11f5fea241e7807acc2c"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "227897",
+      "case_id": "w1_k27_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "227898",
+      "case_id": "w5_k27_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228654",
+      "case_id": "c1_k15_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228655",
+      "case_id": "c2_k20_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228656",
+      "case_id": "c2_k25_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228657",
+      "case_id": "c3_k20_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228658",
+      "case_id": "c4_k25_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228659",
+      "case_id": "c5_k20_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228660",
+      "case_id": "c5_k25_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "227897",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-11"
+      },
+      "after": null
+    },
+    {
+      "job": "227898",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      },
+      "after": null
+    },
+    {
+      "job": "228654",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      },
+      "after": null
+    },
+    {
+      "job": "228655",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-16"
+      },
+      "after": null
+    },
+    {
+      "job": "228656",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      },
+      "after": null
+    },
+    {
+      "job": "228657",
+      "before": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      },
+      "after": null
+    },
+    {
+      "job": "228658",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "228659",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "228660",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      },
+      "after": null
+    }
+  ]
+}
