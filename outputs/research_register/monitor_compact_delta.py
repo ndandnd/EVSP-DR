@@ -14,6 +14,8 @@ def flatten(d):
   diagnostic=c.get('workflow',{}).get('diagnostic_collection',{})
   for i,r in enumerate(diagnostic.get('errors',[])):
    out[campaign,'diagnostic_collection_error',r.get('case_id',str(i))]=r
+  for r in c.get('workflow',{}).get('operational_graph_recovery',{}).get('cases',[]):
+   out[campaign,'operational_graph_recovery',r['case_id']]=r
  return out
 def digest(v):return v.get('sha256') or hashlib.sha256(json.dumps(v,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 a,b=flatten(old),flatten(new);changed=[]
@@ -24,6 +26,12 @@ for key,r in b.items():
   s['final']={k:v for k,v in (d.get('final')or{}).items() if not isinstance(v,(list,dict))}
   if key[1]=='pricing_calls':
    s.update(case_id=d.get('case_id'),selector=d.get('selector'),pricing_call=d.get('pricing_call'),proof_scope=d.get('proof_scope'))
+  if key[1]=='operational_graph_recovery':
+   completion=(d.get('completion') or {}).get('value') or {}
+   s.update(case_id=d['case_id'],completion_status=completion.get('status'),
+            graph_rebuilt=completion.get('graph_rebuilt'),manifest_matches=d.get('manifest_matches'),
+            attempts=[{'attempt':a['attempt'],'status':a.get('records',{}).get('execution.json',{}).get('value',{}).get('status')}
+                      for a in d.get('attempts',[])],proof_scope='Operational graph preparation; no optimization endpoint inferred.')
   changed.append({'campaign':key[0],'stage':key[1],'path':key[2],'new_path':prior is None,'summary':s,'sha256':r.get('sha256'),'payload_sha256':digest(r)})
 prev={r['attempt_key']:r for r in old.get('mip_preemption_study',{}).get('attempts',[])};states=[]
 for r in new.get('mip_preemption_study',{}).get('attempts',[]):

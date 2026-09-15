@@ -1,3 +1,19 @@
+## 14 September, 21:13 EDT — all k8/k10 richer-start targets recovered
+
+Snapshot `20260915T010508Z` (previous000359) completed01:13:06 UTC in478.5s; SHA `9fe87b1841e1fb66d121315b5c2ba766677ed378532a402cc5c57f46479a4ee5`. Preemption study857 attempts; no new confirmed preemption or MIP execution failure. Queue32 running/32 solver waits; held33 excluded. No new campaign, submission, cancellation, requeue or solver edit.
+
+Compact campaign30 certified CGs and25 MIP endpoints, all target/proved/replayed. All24 k8/k10 cases are complete; C6 k15 core512 matches15, other eleven k15 MIPs pending. Cross-audit checks24 old/new comparisons for input/reference/price/deadhead hashes, CG revision, physical/discretization/master/column settings and certificates. Thirteen old pools provably exclude target; both richer pools reach it. Maximum weighted LP spread0.000001939945. This diagnoses those13 as generated-pool limitations, not a full-model target impossibility. Do not extend that conclusion to old open gaps or assume all k15 cases will succeed. Audit in `pool_limitation_evidence.json`.
+
+Earlier seed campaign complete:36 CG(35cert/1cap),36 MIP(9target/13pool-proved miss/14open). Eighteen pairs:11integer-lower/7ties. k15 integer/LP fleets16/19,15/18,15/17,16/18,15/16,16/18. Both columns are integer outcomes. C6k15 late result from prior snapshot is now fully collected; no duplicate endpoint.
+
+C6 k26 new26/proved,201073-column pool, stage1 runtime1688.38s and total3608.43s; charging TIME_LIMIT. Individual replay,57 duplicate trip assignments, no duplicate-removal/shared-capacity validation. C3 k27 CG certified118.3min; MIP pending. Largest one-hour matches24/22/26/23/24/26; separate longer C2 k25 remains25. Original59CG/58MIP totals unchanged; C5k25 is a late scheduler-only result, retain until detailed collection.
+
+C1k28 original graph187967_2/raw188009 FAILED124 after43271s (12:01:11), ending20:41:26EDT. Previously queued gate189917 started00:41:40UTC with86400s watchdog and is running. Other17 original graphs validated. This is graph preprocessing timeout/recovery, not a pricing certificate or MIP result. Keep actual input dependencies; no manual retry. `graph_timeout_recovery.json` binds scheduler and manifest/execution evidence. Compact delta now includes operational graph-case changes, tested on the three changed cases (C1k28 start,C4k26/C4k27 validated), so future checks do not miss graph changes.
+
+Four fixed-state capacity calls still pricing, zero collector errors/no endpoints. Prior prefix wrapper failures and their corrected attempts remain separated. Nine remaining-gap MIPs still active.
+
+Register3053 rows/67 groups retains all6 supplements.318 core plus132 extra endpoints checked;13 workbook views/0formulaerrors. Before baseline reused only after exact saved-workbook hash match to previous inspected artifact. Current Doc tables/explanation updated in place; reference/later content, figure tabs and Slides preserved. Source: `outputs/overnight_evening_20260914/status_20260915T010508Z/CURRENT_STATUS.md`. Keep hourly monitoring; do not duplicate finished controls.
+
 ## 14 September, 20:12 EDT — 26-bus match and compact-seed results
 
 Snapshot `20260915T000359Z` completed at00:12:22 UTC in502.8s, SHA `8050a0e803145c7cb184bd2fa1b25694721e112179ab0fc5d65f878a3d59ec3f`; previous225805. Preemption study848 attempts. No new confirmed preemption, MIP execution failure or unsatisfiable dependency. Queue49 running,44 solver waits,2 conditional checks; held33 excluded. No new submission/retry/cancellation/solver change.

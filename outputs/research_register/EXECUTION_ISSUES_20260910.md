@@ -1,3 +1,9 @@
+## 14 September, 20:41 EDT — C1 k28 graph timeout; planned recovery active
+
+The original graph-preparation task187967_2 (raw allocation188009) ended FAILED with exit124 after12:01:11 on unicorn-cpu-73. Its previously submitted conditional gate189917 started the86400-second recovery at20:41:40EDT. No new job was submitted by this monitoring check. The C1 k28 CG correctly waits for a valid graph and its preceding chain step. Other chains remain active. This is an operational graph-preparation timeout; no CG or MIP result is inferred.
+
+[Scoped scheduler, manifest and recovery execution evidence](../overnight_evening_20260914/status_20260915T010508Z/graph_timeout_recovery.json). Preserve the failed original and distinct recovery attempt; do not requeue or bypass dependencies while recovery runs.
+
 ## Newly identified 14 September, 17:02 EDT — capacity CG preemption with stale worker flag
 
 **Case:** capacity_pricing_boundary_20260914 / k1_13407_flat_capacity_prefix_memo, job189169, attempt189169_r0. Slurm records PREEMPTED from13:02:08 to15:22:18EDT (8,410s), Restarts0. The initial worker_status.json still says running, returncode0 and empty stages; it was never finalized. Those fields do not establish success or a currently active job.

@@ -1,3 +1,5 @@
+**Latest results,21:13 EDT:** [All k8/k10 targets recovered and the pool-limitation diagnosis](status_20260915T010508Z/CURRENT_STATUS.md). Earlier dated notices below are preserved snapshots.
+
 **Latest verified results, 20:12 EDT:** [26-bus match and 14 completed new compact-seed MIPs](status_20260915T000359Z/CURRENT_STATUS.md). The earlier five-result preview below is retained with its timestamp.
 
 **First results, 19:35 EDT:** [Five completed new MIPs all match their targets](FIRST_RESULTS.md). This is a completion-selected subset, not the full experiment.

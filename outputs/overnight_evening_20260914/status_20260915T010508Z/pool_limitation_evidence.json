@@ -1,0 +1,489 @@
+{
+  "snapshot": "outputs/post_meeting_20260910/monitor/20260915T010508Z.json",
+  "comparisons": [
+    {
+      "old_case": "c1_k08_integer",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_integer_mip/mip_result.json",
+      "old_result_sha256": "9d4bde57f9a7b7e4d1c0a5577da7a1765f0766ee51786c3a2972271a781b8b9f",
+      "core_result_sha256": "9275871197b54d20a4bdbd597d6c2dc922c5d20c13fc56543d2684bd81040cf0",
+      "core512_result_sha256": "243baa47022f27f92afb166dc52a70030a45b171961f1096cae6497eb0fe86f2",
+      "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800383.6879776391,
+        800383.6879776372,
+        800383.687977637
+      ],
+      "weighted_lp_range": 2.0954757928848267e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c1_k08_lpweight",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k08_lpweight_mip/mip_result.json",
+      "old_result_sha256": "f82e2e500d9c772f7c789b726f2fb86851ccb4223cf0667f3bea1ff5f9b250ee",
+      "core_result_sha256": "9275871197b54d20a4bdbd597d6c2dc922c5d20c13fc56543d2684bd81040cf0",
+      "core512_result_sha256": "243baa47022f27f92afb166dc52a70030a45b171961f1096cae6497eb0fe86f2",
+      "input_sha256": "cca5b6ca0c9af9eeb20adb414e300a130471e9e802ef6543a85b9d3ba2860f9d",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800383.6879776367,
+        800383.6879776372,
+        800383.687977637
+      ],
+      "weighted_lp_range": 4.656612873077393e-10,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c1_k10_integer",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 11.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_integer_mip/mip_result.json",
+      "old_result_sha256": "eb5ef0f845361dcd4108050c75f0a65b57e028cd94de36f7bb3f077f7afe7ae7",
+      "core_result_sha256": "441b4ef7f404f67101ddec01f2198c090fe34360a2799d48a9bf448830d9dfd7",
+      "core512_result_sha256": "c0e4b92a2e1ba65921f81cb784ccf4a4d3b4b9fb9dc3b3f5bdcc12cbe4ec52da",
+      "input_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000511.2045748285,
+        1000511.2045748308,
+        1000511.2045748363
+      ],
+      "weighted_lp_range": 7.799826562404633e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c1_k10_lpweight",
+      "target_k": 10,
+      "old_buses": 12,
+      "old_pool_bound": 10.000000000000032,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c1_k10_lpweight_mip/mip_result.json",
+      "old_result_sha256": "6c0813647b5088838a7e53ab7fbcb0b293e434835f7d7088713d33aca3d65c58",
+      "core_result_sha256": "441b4ef7f404f67101ddec01f2198c090fe34360a2799d48a9bf448830d9dfd7",
+      "core512_result_sha256": "c0e4b92a2e1ba65921f81cb784ccf4a4d3b4b9fb9dc3b3f5bdcc12cbe4ec52da",
+      "input_sha256": "c54f31750af49fb66f0bf21995d02d01a5520e37f13152bc95b4aff17ecef1f3",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000511.2045748427,
+        1000511.2045748308,
+        1000511.2045748363
+      ],
+      "weighted_lp_range": 1.1874362826347351e-08,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c2_k08_integer",
+      "target_k": 8,
+      "old_buses": 8,
+      "old_pool_bound": 8.0,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_integer_mip/mip_result.json",
+      "old_result_sha256": "b41668b2832d43be51e2fad15655aac570060c615d464ac95ab91c68821749bd",
+      "core_result_sha256": "13ccc820bfe41691c0a40012299531e0808fe24e503f03c12207f4d09e0baa29",
+      "core512_result_sha256": "0810c80d406a776fe30727b5159491682acaece9c8b47cebd6b17f586da3ac4f",
+      "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800235.9144683575,
+        800235.9144683575,
+        800235.9144683565
+      ],
+      "weighted_lp_range": 9.313225746154785e-10,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c2_k08_lpweight",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k08_lpweight_mip/mip_result.json",
+      "old_result_sha256": "9b9b78ec0865223fd2a52aee74e1ed3a7a46ccb735dea363723c8330064136ea",
+      "core_result_sha256": "13ccc820bfe41691c0a40012299531e0808fe24e503f03c12207f4d09e0baa29",
+      "core512_result_sha256": "0810c80d406a776fe30727b5159491682acaece9c8b47cebd6b17f586da3ac4f",
+      "input_sha256": "c1dbe1dd15d20979799c68d01430a5fd0eddc2ca3ced3f46bd8522123e6c480d",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800235.9144683562,
+        800235.9144683575,
+        800235.9144683565
+      ],
+      "weighted_lp_range": 1.280568540096283e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c2_k10_integer",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 10.000000000000021,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k10_integer_mip/mip_result.json",
+      "old_result_sha256": "771c66b50e3b6df6548c5408650fab32ddd7af7ca2dbd79743a989f0d79001bb",
+      "core_result_sha256": "015e6df169cd268d05962888393e3f1dcf20991a8bfe3b5daeeb04cc664eecbc",
+      "core512_result_sha256": "c345fcac58167167cf3428536f381491ab99979a307e1c37fca9c6e137910bc8",
+      "input_sha256": "969e49b79b454241e1f4116e405aebdf117dc6adac5497854cf4d7196166a6d6",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000371.1457444404,
+        1000371.1457444371,
+        1000371.1457444396
+      ],
+      "weighted_lp_range": 3.259629011154175e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c2_k10_lpweight",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 10.000000000000007,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c2_k10_lpweight_mip/mip_result.json",
+      "old_result_sha256": "fc5c7f1f68c7875ab189fd759b990ffb5d6d4b8f885defd2bd0c32ae4405c7ff",
+      "core_result_sha256": "015e6df169cd268d05962888393e3f1dcf20991a8bfe3b5daeeb04cc664eecbc",
+      "core512_result_sha256": "c345fcac58167167cf3428536f381491ab99979a307e1c37fca9c6e137910bc8",
+      "input_sha256": "969e49b79b454241e1f4116e405aebdf117dc6adac5497854cf4d7196166a6d6",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000371.1457444661,
+        1000371.1457444371,
+        1000371.1457444396
+      ],
+      "weighted_lp_range": 2.898741513490677e-08,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c3_k08_integer",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_integer_mip/mip_result.json",
+      "old_result_sha256": "708351a947b1dd3a0449f052c70e293616e7ebd990d16e245d381f62a9e62993",
+      "core_result_sha256": "328eca1007bcc0855344ba48a24743aafecb7d09dec4536efa90ce14259c68de",
+      "core512_result_sha256": "061d2cdf6ff5701fa753515aba9190e63cec460087957776a1f55f6fc7f47842",
+      "input_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800212.6874705863,
+        800212.6874725138,
+        800212.6874725262
+      ],
+      "weighted_lp_range": 1.9399449229240417e-06,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c3_k08_lpweight",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k08_lpweight_mip/mip_result.json",
+      "old_result_sha256": "2a0c0aa542d602955933c38e85a606a4f3b015eee6cd6380e9387f424c159ad5",
+      "core_result_sha256": "328eca1007bcc0855344ba48a24743aafecb7d09dec4536efa90ce14259c68de",
+      "core512_result_sha256": "061d2cdf6ff5701fa753515aba9190e63cec460087957776a1f55f6fc7f47842",
+      "input_sha256": "9d1d4ed1ab86dfa3ae09541180d1a67e612d5473d9964db36b08e9ebce72cd2b",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800212.6874719345,
+        800212.6874725138,
+        800212.6874725262
+      ],
+      "weighted_lp_range": 5.917390808463097e-07,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c3_k10_integer",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 10.000000000000004,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k10_integer_mip/mip_result.json",
+      "old_result_sha256": "32d7f24e84c2aa09fdb19d80f4834bb6d5bc201cfc40d5621a3bff7cbf745551",
+      "core_result_sha256": "2bf1eea9c3bde04b3128fcc044b1c7940f763a1c480921e1dcfac17c01f8b338",
+      "core512_result_sha256": "4816c4ee51bdb79fc4c82a9c3246a9fdc9ce982524f7577f787a889ec20853ae",
+      "input_sha256": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000316.8231857823,
+        1000316.8231857882,
+        1000316.8231857831
+      ],
+      "weighted_lp_range": 5.9371814131736755e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c3_k10_lpweight",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 10.000000000000009,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c3_k10_lpweight_mip/mip_result.json",
+      "old_result_sha256": "5a30fac9863c582f318af19d750e29798ceceb1898f2002178c282e75da90b37",
+      "core_result_sha256": "2bf1eea9c3bde04b3128fcc044b1c7940f763a1c480921e1dcfac17c01f8b338",
+      "core512_result_sha256": "4816c4ee51bdb79fc4c82a9c3246a9fdc9ce982524f7577f787a889ec20853ae",
+      "input_sha256": "0a24efed4fe106a7a0e1d7038964c976e3a46ea62027e1ce879bc151f3a2b18d",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000316.823185783,
+        1000316.8231857882,
+        1000316.8231857831
+      ],
+      "weighted_lp_range": 5.238689482212067e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c4_k08_integer",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_integer_mip/mip_result.json",
+      "old_result_sha256": "7f038e38b03ddce388eb9ecd44129386f3aefec9d0589bdc38a3107bf0758248",
+      "core_result_sha256": "b94a1627a4b583ea67eef4d39de97654b73692aa3e0bed51fd44eb98b696e82e",
+      "core512_result_sha256": "be29acd59932360cdf89fccd30f439325cc7667f0617245d14cff8e6e6620827",
+      "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800359.8182244824,
+        800359.8182244807,
+        800359.8182244881
+      ],
+      "weighted_lp_range": 7.334165275096893e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c4_k08_lpweight",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k08_lpweight_mip/mip_result.json",
+      "old_result_sha256": "29dee90a820b03f1488144562ad7a3fc7ed40c7b70080e7ceac4f83d21128c00",
+      "core_result_sha256": "b94a1627a4b583ea67eef4d39de97654b73692aa3e0bed51fd44eb98b696e82e",
+      "core512_result_sha256": "be29acd59932360cdf89fccd30f439325cc7667f0617245d14cff8e6e6620827",
+      "input_sha256": "b0c454201f81795f6283f17128487a10d54062056e6283b333d70a10f46dd353",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800359.8182244855,
+        800359.8182244807,
+        800359.8182244881
+      ],
+      "weighted_lp_range": 7.334165275096893e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c4_k10_integer",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 11.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_integer_mip/mip_result.json",
+      "old_result_sha256": "71290209b3abe3ba9c51005795cc7df7960062c9b130dca8560ec00644da9bc9",
+      "core_result_sha256": "668ea80770feccc36cfa24ed02a569ee691f1a1dccaefc22fc402dfd49af4238",
+      "core512_result_sha256": "1476c07bd9c7d6f48f9112c5cb680751167c9712a5c8162b7ade7b723d99b3ee",
+      "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000426.2710758048,
+        1000426.2710758002,
+        1000426.2710758033
+      ],
+      "weighted_lp_range": 4.6566128730773926e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c4_k10_lpweight",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 11.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c4_k10_lpweight_mip/mip_result.json",
+      "old_result_sha256": "66350fd64e508022b1740f83f4849add762c246ead5e9fb7731a71c5d9da3d57",
+      "core_result_sha256": "668ea80770feccc36cfa24ed02a569ee691f1a1dccaefc22fc402dfd49af4238",
+      "core512_result_sha256": "1476c07bd9c7d6f48f9112c5cb680751167c9712a5c8162b7ade7b723d99b3ee",
+      "input_sha256": "c186ded0e8b4d7834e0ba51f7ce14cc525fa7b62d38c255ca1ecd1afca9dbf08",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000426.271075802,
+        1000426.2710758002,
+        1000426.2710758033
+      ],
+      "weighted_lp_range": 3.14321368932724e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c5_k08_integer",
+      "target_k": 8,
+      "old_buses": 8,
+      "old_pool_bound": 8.0,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_integer_mip/mip_result.json",
+      "old_result_sha256": "f3c7240a3293a0d030bd2c91dac79b4a7a649c47cad23f098528dd4b39e4fd69",
+      "core_result_sha256": "c0ef20be3e6967d450720733a5175e9b6a1ab871fe252721106417e5ad3f3040",
+      "core512_result_sha256": "410ce14d626c8c20aa7fb48d92557c7166d5efcfe8bd263b0dcad0ffd091942f",
+      "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800431.7722696131,
+        800431.772269616,
+        800431.7722696142
+      ],
+      "weighted_lp_range": 2.9103830456733704e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c5_k08_lpweight",
+      "target_k": 8,
+      "old_buses": 9,
+      "old_pool_bound": 9.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k08_lpweight_mip/mip_result.json",
+      "old_result_sha256": "3098c292375ff8af63c2336410a08c1afafdeb7b02ddaf974e0bdfe2b823de1e",
+      "core_result_sha256": "c0ef20be3e6967d450720733a5175e9b6a1ab871fe252721106417e5ad3f3040",
+      "core512_result_sha256": "410ce14d626c8c20aa7fb48d92557c7166d5efcfe8bd263b0dcad0ffd091942f",
+      "input_sha256": "85aa4a37119b2604a41aa83f46c8b8987bb95c8165c4adfb0a58ce65dbeee05b",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800431.7722696139,
+        800431.772269616,
+        800431.7722696142
+      ],
+      "weighted_lp_range": 2.0954757928848267e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c5_k10_integer",
+      "target_k": 10,
+      "old_buses": 10,
+      "old_pool_bound": 10.0,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_integer_mip/mip_result.json",
+      "old_result_sha256": "c841e1fb2987adf1e6a7e55e2d916f011a7859f07f9ffccc481a5f9c71ff39bd",
+      "core_result_sha256": "1695be2765760ba1fed9c8b1d9956d92a814f8c4437a4c045c399ed76c12278e",
+      "core512_result_sha256": "b49b41871577ead54650df858d5eadfc0c1031e4b1c000862479470dc27e94f8",
+      "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000456.3339241378,
+        1000456.333924139,
+        1000456.3339241368
+      ],
+      "weighted_lp_range": 2.2118911147117615e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c5_k10_lpweight",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 11.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c5_k10_lpweight_mip/mip_result.json",
+      "old_result_sha256": "013b13454c7c4a0e1567714075561e38e4a4dcea10c6ed931f1142c462d9147f",
+      "core_result_sha256": "1695be2765760ba1fed9c8b1d9956d92a814f8c4437a4c045c399ed76c12278e",
+      "core512_result_sha256": "b49b41871577ead54650df858d5eadfc0c1031e4b1c000862479470dc27e94f8",
+      "input_sha256": "b2fa6d6ca7c5deda4877c8f22d726dc49e6bddb72a921fee1da34ec1c3ef86f8",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000456.3339241385,
+        1000456.333924139,
+        1000456.3339241368
+      ],
+      "weighted_lp_range": 2.2118911147117615e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c6_k08_integer",
+      "target_k": 8,
+      "old_buses": 8,
+      "old_pool_bound": 8.0,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_integer_mip/mip_result.json",
+      "old_result_sha256": "65b863d1c29f6f4c4c049a33ebad6d202a47be171a9d90afde37eb7794137a10",
+      "core_result_sha256": "43220aee4142191081bf446b6372bdd6119eaba21c06f4f2e6a48761a583abd3",
+      "core512_result_sha256": "52a635c89fd5d0f82fd8c8d3e151a736a4e82779a82d54e89a4b1c82641b5a2d",
+      "input_sha256": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800293.6644705874,
+        800293.6644705873,
+        800293.6644705897
+      ],
+      "weighted_lp_range": 2.444721758365631e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c6_k08_lpweight",
+      "target_k": 8,
+      "old_buses": 8,
+      "old_pool_bound": 8.0,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k08_lpweight_mip/mip_result.json",
+      "old_result_sha256": "6acf71dc848d59909d52b3e79c9072ca208061ad3bc9a699d8d3c4ee16cb1be9",
+      "core_result_sha256": "43220aee4142191081bf446b6372bdd6119eaba21c06f4f2e6a48761a583abd3",
+      "core512_result_sha256": "52a635c89fd5d0f82fd8c8d3e151a736a4e82779a82d54e89a4b1c82641b5a2d",
+      "input_sha256": "749b356e355c6b7f08f45aa04764f193281215214e084460027fbe63176e400b",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        800293.6644705884,
+        800293.6644705873,
+        800293.6644705897
+      ],
+      "weighted_lp_range": 2.444721758365631e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c6_k10_integer",
+      "target_k": 10,
+      "old_buses": 10,
+      "old_pool_bound": 10.0,
+      "old_pool_proved_miss": false,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_integer_mip/mip_result.json",
+      "old_result_sha256": "d0b8b5d6dfe175649d88faedeb7172a154be95f101c2be652e4def375979223e",
+      "core_result_sha256": "d91993b0def62fa5df267e511b74290ff082a26a757abe3286b7149f9b761b33",
+      "core512_result_sha256": "24eda75df364d37a33b334c7abad107e9a1308d8e62b726dc413b1d772dcd005",
+      "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000377.8715555484,
+        1000377.8715555543,
+        1000377.8715555546
+      ],
+      "weighted_lp_range": 6.170012056827545e-09,
+      "all_three_cg_certified": true
+    },
+    {
+      "old_case": "c6_k10_lpweight",
+      "target_k": 10,
+      "old_buses": 11,
+      "old_pool_bound": 11.0,
+      "old_pool_proved_miss": true,
+      "old_result_path": "/home/nc437/ladder-lite/overnight_parallel_20260914/cases/c6_k10_lpweight_mip/mip_result.json",
+      "old_result_sha256": "e122f2f19d594ca1ae98946269d3330f5ae91a7a2b05412f91bc7b155633a025",
+      "core_result_sha256": "d91993b0def62fa5df267e511b74290ff082a26a757abe3286b7149f9b761b33",
+      "core512_result_sha256": "24eda75df364d37a33b334c7abad107e9a1308d8e62b726dc413b1d772dcd005",
+      "input_sha256": "b6b8abf3c83ef5e8d3167d6a785b8403fb20c8927e25c409193e1c744174ffc0",
+      "same_effective_model_and_cg_revision_checked": true,
+      "weighted_lp_objectives_old_core_core512": [
+        1000377.8715555517,
+        1000377.8715555543,
+        1000377.8715555546
+      ],
+      "weighted_lp_range": 2.9103830456733704e-09,
+      "all_three_cg_certified": true
+    }
+  ],
+  "old_pool_proved_misses": 13,
+  "matched_old_runs": 24,
+  "interpretation": "Thirteen older generated pools provably exclude target fleet; both richer starts produce target fleets on the same inputs under matching effective model fields and CG revision. Other old open MIP gaps remain unresolved; timing and method-wide success claims require their own comparisons.",
+  "max_weighted_lp_range": 1.9399449229240417e-06
+}
