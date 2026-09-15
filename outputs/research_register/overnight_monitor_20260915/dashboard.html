@@ -1,0 +1,55 @@
+<html><body style="font-family:Arial;font-size:11pt;color:#202124">
+<h1>EVSP–DR: current results</h1>
+<p><b>Verified results through 15 September, 00:16 EDT.</b> Overnight results will replace these tables as they are checked. This page is the summary; the other tabs retain the figures and detailed evidence.</p>
+<h2>What we know</h2>
+<p><b>The baseline now reaches 25–27 buses on several chains.</b> Reusing earlier columns helps substantially. The harder model with shared charging limits is still a small-instance research problem.</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%">
+<tr><th>Question</th><th>Evidence</th></tr>
+<tr><td>Does a warm start help?</td><td>In the accumulated-time comparison, all 24 warm runs match their targets; 6 of 24 fresh runs do. All 24 fresh CG runs converge. Extra CG time alone therefore does not reproduce the warm results.</td></tr>
+<tr><td>Why do integer solutions miss the target?</td><td>There are at least two causes. Some saved column sets provably cannot form the target fleet. Other sets can: longer MIP reruns recovered 24 of the 25 misses in the k16–25 batch. The remaining miss is chain 5, k25.</td></tr>
+<tr><td>Are the stricter GIRO settings solved?</td><td>Some one-bus tests work. Two-bus tests with shared charging limits still have unfinished pricing and poor integer solutions. We cannot yet claim that the larger-chain results meet those stricter settings.</td></tr>
+</table>
+<h2>How far the baseline chains reach</h2>
+<p><b>Target k</b> means the selected trips came from k GIRO buses. Each number below is the largest individual target matched, not a claim that every smaller case succeeded in the original time limit.</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%">
+<tr><th>Chain</th><th>Largest target matched with a one-hour MIP</th><th>Largest target matched including separate longer MIPs</th></tr>
+<tr><td>1</td><td>25 buses</td><td>25 buses</td></tr>
+<tr><td>2</td><td>26 buses</td><td>26 buses</td></tr>
+<tr><td>3</td><td>27 buses</td><td>27 buses</td></tr>
+<tr><td>4</td><td>23 buses</td><td>25 buses</td></tr>
+<tr><td>5</td><td>24 buses</td><td>24 buses</td></tr>
+<tr><td>6</td><td>26 buses</td><td>26 buses</td></tr>
+</table>
+<p><b>Model:</b> set covering, inherited columns, 240 kWh batteries, 240 kW charging, and a fee of 5 per charging start. Shared charger capacity and minimum ending SOC are absent. Individual routes were replayed; removing duplicate trip assignments has not been separately validated.</p>
+<p><b>Proof scope:</b> “fleet proved in the saved pool” means Gurobi cannot use fewer buses from those columns. It does not establish the minimum over every feasible route. A CG certificate separately establishes LP convergence for the modeled pricing problem. In the original k16–25 batch, 45 of 60 CG runs have that certificate; 15 reached their time limits.</p>
+<h2>Can a smaller inherited start work?</h2>
+<p><b>Core start:</b> retain earlier integer-solution routes and every route with positive weight in the earlier LP. <b>Expanded start:</b> fill that core to 512 distinct trip sequences. The number 512 is an experimental limit on starting sequences, not a fleet size or final column count.</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%">
+<tr><th>Target</th><th>Completed MIPs matching target</th><th>Still waiting for results</th></tr>
+<tr><td>8 buses</td><td>12 of 12</td><td>0</td></tr>
+<tr><td>10 buses</td><td>12 of 12</td><td>0</td></tr>
+<tr><td>15 buses</td><td>5 of 6</td><td>6</td></tr>
+</table>
+<p>Each target has six chains and two starting methods. At chain 3, k15, the 198-sequence core finds 17 buses after three hours of fleet search; 15 remains possible in that pool. The expanded start finds and proves 15 in 4.4 seconds. Both CG runs converge to the same weighted LP objective, 1,500,507.4203. This separates LP convergence from finding a good integer fleet.</p>
+<h2>What the stricter tests show</h2>
+<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%">
+<tr><th>Test</th><th>Result and limitation</th></tr>
+<tr><td>15% battery reserve; selected depot-speed and capacity variants</td><td>Eight of ten one-duty tests recover one bus. Duty 13405 returns two buses in both tested variants; this is a saved-pool result. All ten CGs converge. The battery is 236.44 kWh with a 35.466 kWh reserve. These tests omit a 65% ending-SOC target and nonlinear charging.</td></tr>
+<tr><td>One duty, 13408: reserve + shared capacity + PARX at 60 kW</td><td>One bus recovered. CG takes 77 minutes, versus 2.2 minutes in its reserve-only baseline. This does not test competition between several buses.</td></tr>
+<tr><td>Hard capacity-pricing calls, with the same input state and dual prices</td><td>The reference finishes in 3.58 and 3.19 hours. The cached version reaches its roughly four-hour deadline in both tests without finishing a call. No speedup is demonstrated on these two states.</td></tr>
+</table>
+<h2>What is running overnight, and why</h2>
+<p><b>Queue checked at 00:39 EDT:</b> 61 jobs running; 38 waiting for required inputs. No pending job in that check was blocked by an array throttle.</p>
+<table border="1" cellpadding="6" style="border-collapse:collapse;width:100%">
+<tr><th>Work</th><th>Question it will answer</th></tr>
+<tr><td>Chain continuation through k28</td><td>How much farther does inherited-column solving reach?</td></tr>
+<tr><td>Core versus expanded starts at k20 and k25</td><td>Can smaller starting pools retain good integer solutions at larger sizes?</td></tr>
+<tr><td>Controlled additions to previously inadequate pools</td><td>Which kinds of added columns restore a target fleet?</td></tr>
+</table>
+<p>The monitor checks hourly, investigates failures or blocked dependencies, and verifies results before updating this page. It preserves real previous-k dependencies. If the queue thins, useful follow-ups must address a specific unresolved comparison with matched settings; repeating completed runs just to increase the job count is not the goal.</p>
+<h2>Figures and detailed evidence</h2>
+<p><a href="https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.ts4vwph3s99i">Figures with explanations</a> — existing comparison charts and editable explanations. Check each figure’s date and model settings.</p>
+<p><a href="https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.h5h2ivyiprly">CG curves and bus schedules</a> — convergence curves and Gantt plots.</p>
+<p><a href="https://docs.google.com/document/d/1hDSWYb2KG-8pnLFN9BdSKkbXOjhytm4bxQz_MsBw_BY/edit?tab=t.lumf8xm66fow">Dated research log</a> — earlier tables, assumptions, source links, and history. Earlier snapshots are not current results.</p>
+<p><a href="https://github.com/ndandnd/EVSP-DR/blob/54f0d8dc2ea4a968b7182239610f09da7f1e0b84/outputs/overnight_next_20260914/status_20260915T040735Z/README.md">Verified source report</a> · <a href="https://github.com/ndandnd/EVSP-DR/blob/54f0d8dc2ea4a968b7182239610f09da7f1e0b84/outputs/cumulative_budget_20260913/status_20260915T040735Z/README.md">Chain and accumulated-time results</a>.</p>
+</body></html>

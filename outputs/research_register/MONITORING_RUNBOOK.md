@@ -1,3 +1,7 @@
+## Active monitoring and document layout — 15 September
+
+Follow [ACTIVE_MONITOR_PLAN.md](ACTIVE_MONITOR_PLAN.md) for the current overnight priorities and concise-document workflow. The first Google Doc tab is now **START HERE — Current results** (`t.79m3d3x4h45m`). The old weekly tab `t.lumf8xm66fow` is preserved as a dated research log; do not prepend new hourly briefings there. Both figure tabs remain intact. Hourly heartbeat updated in place; morning consolidation around09:00EDT. [Queue and document-change evidence](overnight_monitor_20260915/).
+
 ## Publication workspace — repaired 15 September
 
 Use the durable path in `outputs/research_register/publication_workspace_path.txt`: `/Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915`, branch `codex/research-register-20260915`. Push its reviewed allowlist to `HEAD:codex/parallel-research-20260911`. Do not use `/private/tmp/evsp-research-register-20260910`: its .git link and older checkout files were missing. The cause is unverified. A fresh worktree was created from remote-verified commit dac40058; the current changes were reapplied there. No cluster access loss or research-job change occurred. [Recovery record](publication_recovery_20260915.json). The main checkout remains dirty and must not be wholesale committed.
