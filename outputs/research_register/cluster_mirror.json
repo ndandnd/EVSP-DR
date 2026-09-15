@@ -1,8 +1,8 @@
 {
   "mirror_root": "/home/nc437/ladder-lite/research-register",
-  "verified_utc": "2026-09-15T04:33:14.018967+00:00",
-  "source_commit": "54f0d8dc2ea4a968b7182239610f09da7f1e0b84",
-  "verified_files": 2737,
+  "verified_utc": "2026-09-15T04:49:36.144463+00:00",
+  "source_commit": "742ecdf07c1ae026c2d94555734636ebbae73e1d",
+  "verified_files": 2745,
   "mismatch_count": 0,
   "errors": [],
   "files_sha256": {
@@ -2397,9 +2397,9 @@
     "outputs/research_register/DATA_DICTIONARY.md": "324e52b9b95a4a4bd50a919cf04995da2e84f292f2e650cdf66ccfde642cf586",
     "outputs/research_register/EXECUTION_ISSUES_20260910.md": "3a204fefceacbb6da6be8d5eb40be93c47f2a27131eb21dc15c720debb777a09",
     "outputs/research_register/MODEL_PREFERENCE.md": "c8c689ec932cb90c5e356ff0ac09615d217503b7fb61eef53f4e5f8b9975a178",
-    "outputs/research_register/MONITORING_RUNBOOK.md": "94a461d01c40ddbf4b86d981df45c50117bbcdd9fa2d2666eeb7d8a3e3375f0d",
+    "outputs/research_register/MONITORING_RUNBOOK.md": "5b2915af550c79152960c56dafead07832a0b57465b1b2e235860fd5354dbbed",
     "outputs/research_register/OVERNIGHT_PLAN_20260914.md": "1776f0b7348192a4ee6097fef2940e932919727492e06e1958e218f2f291de8a",
-    "outputs/research_register/README.md": "4df728313bdab0a033bfca21887ba043dbb033843beb25d2c5e65c66f9d7017b",
+    "outputs/research_register/README.md": "e9007d6cf04c4a9ddc984b76478727eabb55848b413acdda8a1ee21e2da594b4",
     "outputs/research_register/REGISTER.md": "bbc9039d45307c2d357743021c0e2e58e97adab1b39bb4054c05e41a900179ba",
     "outputs/research_register/RESULTS.md": "c67c5805f65ae7b7cac3896680d8a45d1e3945a8f332ec45dacdd1e59b9d7e71",
     "outputs/research_register/build_register.py": "66345c688de1b24d92ff843b15dde03cf6940666d44409982b29f187b55e4ec7",
@@ -2742,6 +2742,14 @@
     "outputs/zero_charge_start_fee_20260913/validation_mip_worker.sh": "b094cd9ab8372e04928c17d293c7e3cf46aa884409866058d7a46d6c689ff892",
     "outputs/zero_charge_start_fee_20260913/validation_submission.json": "b413807b6609fd53823e595caee8aea60e9f8e9b3a6d324810772a8f772b93bb",
     "outputs/zero_charge_start_fee_20260913/validation_worker.sh": "a9ba4760bce5f2ac22774b174b26a1d8422fddf6dfdd6d000439a78b2fe4f982",
-    "outputs/zero_charge_start_fee_20260913/worker.sh": "5f72a58bd62eb6c1ce5fa7e1be7889617d98970513fe827f68daffab3bbd2d6f"
+    "outputs/zero_charge_start_fee_20260913/worker.sh": "5f72a58bd62eb6c1ce5fa7e1be7889617d98970513fe827f68daffab3bbd2d6f",
+    "outputs/research_register/ACTIVE_MONITOR_PLAN.md": "32bdcdb2dbd8f60d1d8bc9c9fbf8b48e6e8eb2c0827fbdd1a10a2c4a7a5348ee",
+    "outputs/research_register/overnight_monitor_20260915/history_after.md": "3840e8beb7e50ad780a73161436a78f668e181f25b0e2833d65a28dcf5b080fb",
+    "outputs/research_register/overnight_monitor_20260915/automation_verified.json": "f8869a2b4d0838e96cd2b0bf61197b86a9b257ad1a4b515af6f15f54f0f00a10",
+    "outputs/research_register/overnight_monitor_20260915/dashboard.html": "247934927d8c1f2fff596e11578acbfeceace98107d374319d51f03708f94067",
+    "outputs/research_register/overnight_monitor_20260915/dashboard_after.md": "4e56b5079d6100030f2e6956983a9cea4110f43ef1ca3b9889fd61f0c786091f",
+    "outputs/research_register/overnight_monitor_20260915/queue_check.json": "010e030b5781b8b5ab1f13ccc727c8ed6acf859365c17c71ae268873d2d8c3b6",
+    "outputs/research_register/overnight_monitor_20260915/verification.json": "6a61fb38334e8351cdd67618272bda11dcf350459bf22bcd42d3e1cbb88de3d3",
+    "outputs/research_register/overnight_monitor_20260915/doc_before.md": "3840e8beb7e50ad780a73161436a78f668e181f25b0e2833d65a28dcf5b080fb"
   }
 }
