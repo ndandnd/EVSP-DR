@@ -1,0 +1,159 @@
+{
+  "source_snapshot": "20260915T111319Z",
+  "scheduler_transitions": [
+    {
+      "JobID": "187979",
+      "case_id": "w2_k28",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "222757",
+      "case_id": "w3_k28_longmip",
+      "cohort": "default_overnight_diagnostics_20260914",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "227216",
+      "case_id": "c1_k15_union",
+      "cohort": "validation_compact_pool_union_20260915",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "227217",
+      "case_id": "c2_k20_control",
+      "cohort": "validation_compact_pool_union_20260915",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "227218",
+      "case_id": "c2_k20_union",
+      "cohort": "validation_compact_pool_union_20260915",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "227325",
+      "case_id": "c1_k15_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227327",
+      "case_id": "c1_k20_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227328",
+      "case_id": "c2_k20_control",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227329",
+      "case_id": "c2_k20_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227330",
+      "case_id": "c2_k25_control",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227331",
+      "case_id": "c2_k25_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227332",
+      "case_id": "c3_k20_control",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227333",
+      "case_id": "c3_k20_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227334",
+      "case_id": "c4_k25_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227335",
+      "case_id": "c5_k20_control",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227336",
+      "case_id": "c5_k20_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "227337",
+      "case_id": "c5_k25_union",
+      "cohort": "default_compact_pool_union_20260915",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "scientific_promotion_rule": "Only source-verified native endpoints enter result tables; scheduler transitions remain separate."
+}

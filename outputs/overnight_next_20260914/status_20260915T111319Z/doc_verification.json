@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "date_current": true,
+    "chain3_longer28": true,
+    "completed_c3": true,
+    "stale_c3_running_removed": true,
+    "source_current": true,
+    "log_comparison_linked": true,
+    "figures_preserved": true,
+    "gantt_preserved": true,
+    "history_preserved": true,
+    "queue_dated": true,
+    "no_empty_heading": true
+  },
+  "before_sha256": "7ff836e2b669694d5c17388a57b9f75029654c2758fdba6988e361f50e98c9de",
+  "after_sha256": "8489fff1195380dd397c74425876f18ca728872b94284302a13687f6701cfe95",
+  "words_before": 1637,
+  "words_after": 1616,
+  "slides_edited": false
+}

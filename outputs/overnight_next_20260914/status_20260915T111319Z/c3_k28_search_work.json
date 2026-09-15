@@ -1,0 +1,140 @@
+{
+  "checked_utc": "2026-09-15T11:17:53.247018+00:00",
+  "source_and_ordered_pool_match": true,
+  "rows": [
+    {
+      "label": "original",
+      "result_path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w3_k28/mip/187985_r0/result.json",
+      "result_sha256": "8ef6e4eff1790817f1e73a6e38c4ba317d3a5bbc8e5f7dcadae7ba074e191ab6",
+      "log_path": "/share/scaglione/nc437/evsp-dr/chain_extension_20260914/cases/w3_k28/mip/187985_r0/gurobi.log",
+      "log_sha256": "1035186947d1e04caac1c7bc912f1ee7c5871430e81bf5d35b4eb4c0375b8f08",
+      "host": "unicorn-cpu-74.coecis.cornell.edu",
+      "cpu_model": "CPU model: Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz, instruction set [SSE2|AVX]",
+      "fleet_model": "Optimize a model with 606 rows, 166052 columns and 3943168 nonzeros",
+      "root_relaxation": "Root relaxation: objective 2.800000e+01, 14238 iterations, 4.81 seconds (5.26 work units)",
+      "fleet_budget_s": 1800.0,
+      "fleet_native_elapsed_s": 1807.4366211891174,
+      "fleet_optimizer_elapsed_s": 1800.31,
+      "fleet_work_units": 2053.56,
+      "fleet_nodes": 206,
+      "fleet_simplex_iterations": 1546014,
+      "buses": 29,
+      "fleet_bound": 28.00000000000002,
+      "fleet_proven": false,
+      "threads": 8,
+      "seed": 0,
+      "fleet_summary_log_line": 103,
+      "captured_log_lines": [
+        [
+          12,
+          "CPU model: Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz, instruction set [SSE2|AVX]"
+        ],
+        [
+          19,
+          "Optimize a model with 606 rows, 166052 columns and 3943168 nonzeros"
+        ],
+        [
+          59,
+          "Root relaxation: objective 2.800000e+01, 14238 iterations, 4.81 seconds (5.26 work units)"
+        ],
+        [
+          103,
+          "Explored 206 nodes (1546014 simplex iterations) in 1800.31 seconds (2053.56 work units)"
+        ],
+        [
+          109,
+          "Best objective 2.900000000000e+01, best bound 2.800000000000e+01, gap 3.4483%"
+        ],
+        [
+          115,
+          "CPU model: Intel(R) Xeon(R) CPU E5-2665 0 @ 2.40GHz, instruction set [SSE2|AVX]"
+        ],
+        [
+          122,
+          "Optimize a model with 607 rows, 166052 columns and 4109220 nonzeros"
+        ],
+        [
+          174,
+          "Root relaxation: objective 1.100026e+03, 87148 iterations, 85.92 seconds (96.56 work units)"
+        ],
+        [
+          238,
+          "Explored 317 nodes (254476 simplex iterations) in 1792.94 seconds (2449.68 work units)"
+        ],
+        [
+          244,
+          "Best objective 1.825208000000e+03, best bound 1.100352403583e+03, gap 39.7136%"
+        ]
+      ]
+    },
+    {
+      "label": "separate_longer_budget",
+      "result_path": "/home/nc437/ladder-lite/continuation_gap_20260915/cases/w3_k28_longmip/mip_result.json",
+      "result_sha256": "5471dffc6183f138c2a5bbeba4d533b967e8a0b3725724e3e24ffa62a9c766d7",
+      "log_path": "/share/scaglione/nc437/evsp-dr/continuation_gap_20260915/cases/w3_k28_longmip/attempts/222757_r0/gurobi.log",
+      "log_sha256": "bb6ebee6a59c3b393e434392994c0f49f0cc839a10d2f5f7059d2a272b9d696a",
+      "host": "scaglione-cpu-01.tech.cornell.edu",
+      "cpu_model": "CPU model: Intel(R) Xeon(R) Gold 6348 CPU @ 2.60GHz, instruction set [SSE2|AVX|AVX2|AVX512]",
+      "fleet_model": "Optimize a model with 606 rows, 166052 columns and 3943168 nonzeros",
+      "root_relaxation": "Root relaxation: objective 2.800000e+01, 14238 iterations, 2.55 seconds (5.26 work units)",
+      "fleet_budget_s": 10800.0,
+      "fleet_native_elapsed_s": 1644.7084257602692,
+      "fleet_optimizer_elapsed_s": 1640.96,
+      "fleet_work_units": 3685.14,
+      "fleet_nodes": 673,
+      "fleet_simplex_iterations": 2713009,
+      "buses": 28,
+      "fleet_bound": 28.0,
+      "fleet_proven": true,
+      "threads": 8,
+      "seed": 0,
+      "fleet_summary_log_line": 107,
+      "captured_log_lines": [
+        [
+          12,
+          "CPU model: Intel(R) Xeon(R) Gold 6348 CPU @ 2.60GHz, instruction set [SSE2|AVX|AVX2|AVX512]"
+        ],
+        [
+          19,
+          "Optimize a model with 606 rows, 166052 columns and 3943168 nonzeros"
+        ],
+        [
+          58,
+          "Root relaxation: objective 2.800000e+01, 14238 iterations, 2.55 seconds (5.26 work units)"
+        ],
+        [
+          107,
+          "Explored 673 nodes (2713009 simplex iterations) in 1640.96 seconds (3685.14 work units)"
+        ],
+        [
+          113,
+          "Best objective 2.800000000000e+01, best bound 2.800000000000e+01, gap 0.0000%"
+        ],
+        [
+          119,
+          "CPU model: Intel(R) Xeon(R) Gold 6348 CPU @ 2.60GHz, instruction set [SSE2|AVX|AVX2|AVX512]"
+        ],
+        [
+          126,
+          "Optimize a model with 607 rows, 166052 columns and 4109220 nonzeros"
+        ],
+        [
+          181,
+          "Root relaxation: objective 1.137075e+03, 166684 iterations, 96.00 seconds (194.04 work units)"
+        ],
+        [
+          394,
+          "Explored 11271 nodes (5553677 simplex iterations) in 10955.41 seconds (30249.55 work units)"
+        ],
+        [
+          400,
+          "Best objective 1.639328000000e+03, best bound 1.137522090646e+03, gap 30.6105%"
+        ]
+      ]
+    }
+  ],
+  "repeated_to_original_reported_work_ratio": 1.7945129433763805,
+  "reported_work_per_optimizer_second_ratio": 1.9687741304418946,
+  "interpretation": "Different hardware and time-limit settings; observational comparison, not a controlled causal hardware or algorithm benchmark. Same root LP iterations/work and faster repeated root solve support a throughput difference. Work units do not establish identical search paths across hardware.",
+  "work_reference": "https://docs.gurobi.com/projects/optimizer/en/current/reference/attributes/model.html#work"
+}
