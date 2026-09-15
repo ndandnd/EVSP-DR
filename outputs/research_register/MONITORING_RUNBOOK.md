@@ -1,3 +1,17 @@
+## 14 September, 20:12 EDT — 26-bus match and compact-seed results
+
+Snapshot `20260915T000359Z` completed at00:12:22 UTC in502.8s, SHA `8050a0e803145c7cb184bd2fa1b25694721e112179ab0fc5d65f878a3d59ec3f`; previous225805. Preemption study848 attempts. No new confirmed preemption, MIP execution failure or unsatisfiable dependency. Queue49 running,44 solver waits,2 conditional checks; held33 excluded. No new submission/retry/cancellation/solver change.
+
+C3 k26 MIP187981:26 buses, pool bound26/proved after1688.4s of fleet search,148580 columns; total3605.9s. Charging remains TIME_LIMIT, gap separate. Individual-route replay passes;50 duplicated trip assignments, no duplicate-removal or shared-capacity validation. CG had certified113.2min. Canonical publication and immutable attempt are semantically identical, hashes8d84a5d9… vs9b336bb2… differ only in formatting. `k26_publication_binding.json` binds both. The cumulative summarizer now recognizes the collected attempt by case/job/restart instead of falsely marking the separate continuation publication late; no scientific values changed.
+
+C6 k26 CG newly certified119.9min. Original C1 k24 MIP24/proved despite uncertified CG. Original C5 k25 CG capped239.4min,lastRC−0.146677. Original totals59CG(45cert/14cap),58MIP(34target/24miss),15 separate longer recoveries leave9 gaps. One-hour maxima across original and new continuation24/22/26/23/24/24; separate longer C2k25 remains25.
+
+Compact campaign20CG certificates,14MIP endpoints all target/proved/replayed; no k15 endpoint. All manifest/input/seed/source-journal/CG-to-MIP bindings checked, no rejected or repaired imports. `overnight_evening_20260914/summarize_status.py --snapshot PATH` now exports the validated result matrix. Earlier small-seed campaign29MIPs:8target,13pool-proved misses,8open;14pairs7integer-lower/7ties. C6k15 integer189247 completed during collection with reported16 but is not in the full publication sample yet; retain its dated scheduler observation and collect normally next hour.
+
+Fixed-state calls remain pricing with zero collector errors. Original prefix202361/202363 failures already diagnosed and replaced by202450/202451; references202362/202364 continue. No new diagnostic endpoint or certificate. Preserve original failures, linked retry roots and actual dual hashes. Do not resubmit completed or already-running work.
+
+Register3051 rows/67 groups, all6 supplements.318 core and102 extra endpoints checked. Workbook18 views/0formulaerrors; before/after renders inspected. Current Doc tables and explanations updated in place, with reference/later content and figure tabs preserved; Slides untouched. Sources: `outputs/overnight_evening_20260914/status_20260915T000359Z/CURRENT_STATUS.md`. Continue hourly and keep unchanged-state checks quiet.
+
 ## 14 September evening — explicitly authorized independent work
 
 The user requested useful independent overnight experiments because the queue was thinning. The authorized batch is recorded in [the evening plan](../overnight_evening_20260914/README.md):

@@ -1,3 +1,5 @@
+**Latest verified results, 20:12 EDT:** [26-bus match and 14 completed new compact-seed MIPs](status_20260915T000359Z/CURRENT_STATUS.md). The earlier five-result preview below is retained with its timestamp.
+
 **First results, 19:35 EDT:** [Five completed new MIPs all match their targets](FIRST_RESULTS.md). This is a completion-selected subset, not the full experiment.
 
 # Overnight work — evening of 14 September

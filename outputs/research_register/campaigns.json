@@ -2,9 +2,7 @@
   {
     "campaign_id": "capacity_deadline5_retry",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/model_fairness_audit_20260913/constraint_results_audit.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/capacity_deadline5_retry_20260911_253588e",
     "row_count": 11,
     "workflow_job_ids": [
@@ -21,12 +19,37 @@
     ]
   },
   {
+    "campaign_id": "capacity_fixed_dual_20260914",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/capacity_fixed_dual_20260914",
+    "row_count": 3,
+    "workflow_job_ids": [
+      "202202",
+      "202361",
+      "202362",
+      "202363",
+      "202364"
+    ]
+  },
+  {
+    "campaign_id": "capacity_fixed_dual_retry_20260914",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/capacity_fixed_dual_retry_20260914",
+    "row_count": 3,
+    "workflow_job_ids": [
+      "202361",
+      "202363",
+      "202418",
+      "202450",
+      "202451"
+    ]
+  },
+  {
     "campaign_id": "capacity_pricing_boundary_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/capacity_pricing_boundary_20260914/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/capacity_pricing_boundary_20260914/LAUNCH_REPORT.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/capacity_pricing_boundary_20260914",
     "row_count": 17,
     "workflow_job_ids": [
@@ -43,10 +66,7 @@
   {
     "campaign_id": "capacity_speed_pilot",
     "family": "controlled_physics_pilot",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/capacity_speed/IMPLEMENTATION_REPORT.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_v2_7d38efd",
     "row_count": 22,
     "workflow_job_ids": [
@@ -78,10 +98,7 @@
   {
     "campaign_id": "capacity_timeout6_rerun",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/results_20260911T1236Z/TIMEOUT_CHECKPOINT_FIX.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/capacity_speed_pilot_20260910_timeout6_rerun_7d38ef",
     "row_count": 5,
     "workflow_job_ids": [
@@ -95,12 +112,9 @@
   {
     "campaign_id": "chain_extension_20260913",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/INPUTS.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_20260913",
-    "row_count": 181,
+    "row_count": 183,
     "workflow_job_ids": [
       "133908",
       "133909",
@@ -228,12 +242,9 @@
   {
     "campaign_id": "chain_extension_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260914/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_followup_20260914/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/chain_extension_20260914",
-    "row_count": 9,
+    "row_count": 12,
     "workflow_job_ids": [
       "133927",
       "133947",
@@ -281,12 +292,174 @@
     ]
   },
   {
+    "campaign_id": "compact_seed_support_20260914",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/compact_seed_support_20260914",
+    "row_count": 76,
+    "workflow_job_ids": [
+      "41567",
+      "41568",
+      "41569",
+      "41573",
+      "41574",
+      "41575",
+      "41577",
+      "41579",
+      "41581",
+      "41583",
+      "41585",
+      "41587",
+      "41589",
+      "41591",
+      "41594",
+      "41596",
+      "41598",
+      "41600",
+      "41602",
+      "41604",
+      "41607",
+      "41609",
+      "41611",
+      "41613",
+      "41616",
+      "41618",
+      "41620",
+      "41622",
+      "41624",
+      "41627",
+      "41629",
+      "41631",
+      "41633",
+      "41636",
+      "41638",
+      "41640",
+      "41642",
+      "201438",
+      "201439",
+      "201440",
+      "201441",
+      "201442",
+      "201443",
+      "201444",
+      "201445",
+      "201446",
+      "201447",
+      "201448",
+      "201449",
+      "201450",
+      "201451",
+      "201452",
+      "201453",
+      "201454",
+      "201455",
+      "201456",
+      "201457",
+      "201458",
+      "201459",
+      "201460",
+      "201461",
+      "201462",
+      "201463",
+      "201464",
+      "201465",
+      "201466",
+      "201467",
+      "201468",
+      "201469",
+      "201470",
+      "201471",
+      "201472",
+      "201473",
+      "201474",
+      "201475",
+      "201476",
+      "201477",
+      "201478",
+      "201479",
+      "201480",
+      "201481",
+      "201482",
+      "201483",
+      "201484",
+      "201485",
+      "201486",
+      "201487",
+      "201488",
+      "201489",
+      "201490",
+      "201491",
+      "201492",
+      "201493",
+      "201494",
+      "201495",
+      "201496",
+      "201497",
+      "201498",
+      "201499",
+      "201500",
+      "201501",
+      "201502",
+      "201503",
+      "201504",
+      "201505",
+      "201506",
+      "201507",
+      "201508",
+      "201509",
+      "679893",
+      "679894",
+      "679895",
+      "679896",
+      "679897",
+      "679898",
+      "679899",
+      "679900",
+      "679901",
+      "779026",
+      "779027",
+      "779028",
+      "779030",
+      "779031",
+      "779032",
+      "779033",
+      "779034",
+      "779035",
+      "810283",
+      "810285",
+      "810287",
+      "810289",
+      "810291",
+      "810323",
+      "810324",
+      "810325",
+      "810328",
+      "810329",
+      "810330",
+      "810331",
+      "810335",
+      "810336",
+      "810337",
+      "810338",
+      "810339",
+      "810340",
+      "810341",
+      "810342",
+      "810345",
+      "810346",
+      "810347",
+      "810348",
+      "810349",
+      "810350",
+      "810351",
+      "810353",
+      "810354"
+    ]
+  },
+  {
     "campaign_id": "controlled_comparison_20260913",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/doc_after.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/doc_before.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/controlled_comparison_20260913",
     "row_count": 93,
     "workflow_job_ids": []
@@ -294,9 +467,7 @@
   {
     "campaign_id": "covering_complement75",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_multichain_p1246/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/covering_complement75_20260911_21fbecb",
     "row_count": 232,
     "workflow_job_ids": [
@@ -312,10 +483,7 @@
   {
     "campaign_id": "covering_rerun9",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/covering_rerun9/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/RESEARCH_INDEX.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/covering_rerun9_20260909_21fbecb",
     "row_count": 32,
     "workflow_job_ids": [
@@ -329,10 +497,7 @@
   {
     "campaign_id": "cumulative_budget_20260913",
     "family": "cumulative_budget_controls",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/cumulative_budget_20260913/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/cumulative_budget_20260913",
     "row_count": 96,
     "workflow_job_ids": [
@@ -461,9 +626,7 @@
   {
     "campaign_id": "decomposition_lp_support_union_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/decomposition_lp_support_union_20260914/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/decomposition_lp_support_union_20260914",
     "row_count": 53,
     "workflow_job_ids": [
@@ -528,10 +691,7 @@
   {
     "campaign_id": "decomposition_pool_union_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/decomposition_pool_union_20260914/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/decomposition_lp_support_union_20260914/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/decomposition_pool_union_20260914",
     "row_count": 53,
     "workflow_job_ids": [
@@ -596,10 +756,7 @@
   {
     "campaign_id": "easy_k10_raw_split_replay",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0515Z.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/comment_response_evidence.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/easy_k10_raw_split_replay_20260908_9665429",
     "row_count": 2,
     "workflow_job_ids": [
@@ -609,10 +766,7 @@
   {
     "campaign_id": "easy_raw6",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/EASY_LADDER_PLAN.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260908T1752Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/easy_trip_ladder_raw6_20260908_aaf83f6",
     "row_count": 19,
     "workflow_job_ids": []
@@ -620,10 +774,7 @@
   {
     "campaign_id": "full_pool_recovery_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/INPUTS.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/full_pool_recovery_20260912",
     "row_count": 115,
     "workflow_job_ids": [
@@ -706,10 +857,7 @@
   {
     "campaign_id": "giro_small_cg_capacity_duals",
     "family": "small_reference_cg",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/giro_k23_capacity_duals/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/model_fairness_audit_20260913/constraint_results_audit.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/giro_small_cg_capacity_duals_20260909",
     "row_count": 80,
     "workflow_job_ids": []
@@ -725,10 +873,7 @@
   {
     "campaign_id": "giro_zero_start_fee_20260913",
     "family": "giro_zero_fee_comparison",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/zero_charge_start_fee_20260913/giro/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/zero_charge_start_fee_20260913/giro/worker_path_audit.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/giro_zero_start_fee_20260913",
     "row_count": 20,
     "workflow_job_ids": [
@@ -749,9 +894,7 @@
   {
     "campaign_id": "graph_recovery_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/graph_recovery_20260912",
     "row_count": 5,
     "workflow_job_ids": [
@@ -784,10 +927,7 @@
   {
     "campaign_id": "graph_recovery_retry2_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/status_20260913T093758Z/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/graph_recovery_retry2_20260912",
     "row_count": 10,
     "workflow_job_ids": [
@@ -844,13 +984,12 @@
   {
     "campaign_id": "graph_timeout_gates_v2_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_parallel_20260914/graph_retry_v2/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/graph_timeout_gates_v2_20260914",
     "row_count": 4,
     "workflow_job_ids": [
       "134029",
+      "187967",
       "187968",
       "187969",
       "187970",
@@ -888,11 +1027,17 @@
       "188002",
       "188004",
       "188007",
+      "188008",
       "188010",
+      "188011",
+      "188012",
       "188013",
       "188014",
       "188015",
+      "188018",
       "188019",
+      "188020",
+      "188021",
       "188022",
       "188023",
       "189865",
@@ -936,10 +1081,7 @@
   {
     "campaign_id": "greedy_event4",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0125Z.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0300Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/greedy_event4_eaca565",
     "row_count": 14,
     "workflow_job_ids": [
@@ -950,10 +1092,7 @@
   {
     "campaign_id": "heavy_raw6",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0228Z.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0717Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/heavy_trip_ladder_raw6_20260908_9665429",
     "row_count": 19,
     "workflow_job_ids": []
@@ -961,10 +1100,7 @@
   {
     "campaign_id": "historical_cover_controls",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/model_fairness_audit_20260913/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/RESEARCH_INDEX.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/historical_cover_controls_20260909_bead344",
     "row_count": 5,
     "workflow_job_ids": []
@@ -972,10 +1108,7 @@
   {
     "campaign_id": "legacy_selected10_current2",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/EASY_LADDER_PLAN.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260908T1752Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/legacy_selected10_current2_20260908_bead344",
     "row_count": 7,
     "workflow_job_ids": []
@@ -983,10 +1116,7 @@
   {
     "campaign_id": "matched_tariff8",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/TARIFF_EXPERIMENT_PLAN.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260908T1752Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/matched_tariff8_20260908_a9a9720",
     "row_count": 49,
     "workflow_job_ids": [
@@ -996,10 +1126,7 @@
   {
     "campaign_id": "matched_tariff_peak12_peak18",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/TARIFF_EXTENSION_REVIEW.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0053Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/matched_tariff_peak12_peak18_a6e5059",
     "row_count": 50,
     "workflow_job_ids": [
@@ -1010,10 +1137,7 @@
   {
     "campaign_id": "mip_repeatability_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/mip_repeatability_20260914/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_followup_20260914/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/mip_repeatability_20260914",
     "row_count": 37,
     "workflow_job_ids": [
@@ -1055,10 +1179,7 @@
   {
     "campaign_id": "nested84",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/storage_cleanup_20260911/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_p5/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/nested_probability_k2_15_fresh84_20260908_21fbecb",
     "row_count": 253,
     "workflow_job_ids": []
@@ -1066,10 +1187,7 @@
   {
     "campaign_id": "nested_replication42",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0617Z.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0717Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/nested_replication_p7_20_fresh42_20260909_0209d3e",
     "row_count": 127,
     "workflow_job_ids": []
@@ -1077,10 +1195,7 @@
   {
     "campaign_id": "old70",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/ACTION_PLAN.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/HISTORY_EVIDENCE.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/threshold_9_15_event_20260904_9bdbb17/pool_mip8h_20260908_2d7a21a07e",
     "row_count": 38,
     "workflow_job_ids": []
@@ -1088,10 +1203,7 @@
   {
     "campaign_id": "overnight_cpu04_raw_controls",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0515Z.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260909T0617Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/overnight_cpu04_raw_controls_20260909",
     "row_count": 3,
     "workflow_job_ids": [
@@ -1102,10 +1214,7 @@
   {
     "campaign_id": "overnight_diagnostics_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/cumulative_budget_20260913/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/mip_repeatability_20260914/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/overnight_diagnostics_20260914",
     "row_count": 144,
     "workflow_job_ids": [
@@ -1216,10 +1325,7 @@
   {
     "campaign_id": "overnight_extension_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/storage_cleanup_20260912/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/overnight_extension_20260912",
     "row_count": 238,
     "workflow_job_ids": [
@@ -1325,12 +1431,9 @@
   {
     "campaign_id": "overnight_parallel_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_parallel_20260914/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_parallel_20260914/status_20260914T172907Z/doc_after.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/overnight_parallel_20260914",
-    "row_count": 106,
+    "row_count": 109,
     "workflow_job_ids": [
       "41567",
       "41568",
@@ -1493,9 +1596,7 @@
   {
     "campaign_id": "parallel_pool_followup_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_followup_20260914/mip_design/DESIGN.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/parallel_pool_followup_20260914",
     "row_count": 21,
     "workflow_job_ids": [
@@ -1539,9 +1640,7 @@
   {
     "campaign_id": "post_meeting_log_tails",
     "family": "solver_progress_log",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057",
     "row_count": 2,
     "workflow_job_ids": []
@@ -1549,10 +1648,7 @@
   {
     "campaign_id": "queue_recovery_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/model_fairness_audit_20260913/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/queue_recovery_20260912",
     "row_count": 5,
     "workflow_job_ids": [
@@ -1596,6 +1692,24 @@
     ]
   },
   {
+    "campaign_id": "remaining_chain_gaps_20260914",
+    "family": "production_or_historical",
+    "report_links": [],
+    "root": "/home/nc437/ladder-lite/remaining_chain_gaps_20260914",
+    "row_count": 6,
+    "workflow_job_ids": [
+      "201512",
+      "201513",
+      "201514",
+      "201515",
+      "201516",
+      "201517",
+      "201518",
+      "201519",
+      "201520"
+    ]
+  },
+  {
     "campaign_id": "retrospective_prefix_controls_20260914",
     "family": "production_or_historical",
     "report_links": [],
@@ -1616,12 +1730,10 @@
     "family": "scheduler",
     "report_links": [],
     "root": null,
-    "row_count": 103,
+    "row_count": 128,
     "workflow_job_ids": [
-      "133926",
       "133927",
       "133928",
-      "134059",
       "134060",
       "187967",
       "187968",
@@ -1636,7 +1748,6 @@
       "187977",
       "187978",
       "187979",
-      "187981",
       "187982",
       "187983",
       "187984",
@@ -1653,41 +1764,75 @@
       "187995",
       "187996",
       "187997",
-      "187998",
       "187999",
       "188000",
       "188001",
       "188002",
       "188004",
-      "189211",
       "189212",
       "189213",
       "189218",
       "189219",
       "189235",
       "189236",
-      "189242",
-      "189247",
-      "189248",
-      "189916",
       "189917",
-      "189923",
-      "189924",
       "189928",
       "189929",
-      "189930",
-      "189932",
-      "189933",
-      "189936",
+      "201440",
+      "201441",
+      "201442",
+      "201443",
+      "201448",
+      "201449",
+      "201454",
+      "201455",
+      "201456",
+      "201460",
+      "201461",
+      "201466",
+      "201467",
+      "201472",
+      "201473",
+      "201476",
+      "201477",
+      "201478",
+      "201479",
+      "201480",
+      "201482",
+      "201483",
+      "201484",
+      "201485",
+      "201489",
+      "201490",
+      "201491",
+      "201493",
+      "201495",
+      "201496",
+      "201497",
+      "201502",
+      "201503",
+      "201508",
+      "201509",
+      "201512",
+      "201513",
+      "201514",
+      "201515",
+      "201516",
+      "201517",
+      "201518",
+      "201519",
+      "201520",
+      "202362",
+      "202364",
+      "202450",
+      "202451",
       "537227"
     ]
   },
   {
     "campaign_id": "stage2_cap_license_recovery",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/license_and_mip_recovery/STATUS.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/stage2_cap_license_recovery_20260910_871d057",
     "row_count": 3,
     "workflow_job_ids": [
@@ -1697,10 +1842,7 @@
   {
     "campaign_id": "stage2_cap_saved_pool_reruns",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260910T1829Z_heartbeat.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/stage2_cap_saved_pool_reruns_20260910_15e781a",
     "row_count": 4,
     "workflow_job_ids": []
@@ -1708,9 +1850,7 @@
   {
     "campaign_id": "strict_capacity_mip1h_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_followup_20260914/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/strict_capacity_mip1h_20260914",
     "row_count": 15,
     "workflow_job_ids": [
@@ -1743,10 +1883,7 @@
   {
     "campaign_id": "strict_capacity_parallel_20260914",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_followup_20260914/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_parallel_20260914/doc_after.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/strict_capacity_parallel_20260914",
     "row_count": 27,
     "workflow_job_ids": [
@@ -1840,10 +1977,7 @@
   {
     "campaign_id": "targeted_audit:april_source_replay",
     "family": "targeted_audit",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/april_source_replay/SUBMISSION.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/april175_replay_20260909",
     "row_count": 4,
     "workflow_job_ids": [
@@ -1869,10 +2003,7 @@
   {
     "campaign_id": "terminal_energy_fair",
     "family": "matched_terminal_energy",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/terminal_energy/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/terminal_energy_fair_20260910_2424369",
     "row_count": 9,
     "workflow_job_ids": [
@@ -1883,10 +2014,7 @@
   {
     "campaign_id": "terminal_energy_fair_mip_retry_5cdb813",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/current_content_audit.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/terminal_energy_fair_mip_retry_5cdb813_20260910",
     "row_count": 14,
     "workflow_job_ids": [
@@ -1897,9 +2025,7 @@
   {
     "campaign_id": "w2_chain_recovery_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/independent_classification.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/w2_chain_recovery_20260912",
     "row_count": 2,
     "workflow_job_ids": [
@@ -1915,10 +2041,7 @@
   {
     "campaign_id": "w2_chain_recovery_retry2_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/queue_recovery_20260912/independent_classification.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/overnight_extension_20260912/RESULTS_20260912T193423Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/w2_chain_recovery_retry2_20260912",
     "row_count": 6,
     "workflow_job_ids": [
@@ -1937,9 +2060,7 @@
   {
     "campaign_id": "w2_k14_import_fix_20260912",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/w2_k14_import_timeout_review_20260912/retry/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/w2_k14_import_fix_20260912",
     "row_count": 5,
     "workflow_job_ids": [
@@ -1954,10 +2075,7 @@
   {
     "campaign_id": "warm_chain_p3_k2_10",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_status/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/meeting_20260910/snapshots/20260910T0415Z.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/nested_warm_chain_p3_k2_10_20260909_8830a34",
     "row_count": 56,
     "workflow_job_ids": [
@@ -2011,10 +2129,7 @@
   {
     "campaign_id": "warm_chain_p5_k2_10",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/document_cleanup_20260912/current_content_audit.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_chain_p5/resource_plan.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/nested_warm_chain_p5_k2_10_20260910_ecb60c1",
     "row_count": 64,
     "workflow_job_ids": [
@@ -2050,10 +2165,7 @@
   {
     "campaign_id": "warm_multichain_p1246",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/parallel_research_20260911/README.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/warm_multichain_p1246/README.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/nested_warm_multichain_p1246_k2_10_20260910_ecb60c1",
     "row_count": 240,
     "workflow_job_ids": [
@@ -2170,10 +2282,7 @@
   {
     "campaign_id": "zero_charge_start_fee_20260913",
     "family": "production_or_historical",
-    "report_links": [
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/doc_after.md",
-      "/Users/nadan/Documents/projects/demandresponse/outputs/chain_extension_20260913/doc_before.md"
-    ],
+    "report_links": [],
     "root": "/home/nc437/ladder-lite/zero_charge_start_fee_20260913",
     "row_count": 75,
     "workflow_job_ids": []

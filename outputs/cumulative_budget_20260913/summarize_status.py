@@ -119,14 +119,39 @@ def main():
     if extension_rows:
         write_csv(root/'extension_mips.csv', extension_rows)
     collected_cases = {r['case_id'] for r in extension_rows}
+    # Later extensions live in a separate campaign but can already have a
+    # verified endpoint in the same snapshot. Match artifact identity across
+    # campaigns before calling an accounting observation a late arrival.
+    collected_artifacts = {
+        (path, item.get('sha256'))
+        for campaign in snapshot.get('campaigns', {}).values()
+        for item in campaign.get('mip', [])
+        for path in (item.get('path'), item.get('resolved_source_path'))
+        if path and item.get('sha256')
+    }
+    collected_attempt_paths = {
+        item['path']
+        for campaign in snapshot.get('campaigns', {}).values()
+        for item in campaign.get('mip', [])
+        if item.get('path')
+    }
+    def collected_attempt(record):
+        # The canonical publication may only differ in JSON whitespace from
+        # its immutable attempt file. Bind the case, job and restart instead.
+        if record.get('registered_attempt_tag') != 'chain_extension_20260914':
+            return False
+        suffix = (f"/cases/{record.get('case_id')}/mip/"
+                  f"{record.get('JobID')}_r{record.get('Restarts', '0')}/result.json")
+        return any(path.endswith(suffix) for path in collected_attempt_paths)
     late_results = [r for r in snapshot.get('mip_preemption_study', {}).get('attempts', [])
         if r.get('cohort') == 'default_chain_extension_3600'
         and r.get('State') == 'COMPLETED' and r.get('result_exists')
-        and r.get('case_id') not in collected_cases]
-    if late_results:
-        (root/'late_scheduler_results.json').write_text(json.dumps(dict(
-            authority='scheduler observation; detailed scientific endpoint not yet collected',
-            snapshot_path=str(source), snapshot_sha256=digest, attempts=late_results), indent=2)+'\n')
+        and r.get('case_id') not in collected_cases
+        and (r.get('result_path'), r.get('result_sha256')) not in collected_artifacts
+        and not collected_attempt(r)]
+    (root/'late_scheduler_results.json').write_text(json.dumps(dict(
+        authority='scheduler observation; detailed scientific endpoint not yet collected',
+        snapshot_path=str(source), snapshot_sha256=digest, attempts=late_results), indent=2)+'\n')
     counts = {name: sum(r['fresh_meaning'] == name for r in rows) for name in
         ['target matched', 'proved pool limit above target', 'fleet gap open']}
     fresh_done = sum(r['budget_arm'] == 'base' for r in c['mip'])
