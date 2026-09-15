@@ -1,4 +1,4 @@
-**Current verified update:** [15 September04:19EDT results, diagnosis and new chain extension](status_20260915T080947Z/README.md). Earlier dated summaries below are historical.
+**Current verified update:** [15 September 05:19 EDT results](status_20260915T091033Z/README.md) · [All original chain counts](status_20260915T091033Z/CHAIN_TABLES.md). Earlier dated summaries below are historical.
 
 **Results through 00:16 EDT, 15 September:** [New chain matches, compact-start gap and paired pricing results](status_20260915T040735Z/README.md). The launch record below retains its original timestamp.
 

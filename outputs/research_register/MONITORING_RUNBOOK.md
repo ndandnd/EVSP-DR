@@ -6,6 +6,16 @@ Follow [ACTIVE_MONITOR_PLAN.md](ACTIVE_MONITOR_PLAN.md) for the current overnigh
 
 Use the durable path in `outputs/research_register/publication_workspace_path.txt`: `/Users/nadan/Documents/projects/demandresponse/.codex-work/research-register-20260915`, branch `codex/research-register-20260915`. Push its reviewed allowlist to `HEAD:codex/parallel-research-20260911`. Do not use `/private/tmp/evsp-research-register-20260910`: its .git link and older checkout files were missing. The cause is unverified. A fresh worktree was created from remote-verified commit dac40058; the current changes were reapplied there. No cluster access loss or research-job change occurred. [Recovery record](publication_recovery_20260915.json). The main checkout remains dirty and must not be wholesale committed.
 
+## 15 September, 05:19 EDT — C6 reaches28; larger compact integer gap remains
+
+Snapshot20260915T091033Z completed09:19:19.976UTC in526.968s; SHA8b625bd4a557566490d003fd0fa83a52b2d9ca771da844d17e55dbf238ca89a4. SSH available;34running/30true dependencies;941preemption attempts, no new confirmed preemption or execution failure. All12 new k29–30 graphs running and now collected/registered. No submissions, cancellations, requeues, held/V2G or Slides changes.
+
+C6k28:28/bound28/proved in pool,219566columns; fleet25.13min,total60.12min; CG239.87min capped; charging unproved; individual replay passes,60overcovered trips unvalidated. C4k27CG capped239.915min,RC−0.003261; its MIP awaits verification. C5k27MIP187995 completed after campaign scan; retained path/hash, verify next hour. Largest original one-hour matches26/27/27/26/26/28.
+
+Larger compact:10MIPs,7targets,3open gaps. New C2k20expanded21/bound20,180.03fleet/210.07totalmin; CG171.385min certified,weightedLP2000806.3818165,routeweight20. All24CG done3cert/21cap;14MIPs unverified. Longer220545/222757stillpending. No pool deficit is proved by this open gap.
+
+New summarize_chain_extensions.py consolidates original k16–30 across3roots:90submitted cases,73CG/71MIP verified. Uses final_lp re-solve, checks input/revision/stage-cap identities. Prior78case control passed; altered input and equality cap rejected. Register3262records/73groups, exact6supplements; workbook updated/checked. Core321,evening177,pool69 endpoints verified. Current Doc tables updated in place, figures/history retained; morning09:00EDT consolidation remains due. [Source report](../overnight_next_20260914/status_20260915T091033Z/README.md).
+
 ## 15 September, 03:17 EDT — larger compact starts mixed; C3 k28 longer search launched
 
 Snapshot20260915T070849Z completed07:17:45.300UTC in535.696s, SHA69fb81730437e6acac30011013aaa8531d5ccbf3398cd44bc00dcfbce2b32c4c. SSH available. Queue24 running/10 true dependencies/one newly ready pending;33 held excluded. No new execution failure, confirmed preemption or invalid dependency. Preemption929 attempts;10 changed scientific endpoints.
