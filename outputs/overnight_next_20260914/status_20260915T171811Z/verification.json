@@ -1,0 +1,21 @@
+{
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T171811Z.json",
+  "sha256": "b3177bc448d29ba766e8e36b842e3ef704b3577fa03875895fe1b79597109f82",
+  "collection": {
+    "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T171811Z.json",
+    "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T161748Z.json",
+    "started_utc": "2026-09-15T17:18:11.562315+00:00",
+    "returncode": 0,
+    "elapsed_s": 621.6755480766296,
+    "stderr_path": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T171811Z_stderr.txt",
+    "finished_utc": "2026-09-15T17:28:33.319037+00:00"
+  },
+  "new_cg_endpoints": 1,
+  "new_mip_endpoints": 0,
+  "cg_verified": 78,
+  "mip_verified": 77,
+  "queue_running": 27,
+  "queue_pending": 47,
+  "job_mutations": 0,
+  "doc_unchanged_reason": "No changed headline result; current source tables and figures preserved."
+}

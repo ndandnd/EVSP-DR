@@ -1,0 +1,81 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T161748Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T171811Z.json",
+  "timestamp_utc": "2026-09-15T17:18:11.985218+00:00",
+  "changed_results": [
+    {
+      "campaign": "chain_extension_20260914",
+      "stage": "cg",
+      "path": "/home/nc437/ladder-lite/chain_extension_20260914/cases/w1_k28/cg.json",
+      "new_path": true,
+      "summary": {
+        "certified_rc_optimal": false,
+        "stop_reason": "wall_limit",
+        "wall_s": 14366.094039279968,
+        "final": {
+          "iter": 176,
+          "attempt_iter": 176,
+          "lp_obj": 2801175.7876462685,
+          "route_weight": 28.00000000000036,
+          "artificials": 0.0,
+          "min_rc": -0.13102108584790395,
+          "max_row_violation": 6.955547249276606e-13,
+          "max_bound_violation": 3.837683460629156e-13
+        }
+      },
+      "sha256": null,
+      "payload_sha256": "a5c5543817a2bdf1e9b4dfaf0513f4e20ea071efa28ff90f54d5313cb6c4ec66"
+    }
+  ],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "187973",
+      "case_id": "w1_k28",
+      "cohort": "default_chain_extension_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "187972",
+      "before": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      },
+      "after": null
+    },
+    {
+      "job": "187973",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-12"
+      }
+    },
+    {
+      "job": "224628_4",
+      "before": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      },
+      "after": null
+    },
+    {
+      "job": "224637",
+      "before": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      }
+    }
+  ]
+}

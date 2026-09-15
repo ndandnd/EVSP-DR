@@ -1,3 +1,7 @@
+## 15 September13:28EDT — C1k28 CG capped, C3k29 starts CG
+
+Snapshot171811 completed621.676s. C1k28CG239.435min/wallcap,final re-solve2801175.78764622/routeweight28/RC−0.13102109,no certificate; MIP187973running. C3k29cachefinished8.90h,CG224637running; remaining23graphscontinue. Register3347/78groups;78CG77MIPamong102cases. No newintegerresult,Docunchanged. Queue27running47true dependencies,981attempts,no failures/preemptions/invaliddependencies. No jobmutations. See status_20260915T171811Z; preserve realdependencies and question-ledshortDoc.
+
 ## 15 September12:27EDT — Chain1 reaches27; directtarget tests unresolved
 
 Snapshot161748 completed564.206s;9new scientific endpoints verified. C1k27same252540columnpool now27/proved after83.97fleetmin; C5k27remains29/bound26 after180.30fleetmin. Both210mintotal, replaypassed, chargingopen. All7targetcaptests TIME_LIMIT/no incumbent/no infeasibility proof; do not infer pool deficiency or repeat unchangedtests. Combinedobservedchainmax27/28/28/27/26/28. Originalonehourmaxunchanged.

@@ -4,12 +4,12 @@ User authorization: continue productive Unicorn experiments and hourly monitorin
 
 ## Latest verified state
 
-Latest verified collection `20260915T161748Z` completed12:27EDT in564.206s. Chain1k27 longer same-pool MIP reaches27/proved (83.97fleetmin); Chain5k27 stays29/bound26/open. All7directtargettests complete at time limit without witness or infeasibility proof. Queue27running/49true dependencies,981attempt records. Register3348records/78groups; original chain77CG/77MIP among102registered cases. Short Doc updated in place; [source report](../overnight_next_20260914/status_20260915T161748Z/README.md).
+Latest verified collection `20260915T171811Z` completed13:28EDT in621.676s. C1k28CG ended239.43min at wall limit, final weighted LP2801175.78764622/route weight28/lastRC−0.13102109/no certificate; MIP187973 runs. C3k29 graph completed8.90h and releasedCG224637. Chain maxima unchanged27/28/28/27/26/28 including longer MIPs. Register3347records/78groups,78CG/77MIP among102cases;27running47true dependencies,981attempts. Short Doc unchanged; [source report](../overnight_next_20260914/status_20260915T171811Z/README.md).
 
 | Active work | Next check |
 |---|---|
-| Original chain C1k28 | Graph recovery189917 completed; CG187972 runs. Other originalk28 endpoints complete. Maxima26/28/27/27/26/28; separate C3long reaches28. |
-| Chain targets29–32 | All24graph tasks224628/228593 run. Twelve new31–32 cases launched this turn; CG/MIP228594–228617 preserve own-graph/prior-k/own-CG dependencies. Graph24hwatchdog/25hallocation, CG4h, MIP1h. Frozen original random order, unlimited full-pool inheritance, no redraw. See chain_extension_31_32_20260915. |
+| Original chain C1k28 | Graph recovery189917 and CG187972 completed; CG capped/no certificate, MIP187973 runs. Other originalk28 endpoints complete. Maxima26/28/27/27/26/28; separate C3long reaches28. |
+| Chain targets29–32 | C3k29 graph completed and CG224637 runs; remaining23graph tasks224628/228593 run. Twelve new31–32 cases launched this turn; CG/MIP228594–228617 preserve own-graph/prior-k/own-CG dependencies. Graph24hwatchdog/25hallocation, CG4h, MIP1h. Frozen original random order, unlimited full-pool inheritance, no redraw. See chain_extension_31_32_20260915. |
 | Longer original-pool MIPs | continuation_gaps2 COMPLETE:227897(C1k27)=27/proved;227898(C5k27)=29/bound26/open. New continuation_gaps3:228579(C4k28),228580(C5k28). Original newk28 results29/bound28 and34/bound27, bothopen.12600total/10800fleet; same pool/native871d057/greedy policy, no suppliedstart. Both new licenses/startups passed. |
 | Direct union target feasibility | union_target_feasibility_20260915 production228654–228660 COMPLETE, all7 TIME_LIMIT/no incumbent/unresolved. Do not repeat identical tests. Native validation228618/228619 passed; NOTresearchdata. Frozen871d057 plus hashed adapter: min0, covering, fleet<=k,3600s,8CPU24G/default. Feasible establishes cap existence only; infeasible excludes only this finite pool; timeout without incumbent unknown. No minimum-fleet/charging/fullmodelproof inferred. |
 
