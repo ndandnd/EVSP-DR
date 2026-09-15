@@ -1,0 +1,110 @@
+{
+  "root": "/home/nc437/ladder-lite/chain_extension_31_32_20260915/code",
+  "commit": "a0e0bb7681c8451e3cbbbfa06aef390026d9af4b",
+  "files": {
+    "src/exact_pricer_expanded.py": {
+      "sha256": "f4310ddc495c70bba6118b0ecd9c546f80a8ce6b7f1b027e2866de9595af8831",
+      "matches": [
+        {
+          "line": 965,
+          "text": "def min_reduced_cost_route("
+        },
+        {
+          "line": 970,
+          "text": "route_dual: float = 0.0,"
+        },
+        {
+          "line": 989,
+          "text": "if objective == \"combined-cost\" and route_dual == 0.0:"
+        },
+        {
+          "line": 1009,
+          "text": ") - (route_dual if u == 0 else 0.0)"
+        },
+        {
+          "line": 1121,
+          "text": "route_dual: float = 0.0,"
+        },
+        {
+          "line": 1129,
+          "text": "if objective == \"combined-cost\" and route_dual == 0.0:"
+        },
+        {
+          "line": 1133,
+          "text": "alpha, objective=objective, route_dual=route_dual,"
+        }
+      ]
+    },
+    "src/event_pricer_network.py": {
+      "sha256": "03d4674ab684ab690b32b7f04be2073d345efc680315435c4bf06b6c2a6d6d9a",
+      "matches": [
+        {
+          "line": 871,
+          "text": "def min_reduced_cost_route("
+        },
+        {
+          "line": 876,
+          "text": "route_dual=0.0,"
+        },
+        {
+          "line": 888,
+          "text": "dense, objective=objective, route_dual=route_dual,"
+        },
+        {
+          "line": 897,
+          "text": "if objective == \"combined-cost\" and route_dual == 0.0:"
+        },
+        {
+          "line": 913,
+          "text": ") - (route_dual if source == 0 else 0.0)"
+        },
+        {
+          "line": 928,
+          "text": "self, dense, *, objective, route_dual"
+        },
+        {
+          "line": 946,
+          "text": "if objective == \"combined-cost\" and route_dual == 0.0:"
+        },
+        {
+          "line": 966,
+          "text": "- (route_dual if source == 0 else 0.0)"
+        },
+        {
+          "line": 986,
+          "text": "objective=\"combined-cost\", route_dual=0.0,"
+        },
+        {
+          "line": 1004,
+          "text": "if objective == \"combined-cost\" and route_dual == 0.0:"
+        },
+        {
+          "line": 1008,
+          "text": "alpha, objective=objective, route_dual=route_dual,"
+        }
+      ]
+    },
+    "src/master_lp_gurobi.py": {
+      "sha256": "7a42f5ba6af7e8685297034fd5cfb1a4c92071b53f8969b93b0bc42544c60812",
+      "matches": []
+    },
+    "src/master_lp_scipy.py": {
+      "sha256": "56c5dbdf82a92c8557081c07157a70e36419fb94d91507da21b3b28a979d499d",
+      "matches": [
+        {
+          "line": 163,
+          "text": "def solve_restricted_master_lp("
+        }
+      ]
+    },
+    "src/run_exact_pool_mip.py": {
+      "sha256": "81ec981bce8080ed8ad5feecb08d29002eda62918dc2646bfd21485ed5fd2100",
+      "matches": [
+        {
+          "line": 267,
+          "text": "\"\"\"Keep the cheapest physically admitted record per trip incidence.\"\"\""
+        }
+      ]
+    }
+  }
+}

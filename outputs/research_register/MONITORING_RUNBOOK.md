@@ -1,3 +1,9 @@
+## 15 September11:26EDT — no new scientific result
+
+Snapshot151636 completed in592.467s; no changed science, no new execution failure/preemption/invalid dependency. Queue36running49true dependencies;981preemption records. Seven direct target tests stillrunning. New roots and9target attempts pass normalization; fixtures remain validation-only. Current workbook and concise two-table question-led Doc remain unchanged. Do not recreate the older seven-table dashboard. See status_20260915T151636Z for source checks.
+
+Use durable run_collection.py; last_successful_collection_path.txt advances even when the last normalized snapshot/workbook remains older. This preserves comparison with the previous successful operational collection without unnecessary workbook rewrites. Design-only question3 prerequisites are in outputs/zero_fee_full_cg_design_20260915; no new implementation/job was launched. Held/V2G/Slides untouched.
+
 ## 15 September10:34EDT — completed union tests, chain32 and direct target tests
 
 Follow ACTIVE_MONITOR_PLAN.md for live priorities. Snapshot141509:14newMIPs,12union/control +C4k28=29/bound28,C5k28=34/bound27;allreplaypass. Unions0/8improve,controls4/4tie;onlyC1k20targetexcluded,7open. Newgaps3jobs228579/580, chain31–32graph228593andCG/MIP228594–617, directtarget228654–660 allsubmitted/rootreviewed. Queue36running49true dependencies at14:34UTC. Exactdefault/exclusion/resources/dependencieschecked; noheld/V2Gmutation. Nativefeasibilityfixtures228618/619 are validationonly. Targettestmin0+fleet<=k is notfleetminimization; preserve classification. Newcollector/normalizer/delta support and9exactattempt registrations are prepared for nextsnapshot; runbothregistryrefreshers beforecollection.

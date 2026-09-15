@@ -1,0 +1,539 @@
+{
+  "previous": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T141509Z.json",
+  "snapshot": "/Users/nadan/Documents/projects/demandresponse/outputs/post_meeting_20260910/monitor/20260915T151636Z.json",
+  "timestamp_utc": "2026-09-15T15:16:36.664725+00:00",
+  "changed_results": [],
+  "mip_scheduler_transitions": [
+    {
+      "JobID": "228595",
+      "case_id": "w1_k31",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228597",
+      "case_id": "w1_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228599",
+      "case_id": "w2_k31",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228601",
+      "case_id": "w2_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228603",
+      "case_id": "w3_k31",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228605",
+      "case_id": "w3_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228607",
+      "case_id": "w4_k31",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228609",
+      "case_id": "w4_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228611",
+      "case_id": "w5_k31",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228613",
+      "case_id": "w5_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228615",
+      "case_id": "w6_k31",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228617",
+      "case_id": "w6_k32",
+      "cohort": "default_chain_extension_3600",
+      "State": "PENDING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228618",
+      "case_id": "validation_feasible",
+      "cohort": "validation_union_target_feasibility_20260915",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228619",
+      "case_id": "validation_infeasible",
+      "cohort": "validation_union_target_feasibility_20260915",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": true
+    },
+    {
+      "JobID": "228654",
+      "case_id": "c1_k15_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228655",
+      "case_id": "c2_k20_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228656",
+      "case_id": "c2_k25_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228657",
+      "case_id": "c3_k20_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228658",
+      "case_id": "c4_k25_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228659",
+      "case_id": "c5_k20_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    },
+    {
+      "JobID": "228660",
+      "case_id": "c5_k25_target",
+      "cohort": "default_union_target_feasibility_3600",
+      "State": "RUNNING",
+      "ExitCode": "0:0",
+      "confirmed_preemption": false,
+      "result_exists": false
+    }
+  ],
+  "queue_transitions": [
+    {
+      "job": "228593_0",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-73"
+      }
+    },
+    {
+      "job": "228593_1",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "joachims-cpu-01"
+      }
+    },
+    {
+      "job": "228593_10",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "sablab-cpu-02"
+      }
+    },
+    {
+      "job": "228593_11",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "jingjie-cpu-04"
+      }
+    },
+    {
+      "job": "228593_2",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "228593_3",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "228593_4",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-87"
+      }
+    },
+    {
+      "job": "228593_5",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "228593_6",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "228593_7",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "garg-cpu-02"
+      }
+    },
+    {
+      "job": "228593_8",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "harpo"
+      }
+    },
+    {
+      "job": "228593_9",
+      "before": {
+        "state": "PENDING",
+        "reason": "(None)"
+      },
+      "after": {
+        "state": "RUNNING",
+        "reason": "harpo"
+      }
+    },
+    {
+      "job": "228599",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228600",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228601",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228602",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228603",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228604",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228605",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228606",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228607",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228608",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228609",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228610",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228611",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228612",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228613",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228614",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228615",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228616",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228617",
+      "before": null,
+      "after": {
+        "state": "PENDING",
+        "reason": "(Dependency)"
+      }
+    },
+    {
+      "job": "228654",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-14"
+      }
+    },
+    {
+      "job": "228655",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-16"
+      }
+    },
+    {
+      "job": "228656",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      }
+    },
+    {
+      "job": "228657",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "snavely-cpu-15"
+      }
+    },
+    {
+      "job": "228658",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "228659",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "unicorn-cpu-01"
+      }
+    },
+    {
+      "job": "228660",
+      "before": null,
+      "after": {
+        "state": "RUNNING",
+        "reason": "sonic-cpu-01"
+      }
+    }
+  ]
+}
